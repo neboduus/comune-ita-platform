@@ -1,4 +1,8 @@
-ocsdc
-=====
+# OpenContent - Stanza Del Cittadino
 
-A Symfony project created on July 20, 2016, 6:45 pm.
+## Server di sviluppo
+
+ssh developer@devsdc.opencontent.it -p222
+
+Vedi https://support.opencontent.it/opencontent/wiki/devsdc
+
