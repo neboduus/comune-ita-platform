@@ -3,17 +3,54 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\User;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class UserProvider implements UserProviderInterface
 {
+    /**
+     * @var EntityManager
+     */
+    private $em;
+
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
 
     public function loadUserByUsername($username)
     {
+        $user = $this->getPersistedUser($username);
+        if (!$user) {
+            $user = $this->createUser($username);
+        }
+
+        return $user;
+    }
+
+    protected function getPersistedUser($username)
+    {
+        $repo = $this->em->getRepository('AppBundle:User');
+        try {
+            $user = $repo->findOneBy(array('name' => $username));
+        } catch (\Exception $e) {
+            $user = null;
+        }
+
+        return $user;
+    }
+
+    protected function createUser($username)
+    {
         $user = new User();
-        $user->setName($username);
+        $user->setName($username)
+             ->setUsername($username)
+             ->addRole('ROLE_USER');
+
+        $this->em->persist($user);
+        $this->em->flush();
 
         return $user;
     }

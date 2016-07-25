@@ -1,40 +1,22 @@
 <?php
 
-namespace AppBundle\Tests\Controller;
+namespace Tests\AppBundle\Controller;
 
-use AppBundle\Entity\User;
 use AppBundle\Entity\Servizio;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use AppBundle\Entity\User;
+use Tests\AppBundle\Base\AppTestCase;
 
-class ServizioControllerTest extends WebTestCase
+class ServizioControllerTest extends AppTestCase
 {
-    /**
-     *
-     * @var Client
-     */
-    private $client;
-
-    /**
-     * @var EntityManager
-     */
-    private $em;
-
-
-    public function setup(){
-        $this->client = static::createClient();
-        $this->em = $this->client->getContainer()->get('doctrine')->getEntityManager();
-
-        $this->cleanDb( $this->em );
+    public function setUp(){
+        parent::setUp();
+        $this->cleanDb(Servizio::class);
+        $this->cleanDb(User::class);
     }
-
 
     public function testIndex()
     {
-        $user = new User();
-        $userName = md5(time());
-        $user->setName($userName);
+        $user = $this->createUser();
 
         $repo = $this->em->getRepository("AppBundle:Servizio");
         $servizio = new Servizio();
@@ -50,10 +32,4 @@ class ServizioControllerTest extends WebTestCase
         $this->assertEquals( $serviceCountAfterInsert, $renderedServicesCount );
 
     }
-
-    private function cleanDb( EntityManager $em )
-    {
-        $em->createQuery('DELETE FROM AppBundle\Entity\Servizio')->execute();
-    }
-
 }
