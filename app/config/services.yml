@@ -4,6 +4,8 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    sdc_userprovider:
+        class: AppBundle\Services\UserProvider
+        #arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    cps_token_authenticator:
+        class: AppBundle\Security\CPSAuthenticator
