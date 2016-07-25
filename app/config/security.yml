@@ -4,14 +4,22 @@ security:
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory:
-            memory: ~
+        #in_memory:
+            #memory: ~
+        cps:
+            id: sdc_userprovider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        sdc:
+            pattern: ^/servizi
+            guard:
+                authenticators:
+                    - cps_token_authenticator
 
         main:
             anonymous: ~
@@ -22,3 +30,7 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+
+    access_control:
+        - {path:^/servizi,role:ROLE_USER}
+
