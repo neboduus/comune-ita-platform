@@ -1,1 +1,5 @@
 Servizi {% if user %}{{ user.name }}{% else %}World{% endif %}!
+
+{% for service in services %}
+    <div class="servizio">{{ service.name }}</div>
+{% endfor %}

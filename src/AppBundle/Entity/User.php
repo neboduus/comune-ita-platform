@@ -22,6 +22,15 @@ class User implements UserInterface
     private $roles = array();
 
     /**
+     * User constructor.
+     *
+     */
+    public function __construct()
+    {
+        $this->roles []= 'ROLE_USER';
+    }
+
+    /**
      * @return string
      */
     public function getName()

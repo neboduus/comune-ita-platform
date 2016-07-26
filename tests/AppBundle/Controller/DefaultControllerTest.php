@@ -23,7 +23,7 @@ class DefaultControllerTest extends WebTestCase
         $user->setName($userName);
 
         $client = static::createClient();
-        $route = $client->getContainer()->get('router')->generate('app_default_servizi');
+        $route = $client->getContainer()->get('router')->generate('servizi_list');
         $crawler = $client->request('GET', $route, [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
 
         $this->assertContains($user->getName(), $client->getResponse()->getContent());

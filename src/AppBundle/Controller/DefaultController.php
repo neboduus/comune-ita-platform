@@ -22,18 +22,4 @@ class DefaultController extends Controller
 
         return $this->render('AppBundle:Default:index.html.twig', array('user' => $user));
     }
-
-    /**
-     * @Route("/servizi")
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function serviziAction(Request $request)
-    {
-        $user = $this->getUser();
-
-        return $this->render('AppBundle:Default:servizi.html.twig', array('user' => $user));
-    }
 }

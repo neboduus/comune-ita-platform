@@ -14,6 +14,7 @@ class UserProvider implements UserProviderInterface
     {
         $user = new User();
         $user->setName($username);
+
         return $user;
     }
 
