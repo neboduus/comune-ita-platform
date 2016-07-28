@@ -2,14 +2,14 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Entity\User;
 use Monolog\Logger;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AppTestCase;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
 class DefaultControllerTest extends AppTestCase
 {
@@ -17,6 +17,7 @@ class DefaultControllerTest extends AppTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
         $this->cleanDb(TerminiUtilizzo::class);
     }

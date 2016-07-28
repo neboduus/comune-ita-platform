@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use Tests\AppBundle\Base\AppTestCase;
@@ -10,6 +11,7 @@ class ServizioControllerTest extends AppTestCase
 {
     public function setUp(){
         parent::setUp();
+        $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
         $this->cleanDb(User::class);
     }
