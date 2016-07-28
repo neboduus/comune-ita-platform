@@ -4,12 +4,14 @@ namespace AppBundle\Security;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\VarDumper\VarDumper;
 
 class CPSAuthenticator extends AbstractGuardAuthenticator
 {
@@ -25,19 +27,18 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
 
     public function getCredentials(Request $request)
     {
-        if (!$token = $request->headers->get('remote-user')) {
+        if (!$request->headers->has('remote-user')){
             return null;
         }
-
         return array(
-            'token' => $token,
+            'token' => $request->headers->get('remote-user'),
         );
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $apiKey = $credentials['token'];
-        $user = $userProvider->loadUserByUsername($apiKey);
+        $token = $credentials['token'];
+        $user = $userProvider->loadUserByUsername($token);
 
         return $user;
     }

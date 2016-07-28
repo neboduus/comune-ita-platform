@@ -6,6 +6,13 @@ parameters:
 services:
     sdc_userprovider:
         class: AppBundle\Services\UserProvider
-        #arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+        arguments: ["@doctrine.orm.default_entity_manager"]
+
     cps_token_authenticator:
         class: AppBundle\Security\CPSAuthenticator
+
+    sdc_terms_acceptance_listener:
+        class: AppBundle\EventListener\TermsAcceptListener
+        arguments: ["@router","@security.token_storage"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
