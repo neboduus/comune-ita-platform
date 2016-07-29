@@ -7,14 +7,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class ServiziController
+ * Class EsploraController
+ *
  * @package AppBundle\Controller
- * @Route("/servizi")
+ * @Route("/esplora")
  */
-class ServiziController extends Controller
+class EsploraController extends Controller
 {
     /**
-     * @Route("/", name="servizi_list")
+     * @Route("/", name="esplora_servizi_list")
      *
      * @param Request $request
      *
@@ -22,10 +23,6 @@ class ServiziController extends Controller
      */
     public function serviziAction(Request $request)
     {
-        $user = $this->getUser();
-        $repo = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-        $services = $repo->findAll();
-
-        return $this->render('AppBundle:Default:servizi.html.twig', array('user' => $user, 'services' => $services));
+        return $this->forward('AppBundle:Servizi:servizi');
     }
 }
