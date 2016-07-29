@@ -49,7 +49,7 @@ class DefaultControllerTest extends AppTestCase
     public function protectedRoutesProvider()
     {
         return array(
-            array('/pratiche')
+            array('/pratiche/')
         );
     }
 
@@ -57,7 +57,7 @@ class DefaultControllerTest extends AppTestCase
     {
         $user = $this->createUser(false);
 
-        $this->client->request('GET', '/servizi', [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $this->client->request('GET', '/servizi/', [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
 
         $response = $this->client->getResponse();
 

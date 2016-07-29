@@ -1,11 +1,14 @@
 # To get started with security, check out the documentation:
 # http://symfony.com/doc/current/book/security.html
 security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
 
-    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         #in_memory:
             #memory: ~
+        fos_userbundle:
+            id: fos_user.user_provider.username
         cps:
             id: sdc_userprovider
 
@@ -16,13 +19,25 @@ security:
             security: false
 
         sdc:
-            pattern: ^/(pratiche|servizi|terms_accept)
+            pattern: ^/(pratiche|servizi|terms_accept)/
             guard:
+                provider: cps
                 authenticators:
                     - cps_token_authenticator
-
+        operatori:
+            pattern: ^/operatori
+            form_login:
+                check_path: /operatori/login_check
+                login_path: /operatori/login
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
         main:
             anonymous: ~
 
     access_control:
-        - {path:^/pratiche,role:ROLE_USER}
+#        - { path: ^/(pratiche|servizi|terms_accept), role: ROLE_CPS_USER }
+        - { path: ^/pratiche, role: ROLE_USER }
+        - { path: ^/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/operatori, role: ROLE_USER }

@@ -10,11 +10,12 @@ use Symfony\Component\VarDumper\VarDumper;
 /**
  * Class ServiziController
  * @package AppBundle\Controller
+ * @Route("/servizi")
  */
 class ServiziController extends Controller
 {
     /**
-     * @Route("/servizi", name="servizi_list")
+     * @Route("/", name="servizi_list")
      *
      * @param Request $request
      *

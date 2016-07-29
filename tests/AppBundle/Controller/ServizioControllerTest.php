@@ -27,7 +27,7 @@ class ServizioControllerTest extends AppTestCase
 
         $serviceCountAfterInsert = count($repo->findAll());
 
-        $crawler = $this->client->request('GET', '/servizi', [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $crawler = $this->client->request('GET', '/servizi/', [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
         $renderedServicesCount = $crawler->filter('.servizio')->count();
         $this->assertEquals( $serviceCountAfterInsert, $renderedServicesCount );
 
