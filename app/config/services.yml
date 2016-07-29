@@ -6,7 +6,7 @@ parameters:
 services:
     sdc_userprovider:
         class: AppBundle\Services\UserProvider
-        arguments: ["@doctrine.orm.default_entity_manager"]
+        arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
 
     cps_token_authenticator:
         class: AppBundle\Security\CPSAuthenticator

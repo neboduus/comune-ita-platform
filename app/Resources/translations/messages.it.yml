@@ -1,0 +1,6 @@
+#Elementi generici
+salva: Salva
+
+#Elementi specifici di un componente di interfaccia
+#Valutare se spostare in un file separato, mantenendo il namespacing
+terms_do_il_consenso: Dò il consenso
