@@ -53,16 +53,16 @@ abstract class AppTestCase extends WebTestCase
         $userName = md5(time());
         $user = new User();
         $user->setName($userName)
-             ->setUsername($userName)
-             ->addRole('ROLE_USER')
-             ->setTermsAccepted($termAccepted);
+            ->setUsername($userName)
+            ->addRole('ROLE_USER')
+            ->setTermsAccepted($termAccepted)
+            ->setEmail('some@some.tld')
+            ->setPlainPassword('pippo')
+            ->setEnabled(true)
+        ;
 
         $this->em->persist($user);
-        try{
-            $this->em->flush();
-        }catch(\Exception $e){
-
-        }
+        $this->em->flush();
 
         return $user;
     }

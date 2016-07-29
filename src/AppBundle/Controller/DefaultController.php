@@ -29,7 +29,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/terms_accept", name="terms_accept")
+     * @Route("/terms_accept/", name="terms_accept")
      */
     public function termsAcceptAction(Request $request)
     {
@@ -76,7 +76,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/pratiche", name="pratiche")
+     * @Route("/pratiche/", name="pratiche")
      */
     public function praticheAction(Request $request)
     {

@@ -46,9 +46,12 @@ class UserProvider implements UserProviderInterface
     {
         $user = new User();
         $user->setName($username)
-             ->setUsername($username)
-             ->addRole('ROLE_USER');
-
+            ->setUsername($username)
+            ->addRole('ROLE_USER')
+            ->setEmail($user->getId().'@'.User::FAKE_EMAIL_DOMAIN)
+            ->setPlainPassword('pippo')
+            ->addRole('ROLE_CPS_USER')
+            ->setEnabled(true);
         $this->em->persist($user);
         $this->em->flush();
 
