@@ -5,9 +5,8 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Entity\User;
 use Monolog\Logger;
-use Symfony\Component\VarDumper\VarDumper;
-use Tests\AppBundle\Base\AppTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\AppBundle\Base\AppTestCase;
 
 class DefaultControllerTest extends AppTestCase
 {
@@ -77,8 +76,12 @@ class DefaultControllerTest extends AppTestCase
     public function testICanAcceptTermsConditions()
     {
         $mockLogger = $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
-        //@todo testare i log
-        //$mockLogger->expects($this->once())->method('info')->with($this->any());
+
+        $mockLogger->expects($this->exactly(2))->method('info');
+
+        static::$kernel->setKernelModifier(function ($kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
 
         $termine = new TerminiUtilizzo();
         $termine->setName('Test')->setText('Bla bla bla');
@@ -89,19 +92,14 @@ class DefaultControllerTest extends AppTestCase
 
         $crawler = $this->client->request('GET', $this->router->generate('terms_accept'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
 
-        $form = $crawler->selectButton('Salva')
+        $form = $crawler->selectButton($this->container->get('translator')->trans('salva'))
             ->form();
 
-        $this->client->followRedirects();
-        $this->client->getContainer()->set('logger', $mockLogger);
         $this->client->submit($form);
 
-        $user = $this->em->getRepository('AppBundle:User')->find($user->getId());
-
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->em->refresh($user);
         $this->assertTrue($user->getTermsAccepted());
-
-
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
     }
 
 }

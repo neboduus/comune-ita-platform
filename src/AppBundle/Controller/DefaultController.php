@@ -3,14 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\TerminiUtilizzo;
-use AppBundle\Entity\User;
+use AppBundle\Logging\Constants;
+use AppBundle\Logging\LogConstants;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class DefaultController
@@ -35,38 +36,20 @@ class DefaultController extends Controller
     {
         $logger = $this->get('logger');
 
+
         $repo = $this->getDoctrine()->getRepository('AppBundle:TerminiUtilizzo');
         $terms = $repo->findAll();
 
-        $data = array();
-        $formBuilder = $this->createFormBuilder($data);
-        foreach($terms as $term){
-            $formBuilder->add((string)$term->getId(), CheckboxType::class, array(
-                'label'    => 'Dò il consenso', //@todo usare translator
-                'required' => true
-            ));
-        }
-        $formBuilder->add('save', SubmitType::class, array('label' => 'Salva'));
-        $form = $formBuilder->getForm();
+        $form = $this->setupTermsAcceptanceForm($terms);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            $user = $this->getUser();
-            if ($user instanceof User){
-                $manager = $this->getDoctrine()->getManager();
-                $user->setTermsAccepted(true);
-                //@todo testare i logger
-                $logger->info("User {$user->getId()} has accepted the terms of service");
-                $manager->persist($user);
-                try{
-                    $manager->flush();
-                }catch(\Exception $e){
-                    $logger->error($e->getMessage());
-                }
+        $user = $this->getUser();
 
-            }
-            return $this->redirectToRoute('app_default_index');
+        if ($form->isSubmitted()) {
+            return $this->markTermsAcceptedForUser($user, $logger);
+        } else {
+            $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
         }
 
         return $this->render('AppBundle:Default:terms_accept.html.twig', array(
@@ -81,6 +64,47 @@ class DefaultController extends Controller
     public function praticheAction(Request $request)
     {
         return new Response('Todo'); //@todo implementare controller
+    }
+
+    /**
+     * @param $user
+     * @param $logger
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function markTermsAcceptedForUser($user, $logger)
+    {
+        $manager = $this->getDoctrine()->getManager();
+        $user->setTermsAccepted(true);
+        $logger->info(LogConstants::USER_HAS_ACCEPTED_TERMS, ['userid' => $user->getId()]);
+        $manager->persist($user);
+        try {
+            $manager->flush();
+        } catch (\Exception $e) {
+            $logger->error($e->getMessage());
+        }
+
+        return $this->redirectToRoute('app_default_index');
+    }
+
+    /**
+     * @param TerminiUtilizzo[] $terms
+     * @return \Symfony\Component\Form\Form|\Symfony\Component\Form\FormInterface
+     */
+    private function setupTermsAcceptanceForm($terms):FormInterface
+    {
+        $translator = $this->get('translator');
+        $data = array();
+        $formBuilder = $this->createFormBuilder($data);
+        foreach ($terms as $term) {
+            $formBuilder->add((string) $term->getId(), CheckboxType::class, array(
+                'label' => $translator->trans('terms_do_il_consenso'),
+                'required' => true,
+            ));
+        }
+        $formBuilder->add('save', SubmitType::class, array('label' => $translator->trans('salva')));
+        $form = $formBuilder->getForm();
+
+        return $form;
     }
 
 }
