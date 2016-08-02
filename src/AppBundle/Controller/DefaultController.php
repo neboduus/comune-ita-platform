@@ -3,12 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\TerminiUtilizzo;
-use AppBundle\Logging\Constants;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Entity\User;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,8 +24,10 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/")
+     *
+     * @return Response
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $user = $this->getUser();
         return $this->render('AppBundle:Default:index.html.twig', array('user' => $user));
@@ -31,24 +35,26 @@ class DefaultController extends Controller
 
     /**
      * @Route("/terms_accept/", name="terms_accept")
+     *
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function termsAcceptAction(Request $request)
     {
         $logger = $this->get('logger');
 
-
         $repo = $this->getDoctrine()->getRepository('AppBundle:TerminiUtilizzo');
         $terms = $repo->findAll();
 
-        $form = $this->setupTermsAcceptanceForm($terms);
-
-        $form->handleRequest($request);
+        $form = $this->setupTermsAcceptanceForm($terms)->handleRequest($request);
 
         $user = $this->getUser();
 
         if ($form->isSubmitted()) {
-            return $this->markTermsAcceptedForUser($user, $logger);
-        } else {
+            $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'app_default_index';
+            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute);
+        }else{
             $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
         }
 
@@ -61,17 +67,18 @@ class DefaultController extends Controller
     /**
      * @Route("/pratiche/", name="pratiche")
      */
-    public function praticheAction(Request $request)
+    public function praticheAction()
     {
         return new Response('Todo'); //@todo implementare controller
     }
 
     /**
-     * @param $user
-     * @param $logger
+     * @param User $user
+     * @param LoggerInterface $logger
+     * @param string $redirectRoute
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    private function markTermsAcceptedForUser($user, $logger)
+    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null):RedirectResponse
     {
         $manager = $this->getDoctrine()->getManager();
         $user->setTermsAccepted(true);
@@ -82,13 +89,12 @@ class DefaultController extends Controller
         } catch (\Exception $e) {
             $logger->error($e->getMessage());
         }
-
-        return $this->redirectToRoute('app_default_index');
+        return $this->redirectToRoute($redirectRoute);
     }
 
     /**
      * @param TerminiUtilizzo[] $terms
-     * @return \Symfony\Component\Form\Form|\Symfony\Component\Form\FormInterface
+     * @return FormInterface
      */
     private function setupTermsAcceptanceForm($terms):FormInterface
     {
@@ -106,5 +112,6 @@ class DefaultController extends Controller
 
         return $form;
     }
+
 
 }

@@ -6,7 +6,10 @@ use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Entity\User;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AppTestCase;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
 class DefaultControllerTest extends AppTestCase
 {
@@ -56,12 +59,26 @@ class DefaultControllerTest extends AppTestCase
     {
         $user = $this->createUser(false);
 
-        $this->client->request('GET', '/servizi/', [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $this->client->request('GET', $this->router->generate('servizi_list'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
 
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-        $this->assertEquals($this->router->generate('terms_accept'), $response->headers->get('location'));
+        $this->assertEquals($this->router->generate('terms_accept', ['r' => 'servizi_list']), $response->headers->get('location'));
+    }
+
+    public function testIAmRedirectedToOriginalPageWhenIAcceptTermsAsLoggedUserForTheFirstTime()
+    {
+        $user = $this->createUser(false);
+
+        $this->client->followRedirects();
+        $crawler = $this->client->request('GET', $this->router->generate('servizi_list'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $form = $crawler->selectButton($this->container->get('translator')->trans('salva'))->form();
+        $this->client->submit($form);
+        $this->assertEquals(
+            $this->client->getRequest()->getUri(),
+            $this->router->generate('servizi_list', [], Router::ABSOLUTE_URL)
+        );
     }
 
     public function testIAmNotRedirectedToTermAcceptPageIfTermsAreAccepted()
@@ -79,7 +96,7 @@ class DefaultControllerTest extends AppTestCase
 
         $mockLogger->expects($this->exactly(2))->method('info');
 
-        static::$kernel->setKernelModifier(function ($kernel) use ($mockLogger) {
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
             $kernel->getContainer()->set('logger', $mockLogger);
         });
 

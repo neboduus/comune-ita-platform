@@ -5,6 +5,7 @@ namespace AppBundle\EventListener;
 use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
@@ -23,6 +24,7 @@ class TermsAcceptListener
     private $tokenStorage;
 
     public function __construct(Router $router, TokenStorage $tokenStorage)
+
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
@@ -37,7 +39,7 @@ class TermsAcceptListener
                 && $currentRoute !== ''
                 && $currentRoute !== 'terms_accept'
             ) {
-                $redirectUrl = $this->router->generate('terms_accept');
+                $redirectUrl = $this->router->generate('terms_accept', ['r' => $currentRoute]);
                 $event->setResponse(new RedirectResponse($redirectUrl));
             }
         }
