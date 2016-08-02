@@ -1,6 +1,5 @@
-#Elementi generici
 salva: Salva
-
-#Elementi specifici di un componente di interfaccia
-#Valutare se spostare in un file separato, mantenendo il namespacing
-terms_do_il_consenso: Dò il consenso
+terms_do_il_consenso: 'Dò il consenso'
+accedi_al_servizio: 'Accedi al servizio %name%'
+registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
+esplora_i_servizi: 'Esplora i servizi'

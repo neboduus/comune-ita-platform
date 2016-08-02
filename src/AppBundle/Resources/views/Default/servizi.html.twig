@@ -1,8 +1,20 @@
 {% extends '::base.html.twig' %}
 {% block body %}
-Servizi {% if user %}{{ user.name }}{% else %}World{% endif %}!
 
-{% for service in services %}
-    <div class="servizio">{{ service.name }}</div>
-{% endfor %}
+    {% if user != null %}{{ user.name }}{%  endif %}
+
+    {% set route = app.request.attributes.get('_route') %}
+    {% if app.request.attributes.has('_forwarded') %}
+        {% set route = app.request.attributes.get('_forwarded').get('_route') %}
+    {% endif %}
+    {% set route = route|replace({ ('list'): 'show' }) %}
+
+    <h1>{{ 'esplora_i_servizi'|trans() }}</h1>
+    <ul>
+        {% for service in services %}
+            <li class="servizio">
+                <a href="{{ path(route, {'slug': service.slug}) }}">{{ service.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

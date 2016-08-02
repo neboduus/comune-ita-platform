@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity
@@ -15,12 +17,22 @@ class Servizio
      * @ORM\Column(type="guid")
      * @ORM\Id
      */
-    private $id;
+    protected $id;
 
     /**
+     * @var string
+     *
      * @ORM\Column(type="string", length=100)
      */
     private $name;
+
+    /**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(type="string", length=100, unique=true)
+     */
+    private $slug;
 
     /**
      * Servizio constructor.
@@ -33,19 +45,11 @@ class Servizio
     }
 
     /**
-     * @return mixed
+     * @return UuidInterface
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     /**
@@ -57,10 +61,34 @@ class Servizio
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
+     *
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return $this
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 }
