@@ -5,15 +5,22 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
+use AppBundle\Services\CPSUserProvider;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AppTestCase;
 
 class ServizioControllerTest extends AppTestCase
 {
-    public function setUp(){
+    /**
+     * @var CPSUserProvider
+     */
+    protected $userProvider;
+
+    public function setUp()
+    {
         parent::setUp();
+        $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
         $this->cleanDb(User::class);
@@ -21,7 +28,7 @@ class ServizioControllerTest extends AppTestCase
 
     public function testIndexAsLoggedInUser()
     {
-        $user = $this->createUser();
+        $user = $this->createCPSUser();
 
         $repo = $this->em->getRepository("AppBundle:Servizio");
         $servizio = new Servizio();
@@ -32,14 +39,14 @@ class ServizioControllerTest extends AppTestCase
 
         $serviceCountAfterInsert = count($repo->findAll());
 
-        $crawler = $this->client->request('GET', $this->router->generate('servizi_list'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
         $renderedServicesCount = $crawler->filter('.servizio')->count();
         $this->assertEquals( $serviceCountAfterInsert, $renderedServicesCount );
     }
 
     public function testICanSeeAServiceDetailAsLoggedInUser()
     {
-        $user = $this->createUser();
+        $user = $this->createCPSUser();
 
         $servizio = new Servizio();
         $servizio->setName('Secondo servizio');
@@ -48,18 +55,18 @@ class ServizioControllerTest extends AppTestCase
 
         $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 
-        $crawler = $this->client->request('GET', $this->router->generate('servizi_list'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
         $detailLink = $crawler->selectLink('Secondo servizio')->link()->getUri();
 
         $this->assertEquals($servizioDetailUrl, $detailLink);
 
-        $this->client->request('GET', $detailLink, [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $this->clientRequestAsCPSUser($user, 'GET', $detailLink);
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     public function testICanSeeAServiceApplicationLinkAsLoggedInUser()
     {
-        $user = $this->createUser();
+        $user = $this->createCPSUser();
 
         $servizio = new Servizio();
         $servizio->setName('Terzo servizio');
@@ -68,7 +75,7 @@ class ServizioControllerTest extends AppTestCase
 
         $servizioDetailUrl = $this->router->generate('servizi_run', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 
-        $crawler = $this->client->request('GET', $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()]), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()]));
         $detailLink = $crawler->selectLink($this->translator->trans('accedi_al_servizio', ['%name%' => $servizio->getName()]))->link()->getUri();
         $this->assertEquals($servizioDetailUrl, $detailLink);
 

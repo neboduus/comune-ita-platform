@@ -131,7 +131,7 @@ class Pratica
      */
     public function getCreationTime()
     {
-        return $this->creation_time;
+        return $this->creationTime;
     }
 
     /**

@@ -3,6 +3,9 @@
 namespace AppBundle\Security;
 
 
+use AppBundle\Entity\CPSUser;
+use AppBundle\Services\CPSUserProvider;
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +18,51 @@ use Symfony\Component\VarDumper\VarDumper;
 
 class CPSAuthenticator extends AbstractGuardAuthenticator
 {
+    private static $userDataKeys = [
+        "codiceFiscale",
+        "capDomicilio",
+        "capResidenza",
+        "cellulare",
+        "cittaDomicilio",
+        "cittaResidenza",
+        "cognome",
+        "dataNascita",
+        "emailAddress",
+        "emailAddressPersonale",
+        "indirizzoDomicilio",
+        "indirizzoResidenza",
+        "luogoNascita",
+        "nome",
+        "provinciaDomicilio",
+        "provinciaNascita",
+        "provinciaResidenza",
+        "sesso",
+        "statoDomicilio",
+        "statoNascita",
+        "statoResidenza",
+        "telefono",
+        "titolo",
+        "x509certificate_issuerdn",
+        "x509certificate_subjectdn",
+        "x509certificate_base64",
+    ];
+
+    private static function createUserDataFromRequest(Request $request)
+    {
+        $data = array_fill_keys( self::$userDataKeys, null);
+        array_walk(
+            $data,
+            function(&$item, $key, HeaderBag $headers){
+                /** @see \Symfony\Component\HttpFoundation\Request::overrideGlobals() Header keys transformation */
+                $filteredKey = str_replace( '_', '-', strtolower($key) );
+                if($headers->has($filteredKey)){
+                    $item = $headers->get($filteredKey);
+                }
+            },
+            $request->headers
+        );
+        return $data;
+    }
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
@@ -27,20 +75,30 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
 
     public function getCredentials(Request $request)
     {
-        if (!$request->headers->has('remote-user')){
+        $data = self::createUserDataFromRequest($request);
+        if ($data["codiceFiscale"] === null){
             return null;
         }
-        return array(
-            'token' => $request->headers->get('remote-user'),
-        );
+
+        return $data;
+
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserProviderInterface $userProvider
+     *
+     * @return CPSUser
+     * @throws \InvalidArgumentException
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $token = $credentials['token'];
-        $user = $userProvider->loadUserByUsername($token);
-
-        return $user;
+        if ($userProvider instanceof CPSUserProvider) {
+            return $userProvider->provideUser($credentials);
+        }
+        throw new \InvalidArgumentException(
+            sprintf("UserProvider for CPSAuthenticator must be a %s instance", CPSUserProvider::class)
+        );
     }
 
     public function checkCredentials($credentials, UserInterface $user)

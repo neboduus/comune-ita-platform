@@ -1,33 +1,35 @@
 <?php
 
-namespace AppBundle\Tests\Controller;
+namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
-use phpDocumentor\Reflection\Types\Integer;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AppTestCase;
+use AppBundle\Services\CPSUserProvider;
 
 class PraticaControllerTest extends AppTestCase
 {
-    public function setup(){
+    /**
+     * @var CPSUserProvider
+     */
+    protected $userProvider;
+
+    public function setUp()
+    {
         parent::setUp();
+        $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
         $this->cleanDb(User::class);
     }
 
-
     public function testAsLoggedUserISeeAllMyPratiche()
     {
-        $myUser = $this->createUser(true);
+        $myUser = $this->createCPSUser(true);
         $this->createPratiche($myUser);
 
-        $otherUser = $this->createUser(true);
+        $otherUser = $this->createCPSUser(true);
         $this->createPratiche($otherUser);
 
         $repo = $this->em->getRepository("AppBundle:Pratica");
@@ -36,7 +38,7 @@ class PraticaControllerTest extends AppTestCase
         $otherUserPraticheCountAfterInsert = count($repo->findByUser($otherUser));
         $this->assertGreaterThan(0, $otherUserPraticheCountAfterInsert);
 
-        $crawler = $this->client->request('GET', '/pratiche/', [], [], ['HTTP_REMOTE_USER' => $myUser->getName()]);
+        $crawler = $this->clientRequestAsCPSUser( $myUser, 'GET', '/pratiche/');
 
         $renderedPraticheCount = $crawler->filterXPath('//*[@data-user="'.$myUser->getId().'"]')->count();
         $this->assertEquals( $myUserPraticheCountAfterInsert, $renderedPraticheCount );
@@ -47,7 +49,7 @@ class PraticaControllerTest extends AppTestCase
 
     public function testAsLoggedUserISeeAllMyPraticheInCorrectOrder()
     {
-        $user = $this->createUser(true);
+        $user = $this->createCPSUser(true);
 
         $expectedStatuses = [
             Pratica::STATUS_PENDING,
@@ -63,7 +65,7 @@ class PraticaControllerTest extends AppTestCase
             $this->createPratica( $user, $status );
         }
 
-        $crawler = $this->client->request('GET', '/pratiche/', [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $crawler = $this->clientRequestAsCPSUser( $user, 'GET', '/pratiche/');
         $renderedPraticheCount = $crawler->filterXPath('//*[@data-user="'.$user->getId().'"]')->count();
         $this->assertEquals( count($expectedStatuses), $renderedPraticheCount );
 

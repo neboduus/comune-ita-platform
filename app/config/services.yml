@@ -4,14 +4,14 @@ parameters:
 #    parameter_name: value
 
 services:
-    sdc_userprovider:
-        class: AppBundle\Services\UserProvider
+    ocsdc.cps.userprovider:
+        class: AppBundle\Services\CPSUserProvider
         arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
 
-    cps_token_authenticator:
+    ocsdc.cps.token_authenticator:
         class: AppBundle\Security\CPSAuthenticator
 
-    sdc_terms_acceptance_listener:
+    ocsdc.cps.terms_acceptance_listener:
         class: AppBundle\EventListener\TermsAcceptListener
         arguments: ["@router","@security.token_storage"]
         tags:
@@ -24,3 +24,7 @@ services:
             calls:
                 - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
+    monolog_processor:
+            class: Monolog\Processor\PsrLogMessageProcessor
+            tags:
+                - { name: monolog.processor }

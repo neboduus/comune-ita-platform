@@ -10,7 +10,7 @@ security:
         fos_userbundle:
             id: fos_user.user_provider.username
         cps:
-            id: sdc_userprovider
+            id: ocsdc.cps.userprovider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -18,12 +18,12 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        sdc:
+        cps:
             pattern: ^/(pratiche|servizi|terms_accept)/
             guard:
                 provider: cps
                 authenticators:
-                    - cps_token_authenticator
+                    - ocsdc.cps.token_authenticator
         operatori:
             anonymous: ~
             pattern: ^/operatori

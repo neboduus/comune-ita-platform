@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Entity\User;
+use AppBundle\Services\CPSUserProvider;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,9 +15,15 @@ use Tests\AppBundle\Base\AppTestCase;
 class DefaultControllerTest extends AppTestCase
 {
 
+    /**
+     * @var CPSUserProvider
+     */
+    protected $userProvider;
+
     public function setUp()
     {
         parent::setUp();
+        $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
         $this->cleanDb(TerminiUtilizzo::class);
@@ -31,12 +38,12 @@ class DefaultControllerTest extends AppTestCase
 
     public function testISeeMyNameAsLoggedInUser()
     {
-        $user = $this->createUser();
+        $user = $this->createCPSUser();
 
         $route = $this->router->generate('servizi_list');
-        $this->client->request('GET', $route, [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $this->clientRequestAsCPSUser($user, 'GET', $route);
 
-        $this->assertContains($user->getName(), $this->client->getResponse()->getContent());
+        $this->assertContains($user->getFullName(), $this->client->getResponse()->getContent());
     }
 
     /**
@@ -58,9 +65,9 @@ class DefaultControllerTest extends AppTestCase
 
     public function testIAmRedirectedToTermAcceptPageWhenIAccessForTheFirstTimeAsLoggedInUser()
     {
-        $user = $this->createUser(false);
+        $user = $this->createCPSUser(false);
 
-        $this->client->request('GET', $this->router->generate('servizi_list'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
 
         $response = $this->client->getResponse();
 
@@ -70,10 +77,10 @@ class DefaultControllerTest extends AppTestCase
 
     public function testIAmRedirectedToOriginalPageWhenIAcceptTermsForTheFirstTimeAsLoggedInUser()
     {
-        $user = $this->createUser(false);
+        $user = $this->createCPSUser(false);
 
         $this->client->followRedirects();
-        $crawler = $this->client->request('GET', $this->router->generate('servizi_list'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
         $form = $crawler->selectButton($this->translator->trans('salva'))->form();
         $this->client->submit($form);
         $this->assertEquals(
@@ -84,9 +91,9 @@ class DefaultControllerTest extends AppTestCase
 
     public function testIAmNotRedirectedToTermAcceptPageIfTermsAreAccepted()
     {
-        $user = $this->createUser();
+        $user = $this->createCPSUser();
 
-        $this->client->request('GET', '/', [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $this->clientRequestAsCPSUser($user, 'GET', '/');
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
@@ -106,9 +113,9 @@ class DefaultControllerTest extends AppTestCase
         $this->em->persist($termine);
         $this->em->flush();
 
-        $user = $this->createUser(false);
+        $user = $this->createCPSUser(false);
 
-        $crawler = $this->client->request('GET', $this->router->generate('terms_accept'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
+        $crawler =$this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('terms_accept'));
 
         $form = $crawler->selectButton($this->translator->trans('salva'))
             ->form();

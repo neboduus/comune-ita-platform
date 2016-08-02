@@ -12,14 +12,35 @@ use FOS\UserBundle\Model\User as BaseUser;
  * Class User
  *
  * @ORM\Entity
- * @ORM\Table(name="users")
+ * @ORM\Table(name="utente")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"operatore" = "OperatoreUser", "cps" = "CPSUser"})
  *
  * @package AppBundle\Entity
  */
-class User extends BaseUser
+abstract class User extends BaseUser
 {
 
+    const USER_TYPE_OPERATORE = 'operatore';
+
+    const USER_TYPE_CPS = 'cps';
+
     const FAKE_EMAIL_DOMAIN = 'cps.didnt.have.my.email.tld';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="cognome", type="string")
+     */
+    private $cognome;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nome", type="string")
+     */
+    private $nome;
 
     /**
      * @ORM\Column(type="guid")
@@ -27,19 +48,9 @@ class User extends BaseUser
      */
     protected $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string")
-     */
-    private $name;
+    protected $type;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="terms_accepted", type="boolean")
-     */
-    private $termsAccepted = false;
+    protected $fullName;
 
     /**
      * User constructor.
@@ -52,23 +63,11 @@ class User extends BaseUser
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    public function getName()
+    public function getId()
     {
-        return $this->name;
-    }
-
-    /**
-     * @param $name
-     *
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
+        return (string) $this->id;
     }
 
     public function hasPassword()
@@ -77,23 +76,62 @@ class User extends BaseUser
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getTermsAccepted()
+    public function getCognome()
     {
-        return $this->termsAccepted;
+        return $this->cognome;
     }
 
     /**
-     * @param $termsAccepted
+     * @param $cognome
      *
-     * @return User
+     * @return $this
      */
-    public function setTermsAccepted($termsAccepted)
+    public function setCognome($cognome)
     {
-        $this->termsAccepted = $termsAccepted;
+        $this->cognome = $cognome;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNome()
+    {
+        return $this->nome;
+    }
+
+    /**
+     * @param $nome
+     *
+     * @return $this
+     */
+    public function setNome($nome)
+    {
+        $this->nome = $nome;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        if ($this->fullName == null){
+            $this->fullName = $this->cognome . ' ' . $this->nome;
+        }
+        return $this->fullName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
 }

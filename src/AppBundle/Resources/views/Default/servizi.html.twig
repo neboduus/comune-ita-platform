@@ -1,7 +1,7 @@
 {% extends '::base.html.twig' %}
 {% block body %}
 
-    {% if user != null %}{{ user.name }}{%  endif %}
+    {% if user != null %}{{ user.fullName }}{%  endif %}
 
     {% set route = app.request.attributes.get('_route') %}
     {% if app.request.attributes.has('_forwarded') %}
