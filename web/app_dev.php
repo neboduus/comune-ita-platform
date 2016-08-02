@@ -26,6 +26,7 @@ Debug::enable();
 
 $kernel = new AppKernel('dev', true);
 $kernel->loadClassCache();
+$_SERVER['HTTP_REMOTE_USER'] = 'Pinco Pallino';
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

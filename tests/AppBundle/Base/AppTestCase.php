@@ -13,6 +13,12 @@ use Symfony\Component\Finder\Finder;
 
 abstract class AppTestCase extends WebTestCase
 {
+
+    /**
+     * @var \AppTestKernel
+     */
+    protected static $kernel;
+
     /**
      *
      * @var Client

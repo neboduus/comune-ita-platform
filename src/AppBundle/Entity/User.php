@@ -16,7 +16,7 @@ use FOS\UserBundle\Model\User as BaseUser;
  *
  * @package AppBundle\Entity
  */
-class User extends BaseUSer
+class User extends BaseUser
 {
 
     const FAKE_EMAIL_DOMAIN = 'cps.didnt.have.my.email.tld';
