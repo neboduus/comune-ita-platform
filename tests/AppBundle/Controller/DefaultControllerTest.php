@@ -28,7 +28,7 @@ class DefaultControllerTest extends AppTestCase
         $this->assertContains('Hello World', $this->client->getResponse()->getContent());
     }
 
-    public function testISeeMyName()
+    public function testISeeMyNameAsLoggedInUser()
     {
         $user = $this->createUser();
 
@@ -55,7 +55,7 @@ class DefaultControllerTest extends AppTestCase
         );
     }
 
-    public function testIAmRedirectedToTermAcceptPageWhenIAccessAsLoggedUserForTheFirstTime()
+    public function testIAmRedirectedToTermAcceptPageWhenIAccessForTheFirstTimeAsLoggedInUser()
     {
         $user = $this->createUser(false);
 
@@ -67,13 +67,13 @@ class DefaultControllerTest extends AppTestCase
         $this->assertEquals($this->router->generate('terms_accept', ['r' => 'servizi_list']), $response->headers->get('location'));
     }
 
-    public function testIAmRedirectedToOriginalPageWhenIAcceptTermsAsLoggedUserForTheFirstTime()
+    public function testIAmRedirectedToOriginalPageWhenIAcceptTermsForTheFirstTimeAsLoggedInUser()
     {
         $user = $this->createUser(false);
 
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $this->router->generate('servizi_list'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
-        $form = $crawler->selectButton($this->container->get('translator')->trans('salva'))->form();
+        $form = $crawler->selectButton($this->translator->trans('salva'))->form();
         $this->client->submit($form);
         $this->assertEquals(
             $this->client->getRequest()->getUri(),
@@ -90,7 +90,7 @@ class DefaultControllerTest extends AppTestCase
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testICanAcceptTermsConditions()
+    public function testICanAcceptTermsConditionsAsLoggedInUser()
     {
         $mockLogger = $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
 
@@ -109,7 +109,7 @@ class DefaultControllerTest extends AppTestCase
 
         $crawler = $this->client->request('GET', $this->router->generate('terms_accept'), [], [], ['HTTP_REMOTE_USER' => $user->getName()]);
 
-        $form = $crawler->selectButton($this->container->get('translator')->trans('salva'))
+        $form = $crawler->selectButton($this->translator->trans('salva'))
             ->form();
 
         $this->client->submit($form);

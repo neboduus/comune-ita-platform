@@ -11,6 +11,7 @@ parameters:
     locale: en
 
 framework:
+    default_locale: it
     #esi:             ~
     translator:      ~
     secret:          "%secret%"

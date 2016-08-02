@@ -25,4 +25,16 @@ class EsploraController extends Controller
     {
         return $this->forward('AppBundle:Servizi:servizi');
     }
+
+    /**
+     * @Route("/{slug}", name="esplora_servizi_show")
+     *
+     * @param string $slug
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function serviziDetailAction($slug)
+    {
+        return $this->forward('AppBundle:Servizi:serviziDetail', ['slug' => $slug]);
+    }
 }

@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AppTestCase extends WebTestCase
 {
@@ -40,6 +41,11 @@ abstract class AppTestCase extends WebTestCase
      */
     protected $router;
 
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
 
     public function setUp()
     {
@@ -47,6 +53,7 @@ abstract class AppTestCase extends WebTestCase
         $this->container = $this->client->getContainer();
         $this->em = $this->container->get('doctrine')->getManager();
         $this->router = $this->container->get('router');
+        $this->translator = $this->container->get('translator');
         parent::setUp();
     }
 
@@ -57,7 +64,7 @@ abstract class AppTestCase extends WebTestCase
 
     protected function createUser($termAccepted = true)
     {
-        $userName = md5(time());
+        $userName = md5(microtime());
         $user = new User();
         $user->setName($userName)
             ->setUsername($userName)
