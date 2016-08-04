@@ -16,3 +16,11 @@ services:
         arguments: ["@router","@security.token_storage"]
         tags:
             - { name: kernel.event_listener, event: kernel.request }
+
+    gedmo.listener.sluggable:
+            class: Gedmo\Sluggable\SluggableListener
+            tags:
+                - { name: doctrine.event_subscriber, connection: default }
+            calls:
+                - [ setAnnotationReader, [ "@annotation_reader" ] ]
+

@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+    <h1>{{ service.name }}</h1>
+
+    {% if user == null %}
+        <em>{{ 'registrati_per_accedere_al_servizio'|trans() }}</em>
+    {% else %}
+        <a href="{{ path('servizi_run', {'slug': service.slug}) }}">
+            {{ 'accedi_al_servizio'|trans({'%name%': service.name}) }}
+        </a>
+    {% endif %}
+
+{% endblock %}
