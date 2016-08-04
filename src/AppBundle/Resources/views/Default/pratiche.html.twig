@@ -1,0 +1,5 @@
+Lista ordinata Pratiche {% if user %}{{ user.name }}{% endif %}
+
+{% for pratica in pratiche %}
+    <div class="pratica" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">{{ pratica.name }}</div>
+{% endfor %}

@@ -70,7 +70,7 @@ abstract class AppTestCase extends WebTestCase
             ->setUsername($userName)
             ->addRole('ROLE_USER')
             ->setTermsAccepted($termAccepted)
-            ->setEmail('some@some.tld')
+            ->setEmail($user->getId().'@'.User::FAKE_EMAIL_DOMAIN)
             ->setPlainPassword('pippo')
             ->setEnabled(true)
         ;
@@ -100,7 +100,6 @@ abstract class AppTestCase extends WebTestCase
         if (!count($results)) {
             throw new \RuntimeException('Either set KERNEL_DIR in your phpunit.xml according to https://symfony.com/doc/current/book/testing.html#your-first-functional-test or override the WebTestCase::createKernel() method.');
         }
-
 
         $file = current($results);
         $class = $file->getBasename('.php');
