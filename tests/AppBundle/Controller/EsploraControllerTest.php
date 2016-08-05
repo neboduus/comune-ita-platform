@@ -6,11 +6,19 @@ use AppBundle\Entity\Servizio;
 use Tests\AppBundle\Base\AppTestCase;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Services\CPSUserProvider;
 
 class EsploraControllerTest extends AppTestCase
 {
-    public function setUp(){
+    /**
+     * @var CPSUserProvider
+     */
+    protected $userProvider;
+
+    public function setUp()
+    {
         parent::setUp();
+        $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->cleanDb(Servizio::class);
     }
 

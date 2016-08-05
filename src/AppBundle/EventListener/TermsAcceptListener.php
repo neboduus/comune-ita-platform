@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,7 +35,7 @@ class TermsAcceptListener
     {
         $currentRoute = $event->getRequest()->get('_route');
         $user = $this->getUser();
-        if ($user instanceof User) {
+        if ($user instanceof CPSUser) {
             if ($user->getTermsAccepted() == false
                 && $currentRoute !== ''
                 && $currentRoute !== 'terms_accept'

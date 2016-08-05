@@ -1,5 +1,9 @@
-Lista ordinata Pratiche {% if user %}{{ user.name }}{% endif %}
+{% extends '::base.html.twig' %}
+{% block body %}
+{{ 'lista_pratiche'|trans() }} {% if user %}{{ user.fullName }}{% endif %}
 
 {% for pratica in pratiche %}
     <div class="pratica" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">{{ pratica.name }}</div>
 {% endfor %}
+
+{% endblock %}

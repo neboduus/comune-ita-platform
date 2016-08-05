@@ -1,4 +1,4 @@
 {% extends '::base.html.twig' %}
 {% block body %}
-Hello {% if user and user.name %}{{ user.name }}{% else %}World{% endif %}!
+Hello {% if user and user.fullName %}{{ user.fullName }}{% else %}World{% endif %}!
 {% endblock %}
