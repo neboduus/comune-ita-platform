@@ -5,87 +5,84 @@ namespace AppBundle\Security;
 
 use AppBundle\Entity\CPSUser;
 use AppBundle\Services\CPSUserProvider;
-use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Symfony\Component\VarDumper\VarDumper;
 
+/**
+ * Class CPSAuthenticator
+ * @package AppBundle\Security
+ */
 class CPSAuthenticator extends AbstractGuardAuthenticator
 {
+
+    /**
+     * @var array
+     */
+    //TODO:test this mapping
     private static $userDataKeys = [
-        "codiceFiscale",
-        "capDomicilio",
-        "capResidenza",
-        "cellulare",
-        "cittaDomicilio",
-        "cittaResidenza",
-        "cognome",
-        "dataNascita",
-        "emailAddress",
-        "emailAddressPersonale",
-        "indirizzoDomicilio",
-        "indirizzoResidenza",
-        "luogoNascita",
-        "nome",
-        "provinciaDomicilio",
-        "provinciaNascita",
-        "provinciaResidenza",
-        "sesso",
-        "statoDomicilio",
-        "statoNascita",
-        "statoResidenza",
-        "telefono",
-        "titolo",
-        "x509certificate_issuerdn",
-        "x509certificate_subjectdn",
-        "x509certificate_base64",
+        "REDIRECT_shibb_pat_attribute_codicefiscale" => "codiceFiscale",
+        "REDIRECT_shibb_pat_attribute_capdomicilio" => "capDomicilio",
+        "REDIRECT_shibb_pat_attribute_capresidenza" => "capResidenza",
+        "REDIRECT_shibb_pat_attribute_cellulare" => "cellulare",
+        "REDIRECT_shibb_pat_attribute_cittadomicilio" => "cittaDomicilio",
+        "REDIRECT_shibb_pat_attribute_cittaresidenza" => "cittaResidenza",
+        "REDIRECT_shibb_pat_attribute_cognome" => "cognome",
+        "REDIRECT_shibb_pat_attribute_datanascita" => "dataNascita",
+        "REDIRECT_shibb_pat_attribute_emailaddress" => "emailAddress",
+        "REDIRECT_shibb_pat_attribute_emailaddresspersonale" => "emailAddressPersonale",
+        "REDIRECT_shibb_pat_attribute_indirizzodomicilio" => "indirizzoDomicilio",
+        "REDIRECT_shibb_pat_attribute_indirizzoresidenza" => "indirizzoResidenza",
+        "REDIRECT_shibb_pat_attribute_luogonascita" => "luogoNascita",
+        "REDIRECT_shibb_pat_attribute_nome" => "nome",
+        "REDIRECT_shibb_pat_attribute_provinciadomicilio" => "provinciaDomicilio",
+        "REDIRECT_shibb_pat_attribute_provincianascita" => "provinciaNascita",
+        "REDIRECT_shibb_pat_attribute_provinciaresidenza" => "provinciaResidenza",
+        "REDIRECT_shibb_pat_attribute_sesso" => "sesso",
+        "REDIRECT_shibb_pat_attribute_statodomicilio" => "statoDomicilio",
+        "REDIRECT_shibb_pat_attribute_statonascita" => "statoNascita",
+        "REDIRECT_shibb_pat_attribute_statoresidenza" => "statoResidenza",
+        "REDIRECT_shibb_pat_attribute_telefono" => "telefono",
+        "REDIRECT_shibb_pat_attribute_titolo" => "titolo",
+        "REDIRECT_shibb_pat_attribute_x509certificate_issuerdn" => "x509certificate_issuerdn",
+        "REDIRECT_shibb_pat_attribute_x509certificate_subjectdn" => "x509certificate_subjectdn",
+        "REDIRECT_shibb_pat_attribute_x509certificate_base64" => "x509certificate_base64",
     ];
 
-    private static function createUserDataFromRequest(Request $request)
-    {
-        $data = array_fill_keys( self::$userDataKeys, null);
-        array_walk(
-            $data,
-            function(&$item, $key, HeaderBag $headers){
-                /** @see \Symfony\Component\HttpFoundation\Request::overrideGlobals() Header keys transformation */
-                $filteredKey = str_replace( '_', '-', strtolower($key) );
-                if($headers->has($filteredKey)){
-                    $item = $headers->get($filteredKey);
-                }
-            },
-            $request->headers
-        );
-        return $data;
-    }
-
+    /**
+     * @param Request                      $request
+     * @param AuthenticationException|null $authException
+     * @return JsonResponse
+     */
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = array(
-            'message' => 'Authentication Required'
+            'message' => 'Authentication Required',
         );
 
         return new JsonResponse($data, 401);
     }
 
+    /**
+     * @param Request $request
+     * @return array|null
+     */
     public function getCredentials(Request $request)
     {
         $data = self::createUserDataFromRequest($request);
-        if ($data["codiceFiscale"] === null){
+        if ($data["codiceFiscale"] === null) {
             return null;
         }
 
         return $data;
-
     }
 
     /**
-     * @param mixed $credentials
+     * @param mixed                 $credentials
      * @param UserProviderInterface $userProvider
      *
      * @return CPSUser
@@ -101,27 +98,58 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
         );
     }
 
+    /**
+     * @param mixed         $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
     public function checkCredentials($credentials, UserInterface $user)
     {
         return true;
     }
 
+    /**
+     * @param Request                 $request
+     * @param AuthenticationException $exception
+     * @return JsonResponse
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $data = array(
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         );
 
         return new JsonResponse($data, 403);
     }
 
+    /**
+     * @param Request        $request
+     * @param TokenInterface $token
+     * @param string         $providerKey
+     * @return null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         return null;
     }
 
+    /**
+     * @inheritdoc
+     * @return bool
+     */
     public function supportsRememberMe()
     {
         return false;
+    }
+
+    private static function createUserDataFromRequest(Request $request)
+    {
+        $serverProps = $request->server->all();
+        $data = [];
+        foreach (self::$userDataKeys as $shibbKey => $ourKey) {
+            $data[$ourKey] = isset($serverProps[$shibbKey])? $serverProps[$shibbKey] : null;
+        }
+
+        return $data;
     }
 }

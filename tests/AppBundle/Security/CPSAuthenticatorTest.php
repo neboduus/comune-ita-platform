@@ -4,14 +4,14 @@ namespace Tests\AppBundle\Security;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\VarDumper\VarDumper;
-use Tests\AppBundle\Base\AppTestCase;
+use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**
- * Class CPSAuthenticatorTest
+ * Class CPSAuthenticatorTestAbstract
  *
  * @package Tests\AppBundle\Security
  */
-class CPSAuthenticatorTest extends AppTestCase
+class CPSAuthenticatorTest extends AbstractAppTestCase
 {
     /**
      * @inheritdoc

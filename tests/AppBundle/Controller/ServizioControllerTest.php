@@ -8,9 +8,9 @@ use AppBundle\Entity\User;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\AppBundle\Base\AppTestCase;
+use Tests\AppBundle\Base\AbstractAppTestCase;
 
-class ServizioControllerTest extends AppTestCase
+class ServizioControllerTest extends AbstractAppTestCase
 {
     /**
      * @var CPSUserProvider
