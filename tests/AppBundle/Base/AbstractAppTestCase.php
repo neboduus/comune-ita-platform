@@ -12,7 +12,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Translation\TranslatorInterface;
 
-abstract class AppTestCase extends WebTestCase
+/**
+ * Class AbstractAppTestCase
+ * @package Tests\AppBundle\Base
+ */
+abstract class AbstractAppTestCase extends WebTestCase
 {
 
     /**
@@ -46,6 +50,9 @@ abstract class AppTestCase extends WebTestCase
      */
     protected $translator;
 
+    /**
+     * @inheritdoc
+     */
     public function setUp()
     {
         $this->client = static::createClient();
@@ -58,14 +65,15 @@ abstract class AppTestCase extends WebTestCase
 
     protected function cleanDb($entityString)
     {
-        $this->em->createQuery('DELETE FROM ' . $entityString)->execute();
+        $this->em->createQuery('DELETE FROM '.$entityString)->execute();
     }
 
     protected function getCPSUserData()
     {
-        $random = rand(0,time());
+        $random = rand(0, time());
+
         return [
-            "codiceFiscale" => 'ppippi77t05g224f' . $random,
+            "codiceFiscale" => 'ppippi77t05g224f'.$random,
             "capDomicilio" => null,
             "capResidenza" => null,
             "cellulare" => null,
@@ -73,12 +81,12 @@ abstract class AppTestCase extends WebTestCase
             "cittaResidenza" => null,
             "cognome" => 'Pippucci'.$random,
             "dataNascita" => null,
-            "emailAddress" => 'pippo@pippucci.com' . $random,
+            "emailAddress" => 'pippo@pippucci.com'.$random,
             "emailAddressPersonale" => null,
             "indirizzoDomicilio" => null,
             "indirizzoResidenza" => null,
             "luogoNascita" => null,
-            "nome" => 'Pippo' . $random,
+            "nome" => 'Pippo'.$random,
             "provinciaDomicilio" => null,
             "provinciaNascita" => null,
             "provinciaResidenza" => null,
@@ -90,18 +98,19 @@ abstract class AppTestCase extends WebTestCase
             "titolo" => null,
             "x509certificate_issuerdn" => null,
             "x509certificate_subjectdn" => null,
-            "x509certificate_base64" => null
+            "x509certificate_base64" => null,
         ];
     }
 
     protected function createCPSUser($termAccepted = true)
     {
         $user = $this->userProvider->provideUser($this->getCPSUserData());
-        if ($termAccepted){
+        if ($termAccepted) {
             $user->setTermsAccepted(true);
             $this->em->persist($user);
             $this->em->flush();
         }
+
         return $user;
     }
 
@@ -136,44 +145,10 @@ abstract class AppTestCase extends WebTestCase
 
     protected function clientRequestAsCPSUser(User $user, $method, $uri, array $parameters = array(), array $files = array(), array $server = array(), $content = null, $changeHistory = true)
     {
-        $server += ['HTTP_CODICEFISCALE' => $user->getCodiceFiscale()];
+        $server += ['REDIRECT_shibb_pat_attribute_codicefiscale' => $user->getCodiceFiscale()];
+
         return $this->client->request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
     }
 
-    public static function setFakeServerRequest()
-    {
-        $customData = [
-            "HTTP_CODICEFISCALE" => 'RLDLCU77T05G224F',
-            "HTTP_CAPDOMICILIO" => '35143',
-            "HTTP_CAPRESIDENZA" => '35143',
-            "HTTP_CELLULARE" => '3386100602',
-            "HTTP_CITTADOMICILIO" => 'Padova',
-            "HTTP_CITTARESIDENZA" => 'Padova',
-            "HTTP_COGNOME" => 'Realdi',
-            "HTTP_DATANASCITA" => '05/12/1977',
-            "HTTP_EMAILADDRESS" => 'luca@opencontent.it',
-            "HTTP_EMAILADDRESSPERSONALE" => 'lr@opencontent.it',
-            "HTTP_INDIRIZZODOMICILIO" => 'via Monte Perica 25/B int 4',
-            "HTTP_INDIRIZZORESIDENZA" => 'via Monte Perica 25/B int 4',
-            "HTTP_LUOGONASCITA" => 'Padova',
-            "HTTP_NOME" => 'Luca',
-            "HTTP_PROVINCIADOMICILIO" => 'PD',
-            "HTTP_PROVINCIANASCITA" => 'PD',
-            "HTTP_PROVINCIARESIDENZA" => 'PD',
-            "HTTP_SESSO" => 'M',
-            "HTTP_STATODOMICILIO" => 'ITALIA',
-            "HTTP_STATONASCITA" => 'ITALIA',
-            "HTTP_STATORESIDENZA" => 'ITALIA',
-            "HTTP_TELEFONO" => '049132456789',
-            "HTTP_TITOLO" => 'Sig',
-            "HTTP_X509CERTIFICATE_ISSUERDN" => 'test',
-            "HTTP_X509CERTIFICATE_SUBJECTDN" => 'test',
-            "HTTP_X509CERTIFICATE_BASE64" => 'test'
-        ];
-
-        $_SERVER += $customData;
-
-        return $customData;
-    }
 
 }

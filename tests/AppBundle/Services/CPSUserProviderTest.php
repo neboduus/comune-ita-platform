@@ -8,13 +8,13 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Tests\AppBundle\Base\AppTestCase;
+use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**
  * Class UserProviderTest
  * @package AppBundle\Services\Test
  */
-class CPSUserProviderTest extends AppTestCase
+class CPSUserProviderTest extends AbstractAppTestCase
 {
     /**
      * @var CPSUserProvider

@@ -3,12 +3,12 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Servizio;
-use Tests\AppBundle\Base\AppTestCase;
+use Tests\AppBundle\Base\AbstractAppTestCase;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Services\CPSUserProvider;
 
-class EsploraControllerTest extends AppTestCase
+class EsploraControllerTest extends AbstractAppTestCase
 {
     /**
      * @var CPSUserProvider

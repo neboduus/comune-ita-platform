@@ -10,9 +10,9 @@ use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Tests\AppBundle\Base\AppTestCase;
+use Tests\AppBundle\Base\AbstractAppTestCase;
 
-class DefaultControllerTest extends AppTestCase
+class DefaultControllerTest extends AbstractAppTestCase
 {
 
     /**

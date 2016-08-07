@@ -5,10 +5,10 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
-use Tests\AppBundle\Base\AppTestCase;
+use Tests\AppBundle\Base\AbstractAppTestCase;
 use AppBundle\Services\CPSUserProvider;
 
-class PraticaControllerTest extends AppTestCase
+class PraticaControllerTest extends AbstractAppTestCase
 {
     /**
      * @var CPSUserProvider
