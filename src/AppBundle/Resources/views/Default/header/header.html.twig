@@ -1,0 +1,88 @@
+<header id="header">
+    <div id="header-top">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-7 col-md-offset-2 col-xs-7 col-xs-offset-2">
+                    <div id="header-top-left" class="clearfix">
+                        <span class="sr-only">La Stanza del Cittadino appartine al Progetto</span> <a href="http://www.openpa.it/">OpenPA</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="header-inside" class="clearfix">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-2">
+                    <h2 class="sr-only">Menu principale</h2>
+                    <div class="burger-wrapper">
+                        <div class="burger-container">
+                            <!--<button id="showLeftPush">Show/Hide Left Push Menu</button>-->
+                            <a class="toggle-menu" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                                <span class="bar"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <div id="logo">
+                        <a href="#" title="Home" rel="home">
+                            <img class="img-responsive" src="{{ asset('bundles/app/images/logo.png') }}" alt="Home" alt="Home" title="Home" />
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-5">
+                    <div id="site-name">
+                        <a href="#" title="Home"><h1>Stanza del cittadino</h1></a>
+                    </div>
+                </div>
+
+                <div class="col-xs-3">
+                    <h2 class="sr-only title">Motore di ricerca</h2>
+                    <form action="#" method="post" accept-charset="UTF-8">
+                        <div class="input-group hidden-xs hidden-sm">
+                            <input type="text" class="form-control" placeholder="Cerca">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </span>
+                        </div>
+                        <button id="show-form-search" class="btn btn-secondary hidden-md hidden-lg pull-right" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </form>
+                </div>
+                <div id="mobile-search" class="col-xs-12 hidden-md hidden-lg hidden">
+                    <form action="#" method="post" accept-charset="UTF-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Cerca">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary btn-search" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="nav-aree" class="container-fluid clearfix">
+        <div class="row">
+            <div class="col-xs-6 no-pad-b">
+                <h2 class="sr-only">Sezioni principali</h2>
+                <ul class="nav nav-pills">
+                    <li><a href="#">Aree tematiche</a></li>
+                    <li><a href="#">Il progetto</a></li>
+                    <li><a href="#">Enti coinvolti</a></li>
+                </ul>
+            </div>
+            <div class="col-xs-6 no-pad-b">
+                <h2 class="sr-only">Accesso ai servizi</h2>
+                <ul class="nav nav-pills pull-right">
+                    <li><a href="#"><i class="fa fa-user" aria-hidden="true"></i> Accesso ai servizi</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</header>
