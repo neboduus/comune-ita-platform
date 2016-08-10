@@ -33,7 +33,7 @@ class DefaultControllerTest extends AbstractAppTestCase
     {
         $this->client->request('GET', '/');
 
-        $this->assertContains('Hello World', $this->client->getResponse()->getContent());
+        $this->assertContains('Stanza del cittadino', $this->client->getResponse()->getContent());
     }
 
     public function testISeeMyNameAsLoggedInUser()
