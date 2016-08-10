@@ -1,5 +1,5 @@
-{% extends '::base.html.twig' %}
-{% block body %}
+{% extends ':default:index.html.twig' %}
+{% block main_content %}
 
     {% if user != null %}{{ user.fullName }}{%  endif %}
 
@@ -18,3 +18,31 @@
         {% endfor %}
     </ul>
 {% endblock %}
+
+{#
+<div class="row">
+    <div class="col-md-4">
+        <p>Note</p>
+        <div class="panel no-border-radius">
+            <div class="panel-body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat lectus sed tellus consequat, sit amet lacinia dolor ullamcorper.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <p>Note</p>
+        <div class="panel no-border-radius">
+            <div class="panel-body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat lectus sed tellus consequat, sit amet lacinia dolor ullamcorper.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <p>Note</p>
+        <div class="panel no-border-radius">
+            <div class="panel-body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis volutpat lectus sed tellus consequat, sit amet lacinia dolor ullamcorper.</p>
+            </div>
+        </div>
+    </div>
+</div>#}

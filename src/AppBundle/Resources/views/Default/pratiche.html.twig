@@ -1,5 +1,5 @@
-{% extends '::base.html.twig' %}
-{% block body %}
+{% extends ':default:index.html.twig' %}
+{% block main_content %}
 {{ 'lista_pratiche'|trans() }} {% if user %}{{ user.fullName }}{% endif %}
 
 {% for pratica in pratiche %}
