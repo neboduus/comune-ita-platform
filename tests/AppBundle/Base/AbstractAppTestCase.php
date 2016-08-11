@@ -3,7 +3,9 @@
 namespace Tests\AppBundle\Base;
 
 use AppBundle\Entity\CPSUser as User;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Services\CPSUserProvider;
@@ -185,28 +187,18 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param bool $status
      * @return Pratica
      */
-    protected function createPratica(User $user, $status = false)
+    protected function createPratica(CPSUser $user, OperatoreUser $operatore = null, $status = null)
     {
-        $ente1 = new Ente();
-        $ente1->setName('Ente di prova');
-        $this->em->persist($ente1);
-        $this->em->flush();
-
-        $ente2 = new Ente();
-        $ente2->setName('Ente di prova 2');
-        $this->em->persist($ente2);
-        $this->em->flush();
-
-        $servizio = new Servizio();
-        $servizio->setName('Servizio test pratiche')->setEnti([$ente1, $ente2]);
-        $this->em->persist($servizio);
+        $servizio = $this->createServizioWithAssociatedEnti($this->createEnti());
 
         $pratica = new Pratica();
         $pratica->setUser($user);
         $pratica->setServizio($servizio);
+        if ($operatore) {
+            $pratica->setOperatore($operatore);
+        }
 
-        if ($status !== false)
-        {
+        if ($status !== null) {
             $pratica->setStatus($status);
         }
 
@@ -219,14 +211,25 @@ abstract class AbstractAppTestCase extends WebTestCase
     /**
      * @param $user
      */
-    protected function setupPraticheForUser($user)
+    protected function setupPraticheForUser(CPSUser $user)
     {
         $expectedStatuses = $this->getExpectedPraticaStatuses();
 
 
         foreach ($expectedStatuses as $status) {
-            $this->createPratica($user, $status);
+            $this->createPratica($user, null, $status);
         }
+    }
+
+    /**
+     * @param CPSUser $user
+     * @param OperatoreUser $operatore
+     * @param $status
+     * @return Pratica|null
+     */
+    protected function setupPraticheForUserWithOperatoreAndStatus(CPSUser $user, OperatoreUser $operatore = null, $status = null)
+    {
+        return $this->createPratica($user, $operatore, $status);
     }
 
     /**
@@ -246,5 +249,37 @@ abstract class AbstractAppTestCase extends WebTestCase
         shuffle($expectedStatuses);
 
         return $expectedStatuses;
+    }
+
+    /**
+     * @param Ente[] $enti
+     * @return Servizio
+     */
+    protected function createServizioWithAssociatedEnti($enti)
+    {
+        $servizio = new Servizio();
+        $servizio->setName('Servizio test pratiche')->setEnti($enti);
+        $this->em->persist($servizio);
+        $this->em->flush();
+
+        return $servizio;
+    }
+
+    /**
+     * @return array
+     */
+    protected function createEnti()
+    {
+        $ente1 = new Ente();
+        $ente1->setName('Ente di prova');
+        $this->em->persist($ente1);
+        $this->em->flush();
+
+        $ente2 = new Ente();
+        $ente2->setName('Ente di prova 2');
+        $this->em->persist($ente2);
+        $this->em->flush();
+
+        return array($ente1, $ente2);
     }
 }

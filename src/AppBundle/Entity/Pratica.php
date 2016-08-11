@@ -26,7 +26,7 @@ class Pratica
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $user;
@@ -42,6 +42,12 @@ class Pratica
      * @ORM\JoinColumn(name="ente_id", referencedColumnName="id", nullable=true)
      */
     private $ente;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperatoreUser")
+     * @ORM\JoinColumn(name="operatore_id", referencedColumnName="id", nullable=true)
+     */
+    private $operatore;
 
     /**
      * @ORM\Column(type="integer", name="creation_time")
@@ -181,6 +187,25 @@ class Pratica
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return OperatoreUser|null
+     */
+    public function getOperatore()
+    {
+        return $this->operatore;
+    }
+
+    /**
+     * @param OperatoreUser $operatore
+     * @return Pratica
+     */
+    public function setOperatore(OperatoreUser $operatore)
+    {
+        $this->operatore = $operatore;
 
         return $this;
     }

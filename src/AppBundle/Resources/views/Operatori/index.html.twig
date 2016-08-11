@@ -1,1 +1,11 @@
 {% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+    <div class="list">
+    {% for pratica in pratiche %}
+        <div class="pratica" data-pratica="{{ pratica.id }}" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">
+            {{ pratica.servizio.name }}&nbsp;&dash;&nbsp;{{ pratica.user.nome }}  {{ pratica.user.cognome }}
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}
