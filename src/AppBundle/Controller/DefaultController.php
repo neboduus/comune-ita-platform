@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Entity\User;
@@ -53,7 +54,8 @@ class DefaultController extends Controller
 
         if ($form->isSubmitted()) {
             $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'app_default_index';
-            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute);
+            $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
+            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute, $redirectRouteParams);
         }else{
             $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
         }
@@ -65,20 +67,13 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/pratiche/", name="pratiche")
-     */
-    public function praticheAction()
-    {
-        return new Response('Todo'); //@todo implementare controller
-    }
-
-    /**
-     * @param User $user
+     * @param CPSUser $user
      * @param LoggerInterface $logger
      * @param string $redirectRoute
+     * @param array $redirectRouteParams
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null):RedirectResponse
+    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null, $redirectRouteParams = array()):RedirectResponse
     {
         $manager = $this->getDoctrine()->getManager();
         $user->setTermsAccepted(true);
@@ -89,7 +84,7 @@ class DefaultController extends Controller
         } catch (\Exception $e) {
             $logger->error($e->getMessage());
         }
-        return $this->redirectToRoute($redirectRoute);
+        return $this->redirectToRoute($redirectRoute, $redirectRouteParams);
     }
 
     /**

@@ -7,6 +7,7 @@ use AppBundle\Logging\LogConstants;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\VarDumper\VarDumper;
@@ -45,7 +46,11 @@ class CPSUserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username):CPSUser
     {
-        return $this->getPersistedUser(['username' => $username]);
+        $user = $this->getPersistedUser(['username' => $username]);
+        if ($user instanceof CPSUser){
+            return $user;
+        }
+        throw new UsernameNotFoundException("User $username not found");
     }
 
     /**

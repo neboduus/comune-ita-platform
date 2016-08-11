@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{{ 'lista_pratiche_bozza'|trans() }}
+
+<ul>
+    {% for pratica in pratiche %}
+        <li>
+            <a class="pratica"
+               href="{{ path('pratiche_accedi', {'servizio': pratica.servizio.slug, 'ente': pratica.ente.slug, 'id': pratica.id}) }}"
+               data-user="{{ pratica.user.id }}"
+               data-status="{{ pratica.status }}">
+                {{ pratica.servizio.name }} {{ pratica.ente.name }} {{ pratica.creationTime }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+
+{% if ente and servizio %}
+    <a href="{{ path('pratiche_accedi', {'servizio': servizio.slug, 'ente': ente.slug, 'id': 'new'}) }}">
+        Crea nuovo
+    </a>
+{% endif %}
+
+{% endblock %}

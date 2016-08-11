@@ -37,7 +37,8 @@
         "gedmo/doctrine-extensions": "^2.4",
         "symfony/translation": "^3.1",
         "craue/formflow-bundle": "~3.0@dev",
-        "vich/uploader-bundle": "^1.2"
+        "vich/uploader-bundle": "^1.2",
+        "symfony/assetic-bundle": "^2.8"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

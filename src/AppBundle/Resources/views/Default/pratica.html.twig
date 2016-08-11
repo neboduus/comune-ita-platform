@@ -1,0 +1,13 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+    <ul>
+        <li>{{ pratica.id }}
+        <li>{{ pratica.servizio.name }}
+        <li>{{ pratica.ente.name }}
+        <li>{{ pratica.user.fullName }}
+        <li>{{ pratica.status }}
+        <li>{{ pratica.creationTime }}
+    </ul>
+
+{% endblock %}
