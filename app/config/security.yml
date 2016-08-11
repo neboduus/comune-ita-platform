@@ -39,5 +39,5 @@ security:
         - { path: ^/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/operatori$, role: ROLE_USER }
+        - { path: ^/operatori, role: ROLE_USER }
         - { path: ^/pratiche, role: ROLE_USER }
