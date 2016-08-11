@@ -18,13 +18,23 @@ services:
             - { name: kernel.event_listener, event: kernel.request }
 
     gedmo.listener.sluggable:
-            class: Gedmo\Sluggable\SluggableListener
-            tags:
-                - { name: doctrine.event_subscriber, connection: default }
-            calls:
-                - [ setAnnotationReader, [ "@annotation_reader" ] ]
+        class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
     monolog_processor:
-            class: Monolog\Processor\PsrLogMessageProcessor
-            tags:
-                - { name: monolog.processor }
+        class: Monolog\Processor\PsrLogMessageProcessor
+        tags:
+            - { name: monolog.processor }
+
+    ocsdc.form.flow.asilonido:
+        class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
+        parent: craue.form.flow
+        arguments: ["@logger"]
+
+    ocsdc.form.flow.type_extension.sdc_data:
+        class: AppBundle\Form\Extension\SdcDataTypeExtension
+        tags:
+            - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }

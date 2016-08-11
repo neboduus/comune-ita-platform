@@ -9,12 +9,25 @@
     {% endif %}
     {% set route = route|replace({ ('list'): 'show' }) %}
 
-    <h1>{{ 'esplora_i_servizi'|trans() }}</h1>
-    <ul>
-        {% for service in services %}
-            <li class="servizio">
-                <a href="{{ path(route, {'slug': service.slug}) }}">{{ service.name }}</a>
-            </li>
+    {% if (servizi_pending|length > 0) %}
+        <h2>{{ 'servizi_pending'|trans() }}</h2>
+        <ul class="sticky">
+            {% for servizio in servizi_pending %}
+                <li class="servizio">
+                    <a href="{{ path(route, {'slug': servizio.slug}) }}">{{ servizio.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>{{ 'esplora_i_servizi'|trans() }}</h2>
+    <ul class="list">
+        {% for servizio in servizi %}
+            {% if servizio not in servizi_pending %}
+                <li class="servizio">
+                    <a href="{{ path(route, {'slug': servizio.slug}) }}">{{ servizio.name }}</a>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
 {% endblock %}

@@ -3,8 +3,12 @@
 namespace Tests\AppBundle\Base;
 
 use AppBundle\Entity\CPSUser as User;
+use AppBundle\Entity\Ente;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
 use AppBundle\Services\CPSUserProvider;
 use Doctrine\ORM\EntityManager;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -104,8 +108,8 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     protected function createCPSUser($termAccepted = true)
     {
-        $user = $this->userProvider->provideUser($this->getCPSUserData());
-        if ($termAccepted) {
+        $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($this->getCPSUserData());
+        if ($termAccepted){
             $user->setTermsAccepted(true);
             $this->em->persist($user);
             $this->em->flush();
@@ -150,5 +154,97 @@ abstract class AbstractAppTestCase extends WebTestCase
         return $this->client->request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
     }
 
+    protected function getMockLogger()
+    {
+        return $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
+    }
 
+    /**
+     * @param User $user
+     * @param bool $howMany
+     * @return array
+     */
+    protected function createPratiche(User $user, $howMany = false)
+    {
+        $pratiche = array();
+        if ( !$howMany )
+        {
+            $howMany = rand(1, 10);
+        }
+
+        for ($i = 0; $i < $howMany; $i++)
+        {
+            $pratiche []= $this->createPratica( $user );
+        }
+        return $pratiche;
+    }
+
+
+    /**
+     * @param User $user
+     * @param bool $status
+     * @return Pratica
+     */
+    protected function createPratica(User $user, $status = false)
+    {
+        $ente1 = new Ente();
+        $ente1->setName('Ente di prova');
+        $this->em->persist($ente1);
+        $this->em->flush();
+
+        $ente2 = new Ente();
+        $ente2->setName('Ente di prova 2');
+        $this->em->persist($ente2);
+        $this->em->flush();
+
+        $servizio = new Servizio();
+        $servizio->setName('Servizio test pratiche')->setEnti([$ente1, $ente2]);
+        $this->em->persist($servizio);
+
+        $pratica = new Pratica();
+        $pratica->setUser($user);
+        $pratica->setServizio($servizio);
+
+        if ($status !== false)
+        {
+            $pratica->setStatus($status);
+        }
+
+        $this->em->persist($pratica);
+        $this->em->flush();
+
+        return $pratica;
+    }
+
+    /**
+     * @param $user
+     */
+    protected function setupPraticheForUser($user)
+    {
+        $expectedStatuses = $this->getExpectedPraticaStatuses();
+
+
+        foreach ($expectedStatuses as $status) {
+            $this->createPratica($user, $status);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExpectedPraticaStatuses()
+    {
+        $expectedStatuses = [
+            Pratica::STATUS_PENDING,
+            Pratica::STATUS_REGISTERED,
+            Pratica::STATUS_COMPLETE,
+            Pratica::STATUS_SUBMITTED,
+            Pratica::STATUS_DRAFT,
+            Pratica::STATUS_CANCELLED,
+        ];
+
+        shuffle($expectedStatuses);
+
+        return $expectedStatuses;
+    }
 }

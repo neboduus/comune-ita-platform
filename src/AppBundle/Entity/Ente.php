@@ -9,9 +9,9 @@ use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="servizio")
+ * @ORM\Table(name="ente")
  */
-class Servizio
+class Ente
 {
     /**
      * @ORM\Column(type="guid")
@@ -34,19 +34,6 @@ class Servizio
      */
     private $slug;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Ente", cascade={"remove"})
-     * @ORM\JoinTable(
-     *     name="servizio_enti",
-     *     joinColumns={@ORM\JoinColumn(name="servizio_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="ente_id", referencedColumnName="id")}
-     * )
-     */
-    private $enti;
-
-    /**
-     * Servizio constructor.
-     */
     public function __construct()
     {
         if ( !$this->id) {
@@ -102,23 +89,10 @@ class Servizio
         return $this;
     }
 
-    /**
-     * @return Ente[]
-     */
-    public function getEnti()
+    function __toString()
     {
-        return $this->enti;
+        return $this->getName();
     }
 
-    /**
-     * @param mixed $enti
-     *
-     * @return Servizio
-     */
-    public function setEnti($enti)
-    {
-        $this->enti = $enti;
 
-        return $this;
-    }
 }

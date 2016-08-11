@@ -33,14 +33,19 @@ class TermsAcceptListener
 
     public function onKernelRequest(GetResponseEvent $event)
     {
-        $currentRoute = $event->getRequest()->get('_route');
         $user = $this->getUser();
         if ($user instanceof CPSUser) {
+            $currentRoute = $event->getRequest()->get('_route');
+            $currentRouteParams = $event->getRequest()->get('_route_params');
             if ($user->getTermsAccepted() == false
                 && $currentRoute !== ''
                 && $currentRoute !== 'terms_accept'
             ) {
-                $redirectUrl = $this->router->generate('terms_accept', ['r' => $currentRoute]);
+                $redirectParameters = ['r' => $currentRoute];
+                if (!empty($currentRouteParams)){
+                    $redirectParameters['p'] =  serialize($currentRouteParams);
+                }
+                $redirectUrl = $this->router->generate('terms_accept', $redirectParameters);
                 $event->setResponse(new RedirectResponse($redirectUrl));
             }
         }

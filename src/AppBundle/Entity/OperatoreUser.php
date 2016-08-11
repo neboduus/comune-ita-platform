@@ -14,6 +14,12 @@ class OperatoreUser extends User
 {
 
     /**
+     * @ORM\ManyToOne(targetEntity="Ente")
+     * @ORM\JoinColumn(name="ente_id", referencedColumnName="id", nullable=true)
+     */
+    private $ente;
+
+    /**
      * CPSUser constructor.
      */
     public function __construct()

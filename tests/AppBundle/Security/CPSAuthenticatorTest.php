@@ -27,7 +27,6 @@ class CPSAuthenticatorTest extends AbstractAppTestCase
 
         $authenticator = $this->container->get('ocsdc.cps.token_authenticator');
         $wrongProvider = $mockLogger = $this->getMockBuilder(UserProviderInterface::class)->getMock();
-        VarDumper::dump($wrongProvider);
         $authenticator->getUser([], $wrongProvider);
     }
 }

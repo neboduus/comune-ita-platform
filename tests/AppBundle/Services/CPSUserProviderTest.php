@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Services;
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
@@ -27,6 +28,7 @@ class CPSUserProviderTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
     }
 

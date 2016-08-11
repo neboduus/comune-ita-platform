@@ -26,6 +26,14 @@ Debug::enable();
 
 $kernel = new AppKernel('dev', true);
 $kernel->loadClassCache();
+
+$_SERVER += [
+    "REDIRECT_shibb_pat_attribute_codicefiscale" => "RLDLCU77T05G224",
+    "REDIRECT_shibb_pat_attribute_cognome" => "Realdi",
+    "REDIRECT_shibb_pat_attribute_emailaddress" => "lr@opencontent.it",
+    "REDIRECT_shibb_pat_attribute_nome" => "Lua",
+];
+
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

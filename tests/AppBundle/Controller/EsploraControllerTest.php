@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
@@ -19,7 +20,9 @@ class EsploraControllerTest extends AbstractAppTestCase
     {
         parent::setUp();
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
         $this->cleanDb(Servizio::class);
+        $this->cleanDb(Ente::class);
     }
 
     public function testICanSeeServiziAsAnonumousUser()

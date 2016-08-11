@@ -38,9 +38,10 @@ class Pratica
     private $servizio;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\ManyToOne(targetEntity="Ente")
+     * @ORM\JoinColumn(name="ente_id", referencedColumnName="id", nullable=true)
      */
-    private $name;
+    private $ente;
 
     /**
      * @ORM\Column(type="integer", name="creation_time")
@@ -52,9 +53,9 @@ class Pratica
      */
     private $status;
 
-    /**
-     * Pratica constructor.
-     */
+
+    protected $type;
+
     public function __construct()
     {
         if ( !$this->id ) {
@@ -73,25 +74,7 @@ class Pratica
     }
 
     /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return mixed
+     * @return CPSUser
      */
     public function getUser()
     {
@@ -109,7 +92,7 @@ class Pratica
     }
 
     /**
-     * @return mixed
+     * @return Servizio
      */
     public function getServizio()
     {
@@ -162,4 +145,43 @@ class Pratica
         return $this;
     }
 
+    /**
+     * @return Ente
+     */
+    public function getEnte()
+    {
+        return $this->ente;
+    }
+
+    /**
+     * @param mixed $ente
+     *
+     * @return static
+     */
+    public function setEnte($ente)
+    {
+        $this->ente = $ente;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param mixed $type
+     *
+     * @return static
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
 }

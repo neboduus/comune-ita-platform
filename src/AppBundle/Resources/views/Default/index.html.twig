@@ -1,8 +1,9 @@
 {% extends '::base.html.twig' %}
 
 {% block stylesheets %}
-    <link href="{{ asset('bundles/app/css/ita-bootstrap.css') }}" rel="stylesheet" />
-    <link href="{{ asset('bundles/app/css/jasny-bootstrap.min.css') }}" rel="stylesheet" />
+    {% stylesheets 'bundles/app/css/*.css' filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
 {% endblock %}
 
 
