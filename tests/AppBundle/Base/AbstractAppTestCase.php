@@ -6,7 +6,7 @@ use AppBundle\Entity\CPSUser as User;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\Pratica;
+use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Services\CPSUserProvider;
 use Doctrine\ORM\EntityManager;
@@ -80,26 +80,26 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         return [
             "codiceFiscale" => 'ppippi77t05g224f'.$random,
-            "capDomicilio" => null,
-            "capResidenza" => null,
+            "capDomicilio" => '371378',
+            "capResidenza" => '38127',
             "cellulare" => null,
-            "cittaDomicilio" => null,
-            "cittaResidenza" => null,
+            "cittaDomicilio" => 'Verona',
+            "cittaResidenza" => 'Trento',
             "cognome" => 'Pippucci'.$random,
-            "dataNascita" => null,
+            "dataNascita" => '04/01/1973',
             "emailAddress" => 'pippo@pippucci.com'.$random,
             "emailAddressPersonale" => null,
-            "indirizzoDomicilio" => null,
-            "indirizzoResidenza" => null,
-            "luogoNascita" => null,
+            "indirizzoDomicilio" => 'via Leonardo da vinci 17',
+            "indirizzoResidenza" => 'via Marsala 13',
+            "luogoNascita" => 'Verona',
             "nome" => 'Pippo'.$random,
-            "provinciaDomicilio" => null,
-            "provinciaNascita" => null,
-            "provinciaResidenza" => null,
+            "provinciaDomicilio" => 'VR',
+            "provinciaNascita" => 'VR',
+            "provinciaResidenza" => 'TN',
             "sesso" => 'M',
-            "statoDomicilio" => null,
-            "statoNascita" => null,
-            "statoResidenza" => null,
+            "statoDomicilio" => 'IT',
+            "statoNascita" => 'IT',
+            "statoResidenza" => 'IT',
             "telefono" => null,
             "titolo" => null,
             "x509certificate_issuerdn" => null,
@@ -108,14 +108,26 @@ abstract class AbstractAppTestCase extends WebTestCase
         ];
     }
 
-    protected function createCPSUser($termAccepted = true)
+    protected function createCPSUserWithTelefonoAndEmail($telefono, $email)
+    {
+        return $this->createCPSUser(true, $telefono, $email);
+    }
+
+    protected function createCPSUser($termAccepted = true, $telefono = null, $email = null)
     {
         $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($this->getCPSUserData());
-        if ($termAccepted){
+        if ($termAccepted) {
             $user->setTermsAccepted(true);
             $this->em->persist($user);
-            $this->em->flush();
         }
+
+        if ($telefono != null) {
+            $user->setTelefono($telefono);
+        }
+        if ($email != null) {
+            $user->setEmail($email);
+        }
+        $this->em->flush();
 
         return $user;
     }

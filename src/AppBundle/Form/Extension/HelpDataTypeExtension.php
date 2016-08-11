@@ -3,30 +3,32 @@
 namespace AppBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SdcDataTypeExtension extends AbstractTypeExtension
+class HelpDataTypeExtension extends AbstractTypeExtension
 {
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->setAttribute('sdc_data', $options['sdc_data']);
+        $builder->setAttribute('helper', $options['helper']);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['sdc_data'] = $form->getConfig()->getAttribute('sdc_data');
+        $view->vars['helper'] = $options['helper'];
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefined('sdc_data')->setDefault('sdc_data', null);
+        $resolver->setDefaults(['helper' => new TestiAccompagnatoriProcedura()]);
     }
 
     public function getExtendedType()
     {
-        return 'Symfony\Component\Form\Extension\Core\Type\FormType';
+        return FormType::class;
     }
 }

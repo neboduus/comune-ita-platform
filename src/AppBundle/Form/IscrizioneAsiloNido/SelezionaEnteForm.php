@@ -14,13 +14,10 @@ class SelezionaEnteForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var Pratica $pratica */
-        $pratica = $builder->getData();
-        $enti = $pratica->getServizio()->getEnti();
-
         $builder->add('ente', EntityType::class, [
             'class' => 'AppBundle\Entity\Ente',
-            'choices' => $enti,
+            'choices' => $builder->getData()->getServizio()->getEnti(),
+            'choice_label' => 'name',
             'expanded' => false,
             'multiple' => false
         ]);

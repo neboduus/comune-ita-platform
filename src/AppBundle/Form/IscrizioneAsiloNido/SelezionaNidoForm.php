@@ -2,21 +2,19 @@
 
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
-use AppBundle\Services\SdcDataProvider;
+use AppBundle\Entity\AsiloNido;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-
 
 class SelezionaNidoForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var SdcDataProvider $sdcDataProvider */
-        $sdcDataProvider = $options['sdc_data'];
-        $builder->add('asilo', ChoiceType::class, [
-            'mapped' => false,
-            'choices' => (array)$sdcDataProvider->get('asili'),
+        $builder->add('struttura', EntityType::class, [
+            'class' => 'AppBundle\Entity\AsiloNido',
+            'choices' => $builder->getData()->getEnte()->getAsili(),
+            'choice_label' => 'name',
             'expanded' => false,
             'multiple' => false
         ]);

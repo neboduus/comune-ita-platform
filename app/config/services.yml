@@ -34,7 +34,7 @@ services:
         parent: craue.form.flow
         arguments: ["@logger"]
 
-    ocsdc.form.flow.type_extension.sdc_data:
-        class: AppBundle\Form\Extension\SdcDataTypeExtension
+    ocsdc.form.flow.type_extension.help_data:
+        class: AppBundle\Form\Extension\HelpDataTypeExtension
         tags:
             - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }

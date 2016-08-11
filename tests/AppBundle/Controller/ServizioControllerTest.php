@@ -13,6 +13,8 @@ use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**
  * Class ServizioControllerTest
+ *
+ * @package Tests\AppBundle\Controller
  */
 class ServizioControllerTest extends AbstractAppTestCase
 {
@@ -29,6 +31,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         parent::setUp();
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
         $this->cleanDb(User::class);
@@ -53,7 +56,7 @@ class ServizioControllerTest extends AbstractAppTestCase
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
         $renderedServicesCount = $crawler->filter('.servizio')->count();
-        $this->assertEquals($serviceCountAfterInsert, $renderedServicesCount);
+        $this->assertEquals( $serviceCountAfterInsert, $renderedServicesCount );
     }
 
     /**
@@ -115,6 +118,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         );
 
         $this->assertContains($newPraticaUrl, $this->client->getResponse()->getContent(), 'Stringa non trovata');
+
     }
 
     /**
@@ -126,6 +130,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         $this->setupPraticheForUser($user);
 
         $numberServices = rand(1, 10);
+
 
         for ($i = 1; $i <= $numberServices; $i++) {
             $servizio = new Servizio();

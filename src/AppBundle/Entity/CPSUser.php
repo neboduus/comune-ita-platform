@@ -62,9 +62,9 @@ class CPSUser extends User
     private $cittaResidenza;
 
     /**
-     * @var string
+     * @var \DateTime
      *
-     * @ORM\Column(name="data_nascita", type="date", nullable=true)
+     * @ORM\Column(name="data_nascita", type="datetime", nullable=true)
      */
     private $dataNascita;
 
@@ -330,7 +330,7 @@ class CPSUser extends User
     }
 
     /**
-     * @return string
+     * @return \DateTime
      */
     public function getDataNascita()
     {
@@ -338,11 +338,11 @@ class CPSUser extends User
     }
 
     /**
-     * @param string $dataNascita
+     * @param \DateTime $dataNascita
      *
      * @return $this
      */
-    public function setDataNascita($dataNascita)
+    public function setDataNascita(\DateTime $dataNascita)
     {
         $this->dataNascita = $dataNascita;
 

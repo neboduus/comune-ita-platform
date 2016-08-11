@@ -9,17 +9,22 @@ use Ramsey\Uuid\Uuid;
 /**
  * @ORM\Entity
  * @ORM\Table(name="pratica")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"default" = "Pratica", "iscrizione_asilo_nido" = "IscrizioneAsiloNido"})
  * @ORM\HasLifecycleCallbacks
- */
+ **/
 class Pratica
 {
-    const STATUS_CANCELLED  = 0;
-    const STATUS_DRAFT      = 1;
-    const STATUS_SUBMITTED  = 2;
-    const STATUS_COMPLETE   = 3;
+    const STATUS_CANCELLED = 0;
+    const STATUS_DRAFT = 1;
+    const STATUS_SUBMITTED = 2;
+    const STATUS_COMPLETE = 3;
     const STATUS_REGISTERED = 4;
-    const STATUS_PENDING    = 5;
+    const STATUS_PENDING = 5;
 
+    const TYPE_DEFAULT = "default";
+    const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
 
     /**
      * @ORM\Column(type="guid")
@@ -86,7 +91,16 @@ class Pratica
     private $numeriProtocollo;
 
 
+    /**
+     * @var string
+     */
     protected $type;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $data;
 
     /**
      * Pratica constructor.
@@ -98,6 +112,7 @@ class Pratica
         }
         $this->creationTime = time();
         $this->status = self::STATUS_DRAFT;
+        $this->type = self::TYPE_DEFAULT;
         $this->numeroFascicolo = null;
         $this->numeriProtocollo = new ArrayCollection();
         $this->allegati = new ArrayCollection();
@@ -159,6 +174,7 @@ class Pratica
 
     /**
      * @param $time
+     *
      * @return $this
      */
     public function setCreationTime($time)
@@ -178,11 +194,13 @@ class Pratica
 
     /**
      * @param $status
+     *
      * @return $this
      */
     public function setStatus($status)
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -244,6 +262,32 @@ class Pratica
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param string $data
+     *
+     * @return Pratica
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    function __toString()
+    {
+        return (string)$this->getId();
+    }
+
 
     /**
      * @return mixed

@@ -8,23 +8,79 @@
     {{ parent() }}
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+            var $collectionHolder;
+            var $addComponenteNucleoFamiliare = $('<a href="#" class="add_componente_nucleo_familiare">Aggiungi</a>');
+            var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
+
+            function addComponenteNucleoFamiliareForm($collectionHolder, $newLinkLi) {
+                var prototype = $collectionHolder.data('prototype');
+                var index = $collectionHolder.data('index');
+                var newForm = prototype.replace(/__name__/g, index);
+                $collectionHolder.data('index', index + 1);
+                var $newFormLi = $('<li></li>').append(newForm);
+                $newLinkLi.before($newFormLi);
+            }
+            function addComponenteNucleoFamiliareFormDeleteLink($li) {
+                var $removeFormA = $('<a href="#">Elimina</a>');
+                $li.append($removeFormA);
+                $removeFormA.on('click', function(e) {
+                    e.preventDefault();
+                    $li.remove();
+                });
+            }
+            $collectionHolder = $('ul.nucleo_familiare');
+            $collectionHolder.find('li').each(function() {
+                addComponenteNucleoFamiliareFormDeleteLink($(this));
+            });
+            $collectionHolder.append($newLinkLi);
+            $collectionHolder.data('index', $collectionHolder.find(':input').length);
+            $addComponenteNucleoFamiliare.on('click', function(e) {
+                e.preventDefault();
+                addComponenteNucleoFamiliareForm($collectionHolder, $newLinkLi);
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block main_content %}
     <div>
     Steps:
     {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
 </div>
+
+
 {{ form_start(form) }}
     {{ form_errors(form) }}
 
-    {% if flow.getCurrentStepNumber() == 1 %}
-        <div>
-            {{ form.vars.sdc_data.testo_istruzioni|raw }}
-        </div>
+    <div>
+        {{ form.vars.helper.descriptionText|raw }}
+    </div>
+
+    <div>
+        {{ form.vars.helper.guideText|raw }}
+    </div>
+
+
+    {% if form.nucleo_familiare is defined %}
+    <ul class="nucleo_familiare" data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
+        {% for componente in form.nucleo_familiare %}
+            <li>{{ form_row(componente) }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+        @todo stampare form.data
     {% endif %}
 
     {{ form_rest(form) }}
 
     {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
 {{ form_end(form) }}
+
 
 {% endblock %}
