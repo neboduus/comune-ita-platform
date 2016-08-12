@@ -2,6 +2,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use Symfony\Component\HttpFoundation\Response;
@@ -75,7 +76,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         ));
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $praticheCount = $crawler->filter('.list')->filter('.pratica')->count();
+        $praticheCount = $crawler->filter('.list.mie')->filter('.pratica')->count();
         $this->assertEquals(3, $praticheCount);
 
         $expectedPratiche = [
@@ -98,11 +99,60 @@ class OperatoriControllerTest extends AbstractAppTestCase
     }
 
     /**
+     * @test
+     */
+    public function testICanSeeUnassignedPraticheForMyEnteWhenAccessingOperatoriHomePageAsLoggedInOperatore()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $enti = $this->createEnti();
+        $ente1 = $enti[0];
+        $ente2 = $enti[1];
+
+        $this->createOperatoreUser($username, $password, $ente1);
+        $user = $this->createCPSUser(true);
+
+        $praticaSubmitted = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+        $praticaRegistered = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_REGISTERED);
+        $praticaPending = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_PENDING);
+        $praticaPendingMaAltroEnte = $this->setupPraticheForUserWithEnteAndStatus($user, $ente2, Pratica::STATUS_PENDING);
+
+        $operatoriHome = $this->router->generate('operatori_index');
+        $crawler = $this->client->request('GET', $operatoriHome, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $praticheCount = $crawler->filter('.list.libere')->filter('.pratica')->count();
+        $this->assertEquals(3, $praticheCount);
+
+        $expectedPratiche = [
+            $praticaSubmitted,
+            $praticaRegistered,
+            $praticaPending,
+        ];
+
+        $unexpectedPratiche = [
+            $praticaPendingMaAltroEnte,
+        ];
+
+        foreach ($expectedPratiche as $pratica) {
+            $this->assertEquals(1, $crawler->filterXPath('//*[@data-pratica="'.$pratica->getId().'"]')->count());
+        }
+
+        foreach ($unexpectedPratiche as $pratica) {
+            $this->assertEquals(0, $crawler->filterXPath('//*[@data-pratica="'.$pratica->getId().'"]')->count());
+        }
+    }
+
+    /**
      * @param $username
      * @param $password
      * @return OperatoreUser
      */
-    protected function createOperatoreUser($username, $password)
+    protected function createOperatoreUser($username, $password, Ente $ente = null)
     {
         $um = $this->container->get('fos_user.user_manager');
         $user = new OperatoreUser();
@@ -112,6 +162,11 @@ class OperatoriControllerTest extends AbstractAppTestCase
             ->setNome('a')
             ->setCognome('b')
             ->setEnabled(true);
+
+        if ($ente) {
+            $user->setEnte($ente);
+        }
+
         $um->updateUser($user);
 
         return $user;

@@ -187,7 +187,7 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param bool $status
      * @return Pratica
      */
-    protected function createPratica(CPSUser $user, OperatoreUser $operatore = null, $status = null)
+    protected function createPratica(CPSUser $user, OperatoreUser $operatore = null, $status = null, Ente $ente = null)
     {
         $servizio = $this->createServizioWithAssociatedEnti($this->createEnti());
 
@@ -196,6 +196,9 @@ abstract class AbstractAppTestCase extends WebTestCase
         $pratica->setServizio($servizio);
         if ($operatore) {
             $pratica->setOperatore($operatore);
+        }
+        if ($ente) {
+            $pratica->setEnte($ente);
         }
 
         if ($status !== null) {
@@ -230,6 +233,17 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function setupPraticheForUserWithOperatoreAndStatus(CPSUser $user, OperatoreUser $operatore = null, $status = null)
     {
         return $this->createPratica($user, $operatore, $status);
+    }
+
+    /**
+     * @param CPSUser $user
+     * @param Ente $ente
+     * @param $status
+     * @return Pratica|null
+     */
+    protected function setupPraticheForUserWithEnteAndStatus(CPSUser $user, Ente $ente = null, $status = null)
+    {
+        return $this->createPratica($user, null, $status, $ente);
     }
 
     /**

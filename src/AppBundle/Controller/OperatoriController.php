@@ -20,9 +20,10 @@ class OperatoriController extends Controller
     public function indexAction()
     {
         $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-        $pratiche = $praticheRepo->findBy(
+        $praticheMie = $praticheRepo->findBy(
             [
                 'operatore' => $this->getUser(),
+                'ente' => $this->getUser()->getEnte(),
                 'status' => [
                     Pratica::STATUS_PENDING,
                     Pratica::STATUS_SUBMITTED,
@@ -31,6 +32,21 @@ class OperatoriController extends Controller
             ]
         );
 
-        return array('pratiche'  => $pratiche);
+        $praticheLibere = $praticheRepo->findBy(
+            [
+                'operatore' => null,
+                'ente' => $this->getUser()->getEnte(),
+                'status' => [
+                    Pratica::STATUS_PENDING,
+                    Pratica::STATUS_SUBMITTED,
+                    Pratica::STATUS_REGISTERED,
+                ],
+            ]
+        );
+
+        return array(
+            'pratiche_mie'  => $praticheMie,
+            'pratiche_libere'  => $praticheLibere,
+        );
     }
 }
