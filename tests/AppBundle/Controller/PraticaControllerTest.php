@@ -32,8 +32,8 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
-        $this->cleanDb(Ente::class);
         $this->cleanDb(User::class);
+        $this->cleanDb(Ente::class);
     }
 
     /**
