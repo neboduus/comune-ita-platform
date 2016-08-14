@@ -27,4 +27,23 @@ class OperatoreUser extends User
         parent::__construct();
         $this->type = self::USER_TYPE_OPERATORE;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getEnte()
+    {
+        return $this->ente;
+    }
+
+    /**
+     * @param Ente $ente
+     * @return OperatoreUser
+     */
+    public function setEnte(Ente $ente)
+    {
+        $this->ente = $ente;
+
+        return $this;
+    }
 }

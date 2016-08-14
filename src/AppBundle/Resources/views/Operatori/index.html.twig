@@ -1,8 +1,17 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-    <div class="list">
-    {% for pratica in pratiche %}
+    <div class="list mie">
+        <h3>{{ 'pratiche_mie'|trans }}</h3>
+    {% for pratica in pratiche_mie %}
+        <div class="pratica" data-pratica="{{ pratica.id }}" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">
+            {{ pratica.servizio.name }}&nbsp;&dash;&nbsp;{{ pratica.user.nome }}  {{ pratica.user.cognome }}
+        </div>
+    {% endfor %}
+    </div>
+    <div class="list libere">
+        <h3>{{ 'pratiche_libere'|trans }}</h3>
+    {% for pratica in pratiche_libere %}
         <div class="pratica" data-pratica="{{ pratica.id }}" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">
             {{ pratica.servizio.name }}&nbsp;&dash;&nbsp;{{ pratica.user.nome }}  {{ pratica.user.cognome }}
         </div>
