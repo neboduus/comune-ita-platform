@@ -18,4 +18,6 @@ class LogConstants
     const PRATICA_UPDATED = "A new {id} pratica has been updated";
 
     const PRATICA_COMPILING_STEP = "User {user} view step {step} of pratica #{pratica}";
+    const PRATICA_FASCICOLO_ASSEGNATO = "Pratica %s : Assigned Numero Fascicolo %s";
+    const PRATICA_PROTOCOLLO_ASSEGNATO = "Pratica %s : Assigned Numero Protocollo %s";
 }

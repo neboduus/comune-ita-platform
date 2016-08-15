@@ -30,9 +30,9 @@ class ServizioControllerTest extends AbstractAppTestCase
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
         $this->cleanDb(Pratica::class);
-        $this->cleanDb(Ente::class);
         $this->cleanDb(Servizio::class);
         $this->cleanDb(User::class);
+        $this->cleanDb(Ente::class);
     }
 
     /**
@@ -150,5 +150,4 @@ class ServizioControllerTest extends AbstractAppTestCase
         $this->assertGreaterThan(0, count($pratichePendingPerServizio));
         $this->assertEquals(Pratica::STATUS_PENDING, $pratichePendingPerServizio[0]->getStatus());
     }
-
 }
