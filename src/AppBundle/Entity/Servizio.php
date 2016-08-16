@@ -45,6 +45,12 @@ class Servizio
     private $enti;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $testo_istruzioni;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -121,4 +127,25 @@ class Servizio
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getTestoIstruzioni()
+    {
+        return $this->testo_istruzioni;
+    }
+
+    /**
+     * @param string $testo_istruzioni
+     *
+     * @return Servizio
+     */
+    public function setTestoIstruzioni($testo_istruzioni)
+    {
+        $this->testo_istruzioni = $testo_istruzioni;
+
+        return $this;
+    }
+
 }

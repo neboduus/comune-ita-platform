@@ -21,6 +21,7 @@ class EsploraControllerTest extends AbstractAppTestCase
         parent::setUp();
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(Servizio::class);
         $this->cleanDb(Ente::class);
     }

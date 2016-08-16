@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\AsiloNido;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -33,6 +34,16 @@ class Ente
      * @ORM\Column(type="string", length=100, unique=true)
      */
     private $slug;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AsiloNido", cascade={"remove"})
+     * @ORM\JoinTable(
+     *     name="ente_asili",
+     *     joinColumns={@ORM\JoinColumn(name="ente_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="asilo_id", referencedColumnName="id")}
+     * )
+     */
+    private $asili;
 
     public function __construct()
     {
@@ -89,9 +100,29 @@ class Ente
         return $this;
     }
 
+    /**
+     * @return AsiloNido[]
+     */
+    public function getAsili()
+    {
+        return $this->asili;
+    }
+
+    /**
+     * @param AsiloNido[] $asili
+     *
+     * @return $this
+     */
+    public function setAsili($asili)
+    {
+        $this->asili = $asili;
+
+        return $this;
+    }
+
     function __toString()
     {
-        return $this->getName();
+        return (string)$this->getId();
     }
 
 

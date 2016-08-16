@@ -18,8 +18,9 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Craue\FormFlowBundle\CraueFormFlowBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
-            new AppBundle\AppBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
+            new AppBundle\AppBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
