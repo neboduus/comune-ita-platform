@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 
-class AccettazioneIstruzioniForm extends AbstractType
+class AccettazioneIstruzioniType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

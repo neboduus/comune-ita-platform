@@ -40,6 +40,12 @@ class Allegato
      * @var string
      * @ORM\Column(type="string")
      */
+    private $originalFilename;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
     private $description;
 
     /**
@@ -85,14 +91,17 @@ class Allegato
         $this->file = $file;
 
         if ($file) {
-            $this->updatedAt = new \DateTime('now');
+            $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
+            if ($file instanceof UploadedFile) {
+                $this->originalFilename = $file->getClientOriginalName();
+            }
         }
 
         return $this;
     }
 
     /**
-     * @return UploadedFile
+     * @return File
      */
     public function getFile()
     {
@@ -119,9 +128,10 @@ class Allegato
      * @param string $filename
      * @return Allegato
      */
-    public function setFilename(string $filename): Allegato
+    public function setFilename($filename): Allegato
     {
         $this->filename = $filename;
+
         return $this;
     }
 
@@ -140,6 +150,7 @@ class Allegato
     public function setDescription(string $description): Allegato
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -184,10 +195,48 @@ class Allegato
     /**
      * @ORM\PreFlush()
      */
-    public function updateNumeriProtocolloPrartica()
+    public function updateNumeriProtocolloPratica()
     {
         if ($this->numeroProtocollo != null) {
             $this->pratica->addNumeroDiProtocollo($this->numeroProtocollo);
         }
+    }
+
+    /**
+     * @return Pratica
+     */
+    public function getPratica(): Pratica
+    {
+        return $this->pratica;
+    }
+
+    /**
+     * @param Pratica $pratica
+     * @return $this
+     */
+    public function setPratica(Pratica $pratica)
+    {
+        $this->pratica = $pratica;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalFilename()
+    {
+        return $this->originalFilename;
+    }
+
+    /**
+     * @param string $originalFilename
+     * @return $this
+     */
+    public function setOriginalFilename($originalFilename)
+    {
+        $this->originalFilename = $originalFilename;
+
+        return $this;
     }
 }

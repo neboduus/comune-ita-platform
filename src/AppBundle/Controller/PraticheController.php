@@ -2,20 +2,16 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
-use AppBundle\Entity\IscrizioneAsiloNido;
-use Craue\FormFlowBundle\Form\FormFlowInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use AppBundle\Logging\LogConstants;
-use Symfony\Component\VarDumper\VarDumper;
+use Craue\FormFlowBundle\Form\FormFlowInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class PraticheController
@@ -111,10 +107,9 @@ class PraticheController extends Controller
         if ($flow->isValid($form)) {
             $flow->saveCurrentStepData($form);
             if ($flow->nextStep()) {
+                $this->getDoctrine()->getManager()->flush();
                 $form = $flow->createForm();
             } else {
-                $flow->reset();
-
                 $pratica->setStatus(Pratica::STATUS_SUBMITTED);
 
                 $this->getDoctrine()->getManager()->flush();
@@ -127,6 +122,8 @@ class PraticheController extends Controller
                     'feedback',
                     $this->get('translator')->trans('pratica_ricevuta')
                 );
+
+                $flow->reset();
                 return $this->redirectToRoute(
                     'pratiche_show',
                     ['pratica' => $pratica->getId()]

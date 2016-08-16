@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class DatiRichiedenteForm extends AbstractType
+class DatiRichiedenteType extends AbstractType
 {
     const CAMPI_RICHIEDENTE = array(
         'richiedente_nome' => true,
