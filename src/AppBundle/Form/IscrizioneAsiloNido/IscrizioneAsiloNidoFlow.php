@@ -2,12 +2,15 @@
 
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
+use AppBundle\Form\Base\AccettazioneIstruzioniType;
+use AppBundle\Form\Base\NucleoFamiliareType;
 use AppBundle\Form\Base\PraticaFlow;
 
 class IscrizioneAsiloNidoFlow extends PraticaFlow
 {
 
     protected $allowDynamicStepNavigation = true;
+    protected $handleFileUploads = false;
 
 
     protected function loadStepsConfig()
@@ -15,27 +18,31 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
         return array(
             array(
                 'label' => 'iscrizione_asilo_nido.accettazioneIstruzioni',
-                'form_type' => 'AppBundle\Form\Base\AccettazioneIstruzioniForm',
+                'form_type' => AccettazioneIstruzioniType::class,
             ),
             array(
                 'label' => 'iscrizione_asilo_nido.selezionaEnte',
-                'form_type' => 'AppBundle\Form\IscrizioneAsiloNido\SelezionaEnteForm',
+                'form_type' => SelezionaEnteType::class,
             ),
             array(
                 'label' => 'iscrizione_asilo_nido.selezionaNido',
-                'form_type' => 'AppBundle\Form\IscrizioneAsiloNido\SelezionaNidoForm',
+                'form_type' => SelezionaNidoType::class,
             ),
             array(
                 'label' => 'iscrizione_asilo_nido.accettazioneUtilizzoNidoForm',
-                'form_type' => 'AppBundle\Form\IscrizioneAsiloNido\AccettazioneUtilizzoNidoForm',
+                'form_type' => AccettazioneUtilizzoNidoType::class,
             ),
             array(
                 'label' => 'iscrizione_asilo_nido.datiRichiedente',
-                'form_type' => 'AppBundle\Form\IscrizioneAsiloNido\DatiRichiedenteForm',
+                'form_type' => DatiRichiedenteType::class,
             ),
             array(
                 'label' => 'iscrizione_asilo_nido.nucleoFamiliare',
-                'form_type' => 'AppBundle\Form\Base\NucleoFamiliareForm',
+                'form_type' => NucleoFamiliareType::class,
+            ),
+            array(
+                'label' => 'iscrizione_asilo_nido.allegati',
+                'form_type' => AllegatiType::class,
             ),
             array(
                 'label' => 'iscrizione_asilo_nido.conferma',

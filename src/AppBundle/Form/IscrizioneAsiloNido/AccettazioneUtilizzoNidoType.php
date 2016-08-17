@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 
-class AccettazioneUtilizzoNidoForm extends AbstractType
+class AccettazioneUtilizzoNidoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

@@ -57,7 +57,7 @@ class Pratica
     private $operatore;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Allegato", mappedBy="pratica")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Allegato", mappedBy="pratica", cascade={"persist"})
      * @var ArrayCollection
      */
     private $allegati;
@@ -345,10 +345,24 @@ class Pratica
      * @param Allegato $allegato
      * @return $this
      */
-    public function addAllegato(Allegato $allegato)
+    public function addAllegatus(Allegato $allegato)
     {
         if (!$this->allegati->contains($allegato)) {
             $this->allegati->add($allegato);
+            $allegato->setPratica($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Allegato $allegato
+     * @return $this
+     */
+    public function removeAllegatus(Allegato $allegato)
+    {
+        if ($this->allegati->contains($allegato)) {
+            $this->allegati->removeElement($allegato);
         }
 
         return $this;

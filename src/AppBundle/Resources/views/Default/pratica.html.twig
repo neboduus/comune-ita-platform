@@ -2,13 +2,16 @@
 
 {% block main_content %}
     <ul>
-        <li>{{ pratica.id }}
-        <li>{{ pratica.servizio.name }}
-        <li>{{ pratica.ente.name }}
-        <li>{{ pratica.user.fullName }}
-        <li>{{ pratica.status }}
-        <li>{{ pratica.creationTime }}
-        <li>@todo stampare form.data
+        <li>{{ pratica.id }}</li>
+        <li>{{ pratica.servizio.name }}</li>
+        <li>{{ pratica.ente.name }}</li>
+        <li>{{ pratica.user.fullName }}</li>
+        <li>{{ pratica.status }}</li>
+        <li>{{ pratica.creationTime }}</li>
+        <li>@todo stampare form.data</li>
+        {% for allegato in pratica.allegati %}
+            <li><a href="/pratiche/allegati/{{ allegato.filename }}">{{ allegato.originalFilename }}</a></li>
+        {% endfor %}
     </ul>
 
 {% endblock %}

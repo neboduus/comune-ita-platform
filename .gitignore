@@ -15,3 +15,5 @@
 /vendor/
 /web/bundles/
 /bin/*
+/web/pratiche/allegati/*
+/web/css

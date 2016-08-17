@@ -12,11 +12,8 @@
     {{ parent() }}
     <script>
         $(document).ready(function() {
-            var $collectionHolder;
-            var $addComponenteNucleoFamiliare = $('<a href="#" class="add_componente_nucleo_familiare">Aggiungi</a>');
-            var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
 
-            function addComponenteNucleoFamiliareForm($collectionHolder, $newLinkLi) {
+            function addComponenteForm($collectionHolder, $newLinkLi) {
                 var prototype = $collectionHolder.data('prototype');
                 var index = $collectionHolder.data('index');
                 var newForm = prototype.replace(/__name__/g, index);
@@ -24,7 +21,8 @@
                 var $newFormLi = $('<li></li>').append(newForm);
                 $newLinkLi.before($newFormLi);
             }
-            function addComponenteNucleoFamiliareFormDeleteLink($li) {
+
+            function addDeleteLink($li) {
                 var $removeFormA = $('<a href="#">Elimina</a>');
                 $li.append($removeFormA);
                 $removeFormA.on('click', function(e) {
@@ -32,16 +30,37 @@
                     $li.remove();
                 });
             }
-            $collectionHolder = $('ul.nucleo_familiare');
-            $collectionHolder.find('li').each(function() {
-                addComponenteNucleoFamiliareFormDeleteLink($(this));
-            });
-            $collectionHolder.append($newLinkLi);
-            $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+            function setupAddAndRemoveLinks($collectionHolder, $newLinkLi) {
+                $collectionHolder.find('li').each(function () {
+                    addDeleteLink($(this));
+                });
+                $collectionHolder.append($newLinkLi);
+                $collectionHolder.data('index', $collectionHolder.find(':input').length);
+            }
+
+            {% if form.nucleo_familiare is defined %}
+            var $addComponenteNucleoFamiliare = $('<a href="#" class="add_componente_nucleo_familiare">Aggiungi</a>');
+            var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
+            var $collectionHolder = $('ul.nucleo_familiare');
+
             $addComponenteNucleoFamiliare.on('click', function(e) {
                 e.preventDefault();
-                addComponenteNucleoFamiliareForm($collectionHolder, $newLinkLi);
+                addComponenteForm($collectionHolder, $newLinkLi);
             });
+            setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+            {% elseif form.allegati is defined %}
+            var $addAllegato = $('<a href="#" class="add_allegato">Aggiungi</a>');
+            var $newLinkLi = $('<li></li>').append($addAllegato);
+            var $collectionHolder = $('ul.allegati');
+
+            $addAllegato.on('click', function (e) {
+                e.preventDefault();
+                addComponenteForm($collectionHolder, $newLinkLi);
+            });
+            setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+            {% endif %}
+
         });
     </script>
 {% endblock %}
@@ -71,6 +90,15 @@
             <li>{{ form_row(componente) }}</li>
         {% endfor %}
     </ul>
+    {% endif %}
+
+
+    {% if form.allegati is defined %}
+        <ul class="allegati" data-prototype="{{ form_widget(form.allegati.vars.prototype)|e('html_attr') }}">
+            {% for allegato in form.allegati %}
+                <li>{{ form_row(allegato) }}</li>
+            {% endfor %}
+        </ul>
     {% endif %}
 
     {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
