@@ -1,6 +1,11 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block main_content %}
-{{ 'lista_pratiche'|trans() }} {% if user %}{{ user.fullName }}{% endif %}
+{{ title|trans() }} {% if user %}{{ user.fullName }}{% endif %}
+
+{% if msg is defined %}
+    <div class="alert alert-{{ msg.type }}" role="alert">{{ msg.text|trans() }}</div>
+{% endif %}
+
 
 {% for pratica in pratiche %}
     <div class="pratica" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">{{ pratica.servizio.name }}</div>
