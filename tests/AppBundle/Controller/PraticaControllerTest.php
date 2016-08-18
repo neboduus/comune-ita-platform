@@ -309,6 +309,32 @@ class PraticaControllerTest extends AbstractAppTestCase
     }
 
     /**
+     * @test
+     */
+
+    public function testIgetRedirectedIfITryToCreateANewPraticaOnAServiceWithPraticheInDraft()
+    {
+        $ente = $this->createEnteWithAsili();
+        $servizio = $this->createServizioWithEnte($ente);
+        $user = $this->createCPSUser();
+
+        $this->createPratica($user, null, Pratica::STATUS_DRAFT, $ente, $servizio);
+
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+            'pratiche_new',
+            ['servizio' => $servizio->getSlug()]
+        ));
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $this->assertEquals(
+            $this->client->getResponse()->headers->get('location'),
+            $this->router->generate(
+                'pratiche_list_draft',
+                ['servizio' => $servizio->getSlug()]
+            )
+        );
+    }
+
+    /**
      * @return Ente
      */
     protected function createEnteWithAsili()

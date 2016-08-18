@@ -195,13 +195,18 @@ abstract class AbstractAppTestCase extends WebTestCase
 
 
     /**
-     * @param User $user
-     * @param bool $status
+     * @param CPSUser $user
+     * @param OperatoreUser|null $operatore
+     * @param null $status
+     * @param Ente|null $ente
+     * @param Servizio|null $servizio
      * @return Pratica
      */
-    protected function createPratica(CPSUser $user, OperatoreUser $operatore = null, $status = null, Ente $ente = null)
+    protected function createPratica(CPSUser $user, OperatoreUser $operatore = null, $status = null, Ente $ente = null, Servizio $servizio = null)
     {
-        $servizio = $this->createServizioWithAssociatedEnti($this->createEnti());
+        if ( $servizio == null) {
+            $servizio = $this->createServizioWithAssociatedEnti($this->createEnti());
+        }
 
         $pratica = new Pratica();
         $pratica->setUser($user);

@@ -37,7 +37,7 @@ class PraticheController extends Controller
             array('status' => 'DESC')
         );
 
-        return $this->render('AppBundle:Default:pratiche.html.twig', array('user' => $user, 'pratiche' => $pratiche));
+        return $this->render('AppBundle:Default:pratiche.html.twig', array('user' => $user, 'pratiche' => $pratiche, 'title' => 'lista_pratiche'));
     }
 
     /**
@@ -51,11 +51,62 @@ class PraticheController extends Controller
     public function newAction(Servizio $servizio)
     {
         $user = $this->getUser();
-        $pratica = $this->createNewPratica($servizio, $user);
+        $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+        $pratiche = $repo->findBy(
+            array(
+                'user' => $user,
+                'servizio' => $servizio,
+                'status' => Pratica::STATUS_DRAFT),
+            array('creationTime' => 'ASC')
+        );
 
+        if (!empty($pratiche))
+        {
+            return $this->redirectToRoute(
+                'pratiche_list_draft',
+                ['servizio'=>$servizio->getSlug()]
+            );
+        }
+
+        $pratica = $this->createNewPratica($servizio, $user);
         return $this->redirectToRoute(
             'pratiche_compila',
             ['pratica' => $pratica->getId()]
+        );
+
+    }
+
+    /**
+     * @Route("/{servizio}/draft", name="pratiche_list_draft")
+     * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
+     *
+     * @param Servizio $servizio
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function listDraftByServiceAction(Servizio $servizio)
+    {
+        $user = $this->getUser();
+        $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+        $pratiche = $repo->findBy(
+            array(
+                'user' => $user,
+                'servizio' => $servizio,
+                'status' => Pratica::STATUS_DRAFT),
+            array('creationTime' => 'ASC')
+        );
+
+        return $this->render(
+            'AppBundle:Default:pratiche.html.twig',
+            array(
+                'user' => $user,
+                'pratiche' => $pratiche,
+                'title' => 'bozze_servizio',
+                'msg' => array(
+                    'type' => 'warning',
+                    'text' => 'msg_bozze_servizio'
+                )
+            )
         );
     }
 
