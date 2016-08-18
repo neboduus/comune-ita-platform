@@ -5,6 +5,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -27,6 +29,7 @@ class Allegato
     /**
      * @var File
      * @Vich\UploadableField(mapping="allegato", fileNameProperty="filename")
+     * @
      */
     private $file;
 
@@ -238,5 +241,26 @@ class Allegato
         $this->originalFilename = $originalFilename;
 
         return $this;
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     * @Assert\Callback()
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        if (! in_array($this->file->getMimeType(), array(
+            'image/jpeg',
+            'image/gif',
+            'image/png',
+            'application/postscript',
+            'application/pdf',
+        ))) {
+            $context
+                ->buildViolation('Wrong file type (jpg,gif,png,mp4,mov,avi)')
+                ->atPath('file')
+                ->addViolation()
+            ;
+        }
     }
 }

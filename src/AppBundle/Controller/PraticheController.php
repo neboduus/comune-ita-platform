@@ -6,11 +6,13 @@ use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
+use AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow;
 use AppBundle\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -153,11 +155,28 @@ class PraticheController extends Controller
 
 
         $flow->bind($pratica);
-
         $form = $flow->createForm();
+
+
         if ($flow->isValid($form)) {
             $flow->saveCurrentStepData($form);
-            if ($flow->nextStep()) {
+
+            if ($flow->getCurrentStepNumber() == IscrizioneAsiloNidoFlow::STEP_ALLEGATI) {
+                $errors = $this->get('validator')->validate($pratica);
+                if ($errors->count() > 0) {
+                    foreach ($errors as $error) {
+                        $formattedErrorMessage = sprintf(
+                            $this->get('translator')->trans('errori.allegato.tipo_non_valido'),
+                            $error->getInvalidValue()->getOriginalFilename()
+                        );
+                        $form->addError(new FormError($formattedErrorMessage));
+                    }
+                } else {
+                    $flow->nextStep();
+                    $this->getDoctrine()->getManager()->flush();
+                    $form = $flow->createForm();
+                }
+            } elseif ($flow->nextStep()) {
                 $this->getDoctrine()->getManager()->flush();
                 $form = $flow->createForm();
             } else {
