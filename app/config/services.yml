@@ -38,3 +38,6 @@ services:
         class: AppBundle\Form\Extension\HelpDataTypeExtension
         tags:
             - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
+
+    ocsdc.allegati.directory_namer:
+        class: AppBundle\Services\DirectoryNamerService

@@ -35,7 +35,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     {
         parent::setUp();
 
-        array_map('unlink', glob(__DIR__."/../../../web/pratiche/allegati/*"));
+        system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
@@ -176,6 +176,62 @@ class PraticaControllerTest extends AbstractAppTestCase
         ));
 
         $this->assertContains('iscrizione_asilo_nido_accettazione_istruzioni', $this->client->getResponse()->getContent());
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidUploadFilesProvider
+     * @param string $invalidFilename
+     */
+    public function testICannotSubmitUnsopprtedFilesAsAttachments($invalidFilename)
+    {
+        $ente = $this->createEnteWithAsili();
+
+        $servizio = $this->createServizioWithEnte($ente);
+
+        $user = $this->createCPSUser();
+
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+            'pratiche_new',
+            ['servizio' => $servizio->getSlug()]
+        ));
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $crawler = $this->client->followRedirect();
+
+        $currentUriParts = explode('/', $this->client->getHistory()->current()->getUri());
+        $currentPraticaId = array_pop($currentUriParts);
+        $currentPratica = $this->em->getRepository('AppBundle:IscrizioneAsiloNido')->find($currentPraticaId);
+        $this->assertEquals(get_class($currentPratica), IscrizioneAsiloNido::class);
+
+        $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
+        $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
+
+        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
+        $this->selezioneComune($crawler, $nextButton, $ente, $form);
+        $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);
+        $this->terminiFruizione($asiloSelected, $crawler, $nextButton, $form);
+        $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
+        $this->composizioneNucleoFamiliare($crawler, $nextButton, $form);
+
+        $numberOfExpectedAttachments = 1;
+        $formCrawler = $crawler->filter('form[name="iscrizione_asilo_nido_allegati"]');
+        $this->appendPrototypeDom($crawler->filter('.allegati')->getNode(0), 0, $numberOfExpectedAttachments);
+        $form = $formCrawler->form();
+        $values = $form->getValues();
+        $values['iscrizione_asilo_nido_allegati[allegati][0][description]'] = 'pippo';
+        $values['iscrizione_asilo_nido_allegati[allegati][0][file][file]'] = new UploadedFile(
+            __DIR__.'/../Assets/'.$invalidFilename,
+            $invalidFilename,
+            'application/postscript',
+            filesize(__DIR__.'/../Assets/'.$invalidFilename)
+        );
+
+        $form->setValues($values);
+        $crawler = $this->client->submit($form);
+
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $expectedErrorMessage = sprintf($this->translator->trans('errori.allegato.tipo_non_valido'), $invalidFilename);
+        $this->assertEquals(1, $crawler->filter('html:contains("'.$expectedErrorMessage.'")')->count());
     }
 
     /**
@@ -332,6 +388,18 @@ class PraticaControllerTest extends AbstractAppTestCase
                 ['servizio' => $servizio->getSlug()]
             )
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidUploadFilesProvider()
+    {
+        $filenames = array_map(function ($e) {
+            return [basename($e)];
+        }, glob(__DIR__.'/../Assets/invalid_*'));
+
+        return $filenames;
     }
 
     /**
