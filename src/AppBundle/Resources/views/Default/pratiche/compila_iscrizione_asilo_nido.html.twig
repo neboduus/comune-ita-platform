@@ -39,7 +39,7 @@
                 $collectionHolder.data('index', $collectionHolder.find(':input').length);
             }
 
-            {% if form.nucleo_familiare is defined %}
+        {% if form.nucleo_familiare is defined %}
             var $addComponenteNucleoFamiliare = $('<a href="#" class="add_componente_nucleo_familiare">Aggiungi</a>');
             var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
             var $collectionHolder = $('ul.nucleo_familiare');
@@ -49,7 +49,7 @@
                 addComponenteForm($collectionHolder, $newLinkLi);
             });
             setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-            {% elseif form.allegati is defined %}
+        {% elseif form.allegati is defined %}
             var $addAllegato = $('<a href="#" class="add_allegato">Aggiungi</a>');
             var $newLinkLi = $('<li></li>').append($addAllegato);
             var $collectionHolder = $('ul.allegati');
@@ -59,7 +59,7 @@
                 addComponenteForm($collectionHolder, $newLinkLi);
             });
             setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-            {% endif %}
+        {% endif %}
 
         });
     </script>
@@ -70,7 +70,6 @@
     Steps:
     {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
 </div>
-
 
 {{ form_start(form) }}
     {{ form_errors(form) }}

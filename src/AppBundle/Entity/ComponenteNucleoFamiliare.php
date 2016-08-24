@@ -8,21 +8,15 @@ use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="componente_nucleo_familiare")
+ * @ORM\Table(name="componente_nucleo_familiare",uniqueConstraints={@ORM\UniqueConstraint(name="componente_nucleo_familiare_idx",columns={"pratica_id","codice_fiscale"})})
  */
-class ComponenteNucleoFamiliare implements \Serializable
+class ComponenteNucleoFamiliare
 {
     /**
      * @ORM\Column(type="guid")
      * @ORM\Id
      */
     protected $id;
-
-    /**
-     * @var string
-     * @ORM\Column(type="string" , nullable=true)
-     */
-    private $soggetto;
 
     /**
      * @var string
@@ -48,19 +42,20 @@ class ComponenteNucleoFamiliare implements \Serializable
      */
     private $codiceFiscale;
 
-    public function __construct()
-    {
-        if ( !$this->id) {
-            $this->id = Uuid::uuid4();
-        }
-    }
+    /**
+     * @ORM\ManyToOne(inversedBy="nucleo_familiare", targetEntity="AppBundle\Entity\Pratica")
+     * @var Pratica $pratica
+     */
+    private $pratica;
 
     /**
-     * @return UuidInterface
+     * ComponenteNucleoFamiliare constructor.
      */
-    public function getId()
+    public function __construct()
     {
-        return $this->id;
+        if (!$this->id) {
+            $this->id = Uuid::uuid4();
+        }
     }
 
     /**
@@ -146,48 +141,35 @@ class ComponenteNucleoFamiliare implements \Serializable
     /**
      * @return string
      */
-    public function getSoggetto()
+    public function __toString()
     {
-        return $this->soggetto;
+        return (string) $this->getId();
     }
 
     /**
-     * @param string $soggetto
-     *
+     * @return UuidInterface
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return Pratica
+     */
+    public function getPratica(): Pratica
+    {
+        return $this->pratica;
+    }
+
+    /**
+     * @param Pratica $pratica
      * @return ComponenteNucleoFamiliare
      */
-    public function setSoggetto($soggetto)
+    public function setPratica($pratica)
     {
-        $this->soggetto = $soggetto;
+        $this->pratica = $pratica;
 
         return $this;
     }
-
-    function __toString()
-    {
-        return (string)$this->getId();
-    }
-
-    function serialize()
-    {
-        return serialize( [
-            'id' => $this->id,
-            'soggetto' => $this->soggetto,
-            'cognome' => $this->cognome,
-            'nome' => $this->nome,
-            'rapportoParentela' => $this->rapportoParentela,
-            'codiceFiscale' => $this->codiceFiscale,
-        ]);
-    }
-
-    function unserialize($data)
-    {
-        $data = unserialize($data);
-        $self = new static;
-        foreach($data as $key => $value){
-            $self->{$key} = $value;
-        }
-        return $self;
-    }
-
 }

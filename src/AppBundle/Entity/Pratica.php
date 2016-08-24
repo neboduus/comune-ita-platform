@@ -28,6 +28,11 @@ class Pratica
     const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
 
     /**
+     * @var string
+     */
+    protected $type;
+
+    /**
      * @ORM\Column(type="guid")
      * @ORM\Id
      */
@@ -65,6 +70,12 @@ class Pratica
     private $allegati;
 
     /**
+     * @ORM\OneToMany(targetEntity="ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
+     * @var ArrayCollection $nucleo_familiare
+     */
+    private $nucleoFamiliare;
+
+    /**
      * @ORM\Column(type="integer", name="creation_time")
      */
     private $creationTime;
@@ -92,12 +103,6 @@ class Pratica
      */
     private $numeriProtocollo;
 
-
-    /**
-     * @var string
-     */
-    protected $type;
-
     /**
      * @var string
      * @ORM\Column(type="text", nullable=true)
@@ -118,14 +123,7 @@ class Pratica
         $this->numeroFascicolo = null;
         $this->numeriProtocollo = new ArrayCollection();
         $this->allegati = new ArrayCollection();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
+        $this->nucleoFamiliare = new ArrayCollection();
     }
 
     /**
@@ -138,6 +136,7 @@ class Pratica
 
     /**
      * @param CPSUser $user
+     *
      * @return $this
      */
     public function setUser(CPSUser $user)
@@ -157,6 +156,7 @@ class Pratica
 
     /**
      * @param Servizio $servizio
+     *
      * @return $this
      */
     public function setServizio(Servizio $servizio)
@@ -256,6 +256,7 @@ class Pratica
 
     /**
      * @param OperatoreUser $operatore
+     *
      * @return Pratica
      */
     public function setOperatore(OperatoreUser $operatore)
@@ -290,6 +291,13 @@ class Pratica
         return (string)$this->getId();
     }
 
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return mixed
@@ -301,6 +309,7 @@ class Pratica
 
     /**
      * @param string $numeroFascicolo
+     *
      * @return $this
      */
     public function setNumeroFascicolo($numeroFascicolo)
@@ -311,19 +320,8 @@ class Pratica
     }
 
     /**
-     * @return mixed
-     */
-    public function getNumeriProtocollo()
-    {
-        if (!$this->numeriProtocollo instanceof ArrayCollection) {
-            $this->jsonToArray();
-        }
-
-        return $this->numeriProtocollo;
-    }
-
-    /**
      * @param string $numeroDiProtocollo
+     *
      * @return Pratica
      */
     public function addNumeroDiProtocollo($numeroDiProtocollo)
@@ -345,6 +343,7 @@ class Pratica
 
     /**
      * @param Allegato $allegato
+     *
      * @return $this
      */
     public function addAllegatus(Allegato $allegato)
@@ -359,6 +358,7 @@ class Pratica
 
     /**
      * @param Allegato $allegato
+     *
      * @return $this
      */
     public function removeAllegatus(Allegato $allegato)
@@ -380,6 +380,7 @@ class Pratica
 
     /**
      * @param string $numeroProtocollo
+     *
      * @return $this
      */
     public function setNumeroProtocollo($numeroProtocollo)
@@ -398,11 +399,73 @@ class Pratica
     }
 
     /**
+     * @return mixed
+     */
+    public function getNumeriProtocollo()
+    {
+        if (!$this->numeriProtocollo instanceof ArrayCollection) {
+            $this->jsonToArray();
+        }
+
+        return $this->numeriProtocollo;
+    }
+
+    /**
      * @ORM\PostLoad()
      * @ORM\PostUpdate()
      */
     public function jsonToArray()
     {
         $this->numeriProtocollo = new ArrayCollection(json_decode($this->numeriProtocollo));
+    }
+
+    /**
+     * @return ComponenteNucleoFamiliare[]
+     */
+    public function getNucleoFamiliare()
+    {
+        return $this->nucleoFamiliare;
+    }
+
+    /**
+     * @param ArrayCollection $nucleoFamiliare
+     *
+     * @return $this
+     */
+    public function setNucleoFamiliare($nucleoFamiliare)
+    {
+        $this->nucleoFamiliare = $nucleoFamiliare;
+
+        return $this;
+    }
+
+    /**
+     * @param ComponenteNucleoFamiliare $componente
+     *
+     * @return $this
+     */
+    public function addNucleoFamiliare(ComponenteNucleoFamiliare $componente)
+    {
+        if (!$this->nucleoFamiliare->contains($componente)) {
+            $componente->setPratica($this);
+            $this->nucleoFamiliare->add($componente);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ComponenteNucleoFamiliare $componente
+     *
+     * @return $this
+     */
+    public function removeNucleoFamiliare(ComponenteNucleoFamiliare $componente)
+    {
+        if ($this->nucleoFamiliare->contains($componente)) {
+            $this->nucleoFamiliare->removeElement($componente);
+            $componente->setPratica(null);
+        }
+
+        return $this;
     }
 }

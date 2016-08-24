@@ -32,6 +32,7 @@ $_SERVER += [
     "REDIRECT_shibb_pat_attribute_cognome" => "Realdi",
     "REDIRECT_shibb_pat_attribute_emailaddress" => "lr@opencontent.it",
     "REDIRECT_shibb_pat_attribute_nome" => "Lua",
+    "REDIRECT_shibb_pat_attribute_telefono" => "123",
 ];
 
 $request = Request::createFromGlobals();

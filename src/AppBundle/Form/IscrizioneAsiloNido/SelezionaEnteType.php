@@ -2,11 +2,8 @@
 
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
-use AppBundle\Entity\Pratica;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 

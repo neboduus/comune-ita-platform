@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\ComponenteNucleoFamiliare;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
@@ -135,25 +137,6 @@ class PraticheController extends Controller
         /** @var FormFlowInterface $flow */
         $flow = $this->get('ocsdc.form.flow.asilonido');
 
-        $componenti = $this->getDoctrine()->getRepository('AppBundle:ComponenteNucleoFamiliare')->findBy(
-            ['soggetto' => $this->getUser()->getCodiceFiscale()]
-        );
-        foreach ($componenti as $componenteNucleoFamiliare) {
-            $pratica->addComponenteNucleoFamiliare($componenteNucleoFamiliare);
-        }
-
-        $user = $this->getUser();
-        $pratica->setRichiedenteNome($user->getNome());
-        $pratica->setRichiedenteCognome($user->getCognome());
-        $pratica->setRichiedenteLuogoNascita($user->getLuogoNascita());
-        $pratica->setRichiedenteDataNascita($user->getDataNascita());
-        $pratica->setRichiedenteIndirizzoResidenza($user->getIndirizzoResidenza());
-        $pratica->setRichiedenteCapResidenza($user->getCapResidenza());
-        $pratica->setRichiedenteCittaResidenza($user->getCittaResidenza());
-        $pratica->setRichiedenteTelefono($user->getTelefono());
-        $pratica->setRichiedenteEmail($user->getEmailCanonical());
-
-
         $flow->bind($pratica);
         $form = $flow->createForm();
 
@@ -220,7 +203,7 @@ class PraticheController extends Controller
         return $this->render('@App/Default/pratica.html.twig', ['pratica' => $pratica]);
     }
 
-    private function createNewPratica(Servizio $servizio, User $user)
+    private function createNewPratica(Servizio $servizio, CPSUser $user)
     {
         $pratica = new IscrizioneAsiloNido();
         $pratica
@@ -228,6 +211,42 @@ class PraticheController extends Controller
             ->setType($servizio->getSlug())
             ->setUser($user)
             ->setStatus(Pratica::STATUS_DRAFT);
+
+        $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+        $lastPraticaList = $repo->findBy(
+            array(
+                'user' => $user,
+                'servizio' => $servizio,
+                'status' => [Pratica::STATUS_COMPLETE,Pratica::STATUS_SUBMITTED,Pratica::STATUS_PENDING,Pratica::STATUS_REGISTERED]
+            ),
+            array('creationTime' => 'DESC'),
+            1
+        );
+        $lastPratica = null;
+        if ($lastPraticaList){
+            $lastPratica = $lastPraticaList[0];
+        }
+        if ($lastPratica instanceof IscrizioneAsiloNido) {
+            foreach($lastPratica->getNucleoFamiliare() as $compontente){
+                $cloneCompontente = new ComponenteNucleoFamiliare();
+                $cloneCompontente->setNome($compontente->getNome());
+                $cloneCompontente->setCognome($compontente->getCognome());
+                $cloneCompontente->setCodiceFiscale($compontente->getCodiceFiscale());
+                $cloneCompontente->setRapportoParentela($compontente->getRapportoParentela());
+                $pratica->addNucleoFamiliare($cloneCompontente);
+            }
+        }
+
+        $user = $this->getUser();
+        $pratica->setRichiedenteNome($user->getNome());
+        $pratica->setRichiedenteCognome($user->getCognome());
+        $pratica->setRichiedenteLuogoNascita($user->getLuogoNascita());
+        $pratica->setRichiedenteDataNascita($user->getDataNascita());
+        $pratica->setRichiedenteIndirizzoResidenza($user->getIndirizzoResidenza());
+        $pratica->setRichiedenteCapResidenza($user->getCapResidenza());
+        $pratica->setRichiedenteCittaResidenza($user->getCittaResidenza());
+        $pratica->setRichiedenteTelefono($user->getTelefono());
+        $pratica->setRichiedenteEmail($user->getEmailCanonical());
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($pratica);
