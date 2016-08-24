@@ -313,4 +313,29 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         return array($ente1, $ente2);
     }
+
+    /**
+     * @param $username
+     * @param $password
+     * @return OperatoreUser
+     */
+    protected function createOperatoreUser($username, $password, Ente $ente = null)
+    {
+        $um = $this->container->get('fos_user.user_manager');
+        $user = new OperatoreUser();
+        $user->setUsername($username)
+            ->setPlainPassword($password)
+            ->setEmail(md5(rand(0, 1000).time()).'some@fake.email')
+            ->setNome('a')
+            ->setCognome('b')
+            ->setEnabled(true);
+
+        if ($ente) {
+            $user->setEnte($ente);
+        }
+
+        $um->updateUser($user);
+
+        return $user;
+    }
 }
