@@ -1,8 +1,9 @@
 <?php
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Allegato;
+use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Logging\LogConstants;
@@ -21,6 +22,8 @@ class OperatoriControllerTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->cleanDb(ComponenteNucleoFamiliare::class);
+        $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(OperatoreUser::class);
         $this->cleanDb(CPSUser::class);
@@ -238,4 +241,301 @@ class OperatoriControllerTest extends AbstractAppTestCase
             $this->assertEquals(0, $crawler->filterXPath('//*[@data-pratica="'.$pratica->getId().'"]')->count());
         }
     }
+
+    /**
+     * @test
+     */
+    public function testICanSeeMyCompletedPraticheWhenAccessingOperatoriHomePageAsLoggedInOperatore()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $altroOperatore = $this->createOperatoreUser($username.'2', $password);
+        $user = $this->createCPSUser(true);
+
+        $praticaSubmitted = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_SUBMITTED);
+        $praticaRegistered = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_REGISTERED);
+        $praticaPending = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
+        $praticaComplete = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_COMPLETE);
+
+        $praticaCompletedMaAltroOperatore = $this->setupPraticheForUserWithOperatoreAndStatus($user, $altroOperatore, Pratica::STATUS_COMPLETE);
+
+        $operatoriHome = $this->router->generate('operatori_index');
+        $crawler = $this->client->request('GET', $operatoriHome, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $praticheCount = $crawler->filter('.list.mie')->filter('.pratica')->count();
+        $this->assertEquals(3, $praticheCount);
+
+        $expectedPratiche = [
+            $praticaSubmitted,
+            $praticaRegistered,
+            $praticaPending,
+            $praticaComplete,
+        ];
+
+        $unexpectedPratiche = [
+            $praticaCompletedMaAltroOperatore,
+        ];
+
+        foreach ($expectedPratiche as $pratica) {
+            $this->assertEquals(1, $crawler->filterXPath('//*[@data-pratica="'.$pratica->getId().'"]')->count());
+        }
+
+        foreach ($unexpectedPratiche as $pratica) {
+            $this->assertEquals(0, $crawler->filterXPath('//*[@data-pratica="'.$pratica->getId().'"]')->count());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testICanAccessToMyAssignedPraticaDetail()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $altroOperatore = $this->createOperatoreUser($username.'2', $password);
+        $user = $this->createCPSUser(true);
+
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
+        $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
+
+        $operatoriHome = $this->router->generate('operatori_index');
+        $crawler = $this->client->request('GET', $operatoriHome, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertContains($detailPraticaUrl, $this->client->getResponse()->getContent());
+
+        $this->client->request('GET', $detailPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+    }
+
+    /**
+     * @test
+     */
+    public function testICannotAccessToUnassignedPraticaDetail()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $enti = $this->createEnti();
+        $ente1 = $enti[0];
+
+        $operatore = $this->createOperatoreUser($username, $password, $ente1);
+        $user = $this->createCPSUser(true);
+
+        $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+        $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
+
+        $operatoriHome = $this->router->generate('operatori_index');
+        $crawler = $this->client->request('GET', $operatoriHome, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertNotContains($detailPraticaUrl, $this->client->getResponse()->getContent());
+
+        $this->client->request('GET', $detailPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function testICanAssignToMyselfAUnassignedPratica()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $enti = $this->createEnti();
+        $ente1 = $enti[0];
+
+        $operatore = $this->createOperatoreUser($username, $password, $ente1);
+        $user = $this->createCPSUser(true);
+        $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+
+        $mockLogger = $this->getMockLogger();
+        $mockLogger->expects($this->once())
+                   ->method('info')
+                   ->with(LogConstants::PRATICA_ASSIGNED);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
+
+        $autoassignPraticaUrl = $this->router->generate('operatori_autoassing_pratica', ['pratica' => $pratica->getId()]);
+
+        $this->client->followRedirects();
+        $this->client->request('GET', $autoassignPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
+        $this->assertEquals(Pratica::STATUS_PENDING, $pratica->getStatus());
+    }
+
+    /**
+     * @test
+     */
+    public function testICannotAssignToMyselfAnAssignedPratica()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $enti = $this->createEnti();
+        $ente1 = $enti[0];
+
+        $operatore = $this->createOperatoreUser($username, $password, $ente1);
+        $user = $this->createCPSUser(true);
+
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
+        $autoassignPraticaUrl = $this->router->generate('operatori_autoassing_pratica', ['pratica' => $pratica->getId()]);
+
+        $this->client->followRedirects();
+        $this->client->request('GET', $autoassignPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function testICanCommentMyPratica()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $user = $this->createCPSUser(true);
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
+
+        $mockLogger = $this->getMockLogger();
+        $mockLogger->expects($this->once())
+                   ->method('info')
+                   ->with(LogConstants::PRATICA_COMMENTED);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
+
+        $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
+
+        $crawler = $this->client->request('GET', $detailPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $text = 'ma quante belle figlie madamadorè';
+        $form = $crawler->selectButton($this->translator->trans('aggiungi_commento'))->form();
+        $crawler = $this->client->submit($form);
+
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
+        foreach($pratica->getCommenti() as $commento){
+            $this->assertEquals($commento['text'], $text);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function testICanApproveMyPratica()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $user = $this->createCPSUser(true);
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
+
+        $mockLogger = $this->getMockLogger();
+        $mockLogger->expects($this->once())
+                   ->method('info')
+                   ->with(LogConstants::PRATICA_APPROVED);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
+
+        $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
+        $approvePraticaUrl = $this->router->generate('operatori_approva_pratica', ['pratica' => $pratica->getId()]);
+
+        $this->client->request('GET', $detailPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+
+        $this->assertContains($approvePraticaUrl, $this->client->getResponse()->getContent());
+
+        $this->client->request('GET', $approvePraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
+        $this->assertEquals($pratica->getStatus(), Pratica::STATUS_COMPLETE);
+    }
+
+    /**
+     * @test
+     */
+    public function testICanDenyMyPratica()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $user = $this->createCPSUser(true);
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
+
+        $mockLogger = $this->getMockLogger();
+        $mockLogger->expects($this->once())
+                   ->method('info')
+                   ->with(LogConstants::PRATICA_CANCELLED);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
+
+        $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
+        $denyPraticaUrl = $this->router->generate('operatori_rifiuta_pratica', ['pratica' => $pratica->getId()]);
+
+        $this->client->request('GET', $detailPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertContains($denyPraticaUrl, $this->client->getResponse()->getContent());
+
+        $this->client->request('GET', $denyPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
+        $this->assertEquals($pratica->getStatus(), Pratica::STATUS_CANCELLED);
+    }
+
 }

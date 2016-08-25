@@ -110,6 +110,17 @@ class Pratica
     private $data;
 
     /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $commenti;
+
+    /**
+     * @var string
+     */
+    private $statusName;
+
+    /**
      * Pratica constructor.
      */
     public function __construct()
@@ -192,6 +203,25 @@ class Pratica
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusName()
+    {
+        if ($this->statusName === null) {
+            $class = new \ReflectionClass(__CLASS__);
+            $constants = $class->getConstants();
+            foreach ($constants as $name => $value) {
+                if ($value == $this->status) {
+                    $this->statusName = $name;
+                    break;
+                }
+            }
+        }
+
+        return $this->statusName;
     }
 
     /**
@@ -467,5 +497,84 @@ class Pratica
         }
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getCommenti()
+    {
+        if (!$this->commenti instanceof ArrayCollection) {
+            $this->parseCommentiStringIntoArrayCollection();
+        }
+
+        return $this->commenti;
+    }
+
+    /**
+     * @param string $commenti
+     *
+     * @return Pratica
+     */
+    public function setCommenti($commenti)
+    {
+        $this->commenti = $commenti;
+
+        return $this;
+    }
+
+    /**
+     * @param $commento
+     *
+     * @return Pratica
+     */
+    public function addCommento(array $commento)
+    {
+        if (!$this->getCommenti()->exists(function ($key, $value) use ($commento) {
+            return $value['text'] == $commento['text'];
+        })
+        ) {
+            $this->getCommenti()->add($commento);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @ORM\PreFlush()
+     */
+    public function convertCommentiToString()
+    {
+        $data = [];
+        foreach($this->getCommenti() as $commento){
+            $data[] = serialize($commento);
+        }
+        $this->commenti = implode('##', $data);
+    }
+
+    /**
+     * @ORM\PostLoad()
+     * @ORM\PostUpdate()
+     */
+    public function parseCommentiStringIntoArrayCollection()
+    {
+        $collection = new ArrayCollection();
+        if ($this->commenti !== null) {
+            $data = explode('##', $this->commenti);
+            foreach ($data as $commentoSeriliazed) {
+                $commento = unserialize($commentoSeriliazed);
+                if (is_array($commento) && isset($commento['text']) && !empty($commento['text'])) {
+                    if (!$collection->exists(function ($key, $value) use ($commento) {
+                        return $value['text'] == $commento['text'];
+                    })
+                    ) {
+                        $collection->add($commento);
+                    }
+                }
+            }
+        }
+
+        $this->commenti = $collection;
     }
 }
