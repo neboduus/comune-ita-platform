@@ -106,7 +106,7 @@ class AsiloNido
     public function getOrari()
     {
         if (!is_array($this->orari)) {
-            $this->convertOrariToString();
+            $this->parseOrariStringIntoArray();
         }
 
         return $this->orari;
@@ -129,11 +129,7 @@ class AsiloNido
      */
     public function convertOrariToString()
     {
-        $data = (array)$this->getOrari();
-        foreach ($data as $element) {
-            $data[] = $element;
-        }
-        $this->orari = serialize($data);
+        $this->orari = serialize($this->getOrari());
     }
 
     /**
@@ -142,14 +138,7 @@ class AsiloNido
      */
     public function parseOrariStringIntoArray()
     {
-        $collection = array();
-        if ($this->orari !== null) {
-            $data = unserialize($this->orari);
-            foreach ($data as $element) {
-                $collection[] = $element;
-            }
-        }
-        $this->orari = array_unique($collection);
+        $this->orari = unserialize($this->orari);
     }
 
 }
