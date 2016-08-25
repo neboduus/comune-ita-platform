@@ -1,0 +1,22 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+    <h2>{{ title|trans() }} {% if user %}{{ user.fullName }}{% endif %}</h2>
+
+    {% if msg is defined %}
+        <div class="alert alert-{{ msg.type }}" role="alert">{{ msg.text|trans() }}</div>
+    {% endif %}
+
+    <div class="row">
+        {% if pratiche|length > 0 %}
+            {% for pratica in pratiche %}
+                <div class="col-sm-4">
+                    {{ include('@App/Pratiche/parts/panel/pratica.html.twig') }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}</div>
+        {% endif %}
+    </div>
+
+{% endblock %}

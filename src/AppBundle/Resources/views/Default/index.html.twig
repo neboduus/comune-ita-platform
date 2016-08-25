@@ -1,9 +1,10 @@
 {% extends '::base.html.twig' %}
 
+{% block title %}Stanza del cittadino{% endblock %}
+
 {% block stylesheets %}
-    {% stylesheets 'bundles/app/css/*.css' filter='cssrewrite' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/ita-bootstrap.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jasny-bootstrap.min.css') }}"/>
 {% endblock %}
 
 
@@ -34,25 +35,15 @@
 {% endblock %}
 
 {% block javascripts %}
+    <!-- !Javascript - at the bottom for fast page loading -->
     <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>!window.jQuery && document.write('<script src="{{ asset('bundles/app/css/js/jquery.min.js') }}"><\/script>')</script>
-    <script src="{{ asset('bundles/app/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('bundles/app/js/bootstrap-datepicker.min.js') }}"></script>
+    <!-- Classie - class helper functions by @desandro https://github.com/desandro/classie -->
     <script src="{{ asset('bundles/app/js/jasny-bootstrap.min.js') }}"></script>
     <script>
-        $( document ).ready(function($) {
-            $('#show-form-search').click(function() {
-                if ($( "#mobile-search" ).hasClass( 'hidden' )) {
-                    $( "#mobile-search" ).removeClass('hidden');
-                    $('#show-form-search').find('i').attr('class', 'fa fa-times');
-                } else {
-                    $( "#mobile-search" ).addClass('hidden');
-                    $('#show-form-search').find('i').attr('class', 'fa fa-search')
-                }
-            });
-        });
-
         $(document).ready(function($) {
 
             var $wrap = $(window),
@@ -71,7 +62,5 @@
                 }
             });
         });
-
-
     </script>
 {% endblock %}

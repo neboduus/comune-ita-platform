@@ -2,17 +2,17 @@
 
 {% block main_content %}
 
-    <p><a href="{{ path('operatori_index') }}" class="btn btn-info btn-xs">{{ 'torna_alle_pratiche'|trans }}</a></p>
+    <p><a href="{{ path('operatori_index') }}" class="btn btn-info btn-xs">{{ 'operatori.torna_alle_pratiche'|trans }}</a></p>
 
 
     <table class="table table-striped">
         <thead>
         <tr>
-            <td>{{ 'protocollo'|trans }}</td>
-            <td>{{ 'richiedente'|trans }}</td>
-            <td>{{ 'categoria'|trans }}</td>
-            <td>{{ 'data_di_compilazione'|trans }}</td>
-            <td>{{ 'stato'|trans }}</td>
+            <td>{{ 'pratica.protocollo'|trans }}</td>
+            <td>{{ 'pratica.richiedente'|trans }}</td>
+            <td>{{ 'pratica.categoria'|trans }}</td>
+            <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
+            <td>{{ 'pratica.stato'|trans }}</td>
         </tr>
         </thead>
         <tbody>
@@ -34,14 +34,14 @@
         <div class="row">
             <div class="col-md-4">
                 <a href="{{ path('operatori_approva_pratica', {'pratica': pratica}) }}"
-                   class="btn btn-success btn-block btn-lg">{{ 'approva'|trans }}</a>
+                   class="btn btn-success btn-block btn-lg">{{ 'operatori.approva'|trans }}</a>
             </div>
             <div class="col-md-4">
-                <!--<a href="#" class="btn btn-warning btn-block btn-lg">{{ 'richiedi_intergrazioni'|trans }}</a>-->
+                <!--<a href="#" class="btn btn-warning btn-block btn-lg">{{ 'operatori.richiedi_intergrazioni'|trans }}</a>-->
             </div>
             <div class="col-md-4">
                 <a href="{{ path('operatori_rifiuta_pratica', {'pratica': pratica}) }}"
-                   class="btn btn-danger btn-block btn-lg">{{ 'rifiuta'|trans }}</a>
+                   class="btn btn-danger btn-block btn-lg">{{ 'operatori.rifiuta'|trans }}</a>
             </div>
         </div>
     {% endif %}
@@ -50,13 +50,13 @@
         <div class="col-md-6">
             <div class="well">
                 <p><a href="#" class="btn btn-info btn-block btn-lg">{{ 'scarica_modulo_compilato'|trans }}</a></p>
-                <h4>{{ 'allegati'|trans }}</h4>
+                <h4>{{ 'operatori.allegati'|trans }}</h4>
                 {% if pratica.allegati|length > 0 %}
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <td>{{ 'nome_file'|trans }}</td>
-                            <td>{{ 'descrizione_file'|trans }}</td>
+                            <td>{{ 'allegato.nome_file'|trans }}</td>
+                            <td>{{ 'allegato.descrizione_file'|trans }}</td>
                             <td></td>
                         </tr>
                         </thead>
@@ -66,18 +66,18 @@
                                 <td>{{ allegato.originalFilename }}</td>
                                 <td>{{ allegato.description }}</td>
                                 <td><a href="{{ path('allegati_download_operatore', {'allegato': allegato.id}) }}"
-                                       class="btn btn-xs btn-info">{{ 'scarica_allegato'|trans }}</a></td>
+                                       class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
                 {% else %}
-                    <p><em>{{ 'nessun_allegato'|trans }}</em></p>
+                    <p><em>{{ 'pratica.nessun_allegato'|trans }}</em></p>
                 {% endif %}
             </div>
         </div>
         <div class="col-md-6">
-            <h4>{{ 'commenti_e_modifiche'|trans }}</h4>
+            <h4>{{ 'operatori.commenti_e_modifiche'|trans }}</h4>
             <ul class="list-unstyled">
                 {% for commento in pratica.commenti %}
                     <li>

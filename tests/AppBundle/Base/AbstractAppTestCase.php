@@ -118,7 +118,6 @@ abstract class AbstractAppTestCase extends WebTestCase
         $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($this->getCPSUserData());
         if ($termAccepted) {
             $user->setTermsAccepted(true);
-            $this->em->persist($user);
         }
 
         if ($telefono != null) {
@@ -127,6 +126,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         if ($email != null) {
             $user->setEmail($email);
         }
+        $this->em->persist($user);
         $this->em->flush();
 
         return $user;
@@ -290,6 +290,8 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $servizio = new Servizio();
         $servizio->setName('Servizio test pratiche')->setEnti($enti);
+        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
+        $servizio->setArea('Test area');
         $this->em->persist($servizio);
         $this->em->flush();
 

@@ -48,7 +48,8 @@ class ServizioControllerTest extends AbstractAppTestCase
         $repo = $this->em->getRepository("AppBundle:Servizio");
         $servizio = new Servizio();
         $servizio->setName('Primo servizio');
-
+        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
+        $servizio->setArea('Test area');
         $this->em->persist($servizio);
         $this->em->flush();
 
@@ -74,6 +75,8 @@ class ServizioControllerTest extends AbstractAppTestCase
         $servizio = new Servizio();
         $servizio->setName('Secondo servizio')
             ->setEnti([$ente]);
+        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
+        $servizio->setArea('Test area');
         $this->em->persist($servizio);
         $this->em->flush();
 
@@ -107,6 +110,8 @@ class ServizioControllerTest extends AbstractAppTestCase
 
         $servizio = new Servizio();
         $servizio->setName('Terzo servizio')->setEnti([$ente, $ente2]);
+        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
+        $servizio->setArea('Test area');
         $this->em->persist($servizio);
         $this->em->flush();
 
@@ -124,35 +129,27 @@ class ServizioControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testICanSeeServicesWithPendingProceduresInStickyAreaAsLoggedInUser()
+    public function testICanSeeServicesAsAnonymousUser()
     {
         $user = $this->createCPSUser();
         $this->setupPraticheForUser($user);
 
         $numberServices = rand(1, 10);
 
-
         for ($i = 1; $i <= $numberServices; $i++) {
             $servizio = new Servizio();
             $servizio->setName('Servizio '.$i);
+            $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
+            $servizio->setArea('Test area');
             $this->em->persist($servizio);
-            $this->em->flush();
         }
+        $this->em->flush();
 
         $repo = $this->em->getRepository("AppBundle:Servizio");
         $serviceCountAfterInsert = count($repo->findAll());
-        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
-        $stickyRenderedServices = $crawler->filter('.sticky')->filter('.servizio');
-        $stickyRenderedServicesCount = $stickyRenderedServices->count();
-        $nonstickyRenderedServicesCount = $crawler->filter('.list')->filter('.servizio')->count();
-        $this->assertEquals($serviceCountAfterInsert, $stickyRenderedServicesCount + $nonstickyRenderedServicesCount);
-
-        $primoServizioSticky = $stickyRenderedServices->eq(0)->filter('a')->attr('href');
-        $route = $this->router->match($primoServizioSticky);
-        $servizioSlug = $route['slug'];
-        $persistedServizio = $this->em->getRepository('AppBundle:Servizio')->findBySlug($servizioSlug);
-        $pratichePendingPerServizio = $this->em->getRepository('AppBundle:Pratica')->findBy(['user' => $user, 'servizio' => $persistedServizio]);
-        $this->assertGreaterThan(0, count($pratichePendingPerServizio));
-        $this->assertEquals(Pratica::STATUS_PENDING, $pratichePendingPerServizio[0]->getStatus());
+        $crawler = $this->client->request('GET', $this->router->generate('servizi_list'));
+        $renderedServices = $crawler->filter('.list')->filter('.servizio');
+        $renderedServicesCount = $renderedServices->count();
+        $this->assertEquals($serviceCountAfterInsert, $renderedServicesCount);
     }
 }

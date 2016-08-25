@@ -202,7 +202,7 @@ class OperatoriController extends Controller
                 'data' => $this->getUser()->getFullName(),
             ])
             ->add('save', SubmitType::class, [
-                'label' => $translator->trans('aggiungi_commento'),
+                'label' => $translator->trans('operatori.aggiungi_commento'),
                 'attr' => [
                     'class' => 'btn btn-success',
                 ],

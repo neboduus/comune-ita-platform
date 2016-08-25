@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Class DefaultController
@@ -24,22 +25,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/")
+     * @Route("/", name="home")
      *
      * @return Response
      */
     public function indexAction()
     {
-        $user = $this->getUser();
-        return $this->render('AppBundle:Default:index.html.twig', array('user' => $user));
+        return $this->forward('AppBundle:Servizi:servizi');
     }
 
     /**
      * @Route("/terms_accept/", name="terms_accept")
-     *
+     * @Template()
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return array
      */
     public function termsAcceptAction(Request $request)
     {
@@ -53,17 +53,17 @@ class DefaultController extends Controller
         $user = $this->getUser();
 
         if ($form->isSubmitted()) {
-            $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'app_default_index';
+            $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'home';
             $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
             return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute, $redirectRouteParams);
         }else{
             $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
         }
 
-        return $this->render('AppBundle:Default:terms_accept.html.twig', array(
+        return [
             'form' => $form->createView(),
             'terms' => $terms
-        ));
+        ];
     }
 
     /**

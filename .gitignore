@@ -16,3 +16,6 @@
 /web/bundles/
 /bin/*
 /web/css
+/bower_components
+/node_modules
+/web/js

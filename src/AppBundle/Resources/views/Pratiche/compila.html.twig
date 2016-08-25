@@ -1,0 +1,142 @@
+{% extends '@App/Default/index.html.twig' %}
+
+
+{% block stylesheets %}
+    {#{% stylesheets '@CraueFormFlowBundle/Resources/assets/css/buttons.css' %}#}
+    <link type="text/css" rel="stylesheet" href="{{ asset('@CraueFormFlowBundle/Resources/assets/css/buttons.css') }}" />
+    {#{% endstylesheets %}#}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function() {
+
+            function addComponenteForm($collectionHolder, $newLinkLi) {
+                var prototype = $collectionHolder.data('prototype');
+                var index = $collectionHolder.data('index');
+                var newForm = prototype.replace(/__name__/g, index);
+                $collectionHolder.data('index', index + 1);
+                var $newFormLi = $('<li></li>').append(newForm);
+                $newLinkLi.before($newFormLi);
+            }
+
+            function addDeleteLink($li) {
+                var $removeFormA = $('<a href="#" class="btn btn-xs btn-danger">{{ 'pratica.cancella_elemento'|trans() }}</a>');
+                $li.append($removeFormA);
+                $removeFormA.on('click', function(e) {
+                    e.preventDefault();
+                    $li.remove();
+                });
+            }
+
+            function setupAddAndRemoveLinks($collectionHolder, $newLinkLi) {
+                $collectionHolder.find('li').each(function () {
+                    addDeleteLink($(this).find('div.well'));
+                });
+                $collectionHolder.append($newLinkLi);
+                $collectionHolder.data('index', $collectionHolder.find(':input').length);
+            }
+
+            {% if form.nucleo_familiare is defined %}
+            var $addComponenteNucleoFamiliare = $('<a href="#" class="btn btn-md btn-primary add_componente_nucleo_familiare">{{ 'pratica.aggiungi_componente_nucleo_familiare'|trans() }}</a>');
+            var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
+            var $collectionHolder = $('ul.nucleo_familiare');
+
+            $addComponenteNucleoFamiliare.on('click', function(e) {
+                e.preventDefault();
+                addComponenteForm($collectionHolder, $newLinkLi);
+            });
+            setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+            {% elseif form.allegati is defined %}
+            var $addAllegato = $('<a href="#" class="btn btn-md btn-primary add_allegato">{{ 'pratica.aggiungi_allegato'|trans() }}</a>');
+            var $newLinkLi = $('<li></li>').append($addAllegato);
+            var $collectionHolder = $('ul.allegati');
+
+            $addAllegato.on('click', function (e) {
+                e.preventDefault();
+                addComponenteForm($collectionHolder, $newLinkLi);
+            });
+            setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+            {% endif %}
+
+        });
+    </script>
+{% endblock %}
+
+{% block main_content %}
+
+    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+    <div class="container-fluid">
+        <div class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Nuova pratica - Iscrizione asilo nido</h1>
+                </div>
+            </div>
+            <div class="row hidden-xs">
+                <div class="col-md-12">
+                    {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row step-{{ flow.getCurrentStepNumber() }}">
+
+                        <h3>Step {{ flow.getCurrentStepNumber() }} -  {{ flow.currentStepLabel()|trans }}</h3>
+                        {{ form_start(form) }}
+                        {{ form_errors(form) }}
+
+                        <div>
+                            {{ form.vars.helper.descriptionText|raw }}
+                        </div>
+
+                        <div>
+                            {{ form.vars.helper.guideText|raw }}
+                        </div>
+
+
+                        {% if form.nucleo_familiare is defined %}
+                            <ul class="list-unstyled nucleo_familiare" data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
+                                {% for componente in form.nucleo_familiare %}
+                                    <li><div class="well well-sm">{{ form_row(componente) }}</div></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+
+                        {% if form.allegati is defined %}
+                            <ul class="list-unstyled allegati" data-prototype="{{ form_widget(form.allegati.vars.prototype)|e('html_attr') }}">
+                                {% for allegato in form.allegati %}
+                                    <li><div class="well well-sm">{{ form_row(allegato) }}</div></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+                            @todo stampare form.data
+                        {% endif %}
+
+                        {{ form_rest(form) }}
+
+                        {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
+                        {{ form_end(form) }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 col-md-offset-1 sidebar">
+                    <h3><i class="fa fa-info" aria-hidden="true"></i> Info</h3>
+                    <div class="alert alert-info" role="alert">Note e suggerimenti per la compilazione dello step corrente</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
