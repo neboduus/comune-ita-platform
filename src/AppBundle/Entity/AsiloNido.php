@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -10,6 +11,7 @@ use Ramsey\Uuid\UuidInterface;
 /**
  * @ORM\Entity
  * @ORM\Table(name="asilo_nido")
+ * @ORM\HasLifecycleCallbacks
  */
 class AsiloNido
 {
@@ -31,10 +33,16 @@ class AsiloNido
      */
     private $schedaInformativa;
 
+    /**
+     * @var string
+     * @ORM\Column(type="text" , nullable=true)
+     */
+    private $orari;
+
 
     public function __construct()
     {
-        if ( !$this->id) {
+        if (!$this->id) {
             $this->id = Uuid::uuid4();
         }
     }
@@ -90,6 +98,58 @@ class AsiloNido
     function __toString()
     {
         return (string)$this->getId();
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrari()
+    {
+        if (!is_array($this->orari)) {
+            $this->convertOrariToString();
+        }
+
+        return $this->orari;
+    }
+
+    /**
+     * @param string[] $orari
+     *
+     * @return AsiloNido
+     */
+    public function setOrari($orari)
+    {
+        $this->orari = $orari;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PreFlush()
+     */
+    public function convertOrariToString()
+    {
+        $data = (array)$this->getOrari();
+        foreach ($data as $element) {
+            $data[] = $element;
+        }
+        $this->orari = serialize($data);
+    }
+
+    /**
+     * @ORM\PostLoad()
+     * @ORM\PostUpdate()
+     */
+    public function parseOrariStringIntoArray()
+    {
+        $collection = array();
+        if ($this->orari !== null) {
+            $data = unserialize($this->orari);
+            foreach ($data as $element) {
+                $collection[] = $element;
+            }
+        }
+        $this->orari = array_unique($collection);
     }
 
 }

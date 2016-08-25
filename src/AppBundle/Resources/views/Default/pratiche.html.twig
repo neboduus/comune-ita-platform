@@ -8,7 +8,9 @@
 
 
 {% for pratica in pratiche %}
-    <div class="pratica" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">{{ pratica.servizio.name }}</div>
+    <div class="pratica" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">
+        <a href="{{ path('pratiche_compila', {'pratica': pratica.id}) }}">{{ pratica.servizio.name }}</a>
+    </div>
 {% endfor %}
 
 {% endblock %}

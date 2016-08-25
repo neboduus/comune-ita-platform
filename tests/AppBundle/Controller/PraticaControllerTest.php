@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AsiloNido;
+use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\OperatoreUser;
@@ -14,6 +15,7 @@ use AppBundle\Form\IscrizioneAsiloNido\DatiRichiedenteType;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bridge\Monolog\Logger;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
@@ -40,6 +42,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
+        $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
@@ -210,12 +213,14 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->selezioneComune($crawler, $nextButton, $ente, $form);
         $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);
         $this->terminiFruizione($asiloSelected, $crawler, $nextButton, $form);
+        $this->selezioneOrari($asiloSelected, $crawler, $nextButton, $form);
         $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
+        $this->datiBambino($crawler, $nextButton, $form);
         $this->composizioneNucleoFamiliare($crawler, $nextButton, $form);
 
         $numberOfExpectedAttachments = 1;
         $formCrawler = $crawler->filter('form[name="iscrizione_asilo_nido_allegati"]');
-        $this->appendPrototypeDom($crawler->filter('.allegati')->getNode(0), 0, $numberOfExpectedAttachments);
+        $this->appendPrototypeDom($formCrawler->filter('.allegati')->getNode(0), 0, $numberOfExpectedAttachments);
         $form = $formCrawler->form();
         $values = $form->getValues();
         $values['iscrizione_asilo_nido_allegati[allegati][0][description]'] = 'pippo';
@@ -264,7 +269,9 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->selezioneComune($crawler, $nextButton, $ente, $form);
         $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);
         $this->terminiFruizione($asiloSelected, $crawler, $nextButton, $form);
+        $this->selezioneOrari($asiloSelected, $crawler, $nextButton, $form);
         $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
+        $this->datiBambino($crawler, $nextButton, $form);
         $this->composizioneNucleoFamiliare($crawler, $nextButton, $form);
         $this->allegati($crawler, $numberOfExpectedAttachments, $form);
 
@@ -332,6 +339,9 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         // Termini di fruizione della struttura
         $this->terminiFruizione($asiloSelected, $crawler, $nextButton, $form);
+
+        // Selezione orari
+        $this->selezioneOrari($asiloSelected, $crawler, $nextButton, $form);
 
         // Dati richiedente
         $fillData = array();
@@ -409,12 +419,22 @@ class PraticaControllerTest extends AbstractAppTestCase
     {
         $asilo = new AsiloNido();
         $asilo->setName('Asilo nido Bimbi belli')
-            ->setSchedaInformativa('Test');
+            ->setSchedaInformativa('Test')
+            ->setOrari([
+                'orario intero dalle 8:00 alle 16:00',
+                'orario ridotto mattutino dalle 8:00 alle 13:00',
+                'orario prolungato dalle 8:00 alle 19:00',
+            ]);
         $this->em->persist($asilo);
 
         $asilo1 = new AsiloNido();
         $asilo1->setName('Asilo nido Bimbi buoni')
-            ->setSchedaInformativa('Test');
+            ->setSchedaInformativa('Test')
+            ->setOrari([
+                'orario intero dalle 8:00 alle 16:00',
+                'orario ridotto mattutino dalle 8:00 alle 13:00',
+                'orario prolungato dalle 8:00 alle 19:00',
+            ]);;
         $this->em->persist($asilo1);
 
         $ente = new Ente();
@@ -497,7 +517,7 @@ class PraticaControllerTest extends AbstractAppTestCase
      * @param $ente
      * @param $crawler
      * @param $nextButton
-     * @param $asiloSelected
+     * @param AsiloNido $asiloSelected
      * @param $form
      */
     protected function selezioneAsilo($ente, &$crawler, $nextButton, &$asiloSelected, &$form)
@@ -514,7 +534,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     }
 
     /**
-     * @param $asiloSelected
+     * @param AsiloNido $asiloSelected
      * @param $crawler
      * @param $nextButton
      * @param $form
@@ -532,7 +552,30 @@ class PraticaControllerTest extends AbstractAppTestCase
     }
 
     /**
-     * @param $crawler
+     * @param AsiloNido $asiloSelected
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $form
+     */
+    protected function selezioneOrari($asiloSelected, &$crawler, $nextButton, &$form)
+    {
+        $orarioSelected = null;
+        foreach($asiloSelected->getOrari() as $orario) {
+            $this->assertContains($orario, $this->client->getResponse()->getContent());
+            $orarioSelected = $orario;
+        }
+
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'iscrizione_asilo_nido_orari[periodo_iscrizione_da]' => '01-09-2016',
+            'iscrizione_asilo_nido_orari[periodo_iscrizione_a]' => '01-09-2017',
+            'iscrizione_asilo_nido_orari[struttura_orario]' => $orarioSelected,
+        ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param Crawler $crawler
      * @param $nextButton
      * @param $fillData
      * @param $form
@@ -555,7 +598,25 @@ class PraticaControllerTest extends AbstractAppTestCase
     }
 
     /**
-     * @param $crawler
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $form
+     */
+    protected function datiBambino(&$crawler, $nextButton, &$form)
+    {
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'iscrizione_asilo_nido_bambino[bambino_nome]' => 'Ciccio',
+            'iscrizione_asilo_nido_bambino[bambino_cognome]' => 'Balena',
+            'iscrizione_asilo_nido_bambino[bambino_luogo_nascita]' => 'Fantasilandia',
+            'iscrizione_asilo_nido_bambino[bambino_data_nascita]' => '01-09-2016',
+
+        ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param Crawler $crawler
      * @param $nextButton
      * @param $form
      */
@@ -580,7 +641,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     }
 
     /**
-     * @param $crawler
+     * @param Crawler $crawler
      * @param $numberOfExpectedAttachments
      * @param $form
      */

@@ -20,6 +20,7 @@ class AllegatiType extends AbstractType
     {
         $builder->add('allegati', CollectionType::class, [
             'entry_type' => AllegatoType::class,
+            "entry_options" => ["label" => false],
             'allow_add' => true,
             'by_reference' => false,
         ]);

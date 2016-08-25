@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class IscrizioneAsiloNido
@@ -17,13 +18,13 @@ class IscrizioneAsiloNido extends Pratica
      * @var bool
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $accetto_istruzioni;
+    private $accettoIstruzioni;
 
     /**
      * @var bool
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $accetto_utilizzo;
+    private $accettoUtilizzo;
 
     /**
      * @var AsiloNido
@@ -37,105 +38,102 @@ class IscrizioneAsiloNido extends Pratica
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $richiedente_nome;
+    private $strutturaOrario;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $periodoIscrizioneDa;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $periodoIscrizioneA;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $richiedente_cognome;
+    private $richiedenteNome;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $richiedente_luogo_nascita;
+    private $richiedenteCognome;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteLuogoNascita;
 
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $richiedente_data_nascita;
+    private $richiedenteDataNascita;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $richiedente_indirizzo_residenza;
+    private $richiedenteIndirizzoResidenza;
 
     /**
      * @var string
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $richiedente_cap_residenza;
+    private $richiedenteCapResidenza;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $richiedente_citta_residenza;
+    private $richiedenteCittaResidenza;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $richiedente_telefono;
+    private $richiedenteTelefono;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
-    private $richiedente_email;
+    private $richiedenteEmail;
 
     /**
-     * @var ArrayCollection
-     * @ORM\Column(type="array", nullable=true)
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
      */
-    private $nucleo_familiare;
+    private $bambinoNome;
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $bambinoCognome;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $bambinoLuogoNascita;
+
+    /**
+     * @var string
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $bambinoDataNascita;
 
     public function __construct()
     {
         parent::__construct();
         $this->type = self::TYPE_ISCRIZIONE_ASILO_NIDO;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNucleoFamiliare()
-    {
-        if (!$this->nucleo_familiare instanceof ArrayCollection) {
-            $this->stringToArray();
-        }
-
-        return $this->nucleo_familiare;
-    }
-
-    /**
-     * @param ComponenteNucleoFamiliare $componente
-     *
-     * @return $this
-     */
-    public function addComponenteNucleoFamiliare(ComponenteNucleoFamiliare $componente)
-    {
-        if (!$this->nucleo_familiare->contains($componente)) {
-            $this->nucleo_familiare->add($componente);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $nucleoFamiliare
-     *
-     * @return $this
-     */
-    public function setNucleoFamiliare($nucleoFamiliare)
-    {
-        $this->nucleo_familiare = $nucleoFamiliare;
-
-        return $this;
     }
 
     /**
@@ -168,17 +166,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function isAccettoIstruzioni()
     {
-        return $this->accetto_istruzioni;
+        return $this->accettoIstruzioni;
     }
 
     /**
-     * @param boolean $accetto_istruzioni
+     * @param boolean $accettoIstruzioni
      *
      * @return IscrizioneAsiloNido
      */
-    public function setAccettoIstruzioni($accetto_istruzioni)
+    public function setAccettoIstruzioni($accettoIstruzioni)
     {
-        $this->accetto_istruzioni = $accetto_istruzioni;
+        $this->accettoIstruzioni = $accettoIstruzioni;
 
         return $this;
     }
@@ -188,17 +186,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function isAccettoUtilizzo()
     {
-        return $this->accetto_utilizzo;
+        return $this->accettoUtilizzo;
     }
 
     /**
-     * @param boolean $accetto_utilizzo
+     * @param boolean $accettoUtilizzo
      *
      * @return IscrizioneAsiloNido
      */
-    public function setAccettoUtilizzo($accetto_utilizzo)
+    public function setAccettoUtilizzo($accettoUtilizzo)
     {
-        $this->accetto_utilizzo = $accetto_utilizzo;
+        $this->accettoUtilizzo = $accettoUtilizzo;
 
         return $this;
     }
@@ -208,17 +206,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteNome()
     {
-        return $this->richiedente_nome;
+        return $this->richiedenteNome;
     }
 
     /**
-     * @param string $richiedente_nome
+     * @param string $richiedenteNome
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteNome($richiedente_nome)
+    public function setRichiedenteNome($richiedenteNome)
     {
-        $this->richiedente_nome = $richiedente_nome;
+        $this->richiedenteNome = $richiedenteNome;
 
         return $this;
     }
@@ -228,17 +226,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteCognome()
     {
-        return $this->richiedente_cognome;
+        return $this->richiedenteCognome;
     }
 
     /**
-     * @param string $richiedente_cognome
+     * @param string $richiedenteCognome
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteCognome($richiedente_cognome)
+    public function setRichiedenteCognome($richiedenteCognome)
     {
-        $this->richiedente_cognome = $richiedente_cognome;
+        $this->richiedenteCognome = $richiedenteCognome;
 
         return $this;
     }
@@ -248,17 +246,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteLuogoNascita()
     {
-        return $this->richiedente_luogo_nascita;
+        return $this->richiedenteLuogoNascita;
     }
 
     /**
-     * @param string $richiedente_luogo_nascita
+     * @param string $richiedenteLuogoNascita
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteLuogoNascita($richiedente_luogo_nascita)
+    public function setRichiedenteLuogoNascita($richiedenteLuogoNascita)
     {
-        $this->richiedente_luogo_nascita = $richiedente_luogo_nascita;
+        $this->richiedenteLuogoNascita = $richiedenteLuogoNascita;
 
         return $this;
     }
@@ -268,17 +266,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteDataNascita()
     {
-        return $this->richiedente_data_nascita;
+        return $this->richiedenteDataNascita;
     }
 
     /**
-     * @param string $richiedente_data_nascita
+     * @param string $richiedenteDataNascita
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteDataNascita($richiedente_data_nascita)
+    public function setRichiedenteDataNascita($richiedenteDataNascita)
     {
-        $this->richiedente_data_nascita = $richiedente_data_nascita;
+        $this->richiedenteDataNascita = $richiedenteDataNascita;
 
         return $this;
     }
@@ -288,17 +286,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteIndirizzoResidenza()
     {
-        return $this->richiedente_indirizzo_residenza;
+        return $this->richiedenteIndirizzoResidenza;
     }
 
     /**
-     * @param string $richiedente_indirizzo_residenza
+     * @param string $richiedenteIndirizzoResidenza
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteIndirizzoResidenza($richiedente_indirizzo_residenza)
+    public function setRichiedenteIndirizzoResidenza($richiedenteIndirizzoResidenza)
     {
-        $this->richiedente_indirizzo_residenza = $richiedente_indirizzo_residenza;
+        $this->richiedenteIndirizzoResidenza = $richiedenteIndirizzoResidenza;
 
         return $this;
     }
@@ -308,17 +306,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteCapResidenza()
     {
-        return $this->richiedente_cap_residenza;
+        return $this->richiedenteCapResidenza;
     }
 
     /**
-     * @param string $richiedente_cap_residenza
+     * @param string $richiedenteCapResidenza
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteCapResidenza($richiedente_cap_residenza)
+    public function setRichiedenteCapResidenza($richiedenteCapResidenza)
     {
-        $this->richiedente_cap_residenza = $richiedente_cap_residenza;
+        $this->richiedenteCapResidenza = $richiedenteCapResidenza;
 
         return $this;
     }
@@ -328,17 +326,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteCittaResidenza()
     {
-        return $this->richiedente_citta_residenza;
+        return $this->richiedenteCittaResidenza;
     }
 
     /**
-     * @param string $richiedente_citta_residenza
+     * @param string $richiedenteCittaResidenza
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteCittaResidenza($richiedente_citta_residenza)
+    public function setRichiedenteCittaResidenza($richiedenteCittaResidenza)
     {
-        $this->richiedente_citta_residenza = $richiedente_citta_residenza;
+        $this->richiedenteCittaResidenza = $richiedenteCittaResidenza;
 
         return $this;
     }
@@ -348,17 +346,17 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteTelefono()
     {
-        return $this->richiedente_telefono;
+        return $this->richiedenteTelefono;
     }
 
     /**
-     * @param string $richiedente_telefono
+     * @param string $richiedenteTelefono
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteTelefono($richiedente_telefono)
+    public function setRichiedenteTelefono($richiedenteTelefono)
     {
-        $this->richiedente_telefono = $richiedente_telefono;
+        $this->richiedenteTelefono = $richiedenteTelefono;
 
         return $this;
     }
@@ -368,47 +366,159 @@ class IscrizioneAsiloNido extends Pratica
      */
     public function getRichiedenteEmail()
     {
-        return $this->richiedente_email;
+        return $this->richiedenteEmail;
     }
 
     /**
-     * @param string $richiedente_email
+     * @param string $richiedenteEmail
      *
      * @return IscrizioneAsiloNido
      */
-    public function setRichiedenteEmail($richiedente_email)
+    public function setRichiedenteEmail($richiedenteEmail)
     {
-        $this->richiedente_email = $richiedente_email;
+        $this->richiedenteEmail = $richiedenteEmail;
 
         return $this;
     }
 
     /**
-     * @ORM\PreFlush()
+     * @return string
      */
-    public function arrayToString()
+    public function getBambinoNome()
     {
-        $data = (array)$this->getNucleoFamiliare()->toArray();
-        foreach ($data as $element) {
-            $data[] = $element;
-        }
-        $this->nucleo_familiare = serialize($data);
+        return $this->bambinoNome;
     }
 
     /**
-     * @ORM\PostLoad()
-     * @ORM\PostUpdate()
+     * @param string $bambinoNome
+     *
+     * @return IscrizioneAsiloNido
      */
-    public function stringToArray()
+    public function setBambinoNome($bambinoNome)
     {
-        $collection = new ArrayCollection();
-        if ($this->nucleo_familiare !== null) {
-            $data = unserialize($this->nucleo_familiare);
-            foreach ($data as $element) {
-                $collection->add($element);
-            }
-        }
-        $this->nucleo_familiare = $collection;
+        $this->bambinoNome = $bambinoNome;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBambinoCognome()
+    {
+        return $this->bambinoCognome;
+    }
+
+    /**
+     * @param string $bambinoCognome
+     *
+     * @return IscrizioneAsiloNido
+     */
+    public function setBambinoCognome($bambinoCognome)
+    {
+        $this->bambinoCognome = $bambinoCognome;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBambinoLuogoNascita()
+    {
+        return $this->bambinoLuogoNascita;
+    }
+
+    /**
+     * @param string $bambinoLuogoNascita
+     *
+     * @return IscrizioneAsiloNido
+     */
+    public function setBambinoLuogoNascita($bambinoLuogoNascita)
+    {
+        $this->bambinoLuogoNascita = $bambinoLuogoNascita;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getBambinoDataNascita()
+    {
+        return $this->bambinoDataNascita;
+    }
+
+    /**
+     * @param DateTime $bambinoDataNascita
+     *
+     * @return IscrizioneAsiloNido
+     */
+    public function setBambinoDataNascita($bambinoDataNascita)
+    {
+        $this->bambinoDataNascita = $bambinoDataNascita;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStrutturaOrario()
+    {
+        return $this->strutturaOrario;
+    }
+
+    /**
+     * @param string $strutturaOrario
+     *
+     * @return IscrizioneAsiloNido
+     */
+    public function setStrutturaOrario($strutturaOrario)
+    {
+        $this->strutturaOrario = $strutturaOrario;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getPeriodoIscrizioneDa()
+    {
+        return $this->periodoIscrizioneDa;
+    }
+
+    /**
+     * @param DateTime $periodoIscrizioneDa
+     *
+     * @return IscrizioneAsiloNido
+     */
+    public function setPeriodoIscrizioneDa($periodoIscrizioneDa)
+    {
+        $this->periodoIscrizioneDa = $periodoIscrizioneDa;
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getPeriodoIscrizioneA()
+    {
+        return $this->periodoIscrizioneA;
+    }
+
+    /**
+     * @param DateTime $periodoIscrizioneA
+     *
+     * @return IscrizioneAsiloNido
+     */
+    public function setPeriodoIscrizioneA($periodoIscrizioneA)
+    {
+        $this->periodoIscrizioneA = $periodoIscrizioneA;
+
+        return $this;
     }
 
 }
