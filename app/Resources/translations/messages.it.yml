@@ -18,11 +18,31 @@ home:
 terms:
   title: 'Accettazione termini di utilizzo'
 
+servizio:
+  enti_coinvolti: 'Enti coinvolti'
+  cancellato: 'Il servizio è stato cancellato'
+  sospeso: 'Il servizio è stato sospeso'
+  accedi_al_servizio: 'Accedi al servizio %name%'
 
+pratica:
+  vai_alla_pratica: 'Vai alla pratica'
+  empty: 'Non sono presenti pratiche a tuo nome.'
+  protocollo: 'Protocollo'
+  richiedente: 'Richiedente'
+  categoria: 'Categoria'
+  data_di_compilazione: 'Data di compilazione'
+  stato: 'Stato'
+  nessun_allegato: 'Non sono presenti allegati.'
+  aggiungi_allegato: 'Aggiungi allegato'
+  aggiungi_componente_nucleo_familiare: 'Aggiungi componente del nucleo familiare'
+  cancella_elemento: 'Cancella elemento'
+  accetto_istruzioni: 'Ok mi è chiaro'
+  guida_alla_compilazione:
+    accettazione_istruzioni: 'Leggi e accetta le istruzioni di compilazione'
+    nucleo_familiare: 'Inserisci i componenti del nucleo familiare'
 
 iscrizione_asilo_nido:
   accettazioneIstruzioni: 'Istruzioni sulla procedura'
-  accetto_istruzioni: 'Ok mi è chiaro'
   selezionaEnte: 'Selezione del comune di riferimento'
   accettazioneUtilizzoNidoForm: 'Termini di fruizione della struttura'
   selezionaNido: 'Selezione della struttura'
@@ -49,18 +69,14 @@ iscrizione_asilo_nido:
   datiBambino.cognome: 'Cognome'
   datiBambino.luogo_nascita: 'Luogo di nascita'
   datiBambino.data_nascita: 'Data di nascita'
-
-pratica:
-  empty: 'Non sono presenti pratiche a tuo nome.'
-  protocollo: 'Protocollo'
-  richiedente: 'Richiedente'
-  categoria: 'Categoria'
-  data_di_compilazione: 'Data di compilazione'
-  stato: 'Stato'
-  nessun_allegato: 'Non sono presenti allegati.'
-  aggiungi_allegato: 'Aggiungi allegato'
-  aggiungi_componente_nucleo_familiare: 'Aggiungi componente del nucleo familiare'
-  cancella_elemento: 'Cancella elemento'
+  guida_alla_compilazione:
+    seleziona_ente: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
+    seleziona_nido: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
+    accettazione_utilizzo_nido: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
+    allegati: "Inserisci gli allegati: <ul><li>la dichiarazione ICEF</li><li>...</li></ul>"
+    dati_bambino: 'Inserisci i dati del bambino che intendi iscrivere'
+    dati_richiedente: 'I dati del richiedenti non sono modificabili dal momento che vengono utilizzati i dati presenti nella Carta dei servizi con cui ti sei autenticato nel sistema'
+    seleziona_orari: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
 
 errori:
   allegato:

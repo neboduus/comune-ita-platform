@@ -18,19 +18,21 @@ class AccettazioneIstruzioniType extends AbstractType
             $builder->getData()->getServizio()->getTestoIstruzioni()
         );
 
+        $helper->setGuideText('pratica.guida_alla_compilazione.accettazione_istruzioni', true);
+
         $builder->add(
             'accetto_istruzioni',
             CheckboxType::class,
             [
                 "required" => true,
-                "label" => 'iscrizione_asilo_nido.accetto_istruzioni',
+                "label" => 'pratica.accetto_istruzioni',
             ]
         );
     }
 
     public function getBlockPrefix()
     {
-        return 'iscrizione_asilo_nido_accettazione_istruzioni';
+        return 'pratica_accettazione_istruzioni';
     }
 
 }

@@ -9,35 +9,7 @@
         </div>
         <div class="row">
             <div class="col-md-7">
-
-                <!-- div class="alert alert-success" role="alert"><i class="fa fa-check" aria-hidden="true"></i> Lorem ipsum dolor site amet</div>
-                <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> Lorem ipsum dolor sit amet</div>
-                <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Lorem ipsum dolor sit amet</div>
-                <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> Lorem ipsum dolor sit amet</div -->
-
-                <h3>Riassunto dati inseriti</h3>
-                <ul>
-                    <li>Servizio: {{ pratica.servizio.name }}</li>
-                    <li>Ente: {{ pratica.ente.name }}</li>
-                    <li>Presentata da: {{ pratica.user.fullName }}</li>
-                    <li>Il il {{ pratica.creationTime|date('d/m/Y') }} alle {{ pratica.creationTime|date('H:i') }} </li>
-                    <li>Stato: {{ pratica.status }} TODO:mappare</li>
-                </ul>
-
-                <h3>Nucleo Familiare</h3>
-                {% for componente in pratica.nucleoFamiliare %}
-                    <a class="btn btn-info btn-sm"><i class="fa fa-circle" aria-hidden="true"></i> {{ componente.nome }} {{ componente.cognome }} {{ componente.rapportoParentela }}</a>
-                {% endfor %}
-                <h3>Allegati</h3>
-                <ul class="list-unstyled list-inline">
-                    {% for allegato in pratica.allegati %}
-                        <li>
-                            <a class="btn btn-info btn-sm" href="{{ path('allegati_download_cpsuser',{allegato: allegato.id}) }}">
-                                <i class="fa fa-file" aria-hidden="true"></i>{{ allegato.originalFilename }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
+                {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
             </div>
 
 

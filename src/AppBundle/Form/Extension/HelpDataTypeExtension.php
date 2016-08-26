@@ -8,9 +8,19 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class HelpDataTypeExtension extends AbstractTypeExtension
 {
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -24,7 +34,7 @@ class HelpDataTypeExtension extends AbstractTypeExtension
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['helper' => new TestiAccompagnatoriProcedura()]);
+        $resolver->setDefaults(['helper' => new TestiAccompagnatoriProcedura($this->translator)]);
     }
 
     public function getExtendedType()

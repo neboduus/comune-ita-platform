@@ -179,7 +179,7 @@ class PraticaControllerTest extends AbstractAppTestCase
             ['servizio' => $servizio->getSlug()]
         ));
 
-        $this->assertContains('iscrizione_asilo_nido_accettazione_istruzioni', $this->client->getResponse()->getContent());
+        $this->assertContains('pratica_accettazione_istruzioni', $this->client->getResponse()->getContent());
     }
 
     /**
@@ -300,7 +300,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     {
         // Accettazioni istruzioni
         $form = $crawler->selectButton($nextButton)->form(array(
-            'iscrizione_asilo_nido_accettazione_istruzioni[accetto_istruzioni]' => 1,
+            'pratica_accettazione_istruzioni[accetto_istruzioni]' => 1,
         ));
         $crawler = $this->client->submit($form);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");

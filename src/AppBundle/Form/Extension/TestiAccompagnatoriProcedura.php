@@ -2,12 +2,23 @@
 
 namespace AppBundle\Form\Extension;
 
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TestiAccompagnatoriProcedura
 {
     private $guideText;
 
     private $descriptionText;
+
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * @return mixed
@@ -19,12 +30,13 @@ class TestiAccompagnatoriProcedura
 
     /**
      * @param mixed $guideText
+     * @param boolean $translate
      *
      * @return TestiAccompagnatoriProcedura
      */
-    public function setGuideText($guideText)
+    public function setGuideText($guideText, $translate = false)
     {
-        $this->guideText = $guideText;
+        $this->guideText = $translate ? $this->translator->trans($guideText) : $guideText;
 
         return $this;
     }
@@ -39,12 +51,13 @@ class TestiAccompagnatoriProcedura
 
     /**
      * @param mixed $descriptionText
+     * @param boolean $translate
      *
      * @return TestiAccompagnatoriProcedura
      */
-    public function setDescriptionText($descriptionText)
+    public function setDescriptionText($descriptionText, $translate = false)
     {
-        $this->descriptionText = $descriptionText;
+        $this->descriptionText = $translate ? $this->translator->trans($descriptionText) : $descriptionText;;
 
         return $this;
     }

@@ -164,7 +164,7 @@ class Servizio
      *
      * @return $this
      */
-    public function setArea(string $area)
+    public function setArea($area)
     {
         $this->area = $area;
 
@@ -181,10 +181,14 @@ class Servizio
 
     /**
      * @param string $description
+     *
+     * @return $this
      */
     public function setDescription(string $description)
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
