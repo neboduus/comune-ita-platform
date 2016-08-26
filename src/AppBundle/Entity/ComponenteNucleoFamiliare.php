@@ -8,7 +8,7 @@ use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="componente_nucleo_familiare",uniqueConstraints={@ORM\UniqueConstraint(name="componente_nucleo_familiare_idx",columns={"pratica_id","codice_fiscale"})})
+ * @ORM\Table(name="componente_nucleo_familiare")
  */
 class ComponenteNucleoFamiliare
 {

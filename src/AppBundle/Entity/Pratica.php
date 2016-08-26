@@ -63,7 +63,7 @@ class Pratica
     private $operatore;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Allegato", mappedBy="pratica", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Allegato", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
      * @var ArrayCollection
      * @Assert\Valid(traverse=true)
      */
@@ -395,6 +395,7 @@ class Pratica
     {
         if ($this->allegati->contains($allegato)) {
             $this->allegati->removeElement($allegato);
+            $allegato->setPratica(null);
         }
 
         return $this;

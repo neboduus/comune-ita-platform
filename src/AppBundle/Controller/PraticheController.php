@@ -143,7 +143,6 @@ class PraticheController extends Controller
 
         if ($flow->isValid($form)) {
             $flow->saveCurrentStepData($form);
-
             if ($flow->getCurrentStepNumber() == IscrizioneAsiloNidoFlow::STEP_ALLEGATI) {
                 $errors = $this->get('validator')->validate($pratica);
                 if ($errors->count() > 0) {
