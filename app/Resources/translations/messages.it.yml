@@ -73,6 +73,18 @@ STATUS_COMPLETE: 'Accettata'
 STATUS_REGISTERED: 'Protocollata'
 STATUS_PENDING: 'In attesa'
 
+user:
+  dashboard:
+    title: 'Dashboard utente'
+    pratiche_draft: 'Pratiche in bozza'
+    pratiche_pending: 'Pratiche in attesa'
+    pratiche_completed: 'Pratiche accettate'
+    pratiche_cancelled: 'Pratiche rifiutate'
+    vai_al_dettaglio: 'Vedi dettaglio'
+
+  profile:
+    title: 'Profilo utente'
+
 operatori:
   vai_al_dettaglio: 'Vedi dettaglio'
   prendi_in_carico_pratica: 'Prendi in carico'

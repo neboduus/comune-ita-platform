@@ -16,11 +16,17 @@ $gray:                   lighten($gray-base, 33.5%) !default; // #555
 $gray-light:             #dddddd !default;//lighten($gray-base, 46.7%) !default; // #777
 $gray-lighter:           #c6c6c6 !default;//lighten($gray-base, 93.5%) !default; // #eee
 
-$brand-primary:         #0066cc !default;//darken(#428bca, 6.5%) !default; // #337ab7
+/*$brand-primary:         #0066cc !default;//darken(#428bca, 6.5%) !default; // #337ab7
 $brand-success:         #5cb85c !default;
 $brand-info:            #5bc0de !default;
 $brand-warning:         #f0ad4e !default;
-$brand-danger:          #d9534f !default;
+$brand-danger:          #d9534f !default;*/
+
+$brand-primary:         #1571c1 !default;
+$brand-success:         #31bf31 !default;
+$brand-info:            #159fc1 !default;
+$brand-warning:         #f39614 !default;
+$brand-danger:          #d32822 !default;
 
 
 //== Scaffolding

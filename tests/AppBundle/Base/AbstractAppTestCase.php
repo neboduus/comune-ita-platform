@@ -234,8 +234,6 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function setupPraticheForUser(CPSUser $user)
     {
         $expectedStatuses = $this->getExpectedPraticaStatuses();
-
-
         foreach ($expectedStatuses as $status) {
             $this->createPratica($user, null, $status);
         }
