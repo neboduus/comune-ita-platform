@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Entity\User;
@@ -26,6 +27,7 @@ class DefaultControllerTest extends AbstractAppTestCase
         parent::setUp();
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->cleanDb(Allegato::class);
+        $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
         $this->cleanDb(TerminiUtilizzo::class);

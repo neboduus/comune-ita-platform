@@ -20,6 +20,8 @@ class AllegatoType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //TODO: add thumbnail if file has been submitted already
+        //otherwise add file input
         $builder->add('file', VichFileType::class, [ 'allow_delete' => false , 'required' => false ])
             ->add('description', TextType::class, [ 'required' => false ]);
     }

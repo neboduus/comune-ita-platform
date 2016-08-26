@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Controller;
 
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
@@ -26,6 +27,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         parent::setUp();
         system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
         $this->cleanDb(Allegato::class);
+        $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
     }

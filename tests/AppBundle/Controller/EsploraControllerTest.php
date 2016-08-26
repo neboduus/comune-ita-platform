@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
@@ -22,6 +23,7 @@ class EsploraControllerTest extends AbstractAppTestCase
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
+        $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
         $this->cleanDb(Ente::class);
     }

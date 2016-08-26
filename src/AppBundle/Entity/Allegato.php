@@ -150,7 +150,7 @@ class Allegato
      * @param string $description
      * @return Allegato
      */
-    public function setDescription(string $description): Allegato
+    public function setDescription($description): Allegato
     {
         $this->description = $description;
 
@@ -249,7 +249,7 @@ class Allegato
      */
     public function validate(ExecutionContextInterface $context, $payload)
     {
-        if (! in_array($this->file->getMimeType(), array(
+        if ($this->file == null || ! in_array($this->file->getMimeType(), array(
             'image/jpeg',
             'image/gif',
             'image/png',
