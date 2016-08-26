@@ -161,10 +161,14 @@ class Servizio
 
     /**
      * @param string $area
+     *
+     * @return $this
      */
     public function setArea(string $area)
     {
         $this->area = $area;
+
+        return $this;
     }
 
     /**
@@ -212,11 +216,15 @@ class Servizio
     }
 
     /**
-     * @param mixed $status
+     * @param $status
+     *
+     * @return $this
      */
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
     }
 
 
