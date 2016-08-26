@@ -19,7 +19,7 @@ security:
             security: false
 
         cps:
-            pattern: ^/(pratiche|servizi|terms_accept)/
+            pattern: ^/(pratiche|terms_accept)/
             guard:
                 provider: cps
                 authenticators:

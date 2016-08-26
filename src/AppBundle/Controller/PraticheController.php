@@ -11,11 +11,12 @@ use AppBundle\Entity\User;
 use AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow;
 use AppBundle\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Class PraticheController
@@ -27,10 +28,10 @@ class PraticheController extends Controller
 {
     /**
      * @Route("/", name="pratiche")
-     *
+     * @Template()
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      */
     public function indexAction(Request $request)
     {
@@ -41,7 +42,11 @@ class PraticheController extends Controller
             array('status' => 'DESC')
         );
 
-        return $this->render('AppBundle:Default:pratiche.html.twig', array('user' => $user, 'pratiche' => $pratiche, 'title' => 'lista_pratiche'));
+        return [
+            'user' => $user,
+            'pratiche' => $pratiche,
+            'title' => 'lista_pratiche'
+        ];
     }
 
     /**
@@ -83,10 +88,10 @@ class PraticheController extends Controller
     /**
      * @Route("/{servizio}/draft", name="pratiche_list_draft")
      * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
-     *
+     * @Template()
      * @param Servizio $servizio
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      */
     public function listDraftByServiceAction(Servizio $servizio)
     {
@@ -100,27 +105,24 @@ class PraticheController extends Controller
             array('creationTime' => 'ASC')
         );
 
-        return $this->render(
-            'AppBundle:Default:pratiche.html.twig',
-            array(
-                'user' => $user,
-                'pratiche' => $pratiche,
-                'title' => 'bozze_servizio',
-                'msg' => array(
-                    'type' => 'warning',
-                    'text' => 'msg_bozze_servizio'
-                )
+        return [
+            'user' => $user,
+            'pratiche' => $pratiche,
+            'title' => 'bozze_servizio',
+            'msg' => array(
+                'type' => 'warning',
+                'text' => 'msg_bozze_servizio'
             )
-        );
+        ];
     }
 
     /**
      * @Route("/compila/{pratica}", name="pratiche_compila")
      * @ParamConverter("pratica", class="AppBundle:Pratica")
-     *
+     * @Template()
      * @param IscrizioneAsiloNido $pratica
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      */
     public function compilaAction(IscrizioneAsiloNido $pratica)
     {
@@ -135,6 +137,7 @@ class PraticheController extends Controller
 
         //@todo
         /** @var FormFlowInterface $flow */
+        $user = $this->getUser();
         $flow = $this->get('ocsdc.form.flow.asilonido');
 
         $flow->bind($pratica);
@@ -183,23 +186,28 @@ class PraticheController extends Controller
             }
         }
 
-        return $this->render('@App/Default/pratiche/compila_iscrizione_asilo_nido.html.twig', array(
+        return [
             'form' => $form->createView(),
             'flow' => $flow,
-        ));
+            'user' => $user
+        ];
     }
 
     /**
      * @Route("/{pratica}", name="pratiche_show")
      * @ParamConverter("pratica", class="AppBundle:Pratica")
-     *
+     * @Template()
      * @param Pratica $pratica
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array
      */
     public function showAction(Pratica $pratica)
     {
-        return $this->render('@App/Default/pratica.html.twig', ['pratica' => $pratica]);
+        $user = $this->getUser();
+        return [
+            'pratica' => $pratica,
+            'user' => $user,
+        ];
     }
 
     private function createNewPratica(Servizio $servizio, CPSUser $user)

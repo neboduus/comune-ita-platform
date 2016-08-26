@@ -1,0 +1,36 @@
+{% set text_limit = 100 %}
+
+<article class="panel panel-default pratica" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">
+    <div class="panel-body">
+
+        {% if pratica.statusName == 'STATUS_CANCELLED' %}
+            <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+        {% elseif pratica.statusName == 'STATUS_DRAFT' %}
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+        {% elseif pratica.statusName == 'STATUS_SUBMITTED' %}
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+        {% elseif pratica.statusName == 'STATUS_COMPLETE' %}
+            <div class="alert alert-success" role="alert"><i class="fa fa-check" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+        {% elseif pratica.statusName == 'STATUS_REGISTERED' %}
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+        {% else %}
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+        {% endif %}
+
+        <time class="grigio-40-color">{{ pratica.creationTime|date("d/m/Y") }}</time>
+        <h4 class="blu-italia-base-color">{{ pratica.servizio.name }}</h4>
+        <p>{{ pratica.servizio.description|length > text_limit ? pratica.servizio.description|slice(0, text_limit) ~ '...' : pratica.servizio.description  }}</p>
+
+        <div class="row">
+            <div class="col-md-12">
+                <a class="btn btn-default" href="{{ path('pratiche_compila', {'pratica': pratica.id}) }}">
+                    <span class="fa-stack">
+                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                        <i class="fa fa-angle-right fa-stack-1x"></i>
+                    </span>
+                    Vai alla pratica
+                </a>
+            </div>
+        </div>
+    </div>
+</article>

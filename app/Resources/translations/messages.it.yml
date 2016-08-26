@@ -10,6 +10,16 @@ msg_bozze_servizio: 'Attenzione, ci sono delle pratiche in compilazione per il s
 lista_pratiche_bozza: 'Pratica in bozza'
 pratica_ricevuta: 'La tua pratica è stata registata nel sistema'
 
+home:
+  welcome:
+    title: 'Benvenuto nella "Stanza del cittadino"'
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum.'
+
+terms:
+  title: 'Accettazione termini di utilizzo'
+
+
+
 iscrizione_asilo_nido:
   accettazioneIstruzioni: 'Istruzioni sulla procedura'
   accetto_istruzioni: 'Ok mi è chiaro'
@@ -40,9 +50,47 @@ iscrizione_asilo_nido:
   datiBambino.luogo_nascita: 'Luogo di nascita'
   datiBambino.data_nascita: 'Data di nascita'
 
-pratiche_mie: 'Pratiche Mie'
-pratiche_libere: 'Pratiche da assegnare'
+pratica:
+  empty: 'Non sono presenti pratiche a tuo nome.'
+  protocollo: 'Protocollo'
+  richiedente: 'Richiedente'
+  categoria: 'Categoria'
+  data_di_compilazione: 'Data di compilazione'
+  stato: 'Stato'
+  nessun_allegato: 'Non sono presenti allegati.'
+  aggiungi_allegato: 'Aggiungi allegato'
+  aggiungi_componente_nucleo_familiare: 'Aggiungi componente del nucleo familiare'
+  cancella_elemento: 'Cancella elemento'
 
 errori:
   allegato:
     tipo_non_valido: L'allegato %s è di un tipo non supportato
+
+STATUS_CANCELLED: 'Rifiutata'
+STATUS_DRAFT: 'Bozza'
+STATUS_SUBMITTED: 'Inviata'
+STATUS_COMPLETE: 'Accettata'
+STATUS_REGISTERED: 'Protocollata'
+STATUS_PENDING: 'In attesa'
+
+operatori:
+  vai_al_dettaglio: 'Vedi dettaglio'
+  prendi_in_carico_pratica: 'Prendi in carico'
+  sicuro_di_prendere_in_carico_la_pratica: 'Confermi la presa in carico della pratica %name%?'
+  si: 'Sì, sono sicuro'
+  no: "No, annulla l'operazione"
+  pratiche_mie: 'Pratiche Mie'
+  pratiche_libere: 'Pratiche da assegnare'
+  pratiche_concluse: 'Pratiche concluse'
+  torna_alle_pratiche: "Torna all'elenco pratiche"
+  approva: 'Approva'
+  rifiuta: 'Rifiuta'
+  richiedi_intergrazioni: 'Richiedi intergrazioni'
+  allegati: 'Allegati'
+  commenti_e_modifiche: 'Commenti'
+  aggiungi_commento: 'Aggiungi commento'
+
+allegato:
+  nome_file: 'Nome del file'
+  descrizione_file: 'Descrizione del file'
+  scarica_allegato: 'Scarica file'

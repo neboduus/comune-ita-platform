@@ -1,0 +1,17 @@
+{% extends '@App/Default/index.html.twig' %}
+{% block main_content %}
+    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+    <h1>{{ 'terms.title'|trans() }}</h1>
+
+    {{ form_start(form) }}
+
+    {% for term in terms %}
+        <div class="term">{{ term.name }}</div>
+        {{ form_row(form[term.id|trim]) }}
+    {% endfor %}
+
+    {{ form_row(form.save) }}
+    {{ form_end(form) }}
+
+{% endblock %}

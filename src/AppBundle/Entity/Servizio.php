@@ -13,6 +13,11 @@ use Ramsey\Uuid\UuidInterface;
  */
 class Servizio
 {
+
+    const STATUS_CANCELLED = 0;
+    const STATUS_AVAILABLE= 1;
+    const STATUS_SUSPENDED = 2;
+
     /**
      * @ORM\Column(type="guid")
      * @ORM\Id
@@ -48,7 +53,24 @@ class Servizio
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
+    private $area;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
     private $testo_istruzioni;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $status;
 
     /**
      * Servizio constructor.
@@ -58,6 +80,7 @@ class Servizio
         if ( !$this->id) {
             $this->id = Uuid::uuid4();
         }
+        $this->status = self::STATUS_AVAILABLE;
     }
 
     /**
@@ -131,6 +154,38 @@ class Servizio
     /**
      * @return string
      */
+    public function getArea()
+    {
+        return $this->area;
+    }
+
+    /**
+     * @param string $area
+     */
+    public function setArea(string $area)
+    {
+        $this->area = $area;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
     public function getTestoIstruzioni()
     {
         return $this->testo_istruzioni;
@@ -147,5 +202,22 @@ class Servizio
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param mixed $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
 
 }

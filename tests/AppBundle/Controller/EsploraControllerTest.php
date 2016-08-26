@@ -39,7 +39,7 @@ class EsploraControllerTest extends AbstractAppTestCase
 
         $serviceCountAfterInsert = count($repo->findAll());
 
-        $crawler = $this->client->request('GET', $this->router->generate('esplora_servizi_list'));
+        $crawler = $this->client->request('GET', $this->router->generate('servizi_list'));
         $renderedServicesCount = $crawler->filter('.servizio')->count();
         $this->assertEquals( $serviceCountAfterInsert, $renderedServicesCount );
     }
@@ -51,16 +51,14 @@ class EsploraControllerTest extends AbstractAppTestCase
         $this->em->persist($servizio);
         $this->em->flush();
 
-        $servizioDetailUrl = $this->router->generate('esplora_servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
+        $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 
-        $crawler = $this->client->request('GET', '/esplora/');
+        $crawler = $this->client->request('GET', '/servizi/');
         $detailLink = $crawler->selectLink('Secondo servizio')->link()->getUri();
 
         $this->assertEquals($servizioDetailUrl, $detailLink);
 
         $this->client->request('GET', $detailLink);
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertContains($this->translator->trans('registrati_per_accedere_al_servizio'), $this->client->getResponse()->getContent());
-
     }
 }

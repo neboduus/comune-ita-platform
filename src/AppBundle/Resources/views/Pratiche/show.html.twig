@@ -1,0 +1,89 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Iscrizione asilo nido</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-7">
+
+                <!-- div class="alert alert-success" role="alert"><i class="fa fa-check" aria-hidden="true"></i> Lorem ipsum dolor site amet</div>
+                <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> Lorem ipsum dolor sit amet</div>
+                <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Lorem ipsum dolor sit amet</div>
+                <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> Lorem ipsum dolor sit amet</div -->
+
+                <h3>Riassunto dati inseriti</h3>
+                <ul>
+                    <li>Servizio: {{ pratica.servizio.name }}</li>
+                    <li>Ente: {{ pratica.ente.name }}</li>
+                    <li>Presentata da: {{ pratica.user.fullName }}</li>
+                    <li>Il il {{ pratica.creationTime|date('d/m/Y') }} alle {{ pratica.creationTime|date('H:i') }} </li>
+                    <li>Stato: {{ pratica.status }} TODO:mappare</li>
+                </ul>
+
+                <h3>Nucleo Familiare</h3>
+                {% for componente in pratica.nucleoFamiliare %}
+                    <a class="btn btn-info btn-sm"><i class="fa fa-circle" aria-hidden="true"></i> {{ componente.nome }} {{ componente.cognome }} {{ componente.rapportoParentela }}</a>
+                {% endfor %}
+                <h3>Allegati</h3>
+                <ul class="list-unstyled list-inline">
+                    {% for allegato in pratica.allegati %}
+                        <li>
+                            <a class="btn btn-info btn-sm" href="{{ path('allegati_download_cpsuser',{allegato: allegato.id}) }}">
+                                <i class="fa fa-file" aria-hidden="true"></i>{{ allegato.originalFilename }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+            <div class="col-md-4 col-md-offset-1 sidebar">
+                <h3>Iter pratica</h3>
+                <div class="panel no-border-radius">
+                    <div class="panel-body">
+                        <ul class="progress-indicator stepped stacked nocenter">
+                            <li class="completed info">
+                                <a href="#">
+                                    <span class="bubble"></span>
+                                    <span class="stacked-text">
+                                        <span class="fa fa-calendar"></span> {{ pratica.creationTime|date('d/M/y') }}
+                                        <span class="subdued">/ Compilazione</em></span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="completed">
+                                <span class="bubble"></span>
+                                <span class="stacked-text">
+                                    <span class="fa fa-calendar"></span> {#{ pratica.submissionDate|date('d/M/y') }#}
+                                    <span class="subdued">/ Invio</span>
+                                </span>
+                            </li>
+                            <li class="{% if pratica.status > 2 and pratica.status < 4 %}completed{% endif %}">
+                                <span class="bubble"></span>
+                                <span class="stacked-text">
+                                <span class="fa fa-calendar"></span> {#{ pratica.presInCaricoOperatoreDate|date('d/M/y') }#}
+                                    <span class="subdued">/ Presa in carico da <strong>{% if pratica.operatore %}{{ pratica.operatore.nome }} {{ pratica.operatore.cognome }}{% else %} &dash; {% endif %}</strong></span>
+                                </span>
+                            </li>
+                            {#<li>#}
+                            {#<span class="bubble"></span>#}
+                            {#<span class="stacked-text">#}
+                            {#<span class="fa fa-comment"></span> 3 Settembre 2016#}
+                            {#<span class="subdued">/ Domande integrative</span>#}
+                            {#</span>#}
+                            {#</li>#}
+                        </ul>
+                    </div>
+                </div>
+                <h3>Azioni</h3>
+                <div class="list-group">
+                    <a href="#" class="list-group-item">Contatta responsabile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

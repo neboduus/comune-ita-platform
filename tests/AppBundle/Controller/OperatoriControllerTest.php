@@ -446,7 +446,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $text = 'ma quante belle figlie madamadorè';
-        $form = $crawler->selectButton($this->translator->trans('aggiungi_commento'))->form();
+        $form = $crawler->selectButton($this->translator->trans('operatori.aggiungi_commento'))->form();
         $crawler = $this->client->submit($form);
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");

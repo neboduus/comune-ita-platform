@@ -1,0 +1,14 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+
+    <h2>{{ 'esplora_i_servizi'|trans() }}</h2>
+    <div class="row list">
+        {% for servizio in servizi %}
+            <div class="col-sm-4">
+                {{ include('@App/Servizi/parts/panel/servizio.html.twig') }}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

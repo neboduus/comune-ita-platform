@@ -18,7 +18,6 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Craue\FormFlowBundle\CraueFormFlowBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
-            new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new AppBundle\AppBundle(),
         ];

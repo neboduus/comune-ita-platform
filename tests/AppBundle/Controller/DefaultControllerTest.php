@@ -44,7 +44,7 @@ class DefaultControllerTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser();
 
-        $route = $this->router->generate('servizi_list');
+        $route = $this->router->generate('pratiche');
         $this->clientRequestAsCPSUser($user, 'GET', $route);
 
         $this->assertContains($user->getFullName(), $this->client->getResponse()->getContent());
@@ -71,12 +71,12 @@ class DefaultControllerTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser(false);
 
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
 
         $response = $this->client->getResponse();
 
         $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
-        $this->assertEquals($this->router->generate('terms_accept', ['r' => 'servizi_list']), $response->headers->get('location'));
+        $this->assertEquals($this->router->generate('terms_accept', ['r' => 'pratiche']), $response->headers->get('location'));
     }
 
     public function testIAmRedirectedToOriginalPageWhenIAcceptTermsForTheFirstTimeAsLoggedInUser()
@@ -84,12 +84,12 @@ class DefaultControllerTest extends AbstractAppTestCase
         $user = $this->createCPSUser(false);
 
         $this->client->followRedirects();
-        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_list'));
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
         $form = $crawler->selectButton($this->translator->trans('salva'))->form();
         $this->client->submit($form);
         $this->assertEquals(
             $this->client->getRequest()->getUri(),
-            $this->router->generate('servizi_list', [], Router::ABSOLUTE_URL)
+            $this->router->generate('pratiche', [], Router::ABSOLUTE_URL)
         );
     }
 
