@@ -32,10 +32,11 @@ services:
     ocsdc.form.flow.asilonido:
         class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
         parent: craue.form.flow
-        arguments: ["@logger"]
+        arguments: ["@logger","@translator"]
 
     ocsdc.form.flow.type_extension.help_data:
         class: AppBundle\Form\Extension\HelpDataTypeExtension
+        arguments: ["@translator"]
         tags:
             - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 

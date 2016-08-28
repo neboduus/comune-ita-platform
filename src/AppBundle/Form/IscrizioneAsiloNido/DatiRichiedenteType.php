@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Entity\CPSUser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -29,6 +30,10 @@ class DatiRichiedenteType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var TestiAccompagnatoriProcedura $helper */
+        $helper = $options["helper"];
+        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.dati_richiedente', true);
+
         /** @var CPSUser $user */
         $user = $builder->getData()->getUser();
         foreach (self::CAMPI_RICHIEDENTE as $identifier => $disabledBecauseProvidedByCPS) {

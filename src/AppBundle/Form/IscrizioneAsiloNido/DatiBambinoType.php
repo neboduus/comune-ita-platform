@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -15,6 +16,10 @@ class DatiBambinoType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var TestiAccompagnatoriProcedura $helper */
+        $helper = $options["helper"];
+        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.dati_bambino', true);
+
         $builder
             ->add('bambino_nome', TextType::class, [
                 'required' => true,

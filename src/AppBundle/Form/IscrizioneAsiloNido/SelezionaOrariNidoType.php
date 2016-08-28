@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Entity\AsiloNido;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -12,6 +13,10 @@ class SelezionaOrariNidoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+        /** @var TestiAccompagnatoriProcedura $helper */
+        $helper = $options["helper"];
+        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.seleziona_orari', true);
 
         /** @var AsiloNido $asilo */
         $asilo = $pratica = $builder->getData()->getStruttura();

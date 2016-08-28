@@ -29,12 +29,14 @@ class LoadData implements FixtureInterface
         $worksheet = $worksheetFeed->getByTitle($worksheetTitle);
 
         $data = $worksheet->getCsv();
-        $dataArray = str_getcsv($data, "\n");
+
+        $dataArray = str_getcsv($data, "\r\n");
         foreach ($dataArray as &$row) {
             $row = str_getcsv($row, ",");
         }
 
         array_walk($dataArray, function (&$a) use ($dataArray) {
+            $a= array_map('trim', $a);
             $a = array_combine($dataArray[0], $a);
         });
         array_shift($dataArray); # remove column header
@@ -99,6 +101,7 @@ class LoadData implements FixtureInterface
 
             $servizio = (new Servizio())
                 ->setName($item['name'])
+                ->setDescription($item['description'])
                 ->setTestoIstruzioni($item['testoIstruzioni'])
                 ->setStatus($item['status'])
                 ->setArea($item['area'])

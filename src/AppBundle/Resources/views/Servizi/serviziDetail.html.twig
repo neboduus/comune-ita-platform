@@ -9,11 +9,11 @@
 
             {% if servizio.area %}
                 <h3>Area tematica</h3>
-                <a href="#" class="btn btn-info btn-sm"><i class="fa fa-circle" aria-hidden="true"></i> Area tematica</a>
+                <a href="#" class="btn btn-info btn-sm"><i class="fa fa-circle" aria-hidden="true"></i> {{ servizio.area }}</a>
             {% endif %}
 
             {% if servizio.enti|length > 0 %}
-                <h3>Enti coinvolti</h3>
+                <h3>{{ 'servizio.enti_coinvolti'|trans }}</h3>
                 <ul class="list-unstyled list-inline">
                     {% for ente in servizio.enti %}
                         <li><a href="#" class="btn btn-info btn-sm"><i class="fa fa-map-marker" aria-hidden="true"></i> {{ ente.name }}</a></li>
@@ -59,13 +59,13 @@
         <div class="col-md-12">
             {#todo: usare constant()#}
             {% if servizio.status == 0 %}
-                <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> Il servizio è stato cancellato</div>
+                <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}</div>
             {% elseif servizio.status == 2 %}
-                <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Il servizio è stato sospese</div>
+                <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}</div>
             {% else %}
                 <div class="text-center">
                     <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg">
-                        <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'accedi_al_servizio'|trans({'%name%': servizio.name}) }}
+                        <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}
                     </a>
                 </div>
             {% endif %}

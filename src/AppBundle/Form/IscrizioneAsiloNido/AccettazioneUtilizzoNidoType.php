@@ -23,6 +23,8 @@ class AccettazioneUtilizzoNidoType extends AbstractType
             $asilo->getSchedaInformativa()
         );
 
+        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.accettazione_utilizzo_nido', true);
+
         $builder->add(
             'accetto_utilizzo',
             CheckboxType::class,

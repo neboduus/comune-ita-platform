@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Form\Base\AllegatoType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -18,6 +19,10 @@ class AllegatiType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var TestiAccompagnatoriProcedura $helper */
+        $helper = $options["helper"];
+        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.allegati', true);
+
         $builder->add('allegati', CollectionType::class, [
             'entry_type' => AllegatoType::class,
             "entry_options" => ["label" => false],
