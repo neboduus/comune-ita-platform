@@ -1,0 +1,146 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+    <h1>{{ 'user.profile.title'|trans }}</h1>
+
+    <form>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="nome">Nome</label>
+                    <input type="text" class="form-control" id="nome" value="{{ user.nome }}" readonly="readonly" />
+                    <span class="help-block hidden">Inserire un nome</span>
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="cognome">Cognome</label>
+                    <input type="text" class="form-control" id="cognome" value="{{ user.cognome }}" readonly="readonly" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="sesso">Sesso</label>
+                    <input type="text" class="form-control" id="sesso" required="required" value="{{ user.sesso }}" readonly="readonly" />
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="cf">Codice fiscale</label>
+                    <input type="text" class="form-control" id="cf" required="required" value="{{ user.codiceFiscale }}" readonly="readonly">
+                </div>
+            </div>
+        </div><!-- /.row -->
+
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="telefono">Numero di telefono</label>
+                    <input type="text" class="form-control" id="telefono" required="required" value="{{ user.telefono }}" readonly="readonly" />
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="email">Indirizzo email</label>
+                    <input type="email" class="form-control" id="email" required="required" value="{{ user.email }}" readonly="readonly">
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row">
+            <div class="col-md-5">
+                <label>Data di nascita*</label>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="gg" placeholder="GG" value="{{ user.dataNascita|date('U')|date('d') }}" readonly="readonly" />
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="mm" placeholder="MM" value="{{ user.dataNascita|date('U')|date('m') }}" readonly="readonly" />
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="aaaa" placeholder="AAAA" value="{{ user.dataNascita|date('U')|date('Y') }}" readonly="readonly" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="email">Luogo di nascita</label>
+                    <input type="email" class="form-control" id="email" required="required" value="{{ user.luogoNascita }}" readonly="readonly">
+                </div>
+            </div>
+        </div><!-- /.row -->
+
+        <h3>Domicilio</h3>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="indirizzo">Indirizzo</label>
+                    <input type="text" class="form-control" id="indirizzo" value="{{ user.indirizzoDomicilio }}" readonly="readonly" />
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="citta">Città</label>
+                    <input type="text" class="form-control" id="citta" value="{{ user.cittaDomicilio }}" readonly="readonly" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="cap">Cap</label>
+                    <input type="text" class="form-control" id="cap" value="{{ user.capDomicilio }}" readonly="readonly" />
+                    <span class="help-block hidden">Inserire CAP</span>
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="provincia">Provincia</label>
+                    <input type="text" class="form-control" id="provincia" value="{{ user.provinciaDomicilio }}" readonly="readonly" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+
+        <h3>Residenza</h3>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="indirizzo">Indirizzo</label>
+                    <input type="text" class="form-control" id="indirizzo" value="{{ user.indirizzoResidenza }}" readonly="readonly" />
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="citta">Città</label>
+                    <input type="text" class="form-control" id="citta" value="{{ user.cittaResidenza }}" readonly="readonly" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="cap">Cap</label>
+                    <input type="text" class="form-control" id="cap" value="{{ user.capResidenza }}" readonly="readonly" />
+                    <span class="help-block hidden">Inserire CAP</span>
+                </div>
+            </div>
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group">
+                    <label for="provincia">Provincia</label>
+                    <input type="text" class="form-control" id="provincia" value="{{ user.provinciaResidenza }}" readonly="readonly" />
+                </div>
+            </div>
+        </div><!-- /.row -->
+
+    </form>
+
+
+{% endblock %}

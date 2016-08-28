@@ -4,11 +4,11 @@
 
 $incomplete: #555 !default;
 $complete: $brand-success !default;
-$active: #337AB7 !default;
+$active: $brand-primary !default;
 $hover: #5671d0 !default;
-$step-danger: #d3140f !default;
-$step-warning: #edb10a !default;
-$step-info: #5b32d6 !default;
+$step-danger: $brand-danger !default;
+$step-warning: $brand-warning !default;
+$step-info: $brand-info !default;
 
 // sizing
 

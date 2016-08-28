@@ -45,24 +45,15 @@
 
     <div id="nav-aree" class="container-fluid clearfix">
         <div class="row">
-            {% if user is defined and user != null %}
-                <div class="no-pad-b">
-                    <h2 class="sr-only">Sezioni principali</h2>
-                    <ul class="nav nav-pills">
-                        <li{% if 'dashboard' in app.request.pathInfo %} class="active" {% endif %}><a href="#"><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</a></li>
-                        <li{% if 'servizi' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('servizi_list') }}"><i class="fa fa-cubes" aria-hidden="true"></i> Servizi</a></li>
-                        <li{% if 'pratiche' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('pratiche') }}"><i class="fa fa-files-o" aria-hidden="true"></i> Pratiche</a></li>
-                        <li{% if 'profilo' in app.request.pathInfo %} class="active" {% endif %}><a href="#"><i class="fa fa-user" aria-hidden="true"></i> Profilo ( {{ user.fullName }} )</a></li>
-                    </ul>
-                </div>
-            {% else %}
-                <div class="no-pad-b">
-                    <h2 class="sr-only">Sezioni principali</h2>
-                    <ul class="nav nav-pills">
-                        <li><a href="{{ path('servizi_list') }}"><i class="fa fa-cubes" aria-hidden="true"></i> Accesso ai servizi</a></li>
-                    </ul>
-                </div>
-            {%  endif %}
+            <div class="no-pad-b">
+                <h2 class="sr-only">Sezioni principali</h2>
+                <ul class="nav nav-pills">
+                    <li{% if 'dashboard' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('user_dashboard') }}"><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</a></li>
+                    <li{% if 'servizi' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('servizi_list') }}"><i class="fa fa-cubes" aria-hidden="true"></i> Servizi</a></li>
+                    <li{% if 'pratiche' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('pratiche') }}"><i class="fa fa-files-o" aria-hidden="true"></i> Pratiche</a></li>
+                    <li{% if 'profilo' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('user_profile') }}"><i class="fa fa-user" aria-hidden="true"></i> Il mio profilo</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
