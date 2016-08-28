@@ -23,7 +23,7 @@ class TerminiUtilizzo
     private $name;
 
     /**
-     * @ORM\Column(type="blob")
+     * @ORM\Column(type="text")
      */
     private $text;
 

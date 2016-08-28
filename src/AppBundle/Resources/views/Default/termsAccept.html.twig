@@ -7,7 +7,8 @@
     {{ form_start(form) }}
 
     {% for term in terms %}
-        <div class="term">{{ term.name }}</div>
+        <h2 class="term">{{ term.name }}</h2>
+        {{ term.text|raw }}
         {{ form_row(form[term.id|trim]) }}
     {% endfor %}
 
