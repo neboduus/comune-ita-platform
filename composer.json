@@ -26,6 +26,7 @@
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
+        "doctrine/doctrine-fixtures-bundle": "^2.3",
         "symfony/swiftmailer-bundle": "^2.3",
         "symfony/monolog-bundle": "^2.8",
         "symfony/polyfill-apcu": "^1.0",
@@ -47,7 +48,6 @@
         "phpspec/phpspec": "^3.0",
         "phpunit/phpunit": "^5.4",
         "squizlabs/php_codesniffer": "*",
-        "doctrine/doctrine-fixtures-bundle": "^2.3",
         "asimlqt/php-google-spreadsheet-client": "^3.0"
     },
     "scripts": {
