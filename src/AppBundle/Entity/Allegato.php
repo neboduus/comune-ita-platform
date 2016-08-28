@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Entity;
 
+use AppBundle\Validator\Constraints as SDCAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -9,19 +10,23 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use AppBundle\Validator\Constraints as SDCAssert;
 
 /**
  * Class Allegato
  * @package AppBundle\Entity
  * @ORM\Entity
  * @ORM\Table(name="allegato")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"default" = "Allegato", "modulo_compilato" = "ModuloCompilato"})
  * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable()
  * @SDCAssert\ValidMimeType
  */
-class Allegato
+class Allegato implements AllegatoInterface
 {
+
+    const TYPE_DEFAULT = 'default';
 
     /**
      * @var string
@@ -29,6 +34,11 @@ class Allegato
      * @ORM\Id()
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    protected $type;
 
     /**
      * @var File
@@ -84,6 +94,7 @@ class Allegato
     public function __construct()
     {
         $this->id = Uuid::uuid4();
+        $this->type = self::TYPE_DEFAULT;
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
         $this->pratiche = new ArrayCollection();
     }
@@ -97,9 +108,9 @@ class Allegato
      *
      * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $file
      *
-     * @return Allegato
+     * @return AllegatoInterface
      */
-    public function setFile(File $file = null):Allegato
+    public function setFile(File $file = null):AllegatoInterface
     {
         $this->file = $file;
 
@@ -141,7 +152,7 @@ class Allegato
      * @param string $filename
      * @return Allegato
      */
-    public function setFilename($filename): Allegato
+    public function setFilename($filename): AllegatoInterface
     {
         $this->filename = $filename;
 
@@ -158,9 +169,9 @@ class Allegato
 
     /**
      * @param string $description
-     * @return Allegato
+     * @return AllegatoInterface
      */
-    public function setDescription($description): Allegato
+    public function setDescription($description): AllegatoInterface
     {
         $this->description = $description;
 
@@ -179,7 +190,7 @@ class Allegato
      * @param \DateTime $updatedAt
      * @return Allegato
      */
-    public function setUpdatedAt(\DateTime $updatedAt): Allegato
+    public function setUpdatedAt(\DateTime $updatedAt): AllegatoInterface
     {
         $this->updatedAt = $updatedAt;
 
@@ -261,5 +272,23 @@ class Allegato
     public function getChoiceLabel(): string
     {
         return $this->originalFilename . '( ' . $this->description . ' )';
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     * @return Allegato
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
     }
 }

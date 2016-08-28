@@ -1,20 +1,20 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
 use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
 use AppBundle\Logging\LogConstants;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sluggable\Fixture\Handler\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Test\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -181,13 +181,6 @@ class OperatoriController extends Controller
         return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
-    private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
-    {
-        $operatore = $pratica->getOperatore();
-        if (!$operatore  instanceof OperatoreUser || $operatore->getId() !== $user->getId()){
-            throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
-        }
-    }
     /**
      * @Route("/{pratica}/numero_di_fascicolo",name="operatori_set_numero_fascicolo_a_pratica")
      * @Template()
@@ -233,6 +226,7 @@ class OperatoriController extends Controller
     }
 
 
+
     /**
      * @return FormInterface
      */
@@ -249,9 +243,7 @@ class OperatoriController extends Controller
                     'class' => 'form-control input-inline datepicker',
                 ],
             ])
-            ->add('createdAt', HiddenType::class,[
-                'data' => time(),
-            ])
+            ->add('createdAt', HiddenType::class, ['data' => time()])
             ->add('creator', HiddenType::class, [
                 'data' => $this->getUser()->getFullName(),
             ])
@@ -264,5 +256,17 @@ class OperatoriController extends Controller
         $form = $formBuilder->getForm();
 
         return $form;
+    }
+
+    /**
+     * @param OperatoreUser $user
+     * @param Pratica       $pratica
+     */
+    private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
+    {
+        $operatore = $pratica->getOperatore();
+        if (!$operatore  instanceof OperatoreUser || $operatore->getId() !== $user->getId()) {
+            throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
+        }
     }
 }

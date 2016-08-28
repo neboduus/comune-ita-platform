@@ -26,6 +26,43 @@
                 <hr />
             {% endif %}
 
+    <div class="row">
+        <div class="col-md-6">
+            <div class="well">
+
+                {% for allegato in pratica.moduliCompilati %}
+                    <p>
+                        <span>{{ allegato.description }}</span>
+                        <a href="{{ path('allegati_download_operatore', {'allegato': allegato.id}) }}" class="btn btn-info btn-block btn-lg">{{ 'operatori.scarica_modulo_compilato'|trans }}</a>
+                    </p>
+                {% endfor %}
+                <h4>{{ 'operatori.allegati'|trans }}</h4>
+                {% if pratica.allegati|length > 0 %}
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <td>{{ 'allegato.nome_file'|trans }}</td>
+                            <td>{{ 'allegato.descrizione_file'|trans }}</td>
+                            <td></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for allegato in pratica.allegati %}
+                            <tr>
+                                <td>{{ allegato.originalFilename }}</td>
+                                <td>{{ allegato.description }}</td>
+                                <td><a href="{{ path('allegati_download_operatore', {'allegato': allegato.id}) }}"
+                                       class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p><em>{{ 'pratica.nessun_allegato'|trans }}</em></p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
             <h4>{{ 'operatori.commenti_e_modifiche'|trans }}</h4>
 
             {{ form(form) }}

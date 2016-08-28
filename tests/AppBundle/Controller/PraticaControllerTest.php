@@ -9,6 +9,7 @@ use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\IscrizioneAsiloNido;
+use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
@@ -139,6 +140,40 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $renderedOtherUserPraticheCount = $crawler->filterXPath('//*[@data-user="'.$otherUser->getId().'"]')->count();
         $this->assertEquals(0, $renderedOtherUserPraticheCount);
+    }
+
+    public function testAsACPSUserICanSeeTheExportedModuloDownloadLinkOnThePraticaDetailPage()
+    {
+        $myUser = $this->createCPSUser(true);
+        $this->createPratiche($myUser);
+        $repo = $this->em->getRepository("AppBundle:Pratica");
+        $pratica = $repo->findByUser($myUser)[0];
+
+        $now = new \DateTime('now');
+        $fileName = 'aaaaa.pdf';
+
+        $moduloCompilato = new ModuloCompilato();
+        $moduloCompilato->setFilename($fileName);
+        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $moduloCompilato->setDescription(
+            $this->container->get('translator')->trans(
+                'pratica.modulo.descrizione',
+                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i') ]
+            )
+        );
+
+        $pratica->addModuloCompilato($moduloCompilato);
+
+        $this->em->persist($moduloCompilato);
+        $this->em->persist($pratica);
+        $this->em->flush();
+
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+
+        $nodes = $crawler->filterXPath('//*[@class="modulo"]');
+        $renderedModuliCount = $nodes->count();
+
+        $this->assertEquals($pratica->getModuliCompilati()->count(),$renderedModuliCount);
     }
 
     /**
@@ -355,6 +390,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $currentPraticaId = array_pop($currentUriParts);
         $currentPratica = $this->em->getRepository('AppBundle:IscrizioneAsiloNido')->find($currentPraticaId);
         $this->assertEquals(get_class($currentPratica), IscrizioneAsiloNido::class);
+        $this->assertEquals(0, $currentPratica->getModuliCompilati()->count());
 
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
@@ -394,6 +430,18 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $allegati = $currentPratica->getAllegati()->toArray();
         $this->assertEquals($numberOfExpectedAttachments - 1, count($allegati));
+
+        //modulo stampato
+        $this->assertEquals(1, $currentPratica->getModuliCompilati()->count());
+        $pdfExportedForm = $currentPratica->getModuliCompilati()->get(0);
+        $this->assertNotNull($pdfExportedForm);
+        $this->assertTrue($pdfExportedForm instanceof ModuloCompilato);
+
+        $this->assertNotNull($currentPratica->getSubmissionTime());
+        $submissionDate = new \DateTime();
+        $submissionDate->setTimestamp($currentPratica->getSubmissionTime());
+
+        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format('d/m/Y h:i'), $pdfExportedForm->getDescription());
     }
 
     /**

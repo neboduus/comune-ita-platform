@@ -55,6 +55,31 @@ pratica:
     sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
     si: 'Sì, sono sicuro'
     no: 'No'
+  pdf:
+    spett_le: 'Spett.le'
+    oggetto: 'Oggetto'
+    il_sottoscritto: 'Il/La sottoscritto/a'
+    nato_a: 'nato/a'
+    nato_il: 'il'
+    residente_a: 'residente a'
+    telefono: 'Recapito telefonico'
+    email: 'Recapito email'
+    chiede: 'chiede'
+    ammissione_nido: "l'ammissione all'asilo nido"
+    del_bambino: 'del bambino/a'
+    orario: 'Orario prescelto'
+    periodo_da: 'Periodo di iscrizione da'
+    periodo_a: 'a'
+    dichiara: 'dichiara'
+    dichiarazione_composizione_nucleo_familiare: 'che il proprio nucleo familiare &egrave; cos&igrave; composto:'
+    composizione_nucleo_familiare:
+      nome_e_cognome: 'Nome e cognome'
+      rapporto_parentela: 'Rapporto di parentela con bambino/a'
+      codice_fiscale: 'Codice fiscale'
+    dichiarazione_allegati: 'di allegare i seguenti documenti:'
+    dichiarazione_cambiamenti: 'di informare tempestivamente il Comune di Ragoli di mutamenti significativi nelle situazioni familiari ed economiche della famiglia'
+    dichiarazione_cambiamenti_detail: "Il dichiarante &egrave; consapevole che in caso di dichiarazione mendace sar&agrave; punito ai sensi del Codice Penale secondo quanto prescritto dall'art. 76 del D.P.R. 445/2000 e che, inoltre, qualora dal controllo effettuato emerga la non veridicit&agrave; del contenuto di taluna delle dichiarazioni rese, decadr&agrave; dai benefici conseguenti al provvedimento eventualmente emanato sulla base della dichiarazione non veritiera (art. 75 D.P.R. 445/2000).Il dichiarante &egrave; informato ed autorizza la raccolta dei dati per l'emanazione del provvedimento amministrativo ai sensi dell'art. 13 del D. Lgs. 196/2003."
+    luogo: 'L&igrave;'
   dettaglio:
     data_ora_presentazione: 'Data e ora di presentazione'
     alle: 'alle'
@@ -80,6 +105,9 @@ pratica:
     allegato:
       file: 'Nome del file'
       descrizione: 'Descrizione'
+    modulocompilato: ''
+  modulo:
+    descrizione: 'Modulo nomeservizio compilato il datacompilazione'
 
 iscrizione_asilo_nido:
   accettazioneIstruzioni: 'Istruzioni sulla procedura'
@@ -180,6 +208,7 @@ operatori:
   allegati: 'Allegati'
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
+  scarica_modulo_compilato: 'Scarica il modulo compilato'
 
 allegato:
   nome_file: 'Nome del file'
