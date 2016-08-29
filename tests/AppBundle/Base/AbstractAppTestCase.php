@@ -82,7 +82,7 @@ abstract class AbstractAppTestCase extends WebTestCase
             "codiceFiscale" => 'ppippi77t05g224f'.$random,
             "capDomicilio" => '371378',
             "capResidenza" => '38127',
-            "cellulare" => null,
+            "cellulare" => '123456789',
             "cittaDomicilio" => 'Verona',
             "cittaResidenza" => 'Trento',
             "cognome" => 'Pippucci'.$random,

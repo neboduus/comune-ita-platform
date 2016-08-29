@@ -53,6 +53,20 @@ abstract class User extends BaseUser
     protected $fullName;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $emailContatto;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $cellulareContatto;
+
+    /**
      * User constructor.
      *
      */
@@ -133,5 +147,46 @@ abstract class User extends BaseUser
     {
         return $this->type;
     }
+
+    /**
+     * @return string
+     */
+    public function getEmailContatto()
+    {
+        return $this->emailContatto;
+    }
+
+    /**
+     * @param string $emailContatto
+     *
+     * @return User
+     */
+    public function setEmailContatto($emailContatto)
+    {
+        $this->emailContatto = $emailContatto;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCellulareContatto()
+    {
+        return $this->cellulareContatto;
+    }
+
+    /**
+     * @param string $cellulareContatto
+     *
+     * @return User
+     */
+    public function setCellulareContatto($cellulareContatto)
+    {
+        $this->cellulareContatto = $cellulareContatto;
+
+        return $this;
+    }
+
 
 }
