@@ -123,7 +123,7 @@
                         {% endif %}
 
                         {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
-                            {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data}) }}
+                            {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
                         {% endif %}
 
                         {{ form_rest(form) }}
