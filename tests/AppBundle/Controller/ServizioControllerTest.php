@@ -148,7 +148,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         $repo = $this->em->getRepository("AppBundle:Servizio");
         $serviceCountAfterInsert = count($repo->findAll());
         $crawler = $this->client->request('GET', $this->router->generate('servizi_list'));
-        $renderedServices = $crawler->filter('.list')->filter('.servizio');
+        $renderedServices = $crawler->filter('.servizio');
         $renderedServicesCount = $renderedServices->count();
         $this->assertEquals($serviceCountAfterInsert, $renderedServicesCount);
     }

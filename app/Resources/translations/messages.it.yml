@@ -1,4 +1,4 @@
-salva: Salva
+salva: 'Salva'
 terms_do_il_consenso: 'Dò il consenso'
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
@@ -103,6 +103,26 @@ user:
 
   profile:
     title: 'Profilo utente'
+    info_da_sdc: 'Informazioni utente'
+    dati_da_cps_guida: 'Le informazioni seguenti sono state ricavate dalla carta provinciale dei servizi con cui ti sei autenticato e non possono essere modificate in questa applicazione'
+    nome: 'Nome'
+    cognome: 'Cognome'
+    sesso: 'Sesso'
+    codice_fiscale: 'Codice fiscale'
+    telefono: 'Numero di telefono'
+    email: 'Indirizzo email'
+    data_nascita: 'Data di nascita'
+    luogo_nascita: 'Luogo di nascita'
+    contatti_per_sdc: 'Contatti per la Stanza del cittadino'
+    contatti_per_sdc_guida: 'Il sistema utilizzerà questi recapiti per inviarti notifiche e segnalazioni'
+    cellulare: 'Numero di telefono cellulare'
+    indirizzo: 'Indirizzo'
+    citta: 'Città'
+    cap: 'Cap'
+    provincia: 'Provincia'
+    residenza: 'Residenza'
+    domicilio: 'Domicilio'
+    salva_informazioni_contatto: 'Salva informazioni contatto'
 
 operatori:
   vai_al_dettaglio: 'Vedi dettaglio'
@@ -125,3 +145,4 @@ allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
   scarica_allegato: 'Scarica file'
+

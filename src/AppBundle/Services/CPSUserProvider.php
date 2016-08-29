@@ -97,6 +97,16 @@ class CPSUserProvider implements UserProviderInterface
             $callback($user, $data[$key], $this->logger);
         }
 
+        if ($user->getEmail() && $user->getEmail() !== $user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN){
+            $user->setEmailContatto($user->getEmail());
+        }elseif ($user->getEmailAlt()){
+            $user->setEmailContatto($user->getEmailAlt());
+        }
+
+        if ($user->getCellulare()){
+            $user->setCellulareContatto($user->getCellulare());
+        }
+
         $user->addRole('ROLE_USER')
             ->addRole('ROLE_CPS_USER')
             ->setEnabled(true)
