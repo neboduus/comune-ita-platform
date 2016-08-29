@@ -61,6 +61,15 @@
             setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
             {% endif %}
 
+            $('button.craue_formflow_button_last').on('click', function(e){
+                var $form = $(this).closest('form');
+                e.preventDefault();
+                $('#confirm').modal({ backdrop: 'static', keyboard: false })
+                .one('click', '#ok', function() {
+                    $form.trigger('submit'); // submit the form
+                });
+            });
+
         });
     </script>
 {% endblock %}
@@ -134,6 +143,22 @@
                     </div>
                 </div>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirm" tabindex="-1"
+         role="dialog"
+         aria-labelledby="confirmAutoAssignLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    {{ 'pratica.guida_alla_compilazione.sei_sicuro_di_inviare'|trans }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn">{{ 'pratica.guida_alla_compilazione.no'|trans }}</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-primary" id="ok">{{ 'pratica.guida_alla_compilazione.si'|trans }}</button>
+                </div>
             </div>
         </div>
     </div>

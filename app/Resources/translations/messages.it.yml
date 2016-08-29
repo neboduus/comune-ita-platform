@@ -40,6 +40,9 @@ pratica:
   guida_alla_compilazione:
     accettazione_istruzioni: 'Leggi e accetta le istruzioni di compilazione'
     nucleo_familiare: 'Inserisci i componenti del nucleo familiare'
+    sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
+    si: 'Sì, sono sicuro'
+    no: 'No'
 
 iscrizione_asilo_nido:
   accettazioneIstruzioni: 'Istruzioni sulla procedura'

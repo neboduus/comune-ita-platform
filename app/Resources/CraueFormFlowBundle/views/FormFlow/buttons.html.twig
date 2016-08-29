@@ -8,9 +8,7 @@
     #}
     {%- set isLastStep = flow.getCurrentStepNumber() == flow.getLastStepNumber() -%}
     {%- set craue_formflow_button_class_last = craue_formflow_button_class_last | default('craue_formflow_button_last') -%}
-    {%- set craue_formflow_button_class_last = isLastStep
-    ? craue_formflow_button_class_finish | default(craue_formflow_button_class_last)
-    : craue_formflow_button_class_next | default(craue_formflow_button_class_last) -%}
+    {%- set craue_formflow_button_class_last = isLastStep ? craue_formflow_button_class_finish | default(craue_formflow_button_class_last) : craue_formflow_button_class_next | default('craue_formflow_button_class_next') -%}
     {%- set craue_buttons = [
         {
             label: craue_formflow_button_label_back | default('button.back'),
