@@ -127,7 +127,8 @@ class OperatoriController extends Controller
 
         return [
             'form' => $form->createView(),
-            'pratica' => $pratica
+            'pratica' => $pratica,
+            'user' => $this->getUser(),
         ];
     }
 

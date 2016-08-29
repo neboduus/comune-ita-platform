@@ -197,11 +197,11 @@ class PraticheController extends Controller
      * @Route("/{pratica}", name="pratiche_show")
      * @ParamConverter("pratica", class="AppBundle:Pratica")
      * @Template()
-     * @param Pratica $pratica
+     * @param IscrizioneAsiloNido $pratica
      *
      * @return array
      */
-    public function showAction(Pratica $pratica)
+    public function showAction(IscrizioneAsiloNido $pratica)
     {
         $user = $this->getUser();
         return [

@@ -43,6 +43,29 @@ pratica:
     sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
     si: 'Sì, sono sicuro'
     no: 'No'
+  dettaglio:
+    data_ora_presentazione: 'Data e ora di presentazione'
+    alle: 'alle'
+    stato: 'Stato corrente'
+    servizio: 'Servizio'
+    ente: 'Ente'
+    struttura: 'Struttura'
+    orario: 'Orario'
+    periodo: 'Periodo'
+    richiedente: 'Richiedente'
+    bambino: 'Bambino'
+    nato_a: 'nato a'
+    nato_il: 'il'
+    nucleo_familiare: 'Nucleo familiare'
+    componente_nucleo_familiare:
+      cognome: 'Cognome'
+      nome: 'Nome'
+      codice_fiscale: 'Codice fiscale'
+      rapporto_di_parentela: 'Rapporto di parentela'
+    allegati: 'File allegati'
+    allegato:
+      file: 'Nome del file'
+      descrizione: 'Descrizione'
 
 iscrizione_asilo_nido:
   accettazioneIstruzioni: 'Istruzioni sulla procedura'
@@ -130,7 +153,7 @@ operatori:
   sicuro_di_prendere_in_carico_la_pratica: 'Confermi la presa in carico della pratica %name%?'
   si: 'Sì, sono sicuro'
   no: "No, annulla l'operazione"
-  pratiche_mie: 'Pratiche Mie'
+  pratiche_mie: 'Pratiche da gestire'
   pratiche_libere: 'Pratiche da assegnare'
   pratiche_concluse: 'Pratiche concluse'
   torna_alle_pratiche: "Torna all'elenco pratiche"
