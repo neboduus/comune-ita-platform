@@ -2,70 +2,237 @@
 
 {% block main_content %}
 
-    {#Imposto come default la prima chiave dell'array#}
-    {% set active_key = pratiche|keys|first %}
-    {% set find = false %}
-    {% for k, v in pratiche %}
-        {% if v|length > 0 and not find  %}
-            {% set active_key = k %}
-            {% set find = true %}
-        {% endif %}
-    {% endfor %}
+    <div class="row">
+        <div class="col-sm-9">
+            <h1>{{ 'user.dashboard.title'|trans }}</h1>
+        </div>
+        <div class="col-md-3 hidden-xs text-right">
+            <p class="welcome">{{ 'welcome'|transchoice(user.getSesso) }} {{ user.fullName }}</p>
+        </div>
+    </div>
 
-    <h1>{{ 'user.dashboard.title'|trans }}</h1>
-    {#todo: Trovare modo di rendere attive i tab giusti (Aveva Ragione Luca!!!!!)#}
-    <ul class="nav nav-pills">
-        {% for key, value in pratiche %}
-            <li {% if key == active_key %}class="active"{% endif %}>
-                <a href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">
-                    {{ ('user.dashboard.pratiche_' ~ key)|trans }} <span class="badge">{{ value|length }}</span>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <div class="tab-content">
-        {% for key, value in pratiche %}
-            <div role="tabpanel"
-                 class="tab-pane list {{ key }}{% if key == active_key %} active{% endif %}"
-                 id="{{ key }}">
-                <h3>{{ ('user.dashboard.pratiche_' ~ key)|trans }}</h3>
-                {% if value|length > 0 %}
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <td>{{ 'pratica.protocollo'|trans }}</td>
-                            <td>{{ 'pratica.categoria'|trans }}</td>
-                            <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
-                            <td>{{ 'pratica.stato'|trans }}</td>
-                            <td></td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for pratica in value %}
-                            <tr class="pratica"
-                                data-pratica="{{ pratica.id }}"
-                                data-user="{{ pratica.user.id }}"
-                                data-status="{{ pratica.status }}">
-
-                                <td>{{ pratica.numeroProtocollo }}</td>
-                                <td>{{ pratica.servizio.name }}</td>
-                                <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
-                                <td>{{ pratica.statusName|trans }}</td>
-                                <td>
-                                    <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
-                                       class="btn btn-primary btn-xs">{{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
-                                </td>
-
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}</div>
-                {% endif %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary no-border-radius">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ 'user.dashboard.avvisi_notizie'|trans }}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-unstyled list-news">
+                                <li>
+                                    <div class="date">
+                                        <span class="month">AGO</span>
+                                        <span class="day">7</span>
+                                        <span class="year">2016</span>
+                                    </div>
+                                    <a href="#" class="small">Nuovi orari di apertura C.R.M.</a>
+                                    <p class="text-faded small">
+                                        A partire dal giorno 8 agosto 2016 saranno operativi i nuovi orari dei centri di raccolta materiali.
+                                    </p>
+                                </li>
+                                <li>
+                                    <div class="date">
+                                        <span class="month">LUG</span>
+                                        <span class="day">6</span>
+                                        <span class="year">2016</span>
+                                    </div>
+                                    <a href="#" class="small">Contributo per lo sfalcio di aree private</a>
+                                    <p class="text-faded small">
+                                        Sono aperti i termini per la presentazione delle domande di contributo per lo sfalcio e il recupero di aree private.
+                                    </p>
+                                </li>
+                                <li>
+                                    <div class="date">
+                                        <span class="month">GIU</span>
+                                        <span class="day">21</span>
+                                        <span class="year">2016</span>
+                                    </div>
+                                    <a href="#" class="small">Benvenuto/a tra noi! Sostegno alle famiglie con bambini nati nel 2016</a>
+                                    <p class="text-faded small">
+                                        Buono sconto per l'acquisto di pannolini lavabili o biodegradabili oppure per un compattatore di pannolini.
+                                    </p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary no-border-radius">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ 'user.dashboard.scadenze'|trans }}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-unstyled list-deadlines">
+                                <li><span class="date small">07/09/2016</span><a href="#" class="small">Scadenza contributo sfalcio aree private</a></li>
+                                <li><span class="date small">07/09/2016</span><a href="#" class="small">Contributo casa</a></li>
+                                <li><span class="date small">03/10/2016</span><a href="#" class="small">Scadenza IMIS</a></li>
+                                <li><span class="date small">21/11/2016</span><a href="#" class="small">Scadenza corso Cuoco</a></li>
+                                <li><span class="date small">07/04/2017</span><a href="#" class="small">Dichiarazione dei redditi</a></li>
+                                <li><span class="date small">17/06/2017</span><a href="#" class="small">Scadenza Bando Mobilità volontaria</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-        {% endfor %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary no-border-radius">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ 'user.dashboard.servizi_primo_piano'|trans }}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                {% for servizio in servizi %}
+                                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                                        {%  if servizio.area %}
+                                            <span>{{ servizio.area }}</span><br/>
+                                        {% endif %}
+                                        <a href="{{ path('servizi_show', {'slug': servizio.slug}) }}" class="min-h-90">{{ servizio.name }}</a>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-default btn-sm" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
+                                                    <span class="fa-stack">
+                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                                        <i class="fa fa-angle-right fa-stack-1x"></i>
+                                                    </span>
+                                                     Vai al servizio
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <a href="{{ path('servizi_list') }}" class="small">Vedi tutti i servizi</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 hidden-xs hidden-sm">
+            <div class="panel panel-primary no-border-radius">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Hai bisogno di aiuto?<span class="pull-right"><i class="fa fa-comments-o" aria-hidden="true"></i></span></h3>
+                </div>
+                <div class="panel-body">
+
+                    <div class="row bootstrap snippets">
+                        <div class="col-md-12">
+                            <!-- DIRECT CHAT PRIMARY -->
+                            <div class="box box-primary direct-chat direct-chat-primary">
+                                {#<div class="box-header with-border">
+                                    <h3 class="box-title">Direct Chat</h3>
+
+                                    <div class="box-tools pull-right">
+                                        <span data-toggle="tooltip" title="" class="badge bg-light-blue" data-original-title="3 New Messages">3</span>
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
+                                            <i class="fa fa-comments"></i></button>
+                                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>#}
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <!-- Conversations are loaded here -->
+                                    <div class="direct-chat-messages">
+
+                                        <!-- Message to the right -->
+                                        <div class="direct-chat-msg right">
+                                            <div class="direct-chat-info clearfix">
+                                                <span class="direct-chat-name pull-right">Tu</span>
+                                                <span class="direct-chat-timestamp pull-left">23 Ago 2016 14:15</span>
+                                            </div>
+                                            <!-- /.direct-chat-info -->
+                                            <img class="direct-chat-img" src="http://bootdey.com/img/Content/user_2.jpg" alt="Message User Image"><!-- /.direct-chat-img -->
+                                            <div class="direct-chat-text">
+                                                Buongiorno, vorrei un chiarimento sul servizio di iscrizione al nido.<br />
+                                                Sto presentando la richiesta di iscrizione. Posso presentare l' ICEF del 2014?
+                                            </div>
+                                            <!-- /.direct-chat-text -->
+                                        </div>
+
+                                        <div class="direct-chat-msg">
+                                            <div class="direct-chat-info clearfix">
+                                                <span class="direct-chat-name pull-left">URP</span>
+                                                <span class="direct-chat-timestamp pull-right">23 Ago 2016 14:30</span>
+                                            </div>
+                                            <!-- /.direct-chat-info -->
+                                            <img class="direct-chat-img" src="http://bootdey.com/img/Content/user_1.jpg" alt="Message User Image"><!-- /.direct-chat-img -->
+                                            <div class="direct-chat-text">
+                                                Buongiorno, l'ICEF da presentare per l'iscrizione al nido è quello dell'anno 2015/2016
+                                            </div>
+                                            <!-- /.direct-chat-text -->
+                                        </div>
+                                        <!-- /.direct-chat-msg -->
+
+                                    </div>
+                                    <!--/.direct-chat-messages-->
+                                </div>
+                                <!-- /.box-body -->
+                                <div class="box-footer">
+                                    <form action="#" method="post">
+                                        <div class="input-group">
+                                            <input type="text" name="message" placeholder="Componi..." class="form-control">
+                                            <span class="input-group-btn">
+                                                <button type="submit" class="btn btn-primary btn-flat">Invia</button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- /.box-footer-->
+                            </div>
+                            <!--/.direct-chat -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Le mie ultime pratiche <a href="{{ path('pratiche') }}" class="small">(vedi tutte)</a></h3>
+            {% if pratiche|length > 0 %}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <td>{{ 'pratica.protocollo'|trans }}</td>
+                        <td>{{ 'pratica.categoria'|trans }}</td>
+                        <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
+                        <td>{{ 'pratica.stato'|trans }}</td>
+                        <td></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for pratica in pratiche %}
+                        <tr class="pratica"
+                            data-pratica="{{ pratica.id }}"
+                            data-user="{{ pratica.user.id }}"
+                            data-status="{{ pratica.status }}">
+
+                            <td>{{ pratica.numeroProtocollo }}</td>
+                            <td>Scuola</td>
+                            <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
+                            <td>{{ pratica.statusName|trans }}</td>
+                            <td>
+                                <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
+                                   class="btn btn-primary btn-xs">{{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}</div>
+            {% endif %}
+        </div>
     </div>
 
 {% endblock %}

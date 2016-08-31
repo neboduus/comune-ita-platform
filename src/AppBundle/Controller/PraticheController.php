@@ -42,10 +42,61 @@ class PraticheController extends Controller
             array('status' => 'DESC')
         );
 
+        $praticheDraft = $repo->findBy(
+            [
+                'user' => $user,
+                'status' => Pratica::STATUS_DRAFT
+            ],
+            [
+                'creationTime' => 'ASC'
+            ]
+        );
+
+        $pratichePending = $repo->findBy(
+            [
+                'user' => $user,
+                'status' => [
+                    Pratica::STATUS_PENDING,
+                    Pratica::STATUS_SUBMITTED,
+                    Pratica::STATUS_REGISTERED
+                ]
+            ],
+            [
+                'creationTime' => 'ASC'
+            ]
+        );
+
+        $praticheCompleted = $repo->findBy(
+            [
+                'user' => $user,
+                'status' => Pratica::STATUS_COMPLETE
+            ],
+            [
+                'creationTime' => 'ASC'
+            ]
+        );
+
+        $praticheCancelled = $repo->findBy(
+            [
+                'user' => $user,
+                'status' => Pratica::STATUS_CANCELLED
+            ],
+            [
+                'creationTime' => 'ASC'
+            ]
+        );
+
+
         return [
             'user' => $user,
             'pratiche' => $pratiche,
-            'title' => 'lista_pratiche'
+            'title' => 'lista_pratiche',
+            'tab_pratiche' => array(
+                'draft'      => $praticheDraft,
+                'pending'    => $pratichePending,
+                'completed'  => $praticheCompleted,
+                'cancelled'  => $praticheCancelled
+            )
         ];
     }
 

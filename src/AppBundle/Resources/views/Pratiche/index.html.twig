@@ -1,6 +1,16 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
+    {#Imposto come default la prima chiave dell'array#}
+    {% set active_key = tab_pratiche|keys|first %}
+    {% set find = false %}
+    {% for k, v in tab_pratiche %}
+        {% if v|length > 0 and not find  %}
+            {% set active_key = k %}
+            {% set find = true %}
+        {% endif %}
+    {% endfor %}
+
     <h2>{{ title|trans() }} {% if user %}{{ user.fullName }}{% endif %}</h2>
 
     {% if msg is defined %}
@@ -8,6 +18,62 @@
     {% endif %}
 
     <div class="row">
+        <ul class="nav nav-pills">
+            {% for key, value in tab_pratiche %}
+                <li {% if key == active_key %}class="active"{% endif %}>
+                    <a href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">
+                        {{ ('user.dashboard.pratiche_' ~ key)|trans }} <span class="badge">{{ value|length }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+            {% for key, value in tab_pratiche %}
+                <div role="tabpanel"
+                     class="tab-pane list {{ key }}{% if key == active_key %} active{% endif %}"
+                     id="{{ key }}">
+                    <h3>{{ ('user.dashboard.pratiche_' ~ key)|trans }}</h3>
+                    {% if value|length > 0 %}
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <td>{{ 'pratica.protocollo'|trans }}</td>
+                                <td>{{ 'pratica.categoria'|trans }}</td>
+                                <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
+                                <td>{{ 'pratica.stato'|trans }}</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for pratica in value %}
+                                <tr class="pratica"
+                                    data-pratica="{{ pratica.id }}"
+                                    data-user="{{ pratica.user.id }}"
+                                    data-status="{{ pratica.status }}">
+
+                                    <td>{{ pratica.numeroProtocollo }}</td>
+                                    <td>Scuola</td>
+                                    <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
+                                    <td>{{ pratica.statusName|trans }}</td>
+                                    <td>
+                                        <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
+                                           class="btn btn-primary btn-xs">{{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
+                                    </td>
+
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row hidden">
         {% if pratiche|length > 0 %}
             {% for pratica in pratiche %}
                 <div class="col-sm-4">

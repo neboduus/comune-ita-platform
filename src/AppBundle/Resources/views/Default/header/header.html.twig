@@ -1,43 +1,39 @@
 <header id="header">
-    <div id="header-top">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-7 col-md-offset-2 col-xs-7 col-xs-offset-2">
-                    <div id="header-top-left" class="clearfix">
-                        <span class="sr-only">La Stanza del Cittadino appartiene al Progetto</span> <a href="http://www.opencontent.it/openpa">OpenPA</a>
-                    </div>
+    <div id="header-top" class="container-fluid clearfix">
+        <div class="row">
+            <div class="col-md-7 col-md-offset-2 col-xs-7 col-xs-offset-2">
+                <div id="header-top-left" class="clearfix">
+                    <span class="sr-only">La Stanza del Cittadino appartiene al Progetto</span> <a href="http://www.opencontent.it/openpa">OpenPA</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="header-inside" class="clearfix">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-2">
-                    <h2 class="sr-only">Menu principale</h2>
-                    <div class="burger-wrapper">
-                        <div class="burger-container">
-                            <!--<button id="showLeftPush">Show/Hide Left Push Menu</button>-->
-                            <a class="toggle-menu" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
-                                <span class="bar"></span>
-                                <span class="bar"></span>
-                                <span class="bar"></span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-1">
-                    <div id="logo">
-                        <a href="{{ path('home') }}" title="Home" rel="home">
-                            <img class="img-responsive" src="{{ asset('bundles/app/images/logo-stanza.png') }}" alt="Home" alt="Home" title="Home" />
+    <div id="header-inside" class="container-fluid clearfix">
+        <div class="row">
+            <div class="col-xs-2">
+                <h2 class="sr-only">Menu principale</h2>
+                <div class="burger-wrapper">
+                    <div class="burger-container">
+                        <!--<button id="showLeftPush">Show/Hide Left Push Menu</button>-->
+                        <a class="toggle-menu" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
                         </a>
                     </div>
                 </div>
-                <div class="col-xs-5">
-                    <div id="site-name">
-                        <a href="{{ path('home') }}" title="Home"><h1>Stanza del cittadino</h1></a>
-                    </div>
+            </div>
+            <div class="col-xs-1">
+                <div id="logo">
+                    <a href="{{ path('home') }}" title="Home" rel="home">
+                        <img class="img-responsive" src="{{ asset('bundles/app/images/logo-stanza.png') }}" alt="Home" alt="Home" title="Home" />
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-5">
+                <div id="site-name">
+                    <a href="{{ path('home') }}" title="Home"><h1>Stanza del cittadino</h1></a>
                 </div>
             </div>
         </div>
@@ -48,10 +44,10 @@
             <div class="no-pad-b">
                 <h2 class="sr-only">Sezioni principali</h2>
                 <ul class="nav nav-pills">
-                    <li{% if 'dashboard' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('user_dashboard') }}"><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</a></li>
-                    <li{% if 'servizi' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('servizi_list') }}"><i class="fa fa-cubes" aria-hidden="true"></i> Servizi</a></li>
-                    <li{% if 'pratiche' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('pratiche') }}"><i class="fa fa-files-o" aria-hidden="true"></i> Pratiche</a></li>
-                    <li{% if 'profilo' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('user_profile') }}"><i class="fa fa-user" aria-hidden="true"></i> Il mio profilo</a></li>
+                    <li{% if 'dashboard' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('user_dashboard') }}"><i class="fa fa-tachometer" aria-hidden="true"></i> {{ 'nav.dashboard'|trans }}</a></li>
+                    <li{% if 'servizi' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('servizi_list') }}"><i class="fa fa-cubes" aria-hidden="true"></i> {{ 'nav.servizi'|trans }}</a></li>
+                    <li{% if 'pratiche' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('pratiche') }}"><i class="fa fa-files-o" aria-hidden="true"></i> {{ 'nav.pratiche'|trans }}</a></li>
+                    <li{% if 'profilo' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('user_profile') }}"><i class="fa fa-user" aria-hidden="true"></i> {{ 'nav.profilo'|trans }}</a></li>
                 </ul>
             </div>
         </div>

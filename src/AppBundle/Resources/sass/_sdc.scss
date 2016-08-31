@@ -8,7 +8,8 @@ h1, h2, h3, h4, h5, h5 {
 /** Stanza **/
 #header {
   margin: 0;
-  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
   border: 0;
   /*width: 100%;
   height: 247px;
@@ -22,11 +23,10 @@ h1, h2, h3, h4, h5, h5 {
 
   #header-top {
     background-color: #30373d;
-    .container-fluid {
-      padding: 4px 0 0 0;
-      a {
-        color: #fff;
-      }
+    padding-top: 4px;
+    padding-bottom: 0;
+    a {
+      color: #fff;
     }
   }
 
@@ -131,7 +131,8 @@ h1, h2, h3, h4, h5, h5 {
 
   #nav-aree {
     background-color: $blu-italia-base;
-    padding: 0;
+    padding-top: 0;
+    padding-bottom: 0;
     text-align: center;
     .nav-pills {
       li {
@@ -283,7 +284,8 @@ body.canvas-slid {
 
 #survey {
   background-color: $blu-italia-base;
-  padding: 7px 0 0 0;
+  padding-top: 7px;
+  padding-bottom: 0;
   min-height: 65px;
   a {
     color: #fff;
@@ -337,4 +339,72 @@ body.canvas-slid {
 
 .no-pad-b {
   padding-bottom: 0;
+}
+
+/* Panels */
+.panel {
+  &.no-border-radius{
+    border: none;
+    .panel-heading {
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+    }
+  }
+}
+
+
+.list-news {
+  li {
+    position: relative;
+    .date {
+      line-height: 1em;
+      text-align: center;
+      position: absolute;
+      width: 60px;
+      padding: 5px;
+      text-transform: uppercase;
+      background-color: $grigio-10;
+      .month {
+        font-size: 80%;
+        display: block;
+      }
+      .day {
+        font-size: 150%;
+        font-weight: 700;
+        display: block;
+      }
+      .year {
+        font-size: 80%;
+        display: block;
+      }
+    }
+    a {
+      margin-left: 70px;
+      display: block;
+    }
+    p {
+      margin-left: 70px;
+    }
+  }
+}
+
+.list-deadlines {
+  li {
+    border-bottom: 1px solid $grigio-10;
+    .date {
+      margin-right: 10px;
+    }
+  }
+}
+
+.welcome {
+  @media only screen and (min-width: $screen-sm-min) {
+    margin-top: 60px;
+  }
+}
+
+/*todo: temporanea da sistemare*/
+.min-h-90 {
+  display: block;
+  min-height: 100px;
 }
