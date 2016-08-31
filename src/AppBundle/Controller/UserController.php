@@ -32,58 +32,21 @@ class UserController extends Controller
     public function indexAction(Request $request)
     {
         $user = $this->getUser();
+
+        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $servizi = $serviziRepository->findBy([], [], 4);
+
         $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-
-        $praticheDraft = $praticheRepo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_DRAFT
-            ],
-            [
-                'creationTime' => 'ASC'
-            ]
+        $pratiche = $praticheRepo->findBy(
+            ['user' => $user],
+            ['creationTime' => 'ASC'],
+            3
         );
 
-        $pratichePending = $praticheRepo->findBy(
-            [
-                'user' => $user,
-                'status' => [
-                    Pratica::STATUS_PENDING,
-                    Pratica::STATUS_SUBMITTED,
-                    Pratica::STATUS_REGISTERED
-                ]
-            ],
-            [
-                'creationTime' => 'ASC'
-            ]
-        );
-
-        $praticheCompleted = $praticheRepo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_COMPLETE
-            ],
-            [
-                'creationTime' => 'ASC'
-            ]
-        );
-
-        $praticheCancelled = $praticheRepo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_CANCELLED
-            ],
-            [
-                'creationTime' => 'ASC'
-            ]
-        );
         return array(
-            'pratiche' => array(
-                'draft'      => $praticheDraft,
-                'pending'    => $pratichePending,
-                'completed'  => $praticheCompleted,
-                'cancelled'  => $praticheCancelled
-            )
+            'user'     => $user,
+            'servizi' => $servizi,
+            'pratiche' => $pratiche
         );
     }
 

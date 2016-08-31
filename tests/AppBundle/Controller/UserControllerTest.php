@@ -56,63 +56,6 @@ class UserControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testICanSeeMyPraticheWhenAccessingUserDashboardAsLoggedUser()
-    {
-        $user = $this->createCPSUser(true);
-        $this->setupPraticheForUser($user);
-
-        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('user_dashboard'));
-
-        $repo = $this->em->getRepository("AppBundle:Pratica");
-        $praticheDraft = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_DRAFT
-            ]
-        );
-
-        $pratichePending = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => [
-                    Pratica::STATUS_PENDING,
-                    Pratica::STATUS_SUBMITTED,
-                    Pratica::STATUS_REGISTERED,
-                ]
-            ]
-        );
-
-        $praticheCompleted = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_COMPLETE
-            ]
-        );
-
-        $praticheCancelled = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_CANCELLED
-            ]
-        );
-
-        $praticheCount = $crawler->filter('.list.draft')->filter('.pratica')->count();
-        $this->assertEquals(count($praticheDraft), $praticheCount);
-
-        $praticheCount = $crawler->filter('.list.pending')->filter('.pratica')->count();
-        $this->assertEquals(count($pratichePending), $praticheCount);
-
-        $praticheCount = $crawler->filter('.list.completed')->filter('.pratica')->count();
-        $this->assertEquals(count($praticheCompleted), $praticheCount);
-
-        $praticheCount = $crawler->filter('.list.cancelled')->filter('.pratica')->count();
-        $this->assertEquals(count($praticheCancelled), $praticheCount);
-
-    }
-
-    /**
-     * @test
-     */
     public function testICannotAccessUserProfileAsAnonymousUser()
     {
         $this->client->request('GET', $this->router->generate('user_profile'));
