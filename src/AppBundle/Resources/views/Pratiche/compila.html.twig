@@ -12,7 +12,6 @@
     {{ parent() }}
     <script>
         $(document).ready(function() {
-
             function addComponenteForm($collectionHolder, $newLinkLi) {
                 var prototype = $collectionHolder.data('prototype');
                 var index = $collectionHolder.data('index');
@@ -76,7 +75,7 @@
 
 {% block main_content %}
 
-    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+    {% form_theme form ':form:ocsdc_form_style.html.twig' %}
 
     <div class="container-fluid">
         <div class="content">
@@ -164,3 +163,8 @@
     </div>
 
 {% endblock %}
+
+
+{%- block checkbox_widget -%}
+    <input type="checkbox" data-group-cls="btn-group-lg" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{%- endblock checkbox_widget -%}
