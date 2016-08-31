@@ -128,12 +128,14 @@ class UserController extends Controller
 
     private function setupContactsForm(CPSUser $user)
     {
+        $compiledCellulareData = $user->getCellulareContatto() != null ? $user->getCellulareContatto() : $user->getCellulare();
+        $compiledEmailData = $user->getEmailContatto() != null ? $user->getEmailContatto() : $user->getEmail(); 
         $formBuilder = $this->createFormBuilder()
             ->add('email_contatto', EmailType::class,
-                ['label' => false, 'data' => $user->getEmailContatto()]
+                ['label' => false, 'data' => $compiledEmailData, 'required' => false]
             )
             ->add('cellulare_contatto', TextType::class,
-                ['label' => false, 'data' => $user->getCellulareContatto()]
+                ['label' => false, 'data' => $compiledCellulareData, 'required' => false]
             )
             ->add('save', SubmitType::class,
                 ['label' => $this->get('translator')->trans('user.profile.salva_informazioni_contatto')]
