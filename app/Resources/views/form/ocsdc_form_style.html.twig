@@ -1,0 +1,8 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{%- block checkbox_widget -%}
+    {# TODO: spostare questo stile inline nel sass #}
+    <div class="checkboxwrapper" style="border: solid 5px #e74e26; border-radius: 10px; padding:10px">
+        {{ parent() }}
+    </div>
+{%- endblock checkbox_widget -%}
