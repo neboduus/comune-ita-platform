@@ -32,6 +32,9 @@ servizio:
   accedi_al_servizio: 'Accedi al servizio %name%'
 
 pratica:
+  email:
+    status_change:
+      subject: 'La pratica è stata aggiornata'
   vai_alla_pratica: 'Vai alla pratica'
   empty: 'Non sono presenti pratiche a tuo nome.'
   protocollo: 'Protocollo'
@@ -178,4 +181,3 @@ allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
   scarica_allegato: 'Scarica file'
-

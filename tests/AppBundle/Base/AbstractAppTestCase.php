@@ -338,4 +338,18 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         return $user;
     }
+
+    protected function setupSwiftmailerMock($recipients = [])
+    {
+        //swiftmailer.mailer.default
+        $mock = $this->getMockBuilder(\Swift_Mailer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mock->expects($this->exactly(count($recipients)))
+            ->method('send')
+            ->willReturn(count($recipients));
+
+        return $mock;
+    }
 }

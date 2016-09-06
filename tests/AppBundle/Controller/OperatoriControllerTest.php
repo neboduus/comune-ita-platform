@@ -374,8 +374,11 @@ class OperatoriControllerTest extends AbstractAppTestCase
                    ->method('info')
                    ->with(LogConstants::PRATICA_ASSIGNED);
 
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+        $mockMailer = $this->setupSwiftmailerMock([$user, $operatore]);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger, $mockMailer) {
             $kernel->getContainer()->set('logger', $mockLogger);
+            $kernel->getContainer()->set('swiftmailer.mailer.default', $mockMailer);
         });
 
         $autoassignPraticaUrl = $this->router->generate('operatori_autoassing_pratica', ['pratica' => $pratica->getId()]);
@@ -474,8 +477,11 @@ class OperatoriControllerTest extends AbstractAppTestCase
                    ->method('info')
                    ->with(LogConstants::PRATICA_APPROVED);
 
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+        $mockMailer = $this->setupSwiftmailerMock([$user, $operatore]);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger, $mockMailer) {
             $kernel->getContainer()->set('logger', $mockLogger);
+            $kernel->getContainer()->set('swiftmailer.mailer.default', $mockMailer);
         });
 
         $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
@@ -515,8 +521,11 @@ class OperatoriControllerTest extends AbstractAppTestCase
                    ->method('info')
                    ->with(LogConstants::PRATICA_CANCELLED);
 
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+        $mockMailer = $this->setupSwiftmailerMock([$user, $operatore]);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger, $mockMailer) {
             $kernel->getContainer()->set('logger', $mockLogger);
+            $kernel->getContainer()->set('swiftmailer.mailer.default', $mockMailer);
         });
 
         $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
