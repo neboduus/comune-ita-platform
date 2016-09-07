@@ -217,6 +217,7 @@ class PraticheController extends Controller
                 $form = $flow->createForm();
             } else {
                 $pratica->setStatus(Pratica::STATUS_SUBMITTED);
+                $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica,$this->getParameter('default_from_email_address'));
 
                 $this->getDoctrine()->getManager()->flush();
 

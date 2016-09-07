@@ -121,6 +121,24 @@ class Pratica
     private $statusName;
 
     /**
+     * @var int
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $latestStatusChangeTimestamp;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $latestCPSCommunicationTimestamp;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $latestOperatoreCommunicationTimestamp;
+
+    /**
      * Pratica constructor.
      */
     public function __construct()
@@ -135,6 +153,7 @@ class Pratica
         $this->numeriProtocollo = new ArrayCollection();
         $this->allegati = new ArrayCollection();
         $this->nucleoFamiliare = new ArrayCollection();
+        $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
     }
 
     /**
@@ -232,6 +251,7 @@ class Pratica
     public function setStatus($status)
     {
         $this->status = $status;
+        $this->latestStatusChangeTimestamp = time();
 
         return $this;
     }
@@ -577,5 +597,56 @@ class Pratica
         }
 
         $this->commenti = $collection;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLatestStatusChangeTimestamp(): int
+    {
+        return $this->latestStatusChangeTimestamp;
+    }
+
+    /**
+     * @param int $latestStatusChangeTimestamp
+     */
+    public function setLatestStatusChangeTimestamp($latestStatusChangeTimestamp)
+    {
+        $this->latestStatusChangeTimestamp = $latestStatusChangeTimestamp;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLatestCPSCommunicationTimestamp(): int
+    {
+        return $this->latestCPSCommunicationTimestamp;
+    }
+
+    /**
+     * @param int $latestCPSCommunicationTimestamp
+     */
+    public function setLatestCPSCommunicationTimestamp($latestCPSCommunicationTimestamp)
+    {
+        $this->latestCPSCommunicationTimestamp = $latestCPSCommunicationTimestamp;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLatestOperatoreCommunicationTimestamp(): int
+    {
+        return $this->latestOperatoreCommunicationTimestamp;
+    }
+
+    /**
+     * @param int $latestOperatoreCommunicationTimestamp
+     */
+    public function setLatestOperatoreCommunicationTimestamp($latestOperatoreCommunicationTimestamp)
+    {
+        $this->latestOperatoreCommunicationTimestamp = $latestOperatoreCommunicationTimestamp;
+        return $this;
     }
 }

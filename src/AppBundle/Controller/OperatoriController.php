@@ -85,6 +85,9 @@ class OperatoriController extends Controller
 
         $pratica->setOperatore($this->getUser());
         $pratica->setStatus(Pratica::STATUS_PENDING);
+
+        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+
         $this->getDoctrine()->getManager()->flush();
 
         $this->get('logger')->info(
@@ -139,6 +142,9 @@ class OperatoriController extends Controller
     {
         $this->checkUserCanAccessPratica($this->getUser(), $pratica);
         $pratica->setStatus(Pratica::STATUS_COMPLETE);
+
+        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+
         $this->getDoctrine()->getManager()->flush();
 
         $this->get('logger')->info(
@@ -159,6 +165,9 @@ class OperatoriController extends Controller
     {
         $this->checkUserCanAccessPratica($this->getUser(), $pratica);
         $pratica->setStatus(Pratica::STATUS_CANCELLED);
+
+        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+
         $this->getDoctrine()->getManager()->flush();
 
         $this->get('logger')->info(

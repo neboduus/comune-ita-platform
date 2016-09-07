@@ -42,3 +42,7 @@ services:
 
     ocsdc.allegati.directory_namer:
         class: AppBundle\Services\DirectoryNamerService
+
+    ocsdc.mailer:
+        class: AppBundle\Services\MailerService
+        arguments: ["@mailer", "@translator", "@templating"]
