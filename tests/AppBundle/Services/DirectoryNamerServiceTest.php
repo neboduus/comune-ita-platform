@@ -30,16 +30,16 @@ class DirectoryNamerServiceTest extends AbstractAppTestCase
         $this->assertTrue($directoryNamer instanceof DirectoryNamerInterface);
     }
 
-    public function testDirectoryNamerReturnsPraticaIdIfObjectIsAllegatoClass()
+    public function testDirectoryNamerReturnsCPSUserIdIfObjectIsAllegatoClass()
     {
-        $pratica = new Pratica();
+        $user = $this->createCPSUser();
         $allegato = new Allegato();
-        $allegato->setPratica($pratica);
+        $allegato->setOwner($user);
 
         $mockedMappings = $this->getMockBuilder(PropertyMapping::class)->disableOriginalConstructor()->getMock();
 
         $directoryNamer = $this->container->get('ocsdc.allegati.directory_namer');
         $directoryName = $directoryNamer->directoryName($allegato,$mockedMappings);
-        $this->assertEquals($pratica->getId(), $directoryName);
+        $this->assertEquals($user->getId(), $directoryName);
     }
 }

@@ -9,6 +9,8 @@ use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Validator\Constraints\ValidMimeType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
@@ -161,6 +163,78 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
+    /**
+     * @test
+     */
+    public function testCPSUserCanCreateAttachment()
+    {
+        $user = $this->createCPSUser(true);
+        $repo = $this->em->getRepository('AppBundle:Allegato');
+        $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
+        $allegatiCreatePath = $this->router->generate('allegati_create_cpsuser');
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiCreatePath);
+        $form = $crawler->selectButton($this->translator->trans('salva'))->form();
+        $values = $form->getValues();
+        $values['ocsdc_allegato[description]'] = 'pippo';
+        $values['ocsdc_allegato[file][file]'] = new UploadedFile(
+            __DIR__.'/../Assets/lenovo-yoga-xp1.pdf',
+            'lenovo-yoga-xp1.pdf',
+            'application/postscript',
+            filesize(__DIR__.'/../Assets/lenovo-yoga-xp1.pdf')
+        );
+
+        $form->setValues($values);
+        $crawler = $this->client->submit($form);
+        //an allegato is created for this user with the correct file
+        $this->assertEquals(1, count($repo->findBy(['owner' => $user])));
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidUploadFilesProvider
+     * @param string $invalidFilename
+     */
+    public function testUserCannotcreateAttachmentOfUnsupportedType($invalidFilename)
+    {
+        $user = $this->createCPSUser(true);
+        $repo = $this->em->getRepository('AppBundle:Allegato');
+        $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
+        $allegatiCreatePath = $this->router->generate('allegati_create_cpsuser');
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiCreatePath);
+        $form = $crawler->selectButton($this->translator->trans('salva'))->form();
+        $values = $form->getValues();
+
+        $values['ocsdc_allegato[description]'] = 'pippo';
+        $values['ocsdc_allegato[file][file]'] = new UploadedFile(
+            __DIR__.'/../Assets/'.$invalidFilename,
+            $invalidFilename,
+            'application/postscript',
+            filesize(__DIR__.'/../Assets/'.$invalidFilename)
+        );
+
+        $form->setValues($values);
+        $crawler = $this->client->submit($form);
+        //an allegato is not created for this user
+        $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
+
+        $expectedErrorMessage = $this->translator->trans(ValidMimeType::TRANSLATION_ID);
+        $errorMessage = $crawler->filter('.has-error')->html();
+        $this->assertContains($expectedErrorMessage, $errorMessage);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function invalidUploadFilesProvider()
+    {
+        $filenames = array_map(function ($e) {
+            return [basename($e)];
+        }, glob(__DIR__.'/../Assets/invalid_*'));
+
+        return $filenames;
+    }
+
     private function setupMockedLogger($expectedArgs)
     {
         $mockLogger = $this->getMockLogger();
@@ -190,10 +264,12 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $pratica->setOperatore($operatore);
 
         $allegato = new Allegato();
-        $allegato->setPratica($pratica);
+        $allegato->addPratica($pratica);
+        $allegato->setOwner($myUser);
         $allegato->setFilename($destFileName);
         $allegato->setOriginalFilename($fakeFileName);
         $allegato->setDescription('some description');
+        $pratica->addAllegato($allegato);
 
         $directoryNamer = $this->container->get('ocsdc.allegati.directory_namer');
         /** @var PropertyMapping $mapping */
@@ -202,6 +278,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $destDir = $mapping->getUploadDestination().'/'.$directoryNamer->directoryName($allegato, $mapping);
         mkdir($destDir, 0777, true);
         $this->assertTrue(copy(__DIR__.'/../Assets/'.$fakeFileName, $destDir.'/'.$destFileName));
+        $this->em->persist($pratica);
         $this->em->persist($allegato);
         $this->em->flush();
 

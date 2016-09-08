@@ -5,8 +5,12 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Form\Base\AllegatoType;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Logging\LogConstants;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -31,13 +35,13 @@ class AllegatoController extends Controller
     {
         $logger = $this->get('logger');
         $user = $this->getUser();
-        if ($allegato->getPratica()->getUser() === $user) {
+        if ($allegato->getOwner() === $user) {
             $logger->info(
                 LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
                 [
                     'user' => $user->getId().' ('.$user->getNome().' '.$user->getCognome().')',
                     'originalFileName' => $allegato->getOriginalFilename(),
-                    'pratica' => $allegato->getPratica()->getId(),
+                    'allegato' => $allegato->getId(),
                 ]
             );
 
@@ -59,13 +63,24 @@ class AllegatoController extends Controller
     {
         $logger = $this->get('logger');
         $user = $this->getUser();
-        if ($allegato->getPratica()->getOperatore() === $user) {
+        $isOperatoreAmongstTheAllowedOnes = false;
+        $becauseOfPratiche = [];
+
+        foreach($allegato->getPratiche() as $pratica){
+            if($pratica->getOperatore() === $user){
+                $becauseOfPratiche[] = $pratica->getId();
+                $isOperatoreAmongstTheAllowedOnes = true;
+            }
+        }
+
+        if ($isOperatoreAmongstTheAllowedOnes) {
             $logger->info(
                 LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE,
                 [
                     'user' => $user->getId().' ('.$user->getNome().' '.$user->getCognome().')',
                     'originalFileName' => $allegato->getOriginalFilename(),
-                    'pratica' => $allegato->getPratica()->getId(),
+                    'allegato' => $allegato->getId(),
+                    'pratiche' => $becauseOfPratiche
                 ]
             );
 
@@ -73,6 +88,30 @@ class AllegatoController extends Controller
         }
         $this->logUnauthorizedAccessAttempt($allegato, $logger);
         throw new NotFoundHttpException(); //security by obscurity
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/pratiche/allegati",name="allegati_create_cpsuser")
+     * @Template()
+     */
+    public function cpsUserCreateAllegatoAction(Request $request)
+    {
+        $allegato = new Allegato();
+
+        $form = $this->createForm(AllegatoType::class,$allegato,[ 'helper' => new TestiAccompagnatoriProcedura($this->get('translator'))]);
+        $form->add($this->get('translator')->trans('salva'),SubmitType::class);
+
+        $form->handleRequest($request);
+        if($form->isValid()){
+            $result = $this->get('validator')->validate($allegato);
+            $allegato->setOwner($this->getUser());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($allegato);
+            $em->flush();
+        }
+
+        return [ 'form' => $form->createView() ];
     }
 
     /**
@@ -107,7 +146,7 @@ class AllegatoController extends Controller
             LogConstants::ALLEGATO_DOWNLOAD_NEGATO,
             [
                 'originalFileName' => $allegato->getOriginalFilename(),
-                'pratica' => $allegato->getPratica()->getId(),
+                'allegato' => $allegato->getId(),
             ]
         );
     }

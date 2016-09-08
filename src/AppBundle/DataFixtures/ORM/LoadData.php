@@ -2,13 +2,12 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
+use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use AppBundle\Entity\AsiloNido;
-use Symfony\Component\VarDumper\VarDumper;
 use Google\Spreadsheet\DefaultServiceRequest;
 use Google\Spreadsheet\ServiceRequestFactory;
 use Google\Spreadsheet\SpreadsheetService;

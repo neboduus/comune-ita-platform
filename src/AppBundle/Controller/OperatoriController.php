@@ -188,40 +188,6 @@ class OperatoriController extends Controller
             throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
         }
     }
-
-    /**
-     * @return FormInterface
-     */
-    private function setupCommentForm()
-    {
-        $translator = $this->get('translator');
-        $data = array();
-        $formBuilder = $this->createFormBuilder($data)
-            ->add('text', TextareaType::class, [
-                'label' => false,
-                'required' => true,
-                'attr' => [
-                    'rows' => '5',
-                    'class' => 'form-control input-inline datepicker',
-                ],
-            ])
-            ->add('createdAt', HiddenType::class,[
-                'data' => time(),
-            ])
-            ->add('creator', HiddenType::class, [
-                'data' => $this->getUser()->getFullName(),
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => $translator->trans('operatori.aggiungi_commento'),
-                'attr' => [
-                    'class' => 'btn btn-success',
-                ],
-            ]);
-        $form = $formBuilder->getForm();
-
-        return $form;
-    }
-
     /**
      * @Route("/{pratica}/numero_di_fascicolo",name="operatori_set_numero_fascicolo_a_pratica")
      * @Template()
@@ -264,5 +230,39 @@ class OperatoriController extends Controller
         }
 
         return array('form' => $form->createView());
+    }
+
+
+    /**
+     * @return FormInterface
+     */
+    private function setupCommentForm()
+    {
+        $translator = $this->get('translator');
+        $data = array();
+        $formBuilder = $this->createFormBuilder($data)
+            ->add('text', TextareaType::class, [
+                'label' => false,
+                'required' => true,
+                'attr' => [
+                    'rows' => '5',
+                    'class' => 'form-control input-inline datepicker',
+                ],
+            ])
+            ->add('createdAt', HiddenType::class,[
+                'data' => time(),
+            ])
+            ->add('creator', HiddenType::class, [
+                'data' => $this->getUser()->getFullName(),
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => $translator->trans('operatori.aggiungi_commento'),
+                'attr' => [
+                    'class' => 'btn btn-success',
+                ],
+            ]);
+        $form = $formBuilder->getForm();
+
+        return $form;
     }
 }
