@@ -15,7 +15,9 @@ class AccettazioneIstruzioniType extends AbstractType
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
         $helper->setDescriptionText(
-            $builder->getData()->getServizio()->getTestoIstruzioni()
+            '<div class="well well-sm service-disclaimer">' .
+            $builder->getData()->getServizio()->getTestoIstruzioni() .
+            '</div>'
         );
 
         $helper->setGuideText('pratica.guida_alla_compilazione.accettazione_istruzioni', true);

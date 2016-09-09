@@ -20,7 +20,9 @@ class AccettazioneUtilizzoNidoType extends AbstractType
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
         $helper->setDescriptionText(
-            $asilo->getSchedaInformativa()
+            '<div class="well well-sm service-disclaimer">' .
+            $asilo->getSchedaInformativa() .
+            '</div>'
         );
 
         $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.accettazione_utilizzo_nido', true);

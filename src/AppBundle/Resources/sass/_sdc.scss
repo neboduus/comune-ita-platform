@@ -22,6 +22,7 @@ h1, h2, h3, h4, h5, h5 {
   @include transition(.3s);*/
 
   #header-top {
+    display: none;
     background-color: #30373d;
     padding-top: 4px;
     padding-bottom: 0;
@@ -298,6 +299,10 @@ body.canvas-slid {
     color: #fff;
   }
   #logo-footer {
+    img {
+      min-width: 38px;
+    }
+    @include transition(0.2s);
   }
   #site-name-footer {
     h2 {
@@ -328,6 +333,16 @@ body.canvas-slid {
   a {
     &:hover {
       text-decoration: none;
+    }
+  }
+}
+
+#pratica-summary {
+  .row {
+    margin-top: 10px;
+    border-bottom: 1px solid $grigio-10;
+    &.last {
+      border-bottom: none;
     }
   }
 }
@@ -403,8 +418,82 @@ body.canvas-slid {
   }
 }
 
+.service-disclaimer {
+  height: 12em;
+  overflow-y: auto;
+}
+
+@media only screen and (max-width: $screen-sm-min) {
+  /* Force table to not be like tables anymore */
+  #no-more-tables {
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    tr {
+      border: 1px solid #ccc;
+    }
+    td {
+      /* Behave  like a "row" */
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 50%;
+      white-space: normal;
+      text-align: left;
+      &:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        content: attr(data-title);
+      }
+    }
+  }
+  /* Hide table headers (but not display: none;, for accessibility) */
+  /*
+  Label the data
+  */
+}
+
+@media only screen and (max-width: $screen-sm-min) {
+  .nav-pills>li {
+    float: none;
+    text-align: center;
+  }
+
+  .craue_formflow_buttons {
+    .btn {
+      padding: 5px 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      i {
+        display: none;
+      }
+    }
+  }
+
+  .add_componente_nucleo_familiare {
+    padding: 5px 12px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+}
+
 /*todo: temporanea da sistemare*/
 .min-h-90 {
   display: block;
   min-height: 100px;
 }
+
+

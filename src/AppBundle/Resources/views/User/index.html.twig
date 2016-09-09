@@ -113,8 +113,49 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Le mie ultime pratiche <a href="{{ path('pratiche') }}" class="small">(vedi tutte)</a></h3>
+                    {% if pratiche|length > 0 %}
+                        <div id="no-more-tables">
+                            <table class="table table-bordered table-striped table-condensed cf">
+                                <thead class="cf">
+                                <tr>
+                                    <td>{{ 'pratica.protocollo'|trans }}</td>
+                                    <td>{{ 'pratica.categoria'|trans }}</td>
+                                    <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
+                                    <td>{{ 'pratica.stato'|trans }}</td>
+                                    <td></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for pratica in pratiche %}
+                                    <tr class="pratica"
+                                        data-pratica="{{ pratica.id }}"
+                                        data-user="{{ pratica.user.id }}"
+                                        data-status="{{ pratica.status }}">
+
+                                        <td data-title="{{ 'pratica.protocollo'|trans }}">{% if pratica.numeroProtocollo %} {{ pratica.numeroProtocollo }}{% else %} - {% endif %}</td>
+                                        <td data-title="{{ 'pratica.categoria'|trans }}">Scuola</td>
+                                        <td data-title="{{ 'pratica.data_di_compilazione'|trans }}">{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
+                                        <td data-title="{{ 'pratica.stato'|trans }}">{{ pratica.statusName|trans }}</td>
+                                        <td data-title="">
+                                            <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
+                                               class="btn btn-primary btn-xs">{{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}</div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class="col-md-4 hidden-xs hidden-sm">
+        <div class="col-md-4">
             <div class="panel panel-primary no-border-radius">
                 <div class="panel-heading">
                     <h3 class="panel-title">Hai bisogno di aiuto?<span class="pull-right"><i class="fa fa-comments-o" aria-hidden="true"></i></span></h3>
@@ -192,46 +233,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Le mie ultime pratiche <a href="{{ path('pratiche') }}" class="small">(vedi tutte)</a></h3>
-            {% if pratiche|length > 0 %}
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <td>{{ 'pratica.protocollo'|trans }}</td>
-                        <td>{{ 'pratica.categoria'|trans }}</td>
-                        <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
-                        <td>{{ 'pratica.stato'|trans }}</td>
-                        <td></td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for pratica in pratiche %}
-                        <tr class="pratica"
-                            data-pratica="{{ pratica.id }}"
-                            data-user="{{ pratica.user.id }}"
-                            data-status="{{ pratica.status }}">
-
-                            <td>{{ pratica.numeroProtocollo }}</td>
-                            <td>Scuola</td>
-                            <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
-                            <td>{{ pratica.statusName|trans }}</td>
-                            <td>
-                                <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
-                                   class="btn btn-primary btn-xs">{{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
-                            </td>
-
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}</div>
-            {% endif %}
         </div>
     </div>
 
