@@ -44,7 +44,7 @@ pratica:
   stato: 'Stato'
   nessun_allegato: 'Non sono presenti allegati.'
   aggiungi_allegato: 'Aggiungi allegato'
-  aggiungi_componente_nucleo_familiare: 'Aggiungi componente del nucleo familiare'
+  aggiungi_componente_nucleo_familiare: 'Aggiungi componente nucleo familiare'
   cancella_elemento: 'Cancella elemento'
   accetto_istruzioni: 'Ok mi è chiaro'
   guida_alla_compilazione:
@@ -71,7 +71,9 @@ pratica:
       cognome: 'Cognome'
       nome: 'Nome'
       codice_fiscale: 'Codice fiscale'
+      abbr_codice_fiscale: 'CF'
       rapporto_di_parentela: 'Rapporto di parentela'
+      abbr_rapporto_di_parentela: 'Parentela'
     allegati: 'File allegati'
     allegato:
       file: 'Nome del file'
@@ -91,7 +93,7 @@ iscrizione_asilo_nido:
   allegati: 'Caricamento degli allegati'
   seleziona_orario: 'Orario prescelto'
   periodoIscrizioneDa: 'Periodo iscrizione da'
-  periodoIscrizioneA: 'Periodo iscirzione a'
+  periodoIscrizioneA: 'Periodo iscrizione a'
   datiRichiedente.richiedente_nome: 'Nome'
   datiRichiedente.richiedente_cognome: 'Cogome'
   datiRichiedente.richiedente_luogo_nascita: 'Luogo di nascita'

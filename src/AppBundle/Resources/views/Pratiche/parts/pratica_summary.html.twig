@@ -1,105 +1,109 @@
 {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
 
-<table class="table">
+<div id="pratica-summary">
     {%  if pratica.statusName != 'STATUS_DRAFT' %}
-        <tr>
-            <th>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</th>
-            <td> {{ pratica.creationTime|date('d/m/Y') }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.creationTime|date('H:i') }} </td>
-        </tr>
-        <tr>
-            <th>{{ 'pratica.dettaglio.stato'|trans }}</th>
-            <td> {{ pratica.statusName|trans }}</td>
-        </tr>
+        <div class="row">
+            <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
+            <div class="col-xs-8 col-sm-9"> {{ pratica.creationTime|date('d/m/Y') }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.creationTime|date('H:i') }} </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.stato'|trans }}</strong></div>
+            <div class="col-xs-8 col-sm-9"> {{ pratica.statusName|trans }}</div>
+        </div>
     {% endif %}
     {% if pratica.servizio != null %}
-    <tr>
-        <th>{{ 'pratica.dettaglio.servizio'|trans }}</th>
-        <td>{{ pratica.servizio.name }}</td>
-    </tr>
+    <div class="row">
+        <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.servizio'|trans }}</strong></div>
+        <div class="col-xs-8 col-sm-9">{{ pratica.servizio.name }}</div>
+    </div>
     {% endif %}
     {% if pratica.ente != null %}
-    <tr>
-        <th>{{ 'pratica.dettaglio.ente'|trans }}</th>
-        <td> {{ pratica.ente.name }}</td>
-    </tr>
+    <div class="row">
+        <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.ente'|trans }}</strong></div>
+        <div class="col-xs-8 col-sm-9"> {{ pratica.ente.name }}</div>
+    </div>
     {% endif %}
     {% if pratica.struttura != null %}
-    <tr>
-        <th>{{ 'pratica.dettaglio.struttura'|trans }}</th>
-        <td> {{ pratica.struttura.name }}</td>
-    </tr>
+    <div class="row">
+        <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.struttura'|trans }}</strong></div>
+        <div class="col-xs-8 col-sm-9"> {{ pratica.struttura.name }}</div>
+    </div>
     {% endif %}
-    <tr>
-        <th>{{ 'pratica.dettaglio.orario'|trans }}</th>
-        <td> {{ pratica.strutturaOrario }}</td>
-    </tr>
-    <tr>
-        <th>{{ 'pratica.dettaglio.periodo'|trans }}</th>
-        <td> {{ pratica.periodoIscrizioneDa|date("d/m/Y") }} - {{ pratica.periodoIscrizioneA|date("d/m/Y") }}</td>
-    </tr>
-    <tr>
-        <th>{{ 'pratica.dettaglio.richiedente'|trans }}</th>
-        <td> {{ pratica.user.fullName }}</td>
-    </tr>
-    <tr>
-        <th>{{ 'pratica.dettaglio.bambino'|trans }}</th>
-        <td>
+    <div class="row">
+        <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.orario'|trans }}</strong></div>
+        <div class="col-xs-8 col-sm-9"> {{ pratica.strutturaOrario }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.periodo'|trans }}</strong></div>
+        <div class="col-xs-8 col-sm-9"> {{ pratica.periodoIscrizioneDa|date("d/m/Y") }} - {{ pratica.periodoIscrizioneA|date("d/m/Y") }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.richiedente'|trans }}</strong></div>
+        <div class="col-xs-8 col-sm-9"> {{ pratica.user.fullName }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.dettaglio.bambino'|trans }}</strong></div>
+        <div class="col-xs-8 col-sm-9">
             {{ pratica.bambinoCognome }} {{ pratica.bambinoNome }} {{ 'pratica.dettaglio.nato_a'|trans }} {{ pratica.bambinoLuogoNascita }}
             {{ 'pratica.dettaglio.nato_il'|trans }} {{ pratica.bambinoDataNascita|date('d/m/Y') }}
-        </td>
-    </tr>
-    <tr>
-        <th>{{ 'pratica.dettaglio.nucleo_familiare'|trans }}</th>
-        <td>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'pratica.dettaglio.nucleo_familiare'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
             {% if pratica.nucleoFamiliare|length > 0 %}
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.cognome'|trans }}</th>
-                    <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.nome'|trans }}</th>
-                    <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.codice_fiscale'|trans }}</th>
-                    <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.rapporto_di_parentela'|trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for componente in pratica.nucleoFamiliare %}
+            <div id="no-more-tables">
+                <table class="table table-bordered table-striped table-condensed cf">
+                    <thead class="cf">
                     <tr>
-                        <td>{{ componente.cognome }} </td>
-                        <td>{{ componente.nome }}</td>
-                        <td>{{ componente.codiceFiscale }}</td>
-                        <td>{{ componente.rapportoParentela }}</td>
+                        <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.cognome'|trans }}</th>
+                        <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.nome'|trans }}</th>
+                        <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.codice_fiscale'|trans }}</th>
+                        <th>{{ 'pratica.dettaglio.componente_nucleo_familiare.rapporto_di_parentela'|trans }}</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for componente in pratica.nucleoFamiliare %}
+                        <tr>
+                            <td data-title="{{ 'pratica.dettaglio.componente_nucleo_familiare.cognome'|trans }}">{{ componente.cognome }} </td>
+                            <td data-title="{{ 'pratica.dettaglio.componente_nucleo_familiare.nome'|trans }}">{{ componente.nome }}</td>
+                            <td data-title="{{ 'pratica.dettaglio.componente_nucleo_familiare.abbr_codice_fiscale'|trans }}">{{ componente.codiceFiscale }}</td>
+                            <td data-title="{{ 'pratica.dettaglio.componente_nucleo_familiare.abbr_rapporto_di_parentela'|trans }}">{{ componente.rapportoParentela }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <th>{{ 'pratica.dettaglio.allegati'|trans }}</th>
-        <td>
+        </div>
+    </div>
+    <div class="row last">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'pratica.dettaglio.allegati'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
             {% if pratica.allegati|length > 0 %}
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>{{ 'pratica.dettaglio.allegato.file'|trans }}</th>
-                    <th>{{ 'pratica.dettaglio.allegato.descrizione'|trans }}</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for allegato in pratica.allegati %}
+            <div id="no-more-tables">
+                <table class="table table-bordered table-striped table-condensed cf">
+                    <thead class="cf">
                     <tr>
-                        <td>{{ allegato.originalFilename }}</td>
-                        <td>{{ allegato.description }}</td>
-                        <td><a href="{{ path( download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a></td>
+                        <th>{{ 'pratica.dettaglio.allegato.file'|trans }}</th>
+                        <th>{{ 'pratica.dettaglio.allegato.descrizione'|trans }}</th>
+                        <th></th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for allegato in pratica.allegati %}
+                        <tr>
+                            <td data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ allegato.originalFilename }}</td>
+                            <td data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ allegato.description }}</td>
+                            <td data-title=""><a href="{{ path( download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
                 <p><em>{{ 'pratica.nessun_allegato'|trans }}</em></p>
             {% endif %}
-        </td>
-    </tr>
-</table>
+        </div>
+    </div>
+</div>
