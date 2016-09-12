@@ -89,18 +89,6 @@ class Ente
     }
 
     /**
-     * @param string $slug
-     *
-     * @return $this
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
      * @return AsiloNido[]
      */
     public function getAsili()

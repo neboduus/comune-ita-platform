@@ -42,9 +42,7 @@ class AsiloNido
 
     public function __construct()
     {
-        if (!$this->id) {
-            $this->id = Uuid::uuid4();
-        }
+        $this->id = Uuid::uuid4();
     }
 
     /**
@@ -95,11 +93,6 @@ class AsiloNido
         return $this;
     }
 
-    function __toString()
-    {
-        return (string)$this->getId();
-    }
-
     /**
      * @return array
      */
@@ -140,5 +133,4 @@ class AsiloNido
     {
         $this->orari = unserialize($this->orari);
     }
-
 }

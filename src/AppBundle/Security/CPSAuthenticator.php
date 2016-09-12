@@ -57,7 +57,7 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
     /**
      * @param Request                      $request
      * @param AuthenticationException|null $authException
-     * @return JsonResponse
+     * @return Response
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
@@ -108,7 +108,7 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
     /**
      * @param Request                 $request
      * @param AuthenticationException $exception
-     * @return JsonResponse
+     * @return Response
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {

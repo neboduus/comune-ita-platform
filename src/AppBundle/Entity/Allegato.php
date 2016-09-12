@@ -187,36 +187,6 @@ class Allegato
     }
 
     /**
-     * @return string
-     */
-    public function getNumeroProtocollo()
-    {
-        return $this->numeroProtocollo;
-    }
-
-    /**
-     * @param string $numeroProtocollo
-     * @return $this
-     */
-    public function setNumeroProtocollo($numeroProtocollo)
-    {
-        $this->numeroProtocollo = $numeroProtocollo;
-
-        return $this;
-    }
-
-    /**
-     * @ORM\PreFlush()
-     */
-    public function updateNumeriProtocolloPratica()
-    {
-        //TODO: testare e sentire con Nardelli come deve essere fatta la protocollazione degli allegati
-        if ($this->numeroProtocollo != null) {
-            $this->pratica->addNumeroDiProtocollo($this->numeroProtocollo);
-        }
-    }
-
-    /**
      * @return ArrayCollection
      */
     public function getPratiche(): Collection

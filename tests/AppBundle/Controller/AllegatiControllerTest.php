@@ -184,7 +184,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         );
 
         $form->setValues($values);
-        $crawler = $this->client->submit($form);
+        $this->client->submit($form);
         //an allegato is created for this user with the correct file
         $this->assertEquals(1, count($repo->findBy(['owner' => $user])));
     }
@@ -220,6 +220,96 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $expectedErrorMessage = $this->translator->trans(ValidMimeType::TRANSLATION_ID);
         $errorMessage = $crawler->filter('.has-error')->html();
         $this->assertContains($expectedErrorMessage, $errorMessage);
+    }
+
+    /**
+     * @test
+     */
+    public function testUserCanSeeHisOwnAttachments()
+    {
+        //create attachment for this user
+        $user = $this->createCPSUser(true);
+        $fakeFileName = 'lenovo-yoga-xp1.pdf';
+        $destFileName = md5($fakeFileName).'.pdf';
+        $myAllegato = $this->createAllegato('p', 'p', $user, $destFileName, $fakeFileName);
+
+        $otherUser = $this->createCPSUser(true);
+        $fakeFileName = 'lenovo-yoga-xp1.pdf';
+        $destFileName = md5($fakeFileName).'.pdf';
+        $otherAllegato = $this->createAllegato('pp', 'pp', $otherUser, $destFileName, $fakeFileName);
+
+        $crawler = $this->clientRequestAsCPSUser($user,'GET',$this->router->generate('allegati_list_cpsuser'));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(1,$crawler->filterXPath('//*[@data-allegato="'.$myAllegato->getId().'"]')->count());
+        $this->assertEquals(0,$crawler->filterXPath('//*[@data-allegato="'.$otherAllegato->getId().'"]')->count());
+    }
+
+    /**
+     * @test
+     */
+    public function testUserCannotDeleteAllegatoIfAttachedToPratica()
+    {
+        $this->setupMockedLogger([
+            LogConstants::ALLEGATO_CANCELLAZIONE_NEGATA,
+        ]);
+
+        $user = $this->createCPSUser(true);
+        $repo = $this->em->getRepository('AppBundle:Allegato');
+
+        $fakeFileName = 'lenovo-yoga-xp1.pdf';
+        $destFileName = md5($fakeFileName).'.pdf';
+        $boundAllegato = $this->createAllegato('p', 'p', $user, $destFileName, $fakeFileName);
+        $pratica = $this->createPratica($user);
+        $pratica->addAllegato($boundAllegato);
+
+        $allegatiDeletePath = $this->router->generate('allegati_list_cpsuser');
+
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiDeletePath);
+
+        $form = $crawler->filterXPath('//*[@data-allegato="'.$boundAllegato->getId().'"]')
+            ->selectButton($this->translator->trans('elimina'))->form();
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        //an allegato is not created for this user
+        $this->assertEquals(1, count($repo->findBy(['owner' => $user])));
+
+        $expectedErrorMessage = $this->translator->trans('allegato.non_cancellabile');
+        $errorMessage = $crawler->filter('.flash-error')->html();
+        $this->assertContains($expectedErrorMessage, $errorMessage);
+    }
+
+
+    /**
+     * @test
+     */
+    public function testUserCanDeleteAllegatoIfNotAttachedToPratica()
+    {
+        $this->setupMockedLogger([
+            LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA,
+        ]);
+
+        $user = $this->createCPSUser(true);
+        $repo = $this->em->getRepository('AppBundle:Allegato');
+
+        $fakeFileName = 'lenovo-yoga-xp1.pdf';
+        $destFileName = md5($fakeFileName).'.pdf';
+        $boundAllegato = $this->createAllegatoWithNoPratica($user, $destFileName, $fakeFileName);
+        $boundAllegato->getPratiche()->clear();
+        $this->em->persist($boundAllegato);
+        $this->em->flush();
+
+        $allegatiDeletePath = $this->router->generate('allegati_list_cpsuser');
+
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiDeletePath);
+
+        $form = $crawler->filterXPath('//*[@data-allegato="'.$boundAllegato->getId().'"]')
+            ->selectButton($this->translator->trans('elimina'))->form();
+        $this->client->followRedirects(true);
+        $this->client->submit($form);
+
+        //an allegato is not created for this user
+        $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
     }
 
 
@@ -279,6 +369,34 @@ class AllegatiControllerTest extends AbstractAppTestCase
         mkdir($destDir, 0777, true);
         $this->assertTrue(copy(__DIR__.'/../Assets/'.$fakeFileName, $destDir.'/'.$destFileName));
         $this->em->persist($pratica);
+        $this->em->persist($allegato);
+        $this->em->flush();
+
+        return $allegato;
+    }
+
+    /**
+     * @param $myUser
+     * @param $destFileName
+     * @param $fakeFileName
+     * @return Allegato
+     */
+    private function createAllegatoWithNoPratica($myUser, $destFileName, $fakeFileName)
+    {
+
+        $allegato = new Allegato();
+        $allegato->setOwner($myUser);
+        $allegato->setFilename($destFileName);
+        $allegato->setOriginalFilename($fakeFileName);
+        $allegato->setDescription('some description');
+
+        $directoryNamer = $this->container->get('ocsdc.allegati.directory_namer');
+        /** @var PropertyMapping $mapping */
+        $mapping = $this->container->get('vich_uploader.property_mapping_factory')->fromObject($allegato)[0];
+
+        $destDir = $mapping->getUploadDestination().'/'.$directoryNamer->directoryName($allegato, $mapping);
+        mkdir($destDir, 0777, true);
+        $this->assertTrue(copy(__DIR__.'/../Assets/'.$fakeFileName, $destDir.'/'.$destFileName));
         $this->em->persist($allegato);
         $this->em->flush();
 

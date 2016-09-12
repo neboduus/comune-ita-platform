@@ -2,8 +2,10 @@
 
 namespace Tests\AppBundle\Security;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**
@@ -21,6 +23,9 @@ class CPSAuthenticatorTest extends AbstractAppTestCase
         parent::setUp();
     }
 
+    /**
+     * @test
+     */
     public function testIGetAnExceptionIfUserProviderIsNotACPSUserProvider()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -28,5 +33,16 @@ class CPSAuthenticatorTest extends AbstractAppTestCase
         $authenticator = $this->container->get('ocsdc.cps.token_authenticator');
         $wrongProvider = $mockLogger = $this->getMockBuilder(UserProviderInterface::class)->getMock();
         $authenticator->getUser([], $wrongProvider);
+    }
+
+    /**
+     * @test
+     */
+    public function testOnAuthenticationFailureReturnsResponse()
+    {
+        $authenticator = $this->container->get('ocsdc.cps.token_authenticator');
+        $response = $authenticator->onAuthenticationFailure(new Request(), new AuthenticationException('some'));
+        $this->assertTrue($response instanceof Response);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
     }
 }
