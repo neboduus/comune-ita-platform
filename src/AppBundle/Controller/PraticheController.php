@@ -7,16 +7,13 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
-use AppBundle\Entity\User;
-use AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow;
 use AppBundle\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class PraticheController
@@ -26,6 +23,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  */
 class PraticheController extends Controller
 {
+
+    const ENTE_SLUG_QUERY_PARAMETER = 'ente';
+
     /**
      * @Route("/", name="pratiche")
      * @Template()
@@ -108,7 +108,7 @@ class PraticheController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function newAction(Servizio $servizio)
+    public function newAction(Request $request, Servizio $servizio)
     {
         $user = $this->getUser();
         $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
@@ -116,19 +116,38 @@ class PraticheController extends Controller
             array(
                 'user' => $user,
                 'servizio' => $servizio,
-                'status' => Pratica::STATUS_DRAFT),
+                'status' => Pratica::STATUS_DRAFT
+            ),
             array('creationTime' => 'ASC')
         );
 
-        if (!empty($pratiche))
-        {
+        if (!empty($pratiche)) {
             return $this->redirectToRoute(
                 'pratiche_list_draft',
-                ['servizio'=>$servizio->getSlug()]
+                [ 'servizio' => $servizio->getSlug() ]
             );
         }
 
         $pratica = $this->createNewPratica($servizio, $user);
+
+        $enteSlug = $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null);
+        if ($enteSlug != null) {
+            $ente = $this->getDoctrine()
+                ->getRepository('AppBundle:Ente')
+                ->findOneBySlug($enteSlug);
+            if ($ente != null) {
+                $pratica->setEnte($ente);
+            } else {
+                $this->get('logger')->info(
+                    LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
+                    [
+                        'pratica' => $pratica,
+                        'headers' => $request->headers,
+                    ]
+                );
+            }
+        }
+
         return $this->redirectToRoute(
             'pratiche_compila',
             ['pratica' => $pratica->getId()]
