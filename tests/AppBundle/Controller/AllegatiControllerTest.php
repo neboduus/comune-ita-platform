@@ -34,6 +34,19 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->cleanDb(User::class);
     }
 
+    public function testThereIsALinkToCreateAllegati()
+    {
+        $user = $this->createCPSUser(true);
+
+        $allegatiListPath = $this->router->generate('allegati_list_cpsuser');
+
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiListPath);
+        $newPath = $this->router->generate('allegati_create_cpsuser');
+        $linkToNew = $crawler->filterXpath('//*[@href="'.$newPath.'"]');
+        $this->assertGreaterThan(0, $linkToNew->count());
+
+    }
+
     /**
      * @test
      */
@@ -275,7 +288,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->assertEquals(1, count($repo->findBy(['owner' => $user])));
 
         $expectedErrorMessage = $this->translator->trans('allegato.non_cancellabile');
-        $errorMessage = $crawler->filter('.flash-error')->html();
+        $errorMessage = $crawler->filter('.alert-error')->html();
         $this->assertContains($expectedErrorMessage, $errorMessage);
     }
 

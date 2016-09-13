@@ -1,20 +1,29 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-    <ul>
-        {% for item in allegati %}
+    <div class="col-sm-12">
+        <a class="btn btn-default" href="{{ path('allegati_create_cpsuser') }}">{{ 'allegato.aggiungi'|trans }}</a>
+    </div>
+    <div class="row list">
+    {% for item in allegati %}
+        <div class="col-sm-4" data-allegato="{{ item.allegato.id }}">
+            <article class="panel panel-default servizio">
+                <div class="panel-body">
+            <div data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ item.allegato.originalFilename }}</div>
+            <div data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ item.allegato.description }}</div>
+            <div data-title="">
+                <a href="{{ path( 'allegati_download_cpsuser', {'allegato': item.allegato.id}) }}"
+                   class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a>
+            </div>
+            {% if item.deleteform %}
+                {{ form(item.deleteform) }}
+            {% endif %}
+                </div>
 
-            <li data-allegato="{{ item.allegato.id }}">
-                <div data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ item.allegato.originalFilename }}</div>
-                <div data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ item.allegato.description }}</div>
-                <div data-title="">
-                    <a href="{{ path( 'allegati_download_cpsuser', {'allegato': item.allegato.id}) }}"
-                       class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a></div>
-                {% if item.deleteform %}
-                    {{ form(item.deleteform) }}
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+            </article>
+
+        </div>
+    {% endfor %}
+    </div>
 {% endblock %}
 

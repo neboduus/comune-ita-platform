@@ -26,6 +26,9 @@ class AllegatoType extends AbstractType
             ->add('file', VichFileType::class, [
                 'allow_delete' => false,
                 'required' => true,
+                'attr' => [
+                    'class' => 'btn btn-default',
+                ]
             ])
             ->add('description', TextType::class, [
                 'required' => false,
