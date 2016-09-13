@@ -201,7 +201,6 @@ class PraticaControllerTest extends AbstractAppTestCase
         $enteSlug = 'roncella-ionica';
 
         $ente = new Ente();
-        $ente->setSlug($enteSlug);
         $ente->setName($enteSlug);
         $this->em->persist($ente);
         $this->em->flush();
