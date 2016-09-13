@@ -1,4 +1,5 @@
 salva: 'Salva'
+elimina: 'Elimina'
 terms_do_il_consenso: 'Dò il consenso'
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
@@ -187,3 +188,5 @@ allegato:
   non_supportato: 'Il file che stai cecando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
   guida_alla_compilazione:
     crea: 'Seleziona il file da caricare, deve essere una immagine (png bmp gif jpg) o un file pdf. Dai al fle una descrizione che ti aiuti a identificarlo'
+  non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'
+

@@ -1,0 +1,20 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+    <ul>
+        {% for item in allegati %}
+
+            <li data-allegato="{{ item.allegato.id }}">
+                <div data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ item.allegato.originalFilename }}</div>
+                <div data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ item.allegato.description }}</div>
+                <div data-title="">
+                    <a href="{{ path( 'allegati_download_cpsuser', {'allegato': item.allegato.id}) }}"
+                       class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a></div>
+                {% if item.deleteform %}
+                    {{ form(item.deleteform) }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

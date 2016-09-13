@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -475,7 +476,7 @@ class Pratica
     }
 
     /**
-     * @return ComponenteNucleoFamiliare[]
+     * @return Collection
      */
     public function getNucleoFamiliare()
     {
@@ -487,9 +488,8 @@ class Pratica
      *
      * @return $this
      */
-    public function setNucleoFamiliare($nucleoFamiliare)
+    public function setNucleoFamiliare(Collection $nucleoFamiliare)
     {
-        //TODO: testare
         $this->nucleoFamiliare = $nucleoFamiliare;
 
         return $this;

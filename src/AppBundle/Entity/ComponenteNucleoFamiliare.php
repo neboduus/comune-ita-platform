@@ -139,14 +139,6 @@ class ComponenteNucleoFamiliare
     }
 
     /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string) $this->getId();
-    }
-
-    /**
      * @return UuidInterface
      */
     public function getId()
@@ -157,7 +149,7 @@ class ComponenteNucleoFamiliare
     /**
      * @return Pratica
      */
-    public function getPratica(): Pratica
+    public function getPratica()
     {
         return $this->pratica;
     }
@@ -166,7 +158,7 @@ class ComponenteNucleoFamiliare
      * @param Pratica $pratica
      * @return ComponenteNucleoFamiliare
      */
-    public function setPratica($pratica)
+    public function setPratica(Pratica $pratica)
     {
         $this->pratica = $pratica;
 

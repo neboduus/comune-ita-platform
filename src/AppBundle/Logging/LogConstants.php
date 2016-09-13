@@ -24,11 +24,14 @@ class LogConstants
     const ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER = "CPS User {user} downloaded attachment {originalFilename} with id {pratica}";
     const ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE = "Operatore {user} downloaded attachment {originalFilename} Id: {allegato} . He was allowed to because he's responsible for these pratiche : {pratiche}";
     const ALLEGATO_DOWNLOAD_NEGATO = "Denied download of Attachment {originalFilename} Id: {allegato} ";
+    const ALLEGATO_CANCELLAZIONE_NEGATA = "Denied deleting allegato {allegato} by user {user}";
+    const ALLEGATO_CANCELLAZIONE_PERMESSA = "Allowed delete of allegato {allegato} by user {user}";
 
     const PRATICA_ASSIGNED = "Pratica {pratica} assigned to user {user}";
     const PRATICA_COMMENTED = "Pratica {pratica} commented by user {user}";
     const PRATICA_APPROVED = "Pratica {pratica} approved by user {user}";
     const PRATICA_CANCELLED = "Pratica {pratica} cancelled by user {user}";
     const PRATICA_WRONG_ENTE_REQUESTED = "Pratica {pratica} created, but wrong ente requested: {headers}";
+
 
 }
