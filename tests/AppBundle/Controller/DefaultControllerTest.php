@@ -93,6 +93,35 @@ class DefaultControllerTest extends AbstractAppTestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function testOriginalQueryParametersArepreservedWhenIAmRedirectedToOriginalPageAfterAcceptingTermsForTheFirstTimeAsLoggedInUser()
+    {
+        $user = $this->createCPSUser(false);
+
+        $params = [
+            'servizio' => 'someservice',
+            'a' => 'b',
+            'c' => 'd',
+            'e' => 11,
+        ];
+
+        $this->client->followRedirects();
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche_new', $params));
+        $form = $crawler->selectButton($this->translator->trans('salva'))->form();
+        $this->client->submit($form);
+        $this->assertEquals(
+            $this->client->getRequest()->getUri(),
+            $this->router->generate('pratiche_new', $params, Router::ABSOLUTE_URL)
+        );
+        unset($params['servizio']);
+        $this->assertEquals(
+            $params,
+            $this->client->getRequest()->query->all()
+        );
+    }
+
     public function testIAmNotRedirectedToTermAcceptPageIfTermsAreAccepted()
     {
         $user = $this->createCPSUser();

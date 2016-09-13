@@ -5,8 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
-use AppBundle\Entity\User;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Class DefaultController
@@ -55,7 +54,9 @@ class DefaultController extends Controller
         if ($form->isSubmitted()) {
             $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'home';
             $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
-            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute, $redirectRouteParams);
+            $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
+
+            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute, $redirectRouteParams, $redirectRouteQuery);
         }else{
             $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
         }
@@ -73,7 +74,7 @@ class DefaultController extends Controller
      * @param array $redirectRouteParams
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null, $redirectRouteParams = array()):RedirectResponse
+    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null, $redirectRouteParams = array(), $redirectRouteQuery = array()):RedirectResponse
     {
         $manager = $this->getDoctrine()->getManager();
         $user->setTermsAccepted(true);
@@ -84,7 +85,7 @@ class DefaultController extends Controller
         } catch (\Exception $e) {
             $logger->error($e->getMessage());
         }
-        return $this->redirectToRoute($redirectRoute, $redirectRouteParams);
+        return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery) );
     }
 
     /**

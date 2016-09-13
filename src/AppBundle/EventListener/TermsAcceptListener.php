@@ -3,11 +3,8 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
@@ -37,14 +34,19 @@ class TermsAcceptListener
         if ($user instanceof CPSUser) {
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
+            $curretRouteQuery = $event->getRequest()->query->all();
             if ($user->getTermsAccepted() == false
                 && $currentRoute !== ''
                 && $currentRoute !== 'terms_accept'
             ) {
-                $redirectParameters = ['r' => $currentRoute];
-                if (!empty($currentRouteParams)){
-                    $redirectParameters['p'] =  serialize($currentRouteParams);
+                $redirectParameters['r'] = $currentRoute;
+                if ($currentRouteParams) {
+                    $redirectParameters['p'] = serialize($currentRouteParams);
                 }
+                if ($currentRouteParams) {
+                    $redirectParameters['q'] = serialize($curretRouteQuery);
+                }
+
                 $redirectUrl = $this->router->generate('terms_accept', $redirectParameters);
                 $event->setResponse(new RedirectResponse($redirectUrl));
             }

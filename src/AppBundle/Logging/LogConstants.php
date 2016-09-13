@@ -29,5 +29,6 @@ class LogConstants
     const PRATICA_COMMENTED = "Pratica {pratica} commented by user {user}";
     const PRATICA_APPROVED = "Pratica {pratica} approved by user {user}";
     const PRATICA_CANCELLED = "Pratica {pratica} cancelled by user {user}";
+    const PRATICA_WRONG_ENTE_REQUESTED = "Pratica {pratica} created, but wrong ente requested: {headers}";
 
 }

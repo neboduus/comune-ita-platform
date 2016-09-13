@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Controller\PraticheController;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
@@ -172,6 +173,112 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $this->assertEquals(++$tutteLePratiche, $tutteLePraticheNew);
         $this->assertEquals(++$miePratiche, $miePraticheNew);
+    }
+
+    /**
+     * @test
+     */
+    public function testANewPraticaIsPersistedWithEnteSetFromLinkWhenIStartTheFormApplicationAsLoggedUser()
+    {
+        $mockLogger = $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
+        $mockLogger->expects($this->exactly(1))
+            ->method('info')
+            ->with(LogConstants::PRATICA_CREATED);
+
+        $this->container->set('logger', $mockLogger);
+        $user = $this->createCPSUser();
+
+        $praticheRepository = $this->em->getRepository('AppBundle:Pratica');
+        $tutteLePratiche = count($praticheRepository->findAll());
+        $miePratiche = count($praticheRepository->findByUser($user));
+
+        $servizio = new Servizio();
+        $servizio->setName('Terzo servizio');
+        $this->em->persist($servizio);
+        $this->em->flush();
+
+        //Lo slug viene passato da gedmo sluggable
+        $enteSlug = 'roncella-ionica';
+
+        $ente = new Ente();
+        $ente->setSlug($enteSlug);
+        $ente->setName($enteSlug);
+        $this->em->persist($ente);
+        $this->em->flush();
+
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+            'pratiche_new',
+            [
+                'servizio' => $servizio->getSlug(),
+                PraticheController::ENTE_SLUG_QUERY_PARAMETER => $enteSlug,
+            ]
+        ));
+
+        $newPraticaUrl = $this->client->getResponse()->headers->get('Location');
+        $newPraticaParameters = $this->router->match($newPraticaUrl);
+        $pratica = $praticheRepository->find($newPraticaParameters['pratica']);
+        $this->assertEquals($enteSlug, $pratica->getEnte()->getSlug());
+
+        $tutteLePraticheNew = count($praticheRepository->findAll());
+        $miePraticheNew = count($praticheRepository->findByUser($user));
+
+        $this->assertEquals($tutteLePratiche + 1, $tutteLePraticheNew);
+        $this->assertEquals($miePratiche + 1, $miePraticheNew);
+    }
+
+    /**
+     * @test
+     */
+    public function testANewPraticaIsPersistedWithNoEnteSetIfLinkHasNonMatchingSlugWhenIStartTheFormApplicationAsLoggedUser()
+    {
+        $mockLogger = $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
+        $mockLogger->expects($this->exactly(2))
+            ->method('info')
+            ->with($this->callback(function ($arg) {
+
+                return in_array(
+                    $arg,
+                    [
+                    LogConstants::PRATICA_CREATED,
+                    LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
+                    ]
+                );
+            }));
+
+        $this->container->set('logger', $mockLogger);
+        $user = $this->createCPSUser();
+
+        $praticheRepository = $this->em->getRepository('AppBundle:Pratica');
+        $tutteLePratiche = count($praticheRepository->findAll());
+        $miePratiche = count($praticheRepository->findByUser($user));
+
+        $servizio = new Servizio();
+        $servizio->setName('Terzo servizio');
+        $this->em->persist($servizio);
+        $this->em->flush();
+
+        //Lo slug viene passato da gedmo sluggable
+        $enteSlug = 'roncella-ionica';
+
+
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+            'pratiche_new',
+            [
+                'servizio' => $servizio->getSlug(),
+                PraticheController::ENTE_SLUG_QUERY_PARAMETER => $enteSlug,
+            ]
+        ));
+
+        $newPraticaUrl = $this->client->getResponse()->headers->get('Location');
+        $newPraticaParameters = $this->router->match($newPraticaUrl);
+        $pratica = $praticheRepository->find($newPraticaParameters['pratica']);
+        $this->assertNull($pratica->getEnte());
+
+        $tutteLePraticheNew = count($praticheRepository->findAll());
+        $miePraticheNew = count($praticheRepository->findByUser($user));
+
+        $this->assertEquals($tutteLePratiche + 1, $tutteLePraticheNew);
+        $this->assertEquals($miePratiche + 1, $miePraticheNew);
     }
 
     /**
