@@ -177,6 +177,8 @@ class AllegatoController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->remove($allegato);
             $em->flush();
+            $this->get('session')->getFlashBag()
+                ->add('info', $this->get('translator')->trans('allegato.cancellato'));
             $this->get('logger')->info(LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA, [
                 'allegato' => $allegato,
                 'user' => $this->getUser(),
