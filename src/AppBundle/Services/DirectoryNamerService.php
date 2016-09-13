@@ -18,7 +18,7 @@ class DirectoryNamerService implements DirectoryNamerInterface
     public function directoryName($object, PropertyMapping $mapping):string
     {
         if ($object instanceof Allegato) {
-            return $object->getPratica()->getId();
+            return $object->getOwner()->getId();
         }
 
         return 'misc';

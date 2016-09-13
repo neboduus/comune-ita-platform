@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"default" = "Pratica", "iscrizione_asilo_nido" = "IscrizioneAsiloNido"})
  * @ORM\HasLifecycleCallbacks
- **/
+ */
 class Pratica
 {
     const STATUS_CANCELLED = 0;
@@ -63,7 +63,7 @@ class Pratica
     private $operatore;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Allegato", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Allegato", inversedBy="pratiche", orphanRemoval=false)
      * @var ArrayCollection
      * @Assert\Valid(traverse=true)
      */
@@ -205,13 +205,13 @@ class Pratica
     }
 
     /**
-     * @param $time
+     * @param integer $time
      *
      * @return $this
      */
     public function setCreationTime($time)
     {
-        $this->creation_time = $time;
+        $this->creationTime = $time;
 
         return $this;
     }
@@ -244,7 +244,7 @@ class Pratica
     }
 
     /**
-     * @param $status
+     * @param integer $status
      *
      * @return $this
      */
@@ -336,9 +336,12 @@ class Pratica
         return $this;
     }
 
-    function __toString()
+    /**
+     * @return string
+     */
+    public function __toString()
     {
-        return (string)$this->getId();
+        return (string) $this->getId();
     }
 
     /**
@@ -396,11 +399,11 @@ class Pratica
      *
      * @return $this
      */
-    public function addAllegatus(Allegato $allegato)
+    public function addAllegato(Allegato $allegato)
     {
         if (!$this->allegati->contains($allegato)) {
             $this->allegati->add($allegato);
-            $allegato->setPratica($this);
+            $allegato->addPratica($this);
         }
 
         return $this;
@@ -411,11 +414,12 @@ class Pratica
      *
      * @return $this
      */
-    public function removeAllegatus(Allegato $allegato)
+    public function removeAllegato(Allegato $allegato)
     {
+        //TODO: testare e sentire con Nardelli come gestire i nueri di protocollo per gli allegati
         if ($this->allegati->contains($allegato)) {
             $this->allegati->removeElement($allegato);
-            $allegato->setPratica(null);
+            $allegato->removePratica($this);
         }
 
         return $this;
@@ -485,6 +489,7 @@ class Pratica
      */
     public function setNucleoFamiliare($nucleoFamiliare)
     {
+        //TODO: testare
         $this->nucleoFamiliare = $nucleoFamiliare;
 
         return $this;
@@ -526,7 +531,7 @@ class Pratica
     public function getCommenti()
     {
         if (!$this->commenti instanceof ArrayCollection) {
-            $this->parseCommentiStringIntoArrayCollection();
+            $this->parseCommenti();
         }
 
         return $this->commenti;
@@ -545,7 +550,7 @@ class Pratica
     }
 
     /**
-     * @param $commento
+     * @param array $commento
      *
      * @return Pratica
      */
@@ -568,35 +573,10 @@ class Pratica
     public function convertCommentiToString()
     {
         $data = [];
-        foreach($this->getCommenti() as $commento){
+        foreach ($this->getCommenti() as $commento) {
             $data[] = serialize($commento);
         }
         $this->commenti = implode('##', $data);
-    }
-
-    /**
-     * @ORM\PostLoad()
-     * @ORM\PostUpdate()
-     */
-    public function parseCommentiStringIntoArrayCollection()
-    {
-        $collection = new ArrayCollection();
-        if ($this->commenti !== null) {
-            $data = explode('##', $this->commenti);
-            foreach ($data as $commentoSeriliazed) {
-                $commento = unserialize($commentoSeriliazed);
-                if (is_array($commento) && isset($commento['text']) && !empty($commento['text'])) {
-                    if (!$collection->exists(function ($key, $value) use ($commento) {
-                        return $value['text'] == $commento['text'];
-                    })
-                    ) {
-                        $collection->add($commento);
-                    }
-                }
-            }
-        }
-
-        $this->commenti = $collection;
     }
 
     /**
@@ -609,10 +589,12 @@ class Pratica
 
     /**
      * @param int $latestStatusChangeTimestamp
+     * @return Pratica
      */
     public function setLatestStatusChangeTimestamp($latestStatusChangeTimestamp)
     {
         $this->latestStatusChangeTimestamp = $latestStatusChangeTimestamp;
+
         return $this;
     }
 
@@ -626,10 +608,12 @@ class Pratica
 
     /**
      * @param int $latestCPSCommunicationTimestamp
+     * @return Pratica
      */
     public function setLatestCPSCommunicationTimestamp($latestCPSCommunicationTimestamp)
     {
         $this->latestCPSCommunicationTimestamp = $latestCPSCommunicationTimestamp;
+
         return $this;
     }
 
@@ -643,10 +627,45 @@ class Pratica
 
     /**
      * @param int $latestOperatoreCommunicationTimestamp
+     * @return Pratica
      */
     public function setLatestOperatoreCommunicationTimestamp($latestOperatoreCommunicationTimestamp)
     {
         $this->latestOperatoreCommunicationTimestamp = $latestOperatoreCommunicationTimestamp;
+
         return $this;
     }
+
+    /**
+     * @param $commentoSeriliazed
+     */
+    private function parseCommentStringIntoArrayCollection($commentoSeriliazed)
+    {
+        $commento = unserialize($commentoSeriliazed);
+        if (is_array($commento) && isset($commento['text']) && !empty($commento['text'])) {
+            if (!$this->commenti->exists(function ($key, $value) use ($commento) {
+                return $value['text'] == $commento['text'];
+            })
+            ) {
+                $this->commenti->add($commento);
+            }
+        }
+    }
+
+    /**
+     * @ORM\PostLoad()
+     * @ORM\PostUpdate()
+     */
+    private function parseCommenti()
+    {
+        $data = [];
+        if ($this->commenti !== null) {
+            $data = explode('##', $this->commenti);
+        }
+        $this->commenti = new ArrayCollection();
+        foreach ($data as $commentoSeriliazed) {
+            $this->parseCommentStringIntoArrayCollection($commentoSeriliazed);
+        }
+    }
+
 }

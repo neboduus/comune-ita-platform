@@ -1,12 +1,12 @@
 <?php
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
-use AppBundle\Form\Base\AllegatoType;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Class AllegatiType
@@ -22,13 +22,19 @@ class AllegatiType extends AbstractType
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
         $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.allegati', true);
+        $user = $builder->getData()->getUser();
 
-        $builder->add('allegati', CollectionType::class, [
-            'entry_type' => AllegatoType::class,
-            "entry_options" => ["label" => false],
-            'allow_add' => true,
-            'by_reference' => false,
-            "label" => false,
+        $builder->add('allegati', EntityType::class, [
+            'class' => Allegato::class,
+            'choice_label' => 'choiceLabel',
+            'query_builder' => function (EntityRepository $er) use ($user) {
+                return $er->createQueryBuilder('a')
+                    ->where('a.owner = :user')
+                    ->setParameter('user', $user)
+                    ->orderBy('a.originalFilename', 'ASC');
+            },
+            'expanded' => true,
+            'multiple' => true,
         ]);
     }
 

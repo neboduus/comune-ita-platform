@@ -186,9 +186,8 @@ class PraticheController extends Controller
             );
         }
 
-        //@todo
-        /** @var FormFlowInterface $flow */
         $user = $this->getUser();
+        /** @var FormFlowInterface $flow */
         $flow = $this->get('ocsdc.form.flow.asilonido');
 
         $flow->bind($pratica);
@@ -197,22 +196,7 @@ class PraticheController extends Controller
 
         if ($flow->isValid($form)) {
             $flow->saveCurrentStepData($form);
-            if ($flow->getCurrentStepNumber() == IscrizioneAsiloNidoFlow::STEP_ALLEGATI) {
-                $errors = $this->get('validator')->validate($pratica);
-                if ($errors->count() > 0) {
-                    foreach ($errors as $error) {
-                        $formattedErrorMessage = sprintf(
-                            $this->get('translator')->trans('errori.allegato.tipo_non_valido'),
-                            $error->getInvalidValue()->getOriginalFilename()
-                        );
-                        $form->addError(new FormError($formattedErrorMessage));
-                    }
-                } else {
-                    $flow->nextStep();
-                    $this->getDoctrine()->getManager()->flush();
-                    $form = $flow->createForm();
-                }
-            } elseif ($flow->nextStep()) {
+            if ($flow->nextStep()) {
                 $this->getDoctrine()->getManager()->flush();
                 $form = $flow->createForm();
             } else {

@@ -43,6 +43,12 @@ services:
     ocsdc.allegati.directory_namer:
         class: AppBundle\Services\DirectoryNamerService
 
+    ocsdc.allegati.mimetype_validator:
+            class: AppBundle\Validator\Constraints\ValidMimeTypeValidator
+            arguments: ["@translator"]
+            tags:
+                - { name: validator.constraint_validator }
+
     ocsdc.mailer:
         class: AppBundle\Services\MailerService
         arguments: ["@mailer", "@translator", "@templating"]

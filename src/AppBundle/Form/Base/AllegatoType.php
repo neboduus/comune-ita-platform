@@ -25,10 +25,10 @@ class AllegatoType extends AbstractType
         $builder
             ->add('file', VichFileType::class, [
                 'allow_delete' => false,
-                'required' => false
+                'required' => true,
             ])
             ->add('description', TextType::class, [
-                'required' => false
+                'required' => false,
             ]);
     }
 

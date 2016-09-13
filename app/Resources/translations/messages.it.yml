@@ -183,3 +183,7 @@ allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
   scarica_allegato: 'Scarica file'
+  crea_allegato: 'Carica un allegato'
+  non_supportato: 'Il file che stai cecando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
+  guida_alla_compilazione:
+    crea: 'Seleziona il file da caricare, deve essere una immagine (png bmp gif jpg) o un file pdf. Dai al fle una descrizione che ti aiuti a identificarlo'

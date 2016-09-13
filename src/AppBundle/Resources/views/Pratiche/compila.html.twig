@@ -112,13 +112,13 @@
                         {% endif %}
 
 
-                        {% if form.allegati is defined %}
-                            <ul class="list-unstyled allegati" data-prototype="{{ form_widget(form.allegati.vars.prototype)|e('html_attr') }}">
-                                {% for allegato in form.allegati %}
-                                    <li><div class="well well-sm">{{ form_row(allegato) }}</div></li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
+                        {#{% if form.allegati is defined %}#}
+                            {#<ul class="list-unstyled allegati" data-prototype="{{ form_widget(form.allegati.vars.prototype)|e('html_attr') }}">#}
+                                {#{% for allegato in form.allegati %}#}
+                                    {#<li><div class="well well-sm">{{ form_row(allegato) }}</div></li>#}
+                                {#{% endfor %}#}
+                            {#</ul>#}
+                        {#{% endif %}#}
 
                         {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
                             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}

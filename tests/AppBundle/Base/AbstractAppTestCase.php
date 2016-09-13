@@ -325,7 +325,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $user = new OperatoreUser();
         $user->setUsername($username)
             ->setPlainPassword($password)
-            ->setEmail(md5(rand(0, 1000).time()).'some@fake.email')
+            ->setEmail(md5(rand(0, 1000).microtime()).'some@fake.email')
             ->setNome('a')
             ->setCognome('b')
             ->setEnabled(true);

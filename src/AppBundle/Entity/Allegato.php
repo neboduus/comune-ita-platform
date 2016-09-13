@@ -1,13 +1,15 @@
 <?php
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use AppBundle\Validator\Constraints as SDCAssert;
 
 /**
  * Class Allegato
@@ -16,9 +18,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Table(name="allegato")
  * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable()
+ * @SDCAssert\ValidMimeType
  */
 class Allegato
 {
+
     /**
      * @var string
      * @ORM\Column(type="guid")
@@ -29,7 +33,6 @@ class Allegato
     /**
      * @var File
      * @Vich\UploadableField(mapping="allegato", fileNameProperty="filename")
-     * @
      */
     private $file;
 
@@ -64,10 +67,16 @@ class Allegato
     private $numeroProtocollo;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Pratica", inversedBy="allegati")
-     * @var Pratica
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="allegati")
+     * @var ArrayCollection
      */
-    private $pratica;
+    private $pratiche;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser", inversedBy="allegati")
+     * @var CPSUser
+     */
+    private $owner;
 
     /**
      * Allegato constructor.
@@ -76,6 +85,7 @@ class Allegato
     {
         $this->id = Uuid::uuid4();
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
+        $this->pratiche = new ArrayCollection();
     }
 
     /**
@@ -200,26 +210,61 @@ class Allegato
      */
     public function updateNumeriProtocolloPratica()
     {
+        //TODO: testare e sentire con Nardelli come deve essere fatta la protocollazione degli allegati
         if ($this->numeroProtocollo != null) {
             $this->pratica->addNumeroDiProtocollo($this->numeroProtocollo);
         }
     }
 
     /**
-     * @return Pratica
+     * @return ArrayCollection
      */
-    public function getPratica(): Pratica
+    public function getPratiche(): Collection
     {
-        return $this->pratica;
+        return $this->pratiche;
     }
 
     /**
      * @param Pratica $pratica
      * @return $this
      */
-    public function setPratica(Pratica $pratica)
+    public function addPratica(Pratica $pratica)
     {
-        $this->pratica = $pratica;
+        if (!$this->pratiche->contains($pratica)) {
+            $this->pratiche->add($pratica);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Pratica $pratica
+     * @return $this
+     */
+    public function removePratica(Pratica $pratica)
+    {
+        if ($this->pratiche->contains($pratica)) {
+            $this->pratiche->removeElement($pratica);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return CPSUser
+     */
+    public function getOwner(): CPSUser
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param $owner
+     * @return $this
+     */
+    public function setOwner(CPSUser $owner)
+    {
+        $this->owner = $owner;
 
         return $this;
     }
@@ -243,24 +288,8 @@ class Allegato
         return $this;
     }
 
-    /**
-     * @param ExecutionContextInterface $context
-     * @Assert\Callback()
-     */
-    public function validate(ExecutionContextInterface $context, $payload)
+    public function getChoiceLabel(): string
     {
-        if ($this->file == null || ! in_array($this->file->getMimeType(), array(
-            'image/jpeg',
-            'image/gif',
-            'image/png',
-            'application/postscript',
-            'application/pdf',
-        ))) {
-            $context
-                ->buildViolation('Wrong file type (jpg,gif,png,mp4,mov,avi)')
-                ->atPath('file')
-                ->addViolation()
-            ;
-        }
+        return $this->originalFilename . '( ' . $this->description . ' )';
     }
 }
