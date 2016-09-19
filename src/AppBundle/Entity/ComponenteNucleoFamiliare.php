@@ -155,10 +155,10 @@ class ComponenteNucleoFamiliare
     }
 
     /**
-     * @param Pratica $pratica
+     * @param mixed $pratica
      * @return ComponenteNucleoFamiliare
      */
-    public function setPratica(Pratica $pratica)
+    public function setPratica($pratica)
     {
         $this->pratica = $pratica;
 
