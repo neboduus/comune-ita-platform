@@ -71,6 +71,13 @@ class Pratica
     private $allegati;
 
     /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuloCompilato", inversedBy="pratiche", orphanRemoval=false)
+     * @var ArrayCollection
+     * @Assert\Valid(traverse=true)
+     */
+    private $moduliCompilati;
+
+    /**
      * @ORM\OneToMany(targetEntity="ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
      * @var ArrayCollection $nucleo_familiare
      */
@@ -80,6 +87,11 @@ class Pratica
      * @ORM\Column(type="integer", name="creation_time")
      */
     private $creationTime;
+
+    /**
+     * @ORM\Column(type="integer", name="submission_time", nullable=true)
+     */
+    private $submissionTime;
 
     /**
      * @ORM\Column(type="integer")
@@ -153,6 +165,7 @@ class Pratica
         $this->numeroFascicolo = null;
         $this->numeriProtocollo = new ArrayCollection();
         $this->allegati = new ArrayCollection();
+        $this->moduliCompilati = new ArrayCollection();
         $this->nucleoFamiliare = new ArrayCollection();
         $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
     }
@@ -388,7 +401,7 @@ class Pratica
     }
 
     /**
-     * @return mixed
+     * @return Collection
      */
     public function getAllegati()
     {
@@ -421,6 +434,42 @@ class Pratica
         if ($this->allegati->contains($allegato)) {
             $this->allegati->removeElement($allegato);
             $allegato->removePratica($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ModuloCompilato $modulo
+     * @return $this
+     */
+    public function removeModuloCompilato(ModuloCompilato $modulo)
+    {
+        if ($this->moduliCompilati->contains($modulo)) {
+            $this->moduliCompilati->removeElement($modulo);
+            $modulo->removePratica($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getModuliCompilati(): Collection
+    {
+        return $this->moduliCompilati;
+    }
+
+    /**
+     * @param ModuloCompilato $modulo
+     * @return $this
+     */
+    public function addModuloCompilato(ModuloCompilato $modulo)
+    {
+        if (!$this->moduliCompilati->contains($modulo)) {
+            $this->moduliCompilati->add($modulo);
+            $modulo->addPratica($this);
         }
 
         return $this;
@@ -633,6 +682,23 @@ class Pratica
     {
         $this->latestOperatoreCommunicationTimestamp = $latestOperatoreCommunicationTimestamp;
 
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubmissionTime()
+    {
+        return $this->submissionTime;
+    }
+
+    /**
+     * @param mixed $submissionTime
+     */
+    public function setSubmissionTime($submissionTime)
+    {
+        $this->submissionTime = $submissionTime;
         return $this;
     }
 

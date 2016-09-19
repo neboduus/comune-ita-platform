@@ -104,6 +104,18 @@
             {% else %}
                 <p><em>{{ 'pratica.nessun_allegato'|trans }}</em></p>
             {% endif %}
+
+            {% if pratica.moduliCompilati|length > 0 %}
+            <div id="no-more-tables">
+                <h5>{{ 'pratica.dettaglio.modulocompilato'|trans }}</h5>
+                {% for allegato in pratica.moduliCompilati %}
+                <p class="modulo">
+                    <span>{{ allegato.description }}</span>
+                    <a href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" class="btn btn-info btn-block btn-lg">{{ 'operatori.scarica_modulo_compilato'|trans }}</a>
+                </p>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

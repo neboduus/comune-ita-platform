@@ -6,6 +6,7 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
+use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
@@ -62,6 +63,35 @@ class AllegatiControllerTest extends AbstractAppTestCase
 
         $myUser = $this->createCPSUser(true);
         $allegato = $this->createAllegato('username', 'pass', $myUser, $destFileName, $fakeFileName);
+
+        $allegatoDownloadUrl = $this->router->generate(
+            'allegati_download_cpsuser',
+            [
+                'allegato' => $allegato->getId(),
+            ]
+        );
+        $this->clientRequestAsCPSUser($myUser, 'GET', $allegatoDownloadUrl);
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertContains('attachment', $response->headers->get('Content-Disposition'));
+        $this->assertContains($allegato->getOriginalFilename(), $response->headers->get('Content-Disposition'));
+    }
+
+    /**
+     * @test
+     */
+    public function testModuloCompilatoCanBeRetrievedIfUserIsOwnerOfThePratica()
+    {
+
+        $fakeFileName = 'lenovo-yoga-xp1.pdf';
+        $destFileName = md5($fakeFileName).'.pdf';
+
+        $this->setupMockedLogger([
+            LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
+        ]);
+
+        $myUser = $this->createCPSUser(true);
+        $allegato = $this->createModuloCompilato('username', 'pass', $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
             'allegati_download_cpsuser',
@@ -373,6 +403,42 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $allegato->setOriginalFilename($fakeFileName);
         $allegato->setDescription('some description');
         $pratica->addAllegato($allegato);
+
+        $directoryNamer = $this->container->get('ocsdc.allegati.directory_namer');
+        /** @var PropertyMapping $mapping */
+        $mapping = $this->container->get('vich_uploader.property_mapping_factory')->fromObject($allegato)[0];
+
+        $destDir = $mapping->getUploadDestination().'/'.$directoryNamer->directoryName($allegato, $mapping);
+        mkdir($destDir, 0777, true);
+        $this->assertTrue(copy(__DIR__.'/../Assets/'.$fakeFileName, $destDir.'/'.$destFileName));
+        $this->em->persist($pratica);
+        $this->em->persist($allegato);
+        $this->em->flush();
+
+        return $allegato;
+    }
+
+    /**
+     * @param $username
+     * @param $password
+     * @param $myUser
+     * @param $destFileName
+     * @param $fakeFileName
+     * @return Allegato
+     */
+    private function createModuloCompilato($username, $password, $myUser, $destFileName, $fakeFileName)
+    {
+        $operatore = $this->createOperatoreUser($username, $password);
+        $pratica = $this->createPratica($myUser);
+        $pratica->setOperatore($operatore);
+
+        $allegato = new ModuloCompilato();
+        $allegato->addPratica($pratica);
+        $allegato->setOwner($myUser);
+        $allegato->setFilename($destFileName);
+        $allegato->setOriginalFilename($fakeFileName);
+        $allegato->setDescription('some description');
+        $pratica->addModuloCompilato($allegato);
 
         $directoryNamer = $this->container->get('ocsdc.allegati.directory_namer');
         /** @var PropertyMapping $mapping */

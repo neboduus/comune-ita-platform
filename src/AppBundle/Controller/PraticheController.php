@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\IscrizioneAsiloNido;
+use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Logging\LogConstants;
@@ -13,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -29,11 +31,10 @@ class PraticheController extends Controller
     /**
      * @Route("/", name="pratiche")
      * @Template()
-     * @param Request $request
      *
      * @return array
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
         $user = $this->getUser();
         $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
@@ -45,10 +46,10 @@ class PraticheController extends Controller
         $praticheDraft = $repo->findBy(
             [
                 'user' => $user,
-                'status' => Pratica::STATUS_DRAFT
+                'status' => Pratica::STATUS_DRAFT,
             ],
             [
-                'creationTime' => 'ASC'
+                'creationTime' => 'ASC',
             ]
         );
 
@@ -58,31 +59,31 @@ class PraticheController extends Controller
                 'status' => [
                     Pratica::STATUS_PENDING,
                     Pratica::STATUS_SUBMITTED,
-                    Pratica::STATUS_REGISTERED
-                ]
+                    Pratica::STATUS_REGISTERED,
+                ],
             ],
             [
-                'creationTime' => 'ASC'
+                'creationTime' => 'ASC',
             ]
         );
 
         $praticheCompleted = $repo->findBy(
             [
                 'user' => $user,
-                'status' => Pratica::STATUS_COMPLETE
+                'status' => Pratica::STATUS_COMPLETE,
             ],
             [
-                'creationTime' => 'ASC'
+                'creationTime' => 'ASC',
             ]
         );
 
         $praticheCancelled = $repo->findBy(
             [
                 'user' => $user,
-                'status' => Pratica::STATUS_CANCELLED
+                'status' => Pratica::STATUS_CANCELLED,
             ],
             [
-                'creationTime' => 'ASC'
+                'creationTime' => 'ASC',
             ]
         );
 
@@ -95,8 +96,8 @@ class PraticheController extends Controller
                 'draft'      => $praticheDraft,
                 'pending'    => $pratichePending,
                 'completed'  => $praticheCompleted,
-                'cancelled'  => $praticheCancelled
-            )
+                'cancelled'  => $praticheCancelled,
+            ),
         ];
     }
 
@@ -104,6 +105,7 @@ class PraticheController extends Controller
      * @Route("/{servizio}/new", name="pratiche_new")
      * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
      *
+     * @param Request  $request
      * @param Servizio $servizio
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -116,7 +118,7 @@ class PraticheController extends Controller
             array(
                 'user' => $user,
                 'servizio' => $servizio,
-                'status' => Pratica::STATUS_DRAFT
+                'status' => Pratica::STATUS_DRAFT,
             ),
             array('creationTime' => 'ASC')
         );
@@ -152,7 +154,6 @@ class PraticheController extends Controller
             'pratiche_compila',
             ['pratica' => $pratica->getId()]
         );
-
     }
 
     /**
@@ -171,7 +172,8 @@ class PraticheController extends Controller
             array(
                 'user' => $user,
                 'servizio' => $servizio,
-                'status' => Pratica::STATUS_DRAFT),
+                'status' => Pratica::STATUS_DRAFT,
+            ),
             array('creationTime' => 'ASC')
         );
 
@@ -181,8 +183,8 @@ class PraticheController extends Controller
             'title' => 'bozze_servizio',
             'msg' => array(
                 'type' => 'warning',
-                'text' => 'msg_bozze_servizio'
-            )
+                'text' => 'msg_bozze_servizio',
+            ),
         ];
     }
 
@@ -220,12 +222,15 @@ class PraticheController extends Controller
                 $form = $flow->createForm();
             } else {
                 $pratica->setStatus(Pratica::STATUS_SUBMITTED);
-                $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica,$this->getParameter('default_from_email_address'));
+                $pratica->setSubmissionTime(time());
+                $this->createModuloForPratica($pratica, $user);
+                $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
 
                 $this->getDoctrine()->getManager()->flush();
 
                 $this->get('logger')->info(
-                    LogConstants::PRATICA_UPDATED, ['id' => $pratica->getId(), 'pratica' => $pratica]
+                    LogConstants::PRATICA_UPDATED,
+                    ['id' => $pratica->getId(), 'pratica' => $pratica]
                 );
 
                 $this->addFlash(
@@ -234,6 +239,7 @@ class PraticheController extends Controller
                 );
 
                 $flow->reset();
+
                 return $this->redirectToRoute(
                     'pratiche_show',
                     ['pratica' => $pratica->getId()]
@@ -244,7 +250,7 @@ class PraticheController extends Controller
         return [
             'form' => $form->createView(),
             'flow' => $flow,
-            'user' => $user
+            'user' => $user,
         ];
     }
 
@@ -259,6 +265,7 @@ class PraticheController extends Controller
     public function showAction(IscrizioneAsiloNido $pratica)
     {
         $user = $this->getUser();
+
         return [
             'pratica' => $pratica,
             'user' => $user,
@@ -279,27 +286,107 @@ class PraticheController extends Controller
             array(
                 'user' => $user,
                 'servizio' => $servizio,
-                'status' => [Pratica::STATUS_COMPLETE,Pratica::STATUS_SUBMITTED,Pratica::STATUS_PENDING,Pratica::STATUS_REGISTERED]
+                'status' => [Pratica::STATUS_COMPLETE, Pratica::STATUS_SUBMITTED, Pratica::STATUS_PENDING, Pratica::STATUS_REGISTERED],
             ),
             array('creationTime' => 'DESC'),
             1
         );
         $lastPratica = null;
-        if ($lastPraticaList){
+        if ($lastPraticaList) {
             $lastPratica = $lastPraticaList[0];
         }
         if ($lastPratica instanceof IscrizioneAsiloNido) {
-            foreach($lastPratica->getNucleoFamiliare() as $compontente){
-                $cloneCompontente = new ComponenteNucleoFamiliare();
-                $cloneCompontente->setNome($compontente->getNome());
-                $cloneCompontente->setCognome($compontente->getCognome());
-                $cloneCompontente->setCodiceFiscale($compontente->getCodiceFiscale());
-                $cloneCompontente->setRapportoParentela($compontente->getRapportoParentela());
-                $pratica->addNucleoFamiliare($cloneCompontente);
+            foreach ($lastPratica->getNucleoFamiliare() as $oldCompontente) {
+                $this->addNewComponenteToPraticaFromOldComponente($oldCompontente, $pratica);
             }
         }
 
         $user = $this->getUser();
+        $this->populatePraticaFieldsWithUserValues($user, $pratica);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($pratica);
+        $em->flush();
+
+        $this->get('logger')->info(
+            LogConstants::PRATICA_CREATED,
+            ['type' => $pratica->getType(), 'pratica' => $pratica]
+        );
+
+        return $pratica;
+    }
+
+    /**
+     * @param IscrizioneAsiloNido $pratica
+     * @param $user
+     */
+    private function createModuloForPratica(IscrizioneAsiloNido $pratica, $user)
+    {
+        /**
+         * crea il modulo esportato e allegalo alla pratica
+         */
+        $content = $this->renderModuloAsPdf($pratica, $user);
+        $moduloCompilato = new ModuloCompilato();
+        $moduloCompilato->setOwner($user);
+        $destDir = $this->getDestDirFromModuloContext($moduloCompilato);
+        $fileName = uniqid().'.pdf';
+        $filePath = $destDir.DIRECTORY_SEPARATOR.$fileName;
+
+        $fs = $this->get('filesystem');
+        $fs->dumpFile($filePath, $content);
+        $moduloCompilato->setFile(new File($filePath));
+
+        $now = new \DateTime();
+        $now->setTimestamp($pratica->getSubmissionTime());
+
+        $moduloCompilato->setFilename($fileName);
+        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $moduloCompilato->setDescription(
+            $this->get('translator')->trans(
+                'pratica.modulo.descrizione',
+                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i') ]
+            )
+        );
+        $this->getDoctrine()->getManager()->persist($moduloCompilato);
+
+        $pratica->addModuloCompilato($moduloCompilato);
+    }
+
+    /**
+     * @param IscrizioneAsiloNido $pratica
+     * @param $user
+     * @return string
+     */
+    private function renderModuloAsPdf(IscrizioneAsiloNido $pratica, $user):string
+    {
+        $html = $this->renderView('AppBundle:Pratiche:iscrizioneNidoExport.html.twig', array(
+            'pratica' => $pratica,
+            'user' => $user,
+        ));
+        $content = $this->get('knp_snappy.pdf')->getOutputFromHtml($html);
+
+        return $content;
+    }
+
+    /**
+     * @param $moduloCompilato
+     * @return string
+     */
+    private function getDestDirFromModuloContext($moduloCompilato):string
+    {
+        $mapping = $this->get('vich_uploader.property_mapping_factory')->fromObject($moduloCompilato)[0];
+        $path = $this->get('ocsdc.allegati.directory_namer')->directoryName($moduloCompilato, $mapping);
+        $destDir = $mapping->getUploadDestination().'/'.$path;
+
+        return $destDir;
+    }
+
+    /**
+     * @param CPSUser $user
+     * @param $pratica
+     */
+    private function populatePraticaFieldsWithUserValues(CPSUser $user, IscrizioneAsiloNido $pratica)
+    {
         $pratica->setRichiedenteNome($user->getNome());
         $pratica->setRichiedenteCognome($user->getCognome());
         $pratica->setRichiedenteLuogoNascita($user->getLuogoNascita());
@@ -309,15 +396,19 @@ class PraticheController extends Controller
         $pratica->setRichiedenteCittaResidenza($user->getCittaResidenza());
         $pratica->setRichiedenteTelefono($user->getTelefono());
         $pratica->setRichiedenteEmail($user->getEmailCanonical());
+    }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($pratica);
-        $em->flush();
-
-        $this->get('logger')->info(
-            LogConstants::PRATICA_CREATED, ['type' => $pratica->getType(), 'pratica' => $pratica]
-        );
-
-        return $pratica;
+    /**
+     * @param $compontente
+     * @param $pratica
+     */
+    private function addNewComponenteToPraticaFromOldComponente(ComponenteNucleoFamiliare $compontente, Pratica $pratica)
+    {
+        $cloneCompontente = new ComponenteNucleoFamiliare();
+        $cloneCompontente->setNome($compontente->getNome());
+        $cloneCompontente->setCognome($compontente->getCognome());
+        $cloneCompontente->setCodiceFiscale($compontente->getCodiceFiscale());
+        $cloneCompontente->setRapportoParentela($compontente->getRapportoParentela());
+        $pratica->addNucleoFamiliare($cloneCompontente);
     }
 }
