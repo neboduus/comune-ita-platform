@@ -8,7 +8,7 @@
     {% for item in allegati %}
         <div class="col-sm-4" data-allegato="{{ item.allegato.id }}">
             <article class="panel panel-default servizio">
-                <div class="panel-body">
+            <div class="panel-body">
             <div data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ item.allegato.originalFilename }}</div>
             <div data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ item.allegato.description }}</div>
             <div data-title="">
@@ -18,10 +18,8 @@
             {% if item.deleteform %}
                 {{ form(item.deleteform) }}
             {% endif %}
-                </div>
-
+            </div>
             </article>
-
         </div>
     {% endfor %}
     </div>
