@@ -133,8 +133,16 @@ class AllegatoController extends Controller
         $user = $this->getUser();
         $allegati = [];
         if ($user instanceof CPSUser) {
-            $repo = $this->getDoctrine()->getRepository('AppBundle:Allegato');
-            foreach ($repo->findByOwner($this->getUser()) as $allegato) {
+            $query = $this->getDoctrine()
+                ->getManager()
+                ->createQuery("SELECT allegato 
+                FROM AppBundle\Entity\Allegato allegato 
+                WHERE allegato INSTANCE OF AppBundle\Entity\Allegato 
+                AND allegato.owner = :user")
+                ->setParameter('user', $this->getUser());
+
+            $retrievedAllegati = $query->getResult();
+            foreach ($retrievedAllegati as $allegato) {
                 $allegati[] = [
                     'allegato' => $allegato,
                     'deleteform' => $this->createDeleteFormForAllegato($allegato)->createView(),

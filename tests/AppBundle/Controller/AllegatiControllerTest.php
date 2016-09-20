@@ -62,7 +62,8 @@ class AllegatiControllerTest extends AbstractAppTestCase
         ]);
 
         $myUser = $this->createCPSUser(true);
-        $allegato = $this->createAllegato('username', 'pass', $myUser, $destFileName, $fakeFileName);
+
+        $allegato = $this->createAllegato($this->createOperatoreUser('username', 'pass'), $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
             'allegati_download_cpsuser',
@@ -91,7 +92,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         ]);
 
         $myUser = $this->createCPSUser(true);
-        $allegato = $this->createModuloCompilato('username', 'pass', $myUser, $destFileName, $fakeFileName);
+        $allegato = $this->createModuloCompilato($this->createOperatoreUser('username', 'pass'), $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
             'allegati_download_cpsuser',
@@ -121,7 +122,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $username = 'pippo';
         $password = 'pippo';
         $myUser = $this->createCPSUser(true);
-        $allegato = $this->createAllegato($username, $password, $myUser, $destFileName, $fakeFileName);
+        $allegato = $this->createAllegato($this->createOperatoreUser($username, $password), $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
             'allegati_download_operatore',
@@ -155,7 +156,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
 
 
         $myUser = $this->createCPSUser(true);
-        $allegato = $this->createAllegato('p', 'p', $myUser, $destFileName, $fakeFileName);
+        $allegato = $this->createAllegato($this->createOperatoreUser('p', 'p'), $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
             'allegati_download_operatore',
@@ -190,7 +191,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         ]);
 
         $otherUser = $this->createCPSUser(true);
-        $allegato = $this->createAllegato('p', 'p', $otherUser, $destFileName, $fakeFileName);
+        $allegato = $this->createAllegato($this->createOperatoreUser('p', 'p'), $otherUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
             'allegati_download_cpsuser',
@@ -274,17 +275,40 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $user = $this->createCPSUser(true);
         $fakeFileName = 'lenovo-yoga-xp1.pdf';
         $destFileName = md5($fakeFileName).'.pdf';
-        $myAllegato = $this->createAllegato('p', 'p', $user, $destFileName, $fakeFileName);
+        $operatore = $this->createOperatoreUser('p', 'p');
+        $myAllegato = $this->createAllegato($operatore, $user, $destFileName, $fakeFileName);
 
         $otherUser = $this->createCPSUser(true);
         $fakeFileName = 'lenovo-yoga-xp1.pdf';
         $destFileName = md5($fakeFileName).'.pdf';
-        $otherAllegato = $this->createAllegato('pp', 'pp', $otherUser, $destFileName, $fakeFileName);
+        $otherAllegato = $this->createAllegato($operatore, $otherUser, $destFileName, $fakeFileName);
 
         $crawler = $this->clientRequestAsCPSUser($user,'GET',$this->router->generate('allegati_list_cpsuser'));
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals(1,$crawler->filterXPath('//*[@data-allegato="'.$myAllegato->getId().'"]')->count());
         $this->assertEquals(0,$crawler->filterXPath('//*[@data-allegato="'.$otherAllegato->getId().'"]')->count());
+    }
+
+    /**
+     * @test
+     */
+    public function testUserCannotSeeHisModuliinbetweenHisOwnAttachments()
+    {
+        //create attachment for this user
+        $user = $this->createCPSUser(true);
+        $operatore = $this->createOperatoreUser('p', 'p');
+
+        $fakeFileName = 'lenovo-yoga-xp1.pdf';
+        $destFileName = md5($fakeFileName).'.pdf';
+
+        $myAllegato = $this->createAllegato($operatore, $user, $destFileName, $fakeFileName);
+
+        $myModulo = $this->createModuloCompilato($operatore, $user, 'm_'.$destFileName, $fakeFileName);
+
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('allegati_list_cpsuser'));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(1, $crawler->filterXPath('//*[@data-allegato="'.$myAllegato->getId().'"]')->count());
+        $this->assertEquals(0, $crawler->filterXPath('//*[@data-allegato="'.$myModulo->getId().'"]')->count());
     }
 
     /**
@@ -301,7 +325,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
 
         $fakeFileName = 'lenovo-yoga-xp1.pdf';
         $destFileName = md5($fakeFileName).'.pdf';
-        $boundAllegato = $this->createAllegato('p', 'p', $user, $destFileName, $fakeFileName);
+        $boundAllegato = $this->createAllegato($this->createOperatoreUser('p', 'p'), $user, $destFileName, $fakeFileName);
         $pratica = $this->createPratica($user);
         $pratica->addAllegato($boundAllegato);
 
@@ -390,9 +414,8 @@ class AllegatiControllerTest extends AbstractAppTestCase
      * @param $fakeFileName
      * @return Allegato
      */
-    private function createAllegato($username, $password, $myUser, $destFileName, $fakeFileName)
+    private function createAllegato($operatore, $myUser, $destFileName, $fakeFileName)
     {
-        $operatore = $this->createOperatoreUser($username, $password);
         $pratica = $this->createPratica($myUser);
         $pratica->setOperatore($operatore);
 
@@ -419,16 +442,14 @@ class AllegatiControllerTest extends AbstractAppTestCase
     }
 
     /**
-     * @param $username
-     * @param $password
+     * @param $operatore
      * @param $myUser
      * @param $destFileName
      * @param $fakeFileName
      * @return Allegato
      */
-    private function createModuloCompilato($username, $password, $myUser, $destFileName, $fakeFileName)
+    private function createModuloCompilato($operatore, $myUser, $destFileName, $fakeFileName)
     {
-        $operatore = $this->createOperatoreUser($username, $password);
         $pratica = $this->createPratica($myUser);
         $pratica->setOperatore($operatore);
 
@@ -445,7 +466,11 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $mapping = $this->container->get('vich_uploader.property_mapping_factory')->fromObject($allegato)[0];
 
         $destDir = $mapping->getUploadDestination().'/'.$directoryNamer->directoryName($allegato, $mapping);
-        mkdir($destDir, 0777, true);
+        try {
+            mkdir($destDir, 0777, true);
+        } catch (\Exception $e) {
+            //nothing to see here, move on
+        }
         $this->assertTrue(copy(__DIR__.'/../Assets/'.$fakeFileName, $destDir.'/'.$destFileName));
         $this->em->persist($pratica);
         $this->em->persist($allegato);
