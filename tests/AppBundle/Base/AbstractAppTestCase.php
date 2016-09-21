@@ -220,10 +220,13 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         if ($status !== null) {
             $pratica->setStatus($status);
+        } else {
+            $pratica->setStatus(Pratica::STATUS_DRAFT);
         }
 
         $this->em->persist($pratica);
         $this->em->flush();
+        $this->em->refresh($pratica);
 
         return $pratica;
     }

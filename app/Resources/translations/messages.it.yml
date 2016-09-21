@@ -106,6 +106,12 @@ pratica:
       file: 'Nome del file'
       descrizione: 'Descrizione'
     modulocompilato: ''
+    stato_0: 'Cancellata'
+    stato_1: 'Bozza'
+    stato_2: 'Inviata'
+    stato_3: 'Iter Completato'
+    stato_4: 'Registrata'
+    stato_5: 'Presa in carico'
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
 

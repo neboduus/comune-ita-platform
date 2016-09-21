@@ -437,6 +437,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->em->persist($pratica);
         $this->em->persist($allegato);
         $this->em->flush();
+        $this->em->refresh($pratica);
 
         return $allegato;
     }

@@ -152,6 +152,13 @@ class Pratica
     private $latestOperatoreCommunicationTimestamp;
 
     /**
+     * @var Collection
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $storicoStati;
+
+
+    /**
      * Pratica constructor.
      */
     public function __construct()
@@ -160,7 +167,6 @@ class Pratica
             $this->id = Uuid::uuid4();
         }
         $this->creationTime = time();
-        $this->status = self::STATUS_DRAFT;
         $this->type = self::TYPE_DEFAULT;
         $this->numeroFascicolo = null;
         $this->numeriProtocollo = new ArrayCollection();
@@ -168,6 +174,7 @@ class Pratica
         $this->moduliCompilati = new ArrayCollection();
         $this->nucleoFamiliare = new ArrayCollection();
         $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
+        $this->storicoStati = new ArrayCollection();
     }
 
     /**
@@ -266,6 +273,14 @@ class Pratica
     {
         $this->status = $status;
         $this->latestStatusChangeTimestamp = time();
+        $updated = null;
+        if ($this->getStoricoStati()->containsKey($this->latestStatusChangeTimestamp)) {
+            $updated = $this->getStoricoStati()->get($this->latestStatusChangeTimestamp);
+            $updated[] = $status;
+        } else {
+            $updated = [$status];
+        }
+        $this->storicoStati->set($this->latestStatusChangeTimestamp, $updated);
 
         return $this;
     }
@@ -629,6 +644,16 @@ class Pratica
     }
 
     /**
+     * @ORM\PreFlush()
+     */
+    public function serializeStatuses()
+    {
+        if ($this->storicoStati instanceof Collection) {
+            $this->storicoStati = serialize($this->storicoStati->toArray());
+        }
+    }
+
+    /**
      * @return int
      */
     public function getLatestStatusChangeTimestamp(): int
@@ -700,6 +725,36 @@ class Pratica
     {
         $this->submissionTime = $submissionTime;
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getStoricoStati(): Collection
+    {
+        if (!$this->storicoStati instanceof Collection) {
+            $this->storicoStati = new ArrayCollection(unserialize($this->storicoStati));
+        }
+
+        return $this->storicoStati;
+    }
+
+    /**
+     * @param int $status
+     * @return null|int
+     */
+    public function getLatestTimestampForStatus($status)
+    {
+        $latestTimestamp = null;
+        $array = $this->storicoStati->toArray();
+        ksort($array);
+        foreach ($array as $timestamp => $stati) {
+            if (in_array($status, $stati)) {
+                $latestTimestamp = $timestamp;
+            }
+        }
+
+        return $latestTimestamp;
     }
 
     /**
