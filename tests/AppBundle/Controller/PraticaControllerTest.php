@@ -179,6 +179,65 @@ class PraticaControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
+    public function testAsACPSUserICanSeeThePraticaDetailPage()
+    {
+        $myUser = $this->createCPSUser(true);
+        $this->createPratiche($myUser);
+        $repo = $this->em->getRepository("AppBundle:Pratica");
+        /** @var Pratica $pratica */
+        $pratica = $repo->findByUser($myUser)[0];
+
+        $now = new \DateTime('now');
+        $fileName = 'aaaaa.pdf';
+
+        $moduloCompilato = new ModuloCompilato();
+        $moduloCompilato->setFilename($fileName);
+        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $moduloCompilato->setDescription(
+            $this->container->get('translator')->trans(
+                'pratica.modulo.descrizione',
+                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i') ]
+            )
+        );
+
+        $pratica->addModuloCompilato($moduloCompilato);
+
+        $this->em->persist($moduloCompilato);
+
+
+        $allegati = $this->setupNeededAllegatiForAllInvolvedUsers(3, $myUser);
+        foreach ($allegati as $allegato) {
+            $pratica->addAllegato($allegato);
+        }
+
+        $operatore = $this->createOperatoreUser('p', 'p');
+        $pratica->setOperatore($operatore);
+        $pratica->setStatus(Pratica::STATUS_PENDING);
+        sleep(1);
+        $pratica->setStatus(Pratica::STATUS_CANCELLED);
+
+        $this->em->persist($pratica);
+        $this->em->flush();
+        $this->em->refresh($pratica);
+
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+
+        $nodes = $crawler->filterXPath('//*[@class="modulo"]');
+        $renderedModuliCount = $nodes->count();
+
+        $this->assertEquals($pratica->getModuliCompilati()->count(),$renderedModuliCount);
+
+        $nodes = $crawler->filterXPath('//*[contains(@class, "sidebar")]//*[contains(@class, "fa-calendar")]');
+        $this->assertEquals($pratica->getStoricoStati()->count(), $nodes->count());
+
+        //count allegati
+        $nodes = $crawler->filterXPath('//*[@data-title="Nome del file"]');
+        $this->assertEquals($pratica->getAllegati()->count(), $nodes->count());
+    }
+
+    /**
+     * @test
+     */
     public function testANewPraticaIsPersistedWhenIStartTheFormApplicationAsLoggedUser()
     {
         $mockLogger = $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
@@ -818,8 +877,9 @@ class PraticaControllerTest extends AbstractAppTestCase
      * @param $numberOfExpectedAttachments
      * @param CPSUser $user
      */
-    protected function setupNeededAllegatiForAllInvolvedUsers(&$numberOfExpectedAttachments, CPSUser $user)
+    protected function setupNeededAllegatiForAllInvolvedUsers($numberOfExpectedAttachments, CPSUser $user)
     {
+        $allegati = [];
         for ($i = 0; $i < $numberOfExpectedAttachments; $i++) {
             $allegato = new Allegato();
             $allegato->setOwner($user);
@@ -827,6 +887,7 @@ class PraticaControllerTest extends AbstractAppTestCase
             $allegato->setFilename('somefile.txt');
             $allegato->setOriginalFilename('somefile.txt');
             $this->em->persist($allegato);
+            $allegati[] = $allegato;
         }
 
         $otherUser = $this->createCPSUser(true);
@@ -838,5 +899,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->em->persist($allegato);
 
         $this->em->flush();
+
+        return $allegati;
     }
 }
