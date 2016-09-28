@@ -19,6 +19,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
@@ -469,10 +470,10 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $form = $crawler->selectButton($finishButton)->form();
         $this->client->submit($form);
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
         $this->client->followRedirect();
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
         $this->assertContains($currentPraticaId, $this->client->getRequest()->getRequestUri());
 
         $this->em->refresh($currentPratica);

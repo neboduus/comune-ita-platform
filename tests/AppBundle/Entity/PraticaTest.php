@@ -73,19 +73,19 @@ class PraticaTest extends \PHPUnit_Framework_TestCase
         $pratica->setStatus(Pratica::STATUS_DRAFT);
         $this->assertArrayHasKey($time, $pratica->getStoricoStati());
         $this->assertEquals(1, count($pratica->getStoricoStati()[$time]));
-        $this->assertEquals(Pratica::STATUS_DRAFT, $pratica->getStoricoStati()[$time][0]);
+        $this->assertEquals(Pratica::STATUS_DRAFT, $pratica->getStoricoStati()[$time][0][0]);
 
         $pratica->setStatus(Pratica::STATUS_REGISTERED);
         $this->assertArrayHasKey($time, $pratica->getStoricoStati());
         $this->assertEquals(2, count($pratica->getStoricoStati()[$time]));
-        $this->assertEquals(Pratica::STATUS_REGISTERED, $pratica->getStoricoStati()[$time][1]);
+        $this->assertEquals(Pratica::STATUS_REGISTERED, $pratica->getStoricoStati()[$time][1][0]);
 
         sleep(1);
         $time = time();
         $pratica->setStatus(Pratica::STATUS_COMPLETE);
         $this->assertArrayHasKey($time, $pratica->getStoricoStati()->toArray());
         $this->assertEquals(1, count($pratica->getStoricoStati()->toArray()[$time]));
-        $this->assertEquals(Pratica::STATUS_COMPLETE, $pratica->getStoricoStati()->toArray()[$time][0]);
+        $this->assertEquals(Pratica::STATUS_COMPLETE, $pratica->getStoricoStati()->toArray()[$time][0][0]);
     }
 
     /**

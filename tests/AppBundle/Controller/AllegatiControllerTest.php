@@ -13,7 +13,6 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Validator\Constraints\ValidMimeType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 
@@ -35,6 +34,9 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->cleanDb(User::class);
     }
 
+    /**
+     * @test
+     */
     public function testThereIsALinkToCreateAllegati()
     {
         $user = $this->createCPSUser(true);
@@ -45,7 +47,6 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $newPath = $this->router->generate('allegati_create_cpsuser');
         $linkToNew = $crawler->filterXpath('//*[@href="'.$newPath.'"]');
         $this->assertGreaterThan(0, $linkToNew->count());
-
     }
 
     /**
@@ -283,10 +284,10 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $destFileName = md5($fakeFileName).'.pdf';
         $otherAllegato = $this->createAllegato($operatore, $otherUser, $destFileName, $fakeFileName);
 
-        $crawler = $this->clientRequestAsCPSUser($user,'GET',$this->router->generate('allegati_list_cpsuser'));
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('allegati_list_cpsuser'));
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertEquals(1,$crawler->filterXPath('//*[@data-allegato="'.$myAllegato->getId().'"]')->count());
-        $this->assertEquals(0,$crawler->filterXPath('//*[@data-allegato="'.$otherAllegato->getId().'"]')->count());
+        $this->assertEquals(1, $crawler->filterXPath('//*[@data-allegato="'.$myAllegato->getId().'"]')->count());
+        $this->assertEquals(0, $crawler->filterXPath('//*[@data-allegato="'.$otherAllegato->getId().'"]')->count());
     }
 
     /**
@@ -392,19 +393,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         return $filenames;
     }
 
-    private function setupMockedLogger($expectedArgs)
-    {
-        $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->exactly(1))
-            ->method('info')
-            ->with($this->callback(function ($subject) use ($expectedArgs) {
-                return in_array($subject, $expectedArgs);
-            }));
 
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
-            $kernel->getContainer()->set('logger', $mockLogger);
-        });
-    }
 
     /**
      * @param $username
