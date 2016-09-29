@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
@@ -552,7 +553,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testICannotAccessOperatoriListAsCommonOperatore()
+    public function testICannotAccessOperatoriListAsNormalOperatore()
     {
         $password = 'pa$$word';
         $username = 'username';
@@ -562,6 +563,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $operatoriList = $this->router->generate('operatori_list_by_ente');
         $this->client->request('GET', $operatoriList);
         $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertRegExp('/\/login$/', $this->client->getResponse()->headers->get('location'));
     }
 
     /**
@@ -582,5 +584,81 @@ class OperatoriControllerTest extends AbstractAppTestCase
         ));
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
+
+    /**
+     * @test
+     */
+    public function testICanSeeOnlyOperatoriOfMyEnte()
+    {
+        /** @var Ente[] $enti */
+        $enti = $this->createEnti();
+
+        $password = 'operatore_admin';
+        $username = 'operatore_admin';
+        $operatoreAdmin = $this->createOperatoreUser($username, $password, $enti[0]);
+        $operatoreAdmin->addRole(User::ROLE_OPERATORE_ADMIN);
+
+        $sameEnteOperatore = $this->createOperatoreUser('same_ente', 'same_ente', $enti[0]);
+
+        $otherEnteOperatore = $this->createOperatoreUser('other_ente', 'other_ente', $enti[1]);
+
+        $operatoriList = $this->router->generate('operatori_list_by_ente');
+        $crawler = $this->client->request('GET', $operatoriList, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+
+        $operatoriCount = $crawler->filter('.operatore')->count();
+        $this->assertEquals(2, $operatoriCount);
+
+        $this->assertEquals(0, $crawler->filterXPath('//*[@data-opertore="'.$otherEnteOperatore->getId().'"]')->count());
+
+    }
+
+    /**
+     * @test
+     */
+    public function testICanEditAmbitoAsAdminOperatore()
+    {
+        /** @var Ente[] $enti */
+        $enti = $this->createEnti();
+
+        $password = 'operatore_admin';
+        $username = 'operatore_admin';
+        $operatoreAdmin = $this->createOperatoreUser($username, $password, $enti[0]);
+        $operatoreAdmin->addRole(User::ROLE_OPERATORE_ADMIN);
+
+        $sameEnteOperatore = $this->createOperatoreUser('same_ente', 'same_ente', $enti[0]);
+
+        $mockLogger = $this->getMockLogger();
+        $mockLogger->expects($this->once())
+            ->method('info')
+            ->with(LogConstants::OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO);
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
+
+        $detailOperatoreUrl = $this->router->generate('operatori_detail', ['operatore' => $sameEnteOperatore->getId()]);
+
+        $crawler = $this->client->request('GET', $detailOperatoreUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $text = time();
+        $form = $crawler->selectButton($this->translator->trans('operatori.profile.salva_modifiche'))->form([
+            'form[ambito]' => $text
+        ]);;
+        $this->client->submit($form);
+
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        $sameEnteOperatore = $this->em->getRepository('AppBundle:OperatoreUser')->find($sameEnteOperatore->getId());
+        $this->assertEquals($sameEnteOperatore->getAmbito(), $text);
+
+    }
+
 
 }

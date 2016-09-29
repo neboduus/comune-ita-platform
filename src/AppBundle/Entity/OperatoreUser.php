@@ -33,6 +33,7 @@ class OperatoreUser extends User
     {
         parent::__construct();
         $this->type = self::USER_TYPE_OPERATORE;
+        $this->addRole(User::ROLE_OPERATORE);
     }
 
     /**

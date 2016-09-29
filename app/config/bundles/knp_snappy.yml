@@ -1,4 +1,4 @@
 knp_snappy:
     pdf:
         enabled:    true
-        binary:     wkhtmltopdf
+        binary:     "%wkhtmlbinary%"

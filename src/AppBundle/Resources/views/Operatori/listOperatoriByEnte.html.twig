@@ -1,27 +1,24 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-
-    <pre>
-        {{ dump(operatori) }}
-    </pre>
-
     <table class="table table-striped">
         <thead>
         <tr>
-            <td>{{ 'operatori.lista.nome'|trans }}</td>
-            <td>{{ 'operatori.lista.cognome'|trans }}</td>
-            <td>{{ 'operatori.lista.ambito'|trans }}</td>
+            <td>{{ 'operatori.profile.nome'|trans }}</td>
+            <td>{{ 'operatori.profile.cognome'|trans }}</td>
+            <td>{{ 'operatori.profile.email'|trans }}</td>
+            <td>{{ 'operatori.profile.ambito'|trans }}</td>
             <td></td>
         </tr>
         </thead>
         <tbody>
         {% for operatore in operatori %}
             <tr class="operatore"
-                data-pratica="{{ operatore.id }}">
+                data-operatore="{{ operatore.id }}">
 
                 <td>{{ operatore.nome }}</td>
                 <td>{{ operatore.cognome }}</td>
+                <td>{{ operatore.email }}</td>
                 <td>{{ operatore.ambito }}</td>
                 <td>
                     <a href="{{ path('operatori_detail', {'operatore': operatore.id}) }}"
@@ -32,6 +29,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-
 {% endblock %}

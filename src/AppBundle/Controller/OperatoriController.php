@@ -7,6 +7,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
 use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
 use AppBundle\Logging\LogConstants;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -259,18 +260,25 @@ class OperatoriController extends Controller
     public function detailOperatoreAction(Request $request, OperatoreUser $operatore)
     {
         $this->checkUserCanAccessOperatore($this->getUser(), $operatore);
-
         $form = $this->setupOperatoreForm( $operatore )->handleRequest($request);
 
-        /*if ($form->isSubmitted()) {
+        if ($form->isSubmitted()) {
             $data = $form->getData();
-            $this->storeContactsData($operatore, $data, $this->get('logger'));
-            return $this->redirectToRoute('user_profile');
-        }*/
+            //$this->storeOperatoreData($operatore->getId(), $data, $this->get('logger'));
+            $operatore->setAmbito($data['ambito']);
+            $this->getDoctrine()->getManager()->persist($operatore);
+            try {
+                $this->getDoctrine()->getManager()->flush();
+                $this->get('logger')->info(LogConstants::OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO, ['operatore_admin' => $this->getUser()->getId(), 'operatore' => $operatore->getId() ]);
+            } catch (\Exception $e) {
+                $this->get('logger')->error($e->getMessage());
+            }
+            return $this->redirectToRoute('operatori_detail', ['operatore' => $operatore->getId()]);
+        }
 
         return array(
             'operatore' => $operatore,
-            'form'      => $form
+            'form'      => $form->createView()
         );
     }
 
@@ -289,19 +297,6 @@ class OperatoriController extends Controller
             );
         $form = $formBuilder->getForm();
         return $form;
-    }
-
-    private function storeContactsData(OperatoreUser $operatore, array $data, LoggerInterface $logger)
-    {
-        $manager = $this->getDoctrine()->getManager();
-        $operatore->setAmbito($data['ambito']);
-        $manager->persist($operatore);
-        try {
-            $manager->flush();
-            $logger->info(LogConstants::USER_HAS_CHANGED_CONTACTS_INFO, ['userid' => $operatore->getId()]);
-        } catch (\Exception $e) {
-            $logger->error($e->getMessage());
-        }
     }
 
     /**

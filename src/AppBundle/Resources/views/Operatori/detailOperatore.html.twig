@@ -1,32 +1,10 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-
-    {#{% form_theme form 'bootstrap_3_layout.html.twig' %}#}
-
-    {#{{ form_start(form) }}
-        <div class="row">
-            <div class="col-md-5">
-                <div class="form-group">
-                    <label for="indirizzo">{{ 'operatori.profile.ambito'|trans() }}</label>
-                    {{ form_row(form.ambito) }}
-                </div>
-            </div>
-            <div class="col-md-5 col-md-offset-1">
-                {{ form_row(form.save) }}
-            </div>
-        </div><!-- /.row -->
-    {{ form_end(form) }}#}
-    {#{{ form(form) }}#}
-
-    <pre>
-        {{ dump(operatore) }}
-    </pre>
-
     <h3>{{ 'operatori.profile.title'|trans() }}</h3>
 
     <p><a href="{{ path('operatori_list_by_ente') }}"
-          class="btn btn-info btn-xs">{{ 'operatori.torna_alla_lista_operatori'|trans }}</a></p>
+          class="btn btn-info btn-xs"><i class="fa fa-angle-left" aria-hidden="true"></i> {{ 'operatori.torna_alla_lista_operatori'|trans }}</a></p>
 
     <div class="row">
         <div class="col-md-5">
@@ -60,7 +38,21 @@
         </div>
     </div><!-- /.row -->
 
+    {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="indirizzo">{{ 'operatori.profile.ambito'|trans() }}</label>
+                {{ form_row(form.ambito) }}
+            </div>
+        </div>
+        <div class="col-md-12">
+            {{ form_row(form.save) }}
+        </div>
+    </div><!-- /.row -->
+    {{ form_end(form) }}
 
 
 {% endblock %}

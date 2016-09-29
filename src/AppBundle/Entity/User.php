@@ -22,8 +22,10 @@ use FOS\UserBundle\Model\User as BaseUser;
 abstract class User extends BaseUser
 {
 
-    const ROLE_USER = 'ROLE_USER';
     const ROLE_OPERATORE_ADMIN = 'ROLE_OPERATORE_ADMIN';
+    const ROLE_OPERATORE = 'ROLE_OPERATORE';
+    const ROLE_USER = 'ROLE_USER';
+
 
     const USER_TYPE_OPERATORE = 'operatore';
     const USER_TYPE_CPS = 'cps';
