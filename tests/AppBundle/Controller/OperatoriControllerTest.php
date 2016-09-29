@@ -6,6 +6,7 @@ use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -545,6 +546,41 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
         $this->assertEquals($pratica->getStatus(), Pratica::STATUS_CANCELLED);
+    }
+
+
+    /**
+     * @test
+     */
+    public function testICannotAccessOperatoriListAsCommonOperatore()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $this->createOperatoreUser($username, $password);
+
+        $operatoriList = $this->router->generate('operatori_list_by_ente');
+        $this->client->request('GET', $operatoriList);
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function testICanAccessOperatoriListAsAdminOperatore()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $operatore->addRole(User::ROLE_OPERATORE_ADMIN);
+
+        $operatoriList = $this->router->generate('operatori_list_by_ente');
+        $this->client->request('GET', $operatoriList, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
 }

@@ -20,7 +20,14 @@ class OperatoreUser extends User
     private $ente;
 
     /**
-     * CPSUser constructor.
+     * @var string
+     *
+     * @ORM\Column(name="ambito", type="string")
+     */
+    private $ambito;
+
+    /**
+     * OperatoreUser constructor.
      */
     public function __construct()
     {
@@ -46,4 +53,21 @@ class OperatoreUser extends User
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getAmbito()
+    {
+        return $this->ambito;
+    }
+
+    /**
+     * @param string $ambito
+     */
+    public function setAmbito($ambito)
+    {
+        $this->ambito = $ambito;
+    }
+
 }

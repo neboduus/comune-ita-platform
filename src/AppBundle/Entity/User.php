@@ -22,8 +22,10 @@ use FOS\UserBundle\Model\User as BaseUser;
 abstract class User extends BaseUser
 {
 
-    const USER_TYPE_OPERATORE = 'operatore';
+    const ROLE_USER = 'ROLE_USER';
+    const ROLE_OPERATORE_ADMIN = 'ROLE_OPERATORE_ADMIN';
 
+    const USER_TYPE_OPERATORE = 'operatore';
     const USER_TYPE_CPS = 'cps';
 
     const FAKE_EMAIL_DOMAIN = 'cps.didnt.have.my.email.tld';

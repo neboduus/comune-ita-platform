@@ -39,5 +39,10 @@ security:
         - { path: ^/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/operatori/list, role: ROLE_OPERATORE_ADMIN }
         - { path: ^/operatori, role: ROLE_USER }
         - { path: ^/pratiche, role: ROLE_USER }
+
+    role_hierarchy:
+            ROLE_ADMIN:           ROLE_OPERATORE_ADMIN
+            ROLE_OPERATORE_ADMIN: ROLE_USER
