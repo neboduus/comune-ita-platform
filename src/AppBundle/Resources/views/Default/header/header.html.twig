@@ -49,6 +49,9 @@
                     <li{% if 'pratiche' in app.request.pathInfo and 'allegati' not in app.request.pathInfo%} class="active" {% endif %}><a href="{{ path('pratiche') }}"><i class="fa fa-files-o" aria-hidden="true"></i> {{ 'nav.pratiche'|trans }}</a></li>
                     <li{% if 'profilo' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('user_profile') }}"><i class="fa fa-user" aria-hidden="true"></i> {{ 'nav.profilo'|trans }}</a></li>
                     <li{% if 'allegati' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('allegati_list_cpsuser') }}"><i class="fa fa-user" aria-hidden="true"></i> {{ 'nav.allegati'|trans }}</a></li>
+                    {% if is_granted('ROLE_OPERATORE_ADMIN') %}
+                        <li{% if 'operatori/list' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('operatori_list_by_ente') }}"><i class="fa fa-user" aria-hidden="true"></i> {{ 'nav.operatori.lista_operatori'|trans }}</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

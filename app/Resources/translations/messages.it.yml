@@ -18,6 +18,8 @@ nav:
   pratiche: 'Le mie pratiche'
   profilo: 'Il mio profilo'
   allegati: 'I miei allegati'
+  operatori:
+    lista_operatori: 'Gestisci operatori comune'
 
 home:
   welcome:
@@ -215,6 +217,17 @@ operatori:
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
   scarica_modulo_compilato: 'Scarica il modulo compilato'
+  torna_alla_lista_operatori: 'Torna alla lista operatori'
+  profile:
+    title: 'Profilo operatore'
+    nome: 'Nome'
+    cognome: 'Cognome'
+    email: 'Email'
+    ente: 'Ente'
+    ambito: 'Ambito'
+    salva_modifiche: 'Salva modifiche'
+
+
 
 allegato:
   nome_file: 'Nome del file'

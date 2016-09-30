@@ -33,5 +33,7 @@ class LogConstants
     const PRATICA_CANCELLED = "Pratica {pratica} cancelled by user {user}";
     const PRATICA_WRONG_ENTE_REQUESTED = "Pratica {pratica} created, but wrong ente requested: {headers}";
 
+    const OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO = "Operatore Admin {operatore_admin} has changed {operatore} ambito";
+
 
 }
