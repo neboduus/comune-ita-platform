@@ -34,6 +34,8 @@ class LogConstants
     const PRATICA_WRONG_ENTE_REQUESTED = "Pratica {pratica} created, but wrong ente requested: {headers}";
 
     const OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO = "Operatore Admin {operatore_admin} has changed {operatore} ambito";
+    const PRATICA_UPDATED_STATUS_FROM_GPA = "Pratica status has been updated from GPA {statusChange}";
+    const PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA = "Error in trying to update Pratica status from GPA {statusChange}, {error}";
 
 
 }

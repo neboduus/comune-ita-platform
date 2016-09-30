@@ -269,18 +269,26 @@ class Pratica
      *
      * @return $this
      */
-    public function setStatus($status)
+    public function setStatus($status, StatusChange $statusChange = null)
     {
         $this->status = $status;
         $this->latestStatusChangeTimestamp = time();
-        $updated = null;
-        if ($this->getStoricoStati()->containsKey($this->latestStatusChangeTimestamp)) {
-            $updated = $this->getStoricoStati()->get($this->latestStatusChangeTimestamp);
-            $updated[] = $status;
-        } else {
-            $updated = [$status];
+        $timestamp = $this->latestStatusChangeTimestamp;
+
+        if ($statusChange != null) {
+            $timestamp = $statusChange->getTimestamp();
         }
-        $this->storicoStati->set($this->latestStatusChangeTimestamp, $updated);
+        $updated = null;
+
+        $newStatus = [$status, $statusChange ? $statusChange->toArray() : null];
+
+        if ($this->getStoricoStati()->containsKey($timestamp)) {
+            $updated = $this->getStoricoStati()->get($timestamp);
+            $updated[] = $newStatus;
+        } else {
+            $updated = [$newStatus];
+        }
+        $this->storicoStati->set($timestamp, $updated);
 
         return $this;
     }
@@ -749,8 +757,10 @@ class Pratica
         $array = $this->storicoStati->toArray();
         ksort($array);
         foreach ($array as $timestamp => $stati) {
-            if (in_array($status, $stati)) {
-                $latestTimestamp = $timestamp;
+            foreach ($stati as $stato) {
+                if ($stato[0] == $status) {
+                    $latestTimestamp = $timestamp;
+                }
             }
         }
 

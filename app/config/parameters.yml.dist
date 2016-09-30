@@ -20,6 +20,8 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-
     # knp_snappy
     wkhtmlbinary:     %kernel.root_dir%/../vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64
+
+    # La password usata da gpa per pushare gli status changes
+    gpa_password: gpa

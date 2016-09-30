@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -354,5 +355,19 @@ abstract class AbstractAppTestCase extends WebTestCase
             ->willReturn(count($recipients));
 
         return $mock;
+    }
+
+    protected function setupMockedLogger($expectedArgs)
+    {
+        $mockLogger = $this->getMockLogger();
+        $mockLogger->expects($this->exactly(1))
+            ->method('info')
+            ->with($this->callback(function ($subject) use ($expectedArgs) {
+                return in_array($subject, $expectedArgs);
+            }));
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
     }
 }

@@ -15,7 +15,7 @@ class Servizio
 {
 
     const STATUS_CANCELLED = 0;
-    const STATUS_AVAILABLE= 1;
+    const STATUS_AVAILABLE = 1;
     const STATUS_SUSPENDED = 2;
 
     /**

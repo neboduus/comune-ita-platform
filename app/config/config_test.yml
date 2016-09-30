@@ -20,3 +20,13 @@ security:
         operatori:
           http_basic:
             provider: fos_userbundle
+    providers:
+        in_memory:
+            memory:
+                users:
+                    gpa:
+                        password: gpapass
+                        roles: 'ROLE_GPA'
+                    gpa_no_role:
+                        password: gpapass
+                        roles: 'ROLE_NOT_GPA'
