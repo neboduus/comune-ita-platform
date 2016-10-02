@@ -52,6 +52,9 @@
                     {% if is_granted('ROLE_OPERATORE_ADMIN') %}
                         <li{% if 'operatori/list' in app.request.pathInfo %} class="active" {% endif %}><a href="{{ path('operatori_list_by_ente') }}"><i class="fa fa-user" aria-hidden="true"></i> {{ 'nav.operatori.lista_operatori'|trans }}</a></li>
                     {% endif %}
+                    {% if is_granted('ROLE_OPERATORE') %}
+                        <li><a href="{{ logout_path('operatori') }}"><i class="fa fa-power-off" aria-hidden="true"></i> {{ 'logout'|trans }}</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

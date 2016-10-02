@@ -660,5 +660,32 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
     }
 
+    /**
+     * @test
+     */
+    public function testICanDoLogoutAsOperatore()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+
+        $operatoriHome = $this->router->generate('operatori_index');
+        $crawler = $this->client->request('GET', $operatoriHome, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $logout = $crawler->selectLink($this->translator->trans('logout'))->link();
+        $this->client->click($logout);
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $this->assertRegExp('/\/operatori\/$/', $this->client->getResponse()->headers->get('location'));
+
+        $this->client->request('GET', $operatoriHome);
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertRegExp('/\/login$/', $this->client->getResponse()->headers->get('location'));
+    }
+
 
 }
