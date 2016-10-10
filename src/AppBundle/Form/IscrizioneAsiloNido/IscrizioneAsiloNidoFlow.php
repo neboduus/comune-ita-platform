@@ -4,6 +4,9 @@ namespace AppBundle\Form\IscrizioneAsiloNido;
 
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
 use AppBundle\Form\Base\NucleoFamiliareType;
+use AppBundle\Form\Base\DatiRichiedenteType;
+use AppBundle\Form\Base\SelezionaEnteType;
+use AppBundle\Form\Base\AllegatiType;
 use AppBundle\Form\Base\PraticaFlow;
 
 class IscrizioneAsiloNidoFlow extends PraticaFlow
@@ -48,7 +51,7 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
                 'form_type' => SelezionaOrariNidoType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
-                'label' => 'iscrizione_asilo_nido.datiRichiedente',
+                'label' => 'pratica.carica_datiRichiedente',
                 'form_type' => DatiRichiedenteType::class,
             ),
             self::STEP_DATI_BAMBINO => array(
@@ -60,7 +63,7 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
                 'form_type' => NucleoFamiliareType::class,
             ),
             self::STEP_ALLEGATI => array(
-                'label' => 'iscrizione_asilo_nido.allegati',
+                'label' => 'pratica.carica_allegati',
                 'form_type' => AllegatiType::class,
             ),
             self::STEP_CONFERMA => array(

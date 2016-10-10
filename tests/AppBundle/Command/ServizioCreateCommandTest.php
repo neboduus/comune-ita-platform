@@ -26,6 +26,8 @@ class ServizioCreateCommandTest extends AbstractAppTestCase
             'command' => $command->getName(),
             'slug' => $slug,
             'name' => $name,
+            'fcqn' => '\AppBundle\Entity\IscrizioneAsiloNido',
+            'flow' => 'ocsdc.form.flow.asilonido',
         ));
 
         $output = $commandTester->getDisplay();

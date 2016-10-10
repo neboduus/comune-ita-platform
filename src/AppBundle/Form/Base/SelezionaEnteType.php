@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Form\IscrizioneAsiloNido;
+namespace AppBundle\Form\Base;
 
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -14,7 +14,7 @@ class SelezionaEnteType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.seleziona_ente', true);
+        $helper->setGuideText('pratica.guida_alla_compilazione.seleziona_ente', true);
 
         $builder->add('ente', EntityType::class, [
             'class' => 'AppBundle\Entity\Ente',
@@ -27,6 +27,6 @@ class SelezionaEnteType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'iscrizione_asilo_nido_seleziona_ente';
+        return 'pratica_seleziona_ente';
     }
 }

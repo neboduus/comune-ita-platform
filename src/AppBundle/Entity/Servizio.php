@@ -73,6 +73,18 @@ class Servizio
     private $status;
 
     /**
+     * @var string Fully Qualified Class Name
+     * @ORM\Column(type="string")
+     */
+    private $praticaFCQN;
+
+    /**
+     * @var string Fully Qualified Class Name
+     * @ORM\Column(type="string")
+     */
+    private $praticaFlowServiceName;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -227,6 +239,46 @@ class Servizio
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPraticaFCQN()
+    {
+        return $this->praticaFCQN;
+    }
+
+    /**
+     * @param string $praticaFCQN
+     *
+     * @return Servizio
+     */
+    public function setPraticaFCQN($praticaFCQN)
+    {
+        $this->praticaFCQN = $praticaFCQN;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPraticaFlowServiceName()
+    {
+        return $this->praticaFlowServiceName;
+    }
+
+    /**
+     * @param string $praticaFlowServiceName
+     *
+     * @return Servizio
+     */
+    public function setPraticaFlowServiceName($praticaFlowServiceName)
+    {
+        $this->praticaFlowServiceName = $praticaFlowServiceName;
 
         return $this;
     }

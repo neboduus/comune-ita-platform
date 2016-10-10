@@ -288,12 +288,21 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param Ente[] $enti
      * @return Servizio
      */
-    protected function createServizioWithAssociatedEnti($enti)
+    protected function createServizioWithAssociatedEnti(
+        $enti,
+        $name = 'Servizio test pratiche',
+        $praticaFCQN = '\AppBundle\Entity\IscrizioneAsiloNido',
+        $praticaFlowServiceName = 'ocsdc.form.flow.asilonido'
+    )
     {
         $servizio = new Servizio();
-        $servizio->setName('Servizio test pratiche')->setEnti($enti);
-        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
-        $servizio->setArea('Test area');
+        $servizio
+            ->setName($name)
+            ->setEnti($enti)
+            ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.')
+            ->setArea('Test area')
+            ->setPraticaFCQN($praticaFCQN)
+            ->setPraticaFlowServiceName($praticaFlowServiceName);
         $this->em->persist($servizio);
         $this->em->flush();
 

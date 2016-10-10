@@ -104,6 +104,8 @@ class LoadData implements FixtureInterface
                 ->setTestoIstruzioni($item['testoIstruzioni'])
                 ->setStatus($item['status'])
                 ->setArea($item['area'])
+                ->setPraticaFCQN($item['fcqn'])
+                ->setPraticaFlowServiceName($item['flow'])
                 ->setEnti($enti);
 
             $manager->persist($servizio);

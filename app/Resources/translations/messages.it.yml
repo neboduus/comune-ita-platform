@@ -57,6 +57,9 @@ pratica:
     sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
     si: 'Sì, sono sicuro'
     no: 'No'
+    dati_richiedente: 'I dati del richiedenti non sono modificabili dal momento che vengono utilizzati i dati presenti nella Carta dei servizi con cui ti sei autenticato nel sistema'
+    allegati: "Inserisci gli allegati: <ul><li>la dichiarazione ICEF</li><li>...</li></ul>"
+    seleziona_ente: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
   pdf:
     spett_le: 'Spett.le'
     oggetto: 'Oggetto'
@@ -116,42 +119,40 @@ pratica:
     stato_5: 'Presa in carico'
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
+  carica_allegati: 'Caricamento degli allegati'
+  carica_datiRichiedente: 'Dati del richiedente'
+  selezionaEnte: 'Selezione del comune di riferimento'
+  accettazioneIstruzioni: 'Istruzioni sulla procedura'
+  conferma: 'Controllo e conferma'
+  datiRichiedente:
+    richiedente_nome: 'Nome'
+    richiedente_cognome: 'Cogome'
+    richiedente_luogo_nascita: 'Luogo di nascita'
+    richiedente_data_nascita: 'Data di nascita'
+    richiedente_indirizzo_residenza: 'Indirizzo'
+    richiedente_cap_residenza: 'CAP'
+    richiedente_citta_residenza: 'Città'
+    richiedente_telefono: 'Telefono'
+    richiedente_email: 'Email'
 
 iscrizione_asilo_nido:
-  accettazioneIstruzioni: 'Istruzioni sulla procedura'
-  selezionaEnte: 'Selezione del comune di riferimento'
   accettazioneUtilizzoNidoForm: 'Termini di fruizione della struttura'
   selezionaNido: 'Selezione della struttura'
-  datiRichiedente: 'Dati del richiedente'
-  conferma: 'Controllo e conferma'
   nucleoFamiliare: 'Composizione del nucleo familiare'
   accettazione_utilizzo_nido: 'Ho letto i termini di fruizione della struttura'
   selezionaOrariNido: 'Selezione degli orari e del periodo di iscrizione'
   datiBambino: 'Dati del bambino'
-  allegati: 'Caricamento degli allegati'
   seleziona_orario: 'Orario prescelto'
   periodoIscrizioneDa: 'Periodo iscrizione da'
   periodoIscrizioneA: 'Periodo iscrizione a'
-  datiRichiedente.richiedente_nome: 'Nome'
-  datiRichiedente.richiedente_cognome: 'Cogome'
-  datiRichiedente.richiedente_luogo_nascita: 'Luogo di nascita'
-  datiRichiedente.richiedente_data_nascita: 'Data di nascita'
-  datiRichiedente.richiedente_indirizzo_residenza: 'Indirizzo'
-  datiRichiedente.richiedente_cap_residenza: 'CAP'
-  datiRichiedente.richiedente_citta_residenza: 'Città'
-  datiRichiedente.richiedente_telefono: 'Telefono'
-  datiRichiedente.richiedente_email: 'Email'
   datiBambino.nome: 'Nome'
   datiBambino.cognome: 'Cognome'
   datiBambino.luogo_nascita: 'Luogo di nascita'
   datiBambino.data_nascita: 'Data di nascita'
   guida_alla_compilazione:
-    seleziona_ente: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
     seleziona_nido: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
     accettazione_utilizzo_nido: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
-    allegati: "Inserisci gli allegati: <ul><li>la dichiarazione ICEF</li><li>...</li></ul>"
     dati_bambino: 'Inserisci i dati del bambino che intendi iscrivere'
-    dati_richiedente: 'I dati del richiedenti non sono modificabili dal momento che vengono utilizzati i dati presenti nella Carta dei servizi con cui ti sei autenticato nel sistema'
     seleziona_orari: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
 
 errori:

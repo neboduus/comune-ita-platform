@@ -46,12 +46,8 @@ class ServizioControllerTest extends AbstractAppTestCase
         $user = $this->createCPSUser();
 
         $repo = $this->em->getRepository("AppBundle:Servizio");
-        $servizio = new Servizio();
-        $servizio->setName('Primo servizio');
-        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
-        $servizio->setArea('Test area');
-        $this->em->persist($servizio);
-        $this->em->flush();
+
+        $this->createServizioWithAssociatedEnti([], 'Primo servizio');
 
         $serviceCountAfterInsert = count($repo->findAll());
 
@@ -72,13 +68,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         $this->em->persist($ente);
         $this->em->flush();
 
-        $servizio = new Servizio();
-        $servizio->setName('Secondo servizio')
-            ->setEnti([$ente]);
-        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
-        $servizio->setArea('Test area');
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Secondo servizio');
 
         $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 
@@ -108,12 +98,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         $this->em->persist($ente2);
         $this->em->flush();
 
-        $servizio = new Servizio();
-        $servizio->setName('Terzo servizio')->setEnti([$ente, $ente2]);
-        $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
-        $servizio->setArea('Test area');
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([$ente, $ente2], 'Terzo servizio');
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL));
 
@@ -137,11 +122,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         $numberServices = rand(1, 10);
 
         for ($i = 1; $i <= $numberServices; $i++) {
-            $servizio = new Servizio();
-            $servizio->setName('Servizio '.$i);
-            $servizio->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.');
-            $servizio->setArea('Test area');
-            $this->em->persist($servizio);
+            $this->createServizioWithAssociatedEnti([], 'Servizio'.$i);
         }
         $this->em->flush();
 

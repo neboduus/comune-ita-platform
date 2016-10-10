@@ -20,7 +20,9 @@ class ServizioCreateCommand extends ContainerAwareCommand
             ->setDescription('Crea un record nella tabella servizi')
             ->setHelp("Crea un record nella tabella servizi, lo marca come disabilitato, va abilitato a mano una volta che si è creato il flow corrispondente.")
             ->addArgument('slug', InputArgument::REQUIRED)
-            ->addArgument('name', InputArgument::REQUIRED);
+            ->addArgument('name', InputArgument::REQUIRED)
+            ->addArgument('fcqn', InputArgument::REQUIRED)
+            ->addArgument('flow', InputArgument::REQUIRED);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -38,6 +40,8 @@ class ServizioCreateCommand extends ContainerAwareCommand
         $newServizio = new Servizio();
         $newServizio->setSlug($input->getArgument('slug'));
         $newServizio->setName($input->getArgument('name'));
+        $newServizio->setPraticaFCQN($input->getArgument('fcqn'));
+        $newServizio->setPraticaFlowServiceName($input->getArgument('flow'));
 
         $em->persist($newServizio);
         $em->flush();
