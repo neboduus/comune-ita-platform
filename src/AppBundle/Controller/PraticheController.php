@@ -7,6 +7,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -209,18 +210,18 @@ class PraticheController extends Controller
 
         $user = $this->getUser();
 
-        /** @var FormFlowInterface $flow */
-        $flow = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
+        /** @var PraticaFlow $praticaFlowService */
+        $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
 
-        $flow->bind($pratica);
-        $form = $flow->createForm();
+        $praticaFlowService->bind($pratica);
+        $form = $praticaFlowService->createForm();
 
 
-        if ($flow->isValid($form)) {
-            $flow->saveCurrentStepData($form);
-            if ($flow->nextStep()) {
+        if ($praticaFlowService->isValid($form)) {
+            $praticaFlowService->saveCurrentStepData($form);
+            if ($praticaFlowService->nextStep()) {
                 $this->getDoctrine()->getManager()->flush();
-                $form = $flow->createForm();
+                $form = $praticaFlowService->createForm();
             } else {
                 $pratica->setStatus(Pratica::STATUS_SUBMITTED);
                 $pratica->setSubmissionTime(time());
@@ -239,7 +240,7 @@ class PraticheController extends Controller
                     $this->get('translator')->trans('pratica_ricevuta')
                 );
 
-                $flow->reset();
+                $praticaFlowService->reset();
 
                 return $this->redirectToRoute(
                     'pratiche_show',
@@ -251,7 +252,7 @@ class PraticheController extends Controller
         return [
             'form' => $form->createView(),
             'pratica' => $pratica,
-            'flow' => $flow,
+            'flow' => $praticaFlowService,
             'user' => $user,
         ];
     }
@@ -277,6 +278,8 @@ class PraticheController extends Controller
     private function createNewPratica(Servizio $servizio, CPSUser $user)
     {
         $praticaClassName = $servizio->getPraticaFCQN();
+        /** @var PraticaFlow $praticaFlowService */
+        $praticaFlowService = $this->get($servizio->getPraticaFlowServiceName());
 
         $pratica = new $praticaClassName();
         if (!$pratica instanceof Pratica){
@@ -303,13 +306,11 @@ class PraticheController extends Controller
             $lastPratica = $lastPraticaList[0];
         }
         if ($lastPratica instanceof Pratica) {
-            foreach ($lastPratica->getNucleoFamiliare() as $oldCompontente) {
-                $this->addNewComponenteToPraticaFromOldComponente($oldCompontente, $pratica);
-            }
+            $praticaFlowService->populatePraticaFieldsWithLastPraticaValues($lastPratica, $pratica);
         }
 
         $user = $this->getUser();
-        $this->populatePraticaFieldsWithUserValues($user, $pratica);
+        $praticaFlowService->populatePraticaFieldsWithUserValues($user, $pratica);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($pratica);
@@ -392,34 +393,4 @@ class PraticheController extends Controller
         return $destDir;
     }
 
-    /**
-     * @param CPSUser $user
-     * @param $pratica
-     */
-    private function populatePraticaFieldsWithUserValues(CPSUser $user, Pratica $pratica)
-    {
-        $pratica->setRichiedenteNome($user->getNome());
-        $pratica->setRichiedenteCognome($user->getCognome());
-        $pratica->setRichiedenteLuogoNascita($user->getLuogoNascita());
-        $pratica->setRichiedenteDataNascita($user->getDataNascita());
-        $pratica->setRichiedenteIndirizzoResidenza($user->getIndirizzoResidenza());
-        $pratica->setRichiedenteCapResidenza($user->getCapResidenza());
-        $pratica->setRichiedenteCittaResidenza($user->getCittaResidenza());
-        $pratica->setRichiedenteTelefono($user->getTelefono());
-        $pratica->setRichiedenteEmail($user->getEmailCanonical());
-    }
-
-    /**
-     * @param $componente
-     * @param $pratica
-     */
-    private function addNewComponenteToPraticaFromOldComponente(ComponenteNucleoFamiliare $componente, Pratica $pratica)
-    {
-        $cloneComponente = new ComponenteNucleoFamiliare();
-        $cloneComponente->setNome($componente->getNome());
-        $cloneComponente->setCognome($componente->getCognome());
-        $cloneComponente->setCodiceFiscale($componente->getCodiceFiscale());
-        $cloneComponente->setRapportoParentela($componente->getRapportoParentela());
-        $pratica->addNucleoFamiliare($cloneComponente);
-    }
 }

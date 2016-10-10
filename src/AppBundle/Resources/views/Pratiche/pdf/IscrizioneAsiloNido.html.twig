@@ -1,67 +1,10 @@
 <html>
 <head>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 20pt;
-            padding: 20pt 0;
-        }
-        .center_title{
-            text-transform: uppercase;
-            text-align: center;
-            margin: 30px 0;
-        }
-        .table {
-            margin-bottom: 28px;
-            width: 100%;
-            border-collapse: collapse;
-            border-spacing: 0;
-        }
-        .table > caption + thead > tr:first-child > td, .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > td, .table > thead:first-child > tr:first-child > th {
-            border-top: 0 none;
-        }
-        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
-            border-top: 1px solid #ddd;
-            line-height: 1.55556;
-            padding: 8px;
-            vertical-align: top;
-        }
-        .table th{
-            font-weight: bold;
-        }
-        .data, .destinatario{
-            text-align: right;
-            margin: 20pt 0;
-        }
-        .data{
-            margin-bottom: 0;;
-        }
-    </style>
+    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
 </head>
 <body>
 
-<div class="destinatario">
-    <p><em>{{ 'pratica.pdf.spett_le'|trans() }}</em> <strong>{{ pratica.ente.name }}</strong></p>
-</div>
-
-<div class="oggetto">
-    <p>
-        <strong>{{ 'pratica.pdf.oggetto'|trans() }}</strong>
-        {{ pratica.servizio.name }}
-    </p>
-</div>
-
-<div class="dati_richiedente">
-    {{ 'pratica.pdf.il_sottoscritto'|trans() }} {{ pratica.richiedenteCognome }} {{ pratica.richiedenteNome }}
-    {{ 'pratica.pdf.nato_a'|trans() }} {{ pratica.richiedenteLuogoNascita }} {{ 'pratica.pdf.nato_il'|trans() }} {{ pratica.richiedenteDataNascita|date("d/m/Y") }}
-    {{ 'pratica.pdf.residente_a'|trans() }} {{ pratica.richiedenteIndirizzoResidenza }}{{ pratica.richiedenteCapResidenza }} {{ pratica.richiedenteCittaResidenza }}
-    <p>
-        {{ 'pratica.pdf.telefono'|trans() }} {{ pratica.richiedenteTelefono }}
-    </p>
-    <p>
-        {{ 'pratica.pdf.email'|trans() }} {{ pratica.richiedenteEmail }}
-    </p>
-</div>
+{{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
 
 <div class="chiede center_title">
     {{ 'pratica.pdf.chiede'|trans() }}
@@ -69,70 +12,21 @@
 
 <div class="richiesta">
     <p>
-        {{ 'pratica.pdf.ammissione_nido'|trans() }} {{ pratica.struttura.name }}
-        {{ 'pratica.pdf.del_bambino'|trans() }} {{ pratica.bambinoNome }} {{ pratica.bambinoCognome }}
+        {{ 'iscrizione_asilo_nido.pdf.ammissione_nido'|trans() }} <strong>{{ pratica.struttura.name }}</strong>
+        {{ 'iscrizione_asilo_nido.pdf.del_bambino'|trans() }} <strong>{{ pratica.bambinoNome }} {{ pratica.bambinoCognome }}</strong>
         {{ 'pratica.pdf.nato_a'|trans() }} {{ pratica.bambinoLuogoNascita }} {{ 'pratica.pdf.nato_il'|trans() }} {{ pratica.bambinoDataNascita|date("d/m/Y") }}
     </p>
     <p>
-        {{ 'pratica.pdf.orario'|trans() }} {{ pratica.strutturaOrario }}
+        {{ 'iscrizione_asilo_nido.pdf.orario'|trans() }} {{ pratica.strutturaOrario }}
     </p>
     <p>
-        {{ 'pratica.pdf.periodo_da'|trans() }} {{ pratica.periodoIscrizioneDa|date("d/m/Y") }} {{ 'pratica.pdf.periodo_a'|trans() }} {{ pratica.periodoIscrizioneA|date("d/m/Y") }}
+        {{ 'iscrizione_asilo_nido.pdf.periodo_da'|trans() }} {{ pratica.periodoIscrizioneDa|date("d/m/Y") }} {{ 'iscrizione_asilo_nido.pdf.periodo_a'|trans() }} {{ pratica.periodoIscrizioneA|date("d/m/Y") }}
     </p>
 </div>
 
-<div class="dichiara">
-    <div class="dichiara center_title">
-        {{ 'pratica.pdf.dichiara'|trans() }}
-    </div>
+{{ include('AppBundle:Pratiche/pdf/parts:nucleo_familiare.html.twig', {'pratica':pratica, 'user': user}) }}
 
-    <ol>
-        <li class="nucleo_familiare dichiarazione">
-            <p>{{ 'pratica.pdf.dichiarazione_composizione_nucleo_familiare'|trans()|raw }}</p>
-            <table class="table">
-                <thead>
-                <tr>
-                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.nome_e_cognome'|trans() }}</td>
-                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.rapporto_parentela'|trans() }}</td>
-                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.codice_fiscale'|trans() }}</td>
-                </tr>
-                </thead>
-                <tbody>
-                {% for componente in pratica.nucleoFamiliare %}
-                    <tr>
-                        <td>{{ componente.nome }} {{ componente.cognome }}</td>
-                        <td>{{ componente.rapportoParentela }}</td>
-                        <td>{{ componente.codiceFiscale }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </li>
-
-        <li class="nucleo_familiare dichiarazione">
-            <p>{{ 'pratica.pdf.dichiarazione_allegati'|trans() }}</p>
-            <table class="table">
-                <tbody>
-                {% for allegato in pratica.allegati %}
-                    <tr>
-                        <td>{{ allegato.description }} ({{ allegato.originalFilename }})</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </li>
-
-        <li class="dichiarazione">
-            <p>{{ 'pratica.pdf.dichiarazione_cambiamenti'|trans() }}</p>
-            <small>{{ 'pratica.pdf.dichiarazione_cambiamenti_detail'|trans()|raw }}</small>
-        </li>
-    </ol>
-
-</div>
-
-<div class="data">
-    <p>{{ 'pratica.pdf.luogo'|trans()|raw }} {{ pratica.creationTime|date("l, d F Y") }}</p>
-</div>
+{{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
 </body>

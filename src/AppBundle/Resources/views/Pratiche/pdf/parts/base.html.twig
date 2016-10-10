@@ -1,0 +1,20 @@
+
+<div class="destinatario">
+    <p><em>{{ 'pratica.pdf.spett_le'|trans() }}</em> <strong>{{ pratica.ente.name }}</strong></p>
+</div>
+
+<div class="oggetto">
+    <p>
+        <strong>{{ 'pratica.pdf.oggetto'|trans() }}</strong> {{ pratica.servizio.name }}
+    </p>
+</div>
+
+<div class="dati_richiedente">
+    {{ 'pratica.pdf.il_sottoscritto'|trans() }} {{ pratica.richiedenteCognome }} {{ pratica.richiedenteNome }}
+    {{ 'pratica.pdf.nato_a'|trans() }} {{ pratica.richiedenteLuogoNascita }} {{ 'pratica.pdf.nato_il'|trans() }} {{ pratica.richiedenteDataNascita|date("d/m/Y") }}
+    {{ 'pratica.pdf.residente_a'|trans() }} {{ pratica.richiedenteIndirizzoResidenza }}{{ pratica.richiedenteCapResidenza }} {{ pratica.richiedenteCittaResidenza }}
+    <p>
+        {{ 'pratica.pdf.telefono'|trans() }} {{ pratica.richiedenteTelefono }}
+        {{ 'pratica.pdf.email'|trans() }} {{ pratica.richiedenteEmail }}
+    </p>
+</div>

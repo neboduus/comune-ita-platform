@@ -20,14 +20,14 @@ class ServizioCreateCommandTest extends AbstractAppTestCase
         $command = $application->find('ocsdc:crea-servizio');
         $commandTester = new CommandTester($command);
 
-        $slug = 'iscrizione_nido';
-        $name = 'Iscrizione Asili Nido';
+        $slug = 'test_servizio';
+        $name = 'Test Servizio';
         $commandTester->execute(array(
             'command' => $command->getName(),
             'slug' => $slug,
             'name' => $name,
-            'fcqn' => '\AppBundle\Entity\IscrizioneAsiloNido',
-            'flow' => 'ocsdc.form.flow.asilonido',
+            'fcqn' => '\AppBundle\Entity\Test',
+            'flow' => 'ocsdc.form.flow.test',
         ));
 
         $output = $commandTester->getDisplay();

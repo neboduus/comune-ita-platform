@@ -7,6 +7,7 @@ use AppBundle\Entity\CPSUser;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -46,6 +47,9 @@ class DatiRichiedenteType extends AbstractType
                 case 'richiedente_telefono':
                     $type = TextType::class;
                     $opts['disabled'] = $user->getTelefono() == null ? false : true;
+                    break;
+                case 'richiedente_cap':
+                    $type = IntegerType::class;
                     break;
                 case 'richiedente_email':
                     $type = EmailType::class;

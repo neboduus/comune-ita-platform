@@ -6,7 +6,6 @@ use AppBundle\Controller\PraticheController;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
-use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\ModuloCompilato;
@@ -19,7 +18,6 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
@@ -28,8 +26,7 @@ use Tests\AppBundle\Base\AbstractAppTestCase;
  */
 class PraticaControllerTest extends AbstractAppTestCase
 {
-    const OTHER_USER_ALLEGATO_DESCRIPTION = 'other';
-    const CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX = 'description_';
+
     /**
      * @var CPSUserProvider
      */
@@ -148,6 +145,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $myUser = $this->createCPSUser(true);
         $this->createPratiche($myUser);
         $repo = $this->em->getRepository("AppBundle:Pratica");
+        /** @var Pratica $pratica */
         $pratica = $repo->findByUser($myUser)[0];
 
         $now = new \DateTime('now');
@@ -369,7 +367,104 @@ class PraticaControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testISeeistruzioniIscrizioneAsiloNidoApplicationFormWhenIStartTheFormAsLoggedUser()
+    public function testInputFieldsForMyCPSDataAreDisabled()
+    {
+        $ente = $this->createEnteWithAsili();
+
+        $fqcn = IscrizioneAsiloNido::class;
+        $flow = 'ocsdc.form.flow.asilonido';
+        $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
+
+        $user = $this->createCPSUserWithTelefonoAndEmail('1111', '22@eee.55');
+
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+            'pratiche_new',
+            ['servizio' => $servizio->getSlug()]
+        ));
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $crawler = $this->client->followRedirect();
+
+        $currentUriParts = explode('/', $this->client->getHistory()->current()->getUri());
+        $currentPraticaId = array_pop($currentUriParts);
+        $currentPratica = $this->em->getRepository('AppBundle:IscrizioneAsiloNido')->find($currentPraticaId);
+        $this->assertEquals(get_class($currentPratica), IscrizioneAsiloNido::class);
+
+        $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
+        $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
+
+        // Accettazioni istruzioni
+        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
+
+        // Selezione del comune
+        $this->selezioneComune($crawler, $nextButton, $ente, $form);
+
+        // Selezione del asilo
+        $this->nextStep($crawler, $nextButton, $form);
+
+        // Termini di fruizione della struttura
+        $this->nextStep($crawler, $nextButton, $form);
+
+        // Selezione orari
+        $this->nextStep($crawler, $nextButton, $form);
+
+        // Dati richiedente
+        $fillData = array();
+        $crawler->filter('form[name="pratica_richiedente"] input[type="text"]')
+            ->each(function ($node, $i) use (&$fillData) {
+                self::fillFormInputWithDummyText($node, $i, $fillData);
+            });
+        $form = $crawler->selectButton($nextButton)->form();
+
+        foreach (DatiRichiedenteType::CAMPI_RICHIEDENTE as $campo => $statoDisabledAtteso) {
+            $field = $form->get('pratica_richiedente['.$campo.']');
+            switch ($campo) {
+                case 'richiedente_telefono':
+                    $statoDisabledAtteso = $user->getTelefono() == null ? false : true;
+                    break;
+                case 'richiedente_email':
+                    $statoDisabledAtteso = $user->getEmail() == null ? false : true;
+                    break;
+                default:
+                    break;
+            }
+            $this->assertEquals($statoDisabledAtteso, $field->isDisabled(), 'Il campo '.$field->getName().' doveva essere disabled: '.$statoDisabledAtteso);
+        }
+
+        $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @test
+     */
+    public function testIgetRedirectedIfITryToCreateANewPraticaOnAServiceWithPraticheInDraft()
+    {
+        $ente = $this->createEnteWithAsili();
+        $fqcn = IscrizioneAsiloNido::class;
+        $flow = 'ocsdc.form.flow.asilonido';
+        $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
+        $user = $this->createCPSUser();
+
+        $this->createPratica($user, null, Pratica::STATUS_DRAFT, $ente, $servizio);
+
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+            'pratiche_new',
+            ['servizio' => $servizio->getSlug()]
+        ));
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+        $this->assertEquals(
+            $this->client->getResponse()->headers->get('location'),
+            $this->router->generate(
+                'pratiche_list_draft',
+                ['servizio' => $servizio->getSlug()]
+            )
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testISeeInstructionsForFillingUpTheFormWhenIStartTheFormAsLoggedUser()
     {
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->exactly(2))
@@ -409,484 +504,4 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->assertContains('pratica_accettazione_istruzioni', $this->client->getResponse()->getContent());
     }
 
-    /**
-     * @test
-     */
-    public function testICanFillOutTheFormToEnrollMyChildInAsiloNidoAsLoggedUser()
-    {
-        $ente = $this->createEnteWithAsili();
-
-        $servizio = $this->createServizioWithEnte($ente);
-
-        $user = $this->createCPSUser();
-        $numberOfExpectedAttachments = 3;
-        $this->setupNeededAllegatiForAllInvolvedUsers($numberOfExpectedAttachments, $user);
-
-        $mockMailer = $this->setupSwiftmailerMock([$user]);
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockMailer) {
-            $kernel->getContainer()->set('swiftmailer.mailer.default', $mockMailer);
-        });
-
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
-            'pratiche_new',
-            ['servizio' => $servizio->getSlug()]
-        ));
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $crawler = $this->client->followRedirect();
-
-        $currentUriParts = explode('/', $this->client->getHistory()->current()->getUri());
-        $currentPraticaId = array_pop($currentUriParts);
-        $currentPratica = $this->em->getRepository('AppBundle:IscrizioneAsiloNido')->find($currentPraticaId);
-        $this->assertEquals(get_class($currentPratica), IscrizioneAsiloNido::class);
-        $this->assertEquals(0, $currentPratica->getModuliCompilati()->count());
-
-        $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
-        $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
-
-        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
-        $this->selezioneComune($crawler, $nextButton, $ente, $form);
-        $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);
-        $this->terminiFruizione($asiloSelected, $crawler, $nextButton, $form);
-        $this->selezioneOrari($asiloSelected, $crawler, $nextButton, $form);
-        $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
-        $this->datiBambino($crawler, $nextButton, $form);
-        $this->composizioneNucleoFamiliare($crawler, $nextButton, $form, 0, 5);
-
-        $allegati = $this->em->getRepository('AppBundle:Allegato')->findBy(['owner' => $user]);
-        $this->allegati($crawler, $nextButton, $form, $allegati);
-
-
-        $form = $crawler->selectButton($finishButton)->form();
-        $this->client->submit($form);
-        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $this->client->followRedirect();
-
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $this->assertContains($currentPraticaId, $this->client->getRequest()->getRequestUri());
-
-        $this->em->refresh($currentPratica);
-
-        $this->assertEquals(
-            $currentPratica->getRichiedenteNome(),
-            $user->getNome()
-        );
-
-        $this->assertEquals(
-            $currentPratica->getStruttura()->getName(),
-            $asiloSelected->getName()
-        );
-
-        $allegati = $currentPratica->getAllegati()->toArray();
-        $this->assertEquals($numberOfExpectedAttachments - 1, count($allegati));
-
-        //modulo stampato
-        $this->assertEquals(1, $currentPratica->getModuliCompilati()->count());
-        $pdfExportedForm = $currentPratica->getModuliCompilati()->get(0);
-        $this->assertNotNull($pdfExportedForm);
-        $this->assertTrue($pdfExportedForm instanceof ModuloCompilato);
-
-        $this->assertNotNull($currentPratica->getSubmissionTime());
-        $submissionDate = new \DateTime();
-        $submissionDate->setTimestamp($currentPratica->getSubmissionTime());
-
-        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format('d/m/Y h:i'), $pdfExportedForm->getDescription());
-    }
-
-    /**
-     * @test
-     */
-    public function testInputFieldsForMyCPSDataAreDisabled()
-    {
-        $ente = $this->createEnteWithAsili();
-
-        $servizio = $this->createServizioWithEnte($ente);
-
-        $user = $this->createCPSUserWithTelefonoAndEmail('1111', '22@eee.55');
-
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
-            'pratiche_new',
-            ['servizio' => $servizio->getSlug()]
-        ));
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $crawler = $this->client->followRedirect();
-
-        $currentUriParts = explode('/', $this->client->getHistory()->current()->getUri());
-        $currentPraticaId = array_pop($currentUriParts);
-        $currentPratica = $this->em->getRepository('AppBundle:IscrizioneAsiloNido')->find($currentPraticaId);
-        $this->assertEquals(get_class($currentPratica), IscrizioneAsiloNido::class);
-
-        $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
-        $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
-
-        // Accettazioni istruzioni
-        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
-
-        // Selezione del comune
-        $this->selezioneComune($crawler, $nextButton, $ente, $form);
-
-        // Selezione del asilo
-        $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);
-
-        // Termini di fruizione della struttura
-        $this->terminiFruizione($asiloSelected, $crawler, $nextButton, $form);
-
-        // Selezione orari
-        $this->selezioneOrari($asiloSelected, $crawler, $nextButton, $form);
-
-        // Dati richiedente
-        $fillData = array();
-        $crawler->filter('form[name="pratica_richiedente"] input[type="text"]')
-            ->each(function ($node, $i) use (&$fillData) {
-                $name = $node->attr('name');
-                $value = $node->attr('value');
-                if (empty($value)) {
-                    $fillData[$name] = 'test';
-                }
-            });
-        $form = $crawler->selectButton($nextButton)->form();
-
-        foreach (DatiRichiedenteType::CAMPI_RICHIEDENTE as $campo => $statoDisabledAtteso) {
-            $field = $form->get('pratica_richiedente['.$campo.']');
-            switch ($campo) {
-                case 'richiedente_telefono':
-                    $statoDisabledAtteso = $user->getTelefono() == null ? false : true;
-                    break;
-                case 'richiedente_email':
-                    $statoDisabledAtteso = $user->getEmail() == null ? false : true;
-                    break;
-                default:
-                    break;
-            }
-            $this->assertEquals($statoDisabledAtteso, $field->isDisabled(), 'Il campo '.$field->getName().' doveva essere disabled: '.$statoDisabledAtteso);
-        }
-
-        $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @test
-     */
-    public function testIgetRedirectedIfITryToCreateANewPraticaOnAServiceWithPraticheInDraft()
-    {
-        $ente = $this->createEnteWithAsili();
-        $servizio = $this->createServizioWithEnte($ente);
-        $user = $this->createCPSUser();
-
-        $this->createPratica($user, null, Pratica::STATUS_DRAFT, $ente, $servizio);
-
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
-            'pratiche_new',
-            ['servizio' => $servizio->getSlug()]
-        ));
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $this->assertEquals(
-            $this->client->getResponse()->headers->get('location'),
-            $this->router->generate(
-                'pratiche_list_draft',
-                ['servizio' => $servizio->getSlug()]
-            )
-        );
-    }
-
-
-    /**
-     * @return Ente
-     */
-    protected function createEnteWithAsili()
-    {
-        $asilo = new AsiloNido();
-        $asilo->setName('Asilo nido Bimbi belli')
-            ->setSchedaInformativa('Test')
-            ->setOrari([
-                'orario intero dalle 8:00 alle 16:00',
-                'orario ridotto mattutino dalle 8:00 alle 13:00',
-                'orario prolungato dalle 8:00 alle 19:00',
-            ]);
-        $this->em->persist($asilo);
-
-        $asilo1 = new AsiloNido();
-        $asilo1->setName('Asilo nido Bimbi buoni')
-            ->setSchedaInformativa('Test')
-            ->setOrari([
-                'orario intero dalle 8:00 alle 16:00',
-                'orario ridotto mattutino dalle 8:00 alle 13:00',
-                'orario prolungato dalle 8:00 alle 19:00',
-            ]);
-        $this->em->persist($asilo1);
-
-        $ente = new Ente();
-        $ente->setName('Comune di Test')
-            ->setAsili([$asilo, $asilo1]);
-        $this->em->persist($ente);
-
-        $this->em->flush();
-
-        return $ente;
-    }
-
-    /**
-     * @param $ente
-     * @return Servizio
-     */
-    protected function createServizioWithEnte($ente)
-    {
-        $servizio = $this->createServizioWithAssociatedEnti([$ente], 'Iscrizione asilo nido');
-        $servizio->setTestoIstruzioni("<strong>Tutto</strong> quello che volevi sapere sugli asili nido e non hai <em>mai</em> osato chiedere!");
-        $this->em->persist($servizio);
-        $this->em->flush();
-
-        return $servizio;
-    }
-
-    /**
-     * @param $crawler
-     * @param $nextButton
-     * @param $form
-     */
-    protected function accettazioneIstruzioni(&$crawler, $nextButton, &$form)
-    {
-        // Accettazioni istruzioni
-        $form = $crawler->selectButton($nextButton)->form(array(
-            'pratica_accettazione_istruzioni[accetto_istruzioni]' => 1,
-        ));
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @param $crawler
-     * @param $nextButton
-     * @param $ente
-     * @param $form
-     */
-    protected function selezioneComune(&$crawler, $nextButton, $ente, &$form)
-    {
-        // Selezione del comune
-        $form = $crawler->selectButton($nextButton)->form(array(
-            'pratica_seleziona_ente[ente]' => $ente->getId(),
-        ));
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @param $ente
-     * @param $crawler
-     * @param $nextButton
-     * @param AsiloNido $asiloSelected
-     * @param $form
-     */
-    protected function selezioneAsilo($ente, &$crawler, $nextButton, &$asiloSelected, &$form)
-    {
-        // Selezione del asilo
-        $asili = $ente->getAsili();
-        $key = rand(1, count($asili)) - 1;
-        $asiloSelected = $asili[$key];
-        $form = $crawler->selectButton($nextButton)->form(array(
-            'iscrizione_asilo_nido_seleziona_nido[struttura]' => $asiloSelected->getId(),
-        ));
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @param AsiloNido $asiloSelected
-     * @param $crawler
-     * @param $nextButton
-     * @param $form
-     */
-    protected function terminiFruizione($asiloSelected, &$crawler, $nextButton, &$form)
-    {
-        // Termini di fruizione della struttura
-        $this->assertContains($asiloSelected->getSchedaInformativa(), $this->client->getResponse()->getContent());
-
-        $form = $crawler->selectButton($nextButton)->form(array(
-            'iscrizione_asilo_nido_utilizzo_nido[accetto_utilizzo]' => 1,
-        ));
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @param AsiloNido $asiloSelected
-     * @param Crawler $crawler
-     * @param $nextButton
-     * @param $form
-     */
-    protected function selezioneOrari($asiloSelected, &$crawler, $nextButton, &$form)
-    {
-        $orarioSelected = null;
-        foreach ($asiloSelected->getOrari() as $orario) {
-            $this->assertContains($orario, $this->client->getResponse()->getContent());
-            $orarioSelected = $orario;
-        }
-
-        $form = $crawler->selectButton($nextButton)->form(array(
-            'iscrizione_asilo_nido_orari[periodo_iscrizione_da]' => '01-09-2016',
-            'iscrizione_asilo_nido_orari[periodo_iscrizione_a]' => '01-09-2017',
-            'iscrizione_asilo_nido_orari[struttura_orario]' => $orarioSelected,
-        ));
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param $nextButton
-     * @param $fillData
-     * @param $form
-     */
-    protected function datiRichiedente(&$crawler, $nextButton, &$fillData, &$form)
-    {
-        // Dati richiedente
-        $fillData = array();
-        $crawler->filter('form[name="pratica_richiedente"] input[type="text"]')
-            ->each(function ($node, $i) use (&$fillData) {
-                $name = $node->attr('name');
-                $value = $node->attr('value');
-                if (empty($value)) {
-                    $fillData[$name] = 'test';
-                }
-            });
-        $form = $crawler->selectButton($nextButton)->form($fillData);
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param $nextButton
-     * @param $form
-     */
-    protected function datiBambino(&$crawler, $nextButton, &$form)
-    {
-        $form = $crawler->selectButton($nextButton)->form(array(
-            'iscrizione_asilo_nido_bambino[bambino_nome]' => 'Ciccio',
-            'iscrizione_asilo_nido_bambino[bambino_cognome]' => 'Balena',
-            'iscrizione_asilo_nido_bambino[bambino_luogo_nascita]' => 'Fantasilandia',
-            'iscrizione_asilo_nido_bambino[bambino_data_nascita]' => '01-09-2016',
-
-        ));
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    protected function gobackInFlow(&$crawler, $class)
-    {
-        $accumulatedHtml = '<input type="hidden" name="flow_iscrizioneAsiloNido_transition" value="back">';
-        $prototypeFragment = new \DOMDocument();
-        $prototypeFragment->loadHTML($accumulatedHtml);
-        $node = $crawler->filter($class)->getNode(0);
-        foreach ($prototypeFragment->getElementsByTagName('body')->item(0)->childNodes as $prototypeNode) {
-            $node->appendChild($node->ownerDocument->importNode($prototypeNode, true));
-        }
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param $nextButton
-     * @param $form
-     */
-    protected function composizioneNucleoFamiliare(&$crawler, $nextButton, &$form, $offset, $amount)
-    {
-        /** FIXME: Questo test non fa submit di elementi nuovi, né li verifica
-         *  bisogna adattarlo sulla falsariga del test per l'upload allegati
-         */
-        $formCrawler = $crawler->selectButton($nextButton);
-        $this->appendPrototypeDom($crawler->filter('.nucleo_familiare')->getNode(0), $offset, $amount);
-
-        $form = $formCrawler->form();
-        $values = $form->getValues();
-
-        for ($i = $offset; $i < $offset + $amount; $i++) {
-            $values['nucleo_familiare[nucleo_familiare]['.$i.'][nome]'] = $i.'pippo'.md5($i.time());
-            $values['nucleo_familiare[nucleo_familiare]['.$i.'][cognome]'] = $i.'pippo'.md5($i.time());
-            $values['nucleo_familiare[nucleo_familiare]['.$i.'][codiceFiscale]'] = $i.'pippo'.md5($i.time());
-            $values['nucleo_familiare[nucleo_familiare]['.$i.'][rapportoParentela]'] = $i.'pippo'.md5($i.time());
-        }
-
-        $form->setValues($values);
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-    /**
-     * @param \DOMElement $node
-     * @param int $currentIndex
-     * @param int $count
-     */
-    protected function appendPrototypeDom(\DOMElement $node, $currentIndex = 0, $count = 1)
-    {
-        $prototypeHTML = $node->getAttribute('data-prototype');
-        $accumulatedHtml = '';
-        for ($i = 0; $i < $count; $i++) {
-            $accumulatedHtml .= str_replace('__name__', $currentIndex + $i, $prototypeHTML);
-        }
-        $prototypeFragment = new \DOMDocument();
-        $prototypeFragment->loadHTML($accumulatedHtml);
-        foreach ($prototypeFragment->getElementsByTagName('body')->item(0)->childNodes as $prototypeNode) {
-            $node->appendChild($node->ownerDocument->importNode($prototypeNode, true));
-        }
-    }
-
-    /**
-     * @param $crawler
-     * @param $button
-     * @param $form
-     * @param $allegati
-     */
-    protected function allegati(&$crawler, $button, &$form, $allegati)
-    {
-        //TODO: test that I cannot see other people's allegati!
-        //check that we see only our allegati
-
-        //all but the first;
-        $allegatiSelezionati = [];
-        for ($i = 1; $i < count($allegati); $i++) {
-            $allegatiSelezionati[] = $allegati[$i]->getId();
-        }
-
-        $form = $crawler->selectButton($button)->form();
-        $form->disableValidation();
-        $values = $form->getPhpValues();
-        $values['pratica_allegati']['allegati'] = $allegatiSelezionati;
-        $form->setValues($values);
-        $crawler = $this->client->submit($form);
-
-        $this->em->refresh($allegati[0]);
-        $this->assertEquals(0, $allegati[0]->getPratiche()->count());
-        for ($i = 1; $i < count($allegati); $i++) {
-            $this->assertEquals(1, $allegati[$i]->getPratiche()->count());
-        }
-    }
-
-    /**
-     * @param $numberOfExpectedAttachments
-     * @param CPSUser $user
-     */
-    protected function setupNeededAllegatiForAllInvolvedUsers($numberOfExpectedAttachments, CPSUser $user)
-    {
-        $allegati = [];
-        for ($i = 0; $i < $numberOfExpectedAttachments; $i++) {
-            $allegato = new Allegato();
-            $allegato->setOwner($user);
-            $allegato->setDescription(self::CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX.$i);
-            $allegato->setFilename('somefile.txt');
-            $allegato->setOriginalFilename('somefile.txt');
-            $this->em->persist($allegato);
-            $allegati[] = $allegato;
-        }
-
-        $otherUser = $this->createCPSUser(true);
-        $allegato = new Allegato();
-        $allegato->setOwner($otherUser);
-        $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);
-        $allegato->setFilename('somefile.txt');
-        $allegato->setOriginalFilename('somefile.txt');
-        $this->em->persist($allegato);
-
-        $this->em->flush();
-
-        return $allegati;
-    }
 }

@@ -104,7 +104,7 @@ abstract class User extends BaseUser
     /**
      * @param $cognome
      *
-     * @return $this
+     * @return User
      */
     public function setCognome($cognome)
     {
@@ -124,7 +124,7 @@ abstract class User extends BaseUser
     /**
      * @param $nome
      *
-     * @return $this
+     * @return User
      */
     public function setNome($nome)
     {

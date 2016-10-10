@@ -58,11 +58,11 @@ pratica:
     si: 'Sì, sono sicuro'
     no: 'No'
     dati_richiedente: 'I dati del richiedenti non sono modificabili dal momento che vengono utilizzati i dati presenti nella Carta dei servizi con cui ti sei autenticato nel sistema'
-    allegati: "Inserisci gli allegati: <ul><li>la dichiarazione ICEF</li><li>...</li></ul>"
+    allegati: "Inserisci gli allegati"
     seleziona_ente: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
   pdf:
     spett_le: 'Spett.le'
-    oggetto: 'Oggetto'
+    oggetto: 'Oggetto:'
     il_sottoscritto: 'Il/La sottoscritto/a'
     nato_a: 'nato/a'
     nato_il: 'il'
@@ -70,11 +70,7 @@ pratica:
     telefono: 'Recapito telefonico'
     email: 'Recapito email'
     chiede: 'chiede'
-    ammissione_nido: "l'ammissione all'asilo nido"
-    del_bambino: 'del bambino/a'
-    orario: 'Orario prescelto'
-    periodo_da: 'Periodo di iscrizione da'
-    periodo_a: 'a'
+    comunica: 'comunica'
     dichiara: 'dichiara'
     dichiarazione_composizione_nucleo_familiare: 'che il proprio nucleo familiare &egrave; cos&igrave; composto:'
     composizione_nucleo_familiare:
@@ -91,13 +87,7 @@ pratica:
     stato: 'Stato corrente'
     servizio: 'Servizio'
     ente: 'Ente'
-    struttura: 'Struttura'
-    orario: 'Orario'
-    periodo: 'Periodo'
     richiedente: 'Richiedente'
-    bambino: 'Bambino'
-    nato_a: 'nato a'
-    nato_il: 'il'
     nucleo_familiare: 'Nucleo familiare'
     componente_nucleo_familiare:
       cognome: 'Cognome'
@@ -120,20 +110,19 @@ pratica:
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
   carica_allegati: 'Caricamento degli allegati'
-  carica_datiRichiedente: 'Dati del richiedente'
   selezionaEnte: 'Selezione del comune di riferimento'
   accettazioneIstruzioni: 'Istruzioni sulla procedura'
   conferma: 'Controllo e conferma'
-  datiRichiedente:
-    richiedente_nome: 'Nome'
-    richiedente_cognome: 'Cogome'
-    richiedente_luogo_nascita: 'Luogo di nascita'
-    richiedente_data_nascita: 'Data di nascita'
-    richiedente_indirizzo_residenza: 'Indirizzo'
-    richiedente_cap_residenza: 'CAP'
-    richiedente_citta_residenza: 'Città'
-    richiedente_telefono: 'Telefono'
-    richiedente_email: 'Email'
+  datiRichiedente: 'Dati del richiedente'
+  datiRichiedente.richiedente_nome: 'Nome'
+  datiRichiedente.richiedente_cognome: 'Cogome'
+  datiRichiedente.richiedente_luogo_nascita: 'Luogo di nascita'
+  datiRichiedente.richiedente_data_nascita: 'Data di nascita'
+  datiRichiedente.richiedente_indirizzo_residenza: 'Indirizzo'
+  datiRichiedente.richiedente_cap_residenza: 'CAP'
+  datiRichiedente.richiedente_citta_residenza: 'Città'
+  datiRichiedente.richiedente_telefono: 'Telefono'
+  datiRichiedente.richiedente_email: 'Email'
 
 iscrizione_asilo_nido:
   accettazioneUtilizzoNidoForm: 'Termini di fruizione della struttura'
@@ -141,19 +130,79 @@ iscrizione_asilo_nido:
   nucleoFamiliare: 'Composizione del nucleo familiare'
   accettazione_utilizzo_nido: 'Ho letto i termini di fruizione della struttura'
   selezionaOrariNido: 'Selezione degli orari e del periodo di iscrizione'
-  datiBambino: 'Dati del bambino'
   seleziona_orario: 'Orario prescelto'
   periodoIscrizioneDa: 'Periodo iscrizione da'
   periodoIscrizioneA: 'Periodo iscrizione a'
+  datiBambino: 'Dati del bambino'
   datiBambino.nome: 'Nome'
   datiBambino.cognome: 'Cognome'
   datiBambino.luogo_nascita: 'Luogo di nascita'
   datiBambino.data_nascita: 'Data di nascita'
+  dettaglio:
+    struttura: 'Struttura'
+    orario: 'Orario'
+    periodo: 'Periodo'
+    bambino: 'Bambino'
+    nato_a: 'nato a'
+    nato_il: 'il'
+  pdf:
+    ammissione_nido: "l'ammissione all'asilo nido"
+    del_bambino: 'del bambino/a'
+    orario: 'Orario prescelto'
+    periodo_da: 'Periodo di iscrizione da'
+    periodo_a: 'a'
   guida_alla_compilazione:
     seleziona_nido: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
     accettazione_utilizzo_nido: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
     dati_bambino: 'Inserisci i dati del bambino che intendi iscrivere'
     seleziona_orari: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
+
+autolettura_acqua:
+  datiIntestatario: "Intestatario del contratto"
+  datiIntestatario.intestatario_codice_utente: "Codice utenza"
+  datiIntestatario.intestatario_nome: "Nome"
+  datiIntestatario.intestatario_cognome: "Cognome"
+  datiIntestatario.intestatario_indirizzo: "Indirizzo"
+  datiIntestatario.intestatario_cap: "CAP"
+  datiIntestatario.intestatario_citta: "Città"
+  datiIntestatario.intestatario_telefono: "Recapito telefonico per eventuali comunicazioni"
+  datiIntestatario.intestatario_email: "Recapito email per eventuali comunicazioni"
+  datiContatore: "Contatore"
+  datiContatore.contatore_numero: "Numero (da leggere sulla ghiera d'ottone del contatore)"
+  datiContatore.contatore_uso: "Tipologia di utilizzo del contatore"
+  datiContatore.contatore_unita_immobiliari: "Numero di unità immobiliari (appartamenti, negozi, uffici, ...) serviti dal contatore"
+  datiLettura: "Lettura"
+  datiLettura.lettura_metri_cubi: "Lettura dei metri cubi"
+  datiLettura.lettura_data: "Data della rilevazione"
+  note: "Altre comunicazioni"
+  dettaglio:
+    intestatario: "Dati dell'intestatario del contratto"
+    intestatario_codice_utente: "Codice utente"
+    intestatario_nome_completo: "Nome e cognome"
+    intestatario_indirizzo_completo: "Indirizzo"
+    intestatario_telefono: "Telefono"
+    intestatario_email: "Email"
+    contatore: "Dati del contatore"
+    contatore_numero: "Numero"
+    contatore_uso: "Tipo di utilizzo"
+    contatore_unita_immobiliari: "Unità immobiliari"
+    lettura: "Dati della lettura"
+    lettura_metri_cubi: "Metri cubi"
+    lettura_data: "Data"
+    note: "Comunicazioni"
+  pdf:
+    lettura_contatore: "l'autolettura del contatore numero"
+    di_uso: "di uso"
+    per_unita_immobiliari: "per numero di unità immobiliari"
+    intestato_a: "intestato a"
+    lettura_metri_cubi: "Metri cubi:"
+    lettura_in_data: "in data"
+    comunica_inoltre: "Comunica inoltre"
+  guida_alla_compilazione:
+    dati_intestatario: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
+    dati_contatore: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
+    dati_lettura: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
+    note: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
 
 errori:
   allegato:
