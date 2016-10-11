@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Form\IscrizioneAsiloNido;
+namespace AppBundle\Form\Base;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
@@ -21,7 +21,7 @@ class AllegatiType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.allegati', true);
+        $helper->setGuideText('pratica.guida_alla_compilazione.allegati', true);
         $user = $builder->getData()->getUser();
 
         $builder->add('allegati', EntityType::class, [
@@ -43,6 +43,6 @@ class AllegatiType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'iscrizione_asilo_nido_allegati';
+        return 'pratica_allegati';
     }
 }

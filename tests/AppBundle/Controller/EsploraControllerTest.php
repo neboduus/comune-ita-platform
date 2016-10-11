@@ -31,11 +31,7 @@ class EsploraControllerTest extends AbstractAppTestCase
     public function testICanSeeServiziAsAnonumousUser()
     {
         $repo = $this->em->getRepository("AppBundle:Servizio");
-        $servizio = new Servizio();
-        $servizio->setName('Primo servizio');
-
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Primo servizio');
 
         $serviceCountAfterInsert = count($repo->findAll());
 
@@ -46,10 +42,7 @@ class EsploraControllerTest extends AbstractAppTestCase
 
     public function testICanSeeAServiceDetailAsAnonymousUser()
     {
-        $servizio = new Servizio();
-        $servizio->setName('Secondo servizio');
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Secondo servizio');
 
         $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 

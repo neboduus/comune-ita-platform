@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
@@ -16,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
+use Vich\UploaderBundle\Mapping\PropertyMapping;
 
 /**
  * Class PraticheController
@@ -192,11 +192,11 @@ class PraticheController extends Controller
      * @Route("/compila/{pratica}", name="pratiche_compila")
      * @ParamConverter("pratica", class="AppBundle:Pratica")
      * @Template()
-     * @param IscrizioneAsiloNido $pratica
+     * @param Pratica $pratica
      *
      * @return array
      */
-    public function compilaAction(IscrizioneAsiloNido $pratica)
+    public function compilaAction(Pratica $pratica)
     {
         //@todo da testare
         //@todo scrivere la storia
@@ -208,8 +208,9 @@ class PraticheController extends Controller
         }
 
         $user = $this->getUser();
+
         /** @var FormFlowInterface $flow */
-        $flow = $this->get('ocsdc.form.flow.asilonido');
+        $flow = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
 
         $flow->bind($pratica);
         $form = $flow->createForm();
@@ -249,6 +250,7 @@ class PraticheController extends Controller
 
         return [
             'form' => $form->createView(),
+            'pratica' => $pratica,
             'flow' => $flow,
             'user' => $user,
         ];
@@ -258,11 +260,11 @@ class PraticheController extends Controller
      * @Route("/{pratica}", name="pratiche_show")
      * @ParamConverter("pratica", class="AppBundle:Pratica")
      * @Template()
-     * @param IscrizioneAsiloNido $pratica
+     * @param Pratica $pratica
      *
      * @return array
      */
-    public function showAction(IscrizioneAsiloNido $pratica)
+    public function showAction(Pratica $pratica)
     {
         $user = $this->getUser();
 
@@ -274,7 +276,12 @@ class PraticheController extends Controller
 
     private function createNewPratica(Servizio $servizio, CPSUser $user)
     {
-        $pratica = new IscrizioneAsiloNido();
+        $praticaClassName = $servizio->getPraticaFCQN();
+
+        $pratica = new $praticaClassName();
+        if (!$pratica instanceof Pratica){
+            throw new \RuntimeException("Wrong Pratica FCQN for servizio {$servizio->getName()}");
+        }
         $pratica
             ->setServizio($servizio)
             ->setType($servizio->getSlug())
@@ -295,7 +302,7 @@ class PraticheController extends Controller
         if ($lastPraticaList) {
             $lastPratica = $lastPraticaList[0];
         }
-        if ($lastPratica instanceof IscrizioneAsiloNido) {
+        if ($lastPratica instanceof Pratica) {
             foreach ($lastPratica->getNucleoFamiliare() as $oldCompontente) {
                 $this->addNewComponenteToPraticaFromOldComponente($oldCompontente, $pratica);
             }
@@ -317,10 +324,10 @@ class PraticheController extends Controller
     }
 
     /**
-     * @param IscrizioneAsiloNido $pratica
+     * @param Pratica $pratica
      * @param $user
      */
-    private function createModuloForPratica(IscrizioneAsiloNido $pratica, $user)
+    private function createModuloForPratica(Pratica $pratica, $user)
     {
         /**
          * crea il modulo esportato e allegalo alla pratica
@@ -340,7 +347,8 @@ class PraticheController extends Controller
         $now->setTimestamp($pratica->getSubmissionTime());
 
         $moduloCompilato->setFilename($fileName);
-        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $servizioName = $pratica->getServizio()->getName();
+        $moduloCompilato->setOriginalFilename("Modulo {$servizioName} ".$now->format('Ymdhi'));
         $moduloCompilato->setDescription(
             $this->get('translator')->trans(
                 'pratica.modulo.descrizione',
@@ -353,13 +361,14 @@ class PraticheController extends Controller
     }
 
     /**
-     * @param IscrizioneAsiloNido $pratica
+     * @param Pratica $pratica
      * @param $user
      * @return string
      */
-    private function renderModuloAsPdf(IscrizioneAsiloNido $pratica, $user):string
+    private function renderModuloAsPdf(Pratica $pratica, $user):string
     {
-        $html = $this->renderView('AppBundle:Pratiche:iscrizioneNidoExport.html.twig', array(
+        $className = (new \ReflectionClass($pratica))->getShortName();;
+        $html = $this->renderView('AppBundle:Pratiche:pdf/'.$className.'.html.twig', array(
             'pratica' => $pratica,
             'user' => $user,
         ));
@@ -370,10 +379,12 @@ class PraticheController extends Controller
 
     /**
      * @param $moduloCompilato
+     *
      * @return string
      */
     private function getDestDirFromModuloContext($moduloCompilato):string
     {
+        /** @var PropertyMapping $mapping */
         $mapping = $this->get('vich_uploader.property_mapping_factory')->fromObject($moduloCompilato)[0];
         $path = $this->get('ocsdc.allegati.directory_namer')->directoryName($moduloCompilato, $mapping);
         $destDir = $mapping->getUploadDestination().'/'.$path;
@@ -385,7 +396,7 @@ class PraticheController extends Controller
      * @param CPSUser $user
      * @param $pratica
      */
-    private function populatePraticaFieldsWithUserValues(CPSUser $user, IscrizioneAsiloNido $pratica)
+    private function populatePraticaFieldsWithUserValues(CPSUser $user, Pratica $pratica)
     {
         $pratica->setRichiedenteNome($user->getNome());
         $pratica->setRichiedenteCognome($user->getCognome());
@@ -399,16 +410,16 @@ class PraticheController extends Controller
     }
 
     /**
-     * @param $compontente
+     * @param $componente
      * @param $pratica
      */
-    private function addNewComponenteToPraticaFromOldComponente(ComponenteNucleoFamiliare $compontente, Pratica $pratica)
+    private function addNewComponenteToPraticaFromOldComponente(ComponenteNucleoFamiliare $componente, Pratica $pratica)
     {
-        $cloneCompontente = new ComponenteNucleoFamiliare();
-        $cloneCompontente->setNome($compontente->getNome());
-        $cloneCompontente->setCognome($compontente->getCognome());
-        $cloneCompontente->setCodiceFiscale($compontente->getCodiceFiscale());
-        $cloneCompontente->setRapportoParentela($compontente->getRapportoParentela());
-        $pratica->addNucleoFamiliare($cloneCompontente);
+        $cloneComponente = new ComponenteNucleoFamiliare();
+        $cloneComponente->setNome($componente->getNome());
+        $cloneComponente->setCognome($componente->getCognome());
+        $cloneComponente->setCodiceFiscale($componente->getCodiceFiscale());
+        $cloneComponente->setRapportoParentela($componente->getRapportoParentela());
+        $pratica->addNucleoFamiliare($cloneComponente);
     }
 }

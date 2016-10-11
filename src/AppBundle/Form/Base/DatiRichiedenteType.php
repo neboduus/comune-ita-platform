@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Form\IscrizioneAsiloNido;
+namespace AppBundle\Form\Base;
 
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Entity\CPSUser;
@@ -32,14 +32,14 @@ class DatiRichiedenteType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.dati_richiedente', true);
+        $helper->setGuideText('pratica.guida_alla_compilazione.dati_richiedente', true);
 
         /** @var CPSUser $user */
         $user = $builder->getData()->getUser();
         foreach (self::CAMPI_RICHIEDENTE as $identifier => $disabledBecauseProvidedByCPS) {
             $type = TextType::class;
             $opts = [
-                "label" => 'iscrizione_asilo_nido.datiRichiedente.'.$identifier,
+                "label" => 'pratica.datiRichiedente.'.$identifier,
                 'disabled' => $disabledBecauseProvidedByCPS,
             ];
             switch ($identifier) {
@@ -64,6 +64,6 @@ class DatiRichiedenteType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'iscrizione_asilo_nido_richiedente';
+        return 'pratica_richiedente';
     }
 }

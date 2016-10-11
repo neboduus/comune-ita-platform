@@ -157,6 +157,66 @@ class Pratica
      */
     private $storicoStati;
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteNome;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteCognome;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteLuogoNascita;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $richiedenteDataNascita;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteIndirizzoResidenza;
+
+    /**
+     * @var string
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $richiedenteCapResidenza;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteCittaResidenza;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteTelefono;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $richiedenteEmail;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $accettoIstruzioni;
+
 
     /**
      * Pratica constructor.
@@ -797,6 +857,206 @@ class Pratica
         foreach ($data as $commentoSeriliazed) {
             $this->parseCommentStringIntoArrayCollection($commentoSeriliazed);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteNome()
+    {
+        return $this->richiedenteNome;
+    }
+
+    /**
+     * @param string $richiedenteNome
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteNome($richiedenteNome)
+    {
+        $this->richiedenteNome = $richiedenteNome;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteCognome()
+    {
+        return $this->richiedenteCognome;
+    }
+
+    /**
+     * @param string $richiedenteCognome
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteCognome($richiedenteCognome)
+    {
+        $this->richiedenteCognome = $richiedenteCognome;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteLuogoNascita()
+    {
+        return $this->richiedenteLuogoNascita;
+    }
+
+    /**
+     * @param string $richiedenteLuogoNascita
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteLuogoNascita($richiedenteLuogoNascita)
+    {
+        $this->richiedenteLuogoNascita = $richiedenteLuogoNascita;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteDataNascita()
+    {
+        return $this->richiedenteDataNascita;
+    }
+
+    /**
+     * @param string $richiedenteDataNascita
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteDataNascita($richiedenteDataNascita)
+    {
+        $this->richiedenteDataNascita = $richiedenteDataNascita;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteIndirizzoResidenza()
+    {
+        return $this->richiedenteIndirizzoResidenza;
+    }
+
+    /**
+     * @param string $richiedenteIndirizzoResidenza
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteIndirizzoResidenza($richiedenteIndirizzoResidenza)
+    {
+        $this->richiedenteIndirizzoResidenza = $richiedenteIndirizzoResidenza;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteCapResidenza()
+    {
+        return $this->richiedenteCapResidenza;
+    }
+
+    /**
+     * @param string $richiedenteCapResidenza
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteCapResidenza($richiedenteCapResidenza)
+    {
+        $this->richiedenteCapResidenza = $richiedenteCapResidenza;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteCittaResidenza()
+    {
+        return $this->richiedenteCittaResidenza;
+    }
+
+    /**
+     * @param string $richiedenteCittaResidenza
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteCittaResidenza($richiedenteCittaResidenza)
+    {
+        $this->richiedenteCittaResidenza = $richiedenteCittaResidenza;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteTelefono()
+    {
+        return $this->richiedenteTelefono;
+    }
+
+    /**
+     * @param string $richiedenteTelefono
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteTelefono($richiedenteTelefono)
+    {
+        $this->richiedenteTelefono = $richiedenteTelefono;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteEmail()
+    {
+        return $this->richiedenteEmail;
+    }
+
+    /**
+     * @param string $richiedenteEmail
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteEmail($richiedenteEmail)
+    {
+        $this->richiedenteEmail = $richiedenteEmail;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAccettoIstruzioni()
+    {
+        return $this->accettoIstruzioni;
+    }
+
+    /**
+     * @param boolean $accettoIstruzioni
+     *
+     * @return IscrizioneAsiloNido
+     */
+    public function setAccettoIstruzioni($accettoIstruzioni)
+    {
+        $this->accettoIstruzioni = $accettoIstruzioni;
+
+        return $this;
     }
 
 }

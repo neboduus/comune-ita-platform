@@ -14,7 +14,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
-use AppBundle\Form\IscrizioneAsiloNido\DatiRichiedenteType;
+use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bridge\Monolog\Logger;
@@ -253,10 +253,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = new Servizio();
-        $servizio->setName('Terzo servizio');
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Terzo servizio');
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
             'pratiche_new',
@@ -287,10 +284,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = new Servizio();
-        $servizio->setName('Terzo servizio');
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Terzo servizio');
 
         //Lo slug viene passato da gedmo sluggable
         $enteSlug = 'roncella-ionica';
@@ -346,10 +340,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = new Servizio();
-        $servizio->setName('Terzo servizio');
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Terzo servizio');
 
         //Lo slug viene passato da gedmo sluggable
         $enteSlug = 'roncella-ionica';
@@ -407,10 +398,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->em->persist($ente2);
         $this->em->flush();
 
-        $servizio = new Servizio();
-        $servizio->setName('Altro servizio')->setEnti([$ente1, $ente2]);
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Altro servizio');
 
         $this->client->followRedirects();
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
@@ -547,7 +535,7 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         // Dati richiedente
         $fillData = array();
-        $crawler->filter('form[name="iscrizione_asilo_nido_richiedente"] input[type="text"]')
+        $crawler->filter('form[name="pratica_richiedente"] input[type="text"]')
             ->each(function ($node, $i) use (&$fillData) {
                 $name = $node->attr('name');
                 $value = $node->attr('value');
@@ -558,7 +546,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $form = $crawler->selectButton($nextButton)->form();
 
         foreach (DatiRichiedenteType::CAMPI_RICHIEDENTE as $campo => $statoDisabledAtteso) {
-            $field = $form->get('iscrizione_asilo_nido_richiedente['.$campo.']');
+            $field = $form->get('pratica_richiedente['.$campo.']');
             switch ($campo) {
                 case 'richiedente_telefono':
                     $statoDisabledAtteso = $user->getTelefono() == null ? false : true;
@@ -643,10 +631,8 @@ class PraticaControllerTest extends AbstractAppTestCase
      */
     protected function createServizioWithEnte($ente)
     {
-        $servizio = new Servizio();
-        $servizio->setName('Iscrizione asilo nido')
-            ->setEnti([$ente])
-            ->setTestoIstruzioni("<strong>Tutto</strong> quello che volevi sapere sugli asili nido e non hai <em>mai</em> osato chiedere!");
+        $servizio = $this->createServizioWithAssociatedEnti([$ente], 'Iscrizione asilo nido');
+        $servizio->setTestoIstruzioni("<strong>Tutto</strong> quello che volevi sapere sugli asili nido e non hai <em>mai</em> osato chiedere!");
         $this->em->persist($servizio);
         $this->em->flush();
 
@@ -678,7 +664,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     {
         // Selezione del comune
         $form = $crawler->selectButton($nextButton)->form(array(
-            'iscrizione_asilo_nido_seleziona_ente[ente]' => $ente->getId(),
+            'pratica_seleziona_ente[ente]' => $ente->getId(),
         ));
         $crawler = $this->client->submit($form);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
@@ -755,7 +741,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     {
         // Dati richiedente
         $fillData = array();
-        $crawler->filter('form[name="iscrizione_asilo_nido_richiedente"] input[type="text"]')
+        $crawler->filter('form[name="pratica_richiedente"] input[type="text"]')
             ->each(function ($node, $i) use (&$fillData) {
                 $name = $node->attr('name');
                 $value = $node->attr('value');
@@ -863,7 +849,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $form = $crawler->selectButton($button)->form();
         $form->disableValidation();
         $values = $form->getPhpValues();
-        $values['iscrizione_asilo_nido_allegati']['allegati'] = $allegatiSelezionati;
+        $values['pratica_allegati']['allegati'] = $allegatiSelezionati;
         $form->setValues($values);
         $crawler = $this->client->submit($form);
 

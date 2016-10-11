@@ -1,13 +1,5 @@
 {% extends '@App/Default/index.html.twig' %}
 
-
-{% block stylesheets %}
-    {#{% stylesheets '@CraueFormFlowBundle/Resources/assets/css/buttons.css' %}#}
-    <link type="text/css" rel="stylesheet" href="{{ asset('@CraueFormFlowBundle/Resources/assets/css/buttons.css') }}" />
-    {#{% endstylesheets %}#}
-    {{ parent() }}
-{% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
     <script>
@@ -80,7 +72,7 @@
         <div class="content">#}
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Nuova pratica - Iscrizione asilo nido</h1>
+                    <h1>Nuova pratica - {{ pratica.servizio.name }}</h1>
                 </div>
             </div>
             <div class="row hidden-xs">
