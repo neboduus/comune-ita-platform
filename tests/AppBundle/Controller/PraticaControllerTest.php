@@ -18,6 +18,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
@@ -108,7 +109,6 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $praticheCount = $crawler->filter('.list.cancelled')->filter('.pratica')->count();
         $this->assertEquals(count($praticheCancelled), $praticheCount);
-
     }
 
     /**
@@ -232,6 +232,34 @@ class PraticaControllerTest extends AbstractAppTestCase
         //count allegati
         $nodes = $crawler->filterXPath('//*[@data-title="Nome del file"]');
         $this->assertEquals($pratica->getAllegati()->count(), $nodes->count());
+    }
+
+    /**
+     * @test
+     */
+    public function testAsACPSUserICanSeeTheEditLinkForAPraticaInDraftStatus()
+    {
+        $myUser = $this->createCPSUser(true);
+        $pratica = $this->createPratica($myUser, null, Pratica::STATUS_DRAFT);
+
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+
+        $nodes = $crawler->filterXPath('//*[@data-action="edit_draft"]');
+        $this->assertEquals(1, $nodes->count());
+    }
+
+    /**
+     * @test
+     */
+    public function testAsACPSUserICannotSeePraticheOfOthersUsers()
+    {
+        $myUser = $this->createCPSUser(true);
+        $otherUser = $this->createCPSUser(true);
+        $pratica = $this->createPratica($otherUser, null, Pratica::STATUS_DRAFT);
+
+        $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
+
     }
 
     /**

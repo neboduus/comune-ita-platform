@@ -32,6 +32,7 @@
                     <tr>
                         <td>{{ 'pratica.protocollo'|trans }}</td>
                         <td>{{ 'pratica.richiedente'|trans }}</td>
+                        <td>{{ 'pratica.servizio'|trans }}</td>
                         <td>{{ 'pratica.categoria'|trans }}</td>
                         <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
                         <td>{{ 'pratica.stato'|trans }}</td>
@@ -48,6 +49,7 @@
                             <td>{{ pratica.numeroProtocollo }}</td>
                             <td>{{ pratica.user.fullName }}</td>
                             <td>{{ pratica.servizio.name }}</td>
+                            <td>{{ pratica.servizio.area }}</td>
                             <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
                             <td>{{ pratica.statusName|trans }}</td>
                             <td>

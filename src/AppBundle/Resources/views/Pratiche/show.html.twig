@@ -26,8 +26,8 @@
                                         <span class="fa fa-calendar"></span>
                                             {{ timestamp|date('d/M/y') }}
                                             {% for change in changes[0] %}
-                                                {%  set message = 'pratica.dettaglio.stato_'~change %}
-                                                <span class="subdued"><em> {{ message| trans}} </em></span>
+                                                {% set message = 'pratica.dettaglio.stato_'~change %}
+                                                <span class="subdued"><em> {{ message| trans }} </em></span>
                                             {% endfor %}
                                     </a>
                                 </li>
@@ -35,10 +35,22 @@
                         </ul>
                     </div>
                 </div>
+
+                {% if pratica.statusName == 'STATUS_DRAFT' and user.id == pratica.user.id %}
                 <h3>Azioni</h3>
                 <div class="list-group">
-                    <a href="#" class="list-group-item">Contatta responsabile</a>
+                    {% if pratica.statusName == 'STATUS_DRAFT' and user.id == pratica.user.id %}
+                        <a class="list-group-item" data-action="edit_draft" href="{{ path('pratiche_compila', {'pratica': pratica.id}) }}">
+                            <span class="fa-stack">
+                                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                <i class="fa fa-angle-right fa-stack-1x"></i>
+                            </span>
+                            {{ 'pratica.vai_alla_pratica'|trans }}
+                        </a>
+                    {% endif %}
                 </div>
+                {% endif %}
+                
             </div>
         </div>
     </div>
