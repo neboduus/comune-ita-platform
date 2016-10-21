@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="pratica")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"default" = "Pratica", "iscrizione_asilo_nido" = "IscrizioneAsiloNido"})
+ * @ORM\DiscriminatorMap({"default" = "Pratica", "iscrizione_asilo_nido" = "IscrizioneAsiloNido", "autolettura_acqua" = "AutoletturaAcqua"})
  * @ORM\HasLifecycleCallbacks
  */
 class Pratica
@@ -27,6 +27,7 @@ class Pratica
 
     const TYPE_DEFAULT = "default";
     const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
+    const TYPE_AUTOLETTURA_ACQUA = "autolettura_acqua";
 
     /**
      * @var string
@@ -78,8 +79,8 @@ class Pratica
     private $moduliCompilati;
 
     /**
-     * @ORM\OneToMany(targetEntity="ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
-     * @var ArrayCollection $nucleo_familiare
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
+     * @var ArrayCollection $nucleoFamiliare
      */
     private $nucleoFamiliare;
 

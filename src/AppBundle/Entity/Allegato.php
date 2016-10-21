@@ -83,7 +83,7 @@ class Allegato implements AllegatoInterface
     private $pratiche;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser", inversedBy="allegati")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
      * @var CPSUser
      */
     private $owner;

@@ -1,0 +1,48 @@
+<div class="dichiara">
+    <div class="dichiara center_title">
+        {{ 'pratica.pdf.dichiara'|trans() }}
+    </div>
+
+    <ol>
+        <li class="nucleo_familiare dichiarazione">
+            <p>{{ 'pratica.pdf.dichiarazione_composizione_nucleo_familiare'|trans()|raw }}</p>
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.nome_e_cognome'|trans() }}</td>
+                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.rapporto_parentela'|trans() }}</td>
+                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.codice_fiscale'|trans() }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for componente in pratica.nucleoFamiliare %}
+                    <tr>
+                        <td>{{ componente.nome }} {{ componente.cognome }}</td>
+                        <td>{{ componente.rapportoParentela }}</td>
+                        <td>{{ componente.codiceFiscale }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </li>
+
+        <li class="nucleo_familiare dichiarazione">
+            <p>{{ 'pratica.pdf.dichiarazione_allegati'|trans() }}</p>
+            <table class="table">
+                <tbody>
+                {% for allegato in pratica.allegati %}
+                    <tr>
+                        <td>{{ allegato.description }} ({{ allegato.originalFilename }})</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </li>
+
+        <li class="dichiarazione">
+            <p>{{ 'pratica.pdf.dichiarazione_cambiamenti'|trans() }}</p>
+            <small>{{ 'pratica.pdf.dichiarazione_cambiamenti_detail'|trans()|raw }}</small>
+        </li>
+    </ol>
+
+</div>

@@ -2,13 +2,14 @@
 
 namespace Tests\AppBundle\Base;
 
+use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\CPSUser as User;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\Servizio;
-use AppBundle\Services\CPSUserProvider;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
@@ -18,13 +19,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Class AbstractAppTestCase
+ *
  * @package Tests\AppBundle\Base
  */
 abstract class AbstractAppTestCase extends WebTestCase
 {
+    const OTHER_USER_ALLEGATO_DESCRIPTION = 'other';
+    const CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX = 'description_';
 
     /**
      * @var \AppTestKernel
@@ -72,7 +77,7 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     protected function cleanDb($entityString)
     {
-        $this->em->createQuery('DELETE FROM '.$entityString)->execute();
+        $this->em->createQuery('DELETE FROM ' . $entityString)->execute();
     }
 
     protected function getCPSUserData()
@@ -80,20 +85,20 @@ abstract class AbstractAppTestCase extends WebTestCase
         $random = rand(0, time());
 
         return [
-            "codiceFiscale" => 'ppippi77t05g224f'.$random,
+            "codiceFiscale" => 'ppippi77t05g224f' . $random,
             "capDomicilio" => '371378',
             "capResidenza" => '38127',
             "cellulare" => '123456789',
             "cittaDomicilio" => 'Verona',
             "cittaResidenza" => 'Trento',
-            "cognome" => 'Pippucci'.$random,
+            "cognome" => 'Pippucci' . $random,
             "dataNascita" => '04/01/1973',
-            "emailAddress" => 'pippo@pippucci.com'.$random,
+            "emailAddress" => 'pippo@pippucci.com' . $random,
             "emailAddressPersonale" => null,
             "indirizzoDomicilio" => 'via Leonardo da vinci 17',
             "indirizzoResidenza" => 'via Marsala 13',
             "luogoNascita" => 'Verona',
-            "nome" => 'Pippo'.$random,
+            "nome" => 'Pippo' . $random,
             "provinciaDomicilio" => 'VR',
             "provinciaNascita" => 'VR',
             "provinciaResidenza" => 'TN',
@@ -144,8 +149,8 @@ abstract class AbstractAppTestCase extends WebTestCase
      */
     protected static function getKernelClass()
     {
-        $dir = isset($_SERVER['KERNEL_DIR']) ? $_SERVER['KERNEL_DIR'] : static::getPhpUnitXmlDir();
-        $dir = __DIR__.'/../../../'.$dir;
+        $dir = isset( $_SERVER['KERNEL_DIR'] ) ? $_SERVER['KERNEL_DIR'] : static::getPhpUnitXmlDir();
+        $dir = __DIR__ . '/../../../' . $dir;
         $finder = new Finder();
         $finder->name('*TestKernel.php')->depth(0)->in($dir);
         $results = iterator_to_array($finder);
@@ -162,8 +167,16 @@ abstract class AbstractAppTestCase extends WebTestCase
         return $class;
     }
 
-    protected function clientRequestAsCPSUser(User $user, $method, $uri, array $parameters = array(), array $files = array(), array $server = array(), $content = null, $changeHistory = true)
-    {
+    protected function clientRequestAsCPSUser(
+        User $user,
+        $method,
+        $uri,
+        array $parameters = array(),
+        array $files = array(),
+        array $server = array(),
+        $content = null,
+        $changeHistory = true
+    ) {
         $server += ['REDIRECT_shibb_pat_attribute_codicefiscale' => $user->getCodiceFiscale()];
 
         return $this->client->request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
@@ -177,20 +190,20 @@ abstract class AbstractAppTestCase extends WebTestCase
     /**
      * @param User $user
      * @param bool $howMany
+     *
      * @return array
      */
     protected function createPratiche(User $user, $howMany = false)
     {
         $pratiche = array();
-        if ( !$howMany )
-        {
+        if (!$howMany) {
             $howMany = rand(1, 10);
         }
 
-        for ($i = 0; $i < $howMany; $i++)
-        {
-            $pratiche []= $this->createPratica( $user );
+        for ($i = 0; $i < $howMany; $i++) {
+            $pratiche [] = $this->createPratica($user);
         }
+
         return $pratiche;
     }
 
@@ -201,11 +214,17 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param null $status
      * @param Ente|null $ente
      * @param Servizio|null $servizio
+     *
      * @return Pratica
      */
-    protected function createPratica(CPSUser $user, OperatoreUser $operatore = null, $status = null, Ente $ente = null, Servizio $servizio = null)
-    {
-        if ( $servizio == null) {
+    protected function createPratica(
+        CPSUser $user,
+        OperatoreUser $operatore = null,
+        $status = null,
+        Ente $ente = null,
+        Servizio $servizio = null
+    ) {
+        if ($servizio == null) {
             $servizio = $this->createServizioWithAssociatedEnti($this->createEnti());
         }
 
@@ -247,10 +266,14 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param CPSUser $user
      * @param OperatoreUser $operatore
      * @param $status
+     *
      * @return Pratica|null
      */
-    protected function setupPraticheForUserWithOperatoreAndStatus(CPSUser $user, OperatoreUser $operatore = null, $status = null)
-    {
+    protected function setupPraticheForUserWithOperatoreAndStatus(
+        CPSUser $user,
+        OperatoreUser $operatore = null,
+        $status = null
+    ) {
         return $this->createPratica($user, $operatore, $status);
     }
 
@@ -258,6 +281,7 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param CPSUser $user
      * @param Ente $ente
      * @param $status
+     *
      * @return Pratica|null
      */
     protected function setupPraticheForUserWithEnteAndStatus(CPSUser $user, Ente $ente = null, $status = null)
@@ -286,6 +310,10 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     /**
      * @param Ente[] $enti
+     * @param string $name
+     * @param string $praticaFCQN
+     * @param string $praticaFlowServiceName
+     *
      * @return Servizio
      */
     protected function createServizioWithAssociatedEnti(
@@ -293,8 +321,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $name = 'Servizio test pratiche',
         $praticaFCQN = '\AppBundle\Entity\IscrizioneAsiloNido',
         $praticaFlowServiceName = 'ocsdc.form.flow.asilonido'
-    )
-    {
+    ) {
         $servizio = new Servizio();
         $servizio
             ->setName($name)
@@ -330,6 +357,8 @@ abstract class AbstractAppTestCase extends WebTestCase
     /**
      * @param $username
      * @param $password
+     * @param Ente $ente
+     *
      * @return OperatoreUser
      */
     protected function createOperatoreUser($username, $password, Ente $ente = null)
@@ -337,11 +366,11 @@ abstract class AbstractAppTestCase extends WebTestCase
         $um = $this->container->get('fos_user.user_manager');
         $user = new OperatoreUser();
         $user->setUsername($username)
-            ->setPlainPassword($password)
-            ->setEmail(md5(rand(0, 1000).microtime()).'some@fake.email')
-            ->setNome('a')
-            ->setCognome('b')
-            ->setEnabled(true);
+             ->setPlainPassword($password)
+             ->setEmail(md5(rand(0, 1000) . microtime()) . 'some@fake.email')
+             ->setNome('a')
+             ->setCognome('b')
+             ->setEnabled(true);
 
         if ($ente) {
             $user->setEnte($ente);
@@ -356,12 +385,12 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         //swiftmailer.mailer.default
         $mock = $this->getMockBuilder(\Swift_Mailer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+                     ->disableOriginalConstructor()
+                     ->getMock();
 
         $mock->expects($this->exactly(count($recipients)))
-            ->method('send')
-            ->willReturn(count($recipients));
+             ->method('send')
+             ->willReturn(count($recipients));
 
         return $mock;
     }
@@ -370,13 +399,269 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->exactly(1))
-            ->method('info')
-            ->with($this->callback(function ($subject) use ($expectedArgs) {
-                return in_array($subject, $expectedArgs);
-            }));
+                   ->method('info')
+                   ->with($this->callback(function ($subject) use ($expectedArgs) {
+                       return in_array($subject, $expectedArgs);
+                   }));
 
         static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
             $kernel->getContainer()->set('logger', $mockLogger);
         });
+    }
+
+
+    /**
+     * @return Ente
+     */
+    protected function createEnteWithAsili()
+    {
+        $asilo = new AsiloNido();
+        $asilo->setName('Asilo nido Bimbi belli')
+              ->setSchedaInformativa('Test')
+              ->setOrari([
+                  'orario intero dalle 8:00 alle 16:00',
+                  'orario ridotto mattutino dalle 8:00 alle 13:00',
+                  'orario prolungato dalle 8:00 alle 19:00',
+              ]);
+        $this->em->persist($asilo);
+
+        $asilo1 = new AsiloNido();
+        $asilo1->setName('Asilo nido Bimbi buoni')
+               ->setSchedaInformativa('Test')
+               ->setOrari([
+                   'orario intero dalle 8:00 alle 16:00',
+                   'orario ridotto mattutino dalle 8:00 alle 13:00',
+                   'orario prolungato dalle 8:00 alle 19:00',
+               ]);
+        $this->em->persist($asilo1);
+
+        $ente = new Ente();
+        $ente->setName('Comune di Test')
+             ->setAsili([$asilo, $asilo1]);
+        $this->em->persist($ente);
+
+        $this->em->flush();
+
+        return $ente;
+    }
+
+    /**
+     * @param Ente $ente
+     * @param string $slug
+     * @param string $fqcn
+     * @param string $flow
+     *
+     * @return Servizio
+     */
+    protected function createServizioWithEnte($ente, $slug, $fqcn, $flow)
+    {
+        //'Iscrizione asilo nido'
+        $servizio = $this->createServizioWithAssociatedEnti([$ente], $slug, $fqcn, $flow);
+        $servizio->setTestoIstruzioni('<strong>Tutto</strong> quello che volevi sapere su ' . $slug . ' e non hai <em>mai</em> osato chiedere!');
+        $this->em->persist($servizio);
+        $this->em->flush();
+
+        return $servizio;
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $form
+     */
+    protected function accettazioneIstruzioni(&$crawler, $nextButton, &$form)
+    {
+        // Accettazioni istruzioni
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'pratica_accettazione_istruzioni[accetto_istruzioni]' => 1,
+        ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $form
+     */
+    protected function nextStep(&$crawler, $nextButton, &$form)
+    {
+        $form = $crawler->selectButton($nextButton)->form();
+        $crawler = $this->client->submit($form);
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param Ente $ente
+     * @param $form
+     */
+    protected function selezioneComune(&$crawler, $nextButton, $ente, &$form)
+    {
+        // Selezione del comune
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'pratica_seleziona_ente[ente]' => $ente->getId(),
+        ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $class
+     */
+    protected function gobackInFlow(&$crawler, $class)
+    {
+        $accumulatedHtml = '<input type="hidden" name="flow_iscrizioneAsiloNido_transition" value="back">';
+        $prototypeFragment = new \DOMDocument();
+        $prototypeFragment->loadHTML($accumulatedHtml);
+        $node = $crawler->filter($class)->getNode(0);
+        foreach ($prototypeFragment->getElementsByTagName('body')->item(0)->childNodes as $prototypeNode) {
+            $node->appendChild($node->ownerDocument->importNode($prototypeNode, true));
+        }
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $form
+     * @param $offset
+     * @param $amount
+     */
+    protected function composizioneNucleoFamiliare(&$crawler, $nextButton, &$form, $offset, $amount)
+    {
+        /** FIXME: Questo test non fa submit di elementi nuovi, né li verifica
+         *  bisogna adattarlo sulla falsariga del test per l'upload allegati
+         */
+        $formCrawler = $crawler->selectButton($nextButton);
+        $this->appendPrototypeDom($crawler->filter('.nucleo_familiare')->getNode(0), $offset, $amount);
+
+        $form = $formCrawler->form();
+        $values = $form->getValues();
+
+        for ($i = $offset; $i < $offset + $amount; $i++) {
+            $values['nucleo_familiare[nucleo_familiare][' . $i . '][nome]'] = $i . 'pippo' . md5($i . time());
+            $values['nucleo_familiare[nucleo_familiare][' . $i . '][cognome]'] = $i . 'pippo' . md5($i . time());
+            $values['nucleo_familiare[nucleo_familiare][' . $i . '][codiceFiscale]'] = $i . 'pippo' . md5($i . time());
+            $values['nucleo_familiare[nucleo_familiare][' . $i . '][rapportoParentela]'] = $i . 'pippo' . md5($i . time());
+        }
+
+        $form->setValues($values);
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param \DOMElement $node
+     * @param int $currentIndex
+     * @param int $count
+     */
+    protected function appendPrototypeDom(\DOMElement $node, $currentIndex = 0, $count = 1)
+    {
+        $prototypeHTML = $node->getAttribute('data-prototype');
+        $accumulatedHtml = '';
+        for ($i = 0; $i < $count; $i++) {
+            $accumulatedHtml .= str_replace('__name__', $currentIndex + $i, $prototypeHTML);
+        }
+        $prototypeFragment = new \DOMDocument();
+        $prototypeFragment->loadHTML($accumulatedHtml);
+        foreach ($prototypeFragment->getElementsByTagName('body')->item(0)->childNodes as $prototypeNode) {
+            $node->appendChild($node->ownerDocument->importNode($prototypeNode, true));
+        }
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $button
+     * @param $form
+     * @param Allegato[] $allegati
+     */
+    protected function allegati(&$crawler, $button, &$form, $allegati)
+    {
+        //TODO: test that I cannot see other people's allegati!
+        //check that we see only our allegati
+
+        //all but the first;
+        $allegatiSelezionati = [];
+        for ($i = 1; $i < count($allegati); $i++) {
+            $allegatiSelezionati[] = $allegati[$i]->getId();
+        }
+
+        $form = $crawler->selectButton($button)->form();
+        $form->disableValidation();
+        $values = $form->getPhpValues();
+        $values['pratica_allegati']['allegati'] = $allegatiSelezionati;
+        $form->setValues($values);
+        $crawler = $this->client->submit($form);
+
+        $this->em->refresh($allegati[0]);
+        $this->assertEquals(0, $allegati[0]->getPratiche()->count());
+        for ($i = 1; $i < count($allegati); $i++) {
+            $this->assertEquals(1, $allegati[$i]->getPratiche()->count());
+        }
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $fillData
+     * @param $form
+     */
+    protected function datiRichiedente(&$crawler, $nextButton, &$fillData, &$form)
+    {
+        // Dati richiedente
+        $fillData = array();
+        $crawler->filter('form[name="pratica_richiedente"] input[type="text"]')
+                ->each(function ($node, $i) use (&$fillData) {
+                    self::fillFormInputWithDummyText($node, $i, $fillData);
+                });
+        $form = $crawler->selectButton($nextButton)->form($fillData);
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param $numberOfExpectedAttachments
+     * @param CPSUser $user
+     *
+     * @return Allegato[]
+     */
+    protected function setupNeededAllegatiForAllInvolvedUsers($numberOfExpectedAttachments, CPSUser $user)
+    {
+        $allegati = [];
+        for ($i = 0; $i < $numberOfExpectedAttachments; $i++) {
+            $allegato = new Allegato();
+            $allegato->setOwner($user);
+            $allegato->setDescription(self::CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX . $i);
+            $allegato->setFilename('somefile.txt');
+            $allegato->setOriginalFilename('somefile.txt');
+            $this->em->persist($allegato);
+            $allegati[] = $allegato;
+        }
+
+        $otherUser = $this->createCPSUser(true);
+        $allegato = new Allegato();
+        $allegato->setOwner($otherUser);
+        $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);
+        $allegato->setFilename('somefile.txt');
+        $allegato->setOriginalFilename('somefile.txt');
+        $this->em->persist($allegato);
+
+        $this->em->flush();
+
+        return $allegati;
+    }
+
+    protected static function fillFormInputWithDummyText(Crawler $node, $i, &$fillData, $dummyText = 'test')
+    {
+        $type = $node->attr('type');
+        if ($type == 'number'){
+            $dummyText = rand(0, time());
+        }
+        $name = $node->attr('name');
+        $value = $node->attr('value');
+        if (empty($value)){
+            $fillData[$name] = $dummyText;
+        }
     }
 }

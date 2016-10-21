@@ -43,9 +43,33 @@ class ServizioCreateCommand extends ContainerAwareCommand
         $newServizio->setPraticaFCQN($input->getArgument('fcqn'));
         $newServizio->setPraticaFlowServiceName($input->getArgument('flow'));
 
-        $em->persist($newServizio);
-        $em->flush();
+        $repo = $em->getRepository('AppBundle:Servizio');
+        if ($repo->findByPraticaFCQN($newServizio->getPraticaFCQN())){
+            $output->writeln(sprintf('Il servizio: %s esiste già', $input->getArgument('slug')));
+        }else{
+            $em->persist($newServizio);
+            $em->flush();
+            $output->writeln(sprintf('Servizio: %s creato, manca il flusso', $input->getArgument('slug')));
+        }
 
-        $output->writeln(sprintf('Servizio: %s creato, manca il flusso', $input->getArgument('slug')));
+        $fcqn = $newServizio->getPraticaFCQN();
+        $parts = explode("\\", $fcqn);
+        $className = array_pop($parts);
+
+        $slug = $newServizio->getSlug();
+        $slugNormalized = str_replace('-', '_', $slug);
+        $slugConstant = strtoupper($slugNormalized);
+
+        $flow = $newServizio->getPraticaFlowServiceName();
+        $flowClassName = "AppBundle\\Form\\{$className}\\{$className}Flow";
+
+        $output->writeln("\n1 - Modifica l'annotazione DiscriminatorMap di AppBundle\\Entity\\Pratica: \n\n @ORM\\DiscriminatorMap({ ..., \"{$slugNormalized}\" = \"{$className}\"}) \n");
+        $output->writeln("\n2 - Aggiungi in AppBundle\\Entity\\Pratica la costante \n\n const TYPE_{$slugConstant} = \"{$slugNormalized}\" \n");
+        $output->writeln("\n3 - Crea la classe {$fcqn} come estensione di AppBundle\\Entity\\Pratica e aggiungi i campi che servono");
+        $output->writeln("\n4 - Crea la {$flowClassName} classe estensione di AppBundle\\Form\\Base\\PraticaFlow e configura il flow");
+        $output->writeln("\n5 - Registra il servizio in services.yml \n\n {$flow}: \n class: {$flowClassName} \n parent: craue.form.flow \n arguments: [\"@logger\",\"@translator\"] \n");
+        $output->writeln("\n6 - Crea il template Resources/views/Pratiche/summary/{$className}.html.twig per la visualizzazione dei sommari");
+        $output->writeln("\n7 - Crea il template Resources/views/Pratiche/pdf/{$className}.html.twig per il render dei pdf");
+        $output->writeln("\n8 - Coraggio");
     }
 }

@@ -29,11 +29,6 @@ services:
         tags:
             - { name: monolog.processor }
 
-    ocsdc.form.flow.asilonido:
-        class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
-        parent: craue.form.flow
-        arguments: ["@logger","@translator"]
-
     ocsdc.form.flow.type_extension.help_data:
         class: AppBundle\Form\Extension\HelpDataTypeExtension
         arguments: ["@translator"]
@@ -44,11 +39,21 @@ services:
         class: AppBundle\Services\DirectoryNamerService
 
     ocsdc.allegati.mimetype_validator:
-            class: AppBundle\Validator\Constraints\ValidMimeTypeValidator
-            arguments: ["@translator"]
-            tags:
-                - { name: validator.constraint_validator }
+        class: AppBundle\Validator\Constraints\ValidMimeTypeValidator
+        arguments: ["@translator"]
+        tags:
+            - { name: validator.constraint_validator }
 
     ocsdc.mailer:
         class: AppBundle\Services\MailerService
         arguments: ["@mailer", "@translator", "@templating"]
+
+    ocsdc.form.flow.asilonido:
+        class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
+        parent: craue.form.flow
+        arguments: ["@logger","@translator"]
+
+    ocsdc.form.flow.autoletturaacqua:
+        class: AppBundle\Form\AutoletturaAcqua\AutoletturaAcquaFlow
+        parent: craue.form.flow
+        arguments: ["@logger","@translator"]

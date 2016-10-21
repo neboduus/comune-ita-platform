@@ -31,11 +31,11 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
     {
         return array(
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'iscrizione_asilo_nido.accettazioneIstruzioni',
+                'label' => 'pratica.accettazioneIstruzioni',
                 'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_SELEZIONA_ENTE => array(
-                'label' => 'iscrizione_asilo_nido.selezionaEnte',
+                'label' => 'pratica.selezionaEnte',
                 'form_type' => SelezionaEnteType::class,
             ),
             self::STEP_SELEZIONA_NIDO => array(
@@ -51,7 +51,7 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
                 'form_type' => SelezionaOrariNidoType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
-                'label' => 'pratica.carica_datiRichiedente',
+                'label' => 'pratica.datiRichiedente',
                 'form_type' => DatiRichiedenteType::class,
             ),
             self::STEP_DATI_BAMBINO => array(
@@ -67,7 +67,7 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
                 'form_type' => AllegatiType::class,
             ),
             self::STEP_CONFERMA => array(
-                'label' => 'iscrizione_asilo_nido.conferma',
+                'label' => 'pratica.conferma',
             ),
         );
     }
