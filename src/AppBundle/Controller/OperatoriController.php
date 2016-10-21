@@ -283,6 +283,13 @@ class OperatoriController extends Controller
     }
 
     /**
+     * @Route("/logout", name="logout")
+     */
+    public function logoutAction()
+    {
+    }
+
+    /**
      * @param OperatoreUser $operatore
      * @return \Symfony\Component\Form\FormInterface
      */
