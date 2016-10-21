@@ -25,3 +25,6 @@ parameters:
 
     # La password usata da gpa per pushare gli status changes
     gpa_password: gpa
+
+    # La password usata da comunweb per pushare le schede informative
+    ez_password: ez

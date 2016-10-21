@@ -284,13 +284,8 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $servizio = $this->createServizioWithAssociatedEnti([], 'Terzo servizio');
 
-        //Lo slug viene passato da gedmo sluggable
-        $enteSlug = 'roncella-ionica';
-
-        $ente = new Ente();
-        $ente->setName($enteSlug);
-        $this->em->persist($ente);
-        $this->em->flush();
+        $ente = $this->createEnti()[0];
+        $enteSlug = $ente->getSlug();
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
             'pratiche_new',
@@ -362,6 +357,39 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $this->assertEquals($tutteLePratiche + 1, $tutteLePraticheNew);
         $this->assertEquals($miePratiche + 1, $miePraticheNew);
+    }
+
+    /**
+     * @test
+     */
+    public function testISeeistruzioniIscrizioneAsiloNidoApplicationFormWhenIStartTheFormAsLoggedUser()
+    {
+        $mockLogger = $this->getMockLogger();
+        $mockLogger->expects($this->exactly(2))
+            ->method('info')
+            ->with($this->callback(function ($subject) {
+                $expectedArgs = [
+                    LogConstants::PRATICA_CREATED,
+                    LogConstants::PRATICA_COMPILING_STEP,
+                ];
+
+                return in_array($subject, $expectedArgs);
+            }));
+
+        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
+            $kernel->getContainer()->set('logger', $mockLogger);
+        });
+        $user = $this->createCPSUser();
+
+        $servizio = $this->createServizioWithAssociatedEnti([], 'Altro servizio');
+
+        $this->client->followRedirects();
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+            'pratiche_new',
+            ['servizio' => $servizio->getSlug()]
+        ));
+
+        $this->assertContains('pratica_accettazione_istruzioni', $this->client->getResponse()->getContent());
     }
 
     /**
@@ -481,19 +509,14 @@ class PraticaControllerTest extends AbstractAppTestCase
         static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
             $kernel->getContainer()->set('logger', $mockLogger);
         });
-        $user = $this->createCPSUser();
 
-        $ente1 = new Ente();
-        $ente1->setName('Ente di prova');
-        $this->em->persist($ente1);
-        $this->em->flush();
+        $user = $this->createCPSUser(true);
 
-        $ente2 = new Ente();
-        $ente2->setName('Ente di prova 2');
-        $this->em->persist($ente2);
-        $this->em->flush();
+        $ente = $this->createEnteWithAsili('L781');
+        $ente1 = $this->createEnteWithAsili('L782');
+        $ente2 = $this->createEnteWithAsili('L783');
 
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Altro servizio');
+        $servizio = $this->createServizioWithAssociatedEnti([$ente, $ente1, $ente2], 'Altro servizio');
 
         $this->client->followRedirects();
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(

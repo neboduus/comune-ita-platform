@@ -8,6 +8,9 @@ security:
         in_memory:
             memory:
               users:
+                ez:
+                  password: '%ez_password%'
+                  roles: 'ROLE_EZ'
                 gpa:
                   password: '%gpa_password%'
                   roles: 'ROLE_GPA'
@@ -43,6 +46,10 @@ security:
             pattern: ^/api/v\d+\.\d+/pratica/.*/status
             http_basic:
                provider: in_memory
+        ez_api:
+            pattern: ^/api/v\d+\.\d+/schedaInformativa/.*
+            http_basic:
+               provider: in_memory
         main:
             anonymous: ~
 
@@ -58,3 +65,4 @@ security:
         - { path: ^/operatori, role: ROLE_OPERATORE }
         - { path: ^/pratiche, role: ROLE_USER }
         - { path: ^/api/v\d+\.\d+/pratica/.*/status, role: ROLE_GPA }
+        - { path: ^/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
