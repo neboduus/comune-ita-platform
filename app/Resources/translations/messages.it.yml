@@ -158,6 +158,35 @@ iscrizione_asilo_nido:
     dati_bambino: 'Inserisci i dati del bambino che intendi iscrivere'
     seleziona_orari: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
 
+contributo_pannolini:
+  tipo_pannolini: 'Tipo dei pannolini acquistati'
+  punto_vendita: 'Nome del punto vendita'
+  data_acquisto: 'Data di acquisto'
+  totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
+  datiBambino: 'Dati del bambino'
+  datiAcquisto: "Dati dell'Acquisto"
+  datiContoCorrente: 'Dati Conto Corrente'
+  guida_alla_compilazione:
+    dati_bambino: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
+    dati_acquisto: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello step successivo'
+  pdf:
+    rimborso: "Il rimborso per la spesa sostenuta nell'acquisto dei pannolini di tipo "
+    per_il_bambino: 'per il bambino'
+    che_venga_rimborsato: 'Il rimborso andrà effettuato sul seguente conto bancario: '
+    intestato_a: 'intestato a'
+  dettaglio:
+    acquisto: 'Dettaglio Acquisto'
+    nome_punto_vendita: 'Punto Vendita'
+    data_acquisto: 'Data Acquisto'
+    totale_spesa: 'Totale spesa'
+    conto_corrente: 'Conto Corrente'
+    iban: 'IBAN'
+    intestatario_conto: 'Intestato A'
+    tipo_pannolini: 'Tipo Pannolini'
+    tipo_pannolino:
+      1: 'Lavabile'
+      2: 'BioPannolino'
+
 autolettura_acqua:
   datiIntestatario: "Intestatario del contratto"
   datiIntestatario.intestatario_codice_utente: "Codice utenza"
@@ -278,8 +307,6 @@ operatori:
     ambito: 'Ambito'
     salva_modifiche: 'Salva modifiche'
 
-
-
 allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
@@ -291,4 +318,3 @@ allegato:
   non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'
   aggiungi: 'Aggiungi un allegato'
   cancellato: 'Allegato cancellato correttamente'
-

@@ -13,12 +13,24 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ServizioCreateCommand extends ContainerAwareCommand
 {
+
+    const HELP = <<<HELP
+Crea un record nella tabella servizi, lo marca come disabilitato, va abilitato a mano una volta che si è creato il flow corrispondente.
+I valori necessari sono
+Lo slug del servizio (sarà usato anche per le rotte)
+Il nome del servizio (testo libero)
+L'FQCN della classe persistita che rappresenta il servizio (quella in /Entity/...)
+Il nome del servizio che rappresenta il flow
+
+FQCN e flow possono essere creati successivamente, ma finché non ci sono il sistema darà una serie di errori e sarà inutilizzabile (nota utile di fatto solo per lo sviluppo)
+HELP;
+
     protected function configure()
     {
         $this
             ->setName('ocsdc:crea-servizio')
             ->setDescription('Crea un record nella tabella servizi')
-            ->setHelp("Crea un record nella tabella servizi, lo marca come disabilitato, va abilitato a mano una volta che si è creato il flow corrispondente.")
+            ->setHelp(self::HELP)
             ->addArgument('slug', InputArgument::REQUIRED)
             ->addArgument('name', InputArgument::REQUIRED)
             ->addArgument('fcqn', InputArgument::REQUIRED)

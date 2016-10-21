@@ -1,0 +1,34 @@
+<html>
+<head>
+    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+
+{{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+
+<div class="chiede center_title">
+    {{ 'pratica.pdf.chiede'|trans() }}
+    <p>
+        {{ 'contributo_pannolini.pdf.rimborso'| trans }} {{ ('contributo_pannolini.dettaglio.tipo_pannolino.'~pratica.tipoPannolini)|trans() }}
+        <br/>{{ 'contributo_pannolini.pdf.per_il_bambino'|trans() }} <strong>{{ pratica.bambinoNome }} {{ pratica.bambinoCognome }}</strong>
+        <br/>{{ 'contributo_pannolini.pdf.che_venga_rimborsato'|trans() }}
+        <br/>{{ pratica.iban }} {{ 'contributo_pannolini.pdf.intestato_a'|trans }} {{ pratica.intestatarioConto }}
+    </p>
+</div>
+
+<div class="richiesta">
+    <p>
+        {{ 'contributo_pannolini.dettaglio.acquisto'|trans }}
+    </p>
+    <p>
+        {{ 'contributo_pannolini.dettaglio.tipo_pannolini'|trans }} {{ ('contributo_pannolini.dettaglio.tipo_pannolino.'~pratica.tipoPannolini)|trans() }}
+        <br/>{{ 'contributo_pannolini.dettaglio.nome_punto_vendita'|trans }} {{ pratica.nomePuntoVendita }}
+        <br/>{{ 'contributo_pannolini.dettaglio.data_acquisto'|trans }} {{ pratica.dataAcquisto|date('d/m/Y') }}
+        <br/>{{ 'contributo_pannolini.dettaglio.totale_spesa'|trans }} {{ pratica.totaleSpesa }}
+    </p>
+</div>
+
+{{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
+
+</body>
+</html>
