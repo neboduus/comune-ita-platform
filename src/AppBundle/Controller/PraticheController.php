@@ -16,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 
 /**
@@ -208,6 +209,8 @@ class PraticheController extends Controller
             );
         }
 
+        $this->checkUserCanAccessPratica($pratica);
+
         $user = $this->getUser();
 
         /** @var PraticaFlow $praticaFlowService */
@@ -267,6 +270,8 @@ class PraticheController extends Controller
      */
     public function showAction(Pratica $pratica)
     {
+        $this->checkUserCanAccessPratica($pratica);
+
         $user = $this->getUser();
 
         return [
@@ -391,6 +396,14 @@ class PraticheController extends Controller
         $destDir = $mapping->getUploadDestination().'/'.$path;
 
         return $destDir;
+    }
+
+    private function checkUserCanAccessPratica(Pratica $pratica)
+    {
+        $praticaUser = $pratica->getUser();
+        if ( $praticaUser->getId() !== $this->getUser()->getId()) {
+            throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
+        }
     }
 
 }

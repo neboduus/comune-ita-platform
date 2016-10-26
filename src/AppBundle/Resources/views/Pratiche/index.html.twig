@@ -39,8 +39,9 @@
                             <table class="table table-bordered table-striped table-condensed cf">
                                 <thead class="cf">
                                 <tr>
-                                    <td>{{ 'pratica.protocollo'|trans }}</td>
+                                    <td>{{ 'pratica.servizio'|trans }}</td>
                                     <td>{{ 'pratica.categoria'|trans }}</td>
+                                    <td>{{ 'pratica.protocollo'|trans }}</td>
                                     <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
                                     <td>{{ 'pratica.stato'|trans }}</td>
                                     <td></td>
@@ -53,8 +54,9 @@
                                         data-user="{{ pratica.user.id }}"
                                         data-status="{{ pratica.status }}">
 
+                                        <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
+                                        <td data-title="{{ 'pratica.categoria'|trans }}">{{ pratica.servizio.area }}</td>
                                         <td data-title="{{ 'pratica.protocollo'|trans }}">{% if pratica.numeroProtocollo %} {{ pratica.numeroProtocollo }}{% else %} - {% endif %}</td>
-                                        <td data-title="{{ 'pratica.categoria'|trans }}">Scuola</td>
                                         <td data-title="{{ 'pratica.data_di_compilazione'|trans }}">{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
                                         <td data-title="{{ 'pratica.stato'|trans }}">{{ pratica.statusName|trans }}</td>
                                         <td data-title="">

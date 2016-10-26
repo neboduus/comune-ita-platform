@@ -43,6 +43,7 @@ pratica:
   empty: 'Non sono presenti pratiche a tuo nome.'
   protocollo: 'Protocollo'
   richiedente: 'Richiedente'
+  servizio: 'Servizio'
   categoria: 'Categoria'
   data_di_compilazione: 'Data di compilazione'
   stato: 'Stato'
