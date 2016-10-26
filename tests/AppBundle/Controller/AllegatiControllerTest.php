@@ -6,8 +6,10 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Validator\Constraints\ValidMimeType;

@@ -63,11 +63,6 @@ class ServizioControllerTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser();
 
-        $ente = new Ente();
-        $ente->setName('Ente di prova');
-        $this->em->persist($ente);
-        $this->em->flush();
-
         $servizio = $this->createServizioWithAssociatedEnti([], 'Secondo servizio');
 
         $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
@@ -88,17 +83,7 @@ class ServizioControllerTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser();
 
-        $ente = new Ente();
-        $ente->setName('Ente di prova');
-        $this->em->persist($ente);
-        $this->em->flush();
-
-        $ente2 = new Ente();
-        $ente2->setName('Ente di test');
-        $this->em->persist($ente2);
-        $this->em->flush();
-
-        $servizio = $this->createServizioWithAssociatedEnti([$ente, $ente2], 'Terzo servizio');
+        $servizio = $this->createServizioWithAssociatedEnti($this->createEnti(), 'Terzo servizio');
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL));
 

@@ -36,6 +36,12 @@ class Ente
     private $slug;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", unique=true)
+     */
+    private $codiceMeccanografico;
+
+    /**
      * @ORM\ManyToMany(targetEntity="AsiloNido", cascade={"remove"})
      * @ORM\JoinTable(
      *     name="ente_asili",
@@ -113,5 +119,20 @@ class Ente
         return (string)$this->getId();
     }
 
+    /**
+     * @return string
+     */
+    public function getCodiceMeccanografico()
+    {
+        return $this->codiceMeccanografico;
+    }
 
+    /**
+     * @param string $codiceMeccanografico
+     */
+    public function setCodiceMeccanografico($codiceMeccanografico)
+    {
+        $this->codiceMeccanografico = $codiceMeccanografico;
+        return $this;
+    }
 }

@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Controller\APIController;
+use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
@@ -24,6 +25,7 @@ class ApiControllerTest extends AbstractAppTestCase
         parent::setUp();
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
+        $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Ente::class);
         $this->cleanDb(Servizio::class);
@@ -220,12 +222,126 @@ class ApiControllerTest extends AbstractAppTestCase
     }
 
     /**
+     * @test
+     */
+    public function testSchedaInformativaAPIIsProtected()
+    {
+        $enti = $this->createEnti();
+        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $client = static::createClient();
+        $client->restart();
+        $client->request(
+            'GET',
+            $this->formatSchedaInformativaUpdateRoute($servizio, $enti[0])
+        );
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function testSchedaInformativaAPIIsProtectedWithRoleChecking()
+    {
+        $enti = $this->createEnti();
+        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $client = static::createClient();
+        $client->restart();
+        $client->request(
+            'GET',
+            $this->formatSchedaInformativaUpdateRoute($servizio, $enti[0]),
+            array(),
+            array(),
+            array(
+                'PHP_AUTH_USER' => 'ez_no_role',
+                'PHP_AUTH_PW' => 'ez',
+            )
+        );
+
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
+    }
+
+
+    /**
+     * @test
+     */
+    public function testSchedaInformativaAPIReturnsErrorIfMissingMandatoryQueryStringParameter()
+    {
+        $enti = $this->createEnti();
+        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $client = static::createClient();
+        $client->restart();
+        $url = $this->formatSchedaInformativaUpdateRoute($servizio, $enti[0]);
+        $client->request(
+            'GET',
+            $url,
+            array(),
+            array(),
+            array(
+                'PHP_AUTH_USER' => 'ez',
+                'PHP_AUTH_PW' => 'ez',
+            )
+        );
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
+    public function testQueryingTheEndpointAddsTheSchedaInformativaToServizioForEnte()
+    {
+        $remoteUrl = 'http://www.comune.trento.it/api/opendata/v2/content/read/629089';
+        $enti = $this->createEnti();
+        $ente = $enti[0];
+        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $client = static::createClient();
+        $client->restart();
+        $url = $this->formatSchedaInformativaUpdateRoute($servizio, $ente, $remoteUrl);
+        $client->request(
+            'GET',
+            $url,
+            array(),
+            array(),
+            array(
+                'PHP_AUTH_USER' => 'ez',
+                'PHP_AUTH_PW' => 'ez',
+            )
+        );
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $client->getResponse()->getStatusCode());
+
+        $expectedContent = json_decode(file_get_contents($remoteUrl), true);
+        $this->assertTrue(array_key_exists('data', $expectedContent));
+        $this->assertTrue(array_key_exists('metadata', $expectedContent));
+
+        $this->em->persist($servizio);
+        $this->em->refresh($servizio);
+        $schedaInformativa = $servizio->getSchedaInformativaPerEnte($ente);
+        $this->assertEquals($expectedContent, $schedaInformativa);
+    }
+
+    /**
      * @param Pratica $pratica
      * @return string
      */
     private function formatPraticaStatusUpdateRoute(Pratica $pratica):string
     {
         $route = '/api/'.APIController::CURRENT_API_VERSION.'/pratica/'.$pratica->getId().'/status';
+
+        return $route;
+    }
+
+    /**
+     * @param Servizio $servizio
+     * @param Ente $ente
+     * @return string
+     */
+    private function formatSchedaInformativaUpdateRoute(Servizio $servizio, Ente $ente, $remoteUrl = null):string
+    {
+        $route = '/api/'.APIController::CURRENT_API_VERSION.'/schedaInformativa/'.$servizio->getSlug().'/'.$ente->getCodiceMeccanografico();
+
+        $remoteUrl ? $route .= '?remote='.urlencode($remoteUrl) : null;
 
         return $route;
     }

@@ -10,6 +10,9 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Services\CPSUserProvider;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
@@ -337,21 +340,29 @@ abstract class AbstractAppTestCase extends WebTestCase
     }
 
     /**
-     * @return array
+     * @return Collection
      */
     protected function createEnti()
     {
-        $ente1 = new Ente();
-        $ente1->setName('Ente di prova');
-        $this->em->persist($ente1);
+        $repo = $this->em->getRepository('AppBundle:Ente');
+        $ente1 = $repo->findOneByCodiceMeccanografico('L378');
+        if(!$ente1) {
+            $ente1 = new Ente();
+            $ente1->setName('Ente di prova');
+            $ente1->setCodiceMeccanografico('L378');
+            $this->em->persist($ente1);
+        }
+
+        $ente2 = $repo->findOneByCodiceMeccanografico('L781');
+        if(!$ente2) {
+            $ente2 = new Ente();
+            $ente2->setName('Ente di prova 2');
+            $ente2->setCodiceMeccanografico('L781');
+            $this->em->persist($ente2);
+        }
         $this->em->flush();
 
-        $ente2 = new Ente();
-        $ente2->setName('Ente di prova 2');
-        $this->em->persist($ente2);
-        $this->em->flush();
-
-        return array($ente1, $ente2);
+        return new ArrayCollection(array($ente1, $ente2));
     }
 
     /**
@@ -413,7 +424,7 @@ abstract class AbstractAppTestCase extends WebTestCase
     /**
      * @return Ente
      */
-    protected function createEnteWithAsili()
+    protected function createEnteWithAsili($codiceMeccanografico = 'L781')
     {
         $asilo = new AsiloNido();
         $asilo->setName('Asilo nido Bimbi belli')
@@ -437,6 +448,7 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         $ente = new Ente();
         $ente->setName('Comune di Test')
+             ->setCodiceMeccanografico($codiceMeccanografico)
              ->setAsili([$asilo, $asilo1]);
         $this->em->persist($ente);
 

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -10,6 +12,7 @@ use Ramsey\Uuid\UuidInterface;
 /**
  * @ORM\Entity
  * @ORM\Table(name="servizio")
+ * @ORM\HasLifecycleCallbacks
  */
 class Servizio
 {
@@ -73,25 +76,32 @@ class Servizio
     private $status;
 
     /**
-     * @var string Fully Qualified Class Name
+     * @var string
      * @ORM\Column(type="string")
      */
     private $praticaFCQN;
 
     /**
-     * @var string Fully Qualified Class Name
+     * @var string
      * @ORM\Column(type="string")
      */
     private $praticaFlowServiceName;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\Column(type="text")
+     */
+    private $schedeInformative;
 
     /**
      * Servizio constructor.
      */
     public function __construct()
     {
-        if ( !$this->id) {
+        if (!$this->id) {
             $this->id = Uuid::uuid4();
         }
+        $this->schedeInformative = new ArrayCollection();
         $this->status = self::STATUS_AVAILABLE;
     }
 
@@ -283,5 +293,47 @@ class Servizio
         return $this;
     }
 
+    /**
+     * @param Ente $ente
+     * @return string|null
+     */
+    public function getSchedaInformativaPerEnte(Ente $ente)
+    {
+        if ($this->schedeInformative->containsKey($ente->getSlug())) {
+            return $this->schedeInformative->get($ente->getSlug());
+        }
 
+        return  null;
+    }
+
+    /**
+     * @param string $schedaInformativa
+     * @param Ente   $ente
+     * @return Servizio
+     */
+    public function setSchedaInformativaPerEnte($schedaInformativa, Ente $ente)
+    {
+        $this->schedeInformative->set($ente->getSlug(), $schedaInformativa);
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PreFlush()
+     */
+    public function serializeSchedeInformative()
+    {
+        if ($this->schedeInformative instanceof Collection) {
+            $this->schedeInformative = serialize($this->schedeInformative->toArray());
+        }
+    }
+
+    /**
+     * @ORM\PostLoad()
+     * @ORM\PostUpdate()
+     */
+    public function parseSchedeInformative()
+    {
+        $this->schedeInformative = new ArrayCollection(unserialize($this->schedeInformative));
+    }
 }

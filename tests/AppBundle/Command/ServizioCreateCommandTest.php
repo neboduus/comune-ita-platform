@@ -31,6 +31,6 @@ class ServizioCreateCommandTest extends AbstractAppTestCase
         ));
 
         $output = $commandTester->getDisplay();
-        $this->assertContains('Servizio: '.$slug.' creato, manca il flusso', $output);
+        $this->assertContains('Slug: '.$slug, $output);
     }
 }

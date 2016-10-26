@@ -30,3 +30,9 @@ security:
                     gpa_no_role:
                         password: gpapass
                         roles: 'ROLE_NOT_GPA'
+                    ez:
+                        password: ez
+                        roles: 'ROLE_EZ'
+                    ez_no_role:
+                        password: ez
+                        roles: 'ROLE_NOT_EZ'
