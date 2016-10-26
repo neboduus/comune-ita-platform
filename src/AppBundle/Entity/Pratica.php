@@ -7,13 +7,18 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="pratica")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"default" = "Pratica", "iscrizione_asilo_nido" = "IscrizioneAsiloNido", "autolettura_acqua" = "AutoletturaAcqua"})
+ * @ORM\DiscriminatorMap({"default" = "Pratica",
+ *     "iscrizione_asilo_nido" = "IscrizioneAsiloNido",
+ *     "autolettura_acqua" = "AutoletturaAcqua",
+ *     "contributo_pannolini" = "ContributoPannolini"
+ * })
  * @ORM\HasLifecycleCallbacks
  */
 class Pratica
@@ -28,6 +33,7 @@ class Pratica
     const TYPE_DEFAULT = "default";
     const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
     const TYPE_AUTOLETTURA_ACQUA = "autolettura_acqua";
+    const TYPE_CONTRIBUTO_PANNOLINI = "contributo_pannolini";
 
     /**
      * @var string
@@ -218,6 +224,18 @@ class Pratica
      */
     private $accettoIstruzioni;
 
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $iban;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $intestatarioConto;
 
     /**
      * Pratica constructor.
@@ -1057,6 +1075,40 @@ class Pratica
     {
         $this->accettoIstruzioni = $accettoIstruzioni;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIban()
+    {
+        return $this->iban;
+    }
+
+    /**
+     * @param string $iban
+     */
+    public function setIban($iban)
+    {
+        $this->iban = $iban;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIntestatarioConto()
+    {
+        return $this->intestatarioConto;
+    }
+
+    /**
+     * @param string $intestatarioConto
+     */
+    public function setIntestatarioConto($intestatarioConto)
+    {
+        $this->intestatarioConto = $intestatarioConto;
         return $this;
     }
 

@@ -57,3 +57,7 @@ services:
         class: AppBundle\Form\AutoletturaAcqua\AutoletturaAcquaFlow
         parent: craue.form.flow
         arguments: ["@logger","@translator"]
+    ocsdc.form.flow.contributopannolini:
+        class: AppBundle\Form\ContributoPannolini\ContributoPannoliniFlow
+        parent: craue.form.flow
+        arguments: ["@logger","@translator"]

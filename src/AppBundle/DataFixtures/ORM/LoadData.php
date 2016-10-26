@@ -81,6 +81,7 @@ class LoadData implements FixtureInterface
 
             $ente = (new Ente())
                 ->setName($item['name'])
+                ->setCodiceMeccanografico($item['codice'])
                 ->setAsili($asili);
 
             $manager->persist($ente);
