@@ -26,6 +26,7 @@
             </table>
         </li>
 
+        {%  if pratica.allegati|length > 0 %}
         <li class="nucleo_familiare dichiarazione">
             <p>{{ 'pratica.pdf.dichiarazione_allegati'|trans() }}</p>
             <table class="table">
@@ -38,6 +39,7 @@
                 </tbody>
             </table>
         </li>
+        {% endif %}
 
         <li class="dichiarazione">
             <p>{{ 'pratica.pdf.dichiarazione_cambiamenti'|trans() }}</p>

@@ -82,6 +82,6 @@ HELP;
         $output->writeln("\n5 - Registra il servizio in services.yml \n\n {$flow}: \n class: {$flowClassName} \n parent: craue.form.flow \n arguments: [\"@logger\",\"@translator\"] \n");
         $output->writeln("\n6 - Crea il template Resources/views/Pratiche/summary/{$className}.html.twig per la visualizzazione dei sommari");
         $output->writeln("\n7 - Crea il template Resources/views/Pratiche/pdf/{$className}.html.twig per il render dei pdf");
-        $output->writeln("\n8 - Coraggio");
+        $output->writeln("\n8 - Crea la classe di test Tests\\Flows\\{$className}Test");
     }
 }

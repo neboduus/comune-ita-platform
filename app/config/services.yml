@@ -48,18 +48,31 @@ services:
         class: AppBundle\Services\MailerService
         arguments: ["@mailer", "@translator", "@templating"]
 
-    ocsdc.form.flow.asilonido:
-        class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
+    ocsdc.form.flow.storage_key_generator:
+        class: AppBundle\Form\UserSessionStorageKeyGenerator
+
+    ocsdc.form.type.choose_allegato:
+        class: AppBundle\Form\Base\ChooseAllegatoType
+        arguments: ["@doctrine.orm.entity_manager", "@validator"]
+        tags:
+            - { name: form.type }
+    ocsdc.form.flow.pratica:
+        class: AppBundle\Form\Base\PraticaFlow
         parent: craue.form.flow
         arguments: ["@logger","@translator"]
 
+    ocsdc.form.flow.asilonido:
+        class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
+        parent: ocsdc.form.flow.pratica
+
     ocsdc.form.flow.autoletturaacqua:
         class: AppBundle\Form\AutoletturaAcqua\AutoletturaAcquaFlow
-        parent: craue.form.flow
-        arguments: ["@logger","@translator"]
+        parent: ocsdc.form.flow.pratica
+
     ocsdc.form.flow.contributopannolini:
         class: AppBundle\Form\ContributoPannolini\ContributoPannoliniFlow
-        parent: craue.form.flow
-        arguments: ["@logger","@translator"]
-    ocsdc.form.flow.storage_key_generator:
-        class: AppBundle\Form\UserSessionStorageKeyGenerator
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.cambioresidenza:
+        class: AppBundle\Form\CambioResidenza\CambioResidenzaFlow
+        parent: ocsdc.form.flow.pratica

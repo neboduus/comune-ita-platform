@@ -538,23 +538,32 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param $form
      * @param $offset
      * @param $amount
+     * @param string $filter
+     * @param string $prefix
      */
-    protected function composizioneNucleoFamiliare(&$crawler, $nextButton, &$form, $offset, $amount)
-    {
+    protected function composizioneNucleoFamiliare(
+        &$crawler,
+        $nextButton,
+        &$form,
+        $offset,
+        $amount,
+        $filter = '.nucleo_familiare',
+        $prefix = 'nucleo_familiare[nucleo_familiare]'
+    ) {
         /** FIXME: Questo test non fa submit di elementi nuovi, né li verifica
          *  bisogna adattarlo sulla falsariga del test per l'upload allegati
          */
         $formCrawler = $crawler->selectButton($nextButton);
-        $this->appendPrototypeDom($crawler->filter('.nucleo_familiare')->getNode(0), $offset, $amount);
+        $this->appendPrototypeDom($crawler->filter($filter)->getNode(0), $offset, $amount);
 
         $form = $formCrawler->form();
         $values = $form->getValues();
 
         for ($i = $offset; $i < $offset + $amount; $i++) {
-            $values['nucleo_familiare[nucleo_familiare][' . $i . '][nome]'] = $i . 'pippo' . md5($i . time());
-            $values['nucleo_familiare[nucleo_familiare][' . $i . '][cognome]'] = $i . 'pippo' . md5($i . time());
-            $values['nucleo_familiare[nucleo_familiare][' . $i . '][codiceFiscale]'] = $i . 'pippo' . md5($i . time());
-            $values['nucleo_familiare[nucleo_familiare][' . $i . '][rapportoParentela]'] = $i . 'pippo' . md5($i . time());
+            $values[$prefix . '[' . $i . '][nome]'] = $i . 'pippo' . md5($i . time());
+            $values[$prefix . '[' . $i . '][cognome]'] = $i . 'pippo' . md5($i . time());
+            $values[$prefix . '[' . $i . '][codiceFiscale]'] = $i . 'pippo' . md5($i . time());
+            $values[$prefix . '[' . $i . '][rapportoParentela]'] = $i . 'pippo' . md5($i . time());
         }
 
         $form->setValues($values);

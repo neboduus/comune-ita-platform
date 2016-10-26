@@ -17,7 +17,8 @@ use Symfony\Component\VarDumper\VarDumper;
  * @ORM\DiscriminatorMap({"default" = "Pratica",
  *     "iscrizione_asilo_nido" = "IscrizioneAsiloNido",
  *     "autolettura_acqua" = "AutoletturaAcqua",
- *     "contributo_pannolini" = "ContributoPannolini"
+ *     "contributo_pannolini" = "ContributoPannolini",
+ *     "cambio_residenza" = "CambioResidenza"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -34,6 +35,7 @@ class Pratica
     const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
     const TYPE_AUTOLETTURA_ACQUA = "autolettura_acqua";
     const TYPE_CONTRIBUTO_PANNOLINI = "contributo_pannolini";
+    const TYPE_CAMBIO_RESIDENZA = "cambio_residenza";
 
     /**
      * @var string
@@ -86,7 +88,7 @@ class Pratica
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
-     * @var ArrayCollection $nucleoFamiliare
+     * @var ArrayCollection
      */
     private $nucleoFamiliare;
 

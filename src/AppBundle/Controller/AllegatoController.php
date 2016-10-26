@@ -214,7 +214,7 @@ class AllegatoController extends Controller
             200,
             [
                 'Content-type' => 'application/octet-stream',
-                'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename()),
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
             ]
         );
     }

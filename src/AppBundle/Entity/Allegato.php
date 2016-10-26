@@ -5,6 +5,7 @@ use AppBundle\Validator\Constraints as SDCAssert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -25,6 +26,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Allegato implements AllegatoInterface
 {
+
+    /**
+     * Hook timestampable behavior
+     * updates createdAt, updatedAt fields
+     */
+    use TimestampableEntity;
 
     const TYPE_DEFAULT = 'default';
 
@@ -65,12 +72,6 @@ class Allegato implements AllegatoInterface
     private $description;
 
     /**
-     * @var \DateTime
-     * @ORM\Column(type="datetimetz")
-     */
-    private $updatedAt;
-
-    /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
@@ -95,6 +96,7 @@ class Allegato implements AllegatoInterface
     {
         $this->id = Uuid::uuid4();
         $this->type = self::TYPE_DEFAULT;
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
         $this->pratiche = new ArrayCollection();
     }
@@ -174,25 +176,6 @@ class Allegato implements AllegatoInterface
     public function setDescription($description): AllegatoInterface
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt(): \DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return Allegato
-     */
-    public function setUpdatedAt(\DateTime $updatedAt): AllegatoInterface
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -290,5 +273,15 @@ class Allegato implements AllegatoInterface
     {
         $this->type = $type;
         return $this;
+    }
+
+    public function getName()
+    {
+        return $this->getDescription() . ' ' . ' ' . $this->getOriginalFilename();
+    }
+
+    function __toString()
+    {
+        return (string)$this->getId();
     }
 }

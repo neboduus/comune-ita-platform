@@ -3,6 +3,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\HttpFoundation\File\File;
 
 
@@ -48,17 +49,6 @@ interface AllegatoInterface
      * @return AllegatoInterface
      */
     public function setDescription($description) : AllegatoInterface;
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt() : \DateTime;
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return AllegatoInterface
-     */
-    public function setUpdatedAt(\DateTime $updatedAt) : AllegatoInterface;
 
     /**
      * @return ArrayCollection
