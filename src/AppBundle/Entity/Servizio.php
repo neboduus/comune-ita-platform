@@ -5,8 +5,8 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -30,7 +30,7 @@ class Servizio
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, unique=true)
      */
     private $name;
 
@@ -38,7 +38,7 @@ class Servizio
      * @var string
      *
      * @Gedmo\Slug(fields={"name"})
-     * @ORM\Column(type="string", length=100, unique=true)
+     * @ORM\Column(type="string", length=100)
      */
     private $slug;
 
@@ -49,6 +49,7 @@ class Servizio
      *     joinColumns={@ORM\JoinColumn(name="servizio_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="ente_id", referencedColumnName="id")}
      * )
+     * @var ArrayCollection
      */
     private $enti;
 
@@ -102,6 +103,7 @@ class Servizio
             $this->id = Uuid::uuid4();
         }
         $this->schedeInformative = new ArrayCollection();
+        $this->enti = new ArrayCollection();
         $this->status = self::STATUS_AVAILABLE;
     }
 
@@ -335,5 +337,18 @@ class Servizio
     public function parseSchedeInformative()
     {
         $this->schedeInformative = new ArrayCollection(unserialize($this->schedeInformative));
+    }
+
+    /**
+     * @param Ente $ente
+     * @return Servizio
+     */
+    public function activateForEnte(Ente $ente)
+    {
+        if (!$this->enti->contains($ente)) {
+            $this->enti->add($ente);
+        }
+
+        return $this;
     }
 }
