@@ -2,10 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\AsiloNido;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -42,6 +42,7 @@ class Ente
     private $codiceMeccanografico;
 
     /**
+     * @var ArrayCollection
      * @ORM\ManyToMany(targetEntity="AsiloNido", cascade={"remove"})
      * @ORM\JoinTable(
      *     name="ente_asili",
@@ -56,6 +57,7 @@ class Ente
         if ( !$this->id) {
             $this->id = Uuid::uuid4();
         }
+        $this->asili = new ArrayCollection();
     }
 
     /**
@@ -133,6 +135,19 @@ class Ente
     public function setCodiceMeccanografico($codiceMeccanografico)
     {
         $this->codiceMeccanografico = $codiceMeccanografico;
+        return $this;
+    }
+
+    /**
+     * @param AsiloNido $asilo
+     * @return $this
+     */
+    public function addAsilo(AsiloNido $asilo)
+    {
+        if (!$this->asili->contains($asilo)) {
+            $this->asili->add($asilo);
+        }
+
         return $this;
     }
 }

@@ -4,25 +4,24 @@ namespace Tests\AppBundle\Base;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AsiloNido;
-use AppBundle\Entity\CPSUser as User;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\CPSUser as User;
 use AppBundle\Entity\Ente;
-use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Servizio;
-use AppBundle\Services\CPSUserProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Monolog\Logger;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Class AbstractAppTestCase
@@ -327,7 +326,7 @@ abstract class AbstractAppTestCase extends WebTestCase
     ) {
         $servizio = new Servizio();
         $servizio
-            ->setName($name)
+            ->setName($name.'_'.md5(rand(0, 100).microtime()))
             ->setEnti($enti)
             ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.')
             ->setArea('Test area')

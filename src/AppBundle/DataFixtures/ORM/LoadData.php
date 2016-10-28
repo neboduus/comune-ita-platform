@@ -18,30 +18,16 @@ class LoadData implements FixtureInterface
 
     const PUBLIC_SPREADSHEETS_ID = '1mbGZN9OIjfsrrjVbs2QB1DjzzMoCPT6MD5cPTJS4308';
 
-    private function getData($worksheetTitle)
-    {
-        $serviceRequest = new DefaultServiceRequest("");
-        ServiceRequestFactory::setInstance($serviceRequest);
-
-        $spreadsheetService = new SpreadsheetService();
-        $worksheetFeed = $spreadsheetService->getPublicSpreadsheet(self::PUBLIC_SPREADSHEETS_ID);
-        $worksheet = $worksheetFeed->getByTitle($worksheetTitle);
-
-        $data = $worksheet->getCsv();
-
-        $dataArray = str_getcsv($data, "\r\n");
-        foreach ($dataArray as &$row) {
-            $row = str_getcsv($row, ",");
-        }
-
-        array_walk($dataArray, function (&$a) use ($dataArray) {
-            $a= array_map('trim', $a);
-            $a = array_combine($dataArray[0], $a);
-        });
-        array_shift($dataArray); # remove column header
-
-        return $dataArray;
-    }
+    private $counters = [
+        'servizi' => [
+            'new' => 0,
+            'updated' => 0,
+        ],
+        'enti' => [
+            'new' => 0,
+            'updated' => 0,
+        ]
+        ];
 
     public function load(ObjectManager $manager)
     {
@@ -69,47 +55,89 @@ class LoadData implements FixtureInterface
         }
     }
 
-    private function loadEnti(ObjectManager $manager)
+    private function getData($worksheetTitle)
+    {
+        $serviceRequest = new DefaultServiceRequest("");
+        ServiceRequestFactory::setInstance($serviceRequest);
+
+        $spreadsheetService = new SpreadsheetService();
+        $worksheetFeed = $spreadsheetService->getPublicSpreadsheet(self::PUBLIC_SPREADSHEETS_ID);
+        $worksheet = $worksheetFeed->getByTitle($worksheetTitle);
+
+        $data = $worksheet->getCsv();
+
+        $dataArray = str_getcsv($data, "\r\n");
+        foreach ($dataArray as &$row) {
+            $row = str_getcsv($row, ",");
+        }
+
+        array_walk($dataArray, function (&$a) use ($dataArray) {
+            $a = array_map('trim', $a);
+            $a = array_combine($dataArray[0], $a);
+        });
+        array_shift($dataArray); # remove column header
+
+        return $dataArray;
+    }
+
+    public function loadEnti(ObjectManager $manager)
     {
         $data = $this->getData('Enti');
-
+        $entiRepo = $manager->getRepository('AppBundle:Ente');
         foreach ($data as $item) {
+            $ente = $entiRepo->findOneByCodiceMeccanografico($item['codice']);
+            if (!$ente) {
+                $this->counters['enti']['new']++;
+                $ente = (new Ente())
+                    ->setName($item['name'])
+                    ->setCodiceMeccanografico($item['codice']);
+                $manager->persist($ente);
+            } else {
+                $this->counters['enti']['updated']++;
+            }
 
             $asiliNames = explode('##', $item['asili']);
             $asiliNames = array_map('trim', $asiliNames);
             $asili = $manager->getRepository('AppBundle:AsiloNido')->findBy(['name' => $asiliNames]);
+            foreach ($asili as $asilo) {
+                $ente->addAsilo($asilo);
+            }
 
-            $ente = (new Ente())
-                ->setName($item['name'])
-                ->setCodiceMeccanografico($item['codice'])
-                ->setAsili($asili);
-
-            $manager->persist($ente);
             $manager->flush();
         }
     }
 
-    private function loadServizi(ObjectManager $manager)
+    /**
+     * @param ObjectManager $manager
+     */
+    public function loadServizi(ObjectManager $manager)
     {
         $data = $this->getData('Servizi');
-
+        $serviziRepo = $manager->getRepository('AppBundle:Servizio');
         foreach ($data as $item) {
+            $servizio = $serviziRepo->findOneByName($item['name']);
+            if (!$servizio) {
+                $this->counters['servizi']['new']++;
+                $servizio = new Servizio();
+                $servizio
+                    ->setName($item['name'])
+                    ->setDescription($item['description'])
+                    ->setTestoIstruzioni($item['testoIstruzioni'])
+                    ->setStatus($item['status'])
+                    ->setArea($item['area'])
+                    ->setPraticaFCQN($item['fcqn'])
+                    ->setPraticaFlowServiceName($item['flow']);
+                $manager->persist($servizio);
+            } else {
+                $this->counters['servizi']['updated']++;
+            }
 
-            $entiNames = explode('##', $item['enti']);
-            $entiNames = array_map('trim', $entiNames);
-            $enti = $manager->getRepository('AppBundle:Ente')->findBy(['name' => $entiNames]);
+            $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
+            $enti = $manager->getRepository('AppBundle:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
+            foreach ($enti as $ente) {
+                $servizio->activateForEnte($ente);
+            }
 
-            $servizio = (new Servizio())
-                ->setName($item['name'])
-                ->setDescription($item['description'])
-                ->setTestoIstruzioni($item['testoIstruzioni'])
-                ->setStatus($item['status'])
-                ->setArea($item['area'])
-                ->setPraticaFCQN($item['fcqn'])
-                ->setPraticaFlowServiceName($item['flow'])
-                ->setEnti($enti);
-
-            $manager->persist($servizio);
             $manager->flush();
         }
     }
@@ -118,13 +146,16 @@ class LoadData implements FixtureInterface
     {
         $data = $this->getData('TerminiUtilizzo');
         foreach ($data as $item) {
-
             $terminiUtilizzo = (new TerminiUtilizzo())
                 ->setName($item['name'])
                 ->setText($item['text']);
-
             $manager->persist($terminiUtilizzo);
             $manager->flush();
         }
+    }
+
+    public function getCounters()
+    {
+        return $this->counters;
     }
 }
