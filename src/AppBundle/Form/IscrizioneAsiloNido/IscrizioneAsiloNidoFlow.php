@@ -12,8 +12,8 @@ use AppBundle\Form\Base\PraticaFlow;
 class IscrizioneAsiloNidoFlow extends PraticaFlow
 {
 
-    const STEP_ACCETTAZIONE_ISTRUZIONI = 1;
-    const STEP_SELEZIONA_ENTE = 2;
+    const STEP_SELEZIONA_ENTE = 1;
+    const STEP_ACCETTAZIONE_ISTRUZIONI = 2;
     const STEP_SELEZIONA_NIDO = 3;
     const STEP_ACCETTAZIONE_UTILIZZO_NIDO = 4;
     const STEP_SELEZIONA_ORARI_NIDO = 5;
@@ -30,13 +30,13 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
     protected function loadStepsConfig()
     {
         return array(
-            self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'pratica.accettazioneIstruzioni',
-                'form_type' => AccettazioneIstruzioniType::class,
-            ),
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'pratica.selezionaEnte',
                 'form_type' => SelezionaEnteType::class,
+            ),
+            self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
+                'label' => 'pratica.accettazioneIstruzioni',
+                'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_SELEZIONA_NIDO => array(
                 'label' => 'iscrizione_asilo_nido.selezionaNido',

@@ -390,7 +390,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testISeeistruzioniIscrizioneAsiloNidoApplicationFormWhenIStartTheFormAsLoggedUser()
+    public function testISeeSceltaComuneFormWhenIStartTheFormAsLoggedUser()
     {
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->exactly(2))
@@ -417,7 +417,7 @@ class PraticaControllerTest extends AbstractAppTestCase
             ['servizio' => $servizio->getSlug()]
         ));
 
-        $this->assertContains('pratica_accettazione_istruzioni', $this->client->getResponse()->getContent());
+        $this->assertContains('pratica_seleziona_ente', $this->client->getResponse()->getContent());
     }
 
     /**
@@ -448,11 +448,11 @@ class PraticaControllerTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        // Accettazioni istruzioni
-        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
-
         // Selezione del comune
         $this->selezioneComune($crawler, $nextButton, $ente, $form);
+
+        // Accettazioni istruzioni
+        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
 
         // Selezione del asilo
         $this->nextStep($crawler, $nextButton, $form);
@@ -520,7 +520,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testISeeInstructionsForFillingUpTheFormWhenIStartTheFormAsLoggedUser()
+    public function testISeeChoiceOfEnteWhenIStartTheFormAsLoggedUser()
     {
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->exactly(2))
@@ -552,7 +552,6 @@ class PraticaControllerTest extends AbstractAppTestCase
             ['servizio' => $servizio->getSlug()]
         ));
 
-        $this->assertContains('pratica_accettazione_istruzioni', $this->client->getResponse()->getContent());
+        $this->assertContains('pratica_seleziona_ente', $this->client->getResponse()->getContent());
     }
-
 }

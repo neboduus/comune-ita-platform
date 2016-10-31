@@ -14,8 +14,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 
@@ -216,12 +218,18 @@ class PraticheController extends Controller
         /** @var PraticaFlow $praticaFlowService */
         $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
 
+        $praticaFlowService->setInstanceKey($user->getId());
+
         $praticaFlowService->bind($pratica);
+
+        if ($pratica->getInstanceId() == null) {
+            $pratica->setInstanceId($praticaFlowService->getInstanceId());
+        }
+
         $form = $praticaFlowService->createForm();
-
-
         if ($praticaFlowService->isValid($form)) {
             $praticaFlowService->saveCurrentStepData($form);
+            $pratica->setLastCompiledStep($praticaFlowService->getCurrentStepNumber());
             if ($praticaFlowService->nextStep()) {
                 $this->getDoctrine()->getManager()->flush();
                 $form = $praticaFlowService->createForm();
@@ -242,7 +250,7 @@ class PraticheController extends Controller
                     'feedback',
                     $this->get('translator')->trans('pratica_ricevuta')
                 );
-
+                $praticaFlowService->getDataManager()->drop($praticaFlowService);
                 $praticaFlowService->reset();
 
                 return $this->redirectToRoute(
