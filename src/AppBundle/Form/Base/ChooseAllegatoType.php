@@ -70,7 +70,7 @@ class ChooseAllegatoType extends AbstractType
      */
     public function onPreSetData(FormEvent $event)
     {
-        $this->addChoise($event->getForm());
+        $this->addChoice($event->getForm());
     }
 
     /**
@@ -85,6 +85,7 @@ class ChooseAllegatoType extends AbstractType
         /** @var Pratica $pratica */
         $pratica = $options['pratica'];
         $fileDescription = $options['fileDescription'];
+        $purgeFiles = $options['purge_files'];
 
         $data = $event->getData();
 
@@ -95,6 +96,8 @@ class ChooseAllegatoType extends AbstractType
             $fileChoices = array();
         }
 
+        $hasNewFile = false;
+
         if ($fileUpload instanceof UploadedFile) {
 
             $uploadResult = $this->handleUploadedFile($fileUpload, $pratica, $fileDescription);
@@ -103,27 +106,26 @@ class ChooseAllegatoType extends AbstractType
                     $event->getForm()->addError(new FormError($violation->getMessage()));
                 }
             } else {
-                $fileChoices = [$uploadResult->getId()];
-                $data['choose'] = null;
-                $data['add'] = null;
+                $hasNewFile = $uploadResult->getId();
+                $newFileList = [$hasNewFile];
+                $this->addChoiceListToPratica($newFileList, $pratica, $fileDescription, $purgeFiles);
+            }
+        } elseif (!empty( $fileChoices )) {
+            $this->addChoiceListToPratica($fileChoices, $pratica, $fileDescription, $purgeFiles);
+        }
+
+        if ($options['required']){
+            if ($hasNewFile) {
+                $event->getForm()->addError(new FormError('Il file è stato caricato correttamente'));
+                $data['choose'] = $hasNewFile;
+                $event->setData($data);
+            }elseif(empty( $fileChoices )) {
+                $event->getForm()->addError(new FormError('Il campo file è richiesto'));
             }
         }
 
-        if (!empty( $fileChoices )) {
-            $this->addFirstChoiceToPratica($fileChoices, $pratica);
-            $this->removeOtherChoicesFromPratica($fileChoices, $pratica, $fileDescription);
-        }
-
-        if ($options['required'] && empty( $fileChoices )) {
-            $event->getForm()->addError(new FormError('Il campo file è richiesto'));
-        }
-
-        $data['choose'] = isset( $fileChoices[0] ) ? $fileChoices[0] : null;
-
-        $event->setData($data);
-
-        $this->removeChoise($event->getForm());
-        $this->addChoise($event->getForm());
+        $this->removeChoice($event->getForm());
+        $this->addChoice($event->getForm());
 
     }
 
@@ -132,7 +134,12 @@ class ChooseAllegatoType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired(array('fileDescription', 'pratica'));
+        $resolver->setDefaults(array(
+            'purge_files' => false,
+        ))->setRequired(array(
+            'fileDescription',
+            'pratica'
+        ));
     }
 
     /**
@@ -189,7 +196,7 @@ class ChooseAllegatoType extends AbstractType
     /**
      * @param FormInterface $form
      */
-    private function addChoise(FormInterface $form)
+    private function addChoice(FormInterface $form)
     {
         $options = $form->getConfig()->getOptions();
 
@@ -207,7 +214,7 @@ class ChooseAllegatoType extends AbstractType
             'mapped' => false,
             'expanded' => true,
             'multiple' => false,
-            'required' => false,
+            'required' => $options['required'] && count($fileChoices) > 0,
             'data' => count($fileChoices) > 0 ? $fileChoices[0] : null,
             'label' => false,
             'placeholder' => 'Carica un nuovo file..'
@@ -217,7 +224,7 @@ class ChooseAllegatoType extends AbstractType
     /**
      * @param FormInterface $form
      */
-    private function removeChoise(FormInterface $form)
+    private function removeChoice(FormInterface $form)
     {
         $form->remove('choose');
     }
@@ -250,33 +257,29 @@ class ChooseAllegatoType extends AbstractType
     /**
      * @param array $fileChoices
      * @param Pratica $pratica
+     * @param $fileDescription
+     * @param bool $purgeFiles
      */
-    private function addFirstChoiceToPratica(array &$fileChoices, Pratica $pratica)
-    {
+    private function addChoiceListToPratica(
+        array &$fileChoices,
+        Pratica $pratica,
+        $fileDescription,
+        $purgeFiles = false
+    ) {
         foreach ($fileChoices as $key => $fileChoose) {
             $allegato = $this->repository->findOneById($fileChoose);
             if ($allegato instanceof Allegato) {
                 $pratica->addAllegato($allegato);
                 break;
-            } else {
-                unset( $fileChoices[$key] );
             }
         }
-    }
 
-    /**
-     * @param array $fileChoices
-     * @param Pratica $pratica
-     * @param $fileDescription
-     */
-    private function removeOtherChoicesFromPratica(array &$fileChoices, Pratica $pratica, $fileDescription)
-    {
         if (!empty( $fileChoices )) {
             $currentAllegati = $this->getCurrentAllegati($pratica, $fileDescription);
             foreach ($currentAllegati as $praticaAllegato) {
                 if (!in_array((string)$praticaAllegato->getId(), $fileChoices)) {
                     $pratica->removeAllegato($praticaAllegato);
-                    if ($praticaAllegato->getPratiche()->isEmpty()) {
+                    if ($purgeFiles && $praticaAllegato->getPratiche()->isEmpty()) {
                         $this->entityManager->remove($praticaAllegato);
                         $this->entityManager->flush();
                     }
@@ -287,5 +290,4 @@ class ChooseAllegatoType extends AbstractType
             $this->entityManager->flush();
         }
     }
-
 }
