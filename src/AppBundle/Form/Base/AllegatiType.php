@@ -28,8 +28,9 @@ class AllegatiType extends AbstractType
             'class' => Allegato::class,
             'choice_label' => 'choiceLabel',
             'query_builder' => function (EntityRepository $er) use ($user) {
-                return $er->createQueryBuilder('a')
-                    ->where('a.owner = :user')
+                $builder = $er->createQueryBuilder('a');
+                return $builder->where('a.owner = :user')
+                    ->andWhere($builder->expr()->isInstanceOf('a', Allegato::class))
                     ->setParameter('user', $user)
                     ->orderBy('a.originalFilename', 'ASC');
             },

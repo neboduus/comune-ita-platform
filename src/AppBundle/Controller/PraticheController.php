@@ -2,14 +2,12 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Logging\LogConstants;
-use Craue\FormFlowBundle\Form\FormFlowInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -97,10 +95,10 @@ class PraticheController extends Controller
             'pratiche' => $pratiche,
             'title' => 'lista_pratiche',
             'tab_pratiche' => array(
-                'draft'      => $praticheDraft,
-                'pending'    => $pratichePending,
-                'completed'  => $praticheCompleted,
-                'cancelled'  => $praticheCancelled,
+                'draft' => $praticheDraft,
+                'pending' => $pratichePending,
+                'completed' => $praticheCompleted,
+                'cancelled' => $praticheCancelled,
             ),
         ];
     }
@@ -109,7 +107,7 @@ class PraticheController extends Controller
      * @Route("/{servizio}/new", name="pratiche_new")
      * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
      *
-     * @param Request  $request
+     * @param Request $request
      * @param Servizio $servizio
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -127,10 +125,10 @@ class PraticheController extends Controller
             array('creationTime' => 'ASC')
         );
 
-        if (!empty($pratiche)) {
+        if (!empty( $pratiche )) {
             return $this->redirectToRoute(
                 'pratiche_list_draft',
-                [ 'servizio' => $servizio->getSlug() ]
+                ['servizio' => $servizio->getSlug()]
             );
         }
 
@@ -139,8 +137,8 @@ class PraticheController extends Controller
         $enteSlug = $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null);
         if ($enteSlug != null) {
             $ente = $this->getDoctrine()
-                ->getRepository('AppBundle:Ente')
-                ->findOneBySlug($enteSlug);
+                         ->getRepository('AppBundle:Ente')
+                         ->findOneBySlug($enteSlug);
             if ($ente != null) {
                 $pratica->setEnte($ente);
             } else {
@@ -228,8 +226,10 @@ class PraticheController extends Controller
 
         $form = $praticaFlowService->createForm();
         if ($praticaFlowService->isValid($form)) {
+
             $praticaFlowService->saveCurrentStepData($form);
             $pratica->setLastCompiledStep($praticaFlowService->getCurrentStepNumber());
+
             if ($praticaFlowService->nextStep()) {
                 $this->getDoctrine()->getManager()->flush();
                 $form = $praticaFlowService->createForm();
@@ -250,6 +250,7 @@ class PraticheController extends Controller
                     'feedback',
                     $this->get('translator')->trans('pratica_ricevuta')
                 );
+
                 $praticaFlowService->getDataManager()->drop($praticaFlowService);
                 $praticaFlowService->reset();
 
@@ -262,7 +263,7 @@ class PraticheController extends Controller
 
         return [
             'form' => $form->createView(),
-            'pratica' => $pratica,
+            'pratica' => $praticaFlowService->getFormData(),
             'flow' => $praticaFlowService,
             'user' => $user,
         ];
@@ -288,6 +289,12 @@ class PraticheController extends Controller
         ];
     }
 
+    /**
+     * @param Servizio $servizio
+     * @param CPSUser $user
+     *
+     * @return Pratica
+     */
     private function createNewPratica(Servizio $servizio, CPSUser $user)
     {
         $praticaClassName = $servizio->getPraticaFCQN();
@@ -295,7 +302,7 @@ class PraticheController extends Controller
         $praticaFlowService = $this->get($servizio->getPraticaFlowServiceName());
 
         $pratica = new $praticaClassName();
-        if (!$pratica instanceof Pratica){
+        if (!$pratica instanceof Pratica) {
             throw new \RuntimeException("Wrong Pratica FCQN for servizio {$servizio->getName()}");
         }
         $pratica
@@ -309,7 +316,12 @@ class PraticheController extends Controller
             array(
                 'user' => $user,
                 'servizio' => $servizio,
-                'status' => [Pratica::STATUS_COMPLETE, Pratica::STATUS_SUBMITTED, Pratica::STATUS_PENDING, Pratica::STATUS_REGISTERED],
+                'status' => [
+                    Pratica::STATUS_COMPLETE,
+                    Pratica::STATUS_SUBMITTED,
+                    Pratica::STATUS_PENDING,
+                    Pratica::STATUS_REGISTERED
+                ],
             ),
             array('creationTime' => 'DESC'),
             1
@@ -350,8 +362,8 @@ class PraticheController extends Controller
         $moduloCompilato = new ModuloCompilato();
         $moduloCompilato->setOwner($user);
         $destDir = $this->getDestDirFromModuloContext($moduloCompilato);
-        $fileName = uniqid().'.pdf';
-        $filePath = $destDir.DIRECTORY_SEPARATOR.$fileName;
+        $fileName = uniqid() . '.pdf';
+        $filePath = $destDir . DIRECTORY_SEPARATOR . $fileName;
 
         $fs = $this->get('filesystem');
         $fs->dumpFile($filePath, $content);
@@ -362,11 +374,11 @@ class PraticheController extends Controller
 
         $moduloCompilato->setFilename($fileName);
         $servizioName = $pratica->getServizio()->getName();
-        $moduloCompilato->setOriginalFilename("Modulo {$servizioName} ".$now->format('Ymdhi'));
+        $moduloCompilato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi'));
         $moduloCompilato->setDescription(
             $this->get('translator')->trans(
                 'pratica.modulo.descrizione',
-                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i') ]
+                ['nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i')]
             )
         );
         $this->getDoctrine()->getManager()->persist($moduloCompilato);
@@ -377,12 +389,13 @@ class PraticheController extends Controller
     /**
      * @param Pratica $pratica
      * @param $user
+     *
      * @return string
      */
     private function renderModuloAsPdf(Pratica $pratica, $user):string
     {
         $className = (new \ReflectionClass($pratica))->getShortName();;
-        $html = $this->renderView('AppBundle:Pratiche:pdf/'.$className.'.html.twig', array(
+        $html = $this->renderView('AppBundle:Pratiche:pdf/' . $className . '.html.twig', array(
             'pratica' => $pratica,
             'user' => $user,
         ));
@@ -401,7 +414,7 @@ class PraticheController extends Controller
         /** @var PropertyMapping $mapping */
         $mapping = $this->get('vich_uploader.property_mapping_factory')->fromObject($moduloCompilato)[0];
         $path = $this->get('ocsdc.allegati.directory_namer')->directoryName($moduloCompilato, $mapping);
-        $destDir = $mapping->getUploadDestination().'/'.$path;
+        $destDir = $mapping->getUploadDestination() . '/' . $path;
 
         return $destDir;
     }

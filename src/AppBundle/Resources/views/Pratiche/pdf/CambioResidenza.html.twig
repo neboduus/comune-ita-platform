@@ -1,0 +1,32 @@
+<html>
+<head>
+    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+
+{{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+
+<div class="chiede center_title">
+        {{ ('cambio_residenza.provenienza.' ~ pratica.provenienza)|trans }}
+        {% if pratica.provenienza == 'altro_comune' %}
+            {{ 'cambio_residenza.pdf.comune'|trans() }} {{ pratica.comuneDiProvenienza }}
+        {% elseif pratica.provenienza == 'estero' %}
+            {{ 'cambio_residenza.pdf.stato'|trans() }} {{ pratica.statoEsteroDiProvenienza }}
+        {% elseif pratica.provenienza == 'aire' %}
+            {{ 'cambio_residenza.pdf.stato'|trans() }} {{ pratica.statoEsteroDiProvenienza }}
+            {{ 'cambio_residenza.pdf.comune'|trans() }} {{ pratica.comuneEsteroDiProvenienza }}
+        {% elseif pratica.provenienza == 'altro' %}
+            {{ pratica.altraProvenienza }}
+        {% endif %}
+</div>
+
+<div class="richiesta">
+</div>
+
+{{ include('AppBundle:Pratiche/pdf/parts:nucleo_familiare.html.twig', {'pratica':pratica, 'user': user}) }}
+
+{{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
+
+
+</body>
+</html>

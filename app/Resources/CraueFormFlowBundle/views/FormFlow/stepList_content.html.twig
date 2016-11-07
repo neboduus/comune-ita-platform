@@ -6,6 +6,7 @@
         {% for stepLabel in flow.getStepLabels() %}
             <li{{ block('craue_flow_stepList_class') }}>
                 <span class="bubble"></span>
+                <div {% if flow.getStepLabels()|length > 10 %}style="margin-top: 50px;transform: rotate(304deg);"{% endif %}>
                 {%- if flow.isStepDone(loop.index) -%}
                     <i class="fa fa-check"></i>
                 {%- endif -%}
@@ -18,6 +19,7 @@
                 {%- else -%}
                     {{ block('craue_flow_stepLabel') }}
                 {%- endif -%}
+                </div>
             </li>
         {% endfor %}
     </ul>

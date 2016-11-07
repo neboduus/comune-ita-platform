@@ -52,6 +52,7 @@ pratica:
   aggiungi_componente_nucleo_familiare: 'Aggiungi componente nucleo familiare'
   cancella_elemento: 'Cancella elemento'
   accetto_istruzioni: 'Ok mi è chiaro'
+  nucleoFamiliare: 'Composizione del nucleo familiare'
   guida_alla_compilazione:
     accettazione_istruzioni: 'Leggi e accetta le istruzioni di compilazione'
     nucleo_familiare: 'Inserisci i componenti del nucleo familiare'
@@ -233,6 +234,66 @@ autolettura_acqua:
     dati_contatore: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
     dati_lettura: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
     note: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
+
+cambio_residenza:
+  provenienza:
+    comune: "Dichiarazione di cambiamento di abitazione nell’ambito dello stesso comune"
+    altro_comune: "Dichiarazione di residenza con provenienza da altro comune"
+    estero: "Dichiarazione di residenza con provenienza dall’estero"
+    aire: "Dichiarazione di residenza di cittadini italiani iscritti all’AIRE (Anagrafe degli italiani residenti all’estero) con provenienza dall’estero"
+    altro: "Dichiarazione di residenza per altro motivo"
+  occupazione:
+    proprietario: "Proprietario dell'abitazione"
+    locazione: "Intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+    locazione_erp: "Intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+    comodato: "Comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+    usufruttuario: "Usufruttuario"
+    autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+  guida_alla_compilazione:
+    dichiarazione_provenienza: "Dichiarazione della provenienza: da un altro comune, dall'estero o dallo stesso comune"
+    dichiarazione_provenienza_nessun_allegato: "Per il tipo di provenienza selezionato non sono necessarie altre informazioni"
+    dichiarazione_provenienza_altro_comune: "Indicare il comune di provenienza"
+    dichiarazione_provenienza_stato_estero: "Indicare lo Stato estero di provenienza"
+    dichiarazione_provenienza_aire: "Indicare lo Stato estero e il comune AIRE di provenienza"
+    dichiarazione_provenienza_altro_motivo: "Specificare il motivo"
+    dati_residenza: "Specifica il nuovo indirizzo di residenza"
+    attualmente_residenti: "Inserisci le persone già iscritte nella nuova abitazione"
+    occupazione: "Dichiarazione riguardante la tipologia di occupazione della nuova residenza"
+    occupazione.proprietario: "Specifica i valori catastali dell'abitazione di proprietà"
+    occupazione.locazione: "Specifica i dettagli del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+    occupazione.locazione_erp: "Allega il contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+    occupazione.comodato: "Specifica i dettagli del contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+    occupazione.usufruttuario: "Indicare dati utili a consentirne la verifica"
+    occupazione.autocertificazione: "Allega l'autocertificazione del proprietario dell'appartamento"
+    informazioni_accertamento: "Segnalare eventuali giorni ed orari di preferenza per la verifica delle autorità giudiziarie"
+  dichiarazioneProvenienza: "Provenienza"
+  dichiarazioneProvenienzaDettaglio: "Dettagli provenienza"
+  datiResidenza: "Dati residenza"
+  datiResidenza.provincia: "Provincia"
+  datiResidenza.comune: "Comune"
+  datiResidenza.indirizzo: "Via/Piazza"
+  datiResidenza.numero_civico: "Numero civico"
+  datiResidenza.scala: "Scala"
+  datiResidenza.piano: "Piano"
+  datiResidenza.interno: "Interno"
+  attualmenteResidenti: "Persone già iscritte nella nuova abitazione"
+  tipologiaOccupazione: "Tipologia di occupazione"
+  tipologiaOccupazioneDettaglio: "Dettagli tipologia di occupazione"
+  proprietarioCatastoSezione: "Sezione"
+  proprietarioCatastoFoglio: "Foglio"
+  proprietarioCatastoParticella: "Particella/Mappale"
+  proprietarioCatastoSubalterno: "Subalterno"
+  contrattoAgenzia: "Indirizzo agenzia entrate"
+  contrattoNumero: "Numero contratto"
+  contrattoData: "Data di stipula del contratto"
+  verbaleConsegna: "Scansione del contratto o del verbale di consegna dell'immobile"
+  usufruttuarioInfo: "Titolo costitutivo"
+  autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+  informazioniAccertamento: "Informazioni per accertamento dei dati"
+  aggiungi_persona_residente: "Aggiungi persona"
+  pdf:
+    comune: "comune"
+    stato: "stato"
 
 errori:
   allegato:

@@ -8,8 +8,10 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlow;
+use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class PraticaFlow extends FormFlow
 {
@@ -23,11 +25,18 @@ abstract class PraticaFlow extends FormFlow
      */
     private $translator;
 
+    protected $handleFileUploads = false;
+
     /**
+     * PraticaFlow constructor.
+     *
      * @param LoggerInterface $logger
+     * @param TranslatorInterface $translator
      */
-    public function __construct(LoggerInterface $logger, TranslatorInterface $translator)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        TranslatorInterface $translator
+    ) {
         $this->logger = $logger;
         $this->translator = $translator;
     }
@@ -93,4 +102,5 @@ abstract class PraticaFlow extends FormFlow
         $cloneComponente->setRapportoParentela($componente->getRapportoParentela());
         $pratica->addNucleoFamiliare($cloneComponente);
     }
+
 }

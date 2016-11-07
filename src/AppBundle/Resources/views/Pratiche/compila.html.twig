@@ -40,6 +40,7 @@
                 addComponenteForm($collectionHolder, $newLinkLi);
             });
             setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+
             {% elseif form.allegati is defined %}
             var $addAllegato = $('<a href="#" class="btn btn-md btn-primary add_allegato">{{ 'pratica.aggiungi_allegato'|trans() }}</a>');
             var $newLinkLi = $('<li></li>').append($addAllegato);
@@ -50,6 +51,19 @@
                 addComponenteForm($collectionHolder, $newLinkLi);
             });
             setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+
+            {% elseif form.persone_residenti is defined %}
+
+            var $addPersonaResidente = $('<a href="#" class="btn btn-md btn-primary add_persona_residente">{{ 'cambio_residenza.aggiungi_persona_residente'|trans() }}</a>');
+            var $newLinkLi = $('<li></li>').append($addPersonaResidente);
+            var $collectionHolder = $('ul.persone_residenti');
+
+            $addPersonaResidente.on('click', function(e) {
+                e.preventDefault();
+                addComponenteForm($collectionHolder, $newLinkLi);
+            });
+            setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+
             {% endif %}
 
             $('button.craue_formflow_button_last').on('click', function(e){
@@ -99,6 +113,14 @@
                             <ul class="list-unstyled nucleo_familiare" data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
                                 {% for componente in form.nucleo_familiare %}
                                     <li><div class="well well-sm">{{ form_row(componente) }}</div></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if form.persone_residenti is defined %}
+                            <ul class="list-unstyled persone_residenti" data-prototype="{{ form_widget(form.persone_residenti.vars.prototype)|e('html_attr') }}">
+                                {% for persona in form.persone_residenti %}
+                                    <li><div class="well well-sm">{{ form_row(persona) }}</div></li>
                                 {% endfor %}
                             </ul>
                         {% endif %}

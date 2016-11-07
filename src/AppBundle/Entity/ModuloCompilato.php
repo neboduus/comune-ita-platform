@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,6 +14,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ModuloCompilato extends Allegato
 {
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="moduliCompilati")
+     * @var ArrayCollection $pratiche
+     */
+    private $pratiche;
 
     /**
      * ModuloCompilato constructor.

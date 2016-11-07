@@ -62,4 +62,8 @@ class TestiAccompagnatoriProcedura
         return $this;
     }
 
+    public function translate($palceholder){
+        return $this->translator->trans($palceholder);
+    }
+
 }
