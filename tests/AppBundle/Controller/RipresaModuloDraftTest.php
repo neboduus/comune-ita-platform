@@ -12,6 +12,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
+use AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,7 @@ use Symfony\Component\DomCrawler\Crawler;
 /**
  * Class PraticaControllerTest
  */
-class IscrizioneAsiloNidoTest extends AbstractAppTestCase
+class RipresaModuloDraftTest extends AbstractAppTestCase
 {
     /**
      * @var CPSUserProvider
@@ -54,7 +55,7 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testICanFillOutTheFormToEnrollMyChildInAsiloNidoAsLoggedUser()
+    public function testICanResumeFillingTheFormFromTheLastFilledStep()
     {
         $ente = $this->createEnteWithAsili();
 
@@ -63,13 +64,6 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
 
         $user = $this->createCPSUser();
-        $numberOfExpectedAttachments = 3;
-        $this->setupNeededAllegatiForAllInvolvedUsers($numberOfExpectedAttachments, $user);
-
-        $mockMailer = $this->setupSwiftmailerMock([$user]);
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockMailer) {
-            $kernel->getContainer()->set('swiftmailer.mailer.default', $mockMailer);
-        });
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
             'pratiche_new',
@@ -92,49 +86,23 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         /** @var AsiloNido $asiloSelected*/
         $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);
         $this->terminiFruizione($asiloSelected, $crawler, $nextButton, $form);
-        $this->selezioneOrari($asiloSelected, $crawler, $nextButton, $form);
-        $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
-        $this->datiBambino($crawler, $nextButton, $form);
-        $this->composizioneNucleoFamiliare($crawler, $nextButton, $form, 0, 5);
 
-        $allegati = $this->em->getRepository('AppBundle:Allegato')->findBy(['owner' => $user]);
-        $this->allegati($crawler, $nextButton, $form, $allegati);
-
-
-        $form = $crawler->selectButton($finishButton)->form();
-        $this->client->submit($form);
-        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $this->client->followRedirect();
-
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $this->assertContains($currentPraticaId, $this->client->getRequest()->getRequestUri());
-
+        $this->em->persist($currentPratica);
         $this->em->refresh($currentPratica);
+        $this->assertEquals(IscrizioneAsiloNidoFlow::STEP_ACCETTAZIONE_UTILIZZO_NIDO, $currentPratica->getLastCompiledStep());
 
-        $this->assertEquals(
-            $currentPratica->getRichiedenteNome(),
-            $user->getNome()
-        );
+        $this->client->request('GET', $this->router->generate('home'));
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $this->assertEquals(
-            $currentPratica->getStruttura()->getName(),
-            $asiloSelected->getName()
-        );
-
-        $allegati = $currentPratica->getAllegati()->toArray();
-        $this->assertEquals($numberOfExpectedAttachments - 1, count($allegati));
-
-        //modulo stampato
-        $this->assertEquals(1, $currentPratica->getModuliCompilati()->count());
-        $pdfExportedForm = $currentPratica->getModuliCompilati()->get(0);
-        $this->assertNotNull($pdfExportedForm);
-        $this->assertTrue($pdfExportedForm instanceof ModuloCompilato);
-
-        $this->assertNotNull($currentPratica->getSubmissionTime());
-        $submissionDate = new \DateTime();
-        $submissionDate->setTimestamp($currentPratica->getSubmissionTime());
-
-        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format('d/m/Y h:i'), $pdfExportedForm->getDescription());
+        $currentPraticaResumeEditUrl = $this->router->generate('pratiche_compila', [
+            'pratica' => $currentPraticaId,
+            'instance' => $currentPratica->getInstanceId(),
+            'step' => $currentPratica->getLastCompiledStep(),
+        ]);
+        $crawler = $this->client->request('GET', $currentPraticaResumeEditUrl);
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $currentStep = intval($crawler->filterXPath('//input[@name="flow_iscrizioneAsiloNido_step"]')->getNode(0)->getAttribute('value'));
+        $this->assertEquals($currentPratica->getLastCompiledStep(), $currentStep);
     }
 
     /**

@@ -88,7 +88,7 @@
                     <div class="row step-{{ flow.getCurrentStepNumber() }}">
 
                         <h3>Step {{ flow.getCurrentStepNumber() }} -  {{ flow.currentStepLabel()|trans }}</h3>
-                        {{ form_start(form) }}
+                        {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
                         {{ form_errors(form) }}
 
                         <div>

@@ -238,6 +238,18 @@ class Pratica
     private $intestatarioConto;
 
     /**
+     * @var int
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $lastCompiledStep;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string",nullable=true)
+     */
+    private $instanceId;
+
+    /**
      * Pratica constructor.
      */
     public function __construct()
@@ -254,6 +266,7 @@ class Pratica
         $this->nucleoFamiliare = new ArrayCollection();
         $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
         $this->storicoStati = new ArrayCollection();
+        $this->lastCompiledStep = 0;
     }
 
     /**
@@ -1112,4 +1125,37 @@ class Pratica
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getLastCompiledStep(): int
+    {
+        return $this->lastCompiledStep;
+    }
+
+    /**
+     * @param int $lastCompiledStep
+     */
+    public function setLastCompiledStep($lastCompiledStep)
+    {
+        $this->lastCompiledStep = $lastCompiledStep;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstanceId()
+    {
+        return $this->instanceId;
+    }
+
+    /**
+     * @param string $instanceId
+     */
+    public function setInstanceId($instanceId)
+    {
+        $this->instanceId = $instanceId;
+        return $this;
+    }
 }

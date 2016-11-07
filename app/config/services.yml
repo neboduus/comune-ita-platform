@@ -61,3 +61,5 @@ services:
         class: AppBundle\Form\ContributoPannolini\ContributoPannoliniFlow
         parent: craue.form.flow
         arguments: ["@logger","@translator"]
+    ocsdc.form.flow.storage_key_generator:
+        class: AppBundle\Form\UserSessionStorageKeyGenerator
