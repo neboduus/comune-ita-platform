@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * @ORM\Entity
@@ -18,7 +17,8 @@ use Symfony\Component\VarDumper\VarDumper;
  *     "iscrizione_asilo_nido" = "IscrizioneAsiloNido",
  *     "autolettura_acqua" = "AutoletturaAcqua",
  *     "contributo_pannolini" = "ContributoPannolini",
- *     "cambio_residenza" = "CambioResidenza"
+ *     "cambio_residenza" = "CambioResidenza",
+ *     "allacciamento_acquedotto" = "AllacciamentoAcquedotto"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -36,6 +36,7 @@ class Pratica
     const TYPE_AUTOLETTURA_ACQUA = "autolettura_acqua";
     const TYPE_CONTRIBUTO_PANNOLINI = "contributo_pannolini";
     const TYPE_CAMBIO_RESIDENZA = "cambio_residenza";
+    const TYPE_ALLACCIAMENTO_AQUEDOTTO = "allacciamento_aquedotto";
 
     /**
      * @var string
@@ -359,7 +360,8 @@ class Pratica
     }
 
     /**
-     * @param integer $status
+     * @param $status
+     * @param StatusChange|null $statusChange
      *
      * @return $this
      */
@@ -650,7 +652,7 @@ class Pratica
     }
 
     /**
-     * @param ArrayCollection $nucleoFamiliare
+     * @param Collection $nucleoFamiliare
      *
      * @return $this
      */
@@ -821,7 +823,9 @@ class Pratica
     }
 
     /**
-     * @param mixed $submissionTime
+     * @param $submissionTime
+     *
+     * @return $this
      */
     public function setSubmissionTime($submissionTime)
     {
@@ -862,11 +866,11 @@ class Pratica
     }
 
     /**
-     * @param $commentoSeriliazed
+     * @param $commentoSerialized
      */
-    private function parseCommentStringIntoArrayCollection($commentoSeriliazed)
+    private function parseCommentStringIntoArrayCollection($commentoSerialized)
     {
-        $commento = unserialize($commentoSeriliazed);
+        $commento = unserialize($commentoSerialized);
         if (is_array($commento) && isset($commento['text']) && !empty($commento['text'])) {
             if (!$this->commenti->exists(function ($key, $value) use ($commento) {
                 return $value['text'] == $commento['text'];
@@ -1102,7 +1106,9 @@ class Pratica
     }
 
     /**
-     * @param string $iban
+     * @param $iban
+     *
+     * @return $this
      */
     public function setIban($iban)
     {
@@ -1137,6 +1143,8 @@ class Pratica
 
     /**
      * @param int $lastCompiledStep
+     *
+     * @return $this
      */
     public function setLastCompiledStep($lastCompiledStep)
     {
@@ -1153,7 +1161,9 @@ class Pratica
     }
 
     /**
-     * @param string $instanceId
+     * @param $instanceId
+     *
+     * @return $this
      */
     public function setInstanceId($instanceId)
     {

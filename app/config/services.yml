@@ -76,3 +76,8 @@ services:
     ocsdc.form.flow.cambioresidenza:
         class: AppBundle\Form\CambioResidenza\CambioResidenzaFlow
         parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.allacciamentoacquedotto:
+        class: AppBundle\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow
+        parent: ocsdc.form.flow.pratica
+
