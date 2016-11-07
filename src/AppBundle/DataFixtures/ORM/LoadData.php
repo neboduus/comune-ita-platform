@@ -126,7 +126,8 @@ class LoadData implements FixtureInterface
                     ->setStatus($item['status'])
                     ->setArea($item['area'])
                     ->setPraticaFCQN($item['fcqn'])
-                    ->setPraticaFlowServiceName($item['flow']);
+                    ->setPraticaFlowServiceName($item['flow'])
+                    ->setPraticaFlowOperatoreServiceName($item['flow_operatore']);
                 $manager->persist($servizio);
             } else {
                 $this->counters['servizi']['updated']++;

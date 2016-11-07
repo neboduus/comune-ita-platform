@@ -24,27 +24,31 @@
                 </p>
                 <hr />
             {% endif %}
+
+
+            <div class="row">
+
+                <h4>{{ 'operatori.commenti_e_modifiche'|trans }}</h4>
+
+                <div class="col-md-12">
+                    <ul class="list-unstyled">
+                        {% for commento in pratica.commenti %}
+                            <li>
+                                <small>{{ commento.createdAt|date("d/m/Y H:i") }}</small>
+                                <p><strong>{{ commento.creator }}:</strong> {{ commento.text }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-12">
+                    {{ form(form) }}
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="row">
 
-        <h4>{{ 'operatori.commenti_e_modifiche'|trans }}</h4>
-
-        <div class="col-md-6">
-            <ul class="list-unstyled">
-                {% for commento in pratica.commenti %}
-                    <li>
-                        <small>{{ commento.createdAt|date("d/m/Y H:i") }}</small>
-                        <p><strong>{{ commento.creator }}:</strong> {{ commento.text }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="col-md-6">
-            {{ form(form) }}
-        </div>
-    </div>
 
 
 {% endblock %}

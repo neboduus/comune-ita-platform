@@ -4,6 +4,7 @@ namespace AppBundle\Form\Base;
 
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\Pratica;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -30,7 +31,6 @@ class ChooseAllegatoType extends AbstractType
     /**
      * @var \Doctrine\Common\Persistence\ObjectRepository|EntityRepository
      */
-    protected $repository;
 
     protected $validator;
 
@@ -43,7 +43,6 @@ class ChooseAllegatoType extends AbstractType
     public function __construct(EntityManager $entityManager, ValidatorInterface $validator)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $this->entityManager->getRepository(Allegato::class);
         $this->validator = $validator;
     }
 
@@ -86,6 +85,7 @@ class ChooseAllegatoType extends AbstractType
         $pratica = $options['pratica'];
         $fileDescription = $options['fileDescription'];
         $purgeFiles = $options['purge_files'];
+        $class = $options['class'];
 
         $data = $event->getData();
 
@@ -100,7 +100,7 @@ class ChooseAllegatoType extends AbstractType
 
         if ($fileUpload instanceof UploadedFile) {
 
-            $uploadResult = $this->handleUploadedFile($fileUpload, $pratica, $fileDescription);
+            $uploadResult = $this->handleUploadedFile($fileUpload, $pratica, $fileDescription, $class);
             if ($uploadResult instanceof ConstraintViolationListInterface) {
                 foreach ($uploadResult as $violation) {
                     $event->getForm()->addError(new FormError($violation->getMessage()));
@@ -108,10 +108,10 @@ class ChooseAllegatoType extends AbstractType
             } else {
                 $hasNewFile = $uploadResult->getId();
                 $newFileList = [$hasNewFile];
-                $this->addChoiceListToPratica($newFileList, $pratica, $fileDescription, $purgeFiles);
+                $this->addChoiceListToPratica($newFileList, $pratica, $fileDescription, $class, $purgeFiles);
             }
         } elseif (!empty( $fileChoices )) {
-            $this->addChoiceListToPratica($fileChoices, $pratica, $fileDescription, $purgeFiles);
+            $this->addChoiceListToPratica($fileChoices, $pratica, $fileDescription, $class, $purgeFiles);
         }
 
         if ($options['required']){
@@ -136,6 +136,7 @@ class ChooseAllegatoType extends AbstractType
     {
         $resolver->setDefaults(array(
             'purge_files' => false,
+            'class' => Allegato::class
         ))->setRequired(array(
             'fileDescription',
             'pratica'
@@ -156,15 +157,15 @@ class ChooseAllegatoType extends AbstractType
      *
      * @return Allegato[]
      */
-    private function getCurrentAllegati(Pratica $pratica, $fileDescription)
+    private function getCurrentAllegati(Pratica $pratica, $fileDescription, $class)
     {
         $user = $pratica->getUser();
-        $queryBuilder = $this->repository->createQueryBuilder('a');
+        $queryBuilder = $this->entityManager->getRepository($class)->createQueryBuilder('a');
         $queryBuilder->setCacheable(false);
 
         return $queryBuilder
             ->where('a.owner = :user AND a.description = :fileDescription')
-            ->andWhere($queryBuilder->expr()->isInstanceOf('a', Allegato::class))
+            ->andWhere($queryBuilder->expr()->isInstanceOf('a', $class))
             ->andWhere(':praticaId MEMBER OF a.pratiche')
             ->setParameter('user', $user)
             ->setParameter('praticaId', $pratica->getId())
@@ -179,14 +180,14 @@ class ChooseAllegatoType extends AbstractType
      *
      * @return Allegato[]
      */
-    private function getAllAllegati(Pratica $pratica, $fileDescription)
+    private function getAllAllegati(Pratica $pratica, $fileDescription, $class)
     {
         $user = $pratica->getUser();
-        $queryBuilder = $this->repository->createQueryBuilder('a');
+        $queryBuilder = $this->entityManager->getRepository($class)->createQueryBuilder('a');
 
         return $queryBuilder
             ->where('a.owner = :user AND a.description = :fileDescription')
-            ->andWhere($queryBuilder->expr()->isInstanceOf('a', Allegato::class))
+            ->andWhere($queryBuilder->expr()->isInstanceOf('a', $class))
             ->setParameter('user', $user)
             ->setParameter('fileDescription', $fileDescription)
             ->orderBy('a.updatedAt', 'DESC')
@@ -204,11 +205,12 @@ class ChooseAllegatoType extends AbstractType
         $pratica = $options['pratica'];
 
         $fileDescription = $options['fileDescription'];
+        $class = $options['class'];
 
-        $fileChoices = $this->getCurrentAllegati($pratica, $fileDescription);
-        $allAllegati = $this->getAllAllegati($pratica, $fileDescription);
+        $fileChoices = $this->getCurrentAllegati($pratica, $fileDescription, $class);
+        $allAllegati = $this->getAllAllegati($pratica, $fileDescription, $class);
         $form->add('choose', EntityType::class, [
-            'class' => Allegato::class,
+            'class' => $class,
             'choices' => $allAllegati,
             'choice_label' => 'name',
             'mapped' => false,
@@ -236,9 +238,10 @@ class ChooseAllegatoType extends AbstractType
      *
      * @return Allegato|ConstraintViolationListInterface
      */
-    private function handleUploadedFile(UploadedFile $fileUpload, Pratica $pratica, $fileDescription)
+    private function handleUploadedFile(UploadedFile $fileUpload, Pratica $pratica, $fileDescription, $class)
     {
-        $newAllegato = new Allegato();
+        /** @var Allegato $newAllegato */
+        $newAllegato = new $class();
         $newAllegato->setFile($fileUpload);
         $newAllegato->setDescription($fileDescription);
         $newAllegato->setOwner($pratica->getUser());
@@ -264,18 +267,22 @@ class ChooseAllegatoType extends AbstractType
         array &$fileChoices,
         Pratica $pratica,
         $fileDescription,
+        $class,
         $purgeFiles = false
     ) {
         foreach ($fileChoices as $key => $fileChoose) {
-            $allegato = $this->repository->findOneById($fileChoose);
+            $allegato = $this->entityManager->getRepository($class)->findOneById($fileChoose);
+
+            $reflect = new \ReflectionClass($allegato);
+            $method = 'add' . $reflect->getShortName();
             if ($allegato instanceof Allegato) {
-                $pratica->addAllegato($allegato);
+                $pratica->$method ($allegato);
                 break;
             }
         }
 
         if (!empty( $fileChoices )) {
-            $currentAllegati = $this->getCurrentAllegati($pratica, $fileDescription);
+            $currentAllegati = $this->getCurrentAllegati($pratica, $fileDescription, $class);
             foreach ($currentAllegati as $praticaAllegato) {
                 if (!in_array((string)$praticaAllegato->getId(), $fileChoices)) {
                     $pratica->removeAllegato($praticaAllegato);

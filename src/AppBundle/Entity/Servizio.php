@@ -89,6 +89,12 @@ class Servizio
     private $praticaFlowServiceName;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $praticaFlowOperatoreServiceName;
+
+    /**
      * @var ArrayCollection
      * @ORM\Column(type="text")
      */
@@ -291,6 +297,26 @@ class Servizio
     public function setPraticaFlowServiceName($praticaFlowServiceName)
     {
         $this->praticaFlowServiceName = $praticaFlowServiceName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPraticaFlowOperatoreServiceName()
+    {
+        return $this->praticaFlowOperatoreServiceName;
+    }
+
+    /**
+     * @param string $praticaFlowOperatoreServiceName
+     *
+     * @return Servizio
+     */
+    public function setPraticaFlowOperatoreServiceName($praticaFlowOperatoreServiceName)
+    {
+        $this->praticaFlowOperatoreServiceName = $praticaFlowOperatoreServiceName;
 
         return $this;
     }

@@ -4,8 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
 use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
+use AppBundle\Form\AzioniOperatore\AllegatoPraticaType;
 use AppBundle\Logging\LogConstants;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -141,25 +143,64 @@ class OperatoriController extends Controller
 
     /**
      * @Route("/{pratica}/approva",name="operatori_approva_pratica")
+     * @Template()
+     * @param Pratica $pratica
      */
-    public function approvaPraticaAction(Pratica $pratica, Request $request)
+    public function approvaPraticaAction(Pratica $pratica)
     {
+
+        if ($pratica->getStatus() == Pratica::STATUS_COMPLETE) {
+            return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+        }
+
         $this->checkUserCanAccessPratica($this->getUser(), $pratica);
-        $pratica->setStatus(Pratica::STATUS_COMPLETE);
+        $user = $this->getUser();
 
-        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+        // Se non è stato dichiarato un flow operatore per il servizio della pratica posso approvarla direttamente
+        if ($pratica->getServizio()->getPraticaFlowOperatoreServiceName() == null
+            || empty($pratica->getServizio()->getPraticaFlowOperatoreServiceName()))
+        {
+            $this->approvePratica($pratica);
+            return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+        }
 
-        $this->getDoctrine()->getManager()->flush();
+        /** @var PraticaFlow $praticaFlowService */
+        $praticaFlowService = $this->get( $pratica->getServizio()->getPraticaFlowOperatoreServiceName() );
 
-        $this->get('logger')->info(
-            LogConstants::PRATICA_APPROVED,
-            [
-                'pratica' => $pratica->getId(),
-                'user' => $pratica->getUser()->getId(),
-            ]
-        );
+        $praticaFlowService->setInstanceKey($user->getId());
 
-        return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+        $praticaFlowService->bind($pratica);
+
+        if ($pratica->getInstanceId() == null) {
+            $pratica->setInstanceId($praticaFlowService->getInstanceId());
+        }
+
+        $form = $praticaFlowService->createForm();
+        if ($praticaFlowService->isValid($form)) {
+
+            $praticaFlowService->saveCurrentStepData($form);
+            $pratica->setLastCompiledStep($praticaFlowService->getCurrentStepNumber());
+
+            if ($praticaFlowService->nextStep()) {
+                $this->getDoctrine()->getManager()->flush();
+                $form = $praticaFlowService->createForm();
+            } else {
+
+                $this->approvePratica($pratica);
+
+                $praticaFlowService->getDataManager()->drop($praticaFlowService);
+                $praticaFlowService->reset();
+
+                return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+            }
+        }
+
+        return [
+            'form' => $form->createView(),
+            'pratica' => $praticaFlowService->getFormData(),
+            'flow' => $praticaFlowService,
+            'user' => $user,
+        ];
     }
 
     /**
@@ -358,6 +399,24 @@ class OperatoriController extends Controller
         if ( $user->getEnte() != $operatore->getEnte() ) {
             throw new UnauthorizedHttpException("User can not read operatore {$operatore->getId()}");
         }
+    }
+
+    /**
+     * @param Pratica $pratica
+     */
+    private function approvePratica(Pratica $pratica)
+    {
+        $pratica->setStatus(Pratica::STATUS_COMPLETE);
+        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+        $this->getDoctrine()->getManager()->flush();
+
+        $this->get('logger')->info(
+            LogConstants::PRATICA_APPROVED,
+            [
+                'pratica' => $pratica->getId(),
+                'user' => $pratica->getUser()->getId(),
+            ]
+        );
     }
 
 }

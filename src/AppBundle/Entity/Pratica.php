@@ -18,7 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "autolettura_acqua" = "AutoletturaAcqua",
  *     "contributo_pannolini" = "ContributoPannolini",
  *     "cambio_residenza" = "CambioResidenza",
- *     "allacciamento_acquedotto" = "AllacciamentoAcquedotto"
+ *     "allacciamento_acquedotto" = "AllacciamentoAcquedotto",
+ *     "certificato_nascita" = "CertificatoNascita"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -37,6 +38,7 @@ class Pratica
     const TYPE_CONTRIBUTO_PANNOLINI = "contributo_pannolini";
     const TYPE_CAMBIO_RESIDENZA = "cambio_residenza";
     const TYPE_ALLACCIAMENTO_AQUEDOTTO = "allacciamento_aquedotto";
+    const TYPE_CERTIFICATO_NASCITA = "certificato_nascita";
 
     /**
      * @var string
@@ -86,6 +88,13 @@ class Pratica
      * @Assert\Valid(traverse=true)
      */
     private $moduliCompilati;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\AllegatoOperatore", inversedBy="pratiche3", orphanRemoval=false)
+     * @var ArrayCollection
+     * @Assert\Valid(traverse=true)
+     */
+    private $allegatiOperatore;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
@@ -266,6 +275,7 @@ class Pratica
         $this->numeriProtocollo = new ArrayCollection();
         $this->allegati = new ArrayCollection();
         $this->moduliCompilati = new ArrayCollection();
+        $this->allegatiOperatore = new ArrayCollection();
         $this->nucleoFamiliare = new ArrayCollection();
         $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
         $this->storicoStati = new ArrayCollection();
@@ -559,9 +569,9 @@ class Pratica
     }
 
     /**
-     * @param ModuloCompilato $modulo
-     * @return $this
-     */
+ * @param ModuloCompilato $modulo
+ * @return $this
+ */
     public function removeModuloCompilato(ModuloCompilato $modulo)
     {
         if ($this->moduliCompilati->contains($modulo)) {
@@ -589,6 +599,42 @@ class Pratica
         if (!$this->moduliCompilati->contains($modulo)) {
             $this->moduliCompilati->add($modulo);
             $modulo->addPratica($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param AllegatoOperatore $modulo
+     * @return $this
+     */
+    public function removeAllegatoOperatore( AllegatoOperatore $allegato )
+    {
+        if ($this->allegatiOperatore->contains($allegato)) {
+            $this->allegatiOperatore->removeElement($allegato);
+            $allegato->removePratica($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAllegatiOperatore(): Collection
+    {
+        return $this->allegatiOperatore;
+    }
+
+    /**
+     * @param AllegatoOperatore $allegato
+     * @return $this
+     */
+    public function addAllegatoOperatore( AllegatoOperatore $allegato )
+    {
+        if (!$this->allegatiOperatore->contains( $allegato )) {
+            $this->allegatiOperatore->add( $allegato );
+            $allegato->addPratica( $this );
         }
 
         return $this;
