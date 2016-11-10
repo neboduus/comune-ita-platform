@@ -1,7 +1,8 @@
-
+{% if pratica.ente != null %}
 <div class="destinatario">
     <p><em>{{ 'pratica.pdf.spett_le'|trans() }}</em> <strong>{{ pratica.ente.name }}</strong></p>
 </div>
+{% endif %}
 
 <div class="oggetto">
     <p>

@@ -296,6 +296,40 @@ cambio_residenza:
     comune: "comune"
     stato: "stato"
 
+allacciamento_acquedotto:
+  guida_alla_compilazione:
+    dati_immobile: "Inserire i dati dell'immobile e a che titolo viene fatta la richiesta"
+    dati_intervento: "Inserire i dati dell'intervento"
+    dati_contatto: "Specificare indirizzo per comunicazioni e rimborsi"
+  datiImmobile: "Dati dell'immobile"
+  datiImmobile.qualifica: "Qualifica del richiedente"
+  datiImmobile.provincia: "Provincia"
+  datiImmobile.comune: "Comune"
+  datiImmobile.indirizzo: "Indirizzo"
+  datiImmobile.numero_civico: "Numero civico"
+  datiImmobile.cap: "CAP"
+  datiImmobile.scala: "Scala"
+  datiImmobile.piano: "Piano"
+  datiImmobile.interno: "Interno"
+  datiImmobile.catasto_categoria: "Categoria catastale"
+  datiImmobile.catasto_codice_comune: "Codice catastale del comune"
+  datiImmobile.catasto_foglio: "Foglio"
+  datiImmobile.catasto_sezione: "Sezione"
+  datiImmobile.catasto_mappale: "Particella Mappale"
+  datiImmobile.catasto_subalterno: "Subalterno"
+  datiIntervento: "Tipologia di intervento"
+  datiIntervento.tipo_intervento: "Tipologia di intervento"
+  datiIntervento.tipo_allaccio: "Tipologia di allaccio"
+  datiIntervento.tipo_uso: "Tipologia d'utilizzo"
+  datiIntervento.diametro_rete_interna: "Diametro rete interna"
+  datiContatto: "Contatti"
+  datiContatto.use_alternate: "Utilizza i segenti dati"
+  datiContatto.indirizzo: "Indirizzo"
+  datiContatto.numero_civico: "Numero civico"
+  datiContatto.cap: "CAP"
+  datiContatto.comune: "Comune"
+
+
 errori:
   allegato:
     tipo_non_valido: L'allegato %s è di un tipo non supportato
