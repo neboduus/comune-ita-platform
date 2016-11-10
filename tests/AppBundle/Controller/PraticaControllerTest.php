@@ -60,7 +60,7 @@ class PraticaControllerTest extends AbstractAppTestCase
      */
     public function testICanSeeMyPraticheInTableView()
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $this->setupPraticheForUser($user);
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
@@ -117,10 +117,10 @@ class PraticaControllerTest extends AbstractAppTestCase
 
     public function testAsLoggedUserISeeAllMyPratiche()
     {
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $this->createPratiche($myUser);
 
-        $otherUser = $this->createCPSUser(true);
+        $otherUser = $this->createCPSUser();
         $this->createPratiche($otherUser);
 
         $repo = $this->em->getRepository("AppBundle:Pratica");
@@ -142,7 +142,7 @@ class PraticaControllerTest extends AbstractAppTestCase
 
     public function testAsACPSUserICanSeeTheExportedModuloDownloadLinkOnThePraticaDetailPage()
     {
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $this->createPratiche($myUser);
         $repo = $this->em->getRepository("AppBundle:Pratica");
         /** @var Pratica $pratica */
@@ -180,7 +180,7 @@ class PraticaControllerTest extends AbstractAppTestCase
      */
     public function testAsACPSUserICanSeeThePraticaDetailPage()
     {
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $this->createPratiche($myUser);
         $repo = $this->em->getRepository("AppBundle:Pratica");
         /** @var Pratica $pratica */
@@ -239,7 +239,7 @@ class PraticaControllerTest extends AbstractAppTestCase
      */
     public function testAsACPSUserICanSeeTheEditLinkForAPraticaInDraftStatus()
     {
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $pratica = $this->createPratica($myUser, null, Pratica::STATUS_DRAFT);
 
         $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
@@ -253,8 +253,8 @@ class PraticaControllerTest extends AbstractAppTestCase
      */
     public function testAsACPSUserICannotSeePraticheOfOthersUsers()
     {
-        $myUser = $this->createCPSUser(true);
-        $otherUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
+        $otherUser = $this->createCPSUser();
         $pratica = $this->createPratica($otherUser, null, Pratica::STATUS_DRAFT);
 
         $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
@@ -431,7 +431,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $flow = 'ocsdc.form.flow.asilonido';
         $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
 
-        $user = $this->createCPSUserWithTelefonoAndEmail('1111', '22@eee.55');
+        $user = $this->createCPSUser();
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
             'pratiche_new',
@@ -542,7 +542,7 @@ class PraticaControllerTest extends AbstractAppTestCase
             $kernel->getContainer()->set('logger', $mockLogger);
         });
 
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $ente = $this->createEnteWithAsili('L781');
         $ente1 = $this->createEnteWithAsili('L782');

@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
@@ -10,6 +11,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**
@@ -29,6 +31,7 @@ class CPSUserProviderTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
@@ -48,6 +51,7 @@ class CPSUserProviderTest extends AbstractAppTestCase
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
 
         $data = $this->getCPSUserData();
+        $data['codiceFiscale'] = 'RLDLCU77T05G224F';
         $data['emailAddress'] = null;
         $data['emailAddressPersonale'] = null;
         $user = $this->userProvider->provideUser($data);
@@ -67,7 +71,6 @@ class CPSUserProviderTest extends AbstractAppTestCase
 
         $data = $this->getCPSUserData();
         $user = $this->userProvider->provideUser($data);
-
         $mappedValue = self::getRemoteDataMapper($user);
         foreach($data as $key => $value){
             $this->assertEquals($value, $mappedValue['HTTP_'.strtoupper(str_replace('-', '_', $key))]);

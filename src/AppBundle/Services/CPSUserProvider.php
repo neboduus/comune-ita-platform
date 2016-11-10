@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * Class UserProvider
+ *
  * @package AppBundle\Services
  */
 class CPSUserProvider implements UserProviderInterface
@@ -27,10 +28,10 @@ class CPSUserProvider implements UserProviderInterface
      */
     private $logger;
 
-
     /**
      * UserProvider constructor.
-     * @param EntityManager   $em
+     *
+     * @param EntityManager $em
      * @param LoggerInterface $logger
      */
     public function __construct(EntityManager $em, LoggerInterface $logger)
@@ -41,12 +42,13 @@ class CPSUserProvider implements UserProviderInterface
 
     /**
      * @param string $username
+     *
      * @return CPSUser
      */
     public function loadUserByUsername($username):CPSUser
     {
         $user = $this->getPersistedUser(['username' => $username]);
-        if ($user instanceof CPSUser){
+        if ($user instanceof CPSUser) {
             return $user;
         }
         throw new UsernameNotFoundException("User $username not found");
@@ -54,6 +56,7 @@ class CPSUserProvider implements UserProviderInterface
 
     /**
      * @param UserInterface $user
+     *
      * @return CPSUser
      */
     public function refreshUser(UserInterface $user):CPSUser
@@ -69,6 +72,7 @@ class CPSUserProvider implements UserProviderInterface
 
     /**
      * @param string $class
+     *
      * @return bool
      */
     public function supportsClass($class)
@@ -93,24 +97,33 @@ class CPSUserProvider implements UserProviderInterface
         $user = new CPSUser();
 
         $fieldSetters = $this->getFieldSetters();
-        foreach( $fieldSetters as $key => $callback){
-            $callback($user, $data[$key], $this->logger);
+        foreach ($fieldSetters as $key => $callback) {
+            if (isset( $data[$key] )) {
+                $callback($user, $data[$key]);
+            }
         }
 
-        if ($user->getEmail() && $user->getEmail() !== $user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN){
+        if ($user->getEmail() === null) {
+            $user->setEmail($user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN);
+            $this->logger->notice(
+                LogConstants::CPS_USER_CREATED_WITH_BOGUS_DATA, ['user' => $user]
+            );
+        }
+
+        if ($user->getEmail() && $user->getEmail() !== $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN) {
             $user->setEmailContatto($user->getEmail());
-        }elseif ($user->getEmailAlt()){
-            $user->setEmailContatto($user->getEmailAlt());
+        } elseif ($user->getCpsEmailPersonale()) {
+            $user->setEmailContatto($user->getCpsEmailPersonale());
         }
 
-        if ($user->getCellulare()){
-            $user->setCellulareContatto($user->getCellulare());
+        if ($user->getCpsCellulare()) {
+            $user->setCellulareContatto($user->getCpsCellulare());
         }
 
         $user->addRole('ROLE_USER')
-            ->addRole('ROLE_CPS_USER')
-            ->setEnabled(true)
-            ->setPassword('');
+             ->addRole('ROLE_CPS_USER')
+             ->setEnabled(true)
+             ->setPassword('');
 
         $this->em->persist($user);
         $this->logger->info(
@@ -129,9 +142,10 @@ class CPSUserProvider implements UserProviderInterface
     public function provideUser(array $data)
     {
         $user = $this->getPersistedUser(['codiceFiscale' => $data['codiceFiscale']]);
-        if (!$user instanceof CPSUser){
+        if (!$user instanceof CPSUser) {
             $user = $this->createUserFromArray($data);
         }
+
         return $user;
     }
 
@@ -141,101 +155,104 @@ class CPSUserProvider implements UserProviderInterface
     private function getFieldSetters()
     {
         $fieldSetters = [
-            'codiceFiscale' => function(CPSUser $user, $value){
-                if (!$value){
-                    throw new \Exception("Field codiceFiscale not found");
-                }
+            'codiceFiscale' => function (CPSUser $user, $value) {
                 $user->setUsername($value);
                 $user->setCodiceFiscale($value);
             },
-            'capDomicilio' => function(CPSUser $user, $value){
-                $user->setCapDomicilio($value);
-            },
-            'capResidenza' => function(CPSUser $user, $value){
-                $user->setCapResidenza($value);
-            },
-            'cellulare' => function(CPSUser $user, $value){
-                $user->setCellulare($value);
-            },
-            'cittaDomicilio' => function(CPSUser $user, $value){
-                $user->setCittaDomicilio($value);
-            },
-            'cittaResidenza' => function(CPSUser $user, $value){
-                $user->setCittaResidenza($value);
-            },
-            'cognome' => function(CPSUser $user, $value){
+            'cognome' => function (CPSUser $user, $value) {
                 $user->setCognome($value);
             },
-            'dataNascita' => function(CPSUser $user, $value){
+            'dataNascita' => function (CPSUser $user, $value) {
                 $dateTime = \DateTime::createFromFormat('d/m/Y', $value);
                 if ($dateTime instanceof \DateTime) {
                     $user->setDataNascita($dateTime);
                 }
             },
-            'emailAddress' => function(CPSUser $user, $value, LoggerInterface $logger){
-                if ($value === null){
-                    $user->setEmail($user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN);
-                    $logger->notice(
-                        LogConstants::CPS_USER_CREATED_WITH_BOGUS_DATA, ['user' => $user]
-                    );
-                }else{
-                    $user->setEmail($value);
-                }
-            },
-            'emailAddressPersonale' => function(CPSUser $user, $value){
-                $user->setEmailAlt($value);
-            },
-            'indirizzoDomicilio' => function(CPSUser $user, $value){
-                $user->setIndirizzoDomicilio($value);
-            },
-            'indirizzoResidenza' => function(CPSUser $user, $value){
-                $user->setIndirizzoResidenza($value);
-            },
-            'luogoNascita' => function(CPSUser $user, $value){
+            'luogoNascita' => function (CPSUser $user, $value) {
                 $user->setLuogoNascita($value);
             },
-            'nome' => function(CPSUser $user, $value){
-                $user->setNome($value);
-            },
-            'provinciaDomicilio' => function(CPSUser $user, $value){
-                $user->setProvinciaDomicilio($value);
-            },
-            'provinciaNascita' => function(CPSUser $user, $value){
+            'provinciaNascita' => function (CPSUser $user, $value) {
                 $user->setProvinciaNascita($value);
             },
-            'provinciaResidenza' => function(CPSUser $user, $value){
-                $user->setProvinciaResidenza($value);
-            },
-            'sesso' => function(CPSUser $user, $value){
-                $user->setSesso($value);
-            },
-            'statoDomicilio' => function(CPSUser $user, $value){
-                $user->setStatoDomicilio($value);
-            },
-            'statoNascita' => function(CPSUser $user, $value){
+            'statoNascita' => function (CPSUser $user, $value) {
                 $user->setStatoNascita($value);
             },
-            'statoResidenza' => function(CPSUser $user, $value){
-                $user->setStatoResidenza($value);
+            'sesso' => function (CPSUser $user, $value) {
+                $user->setSesso($value);
             },
-            'telefono' => function(CPSUser $user, $value){
-                $user->setTelefono($value);
+            'emailAddress' => function (CPSUser $user, $value) {
+                $user->setEmail($value);
+                $user->setCpsEmail($value);
             },
-            'titolo' => function(CPSUser $user, $value){
-                $user->setTitolo($value);
+            'emailAddressPersonale' => function (CPSUser $user, $value) {
+                $user->setCpsEmailPersonale($value);
             },
-            'x509certificate_issuerdn' => function(CPSUser $user, $value){
+            'capDomicilio' => function (CPSUser $user, $value) {
+                $user->setCpsCapDomicilio($value);
+            },
+            'capResidenza' => function (CPSUser $user, $value) {
+                $user->setCpsCapResidenza($value);
+            },
+            'cellulare' => function (CPSUser $user, $value) {
+                $user->setCpsCellulare($value);
+            },
+            'cittaDomicilio' => function (CPSUser $user, $value) {
+                $user->setCpsCittaDomicilio($value);
+            },
+            'cittaResidenza' => function (CPSUser $user, $value) {
+                $user->setCpsCittaResidenza($value);
+            },
+            'indirizzoDomicilio' => function (CPSUser $user, $value) {
+                $user->setCpsIndirizzoDomicilio($value);
+            },
+            'indirizzoResidenza' => function (CPSUser $user, $value) {
+                $user->setCpsIndirizzoResidenza($value);
+            },
+            'nome' => function (CPSUser $user, $value) {
+                $user->setNome($value);
+            },
+            'provinciaDomicilio' => function (CPSUser $user, $value) {
+                $user->setCpsProvinciaDomicilio($value);
+            },
+            'provinciaResidenza' => function (CPSUser $user, $value) {
+                $user->setCpsProvinciaResidenza($value);
+            },
+            'statoDomicilio' => function (CPSUser $user, $value) {
+                $user->setCpsStatoDomicilio($value);
+            },
+            'statoResidenza' => function (CPSUser $user, $value) {
+                $user->setCpsStatoResidenza($value);
+            },
+            'telefono' => function (CPSUser $user, $value) {
+                $user->setCpsTelefono($value);
+            },
+            'titolo' => function (CPSUser $user, $value) {
+                $user->setCpsTitolo($value);
+            },
+            'x509certificate_issuerdn' => function (CPSUser $user, $value) {
                 $user->setX509certificateIssuerdn($value);
             },
-            'x509certificate_subjectdn' => function(CPSUser $user, $value){
+            'x509certificate_subjectdn' => function (CPSUser $user, $value) {
                 $user->setX509certificateSubjectdn($value);
             },
-            'x509certificate_base64' => function(CPSUser $user, $value){
+            'x509certificate_base64' => function (CPSUser $user, $value) {
                 $user->setX509certificateBase64($value);
             }
         ];
 
         return $fieldSetters;
+    }
+
+    public function userHasEnoughData(CPSUser $user)
+    {
+        return $user->getNome() !== null
+               && $user->getCognome() !== null
+               && $user->getCodiceFiscale() !== null
+               && $user->getIndirizzoResidenza() !== null
+               && $user->getCapResidenza() !== null
+               && $user->getCittaResidenza() !== null
+               && $user->getCellulare() !== null
+               && $user->getEmail() !== null;
     }
 
 }

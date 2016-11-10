@@ -41,7 +41,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
      */
     public function testThereIsALinkToCreateAllegati()
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $allegatiListPath = $this->router->generate('allegati_list_cpsuser');
 
@@ -64,7 +64,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
             LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
         ]);
 
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
 
         $allegato = $this->createAllegato($this->createOperatoreUser('username', 'pass'), $myUser, $destFileName, $fakeFileName);
 
@@ -94,7 +94,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
             LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
         ]);
 
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $allegato = $this->createModuloCompilato($this->createOperatoreUser('username', 'pass'), $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
@@ -124,7 +124,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
 
         $username = 'pippo';
         $password = 'pippo';
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $allegato = $this->createAllegato($this->createOperatoreUser($username, $password), $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
@@ -158,7 +158,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
         ]);
 
 
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $allegato = $this->createAllegato($this->createOperatoreUser('p', 'p'), $myUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
@@ -193,7 +193,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
             LogConstants::ALLEGATO_DOWNLOAD_NEGATO,
         ]);
 
-        $otherUser = $this->createCPSUser(true);
+        $otherUser = $this->createCPSUser();
         $allegato = $this->createAllegato($this->createOperatoreUser('p', 'p'), $otherUser, $destFileName, $fakeFileName);
 
         $allegatoDownloadUrl = $this->router->generate(
@@ -203,7 +203,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
             ]
         );
 
-        $myUser = $this->createCPSUser(true);
+        $myUser = $this->createCPSUser();
         $this->clientRequestAsCPSUser($myUser, 'GET', $allegatoDownloadUrl);
 
         $response = $this->client->getResponse();
@@ -215,7 +215,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
      */
     public function testCPSUserCanCreateAttachment()
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $repo = $this->em->getRepository('AppBundle:Allegato');
         $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
         $allegatiCreatePath = $this->router->generate('allegati_create_cpsuser');
@@ -243,7 +243,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
      */
     public function testUserCannotcreateAttachmentOfUnsupportedType($invalidFilename)
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $repo = $this->em->getRepository('AppBundle:Allegato');
         $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
         $allegatiCreatePath = $this->router->generate('allegati_create_cpsuser');
@@ -275,13 +275,13 @@ class AllegatiControllerTest extends AbstractAppTestCase
     public function testUserCanSeeHisOwnAttachments()
     {
         //create attachment for this user
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $fakeFileName = 'lenovo-yoga-xp1.pdf';
         $destFileName = md5($fakeFileName).'.pdf';
         $operatore = $this->createOperatoreUser('p', 'p');
         $myAllegato = $this->createAllegato($operatore, $user, $destFileName, $fakeFileName);
 
-        $otherUser = $this->createCPSUser(true);
+        $otherUser = $this->createCPSUser();
         $fakeFileName = 'lenovo-yoga-xp1.pdf';
         $destFileName = md5($fakeFileName).'.pdf';
         $otherAllegato = $this->createAllegato($operatore, $otherUser, $destFileName, $fakeFileName);
@@ -298,7 +298,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
     public function testUserCannotSeeHisModuliinbetweenHisOwnAttachments()
     {
         //create attachment for this user
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $operatore = $this->createOperatoreUser('p', 'p');
 
         $fakeFileName = 'lenovo-yoga-xp1.pdf';
@@ -319,7 +319,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
      */
     public function testUserCannotSeeDeleteAllegatoButtonIfAllegatoIsAttachedToPratica()
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $repo = $this->em->getRepository('AppBundle:Allegato');
 
         $fakeFileName = 'lenovo-yoga-xp1.pdf';
@@ -352,7 +352,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
             LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA,
         ]);
 
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $repo = $this->em->getRepository('AppBundle:Allegato');
 
         $fakeFileName = 'lenovo-yoga-xp1.pdf';

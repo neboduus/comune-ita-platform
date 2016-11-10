@@ -84,23 +84,36 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     protected function getCPSUserData()
     {
+        return array_merge($this->getCPSUserBaseData(), $this->getCPSUserExtraData());
+    }
+
+    protected function getCPSUserBaseData()
+    {
         $random = rand(0, time());
 
         return [
             "codiceFiscale" => 'ppippi77t05g224f' . $random,
+            "cognome" => 'Pippucci' . $random,
+            "nome" => 'Pippo' . $random,
+        ];
+    }
+
+    protected function getCPSUserExtraData()
+    {
+        $random = rand(0, time());
+
+        return [
             "capDomicilio" => '371378',
             "capResidenza" => '38127',
             "cellulare" => '123456789',
             "cittaDomicilio" => 'Verona',
             "cittaResidenza" => 'Trento',
-            "cognome" => 'Pippucci' . $random,
             "dataNascita" => '04/01/1973',
             "emailAddress" => 'pippo@pippucci.com' . $random,
             "emailAddressPersonale" => null,
             "indirizzoDomicilio" => 'via Leonardo da vinci 17',
             "indirizzoResidenza" => 'via Marsala 13',
             "luogoNascita" => 'Verona',
-            "nome" => 'Pippo' . $random,
             "provinciaDomicilio" => 'VR',
             "provinciaNascita" => 'VR',
             "provinciaResidenza" => 'TN',
@@ -116,24 +129,14 @@ abstract class AbstractAppTestCase extends WebTestCase
         ];
     }
 
-    protected function createCPSUserWithTelefonoAndEmail($telefono, $email)
+    protected function createCPSUser($termAccepted = true, $profileData = true)
     {
-        return $this->createCPSUser(true, $telefono, $email);
-    }
-
-    protected function createCPSUser($termAccepted = true, $telefono = null, $email = null)
-    {
-        $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($this->getCPSUserData());
+        $data = $profileData ? $this->getCPSUserData() : $this->getCPSUserBaseData();
+        $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($data);
         if ($termAccepted) {
             $user->setTermsAccepted(true);
         }
 
-        if ($telefono != null) {
-            $user->setTelefono($telefono);
-        }
-        if ($email != null) {
-            $user->setEmail($email);
-        }
         $this->em->persist($user);
         $this->em->flush();
 
@@ -663,7 +666,7 @@ abstract class AbstractAppTestCase extends WebTestCase
             $allegati[] = $allegato;
         }
 
-        $otherUser = $this->createCPSUser(true);
+        $otherUser = $this->createCPSUser();
         $allegato = new Allegato();
         $allegato->setOwner($otherUser);
         $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);

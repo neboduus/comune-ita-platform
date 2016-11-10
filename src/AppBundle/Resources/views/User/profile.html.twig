@@ -1,7 +1,7 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-    <h1>{{ 'user.profile.title'|trans }}</h1>
+    <h1>{{ 'user.profile.title'|trans }} {{ user.fullName }}</h1>
 
     {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
@@ -28,10 +28,91 @@
         </div>
     </div><!-- /.row -->
 
+    <h3>Residenza</h3>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <label for="indirizzo">{{ 'user.profile.indirizzo'|trans() }}</label>
+                        {{ form_row(form.sdc_indirizzo_residenza) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="cap">{{ 'user.profile.cap'|trans() }}</label>
+                        {{ form_row(form.sdc_cap_residenza) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-md-offset-1">
+            <div class="form-group">
+                <label for="citta">{{ 'user.profile.citta'|trans() }}</label>
+                {{ form_row(form.sdc_citta_residenza) }}
+            </div>
+        </div>
+    </div><!-- /.row -->
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="provincia">{{ 'user.profile.provincia'|trans() }}</label>
+                {{ form_row(form.sdc_provincia_residenza) }}
+            </div>
+        </div>
+        <div class="col-md-5 col-md-offset-1">
+            <div class="form-group">
+                <label for="stato">{{ 'user.profile.stato'|trans() }}</label>
+                {{ form_row(form.sdc_stato_residenza) }}
+            </div>
+        </div>
+    </div><!-- /.row -->
+
+    <h3>Domicilio</h3>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <label for="indirizzo">{{ 'user.profile.indirizzo'|trans() }}</label>
+                        {{ form_row(form.sdc_indirizzo_domicilio) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="cap">{{ 'user.profile.cap'|trans() }}</label>
+                        {{ form_row(form.sdc_cap_domicilio) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-md-offset-1">
+            <div class="form-group">
+                <label for="citta">{{ 'user.profile.citta'|trans() }}</label>
+                {{ form_row(form.sdc_citta_domicilio) }}
+            </div>
+        </div>
+    </div><!-- /.row -->
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="provincia">{{ 'user.profile.provincia'|trans() }}</label>
+                {{ form_row(form.sdc_provincia_domicilio) }}
+            </div>
+        </div>
+        <div class="col-md-5 col-md-offset-1">
+            <div class="form-group">
+                <label for="stato">{{ 'user.profile.stato'|trans() }}</label>
+                {{ form_row(form.sdc_stato_domicilio) }}
+            </div>
+        </div>
+    </div><!-- /.row -->
+
     {{ form_row(form.save) }}
 
     {{ form_end(form) }}
 
+    <hr />
 
     <h3>{{ 'user.profile.info_da_sdc'|trans() }}</h3>
     <div class="row">
@@ -88,14 +169,14 @@
             </div>
         </div>
     </div><!-- /.row -->
+
     <div class="row">
         <div class="col-md-5">
             <label>{{ 'user.profile.data_nascita'|trans() }}</label>
             <div class="row">
                 <div class="col-xs-4">
                     <div class="form-group">
-                        <input type="text" class="form-control" id="gg" placeholder="GG"
-                               value="{{ user.dataNascita|date('U')|date('d') }}" readonly="readonly"/>
+                        <input type="text" class="form-control" id="gg" placeholder="GG" value="{{ user.dataNascita|date('U')|date('d') }}" readonly="readonly"/>
                     </div>
                 </div>
                 <div class="col-xs-4">
@@ -121,71 +202,89 @@
         </div>
     </div><!-- /.row -->
 
-    <h3>Domicilio</h3>
+    {% if user.cpsIndirizzoResidenza != null %}
+    <h4>Residenza</h4>
     <div class="row">
         <div class="col-md-5">
-            <div class="form-group">
-                <label for="indirizzo">{{ 'user.profile.indirizzo'|trans() }}</label>
-                <input type="text" class="form-control" id="indirizzo" value="{{ user.indirizzoDomicilio }}"
-                       readonly="readonly"/>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <label for="indirizzo">{{ 'user.profile.indirizzo'|trans() }}</label>
+                        <input type="text" class="form-control" value="{{ user.cpsIndirizzoResidenza }}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="cap">{{ 'user.profile.cap'|trans() }}</label>
+                        <input type="text" class="form-control" value="{{ user.cpsCapResidenza }}" readonly="readonly"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-5 col-md-offset-1">
             <div class="form-group">
                 <label for="citta">{{ 'user.profile.citta'|trans() }}</label>
-                <input type="text" class="form-control" id="citta" value="{{ user.cittaDomicilio }}"
-                       readonly="readonly"/>
+                <input type="text" class="form-control" value="{{ user.cpsCittaResidenza }}" readonly="readonly"/>
             </div>
         </div>
     </div><!-- /.row -->
     <div class="row">
         <div class="col-md-5">
             <div class="form-group">
-                <label for="cap">{{ 'user.profile.cap'|trans() }}</label>
-                <input type="text" class="form-control" id="cap" value="{{ user.capDomicilio }}" readonly="readonly"/>
+                <label for="provincia">{{ 'user.profile.provincia'|trans() }}</label>
+                <input type="text" class="form-control" value="{{ user.cpsProvinciaResidenza }}" readonly="readonly"/>
             </div>
         </div>
         <div class="col-md-5 col-md-offset-1">
             <div class="form-group">
-                <label for="provincia">{{ 'user.profile.provincia'|trans() }}</label>
-                <input type="text" class="form-control" id="provincia" value="{{ user.provinciaDomicilio }}"
-                       readonly="readonly"/>
+                <label for="stato">{{ 'user.profile.stato'|trans() }}</label>
+                <input type="text" class="form-control" value="{{ user.cpsStatoResidenza }}" readonly="readonly"/>
             </div>
         </div>
     </div><!-- /.row -->
+    {% endif %}
 
-    <h3>Residenza</h3>
+    {% if user.cpsIndirizzoDomicilio != null %}
+    <h4>Domicilio</h4>
     <div class="row">
         <div class="col-md-5">
-            <div class="form-group">
-                <label for="indirizzo">{{ 'user.profile.indirizzo'|trans() }}</label>
-                <input type="text" class="form-control" id="indirizzo" value="{{ user.indirizzoResidenza }}"
-                       readonly="readonly"/>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <label for="indirizzo">{{ 'user.profile.indirizzo'|trans() }}</label>
+                        <input type="text" class="form-control" value="{{ user.cpsIndirizzoDomicilio }}" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label for="cap">{{ 'user.profile.cap'|trans() }}</label>
+                        <input type="text" class="form-control" value="{{ user.cpsIndirizzoDomicilio }}" readonly="readonly"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-5 col-md-offset-1">
             <div class="form-group">
                 <label for="citta">{{ 'user.profile.citta'|trans() }}</label>
-                <input type="text" class="form-control" id="citta" value="{{ user.cittaResidenza }}"
-                       readonly="readonly"/>
+                <input type="text" class="form-control" value="{{ user.cpsIndirizzoDomicilio }}" readonly="readonly"/>
             </div>
         </div>
     </div><!-- /.row -->
     <div class="row">
         <div class="col-md-5">
             <div class="form-group">
-                <label for="cap">{{ 'user.profile.cap'|trans() }}</label>
-                <input type="text" class="form-control" id="cap" value="{{ user.capResidenza }}" readonly="readonly"/>
+                <label for="provincia">{{ 'user.profile.provincia'|trans() }}</label>
+                <input type="text" class="form-control" value="{{ user.cpsIndirizzoDomicilio }}" readonly="readonly"/>
             </div>
         </div>
         <div class="col-md-5 col-md-offset-1">
             <div class="form-group">
-                <label for="provincia">{{ 'user.profile.provincia'|trans() }}</label>
-                <input type="text" class="form-control" id="provincia" value="{{ user.provinciaResidenza }}"
-                       readonly="readonly"/>
+                <label for="stato">{{ 'user.profile.stato'|trans() }}</label>
+                <input type="text" class="form-control" value="{{ user.cpsIndirizzoDomicilio }}" readonly="readonly"/>
             </div>
         </div>
     </div><!-- /.row -->
+    {% endif %}
 
 
 {% endblock %}

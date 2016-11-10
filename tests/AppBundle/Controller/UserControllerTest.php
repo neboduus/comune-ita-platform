@@ -42,7 +42,7 @@ class UserControllerTest extends AbstractAppTestCase
      */
     public function testICanAccessUserDashboardAsLoggedUser()
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $this->clientRequestAsCPSUser(
             $user,
             'GET',
@@ -67,7 +67,7 @@ class UserControllerTest extends AbstractAppTestCase
      */
     public function testICanAccessUserProfileAsLoggedUser()
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $this->client->request('GET', $this->router->generate('user_profile'));
         $this->clientRequestAsCPSUser(
             $user,
@@ -81,7 +81,7 @@ class UserControllerTest extends AbstractAppTestCase
 
     public function testUseCPSValuesAsDefaultContactInfoWhenCreatingUser()
     {
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $this->assertEquals($user->getCellulare(), $user->getCellulareContatto());
         $this->assertEquals($user->getEmail(), $user->getEmailContatto());
     }
@@ -96,13 +96,13 @@ class UserControllerTest extends AbstractAppTestCase
             $kernel->getContainer()->set('logger', $mockLogger);
         });
 
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $testEmail = rand(1, 10).'@example.com';
         $testCellulare = rand(1, 10);
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('user_profile'));
-        $form = $crawler->selectButton($this->translator->trans('user.profile.salva_informazioni_contatto'))->form([
+        $form = $crawler->selectButton($this->translator->trans('user.profile.salva_informazioni_profilo'))->form([
             'form[email_contatto]' => $testEmail,
             'form[cellulare_contatto]' => $testCellulare,
         ]);

@@ -69,7 +69,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $operatore = $this->createOperatoreUser($username, $password);
         $altroOperatore = $this->createOperatoreUser($username.'2', $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $praticaSubmitted = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_SUBMITTED);
         $praticaRegistered = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_REGISTERED);
@@ -115,7 +115,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $numeroDiFascicolo = 'NumeroDiFascicolo'.md5(time());
 
         $operatore = $this->createOperatoreUser($username, $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
 
@@ -161,7 +161,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $numeroDiProtocollo = 'NumeroDiProtocollo'.md5(time());
 
         $operatore = $this->createOperatoreUser($username, $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
 
@@ -208,7 +208,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $ente2 = $enti[1];
 
         $this->createOperatoreUser($username, $password, $ente1);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $praticaSubmitted = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
         $praticaRegistered = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_REGISTERED);
@@ -254,7 +254,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $operatore = $this->createOperatoreUser($username, $password);
         $altroOperatore = $this->createOperatoreUser($username.'2', $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $praticaSubmitted = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_SUBMITTED);
         $praticaRegistered = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_REGISTERED);
@@ -303,7 +303,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $operatore = $this->createOperatoreUser($username, $password);
         $altroOperatore = $this->createOperatoreUser($username.'2', $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
         $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
@@ -336,7 +336,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $ente1 = $enti[0];
 
         $operatore = $this->createOperatoreUser($username, $password, $ente1);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
         $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
@@ -368,7 +368,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $ente1 = $enti[0];
 
         $operatore = $this->createOperatoreUser($username, $password, $ente1);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
 
         $mockLogger = $this->getMockLogger();
@@ -408,7 +408,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $ente1 = $enti[0];
 
         $operatore = $this->createOperatoreUser($username, $password, $ente1);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
 
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
         $autoassignPraticaUrl = $this->router->generate('operatori_autoassing_pratica', ['pratica' => $pratica->getId()]);
@@ -430,7 +430,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $username = 'username';
 
         $operatore = $this->createOperatoreUser($username, $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
 
         $mockLogger = $this->getMockLogger();
@@ -471,7 +471,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $username = 'username';
 
         $operatore = $this->createOperatoreUser($username, $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
 
         $mockLogger = $this->getMockLogger();
@@ -515,7 +515,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $username = 'username';
 
         $operatore = $this->createOperatoreUser($username, $password);
-        $user = $this->createCPSUser(true);
+        $user = $this->createCPSUser();
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
 
         $mockLogger = $this->getMockLogger();
