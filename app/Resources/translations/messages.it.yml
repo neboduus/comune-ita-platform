@@ -102,6 +102,7 @@ pratica:
     allegato:
       file: 'Nome del file'
       descrizione: 'Descrizione'
+      pratiche_list_intro: 'Allegato alle pratiche:'
     modulocompilato: ''
     stato_0: 'Cancellata'
     stato_1: 'Bozza'

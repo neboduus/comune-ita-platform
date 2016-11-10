@@ -9,6 +9,8 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Logging\LogConstants;
+use Doctrine\ORM\Query;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,6 +22,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Vich\UploaderBundle\Mapping\PropertyMapping;
 
 /**
  * Class AllegatoController
@@ -29,7 +32,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AllegatoController extends Controller
 {
-
 
     /**
      * @param Request $request
@@ -133,19 +135,22 @@ class AllegatoController extends Controller
         $user = $this->getUser();
         $allegati = [];
         if ($user instanceof CPSUser) {
+            /** @var Query $query */
             $query = $this->getDoctrine()
                 ->getManager()
                 ->createQuery("SELECT allegato 
                 FROM AppBundle\Entity\Allegato allegato 
                 WHERE allegato INSTANCE OF AppBundle\Entity\Allegato 
-                AND allegato.owner = :user")
+                AND allegato.owner = :user
+                ORDER BY allegato.filename ASC")
                 ->setParameter('user', $this->getUser());
 
             $retrievedAllegati = $query->getResult();
             foreach ($retrievedAllegati as $allegato) {
+                $deleteForm = $this->createDeleteFormForAllegato($allegato);
                 $allegati[] = [
                     'allegato' => $allegato,
-                    'deleteform' => $this->createDeleteFormForAllegato($allegato)->createView(),
+                    'deleteform' => $deleteForm ? $deleteForm->createView() : null,
                 ];
             }
         }
@@ -166,36 +171,31 @@ class AllegatoController extends Controller
     public function cpsUserDeleteAllegatoAction(Request $request, Allegato $allegato)
     {
         $deleteForm = $this->createDeleteFormForAllegato($allegato);
+        if ($deleteForm instanceof Form) {
+            $deleteForm->handleRequest($request);
 
-        $deleteForm->handleRequest($request);
-
-        if ($allegato->getOwner() === $this->getUser() && $deleteForm->isValid()) {
-            if ($allegato->getPratiche()->count() > 0) {
+            if ($this->canDeleteAllegato($allegato) && $deleteForm->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($allegato);
+                $em->flush();
                 $this->get('session')->getFlashBag()
-                    ->add('error', $this->get('translator')->trans('allegato.non_cancellabile'));
-
-                $this->get('logger')->info(LogConstants::ALLEGATO_CANCELLAZIONE_NEGATA, [
+                     ->add('info', $this->get('translator')->trans('allegato.cancellato'));
+                $this->get('logger')->info(LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA, [
                     'allegato' => $allegato,
                     'user' => $this->getUser(),
                 ]);
-
-                return new RedirectResponse($this->get('router')->generate('allegati_list_cpsuser'));
             }
-
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($allegato);
-            $em->flush();
-            $this->get('session')->getFlashBag()
-                ->add('info', $this->get('translator')->trans('allegato.cancellato'));
-            $this->get('logger')->info(LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA, [
-                'allegato' => $allegato,
-                'user' => $this->getUser(),
-            ]);
         }
 
         return new RedirectResponse($this->get('router')->generate('allegati_list_cpsuser'));
     }
 
+    private function canDeleteAllegato(Allegato $allegato)
+    {
+        return $allegato->getOwner() === $this->getUser()
+               && $allegato->getPratiche()->count() == 0
+               && !is_subclass_of($allegato, Allegato::class);
+    }
 
     /**
      * @param Allegato $allegato
@@ -205,6 +205,7 @@ class AllegatoController extends Controller
     {
         $filename = $allegato->getFilename();
         $directoryNamer = $this->get('ocsdc.allegati.directory_namer');
+        /** @var PropertyMapping $mapping */
         $mapping = $this->get('vich_uploader.property_mapping_factory')->fromObject($allegato)[0];
         $destDir = $mapping->getUploadDestination().'/'.$directoryNamer->directoryName($allegato, $mapping);
         $filePath = $destDir.DIRECTORY_SEPARATOR.$filename;
@@ -221,7 +222,7 @@ class AllegatoController extends Controller
 
     /**
      * @param Allegato $allegato
-     * @param $logger
+     * @param LoggerInterface $logger
      */
     private function logUnauthorizedAccessAttempt(Allegato $allegato, $logger)
     {
@@ -235,16 +236,20 @@ class AllegatoController extends Controller
     }
 
     /**
-     * @param $allegato
-     * @return \Symfony\Component\Form\Form
+     * @param Allegato $allegato
+     * @return \Symfony\Component\Form\Form|null
      */
-    private function createDeleteFormForAllegato($allegato):Form
+    private function createDeleteFormForAllegato($allegato)
     {
-        return $this->createFormBuilder(array('id' => $allegato->getId()))
-            ->add('id', HiddenType::class)
-            ->add('elimina', SubmitType::class)
-            ->setAction($this->get('router')->generate('allegati_delete_cpsuser', ['allegato' => $allegato->getId()]))
-            ->setMethod('DELETE')
-            ->getForm();
+        if ($this->canDeleteAllegato($allegato)) {
+            return $this->createFormBuilder(array('id' => $allegato->getId()))
+                        ->add('id', HiddenType::class)
+                        ->add('elimina', SubmitType::class, ['attr' => ['class' => 'btn btn-xs btn-danger']])
+                        ->setAction($this->get('router')->generate('allegati_delete_cpsuser',
+                            ['allegato' => $allegato->getId()]))
+                        ->setMethod('DELETE')
+                        ->getForm();
+        }
+        return null;
     }
 }

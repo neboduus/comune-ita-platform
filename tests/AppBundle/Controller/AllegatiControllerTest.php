@@ -317,12 +317,8 @@ class AllegatiControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testUserCannotDeleteAllegatoIfAttachedToPratica()
+    public function testUserCannotSeeDeleteAllegatoButtonIfAllegatoIsAttachedToPratica()
     {
-        $this->setupMockedLogger([
-            LogConstants::ALLEGATO_CANCELLAZIONE_NEGATA,
-        ]);
-
         $user = $this->createCPSUser(true);
         $repo = $this->em->getRepository('AppBundle:Allegato');
 
@@ -336,17 +332,14 @@ class AllegatiControllerTest extends AbstractAppTestCase
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiDeletePath);
 
-        $form = $crawler->filterXPath('//*[@data-allegato="'.$boundAllegato->getId().'"]')
-            ->selectButton($this->translator->trans('elimina'))->form();
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $crawler = $crawler->filterXPath('//*[@data-allegato="'.$boundAllegato->getId().'"]')
+            ->selectButton($this->translator->trans('elimina'));
+
+        $this->assertEquals(0, count($crawler));
 
         //an allegato is not created for this user
         $this->assertEquals(1, count($repo->findBy(['owner' => $user])));
 
-        $expectedErrorMessage = $this->translator->trans('allegato.non_cancellabile');
-        $errorMessage = $crawler->filter('.alert-error')->html();
-        $this->assertContains($expectedErrorMessage, $errorMessage);
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Services;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use Tests\AppBundle\Base\AbstractAppTestCase;
@@ -17,6 +18,7 @@ class MailerServiceTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
     }
