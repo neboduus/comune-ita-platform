@@ -81,7 +81,7 @@ class Pratica
     private $allegati;
 
     /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuloCompilato", inversedBy="pratiche", orphanRemoval=false)
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuloCompilato", inversedBy="pratiche2", orphanRemoval=false)
      * @var ArrayCollection
      * @Assert\Valid(traverse=true)
      */
