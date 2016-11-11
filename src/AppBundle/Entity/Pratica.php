@@ -520,7 +520,7 @@ class Pratica
     }
 
     /**
-     * @param string $numeroDiProtocollo
+     * @param array $numeroDiProtocollo
      *
      * @return Pratica
      */

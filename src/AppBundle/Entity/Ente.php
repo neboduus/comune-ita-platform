@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
@@ -11,6 +12,7 @@ use Ramsey\Uuid\UuidInterface;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ente")
+ * @ORM\HasLifecycleCallbacks
  */
 class Ente
 {
@@ -52,12 +54,19 @@ class Ente
      */
     private $asili;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\Column(type="text")
+     */
+    private $protocolloParameters;
+
     public function __construct()
     {
         if ( !$this->id) {
             $this->id = Uuid::uuid4();
         }
         $this->asili = new ArrayCollection();
+        $this->protocolloParameters = new ArrayCollection();
     }
 
     /**
@@ -149,5 +158,53 @@ class Ente
         }
 
         return $this;
+    }
+
+    /**
+     * @param Servizio $servizio
+     * @return mixed
+     */
+    public function getProtocolloParametersPerServizio(Servizio $servizio)
+    {
+        $this->parseProtocolloParameters();
+        if ($this->protocolloParameters->containsKey($servizio->getSlug())) {
+            return $this->protocolloParameters->get($servizio->getSlug());
+        }
+
+        return  null;
+    }
+
+    /**
+     * @param mixed $protocolloParameters
+     * @param Servizio $servizio
+     * @return Servizio
+     */
+    public function setProtocolloParametersPerServizio($protocolloParameters, Servizio $servizio)
+    {
+        $this->parseProtocolloParameters();
+        $this->protocolloParameters->set($servizio->getSlug(), $protocolloParameters);
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PreFlush()
+     */
+    public function serializeProtocolloParameters()
+    {
+        if ($this->protocolloParameters instanceof Collection) {
+            $this->protocolloParameters = serialize($this->protocolloParameters->toArray());
+        }
+    }
+
+    /**
+     * @ORM\PostLoad()
+     * @ORM\PostUpdate()
+     */
+    public function parseProtocolloParameters()
+    {
+        if (!$this->protocolloParameters instanceof ArrayCollection) {
+            $this->protocolloParameters = new ArrayCollection(unserialize($this->protocolloParameters));
+        }
     }
 }

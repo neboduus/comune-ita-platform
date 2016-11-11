@@ -37,5 +37,10 @@ class LogConstants
     const PRATICA_UPDATED_STATUS_FROM_GPA = "Pratica status has been updated from GPA {statusChange}";
     const PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA = "Error in trying to update Pratica status from GPA {statusChange}, {error}";
 
+    const PRATICA_CHANGE_STATUS = "Pratica change status handled by listener {listener}: new status is {status}";
+
+    const PROTOCOLLO_SEND_ERROR = "Error {error_number} sending pratica {pratica} to protocollo";
+    const PROTOCOLLO_UPLOAD_ERROR = "Error {error_number} uploading allegato {allegato} of pratica {pratica} to protocollo";
+
 
 }

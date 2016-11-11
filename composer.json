@@ -43,7 +43,8 @@
         "knplabs/knp-snappy-bundle": "^1.4",
         "jms/serializer-bundle": "^1.1",
         "doctrine/doctrine-migrations-bundle": "^1.2",
-        "h4cc/wkhtmltopdf-amd64": "^0.12.3"
+        "h4cc/wkhtmltopdf-amd64": "^0.12.3",
+        "eightpoints/guzzle-bundle": "^5.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

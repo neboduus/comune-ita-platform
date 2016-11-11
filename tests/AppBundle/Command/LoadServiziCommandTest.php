@@ -2,6 +2,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Command\LoadServiziCommand;
+use AppBundle\DataFixtures\ORM\LoadData;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
@@ -9,6 +10,9 @@ use AppBundle\Entity\Servizio;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Tests\AppBundle\Base\AbstractAppTestCase;
+use Google\Spreadsheet\DefaultServiceRequest;
+use Google\Spreadsheet\ServiceRequestFactory;
+use Google\Spreadsheet\SpreadsheetService;
 
 /**
  * Class ServizioCreateCommandTest
@@ -34,8 +38,7 @@ class LoadServiziCommandTest extends AbstractAppTestCase
      */
     public function testExecute()
     {
-        //FIXME: questo pesca dal foglio "live" quindi si rompe ad ogni modifica
-        $expectedServicesCount = 13;
+        $expectedServicesCount = $this->getCountServizi();
         $serviziRepo = $this->em->getRepository(Servizio::class);
         $this->assertEquals(0, count($serviziRepo->findAll()));
 
@@ -63,5 +66,25 @@ class LoadServiziCommandTest extends AbstractAppTestCase
         $output = $commandTester->getDisplay();
         $this->assertContains('Servizi caricati: 0', $output);
         $this->assertContains('Servizi aggiornati: '.$expectedServicesCount, $output);
+    }
+
+    private function getCountServizi()
+    {
+        $serviceRequest = new DefaultServiceRequest("");
+        ServiceRequestFactory::setInstance($serviceRequest);
+
+        $spreadsheetService = new SpreadsheetService();
+        $worksheetFeed = $spreadsheetService->getPublicSpreadsheet(LoadData::PUBLIC_SPREADSHEETS_ID);
+        $worksheet = $worksheetFeed->getByTitle('Servizi');
+
+        $data = $worksheet->getCsv();
+        $dataArray = str_getcsv($data, "\r\n");
+        foreach ($dataArray as &$row) {
+            $row = str_getcsv($row, ",");
+        }
+
+        array_shift($dataArray); # remove column header
+
+        return count($dataArray);
     }
 }

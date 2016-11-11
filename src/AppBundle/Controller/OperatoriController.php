@@ -4,11 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
 use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
 use AppBundle\Form\AzioniOperatore\AllegatoPraticaType;
 use AppBundle\Logging\LogConstants;
+use AppBundle\PraticaEvents;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -92,7 +94,10 @@ class OperatoriController extends Controller
         $pratica->setOperatore($this->getUser());
         $pratica->setStatus(Pratica::STATUS_PENDING);
 
-        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+        $this->get('event_dispatcher')->dispatch(
+            PraticaEvents::ON_STATUS_CHANGE,
+            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_PENDING)
+        );
 
         $this->getDoctrine()->getManager()->flush();
 
@@ -211,7 +216,10 @@ class OperatoriController extends Controller
         $this->checkUserCanAccessPratica($this->getUser(), $pratica);
         $pratica->setStatus(Pratica::STATUS_CANCELLED);
 
-        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+        $this->get('event_dispatcher')->dispatch(
+            PraticaEvents::ON_STATUS_CHANGE,
+            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_CANCELLED)
+        );
 
         $this->getDoctrine()->getManager()->flush();
 
@@ -407,7 +415,12 @@ class OperatoriController extends Controller
     private function approvePratica(Pratica $pratica)
     {
         $pratica->setStatus(Pratica::STATUS_COMPLETE);
-        $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+
+        $this->get('event_dispatcher')->dispatch(
+            PraticaEvents::ON_STATUS_CHANGE,
+            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_COMPLETE)
+        );
+
         $this->getDoctrine()->getManager()->flush();
 
         $this->get('logger')->info(

@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new Vich\UploaderBundle\VichUploaderBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
+            new EightPoints\Bundle\GuzzleBundle\GuzzleBundle(),
             new AppBundle\AppBundle(),
         ];
 
