@@ -40,6 +40,10 @@ class MailerService
 
     /**
      * @param Pratica $pratica
+     * @param $fromAddress
+     * @param bool $resend
+     *
+     * @return int
      */
     public function dispatchMailForPratica(Pratica $pratica, $fromAddress, $resend = false)
     {
@@ -55,8 +59,8 @@ class MailerService
         if ($pratica->getOperatore() != null &&
             ($resend || !$this->operatoreUserHasAlreadyBeenWarned($pratica))
         ) {
-            $OperatoreUsermessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
-            $sentAmount += $this->mailer->send($OperatoreUsermessage);
+            $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
+            $sentAmount += $this->mailer->send($operatoreUserMessage);
             $pratica->setLatestOperatoreCommunicationTimestamp(time());
         }
 
