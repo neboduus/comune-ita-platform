@@ -461,7 +461,11 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->nextStep($crawler, $nextButton, $form);
 
         // Selezione orari
-        $this->nextStep($crawler, $nextButton, $form);
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'iscrizione_asilo_nido_orari[periodo_iscrizione_da]' => '01-09-2016',
+            'iscrizione_asilo_nido_orari[periodo_iscrizione_a]' => '01-09-2017'
+        ));
+        $crawler = $this->client->submit($form);
 
         // Dati richiedente
         $fillData = array();

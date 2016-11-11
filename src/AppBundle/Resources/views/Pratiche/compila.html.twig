@@ -1,7 +1,14 @@
 {% extends '@App/Default/index.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jquery-ui.min.css') }}"/>
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('bundles/app/js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/datepicker-it.js') }}"></script>
     <script>
         $(document).ready(function() {
             function addComponenteForm($collectionHolder, $newLinkLi) {
@@ -74,6 +81,46 @@
                     $form.trigger('submit'); // submit the form
                 });
             });
+
+
+            $.datepicker.setDefaults($.datepicker.regional['it']);
+            // Datepicker
+            $( ".datepicker" ).datepicker();
+
+            // Range datepicker
+            if ( $( ".datepicker-range-from" ).length && $( ".datepicker-range-to" ).length )
+            {
+                var dateFormat = "dd-mm-yy",
+                    from = $( ".datepicker-range-from" )
+                        .datepicker({
+                            defaultDate: "0",
+                            dateFormat: dateFormat,
+                            changeMonth: true,
+                            numberOfMonths: 2
+                        })
+                        .on( "change", function() {
+                            to.datepicker( "option", "minDate", getDate( this ) );
+                        }),
+                    to = $( ".datepicker-range-to" ).datepicker({
+                        defaultDate: "+1w",
+                        dateFormat: dateFormat,
+                        changeMonth: true,
+                        numberOfMonths: 2
+                    })
+                        .on( "change", function() {
+                            from.datepicker( "option", "maxDate", getDate( this ) );
+                        });
+
+                function getDate( element ) {
+                    var date;
+                    try {
+                        date = $.datepicker.parseDate( dateFormat, element.value );
+                    } catch( error ) {
+                        date = null;
+                    }
+                    return date;
+                }
+            }
         });
     </script>
 {% endblock %}

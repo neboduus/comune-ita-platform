@@ -16,6 +16,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -193,6 +194,18 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
             $this->assertContains($orario, $this->client->getResponse()->getContent());
             $orarioSelected = $orario;
         }
+
+        // Test su periodo iscrizione errato
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'iscrizione_asilo_nido_orari[periodo_iscrizione_da]' => '01-09-2017',
+            'iscrizione_asilo_nido_orari[periodo_iscrizione_a]' => '01-09-2016',
+            'iscrizione_asilo_nido_orari[struttura_orario]' => $orarioSelected,
+        ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        $msg = trim($crawler->filter('.alert-danger ul')->first()->text());
+        $this->assertEquals($msg, "La data di fine iscrizione deve essere maggiore di quella d'inizio", "Periodo iscrizione errato");
 
         $form = $crawler->selectButton($nextButton)->form(array(
             'iscrizione_asilo_nido_orari[periodo_iscrizione_da]' => '01-09-2016',

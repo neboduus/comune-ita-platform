@@ -8,6 +8,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class SelezionaOrariNidoType extends AbstractType
 {
@@ -34,7 +37,7 @@ class SelezionaOrariNidoType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'dd-MM-yyyy',
                 'attr' => [
-                    'class' => 'form-control input-inline datepicker',
+                    'class' => 'form-control input-inline datepicker-range-from',
                     'data-provide' => 'datepicker',
                     'data-date-format' => 'dd-mm-yyyy'
                 ]
@@ -45,11 +48,27 @@ class SelezionaOrariNidoType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'dd-MM-yyyy',
                 'attr' => [
-                    'class' => 'form-control input-inline datepicker',
+                    'class' => 'form-control input-inline datepicker-range-to',
                     'data-provide' => 'datepicker',
                     'data-date-format' => 'dd-mm-yyyy'
                 ]
             ]);
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+    }
+
+    /**
+     * FormEvents::PRE_SUBMIT $listener
+     *
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $data = $event->getData();
+        if ( strtotime($data['periodo_iscrizione_da']) >= strtotime($data['periodo_iscrizione_a']))
+        {
+            $event->getForm()->addError(new FormError("La data di fine iscrizione deve essere maggiore di quella d'inizio"));
+        }
     }
 
     public function getBlockPrefix()
