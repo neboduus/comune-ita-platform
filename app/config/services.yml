@@ -80,4 +80,19 @@ services:
     ocsdc.form.flow.allacciamentoacquedotto:
         class: AppBundle\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow
         parent: ocsdc.form.flow.pratica
+        arguments: ["@logger","@translator"]
 
+    ocsdc.form.flow.certificatonascita:
+        class: AppBundle\Form\CertificatoNascita\CertificatoNascitaFlow
+        parent: ocsdc.form.flow.pratica
+        arguments: ["@logger","@translator"]
+
+    ocsdc.form.flow.praticaoperatore:
+        class: AppBundle\Form\Operatore\Base\PraticaOperatoreFlow
+        parent: craue.form.flow
+        arguments: ["@logger","@translator"]
+
+    ocsdc.form.flow.certificatonascitaoperatore:
+        class: AppBundle\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow
+        parent: ocsdc.form.flow.praticaoperatore
+        arguments: ["@logger","@translator"]

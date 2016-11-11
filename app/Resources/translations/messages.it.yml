@@ -386,6 +386,7 @@ operatori:
   pratiche_libere: 'Pratiche da assegnare'
   pratiche_concluse: 'Pratiche concluse'
   torna_alle_pratiche: "Torna all'elenco pratiche"
+  allega: 'Allega'
   approva: 'Approva'
   rifiuta: 'Rifiuta'
   richiedi_intergrazioni: 'Richiedi intergrazioni'

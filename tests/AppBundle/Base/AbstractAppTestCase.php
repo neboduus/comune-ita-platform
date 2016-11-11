@@ -315,14 +315,15 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param string $name
      * @param string $praticaFCQN
      * @param string $praticaFlowServiceName
-     *
+     * @param string $praticaFlowOperatoreServiceName
      * @return Servizio
      */
     protected function createServizioWithAssociatedEnti(
         $enti,
         $name = 'Servizio test pratiche',
         $praticaFCQN = '\AppBundle\Entity\IscrizioneAsiloNido',
-        $praticaFlowServiceName = 'ocsdc.form.flow.asilonido'
+        $praticaFlowServiceName = 'ocsdc.form.flow.asilonido',
+        $praticaFlowOperatoreServiceName = ''
     ) {
         $servizio = new Servizio();
         $servizio
@@ -331,7 +332,9 @@ abstract class AbstractAppTestCase extends WebTestCase
             ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.')
             ->setArea('Test area')
             ->setPraticaFCQN($praticaFCQN)
-            ->setPraticaFlowServiceName($praticaFlowServiceName);
+            ->setPraticaFlowServiceName($praticaFlowServiceName)
+            ->setPraticaFlowOperatoreServiceName($praticaFlowOperatoreServiceName);
+
         $this->em->persist($servizio);
         $this->em->flush();
 
@@ -700,6 +703,24 @@ abstract class AbstractAppTestCase extends WebTestCase
             'iscrizione_asilo_nido_bambino[bambino_data_nascita]' => '01-09-2016',
 
         ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param Ente $ente
+     * @param $form
+     */
+    protected function addAllegatoOperatore(&$crawler, $nextButton, &$form)
+    {
+        // Selezione del comune
+        $form = $crawler->selectButton($nextButton)->form();
+        copy(__DIR__.'/test.pdf', __DIR__.'/run_test.pdf');
+        $file = new UploadedFile(__DIR__.'/run_test.pdf', 'test.pdf', null, null, null, true);
+        $formData = array('add' => $file);
+        $form->submit($formData);
         $crawler = $this->client->submit($form);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
     }

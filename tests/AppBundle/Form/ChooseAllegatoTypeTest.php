@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Form;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
@@ -73,7 +74,19 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
         );
     }
 
-    public function testISeeAListOfFileWithPredefinedDescription()
+    public function chooseAllegatoTypeDataProvider()
+    {
+        return array(
+            array(Allegato::class),
+            array(AllegatoOperatore::class),
+        );
+    }
+
+    /**
+     * @dataProvider chooseAllegatoTypeDataProvider
+     * @param $class
+     */
+    public function testISeeAListOfFileWithPredefinedDescription($class)
     {
         $label = 'testLabel';
         $fileDescription = 'testFileDescription';
@@ -83,7 +96,7 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
 
         $expected = 2;
         for($i=1; $i<=$expected; $i++){
-            $this->addNewAllegatoForUser($fileDescription, $user);
+            $this->addNewAllegatoForUser($fileDescription, $user, $class);
         }
 
         $form = $this->factory->create(
@@ -95,6 +108,7 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
                 'required' => true,
                 'pratica' => $pratica,
                 'mapped' => false,
+                'class' => $class,
             ]
         );
 
@@ -114,7 +128,11 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
         }
     }
 
-    public function testISeeAErrorIfTypeIsRequiredAndNoFilesAreSelected()
+    /**
+     * @dataProvider chooseAllegatoTypeDataProvider
+     * @param $class
+     */
+    public function testISeeAErrorIfTypeIsRequiredAndNoFilesAreSelected($class)
     {
         $label = 'testLabel';
         $fileDescription = 'testFileDescription';
@@ -131,6 +149,7 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
                 'required' => true,
                 'pratica' => $pratica,
                 'mapped' => false,
+                'class' => $class,
             ]
         );
 
@@ -142,7 +161,11 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
         $this->assertTrue($form->isSynchronized());
     }
 
-    public function testISeeNewFileInList()
+    /**
+     * @dataProvider chooseAllegatoTypeDataProvider
+     * @param $class
+     */
+    public function testISeeNewFileInList($class)
     {
         $label = 'testLabel';
         $fileDescription = 'testFileDescription';
@@ -159,6 +182,7 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
                 'required' => true,
                 'pratica' => $pratica,
                 'mapped' => false,
+                'class' => $class,
             ]
         );
 
@@ -190,9 +214,10 @@ class ChooseAllegatoTypeTest extends AbstractAppTestCase
 
     }
 
-    private function addNewAllegatoForUser($description, CPSUser $user)
+    private function addNewAllegatoForUser($description, CPSUser $user, $class)
     {
-        $allegato = new Allegato();
+        /** @var Allegato $allegato */
+        $allegato = new $class();
         $allegato->setOwner($user);
         $allegato->setDescription($description);
         $allegato->setFilename(rand(1,5).'somefile.pdf');
