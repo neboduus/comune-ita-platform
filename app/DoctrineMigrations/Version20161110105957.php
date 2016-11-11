@@ -18,7 +18,6 @@ class Version20161110105957 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('DROP TABLE craue_form_flow_storage');
         $this->addSql('ALTER TABLE pratica ADD allacciamento_acquedotto_immobile_provincia VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE pratica ADD allacciamento_acquedotto_immobile_comune VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE pratica ADD allacciamento_acquedotto_immobile_indirizzo VARCHAR(255) DEFAULT NULL');
@@ -54,8 +53,6 @@ class Version20161110105957 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('CREATE TABLE craue_form_flow_storage (key VARCHAR(255) NOT NULL, value TEXT NOT NULL, PRIMARY KEY(key))');
-        $this->addSql('COMMENT ON COLUMN craue_form_flow_storage.value IS \'(DC2Type:array)\'');
         $this->addSql('ALTER TABLE pratica DROP allacciamento_acquedotto_immobile_provincia');
         $this->addSql('ALTER TABLE pratica DROP allacciamento_acquedotto_immobile_comune');
         $this->addSql('ALTER TABLE pratica DROP allacciamento_acquedotto_immobile_indirizzo');
