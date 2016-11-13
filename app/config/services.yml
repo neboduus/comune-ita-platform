@@ -48,6 +48,17 @@ services:
         class: AppBundle\Services\MailerService
         arguments: ["@mailer", "@translator", "@templating"]
 
+    ocsdc.modulo_pdf_builder:
+        class: AppBundle\Services\ModuloPdfBuilderService
+        arguments:
+            - "@filesystem"
+            - "@doctrine.orm.default_entity_manager"
+            - "@translator"
+            - "@vich_uploader.property_mapping_factory"
+            - "@ocsdc.allegati.directory_namer"
+            - "@knp_snappy.pdf"
+            - "@templating"
+
     ocsdc.form.flow.storage_key_generator:
         class: AppBundle\Form\UserSessionStorageKeyGenerator
 

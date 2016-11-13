@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\PraticaFlow;
@@ -13,12 +12,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Vich\UploaderBundle\Mapping\PropertyMapping;
 
 /**
  * Class PraticheController
@@ -238,7 +233,10 @@ class PraticheController extends Controller
             } else {
                 $pratica->setStatus(Pratica::STATUS_SUBMITTED);
                 $pratica->setSubmissionTime(time());
-                $this->createModuloForPratica($pratica, $user);
+
+                $moduloCompilato = $this->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
+                $pratica->addModuloCompilato($moduloCompilato);
+
                 $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
 
                 $this->getDoctrine()->getManager()->flush();
@@ -349,76 +347,6 @@ class PraticheController extends Controller
         );
 
         return $pratica;
-    }
-
-    /**
-     * @param Pratica $pratica
-     * @param $user
-     */
-    private function createModuloForPratica(Pratica $pratica, $user)
-    {
-        /**
-         * crea il modulo esportato e allegalo alla pratica
-         */
-        $content = $this->renderModuloAsPdf($pratica, $user);
-        $moduloCompilato = new ModuloCompilato();
-        $moduloCompilato->setOwner($user);
-        $destDir = $this->getDestDirFromModuloContext($moduloCompilato);
-        $fileName = uniqid() . '.pdf';
-        $filePath = $destDir . DIRECTORY_SEPARATOR . $fileName;
-
-        $fs = $this->get('filesystem');
-        $fs->dumpFile($filePath, $content);
-        $moduloCompilato->setFile(new File($filePath));
-
-        $now = new \DateTime();
-        $now->setTimestamp($pratica->getSubmissionTime());
-
-        $moduloCompilato->setFilename($fileName);
-        $servizioName = $pratica->getServizio()->getName();
-        $moduloCompilato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi'));
-        $moduloCompilato->setDescription(
-            $this->get('translator')->trans(
-                'pratica.modulo.descrizione',
-                ['nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i')]
-            )
-        );
-        $this->getDoctrine()->getManager()->persist($moduloCompilato);
-
-        $pratica->addModuloCompilato($moduloCompilato);
-    }
-
-    /**
-     * @param Pratica $pratica
-     * @param $user
-     *
-     * @return string
-     */
-    private function renderModuloAsPdf(Pratica $pratica, $user):string
-    {
-        $className = (new \ReflectionClass($pratica))->getShortName();;
-        $html = $this->renderView('AppBundle:Pratiche:pdf/' . $className . '.html.twig', array(
-            'pratica' => $pratica,
-            'user' => $user,
-        ));
-        $content = $this->get('knp_snappy.pdf')->getOutputFromHtml($html);
-
-        return $content;
-    }
-
-    /**
-     * @param $moduloCompilato
-     *
-     * @return string
-     */
-    private function getDestDirFromModuloContext($moduloCompilato):string
-    {
-        /** @var PropertyMapping $mapping */
-        $mapping = $this->get('vich_uploader.property_mapping_factory')->fromObject($moduloCompilato)[0];
-        $path = $this->get('ocsdc.allegati.directory_namer')->directoryName($moduloCompilato, $mapping);
-        $destDir = $mapping->getUploadDestination() . '/' . $path;
-
-        return $destDir;
     }
 
     private function checkUserCanAccessPratica(Pratica $pratica)
