@@ -74,8 +74,8 @@ abstract class PraticaFlow extends FormFlow
         $pratica->setRichiedenteIndirizzoResidenza($user->getIndirizzoResidenza());
         $pratica->setRichiedenteCapResidenza($user->getCapResidenza());
         $pratica->setRichiedenteCittaResidenza($user->getCittaResidenza());
-        $pratica->setRichiedenteTelefono($user->getTelefono());
-        $pratica->setRichiedenteEmail($user->getEmailCanonical());
+        $pratica->setRichiedenteTelefono($user->getCellulare() ?? $user->getTelefono());
+        $pratica->setRichiedenteEmail($user->getEmail());
     }
 
     /**

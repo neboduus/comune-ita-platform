@@ -34,6 +34,11 @@ $_SERVER += [
     "REDIRECT_shibb_pat_attribute_nome" => "Luca",
     "REDIRECT_shibb_pat_attribute_telefono" => "123",
     "REDIRECT_shibb_pat_attribute_cellulare" => "456",
+    "REDIRECT_shibb_pat_attribute_indirizzoresidenza" => "Via il male dal mondo, 15",
+    "REDIRECT_shibb_pat_attribute_capresidenza" => "00100",
+    "REDIRECT_shibb_pat_attribute_cittaresidenza" => "Roma",
+    "REDIRECT_shibb_pat_attribute_provinciaresidenza" => "Roma",
+    "REDIRECT_shibb_pat_attribute_statoresidenza" => "Tristalia",
 ];
 
 $request = Request::createFromGlobals();

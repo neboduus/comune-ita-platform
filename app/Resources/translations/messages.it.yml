@@ -11,6 +11,7 @@ msg_bozze_servizio: 'Attenzione, ci sono delle pratiche in compilazione per il s
 lista_pratiche_bozza: 'Pratica in bozza'
 pratica_ricevuta: 'La tua pratica è stata registata nel sistema'
 welcome: 'F: Benvenuta,|M: Benvenuto,'
+completa_profilo: "Completa e conferma i dati del tuo profilo"
 
 nav:
   dashboard: 'La mia stanza'
@@ -356,7 +357,7 @@ user:
   profile:
     title: 'Profilo utente'
     info_da_sdc: 'Informazioni utente'
-    dati_da_cps_guida: 'Le informazioni seguenti sono state ricavate dalla carta provinciale dei servizi con cui ti sei autenticato e non possono essere modificate in questa applicazione'
+    dati_da_cps_guida: 'Queste informazioni sono state ricavate dalla carta provinciale dei servizi con cui ti sei autenticato e non possono essere modificate in questa applicazione'
     nome: 'Nome'
     cognome: 'Cognome'
     sesso: 'Sesso'
@@ -372,9 +373,11 @@ user:
     citta: 'Città'
     cap: 'Cap'
     provincia: 'Provincia'
+    stato: 'Stato'
     residenza: 'Residenza'
     domicilio: 'Domicilio'
     salva_informazioni_contatto: 'Salva informazioni contatto'
+    salva_informazioni_profilo: 'Salva informazioni profilo'
 
 operatori:
   vai_al_dettaglio: 'Vedi dettaglio'

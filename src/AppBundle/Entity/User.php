@@ -163,7 +163,7 @@ abstract class User extends BaseUser
     /**
      * @param string $emailContatto
      *
-     * @return User
+     * @return $this
      */
     public function setEmailContatto($emailContatto)
     {
@@ -183,7 +183,7 @@ abstract class User extends BaseUser
     /**
      * @param string $cellulareContatto
      *
-     * @return User
+     * @return $this
      */
     public function setCellulareContatto($cellulareContatto)
     {

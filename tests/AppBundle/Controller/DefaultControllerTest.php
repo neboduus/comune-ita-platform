@@ -10,8 +10,10 @@ use AppBundle\Entity\User;
 use AppBundle\Services\CPSUserProvider;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
 class DefaultControllerTest extends AbstractAppTestCase
@@ -69,7 +71,7 @@ class DefaultControllerTest extends AbstractAppTestCase
 
     public function testIAmRedirectedToTermAcceptPageWhenIAccessForTheFirstTimeAsLoggedInUser()
     {
-        $user = $this->createCPSUser(false);
+        $user = $this->createCPSUser(false, true);
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
 
@@ -79,14 +81,57 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->assertEquals($this->router->generate('terms_accept', ['r' => 'pratiche']), $response->headers->get('location'));
     }
 
+    public function testIAmRedirectedToUserProfilePageWhenIAcceptTermsForTheFirstTimeAndMyProfileIsNotCompleteAsLoggedInUser()
+    {
+        $user = $this->createCPSUser(true, false);
+
+        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
+        $this->assertEquals($this->router->generate('user_profile', ['r' => 'pratiche']), $response->headers->get('location'));
+    }
+
+
     public function testIAmRedirectedToOriginalPageWhenIAcceptTermsForTheFirstTimeAsLoggedInUser()
     {
-        $user = $this->createCPSUser(false);
+        $user = $this->createCPSUser(false, true);
 
         $this->client->followRedirects();
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
         $form = $crawler->selectButton($this->translator->trans('salva'))->form();
         $this->client->submit($form);
+        $this->assertEquals(
+            $this->client->getRequest()->getUri(),
+            $this->router->generate('pratiche', [], Router::ABSOLUTE_URL)
+        );
+    }
+
+    public function testIAmRedirectedToOriginalPageWhenIAcceptTermsAndCompleteProfileForTheFirstTimeAsLoggedInUser()
+    {
+        $user = $this->createCPSUser(false, false);
+
+        $this->client->followRedirects();
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
+        $form = $crawler->selectButton($this->translator->trans('salva'))->form();
+        $crawler = $this->client->submit($form);
+
+        $this->assertEquals(
+            $this->client->getRequest()->getUri(),
+            $this->router->generate('user_profile', ['r' => 'pratiche'], Router::ABSOLUTE_URL)
+        );
+
+        $fillData = array();
+        $crawler->filter('form[id="edit_user_profile"] input')
+                ->each(function (Crawler $node, $i) use (&$fillData) {
+                    if ($node->attr('readonly') === null){
+                        $fillData[$node->attr('name')] = $node->attr('type') == 'email' ? 'test@test.it' : 'test';
+                    }
+                });
+        $form = $crawler->selectButton($this->translator->trans('user.profile.salva_informazioni_profilo'))->form($fillData);
+        $crawler = $this->client->submit($form);
+
         $this->assertEquals(
             $this->client->getRequest()->getUri(),
             $this->router->generate('pratiche', [], Router::ABSOLUTE_URL)
@@ -156,7 +201,7 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->client->submit($form);
 
         $this->em->refresh($user);
-        $this->assertTrue($user->getTermsAccepted());
+        $this->assertTrue($user->isTermsAccepted());
         $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
     }
 

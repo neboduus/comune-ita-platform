@@ -60,7 +60,7 @@ doctrine:
         #     path:     "%database_path%"
 
         #TODO: find a way to mask this from migrations, but let dbal see it
-#        schema_filter: ~^(?!craue_form_flow_storage)~
+        #schema_filter: ~^(?!craue_form_flow_storage)~
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore

@@ -1,14 +1,14 @@
 <?php
-
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Services\CPSUserProvider;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
-class TermsAcceptListener
+class CompleteProfileListener
 {
 
     /**
@@ -21,23 +21,36 @@ class TermsAcceptListener
      */
     private $tokenStorage;
 
-    public function __construct(Router $router, TokenStorage $tokenStorage)
+    /**
+     * @var CPSUserProvider
+     */
+    private $userProvider;
+
+    /**
+     * CompleteProfileListener constructor.
+     *
+     * @param Router $router
+     * @param TokenStorage $tokenStorage
+     * @param CPSUserProvider $userProvider
+     */
+    public function __construct(Router $router, TokenStorage $tokenStorage, CPSUserProvider $userProvider)
 
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
+        $this->userProvider = $userProvider;
     }
 
     public function onKernelRequest(GetResponseEvent $event)
     {
         $user = $this->getUser();
-        if ($user instanceof CPSUser) {
+        if ($user instanceof CPSUser && $user->isTermsAccepted()) {
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
             $currentRouteQuery = $event->getRequest()->query->all();
-            if ($user->isTermsAccepted() == false
+            if ($this->userProvider->userHasEnoughData($user) == false
                 && $currentRoute !== ''
-                && $currentRoute !== 'terms_accept'
+                && $currentRoute !== 'user_profile'
             ) {
                 $redirectParameters['r'] = $currentRoute;
                 if ($currentRouteParams) {
@@ -47,7 +60,7 @@ class TermsAcceptListener
                     $redirectParameters['q'] = serialize($currentRouteQuery);
                 }
 
-                $redirectUrl = $this->router->generate('terms_accept', $redirectParameters);
+                $redirectUrl = $this->router->generate('user_profile', $redirectParameters);
                 $event->setResponse(new RedirectResponse($redirectUrl));
             }
         }

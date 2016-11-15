@@ -81,7 +81,7 @@ class ApiControllerTest extends AbstractAppTestCase
         $this->setupMockedLogger([
             LogConstants::PRATICA_UPDATED_STATUS_FROM_GPA,
         ]);
-        $user = $user = $this->createCPSUser(true);
+        $user = $user = $this->createCPSUser();
         $pratica = $this->createPratica($user);
         $initialStatusCount = $pratica->getStoricoStati()->count();
 
@@ -126,7 +126,7 @@ class ApiControllerTest extends AbstractAppTestCase
         $this->setupMockedLogger([
             LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA,
         ]);
-        $user = $user = $this->createCPSUser(true);
+        $user = $user = $this->createCPSUser();
         $pratica = $this->createPratica($user);
 
         $this->client->request(
@@ -152,7 +152,7 @@ class ApiControllerTest extends AbstractAppTestCase
         $this->setupMockedLogger([
             LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA,
         ]);
-        $user = $user = $this->createCPSUser(true);
+        $user = $user = $this->createCPSUser();
         $pratica = $this->createPratica($user);
 
         //missing operatore
@@ -184,7 +184,7 @@ class ApiControllerTest extends AbstractAppTestCase
      */
     public function testPraticaStatusAPIIsProtected()
     {
-        $user = $user = $this->createCPSUser(true);
+        $user = $user = $this->createCPSUser();
         $pratica = $this->createPratica($user);
 
         $client = static::createClient();
@@ -202,7 +202,7 @@ class ApiControllerTest extends AbstractAppTestCase
      */
     public function testPraticaStatusAPIIsProtectedWithRoleChecking()
     {
-        $user = $user = $this->createCPSUser(true);
+        $user = $user = $this->createCPSUser();
         $pratica = $this->createPratica($user);
 
         $client = static::createClient();
