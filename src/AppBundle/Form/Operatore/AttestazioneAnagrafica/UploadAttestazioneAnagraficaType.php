@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Form\Operatore\CertificatoNascita;
+namespace AppBundle\Form\Operatore\AttestazioneAnagrafica;
 
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CambioResidenza;
@@ -9,9 +9,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 
-class UploadCertificatoNascitaType extends AbstractType
+class UploadAttestazioneAnagraficaType extends AbstractType
 {
-    const FILE_DESCRIPTION = "Certificato di nascita richiesto";
+    const FILE_DESCRIPTION = "Attestazione di iscrizione anagrafica richiesto";
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -31,11 +31,10 @@ class UploadCertificatoNascitaType extends AbstractType
                 'class' => AllegatoOperatore::class,
                 'mapped' => false,
             ]);
-
     }
 
     public function getBlockPrefix()
     {
-        return 'upload_certificato_nascita';
+        return 'upload_attestazione_anagrafica';
     }
 }

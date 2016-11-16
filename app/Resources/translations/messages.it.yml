@@ -396,8 +396,11 @@ operatori:
   allegati: 'Allegati'
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
+  scarica: 'Scarica'
   scarica_modulo_compilato: 'Scarica il modulo compilato'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
+  flow:
+    allega_documentazione_richiesta: 'Allega documentazione richiesta'
   profile:
     title: 'Profilo operatore'
     nome: 'Nome'
