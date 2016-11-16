@@ -7,6 +7,7 @@ use AppBundle\Entity\Servizio;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -28,8 +29,57 @@ class ServiziController extends Controller
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
         $servizi = $serviziRepository->findAll();
 
+
         return [
             'servizi' => $servizi
+        ];
+    }
+
+    /**
+     * @Route("/miller/{topic}", name="servizi_miller", defaults={"topic":false})
+     * @Template()
+     * @param string $topic
+     * @param Request $request
+     * @return array
+     */
+    public function serviziMillerAction($topic, Request $request)
+    {
+        $topics = $servizi = array();
+        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $noSortedTopics = $serviziRepository->createQueryBuilder('t')
+            ->select('t.area')
+            ->distinct()
+            ->getQuery()
+            ->getResult();
+
+        foreach ($noSortedTopics as $t)
+        {
+            $topics []= $t['area'];
+        }
+        asort($topics);
+
+        if ( !$topic )
+        {
+            $topic = $topics[0];
+        }
+
+        $servizi = $serviziRepository->findBy(
+            array('area' => $topic),
+            array('name' => 'ASC')
+        );
+
+        if ($request->isXMLHttpRequest()) {
+
+            $template = $this->render('@App/Servizi/parts/miller/section.html.twig', ['current_topic' => $topic, 'servizi' => $servizi])->getContent();
+            return new JsonResponse(
+                ['html' => $template]
+            );
+        }
+
+        return [
+            'current_topic' => $topic,
+            'topics'        => $topics,
+            'servizi'       => $servizi
         ];
     }
 

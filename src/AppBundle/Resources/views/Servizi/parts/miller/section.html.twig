@@ -1,0 +1,13 @@
+<div class="pane-inner alphabetical">
+    <h1 tabindex="-1" class="hidden-xs">{{ current_topic }}</h1>
+    <p class="sort-order"><i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></p>
+    <ul>
+        {% for servizio in servizi %}
+            <li>
+                <a href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
+                    <h3>{{ servizio.name }}</h3>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

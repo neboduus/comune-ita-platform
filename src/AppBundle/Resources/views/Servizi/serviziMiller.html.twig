@@ -1,0 +1,56 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/miller.css') }}"/>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/miller.js') }}"></script>
+{% endblock %}
+
+{% block main_content %}
+
+    {% if current_topic and servizi|length > 0 %}
+        {% set class_panes = 'browse-panes section' %}
+        {% set state_panes = 'section' %}
+    {% else %}
+        {% set class_panes = 'browse-panes root section' %}
+        {% set state_panes = '' %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-9">
+            <h1>{{ 'esplora_i_servizi'|trans() }}</h1>
+        </div>
+        <div class="col-md-3 hidden-xs text-right">
+            <p class="welcome"><a href="{{ path('servizi_list') }}" class="btn btn-sm btn-info"><i class="fa fa-th" aria-hidden="true"></i> Visulizza griglia</a></p>
+        </div>
+    </div>
+    <div id="wrapper">
+        <main id="content" role="main" class="browse">
+            <div class="{{ class_panes }}" data-state="{{ state_panes }}">
+
+                <div id="section" class="pane with-sort">
+                    {% if servizi|length > 0 %}
+                        {{ include('@App/Servizi/parts/miller/section.html.twig') }}
+                    {% endif %}
+                </div>
+
+                <div id="root" class="pane">
+                    <h1 class="visuallyhidden" tabindex="-1" class="hidden-xs">Aree</h1>
+                    <ul>
+                        {% for topic in topics %}
+                            <li {% if topic == current_topic %}class="active"{% endif %}>
+                                <a href="{{ path('servizi_miller', {'topic': topic}) }}">{{ topic }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+{% endblock %}
