@@ -35,7 +35,7 @@ class LoadServiziCommandTest extends AbstractAppTestCase
     public function testExecute()
     {
         //FIXME: questo pesca dal foglio "live" quindi si rompe ad ogni modifica
-        $expectedServicesCount = 12;
+        $expectedServicesCount = 13;
         $serviziRepo = $this->em->getRepository(Servizio::class);
         $this->assertEquals(0, count($serviziRepo->findAll()));
 

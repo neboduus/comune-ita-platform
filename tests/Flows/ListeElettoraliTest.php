@@ -4,7 +4,7 @@ namespace Tests\Flows;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AsiloNido;
-use AppBundle\Entity\AttestazioneAnagrafica;
+use AppBundle\Entity\ListeElettorali;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\ModuloCompilato;
@@ -19,9 +19,9 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**
- * Class AttestazioneAnagraficaTest
+ * Class ListeElettoraliTest
  */
-class AttestazioneAnagraficaTest extends AbstractAppTestCase
+class ListeElettoraliTest extends AbstractAppTestCase
 {
     /**
      * @var CPSUserProvider
@@ -53,16 +53,16 @@ class AttestazioneAnagraficaTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testICanFillOutTheAttestazioneAnagraficaAsLoggedUser()
+    public function testICanFillOutTheListeElettoraliAsLoggedUser()
     {
 //        $this->markTestIncomplete('Create the test for the autolettura service');
 
         //create an ente
         $ente = $this->createEnti()[0];
         //create the autolettura service bound to that ente
-        $fqcn = AttestazioneAnagrafica ::class;
-        $flow = 'ocsdc.form.flow.attestazioneanagrafica';
-        $servizio = $this->createServizioWithEnte($ente, 'Attestazione anagrafica', $fqcn, $flow);
+        $fqcn = ListeElettorali ::class;
+        $flow = 'ocsdc.form.flow.listeelettorali';
+        $servizio = $this->createServizioWithEnte($ente, 'Liste elettorali', $fqcn, $flow);
 
         $user = $this->createCPSUser();
 
@@ -80,8 +80,8 @@ class AttestazioneAnagraficaTest extends AbstractAppTestCase
 
         $currentUriParts = explode('/', $this->client->getHistory()->current()->getUri());
         $currentPraticaId = array_pop($currentUriParts);
-        $currentPratica = $this->em->getRepository('AppBundle:AttestazioneAnagrafica')->find($currentPraticaId);
-        $this->assertEquals(AttestazioneAnagrafica::class, get_class($currentPratica));
+        $currentPratica = $this->em->getRepository('AppBundle:ListeElettorali')->find($currentPraticaId);
+        $this->assertEquals(ListeElettorali::class, get_class($currentPratica));
         $this->assertEquals(0, $currentPratica->getModuliCompilati()->count());
 
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');

@@ -104,8 +104,12 @@ services:
         parent: ocsdc.form.flow.pratica
 
     ocsdc.form.flow.attestazioneanagrafica:
-            class: AppBundle\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow
-            parent: ocsdc.form.flow.pratica
+        class: AppBundle\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.listeelettorali:
+        class: AppBundle\Form\ListeElettorali\ListeElettoraliFlow
+        parent: ocsdc.form.flow.pratica
 
     ocsdc.form.flow.praticaoperatore:
         class: AppBundle\Form\Operatore\Base\PraticaOperatoreFlow
@@ -117,5 +121,9 @@ services:
         parent: ocsdc.form.flow.praticaoperatore
 
     ocsdc.form.flow.attestazioneanagraficaoperatore:
-            class: AppBundle\Form\Operatore\AttestazioneAnagrafica\AttestazioneAnagraficaOperatoreFlow
-            parent: ocsdc.form.flow.praticaoperatore
+        class: AppBundle\Form\Operatore\AttestazioneAnagrafica\AttestazioneAnagraficaOperatoreFlow
+        parent: ocsdc.form.flow.praticaoperatore
+
+    ocsdc.form.flow.listeelettoralioperatore:
+        class: AppBundle\Form\Operatore\ListeElettorali\ListeElettoraliOperatoreFlow
+        parent: ocsdc.form.flow.praticaoperatore
