@@ -10,24 +10,31 @@
     {{ 'pratica.pdf.chiede'|trans() }}
 </div>
 
-<div class="richiesta">
+<div class="richiesta page-break-after">
     <p>
-        {{ 'iscrizione_asilo_nido.pdf.ammissione_nido'|trans() }} <strong>{{ pratica.struttura.name }}</strong>
-        {{ 'iscrizione_asilo_nido.pdf.del_bambino'|trans() }} <strong>{{ pratica.bambinoNome }} {{ pratica.bambinoCognome }}</strong>
-        {{ 'pratica.pdf.nato_a'|trans() }} {{ pratica.bambinoLuogoNascita }} {{ 'pratica.pdf.nato_il'|trans() }} {{ pratica.bambinoDataNascita|date("d/m/Y") }}
+        {{ 'iscrizione_asilo_nido.pdf.ammissione_nido'|trans() }} <span class="text-uppercase">{{ pratica.struttura.name }}</span>
+        {{ 'iscrizione_asilo_nido.pdf.del_bambino'|trans() }} <span class="text-uppercase">{{ pratica.bambinoNome }} {{ pratica.bambinoCognome }}</span>
+        {{ 'pratica.pdf.nato_il'|trans() }} <span class="text-uppercase">{{ pratica.bambinoDataNascita|date("d/m/Y") }}</span>
+        {{ 'pratica.pdf.nato_a'|trans() }} <span class="text-uppercase">{{ pratica.bambinoLuogoNascita }}</span>
     </p>
-    <p>
-        {{ 'iscrizione_asilo_nido.pdf.orario'|trans() }} {{ pratica.strutturaOrario }}
-    </p>
-    <p>
-        {{ 'iscrizione_asilo_nido.pdf.periodo_da'|trans() }} {{ pratica.periodoIscrizioneDa|date("d/m/Y") }} {{ 'iscrizione_asilo_nido.pdf.periodo_a'|trans() }} {{ pratica.periodoIscrizioneA|date("d/m/Y") }}
-    </p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>{{ 'iscrizione_asilo_nido.pdf.orario'|trans() }}</th>
+            <th>{{ 'iscrizione_asilo_nido.pdf.periodo'|trans() }}</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>{{ pratica.strutturaOrario }}</td>
+            <td>{{ 'iscrizione_asilo_nido.pdf.periodo_da'|trans() }} {{ pratica.periodoIscrizioneDa|date("d/m/Y") }} {{ 'iscrizione_asilo_nido.pdf.periodo_a'|trans() }} {{ pratica.periodoIscrizioneA|date("d/m/Y") }}</td>
+        </tr>
+    </table>
 </div>
 
 {{ include('AppBundle:Pratiche/pdf/parts:nucleo_familiare.html.twig', {'pratica':pratica, 'user': user}) }}
-
+{{ include('AppBundle:Pratiche/pdf/parts:allegati.html.twig', {'pratica':pratica, 'user': user}) }}
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
-
 
 </body>
 </html>

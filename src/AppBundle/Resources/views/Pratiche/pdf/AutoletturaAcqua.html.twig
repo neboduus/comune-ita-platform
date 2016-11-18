@@ -12,30 +12,36 @@
 
 <div class="richiesta">
     <p>
-        {{ 'autolettura_acqua.pdf.lettura_contatore'|trans() }} {{ pratica.contatoreNumero }}
-        {{ 'autolettura_acqua.pdf.di_uso'|trans() }} {{ pratica.contatoreUso }}
-        {{ 'autolettura_acqua.pdf.per_unita_immobiliari'|trans() }} {{ pratica.contatoreUnitaImmobiliari }}
-    </p>
-    <p>
-        {{ 'autolettura_acqua.pdf.intestato_a'|trans() }} {{ pratica.intestatarioNome }} {{ pratica.intestatarioCognome }}
-        {{ 'pratica.pdf.residente_a'|trans() }} {{ pratica.intestatarioIndirizzo }} {{ pratica.intestatarioCap }} {{ pratica.intestatarioCitta }},
-        {{ 'pratica.pdf.telefono'|trans() }} {{ pratica.intestatarioTelefono }}
-        {{ 'pratica.pdf.email'|trans() }} {{ pratica.intestatarioEmail }}
+        {{ 'autolettura_acqua.pdf.lettura_contatore'|trans() }} <span class="text-uppercase">{{ pratica.contatoreNumero }}</span>
+        {{ 'autolettura_acqua.pdf.di_uso'|trans() }} <span class="text-uppercase">{{ pratica.contatoreUso }}</span>
+        {{ 'autolettura_acqua.pdf.per_unita_immobiliari'|trans() }} <span class="text-uppercase">{{ pratica.contatoreUnitaImmobiliari }}</span>.<br />
+        {{ 'autolettura_acqua.pdf.intestato_a'|trans() }} <span class="text-uppercase">{{ pratica.intestatarioNome }} {{ pratica.intestatarioCognome }}</span>
+        {{ 'pratica.pdf.residente_in'|trans() }} <span class="text-uppercase">{{ pratica.intestatarioIndirizzo }} {{ pratica.intestatarioCap }} {{ pratica.intestatarioCitta }}</span>,
+        {{ 'pratica.pdf.telefono'|trans() }} <span class="text-uppercase">{{ pratica.intestatarioTelefono }}</span>
+        {{ 'pratica.pdf.email'|trans() }} <span class="text-uppercase">{{ pratica.intestatarioEmail }}</span>
     </p>
 </div>
 
-<div class="chiede center_title">
-    {{ 'autolettura_acqua.pdf.lettura_metri_cubi'|trans() }} {{ pratica.letturaMetriCubi }}
-    {{ 'autolettura_acqua.pdf.lettura_in_data'|trans() }} {{ pratica.letturaData|date('d/m/Y')  }}
-</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th>{{ 'autolettura_acqua.pdf.lettura_metri_cubi'|trans() }}</th>
+        <th>{{ 'autolettura_acqua.pdf.lettura_in_data'|trans() }}</th>
+    </tr>
+    </thead>
+    <tr>
+        <td>{{ pratica.letturaMetriCubi }}</td>
+        <td>{{ pratica.letturaData|date('d/m/Y')  }}</td>
+    </tr>
+</table>
 
 {% if pratica.note != null %}
-<div class="chiede center_title">
-    {{ 'autolettura_acqua.pdf.comunica_inoltre'|trans() }}
-</div>
-<div class="richiesta">
-    <p>{{ pratica.note }}</p>
-</div>
+    <div class="chiede center_title">
+        {{ 'autolettura_acqua.pdf.comunica_inoltre'|trans() }}
+    </div>
+    <div class="richiesta">
+        <p>{{ pratica.note }}</p>
+    </div>
 {% endif %}
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}

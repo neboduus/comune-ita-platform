@@ -1,50 +1,35 @@
-<div class="dichiara">
-    <div class="dichiara center_title">
-        {{ 'pratica.pdf.dichiara'|trans() }}
-    </div>
+<div class="chiede center_title">
+    {{ 'pratica.pdf.dichiara'|trans() }}
+</div>
 
-    <ol>
+<ol>
+    {%  if pratica.nucleoFamiliare|length > 0 %}
         <li class="nucleo_familiare dichiarazione">
             <p>{{ 'pratica.pdf.dichiarazione_composizione_nucleo_familiare'|trans()|raw }}</p>
             <table class="table">
                 <thead>
-                <tr>
-                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.nome_e_cognome'|trans() }}</td>
-                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.rapporto_parentela'|trans() }}</td>
-                    <td>{{ 'pratica.pdf.composizione_nucleo_familiare.codice_fiscale'|trans() }}</td>
-                </tr>
+                    <tr>
+                        <th>{{ 'pratica.pdf.composizione_nucleo_familiare.nome_e_cognome'|trans() }}</th>
+                        <th>{{ 'pratica.pdf.composizione_nucleo_familiare.rapporto_parentela'|trans() }}</th>
+                        <th>{{ 'pratica.pdf.composizione_nucleo_familiare.codice_fiscale'|trans() }}</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {% for componente in pratica.nucleoFamiliare %}
-                    <tr>
-                        <td>{{ componente.nome }} {{ componente.cognome }}</td>
-                        <td>{{ componente.rapportoParentela }}</td>
-                        <td>{{ componente.codiceFiscale }}</td>
-                    </tr>
-                {% endfor %}
+                    {% for componente in pratica.nucleoFamiliare %}
+                        <tr>
+                            <td>{{ componente.nome }} {{ componente.cognome }}</td>
+                            <td>{{ componente.rapportoParentela }}</td>
+                            <td>{{ componente.codiceFiscale }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </li>
+    {% endif %}
 
-        {%  if pratica.allegati|length > 0 %}
-        <li class="nucleo_familiare dichiarazione">
-            <p>{{ 'pratica.pdf.dichiarazione_allegati'|trans() }}</p>
-            <table class="table">
-                <tbody>
-                {% for allegato in pratica.allegati %}
-                    <tr>
-                        <td>{{ allegato.description }} ({{ allegato.originalFilename }})</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </li>
-        {% endif %}
+    <li class="dichiarazione">
+        <p>{{ 'pratica.pdf.dichiarazione_cambiamenti'|trans({'%comune%': pratica.ente.name}) }}</p>
+        <small>{{ 'pratica.pdf.dichiarazione_cambiamenti_detail'|trans()|raw }}</small>
+    </li>
+</ol>
 
-        <li class="dichiarazione">
-            <p>{{ 'pratica.pdf.dichiarazione_cambiamenti'|trans() }}</p>
-            <small>{{ 'pratica.pdf.dichiarazione_cambiamenti_detail'|trans()|raw }}</small>
-        </li>
-    </ol>
-
-</div>
