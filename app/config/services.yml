@@ -18,10 +18,10 @@ services:
             - { name: kernel.event_listener, event: kernel.request }
 
     ocsdc.cps.complete_profile_listener:
-            class: AppBundle\EventListener\CompleteProfileListener
-            arguments: ["@router","@security.token_storage", "@ocsdc.cps.userprovider"]
-            tags:
-                - { name: kernel.event_listener, event: kernel.request }
+        class: AppBundle\EventListener\CompleteProfileListener
+        arguments: ["@router","@security.token_storage", "@ocsdc.cps.userprovider"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
 
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
@@ -54,6 +54,7 @@ services:
         class: AppBundle\Services\MailerService
         arguments: ["@mailer", "@translator", "@templating"]
 
+
     ocsdc.modulo_pdf_builder:
         class: AppBundle\Services\ModuloPdfBuilderService
         arguments:
@@ -65,6 +66,36 @@ services:
             - "@knp_snappy.pdf"
             - "@templating"
 
+    ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
+
+    ocsdc.protocollo.handlers.pitre:
+        class: AppBundle\Protocollo\PiTreProtocolloHandler
+        arguments: ["@ocsdc.protocollo.client"]
+        public: false
+
+    ocsdc.protocollo_delayed:
+        class: AppBundle\Services\DelayedProtocolloService
+        arguments: ["@ocsdc.protocollo.handlers.pitre","@doctrine.orm.entity_manager","@logger"]
+
+    ocsdc.protocollo_direct:
+        class: AppBundle\Services\ProtocolloService
+        arguments: ["@ocsdc.protocollo.handlers.pitre","@doctrine.orm.entity_manager","@logger"]
+
+    ocsdc.protocollo: "@ocsdc.protocollo_delayed"
+
+    ocsdc.pratica_listeners.sendmail:
+        class: AppBundle\EventListener\SendMailPraticaListener
+        arguments: ["@ocsdc.mailer", %default_from_email_address%,"@logger"]
+        tags:
+            - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange }
+
+    ocsdc.pratica_listeners.protocollo:
+        class: AppBundle\EventListener\ProtocolloPraticaListener
+        arguments: ["@ocsdc.protocollo","@logger"]
+        tags:
+            - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 10 }
+
+
     ocsdc.form.flow.storage_key_generator:
         class: AppBundle\Form\UserSessionStorageKeyGenerator
 
@@ -73,6 +104,7 @@ services:
         arguments: ["@doctrine.orm.entity_manager", "@validator"]
         tags:
             - { name: form.type }
+
     ocsdc.form.flow.pratica:
         class: AppBundle\Form\Base\PraticaFlow
         parent: craue.form.flow

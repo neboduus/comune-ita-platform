@@ -20,8 +20,14 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Class AbstractAppTestCase
@@ -233,7 +239,9 @@ abstract class AbstractAppTestCase extends WebTestCase
             $servizio = $this->createServizioWithAssociatedEnti($this->createEnti());
         }
 
-        $pratica = new Pratica();
+        $praticaClass = $servizio->getPraticaFCQN();
+        /** @var Pratica $pratica */
+        $pratica = new $praticaClass();
         $pratica->setUser($user);
         $pratica->setServizio($servizio);
         if ($operatore) {
@@ -657,11 +665,14 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $allegati = [];
         for ($i = 0; $i < $numberOfExpectedAttachments; $i++) {
+
+
             $allegato = new Allegato();
             $allegato->setOwner($user);
             $allegato->setDescription(self::CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX . $i);
             $allegato->setFilename('somefile.txt');
             $allegato->setOriginalFilename('somefile.txt');
+            $allegato->setFile( new File(__DIR__.'/somefile.txt'));
             $this->em->persist($allegato);
             $allegati[] = $allegato;
         }
@@ -672,6 +683,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);
         $allegato->setFilename('somefile.txt');
         $allegato->setOriginalFilename('somefile.txt');
+        $allegato->setFile( new File(__DIR__.'/somefile.txt'));
         $this->em->persist($allegato);
 
         $this->em->flush();
@@ -726,5 +738,50 @@ abstract class AbstractAppTestCase extends WebTestCase
         $form->submit($formData);
         $crawler = $this->client->submit($form);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    protected function createSubmittedPraticaForUser($user)
+    {
+        $ente = $this->createEnti()[0];
+        $servizio = $this->createServizioWithEnte($ente, 'Test protocollo', '\AppBundle\Entity\CertificatoNascita', 'ocsdc.form.flow.certificatonascita');
+        $pratica = $this->createPratica($user, null, Pratica::STATUS_SUBMITTED, $ente, $servizio);
+        $pratica->setEnte($ente);
+        $moduloCompilato = $this->container->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
+        $pratica->addModuloCompilato($moduloCompilato);
+        return $pratica;
+    }
+
+    protected function getMockGuzzleClient(array $responses = [])
+    {
+        if (empty($responses)){
+            $responses = [$this->getPiTreSuccessResponse()];
+        }
+        $mock = new MockHandler($responses);
+
+        $handler = HandlerStack::create($mock);
+        return new GuzzleClient(['handler' => $handler]);
+    }
+
+    protected function getPiTreErrorResponse()
+    {
+        $body = [
+            'status' => 'error',
+            'message' => 'Test error',
+        ];
+        return new Response(200, [], json_encode($body));
+    }
+
+    protected function getPiTreSuccessResponse()
+    {
+        $body = [
+            'status' => 'success',
+            'message' => 'Elaborazione eseguita correttamente',
+            'data' => [
+                "id_doc" => md5(rand(0, 100).microtime()),
+                "n_prot" => md5(rand(100, 200).microtime()),
+            ]
+        ];
+
+        return new Response(200, [], json_encode($body));
     }
 }

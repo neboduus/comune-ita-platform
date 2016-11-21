@@ -5,8 +5,10 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Logging\LogConstants;
+use AppBundle\PraticaEvents;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -237,7 +239,10 @@ class PraticheController extends Controller
                 $moduloCompilato = $this->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
                 $pratica->addModuloCompilato($moduloCompilato);
 
-                $this->get('ocsdc.mailer')->dispatchMailForPratica($pratica, $this->getParameter('default_from_email_address'));
+                $this->get('event_dispatcher')->dispatch(
+                    PraticaEvents::ON_STATUS_CHANGE,
+                    new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_SUBMITTED)
+                );
 
                 $this->getDoctrine()->getManager()->flush();
 

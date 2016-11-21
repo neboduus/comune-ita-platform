@@ -73,3 +73,12 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+guzzle:
+  clients:
+    protocollo_cct:
+      base_url: "http://localhost:8080/pitre/"
+      options:
+        timeout: 10
+      headers:
+        Accept: "application/json"
