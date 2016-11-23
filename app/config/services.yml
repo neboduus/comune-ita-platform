@@ -143,6 +143,10 @@ services:
         class: AppBundle\Form\ListeElettorali\ListeElettoraliFlow
         parent: ocsdc.form.flow.pratica
 
+    ocsdc.form.flow.statofamiglia:
+            class: AppBundle\Form\StatoFamiglia\StatoFamigliaFlow
+            parent: ocsdc.form.flow.pratica
+
     ocsdc.form.flow.praticaoperatore:
         class: AppBundle\Form\Operatore\Base\PraticaOperatoreFlow
         parent: craue.form.flow
@@ -159,3 +163,7 @@ services:
     ocsdc.form.flow.listeelettoralioperatore:
         class: AppBundle\Form\Operatore\ListeElettorali\ListeElettoraliOperatoreFlow
         parent: ocsdc.form.flow.praticaoperatore
+
+    ocsdc.form.flow.statofamigliaoperatore:
+            class: AppBundle\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow
+            parent: ocsdc.form.flow.praticaoperatore

@@ -21,7 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "allacciamento_acquedotto" = "AllacciamentoAcquedotto",
  *     "certificato_nascita" = "CertificatoNascita",
  *     "attestazione_anagrafica" = "AttestazioneAnagrafica",
- *     "liste_elettorali" = "ListeElettorali"
+ *     "liste_elettorali" = "ListeElettorali",
+ *     "stato_famiglia" = "StatoFamiglia"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -43,6 +44,7 @@ class Pratica
     const TYPE_CERTIFICATO_NASCITA = "certificato_nascita";
     const TYPE_ATTESTAZIONE_ANAGRAFICA = "attestazione_anagrafica";
     const TYPE_LISTE_ELETTORALI = "liste_elettorali";
+    const TYPE_STATO_FAMIGLIA = "stato_famiglia";
 
     /**
      * @var string
