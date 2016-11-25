@@ -67,21 +67,24 @@ pratica:
     spett_le: 'Spett.le'
     oggetto: 'Oggetto:'
     il_sottoscritto: 'Il/La sottoscritto/a'
-    nato_a: 'nato/a'
-    nato_il: 'il'
-    residente_a: 'residente a'
+    nato_il: 'nato/a il'
+    nato_a: 'a'
+    nazionalita: 'Nazionalita'
+    codice_ficale: 'Codice fiscale'
+    residente_in: 'Residente in'
     telefono: 'Recapito telefonico'
     email: 'Recapito email'
     chiede: 'chiede'
     comunica: 'comunica'
     dichiara: 'dichiara'
+    allega: 'allega'
     dichiarazione_composizione_nucleo_familiare: 'che il proprio nucleo familiare &egrave; cos&igrave; composto:'
     composizione_nucleo_familiare:
       nome_e_cognome: 'Nome e cognome'
-      rapporto_parentela: 'Rapporto di parentela con bambino/a'
+      rapporto_parentela: 'Rapporto di parentela'
       codice_fiscale: 'Codice fiscale'
     dichiarazione_allegati: 'di allegare i seguenti documenti:'
-    dichiarazione_cambiamenti: 'di informare tempestivamente il Comune di Ragoli di mutamenti significativi nelle situazioni familiari ed economiche della famiglia'
+    dichiarazione_cambiamenti: 'di informare tempestivamente il %comune% di mutamenti significativi nelle situazioni familiari ed economiche della famiglia'
     dichiarazione_cambiamenti_detail: "Il dichiarante &egrave; consapevole che in caso di dichiarazione mendace sar&agrave; punito ai sensi del Codice Penale secondo quanto prescritto dall'art. 76 del D.P.R. 445/2000 e che, inoltre, qualora dal controllo effettuato emerga la non veridicit&agrave; del contenuto di taluna delle dichiarazioni rese, decadr&agrave; dai benefici conseguenti al provvedimento eventualmente emanato sulla base della dichiarazione non veritiera (art. 75 D.P.R. 445/2000).Il dichiarante &egrave; informato ed autorizza la raccolta dei dati per l'emanazione del provvedimento amministrativo ai sensi dell'art. 13 del D. Lgs. 196/2003."
     luogo: 'L&igrave;'
   dettaglio:
@@ -153,8 +156,9 @@ iscrizione_asilo_nido:
     ammissione_nido: "l'ammissione all'asilo nido"
     del_bambino: 'del bambino/a'
     orario: 'Orario prescelto'
-    periodo_da: 'Periodo di iscrizione da'
-    periodo_a: 'a'
+    periodo: 'Periodo di iscrizione'
+    periodo_da: 'dal'
+    periodo_a: 'al'
   guida_alla_compilazione:
     seleziona_nido: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
     accettazione_utilizzo_nido: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
@@ -178,10 +182,10 @@ contributo_pannolini:
     che_venga_rimborsato: 'Il rimborso andrà effettuato sul seguente conto bancario: '
     intestato_a: 'intestato a'
   dettaglio:
-    acquisto: 'Dettaglio Acquisto'
+    acquisto: 'dettaglio acquisto'
     nome_punto_vendita: 'Punto Vendita'
     data_acquisto: 'Data Acquisto'
-    totale_spesa: 'Totale spesa'
+    totale_spesa: 'Totale spesa (€)'
     conto_corrente: 'Conto Corrente'
     iban: 'IBAN'
     intestatario_conto: 'Intestato A'
@@ -224,12 +228,12 @@ autolettura_acqua:
     lettura_data: "Data"
     note: "Comunicazioni"
   pdf:
-    lettura_contatore: "l'autolettura del contatore numero"
+    lettura_contatore: "L'autolettura del contatore numero"
     di_uso: "di uso"
     per_unita_immobiliari: "per numero di unità immobiliari"
-    intestato_a: "intestato a"
-    lettura_metri_cubi: "Metri cubi:"
-    lettura_in_data: "in data"
+    intestato_a: "Intestato a"
+    lettura_metri_cubi: "Metri cubi"
+    lettura_in_data: "In data"
     comunica_inoltre: "Comunica inoltre"
   guida_alla_compilazione:
     dati_intestatario: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
@@ -294,8 +298,20 @@ cambio_residenza:
   informazioniAccertamento: "Informazioni per accertamento dei dati"
   aggiungi_persona_residente: "Aggiungi persona"
   pdf:
-    comune: "comune"
-    stato: "stato"
+    comune: ' - comune '
+    stato: ' - stato '
+    rischi: "Consapevole delle responsabilità penali per le dichiarazioni mendaci ai sensi degli art. 75 e 76 DPR 445/2000 che prevedono la decadenza dai benefici e l’obbligo di denuncia all’autorità competente."
+    trasferimento: "Di aver trasferito la dimora abituale al seguente indirizzo"
+    familiari: "Che nell’abitazione sita al nuovo indirizzo si sono trasferiti anche i familiari di seguito specificati"
+    iscritti: "Che nell’abitazione sita al nuovo indirizzo sono già iscritte le seguenti persone"
+    accertamento_dati: "Di aver rilasciato le seguenti informazioni per l'accertamento dei dati"
+    occupazione:
+        proprietario: "Di essere proprietario dell'abitazione:"
+        locazione: "Di essere intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+        locazione_erp: "Di essere intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+        comodato: "Di essere comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+        usufruttuario: "Di essere usufruttuario"
+        autocertificazione: "Di occupare legittimamente l'abitazione in base all' autocertificazione del proprietario dell'appartamento"
 
 allacciamento_acquedotto:
   guida_alla_compilazione:
@@ -329,6 +345,13 @@ allacciamento_acquedotto:
   datiContatto.numero_civico: "Numero civico"
   datiContatto.cap: "CAP"
   datiContatto.comune: "Comune"
+  pdf:
+    chiede: "L’autorizzazione ad effettuare l’allacciamento all’acquedotto comunale, secondo le modalità fissate nel regolamento vigente"
+
+attestazione_anagrafica:
+  pdf:
+    richiesta: "Il rilascio di attestazione di iscrizione Anagrafica"
+
 
 
 errori:

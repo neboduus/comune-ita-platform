@@ -68,7 +68,7 @@ class ModuloPdfBuilderServiceTest extends AbstractAppTestCase
                      ->disableOriginalConstructor()
                      ->getMock();
 
-        $mock->expects($this->once())
+        $mock->expects($this->atLeast(1))
              ->method('render');
 
         return $mock;
