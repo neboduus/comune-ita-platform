@@ -49,7 +49,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $password = 'pa$$word';
         $username = 'username';
 
-        $this->createOperatoreUser($username, $password);
+        $user = $this->createOperatoreUser($username, $password);
 
         $operatoriHome = $this->router->generate('operatori_index');
         $this->client->request('GET', $operatoriHome, array(), array(), array(
@@ -57,6 +57,8 @@ class OperatoriControllerTest extends AbstractAppTestCase
             'PHP_AUTH_PW' => $password,
         ));
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
     }
 
     /**
@@ -82,6 +84,8 @@ class OperatoriControllerTest extends AbstractAppTestCase
             'PHP_AUTH_PW' => $password,
         ));
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $this->doTestISeeMyNameAsLoggedInUser($operatore, $this->client->getResponse());
 
         $praticheCount = $crawler->filter('.list.mie')->filter('.pratica')->count();
         $this->assertEquals(3, $praticheCount);

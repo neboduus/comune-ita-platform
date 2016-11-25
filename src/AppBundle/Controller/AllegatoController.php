@@ -56,7 +56,10 @@ class AllegatoController extends Controller
             return new RedirectResponse($this->get('router')->generate('allegati_list_cpsuser'));
         }
 
-        return ['form' => $form->createView()];
+        return [
+            'form' => $form->createView(),
+            'user' => $this->getUser(),
+        ];
     }
 
     /**
@@ -157,6 +160,7 @@ class AllegatoController extends Controller
 
         return [
             'allegati' => $allegati,
+            'user' => $this->getUser(),
         ];
     }
 

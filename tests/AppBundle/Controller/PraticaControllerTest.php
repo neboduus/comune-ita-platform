@@ -65,6 +65,8 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
 
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
+
         $repo = $this->em->getRepository("AppBundle:Pratica");
         $praticheDraft = $repo->findBy(
             [
@@ -138,6 +140,8 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $renderedOtherUserPraticheCount = $crawler->filterXPath('//*[@data-user="'.$otherUser->getId().'"]')->count();
         $this->assertEquals(0, $renderedOtherUserPraticheCount);
+
+        $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
     }
 
     public function testAsACPSUserICanSeeTheExportedModuloDownloadLinkOnThePraticaDetailPage()
@@ -173,6 +177,8 @@ class PraticaControllerTest extends AbstractAppTestCase
         $renderedModuliCount = $nodes->count();
 
         $this->assertEquals($pratica->getModuliCompilati()->count(),$renderedModuliCount);
+
+        $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
     }
 
     /**
@@ -232,6 +238,8 @@ class PraticaControllerTest extends AbstractAppTestCase
         //count allegati
         $nodes = $crawler->filterXPath('//*[@data-title="Nome del file"]');
         $this->assertEquals($pratica->getAllegati()->count(), $nodes->count());
+
+        $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
     }
 
     /**
@@ -246,6 +254,8 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $nodes = $crawler->filterXPath('//*[@data-action="edit_draft"]');
         $this->assertEquals(1, $nodes->count());
+
+        $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
     }
 
     /**
@@ -418,6 +428,8 @@ class PraticaControllerTest extends AbstractAppTestCase
         ));
 
         $this->assertContains('pratica_seleziona_ente', $this->client->getResponse()->getContent());
+
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
     }
 
     /**

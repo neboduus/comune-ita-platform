@@ -79,6 +79,7 @@ class OperatoriController extends Controller
             'pratiche_mie'  => $praticheMie,
             'pratiche_libere'  => $praticheLibere,
             'pratiche_concluse'  => $praticheConcluse,
+            'user' => $this->getUser(),
         );
     }
 
@@ -253,7 +254,10 @@ class OperatoriController extends Controller
             $this->getDoctrine()->getManager()->flush();
         }
 
-        return array('form' => $form->createView());
+        return [
+            'form' => $form->createView(),
+            'user' => $this->getUser(),
+        ];
     }
 
     /**
@@ -275,7 +279,10 @@ class OperatoriController extends Controller
             $this->getDoctrine()->getManager()->flush();
         }
 
-        return array('form' => $form->createView());
+        return [
+            'form' => $form->createView(),
+            'user' => $this->getUser(),
+        ];
     }
 
     /**
@@ -294,7 +301,8 @@ class OperatoriController extends Controller
             ]
         );
         return array(
-            'operatori' => $operatori
+            'operatori' => $operatori,
+            'user' => $this->getUser(),
         );
     }
 
@@ -327,7 +335,8 @@ class OperatoriController extends Controller
 
         return array(
             'operatore' => $operatore,
-            'form'      => $form->createView()
+            'form'      => $form->createView(),
+            'user' => $this->getUser(),
         );
     }
 

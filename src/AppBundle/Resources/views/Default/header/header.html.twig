@@ -1,11 +1,16 @@
 <header id="header">
     <div id="header-top" class="container-fluid clearfix">
         <div class="row">
-            <div class="col-md-7 col-md-offset-2 col-xs-7 col-xs-offset-2">
+            <div class="col-md-4 col-md-offset-2 col-xs-4 col-xs-offset-2">
                 <div id="header-top-left" class="clearfix">
                     <span class="sr-only">{{ 'title'|trans }} appartiene al Progetto</span> <a href="http://www.opencontent.it/openpa">OpenPA</a>
                 </div>
             </div>
+            {% if user is defined %}
+                <div class="col-md-6">
+                    {{ include('@App/Default/parts/user_badge.html.twig', {'user': user}) }}
+                </div>
+            {% endif %}
         </div>
     </div>
 
