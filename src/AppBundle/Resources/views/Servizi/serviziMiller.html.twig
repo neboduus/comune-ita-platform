@@ -25,7 +25,11 @@
             <h1>{{ 'esplora_i_servizi'|trans() }}</h1>
         </div>
         <div class="col-md-3 hidden-xs text-right">
-            <p class="welcome"><a href="{{ path('servizi_list') }}" class="btn btn-sm btn-info"><i class="fa fa-th" aria-hidden="true"></i> Visulizza griglia</a></p>
+            <p class="welcome">
+                <a href="{{ path('servizi_list') }}" class="btn btn-sm btn-info">
+                    <i class="fa fa-th" aria-hidden="true"></i> {{ 'visualizza_griglia'|trans }}
+                </a>
+            </p>
         </div>
     </div>
     <div id="wrapper">

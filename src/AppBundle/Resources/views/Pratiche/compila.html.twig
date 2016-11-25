@@ -85,7 +85,7 @@
 
             $.datepicker.setDefaults($.datepicker.regional['it']);
             // Datepicker
-            $( ".datepicker" ).datepicker();
+            $( ".datepicker" ).datepicker({dateFormat: "dd-mm-yy"});
 
             // Range datepicker
             if ( $( ".datepicker-range-from" ).length && $( ".datepicker-range-to" ).length )
@@ -148,7 +148,7 @@
                 <div class="col-md-{%  if form.vars.helper.guideText|length > 0  %}7{% else %}12{% endif %}">
                     <div class="row step-{{ flow.getCurrentStepNumber() }}">
 
-                        <h3>Step {{ flow.getCurrentStepNumber() }} -  {{ flow.currentStepLabel()|trans }}</h3>
+                        <h3>{{ flow.getCurrentStepNumber() }}/{{ flow.stepCount }} -  {{ flow.currentStepLabel()|trans }}</h3>
                         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
                         {{ form_errors(form) }}
 

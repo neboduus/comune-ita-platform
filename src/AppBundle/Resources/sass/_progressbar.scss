@@ -57,7 +57,6 @@ $mobile-size: 400px !default;
     margin: 0;
     padding: 0;
     font-size: 80%;
-    text-transform: uppercase;
     margin-bottom: 1em;
     > li {
         @extend .flexer-element;
@@ -118,6 +117,7 @@ $mobile-size: 400px !default;
 
     // completed state
 
+    > li.craue_formflow_skipped_step,
     > li.completed {
         color: $complete;
         .bubble {

@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jasny-bootstrap.min.css') }}"/>
 {% endblock %}
 
-
 {% block nav %}
     {{ include('@App/Default/nav/main.html.twig') }}
 {% endblock %}
@@ -58,6 +57,7 @@
                     $header.removeClass("header-fixed");
                 }
             });
+            $('.has_tooltip').tooltip();
         });
     </script>
 {% endblock %}

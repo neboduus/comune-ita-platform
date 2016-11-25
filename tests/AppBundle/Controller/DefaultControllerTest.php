@@ -42,16 +42,6 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->assertContains('Stanza del cittadino', $this->client->getResponse()->getContent());
     }
 
-    public function testISeeMyNameAsLoggedInUser()
-    {
-        $user = $this->createCPSUser();
-
-        $route = $this->router->generate('pratiche');
-        $this->clientRequestAsCPSUser($user, 'GET', $route);
-
-        $this->assertContains($user->getFullName(), $this->client->getResponse()->getContent());
-    }
-
     /**
      * @dataProvider protectedRoutesProvider
      * @param array $route

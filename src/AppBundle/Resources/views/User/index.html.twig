@@ -93,11 +93,8 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <a class="btn btn-default btn-sm" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
-                                                    <span class="fa-stack">
-                                                        <i class="fa fa-circle-thin fa-stack-2x"></i>
-                                                        <i class="fa fa-angle-right fa-stack-1x"></i>
-                                                    </span>
-                                                     Vai al servizio
+                                                    <i class="fa fa-arrow-circle-o-right"></i>
+                                                     {{ 'servizio.vai'|trans() }}
                                                 </a>
                                             </div>
                                         </div>
@@ -106,7 +103,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12 text-right">
-                                    <a href="{{ path('servizi_list') }}" class="small">Vedi tutti i servizi</a>
+                                    <a href="{{ path('servizi_list') }}" class="small">{{ 'nav.servizi'|trans() }}</a>
                                 </div>
                             </div>
                         </div>

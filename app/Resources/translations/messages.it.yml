@@ -1,19 +1,25 @@
+title: 'Stanza del cittadino'
 salva: 'Salva'
 elimina: 'Elimina'
 terms_do_il_consenso: 'Dò il consenso'
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
-servizi_pending: 'Servizi con pratiche in attesa'
+servizi_pending: 'Servizi con pratiche inviate'
 esplora_i_servizi: 'Esplora i servizi'
-lista_pratiche: 'Lista ordinata di pratiche'
-bozze_servizio: 'Lista di pratiche in bozza per il servizio'
+lista_pratiche: 'Le mie pratiche'
+bozze_servizio: 'Pratiche in bozza per il servizio'
 msg_bozze_servizio: 'Attenzione, ci sono delle pratiche in compilazione per il servizio selezionato.'
 lista_pratiche_bozza: 'Pratica in bozza'
 pratica_ricevuta: 'La tua pratica è stata registata nel sistema'
 welcome: 'F: Benvenuta,|M: Benvenuto,'
 completa_profilo: "Completa e conferma i dati del tuo profilo"
+error_message: "Ooops! Qualcosa non ha funzionato!"
+error_message_detail: "Per favore contatta il supporto tecnico e comunicagli cosa stavi facendo."
+visualizza_colonne: "Visualizza colonne"
+visualizza_griglia: "Visualizza griglia"
 
 nav:
+  home: 'Homepage'
   dashboard: 'La mia stanza'
   servizi: 'Tutti i servizi'
   pratiche: 'Le mie pratiche'
@@ -21,6 +27,7 @@ nav:
   allegati: 'I miei allegati'
   operatori:
     lista_operatori: 'Gestisci operatori comune'
+    accesso_operatori: 'Accesso operatori'
 
 home:
   welcome:
@@ -35,18 +42,26 @@ servizio:
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Il servizio è stato sospeso'
   accedi_al_servizio: 'Accedi al servizio %name%'
+  attivo_per: "Servizio attivo per:"
+  servizi_area_title: '%area%'
+  vai: "Vai al servizio"
+  il_servizio: 'Il servizio'
+  area_tematica: 'Area tematica'
 
 pratica:
   email:
     status_change:
       subject: 'La pratica è stata aggiornata'
   vai_alla_pratica: 'Vai alla pratica'
+  riprendi_pratica: "Riprendi compilazione"
   empty: 'Non sono presenti pratiche a tuo nome.'
   protocollo: 'Protocollo'
+  in_attesa_protocollo: 'In attesa di protocollazione'
   richiedente: 'Richiedente'
   servizio: 'Servizio'
   categoria: 'Categoria'
   data_di_compilazione: 'Data di compilazione'
+  data_di_creazione: 'Data di creazione'
   stato: 'Stato'
   nessun_allegato: 'Non sono presenti allegati.'
   aggiungi_allegato: 'Aggiungi allegato'
@@ -60,7 +75,7 @@ pratica:
     sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
     si: 'Sì, sono sicuro'
     no: 'No'
-    dati_richiedente: 'I dati del richiedenti non sono modificabili dal momento che vengono utilizzati i dati presenti nella Carta dei servizi con cui ti sei autenticato nel sistema'
+    dati_richiedente: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al tuo profilo</a>'
     allegati: "Inserisci gli allegati"
     seleziona_ente: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
   pdf:
@@ -171,18 +186,22 @@ contributo_pannolini:
   data_acquisto: 'Data di acquisto'
   totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
   datiBambino: 'Dati del bambino'
+  datiBambino.nome: 'Nome'
+  datiBambino.cognome: 'Cognome'
+  datiBambino.luogo_nascita: 'Luogo di nascita'
+  datiBambino.data_nascita: 'Data di nascita'
   datiAcquisto: "Dati dell'Acquisto"
   datiContoCorrente: 'Dati Conto Corrente'
   guida_alla_compilazione:
     dati_bambino: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
-    dati_acquisto: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello step successivo'
+    dati_acquisto: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello passaggio successivo'
   pdf:
     rimborso: "Il rimborso per la spesa sostenuta nell'acquisto dei pannolini di tipo "
     per_il_bambino: 'per il bambino'
     che_venga_rimborsato: 'Il rimborso andrà effettuato sul seguente conto bancario: '
     intestato_a: 'intestato a'
   dettaglio:
-    acquisto: 'dettaglio acquisto'
+    acquisto: 'Dettaglio acquisto'
     nome_punto_vendita: 'Punto Vendita'
     data_acquisto: 'Data Acquisto'
     totale_spesa: 'Totale spesa (€)'
@@ -371,13 +390,13 @@ STATUS_DRAFT: 'Bozza'
 STATUS_SUBMITTED: 'Inviata'
 STATUS_COMPLETE: 'Accettata'
 STATUS_REGISTERED: 'Protocollata'
-STATUS_PENDING: 'In attesa'
+STATUS_PENDING: 'Inviata'
 
 user:
   dashboard:
     title: 'La mia stanza'
     pratiche_draft: 'Pratiche in bozza'
-    pratiche_pending: 'Pratiche in attesa'
+    pratiche_pending: 'Pratiche inviate'
     pratiche_completed: 'Pratiche accettate'
     pratiche_cancelled: 'Pratiche rifiutate'
     vai_al_dettaglio: 'Vedi dettaglio'
@@ -428,7 +447,7 @@ operatori:
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
   scarica: 'Scarica'
-  scarica_modulo_compilato: 'Scarica il modulo compilato'
+  scarica_modulo_compilato: 'Scarica ricevuta provvisoria'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
     allega_documentazione_richiesta: 'Allega documentazione richiesta'

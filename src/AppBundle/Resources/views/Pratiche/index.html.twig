@@ -11,7 +11,7 @@
         {% endif %}
     {% endfor %}
 
-    <h2>{{ title|trans() }} {% if user %}{{ user.fullName }}{% endif %}</h2>
+    <h2>{{ title|trans() }}</h2>
 
     {% if msg is defined %}
         <div class="alert alert-{{ msg.type }}" role="alert">{{ msg.text|trans() }}</div>
