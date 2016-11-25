@@ -353,6 +353,14 @@ attestazione_anagrafica:
     richiesta: "Il rilascio di attestazione di iscrizione Anagrafica"
 
 
+certificato_nascita:
+  pdf:
+    richiesta: "Il rilascio del certificato di nascita"
+
+stato_famiglia:
+  pdf:
+    richiesta: "Il rilascio del certificato dello stato di famiglia"
+
 
 errori:
   allegato:
