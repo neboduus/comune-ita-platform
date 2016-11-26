@@ -122,14 +122,14 @@ class MailerService
             ->setTo($toEmail)
             ->setBody(
                 $this->templating->render(
-                    'Emails/pratica_status_change.html.twig',
+                    'AppBundle:Emails:pratica_status_change.html.twig',
                     array('pratica' => $pratica)
                 ),
                 'text/html'
             )
             ->addPart(
                 $this->templating->render(
-                    'Emails/pratica_status_change.txt.twig',
+                    'AppBundle:Emails:pratica_status_change.txt.twig',
                     array('pratica' => $pratica)
                 ),
                 'text/plain'

@@ -294,7 +294,7 @@ class PraticheController extends Controller
             'user' => $user,
         ];
     }
-
+    
     /**
      * @param Servizio $servizio
      * @param CPSUser $user
