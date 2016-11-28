@@ -149,7 +149,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $form->setValues($values);
         $this->client->submit($form);
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
 
         $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
         $this->assertEquals($numeroDiFascicolo, $pratica->getNumeroFascicolo());
@@ -193,7 +193,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $form->setValues($values);
         $this->client->submit($form);
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
 
         $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
         $this->assertEquals($numeroDiProtocollo, $pratica->getNumeroProtocollo());
@@ -374,6 +374,9 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $operatore = $this->createOperatoreUser($username, $password, $ente1);
         $user = $this->createCPSUser();
         $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+        $pratica->setNumeroProtocollo('test');
+        $pratica->setNumeroFascicolo('test');
+        $this->em->flush($pratica);
 
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->once())
@@ -398,6 +401,31 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
         $this->assertEquals(Pratica::STATUS_PENDING, $pratica->getStatus());
+    }
+
+    /**
+     * @test
+     */
+    public function testICanNotAssignToMyselfAUnassignedPraticaWithoutProtocollo()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $enti = $this->createEnti();
+        $ente1 = $enti[0];
+
+        $operatore = $this->createOperatoreUser($username, $password, $ente1);
+        $user = $this->createCPSUser();
+        $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+
+        $autoassignPraticaUrl = $this->router->generate('operatori_autoassing_pratica', ['pratica' => $pratica->getId()]);
+
+        $this->client->followRedirects();
+        $this->client->request('GET', $autoassignPraticaUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
     }
 
     /**

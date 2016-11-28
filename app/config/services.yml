@@ -73,13 +73,20 @@ services:
         arguments: ["@ocsdc.protocollo.client"]
         public: false
 
+    ocsdc.protocollo.handlers.dummy:
+        class: AppBundle\Protocollo\DummyProtocolloHandler
+        public: false
+
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"
+    #ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
+
     ocsdc.protocollo_delayed:
         class: AppBundle\Services\DelayedProtocolloService
-        arguments: ["@ocsdc.protocollo.handlers.pitre","@doctrine.orm.entity_manager","@logger"]
+        arguments: ["@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger"]
 
     ocsdc.protocollo_direct:
         class: AppBundle\Services\ProtocolloService
-        arguments: ["@ocsdc.protocollo.handlers.pitre","@doctrine.orm.entity_manager","@logger"]
+        arguments: ["@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger"]
 
     ocsdc.protocollo: "@ocsdc.protocollo_delayed"
 
