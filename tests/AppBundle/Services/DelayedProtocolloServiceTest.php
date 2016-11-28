@@ -120,7 +120,8 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
             new DelayedProtocolloService(
                 new PiTreProtocolloHandler($this->getMockGuzzleClient($responses)),
                 $this->em,
-                $this->getMockLogger()
+                $this->getMockLogger(),
+                $this->container->get('event_dispatcher')
             );
 
     }
