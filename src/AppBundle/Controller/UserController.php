@@ -5,17 +5,17 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Form\Base\MessageType;
 use AppBundle\Logging\LogConstants;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Class UserController
@@ -44,10 +44,32 @@ class UserController extends Controller
             3
         );
 
+        $messagesAdapterService = $this->get('ocsdc.messages_adapter');
+        $userThreads = (array) $messagesAdapterService->getThreadsForUser($user);
+        $threads = [];
+        foreach ($userThreads as $thread) {
+
+            $form = $this->createForm(
+                MessageType::class,
+                ['thread_id' => $thread->threadId, 'sender_id' => $user->getId()],
+                [
+                    'action' => $this->get('router')->generate('messages_controller_enqueue_for_user', ['threadId' => $thread->threadId]),
+                    'method' => 'PUT',
+                ]
+            );
+
+            $threads[] = [
+                'threadId' => $thread->threadId,
+                'messages' => $messagesAdapterService->getMessagesForThread($thread->threadId),
+                'form' => $form->createView(),
+            ];
+        }
+
         return array(
             'user'     => $user,
             'servizi' => $servizi,
-            'pratiche' => $pratiche
+            'pratiche' => $pratiche,
+            'threads' => $threads,
         );
     }
 

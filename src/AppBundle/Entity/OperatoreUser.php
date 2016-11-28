@@ -2,19 +2,21 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class OperatoreUser
  * @ORM\Entity
- *
+ * @ORM\HasLifecycleCallbacks()
  * @package AppBundle\Entity
  */
 class OperatoreUser extends User
 {
 
     /**
-     * @ORM\ManyToOne(targetEntity="Ente")
+     * @ORM\ManyToOne(targetEntity="Ente", inversedBy="operatori")
      * @ORM\JoinColumn(name="ente_id", referencedColumnName="id", nullable=true)
      */
     private $ente;
@@ -27,6 +29,13 @@ class OperatoreUser extends User
     private $ambito;
 
     /**
+     * @var Collection
+     *
+     * @ORM\Column(name="servizi_abilitati", type="text")
+     */
+    private $serviziAbilitati;
+
+    /**
      * OperatoreUser constructor.
      */
     public function __construct()
@@ -34,6 +43,7 @@ class OperatoreUser extends User
         parent::__construct();
         $this->type = self::USER_TYPE_OPERATORE;
         $this->addRole(User::ROLE_OPERATORE);
+        $this->serviziAbilitati = new ArrayCollection();
     }
 
     /**
@@ -71,4 +81,47 @@ class OperatoreUser extends User
         $this->ambito = $ambito;
     }
 
+    /**
+     * @return Collection
+     */
+    public function getServiziAbilitati(): Collection
+    {
+        if (!($this->serviziAbilitati instanceof Collection)) {
+            $this->serviziAbilitati = new ArrayCollection(json_decode($this->serviziAbilitati));
+        }
+
+        return $this->serviziAbilitati;
+    }
+
+    /**
+     * @param Collection $servizi
+     * @return $this
+     */
+    public function setServiziAbilitati(Collection $servizi)
+    {
+        $this->serviziAbilitati = $servizi;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad()
+     * @ORM\PostUpdate()
+     */
+    public function parseServizi()
+    {
+        if (!($this->serviziAbilitati instanceof Collection)) {
+            $this->serviziAbilitati = new ArrayCollection(json_decode($this->serviziAbilitati));
+        }
+    }
+
+    /**
+     * @ORM\PreFlush()
+     */
+    public function serializeServizi()
+    {
+        if ($this->serviziAbilitati instanceof Collection) {
+            $this->serviziAbilitati = json_encode($this->getServiziAbilitati()->toArray());
+        }
+    }
 }

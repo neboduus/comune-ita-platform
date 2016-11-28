@@ -56,6 +56,12 @@ class Ente
 
     /**
      * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperatoreUser", mappedBy="ente", fetch="EAGER")
+     */
+    private $operatori;
+
+    /**
+     * @var ArrayCollection
      * @ORM\Column(type="text")
      */
     private $protocolloParameters;
@@ -66,13 +72,22 @@ class Ente
      */
     private $siteUrl;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Servizio", mappedBy="enti")
+     * @var Collection
+     */
+    private $servizi;
+
+    /**
+     * Ente constructor.
+     */
     public function __construct()
     {
-        if ( !$this->id) {
-            $this->id = Uuid::uuid4();
-        }
+        $this->id = Uuid::uuid4();
         $this->asili = new ArrayCollection();
         $this->protocolloParameters = new ArrayCollection();
+        $this->operatori = new ArrayCollection();
+        $this->servizi = new ArrayCollection();
     }
 
     /**
@@ -112,7 +127,7 @@ class Ente
     }
 
     /**
-     * @return AsiloNido[]
+     * @return Collection
      */
     public function getAsili()
     {
@@ -131,9 +146,12 @@ class Ente
         return $this;
     }
 
-    function __toString()
+    /**
+     * @return string
+     */
+    public function __toString()
     {
-        return (string)$this->getId();
+        return (string) $this->getId();
     }
 
     /**
@@ -146,10 +164,12 @@ class Ente
 
     /**
      * @param string $codiceMeccanografico
+     * @return Ente
      */
     public function setCodiceMeccanografico($codiceMeccanografico)
     {
         $this->codiceMeccanografico = $codiceMeccanografico;
+
         return $this;
     }
 
@@ -181,9 +201,9 @@ class Ente
     }
 
     /**
-     * @param mixed $protocolloParameters
+     * @param mixed    $protocolloParameters
      * @param Servizio $servizio
-     * @return Servizio
+     * @return Ente
      */
     public function setProtocolloParametersPerServizio($protocolloParameters, Servizio $servizio)
     {
@@ -234,5 +254,19 @@ class Ente
         return $this;
     }
 
+    /*
+     * @return Collection
+     */
+    public function getOperatori(): Collection
+    {
+        return $this->operatori;
+    }
 
+    /**
+     * @return Collection
+     */
+    public function getServizi(): Collection
+    {
+        return $this->servizi;
+    }
 }

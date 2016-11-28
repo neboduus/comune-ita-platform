@@ -21,10 +21,14 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
 
     # knp_snappy
-    wkhtmlbinary:     %kernel.root_dir%/../vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64
+    wkhtmlbinary:     '%kernel.root_dir%/../vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64'
 
     # La password usata da gpa per pushare gli status changes
     gpa_password: gpa
 
     # La password usata da comunweb per pushare le schede informative
     ez_password: ez
+
+    pitre_adapter_url: http://localhost:8080/pitre/
+
+    messages_backend_url: http://localhost:3000/

@@ -1,5 +1,4 @@
 {% extends '@App/Default/index.html.twig' %}
-
 {% block main_content %}
 
     <h1>{{ 'user.dashboard.title'|trans }}</h1>
@@ -91,86 +90,9 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="panel panel-primary no-border-radius">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Hai bisogno di aiuto?<span class="pull-right"><i class="fa fa-comments-o" aria-hidden="true"></i></span></h3>
-                </div>
-                <div class="panel-body">
-
-                    <div class="row bootstrap snippets">
-                        <div class="col-md-12">
-                            <!-- DIRECT CHAT PRIMARY -->
-                            <div class="box box-primary direct-chat direct-chat-primary">
-                                {#<div class="box-header with-border">
-                                    <h3 class="box-title">Direct Chat</h3>
-
-                                    <div class="box-tools pull-right">
-                                        <span data-toggle="tooltip" title="" class="badge bg-light-blue" data-original-title="3 New Messages">3</span>
-                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
-                                            <i class="fa fa-comments"></i></button>
-                                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                                    </div>
-                                </div>#}
-                                <!-- /.box-header -->
-                                <div class="box-body">
-                                    <!-- Conversations are loaded here -->
-                                    <div class="direct-chat-messages">
-
-                                        <!-- Message to the right -->
-                                        <div class="direct-chat-msg right">
-                                            <div class="direct-chat-info clearfix">
-                                                <span class="direct-chat-name pull-right">Tu</span>
-                                                <span class="direct-chat-timestamp pull-left">23 Ago 2016 14:15</span>
-                                            </div>
-                                            <!-- /.direct-chat-info -->
-                                            <img class="direct-chat-img" src="http://bootdey.com/img/Content/user_2.jpg" alt="Message User Image"><!-- /.direct-chat-img -->
-                                            <div class="direct-chat-text">
-                                                Buongiorno, vorrei un chiarimento sul servizio di iscrizione al nido.<br />
-                                                Sto presentando la richiesta di iscrizione. Posso presentare l' ICEF del 2014?
-                                            </div>
-                                            <!-- /.direct-chat-text -->
-                                        </div>
-
-                                        <div class="direct-chat-msg">
-                                            <div class="direct-chat-info clearfix">
-                                                <span class="direct-chat-name pull-left">URP</span>
-                                                <span class="direct-chat-timestamp pull-right">23 Ago 2016 14:30</span>
-                                            </div>
-                                            <!-- /.direct-chat-info -->
-                                            <img class="direct-chat-img" src="http://bootdey.com/img/Content/user_1.jpg" alt="Message User Image"><!-- /.direct-chat-img -->
-                                            <div class="direct-chat-text">
-                                                Buongiorno, l'ICEF da presentare per l'iscrizione al nido è quello dell'anno 2015/2016
-                                            </div>
-                                            <!-- /.direct-chat-text -->
-                                        </div>
-                                        <!-- /.direct-chat-msg -->
-
-                                    </div>
-                                    <!--/.direct-chat-messages-->
-                                </div>
-                                <!-- /.box-body -->
-                                <div class="box-footer">
-                                    <form action="#" method="post">
-                                        <div class="input-group">
-                                            <input type="text" name="message" placeholder="Componi..." class="form-control">
-                                            <span class="input-group-btn">
-                                                <button type="submit" class="btn btn-primary btn-flat">Invia</button>
-                                            </span>
-                                        </div>
-                                    </form>
-                                </div>
-                                <!-- /.box-footer-->
-                            </div>
-                            <!--/.direct-chat -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {{ include('@App/Default/parts/chat.html.twig') }}
         </div>
     </div>
-
 {% endblock %}
 
 {% block javascripts %}
@@ -199,4 +121,18 @@
             });
         });
     </script>
+    <script type="text/javascript">
+        $( function() {
+//            $("#thread-tabs").tabs();
+            $('.direct-chat-messages').scrollTop(100000);
+
+            $('#chat').find('form').on('submit', function( event ) {
+                event.preventDefault();
+                var messageInput = $(this).find('.message');
+                console.log( messageInput.val());
+                messageInput.val('');
+            })
+        } );
+    </script>
+    <script src="{{ asset('bundles/app/js/chat.js') }}"></script>
 {% endblock %}

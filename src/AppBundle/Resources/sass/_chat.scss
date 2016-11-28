@@ -1,29 +1,49 @@
+#chat {
+  .nav-tabs {
+    li {
+      a {
+        background-color: $gray-lighter;
+        padding: 5px 20px;
+        &:hover {
+          background-color: $gray-light;
+        }
+      }
+      &.active {
+        a {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}
+
+
 .box {
   position: relative;
   border-radius: 3px;
   background: #ffffff;
-  border-top: 3px solid #d2d6de;
-  /*margin-bottom: 20px;*/
   width: 100%;
-  /*box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);*/
+  /*border-top: 3px solid #d2d6de;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   &.box-primary {
-    border-top-color: #3c8dbc;
+    border-top-color: $brand-primary;
   }
   &.box-info {
-    border-top-color: #00c0ef;
+    border-top-color: $brand-info;
   }
   &.box-danger {
-    border-top-color: #dd4b39;
+    border-top-color: $brand-danger;
   }
   &.box-warning {
-    border-top-color: #f39c12;
+    border-top-color: $brand-warning;
   }
   &.box-success {
-    border-top-color: #00a65a;
+    border-top-color: $brand-success;
   }
   &.box-default {
-    border-top-color: #d2d6de;
-  }
+    border-top-color: $gray;
+  }*/
   &.collapsed-box {
     .box-body, .box-footer {
       display: none;
@@ -73,55 +93,55 @@
       }
     }
     &.box-primary {
-      border: 1px solid #3c8dbc;
+      border: 1px solid $brand-primary;
       > .box-header {
         color: #fff;
-        background: #3c8dbc;
-        background-color: #3c8dbc;
+        background: $brand-primary;
+        background-color: $brand-primary;
         a, .btn {
           color: #fff;
         }
       }
     }
     &.box-info {
-      border: 1px solid #00c0ef;
+      border: 1px solid $brand-info;
       > .box-header {
         color: #fff;
-        background: #00c0ef;
-        background-color: #00c0ef;
+        background: $brand-info;
+        background-color: $brand-info;
         a, .btn {
           color: #fff;
         }
       }
     }
     &.box-danger {
-      border: 1px solid #dd4b39;
+      border: 1px solid $brand-danger;
       > .box-header {
         color: #fff;
-        background: #dd4b39;
-        background-color: #dd4b39;
+        background: $brand-danger;
+        background-color: $brand-danger;
         a, .btn {
           color: #fff;
         }
       }
     }
     &.box-warning {
-      border: 1px solid #f39c12;
+      border: 1px solid $brand-warning;
       > .box-header {
         color: #fff;
-        background: #f39c12;
-        background-color: #f39c12;
+        background: $brand-warning;
+        background-color: $brand-warning;
         a, .btn {
           color: #fff;
         }
       }
     }
     &.box-success {
-      border: 1px solid #00a65a;
+      border: 1px solid $brand-success;
       > .box-header {
         color: #fff;
-        background: #00a65a;
-        background-color: #00a65a;
+        background: $brand-success;
+        background-color: $brand-success;
         a, .btn {
           color: #fff;
         }
@@ -497,46 +517,46 @@
 }
 
 .direct-chat-danger .right > .direct-chat-text {
-  background: #dd4b39;
-  border-color: #dd4b39;
+  background: $brand-danger;
+  border-color: $brand-danger;
   color: #fff;
   &:after, &:before {
-    border-left-color: #dd4b39;
+    border-left-color: $brand-danger;
   }
 }
 
 .direct-chat-primary .right > .direct-chat-text {
-  background: #3c8dbc;
-  border-color: #3c8dbc;
+  background: $brand-primary;
+  border-color: $brand-primary;
   color: #fff;
   &:after, &:before {
-    border-left-color: #3c8dbc;
+    border-left-color: $brand-primary;
   }
 }
 
 .direct-chat-warning .right > .direct-chat-text {
-  background: #f39c12;
-  border-color: #f39c12;
+  background: $brand-warning;
+  border-color: $brand-warning;
   color: #fff;
   &:after, &:before {
-    border-left-color: #f39c12;
+    border-left-color: $brand-warning;
   }
 }
 
 .direct-chat-info .right > .direct-chat-text {
-  background: #00c0ef;
-  border-color: #00c0ef;
+  background: $brand-info;
+  border-color: $brand-info;
   color: #fff;
   &:after, &:before {
-    border-left-color: #00c0ef;
+    border-left-color: $brand-info;
   }
 }
 
 .direct-chat-success .right > .direct-chat-text {
-  background: #00a65a;
-  border-color: #00a65a;
+  background: $brand-success;
+  border-color: $brand-success;
   color: #fff;
   &:after, &:before {
-    border-left-color: #00a65a;
+    border-left-color: $brand-success;
   }
 }

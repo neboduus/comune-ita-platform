@@ -9,6 +9,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
@@ -718,6 +719,4 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
         $this->assertRegExp('/\/login$/', $this->client->getResponse()->headers->get('location'));
     }
-
-
 }

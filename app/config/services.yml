@@ -92,7 +92,7 @@ services:
 
     ocsdc.pratica_listeners.sendmail:
         class: AppBundle\EventListener\SendMailPraticaListener
-        arguments: ["@ocsdc.mailer", %default_from_email_address%,"@logger"]
+        arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@logger"]
         tags:
             - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange }
 
@@ -180,3 +180,8 @@ services:
         arguments: ["@guzzle.client.comunweb","@logger"]
 
     ocsdc.remote_content_provider: "@ocsdc.comunweb_content_provider"
+
+    ocsdc.messages.client: "@guzzle.client.messages"
+    ocsdc.messages_adapter:
+        class: AppBundle\Services\MessagesAdapterService
+        arguments: ["@ocsdc.messages.client", "@logger"]

@@ -13,12 +13,14 @@ use AppBundle\Entity\Servizio;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -145,6 +147,7 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         $this->em->persist($user);
         $this->em->flush();
+        $this->em->refresh($user);
 
         return $user;
     }
@@ -391,24 +394,34 @@ abstract class AbstractAppTestCase extends WebTestCase
      *
      * @return OperatoreUser
      */
-    protected function createOperatoreUser($username, $password, Ente $ente = null)
+    protected function createOperatoreUser($username, $password, Ente $ente = null, $serviziAbilitati = null)
     {
         $um = $this->container->get('fos_user.user_manager');
-        $user = new OperatoreUser();
-        $user->setUsername($username)
-             ->setPlainPassword($password)
-             ->setEmail(md5(rand(0, 1000) . microtime()) . 'some@fake.email')
-             ->setNome('a')
-             ->setCognome('b')
-             ->setEnabled(true);
 
-        if ($ente) {
-            $user->setEnte($ente);
+        if(!$serviziAbilitati){
+            $serviziAbilitati = new ArrayCollection();
         }
 
-        $um->updateUser($user);
+        $operatore = new OperatoreUser();
+        $operatore->setUsername($username)
+             ->setPlainPassword($password)
+             ->setEmail(md5(rand(0, 1000).microtime()).'some@fake.email')
+             ->setNome('a')
+             ->setCognome('b')
+             ->setEnabled(true)
+             ->setServiziAbilitati($serviziAbilitati);
 
-        return $user;
+        if ($ente) {
+            $operatore->setEnte($ente);
+        }
+
+        $um->updateUser($operatore);
+        $this->em->refresh($operatore);
+        if ($ente) {
+            $operatore->setEnte($ente);
+        }
+
+        return $operatore;
     }
 
     protected function setupSwiftmailerMock($recipients = [])
@@ -491,6 +504,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $servizio->setTestoIstruzioni('<strong>Tutto</strong> quello che volevi sapere su ' . $slug . ' e non hai <em>mai</em> osato chiedere!');
         $this->em->persist($servizio);
         $this->em->flush();
+        $this->em->refresh($servizio);
 
         return $servizio;
     }
@@ -828,4 +842,40 @@ abstract class AbstractAppTestCase extends WebTestCase
         $this->assertContains($user->getFullName(), $response->getContent());
     }
 
+    protected function getMockedMessagesBackendThreadResponseForUser(CPSUser $user)
+    {
+        $body = [
+            [
+                'threadId' => $user->getId().'~'.Uuid::uuid4(),
+                'senderId' => $user->getId(),
+            ],
+            [
+                'threadId' => $user->getId().'~'.Uuid::uuid4(),
+                'senderId' => $user->getId(),
+            ],
+            [
+                'threadId' => $user->getId().'~'.Uuid::uuid4(),
+                'senderId' => $user->getId(),
+            ],
+        ];
+
+        return new Response(200, [], json_encode($body));
+    }
+
+    protected function getMockedMessagesBackendThreadResponseForUserEnteAndService(CPSUser $user, OperatoreUser $operatore)
+    {
+        $body = [
+            [
+                'threadId' => $user->getId().'~'.$operatore->getId(),
+                'senderId' => $user->getId(),
+            ]
+        ];
+
+        return new Response(200, [], json_encode($body));
+    }
+
+    protected function submitAsCPSUser(CPSUser $user, Form $form)
+    {
+        return $this->clientRequestAsCPSUser($user, $form->getMethod(), $form->getUri(), $form->getPhpValues());
+    }
 }

@@ -55,8 +55,6 @@ class AutoletturaTest extends AbstractAppTestCase
      */
     public function testICanFillOutTheAutoletturaAsLoggedUser()
     {
-//        $this->markTestIncomplete('Create the test for the autolettura service');
-
         //create an ente
         $ente = $this->createEnti()[0];
         //create the autolettura service bound to that ente

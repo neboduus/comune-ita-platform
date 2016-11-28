@@ -43,7 +43,7 @@ class Servizio
     private $slug;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Ente", cascade={"remove"})
+     * @ORM\ManyToMany(targetEntity="Ente", cascade={"remove"}, inversedBy="servizi")
      * @ORM\JoinTable(
      *     name="servizio_enti",
      *     joinColumns={@ORM\JoinColumn(name="servizio_id", referencedColumnName="id")},
