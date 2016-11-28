@@ -1,9 +1,5 @@
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas">
     <ul class="nav navmenu-nav">
-        <li class="active"><a href="{{ path('home') }}"><i class="fa fa-home fa-2" aria-hidden="true"></i>  Home</a></li>
-        <li><a href="#">La stanza del cittadino</a></li>
-        <li><a href="#">Enti coinvolti</a></li>
-        <li><a href="#">Privacy policy</a></li>
-        <li><a href="#">Faq</a></li>
+        {{ include('@App/Default/parts/menu_list.html.twig') }}
     </ul>
 </div>

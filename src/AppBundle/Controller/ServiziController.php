@@ -95,16 +95,19 @@ class ServiziController extends Controller
     {
         $user = $this->getUser();
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        /** @var Servizio $servizio */
         $servizio = $serviziRepository->findOneBySlug($slug);
-        if (!$servizio){
+        if (!$servizio instanceof Servizio){
             throw new NotFoundHttpException("Servizio $slug not found");
         }
         $servizi = $serviziRepository->findAll();
+        $serviziArea = $serviziRepository->findBy(['area' => $servizio->getArea()]);
 
         return [
             'user' => $user,
             'servizio' => $servizio,
-            'servizi' => $servizi
+            'servizi' => $servizi,
+            'servizi_area' => $serviziArea,
         ];
 
     }

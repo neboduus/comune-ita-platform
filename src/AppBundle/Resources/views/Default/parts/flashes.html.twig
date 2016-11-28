@@ -22,3 +22,9 @@
         {{ flashMessage }}
     </div>
 {% endfor %}
+{% for flashMessage in app.session.flashbag.get('feedback') %}
+    <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        {{ flashMessage }}
+    </div>
+{% endfor %}

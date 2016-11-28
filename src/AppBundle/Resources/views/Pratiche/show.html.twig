@@ -24,10 +24,12 @@
                                         <span class="bubble"></span>
                                         <span class="stacked-text">
                                         <span class="fa fa-calendar"></span>
-                                            {{ timestamp|date('d/M/y') }}
+                                            {{ timestamp|date('d/M/y H:i') }}
                                             {% for change in changes[0] %}
-                                                {% set message = 'pratica.dettaglio.stato_'~change %}
-                                                <span class="subdued"><em> {{ message| trans }} </em></span>
+                                                {% if change %}
+                                                    {% set message = 'pratica.dettaglio.stato_'~change %}
+                                                    <span class="subdued"><em> {{ message| trans }} </em></span>
+                                                {% endif %}
                                             {% endfor %}
                                     </a>
                                 </li>
@@ -41,10 +43,7 @@
                 <div class="list-group">
                     {% if pratica.statusName == 'STATUS_DRAFT' and user.id == pratica.user.id %}
                         <a class="list-group-item" data-action="edit_draft" href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                            <span class="fa-stack">
-                                <i class="fa fa-circle-thin fa-stack-2x"></i>
-                                <i class="fa fa-angle-right fa-stack-1x"></i>
-                            </span>
+                            <i class="fa fa-arrow-circle-o-right"></i>
                             {{ 'pratica.vai_alla_pratica'|trans }}
                         </a>
                     {% endif %}

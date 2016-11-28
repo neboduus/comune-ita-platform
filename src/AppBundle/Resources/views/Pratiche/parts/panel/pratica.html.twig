@@ -3,6 +3,8 @@
 <article class="panel panel-default pratica" data-user="{{ pratica.user.id }}" data-status="{{ pratica.status }}">
     <div class="panel-body">
 
+        <h4 class="blu-italia-base-color">{{ pratica.servizio.name }}</h4>
+
         {% if pratica.statusName == 'STATUS_CANCELLED' %}
             <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
         {% elseif pratica.statusName == 'STATUS_DRAFT' %}
@@ -17,18 +19,13 @@
             <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
         {% endif %}
 
-        <time class="grigio-40-color">{{ pratica.creationTime|date("d/m/Y") }}</time>
-        <h4 class="blu-italia-base-color">{{ pratica.servizio.name }}</h4>
-        <p>{{ pratica.servizio.description|length > text_limit ? pratica.servizio.description|slice(0, text_limit) ~ '...' : pratica.servizio.description  }}</p>
+        <p><b>{{ 'pratica.data_di_creazione'|trans }}:</b> {{ pratica.creationTime|date("d/m/Y") }}</p>
 
         <div class="row">
-            <div class="col-md-12">
-                <a class="btn btn-default" href="{{ path('pratiche_compila', {'pratica': pratica.id}) }}">
-                    <span class="fa-stack">
-                        <i class="fa fa-circle-thin fa-stack-2x"></i>
-                        <i class="fa fa-angle-right fa-stack-1x"></i>
-                    </span>
-                    {{ 'pratica.vai_alla_pratica'|trans }}
+            <div class="col-md-12 text-center">
+                <a class="btn btn-default" href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                    {{ 'pratica.riprendi_pratica'|trans }}
                 </a>
             </div>
         </div>

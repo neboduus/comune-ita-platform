@@ -4,16 +4,16 @@
     <h1>{{ servizio.name }}</h1>
     <div class="row">
         <div class="col-sm-7">
-            <h3>Il servizio</h3>
+            <h4>{{ 'servizio.il_servizio'|trans() }}</h4>
             <p>{{ servizio.description }}</p>
 
             {% if servizio.area %}
-                <h3>Area tematica</h3>
+                <h4>{{ 'servizio.area_tematica'|trans() }}</h4>
                 <a href="#" class="btn btn-info btn-sm"><i class="fa fa-circle" aria-hidden="true"></i> {{ servizio.area }}</a>
             {% endif %}
 
             {% if servizio.enti|length > 0 %}
-                <h3>{{ 'servizio.enti_coinvolti'|trans }}</h3>
+                <h4>{{ 'servizio.enti_coinvolti'|trans }}</h4>
                 <ul class="list-unstyled list-inline">
                     {% for ente in servizio.enti %}
                         <li><a href="#" class="btn btn-info btn-sm"><i class="fa fa-map-marker" aria-hidden="true"></i> {{ ente.name }}</a></li>
@@ -34,8 +34,9 @@
                         <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}</div>
                     {% else %}
                         <div class="text-center">
-                            <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-sm">
-                                <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}
+                            <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg">
+                                <span class="hidden-xs">{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
+                                <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%':null}) }}</span>
                             </a>
                         </div>
                     {% endif %}
@@ -45,10 +46,11 @@
         </div>
 
 
+        {% if servizi_area|length > 0 %}
         <div class="col-sm-4 col-sm-offset-1 sidebar">
-            <h3>Altri servizi</h3>
+            <h4>{{ "servizio.servizi_area_title"|trans({'%area%': servizio.area}) }}</h4>
             <div class="list-group">
-                {% for s in servizi %}
+                {% for s in servizi_area %}
                     <a href="{{ path('servizi_show', {'slug': s.slug}) }}" class="list-group-item{% if s.id == servizio.id %} active{% endif %}">{{ s.name }}</a>
                 {% endfor %}
             </div>
@@ -75,6 +77,7 @@
                 </a>
             </p>#}
         </div>
+        {% endif %}
     </div>
 
     <div class="row hidden-xs">
