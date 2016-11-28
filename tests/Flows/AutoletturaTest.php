@@ -88,8 +88,8 @@ class AutoletturaTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
         $this->selezioneComune($crawler, $nextButton, $ente, $form);
+        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
         $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
         $this->datiIntestatario($crawler, $nextButton, $fillData, $form);
         $this->datiContatore($crawler, $nextButton, $fillData, $form);
