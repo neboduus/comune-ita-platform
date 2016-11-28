@@ -471,3 +471,19 @@ allegato:
   non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'
   aggiungi: 'Aggiungi un allegato'
   cancellato: 'Allegato cancellato correttamente'
+
+email:
+  detail_link: 'link'
+  footer: "<strong>La Stanza del cittadino</strong> powered by <strong>ComunWEB</strong> con il supporto di <strong>OpenContent Scarl</strong>"
+  pratica:
+    dear: 'Gentile <strong>%nome% %cognome%</strong>,'
+    thanks: 'La ringraziamo per aver utilizzato la stanza del cittadino.'
+    link: 'Per ulteriori dettagli visiti il seguente '
+    link_txt: 'Per ulteriori dettagli visiti il seguente link: '
+    status:
+      submitted: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+      registered: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della pratica."
+      cancelled: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata rifiutata.'
+      complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata accettata.'
+      pending: ''
+      draft: ''
