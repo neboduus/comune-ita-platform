@@ -185,6 +185,8 @@ class DefaultControllerTest extends AbstractAppTestCase
 
         $crawler =$this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('terms_accept'));
 
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
+
         $form = $crawler->selectButton($this->translator->trans('salva'))
             ->form();
 

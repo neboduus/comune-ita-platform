@@ -31,7 +31,8 @@ class ServiziController extends Controller
 
 
         return [
-            'servizi' => $servizi
+            'servizi' => $servizi,
+            'user' => $this->getUser(),
         ];
     }
 
@@ -79,7 +80,8 @@ class ServiziController extends Controller
         return [
             'current_topic' => $topic,
             'topics'        => $topics,
-            'servizi'       => $servizi
+            'servizi'       => $servizi,
+            'user' => $this->getUser(),
         ];
     }
 
@@ -108,6 +110,7 @@ class ServiziController extends Controller
             'servizio' => $servizio,
             'servizi' => $servizi,
             'servizi_area' => $serviziArea,
+            'user' => $this->getUser(),
         ];
 
     }

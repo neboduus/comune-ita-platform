@@ -17,6 +17,8 @@ error_message: "Ooops! Qualcosa non ha funzionato!"
 error_message_detail: "Per favore contatta il supporto tecnico e comunicagli cosa stavi facendo."
 visualizza_colonne: "Visualizza colonne"
 visualizza_griglia: "Visualizza griglia"
+profilo_utente: "Profilo utente"
+operatore: "Operatore"
 
 nav:
   home: 'Homepage'

@@ -784,4 +784,12 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         return new Response(200, [], json_encode($body));
     }
+
+    protected function doTestISeeMyNameAsLoggedInUser(
+        \AppBundle\Entity\User $user,
+        \Symfony\Component\HttpFoundation\Response $response)
+    {
+        $this->assertContains($user->getFullName(), $response->getContent());
+    }
+
 }

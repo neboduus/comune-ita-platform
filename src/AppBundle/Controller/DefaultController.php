@@ -63,7 +63,8 @@ class DefaultController extends Controller
 
         return [
             'form' => $form->createView(),
-            'terms' => $terms
+            'terms' => $terms,
+            'user' => $user
         ];
     }
 

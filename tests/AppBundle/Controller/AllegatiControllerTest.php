@@ -49,6 +49,8 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $newPath = $this->router->generate('allegati_create_cpsuser');
         $linkToNew = $crawler->filterXpath('//*[@href="'.$newPath.'"]');
         $this->assertGreaterThan(0, $linkToNew->count());
+
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
     }
 
     /**
@@ -220,6 +222,9 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
         $allegatiCreatePath = $this->router->generate('allegati_create_cpsuser');
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiCreatePath);
+
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
+
         $form = $crawler->selectButton($this->translator->trans('salva'))->form();
         $values = $form->getValues();
         $values['ocsdc_allegato[description]'] = 'pippo';
@@ -290,6 +295,9 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals(1, $crawler->filterXPath('//*[@data-allegato="'.$myAllegato->getId().'"]')->count());
         $this->assertEquals(0, $crawler->filterXPath('//*[@data-allegato="'.$otherAllegato->getId().'"]')->count());
+
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
+
     }
 
     /**
@@ -340,6 +348,8 @@ class AllegatiControllerTest extends AbstractAppTestCase
         //an allegato is not created for this user
         $this->assertEquals(1, count($repo->findBy(['owner' => $user])));
 
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
+
     }
 
 
@@ -373,6 +383,8 @@ class AllegatiControllerTest extends AbstractAppTestCase
 
         //an allegato is not created for this user
         $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
+
+        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
     }
 
 
