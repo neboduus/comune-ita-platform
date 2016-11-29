@@ -85,11 +85,18 @@ class OperatoriController extends Controller
 
     /**
      * @Route("/{pratica}/autoassign",name="operatori_autoassing_pratica")
+     * @param Pratica $pratica
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function autoAssignPraticaAction(Pratica $pratica)
     {
         if ($pratica->getOperatore() !== null){
             throw new BadRequestHttpException("Pratica {$pratica->getId()} already assigned to {$pratica->getOperatore()->getFullName()}");
+        }
+
+        if ($pratica->getNumeroProtocollo() === null){
+            throw new BadRequestHttpException("Pratica {$pratica->getId()} does not have yet a protocol number");
         }
 
         $pratica->setOperatore($this->getUser());
@@ -116,6 +123,7 @@ class OperatoriController extends Controller
     /**
      * @Route("/{pratica}/detail",name="operatori_show_pratica")
      * @Template()
+     *
      * @return array
      */
     public function showPraticaAction(Pratica $pratica, Request $request)
@@ -151,6 +159,8 @@ class OperatoriController extends Controller
      * @Route("/{pratica}/approva",name="operatori_approva_pratica")
      * @Template()
      * @param Pratica $pratica
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function approvaPraticaAction(Pratica $pratica)
     {
@@ -170,7 +180,7 @@ class OperatoriController extends Controller
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
 
-        /** @var PraticaFlow $praticaFlowService */
+        /** @var PraticaOperatoreFlow $praticaFlowService */
         $praticaFlowService = $this->get( $pratica->getServizio()->getPraticaFlowOperatoreServiceName() );
 
         $praticaFlowService->setInstanceKey($user->getId());
@@ -242,6 +252,7 @@ class OperatoriController extends Controller
      */
     public function addNumeroDiFascicoloToPraticaAction(Request $request, Pratica $pratica)
     {
+        $this->checkUserCanAccessPratica($this->getUser(), $pratica);
         $form = $this->createForm(NumeroFascicoloPraticaType::class, $pratica);
         $form->add('submit', SubmitType::class, array(
             'label' => $this->get('translator')->trans('salva'),
@@ -252,6 +263,7 @@ class OperatoriController extends Controller
             $this->get('logger')->info(sprintf(LogConstants::PRATICA_FASCICOLO_ASSEGNATO, $pratica->getId(), $pratica->getNumeroFascicolo()));
 
             $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
 
         return [
@@ -267,6 +279,7 @@ class OperatoriController extends Controller
      */
     public function addNumeroDiProtocolloToPraticaAction(Request $request, Pratica $pratica)
     {
+        $this->checkUserCanAccessPratica($this->getUser(), $pratica);
         $form = $this->createForm(NumeroProtocolloPraticaType::class, $pratica);
         $form->add('submit', SubmitType::class, array(
             'label' => $this->get('translator')->trans('salva'),
@@ -277,6 +290,7 @@ class OperatoriController extends Controller
             $this->get('logger')->info(sprintf(LogConstants::PRATICA_PROTOCOLLO_ASSEGNATO, $pratica->getId(), $pratica->getNumeroProtocollo()));
 
             $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
 
         return [
