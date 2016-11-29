@@ -13,8 +13,8 @@ use AppBundle\Entity\Pratica;
 
 class AutoletturaAcquaFlow extends PraticaFlow
 {
-    const STEP_ACCETTAZIONE_ISTRUZIONI = 1;
-    const STEP_SELEZIONA_ENTE = 2;
+    const STEP_SELEZIONA_ENTE = 1;
+    const STEP_ACCETTAZIONE_ISTRUZIONI = 2;
     const STEP_DATI_RICHIEDENTE = 3;
     const STEP_DATI_INTESTATARIO = 4;
     const STEP_DATI_CONTATORE = 5;
@@ -27,13 +27,13 @@ class AutoletturaAcquaFlow extends PraticaFlow
     protected function loadStepsConfig()
     {
         return array(
-            self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'pratica.accettazioneIstruzioni',
-                'form_type' => AccettazioneIstruzioniType::class,
-            ),
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'pratica.selezionaEnte',
                 'form_type' => SelezionaEnteType::class,
+            ),
+            self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
+                'label' => 'pratica.accettazioneIstruzioni',
+                'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
                 'label' => 'pratica.datiRichiedente',
