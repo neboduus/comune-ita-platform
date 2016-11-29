@@ -82,11 +82,11 @@ services:
 
     ocsdc.protocollo_delayed:
         class: AppBundle\Services\DelayedProtocolloService
-        arguments: ["@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger"]
+        arguments: ["@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher"]
 
     ocsdc.protocollo_direct:
         class: AppBundle\Services\ProtocolloService
-        arguments: ["@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger"]
+        arguments: ["@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher"]
 
     ocsdc.protocollo: "@ocsdc.protocollo_delayed"
 

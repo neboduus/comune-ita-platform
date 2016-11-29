@@ -4,11 +4,14 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Pratica;
+use AppBundle\Event\PraticaOnChangeStatusEvent;
+use AppBundle\PraticaEvents;
 use AppBundle\Protocollo\Exception\AlreadySentException;
 use AppBundle\Protocollo\Exception\AlreadyUploadException;
 use AppBundle\Protocollo\Exception\ParentNotRegisteredException;
 use AppBundle\Protocollo\Exception\InvalidStatusException;
 use AppBundle\Protocollo\ProtocolloHandlerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManager;
 
@@ -29,15 +32,21 @@ class ProtocolloService implements ProtocolloServiceInterface
      */
     protected $entityManager;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
 
     public function __construct(
         ProtocolloHandlerInterface $handler,
         EntityManager $entityManager,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        EventDispatcherInterface $dispatcher
     ) {
         $this->handler = $handler;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->dispatcher = $dispatcher;
     }
 
     public function protocollaPratica(Pratica $pratica)
@@ -45,6 +54,7 @@ class ProtocolloService implements ProtocolloServiceInterface
         $this->validatePratica($pratica);
 
         $this->handler->sendPraticaToProtocollo($pratica);
+
         $pratica->setStatus(Pratica::STATUS_REGISTERED);
 
         foreach ($pratica->getAllegati() as $allegato) {
@@ -53,6 +63,11 @@ class ProtocolloService implements ProtocolloServiceInterface
 
         $this->entityManager->persist($pratica);
         $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(
+            PraticaEvents::ON_STATUS_CHANGE,
+            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_REGISTERED)
+        );
     }
 
     public function protocollaAllegato(Pratica $pratica, AllegatoInterface $allegato)

@@ -8,6 +8,7 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\User;
 use AppBundle\Protocollo\PiTreProtocolloHandler;
 use AppBundle\Services\ProtocolloService;
+use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
 class ProtocolloServiceTest extends AbstractAppTestCase
@@ -31,7 +32,11 @@ class ProtocolloServiceTest extends AbstractAppTestCase
         for ($i = 1; $i <= $expectedAllegati; $i++) {
             $responses[] = $this->getPiTreSuccessResponse();
         }
-        $protocollo = $this->getMockProtocollo($responses);
+
+        $dispatcher = $this->getMockBuilder(TraceableEventDispatcher::class)->disableOriginalConstructor()->getMock();
+        $dispatcher->expects($this->exactly(1))
+                   ->method('dispatch');
+        $protocollo = $this->getMockProtocollo($responses, $dispatcher);
 
         $user = $this->createCPSUser();
         $pratica = $this->createSubmittedPraticaForUser($user);
@@ -132,13 +137,17 @@ class ProtocolloServiceTest extends AbstractAppTestCase
         }
     }
 
-    private function getMockProtocollo($responses = array())
+    private function getMockProtocollo($responses = array(), $dispatcher = null)
     {
+        if (!$dispatcher){
+            $dispatcher = $this->container->get('event_dispatcher');
+        }
         return
             new ProtocolloService(
                 new PiTreProtocolloHandler($this->getMockGuzzleClient($responses)),
                 $this->em,
-                $this->getMockLogger()
+                $this->getMockLogger(),
+                $dispatcher
             );
 
     }
