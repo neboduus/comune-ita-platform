@@ -60,6 +60,12 @@ class Ente
      */
     private $protocolloParameters;
 
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $siteUrl;
+
     public function __construct()
     {
         if ( !$this->id) {
@@ -207,4 +213,26 @@ class Ente
             $this->protocolloParameters = new ArrayCollection(unserialize($this->protocolloParameters));
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getSiteUrl()
+    {
+        return $this->siteUrl;
+    }
+
+    /**
+     * @param string $siteUrl
+     *
+     * @return Ente
+     */
+    public function setSiteUrl($siteUrl)
+    {
+        $this->siteUrl = $siteUrl;
+
+        return $this;
+    }
+
+
 }

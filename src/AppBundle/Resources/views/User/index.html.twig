@@ -8,65 +8,10 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="panel panel-primary no-border-radius">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">{{ 'user.dashboard.avvisi_notizie'|trans }}</h3>
-                        </div>
-                        <div class="panel-body">
-                            <ul class="list-unstyled list-news">
-                                <li>
-                                    <div class="date">
-                                        <span class="month">AGO</span>
-                                        <span class="day">7</span>
-                                        <span class="year">2016</span>
-                                    </div>
-                                    <a href="#" class="small">Nuovi orari di apertura C.R.M.</a>
-                                    <p class="text-faded small">
-                                        A partire dal giorno 8 agosto 2016 saranno operativi i nuovi orari dei centri di raccolta materiali.
-                                    </p>
-                                </li>
-                                <li>
-                                    <div class="date">
-                                        <span class="month">LUG</span>
-                                        <span class="day">6</span>
-                                        <span class="year">2016</span>
-                                    </div>
-                                    <a href="#" class="small">Contributo per lo sfalcio di aree private</a>
-                                    <p class="text-faded small">
-                                        Sono aperti i termini per la presentazione delle domande di contributo per lo sfalcio e il recupero di aree private.
-                                    </p>
-                                </li>
-                                <li>
-                                    <div class="date">
-                                        <span class="month">GIU</span>
-                                        <span class="day">21</span>
-                                        <span class="year">2016</span>
-                                    </div>
-                                    <a href="#" class="small">Benvenuto/a tra noi! Sostegno alle famiglie con bambini nati nel 2016</a>
-                                    <p class="text-faded small">
-                                        Buono sconto per l'acquisto di pannolini lavabili o biodegradabili oppure per un compattatore di pannolini.
-                                    </p>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    {{ include('AppBundle:User/parts:avvisi_notizie.html.twig') }}
                 </div>
                 <div class="col-md-6">
-                    <div class="panel panel-primary no-border-radius">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">{{ 'user.dashboard.scadenze'|trans }}</h3>
-                        </div>
-                        <div class="panel-body">
-                            <ul class="list-unstyled list-deadlines">
-                                <li><span class="date small">07/09/2016</span><a href="#" class="small">Scadenza contributo sfalcio aree private</a></li>
-                                <li><span class="date small">07/09/2016</span><a href="#" class="small">Contributo casa</a></li>
-                                <li><span class="date small">03/10/2016</span><a href="#" class="small">Scadenza IMIS</a></li>
-                                <li><span class="date small">21/11/2016</span><a href="#" class="small">Scadenza corso Cuoco</a></li>
-                                <li><span class="date small">07/04/2017</span><a href="#" class="small">Dichiarazione dei redditi</a></li>
-                                <li><span class="date small">17/06/2017</span><a href="#" class="small">Scadenza Bando Mobilità volontaria</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    {{ include('AppBundle:User/parts:scadenze.html.twig') }}
                 </div>
             </div>
             <div class="row">
@@ -105,7 +50,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <h3>Le mie ultime pratiche <a href="{{ path('pratiche') }}" class="small">(vedi tutte)</a></h3>
+                    <h3>{{ 'user.dashboard.ultime_pratiche'|trans }} {% if pratiche|length > 0 %}<a href="{{ path('pratiche') }}" class="small">{{ 'user.dashboard.vedi_tutte'|trans }}</a>{% endif %}</h3>
                     {% if pratiche|length > 0 %}
                         <div id="no-more-tables">
                             <table class="table table-bordered table-striped table-condensed cf">
@@ -226,4 +171,32 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var news = $('.list-news');
+            var deadlines = $('.list-deadlines');
+            news.html($.templates("#tpl-news-spinner").render({}));
+            $.get("{{ path('user_latest_news') }}", function (data) {
+                if (data.length > 0) {
+                    news.parent().css({'max-height':'300px','overflow-y':'scroll','overflow-x':'hidden'});
+                    news.html($.templates("#tpl-news").render(data));
+                }else {
+                    news.parent().removeAttr('style');
+                    news.html($.templates("#tpl-news-empty").render({}));
+                }
+            });
+            deadlines.html($.templates("#tpl-deadlines-spinner").render({}));
+            $.get("{{ path('user_latest_deadlines') }}", function (data) {
+                if (data.length > 0)
+                    deadlines.html($.templates("#tpl-deadlines").render(data));
+                else
+                    deadlines.html($.templates("#tpl-deadlines-empty").render({}));
+            });
+        });
+    </script>
 {% endblock %}

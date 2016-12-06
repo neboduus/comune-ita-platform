@@ -82,3 +82,8 @@ guzzle:
         timeout: 10
       headers:
         Accept: "application/json"
+    comunweb:
+      options:
+        timeout: 3
+      headers:
+        Accept: "application/json"
