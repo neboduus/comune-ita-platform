@@ -29,6 +29,6 @@ parameters:
     # La password usata da comunweb per pushare le schede informative
     ez_password: ez
 
-    pitre_adapter_url: http://localhost:8080/pitre/
+    pitre_adapter_url: http://localhost:8080/
 
     messages_backend_url: http://localhost:3000/

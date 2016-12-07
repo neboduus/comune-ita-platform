@@ -185,3 +185,4 @@ services:
     ocsdc.messages_adapter:
         class: AppBundle\Services\MessagesAdapterService
         arguments: ["@ocsdc.messages.client", "@logger"]
+
