@@ -151,8 +151,8 @@ services:
         parent: ocsdc.form.flow.pratica
 
     ocsdc.form.flow.statofamiglia:
-            class: AppBundle\Form\StatoFamiglia\StatoFamigliaFlow
-            parent: ocsdc.form.flow.pratica
+        class: AppBundle\Form\StatoFamiglia\StatoFamigliaFlow
+        parent: ocsdc.form.flow.pratica
 
     ocsdc.form.flow.praticaoperatore:
         class: AppBundle\Form\Operatore\Base\PraticaOperatoreFlow
@@ -172,5 +172,11 @@ services:
         parent: ocsdc.form.flow.praticaoperatore
 
     ocsdc.form.flow.statofamigliaoperatore:
-            class: AppBundle\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow
-            parent: ocsdc.form.flow.praticaoperatore
+        class: AppBundle\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow
+        parent: ocsdc.form.flow.praticaoperatore
+
+    ocsdc.comunweb_content_provider:
+        class: AppBundle\Services\ComunwebContentProviderService
+        arguments: ["@guzzle.client.comunweb","@logger"]
+
+    ocsdc.remote_content_provider: "@ocsdc.comunweb_content_provider"

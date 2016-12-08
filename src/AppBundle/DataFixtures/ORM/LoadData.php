@@ -90,7 +90,8 @@ class LoadData implements FixtureInterface
                 $this->counters['enti']['new']++;
                 $ente = (new Ente())
                     ->setName($item['name'])
-                    ->setCodiceMeccanografico($item['codice']);
+                    ->setCodiceMeccanografico($item['codice'])
+                    ->setSiteUrl($item['url']);
                 $manager->persist($ente);
             } else {
                 $this->counters['enti']['updated']++;

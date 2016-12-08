@@ -405,6 +405,8 @@ user:
     avvisi_notizie: 'Avvisi / Notizie'
     scadenze: 'Le mie Scadenze'
     servizi_primo_piano: 'Servizi in primo piano'
+    ultime_pratiche: "Pratiche recenti"
+    vedi_tutte: "(vedi tutte)"
 
   profile:
     title: 'Profilo utente'

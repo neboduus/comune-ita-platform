@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -181,6 +182,62 @@ class UserController extends Controller
         $form = $formBuilder->getForm();
 
         return $form;
+    }
+
+    /**
+     * @Route("/latest_news", name="user_latest_news")
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function latestNewsAction(Request $request)
+    {
+        $newsProvider = $this->get('ocsdc.remote_content_provider');
+        $enti = $this->getEntiFromCurrentUser();
+        $data = $newsProvider->getLatestNews($enti);
+        $response = new JsonResponse($data);
+        $response->setMaxAge(3600);
+        $response->setSharedMaxAge(3600);
+        return $response;
+    }
+
+    /**
+     * @Route("/latest_deadlines", name="user_latest_deadlines")
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function latestDeadlinesAction(Request $request)
+    {
+        $newsProvider = $this->get('ocsdc.remote_content_provider');
+        $enti = $this->getEntiFromCurrentUser();
+        $data = $newsProvider->getLatestDeadlines($enti);
+        $response = new JsonResponse($data);
+        $response->setMaxAge(3600);
+        $response->setSharedMaxAge(3600);
+        return $response;
+    }
+
+    private function getEntiFromCurrentUser()
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entiPerUser = $entityManager->createQueryBuilder()
+                                           ->select('IDENTITY(p.ente)')->distinct()
+                                           ->from('AppBundle:Pratica', 'p')
+                                           ->where('p.user = :user')
+                                           ->setParameter('user', $this->getUser())
+                                           ->getQuery()
+                                           ->getResult();
+
+        $repository = $entityManager->getRepository('AppBundle:Ente');
+        if (count($entiPerUser) > 0) {
+            $entiPerUser = array_reduce($entiPerUser, 'array_merge', array());
+            $enti = $repository->findBy(['id' => $entiPerUser]);
+        } else {
+            $enti = $repository->findAll();
+        }
+
+        return $enti;
     }
 
 }

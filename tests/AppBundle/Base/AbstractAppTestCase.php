@@ -245,9 +245,13 @@ abstract class AbstractAppTestCase extends WebTestCase
         $pratica->setUser($user);
         $pratica->setServizio($servizio);
         if ($operatore) {
+            /** @var OperatoreUser $operatore */
+            $operatore = $this->em->merge($operatore);
             $pratica->setOperatore($operatore);
         }
         if ($ente) {
+            /** @var Ente $ente */
+            $ente = $this->em->merge($ente);
             $pratica->setEnte($ente);
         }
 
@@ -363,6 +367,7 @@ abstract class AbstractAppTestCase extends WebTestCase
             $ente1 = new Ente();
             $ente1->setName('Ente di prova');
             $ente1->setCodiceMeccanografico('L378');
+            $ente1->setSiteUrl('http://example.com');
             $this->em->persist($ente1);
         }
 
@@ -371,6 +376,7 @@ abstract class AbstractAppTestCase extends WebTestCase
             $ente2 = new Ente();
             $ente2->setName('Ente di prova 2');
             $ente2->setCodiceMeccanografico('L781');
+            $ente2->setSiteUrl('http://example.com');
             $this->em->persist($ente2);
         }
         $this->em->flush();
@@ -783,6 +789,36 @@ abstract class AbstractAppTestCase extends WebTestCase
         ];
 
         return new Response(200, [], json_encode($body));
+    }
+
+    protected function getComunwebRemoteSuccessResponse($contentsCount = 1)
+    {
+        $hits = [];
+        for($i = 0; $i < $contentsCount; $i++){
+            $hits[] = [
+                'metadata' => [
+                    'published' => (new \DateTime())->format('c'),
+                    'name' => ['ita-IT' => 'Test' . $i ],
+                    'mainNodeId' => $i,
+                    'link' => 'http://example.com/api/opendata/v2/content/read/' . $i
+                ],
+                'data' => [
+                    'ita-IT' => [
+                        'abstract' => 'test',
+                        'scadenza' => (new \DateTime())->format('c')
+                    ]
+                ]
+            ];
+        }
+        return new Response(200, [], json_encode([
+            'totalCount' => $contentsCount,
+            'searchHits' => $hits
+        ]));
+    }
+
+    protected function getComunwebRemoteErrorResponse()
+    {
+        return new Response(500);
     }
 
     protected function doTestISeeMyNameAsLoggedInUser(
