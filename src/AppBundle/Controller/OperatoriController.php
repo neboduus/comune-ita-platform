@@ -8,10 +8,8 @@ use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
 use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
-use AppBundle\Form\AzioniOperatore\AllegatoPraticaType;
 use AppBundle\Logging\LogConstants;
 use AppBundle\PraticaEvents;
-use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -21,7 +19,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormInterface;
 use AppBundle\Form\Base\MessageType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -442,6 +439,11 @@ class OperatoriController extends Controller
      */
     private function approvePratica(Pratica $pratica)
     {
+        $allegati = $pratica->getAllegatiOperatore();
+        foreach($allegati as $allegato){
+            $this->get('ocsdc.protocollo')->protocollaAllegato($pratica, $allegato);
+        }
+
         $pratica->setStatus(Pratica::STATUS_COMPLETE);
 
         $this->get('event_dispatcher')->dispatch(

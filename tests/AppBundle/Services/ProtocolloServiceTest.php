@@ -45,7 +45,7 @@ class ProtocolloServiceTest extends AbstractAppTestCase
 
         $this->assertEquals(Pratica::STATUS_REGISTERED, $pratica->getStatus());
         $this->assertNotEquals(null, $pratica->getNumeroProtocollo());
-        $this->assertNotEquals(null, $pratica->getNumeroFascicolo());
+        $this->assertNotEquals(null, $pratica->getIdDocumentoProtocollo());
 
         $allegati = $this->setupNeededAllegatiForAllInvolvedUsers($expectedAllegati, $user);
         foreach ($allegati as $allegato) {
@@ -73,12 +73,12 @@ class ProtocolloServiceTest extends AbstractAppTestCase
      * @test
      * @expectedException \AppBundle\Protocollo\Exception\AlreadySentException
      */
-    public function testProtocolloServiceCanNotSendPraticaWithNumeroFascicolo()
+    public function testProtocolloServiceCanNotSendPraticaWithNumeroProtocollo()
     {
         $protocollo = $this->getMockProtocollo();
         $user = $this->createCPSUser();
         $pratica = $this->createSubmittedPraticaForUser($user);
-        $pratica->setNumeroFascicolo('test');
+        $pratica->setNumeroProtocollo('test');
 
         $protocollo->protocollaPratica($pratica);
     }

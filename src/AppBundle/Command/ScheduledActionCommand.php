@@ -36,7 +36,6 @@ class ScheduledActionCommand extends ContainerAwareCommand
                     $em->remove($action);
                 }catch(\Exception $e){
                     $this->getContainer()->get('logger')->error($e->getMessage());
-                    $output->writeln($e->getMessage());
                 }
             }
         }

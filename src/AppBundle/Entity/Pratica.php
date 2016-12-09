@@ -136,6 +136,12 @@ class Pratica
     private $numeroProtocollo;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $idDocumentoProtocollo;
+
+    /**
      * @ORM\Column(type="array", nullable=true)
      * @var ArrayCollection
      */
@@ -520,6 +526,28 @@ class Pratica
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getIdDocumentoProtocollo()
+    {
+        return $this->idDocumentoProtocollo;
+    }
+
+    /**
+     * @param string $idDocumentoProtocollo
+     *
+     * @return Pratica
+     */
+    public function setIdDocumentoProtocollo($idDocumentoProtocollo)
+    {
+        $this->idDocumentoProtocollo = $idDocumentoProtocollo;
+
+        return $this;
+    }
+
+
 
     /**
      * @param array $numeroDiProtocollo

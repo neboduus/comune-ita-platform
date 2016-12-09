@@ -15,7 +15,7 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
      */
     public function sendPraticaToProtocollo(Pratica $pratica)
     {
-        $pratica->setNumeroFascicolo(rand(0,100));
+        $pratica->setIdDocumentoProtocollo(rand(0,100));
         $pratica->setNumeroProtocollo(rand(100,200));
     }
 

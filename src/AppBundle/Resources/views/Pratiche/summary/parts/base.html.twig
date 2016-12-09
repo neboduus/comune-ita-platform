@@ -1,7 +1,9 @@
+{% if pratica.statusName != 'STATUS_DRAFT' %}
 <div class="row">
     <div class="col-xs-4 col-sm-3"><strong>{{ 'pratica.protocollo'|trans }}</strong></div>
     <div class="col-xs-8 col-sm-9">{% if pratica.numeroProtocollo %}{{ pratica.numeroProtocollo }}{% else %}<em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>{% endif %}</div>
 </div>
+{% endif %}
 
 {% if pratica.statusName != 'STATUS_DRAFT' %}
     <div class="row">

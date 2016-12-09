@@ -6,12 +6,43 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PiTreProtocolloParameters extends ParameterBag
 {
+    public function __construct(array $parameters = array())
+    {
+        parent::__construct($parameters);
+    }
+
+    public static function getEnteParametersKeys()
+    {
+        return array(
+            'recipientID',
+            'recipientIDType',
+            'codeNodeClassification',
+            'codeAdm'
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeAdm()
+    {
+        return $this->get('codeAdm');
+    }
+
+    /**
+     * @param string $codeAdm
+     */
+    public function setCodeAdm($codeAdm)
+    {
+        $this->set('codeAdm', $codeAdm );
+    }
+
     /**
      * @return string
      */
     public function getRecipientId()
     {
-        return $this->get('recipientId');
+        return $this->get('recipientID');
     }
 
     /**
@@ -19,7 +50,7 @@ class PiTreProtocolloParameters extends ParameterBag
      */
     public function setRecipientId($recipientId)
     {
-        $this->set('recipientId', $recipientId );
+        $this->set('recipientID', $recipientId );
     }
 
     /**
@@ -27,7 +58,7 @@ class PiTreProtocolloParameters extends ParameterBag
      */
     public function getRecipientIdType()
     {
-        return $this->get('recipientIdType');
+        return $this->get('recipientIDType');
     }
 
     /**
@@ -35,7 +66,7 @@ class PiTreProtocolloParameters extends ParameterBag
      */
     public function setRecipientIdType($recipientIdType)
     {
-        $this->set('recipientIdType', $recipientIdType);
+        $this->set('recipientIDType', $recipientIdType);
     }
 
     /**

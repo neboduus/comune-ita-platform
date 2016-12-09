@@ -72,7 +72,7 @@ class ProtocolloService implements ProtocolloServiceInterface
 
     public function protocollaAllegato(Pratica $pratica, AllegatoInterface $allegato)
     {
-        $this->validatePraticaForUploadFile($pratica, $allegato);
+        $this->validatePraticaForUploadFile($pratica);
         $this->validateUploadFile($pratica, $allegato);
 
         $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
@@ -92,7 +92,7 @@ class ProtocolloService implements ProtocolloServiceInterface
             throw new InvalidStatusException();
         }
 
-        if ($pratica->getNumeroFascicolo() !== null) {
+        if ($pratica->getNumeroProtocollo() !== null) {
             throw new AlreadySentException();
         }
 
@@ -101,9 +101,9 @@ class ProtocolloService implements ProtocolloServiceInterface
         }
     }
 
-    protected function validatePraticaForUploadFile(Pratica $pratica, AllegatoInterface $allegato)
+    protected function validatePraticaForUploadFile(Pratica $pratica)
     {
-        if ($pratica->getNumeroFascicolo() === null) {
+        if ($pratica->getNumeroProtocollo() === null) {
             throw new ParentNotRegisteredException();
         }
     }
