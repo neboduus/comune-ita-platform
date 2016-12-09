@@ -101,7 +101,8 @@ class MessagesController extends Controller
     private function decorateMessages($undecoratedResponse, User $user)
     {
         foreach ($undecoratedResponse as &$message) {
-            $message->formattedDate = strftime("%e %b %Y %H:%M", $message->timestamp);
+            $actualTimestamp = strlen((string) $message->timestamp) > 10 ? $message->timestamp / 1000 : $message->timestamp;
+            $message->formattedDate = strftime("%e %b %Y %H:%M", $actualTimestamp);
             $message->isMine = false;
             if ($message->senderId == $user->getId()) {
                 $message->isMine = true;
