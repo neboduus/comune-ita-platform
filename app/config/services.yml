@@ -186,3 +186,10 @@ services:
         class: AppBundle\Services\MessagesAdapterService
         arguments: ["@ocsdc.messages.client", "@logger", "@doctrine"]
 
+    ocsdc.twig.iter_calculator_extension:
+        class: AppBundle\Twig\IterCalculatorExtension
+        arguments: ['%ocsdc_iter_duration_start_status%', '%ocsdc_iter_duration_end_status%']
+        public: false
+        tags:
+              - { name: twig.extension }
+

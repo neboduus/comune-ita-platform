@@ -7,20 +7,6 @@
             <h4>{{ 'servizio.il_servizio'|trans() }}</h4>
             <p>{{ servizio.description }}</p>
 
-            {% if servizio.area %}
-                <h4>{{ 'servizio.area_tematica'|trans() }}</h4>
-                <a href="#" class="btn btn-info btn-sm"><i class="fa fa-circle" aria-hidden="true"></i> {{ servizio.area }}</a>
-            {% endif %}
-
-            {% if servizio.enti|length > 0 %}
-                <h4>{{ 'servizio.enti_coinvolti'|trans }}</h4>
-                <ul class="list-unstyled list-inline">
-                    {% for ente in servizio.enti %}
-                        <li><a href="#" class="btn btn-info btn-sm"><i class="fa fa-map-marker" aria-hidden="true"></i> {{ ente.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
             <div class="well well-sm service-disclaimer">
                 {{ servizio.testoIstruzioni|raw }}
             </div>
@@ -38,6 +24,17 @@
                                 <span class="hidden-xs">{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
                                 <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%':null}) }}</span>
                             </a>
+
+                            {% if servizio.enti|length > 0 %}
+                                <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}:</strong>
+                                    <ul class="list-unstyled">
+                                        {% for ente in servizio.enti %}
+                                            <li><a href="{{ ente.siteUrl }}"><small>{{ ente.name }}</small></a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
                         </div>
                     {% endif %}
                 </div>
@@ -92,6 +89,17 @@
                     <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg">
                         <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}
                     </a>
+
+                    {% if servizio.enti|length > 0 %}
+                        <div class="well well-sm text-center"><strong>{{ 'servizio.enti_coinvolti'|trans }}:</strong>
+                        <ul class="list-inline">
+                            {% for ente in servizio.enti %}
+                                <li><a href="{{ ente.siteUrl }}"><small>{{ ente.name }}</small></a></li>
+                            {% endfor %}
+                        </ul>
+                        </div>
+                    {% endif %}
+
                 </div>
             {% endif %}
         </div>

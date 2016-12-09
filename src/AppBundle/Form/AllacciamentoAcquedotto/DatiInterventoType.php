@@ -44,16 +44,19 @@ class DatiInterventoType extends AbstractType
             ->add('allacciamentoAcquedottoTipoIntervento', ChoiceType::class, [
                 'required' => true,
                 'choices' => array_combine(self::TIPI_INTERVENTO, self::TIPI_INTERVENTO),
+                'expanded' => true,
                 'label' => 'allacciamento_acquedotto.datiIntervento.tipo_intervento',
             ])
             ->add('allacciamentoAcquedottoTipoAllaccio', ChoiceType::class, [
                 'required' => true,
                 'choices' => array_combine(self::TIPI_ALLACCIO, self::TIPI_ALLACCIO),
+                'expanded' => true,
                 'label' => 'allacciamento_acquedotto.datiIntervento.tipo_allaccio',
             ])
             ->add('allacciamentoAcquedottoTipoUso', ChoiceType::class, [
                 'required' => true,
                 'choices' => array_combine(self::TIPI_USO, self::TIPI_USO),
+                'expanded' => true,
                 'label' => 'allacciamento_acquedotto.datiIntervento.tipo_uso',
             ])
             ->add('allacciamentoAcquedottoDiametroReteInterna', NumberType::class, [

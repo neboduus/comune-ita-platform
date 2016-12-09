@@ -4,12 +4,12 @@
 
     <ul class="nav nav-pills">
         <li {% if pratiche_mie|length > 0 or ( pratiche_libere|length == 0 and pratiche_concluse|length == 0 ) %}class="active"{% endif %}>
-            <a href="#mie" aria-controls="mie" role="tab" data-toggle="tab">
+            <a href="#da_gestire" aria-controls="mie" role="tab" data-toggle="tab">
                 {{ 'operatori.pratiche_mie'|trans }} <span class="badge">{{ pratiche_mie|length }}</span>
             </a>
         </li>
         <li {% if pratiche_mie|length == 0 and pratiche_libere|length > 0 %}class="active"{% endif %}>
-            <a href="#libere" aria-controls="mie" role="tab" data-toggle="tab">
+            <a href="#da_assegnare" aria-controls="mie" role="tab" data-toggle="tab">
                 {{ 'operatori.pratiche_libere'|trans }} <span class="badge">{{ pratiche_libere|length }}</span>
             </a>
         </li>
@@ -22,9 +22,7 @@
 
     <div class="tab-content">
 
-        <div role="tabpanel"
-             class="tab-pane {% if pratiche_mie|length > 0 or ( pratiche_libere|length == 0 and pratiche_concluse|length == 0 ) %}active{% endif %} list mie"
-             id="mie">
+        <div role="tabpanel" class="tab-pane {% if pratiche_mie|length > 0 or ( pratiche_libere|length == 0 and pratiche_concluse|length == 0 ) %}active{% endif %} list mie" id="da_gestire">
             <h3>{{ 'operatori.pratiche_mie'|trans }}</h3>
             {% if pratiche_mie|length > 0 %}
                 <table class="table table-striped">
@@ -65,9 +63,7 @@
         </div>
 
 
-        <div role="tabpanel"
-             class="tab-pane {% if pratiche_mie|length == 0 and pratiche_libere|length > 0 %}active{% endif %} list libere"
-             id="libere">
+        <div role="tabpanel" class="tab-pane {% if pratiche_mie|length == 0 and pratiche_libere|length > 0 %}active{% endif %} list libere" id="da_assegnare">
             <h3>{{ 'operatori.pratiche_libere'|trans }}</h3>
             {% if pratiche_libere|length > 0 %}
                 <table class="table table-striped">
@@ -130,9 +126,7 @@
             {% endif %}
         </div>
 
-        <div role="tabpanel"
-             class="tab-pane {% if pratiche_mie|length == 0 and pratiche_libere|length == 0 and pratiche_concluse|length > 0 %}active{% endif %} list concluse"
-             id="concluse">
+        <div role="tabpanel" class="tab-pane {% if pratiche_mie|length == 0 and pratiche_libere|length == 0 and pratiche_concluse|length > 0 %}active{% endif %} list concluse" id="concluse">
             <h3>{{ 'operatori.pratiche_concluse'|trans }}</h3>
             {% if pratiche_concluse|length > 0 %}
                 <table class="table table-striped">

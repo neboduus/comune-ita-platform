@@ -48,7 +48,7 @@ class ComunwebContentProviderService implements RemoteContentProviderServiceInte
      */
     public function getLatestDeadlines(array $enti)
     {
-        $query = "scadenza range [today,next week] sort [scadenza=>asc] limit 5";
+        $query = "scadenza range [yesterday,next month] sort [scadenza=>asc] limit 15";
         return $this->getRemoteContents($enti, $query);
     }
 

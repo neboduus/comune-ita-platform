@@ -32,3 +32,10 @@ parameters:
     pitre_adapter_url: http://localhost:8080/
 
     messages_backend_url: http://localhost:3000/
+
+    header_top_title: Provincia autonoma di Trento
+    header_top_link: http://www.provincia.tn.it/
+    footer_credits: <strong>La Stanza del cittadino</strong> powered by <strong>OpenPa</strong>
+
+    ocsdc_iter_duration_start_status: 4
+    ocsdc_iter_duration_end_status: 3

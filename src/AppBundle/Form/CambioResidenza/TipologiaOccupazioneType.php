@@ -25,7 +25,7 @@ class TipologiaOccupazioneType extends AbstractType
 
         $builder->add('tipoOccupazione', ChoiceType::class, [
             'choices' => $choices,
-            'expanded' => false,
+            'expanded' => true,
             'multiple' => false,
             'label' => false,
         ]);

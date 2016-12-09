@@ -28,6 +28,7 @@ nav:
   profilo: 'Il mio profilo'
   allegati: 'I miei allegati'
   operatori:
+    panello_controllo: "Pannello di controllo"
     lista_operatori: 'Gestisci operatori comune'
     accesso_operatori: 'Accesso operatori'
 
@@ -40,7 +41,7 @@ terms:
   title: 'Accettazione termini di utilizzo'
 
 servizio:
-  enti_coinvolti: 'Enti coinvolti'
+  enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Il servizio è stato sospeso'
   accedi_al_servizio: 'Accedi al servizio %name%'
@@ -54,7 +55,11 @@ pratica:
   email:
     status_change:
       subject: 'La pratica è stata aggiornata'
+  iter: 'Iter della pratica'
+  tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
+  nuova_pratica: 'Nuova pratica: %name%'
+  passo_uno_di_tanti: 'Passo %current% di %total%'
   riprendi_pratica: "Riprendi compilazione"
   empty: 'Non sono presenti pratiche a tuo nome.'
   protocollo: 'Protocollo'
@@ -111,6 +116,11 @@ pratica:
     servizio: 'Servizio'
     ente: 'Ente'
     richiedente: 'Richiedente'
+    richiedente.nato_a: 'Luogo di nascita'
+    richiedente.nato_il: 'Data di nascita'
+    richiedente.residente_a: 'Richiedente'
+    richiedente.telefono: 'Telefono'
+    richiedente.email: 'Email'
     nucleo_familiare: 'Nucleo familiare'
     componente_nucleo_familiare:
       cognome: 'Cognome'
@@ -403,7 +413,7 @@ user:
     pratiche_cancelled: 'Pratiche rifiutate'
     vai_al_dettaglio: 'Vedi dettaglio'
     avvisi_notizie: 'Avvisi / Notizie'
-    scadenze: 'Le mie Scadenze'
+    scadenze: 'Scadenze'
     servizi_primo_piano: 'Servizi in primo piano'
     ultime_pratiche: "Pratiche recenti"
     vedi_tutte: "(vedi tutte)"
@@ -478,7 +488,6 @@ allegato:
 
 email:
   detail_link: 'link'
-  footer: "<strong>La Stanza del cittadino</strong> powered by <strong>ComunWEB</strong> con il supporto di <strong>OpenContent Scarl</strong>"
   pratica:
     dear: 'Gentile <strong>%nome% %cognome%</strong>,'
     thanks: 'La ringraziamo per aver utilizzato la stanza del cittadino.'

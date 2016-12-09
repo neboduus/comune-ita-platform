@@ -19,7 +19,7 @@ class InformazioneAccertamentoType extends AbstractType
         $builder
             ->add('infoAccertamento', TextareaType::class, [
                 'label' => false,
-                'required' => true,
+                'required' => false,
             ]);
     }
 

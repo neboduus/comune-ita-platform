@@ -14,29 +14,8 @@
 
 
             <div class="col-md-4 col-md-offset-1 sidebar">
-                <h3>Iter pratica</h3>
-                <div class="panel no-border-radius">
-                    <div class="panel-body">
-                        <ul class="progress-indicator stepped stacked nocenter">
-                            {% for timestamp, changes in pratica.storicoStati %}
-                                <li class="completed info">
-                                    <a href="#">
-                                        <span class="bubble"></span>
-                                        <span class="stacked-text">
-                                        <span class="fa fa-calendar"></span>
-                                            {{ timestamp|date('d/M/y H:i') }}
-                                            {% for change in changes[0] %}
-                                                {% if change %}
-                                                    {% set message = 'pratica.dettaglio.stato_'~change %}
-                                                    <span class="subdued"><em> {{ message| trans }} </em></span>
-                                                {% endif %}
-                                            {% endfor %}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
+
+                {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
 
                 {% if pratica.statusName == 'STATUS_DRAFT' and user.id == pratica.user.id %}
                 <h3>Azioni</h3>

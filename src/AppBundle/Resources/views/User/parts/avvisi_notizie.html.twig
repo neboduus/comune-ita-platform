@@ -3,7 +3,7 @@
         <h3 class="panel-title">{{ 'user.dashboard.avvisi_notizie'|trans }}</h3>
     </div>
     <div class="panel-body">
-        <ul class="list-unstyled list-news">
+        <ul class="list-unstyled list-news" id="news">
         </ul>
     </div>
 </div>
@@ -22,7 +22,7 @@
             <span class="day">{{:day}}</span>
             <span class="year">{{:year}}</span>
         </div>
-        <a href="{{:link}}" class="small">
+        <a href="{{:link}}" target="_blank" class="small">
             <small>{{:site_name}}</small>
             <br />{{:title}}
         </a>

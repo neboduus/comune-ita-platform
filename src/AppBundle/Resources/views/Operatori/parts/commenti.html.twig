@@ -1,0 +1,14 @@
+<h3>{{ 'operatori.commenti_e_modifiche'|trans }}</h3>
+<div class="panel no-border-radius">
+    <div class="panel-body">
+        <ul class="list-unstyled">
+            {% for commento in pratica.commenti %}
+                <li>
+                    <small>{{ commento.createdAt|date("d/m/Y H:i") }}</small>
+                    <p><strong>{{ commento.creator }}:</strong> {{ commento.text }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+        {{ form(form) }}
+    </div>
+</div>
