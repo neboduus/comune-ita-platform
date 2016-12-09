@@ -491,3 +491,10 @@ email:
       complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata accettata.'
       pending: ''
       draft: ''
+messaggi:
+  messaggio: Messaggio
+  invia: Invia
+chat:
+  loading: ' Recupero dei messaggi in corso'
+  io:
+    chat_name: Io

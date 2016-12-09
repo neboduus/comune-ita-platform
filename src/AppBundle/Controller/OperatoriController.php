@@ -19,12 +19,14 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormInterface;
+use AppBundle\Form\Base\MessageType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use AppBundle\Entity\User;
 
 
 /**
@@ -148,10 +150,13 @@ class OperatoriController extends Controller
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
 
+        $threads = $this->createThreadElementsForOperatoreAndPratica( $this->getUser(), $pratica);
+
         return [
             'form' => $form->createView(),
             'pratica' => $pratica,
             'user' => $this->getUser(),
+            'threads' => $threads,
         ];
     }
 
@@ -453,6 +458,33 @@ class OperatoriController extends Controller
                 'user' => $pratica->getUser()->getId(),
             ]
         );
+    }
+
+    /**
+     * @param Pratica $pratica
+     * @param $user
+     * @return array
+     */
+    private function createThreadElementsForOperatoreAndPratica( OperatoreUser $operatore, Pratica $pratica )
+    {
+        $messagesAdapterService = $this->get('ocsdc.messages_adapter');
+        $threadId = $pratica->getUser()->getId() . '~' . $operatore->getId();
+        $form = $this->createForm(
+            MessageType::class,
+            ['thread_id' => $threadId, 'sender_id' => $operatore->getId()],
+            [
+                'action' => $this->get('router')->generate('messages_controller_enqueue_for_operatore', ['threadId' => $threadId]),
+                'method' => 'PUT',
+            ]
+        );
+
+        $threads[] = [
+            'threadId' => $threadId,
+            'messages' => $messagesAdapterService->getMessagesForThread($threadId),
+            'form' => $form->createView(),
+        ];
+
+        return $threads;
     }
 
 }

@@ -45,10 +45,14 @@
                 </div>
             </div>
 
+            {{ include('@App/Default/parts/chat.html.twig') }}
+
         </div>
     </div>
+{% endblock %}
 
-
-
-
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/chat.js') }}"></script>
 {% endblock %}

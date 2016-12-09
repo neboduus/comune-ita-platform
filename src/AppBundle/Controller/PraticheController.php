@@ -3,9 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\User;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
+use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Logging\LogConstants;
 use AppBundle\PraticaEvents;
@@ -13,10 +16,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class PraticheController
@@ -197,7 +198,7 @@ class PraticheController extends Controller
      *
      * @return array
      */
-    public function compilaAction(Pratica $pratica)
+    public function compilaAction(Request $request, Pratica $pratica)
     {
         //@todo da testare
         //@todo scrivere la storia
@@ -222,9 +223,13 @@ class PraticheController extends Controller
         if ($pratica->getInstanceId() == null) {
             $pratica->setInstanceId($praticaFlowService->getInstanceId());
         }
+        $resumeURI = $request->getUri()
+            .'?instance='.$praticaFlowService->getInstanceId()
+            .'&step='.$praticaFlowService->getCurrentStepNumber();
+
+        $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
         $form = $praticaFlowService->createForm();
-
         if ($praticaFlowService->isValid($form)) {
 
             $praticaFlowService->saveCurrentStepData($form);
@@ -233,6 +238,12 @@ class PraticheController extends Controller
             if ($praticaFlowService->nextStep()) {
                 $this->getDoctrine()->getManager()->flush();
                 $form = $praticaFlowService->createForm();
+
+                $resumeURI = $request->getUri()
+                    .'?instance='.$praticaFlowService->getInstanceId()
+                    .'&step='.$praticaFlowService->getCurrentStepNumber();
+                $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+
             } else {
                 $pratica->setStatus(Pratica::STATUS_SUBMITTED);
                 $pratica->setSubmissionTime(time());
@@ -272,6 +283,7 @@ class PraticheController extends Controller
             'pratica' => $praticaFlowService->getFormData(),
             'flow' => $praticaFlowService,
             'user' => $user,
+            'threads' => $thread,
         ];
     }
 
@@ -363,4 +375,42 @@ class PraticheController extends Controller
         }
     }
 
+    /**
+     * @param Pratica $pratica
+     * @param $user
+     * @return array
+     */
+    private function createThreadElementsForUserAndPratica(Pratica $pratica, User $user, $returnURL)
+    {
+        if ($pratica->getEnte()) {
+            $messagesAdapterService = $this->get('ocsdc.messages_adapter');
+            $userThread = $messagesAdapterService->getThreadsForUserEnteAndService($user, $pratica->getEnte(), $pratica->getServizio());
+            if (!$userThread) {
+                return null;
+            }
+            $threadId = $userThread[0]->threadId;
+            $threadForm = $this->createForm(
+                MessageType::class,
+                [
+                    'thread_id' => $threadId,
+                    'sender_id' => $user->getId(),
+                    'return_url' => $returnURL,
+                ],
+                [
+                    'action' => $this->get('router')->generate('messages_controller_enqueue_for_user', ['threadId' => $threadId]),
+                    'method' => 'PUT',
+                ]
+            );
+
+            $thread = [
+                'threadId' => $threadId,
+                'messages' => $messagesAdapterService->getMessagesForThread($threadId),
+                'form' => $threadForm->createView(),
+            ];
+
+            return [$thread];
+        }
+
+        return null;
+    }
 }
