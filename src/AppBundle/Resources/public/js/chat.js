@@ -17,29 +17,28 @@ $( function() {
         };
 
     function loadMessages( target, silent ){
-        $.ajax({
-            type: "GET",
-            url: $(target).find('form').attr('action'),
-            dataType: "json",
-            beforeSend: function(){
-                if (!silent) {
-                    $(target).find('.direct-chat-messages').html('<div class="alert alert-info loading"><i class="fa fa-spinner fa-pulse"></i> <small>Recupero dei messaggi in corso</small></div>');
+        if ($(target).length) {
+            $.ajax({
+                type: "GET",
+                url: $(target).find('form').attr('action'),
+                dataType: "json",
+                beforeSend: function () {
+                    if (!silent) {
+                        $(target).find('.direct-chat-messages').html('<div class="alert alert-info loading"><i class="fa fa-spinner fa-pulse"></i> <small>Recupero dei messaggi in corso</small></div>');
+                    }
+                },
+                success: function (data) {
+                    //$(target).html(data);
+                    $(target).find('.direct-chat-messages')
+                        .html($.templates("#message-tmpl").render(data, helpers));
+                    if (silent) {
+                        $(target).find('.direct-chat-messages').scrollTop($(target).find('.direct-chat-messages').prop("scrollHeight"));
+                    } else {
+                        $(target).find('.direct-chat-messages').animate({scrollTop: $(target).find('.direct-chat-messages').prop("scrollHeight")}, 1000);
+                    }
                 }
-            },
-            error: function(data){
-                alert("There was a problem");
-            },
-            success: function(data){
-                //$(target).html(data);
-                $(target).find('.direct-chat-messages')
-                    .html($.templates("#message-tmpl").render(data, helpers));
-                if (silent){
-                    $(target).find('.direct-chat-messages').scrollTop($(target).find('.direct-chat-messages').prop("scrollHeight"));
-                } else {
-                    $(target).find('.direct-chat-messages').animate({ scrollTop: $(target).find('.direct-chat-messages').prop("scrollHeight")}, 1000);
-                }
-            }
-        })
+            });
+        }
     }
 
     $('.direct-chat-messages').scrollTop(100000);
