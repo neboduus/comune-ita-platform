@@ -382,12 +382,14 @@ class PraticheController extends Controller
      */
     private function createThreadElementsForUserAndPratica(Pratica $pratica, User $user, $returnURL)
     {
+
         if ($pratica->getEnte()) {
             $messagesAdapterService = $this->get('ocsdc.messages_adapter');
             $userThread = $messagesAdapterService->getThreadsForUserEnteAndService($user, $pratica->getEnte(), $pratica->getServizio());
             if (!$userThread) {
                 return null;
             }
+
             $threadId = $userThread[0]->threadId;
             $threadForm = $this->createForm(
                 MessageType::class,
@@ -404,8 +406,9 @@ class PraticheController extends Controller
 
             $thread = [
                 'threadId' => $threadId,
-                'messages' => $messagesAdapterService->getMessagesForThread($threadId),
-                'form' => $threadForm->createView(),
+                'title'    => $userThread[0]->title,
+                'messages' => $messagesAdapterService->getDecoratedMessagesForThread($threadId, $user),
+                'form'     => $threadForm->createView(),
             ];
 
             return [$thread];

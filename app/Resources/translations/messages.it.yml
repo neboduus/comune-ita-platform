@@ -505,5 +505,8 @@ messaggi:
   invia: Invia
 chat:
   loading: ' Recupero dei messaggi in corso'
+  title:
+    user: 'Hai bisogno di aiuto?'
+    operatore: 'Filo diretto'
   io:
     chat_name: Io

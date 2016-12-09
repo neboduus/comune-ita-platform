@@ -1,6 +1,5 @@
 $( function() {
 
-
     var chat = $('#chat'),
         helpers = {
             checkOwner: function( senderID ){
@@ -41,8 +40,10 @@ $( function() {
         }
     }
 
-    $('.direct-chat-messages').scrollTop(100000);
+    /* Carico i messaggi del thread attivo */
+    loadMessages(chat.find('.tab-pane.active.in'), false);
 
+    /* Evento ciclico per il recupero dei messaggi del thread attivo */
     setInterval(function(){
         loadMessages(chat.find('.tab-pane.active.in'), true);
     }, 30000);
@@ -65,7 +66,7 @@ $( function() {
                 'message': {
                     'sender_id': $form.find('#message_sender_id').val(),
                     'thread_id': $form.find('#message_thread_id').val(),
-                    'message': $form.find('#message_message').val()
+                    'message': messageInput.val()
                 }
             },
             beforeSend: function(){

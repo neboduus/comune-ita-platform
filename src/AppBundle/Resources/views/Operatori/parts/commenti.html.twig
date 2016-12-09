@@ -1,6 +1,6 @@
-<h3>{{ 'operatori.commenti_e_modifiche'|trans }}</h3>
-<div class="panel no-border-radius">
-    <div class="panel-body">
+<div class="row">
+    <div class="col-md-12">
+        <h3>{{ 'operatori.commenti_e_modifiche'|trans }}</h3>
         <ul class="list-unstyled">
             {% for commento in pratica.commenti %}
                 <li>
@@ -9,6 +9,7 @@
                 </li>
             {% endfor %}
         </ul>
+        {% form_theme form 'bootstrap_3_layout.html.twig' %}
         {{ form(form) }}
     </div>
 </div>

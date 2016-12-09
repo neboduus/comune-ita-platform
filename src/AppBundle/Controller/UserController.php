@@ -45,7 +45,7 @@ class UserController extends Controller
         );
 
         $messagesAdapterService = $this->get('ocsdc.messages_adapter');
-        $userThreads = (array) $messagesAdapterService->getThreadsForUser($user);
+        $userThreads = (array) $messagesAdapterService->getDecoratedThreadsForUser($user);
         $threads = [];
         foreach ($userThreads as $thread) {
 
@@ -60,8 +60,9 @@ class UserController extends Controller
 
             $threads[] = [
                 'threadId' => $thread->threadId,
-                'messages' => $messagesAdapterService->getMessagesForThread($thread->threadId),
-                'form' => $form->createView(),
+                'title'    => $thread->title,
+                'messages' => $messagesAdapterService->getDecoratedMessagesForThread($thread->threadId, $user),
+                'form'     => $form->createView()
             ];
         }
 

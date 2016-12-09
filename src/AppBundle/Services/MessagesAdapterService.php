@@ -45,10 +45,11 @@ class MessagesAdapterService
      * @param User $user
      * @return mixed|\Psr\Http\Message\ResponseInterface
      */
-    public function getThreadsForUser(User $user)
+    public function getDecoratedThreadsForUser(User $user)
     {
         try {
             $response = \GuzzleHttp\json_decode((string) $this->client->get('/user/'.$user->getId().'/threads')->getBody());
+
             $repo = null;
             switch (get_class($user)) {
                 case CPSUser::class :
@@ -83,7 +84,8 @@ class MessagesAdapterService
             'threadId' => $threadId,
         ];
         try {
-        return \GuzzleHttp\json_decode((string) $this->client->put('/thread/'.$threadId, ['json' => $message])->getBody());
+            $response = \GuzzleHttp\json_decode((string) $this->client->put('/thread/'.$threadId, ['json' => $message])->getBody());
+            return $this->decorateMessages($response, $sender);
         } catch (RequestException $e) {
             $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
 
@@ -95,10 +97,11 @@ class MessagesAdapterService
      * @param string $threadId
      * @return array
      */
-    public function getMessagesForThread($threadId)
+    public function getDecoratedMessagesForThread($threadId, User $user)
     {
         try {
-        return \GuzzleHttp\json_decode((string) $this->client->get('/thread/'.$threadId)->getBody());
+            $response = \GuzzleHttp\json_decode((string) $this->client->get('/thread/'.$threadId)->getBody());
+            return $this->decorateMessages($response, $user);
         } catch (RequestException $e) {
             $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
 
@@ -123,15 +126,14 @@ class MessagesAdapterService
         try {
             $response = \GuzzleHttp\json_decode((string)$this->client->get('/thread/'.$threadId)->getBody());
             if (count($response) > 0 && $this->checkThreadIdIsCorrect($response[0])) {
+                $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+                $response = $this->decorateThreadsForUser($response, $repo);
                 return $response;
             }
         } catch (RequestException $e) {
             $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
-
             return null;
         }
-
-
         return $this->createThreadsForUserEnteAndService($user, $ente, $servizio);
     }
 
@@ -147,10 +149,12 @@ class MessagesAdapterService
         $operatore = $this->getOperatoreForEnteAndServizio($ente, $servizio);
         $threadId = $user->getId().'~'.$operatore->getId();
         try {
-            return \GuzzleHttp\json_decode((string)$this->client->put('/thread', ['json' => ['threadId' => $threadId, 'servizioId' => $servizio->getId()]])->getBody());
+            $response =  \GuzzleHttp\json_decode((string)$this->client->put('/thread', ['json' => ['threadId' => $threadId, 'servizioId' => $servizio->getId()]])->getBody());
+            $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+            $response = $this->decorateThreadsForUser($response, $repo);
+            return $response;
         } catch (RequestException $e) {
             $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
-
             return null;
         }
     }
@@ -199,5 +203,32 @@ class MessagesAdapterService
         }
 
         return $threads;
+    }
+
+    private function decorateMessages($undecoratedResponse, User $user)
+    {
+        foreach ($undecoratedResponse as &$message) {
+            $actualTimestamp = strlen((string) $message->timestamp) > 10 ? $message->timestamp / 1000 : $message->timestamp;
+            $message->formattedDate = strftime("%e %b %Y %H:%M", $actualTimestamp);
+            $message->isMine = false;
+            if ($message->senderId == $user->getId()) {
+                $message->isMine = true;
+            }
+        }
+        return $undecoratedResponse;
+    }
+
+    private function decorateThreads($undecoratedResponse)
+    {
+        foreach ($undecoratedResponse as &$thread) {
+            $thread->nomeThread = 'Servizio';
+            $operatoriRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
+            $operatoreId = preg_split('/~/', $thread->threadId)[1];
+            $operatore = $operatoriRepo->find($operatoreId);
+            if ($operatore) {
+                $thread->nomeThread = $operatore->getEnte()->getName() . ' (' . $operatore->getNome() . ' ' . $operatore->getCognome() . ')';
+            }
+        }
+        return $undecoratedResponse;
     }
 }

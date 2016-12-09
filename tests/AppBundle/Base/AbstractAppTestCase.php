@@ -847,15 +847,44 @@ abstract class AbstractAppTestCase extends WebTestCase
         $body = [
             [
                 'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
+                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
             ],
             [
                 'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
+                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
             ],
             [
                 'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
+                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
+            ],
+        ];
+
+        return new Response(200, [], json_encode($body));
+    }
+
+    protected function getDecoratedThreadResponseForuser(CPSUser $user, OperatoreUser $operatore = null)
+    {
+        $body = [
+            [
+                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
+                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'senderId' => $user->getId(),
+                'nomeThread' => 'Some '.Uuid::uuid4(),
+            ],
+            [
+                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
+                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'senderId' => $user->getId(),
+                'nomeThread' => 'Some '.Uuid::uuid4(),
+            ],
+            [
+                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
+                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'senderId' => $user->getId(),
+                'nomeThread' => 'Some '.Uuid::uuid4(),
             ],
         ];
 
@@ -867,6 +896,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $body = [
             [
                 'threadId' => $user->getId().'~'.$operatore->getId(),
+                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
             ]
         ];

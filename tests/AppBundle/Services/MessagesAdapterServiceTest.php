@@ -59,7 +59,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $mockedLogger = $this->getMockLogger();
 
         $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
-        $threads = $service->getThreadsForUser($user);
+        $threads = $service->getDecoratedThreadsForUser($user);
         foreach ($threads as $thread) {
             $this->assertTrue($this->checkThreadObjectIsCorrect($thread));
         }
@@ -76,7 +76,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $mockedGuzzle = $this->getMockGuzzleClient([$this->getMockedMessagesBackendThreadResponseForUser($user, $operatore)]);
         $mockedLogger = $this->getMockLogger();
         $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
-        $threads = $service->getThreadsForUser($user);
+        $threads = $service->getDecoratedThreadsForUser($user);
         foreach ($threads as $thread) {
             $this->assertTrue(strpos($thread->title, $operatore->getFullName()) >= 0);
             $this->assertTrue(strpos($thread->title, $operatore->getEnte()->getName()) >= 0);
@@ -92,7 +92,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $mockedGuzzle = $this->getMockGuzzleClient([$this->getMockedMessagesBackendThreadResponseForUser($user)]);
         $mockedLogger = $this->getMockLogger();
         $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
-        $threads = $service->getThreadsForUser($operatore);
+        $threads = $service->getDecoratedThreadsForUser($operatore);
         foreach ($threads as $thread) {
             $this->assertTrue(strpos($thread->title, $user->getFullName()) >= 0);
         }

@@ -48,8 +48,9 @@ class MessagesControllerTest extends AbstractAppTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $threadsForUser = json_decode((string) $this->getMockedMessagesBackendThreadResponseForUser($cpsUser)->getBody());
+
         $mockedMessagesService->expects($this->exactly(1))
-            ->method('getThreadsForUser')
+            ->method('getDecoratedThreadsForUser')
             ->willReturn($threadsForUser);
 
         $expectedMessage = new \stdClass();
@@ -95,10 +96,10 @@ class MessagesControllerTest extends AbstractAppTestCase
             ->getMock();
 
         $threadId = $cpsUser->getId().'~'.Uuid::uuid4();
-        $messagesForThread = $this->getMockedThreadMessagesResponseForThread($threadId);
+        $messagesForThread = $this->getDecoratedMessagesResponseForThread($threadId);
 
         $mockedMessagesService->expects($this->once())
-            ->method('getMessagesForThread')
+            ->method('getDecoratedMessagesForThread')
             ->willReturn($messagesForThread);
 
         static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockedMessagesService) {
@@ -113,7 +114,6 @@ class MessagesControllerTest extends AbstractAppTestCase
             $this->assertObjectHasAttribute('formattedDate', $message);
         }
 
-
         $this->assertEquals(count($messagesForThread), count($response));
     }
 
@@ -127,9 +127,10 @@ class MessagesControllerTest extends AbstractAppTestCase
         $mockedMessagesService = $this->getMockBuilder(MessagesAdapterService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $threadsForUser = (string) $this->getMockedMessagesBackendThreadResponseForUser($cpsUser)->getBody();
+        $threadsForUser = (string) $this->getDecoratedThreadResponseForUser($cpsUser)->getBody();
+
         $mockedMessagesService->expects($this->exactly(1))
-            ->method('getThreadsForUser')
+            ->method('getDecoratedThreadsForUser')
             ->willReturn(json_decode($threadsForUser));
 
         static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockedMessagesService) {
@@ -137,11 +138,23 @@ class MessagesControllerTest extends AbstractAppTestCase
         });
 
         $this->clientRequestAsCPSUser($cpsUser, 'GET', '/user/threads');
-        $response = $this->client->getResponse()->getContent();
-        $this->assertEquals($threadsForUser, $response);
+        $response = json_decode($this->client->getResponse()->getContent());
+
+        $threadsForUser = json_decode($threadsForUser);
+
+        foreach ($response as $k => $v) {
+            $this->assertEquals($threadsForUser[$k]->threadId, $v->threadId);
+            $this->assertEquals($threadsForUser[$k]->title, $v->title);
+            /**
+             * FIXME: @coppo
+             * qua non ho capito come intendi comporre il nome thread quindi ho lasciato
+             * un check molto generico. Questo punto va testato
+             */
+            $this->assertObjectHasAttribute('nomeThread', $v);
+        }
     }
 
-    private function getMockedThreadMessagesResponseForThread($threadId)
+    private function getDecoratedMessagesResponseForThread($threadId)
     {
         $userId = explode('~', $threadId)[0];
         $operatoreId = explode('~', $threadId)[1];
@@ -150,12 +163,16 @@ class MessagesControllerTest extends AbstractAppTestCase
         $message1->senderId = $userId;
         $message1->content = 'pippo';
         $message1->timestamp = time() - 1000;
+        $message1->isMine = true;
+        $message1->formattedDate = '14/12/2106 10:14';
 
         $message2 = new \stdClass();
         $message2->messageId = Uuid::uuid4();
         $message2->senderId = $operatoreId;
         $message2->content = 'pippo';
         $message2->timestamp = time() - 500;
+        $message2->isMine = false;
+        $message2->formattedDate = '14/12/2106 11:14';
         return [
             $message1,
             $message2,

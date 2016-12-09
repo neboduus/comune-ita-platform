@@ -1,3 +1,4 @@
+<hr />
 <div class="row">
     <div class="col-md-6">
         <a href="{{ path('operatori_approva_pratica', {'pratica': pratica}) }}"
@@ -5,7 +6,7 @@
             {{ 'operatori.approva'|trans }}
         </a>
     </div>
-    <!--<p><a href="#" class="btn btn-warning btn-block btn-lg">{{ 'operatori.richiedi_intergrazioni'|trans }}</a></p>-->
+    {#<p><a href="#" class="btn btn-warning btn-block btn-lg">{{ 'operatori.richiedi_intergrazioni'|trans }}</a></p>#}
     <div class="col-md-6">
         <a href="{{ path('operatori_rifiuta_pratica', {'pratica': pratica}) }}" class="btn btn-danger btn-block btn-lg">
             {{ 'operatori.rifiuta'|trans }}
