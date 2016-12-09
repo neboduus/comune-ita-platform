@@ -5,6 +5,7 @@ use AppBundle\Command\LoadServiziCommand;
 use AppBundle\DataFixtures\ORM\LoadData;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -29,6 +30,7 @@ class LoadServiziCommandTest extends AbstractAppTestCase
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
+        $this->cleanDb(OperatoreUser::class);
         $this->cleanDb(Ente::class);
         $this->cleanDb(Servizio::class);
     }

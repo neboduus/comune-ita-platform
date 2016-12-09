@@ -842,19 +842,19 @@ abstract class AbstractAppTestCase extends WebTestCase
         $this->assertContains($user->getFullName(), $response->getContent());
     }
 
-    protected function getMockedMessagesBackendThreadResponseForUser(CPSUser $user)
+    protected function getMockedMessagesBackendThreadResponseForUser(CPSUser $user, OperatoreUser $operatore = null)
     {
         $body = [
             [
-                'threadId' => $user->getId().'~'.Uuid::uuid4(),
+                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
             ],
             [
-                'threadId' => $user->getId().'~'.Uuid::uuid4(),
+                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
             ],
             [
-                'threadId' => $user->getId().'~'.Uuid::uuid4(),
+                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
             ],
         ];

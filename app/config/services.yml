@@ -184,5 +184,5 @@ services:
     ocsdc.messages.client: "@guzzle.client.messages"
     ocsdc.messages_adapter:
         class: AppBundle\Services\MessagesAdapterService
-        arguments: ["@ocsdc.messages.client", "@logger"]
+        arguments: ["@ocsdc.messages.client", "@logger", "@doctrine"]
 

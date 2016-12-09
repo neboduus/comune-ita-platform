@@ -3,12 +3,14 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use FOS\UserBundle\Model\UserInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Class MessagesAdapterService
@@ -32,10 +34,11 @@ class MessagesAdapterService
      * @param Client          $client
      * @param LoggerInterface $logger
      */
-    public function __construct(Client $client, LoggerInterface $logger)
+    public function __construct(Client $client, LoggerInterface $logger, RegistryInterface $doctrine)
     {
         $this->client = $client;
         $this->logger = $logger;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -45,9 +48,20 @@ class MessagesAdapterService
     public function getThreadsForUser(User $user)
     {
         try {
-            $response = (string) $this->client->get('/user/'.$user->getId().'/threads')->getBody();
+            $response = \GuzzleHttp\json_decode((string) $this->client->get('/user/'.$user->getId().'/threads')->getBody());
+            $repo = null;
+            switch (get_class($user)) {
+                case CPSUser::class :
+                    $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+                    $response = $this->decorateThreadsForUser($response, $repo);
+                    break;
+                case OperatoreUser::class :
+                    $repo = $this->doctrine->getRepository('AppBundle:CPSUser');
+                    $response = $this->decorateThreadsForOperatore($response, $repo);
+                    break;
+            }
 
-            return \GuzzleHttp\json_decode($response);
+            return $response;
         } catch (RequestException $e) {
             $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
 
@@ -161,5 +175,29 @@ class MessagesAdapterService
         }
 
         return true;
+    }
+
+    private function decorateThreadsForUser($threads, $repo)
+    {
+        foreach ($threads as &$thread) {
+            $operatoreId = preg_split('/~/', $thread->threadId)[1];
+            $operatore = $repo->find($operatoreId);
+
+            $thread->title = $operatore->getEnte()->getName().' ('.$operatore->getFullName().')';
+        }
+
+        return $threads;
+    }
+
+    private function decorateThreadsForOperatore($threads, $repo)
+    {
+        foreach ($threads as &$thread) {
+            $userId = preg_split('/~/', $thread->threadId)[0];
+            $cpsUser = $repo->find($userId);
+
+            $thread->title = $cpsUser->getFullName();
+        }
+
+        return $threads;
     }
 }
