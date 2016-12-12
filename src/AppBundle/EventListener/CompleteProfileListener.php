@@ -44,7 +44,7 @@ class CompleteProfileListener
     public function onKernelRequest(GetResponseEvent $event)
     {
         $user = $this->getUser();
-        if ($user instanceof CPSUser && $user->isTermsAccepted()) {
+        if ($user instanceof CPSUser) {
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
             $currentRouteQuery = $event->getRequest()->query->all();

@@ -13,15 +13,15 @@ services:
 
     ocsdc.cps.terms_acceptance_listener:
         class: AppBundle\EventListener\TermsAcceptListener
-        arguments: ["@router","@security.token_storage"]
+        arguments: ["@router", "@security.token_storage", "@ocsdc.cps.terms_acceptance_checker"]
         tags:
-            - { name: kernel.event_listener, event: kernel.request }
+            - { name: kernel.event_listener, event: kernel.request, priority: -10 }
 
     ocsdc.cps.complete_profile_listener:
         class: AppBundle\EventListener\CompleteProfileListener
         arguments: ["@router","@security.token_storage", "@ocsdc.cps.userprovider"]
         tags:
-            - { name: kernel.event_listener, event: kernel.request }
+            - { name: kernel.event_listener, event: kernel.request, priority: -100 }
 
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
@@ -202,3 +202,6 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    ocsdc.cps.terms_acceptance_checker:
+        class: AppBundle\Services\TermsAcceptanceCheckerService
+        arguments: ["@doctrine"]

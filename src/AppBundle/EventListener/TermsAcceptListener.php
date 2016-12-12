@@ -3,11 +3,15 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Services\TermsAcceptanceCheckerService;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
+/**
+ * Class TermsAcceptListener
+ */
 class TermsAcceptListener
 {
 
@@ -21,13 +25,26 @@ class TermsAcceptListener
      */
     private $tokenStorage;
 
-    public function __construct(Router $router, TokenStorage $tokenStorage)
+    /**
+     * @var TermsAcceptanceCheckerService
+     */
+    private $termsAcceptanceChecker;
 
+    /**
+     * TermsAcceptListener constructor.
+     * @param Router       $router
+     * @param TokenStorage $tokenStorage
+     */
+    public function __construct(Router $router, TokenStorage $tokenStorage, TermsAcceptanceCheckerService $termsAcceptanceChecker)
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
+        $this->termsAcceptanceChecker = $termsAcceptanceChecker;
     }
 
+    /**
+     * @param GetResponseEvent $event
+     */
     public function onKernelRequest(GetResponseEvent $event)
     {
         $user = $this->getUser();
@@ -35,7 +52,7 @@ class TermsAcceptListener
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
             $currentRouteQuery = $event->getRequest()->query->all();
-            if ($user->isTermsAccepted() == false
+            if ($this->termsAcceptanceChecker->checkIfUserHasAcceptedMandatoryTerms($user) == false
                 && $currentRoute !== ''
                 && $currentRoute !== 'terms_accept'
             ) {
@@ -51,7 +68,6 @@ class TermsAcceptListener
                 $event->setResponse(new RedirectResponse($redirectUrl));
             }
         }
-
     }
 
     protected function getUser()
@@ -67,4 +83,3 @@ class TermsAcceptListener
         return $user;
     }
 }
-

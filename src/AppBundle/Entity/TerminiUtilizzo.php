@@ -28,13 +28,25 @@ class TerminiUtilizzo
     private $text;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     */
+    private $mandatory;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private $latestRevision;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
     {
-        if ( !$this->id) {
-            $this->id = Uuid::uuid4();
-        }
+        $this->id = Uuid::uuid4();
+        $this->latestRevision = time();
+        $this->mandatory = false;
     }
 
     /**
@@ -84,5 +96,42 @@ class TerminiUtilizzo
 
         return $this;
     }
-}
 
+    /**
+     * @return bool
+     */
+    public function isMandatory(): bool
+    {
+        return $this->mandatory;
+    }
+
+    /**
+     * @param bool $mandatory
+     * @return $this
+     */
+    public function setMandatory($mandatory)
+    {
+        $this->mandatory = $mandatory;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLatestRevisionTime(): int
+    {
+        return $this->latestRevision;
+    }
+
+    /**
+     * @param int $latestRevision
+     * @return $this
+     */
+    public function setLatestRevision($latestRevision)
+    {
+        $this->latestRevision = $latestRevision;
+
+        return $this;
+    }
+}

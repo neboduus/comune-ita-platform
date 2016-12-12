@@ -45,6 +45,13 @@ class DefaultController extends Controller
         $logger = $this->get('logger');
 
         $repo = $this->getDoctrine()->getRepository('AppBundle:TerminiUtilizzo');
+
+        /**
+         * FIXME: gestire termini multipli
+         * Il sistema è pronto per iniziare a gestire una accettazione di termini condizionale
+         * con alcuni obbligatori e altri opzionali, tutti versionati. Al momento marchiamo tutti come accettati
+         */
+
         $terms = $repo->findAll();
 
         $form = $this->setupTermsAcceptanceForm($terms)->handleRequest($request);
@@ -56,7 +63,7 @@ class DefaultController extends Controller
             $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
             $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
 
-            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute, $redirectRouteParams, $redirectRouteQuery);
+            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute, $redirectRouteParams, $redirectRouteQuery, $terms);
         }else{
             $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
         }
@@ -73,12 +80,15 @@ class DefaultController extends Controller
      * @param LoggerInterface $logger
      * @param string $redirectRoute
      * @param array $redirectRouteParams
+     * @param array $terms
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null, $redirectRouteParams = array(), $redirectRouteQuery = array()):RedirectResponse
+    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null, $redirectRouteParams = array(), $redirectRouteQuery = array(), $terms):RedirectResponse
     {
         $manager = $this->getDoctrine()->getManager();
-        $user->setTermsAccepted(true);
+        foreach ($terms as $term) {
+            $user->addTermsAcceptance($term);
+        }
         $logger->info(LogConstants::USER_HAS_ACCEPTED_TERMS, ['userid' => $user->getId()]);
         $manager->persist($user);
         try {
@@ -86,7 +96,8 @@ class DefaultController extends Controller
         } catch (\Exception $e) {
             $logger->error($e->getMessage());
         }
-        return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery) );
+
+        return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
     }
 
     /**
