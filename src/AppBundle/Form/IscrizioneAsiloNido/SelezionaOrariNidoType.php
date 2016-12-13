@@ -29,6 +29,7 @@ class SelezionaOrariNidoType extends AbstractType
             ->add('struttura_orario', ChoiceType::class, [
                 "required" => true,
                 "label" => 'iscrizione_asilo_nido.seleziona_orario',
+                'expanded' => true,
                 'choices' => $orari,
             ])
             ->add('periodo_iscrizione_da', DateType::class, [

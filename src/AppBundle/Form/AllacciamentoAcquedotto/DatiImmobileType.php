@@ -35,6 +35,7 @@ class DatiImmobileType extends AbstractType
             ->add('allacciamentoAcquedottoImmobileQualifica', ChoiceType::class, [
                 'required' => true,
                 'choices' => array_combine(self::TIPI_QUALIFICA, self::TIPI_QUALIFICA),
+                'expanded' => true,
                 'label' => 'allacciamento_acquedotto.datiImmobile.qualifica',
             ])
             ->add('allacciamentoAcquedottoImmobileProvincia', TextType::class, [

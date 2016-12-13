@@ -1,49 +1,23 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-
-    <p><a href="{{ path('operatori_index') }}"
-          class="btn btn-info btn-xs">{{ 'operatori.torna_alle_pratiche'|trans }}</a></p>
-
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{{ pratica.servizio.name }} - {{ pratica.richiedenteCognome }} {{ pratica.richiedenteNome }}</h2>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-7">
             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica, 'user': user}) }}
         </div>
         <div class="col-sm-4 col-sm-offset-1 sidebar">
             {% if pratica.statusName != 'STATUS_COMPLETE' and pratica.statusName != 'STATUS_CANCELLED' %}
-                <p>
-                    <a href="{{ path('operatori_approva_pratica', {'pratica': pratica}) }}"
-                       class="btn btn-success btn-block btn-lg">{{ 'operatori.approva'|trans }}</a>
-                </p>
-                <p>
-                    <!--<a href="#" class="btn btn-warning btn-block btn-lg">{{ 'operatori.richiedi_intergrazioni'|trans }}</a>-->
-                </p>
-                <p>
-                    <a href="{{ path('operatori_rifiuta_pratica', {'pratica': pratica}) }}"
-                       class="btn btn-danger btn-block btn-lg">{{ 'operatori.rifiuta'|trans }}</a>
-                </p>
-                <hr />
+                {{ include('AppBundle:Operatori/parts:azioni_operatore.html.twig', {'pratica':pratica}) }}
             {% endif %}
 
+            {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
 
-            <div class="row">
-
-                <h4>{{ 'operatori.commenti_e_modifiche'|trans }}</h4>
-
-                <div class="col-md-12">
-                    <ul class="list-unstyled">
-                        {% for commento in pratica.commenti %}
-                            <li>
-                                <small>{{ commento.createdAt|date("d/m/Y H:i") }}</small>
-                                <p><strong>{{ commento.creator }}:</strong> {{ commento.text }}</p>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="col-md-12">
-                    {{ form(form) }}
-                </div>
-            </div>
+            {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
 
             {{ include('@App/Default/parts/chat.html.twig') }}
 

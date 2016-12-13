@@ -41,6 +41,12 @@ twig:
     strict_variables: "%kernel.debug%"
     form_themes:
         - 'VichUploaderBundle:Form:fields.html.twig'
+    globals:
+        header_top:
+            title: "%header_top_title%"
+            link: "%header_top_link%"
+        footer_credits: "%footer_credits%"
+
 
 # Doctrine Configuration
 doctrine:

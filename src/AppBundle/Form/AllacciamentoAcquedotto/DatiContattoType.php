@@ -31,6 +31,7 @@ class DatiContattoType extends AbstractType
                     "Usa l'indirizzo di residenza" => 0,
                     "Usa i dati sotto riportati" => 1,
                 ],
+                'expanded' => true,
                 'label' => 'allacciamento_acquedotto.datiContatto.use_alternate',
             ])
             ->add('allacciamentoAcquedottoAlternateContactVia', TextType::class, [

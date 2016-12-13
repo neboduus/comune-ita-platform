@@ -43,6 +43,7 @@ class DatiContatoreType extends AbstractType
                 case 'contatore_uso':
                     $type = ChoiceType::class;
                     $opts['choices'] = array_combine( self::TIPI_USO, self::TIPI_USO);
+                    $opts['expanded'] = true;
                     break;
                 case 'contatore_unita_immobiliari':
                     $type = IntegerType::class;

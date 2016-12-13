@@ -57,7 +57,6 @@ $mobile-size: 400px !default;
     margin: 0;
     padding: 0;
     font-size: 80%;
-    margin-bottom: 1em;
     > li {
         @extend .flexer-element;
         list-style: none;
@@ -112,6 +111,11 @@ $mobile-size: 400px !default;
     > li:last-child .bubble:after {
         width: 50%;
         margin-right: 50%;
+    }
+
+    > li.last .bubble:before,
+    > li.last .bubble:after {
+        display: none;
     }
 
 
@@ -194,7 +198,8 @@ $mobile-size: 400px !default;
         .stacked-text {
             width: auto !important;
             display: block;
-            margin-left: $bubble-size * 2 !important;
+            top: -$bubble-size - 5;
+            margin-left: $bubble-size * 2 + 10 !important;
         }
     }
 }

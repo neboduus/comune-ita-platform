@@ -12,7 +12,7 @@
 
         {% if servizio.enti|length > 0 %}
             <p><small><b>{{ 'servizio.attivo_per'|trans }}</b></small>
-            {% for ente in servizio.enti %}<small>{{ ente.name }} </small>{% endfor %}
+            {% for ente in servizio.enti %}<a href="{{ ente.siteUrl }}"><small>{{ ente.name }} </small></a>{% endfor %}
             </p>
         {% endif %}
 

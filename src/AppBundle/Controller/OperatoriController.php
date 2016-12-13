@@ -463,8 +463,9 @@ class OperatoriController extends Controller
     }
 
     /**
+     * @param OperatoreUser $operatore
      * @param Pratica $pratica
-     * @param $user
+     *
      * @return array
      */
     private function createThreadElementsForOperatoreAndPratica( OperatoreUser $operatore, Pratica $pratica )

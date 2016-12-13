@@ -25,7 +25,7 @@ class DichiarazioneProvenienzaType extends AbstractType
 
         $builder->add('provenienza', ChoiceType::class, [
             'choices' => $choices,
-            'expanded' => false,
+            'expanded' => true,
             'multiple' => false,
             'label' => false,
         ]);

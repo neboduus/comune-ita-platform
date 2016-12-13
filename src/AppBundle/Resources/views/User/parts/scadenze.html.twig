@@ -3,7 +3,7 @@
         <h3 class="panel-title">{{ 'user.dashboard.scadenze'|trans }}</h3>
     </div>
     <div class="panel-body">
-        <ul class="list-unstyled list-deadlines">
+        <ul class="list-unstyled list-news" id="deadlines">
         </ul>
     </div>
 </div>
@@ -16,9 +16,16 @@
 </li>
 </script>
 <script id="tpl-deadlines" type="text/x-jsrender">
-    <li>
-        <span class="date small">{{:date}}</span>
-        <a href="#" class="small">{{:title}}</a>
+    <li class="clearfix">
+        <div class="date">
+            <span class="month">{{:month}}</span>
+            <span class="day">{{:day}}</span>
+            <span class="year">{{:year}}</span>
+        </div>
+        <a href="{{:link}}" target="_blank" class="small">
+            <small>{{:site_name}}</small>
+            <br />{{:title}}
+        </a>
     </li>
 </script>
 <script id="tpl-deadlines-empty" type="text/x-jsrender">

@@ -29,3 +29,5 @@
         <div class="col-xs-8 col-sm-9"> {{ pratica.ente.name }}</div>
     </div>
 {% endif %}
+
+{{ include('AppBundle:Pratiche/summary/parts:richiedente.html.twig', {'pratica':pratica, 'user': user}) }}
