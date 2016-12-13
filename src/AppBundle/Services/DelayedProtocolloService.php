@@ -6,13 +6,44 @@ use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Protocollo\Exception\AlreadyScheduledException;
+use AppBundle\Protocollo\Exception\AlreadySentException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
+use Psr\Log\LoggerInterface;
+use Doctrine\ORM\EntityManager;
 
-class DelayedProtocolloService extends ProtocolloService implements ProtocolloServiceInterface, ScheduledActionHandlerInterface
+class DelayedProtocolloService extends AbstractProtocolloService implements ProtocolloServiceInterface, ScheduledActionHandlerInterface
 {
     const SCHEDULED_ITEM_TYPE_SEND = 'protocollo.sendPratica';
 
+    const SCHEDULED_ITEM_TYPE_UPDATE = 'protocollo.refreshPratica';
+
     const SCHEDULED_ITEM_TYPE_UPLOAD = 'protocollo.uploadFile';
+
+    /**
+     * @var ProtocolloServiceInterface
+     */
+    protected $protocolloService;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+
+    public function __construct(
+        ProtocolloServiceInterface $protocolloService,
+        EntityManager $entityManager,
+        LoggerInterface $logger
+    ) {
+        $this->protocolloService = $protocolloService;
+        $this->entityManager = $entityManager;
+        $this->logger = $logger;
+    }
 
     public function protocollaPratica(Pratica $pratica)
     {
@@ -34,6 +65,30 @@ class DelayedProtocolloService extends ProtocolloService implements ProtocolloSe
         $scheduled = (new ScheduledAction())
             ->setService('ocsdc.protocollo')
             ->setType(self::SCHEDULED_ITEM_TYPE_SEND)
+            ->setParams($params);
+        $this->entityManager->persist($scheduled);
+        $this->entityManager->flush();
+    }
+
+    public function protocollaAllegatiOperatore(Pratica $pratica)
+    {
+        $this->validatePraticaForUploadFile($pratica);
+        $params = serialize([
+            'pratica' => $pratica->getId(),
+        ]);
+
+        $repository = $this->entityManager->getRepository('AppBundle:ScheduledAction');
+        if ($repository->findBy([
+            'type' => self::SCHEDULED_ITEM_TYPE_UPDATE,
+            'params' => $params,
+        ])
+        ) {
+            throw new AlreadyScheduledException();
+        }
+
+        $scheduled = (new ScheduledAction())
+            ->setService('ocsdc.protocollo')
+            ->setType(self::SCHEDULED_ITEM_TYPE_UPDATE)
             ->setParams($params);
         $this->entityManager->persist($scheduled);
         $this->entityManager->flush();
@@ -66,6 +121,11 @@ class DelayedProtocolloService extends ProtocolloService implements ProtocolloSe
         $this->entityManager->flush();
     }
 
+    public function getHandler()
+    {
+        return $this->protocolloService->getHandler();
+    }
+
     /**
      * @param ScheduledAction $action
      *
@@ -75,23 +135,35 @@ class DelayedProtocolloService extends ProtocolloService implements ProtocolloSe
     {
         $params = unserialize($action->getParams());
 
-        if ($action->getType() == self::SCHEDULED_ITEM_TYPE_SEND) {
+        try {
+            if ($action->getType() == self::SCHEDULED_ITEM_TYPE_SEND) {
 
-            $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+                $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
 
-            if ($pratica instanceof Pratica) {
-                parent::protocollaPratica($pratica);
+                if ($pratica instanceof Pratica) {
+                    $this->protocolloService->protocollaPratica($pratica);
+                }
+
+            } elseif ($action->getType() == self::SCHEDULED_ITEM_TYPE_UPDATE) {
+
+                $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+
+                if ($pratica instanceof Pratica) {
+                    $this->protocolloService->protocollaAllegatiOperatore($pratica);
+                }
+
+            } elseif ($action->getType() == self::SCHEDULED_ITEM_TYPE_UPLOAD) {
+
+                $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($params['allegato']);
+                $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+
+                if ($pratica instanceof Pratica && $allegato instanceof AllegatoInterface) {
+                    $this->protocolloService->protocollaAllegato($pratica, $allegato);
+                }
+
             }
-
-        } elseif ($action->getType() == self::SCHEDULED_ITEM_TYPE_UPLOAD) {
-
-            $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($params['allegato']);
-            $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
-
-            if ($pratica instanceof Pratica && $allegato instanceof AllegatoInterface) {
-                parent::protocollaAllegato($pratica, $allegato);
-            }
-
+        }catch(AlreadySentException $e){
+            $this->logger->warning($e->getMessage());
         }
     }
 }

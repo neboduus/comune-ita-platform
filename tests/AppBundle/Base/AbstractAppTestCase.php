@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Base;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\CPSUser as User;
@@ -260,6 +261,10 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         if ($status !== null) {
             $pratica->setStatus($status);
+            if ($status > Pratica::STATUS_SUBMITTED){
+                $pratica->setNumeroProtocollo('test');
+                $pratica->setIdDocumentoProtocollo('test');
+            }
         } else {
             $pratica->setStatus(Pratica::STATUS_DRAFT);
         }
@@ -441,7 +446,7 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function setupMockedLogger($expectedArgs)
     {
         $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->exactly(1))
+        $mockLogger->expects($this->exactly(count($expectedArgs)))
                    ->method('info')
                    ->with($this->callback(function ($subject) use ($expectedArgs) {
                        return in_array($subject, $expectedArgs);
@@ -699,6 +704,42 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         $otherUser = $this->createCPSUser();
         $allegato = new Allegato();
+        $allegato->setOwner($otherUser);
+        $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);
+        $allegato->setFilename('somefile.txt');
+        $allegato->setOriginalFilename('somefile.txt');
+        $allegato->setFile( new File(__DIR__.'/somefile.txt'));
+        $this->em->persist($allegato);
+
+        $this->em->flush();
+
+        return $allegati;
+    }
+
+    /**
+     * @param $numberOfExpectedAttachments
+     * @param CPSUser $user
+     *
+     * @return AllegatoOperatore[]
+     */
+    protected function setupNeededAllegatiOperatoreForAllInvolvedUsers($numberOfExpectedAttachments, CPSUser $user)
+    {
+        $allegati = [];
+        for ($i = 0; $i < $numberOfExpectedAttachments; $i++) {
+
+
+            $allegato = new AllegatoOperatore();
+            $allegato->setOwner($user);
+            $allegato->setDescription(self::CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX . $i);
+            $allegato->setFilename('somefile.txt');
+            $allegato->setOriginalFilename('somefile.txt');
+            $allegato->setFile( new File(__DIR__.'/somefile.txt'));
+            $this->em->persist($allegato);
+            $allegati[] = $allegato;
+        }
+
+        $otherUser = $this->createCPSUser();
+        $allegato = new AllegatoOperatore();
         $allegato->setOwner($otherUser);
         $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);
         $allegato->setFilename('somefile.txt');

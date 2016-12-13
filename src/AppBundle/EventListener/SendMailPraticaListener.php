@@ -3,7 +3,6 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Event\PraticaOnChangeStatusEvent;
-use AppBundle\Logging\LogConstants;
 use AppBundle\Services\MailerService;
 use Psr\Log\LoggerInterface;
 

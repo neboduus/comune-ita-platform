@@ -377,12 +377,19 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
         $pratica->setNumeroProtocollo('test');
         $pratica->setNumeroFascicolo('test');
+        $pratica->setStatus(Pratica::STATUS_REGISTERED);
         $this->em->flush($pratica);
 
         $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->once())
+        $expectedArgs = [
+            LogConstants::PRATICA_ASSIGNED,
+            LogConstants::PRATICA_CHANGED_STATUS,
+        ];
+        $mockLogger->expects($this->exactly(count($expectedArgs)))
                    ->method('info')
-                   ->with(LogConstants::PRATICA_ASSIGNED);
+                   ->with($this->callback(function ($subject) use ($expectedArgs) {
+                       return in_array($subject, $expectedArgs);
+                   }));
 
         $mockMailer = $this->setupSwiftmailerMock([$user, $operatore]);
 
@@ -398,6 +405,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
             'PHP_AUTH_USER' => $username,
             'PHP_AUTH_PW' => $password,
         ));
+
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
@@ -508,9 +516,16 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
 
         $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->once())
+        $expectedArgs = [
+            LogConstants::PRATICA_APPROVED,
+            LogConstants::PRATICA_CHANGED_STATUS,
+        ];
+        $mockLogger->expects($this->exactly(count($expectedArgs)))
                    ->method('info')
-                   ->with(LogConstants::PRATICA_APPROVED);
+                   ->with($this->callback(function ($subject) use ($expectedArgs) {
+                       return in_array($subject, $expectedArgs);
+                   }));
+
 
         $mockMailer = $this->setupSwiftmailerMock([$user, $operatore]);
 
@@ -533,6 +548,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
             'PHP_AUTH_USER' => $username,
             'PHP_AUTH_PW' => $password,
         ));
+
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
 
         $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
@@ -552,9 +568,15 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
 
         $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->once())
+        $expectedArgs = [
+            LogConstants::PRATICA_CANCELLED,
+            LogConstants::PRATICA_CHANGED_STATUS,
+        ];
+        $mockLogger->expects($this->exactly(count($expectedArgs)))
                    ->method('info')
-                   ->with(LogConstants::PRATICA_CANCELLED);
+                   ->with($this->callback(function ($subject) use ($expectedArgs) {
+                       return in_array($subject, $expectedArgs);
+                   }));
 
         $mockMailer = $this->setupSwiftmailerMock([$user, $operatore]);
 

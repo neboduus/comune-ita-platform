@@ -28,12 +28,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Pratica
 {
-    const STATUS_CANCELLED = 0;
     const STATUS_DRAFT = 1;
     const STATUS_SUBMITTED = 2;
-    const STATUS_COMPLETE = 3;
-    const STATUS_REGISTERED = 4;
-    const STATUS_PENDING = 5;
+    const STATUS_REGISTERED = 3;
+    const STATUS_PENDING = 4;
+    const STATUS_COMPLETE_WAITALLEGATIOPERATORE = 5;
+    const STATUS_COMPLETE = 10;
+    const STATUS_CANCELLED = 100;
 
     const TYPE_DEFAULT = "default";
     const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
@@ -367,19 +368,33 @@ class Pratica
      */
     public function getStatusName()
     {
-        if ($this->statusName === null) {
-            $class = new \ReflectionClass(__CLASS__);
-            $constants = $class->getConstants();
-            foreach ($constants as $name => $value) {
-                if ($value == $this->status) {
-                    $this->statusName = $name;
-                    break;
-                }
+        $class = new \ReflectionClass(__CLASS__);
+        $constants = $class->getConstants();
+        foreach ($constants as $name => $value) {
+            if ($value == $this->status) {
+                return $name;
             }
         }
 
-        return $this->statusName;
+        return null;
     }
+
+    public static function getStatuses()
+    {
+        $statuses = [];
+        $class = new \ReflectionClass(__CLASS__);
+        $constants = $class->getConstants();
+        foreach ($constants as $name => $value) {
+            if (strpos($name, 'STATUS_') === 0){
+                $statuses[$value] = [
+                    'id' => $value,
+                    'identifier' => $name,
+                ];
+            }
+        }
+        return $statuses;
+    }
+
 
     /**
      * @param $status

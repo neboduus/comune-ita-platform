@@ -79,6 +79,7 @@ class ApiControllerTest extends AbstractAppTestCase
     public function testPraticaStatusCanBeUpdatedViaProtectedAPI()
     {
         $this->setupMockedLogger([
+            LogConstants::PRATICA_CHANGED_STATUS,
             LogConstants::PRATICA_UPDATED_STATUS_FROM_GPA,
         ]);
         $user = $user = $this->createCPSUser();
@@ -86,7 +87,7 @@ class ApiControllerTest extends AbstractAppTestCase
         $initialStatusCount = $pratica->getStoricoStati()->count();
 
         $rawStatusChange = [
-            'evento' => 200,
+            'evento' => Pratica::STATUS_SUBMITTED,
             'timestamp' => 123,
             'responsabile' => 'Contessa Serbelloni Mazzanti Viendalmare',
             'operatore' => 'pippo',
@@ -157,7 +158,7 @@ class ApiControllerTest extends AbstractAppTestCase
 
         //missing operatore
         $rawStatusChange = [
-            'evento' => 200,
+            'evento' => Pratica::STATUS_SUBMITTED,
             'timestamp' => 123,
             'responsabile' => 'Contessa Serbelloni Mazzanti Viendalmare',
             //'operatore' => 'pippo',

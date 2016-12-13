@@ -4,18 +4,16 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Pratica;
-use AppBundle\Event\PraticaOnChangeStatusEvent;
-use AppBundle\PraticaEvents;
-use AppBundle\Protocollo\Exception\AlreadySentException;
+use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
+use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Protocollo\Exception\AlreadyUploadException;
-use AppBundle\Protocollo\Exception\ParentNotRegisteredException;
-use AppBundle\Protocollo\Exception\InvalidStatusException;
+use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Protocollo\ProtocolloHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManager;
 
-class ProtocolloService implements ProtocolloServiceInterface
+class ProtocolloService extends AbstractProtocolloService implements ProtocolloServiceInterface
 {
     /**
      * @var ProtocolloHandlerInterface
@@ -55,18 +53,41 @@ class ProtocolloService implements ProtocolloServiceInterface
 
         $this->handler->sendPraticaToProtocollo($pratica);
 
-        $pratica->setStatus(Pratica::STATUS_REGISTERED);
-
-        foreach ($pratica->getAllegati() as $allegato) {
-            $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+        $allegati = $pratica->getAllegati();
+        foreach ($allegati as $allegato) {
+            try {
+                $this->validateUploadFile($pratica, $allegato);
+                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+            }catch(AlreadyUploadException $e){}
         }
 
         $this->entityManager->persist($pratica);
         $this->entityManager->flush();
 
         $this->dispatcher->dispatch(
-            PraticaEvents::ON_STATUS_CHANGE,
-            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_REGISTERED)
+            ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS,
+            new ProtocollaPraticaSuccessEvent($pratica)
+        );
+    }
+
+    public function protocollaAllegatiOperatore(Pratica $pratica)
+    {
+        $this->validatePraticaForUploadFile($pratica);
+
+        $allegati = $pratica->getAllegatiOperatore();
+        foreach ($allegati as $allegato) {
+            try {
+                $this->validateUploadFile($pratica, $allegato);
+                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+            }catch(AlreadyUploadException $e){}
+        }
+
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(
+            ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_OPERATORE_SUCCESS,
+            new ProtocollaAllegatiOperatoreSuccessEvent($pratica)
         );
     }
 
@@ -86,40 +107,4 @@ class ProtocolloService implements ProtocolloServiceInterface
         return $this->handler;
     }
 
-    protected function validatePratica(Pratica $pratica)
-    {
-        if ($pratica->getStatus() == Pratica::STATUS_DRAFT){
-            throw new InvalidStatusException();
-        }
-
-        if ($pratica->getNumeroProtocollo() !== null) {
-            throw new AlreadySentException();
-        }
-
-        foreach ($pratica->getAllegati() as $allegato) {
-            $this->validateUploadFile($pratica, $allegato);
-        }
-    }
-
-    protected function validatePraticaForUploadFile(Pratica $pratica)
-    {
-        if ($pratica->getNumeroProtocollo() === null) {
-            throw new ParentNotRegisteredException();
-        }
-    }
-
-    protected function validateUploadFile(Pratica $pratica, AllegatoInterface $allegato)
-    {
-        $alreadySent = false;
-        foreach ($pratica->getNumeriProtocollo() as $item) {
-            $item = (array)$item;
-            if ($item['id'] == $allegato->getId()) {
-                $alreadySent = true;
-            }
-        }
-
-        if ($alreadySent) {
-            throw new AlreadyUploadException();
-        }
-    }
 }

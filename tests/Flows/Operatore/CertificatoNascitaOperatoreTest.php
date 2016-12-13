@@ -194,9 +194,15 @@ class CertificatoNascitaOperatoreTest extends AbstractAppTestCase
 
         $form = $crawler->selectButton($finishButton)->form();
         $this->client->submit($form);
+
         $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
         $this->client->followRedirect();
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        /** @var Pratica $pratica */
+        $pratica = $this->em->getRepository('AppBundle:Pratica')->findOneById($pratica->getId());
+        $this->assertEquals(Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE, $pratica->getStatus());
+
     }
 }

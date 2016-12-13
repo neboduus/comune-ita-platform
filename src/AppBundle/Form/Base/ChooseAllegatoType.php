@@ -4,7 +4,6 @@ namespace AppBundle\Form\Base;
 
 
 use AppBundle\Entity\Allegato;
-use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\Pratica;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;

@@ -80,8 +80,7 @@ class APIController extends Controller
             return new Response(null, Response::HTTP_BAD_REQUEST);
         }
 
-        $pratica->setStatus($statusChange->getEvento(), $statusChange);
-        $this->getDoctrine()->getManager()->flush();
+        $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, $statusChange->getEvento(), $statusChange);
         $logger->info(LogConstants::PRATICA_UPDATED_STATUS_FROM_GPA, [ 'statusChange' => $statusChange ]);
 
         return new Response(null, Response::HTTP_NO_CONTENT);

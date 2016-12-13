@@ -33,10 +33,7 @@ class ProtocolloServiceTest extends AbstractAppTestCase
             $responses[] = $this->getPiTreSuccessResponse();
         }
 
-        $dispatcher = $this->getMockBuilder(TraceableEventDispatcher::class)->disableOriginalConstructor()->getMock();
-        $dispatcher->expects($this->exactly(1))
-                   ->method('dispatch');
-        $protocollo = $this->getMockProtocollo($responses, $dispatcher);
+        $protocollo = $this->getMockProtocollo($responses);
 
         $user = $this->createCPSUser();
         $pratica = $this->createSubmittedPraticaForUser($user);
@@ -54,6 +51,35 @@ class ProtocolloServiceTest extends AbstractAppTestCase
         }
 
         $this->assertEquals($expectedAllegati, count($pratica->getNumeriProtocollo()));
+    }
+
+    /**
+     * @test
+     */
+    public function testProtocolloServiceDispatchEvent()
+    {
+        $expectedAllegati = 2;
+        $responses = [$this->getPiTreSuccessResponse()];
+        for ($i = 1; $i <= $expectedAllegati; $i++) {
+            $responses[] = $this->getPiTreSuccessResponse();
+        }
+
+        $dispatcher = $this->getMockBuilder(TraceableEventDispatcher::class)->disableOriginalConstructor()->getMock();
+        $dispatcher->expects($this->exactly(2))->method('dispatch');
+
+        $protocollo = $this->getMockProtocollo($responses, $dispatcher);
+
+        $user = $this->createCPSUser();
+        $pratica = $this->createSubmittedPraticaForUser($user);
+
+        $protocollo->protocollaPratica($pratica);
+
+        $allegati = $this->setupNeededAllegatiOperatoreForAllInvolvedUsers(1, $user);
+        foreach ($allegati as $allegato) {
+            $pratica->addAllegatoOperatore($allegato);
+        }
+
+        $protocollo->protocollaAllegatiOperatore($pratica);
     }
 
     /**

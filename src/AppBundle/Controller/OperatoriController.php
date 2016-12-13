@@ -4,13 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
-use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
 use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
 use AppBundle\Logging\LogConstants;
-use AppBundle\PraticaEvents;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -23,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use AppBundle\Entity\User;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 
 /**
@@ -70,6 +67,7 @@ class OperatoriController extends Controller
                 'ente' => $this->getUser()->getEnte(),
                 'status' => [
                     Pratica::STATUS_COMPLETE,
+                    Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
                     Pratica::STATUS_CANCELLED,
                 ]
             ]
@@ -99,14 +97,7 @@ class OperatoriController extends Controller
         }
 
         $pratica->setOperatore($this->getUser());
-        $pratica->setStatus(Pratica::STATUS_PENDING);
-
-        $this->get('event_dispatcher')->dispatch(
-            PraticaEvents::ON_STATUS_CHANGE,
-            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_PENDING)
-        );
-
-        $this->getDoctrine()->getManager()->flush();
+        $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_PENDING);
 
         $this->get('logger')->info(
             LogConstants::PRATICA_ASSIGNED,
@@ -167,23 +158,27 @@ class OperatoriController extends Controller
     public function approvaPraticaAction(Pratica $pratica)
     {
 
-        if ($pratica->getStatus() == Pratica::STATUS_COMPLETE) {
+        if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
 
         $this->checkUserCanAccessPratica($this->getUser(), $pratica);
         $user = $this->getUser();
 
+        $praticaFlowService = null;
+        $praticaFlowServiceName = $pratica->getServizio()->getPraticaFlowOperatoreServiceName();
+
+        if ($praticaFlowServiceName) {
+            /** @var PraticaOperatoreFlow $praticaFlowService */
+            $praticaFlowService = $this->get($praticaFlowServiceName);
+        }
+
         // Se non è stato dichiarato un flow operatore per il servizio della pratica posso approvarla direttamente
-        if ($pratica->getServizio()->getPraticaFlowOperatoreServiceName() == null
-            || empty($pratica->getServizio()->getPraticaFlowOperatoreServiceName()))
+        if (!$praticaFlowService instanceof PraticaOperatoreFlow)
         {
             $this->approvePratica($pratica);
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
-
-        /** @var PraticaOperatoreFlow $praticaFlowService */
-        $praticaFlowService = $this->get( $pratica->getServizio()->getPraticaFlowOperatoreServiceName() );
 
         $praticaFlowService->setInstanceKey($user->getId());
 
@@ -204,7 +199,7 @@ class OperatoriController extends Controller
                 $form = $praticaFlowService->createForm();
             } else {
 
-                $this->approvePratica($pratica);
+                $this->approvePratica($pratica, $praticaFlowService->hasUploadAllegati());
 
                 $praticaFlowService->getDataManager()->drop($praticaFlowService);
                 $praticaFlowService->reset();
@@ -227,14 +222,7 @@ class OperatoriController extends Controller
     public function rifiutaPraticaAction(Pratica $pratica, Request $request)
     {
         $this->checkUserCanAccessPratica($this->getUser(), $pratica);
-        $pratica->setStatus(Pratica::STATUS_CANCELLED);
-
-        $this->get('event_dispatcher')->dispatch(
-            PraticaEvents::ON_STATUS_CHANGE,
-            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_CANCELLED)
-        );
-
-        $this->getDoctrine()->getManager()->flush();
+        $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_CANCELLED);
 
         $this->get('logger')->info(
             LogConstants::PRATICA_CANCELLED,
@@ -437,21 +425,13 @@ class OperatoriController extends Controller
     /**
      * @param Pratica $pratica
      */
-    private function approvePratica(Pratica $pratica)
+    private function approvePratica(Pratica $pratica, $hasNewAllegati = false)
     {
-        $allegati = $pratica->getAllegatiOperatore();
-        foreach($allegati as $allegato){
-            $this->get('ocsdc.protocollo')->protocollaAllegato($pratica, $allegato);
+        if ($hasNewAllegati) {
+            $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);
+        }else{
+            $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_COMPLETE);
         }
-
-        $pratica->setStatus(Pratica::STATUS_COMPLETE);
-
-        $this->get('event_dispatcher')->dispatch(
-            PraticaEvents::ON_STATUS_CHANGE,
-            new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_COMPLETE)
-        );
-
-        $this->getDoctrine()->getManager()->flush();
 
         $this->get('logger')->info(
             LogConstants::PRATICA_APPROVED,
