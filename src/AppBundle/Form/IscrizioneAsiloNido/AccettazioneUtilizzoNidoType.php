@@ -25,12 +25,13 @@ class AccettazioneUtilizzoNidoType extends AbstractType
             '</div>'
         );
 
-        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.accettazione_utilizzo_nido', true);
+        $helper->setGuideText('steps.iscrizione_asilo_nido.accettazione_utilizzo.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.iscrizione_asilo_nido.accettazione_utilizzo.title', true);
 
         $builder->add(
             'accetto_utilizzo',
             CheckboxType::class,
-            ["required" => true, "label" => 'iscrizione_asilo_nido.accettazione_utilizzo_nido']
+            ["required" => true, "label" => 'steps.iscrizione_asilo_nido.accettazione_utilizzo.accetto_utilizzo']
         );
     }
 

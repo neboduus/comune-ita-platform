@@ -29,66 +29,67 @@ class DatiImmobileType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('allacciamento_acquedotto.guida_alla_compilazione.dati_immobile', true);
+        $helper->setGuideText('steps.allacciamento_acquedotto.dati_immobile.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.allacciamento_acquedotto.dati_immobile.title', true);
 
         $builder
             ->add('allacciamentoAcquedottoImmobileQualifica', ChoiceType::class, [
                 'required' => true,
                 'choices' => array_combine(self::TIPI_QUALIFICA, self::TIPI_QUALIFICA),
                 'expanded' => true,
-                'label' => 'allacciamento_acquedotto.datiImmobile.qualifica',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.qualifica',
             ])
             ->add('allacciamentoAcquedottoImmobileProvincia', TextType::class, [
                 'required' => true,
-                'label' => 'allacciamento_acquedotto.datiImmobile.provincia',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.provincia',
             ])
             ->add('allacciamentoAcquedottoImmobileComune', TextType::class, [
                 'required' => true,
-                'label' => 'allacciamento_acquedotto.datiImmobile.comune',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.comune',
             ])
             ->add('allacciamentoAcquedottoImmobileIndirizzo', TextType::class, [
                 'required' => true,
-                'label' => 'allacciamento_acquedotto.datiImmobile.indirizzo',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.indirizzo',
             ])
             ->add('allacciamentoAcquedottoImmobileNumeroCivico', TextType::class, [
                 'required' => true,
-                'label' => 'allacciamento_acquedotto.datiImmobile.numero_civico',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.numero_civico',
             ])
             ->add('allacciamentoAcquedottoImmobileCap', IntegerType::class, [
                 'required' => true,
-                'label' => 'allacciamento_acquedotto.datiImmobile.cap',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.cap',
             ])
             ->add('allacciamentoAcquedottoImmobileScala', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.scala',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.scala',
             ])
             ->add('allacciamentoAcquedottoImmobilePiano', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.piano',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.piano',
             ])
             ->add('allacciamentoAcquedottoImmobileInterno', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.interno',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.interno',
             ])
             ->add('allacciamentoAcquedottoImmobileCatastoCategoria', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.catasto_categoria',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.catasto_categoria',
             ])
             ->add('allacciamentoAcquedottoImmobileCatastoCodiceComune', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.catasto_codice_comune',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.catasto_codice_comune',
             ])
             ->add('allacciamentoAcquedottoImmobileCatastoFoglio', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.catasto_foglio',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.catasto_foglio',
             ])
             ->add('allacciamentoAcquedottoImmobileCatastoSezione', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.catasto_sezione',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.catasto_sezione',
             ])
             ->add('allacciamentoAcquedottoImmobileCatastoMappale', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiImmobile.catasto_mappale',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.catasto_mappale',
             ]);
     }
 

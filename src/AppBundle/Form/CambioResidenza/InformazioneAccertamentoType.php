@@ -14,8 +14,8 @@ class InformazioneAccertamentoType extends AbstractType
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
 
-        $helper->setGuideText('cambio_residenza.guida_alla_compilazione.informazioni_accertamento',
-            true);
+        $helper->setGuideText('steps.cambio_residenza.informazioni_accertamento.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.cambio_residenza.informazioni_accertamento.title', true);
         $builder
             ->add('infoAccertamento', TextareaType::class, [
                 'label' => false,

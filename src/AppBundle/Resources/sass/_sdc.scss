@@ -499,6 +499,10 @@ body.canvas-slid {
   overflow-y: auto;
 }
 
+.service-access-button {
+  margin: 40px auto;
+}
+
 @media only screen and (max-width: $screen-sm-min) {
   /* Force table to not be like tables anymore */
   #no-more-tables {

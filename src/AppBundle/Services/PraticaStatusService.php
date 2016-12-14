@@ -133,6 +133,4 @@ class PraticaStatusService
         throw new \Exception("Invalid pratica status change form $beforeStatus to $afterStatus");
     }
 
-
-
 }

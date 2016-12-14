@@ -32,7 +32,8 @@ class DatiIntestatarioType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('autolettura_acqua.guida_alla_compilazione.dati_intestatario', true);
+        $helper->setGuideText('steps.autolettura_acqua.dati_intestatario.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.autolettura_acqua.dati_intestatario.title', true);
 
         /** @var CPSUser $user */
         $user = $builder->getData()->getUser();
@@ -40,7 +41,7 @@ class DatiIntestatarioType extends AbstractType
         foreach (self::CAMPI_INTESTATARIO as $identifier) {
             $type = TextType::class;
             $opts = [
-                "label" => 'autolettura_acqua.datiIntestatario.'.$identifier
+                "label" => 'steps.autolettura_acqua.dati_intestatario.'.$identifier
             ];
             switch ($identifier) {
                 case 'intestatario_telefono':

@@ -21,10 +21,12 @@ class DichiarazioneProvenienzaDettaglioType extends AbstractType
         $pratica = $builder->getData();
         $provenienza = $pratica->getProvenienza();
 
+        $helper->setStepTitle('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.title');
+
         switch ($provenienza) {
             case CambioResidenza::PROVENIENZA_ALTRO_COMUNE:
 
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.dichiarazione_provenienza_altro_comune',
+                $helper->setGuideText('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.guida_alla_compilazione.altro_comune',
                     true);
 
                 $builder->add('comuneDiProvenienza', TextType::class, [
@@ -35,7 +37,7 @@ class DichiarazioneProvenienzaDettaglioType extends AbstractType
 
             case CambioResidenza::PROVENIENZA_ESTERO:
 
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.dichiarazione_provenienza_stato_estero',
+                $helper->setGuideText('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.guida_alla_compilazione.stato_estero',
                     true);
 
                 $builder
@@ -46,7 +48,7 @@ class DichiarazioneProvenienzaDettaglioType extends AbstractType
 
             case CambioResidenza::PROVENIENZA_AIRE:
 
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.dichiarazione_provenienza_aire',
+                $helper->setGuideText('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.guida_alla_compilazione.aire',
                     true);
 
                 $builder
@@ -61,7 +63,7 @@ class DichiarazioneProvenienzaDettaglioType extends AbstractType
 
             case CambioResidenza::PROVENIENZA_ALTRO:
 
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.dichiarazione_provenienza_altro_motivo',
+                $helper->setGuideText('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.guida_alla_compilazione.altro_motivo',
                     true);
 
                 $builder->add('altraProvenienza', TextareaType::class, [
@@ -71,7 +73,7 @@ class DichiarazioneProvenienzaDettaglioType extends AbstractType
                 break;
 
             default:
-                $helper->setDescriptionText('cambio_residenza.guida_alla_compilazione.dichiarazione_provenienza_nessun_allegato',
+                $helper->setDescriptionText('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.guida_alla_compilazione.nessun_allegato',
                     true);
         }
     }

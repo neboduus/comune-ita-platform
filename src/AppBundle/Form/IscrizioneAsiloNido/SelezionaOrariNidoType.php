@@ -19,7 +19,8 @@ class SelezionaOrariNidoType extends AbstractType
 
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.seleziona_orari', true);
+        $helper->setGuideText('steps.iscrizione_asilo_nido.seleziona_orari.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.iscrizione_asilo_nido.seleziona_orari.title', true);
 
         /** @var AsiloNido $asilo */
         $asilo = $pratica = $builder->getData()->getStruttura();
@@ -28,13 +29,13 @@ class SelezionaOrariNidoType extends AbstractType
         $builder
             ->add('struttura_orario', ChoiceType::class, [
                 "required" => true,
-                "label" => 'iscrizione_asilo_nido.seleziona_orario',
+                "label" => 'steps.iscrizione_asilo_nido.seleziona_orari.seleziona_orario',
                 'expanded' => true,
                 'choices' => $orari,
             ])
             ->add('periodo_iscrizione_da', DateType::class, [
                 'required' => true,
-                'label' => 'iscrizione_asilo_nido.periodoIscrizioneDa',
+                'label' => 'steps.iscrizione_asilo_nido.seleziona_orari.periodo_iscrizione_da',
                 'widget' => 'single_text',
                 'format' => 'dd-MM-yyyy',
                 'attr' => [
@@ -45,7 +46,7 @@ class SelezionaOrariNidoType extends AbstractType
             ])
             ->add('periodo_iscrizione_a', DateType::class, [
                 'required' => true,
-                'label' => 'iscrizione_asilo_nido.periodoIscrizioneA',
+                'label' => 'steps.iscrizione_asilo_nido.seleziona_orari.periodo_iscrizione_a',
                 'widget' => 'single_text',
                 'format' => 'dd-MM-yyyy',
                 'attr' => [
@@ -66,9 +67,16 @@ class SelezionaOrariNidoType extends AbstractType
     public function onPreSubmit(FormEvent $event)
     {
         $data = $event->getData();
+        $options = $event->getForm()->getConfig()->getOptions();
+
+        /** @var TestiAccompagnatoriProcedura $helper */
+        $helper = $options["helper"];
+
         if ( strtotime($data['periodo_iscrizione_da']) >= strtotime($data['periodo_iscrizione_a']))
         {
-            $event->getForm()->addError(new FormError("La data di fine iscrizione deve essere maggiore di quella d'inizio"));
+            $event->getForm()->addError(
+                new FormError($helper->translate('steps.iscrizione_asilo_nido.seleziona_orari.error'))
+            );
         }
     }
 

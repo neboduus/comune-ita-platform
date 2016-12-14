@@ -10,7 +10,8 @@
                     | merge(app.request.attributes.get('_route_params'))
                     | craue_addDynamicStepNavigationParameters(flow, loop.index)) }}"  data-toggle="tab">
                 {% endif %}
-                <span class="bubble has_tooltip" data-toggle="tooltip" data-placement="bottom"  title="{{ block('craue_flow_stepLabel') }}"></span>
+                <span class="bubble"></span>
+                        <small class="text">{{ block('craue_flow_stepLabel') }}</small>
                 {%- if craue_isStepLinkable(flow, loop.index) -%}
                     </a>
                 {% endif %}

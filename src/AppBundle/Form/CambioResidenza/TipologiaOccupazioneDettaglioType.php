@@ -25,43 +25,45 @@ class TipologiaOccupazioneDettaglioType extends AbstractType
         $pratica = $builder->getData();
         $occupazione = $pratica->getTipoOccupazione();
 
+        $helper->setStepTitle('steps.cambio_residenza.tipologia_occupazione_dettaglio.title');
+
         switch ($occupazione) {
             case CambioResidenza::OCCUPAZIONE_PROPRIETARIO:
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.occupazione.proprietario',
+                $helper->setGuideText('steps.cambio_residenza.tipologia_occupazione_dettaglio.guida_alla_compilazione.proprietario',
                     true);
                 $builder
                     ->add('proprietarioCatastoSezione', TextType::class, [
-                        'label' => 'cambio_residenza.proprietarioCatastoSezione',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_sezione',
                         'required' => true,
                     ])
                     ->add('proprietarioCatastoFoglio', TextType::class, [
-                        'label' => 'cambio_residenza.proprietarioCatastoFoglio',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_foglio',
                         'required' => true,
                     ])
                     ->add('proprietarioCatastoParticella', TextType::class, [
-                        'label' => 'cambio_residenza.proprietarioCatastoParticella',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_particella',
                         'required' => false,
                     ])
                     ->add('proprietarioCatastoSubalterno', TextType::class, [
-                        'label' => 'cambio_residenza.proprietarioCatastoSubalterno',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_subalterno',
                         'required' => false,
                     ]);
                 break;
 
             case CambioResidenza::OCCUPAZIONE_LOCAZIONE:
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.occupazione.locazione',
+                $helper->setGuideText('steps.cambio_residenza.tipologia_occupazione_dettaglio.guida_alla_compilazione.locazione',
                     true);
                 $builder
                     ->add('contrattoAgenzia', TextType::class, [
-                        'label' => 'cambio_residenza.contrattoAgenzia',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.agenzia',
                         'required' => true,
                     ])
                     ->add('contrattoNumero', TextType::class, [
-                        'label' => 'cambio_residenza.contrattoNumero',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.numero',
                         'required' => true,
                     ])
                     ->add('contrattoData', DateType::class, [
-                        'label' => 'cambio_residenza.contrattoData',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.data',
                         'required' => true,
                         'widget' => 'single_text',
                         'format' => 'dd-MM-yyyy',
@@ -74,11 +76,11 @@ class TipologiaOccupazioneDettaglioType extends AbstractType
                 break;
 
             case CambioResidenza::OCCUPAZIONE_LOCAZIONE_ERP:
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.occupazione.locazione_erp',
+                $helper->setGuideText('steps.cambio_residenza.tipologia_occupazione_dettaglio.guida_alla_compilazione.locazione_erp',
                     true);
                 $builder
                     ->add('verbaleConsegna', ChooseAllegatoType::class, [
-                        'label' => 'cambio_residenza.verbaleConsegna',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.verbale_consegna',
                         'fileDescription' => self::OCCUPAZIONE_LOCAZIONE_ERP_FILE_DESCRIPTION,
                         'required' => true,
                         'pratica' => $builder->getData(),
@@ -87,19 +89,19 @@ class TipologiaOccupazioneDettaglioType extends AbstractType
                 break;
 
             case CambioResidenza::OCCUPAZIONE_COMODATO:
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.occupazione.comodato',
+                $helper->setGuideText('steps.cambio_residenza.tipologia_occupazione_dettaglio.guida_alla_compilazione.comodato',
                     true);
                 $builder
                     ->add('contrattoAgenzia', TextType::class, [
-                        'label' => 'cambio_residenza.contrattoAgenzia',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.agenzia',
                         'required' => true,
                     ])
                     ->add('contrattoNumero', TextType::class, [
-                        'label' => 'cambio_residenza.contrattoNumero',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.numero',
                         'required' => true,
                     ])
                     ->add('contrattoData', DateType::class, [
-                        'label' => 'cambio_residenza.contrattoData',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.data',
                         'required' => true,
                         'widget' => 'single_text',
                         'format' => 'dd-MM-yyyy',
@@ -112,21 +114,21 @@ class TipologiaOccupazioneDettaglioType extends AbstractType
                 break;
 
             case CambioResidenza::OCCUPAZIONE_USUFRUTTO:
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.occupazione.usufruttuario',
+                $helper->setGuideText('steps.cambio_residenza.tipologia_occupazione_dettaglio.guida_alla_compilazione.usufruttuario',
                     true);
                 $builder
                     ->add('usufruttuarioInfo', TextareaType::class, [
-                        'label' => 'cambio_residenza.usufruttuarioInfo',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.usufruttuario_info',
                         'required' => true,
                     ]);
                 break;
 
             case CambioResidenza::OCCUPAZIONE_AUTOCERTIFICAZIONE:
-                $helper->setGuideText('cambio_residenza.guida_alla_compilazione.occupazione.autocertificazione',
+                $helper->setGuideText('steps.cambio_residenza.tipologia_occupazione_dettaglio.guida_alla_compilazione.autocertificazione',
                     true);
                 $builder
                     ->add('autocertificazione', ChooseAllegatoType::class, [
-                        'label' => 'cambio_residenza.autocertificazione',
+                        'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.autocertificazione',
                         'fileDescription' => self::OCCUPAZIONE_AUTOCERTIFICAZIONE_FILE_DESCRIPTION,
                         'required' => true,
                         'pratica' => $builder->getData(),

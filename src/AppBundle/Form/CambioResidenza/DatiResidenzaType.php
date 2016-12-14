@@ -18,36 +18,37 @@ class DatiResidenzaType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('cambio_residenza.guida_alla_compilazione.dati_residenza', true);
+        $helper->setGuideText('steps.cambio_residenza.dati_residenza.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.cambio_residenza.dati_residenza.title', true);
 
         $builder
             ->add('residenzaProvincia', TextType::class, [
                 'required' => true,
-                'label' => 'cambio_residenza.datiResidenza.provincia',
+                'label' => 'steps.cambio_residenza.dati_residenza.provincia',
             ])
             ->add('residenzaComune', TextType::class, [
                 'required' => true,
-                'label' => 'cambio_residenza.datiResidenza.comune',
+                'label' => 'steps.cambio_residenza.dati_residenza.comune',
             ])
             ->add('residenzaIndirizzo', TextType::class, [
                 'required' => true,
-                'label' => 'cambio_residenza.datiResidenza.indirizzo',
+                'label' => 'steps.cambio_residenza.dati_residenza.indirizzo',
             ])
             ->add('residenzaNumeroCivico', TextType::class, [
                 'required' => true,
-                'label' => 'cambio_residenza.datiResidenza.numero_civico',
+                'label' => 'steps.cambio_residenza.dati_residenza.numero_civico',
             ])
             ->add('residenzaScala', TextType::class, [
                 'required' => false,
-                'label' => 'cambio_residenza.datiResidenza.scala',
+                'label' => 'steps.cambio_residenza.dati_residenza.scala',
             ])
             ->add('residenzaPiano', TextType::class, [
                 'required' => false,
-                'label' => 'cambio_residenza.datiResidenza.piano',
+                'label' => 'steps.cambio_residenza.dati_residenza.piano',
             ])
             ->add('residenzaInterno', TextType::class, [
                 'required' => false,
-                'label' => 'cambio_residenza.datiResidenza.interno',
+                'label' => 'steps.cambio_residenza.dati_residenza.interno',
             ]);
     }
 

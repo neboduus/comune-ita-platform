@@ -17,6 +17,7 @@ class PraticaOnChangeStatusEvent extends Event
      */
     private $newStateIdentifier;
 
+
     public function __construct(Pratica $pratica, $newStateIdentifier)
     {
         $this->pratica = $pratica;

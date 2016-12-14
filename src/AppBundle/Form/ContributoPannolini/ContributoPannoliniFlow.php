@@ -31,35 +31,35 @@ class ContributoPannoliniFlow extends PraticaFlow
     {
         return array(
             self::STEP_SELEZIONA_ENTE => array(
-                'label' => 'pratica.selezionaEnte',
+                'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
             ),
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'pratica.accettazioneIstruzioni',
+                'label' => 'steps.common.accettazione_istruzioni.label',
                 'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
-                'label' => 'pratica.datiRichiedente',
+                'label' => 'steps.common.dati_richiedente.label',
                 'form_type' => DatiRichiedenteType::class,
             ),
             self::STEP_DATI_BAMBINO => array(
-                'label' => 'contributo_pannolini.datiBambino',
+                'label' => 'steps.contributo_pannolini.dati_bambino.label',
                 'form_type' => DatiBambinoType::class,
             ),
             self::STEP_DATI_ACQUISTO => array(
-                'label' => 'contributo_pannolini.datiAcquisto',
+                'label' => 'steps.contributo_pannolini.dati_acquisto.label',
                 'form_type' => DatiAcquistoType::class,
             ),
             self::STEP_ALLEGATI => array(
-                'label' => 'pratica.carica_allegati',
+                'label' => 'steps.common.carica_allegati.label',
                 'form_type' => AllegatiType::class,
             ),
             self::STEP_DATI_CONTO_CORRENTE => array(
-                'label' => 'contributo_pannolini.datiContoCorrente',
+                'label' => 'steps.contributo_pannolini.dati_conto_corrente.label',
                 'form_type' => DatiContoCorrenteType::class,
             ),
             self::STEP_CONFERMA => array(
-                'label' => 'pratica.conferma',
+                'label' => 'steps.common.conferma.label',
             ),
         );
     }

@@ -21,7 +21,9 @@ class AllegatiType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('pratica.guida_alla_compilazione.allegati', true);
+        $helper->setGuideText('steps.common.carica_allegati.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.common.carica_allegati.title', true);
+
         $user = $builder->getData()->getUser();
 
         $builder->add('allegati', EntityType::class, [

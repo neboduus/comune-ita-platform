@@ -2,16 +2,17 @@
 {% block main_content %}
 
     <h1>{{ servizio.name }}</h1>
+
     <div class="row">
         <div class="col-sm-7">
-            <h4>{{ 'servizio.il_servizio'|trans() }}</h4>
-            <p>{{ servizio.description }}</p>
 
-            <div class="well well-sm service-disclaimer">
+            <h3>{{ servizio.description }}</h3>
+
+            <div class="service-istruzioni">
                 {{ servizio.testoIstruzioni|raw }}
             </div>
 
-            <div class="row hidden-sm hidden-md hidden-lg">
+            <div class="row">
                 <div class="col-md-12">
                     {#todo: usare constant()#}
                     {% if servizio.status == 0 %}
@@ -20,7 +21,7 @@
                         <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}</div>
                     {% else %}
                         <div class="text-center">
-                            <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg">
+                            <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg service-access-button">
                                 <span class="hidden-xs">{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
                                 <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%':null}) }}</span>
                             </a>
@@ -75,34 +76,6 @@
             </p>#}
         </div>
         {% endif %}
-    </div>
-
-    <div class="row hidden-xs">
-        <div class="col-md-12">
-            {#todo: usare constant()#}
-            {% if servizio.status == 0 %}
-                <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}</div>
-            {% elseif servizio.status == 2 %}
-                <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}</div>
-            {% else %}
-                <div class="text-center">
-                    <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg">
-                        <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}
-                    </a>
-
-                    {% if servizio.enti|length > 0 %}
-                        <div class="well well-sm text-center"><strong>{{ 'servizio.enti_coinvolti'|trans }}:</strong>
-                        <ul class="list-inline">
-                            {% for ente in servizio.enti %}
-                                <li><a href="{{ ente.siteUrl }}"><small>{{ ente.name }}</small></a></li>
-                            {% endfor %}
-                        </ul>
-                        </div>
-                    {% endif %}
-
-                </div>
-            {% endif %}
-        </div>
     </div>
 
 

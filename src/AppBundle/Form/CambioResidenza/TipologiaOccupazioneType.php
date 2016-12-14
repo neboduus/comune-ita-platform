@@ -14,13 +14,14 @@ class TipologiaOccupazioneType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('cambio_residenza.guida_alla_compilazione.occupazione', true);
+        $helper->setGuideText('steps.cambio_residenza.tipologia_occupazione.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.cambio_residenza.tipologia_occupazione.title', true);
 
         /** @var CambioResidenza $pratica */
         $pratica = $builder->getData();
         $choices = array();
         foreach ($pratica->getTipiOccupazione() as $occupazione) {
-            $choices[$helper->translate('cambio_residenza.occupazione.' . $occupazione)] = $occupazione;
+            $choices[$helper->translate('steps.cambio_residenza.tipologia_occupazione.' . $occupazione)] = $occupazione;
         }
 
         $builder->add('tipoOccupazione', ChoiceType::class, [

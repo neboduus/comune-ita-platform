@@ -14,7 +14,8 @@ class SelezionaNidoType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('iscrizione_asilo_nido.guida_alla_compilazione.seleziona_nido', true);
+        $helper->setGuideText('steps.iscrizione_asilo_nido.seleziona_nido.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.iscrizione_asilo_nido.seleziona_nido.title', true);
 
         $builder->add('struttura', EntityType::class, [
             'class' => 'AppBundle\Entity\AsiloNido',

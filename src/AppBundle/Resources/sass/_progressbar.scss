@@ -68,9 +68,6 @@ $mobile-size: 400px !default;
         text-overflow: ellipsis;
         color: $incomplete;
         display: block;
-        &:hover {
-            color: darken($incomplete, $darken-amount);
-        }
     }
     > li .bubble {
         border-radius: 1000px;
@@ -99,6 +96,11 @@ $mobile-size: 400px !default;
     }
     > li .bubble:after {
         right: 0;
+    }
+
+    > li small.text{
+        display: block;
+        line-height: 1.3;
     }
 
     > li:first-child .bubble:before,
@@ -138,11 +140,6 @@ $mobile-size: 400px !default;
         }
     }
 
-    // button states
-
-    > li a:hover .bubble {
-        @include bubble-style($hover);
-    }
 
     // override states
 

@@ -13,7 +13,8 @@ class NucleoFamiliareType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('pratica.guida_alla_compilazione.nucleo_familiare', true);
+        $helper->setGuideText('steps.common.nucleo_familiare.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.common.nucleo_familiare.title', true);
 
         $builder->add('nucleo_familiare', CollectionType::class, [
             "entry_type" => ComponenteNucleoFamiliareType::class,
