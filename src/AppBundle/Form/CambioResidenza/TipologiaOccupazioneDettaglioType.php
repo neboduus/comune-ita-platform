@@ -25,7 +25,7 @@ class TipologiaOccupazioneDettaglioType extends AbstractType
         $pratica = $builder->getData();
         $occupazione = $pratica->getTipoOccupazione();
 
-        $helper->setStepTitle('steps.cambio_residenza.tipologia_occupazione_dettaglio.title');
+        $helper->setStepTitle('steps.cambio_residenza.tipologia_occupazione_dettaglio.title', true);
 
         switch ($occupazione) {
             case CambioResidenza::OCCUPAZIONE_PROPRIETARIO:

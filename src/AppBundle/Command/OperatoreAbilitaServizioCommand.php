@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\Servizio;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,6 +31,7 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
         $username = $helper->ask($input, $output, $question);
         $em = $this->getContainer()->get('doctrine')->getManager();
         $operatoriRepo = $em->getRepository('AppBundle:OperatoreUser');
+        /** @var OperatoreUser $user */
         $user = $operatoriRepo->findOneByUsername($username);
         if (!$user) {
             throw new InvalidArgumentException('utente non trovato');
@@ -37,12 +39,13 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
 
         $serviziAbilitati = $user->getServiziAbilitati();
 
+        /** @var Servizio[] $servizi */
         $servizi = $user->getEnte()->getServizi()->toArray();
 
-        $serviziNames = [];
+        $serviziNames = ['*' => '(tutti)'];
         foreach ($servizi as $servizio) {
             if (!$serviziAbilitati->contains($servizio->getId())) {
-                $serviziNames[$servizio->getId()] = $servizio->getName();
+                $serviziNames[(string)$servizio->getId()] = $servizio->getName();
             }
         }
 
@@ -51,25 +54,45 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
 
         $serviziRepo = $em->getRepository('AppBundle:Servizio');
 
-        if (!$serviziRepo->find($servizioId)) {
-            throw new InvalidArgumentException('Servizio '.$servizioId.' non trovato');
-        }
-        $servizio = $serviziRepo->find($servizioId);
+        if ($servizioId != '*') {
+            if (!$serviziRepo->find($servizioId)) {
+                throw new InvalidArgumentException('Servizio ' . $servizioId . ' non trovato');
+            }
+            $servizio = $serviziRepo->find($servizioId);
 
-        if ($serviziAbilitati->contains($servizio->getId())) {
-            throw new InvalidArgumentException('Servizio '.$servizio->getName().' già abilitato');
-        }
-        $serviziAbilitati->add($servizio->getId());
+            if ($serviziAbilitati->contains($servizio->getId())) {
+                throw new InvalidArgumentException('Servizio ' . $servizio->getName() . ' già abilitato');
+            }
+            $serviziAbilitati->add($servizio->getId());
 
-        $user->setServiziAbilitati($serviziAbilitati);
+            $user->setServiziAbilitati($serviziAbilitati);
 
-        $um = $this->getContainer()->get('fos_user.user_manager');
+            $um = $this->getContainer()->get('fos_user.user_manager');
 
-        try {
-            $um->updateUser($user);
-            $output->writeln('Ok: utente '.$user->getUsername().' abilitato per il servizio '.$servizio->getName());
-        } catch (\Exception $e) {
-            $output->writeln('Errore: '.$e->getMessage());
+            try {
+                $um->updateUser($user);
+                $output->writeln('Ok: utente '.$user->getUsername().' abilitato per il servizio '.$servizio->getName());
+            } catch (\Exception $e) {
+                $output->writeln('Errore: '.$e->getMessage());
+            }
+
+        }else{
+            foreach($servizi as $servizio){
+                if (!$serviziAbilitati->contains($servizio->getId())) {
+                    $serviziAbilitati->add($servizio->getId());
+                }
+            }
+            $user->setServiziAbilitati($serviziAbilitati);
+
+            $um = $this->getContainer()->get('fos_user.user_manager');
+
+            try {
+                $um->updateUser($user);
+                $output->writeln('Ok: utente '.$user->getUsername().' abilitato per tutti i servizi');
+            } catch (\Exception $e) {
+                $output->writeln('Errore: '.$e->getMessage());
+            }
+
         }
     }
 

@@ -30,13 +30,13 @@ class ProtocollaPraticaListener
     public function onStatusChange(PraticaOnChangeStatusEvent $event)
     {
         $pratica = $event->getPratica();
-        if ($pratica->getStatus() == Pratica::STATUS_DRAFT && $event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
+        if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
             $this->protocollo->protocollaPratica($pratica);
 
             return;
         }
 
-        if ($pratica->getStatus() == Pratica::STATUS_PENDING && $event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
+        if ($event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
             $this->protocollo->protocollaAllegatiOperatore($pratica);
 
             return;

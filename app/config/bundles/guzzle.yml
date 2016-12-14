@@ -9,7 +9,7 @@ guzzle:
     protocollo_cct:
       base_url: "%pitre_adapter_url%"
       options:
-        timeout: 10
+        timeout: 50
       headers:
         Accept: "application/json"
     comunweb:

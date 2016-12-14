@@ -148,7 +148,15 @@
                 <div class="col-md-7">
                     <div class="step-{{ flow.getCurrentStepNumber() }}">
 
-                        <h3>{{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }} - {{ form.vars.helper.stepTitle }}</h3>
+                        <h3>
+                            {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
+                            -
+                            {%  if form.vars.helper.stepTitle|length > 0  %}
+                                {{ form.vars.helper.stepTitle }}
+                            {% else %}
+                            {{ flow.currentStepLabel()|trans }}
+                            {% endif %}
+                        </h3>
                         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
                         {{ form_errors(form) }}
 

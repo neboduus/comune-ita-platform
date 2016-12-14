@@ -26,19 +26,19 @@ class OperatoreCreateCommand extends ContainerAwareCommand
     {
         $helper = $this->getHelper('question');
 
-        $question = new Question('Inserisci il nome ');
+        $question = new Question('Inserisci il nome ', 'Mario');
         $nome = $helper->ask($input, $output, $question);
 
-        $question = new Question('Inserisci il cognome ');
+        $question = new Question('Inserisci il cognome ', 'Rossi');
         $cognome = $helper->ask($input, $output, $question);
 
-        $question = new Question('Inserisci l\'indirizzo email ');
+        $question = new Question('Inserisci l\'indirizzo email ', 'gabriele@opencontent.it');
         $email = $helper->ask($input, $output, $question);
 
-        $question = new Question('Inserisci lo username ');
+        $question = new Question('Inserisci lo username ', 'mariorossi');
         $username = $helper->ask($input, $output, $question);
 
-        $question = new Question('Inserisci la password ');
+        $question = new Question('Inserisci la password ', 'mariorossi');
         $password = $helper->ask($input, $output, $question);
 
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -48,7 +48,7 @@ class OperatoreCreateCommand extends ContainerAwareCommand
         foreach($entiEntites as $entiEntity){
             $enti[] = $entiEntity->getName();
         }
-        $question = new ChoiceQuestion('Seleziona ente di riferimento', $enti);
+        $question = new ChoiceQuestion('Seleziona ente di riferimento', $enti, 0);
         $enteName = $helper->ask($input, $output, $question);
         $ente = $repo->findOneByName($enteName);
         if (!$ente){

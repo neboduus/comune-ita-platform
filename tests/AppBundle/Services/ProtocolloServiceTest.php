@@ -109,18 +109,18 @@ class ProtocolloServiceTest extends AbstractAppTestCase
         $protocollo->protocollaPratica($pratica);
     }
 
-    /**
-     * @test
-     * @expectedException \AppBundle\Protocollo\Exception\InvalidStatusException
-     */
-    public function testProtocolloServiceCanNotSendPraticaNotSubmitted()
-    {
-        $protocollo = $this->getMockProtocollo();
-        $user = $this->createCPSUser();
-        $pratica = $this->createPratica($user);
-
-        $protocollo->protocollaPratica($pratica);
-    }
+//    /**
+//     * @test
+//     * @expectedException \AppBundle\Protocollo\Exception\InvalidStatusException
+//     */
+//    public function testProtocolloServiceCanNotSendPraticaNotSubmitted()
+//    {
+//        $protocollo = $this->getMockProtocollo();
+//        $user = $this->createCPSUser();
+//        $pratica = $this->createPratica($user);
+//
+//        $protocollo->protocollaPratica($pratica);
+//    }
 
     /**
      * @test

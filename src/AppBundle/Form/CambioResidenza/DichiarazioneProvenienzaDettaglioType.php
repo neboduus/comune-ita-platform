@@ -21,7 +21,7 @@ class DichiarazioneProvenienzaDettaglioType extends AbstractType
         $pratica = $builder->getData();
         $provenienza = $pratica->getProvenienza();
 
-        $helper->setStepTitle('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.title');
+        $helper->setStepTitle('steps.cambio_residenza.dichiarazione_provenienza_dettaglio.title', true);
 
         switch ($provenienza) {
             case CambioResidenza::PROVENIENZA_ALTRO_COMUNE:
