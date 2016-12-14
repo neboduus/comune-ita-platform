@@ -82,7 +82,7 @@ services:
 
     ocsdc.protocollo_delayed:
         class: AppBundle\Services\DelayedProtocolloService
-        arguments: ["@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher"]
+        arguments: ["@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger"]
 
     ocsdc.protocollo_direct:
         class: AppBundle\Services\ProtocolloService
@@ -94,14 +94,13 @@ services:
         class: AppBundle\EventListener\SendMailPraticaListener
         arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@logger"]
         tags:
-            - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange }
-
-    ocsdc.pratica_listeners.protocollo:
-        class: AppBundle\EventListener\ProtocolloPraticaListener
-        arguments: ["@ocsdc.protocollo","@logger"]
-        tags:
             - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 10 }
 
+    ocsdc.pratica_listeners.protocollo:
+        class: AppBundle\EventListener\ProtocollaPraticaListener
+        arguments: ["@ocsdc.protocollo","@logger"]
+        tags:
+            - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 100 }
 
     ocsdc.form.flow.storage_key_generator:
         class: AppBundle\Form\UserSessionStorageKeyGenerator
@@ -188,8 +187,18 @@ services:
 
     ocsdc.twig.iter_calculator_extension:
         class: AppBundle\Twig\IterCalculatorExtension
-        arguments: ['%ocsdc_iter_duration_start_status%', '%ocsdc_iter_duration_end_status%']
+        arguments: ['%ocsdc_iter_duration_start_status%', '%ocsdc_iter_duration_end_statuses%']
         public: false
         tags:
-              - { name: twig.extension }
+            - { name: twig.extension }
+
+    ocsdc.pratica_status_service:
+        class: AppBundle\Services\PraticaStatusService
+        arguments: ["@doctrine.orm.entity_manager", "@logger", "@event_dispatcher"]
+
+    ocsdc.protocollo_success_events_subscriber:
+        class: AppBundle\EventListener\ProtocolloSuccessSubscriber
+        arguments: ["@ocsdc.pratica_status_service", "@logger"]
+        tags:
+            - { name: kernel.event_subscriber }
 

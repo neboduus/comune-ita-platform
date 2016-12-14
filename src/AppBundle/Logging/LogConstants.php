@@ -27,6 +27,9 @@ class LogConstants
     const ALLEGATO_CANCELLAZIONE_NEGATA = "Denied deleting allegato {allegato} by user {user}";
     const ALLEGATO_CANCELLAZIONE_PERMESSA = "Allowed delete of allegato {allegato} by user {user}";
 
+    const PRATICA_CHANGED_STATUS = "Pratica {pratica} status has changed from {before_status} to {after_status}";
+    const PRATICA_CHANGED_STATUS_FAILED = "Fail changing pratica {pratica} from {before_status} to {after_status}: {error}";
+
     const PRATICA_ASSIGNED = "Pratica {pratica} assigned to user {user}";
     const PRATICA_COMMENTED = "Pratica {pratica} commented by user {user}";
     const PRATICA_APPROVED = "Pratica {pratica} approved by user {user}";
@@ -41,6 +44,7 @@ class LogConstants
 
     const PROTOCOLLO_SEND_ERROR = "Error {error_number} sending pratica {pratica} to protocollo";
     const PROTOCOLLO_UPLOAD_ERROR = "Error {error_number} uploading allegato {allegato} of pratica {pratica} to protocollo";
+    const PROTOCOLLO_UPLOADOPERATORE_ERROR = "Error {error_number} uploading allegati operatore of pratica {pratica} to protocollo";
 
 
 }

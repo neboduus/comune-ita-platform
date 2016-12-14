@@ -7,11 +7,11 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\User;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
-use AppBundle\EventListener\ProtocolloPraticaListener;
+use AppBundle\EventListener\ProtocollaPraticaListener;
 use AppBundle\Services\ProtocolloService;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
-class ProtocolloPraticaListenerTest extends AbstractAppTestCase
+class ProtocollaPraticaListenerTest extends AbstractAppTestCase
 {
     public function setUp()
     {
@@ -22,11 +22,11 @@ class ProtocolloPraticaListenerTest extends AbstractAppTestCase
         $this->cleanDb(User::class);
     }
 
-    public function testProtocolloPraticaListener()
+    public function testProtocollaPraticaListener()
     {
         $cpsUser = $this->createCPSUser();
         $pratica = $this->createPratica($cpsUser);
-        $pratica->setStatus(Pratica::STATUS_SUBMITTED);
+        $pratica->setStatus(Pratica::STATUS_DRAFT);
 
         $event = new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_SUBMITTED);
 
@@ -35,7 +35,7 @@ class ProtocolloPraticaListenerTest extends AbstractAppTestCase
                        ->method('protocollaPratica')
                        ->with($pratica);
 
-        $listener = new ProtocolloPraticaListener($mockProtocollo, $this->getMockLogger());
+        $listener = new ProtocollaPraticaListener($mockProtocollo, $this->getMockLogger());
         $listener->onStatusChange($event);
     }
 
@@ -63,7 +63,7 @@ class ProtocolloPraticaListenerTest extends AbstractAppTestCase
         $event = new PraticaOnChangeStatusEvent($pratica, $status);
 
         $mockProtocollo = $this->getMockBuilder(ProtocolloService::class)->disableOriginalConstructor()->getMock();
-        $listener = new ProtocolloPraticaListener($mockProtocollo, $this->getMockLogger());
+        $listener = new ProtocollaPraticaListener($mockProtocollo, $this->getMockLogger());
         $mockProtocollo->expects($this->never())
                        ->method('protocollaPratica')
                        ->with($pratica);

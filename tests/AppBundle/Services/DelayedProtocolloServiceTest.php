@@ -8,6 +8,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\User;
 use AppBundle\Services\DelayedProtocolloService;
+use AppBundle\Services\ProtocolloService;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use AppBundle\Protocollo\PiTreProtocolloHandler;
 
@@ -79,6 +80,7 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
         $repo = $this->em->getRepository('AppBundle:ScheduledAction');
         $this->assertEquals(0, count($repo->findAll()));
         $this->assertEquals(Pratica::STATUS_REGISTERED, $pratica->getStatus());
+        $this->assertEquals(3, count($pratica->getNumeriProtocollo()));
 
 
         $allegati = $this->setupNeededAllegatiForAllInvolvedUsers(3, $user);
@@ -118,10 +120,24 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
     {
         return
             new DelayedProtocolloService(
+                $this->getMockProtocollo($responses),
+                $this->em,
+                $this->getMockLogger()
+            );
+
+    }
+
+    private function getMockProtocollo($responses = array(), $dispatcher = null)
+    {
+        if (!$dispatcher){
+            $dispatcher = $this->container->get('event_dispatcher');
+        }
+        return
+            new ProtocolloService(
                 new PiTreProtocolloHandler($this->getMockGuzzleClient($responses)),
                 $this->em,
                 $this->getMockLogger(),
-                $this->container->get('event_dispatcher')
+                $dispatcher
             );
 
     }

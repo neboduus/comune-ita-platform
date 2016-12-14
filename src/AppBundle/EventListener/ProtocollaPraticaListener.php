@@ -9,7 +9,7 @@ use AppBundle\Services\ProtocolloServiceInterface;
 use Psr\Log\LoggerInterface;
 use AppBundle\Protocollo\Exception\BaseException as ProtocolloException;
 
-class ProtocolloPraticaListener
+class ProtocollaPraticaListener
 {
     /**
      * @var ProtocolloServiceInterface
@@ -29,16 +29,19 @@ class ProtocolloPraticaListener
 
     public function onStatusChange(PraticaOnChangeStatusEvent $event)
     {
-        if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
-            $pratica = $event->getPratica();
-            try {
-                $this->protocollo->protocollaPratica($pratica);
-            }catch(ProtocolloException $e){
-                $this->logger->error(
-                    LogConstants::PROTOCOLLO_SEND_ERROR,
-                    ['pratica' => $pratica->getId(), 'error_number' => $e->getMessage()]
-                );
-            }
+        $pratica = $event->getPratica();
+        if ($pratica->getStatus() == Pratica::STATUS_DRAFT && $event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
+            $this->protocollo->protocollaPratica($pratica);
+
+            return;
         }
+
+        if ($pratica->getStatus() == Pratica::STATUS_PENDING && $event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
+            $this->protocollo->protocollaAllegatiOperatore($pratica);
+
+            return;
+        }
+
+        return;
     }
 }

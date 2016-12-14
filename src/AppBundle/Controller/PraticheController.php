@@ -7,11 +7,9 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
-use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Logging\LogConstants;
-use AppBundle\PraticaEvents;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -59,9 +57,10 @@ class PraticheController extends Controller
             [
                 'user' => $user,
                 'status' => [
-                    Pratica::STATUS_PENDING,
                     Pratica::STATUS_SUBMITTED,
                     Pratica::STATUS_REGISTERED,
+                    Pratica::STATUS_PENDING,
+                    Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
                 ],
             ],
             [
@@ -245,18 +244,12 @@ class PraticheController extends Controller
                 $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
             } else {
-                $pratica->setStatus(Pratica::STATUS_SUBMITTED);
                 $pratica->setSubmissionTime(time());
 
                 $moduloCompilato = $this->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
                 $pratica->addModuloCompilato($moduloCompilato);
 
-                $this->get('event_dispatcher')->dispatch(
-                    PraticaEvents::ON_STATUS_CHANGE,
-                    new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_SUBMITTED)
-                );
-
-                $this->getDoctrine()->getManager()->flush();
+                $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
 
                 $this->get('logger')->info(
                     LogConstants::PRATICA_UPDATED,

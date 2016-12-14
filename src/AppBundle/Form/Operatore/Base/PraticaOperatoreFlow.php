@@ -58,5 +58,10 @@ abstract class PraticaOperatoreFlow extends FormFlow
         return $options;
     }
 
+    public function hasUploadAllegati()
+    {
+        return true;
+    }
+
 
 }

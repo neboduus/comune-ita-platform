@@ -5,18 +5,17 @@ namespace AppBundle\Twig;
 use AppBundle\Entity\Pratica;
 use Carbon\Carbon;
 
-
 class IterCalculatorExtension extends \Twig_Extension
 {
 
     private $durationStartStatus;
 
-    private $durationEndStatus;
+    private $durationEndStatuses;
 
-    public function __construct($durationStartStatus, $durationEndStatus)
+    public function __construct($durationStartStatus, $durationEndStatuses)
     {
         $this->durationStartStatus = $durationStartStatus;
-        $this->durationEndStatus = $durationEndStatus;
+        $this->durationEndStatuses = (array)$durationEndStatuses;
     }
 
     public function getName()
@@ -49,17 +48,17 @@ class IterCalculatorExtension extends \Twig_Extension
             $endTimestamp = time();
             foreach ($history as $timestamp => $statuses) {
                 foreach ($statuses as $status) {
-                    if ($status[0] == $this->durationStartStatus) {
+                    if ($status[0] === $this->durationStartStatus) {
                         $startTimestamp = $timestamp;
                         break;
-                    }elseif ($status[0] == $this->durationEndStatus) {
+                    } elseif (in_array($status[0], $this->durationEndStatuses, true)) {
                         $endTimestamp = $timestamp;
                         break;
                     }
                 }
             }
 
-            if ($locale){
+            if ($locale) {
                 Carbon::setLocale($locale);
             }
 
@@ -70,6 +69,7 @@ class IterCalculatorExtension extends \Twig_Extension
                 return $start->diffForHumans($end, true);
             }
         }
+
         return '';
     }
 }

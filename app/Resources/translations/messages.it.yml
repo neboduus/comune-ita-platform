@@ -135,12 +135,13 @@ pratica:
       descrizione: 'Descrizione'
       pratiche_list_intro: 'Allegato alle pratiche:'
     modulocompilato: ''
-    stato_0: 'Cancellata'
     stato_1: 'Bozza'
     stato_2: 'Inviata'
-    stato_3: 'Iter Completato'
-    stato_4: 'Protocollata'
-    stato_5: 'Presa in carico'
+    stato_3: 'Protocollata'
+    stato_4: 'Presa in carico'
+    stato_5: 'Elaborata (in attesa di protocollazione nuovi file allegati)'
+    stato_10: 'Iter completato'
+    stato_100: 'Cancellata'
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
   carica_allegati: 'Caricamento degli allegati'
@@ -403,6 +404,7 @@ STATUS_SUBMITTED: 'Inviata'
 STATUS_COMPLETE: 'Accettata'
 STATUS_REGISTERED: 'Protocollata'
 STATUS_PENDING: 'In carico'
+STATUS_COMPLETE_WAITALLEGATIOPERATORE: 'Accettata (in attesa di protocollazione nuovi file allegati)'
 
 user:
   dashboard:
@@ -498,7 +500,8 @@ email:
       registered: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della pratica."
       cancelled: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata rifiutata.'
       complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata accettata.'
-      pending: ''
+      complete.waitallegatioperatore: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi file allegati.'
+      pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
       draft: ''
 messaggi:
   messaggio: Messaggio
