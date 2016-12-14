@@ -393,7 +393,7 @@ class OperatoriController extends Controller
                 'required' => true,
                 'attr' => [
                     'rows' => '5',
-                    'class' => 'form-control input-inline datepicker',
+                    'class' => 'form-control input-inline',
                 ],
             ])
             ->add('createdAt', HiddenType::class, ['data' => time()])
@@ -403,7 +403,7 @@ class OperatoriController extends Controller
             ->add('save', SubmitType::class, [
                 'label' => $translator->trans('operatori.aggiungi_commento'),
                 'attr' => [
-                    'class' => 'btn btn-success',
+                    'class' => 'btn btn-info',
                 ],
             ]);
         $form = $formBuilder->getForm();
@@ -483,8 +483,9 @@ class OperatoriController extends Controller
 
         $threads[] = [
             'threadId' => $threadId,
-            'messages' => $messagesAdapterService->getMessagesForThread($threadId),
-            'form' => $form->createView(),
+            'title'    => $pratica->getUser()->getFullName(),
+            'messages' => $messagesAdapterService->getDecoratedMessagesForThread($threadId, $operatore),
+            'form'     => $form->createView(),
         ];
 
         return $threads;

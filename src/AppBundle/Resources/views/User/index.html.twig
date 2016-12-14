@@ -4,7 +4,7 @@
     <h1>{{ 'user.dashboard.title'|trans }}</h1>
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="{% if threads %}col-md-8{% else %}col-md-12{% endif %}">
             <div class="row">
                 <div class="col-md-6">
                     {{ include('AppBundle:User/parts:avvisi_notizie.html.twig') }}
@@ -91,9 +91,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            {{ include('@App/Default/parts/chat.html.twig') }}
-        </div>
+        {% if threads %}
+            <div class="col-md-4">
+                {{ include('@App/Default/parts/chat.html.twig') }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -122,19 +124,6 @@
                     deadlines.html($.templates("#tpl-deadlines-empty").render({}));
             });
         });
-    </script>
-    <script type="text/javascript">
-        $( function() {
-//            $("#thread-tabs").tabs();
-            $('.direct-chat-messages').scrollTop(100000);
-
-            $('#chat').find('form').on('submit', function( event ) {
-                event.preventDefault();
-                var messageInput = $(this).find('.message');
-                console.log( messageInput.val());
-                messageInput.val('');
-            })
-        } );
     </script>
     <script src="{{ asset('bundles/app/js/chat.js') }}"></script>
 {% endblock %}

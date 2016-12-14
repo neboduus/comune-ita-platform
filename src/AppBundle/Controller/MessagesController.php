@@ -42,7 +42,6 @@ class MessagesController extends Controller
                 $payload['thread_id']
             );
 
-            $this->decorateMessages($postedMessage, $this->getUser());
             return JsonResponse::create($postedMessage);
         }
 
@@ -58,8 +57,9 @@ class MessagesController extends Controller
     public function getThreadsAction(Request $request)
     {
         $messagesAdapterService = $this->get('ocsdc.messages_adapter');
+        $return = $messagesAdapterService->getDecoratedThreadsForUser($this->getUser());
 
-        return JsonResponse::create($messagesAdapterService->getThreadsForUser($this->getUser()));
+        return JsonResponse::create($return);
     }
 
 
@@ -74,10 +74,9 @@ class MessagesController extends Controller
         $payload = ['thread_id' => $threadId];
         if ($this->performChecks($payload, $threadId, $user, false)) {
             $messagesAdapterService = $this->get('ocsdc.messages_adapter');
-            $undecoratedResponse = $messagesAdapterService->getMessagesForThread($threadId);
-            $decoratedResponse = $this->decorateMessages($undecoratedResponse, $user);
+            $response = $messagesAdapterService->getDecoratedMessagesForThread($threadId, $user);
 
-            return JsonResponse::create($decoratedResponse);
+            return JsonResponse::create($response);
         }
 
         return Response::create(null, Response::HTTP_NOT_FOUND);
@@ -96,19 +95,5 @@ class MessagesController extends Controller
         }
 
         return true;
-    }
-
-    private function decorateMessages($undecoratedResponse, User $user)
-    {
-        foreach ($undecoratedResponse as &$message) {
-            $actualTimestamp = strlen((string) $message->timestamp) > 10 ? $message->timestamp / 1000 : $message->timestamp;
-            $message->formattedDate = strftime("%e %b %Y %H:%M", $actualTimestamp);
-            $message->isMine = false;
-            if ($message->senderId == $user->getId()) {
-                $message->isMine = true;
-            }
-        }
-
-        return $undecoratedResponse;
     }
 }
