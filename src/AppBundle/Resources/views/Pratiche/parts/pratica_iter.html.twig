@@ -4,7 +4,7 @@
     <div class="panel-body">
         <ul class="progress-indicator stepped stacked nocenter">
             {% for timestamp, changes in pratica.storicoStati %}
-                <li>
+                <li class="completed info{% for change in changes[0] %}{% if change and (change == 10 or change == 100) %} last{% endif %}{% endfor %}">
                     <a href="#">
                         <span class="bubble"></span>
                         <span class="stacked-text">

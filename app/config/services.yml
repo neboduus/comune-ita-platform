@@ -205,3 +205,7 @@ services:
     ocsdc.cps.terms_acceptance_checker:
         class: AppBundle\Services\TermsAcceptanceCheckerService
         arguments: ["@doctrine"]
+
+    ocsdc.form.flow.occupazionesuolopubblico:
+        class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
+        parent: ocsdc.form.flow.pratica

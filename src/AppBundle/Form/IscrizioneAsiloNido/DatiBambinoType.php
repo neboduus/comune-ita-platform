@@ -24,19 +24,19 @@ class DatiBambinoType extends AbstractType
         $builder
             ->add('bambino_nome', TextType::class, [
                 'required' => true,
-                 'label' => 'steps.iscrizione_asilo_nido.dati_bambino..nome',
+                'label' => 'steps.iscrizione_asilo_nido.dati_bambino.nome',
             ])
             ->add('bambino_cognome', TextType::class, [
                 'required' => true,
-                'label' => 'steps.iscrizione_asilo_nido.dati_bambino..cognome',
+                'label' => 'steps.iscrizione_asilo_nido.dati_bambino.cognome',
             ])
             ->add('bambino_luogo_nascita', TextType::class, [
                 'required' => true,
-                'label' => 'steps.iscrizione_asilo_nido.dati_bambino..luogo_nascita',
+                'label' => 'steps.iscrizione_asilo_nido.dati_bambino.luogo_nascita',
             ])
             ->add('bambino_data_nascita', DateType::class, [
                 'required' => true,
-                'label' => 'steps.iscrizione_asilo_nido.dati_bambino..data_nascita',
+                'label' => 'steps.iscrizione_asilo_nido.dati_bambino.data_nascita',
                 'widget' => 'single_text',
                 'format' => 'dd-MM-yyyy',
                 'attr' => [
