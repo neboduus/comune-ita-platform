@@ -13,10 +13,6 @@ class AbstractProtocolloService
 {
     protected function validatePratica(Pratica $pratica)
     {
-        if ($pratica->getStatus() == Pratica::STATUS_DRAFT){
-            throw new InvalidStatusException();
-        }
-
         if ($pratica->getNumeroProtocollo() !== null) {
             throw new AlreadySentException();
         }

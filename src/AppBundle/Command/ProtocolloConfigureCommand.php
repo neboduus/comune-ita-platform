@@ -93,12 +93,16 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
     {
         $this->io->title("Inserisci parametri per {$servizio->getName()} di {$ente->getName()}");
         $data = [];
-        $keys = PiTreProtocolloParameters::getEnteParametersKeys();
+        $keys = [
+            'recipientID' => 554,
+            'recipientIDType' => 'R',
+            'codeNodeClassification' => 1,
+            'codeAdm' => 'CCT_CAL'
+        ];
         $currentParameters = new PiTreProtocolloParameters((array)$ente->getProtocolloParametersPerServizio($servizio));
 
-        foreach ($keys as $key) {
-            $data[$key] = $this->io->ask("Inserisci $key",
-                $currentParameters->get($key));
+        foreach ($keys as $key => $default) {
+            $data[$key] = $this->io->ask("Inserisci $key", $default);
         }
 
         $ente->setProtocolloParametersPerServizio($data, $servizio);

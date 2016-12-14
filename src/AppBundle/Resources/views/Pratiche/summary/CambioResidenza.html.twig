@@ -4,9 +4,9 @@
     {{ include('AppBundle:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
 
     <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'cambio_residenza.dichiarazioneProvenienza'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.cambio_residenza.dichiarazione_provenienza.title'|trans }}</strong></div>
         <div class="col-xs-12 col-sm-9">
-            <p>{{ ('cambio_residenza.provenienza.' ~ pratica.provenienza)|trans }}</p>
+            <p>{{ ('steps.cambio_residenza.dichiarazione_provenienza.' ~ pratica.provenienza)|trans }}</p>
             {% if pratica.provenienza == 'altro_comune' %}
                 {{ pratica.comuneDiProvenienza }}
             {% elseif pratica.provenienza == 'estero' %}
@@ -20,35 +20,35 @@
     </div>
 
     <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'cambio_residenza.datiResidenza'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.cambio_residenza.dati_residenza.title'|trans }}</strong></div>
         <div class="col-xs-12 col-sm-9">
             <table class="table table-bordered table-striped table-condensed cf">
                 <tr>
-                    <th width="1">{{ 'cambio_residenza.datiResidenza.provincia'|trans }}</th>
+                    <th width="1">{{ 'steps.cambio_residenza.dati_residenza.provincia'|trans }}</th>
                     <td>{{ pratica.residenzaProvincia }}</td>
                 </tr>
                 <tr>
-                    <th>{{ 'cambio_residenza.datiResidenza.comune'|trans }}</th>
+                    <th>{{ 'steps.cambio_residenza.dati_residenza.comune'|trans }}</th>
                     <td>{{ pratica.residenzaComune }}</td>
                 </tr>
                 <tr>
-                    <th>{{ 'cambio_residenza.datiResidenza.indirizzo'|trans }}</th>
+                    <th>{{ 'steps.cambio_residenza.dati_residenza.indirizzo'|trans }}</th>
                     <td>{{ pratica.residenzaIndirizzo }}</td>
                 </tr>
                 <tr>
-                    <th>{{ 'cambio_residenza.datiResidenza.numero_civico'|trans }}</th>
+                    <th>{{ 'steps.cambio_residenza.dati_residenza.numero_civico'|trans }}</th>
                     <td>{{ pratica.residenzaNumeroCivico }}</td>
                 </tr>
                 <tr>
-                    <th>{{ 'cambio_residenza.datiResidenza.scala'|trans }}</th>
+                    <th>{{ 'steps.cambio_residenza.dati_residenza.scala'|trans }}</th>
                     <td>{{ pratica.residenzaScala }}</td>
                 </tr>
                 <tr>
-                    <th>{{ 'cambio_residenza.datiResidenza.piano'|trans }}</th>
+                    <th>{{ 'steps.cambio_residenza.dati_residenza.piano'|trans }}</th>
                     <td>{{ pratica.residenzaPiano }}</td>
                 </tr>
                 <tr>
-                    <th>{{ 'cambio_residenza.datiResidenza.interno'|trans }}</th>
+                    <th>{{ 'steps.cambio_residenza.dati_residenza.interno'|trans }}</th>
                     <td>{{ pratica.residenzaInterno }}</td>
                 </tr>
             </table>
@@ -60,7 +60,7 @@
     {{ include('AppBundle:Pratiche/summary/parts:nucleo_familiare.html.twig', {'pratica':pratica, 'user': user}) }}
 
     <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'cambio_residenza.attualmenteResidenti'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.cambio_residenza.attualmente_residenti.title'|trans }}</strong></div>
         <div class="col-xs-12 col-sm-9">
             <div id="no-more-tables">
                 <table class="table table-bordered table-striped table-condensed cf">
@@ -90,26 +90,26 @@
 
 
     <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'cambio_residenza.tipologiaOccupazione'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.cambio_residenza.tipologia_occupazione.title'|trans }}</strong></div>
         <div class="col-xs-12 col-sm-9">
-            <p>{{ ('cambio_residenza.occupazione.' ~ pratica.tipoOccupazione)|trans }}</p>
+            <p>{{ ('steps.cambio_residenza.tipologia_occupazione.' ~ pratica.tipoOccupazione)|trans }}</p>
 
             {% if pratica.tipoOccupazione == 'proprietario' %}
                 <table class="table table-bordered table-striped table-condensed cf">
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.proprietarioCatastoSezione'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_sezione'|trans }}</th>
                         <td>{{ pratica.proprietarioCatastoSezione }}</td>
                     </tr>
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.proprietarioCatastoFoglio'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_foglio'|trans }}</th>
                         <td>{{ pratica.proprietarioCatastoFoglio }}</td>
                     </tr>
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.proprietarioCatastoParticella'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_particella'|trans }}</th>
                         <td>{{ pratica.proprietarioCatastoParticella }}</td>
                     </tr>
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.proprietarioCatastoSubalterno'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.proprietario.catasto_subalterno'|trans }}</th>
                         <td>{{ pratica.proprietarioCatastoSubalterno }}</td>
                     </tr>
                 </table>
@@ -117,15 +117,15 @@
             {% elseif pratica.tipoOccupazione == 'locazione' %}
                 <table class="table table-bordered table-striped table-condensed cf">
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.contrattoAgenzia'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.agenzia'|trans }}</th>
                         <td>{{ pratica.contrattoAgenzia }}</td>
                     </tr>
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.contrattoNumero'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.numero'|trans }}</th>
                         <td>{{ pratica.contrattoNumero }}</td>
                     </tr>
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.contrattoData'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.data'|trans }}</th>
                         <td>{{ pratica.contrattoData|date('d/m/Y') }}</td>
                     </tr>
                 </table>
@@ -162,15 +162,15 @@
 
                 <table class="table table-bordered table-striped table-condensed cf">
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.contrattoAgenzia'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.agenzia'|trans }}</th>
                         <td>{{ pratica.contrattoAgenzia }}</td>
                     </tr>
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.contrattoNumero'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.numero'|trans }}</th>
                         <td>{{ pratica.contrattoNumero }}</td>
                     </tr>
                     <tr>
-                        <th width="1">{{ 'cambio_residenza.contrattoData'|trans }}</th>
+                        <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.data'|trans }}</th>
                         <td>{{ pratica.contrattoData|date('d/m/Y') }}</td>
                     </tr>
                 </table>
@@ -212,7 +212,7 @@
     </div>
 
     <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'cambio_residenza.informazioniAccertamento'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.cambio_residenza.informazioni_accertamento.title'|trans }}</strong></div>
         <div class="col-xs-12 col-sm-9">
             {{ pratica.infoAccertamento }}
         </div>
