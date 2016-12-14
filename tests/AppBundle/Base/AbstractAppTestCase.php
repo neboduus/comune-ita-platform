@@ -11,6 +11,7 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\TerminiUtilizzo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
@@ -143,7 +144,11 @@ abstract class AbstractAppTestCase extends WebTestCase
         $data = $profileData ? $this->getCPSUserData() : $this->getCPSUserBaseData();
         $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($data);
         if ($termAccepted) {
-            $user->setTermsAccepted(true);
+            $termsRepo = $this->em->getRepository('AppBundle:TerminiUtilizzo');
+            $terms = $termsRepo->findByMandatory(true);
+            foreach ($terms as $term) {
+                $user->addTermsAcceptance($term);
+            }
         }
 
         $this->em->persist($user);
@@ -939,7 +944,7 @@ abstract class AbstractAppTestCase extends WebTestCase
                 'threadId' => $user->getId().'~'.$operatore->getId(),
                 'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
                 'senderId' => $user->getId(),
-            ]
+            ],
         ];
 
         return new Response(200, [], json_encode($body));
@@ -948,5 +953,15 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function submitAsCPSUser(CPSUser $user, Form $form)
     {
         return $this->clientRequestAsCPSUser($user, $form->getMethod(), $form->getUri(), $form->getPhpValues());
+    }
+
+    protected function createDefaultTerm($mandatory = true)
+    {
+        $term = new TerminiUtilizzo();
+        $term->setName('memento mori')
+            ->setText('Ricordati che devi Rovereto')
+            ->setMandatory($mandatory);
+        $this->em->persist($term);
+        $this->em->flush();
     }
 }

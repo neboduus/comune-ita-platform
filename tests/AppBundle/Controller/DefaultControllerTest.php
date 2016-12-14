@@ -24,6 +24,9 @@ class DefaultControllerTest extends AbstractAppTestCase
      */
     protected $userProvider;
 
+    /**
+     * @inheritdoc
+     */
     public function setUp()
     {
         parent::setUp();
@@ -35,6 +38,9 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->cleanDb(TerminiUtilizzo::class);
     }
 
+    /**
+     * @test
+     */
     public function testIndex()
     {
         $this->client->request('GET', '/');
@@ -52,15 +58,22 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
+    /**
+     * @return array
+     */
     public function protectedRoutesProvider()
     {
         return array(
-            array('/pratiche/')
+            array('/pratiche/'),
         );
     }
 
+    /**
+     * @test
+     */
     public function testIAmRedirectedToTermAcceptPageWhenIAccessForTheFirstTimeAsLoggedInUser()
     {
+        $this->createDefaultTerm(true);
         $user = $this->createCPSUser(false, true);
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
@@ -71,6 +84,9 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->assertEquals($this->router->generate('terms_accept', ['r' => 'pratiche']), $response->headers->get('location'));
     }
 
+    /**
+     * @test
+     */
     public function testIAmRedirectedToUserProfilePageWhenIAcceptTermsForTheFirstTimeAndMyProfileIsNotCompleteAsLoggedInUser()
     {
         $user = $this->createCPSUser(true, false);
@@ -83,9 +99,12 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->assertEquals($this->router->generate('user_profile', ['r' => 'pratiche']), $response->headers->get('location'));
     }
 
-
+    /**
+     * @test
+     */
     public function testIAmRedirectedToOriginalPageWhenIAcceptTermsForTheFirstTimeAsLoggedInUser()
     {
+        $this->createDefaultTerm(true);
         $user = $this->createCPSUser(false, true);
 
         $this->client->followRedirects();
@@ -98,6 +117,9 @@ class DefaultControllerTest extends AbstractAppTestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testIAmRedirectedToOriginalPageWhenIAcceptTermsAndCompleteProfileForTheFirstTimeAsLoggedInUser()
     {
         $user = $this->createCPSUser(false, false);
@@ -115,7 +137,7 @@ class DefaultControllerTest extends AbstractAppTestCase
         $fillData = array();
         $crawler->filter('form[id="edit_user_profile"] input')
                 ->each(function (Crawler $node, $i) use (&$fillData) {
-                    if ($node->attr('readonly') === null){
+                    if ($node->attr('readonly') === null) {
                         $fillData[$node->attr('name')] = $node->attr('type') == 'email' ? 'test@test.it' : 'test';
                     }
                 });
@@ -133,6 +155,7 @@ class DefaultControllerTest extends AbstractAppTestCase
      */
     public function testOriginalQueryParametersArepreservedWhenIAmRedirectedToOriginalPageAfterAcceptingTermsForTheFirstTimeAsLoggedInUser()
     {
+        $this->createDefaultTerm(true);
         $user = $this->createCPSUser(false);
 
         $params = [
@@ -157,6 +180,9 @@ class DefaultControllerTest extends AbstractAppTestCase
         );
     }
 
+    /**
+     * @test
+     */
     public function testIAmNotRedirectedToTermAcceptPageIfTermsAreAccepted()
     {
         $user = $this->createCPSUser();
@@ -166,6 +192,9 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
+    /**
+     * @test
+     */
     public function testICanAcceptTermsConditionsAsLoggedInUser()
     {
         $mockLogger = $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
@@ -176,14 +205,11 @@ class DefaultControllerTest extends AbstractAppTestCase
             $kernel->getContainer()->set('logger', $mockLogger);
         });
 
-        $termine = new TerminiUtilizzo();
-        $termine->setName('Test')->setText('Bla bla bla');
-        $this->em->persist($termine);
-        $this->em->flush();
+        $this->createDefaultTerm(true);
 
         $user = $this->createCPSUser(false);
 
-        $crawler =$this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('terms_accept'));
+        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('terms_accept'));
 
         $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
 
@@ -193,8 +219,8 @@ class DefaultControllerTest extends AbstractAppTestCase
         $this->client->submit($form);
 
         $this->em->refresh($user);
-        $this->assertTrue($user->isTermsAccepted());
+
+        $this->assertTrue($this->container->get('ocsdc.cps.terms_acceptance_checker')->checkIfUserHasAcceptedMandatoryTerms($user));
         $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
     }
-
 }

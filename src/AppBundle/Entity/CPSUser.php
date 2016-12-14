@@ -2,13 +2,15 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class CPSUser
  *
  * @ORM\Entity
- *
+ * @ORM\HasLifecycleCallbacks()
  * @package AppBundle\Entity
  */
 class CPSUser extends User
@@ -253,13 +255,12 @@ class CPSUser extends User
      */
     private $sdcStatoResidenza;
 
-
     /**
-     * @var boolean
+     * @var Collection
      *
-     * @ORM\Column(name="terms_accepted", type="boolean")
+     * @ORM\Column(name="accepted_terms", type="text")
      */
-    private $termsAccepted = false;
+    private $acceptedTerms;
 
     /**
      * CPSUser constructor.
@@ -268,6 +269,7 @@ class CPSUser extends User
     {
         parent::__construct();
         $this->type = self::USER_TYPE_CPS;
+        $this->acceptedTerms = new ArrayCollection();
     }
 
     /**
@@ -950,24 +952,14 @@ class CPSUser extends User
         return $this;
     }
 
-    /**
-     * @return boolean
-     */
     public function isTermsAccepted()
     {
-        return $this->termsAccepted;
+        throw new \Exception('deprecated, use the TermsAcceptanceCheckerService instead');
     }
 
-    /**
-     * @param boolean $termsAccepted
-     *
-     * @return CPSUser
-     */
     public function setTermsAccepted($termsAccepted)
     {
-        $this->termsAccepted = $termsAccepted;
-
-        return $this;
+        throw new \Exception('deprecated, use setAcceptedterms ');
     }
 
     /**
@@ -1096,5 +1088,53 @@ class CPSUser extends User
     public function getStatoResidenza()
     {
         return $this->sdcStatoResidenza ?? $this->cpsStatoResidenza;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAcceptedTerms(): Collection
+    {
+        $this->parseAcceptedTerms();
+
+        return $this->acceptedTerms;
+    }
+
+    /**
+     * @param TerminiUtilizzo $term
+     * @return $this
+     */
+    public function addTermsAcceptance(TerminiUtilizzo $term)
+    {
+        if (!$this->getAcceptedTerms()->containsKey((string)$term->getId())) {
+            $this->acceptedTerms[$term->getId().''] = [
+                'text' => $term->getText(),
+                'name' => $term->getName(),
+                'timestamp' => time(),
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PostLoad()
+     * @ORM\PostUpdate()
+     */
+    public function parseAcceptedTerms()
+    {
+        if (!($this->acceptedTerms instanceof Collection)) {
+            $this->acceptedTerms = new ArrayCollection(json_decode($this->acceptedTerms, true));
+        }
+    }
+
+    /**
+     * @ORM\PreFlush()
+     */
+    public function serializeAcceptedTerms()
+    {
+        if ($this->acceptedTerms instanceof Collection) {
+            $this->acceptedTerms = json_encode($this->getAcceptedterms()->toArray());
+        }
     }
 }
