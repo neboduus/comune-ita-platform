@@ -40,7 +40,8 @@ class DatiRichiedenteType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('pratica.guida_alla_compilazione.dati_richiedente', true);
+        $helper->setGuideText('steps.common.dati_richiedente.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.common.dati_richiedente.title', true);
 
         /** @var Pratica $pratica */
         $pratica = $builder->getData();
@@ -51,7 +52,7 @@ class DatiRichiedenteType extends AbstractType
         foreach (self::CAMPI_RICHIEDENTE as $identifier => $disabledBecauseProvidedByCPS) {
             $type = TextType::class;
             $opts = [
-                "label" => 'pratica.datiRichiedente.' . $identifier,
+                "label" => 'steps.common.dati_richiedente.' . $identifier,
                 'disabled' => $disabledBecauseProvidedByCPS,
             ];
             switch ($identifier) {

@@ -32,54 +32,54 @@ class CambioResidenzaFlow extends PraticaFlow
     {
         return array(
             self::STEP_SELEZIONA_ENTE => array(
-                'label' => 'pratica.selezionaEnte',
+                'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
             ),
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'pratica.accettazioneIstruzioni',
+                'label' => 'steps.common.accettazione_istruzioni.label',
                 'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
-                'label' => 'pratica.datiRichiedente',
+                'label' => 'steps.common.dati_richiedente.label',
                 'form_type' => DatiRichiedenteType::class,
             ),
             self::STEP_DICHIARAZIONE_PROVENIENZA => array(
-                'label' => 'cambio_residenza.dichiarazioneProvenienza',
+                'label' => 'steps.cambio_residenza.dichiarazione_provenienza.label',
                 'form_type' => DichiarazioneProvenienzaType::class,
             ),
             self::STEP_DICHIARAZIONE_PROVENIENZA_DETTAGLIO => array(
-                'label' => 'cambio_residenza.dichiarazioneProvenienzaDettaglio',
+                'label' => 'steps.cambio_residenza.dichiarazione_provenienza_dettaglio.label',
                 'form_type' => DichiarazioneProvenienzaDettaglioType::class,
                 'skip' => function($estimatedCurrentStepNumber, FormFlowInterface $flow) {
                     return $flow->getFormData()->getProvenienza() == CambioResidenza::PROVENIENZA_COMUNE;
                 },
             ),
             self::STEP_DATI_RESIDENZA => array(
-                'label' => 'cambio_residenza.datiResidenza',
+                'label' => 'steps.cambio_residenza.dati_residenza.label',
                 'form_type' => DatiResidenzaType::class,
             ),
             self::STEP_NUCLEO_FAMILIARE => array(
-                'label' => 'pratica.nucleoFamiliare',
+                'label' => 'steps.common.nucleo_familiare.label',
                 'form_type' => NucleoFamiliareType::class,
             ),
             self::STEP_ATTUALMENTE_RESIDENTI => array(
-                'label' => 'cambio_residenza.attualmenteResidenti',
+                'label' => 'steps.cambio_residenza.attualmente_residenti.label',
                 'form_type' => AttualmenteResidentiType::class,
             ),
             self::STEP_TIPOLOGIA_OCCUPAZIONE => array(
-                'label' => 'cambio_residenza.tipologiaOccupazione',
+                'label' => 'steps.cambio_residenza.tipologia_occupazione.label',
                 'form_type' => TipologiaOccupazioneType::class,
             ),
             self::STEP_TIPOLOGIA_OCCUPAZIONE_DETTAGLIO => array(
-                'label' => 'cambio_residenza.tipologiaOccupazioneDettaglio',
+                'label' => 'steps.cambio_residenza.tipologia_occupazione_dettaglio.label',
                 'form_type' => TipologiaOccupazioneDettaglioType::class,
             ),
             self::STEP_INFORMAZIONI_ACCERTAMENTO => array(
-                'label' => 'cambio_residenza.informazioniAccertamento',
+                'label' => 'steps.cambio_residenza.informazioni_accertamento.label',
                 'form_type' => InformazioneAccertamentoType::class,
             ),
             self::STEP_CONFERMA => array(
-                'label' => 'pratica.conferma',
+                'label' => 'steps.common.conferma.label',
             ),
         );
     }

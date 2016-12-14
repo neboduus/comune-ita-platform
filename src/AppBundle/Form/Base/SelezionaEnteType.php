@@ -14,14 +14,16 @@ class SelezionaEnteType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('pratica.guida_alla_compilazione.seleziona_ente', true);
+        $helper->setGuideText('steps.common.seleziona_ente.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.common.seleziona_ente.title', true);
 
         $builder->add('ente', EntityType::class, [
             'class' => 'AppBundle\Entity\Ente',
             'choices' => $builder->getData()->getServizio()->getEnti(),
             'choice_label' => 'name',
             'expanded' => false,
-            'multiple' => false
+            'multiple' => false,
+            'label' => false,
         ]);
     }
 

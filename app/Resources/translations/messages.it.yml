@@ -32,11 +32,6 @@ nav:
     lista_operatori: 'Gestisci operatori comune'
     accesso_operatori: 'Accesso operatori'
 
-home:
-  welcome:
-    title: 'Benvenuto nella "Stanza del cittadino"'
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum.'
-
 terms:
   title: 'Accettazione termini di utilizzo'
 
@@ -52,6 +47,7 @@ servizio:
   area_tematica: 'Area tematica'
 
 pratica:
+  guida_utente: 'Guida alla compilazione'
   email:
     status_change:
       subject: 'La pratica è stata aggiornata'
@@ -74,17 +70,7 @@ pratica:
   aggiungi_allegato: 'Aggiungi allegato'
   aggiungi_componente_nucleo_familiare: 'Aggiungi componente nucleo familiare'
   cancella_elemento: 'Cancella elemento'
-  accetto_istruzioni: 'Ok mi è chiaro'
-  nucleoFamiliare: 'Composizione del nucleo familiare'
-  guida_alla_compilazione:
-    accettazione_istruzioni: 'Leggi e accetta le istruzioni di compilazione'
-    nucleo_familiare: 'Inserisci i componenti del nucleo familiare'
-    sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
-    si: 'Sì, sono sicuro'
-    no: 'No'
-    dati_richiedente: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al tuo profilo</a>'
-    allegati: "Inserisci gli allegati"
-    seleziona_ente: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
+  nucleoFamiliare: 'Composizione del nucleo familiare'    
   pdf:
     spett_le: 'Spett.le'
     oggetto: 'Oggetto:'
@@ -143,36 +129,10 @@ pratica:
     stato_10: 'Iter completato'
     stato_100: 'Cancellata'
   modulo:
-    descrizione: 'Modulo nomeservizio compilato il datacompilazione'
-  carica_allegati: 'Caricamento degli allegati'
-  selezionaEnte: 'Selezione del comune di riferimento'
-  accettazioneIstruzioni: 'Istruzioni sulla procedura'
-  conferma: 'Controllo e conferma'
-  datiRichiedente: 'Dati del richiedente'
-  datiRichiedente.richiedente_nome: 'Nome'
-  datiRichiedente.richiedente_cognome: 'Cogome'
-  datiRichiedente.richiedente_luogo_nascita: 'Luogo di nascita'
-  datiRichiedente.richiedente_data_nascita: 'Data di nascita'
-  datiRichiedente.richiedente_indirizzo_residenza: 'Indirizzo'
-  datiRichiedente.richiedente_cap_residenza: 'CAP'
-  datiRichiedente.richiedente_citta_residenza: 'Città'
-  datiRichiedente.richiedente_telefono: 'Telefono'
-  datiRichiedente.richiedente_email: 'Email'
+    descrizione: 'Modulo nomeservizio compilato il datacompilazione'  
+  
 
 iscrizione_asilo_nido:
-  accettazioneUtilizzoNidoForm: 'Termini di fruizione della struttura'
-  selezionaNido: 'Selezione della struttura'
-  nucleoFamiliare: 'Composizione del nucleo familiare'
-  accettazione_utilizzo_nido: 'Ho letto i termini di fruizione della struttura'
-  selezionaOrariNido: 'Selezione degli orari e del periodo di iscrizione'
-  seleziona_orario: 'Orario prescelto'
-  periodoIscrizioneDa: 'Periodo iscrizione da'
-  periodoIscrizioneA: 'Periodo iscrizione a'
-  datiBambino: 'Dati del bambino'
-  datiBambino.nome: 'Nome'
-  datiBambino.cognome: 'Cognome'
-  datiBambino.luogo_nascita: 'Luogo di nascita'
-  datiBambino.data_nascita: 'Data di nascita'
   dettaglio:
     struttura: 'Struttura'
     orario: 'Orario'
@@ -187,27 +147,9 @@ iscrizione_asilo_nido:
     periodo: 'Periodo di iscrizione'
     periodo_da: 'dal'
     periodo_a: 'al'
-  guida_alla_compilazione:
-    seleziona_nido: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
-    accettazione_utilizzo_nido: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
-    dati_bambino: 'Inserisci i dati del bambino che intendi iscrivere'
-    seleziona_orari: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
+    
 
-contributo_pannolini:
-  tipo_pannolini: 'Tipo dei pannolini acquistati'
-  punto_vendita: 'Nome del punto vendita'
-  data_acquisto: 'Data di acquisto'
-  totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
-  datiBambino: 'Dati del bambino'
-  datiBambino.nome: 'Nome'
-  datiBambino.cognome: 'Cognome'
-  datiBambino.luogo_nascita: 'Luogo di nascita'
-  datiBambino.data_nascita: 'Data di nascita'
-  datiAcquisto: "Dati dell'Acquisto"
-  datiContoCorrente: 'Dati Conto Corrente'
-  guida_alla_compilazione:
-    dati_bambino: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
-    dati_acquisto: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello passaggio successivo'
+contributo_pannolini:    
   pdf:
     rimborso: "Il rimborso per la spesa sostenuta nell'acquisto dei pannolini di tipo "
     per_il_bambino: 'per il bambino'
@@ -226,24 +168,7 @@ contributo_pannolini:
       1: 'Lavabile'
       2: 'BioPannolino'
 
-autolettura_acqua:
-  datiIntestatario: "Intestatario del contratto"
-  datiIntestatario.intestatario_codice_utente: "Codice utenza"
-  datiIntestatario.intestatario_nome: "Nome"
-  datiIntestatario.intestatario_cognome: "Cognome"
-  datiIntestatario.intestatario_indirizzo: "Indirizzo"
-  datiIntestatario.intestatario_cap: "CAP"
-  datiIntestatario.intestatario_citta: "Città"
-  datiIntestatario.intestatario_telefono: "Recapito telefonico per eventuali comunicazioni"
-  datiIntestatario.intestatario_email: "Recapito email per eventuali comunicazioni"
-  datiContatore: "Contatore"
-  datiContatore.contatore_numero: "Numero (da leggere sulla ghiera d'ottone del contatore)"
-  datiContatore.contatore_uso: "Tipologia di utilizzo del contatore"
-  datiContatore.contatore_unita_immobiliari: "Numero di unità immobiliari (appartamenti, negozi, uffici, ...) serviti dal contatore"
-  datiLettura: "Lettura"
-  datiLettura.lettura_metri_cubi: "Lettura dei metri cubi"
-  datiLettura.lettura_data: "Data della rilevazione"
-  note: "Altre comunicazioni"
+autolettura_acqua:    
   dettaglio:
     intestatario: "Dati dell'intestatario del contratto"
     intestatario_codice_utente: "Codice utente"
@@ -267,67 +192,8 @@ autolettura_acqua:
     lettura_metri_cubi: "Metri cubi"
     lettura_in_data: "In data"
     comunica_inoltre: "Comunica inoltre"
-  guida_alla_compilazione:
-    dati_intestatario: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
-    dati_contatore: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
-    dati_lettura: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
-    note: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
-
-cambio_residenza:
-  provenienza:
-    comune: "Dichiarazione di cambiamento di abitazione nell’ambito dello stesso comune"
-    altro_comune: "Dichiarazione di residenza con provenienza da altro comune"
-    estero: "Dichiarazione di residenza con provenienza dall’estero"
-    aire: "Dichiarazione di residenza di cittadini italiani iscritti all’AIRE (Anagrafe degli italiani residenti all’estero) con provenienza dall’estero"
-    altro: "Dichiarazione di residenza per altro motivo"
-  occupazione:
-    proprietario: "Proprietario dell'abitazione"
-    locazione: "Intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
-    locazione_erp: "Intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
-    comodato: "Comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
-    usufruttuario: "Usufruttuario"
-    autocertificazione: "Autocertificazione del proprietario dell'appartamento"
-  guida_alla_compilazione:
-    dichiarazione_provenienza: "Dichiarazione della provenienza: da un altro comune, dall'estero o dallo stesso comune"
-    dichiarazione_provenienza_nessun_allegato: "Per il tipo di provenienza selezionato non sono necessarie altre informazioni"
-    dichiarazione_provenienza_altro_comune: "Indicare il comune di provenienza"
-    dichiarazione_provenienza_stato_estero: "Indicare lo Stato estero di provenienza"
-    dichiarazione_provenienza_aire: "Indicare lo Stato estero e il comune AIRE di provenienza"
-    dichiarazione_provenienza_altro_motivo: "Specificare il motivo"
-    dati_residenza: "Specifica il nuovo indirizzo di residenza"
-    attualmente_residenti: "Inserisci le persone già iscritte nella nuova abitazione"
-    occupazione: "Dichiarazione riguardante la tipologia di occupazione della nuova residenza"
-    occupazione.proprietario: "Specifica i valori catastali dell'abitazione di proprietà"
-    occupazione.locazione: "Specifica i dettagli del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
-    occupazione.locazione_erp: "Allega il contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
-    occupazione.comodato: "Specifica i dettagli del contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
-    occupazione.usufruttuario: "Indicare dati utili a consentirne la verifica"
-    occupazione.autocertificazione: "Allega l'autocertificazione del proprietario dell'appartamento"
-    informazioni_accertamento: "Segnalare eventuali giorni ed orari di preferenza per la verifica delle autorità giudiziarie"
-  dichiarazioneProvenienza: "Provenienza"
-  dichiarazioneProvenienzaDettaglio: "Dettagli provenienza"
-  datiResidenza: "Dati residenza"
-  datiResidenza.provincia: "Provincia"
-  datiResidenza.comune: "Comune"
-  datiResidenza.indirizzo: "Via/Piazza"
-  datiResidenza.numero_civico: "Numero civico"
-  datiResidenza.scala: "Scala"
-  datiResidenza.piano: "Piano"
-  datiResidenza.interno: "Interno"
-  attualmenteResidenti: "Persone già iscritte nella nuova abitazione"
-  tipologiaOccupazione: "Tipologia di occupazione"
-  tipologiaOccupazioneDettaglio: "Dettagli tipologia di occupazione"
-  proprietarioCatastoSezione: "Sezione"
-  proprietarioCatastoFoglio: "Foglio"
-  proprietarioCatastoParticella: "Particella/Mappale"
-  proprietarioCatastoSubalterno: "Subalterno"
-  contrattoAgenzia: "Indirizzo agenzia entrate"
-  contrattoNumero: "Numero contratto"
-  contrattoData: "Data di stipula del contratto"
-  verbaleConsegna: "Scansione del contratto o del verbale di consegna dell'immobile"
-  usufruttuarioInfo: "Titolo costitutivo"
-  autocertificazione: "Autocertificazione del proprietario dell'appartamento"
-  informazioniAccertamento: "Informazioni per accertamento dei dati"
+  
+cambio_residenza:  
   aggiungi_persona_residente: "Aggiungi persona"
   pdf:
     comune: ' - comune '
@@ -345,45 +211,13 @@ cambio_residenza:
         usufruttuario: "Di essere usufruttuario"
         autocertificazione: "Di occupare legittimamente l'abitazione in base all' autocertificazione del proprietario dell'appartamento"
 
-allacciamento_acquedotto:
-  guida_alla_compilazione:
-    dati_immobile: "Inserire i dati dell'immobile e a che titolo viene fatta la richiesta"
-    dati_intervento: "Inserire i dati dell'intervento"
-    dati_contatto: "Specificare indirizzo per comunicazioni e rimborsi"
-  datiImmobile: "Dati dell'immobile"
-  datiImmobile.qualifica: "Qualifica del richiedente"
-  datiImmobile.provincia: "Provincia"
-  datiImmobile.comune: "Comune"
-  datiImmobile.indirizzo: "Indirizzo"
-  datiImmobile.numero_civico: "Numero civico"
-  datiImmobile.cap: "CAP"
-  datiImmobile.scala: "Scala"
-  datiImmobile.piano: "Piano"
-  datiImmobile.interno: "Interno"
-  datiImmobile.catasto_categoria: "Categoria catastale"
-  datiImmobile.catasto_codice_comune: "Codice catastale del comune"
-  datiImmobile.catasto_foglio: "Foglio"
-  datiImmobile.catasto_sezione: "Sezione"
-  datiImmobile.catasto_mappale: "Particella Mappale"
-  datiImmobile.catasto_subalterno: "Subalterno"
-  datiIntervento: "Tipologia di intervento"
-  datiIntervento.tipo_intervento: "Tipologia di intervento"
-  datiIntervento.tipo_allaccio: "Tipologia di allaccio"
-  datiIntervento.tipo_uso: "Tipologia d'utilizzo"
-  datiIntervento.diametro_rete_interna: "Diametro rete interna"
-  datiContatto: "Contatti"
-  datiContatto.use_alternate: "Utilizza i segenti dati"
-  datiContatto.indirizzo: "Indirizzo"
-  datiContatto.numero_civico: "Numero civico"
-  datiContatto.cap: "CAP"
-  datiContatto.comune: "Comune"
+allacciamento_acquedotto:        
   pdf:
     chiede: "L’autorizzazione ad effettuare l’allacciamento all’acquedotto comunale, secondo le modalità fissate nel regolamento vigente"
 
 attestazione_anagrafica:
   pdf:
     richiesta: "Il rilascio di attestazione di iscrizione Anagrafica"
-
 
 certificato_nascita:
   pdf:
@@ -393,10 +227,9 @@ stato_famiglia:
   pdf:
     richiesta: "Il rilascio del certificato dello stato di famiglia"
 
-
 errori:
   allegato:
-    tipo_non_valido: L'allegato %s è di un tipo non supportato
+    tipo_non_valido: "L'allegato %s è di un tipo non supportato"
 
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
@@ -463,7 +296,8 @@ operatori:
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
   scarica: 'Scarica'
-  scarica_modulo_compilato: 'Scarica ricevuta provvisoria'
+  scarica_ricevuta_provvisoria: 'Scarica ricevuta provvisoria'
+  scarica_modulo_compilato: 'Scarica il modulo compilato'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
     allega_documentazione_richiesta: 'Allega documentazione richiesta'
@@ -513,3 +347,255 @@ chat:
     operatore: 'Filo diretto'
   io:
     chat_name: Io
+
+        
+steps:
+    common:
+        seleziona_ente:
+            label: "Ente"
+            title: 'Selezione del comune di riferimento'
+            guida_alla_compilazione: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
+
+        accettazione_istruzioni:
+            label: 'Istruzioni'
+            title: 'Istruzioni sulla procedura'
+            guida_alla_compilazione: 'Leggi e accetta le istruzioni di compilazione'
+            accetto_istruzioni: 'Ok mi è chiaro'
+
+        dati_richiedente:
+            label: 'Richiedente'
+            title: 'Dati del richiedente'
+            guida_alla_compilazione: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al tuo profilo</a>'
+            richiedente_nome: 'Nome'
+            richiedente_cognome: 'Cognome'
+            richiedente_luogo_nascita: 'Luogo di nascita'
+            richiedente_data_nascita: 'Data di nascita'
+            richiedente_indirizzo_residenza: 'Indirizzo'
+            richiedente_cap_residenza: 'CAP'
+            richiedente_citta_residenza: 'Città'
+            richiedente_telefono: 'Telefono'
+            richiedente_email: 'Email'
+
+        conferma:
+            label: 'Controllo e conferma'
+            title: 'Controllo e conferma'
+            sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
+            si: 'Sì, sono sicuro'
+            no: 'No'
+
+        nucleo_familiare:
+            label: 'Nucleo familiare'
+            title: 'Composizione del nucleo familiare'
+            guida_alla_compilazione: 'Inserisci i componenti del nucleo familiare'
+
+        carica_allegati:
+            label: 'Allegati'
+            title: 'Caricamento degli allegati'
+            guida_alla_compilazione: "Inserisci gli allegati"
+
+    allacciamento_acquedotto:
+        dati_immobile:
+            label: 'Immobile'
+            title: "Dati dell'immobile"
+            guida_alla_compilazione: "Inserire i dati dell'immobile e a che titolo viene fatta la richiesta"
+            datiImmobile: "Dati dell'immobile"
+            qualifica: "Qualifica del richiedente"
+            provincia: "Provincia"
+            comune: "Comune"
+            indirizzo: "Indirizzo"
+            numero_civico: "Numero civico"
+            cap: "CAP"
+            scala: "Scala"
+            piano: "Piano"
+            interno: "Interno"
+            catasto_categoria: "Categoria catastale"
+            catasto_codice_comune: "Codice catastale del comune"
+            catasto_foglio: "Foglio"
+            catasto_sezione: "Sezione"
+            catasto_mappale: "Particella Mappale"
+            catasto_subalterno: "Subalterno"
+
+        dati_intervento:
+            label: 'Intervento'
+            title: "Tipologia di intervento"
+            guida_alla_compilazione: "Inserire i dati dell'intervento"
+            tipo_intervento: "Tipologia di intervento"
+            tipo_allaccio: "Tipologia di allaccio"
+            tipo_uso: "Tipologia d'utilizzo"
+            diametro_rete_interna: "Diametro rete interna"
+
+        dati_contatto:
+            label: 'Contatti'
+            title: 'Contatti'
+            guida_alla_compilazione: "Specificare indirizzo per comunicazioni e rimborsi"
+            use_alternate: "Utilizza i segenti dati"
+            indirizzo: "Indirizzo"
+            numero_civico: "Numero civico"
+            cap: "CAP"
+            comune: "Comune"
+    
+    autolettura_acqua:
+        dati_intestatario:
+            label: 'Intestatario'
+            title: "Dati dell'intestatario del contratto"
+            guida_alla_compilazione: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
+            intestatario_codice_utente: "Codice utenza"
+            intestatario_nome: "Nome"
+            intestatario_cognome: "Cognome"
+            intestatario_indirizzo: "Indirizzo"
+            intestatario_cap: "CAP"
+            intestatario_citta: "Città"
+            intestatario_telefono: "Recapito telefonico per eventuali comunicazioni"
+            intestatario_email: "Recapito email per eventuali comunicazioni"
+
+        dati_contatore:
+            label: "Contatore"
+            title: "Contatore"
+            guida_alla_compilazione: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
+            contatore_numero: "Numero (da leggere sulla ghiera d'ottone del contatore)"
+            contatore_uso: "Tipologia di utilizzo del contatore"
+            contatore_unita_immobiliari: "Numero di unità immobiliari (appartamenti, negozi, uffici, ...) serviti dal contatore"
+
+        dati_lettura:
+            label: "Lettura"
+            title: "Dati della lettura"
+            guida_alla_compilazione: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
+            lettura_metri_cubi: "Lettura dei metri cubi"
+            lettura_data: "Data della rilevazione"
+
+        note:
+            label: "Altre comunicazioni"
+            title: "Altre comunicazioni"
+            guida_alla_compilazione: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
+
+    cambio_residenza:
+
+        dichiarazione_provenienza:
+            label: "Provenienza"
+            title: "Dichiarazione della provenienza"
+            guida_alla_compilazione: "Dichiarazione della provenienza: da un altro comune, dall'estero o dallo stesso comune"
+            comune: "Dichiarazione di cambiamento di abitazione nell’ambito dello stesso comune"
+            altro_comune: "Dichiarazione di residenza con provenienza da altro comune"
+            estero: "Dichiarazione di residenza con provenienza dall’estero"
+            aire: "Dichiarazione di residenza di cittadini italiani iscritti all’AIRE (Anagrafe degli italiani residenti all’estero) con provenienza dall’estero"
+            altro: "Dichiarazione di residenza per altro motivo"
+
+        dichiarazione_provenienza_dettaglio:
+            label: 'Provenienza (dettaglio)'
+            title: "Dettagli provenienza"
+            guida_alla_compilazione:
+                nessun_allegato: "Per il tipo di provenienza selezionato non sono necessarie altre informazioni"
+                altro_comune: "Indicare il comune di provenienza"
+                stato_estero: "Indicare lo Stato estero di provenienza"
+                aire: "Indicare lo Stato estero e il comune AIRE di provenienza"
+                altro_motivo: "Specificare il motivo"
+
+        dati_residenza:
+            label: "Residenza"
+            title: "Dati residenza"
+            guida_alla_compilazione: "Specifica il nuovo indirizzo di residenza"
+            provincia: "Provincia"
+            comune: "Comune"
+            indirizzo: "Via/Piazza"
+            numero_civico: "Numero civico"
+            scala: "Scala"
+            piano: "Piano"
+            interno: "Interno"
+
+        attualmente_residenti:
+            label: "Residenti"
+            title: "Persone già iscritte nella nuova abitazione"
+            guida_alla_compilazione: "Inserisci le eventuali persone già residenti nell'abitazione per la quale chiedi la residenza"
+
+        tipologia_occupazione:
+            label: "Tipologia"
+            title: "Tipologia di occupazione"
+            guida_alla_compilazione: "Dichiarazione riguardante la tipologia di occupazione della nuova residenza"
+            proprietario: "Proprietario dell'abitazione"
+            locazione: "Intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+            locazione_erp: "Intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+            comodato: "Comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+            usufruttuario: "Usufruttuario"
+            autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+
+        tipologia_occupazione_dettaglio:
+            label: "Tipologia (dettaglio)"
+            title: "Dettagli della tipologia di occupazione"
+            guida_alla_compilazione:
+                proprietario: "Specifica i valori catastali dell'abitazione di proprietà"
+                locazione: "Specifica i dettagli del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+                locazione_erp: "Allega il contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+                comodato: "Specifica i dettagli del contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+                usufruttuario: "Indicare dati utili a consentirne la verifica"
+                autocertificazione: "Allega l'autocertificazione del proprietario dell'appartamento"
+            proprietario:
+                catasto_sezione: "Sezione"
+                catasto_foglio: "Foglio"
+                catasto_particella: "Particella/Mappale"
+                catasto_subalterno: "Subalterno"
+            contratto:
+                agenzia: "Indirizzo agenzia entrate"
+                numero: "Numero contratto"
+                data: "Data di stipula del contratto"
+            verbale_consegna: "Scansione del contratto o del verbale di consegna dell'immobile"
+            usufruttuario_info: "Titolo costitutivo"
+            autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+
+        informazioni_accertamento:
+            label: "Accertamento"
+            title: "Informazioni per accertamento dei dati"
+            guida_alla_compilazione: "Segnalare eventuali giorni ed orari di preferenza per la verifica delle autorità giudiziarie"
+
+    contributo_pannolini:
+        dati_bambino:
+            label: 'Dati del bambino'
+            title: 'Dati del bambino'
+            guida_alla_compilazione: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
+            nome: 'Nome'
+            cognome: 'Cognome'
+            luogo_nascita: 'Luogo di nascita'
+            data_nascita: 'Data di nascita'
+
+        dati_acquisto:
+            label: "Dati dell'Acquisto"
+            title: "Dati dell'Acquisto"
+            guida_alla_compilazione: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello passaggio successivo'
+            tipo_pannolini: 'Tipo dei pannolini acquistati'
+            punto_vendita: 'Nome del punto vendita'
+            data_acquisto: 'Data di acquisto'
+            totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
+
+        dati_conto_corrente:
+            label: 'Dati Conto Corrente'
+            title: 'Dati Conto Corrente'
+            guida_alla_compilazione: 'Inserisci i dati del conto corrente'
+
+    iscrizione_asilo_nido:
+        seleziona_nido:
+            label: 'Struttura'
+            title: 'Selezione della struttura'
+            guida_alla_compilazione: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
+
+        accettazione_utilizzo:
+            label: 'Accettazione'
+            title: 'Termini di fruizione della struttura'
+            guida_alla_compilazione: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
+            accetto_utilizzo: 'Ho letto i termini di fruizione della struttura'
+
+        seleziona_orari:
+            label: 'Orari e periodo'
+            title: 'Selezione degli orari e del periodo di iscrizione'
+            guida_alla_compilazione: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
+            seleziona_orario: 'Orario prescelto'
+            periodo_iscrizione_da: 'Periodo iscrizione da'
+            periodo_iscrizione_a: 'Periodo iscrizione a'
+            error: "La data di fine iscrizione deve essere maggiore di quella d'inizio"
+
+        dati_bambino:
+            label: 'Dati del bambino'
+            title: 'Dati del bambino'
+            guida_alla_compilazione: 'Inserisci i dati del bambino che intendi iscrivere'
+            nome: 'Nome'
+            cognome: 'Cognome'
+            luogo_nascita: 'Luogo di nascita'
+            data_nascita: 'Data di nascita'

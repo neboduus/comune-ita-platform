@@ -23,23 +23,24 @@ class DatiAcquistoType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('contributo_pannolini.guida_alla_compilazione.dati_acquisto', true);
+        $helper->setGuideText('steps.contributo_pannolini.dati_acquisto.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.contributo_pannolini.dati_acquisto.title', true);
 
         $builder
             ->add('tipoPannolini', ChoiceType::class, [
                 'required' => true,
-                'label' => 'contributo_pannolini.tipo_pannolini',
+                'label' => 'steps.contributo_pannolini.dati_acquisto.tipo_pannolini',
                 'choices' => [ 'Lavabile' => ContributoPannolini::PANNOLINO_LAVABILE,  'Biopannolino' => ContributoPannolini::PANNOLINO_BIOPANNOLINO ],
                 'expanded' => true,
                 'multiple' => false,
             ])
             ->add('nomePuntoVendita', TextType::class, [
                 'required' => true,
-                'label' => 'contributo_pannolini.punto_vendita',
+                'label' => 'steps.contributo_pannolini.dati_acquisto.punto_vendita',
             ])
             ->add('dataAcquisto', DateType::class, [
                 'required' => true,
-                'label' => 'contributo_pannolini.data_acquisto',
+                'label' => 'steps.contributo_pannolini.dati_acquisto.data_acquisto',
                 'widget' => 'single_text',
                 'format' => 'dd-MM-yyyy',
                 'attr' => [
@@ -50,7 +51,7 @@ class DatiAcquistoType extends AbstractType
             ])
             ->add('totaleSpesa', NumberType::class, [
                 'required' => true,
-                'label' => 'contributo_pannolini.totale_spesa',
+                'label' => 'steps.contributo_pannolini.dati_acquisto.totale_spesa',
             ]);
     }
 

@@ -7,7 +7,13 @@
                 {% for allegato in pratica.moduliCompilati %}
                     <p class="modulo">
                         <span>{{ allegato.description }}</span>
-                        <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-info btn-block btn-lg">{{ 'operatori.scarica_modulo_compilato'|trans }}</a>
+                        <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-info btn-block btn-lg">
+                            {% if pratica.statusName != 'STATUS_COMPLETE' %}
+                                {{ 'operatori.scarica_modulo_compilato'|trans }}
+                            {% else %}
+                                {{ 'operatori.scarica_ricevuta_provvisoria'|trans }}
+                            {% endif %}
+                        </a>
                     </p>
                 {% endfor %}
             </div>

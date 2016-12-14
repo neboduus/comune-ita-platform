@@ -23,12 +23,13 @@ class DatiLetturaType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('autolettura_acqua.guida_alla_compilazione.dati_lettura', true);
+        $helper->setGuideText('steps.autolettura_acqua.dati_lettura.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.autolettura_acqua.dati_lettura.title', true);
 
         foreach (self::CAMPI_LETTURA as $identifier) {
             $type = TextType::class;
             $opts = [
-                "label" => 'autolettura_acqua.datiLettura.'.$identifier
+                "label" => 'steps.autolettura_acqua.dati_lettura.'.$identifier
             ];
             switch ($identifier) {
                 case 'lettura_data':

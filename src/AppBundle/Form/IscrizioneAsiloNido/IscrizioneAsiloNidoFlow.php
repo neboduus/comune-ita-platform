@@ -31,43 +31,43 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
     {
         return array(
             self::STEP_SELEZIONA_ENTE => array(
-                'label' => 'pratica.selezionaEnte',
+                'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
             ),
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'pratica.accettazioneIstruzioni',
+                'label' => 'steps.common.accettazione_istruzioni.label',
                 'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_SELEZIONA_NIDO => array(
-                'label' => 'iscrizione_asilo_nido.selezionaNido',
+                'label' => 'steps.iscrizione_asilo_nido.seleziona_nido.label',
                 'form_type' => SelezionaNidoType::class,
             ),
             self::STEP_ACCETTAZIONE_UTILIZZO_NIDO => array(
-                'label' => 'iscrizione_asilo_nido.accettazioneUtilizzoNidoForm',
+                'label' => 'steps.iscrizione_asilo_nido.accettazione_utilizzo.label',
                 'form_type' => AccettazioneUtilizzoNidoType::class,
             ),
             self::STEP_SELEZIONA_ORARI_NIDO => array(
-                'label' => 'iscrizione_asilo_nido.selezionaOrariNido',
+                'label' => 'steps.iscrizione_asilo_nido.seleziona_orari.label',
                 'form_type' => SelezionaOrariNidoType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
-                'label' => 'pratica.datiRichiedente',
+                'label' => 'steps.common.dati_richiedente.label',
                 'form_type' => DatiRichiedenteType::class,
             ),
             self::STEP_DATI_BAMBINO => array(
-                'label' => 'iscrizione_asilo_nido.datiBambino',
+                'label' => 'steps.iscrizione_asilo_nido.dati_bambino.label',
                 'form_type' => DatiBambinoType::class,
             ),
             self::STEP_NUCLEO_FAMILIARE => array(
-                'label' => 'iscrizione_asilo_nido.nucleoFamiliare',
+                'label' => 'steps.common.nucleo_familiare.label',
                 'form_type' => NucleoFamiliareType::class,
             ),
             self::STEP_ALLEGATI => array(
-                'label' => 'pratica.carica_allegati',
+                'label' => 'steps.common.carica_allegati.label',
                 'form_type' => AllegatiType::class,
             ),
             self::STEP_CONFERMA => array(
-                'label' => 'pratica.conferma',
+                'label' => 'steps.common.conferma.label',
             ),
         );
     }

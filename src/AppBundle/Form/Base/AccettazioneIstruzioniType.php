@@ -19,15 +19,16 @@ class AccettazioneIstruzioniType extends AbstractType
             $builder->getData()->getServizio()->getTestoIstruzioni() .
             '</div>'
         );
+        $helper->setStepTitle('steps.common.accettazione_istruzioni.title', true);
 
-        $helper->setGuideText('pratica.guida_alla_compilazione.accettazione_istruzioni', true);
+        $helper->setGuideText('steps.common.accettazione_istruzioni.guida_alla_compilazione', true);
 
         $builder->add(
             'accetto_istruzioni',
             CheckboxType::class,
             [
                 "required" => true,
-                "label" => 'pratica.accetto_istruzioni',
+                "label" => 'steps.common.accettazione_istruzioni.accetto_istruzioni',
             ]
         );
     }

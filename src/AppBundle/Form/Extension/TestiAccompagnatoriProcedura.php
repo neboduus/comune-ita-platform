@@ -10,6 +10,8 @@ class TestiAccompagnatoriProcedura
 
     private $descriptionText;
 
+    private $stepTitle;
+
     /**
      * @var TranslatorInterface
      */
@@ -25,7 +27,7 @@ class TestiAccompagnatoriProcedura
      */
     public function getGuideText()
     {
-        return $this->guideText;
+        return !empty($this->guideText) ? $this->guideText : null;
     }
 
     /**
@@ -46,7 +48,7 @@ class TestiAccompagnatoriProcedura
      */
     public function getDescriptionText()
     {
-        return $this->descriptionText;
+        return !empty($this->descriptionText) ? $this->descriptionText : null;
     }
 
     /**
@@ -57,13 +59,33 @@ class TestiAccompagnatoriProcedura
      */
     public function setDescriptionText($descriptionText, $translate = false)
     {
-        $this->descriptionText = $translate ? $this->translator->trans($descriptionText) : $descriptionText;;
+        $this->descriptionText = $translate ? $this->translator->trans($descriptionText) : $descriptionText;
 
         return $this;
     }
 
     public function translate($palceholder){
         return $this->translator->trans($palceholder);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStepTitle()
+    {
+        return $this->stepTitle;
+    }
+
+    /**
+     * @param mixed $stepTitle
+     *
+     * @return TestiAccompagnatoriProcedura
+     */
+    public function setStepTitle($stepTitle, $translate = false)
+    {
+        $this->stepTitle = $translate ? $this->translator->trans($stepTitle) : $stepTitle;
+
+        return $this;
     }
 
 }

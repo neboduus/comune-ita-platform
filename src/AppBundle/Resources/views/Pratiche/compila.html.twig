@@ -148,7 +148,7 @@
                 <div class="col-md-7">
                     <div class="step-{{ flow.getCurrentStepNumber() }}">
 
-                        <h3>{{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }} - {{ flow.currentStepLabel()|trans }}</h3>
+                        <h3>{{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }} - {{ form.vars.helper.stepTitle }}</h3>
                         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
                         {{ form_errors(form) }}
 
@@ -185,8 +185,9 @@
                 </div>
 
                 <div class="col-md-4 col-md-offset-1 sidebar">
+
                     {%  if form.vars.helper.guideText|length > 0  %}
-                        <h3><i class="fa fa-info" aria-hidden="true"></i> Info</h3>
+                        <h3><i class="fa fa-info" aria-hidden="true"></i> {{ 'pratica.guida_utente'|trans }}</h3>
                         <div class="alert alert-info" role="alert">
                             {{ form.vars.helper.guideText|raw }}
                         </div>
@@ -207,11 +208,11 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
-                    {{ 'pratica.guida_alla_compilazione.sei_sicuro_di_inviare'|trans }}
+                    {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn">{{ 'pratica.guida_alla_compilazione.no'|trans }}</button>
-                    <button type="button" data-dismiss="modal" class="btn btn-primary" id="ok">{{ 'pratica.guida_alla_compilazione.si'|trans }}</button>
+                    <button type="button" data-dismiss="modal" class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-primary" id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
                 </div>
             </div>
         </div>

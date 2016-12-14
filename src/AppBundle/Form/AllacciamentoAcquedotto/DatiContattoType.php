@@ -22,7 +22,8 @@ class DatiContattoType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('allacciamento_acquedotto.guida_alla_compilazione.dati_contatto', true);
+        $helper->setGuideText('steps.allacciamento_acquedotto.dati_contatto.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.allacciamento_acquedotto.dati_contatto.title', true);
 
         $builder
             ->add('allacciamentoAcquedottoUseAlternateContact', ChoiceType::class, [
@@ -32,23 +33,23 @@ class DatiContattoType extends AbstractType
                     "Usa i dati sotto riportati" => 1,
                 ],
                 'expanded' => true,
-                'label' => 'allacciamento_acquedotto.datiContatto.use_alternate',
+                'label' => 'steps.allacciamento_acquedotto.dati_contatto.use_alternate',
             ])
             ->add('allacciamentoAcquedottoAlternateContactVia', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiContatto.indirizzo',
+                'label' => 'steps.allacciamento_acquedotto.dati_contatto.indirizzo',
             ])
             ->add('allacciamentoAcquedottoAlternateContactCivico', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiContatto.numero_civico',
+                'label' => 'steps.allacciamento_acquedotto.dati_contatto.numero_civico',
             ])
             ->add('allacciamentoAcquedottoAlternateContactCAP', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiContatto.cap',
+                'label' => 'steps.allacciamento_acquedotto.dati_contatto.cap',
             ])
             ->add('allacciamentoAcquedottoAlternateContactComune', TextType::class, [
                 'required' => false,
-                'label' => 'allacciamento_acquedotto.datiContatto.comune',
+                'label' => 'steps.allacciamento_acquedotto.dati_contatto.comune',
             ]);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
 

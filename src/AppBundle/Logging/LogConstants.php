@@ -28,13 +28,14 @@ class LogConstants
     const ALLEGATO_CANCELLAZIONE_PERMESSA = "Allowed delete of allegato {allegato} by user {user}";
 
     const PRATICA_CHANGED_STATUS = "Pratica {pratica} status has changed from {before_status} to {after_status}";
-    const PRATICA_CHANGED_STATUS_FAILED = "Fail changing pratica {pratica} from {before_status} to {after_status}: {error}";
+    const PRATICA_CHANGED_STATUS_FAILED = "Failed changing pratica {pratica} from {before_status} to {after_status}, error: {error}";
 
     const PRATICA_ASSIGNED = "Pratica {pratica} assigned to user {user}";
     const PRATICA_COMMENTED = "Pratica {pratica} commented by user {user}";
     const PRATICA_APPROVED = "Pratica {pratica} approved by user {user}";
     const PRATICA_CANCELLED = "Pratica {pratica} cancelled by user {user}";
     const PRATICA_WRONG_ENTE_REQUESTED = "Pratica {pratica} created, but wrong ente requested: {headers}";
+    const PRATICA_APPROVED_WAIT_REGISTRATION = "Pratica {pratica} completed by user {user} and wait new registration";
 
     const OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO = "Operatore Admin {operatore_admin} has changed {operatore} ambito";
     const PRATICA_UPDATED_STATUS_FROM_GPA = "Pratica status has been updated from GPA {statusChange}";

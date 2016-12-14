@@ -25,31 +25,31 @@ class AllacciamentoAcquedottoFlow extends PraticaFlow
     {
         return array(
             self::STEP_SELEZIONA_ENTE => array(
-                'label' => 'pratica.selezionaEnte',
+                'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
             ),
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'pratica.accettazioneIstruzioni',
+                'label' => 'steps.common.accettazione_istruzioni.label',
                 'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
-                'label' => 'pratica.datiRichiedente',
+                'label' => 'steps.common.dati_richiedente.label',
                 'form_type' => DatiRichiedenteType::class,
             ),
             self::STEP_DATI_IMMOBILE => array(
-                'label' => 'allacciamento_acquedotto.datiImmobile',
+                'label' => 'steps.allacciamento_acquedotto.dati_immobile.label',
                 'form_type' => DatiImmobileType::class,
             ),
             self::STEP_DATI_INTERVENTO => array(
-                'label' => 'allacciamento_acquedotto.datiIntervento',
+                'label' => 'steps.allacciamento_acquedotto.dati_intervento.label',
                 'form_type' => DatiInterventoType::class,
             ),
             self::STEP_DATI_COMUNICAZIONI => array(
-                'label' => 'allacciamento_acquedotto.datiContatto',
+                'label' => 'steps.allacciamento_acquedotto.dati_contatto.label',
                 'form_type' => DatiContattoType::class,
             ),
             self::STEP_CONFERMA => array(
-                'label' => 'pratica.conferma',
+                'label' => 'steps.common.conferma.label',
             ),
         );
     }

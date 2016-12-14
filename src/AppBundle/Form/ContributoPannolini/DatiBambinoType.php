@@ -18,24 +18,25 @@ class DatiBambinoType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('contributo_pannolini.guida_alla_compilazione.dati_bambino', true);
+        $helper->setGuideText('steps.contributo_pannolini.dati_bambino.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.contributo_pannolini.dati_bambino.title', true);
 
         $builder
             ->add('bambino_nome', TextType::class, [
                 'required' => true,
-                 'label' => 'iscrizione_asilo_nido.datiBambino.nome',
+                 'label' => 'steps.contributo_pannolini.dati_bambino.nome',
             ])
             ->add('bambino_cognome', TextType::class, [
                 'required' => true,
-                'label' => 'iscrizione_asilo_nido.datiBambino.cognome',
+                'label' => 'steps.contributo_pannolini.dati_bambino.cognome',
             ])
             ->add('bambino_luogo_nascita', TextType::class, [
                 'required' => true,
-                'label' => 'iscrizione_asilo_nido.datiBambino.luogo_nascita',
+                'label' => 'steps.contributo_pannolini.dati_bambino.luogo_nascita',
             ])
             ->add('bambino_data_nascita', DateType::class, [
                 'required' => true,
-                'label' => 'iscrizione_asilo_nido.datiBambino.data_nascita',
+                'label' => 'steps.contributo_pannolini.dati_bambino.data_nascita',
                 'widget' => 'single_text',
                 'format' => 'dd-MM-yyyy',
                 'attr' => [

@@ -32,12 +32,13 @@ class DatiContatoreType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('autolettura_acqua.guida_alla_compilazione.dati_contatore', true);
+        $helper->setGuideText('steps.autolettura_acqua.dati_contatore.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.autolettura_acqua.dati_contatore.title', true);
 
         foreach (self::CAMPI_CONTATORE as $identifier) {
             $type = TextType::class;
             $opts = [
-                "label" => 'autolettura_acqua.datiContatore.'.$identifier
+                "label" => 'steps.autolettura_acqua.dati_contatore.'.$identifier
             ];
             switch ($identifier) {
                 case 'contatore_uso':

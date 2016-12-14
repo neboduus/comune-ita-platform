@@ -18,7 +18,8 @@ class NoteType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('autolettura_acqua.guida_alla_compilazione.note', true);
+        $helper->setGuideText('steps.autolettura_acqua.note.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.autolettura_acqua.note.title', true);
         $builder->add(
             'note',
             TextareaType::class,

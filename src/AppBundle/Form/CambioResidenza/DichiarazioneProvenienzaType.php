@@ -14,13 +14,14 @@ class DichiarazioneProvenienzaType extends AbstractType
     {
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('cambio_residenza.guida_alla_compilazione.dichiarazione_provenienza', true);
+        $helper->setGuideText('steps.cambio_residenza.dichiarazione_provenienza.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.cambio_residenza.dichiarazione_provenienza.title', true);
 
         /** @var CambioResidenza $pratica */
         $pratica = $builder->getData();
         $choices = array();
         foreach ($pratica->getTipiProvenienza() as $provenienza) {
-            $choices[$helper->translate('cambio_residenza.provenienza.' . $provenienza)] = $provenienza;
+            $choices[$helper->translate('steps.cambio_residenza.dichiarazione_provenienza.' . $provenienza)] = $provenienza;
         }
 
         $builder->add('provenienza', ChoiceType::class, [

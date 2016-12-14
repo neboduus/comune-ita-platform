@@ -28,35 +28,35 @@ class AutoletturaAcquaFlow extends PraticaFlow
     {
         return array(
             self::STEP_SELEZIONA_ENTE => array(
-                'label' => 'pratica.selezionaEnte',
+                'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
             ),
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
-                'label' => 'pratica.accettazioneIstruzioni',
+                'label' => 'steps.common.accettazione_istruzioni.label',
                 'form_type' => AccettazioneIstruzioniType::class,
             ),
             self::STEP_DATI_RICHIEDENTE => array(
-                'label' => 'pratica.datiRichiedente',
+                'label' => 'steps.common.dati_richiedente.label',
                 'form_type' => DatiRichiedenteType::class,
             ),
             self::STEP_DATI_INTESTATARIO => array(
-                'label' => 'autolettura_acqua.datiIntestatario',
+                'label' => 'steps.autolettura_acqua.dati_intestatario.label',
                 'form_type' => DatiIntestatarioType::class,
             ),
             self::STEP_DATI_CONTATORE => array(
-                'label' => 'autolettura_acqua.datiContatore',
+                'label' => 'steps.autolettura_acqua.dati_contatore.label',
                 'form_type' => DatiContatoreType::class,
             ),
             self::STEP_DATI_LETTURA => array(
-                'label' => 'autolettura_acqua.datiLettura',
+                'label' => 'steps.autolettura_acqua.dati_lettura.label',
                 'form_type' => DatiLetturaType::class,
             ),
             self::STEP_NOTE => array(
-                'label' => 'autolettura_acqua.note',
+                'label' => 'steps.autolettura_acqua.note.label',
                 'form_type' => NoteType::class,
             ),
             self::STEP_CONFERMA => array(
-                'label' => 'pratica.conferma',
+                'label' => 'steps.common.conferma.label',
             ),
         );
     }
