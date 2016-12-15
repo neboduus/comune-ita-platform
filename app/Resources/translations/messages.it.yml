@@ -325,28 +325,38 @@ allegato:
 email:
   detail_link: 'link'
   pratica:
-    dear: 'Gentile <strong>%nome% %cognome%</strong>,'
+    dear: 'Gentile <strong>%user_name%</strong>,'
     thanks: 'La ringraziamo per aver utilizzato la stanza del cittadino.'
     link: 'Per ulteriori dettagli visiti il seguente '
     link_txt: 'Per ulteriori dettagli visiti il seguente link: '
-    status:
-      submitted: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
-      registered: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della pratica."
-      cancelled: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata rifiutata.'
-      complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata accettata.'
-      complete.waitallegatioperatore: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi file allegati.'
-      pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
-      draft: ''
+    user:
+      status:
+        submitted: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+        registered: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della pratica."
+        cancelled: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata rifiutata.'
+        complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata accettata.'
+        complete.waitallegatioperatore: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi file allegati.'
+        pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
+        draft: ''
+    operatore:
+      status:
+        submitted: "la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+        registered: "la domanda dell'utente <strong>%user_pratica%</strong> dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata. Il numero di protocollo è <strong>%protocollo%</strong>."
+        cancelled: "hai rifiutato la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
+        complete: "hai accettato la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
+        complete.waitallegatioperatore: "la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi file allegati."
+        pending: "hai preso in carico la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
+        draft: ''
 messaggi:
-  messaggio: Messaggio
-  invia: Invia
+  messaggio: 'Messaggio'
+  invia: 'Invia'
 chat:
   loading: ' Recupero dei messaggi in corso'
   title:
     user: 'Hai bisogno di aiuto?'
     operatore: 'Filo diretto'
   io:
-    chat_name: Io
+    chat_name: 'Io'
 
         
 steps:

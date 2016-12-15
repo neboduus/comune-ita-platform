@@ -6,6 +6,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\User;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -76,8 +77,30 @@ class MailerService
     {
         $toEmail = $pratica->getUser()->getEmailContatto();
 
-        $message = $this->setupMessage($pratica, $fromAddress, $toEmail);
-
+        $message = \Swift_Message::newInstance()
+            ->setSubject($this->translator->trans('pratica.email.status_change.subject'))
+            ->setFrom($fromAddress)
+            ->setTo($toEmail)
+            ->setBody(
+                $this->templating->render(
+                    'AppBundle:Emails/User:pratica_status_change.html.twig',
+                    array(
+                        'pratica' => $pratica,
+                        'user_name'    => $pratica->getUser()->getFullName()
+                    )
+                ),
+                'text/html'
+            )
+            ->addPart(
+                $this->templating->render(
+                    'AppBundle:Emails/User:pratica_status_change.txt.twig',
+                    array(
+                        'pratica' => $pratica,
+                        'user_name'    => $pratica->getUser()->getFullName()
+                    )
+                ),
+                'text/plain'
+            );
         return $message;
     }
 
@@ -85,9 +108,30 @@ class MailerService
     private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress)
     {
         $toEmail = $pratica->getOperatore()->getEmail();
-
-        $message = $this->setupMessage($pratica, $fromAddress, $toEmail);
-
+        $message = \Swift_Message::newInstance()
+            ->setSubject($this->translator->trans('pratica.email.status_change.subject'))
+            ->setFrom($fromAddress)
+            ->setTo($toEmail)
+            ->setBody(
+                $this->templating->render(
+                    'AppBundle:Emails/Operatore:pratica_status_change.html.twig',
+                    array(
+                        'pratica' => $pratica,
+                        'user_name'    => $pratica->getOperatore()->getFullName()
+                    )
+                ),
+                'text/html'
+            )
+            ->addPart(
+                $this->templating->render(
+                    'AppBundle:Emails/Operatore:pratica_status_change.txt.twig',
+                    array(
+                        'pratica' => $pratica,
+                        'user_name'    => $pratica->getOperatore()->getFullName()
+                    )
+                ),
+                'text/plain'
+            );
         return $message;
     }
 
@@ -108,32 +152,4 @@ class MailerService
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
-    /**
-     * @param Pratica $pratica
-     * @param $fromAddress
-     * @param $toEmail
-     * @return mixed
-     */
-    private function setupMessage(Pratica $pratica, $fromAddress, $toEmail)
-    {
-        $message = \Swift_Message::newInstance()
-            ->setSubject($this->translator->trans('pratica.email.status_change.subject'))
-            ->setFrom($fromAddress)
-            ->setTo($toEmail)
-            ->setBody(
-                $this->templating->render(
-                    'AppBundle:Emails:pratica_status_change.html.twig',
-                    array('pratica' => $pratica)
-                ),
-                'text/html'
-            )
-            ->addPart(
-                $this->templating->render(
-                    'AppBundle:Emails:pratica_status_change.txt.twig',
-                    array('pratica' => $pratica)
-                ),
-                'text/plain'
-            );
-        return $message;
-    }
 }

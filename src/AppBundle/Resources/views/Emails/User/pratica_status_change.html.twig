@@ -6,9 +6,9 @@
         <tr>
             <td style="padding: 20px">
                 <p>
-                    {{ 'email.pratica.dear'|trans({'%nome%' : pratica.user.nome, '%cognome%' : pratica.user.cognome})|raw }}
+                    {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
                 </p>
-                <p>{{ ('email.pratica.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
+                <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
                 <p>
                     {{ 'email.pratica.thanks'|trans() }}
                 </p>
