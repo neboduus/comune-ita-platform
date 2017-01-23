@@ -26,7 +26,8 @@ class LoadServiziCommandTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
@@ -59,6 +60,12 @@ class LoadServiziCommandTest extends AbstractAppTestCase
         $output = $commandTester->getDisplay();
         $this->assertContains('Servizi caricati: '.$expectedServicesCount, $output);
         $this->assertContains('Servizi aggiornati: 0', $output);
+
+        //all services have a erogatore
+        foreach ($serviziRepo->findAll() as $servizio) {
+            $this->assertGreaterThanOrEqual(1, $servizio->getErogatori()->count());
+        }
+
 
         //idempotence
         $commandTester->execute(array(

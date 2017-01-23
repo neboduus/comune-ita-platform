@@ -22,7 +22,8 @@ class EsploraControllerTest extends AbstractAppTestCase
     {
         parent::setUp();
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
@@ -33,7 +34,8 @@ class EsploraControllerTest extends AbstractAppTestCase
     public function testICanSeeServiziAsAnonumousUser()
     {
         $repo = $this->em->getRepository("AppBundle:Servizio");
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Primo servizio');
+        $erogatori = $this->createErogatoreWithEnti([]);
+        $this->createServizioWithAssociatedErogatori([$erogatori], 'Primo servizio');
 
         $serviceCountAfterInsert = count($repo->findAll());
 
@@ -44,7 +46,8 @@ class EsploraControllerTest extends AbstractAppTestCase
 
     public function testICanSeeAServiceDetailAsAnonymousUser()
     {
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Secondo servizio');
+        $erogatori = $this->createErogatoreWithEnti([]);
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatori], 'Secondo servizio');
 
         $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 

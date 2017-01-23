@@ -38,7 +38,8 @@ class StatoFamigliaTest extends AbstractAppTestCase
         system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
@@ -57,10 +58,11 @@ class StatoFamigliaTest extends AbstractAppTestCase
     {
         //create an ente
         $ente = $this->createEnti()[0];
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
         //create the autolettura service bound to that ente
         $fqcn = StatoFamiglia ::class;
         $flow = 'ocsdc.form.flow.statofamiglia';
-        $servizio = $this->createServizioWithEnte($ente, 'Stato famiglia', $fqcn, $flow);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Stato famiglia', $fqcn, $flow);
 
         $user = $this->createCPSUser();
 
@@ -85,7 +87,7 @@ class StatoFamigliaTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        $this->selezioneComune($crawler, $nextButton, $ente, $form);
+        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
         $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
 

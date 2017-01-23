@@ -27,7 +27,8 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
     {
         parent::setUp();
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
@@ -104,7 +105,8 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser(true, true);
         $ente = $this->createEnti()[0];
-        $servizio = $this->createServizioWithEnte($ente, 'servizio_a', 'aa', 'bb');
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'servizio_a', 'aa', 'bb');
         $operatore = $this->createOperatoreUser('pippo', 'pippi', $ente, new ArrayCollection([$servizio->getId()]));
         $mockedGuzzle = $this->getMockGuzzleClient([$this->getMockedMessagesBackendThreadResponseForUserEnteAndService($user, $operatore)]);
         $mockedLogger = $this->getMockLogger();
@@ -126,7 +128,8 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser(true, true);
         $ente = $this->createEnti()[0];
-        $servizio = $this->createServizioWithEnte($ente, 'servizio_a', 'aa', 'bb');
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'servizio_a', 'aa', 'bb');
         $operatore = $this->createOperatoreUser('pippo', 'pippi', $ente, new ArrayCollection([$servizio->getId()]));
         $mockedGuzzle = $this->getMockGuzzleClient([$this->getMockedMessagesBackendThreadResponseForUserEnteAndService($user, $operatore)]);
         $mockedLogger = $this->getMockLogger();
@@ -152,7 +155,8 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
             ->with(MessagesAdapterService::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
         $user = $this->createCPSUser(true, true);
         $ente = $this->createEnti()[0];
-        $servizio = $this->createServizioWithEnte($ente, 'servizio_a', 'aa', 'bb');
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'servizio_a', 'aa', 'bb');
         $operatore = $this->createOperatoreUser('pippo', 'pippi', $ente, new ArrayCollection([$servizio->getId()]));
         $enteMock = $this->getMockBuilder(Ente::class)->getMock();
 

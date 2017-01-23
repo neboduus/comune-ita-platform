@@ -39,7 +39,8 @@ class CertificatoNascitaOperatoreTest extends AbstractAppTestCase
         system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
@@ -61,14 +62,15 @@ class CertificatoNascitaOperatoreTest extends AbstractAppTestCase
         $operatore = $this->createOperatoreUser($username, $password);
         //create an ente
         $ente = $this->createEnti()[0];
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
         //create the autolettura service bound to that ente
         $fqcn = CertificatoNascita ::class;
         $flow = 'ocsdc.form.flow.certificatonascita';
         $flowOperatore = 'ocsdc.form.flow.certificatonascitaoperatore';
-        $servizio = $this->createServizioWithAssociatedEnti(array($ente), 'Certificato Nascita', $fqcn, $flow, $flowOperatore);
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], 'Certificato Nascita', $fqcn, $flow, $flowOperatore);
         $user = $this->createCPSUser();
 
-        $pratica = $this->createPratica($user, $operatore, Pratica::STATUS_PENDING, $ente, $servizio);
+        $pratica = $this->createPratica($user, $operatore, Pratica::STATUS_PENDING, $erogatore, $servizio);
 
         $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
         $approvePraticaUrl = $this->router->generate('operatori_approva_pratica', ['pratica' => $pratica->getId()]);
@@ -125,14 +127,15 @@ class CertificatoNascitaOperatoreTest extends AbstractAppTestCase
         $operatore = $this->createOperatoreUser($username, $password);
         //create an ente
         $ente = $this->createEnti()[0];
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
         //create the autolettura service bound to that ente
         $fqcn = CertificatoNascita ::class;
         $flow = 'ocsdc.form.flow.certificatonascita';
         $flowOperatore = 'ocsdc.form.flow.certificatonascitaoperatore';
-        $servizio = $this->createServizioWithAssociatedEnti(array($ente), 'Certificato Nascita', $fqcn, $flow, $flowOperatore);
+        $servizio = $this->createServizioWithAssociatedErogatori(array($erogatore), 'Certificato Nascita', $fqcn, $flow, $flowOperatore);
         $user = $this->createCPSUser();
 
-        $pratica = $this->createPratica($user, $operatore, Pratica::STATUS_PENDING, $ente, $servizio);
+        $pratica = $this->createPratica($user, $operatore, Pratica::STATUS_PENDING, $erogatore, $servizio);
 
         $mockMailer = $this->setupSwiftmailerMock([$user, $operatore]);
         static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockMailer) {

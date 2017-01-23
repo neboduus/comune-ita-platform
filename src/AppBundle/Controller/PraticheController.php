@@ -231,8 +231,18 @@ class PraticheController extends Controller
         $form = $praticaFlowService->createForm();
         if ($praticaFlowService->isValid($form)) {
 
+
+            $currentStep = $praticaFlowService->getCurrentStepNumber();
+            //Erogatore
+            //FIXME: find a way to generalize the ente selection step
+            if($currentStep == 1 ) {
+                $this->infereErogatoreFromEnteAndServizio($pratica);
+            }
+
             $praticaFlowService->saveCurrentStepData($form);
-            $pratica->setLastCompiledStep($praticaFlowService->getCurrentStepNumber());
+            $pratica->setLastCompiledStep($currentStep);
+
+
 
             if ($praticaFlowService->nextStep()) {
                 $this->getDoctrine()->getManager()->flush();
@@ -288,15 +298,18 @@ class PraticheController extends Controller
      *
      * @return array
      */
-    public function showAction(Pratica $pratica)
+    public function showAction(Request $request, Pratica $pratica)
     {
         $this->checkUserCanAccessPratica($pratica);
 
         $user = $this->getUser();
+        $resumeURI = $request->getUri();
+        $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
         return [
             'pratica' => $pratica,
             'user' => $user,
+            'threads' => $thread,
         ];
     }
     
@@ -378,7 +391,10 @@ class PraticheController extends Controller
 
         if ($pratica->getEnte()) {
             $messagesAdapterService = $this->get('ocsdc.messages_adapter');
-            $userThread = $messagesAdapterService->getThreadsForUserEnteAndService($user, $pratica->getEnte(), $pratica->getServizio());
+            //FIXME: this should be the Capofila Ente (the first in the array of the Erogatore's ones)
+            $ente = $pratica->getEnte();
+            $servizio = $pratica->getServizio();
+            $userThread = $messagesAdapterService->getThreadsForUserEnteAndService($user, $ente, $servizio);
             if (!$userThread) {
                 return null;
             }
@@ -408,5 +424,21 @@ class PraticheController extends Controller
         }
 
         return null;
+    }
+
+    private function infereErogatoreFromEnteAndServizio(Pratica $pratica)
+    {
+        $ente = $pratica->getEnte();
+        $servizio = $pratica->getServizio();
+        $erogatori = $servizio->getErogatori();
+        foreach ($erogatori as $erogatore) {
+            if ($erogatore->getEnti()->contains($ente)) {
+                $pratica->setErogatore($erogatore);
+
+                return;
+            }
+        }
+        //FIXME: testme
+        throw new \Error('Missing erogatore for service ');
     }
 }

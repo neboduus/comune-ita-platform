@@ -45,7 +45,8 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
@@ -63,10 +64,11 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
     public function testICanFillOutTheFormToEnrollMyChildInAsiloNidoAsLoggedUser()
     {
         $ente = $this->createEnteWithAsili();
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
 
         $fqcn = IscrizioneAsiloNido::class;
         $flow = 'ocsdc.form.flow.asilonido';
-        $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Iscrizione Asilo Nido', $fqcn, $flow);
 
         $this->currentUser = $this->createCPSUser();
 
@@ -94,7 +96,7 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        $this->selezioneComune($crawler, $nextButton, $ente, $form);
+        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
         /** @var AsiloNido $asiloSelected*/
         $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);

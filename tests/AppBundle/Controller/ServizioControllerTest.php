@@ -32,7 +32,8 @@ class ServizioControllerTest extends AbstractAppTestCase
     {
         parent::setUp();
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(Allegato::class);
         $this->cleanDb(ComponenteNucleoFamiliare::class);
@@ -51,7 +52,7 @@ class ServizioControllerTest extends AbstractAppTestCase
 
         $repo = $this->em->getRepository("AppBundle:Servizio");
 
-        $this->createServizioWithAssociatedEnti([], 'Primo servizio');
+        $this->createServizioWithAssociatedErogatori([], 'Primo servizio');
 
         $serviceCountAfterInsert = count($repo->findAll());
 
@@ -67,7 +68,7 @@ class ServizioControllerTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser();
 
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Secondo servizio');
+        $servizio = $this->createServizioWithAssociatedErogatori([], 'Secondo servizio');
 
         $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 
@@ -86,8 +87,8 @@ class ServizioControllerTest extends AbstractAppTestCase
     public function testICanSeeANewPraticaLinkInServiceDetailsAsLoggedInUser()
     {
         $user = $this->createCPSUser();
-
-        $servizio = $this->createServizioWithAssociatedEnti($this->createEnti(), 'Terzo servizio');
+        $erogatore = $this->createErogatoreWithEnti($this->createEnti());
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], 'Terzo servizio');
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL));
 
@@ -111,7 +112,7 @@ class ServizioControllerTest extends AbstractAppTestCase
         $numberServices = rand(1, 10);
 
         for ($i = 1; $i <= $numberServices; $i++) {
-            $this->createServizioWithAssociatedEnti([], 'Servizio'.$i);
+            $this->createServizioWithAssociatedErogatori([], 'Servizio'.$i);
         }
         $this->em->flush();
 

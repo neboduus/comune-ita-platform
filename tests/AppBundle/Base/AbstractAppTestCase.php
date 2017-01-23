@@ -8,6 +8,7 @@ use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\CPSUser as User;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Servizio;
@@ -233,7 +234,7 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param CPSUser $user
      * @param OperatoreUser|null $operatore
      * @param null $status
-     * @param Ente|null $ente
+     * @param Erogatore|null $erogatore
      * @param Servizio|null $servizio
      *
      * @return Pratica
@@ -242,11 +243,18 @@ abstract class AbstractAppTestCase extends WebTestCase
         CPSUser $user,
         OperatoreUser $operatore = null,
         $status = null,
-        Ente $ente = null,
+        Erogatore $erogatore = null,
         Servizio $servizio = null
     ) {
+        if (!$erogatore) {
+            $erogatore = $this->createErogatoreWithEnti(
+                $this->createEnti()
+            );
+        }
         if ($servizio == null) {
-            $servizio = $this->createServizioWithAssociatedEnti($this->createEnti());
+            $servizio = $this->createServizioWithAssociatedErogatori(
+                [$erogatore]
+            );
         }
 
         $praticaClass = $servizio->getPraticaFCQN();
@@ -259,11 +267,8 @@ abstract class AbstractAppTestCase extends WebTestCase
             $operatore = $this->em->merge($operatore);
             $pratica->setOperatore($operatore);
         }
-        if ($ente) {
-            /** @var Ente $ente */
-            $ente = $this->em->merge($ente);
-            $pratica->setEnte($ente);
-        }
+
+        $pratica->setErogatore($erogatore);
 
         if ($status !== null) {
             $pratica->setStatus($status);
@@ -310,14 +315,14 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     /**
      * @param CPSUser $user
-     * @param Ente $ente
+     * @param Erogatore $erogatore
      * @param $status
      *
      * @return Pratica|null
      */
-    protected function setupPraticheForUserWithEnteAndStatus(CPSUser $user, Ente $ente = null, $status = null)
+    protected function setupPraticheForUserWithErogatoreAndStatus(CPSUser $user, Erogatore $erogatore = null, $status = null)
     {
-        return $this->createPratica($user, null, $status, $ente);
+        return $this->createPratica($user, null, $status, $erogatore);
     }
 
     /**
@@ -340,15 +345,15 @@ abstract class AbstractAppTestCase extends WebTestCase
     }
 
     /**
-     * @param Ente[] $enti
+     * @param Erogatori[] $erogatori
      * @param string $name
      * @param string $praticaFCQN
      * @param string $praticaFlowServiceName
      * @param string $praticaFlowOperatoreServiceName
      * @return Servizio
      */
-    protected function createServizioWithAssociatedEnti(
-        $enti,
+    protected function createServizioWithAssociatedErogatori(
+        $erogatori,
         $name = 'Servizio test pratiche',
         $praticaFCQN = '\AppBundle\Entity\IscrizioneAsiloNido',
         $praticaFlowServiceName = 'ocsdc.form.flow.asilonido',
@@ -366,7 +371,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $servizio = new Servizio();
         $servizio
             ->setName($name.'_'.md5(rand(0, 100).microtime()))
-            ->setEnti($enti)
+            ->setErogatori($erogatori)
             ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.')
             ->setArea($area)
             ->setPraticaFCQN($praticaFCQN)
@@ -374,9 +379,33 @@ abstract class AbstractAppTestCase extends WebTestCase
             ->setPraticaFlowOperatoreServiceName($praticaFlowOperatoreServiceName);
 
         $this->em->persist($servizio);
+
+        foreach ($erogatori as $erogatore) {
+            $this->em->persist($erogatore);
+            foreach ($erogatore->getEnti() as $ente) {
+                if (\Doctrine\ORM\UnitOfWork::STATE_MANAGED !== $this->em->getUnitOfWork()->getEntityState($ente) ) {
+//                    $this->em->persist($ente);
+                }
+
+            }
+        }
+
         $this->em->flush();
 
         return $servizio;
+    }
+
+    protected function createErogatoreWithEnti($enti)
+    {
+        $erogatore = new Erogatore();
+        $erogatore->setName('Erogatore '.time());
+        foreach ($enti as $ente) {
+            $erogatore->addEnte($ente);
+        }
+        $this->em->persist($erogatore);
+        $this->em->flush();
+
+        return $erogatore;
     }
 
     /**
@@ -510,17 +539,17 @@ abstract class AbstractAppTestCase extends WebTestCase
     }
 
     /**
-     * @param Ente $ente
+     * @param Erogatore $erogatore
      * @param string $slug
      * @param string $fqcn
      * @param string $flow
      *
      * @return Servizio
      */
-    protected function createServizioWithEnte($ente, $slug, $fqcn, $flow)
+    protected function createServizioWithErogatore(Erogatore $erogatore, $slug, $fqcn, $flow)
     {
         //'Iscrizione asilo nido'
-        $servizio = $this->createServizioWithAssociatedEnti([$ente], $slug, $fqcn, $flow);
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], $slug, $fqcn, $flow);
         $servizio->setTestoIstruzioni('<strong>Tutto</strong> quello che volevi sapere su ' . $slug . ' e non hai <em>mai</em> osato chiedere!');
         $this->em->persist($servizio);
         $this->em->flush();
@@ -561,7 +590,7 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param Ente $ente
      * @param $form
      */
-    protected function selezioneComune(&$crawler, $nextButton, $ente, &$form)
+    protected function selezioneComune(&$crawler, $nextButton, $ente, &$form, $pratica, $erogatore)
     {
         // Selezione del comune
         $form = $crawler->selectButton($nextButton)->form(array(
@@ -569,6 +598,10 @@ abstract class AbstractAppTestCase extends WebTestCase
         ));
         $crawler = $this->client->submit($form);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        $this->em->refresh($pratica);
+        $persistedErogatore = $pratica->getErogatore();
+        $this->assertEquals($erogatore->getId(), $persistedErogatore->getId());
     }
 
     /**
@@ -818,8 +851,9 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function createSubmittedPraticaForUser($user)
     {
         $ente = $this->createEnti()[0];
-        $servizio = $this->createServizioWithEnte($ente, 'Test protocollo', '\AppBundle\Entity\CertificatoNascita', 'ocsdc.form.flow.certificatonascita');
-        $pratica = $this->createPratica($user, null, Pratica::STATUS_SUBMITTED, $ente, $servizio);
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Test protocollo', '\AppBundle\Entity\CertificatoNascita', 'ocsdc.form.flow.certificatonascita');
+        $pratica = $this->createPratica($user, null, Pratica::STATUS_SUBMITTED, $erogatore, $servizio);
         $pratica->setEnte($ente);
         $moduloCompilato = $this->container->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
         $pratica->addModuloCompilato($moduloCompilato);

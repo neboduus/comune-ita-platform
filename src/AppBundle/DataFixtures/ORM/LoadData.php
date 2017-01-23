@@ -5,6 +5,7 @@ namespace AppBundle\DataFixtures\ORM;
 use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -177,7 +178,11 @@ class LoadData implements FixtureInterface
             $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
             $enti = $manager->getRepository('AppBundle:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
             foreach ($enti as $ente) {
-                $servizio->activateForEnte($ente);
+                $erogatore = new Erogatore();
+                $erogatore->setName('Erogatore di '.$servizio->getName().' per '.$ente->getName());
+                $erogatore->addEnte($ente);
+                $manager->persist($erogatore);
+                $servizio->activateForErogatore($erogatore);
             }
 
             $manager->flush();
