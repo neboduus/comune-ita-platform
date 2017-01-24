@@ -227,6 +227,10 @@ stato_famiglia:
   pdf:
     richiesta: "Il rilascio del certificato dello stato di famiglia"
 
+occupazione_suolo_pubblico:
+  pdf:
+    richiesta: "Il rilascio della concessione di occupazione di suolo pubblico:"
+
 errori:
   allegato:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
@@ -609,3 +613,40 @@ steps:
             cognome: 'Cognome'
             luogo_nascita: 'Luogo di nascita'
             data_nascita: 'Data di nascita'
+
+    occupazione_suolo_pubblico:
+        org_richiedente:
+            label: 'Organizzazione richiedente'
+            title: 'Organizzazione richiedente'
+            ruolo_utente: 'In qualità di'
+            ragione_sociale: 'Ragione sociale'
+            indirizzo: 'Indirizzo'
+            civico: 'Numero civico'
+            cap: 'Cap'
+            comune: 'Comune'
+            provincia: 'Provincia'
+
+        occupazione:
+            label: 'Luogo occupazione'
+            title: 'Luogo occupazione'
+            indirizzo: 'Indirizzo'
+            civico: 'Numero civico'
+            lunghezza: 'Lunghezza in cm'
+            larghezza: 'Larghezza in cm'
+            metri_quadri: 'Metri quadrati'
+            motivazione: 'Motivazione'
+
+        tipologia_occupazione:
+            label: 'Tipologia occupazione'
+            title: 'Tipologia occupazione'
+            tipologia: 'Tipologia'
+
+        tempo_occupazione:
+            label: 'Tempo di occupazione'
+            title: 'Tempo di occupazione'
+            inizio_giorno: 'Giorno inizio occupazione'
+            inizio_ora: 'Ora inizio occupazione'
+            fine_giorno: 'Giorno fine occupazione'
+            fine_ora: 'Ora fine occupazione'
+            error: 'Selezionare un giorno di inizio precedente a quello di fine'
+

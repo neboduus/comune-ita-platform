@@ -22,7 +22,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "certificato_nascita" = "CertificatoNascita",
  *     "attestazione_anagrafica" = "AttestazioneAnagrafica",
  *     "liste_elettorali" = "ListeElettorali",
- *     "stato_famiglia" = "StatoFamiglia"
+ *     "stato_famiglia" = "StatoFamiglia",
+ *     "occupazione_suolo_pubblico" = "OccupazioneSuoloPubblico"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -46,6 +47,7 @@ class Pratica
     const TYPE_ATTESTAZIONE_ANAGRAFICA = "attestazione_anagrafica";
     const TYPE_LISTE_ELETTORALI = "liste_elettorali";
     const TYPE_STATO_FAMIGLIA = "stato_famiglia";
+    const TYPE_OCCUPAZIONE_SUOLO_PUBBLICO = "occupazione_suolo_pubblico";
 
     /**
      * @var string
