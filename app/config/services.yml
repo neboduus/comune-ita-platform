@@ -209,3 +209,7 @@ services:
     ocsdc.form.flow.occupazionesuolopubblico:
         class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
         parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.contributoassociazioni:
+            class: AppBundle\Form\ContributoAssociazioni\ContributoAssociazioniFlow
+            parent: ocsdc.form.flow.pratica

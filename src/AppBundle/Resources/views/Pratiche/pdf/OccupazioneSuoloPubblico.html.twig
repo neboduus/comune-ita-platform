@@ -17,11 +17,11 @@
     <p><strong>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.title'|trans }}</strong></p>
     <table class="table">
         <tr>
-            <th width="1">{{ 'steps.occupazione_suolo_pubblico.org_richiedente.ruolo_utente'|trans }}</th>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.ruolo_utente'|trans }}</th>
             <td>{{ pratica.getRuoloUtenteOrgRichiedente }}</td>
         </tr>
         <tr>
-            <th width="1">{{ 'steps.occupazione_suolo_pubblico.org_richiedente.ragione_sociale'|trans }}</th>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.ragione_sociale'|trans }}</th>
             <td>{{ pratica.ragioneSocialeOrgRichiedente }}</td>
         </tr>
         <tr>
@@ -49,11 +49,11 @@
     <p><strong>{{ 'steps.occupazione_suolo_pubblico.occupazione.title'|trans }}</strong></p>
     <table class="table">
         <tr>
-            <th width="1">{{ 'steps.occupazione_suolo_pubblico.occupazione.indirizzo'|trans }}</th>
+            <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.indirizzo'|trans }}</th>
             <td>{{ pratica.indirizzoOccupazione }}</td>
         </tr>
         <tr>
-            <th width="1">{{ 'steps.occupazione_suolo_pubblico.occupazione.civico'|trans }}</th>
+            <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.civico'|trans }}</th>
             <td>{{ pratica.civicoOccupazione }}</td>
         </tr>
         <tr>
@@ -77,16 +77,16 @@
     <p><strong>{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.title'|trans }}</strong></p>
     <table class="table">
         <tr>
-            <th width="1">{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.tipologia'|trans }}</th>
+            <th>{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.tipologia'|trans }}</th>
             <td>{{ pratica.tipologiaOccupazione }}</td>
         </tr>
         {% if pratica.tipologiaOccupazione == 'temporanea' %}
             <tr>
-                <th width="1">{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.inizio_giorno'|trans }}</th>
+                <th>{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.inizio_giorno'|trans }}</th>
                 <td>{{ pratica.inizioOccupazioneGiorno|date('d/m/Y') }} - {{ pratica.inizioOccupazioneOra }}</td>
             </tr>
             <tr>
-                <th width="1">{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.fine_giorno'|trans }}</th>
+                <th>{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.fine_giorno'|trans }}</th>
                 <td>{{ pratica.fineOccupazioneGiorno|date('d/m/Y') }} - {{ pratica.fineOccupazioneOra }}</td>
             </tr>
         {% endif %}
