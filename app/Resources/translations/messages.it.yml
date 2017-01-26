@@ -231,6 +231,10 @@ occupazione_suolo_pubblico:
   pdf:
     richiesta: "Il rilascio della concessione di occupazione di suolo pubblico:"
 
+contributo_associazioni:
+  pdf:
+    richiesta: "L'erogazione del contributo per la segunte associazione ed attività:"
+
 errori:
   allegato:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
@@ -406,6 +410,28 @@ steps:
             label: 'Allegati'
             title: 'Caricamento degli allegati'
             guida_alla_compilazione: "Inserisci gli allegati"
+
+        org_richiedente:
+            label: 'Organizzazione richiedente'
+            title: 'Organizzazione richiedente'
+            ruolo_utente: 'In qualità di'
+            ragione_sociale: 'Ragione sociale'
+            cf: 'Codice fiscale'
+            piva: 'Partita Iva'
+            indirizzo: 'Indirizzo'
+            civico: 'Numero civico'
+            cap: 'Cap'
+            comune: 'Comune'
+            provincia: 'Provincia'
+            email: 'Indirizzo Email'
+            tel: 'Numero di telefono'
+
+        dati_conto_corrente:
+            label: 'Dati Conto Corrente'
+            title: 'Dati Conto Corrente'
+            iban: 'Codice Iban'
+            intestatario: 'Intestatario conto'
+            guida_alla_compilazione: 'Inserisci i dati del conto corrente'
 
     allacciamento_acquedotto:
         dati_immobile:
@@ -650,3 +676,24 @@ steps:
             fine_ora: 'Ora fine occupazione'
             error: 'Selezionare un giorno di inizio precedente a quello di fine'
 
+    contributo_associazioni:
+        tipologia_attivita:
+            label: 'Tipologia attività'
+            title: 'Tipologia attività'
+            tipologia: 'Selezionare il tipo di attività'
+            commerciale: 'Svolge attività commerciale'
+            non_commerciale: 'Non svolge attività commerciale (art. 108 del Testo Unico delle Imposte sui redditi)'
+            guida_alla_compilazione: "Seleziona la tipologia di attività che l'organizzazione svolge"
+
+        contributo:
+            label: 'Uso del contributo'
+            title: 'Uso del contributo'
+            tipologia_contributo: 'Tipologia contributo'
+            beni_strumentali: 'Acquisto di beni strumentali'
+            fini_istituzionali_commerciali: 'Attività per il perseguimento di fini istituzionali a carattere commerciale'
+            fini_istituzionali_non_commerciali: 'Attività per il perseguimento di fini istituzionali non a carattere commerciale'
+            manifestazione_istituzionale_non_commerciale: 'Manifestazione rientrante nell’attività istituzionale non a carattere commerciale'
+            commerciale: 'Attività a carattere commerciale'
+            descrizione: 'Descrizione'
+            anno: 'Anno di attività'
+            guida_alla_compilazione: "Selezionare il tipo di contributo ed inserire descrizione ed anno dell'attività per cui si fa domanda"

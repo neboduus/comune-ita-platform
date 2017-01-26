@@ -23,7 +23,8 @@ class DatiContoCorrenteType extends AbstractType
         $helper->setGuideText('steps.contributo_pannolini.dati_conto_corrente.guida_alla_compilazione', true);
         $helper->setStepTitle('steps.contributo_pannolini.dati_conto_corrente.title', true);
 
-        $builder->add('iban', TextType::class, ['required' => true])
+        $builder
+            ->add('iban', TextType::class, ['required' => true])
             ->add('intestatarioConto', TextType::class, ['required' => true]);
     }
 
