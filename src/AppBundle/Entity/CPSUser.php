@@ -32,21 +32,21 @@ class CPSUser extends User
     /**
      * @var string
      *
-     * @ORM\Column(name="luogo_nascita", type="string", nullable=true)
+     * @ORM\Column(name="luogo_nascita", type="text", nullable=true)
      */
     private $luogoNascita;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="provincia_nascita", type="string", nullable=true)
+     * @ORM\Column(name="provincia_nascita", type="text", nullable=true)
      */
     private $provinciaNascita;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="stato_nascita", type="string", nullable=true)
+     * @ORM\Column(name="stato_nascita", type="text", nullable=true)
      */
     private $statoNascita;
 
@@ -60,21 +60,21 @@ class CPSUser extends User
     /**
      * @var string
      *
-     * @ORM\Column(name="x509certificate_issuerdn", type="string", nullable=true)
+     * @ORM\Column(name="x509certificate_issuerdn", type="text", nullable=true)
      */
     private $x509certificate_issuerdn;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="x509certificate_subjectdn", type="string", nullable=true)
+     * @ORM\Column(name="x509certificate_subjectdn", type="text", nullable=true)
      */
     private $x509certificate_subjectdn;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="x509certificate_base64", type="string", nullable=true)
+     * @ORM\Column(name="x509certificate_base64", type="text", nullable=true)
      */
     private $x509certificate_base64;
 
@@ -82,105 +82,105 @@ class CPSUser extends User
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_telefono", type="string", nullable=true)
+     * @ORM\Column(name="cps_telefono", type="text", nullable=true)
      */
     private $cpsTelefono;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_cellulare", type="string", nullable=true)
+     * @ORM\Column(name="cps_cellulare", type="text", nullable=true)
      */
     private $cpsCellulare;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_email", type="string", nullable=true)
+     * @ORM\Column(name="cps_email", type="text", nullable=true)
      */
     private $cpsEmail;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_email_personale", type="string", nullable=true)
+     * @ORM\Column(name="cps_email_personale", type="text", nullable=true)
      */
     private $cpsEmailPersonale;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_titolo", type="string", nullable=true)
+     * @ORM\Column(name="cps_titolo", type="text", nullable=true)
      */
     private $cpsTitolo;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_indirizzo_domicilio", type="string", nullable=true)
+     * @ORM\Column(name="cps_indirizzo_domicilio", type="text", nullable=true)
      */
     private $cpsIndirizzoDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_cap_domicilio", type="string", nullable=true)
+     * @ORM\Column(name="cps_cap_domicilio", type="text", nullable=true)
      */
     private $cpsCapDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_citta_domicilio", type="string", nullable=true)
+     * @ORM\Column(name="cps_citta_domicilio", type="text", nullable=true)
      */
     private $cpsCittaDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_provincia_domicilio", type="string", nullable=true)
+     * @ORM\Column(name="cps_provincia_domicilio", type="text", nullable=true)
      */
     private $cpsProvinciaDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_stato_domicilio", type="string", nullable=true)
+     * @ORM\Column(name="cps_stato_domicilio", type="text", nullable=true)
      */
     private $cpsStatoDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_indirizzo_residenza", type="string", nullable=true)
+     * @ORM\Column(name="cps_indirizzo_residenza", type="text", nullable=true)
      */
     private $cpsIndirizzoResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_cap_residenza", type="string", nullable=true)
+     * @ORM\Column(name="cps_cap_residenza", type="text", nullable=true)
      */
     private $cpsCapResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_citta_residenza", type="string", nullable=true)
+     * @ORM\Column(name="cps_citta_residenza", type="text", nullable=true)
      */
     private $cpsCittaResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_provincia_residenza", type="string", nullable=true)
+     * @ORM\Column(name="cps_provincia_residenza", type="text", nullable=true)
      */
     private $cpsProvinciaResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="cps_stato_residenza", type="string", nullable=true)
+     * @ORM\Column(name="cps_stato_residenza", type="text", nullable=true)
      */
     private $cpsStatoResidenza;
 
@@ -188,70 +188,70 @@ class CPSUser extends User
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcIndirizzoDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcCapDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcCittaDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcProvinciaDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcStatoDomicilio;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcIndirizzoResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcCapResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcCittaResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcProvinciaResidenza;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $sdcStatoResidenza;
 
