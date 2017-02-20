@@ -17,7 +17,9 @@
                         <tr>
                             <td data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ allegato.originalFilename }}</td>
                             <td data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ allegato.description }}</td>
-                            <td data-title=""><a href="{{ path( download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a></td>
+                            <td data-title="">
+                                {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato': allegato}) }}
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>

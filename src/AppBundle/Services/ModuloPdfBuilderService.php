@@ -53,6 +53,11 @@ class ModuloPdfBuilderService
      */
     private $templating;
 
+    /**
+     * @var string
+     */
+    private $dateTimeFormat;
+
     public function __construct(
         Filesystem $filesystem,
         EntityManagerInterface $em,
@@ -60,7 +65,8 @@ class ModuloPdfBuilderService
         PropertyMappingFactory $propertyMappingFactory,
         DirectoryNamerInterface $directoryNamer,
         GeneratorInterface $generator,
-        EngineInterface $templating
+        EngineInterface $templating,
+        $dateTimeFormat
     ) {
         $this->filesystem = $filesystem;
         $this->em = $em;
@@ -69,6 +75,7 @@ class ModuloPdfBuilderService
         $this->directoryNamer = $directoryNamer;
         $this->generator = $generator;
         $this->templating = $templating;
+        $this->dateTimeFormat = $dateTimeFormat;
     }
 
     /**
@@ -100,7 +107,7 @@ class ModuloPdfBuilderService
                 'pratica.modulo.descrizione',
                 [
                     'nomeservizio' => $pratica->getServizio()->getName(),
-                    'datacompilazione' => $now->format('d/m/Y h:i')
+                    'datacompilazione' => $now->format($this->dateTimeFormat)
                 ])
         );
         $this->em->persist($moduloCompilato);

@@ -19,7 +19,7 @@
             <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
         {% endif %}
 
-        <p><b>{{ 'pratica.data_di_creazione'|trans }}:</b> {{ pratica.creationTime|date("d/m/Y") }}</p>
+        <p><b>{{ 'pratica.data_di_creazione'|trans }}:</b> {{ pratica.creationTime|date(ocsdc_default_date_format) }}</p>
 
         <div class="row">
             <div class="col-md-12 text-center">

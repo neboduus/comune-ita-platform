@@ -5,7 +5,7 @@
 <article class="panel panel-default servizio">
     <div class="panel-body">
         {%  if servizio.area %}
-            <p><i class="fa fa-circle"></i> {{ servizio.area.name }}</p>
+            <small><i class="fa fa-circle"></i> {{ servizio.area.name }}</small>
         {% endif %}
         <h4><a href="{{ path('servizi_show', {'slug': servizio.slug}) }}">{{ servizio.name }}</a></h4>
         <p>{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit) ~ '...' : servizio.description  }}</p>

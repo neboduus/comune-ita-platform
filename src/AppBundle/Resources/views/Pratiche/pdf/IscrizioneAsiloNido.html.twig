@@ -14,7 +14,7 @@
     <p>
         {{ 'iscrizione_asilo_nido.pdf.ammissione_nido'|trans() }} <span class="text-uppercase">{{ pratica.struttura.name }}</span>
         {{ 'iscrizione_asilo_nido.pdf.del_bambino'|trans() }} <span class="text-uppercase">{{ pratica.bambinoNome }} {{ pratica.bambinoCognome }}</span>
-        {{ 'pratica.pdf.nato_il'|trans() }} <span class="text-uppercase">{{ pratica.bambinoDataNascita|date("d/m/Y") }}</span>
+        {{ 'pratica.pdf.nato_il'|trans() }} <span class="text-uppercase">{{ pratica.bambinoDataNascita|date(ocsdc_default_date_format) }}</span>
         {{ 'pratica.pdf.nato_a'|trans() }} <span class="text-uppercase">{{ pratica.bambinoLuogoNascita }}</span>
     </p>
 
@@ -27,7 +27,7 @@
         </thead>
         <tr>
             <td>{{ pratica.strutturaOrario }}</td>
-            <td>{{ 'iscrizione_asilo_nido.pdf.periodo_da'|trans() }} {{ pratica.periodoIscrizioneDa|date("d/m/Y") }} {{ 'iscrizione_asilo_nido.pdf.periodo_a'|trans() }} {{ pratica.periodoIscrizioneA|date("d/m/Y") }}</td>
+            <td>{{ 'iscrizione_asilo_nido.pdf.periodo_da'|trans() }} {{ pratica.periodoIscrizioneDa|date(ocsdc_default_date_format) }} {{ 'iscrizione_asilo_nido.pdf.periodo_a'|trans() }} {{ pratica.periodoIscrizioneA|date(ocsdc_default_date_format) }}</td>
         </tr>
     </table>
 </div>
@@ -36,5 +36,6 @@
 {{ include('AppBundle:Pratiche/pdf/parts:allegati.html.twig', {'pratica':pratica, 'user': user}) }}
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 
+{{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
 </body>
 </html>

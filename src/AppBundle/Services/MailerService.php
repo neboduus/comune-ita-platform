@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use Symfony\Bundle\TwigBundle\TwigEngine;
@@ -76,11 +77,15 @@ class MailerService
     private function setupCPSUserMessage(Pratica $pratica, $fromAddress)
     {
         $toEmail = $pratica->getUser()->getEmailContatto();
+        $toName = $pratica->getUser()->getFullName();
+
+        $ente = $pratica->getEnte();
+        $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
         $message = \Swift_Message::newInstance()
             ->setSubject($this->translator->trans('pratica.email.status_change.subject'))
-            ->setFrom($fromAddress)
-            ->setTo($toEmail)
+            ->setFrom($fromAddress, $fromName)
+            ->setTo($toEmail, $toName)
             ->setBody(
                 $this->templating->render(
                     'AppBundle:Emails/User:pratica_status_change.html.twig',
@@ -108,10 +113,15 @@ class MailerService
     private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress)
     {
         $toEmail = $pratica->getOperatore()->getEmail();
+        $toName = $pratica->getOperatore()->getFullName();
+
+        $ente = $pratica->getEnte();
+        $fromName = $ente instanceof Ente ? $ente->getName() : null;
+
         $message = \Swift_Message::newInstance()
             ->setSubject($this->translator->trans('pratica.email.status_change.subject'))
-            ->setFrom($fromAddress)
-            ->setTo($toEmail)
+            ->setFrom($fromAddress, $fromName)
+            ->setTo($toEmail, $toName)
             ->setBody(
                 $this->templating->render(
                     'AppBundle:Emails/Operatore:pratica_status_change.html.twig',

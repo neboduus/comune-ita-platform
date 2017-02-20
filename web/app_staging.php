@@ -30,6 +30,9 @@ $_SERVER += [
     "REDIRECT_shibb_pat_attribute_cittaresidenza" => "Trento",
     "REDIRECT_shibb_pat_attribute_provinciaresidenza" => "Trento",
     "REDIRECT_shibb_pat_attribute_statoresidenza" => "Italia",
+    "REDIRECT_shibb_pat_attribute_x509certificate_issuerdn" => "FAKE_issuerdn",
+    "REDIRECT_shibb_pat_attribute_x509certificate_subjectdn" => "FAKE_subjectdn",
+    "REDIRECT_shibb_pat_attribute_x509certificate_base64" => "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg==",
 ];
 
 

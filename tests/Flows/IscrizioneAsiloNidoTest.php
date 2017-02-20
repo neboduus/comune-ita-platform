@@ -5,6 +5,7 @@ namespace Tests\Flows;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\IscrizioneAsiloNido;
 use AppBundle\Entity\ModuloCompilato;
@@ -12,11 +13,10 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
-use AppBundle\Logging\LogConstants;
+use AppBundle\Form\IscrizioneAsiloNido\AttestazioneIcefType;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -29,6 +29,11 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
      * @var CPSUserProvider
      */
     protected $userProvider;
+
+    /**
+     * @var CPSUser
+     */
+    private $currentUser;
 
     /**
      * @inheritdoc
@@ -63,16 +68,17 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         $flow = 'ocsdc.form.flow.asilonido';
         $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
 
-        $user = $this->createCPSUser();
-        $numberOfExpectedAttachments = 3;
-        $this->setupNeededAllegatiForAllInvolvedUsers($numberOfExpectedAttachments, $user);
+        $this->currentUser = $this->createCPSUser();
 
-        $mockMailer = $this->setupSwiftmailerMock([$user]);
+        $allegato = $this->addAllegato(AttestazioneIcefType::ATTESTAZIONE_ICEF_FILE_DESCRIPTION);
+        $numberOfExpectedAttachments = 1;
+
+        $mockMailer = $this->setupSwiftmailerMock([$this->currentUser]);
         static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockMailer) {
             $kernel->getContainer()->set('swiftmailer.mailer.default', $mockMailer);
         });
 
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
+        $this->clientRequestAsCPSUser($this->currentUser, 'GET', $this->router->generate(
             'pratiche_new',
             ['servizio' => $servizio->getSlug()]
         ));
@@ -97,10 +103,7 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
         $this->datiBambino($crawler, $nextButton, $form);
         $this->composizioneNucleoFamiliare($crawler, $nextButton, $form, 0, 5);
-
-        $allegati = $this->em->getRepository('AppBundle:Allegato')->findBy(['owner' => $user]);
-        $this->allegati($crawler, $nextButton, $form, $allegati);
-
+        $this->allegaCertificazioneIcef($crawler, $nextButton, $form, $allegato);
 
         $form = $crawler->selectButton($finishButton)->form();
         $this->client->submit($form);
@@ -114,7 +117,7 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
 
         $this->assertEquals(
             $currentPratica->getRichiedenteNome(),
-            $user->getNome()
+            $this->currentUser->getNome()
         );
 
         $this->assertEquals(
@@ -123,7 +126,7 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         );
 
         $allegati = $currentPratica->getAllegati()->toArray();
-        $this->assertEquals($numberOfExpectedAttachments - 1, count($allegati));
+        $this->assertEquals($numberOfExpectedAttachments, count($allegati));
 
         //modulo stampato
         $this->assertEquals(1, $currentPratica->getModuliCompilati()->count());
@@ -135,7 +138,7 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         $submissionDate = new \DateTime();
         $submissionDate->setTimestamp($currentPratica->getSubmissionTime());
 
-        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format('d/m/Y h:i'), $pdfExportedForm->getDescription());
+        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format($this->container->getParameter('ocsdc_default_datetime_format')), $pdfExportedForm->getDescription());
     }
 
     /**
@@ -216,5 +219,34 @@ class IscrizioneAsiloNidoTest extends AbstractAppTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
     }
 
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $form
+     * @param Allegato $allegato
+     */
+    protected function allegaCertificazioneIcef(&$crawler, $nextButton, &$form, $allegato)
+    {
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'attestazione_icef[autocertificazione][choose]' => $allegato->getId()
+        ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    private function addAllegato($description)
+    {
+        $user = $this->em->getRepository('AppBundle:CPSUser')->find($this->currentUser->getId());
+
+        $allegato = new Allegato();
+        $allegato->setOwner($user);
+        $allegato->setDescription($description);
+        $allegato->setFilename('somefile.txt');
+        $allegato->setOriginalFilename('somefile.txt');
+        $this->em->persist($allegato);
+        $this->em->flush();
+
+        return $allegato;
+    }
 
 }

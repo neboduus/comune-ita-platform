@@ -49,6 +49,18 @@ class DefaultControllerTest extends AbstractAppTestCase
     }
 
     /**
+     * @test
+     */
+    public function testPrivacy()
+    {
+        $this->client->request('GET', '/');
+        $this->assertContains('Informativa per il trattamento dati personali', $this->client->getResponse()->getContent());
+
+        $this->client->request('GET', '/privacy');
+        $this->assertContains('Informativa per il trattamento dati personali', $this->client->getResponse()->getContent());
+    }
+
+    /**
      * @dataProvider protectedRoutesProvider
      * @param array $route
      */

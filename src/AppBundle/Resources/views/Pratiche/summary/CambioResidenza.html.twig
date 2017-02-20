@@ -1,4 +1,3 @@
-{% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
 <div id="pratica-summary">
 
     {{ include('AppBundle:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
@@ -126,7 +125,7 @@
                     </tr>
                     <tr>
                         <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.data'|trans }}</th>
-                        <td>{{ pratica.contrattoData|date('d/m/Y') }}</td>
+                        <td>{{ pratica.contrattoData|date(ocsdc_default_date_format) }}</td>
                     </tr>
                 </table>
 
@@ -147,9 +146,8 @@
                                 <tr>
                                     <td data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ allegato.originalFilename }}</td>
                                     <td data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ allegato.description }}</td>
-                                    <td data-title=""><a
-                                                href="{{ path( download_allegato_path, {'allegato': allegato.id}) }}"
-                                                class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a>
+                                    <td data-title="">
+                                        {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato': allegato}) }}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -171,7 +169,7 @@
                     </tr>
                     <tr>
                         <th width="1">{{ 'steps.cambio_residenza.tipologia_occupazione_dettaglio.contratto.data'|trans }}</th>
-                        <td>{{ pratica.contrattoData|date('d/m/Y') }}</td>
+                        <td>{{ pratica.contrattoData|date(ocsdc_default_date_format) }}</td>
                     </tr>
                 </table>
 
@@ -196,9 +194,8 @@
                                 <tr>
                                     <td data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ allegato.originalFilename }}</td>
                                     <td data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ allegato.description }}</td>
-                                    <td data-title=""><a
-                                                href="{{ path( download_allegato_path, {'allegato': allegato.id}) }}"
-                                                class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a>
+                                    <td data-title="">
+                                        {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato': allegato}) }}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -217,7 +214,5 @@
             {{ pratica.infoAccertamento }}
         </div>
     </div>
-
-    {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
 
 </div>

@@ -20,7 +20,7 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
     const STEP_DATI_RICHIEDENTE = 6;
     const STEP_DATI_BAMBINO = 7;
     const STEP_NUCLEO_FAMILIARE = 8;
-    const STEP_ALLEGATI = 9;
+    const STEP_ALLEGA_ATTESTAZIONE_ICEF = 9;
     const STEP_CONFERMA = 10;
 
     protected $allowDynamicStepNavigation = true;
@@ -62,9 +62,9 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
                 'label' => 'steps.common.nucleo_familiare.label',
                 'form_type' => NucleoFamiliareType::class,
             ),
-            self::STEP_ALLEGATI => array(
-                'label' => 'steps.common.carica_allegati.label',
-                'form_type' => AllegatiType::class,
+            self::STEP_ALLEGA_ATTESTAZIONE_ICEF => array(
+                'label' => 'steps.iscrizione_asilo_nido.allega_attestazione_icef.label',
+                'form_type' => AttestazioneIcefType::class,
             ),
             self::STEP_CONFERMA => array(
                 'label' => 'steps.common.conferma.label',

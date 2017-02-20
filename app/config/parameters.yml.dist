@@ -39,3 +39,10 @@ parameters:
 
     ocsdc_iter_duration_start_status: 3
     ocsdc_iter_duration_end_statuses: [10,100]
+
+    ocsdc_default_date_format: "d-m-Y"
+    ocsdc_default_datetime_format: "d-m-Y H:i"
+    ocsdc_default_time_format: "H:i"
+
+    ocsdc_scheme: 'https'
+    ocsdc_host:  devsdc.opencontent.it

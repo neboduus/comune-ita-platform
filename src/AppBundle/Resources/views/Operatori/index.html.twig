@@ -48,7 +48,7 @@
                             <td>{{ pratica.user.fullName }}</td>
                             <td>{{ pratica.servizio.name }}</td>
                             <td>{{ pratica.servizio.area.name }}</td>
-                            <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
+                            <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
                             <td>{{ pratica.statusName|trans }}</td>
                             <td>
                                 <a href="{{ path('operatori_show_pratica', {'pratica': pratica}) }}"
@@ -87,7 +87,7 @@
                             <td>{% if pratica.numeroProtocollo %}{{ pratica.numeroProtocollo }}{% else %}<em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>{% endif %}</td>
                             <td>{{ pratica.user.fullName }}</td>
                             <td>{{ pratica.servizio.name }}</td>
-                            <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
+                            <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
                             <td>{{ pratica.statusName|trans }}</td>
                             <td>
                                     <button type="button" class="btn btn-primary btn-xs" data-toggle="modal"
@@ -150,7 +150,7 @@
                             <td>{{ pratica.numeroProtocollo }}</td>
                             <td>{{ pratica.user.fullName }}</td>
                             <td>{{ pratica.servizio.name }}</td>
-                            <td>{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
+                            <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
                             <td>{{ pratica.statusName|trans }}</td>
                             <td>
                                 <a href="{{ path('operatori_show_pratica', {'pratica': pratica}) }}"

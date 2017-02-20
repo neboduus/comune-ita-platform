@@ -9,7 +9,7 @@
                         <span class="bubble"></span>
                         <span class="stacked-text">
                         <span class="fa fa-calendar"></span>
-                        {{ timestamp|date('d/M/y H:i') }}
+                        {{ timestamp|date(ocsdc_default_datetime_format) }}
                         {% for change in changes[0] %}
                             {% if change is not null %}
                                 {% set message = 'pratica.dettaglio.stato_'~change %}

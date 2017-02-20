@@ -8,7 +8,7 @@
                 {%- if craue_isStepLinkable(flow, loop.index) -%}
                     <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all
                     | merge(app.request.attributes.get('_route_params'))
-                    | craue_addDynamicStepNavigationParameters(flow, loop.index)) }}"  data-toggle="tab">
+                    | craue_addDynamicStepNavigationParameters(flow, loop.index)) }}">
                 {% endif %}
                 <span class="bubble"></span>
                         <small class="text">{{ block('craue_flow_stepLabel') }}</small>

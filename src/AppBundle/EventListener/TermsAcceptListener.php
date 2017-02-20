@@ -55,6 +55,7 @@ class TermsAcceptListener
             if ($this->termsAcceptanceChecker->checkIfUserHasAcceptedMandatoryTerms($user) == false
                 && $currentRoute !== ''
                 && $currentRoute !== 'terms_accept'
+                && $currentRoute !== 'user_profile'
             ) {
                 $redirectParameters['r'] = $currentRoute;
                 if ($currentRouteParams) {
