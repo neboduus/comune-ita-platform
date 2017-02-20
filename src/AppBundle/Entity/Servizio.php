@@ -54,8 +54,8 @@ class Servizio
     private $enti;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Categoria")
+     * @ORM\JoinColumn(name="area", referencedColumnName="id", nullable=true)
      */
     private $area;
 
@@ -182,7 +182,7 @@ class Servizio
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getArea()
     {
@@ -190,16 +190,14 @@ class Servizio
     }
 
     /**
-     * @param string $area
-     *
-     * @return $this
+     * @param mixed $area
      */
     public function setArea($area)
     {
         $this->area = $area;
-
         return $this;
     }
+
 
     /**
      * @return string

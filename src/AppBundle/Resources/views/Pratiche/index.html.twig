@@ -55,7 +55,7 @@
                                         data-status="{{ pratica.status }}">
 
                                         <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
-                                        <td data-title="{{ 'pratica.categoria'|trans }}">{{ pratica.servizio.area }}</td>
+                                        <td data-title="{{ 'pratica.categoria'|trans }}">{{ pratica.servizio.area.name }}</td>
                                         <td data-title="{{ 'pratica.protocollo'|trans }}">
                                             {% if pratica.numeroProtocollo %}
                                                 {{ pratica.numeroProtocollo }}

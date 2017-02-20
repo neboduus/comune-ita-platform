@@ -46,7 +46,7 @@
 
         {% if servizi_area|length > 0 %}
         <div class="col-sm-4 col-sm-offset-1 sidebar">
-            <h4>{{ "servizio.servizi_area_title"|trans({'%area%': servizio.area}) }}</h4>
+            <h4>{{ "servizio.servizi_area_title"|trans({'%area%': servizio.area.name}) }}</h4>
             <div class="list-group">
                 {% for s in servizi_area %}
                     <a href="{{ path('servizi_show', {'slug': s.slug}) }}" class="list-group-item{% if s.id == servizio.id %} active{% endif %}">{{ s.name }}</a>

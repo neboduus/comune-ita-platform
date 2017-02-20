@@ -24,7 +24,7 @@
                                 {% for servizio in servizi %}
                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
                                         {%  if servizio.area %}
-                                            <span>{{ servizio.area }}</span><br/>
+                                            <span>{{ servizio.area.name }}</span><br/>
                                         {% endif %}
                                         <a href="{{ path('servizi_show', {'slug': servizio.slug}) }}" class="min-h-90">{{ servizio.name }}</a>
                                         <div class="row">
@@ -72,7 +72,7 @@
 
                                         <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
                                         <td data-title="{{ 'pratica.protocollo'|trans }}">{% if pratica.numeroProtocollo %} {{ pratica.numeroProtocollo }}{% else %} - {% endif %}</td>
-                                        <td data-title="{{ 'pratica.categoria'|trans }}">{{ pratica.servizio.area }}</td>
+                                        <td data-title="{{ 'pratica.categoria'|trans }}">{{ pratica.servizio.area.name }}</td>
                                         <td data-title="{{ 'pratica.data_di_compilazione'|trans }}">{{ pratica.creationTime|date("d/m/Y H:i") }}</td>
                                         <td data-title="{{ 'pratica.stato'|trans }}">{{ pratica.statusName|trans }}</td>
                                         <td data-title="">

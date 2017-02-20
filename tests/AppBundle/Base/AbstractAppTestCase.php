@@ -11,6 +11,7 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\Categoria;
 use AppBundle\Entity\TerminiUtilizzo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -353,12 +354,21 @@ abstract class AbstractAppTestCase extends WebTestCase
         $praticaFlowServiceName = 'ocsdc.form.flow.asilonido',
         $praticaFlowOperatoreServiceName = ''
     ) {
+        $area = new Categoria();
+        $area
+            ->setName('Nome categoria di Prova')
+            ->setDescription('Descrizione categoria di Prova')
+            ->setTreeId(1)
+            ->setTreeParentId(0);
+        $this->em->persist($area);
+        $this->em->flush();
+
         $servizio = new Servizio();
         $servizio
             ->setName($name.'_'.md5(rand(0, 100).microtime()))
             ->setEnti($enti)
             ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.')
-            ->setArea('Test area')
+            ->setArea($area)
             ->setPraticaFCQN($praticaFCQN)
             ->setPraticaFlowServiceName($praticaFlowServiceName)
             ->setPraticaFlowOperatoreServiceName($praticaFlowOperatoreServiceName);

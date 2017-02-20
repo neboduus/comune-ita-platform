@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,52 +38,179 @@ class ServiziController extends Controller
     }
 
     /**
-     * @Route("/miller/{topic}", name="servizi_miller", defaults={"topic":false})
+     * @Route("/miller/{topic}/{subtopic}", name="servizi_miller", defaults={"topic":false, "subtopic":false})
      * @Template()
      * @param string $topic
+     * @param string $subtopic
      * @param Request $request
      * @return array
      */
-    public function serviziMillerAction($topic, Request $request)
+    public function serviziMillerAction($topic, $subtopic, Request $request)
     {
-        $topics = $servizi = array();
+        $topics = $subTopics = $subSubTopics = $servizi = array();
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-        $noSortedTopics = $serviziRepository->createQueryBuilder('t')
-            ->select('t.area')
-            ->distinct()
-            ->getQuery()
-            ->getResult();
+        $categoriesRepo = $this->getDoctrine()->getRepository('AppBundle:Categoria');
+        $area = $request->get('area', false);
 
-        foreach ($noSortedTopics as $t)
+        $areas = $categoriesRepo->findBy(
+            ['parentId' => null],
+            ['name' => 'ASC']
+        );
+
+        /** @var Categoria $parent */
+        if (!$area)
         {
-            $topics []= $t['area'];
+            if ($topic)
+            {
+                /** @var Categoria $temp */
+                $temp = $categoriesRepo->findOneBySlug($topic);
+                $parent = $categoriesRepo->findOneByTreeId($temp->getTreeParentId());
+            }
+            else
+            {
+                $parent = $areas[0];
+            }
         }
-        asort($topics);
+        else
+        {
+            $parent = $categoriesRepo->findOneBySlug($area);
+        }
+
+        $topics = $categoriesRepo->findBy(
+            ['treeParentId' => $parent->getTreeId()],
+            ['name' => 'ASC']
+        );
 
         if ( !$topic )
         {
             $topic = $topics[0];
         }
+        else
+        {
+            $topic = $categoriesRepo->findOneBySlug($topic);
+        }
 
-        $servizi = $serviziRepository->findBy(
-            array('area' => $topic),
-            array('name' => 'ASC')
+        $subTopics = $categoriesRepo->findBy(
+            ['parentId' => $topic->getId()],
+            ['name' => 'ASC']
         );
 
-        if ($request->isXMLHttpRequest()) {
-
-            $template = $this->render('@App/Servizi/parts/miller/section.html.twig', ['current_topic' => $topic, 'servizi' => $servizi])->getContent();
-            return new JsonResponse(
-                ['html' => $template]
+        if ($subtopic)
+        {
+            $subtopic = $categoriesRepo->findOneBySlug($subtopic);
+            $subSubTopics = $categoriesRepo->findBy(
+                ['parentId' => $subtopic->getId()],
+                ['name' => 'ASC']
             );
+
+            // Recupero servizi subtopic
+            $temp = $serviziRepository->findBy(
+                array('area' => $subtopic->getId()),
+                array('name' => 'ASC')
+            );
+            $servizi[$subtopic->getId()] = $temp;
+
+            foreach ($subSubTopics as $sub)
+            {
+                $temp = $serviziRepository->findBy(
+                    array('area' => $sub->getId()),
+                    array('name' => 'ASC')
+                );
+                $servizi[$sub->getId()] = $temp;
+            }
         }
 
         return [
-            'current_topic' => $topic,
-            'topics'        => $topics,
-            'servizi'       => $servizi,
-            'user' => $this->getUser(),
+            'areas'            => $areas,
+            'current_area'     => $parent,
+            'current_topic'    => $topic,
+            'topics'           => $topics,
+            'current_subtopic' => $subtopic,
+            'sub_topics'       => $subTopics,
+            'sub_sub_topics'   => $subSubTopics,
+            'servizi'          => $servizi,
+            'user'             => $this->getUser()
         ];
+    }
+
+    /**
+     * @Route("/miller_ajax/{topic}/{subtopic}", name="servizi_miller_ajax", defaults={"subtopic":false})
+     * @param string $topic
+     * @param string $subtopic
+     * @param Request $request
+     * @return array
+     */
+    public function serviziMillerAjaxAction($topic, $subtopic, Request $request)
+    {
+
+        if (!$request->isXMLHttpRequest()) {
+            return $this->redirectToRoute(
+                'servizi_miller',
+                ['topic' => $topic, 'subtopic' => $subtopic]
+            );
+        }
+        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $categoriesRepo = $this->getDoctrine()->getRepository('AppBundle:Categoria');
+
+        $subTopics = $subSubTopics = $servizi =  $params = array();
+        $templateName =  '@App/Servizi/parts/miller/section.html.twig';
+
+        /** @var Categoria $topic */
+        $topic = $categoriesRepo->findOneBySlug($topic);
+        $parent = $categoriesRepo->findOneByTreeId($topic->getTreeParentId());
+        $params['current_area']= $parent;
+
+        $params['current_topic']= $topic;
+
+        $subTopics = $categoriesRepo->findBy(
+            ['parentId' => $topic->getId()],
+            ['name' => 'ASC']
+        );
+        $params['sub_topics']= $subTopics;
+        $params['current_subtopic']= $subtopic;
+
+        if ($subtopic)
+        {
+
+            $templateName =  '@App/Servizi/parts/miller/subsection.html.twig';
+            $subtopic = $categoriesRepo->findOneBySlug($subtopic);
+            $params['current_subtopic']= $subtopic;
+            $subSubTopics = $categoriesRepo->findBy(
+                ['parentId' => $subtopic->getId()],
+                ['name' => 'ASC']
+            );
+
+            $params['sub_sub_topics']= $subSubTopics;
+
+            // Recupero servizi subtopic
+            $temp = $serviziRepository->findBy(
+                array('area' => $subtopic->getId()),
+                array('name' => 'ASC')
+            );
+            $servizi[$subtopic->getId()] = $temp;
+
+            foreach ($subSubTopics as $sub)
+            {
+                $temp = $serviziRepository->findBy(
+                    array('area' => $sub->getId()),
+                    array('name' => 'ASC')
+                );
+                $servizi[$sub->getId()] = $temp;
+            }
+            $params['servizi']= $servizi;
+        }
+
+        $template = $this->render(
+            $templateName,
+            $params
+        )->getContent();
+
+        $response = new JsonResponse(
+            ['html' => $template]
+        );
+        $response->setVary("X-Requested-With");
+        return $response;
+
     }
 
     /**
