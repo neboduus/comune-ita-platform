@@ -115,7 +115,7 @@ Function.prototype.bind || (Function.prototype.bind = function (t) {
                 }.bind(this)), t
             },
             getTitle: function (t) {
-                var i = this.$el.find('a[href$="/servizi/miller/' + t + '"]:first'),
+                var i = this.$el.find('a[href$="/servizi/miller_ajax/' + t + '"]:first'),
                     e = i.find("h3");
                 return e.length > 0 ? e.text() : i.text()
             },
@@ -134,7 +134,7 @@ Function.prototype.bind || (Function.prototype.bind = function (t) {
                     s = new i.Deferred,
                     //n = "/proto-MILLER/browse/" + t.slug + ".json";
                     //n = "http://MILLER.localhost/ajaxCalls.php?action=get_section_data&json=true";
-                    //n= "http://sdc.local/app_dev.php/servizi/miller/" + t.slug;
+                    //n= "http://sdc.local/app_dev.php/servizi/miller_ajax/" + t.slug;
                     n = window.location.origin  + t.path;
                 //console.log(t);
                 //console.log(n);
@@ -155,7 +155,7 @@ Function.prototype.bind || (Function.prototype.bind = function (t) {
             parsePathname: function (t) {
                 var i = {
                     path: t,
-                    slug: t.replace(/(\/app_dev.php)?\/servizi\/miller\/?/, "")
+                    slug: t.replace(/(\/app_dev.php)?\/servizi\/miller_ajax\/?/, "")
                 };
                 return i.slug.indexOf("/") > -1 ? (i.section = i.slug.split("/")[0], i.subsection = i.slug.split("/")[1]) : i.section = i.slug, i
             },
@@ -173,11 +173,11 @@ Function.prototype.bind || (Function.prototype.bind = function (t) {
                     s = i.when(n)
                 }
                 return s.done(function (i) {
-                    t.sectionData = i, this.scrollToBrowse(), t.subsection ? this.showSubsection(t) : this.showSection(t), "undefined" == typeof e && (history.pushState(t, "", t.path)/*, this.trackPageview(t)*/), this.lastState = t
+                    t.sectionData = i, this.scrollToBrowse(), t.subsection ? this.showSubsection(t) : this.showSection(t), "undefined" == typeof e && (history.pushState(t, "", t.path.replace('miller_ajax', 'miller'))/*, this.trackPageview(t)*/), this.lastState = t
                 }.bind(this)), s
             },
             navigate: function (t) {
-                if (t.currentTarget.pathname.match(/^(\/app_dev.php)?\/servizi\/miller\/[^\/]+(\/[^\/]+)?$/)) {
+                if (t.currentTarget.pathname.match(/^(\/app_dev.php)?\/servizi\/miller_ajax\/[^\/]+(\/[^\/]+)?$/)) {
                     t.preventDefault();
                     var e = i(t.currentTarget),
                         s = this.parsePathname(t.currentTarget.pathname);

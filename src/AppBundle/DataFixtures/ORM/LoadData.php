@@ -3,6 +3,7 @@
 namespace AppBundle\DataFixtures\ORM;
 
 use AppBundle\Entity\AsiloNido;
+use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
@@ -26,6 +27,10 @@ class LoadData implements FixtureInterface
         'enti' => [
             'new' => 0,
             'updated' => 0,
+        ],
+        'categorie' => [
+            'new' => 0,
+            'updated' => 0,
         ]
         ];
 
@@ -33,8 +38,10 @@ class LoadData implements FixtureInterface
     {
         $this->loadAsili($manager);
         $this->loadEnti($manager);
+        $this->loadCategories($manager);
         $this->loadServizi($manager);
         $this->loadTerminiUtilizzo($manager);
+
     }
 
     private function loadAsili(ObjectManager $manager)
@@ -108,6 +115,33 @@ class LoadData implements FixtureInterface
         }
     }
 
+    private function loadCategories(ObjectManager $manager)
+    {
+        $data = $this->getData('Categorie');
+        $categoryRepo = $manager->getRepository('AppBundle:Categoria');
+        foreach ($data as $item) {
+            $category = $categoryRepo->findOneByTreeId($item['tree_id']);
+            $parent   = $categoryRepo->findOneByTreeId($item['tree_parent_id']);
+            if (!$category) {
+                $this->counters['categorie']['new']++;
+                $category = new Categoria();
+                $category
+                    ->setName($item['name'])
+                    ->setDescription($item['description'])
+                    ->setTreeId($item['tree_id'])
+                    ->setTreeParentId($item['tree_parent_id']);
+
+                $category ->setParentId(($parent ? $parent->getId() : null));
+                $manager->persist($category);
+
+            } else {
+                $this->counters['categorie']['updated']++;
+            }
+
+            $manager->flush();
+        }
+    }
+
     /**
      * @param ObjectManager $manager
      */
@@ -115,6 +149,7 @@ class LoadData implements FixtureInterface
     {
         $data = $this->getData('Servizi');
         $serviziRepo = $manager->getRepository('AppBundle:Servizio');
+        $categoryRepo = $manager->getRepository('AppBundle:Categoria');
         foreach ($data as $item) {
             $servizio = $serviziRepo->findOneByName($item['name']);
             if (!$servizio) {
@@ -125,10 +160,16 @@ class LoadData implements FixtureInterface
                     ->setDescription($item['description'])
                     ->setTestoIstruzioni($item['testoIstruzioni'])
                     ->setStatus($item['status'])
-                    ->setArea($item['area'])
                     ->setPraticaFCQN($item['fcqn'])
                     ->setPraticaFlowServiceName($item['flow'])
                     ->setPraticaFlowOperatoreServiceName($item['flow_operatore']);
+
+                $area = $categoryRepo->findOneBySlug($item['area']);
+                if ($area instanceof Categoria)
+                {
+                    $servizio->setArea($area);
+                }
+
                 $manager->persist($servizio);
             } else {
                 $this->counters['servizi']['updated']++;
