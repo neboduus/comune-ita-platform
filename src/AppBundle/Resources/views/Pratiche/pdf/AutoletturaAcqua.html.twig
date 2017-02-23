@@ -31,7 +31,7 @@
     </thead>
     <tr>
         <td>{{ pratica.letturaMetriCubi }}</td>
-        <td>{{ pratica.letturaData|date('d/m/Y')  }}</td>
+        <td>{{ pratica.letturaData|date(ocsdc_default_date_format)  }}</td>
     </tr>
 </table>
 
@@ -46,6 +46,6 @@
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 
-
+{{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
 </body>
 </html>

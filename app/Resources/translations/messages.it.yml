@@ -1,4 +1,6 @@
 title: 'Stanza del cittadino'
+claim: 'Portale ufficiale dei servizi online degli Enti Locali Trentini'
+intro: '<p>Attraverso "La Stanza del Cittadino" potrai accedere con pochi click a tutti i servizi messi a disposizione degli Enti Locali Trentini.</p><p>Per alcuni di essi dovrai autenticarti seguendo le istruzioni.</p>'
 salva: 'Salva'
 elimina: 'Elimina'
 terms_do_il_consenso: 'Dò il consenso'
@@ -27,6 +29,7 @@ nav:
   pratiche: 'Le mie pratiche'
   profilo: 'Il mio profilo'
   allegati: 'I miei allegati'
+  informativa_privacy: 'Informativa per il trattamento dati personali'
   operatori:
     panello_controllo: "Pannello di controllo"
     lista_operatori: 'Gestisci operatori comune'
@@ -72,6 +75,7 @@ pratica:
   cancella_elemento: 'Cancella elemento'
   nucleoFamiliare: 'Composizione del nucleo familiare'    
   pdf:
+    dati_autenticazione: 'Dati autenticazione'
     spett_le: 'Spett.le'
     oggetto: 'Oggetto:'
     il_sottoscritto: 'Il/La sottoscritto/a'
@@ -275,7 +279,7 @@ user:
     luogo_nascita: 'Luogo di nascita'
     contatti_per_sdc: 'Contatti per la Stanza del cittadino'
     contatti_per_sdc_guida: 'Il sistema utilizzerà questi recapiti per inviarti notifiche e segnalazioni'
-    cellulare: 'Numero di telefono cellulare'
+    cellulare: 'Numero di telefono cellulare (*)'
     indirizzo: 'Indirizzo'
     citta: 'Città'
     cap: 'Cap'
@@ -304,7 +308,8 @@ operatori:
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
   scarica: 'Scarica'
-  scarica_ricevuta_provvisoria: 'Scarica ricevuta provvisoria'
+  scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
+  scarica_ricevuta_provvisoria_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma.<br /> Puoi controllare l'avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <em>Le mie pratiche</em>."
   scarica_modulo_compilato: 'Scarica il modulo compilato'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
@@ -322,6 +327,7 @@ allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
   scarica_allegato: 'Scarica file'
+  scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'
   crea_allegato: 'Carica un allegato'
   non_supportato: 'Il file che stai cecando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
   guida_alla_compilazione:
@@ -383,7 +389,7 @@ steps:
         dati_richiedente:
             label: 'Richiedente'
             title: 'Dati del richiedente'
-            guida_alla_compilazione: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al tuo profilo</a>'
+            guida_alla_compilazione: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al <u>tuo profilo</u></a>'
             richiedente_nome: 'Nome'
             richiedente_cognome: 'Cognome'
             richiedente_luogo_nascita: 'Luogo di nascita'
@@ -639,6 +645,11 @@ steps:
             cognome: 'Cognome'
             luogo_nascita: 'Luogo di nascita'
             data_nascita: 'Data di nascita'
+
+        allega_attestazione_icef:
+            label: 'Attestazione ICEF'
+            title: 'Attestazione ICEF per i servizi alla prima infanzia'
+            guida_alla_compilazione: "Allega l'attestazione ICEF per i servizi alla prima infanzia (in mancanza dell’attestazione verranno applicate le tariffe massime. L’eventuale tariffa agevolata sarà applicata dal primo giorno del mese successivo a quello di presentazione dell’attestazione al Comune)"
 
     occupazione_suolo_pubblico:
         org_richiedente:

@@ -21,6 +21,10 @@ class ScheduledActionCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $context = $this->getContainer()->get('router')->getContext();
+        $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
+        $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
+
         $em = $this->getContainer()->get('doctrine')->getManager();
         /** @var EntityRepository $repository */
         $repository = $em->getRepository('AppBundle:ScheduledAction');

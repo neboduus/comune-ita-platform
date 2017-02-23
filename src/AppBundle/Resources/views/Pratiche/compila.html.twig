@@ -87,7 +87,12 @@
 
             $.datepicker.setDefaults($.datepicker.regional['it']);
             // Datepicker
-            $( ".datepicker" ).datepicker({dateFormat: "dd-mm-yy"});
+            $( ".datepicker" ).datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-50:+10"
+            });
 
             // Range datepicker
             if ( $( ".datepicker-range-from" ).length && $( ".datepicker-range-to" ).length )
@@ -98,7 +103,7 @@
                             defaultDate: "0",
                             dateFormat: dateFormat,
                             changeMonth: true,
-                            numberOfMonths: 2
+                            changeYear: true
                         })
                         .on( "change", function() {
                             to.datepicker( "option", "minDate", getDate( this ) );
@@ -107,7 +112,7 @@
                         defaultDate: "+1w",
                         dateFormat: dateFormat,
                         changeMonth: true,
-                        numberOfMonths: 2
+                        changeYear: true
                     })
                         .on( "change", function() {
                             from.datepicker( "option", "maxDate", getDate( this ) );

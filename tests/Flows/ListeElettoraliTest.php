@@ -114,6 +114,6 @@ class ListeElettoraliTest extends AbstractAppTestCase
         $submissionDate = new \DateTime();
         $submissionDate->setTimestamp($currentPratica->getSubmissionTime());
 
-        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format('d/m/Y h:i'), $pdfExportedForm->getDescription());
+        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format($this->container->getParameter('ocsdc_default_datetime_format')), $pdfExportedForm->getDescription());
     }
 }

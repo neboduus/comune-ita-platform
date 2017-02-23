@@ -801,7 +801,6 @@ abstract class AbstractAppTestCase extends WebTestCase
     /**
      * @param Crawler $crawler
      * @param $nextButton
-     * @param Ente $ente
      * @param $form
      */
     protected function addAllegatoOperatore(&$crawler, $nextButton, &$form)

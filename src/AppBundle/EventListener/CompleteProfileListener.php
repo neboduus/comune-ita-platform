@@ -51,6 +51,7 @@ class CompleteProfileListener
             if ($this->userProvider->userHasEnoughData($user) == false
                 && $currentRoute !== ''
                 && $currentRoute !== 'user_profile'
+                && $currentRoute !== 'terms_accept'
             ) {
                 $redirectParameters['r'] = $currentRoute;
                 if ($currentRouteParams) {

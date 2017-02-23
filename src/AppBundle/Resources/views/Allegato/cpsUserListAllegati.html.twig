@@ -31,7 +31,7 @@
                             <a href="{{ path('pratiche_show', {'pratica': pratica}) }}">
                                 <small>{{ pratica.servizio.name }}
                                     ({{ pratica.statusName|trans }}
-                                    {% if pratica.statusName == 'STATUS_SUBMITTED' %}{{ pratica.submissionTime|date("d/m/Y") }}{% else %}{{ pratica.creationTime|date("d/m/Y") }}{% endif %})
+                                    {% if pratica.statusName == 'STATUS_SUBMITTED' %}{{ pratica.submissionTime|date(ocsdc_default_date_format) }}{% else %}{{ pratica.creationTime|date(ocsdc_default_date_format) }}{% endif %})
                                 </small>
                             </a>
                         </li>

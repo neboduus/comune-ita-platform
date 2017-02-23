@@ -65,6 +65,7 @@ services:
             - "@ocsdc.allegati.directory_namer"
             - "@knp_snappy.pdf"
             - "@templating"
+            - "%ocsdc_default_datetime_format%"
 
     ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
 

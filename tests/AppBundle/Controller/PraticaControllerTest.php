@@ -151,6 +151,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $repo = $this->em->getRepository("AppBundle:Pratica");
         /** @var Pratica $pratica */
         $pratica = $repo->findByUser($myUser)[0];
+        $pratica->setStatus(Pratica::STATUS_SUBMITTED);
 
         $now = new \DateTime('now');
         $fileName = 'aaaaa.pdf';
@@ -161,7 +162,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $moduloCompilato->setDescription(
             $this->container->get('translator')->trans(
                 'pratica.modulo.descrizione',
-                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i') ]
+                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format')) ]
             )
         );
 
@@ -201,7 +202,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $moduloCompilato->setDescription(
             $this->container->get('translator')->trans(
                 'pratica.modulo.descrizione',
-                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format('d/m/Y h:i') ]
+                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format')) ]
             )
         );
 

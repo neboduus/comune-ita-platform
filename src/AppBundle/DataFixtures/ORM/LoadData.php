@@ -164,9 +164,8 @@ class LoadData implements FixtureInterface
                     ->setPraticaFlowServiceName($item['flow'])
                     ->setPraticaFlowOperatoreServiceName($item['flow_operatore']);
 
-                $area = $categoryRepo->findOneBySlug($item['area']);
-                if ($area instanceof Categoria)
-                {
+                $area = $categoryRepo->findOneByTreeId($item['area']);
+                if ($area instanceof Categoria){
                     $servizio->setArea($area);
                 }
 
@@ -191,7 +190,8 @@ class LoadData implements FixtureInterface
         foreach ($data as $item) {
             $terminiUtilizzo = (new TerminiUtilizzo())
                 ->setName($item['name'])
-                ->setText($item['text']);
+                ->setText($item['text'])
+                ->setMandatory(true);
             $manager->persist($terminiUtilizzo);
             $manager->flush();
         }

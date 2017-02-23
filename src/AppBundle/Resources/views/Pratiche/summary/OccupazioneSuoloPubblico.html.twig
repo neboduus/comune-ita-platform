@@ -83,18 +83,16 @@
                 {% if pratica.tipologiaOccupazione == 'temporanea' %}
                     <tr>
                         <th width="1">{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.inizio_giorno'|trans }}</th>
-                        <td>{{ pratica.inizioOccupazioneGiorno|date('d/m/Y') }} - {{ pratica.inizioOccupazioneOra }}</td>
+                        <td>{{ pratica.inizioOccupazioneGiorno|date(ocsdc_default_date_format) }} - {{ pratica.inizioOccupazioneOra }}</td>
                     </tr>
                     <tr>
                         <th width="1">{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.fine_giorno'|trans }}</th>
-                        <td>{{ pratica.fineOccupazioneGiorno|date('d/m/Y') }} - {{ pratica.fineOccupazioneOra }}</td>
+                        <td>{{ pratica.fineOccupazioneGiorno|date(ocsdc_default_date_format) }} - {{ pratica.fineOccupazioneOra }}</td>
                     </tr>
                 {% endif %}
             </table>
 
         </div>
     </div>
-
-    {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
 
 </div>

@@ -34,6 +34,14 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/privacy", name="privacy")
+     * @Template()
+     */
+    public function privacyAction()
+    {
+    }
+
+    /**
      * @Route("/terms_accept/", name="terms_accept")
      * @Template()
      * @param Request $request

@@ -4,7 +4,7 @@
         <ul class="list-unstyled">
             {% for commento in pratica.commenti %}
                 <li>
-                    <small>{{ commento.createdAt|date("d/m/Y H:i") }}</small>
+                    <small>{{ commento.createdAt|date(ocsdc_default_datetime_format) }}</small>
                     <p><strong>{{ commento.creator }}:</strong> {{ commento.text }}</p>
                 </li>
             {% endfor %}
