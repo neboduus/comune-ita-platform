@@ -1,15 +1,11 @@
 <?php
 namespace AppBundle\Form\ContributoAssociazioni;
 
-use AppBundle\Entity\ContributoAssociazioni;
+use AppBundle\Form\Base\AccettazioneIstruzioniType;
+use AppBundle\Form\Base\DatiContoCorrenteType;
+use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
-use AppBundle\Form\Base\AccettazioneIstruzioniType;
-use AppBundle\Form\Base\DatiRichiedenteType;
-use AppBundle\Form\ContributoAssociazioni\OrgRichiedenteType;
-use AppBundle\Form\ContributoAssociazioni\TipologiaAttivitaType;
-use AppBundle\Form\Base\DatiContoCorrenteType;
-use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 /**
  * Class ContributoAssociazioniFlow

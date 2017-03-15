@@ -3,7 +3,6 @@
 namespace AppBundle\Command;
 
 use AppBundle\DataFixtures\ORM\LoadData;
-use AppBundle\Entity\Servizio;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

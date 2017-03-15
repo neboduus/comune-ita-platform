@@ -7,7 +7,6 @@ namespace AppBundle\Services;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
-use AppBundle\Entity\User;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;

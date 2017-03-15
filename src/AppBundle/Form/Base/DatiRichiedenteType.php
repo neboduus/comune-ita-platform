@@ -2,19 +2,13 @@
 
 namespace AppBundle\Form\Base;
 
-use AppBundle\Entity\Allegato;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
-use AppBundle\Entity\CPSUser;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 

@@ -4,23 +4,23 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
-use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
 use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
+use AppBundle\Form\Base\MessageType;
+use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Logging\LogConstants;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormInterface;
-use AppBundle\Form\Base\MessageType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 
 /**
@@ -71,6 +71,7 @@ class OperatoriController extends Controller
                 'status' => [
                     Pratica::STATUS_COMPLETE,
                     Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
+                    Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
                     Pratica::STATUS_CANCELLED,
                 ]
             ]
@@ -152,15 +153,14 @@ class OperatoriController extends Controller
     }
 
     /**
-     * @Route("/{pratica}/approva",name="operatori_approva_pratica")
+     * @Route("/{pratica}/elabora",name="operatori_elabora_pratica")
      * @Template()
      * @param Pratica $pratica
      *
      * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function approvaPraticaAction(Pratica $pratica)
+    public function elaboraPraticaAction(Pratica $pratica)
     {
-
         if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
@@ -175,12 +175,10 @@ class OperatoriController extends Controller
             /** @var PraticaOperatoreFlow $praticaFlowService */
             $praticaFlowService = $this->get($praticaFlowServiceName);
         }
-
-        // Se non è stato dichiarato un flow operatore per il servizio della pratica posso approvarla direttamente
-        if (!$praticaFlowService instanceof PraticaOperatoreFlow)
+        else
         {
-            $this->approvePratica($pratica);
-            return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+            // Default pratica flow
+            $praticaFlowService = $this->get('ocsdc.form.flow.standardoperatore');
         }
 
         $praticaFlowService->setInstanceKey($user->getId());
@@ -202,7 +200,7 @@ class OperatoriController extends Controller
                 $form = $praticaFlowService->createForm();
             } else {
 
-                $this->approvePratica($pratica, $praticaFlowService->hasUploadAllegati());
+                $this->completePraticaFlow($pratica, $praticaFlowService->hasUploadAllegati());
 
                 $praticaFlowService->getDataManager()->drop($praticaFlowService);
                 $praticaFlowService->reset();
@@ -219,78 +217,6 @@ class OperatoriController extends Controller
         ];
     }
 
-    /**
-     * @Route("/{pratica}/rifiuta",name="operatori_rifiuta_pratica")
-     */
-    public function rifiutaPraticaAction(Pratica $pratica, Request $request)
-    {
-        $this->checkUserCanAccessPratica($this->getUser(), $pratica);
-        $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_CANCELLED);
-
-        $this->get('logger')->info(
-            LogConstants::PRATICA_CANCELLED,
-            [
-                'pratica' => $pratica->getId(),
-                'user' => $pratica->getUser()->getId(),
-            ]
-        );
-
-        return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-    }
-
-    /**
-     * @Route("/{pratica}/numero_di_fascicolo",name="operatori_set_numero_fascicolo_a_pratica")
-     * @Template()
-     * @return array
-     */
-    public function addNumeroDiFascicoloToPraticaAction(Request $request, Pratica $pratica)
-    {
-        $this->checkUserCanAccessPratica($this->getUser(), $pratica);
-        $form = $this->createForm(NumeroFascicoloPraticaType::class, $pratica);
-        $form->add('submit', SubmitType::class, array(
-            'label' => $this->get('translator')->trans('salva'),
-        ));
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $this->get('logger')->info(sprintf(LogConstants::PRATICA_FASCICOLO_ASSEGNATO, $pratica->getId(), $pratica->getNumeroFascicolo()));
-
-            $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-        }
-
-        return [
-            'form' => $form->createView(),
-            'user' => $this->getUser(),
-        ];
-    }
-
-    /**
-     * @Route("/{pratica}/numero_di_protocollo",name="operatori_set_numero_protocollo_a_pratica")
-     * @Template()
-     * @return array
-     */
-    public function addNumeroDiProtocolloToPraticaAction(Request $request, Pratica $pratica)
-    {
-        $this->checkUserCanAccessPratica($this->getUser(), $pratica);
-        $form = $this->createForm(NumeroProtocolloPraticaType::class, $pratica);
-        $form->add('submit', SubmitType::class, array(
-            'label' => $this->get('translator')->trans('salva'),
-        ));
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $this->get('logger')->info(sprintf(LogConstants::PRATICA_PROTOCOLLO_ASSEGNATO, $pratica->getId(), $pratica->getNumeroProtocollo()));
-
-            $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-        }
-
-        return [
-            'form' => $form->createView(),
-            'user' => $this->getUser(),
-        ];
-    }
 
     /**
      * @Route("/list",name="operatori_list_by_ente")
@@ -428,21 +354,32 @@ class OperatoriController extends Controller
     /**
      * @param Pratica $pratica
      */
-    private function approvePratica(Pratica $pratica, $hasNewAllegati = false)
+    private function completePraticaFlow(Pratica $pratica, $hasNewAllegati = false)
     {
-        if ($hasNewAllegati) {
+        if ($pratica->getEsito())
+        {
             $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);
-        }else{
-            $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_COMPLETE);
-        }
 
-        $this->get('logger')->info(
-            LogConstants::PRATICA_APPROVED,
-            [
-                'pratica' => $pratica->getId(),
-                'user' => $pratica->getUser()->getId(),
-            ]
-        );
+            $this->get('logger')->info(
+                LogConstants::PRATICA_APPROVED,
+                [
+                    'pratica' => $pratica->getId(),
+                    'user' => $pratica->getUser()->getId(),
+                ]
+            );
+        }
+        else
+        {
+            $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE);
+
+            $this->get('logger')->info(
+                LogConstants::PRATICA_CANCELLED,
+                [
+                    'pratica' => $pratica->getId(),
+                    'user' => $pratica->getUser()->getId(),
+                ]
+            );
+        }
     }
 
     /**

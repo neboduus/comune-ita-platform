@@ -3,11 +3,10 @@
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
-use AppBundle\Form\Base\NucleoFamiliareType;
 use AppBundle\Form\Base\DatiRichiedenteType;
-use AppBundle\Form\Base\SelezionaEnteType;
-use AppBundle\Form\Base\AllegatiType;
+use AppBundle\Form\Base\NucleoFamiliareType;
 use AppBundle\Form\Base\PraticaFlow;
+use AppBundle\Form\Base\SelezionaEnteType;
 
 class IscrizioneAsiloNidoFlow extends PraticaFlow
 {

@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
@@ -49,7 +48,7 @@ class PraticheController extends Controller
                 'status' => Pratica::STATUS_DRAFT,
             ],
             [
-                'creationTime' => 'ASC',
+                'creationTime' => 'DESC',
             ]
         );
 
@@ -64,7 +63,7 @@ class PraticheController extends Controller
                 ],
             ],
             [
-                'creationTime' => 'ASC',
+                'creationTime' => 'DESC',
             ]
         );
 
@@ -74,7 +73,7 @@ class PraticheController extends Controller
                 'status' => Pratica::STATUS_COMPLETE,
             ],
             [
-                'creationTime' => 'ASC',
+                'creationTime' => 'DESC',
             ]
         );
 
@@ -84,7 +83,7 @@ class PraticheController extends Controller
                 'status' => Pratica::STATUS_CANCELLED,
             ],
             [
-                'creationTime' => 'ASC',
+                'creationTime' => 'DESC',
             ]
         );
 

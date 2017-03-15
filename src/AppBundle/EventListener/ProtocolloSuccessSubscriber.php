@@ -3,10 +3,9 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Pratica;
-use AppBundle\Protocollo\ProtocolloEvents;
-use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
-use AppBundle\Event\ProtocollaAllegatoSuccessEvent;
+use AppBundle\Event\ProtocollaPraticaSuccessEvent;
+use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -38,6 +37,15 @@ class ProtocolloSuccessSubscriber implements EventSubscriberInterface
 
     public function onProtocollaAllegatiOperatore(ProtocollaAllegatiOperatoreSuccessEvent $event)
     {
-        $this->praticaStatusService->setNewStatus($event->getPratica(), Pratica::STATUS_COMPLETE);
+        $pratica = $event->getPratica();
+        if ($pratica->getEsito())
+        {
+            $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_COMPLETE);
+        }
+        else
+        {
+            $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_CANCELLED);
+        }
+
     }
 }

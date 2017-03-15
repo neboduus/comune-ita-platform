@@ -2,6 +2,7 @@
 
 namespace AppBundle\Protocollo;
 
+use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PiTreProtocolloParameters extends ParameterBag
@@ -14,8 +15,8 @@ class PiTreProtocolloParameters extends ParameterBag
     public static function getEnteParametersKeys()
     {
         return array(
-            'recipientID',
-            'recipientIDType',
+            'recipientIDArray',
+            'recipientTypeIDArray',
             'codeNodeClassification',
             'codeAdm'
         );
@@ -40,33 +41,63 @@ class PiTreProtocolloParameters extends ParameterBag
     /**
      * @return string
      */
-    public function getRecipientId()
+    public function getRecipientIDArray()
     {
-        return $this->get('recipientID');
+        return $this->get('recipientIDArray');
     }
 
     /**
-     * @param string $recipientId
+     * @param string $recipientIDArray
      */
-    public function setRecipientId($recipientId)
+    public function setRecipientIdArray( $recipientIDArray )
     {
-        $this->set('recipientID', $recipientId );
+        $this->set('recipientIDArray', $recipientIDArray );
+    }
+
+    /**
+     * @param string $recipientID
+     */
+    // FIXME: il wrapper da errore se passo un array, verificare con Francesco
+    public function addRecipientId( $recipientID )
+    {
+        $recipientIDArray = array();
+        if ($this->has('recipientIDArray'))
+        {
+            $recipientIDArray = $this->getRecipientIDArray();
+        }
+        $recipientIDArray []= $recipientID;
+        $this->set('recipientIDArray', $recipientIDArray );
     }
 
     /**
      * @return string
      */
-    public function getRecipientIdType()
+    public function getRecipientTypeIDArray()
     {
-        return $this->get('recipientIDType');
+        return $this->get('recipientTypeIDArray');
     }
 
     /**
      * @param string $recipientIdType
      */
-    public function setRecipientIdType($recipientIdType)
+    public function setRecipientTypeIDArray($recipientTypeIDArray)
     {
-        $this->set('recipientIDType', $recipientIdType);
+        $this->set('recipientTypeIDArray', $recipientTypeIDArray);
+    }
+
+    /**
+     * @param string $recipientID
+     */
+    // FIXME: il wrapper da errore se passo un array, verificare con Francesco
+    public function addRecipientTypeID( $recipientTypeID )
+    {
+        $recipientTypeIDArray = array();
+        if ($this->has('recipientTypeIDArray'))
+        {
+            $recipientTypeIDArray = $this->getrecipientTypeIDArray();
+        }
+        $recipientTypeIDArray []= $recipientTypeID;
+        $this->set('recipientTypeIDArray', $recipientTypeIDArray );
     }
 
     /**
@@ -113,6 +144,23 @@ class PiTreProtocolloParameters extends ParameterBag
     public function setAttachmentDescription($attachmentDescription)
     {
         $this->set('attachmentDescription', $attachmentDescription);
+    }
+
+    /**
+     * @param $idProject
+     * idProject valorizzato fa in modo che il documento venga inserito in quel preciso fascicolo
+     */
+    public function setIdProject($idProject)
+    {
+        $this->set('idProject', $idProject);
+    }
+
+    /**
+     * @param $createProject
+     */
+    public function setCreateProject($createProject)
+    {
+        $this->set('createProject', $createProject);
     }
 
 }

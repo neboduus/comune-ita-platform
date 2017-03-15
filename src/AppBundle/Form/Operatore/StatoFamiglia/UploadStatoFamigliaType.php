@@ -5,9 +5,9 @@ namespace AppBundle\Form\Operatore\StatoFamiglia;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CambioResidenza;
 use AppBundle\Form\Base\ChooseAllegatoType;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 
 class UploadStatoFamigliaType extends AbstractType
 {

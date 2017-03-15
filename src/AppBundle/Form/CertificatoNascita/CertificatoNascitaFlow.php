@@ -3,8 +3,6 @@
 namespace AppBundle\Form\CertificatoNascita;
 
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
-use AppBundle\Form\Base\AllegatiType;
-use AppBundle\Form\Base\DatiContoCorrenteType;
 use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;

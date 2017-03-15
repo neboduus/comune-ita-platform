@@ -3,6 +3,7 @@ namespace Tests\AppBundle\Controller;
 
 use AppBundle\Command\LoadServiziCommand;
 use AppBundle\DataFixtures\ORM\LoadData;
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;

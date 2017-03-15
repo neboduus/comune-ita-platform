@@ -4,10 +4,8 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Pratica;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
-use AppBundle\Logging\LogConstants;
 use AppBundle\Services\ProtocolloServiceInterface;
 use Psr\Log\LoggerInterface;
-use AppBundle\Protocollo\Exception\BaseException as ProtocolloException;
 
 class ProtocollaPraticaListener
 {
@@ -32,13 +30,11 @@ class ProtocollaPraticaListener
         $pratica = $event->getPratica();
         if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
             $this->protocollo->protocollaPratica($pratica);
-
             return;
         }
 
-        if ($event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
-            $this->protocollo->protocollaAllegatiOperatore($pratica);
-
+        if ($event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE || $event->getNewStateIdentifier() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
+            $this->protocollo->protocollaRisposta($pratica);
             return;
         }
 

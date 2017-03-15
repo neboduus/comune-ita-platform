@@ -7,7 +7,6 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Protocollo\Exception\AlreadySentException;
 use AppBundle\Protocollo\Exception\AlreadyUploadException;
 use AppBundle\Protocollo\Exception\ParentNotRegisteredException;
-use AppBundle\Protocollo\Exception\InvalidStatusException;
 
 class AbstractProtocolloService
 {
@@ -33,6 +32,34 @@ class AbstractProtocolloService
     {
         $alreadySent = false;
         foreach ($pratica->getNumeriProtocollo() as $item) {
+            $item = (array)$item;
+            if ($item['id'] == $allegato->getId()) {
+                $alreadySent = true;
+            }
+        }
+
+        if ($alreadySent) {
+            throw new AlreadyUploadException();
+        }
+    }
+
+    protected function validateRisposta(Pratica $pratica)
+    {
+        $risposta = $pratica->getRispostaOperatore();
+        if ($risposta->getNumeroProtocollo() !== null) {
+            throw new AlreadySentException();
+        }
+
+        foreach ($pratica->getAllegatiOperatore() as $allegato) {
+            $this->validateRispostaUploadFile($pratica, $allegato);
+        }
+    }
+
+    protected function validateRispostaUploadFile(Pratica $pratica, AllegatoInterface $allegato)
+    {
+        $risposta = $pratica->getRispostaOperatore();
+        $alreadySent = false;
+        foreach ($risposta->getNumeriProtocollo() as $item) {
             $item = (array)$item;
             if ($item['id'] == $allegato->getId()) {
                 $alreadySent = true;

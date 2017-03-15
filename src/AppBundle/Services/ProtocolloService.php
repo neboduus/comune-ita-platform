@@ -9,9 +9,9 @@ use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Protocollo\Exception\AlreadyUploadException;
 use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Protocollo\ProtocolloHandlerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProtocolloService extends AbstractProtocolloService implements ProtocolloServiceInterface
 {
@@ -70,15 +70,17 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         );
     }
 
-    public function protocollaAllegatiOperatore(Pratica $pratica)
+    public function protocollaRisposta(Pratica $pratica)
     {
-        $this->validatePraticaForUploadFile($pratica);
+        $this->validateRisposta($pratica);
+
+        $this->handler->sendRispostaToProtocollo($pratica);
 
         $allegati = $pratica->getAllegatiOperatore();
         foreach ($allegati as $allegato) {
             try {
                 $this->validateUploadFile($pratica, $allegato);
-                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+                $this->handler->sendAllegatoRispostaToProtocollo($pratica, $allegato);
             }catch(AlreadyUploadException $e){}
         }
 

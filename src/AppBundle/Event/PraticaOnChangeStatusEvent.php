@@ -2,8 +2,8 @@
 
 namespace AppBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use AppBundle\Entity\Pratica;
+use Symfony\Component\EventDispatcher\Event;
 
 class PraticaOnChangeStatusEvent extends Event
 {

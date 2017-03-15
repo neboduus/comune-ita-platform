@@ -3,7 +3,6 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\Servizio;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;

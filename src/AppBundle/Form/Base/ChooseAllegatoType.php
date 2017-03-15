@@ -156,7 +156,7 @@ class ChooseAllegatoType extends AbstractType
      *
      * @return Allegato[]
      */
-    private function getCurrentAllegati(Pratica $pratica, $fileDescription, $class)
+    protected function getCurrentAllegati(Pratica $pratica, $fileDescription, $class)
     {
         $user = $pratica->getUser();
         $queryBuilder = $this->entityManager->getRepository($class)->createQueryBuilder('a');
@@ -179,7 +179,7 @@ class ChooseAllegatoType extends AbstractType
      *
      * @return Allegato[]
      */
-    private function getAllAllegati(Pratica $pratica, $fileDescription, $class)
+    protected function getAllAllegati(Pratica $pratica, $fileDescription, $class)
     {
         $user = $pratica->getUser();
         $queryBuilder = $this->entityManager->getRepository($class)->createQueryBuilder('a');
@@ -196,7 +196,7 @@ class ChooseAllegatoType extends AbstractType
     /**
      * @param FormInterface $form
      */
-    private function addChoice(FormInterface $form)
+    protected function addChoice(FormInterface $form)
     {
         $options = $form->getConfig()->getOptions();
 
@@ -237,7 +237,7 @@ class ChooseAllegatoType extends AbstractType
      *
      * @return Allegato|ConstraintViolationListInterface
      */
-    private function handleUploadedFile(UploadedFile $fileUpload, Pratica $pratica, $fileDescription, $class)
+    protected function handleUploadedFile(UploadedFile $fileUpload, Pratica $pratica, $fileDescription, $class)
     {
         /** @var Allegato $newAllegato */
         $newAllegato = new $class();

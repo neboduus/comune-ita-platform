@@ -5,8 +5,8 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 use Craue\FormFlowBundle\Storage\DataManager as BaseDataManager;
 use Craue\FormFlowBundle\Storage\SerializableFile;
 use Craue\FormFlowBundle\Storage\StorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Manages data of flows and their steps.

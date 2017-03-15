@@ -3,7 +3,6 @@
 namespace AppBundle\Form\IscrizioneAsiloNido;
 
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
-use AppBundle\Entity\AsiloNido;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

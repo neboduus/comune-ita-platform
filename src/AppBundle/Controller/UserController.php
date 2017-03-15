@@ -3,8 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Logging\LogConstants;
 use Psr\Log\LoggerInterface;

@@ -2,14 +2,10 @@
 namespace AppBundle\Form\OccupazioneSuoloPubblico;
 
 use AppBundle\Entity\OccupazioneSuoloPubblico;
-use AppBundle\Form\Base\PraticaFlow;
-use AppBundle\Form\Base\SelezionaEnteType;
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
 use AppBundle\Form\Base\DatiRichiedenteType;
-use AppBundle\Form\OccupazioneSuoloPubblico\OrgRichiedenteType;
-use AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneType;
-use AppBundle\Form\OccupazioneSuoloPubblico\TipologiaOccupazioneType;
-use AppBundle\Form\OccupazioneSuoloPubblico\TempoOccupazioneType;
+use AppBundle\Form\Base\PraticaFlow;
+use AppBundle\Form\Base\SelezionaEnteType;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 /**

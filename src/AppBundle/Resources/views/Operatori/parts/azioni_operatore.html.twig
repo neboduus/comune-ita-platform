@@ -1,15 +1,9 @@
 <hr />
 <div class="row">
-    <div class="col-md-6">
-        <a href="{{ path('operatori_approva_pratica', {'pratica': pratica}) }}"
-           class="btn btn-success btn-block btn-lg">
-            {{ 'operatori.approva'|trans }}
-        </a>
-    </div>
-    {#<p><a href="#" class="btn btn-warning btn-block btn-lg">{{ 'operatori.richiedi_intergrazioni'|trans }}</a></p>#}
-    <div class="col-md-6">
-        <a href="{{ path('operatori_rifiuta_pratica', {'pratica': pratica}) }}" class="btn btn-danger btn-block btn-lg">
-            {{ 'operatori.rifiuta'|trans }}
+    <div class="col-md-12">
+        <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}"
+           class="btn btn-primary btn-block btn-lg">
+            {{ 'operatori.elabora'|trans }}
         </a>
     </div>
 </div>

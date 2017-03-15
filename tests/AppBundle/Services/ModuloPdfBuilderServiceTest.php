@@ -31,7 +31,7 @@ class ModuloPdfBuilderServiceTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testModuloPdfBuilderService()
+    public function testServiceCanCreateModuloForPratica()
     {
         $cpsUser = $this->createCPSUser();
         $pratica = $this->createPratica($cpsUser);
@@ -46,8 +46,27 @@ class ModuloPdfBuilderServiceTest extends AbstractAppTestCase
         $this->container->set('knp_snappy.pdf', $generator);
 
         $service = $this->container->get('ocsdc.modulo_pdf_builder');
-        $service->createForPratica($pratica, $cpsUser);
+        $service->createForPratica($pratica);
 
+    }
+
+    /**
+     * @test
+     */
+    public function testServiceCanCreateResponseForPratica()
+    {
+        $cpsUser = $this->createCPSUser();
+        $pratica = $this->createPratica($cpsUser);
+
+        $translator = $this->setupTranslatorMock();
+        $this->container->set('translator', $translator);
+
+        $generator = $this->setupGeneratorMock();
+        $this->container->set('knp_snappy.pdf', $generator);
+
+        $service = $this->container->get('ocsdc.modulo_pdf_builder');
+        $risposta = $service->createUnsignedResponseForPratica($pratica);
+        $this->assertNotNull($risposta);
     }
 
     protected function setupTranslatorMock()
@@ -56,8 +75,8 @@ class ModuloPdfBuilderServiceTest extends AbstractAppTestCase
                      ->disableOriginalConstructor()
                      ->getMock();
 
-        $mock->expects($this->once())
-             ->method('trans')->with('pratica.modulo.descrizione');
+        $mock->expects($this->atLeast(1))
+             ->method('trans');
 
         return $mock;
     }
@@ -81,7 +100,8 @@ class ModuloPdfBuilderServiceTest extends AbstractAppTestCase
                      ->getMock();
 
         $mock->expects($this->once())
-             ->method('getOutputFromHtml');
+             ->method('getOutputFromHtml')
+             ->willReturn("La marianna la va in campagna a fare i pdf");
 
         return $mock;
     }
