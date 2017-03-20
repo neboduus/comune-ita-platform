@@ -75,6 +75,12 @@ class Pratica
     private $servizio;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Erogatore")
+     * @ORM\JoinColumn(name="erogatore_id", referencedColumnName="id", nullable=true)
+     */
+    private $erogatore;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Ente")
      * @ORM\JoinColumn(name="ente_id", referencedColumnName="id", nullable=true)
      */
@@ -431,21 +437,21 @@ class Pratica
     }
 
     /**
-     * @return Ente
+     * @return Erogatore
      */
-    public function getEnte()
+    public function getErogatore()
     {
-        return $this->ente;
+        return $this->erogatore;
     }
 
     /**
-     * @param Ente $ente
+     * @param Erogatore $erogatore
      *
-     * @return static
+     * @return $this
      */
-    public function setEnte(Ente $ente)
+    public function setErogatore(Erogatore $erogatore)
     {
-        $this->ente = $ente;
+        $this->erogatore = $erogatore;
 
         return $this;
     }
@@ -1267,6 +1273,25 @@ class Pratica
     public function setInstanceId($instanceId)
     {
         $this->instanceId = $instanceId;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEnte()
+    {
+        return $this->ente;
+    }
+
+    /**
+     * @param mixed $ente
+     * @return $this
+     */
+    public function setEnte($ente)
+    {
+        $this->ente = $ente;
+
         return $this;
     }
 }

@@ -38,7 +38,8 @@ class ListeElettoraliTest extends AbstractAppTestCase
         system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
@@ -57,10 +58,11 @@ class ListeElettoraliTest extends AbstractAppTestCase
     {
         //create an ente
         $ente = $this->createEnti()[0];
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
         //create the autolettura service bound to that ente
         $fqcn = ListeElettorali ::class;
         $flow = 'ocsdc.form.flow.listeelettorali';
-        $servizio = $this->createServizioWithEnte($ente, 'Liste elettorali', $fqcn, $flow);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Liste elettorali', $fqcn, $flow);
 
         $user = $this->createCPSUser();
 
@@ -85,7 +87,7 @@ class ListeElettoraliTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        $this->selezioneComune($crawler, $nextButton, $ente, $form);
+        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
         $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
 

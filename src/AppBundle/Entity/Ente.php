@@ -73,10 +73,10 @@ class Ente
     private $siteUrl;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Servizio", mappedBy="enti")
-     * @var Collection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Erogatore", mappedBy="enti")
+     * @var Collection;
      */
-    private $servizi;
+    private $erogatori;
 
     /**
      * Ente constructor.
@@ -87,7 +87,7 @@ class Ente
         $this->asili = new ArrayCollection();
         $this->protocolloParameters = new ArrayCollection();
         $this->operatori = new ArrayCollection();
-        $this->servizi = new ArrayCollection();
+        $this->erogatori = new ArrayCollection();
     }
 
     /**
@@ -254,7 +254,7 @@ class Ente
         return $this;
     }
 
-    /*
+    /**
      * @return Collection
      */
     public function getOperatori(): Collection
@@ -265,8 +265,8 @@ class Ente
     /**
      * @return Collection
      */
-    public function getServizi(): Collection
+    public function getErogatori(): Collection
     {
-        return $this->servizi;
+        return $this->erogatori;
     }
 }

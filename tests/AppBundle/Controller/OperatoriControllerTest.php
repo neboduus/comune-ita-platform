@@ -50,7 +50,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $password = 'pa$$word';
         $username = 'username';
 
-        $user = $this->createOperatoreUser($username, $password);
+        $user = $this->createOperatoreUser($username, $password, $this->createEnti()[0]);
 
         $operatoriHome = $this->router->generate('operatori_index');
         $this->client->request('GET', $operatoriHome, array(), array(), array(
@@ -70,7 +70,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $password = 'pa$$word';
         $username = 'username';
 
-        $operatore = $this->createOperatoreUser($username, $password);
+        $operatore = $this->createOperatoreUser($username, $password, $this->createEnti()[0]);
         $altroOperatore = $this->createOperatoreUser($username.'2', $password);
         $user = $this->createCPSUser();
 
@@ -215,10 +215,13 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $this->createOperatoreUser($username, $password, $ente1);
         $user = $this->createCPSUser();
 
-        $praticaSubmitted = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
-        $praticaRegistered = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_REGISTERED);
-        $praticaPending = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_PENDING);
-        $praticaPendingMaAltroEnte = $this->setupPraticheForUserWithEnteAndStatus($user, $ente2, Pratica::STATUS_PENDING);
+        $erogatore1 = $this->createErogatoreWithEnti([$ente1]);
+        $erogatore2 = $this->createErogatoreWithEnti([$ente2]);
+
+        $praticaSubmitted = $this->setupPraticheForUserWithErogatoreAndStatus($user, $erogatore1, Pratica::STATUS_SUBMITTED);
+        $praticaRegistered = $this->setupPraticheForUserWithErogatoreAndStatus($user, $erogatore1, Pratica::STATUS_REGISTERED);
+        $praticaPending = $this->setupPraticheForUserWithErogatoreAndStatus($user, $erogatore1, Pratica::STATUS_PENDING);
+        $praticaPendingMaAltroEnte = $this->setupPraticheForUserWithErogatoreAndStatus($user, $erogatore2, Pratica::STATUS_PENDING);
 
         $operatoriHome = $this->router->generate('operatori_index');
         $crawler = $this->client->request('GET', $operatoriHome, array(), array(), array(
@@ -257,7 +260,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $password = 'pa$$word';
         $username = 'username';
 
-        $operatore = $this->createOperatoreUser($username, $password);
+        $operatore = $this->createOperatoreUser($username, $password, $this->createEnti()[0]);
         $altroOperatore = $this->createOperatoreUser($username.'2', $password);
         $user = $this->createCPSUser();
 
@@ -306,7 +309,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $password = 'pa$$word';
         $username = 'username';
 
-        $operatore = $this->createOperatoreUser($username, $password);
+        $operatore = $this->createOperatoreUser($username, $password, $this->createEnti()[0]);
         $altroOperatore = $this->createOperatoreUser($username.'2', $password);
         $user = $this->createCPSUser();
 
@@ -339,11 +342,12 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $enti = $this->createEnti();
         $ente1 = $enti[0];
+        $erogatore1 = $this->createErogatoreWithEnti([$ente1]);
 
         $operatore = $this->createOperatoreUser($username, $password, $ente1);
         $user = $this->createCPSUser();
 
-        $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+        $pratica = $this->setupPraticheForUserWithErogatoreAndStatus($user, $erogatore1, Pratica::STATUS_SUBMITTED);
         $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
 
         $operatoriHome = $this->router->generate('operatori_index');
@@ -371,10 +375,11 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $enti = $this->createEnti();
         $ente1 = $enti[0];
+        $erogatore1 = $this->createErogatoreWithEnti([$ente1]);
 
         $operatore = $this->createOperatoreUser($username, $password, $ente1);
         $user = $this->createCPSUser();
-        $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+        $pratica = $this->setupPraticheForUserWithErogatoreAndStatus($user, $erogatore1, Pratica::STATUS_SUBMITTED);
         $pratica->setNumeroProtocollo('test');
         $pratica->setNumeroFascicolo('test');
         $pratica->setStatus(Pratica::STATUS_REGISTERED);
@@ -422,10 +427,11 @@ class OperatoriControllerTest extends AbstractAppTestCase
 
         $enti = $this->createEnti();
         $ente1 = $enti[0];
+        $erogatore1 = $this->createErogatoreWithEnti([$ente1]);
 
         $operatore = $this->createOperatoreUser($username, $password, $ente1);
         $user = $this->createCPSUser();
-        $pratica = $this->setupPraticheForUserWithEnteAndStatus($user, $ente1, Pratica::STATUS_SUBMITTED);
+        $pratica = $this->setupPraticheForUserWithErogatoreAndStatus($user, $erogatore1, Pratica::STATUS_SUBMITTED);
 
         $autoassignPraticaUrl = $this->router->generate('operatori_autoassing_pratica', ['pratica' => $pratica->getId()]);
 
@@ -723,7 +729,7 @@ class OperatoriControllerTest extends AbstractAppTestCase
         $password = 'pa$$word';
         $username = 'username';
 
-        $operatore = $this->createOperatoreUser($username, $password);
+        $operatore = $this->createOperatoreUser($username, $password, $this->createEnti()[0]);
 
         $operatoriHome = $this->router->generate('operatori_index');
         $crawler = $this->client->request('GET', $operatoriHome, array(), array(), array(

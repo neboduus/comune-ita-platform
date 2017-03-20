@@ -25,7 +25,8 @@ class MessagesControllerTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);

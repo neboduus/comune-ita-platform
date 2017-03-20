@@ -48,7 +48,8 @@ class CambioResidenzaTest extends AbstractAppTestCase
         system('rm -rf ' . __DIR__ . "/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
@@ -93,9 +94,10 @@ class CambioResidenzaTest extends AbstractAppTestCase
 
         // ente
         $ente = $this->createEnti()[0];
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
 
         // servizio
-        $servizio = $this->createServizioWithEnte($ente, 'Cambio residenza', $fqcn, $flow);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Cambio residenza', $fqcn, $flow);
 
         // utente
         $this->currentUser = $this->createCPSUser();
@@ -126,7 +128,7 @@ class CambioResidenzaTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        $this->selezioneComune($crawler, $nextButton, $ente, $form);
+        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
 
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
 

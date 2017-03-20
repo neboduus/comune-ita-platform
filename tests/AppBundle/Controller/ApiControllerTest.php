@@ -7,6 +7,7 @@ use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\AppBundle\Base\AbstractAppTestCase;
@@ -23,10 +24,12 @@ class ApiControllerTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
+        $this->cleanDb(User::class);
         $this->cleanDb(Ente::class);
         $this->cleanDb(Servizio::class);
     }
@@ -53,8 +56,8 @@ class ApiControllerTest extends AbstractAppTestCase
      */
     public function testGetServizi()
     {
-        $servizio1 = $this->createServizioWithAssociatedEnti([]);
-        $servizio2 = $this->createServizioWithAssociatedEnti([]);
+        $servizio1 = $this->createServizioWithAssociatedErogatori([]);
+        $servizio2 = $this->createServizioWithAssociatedErogatori([]);
 
         $expectedResponse = [
             (object) [
@@ -228,7 +231,8 @@ class ApiControllerTest extends AbstractAppTestCase
     public function testSchedaInformativaAPIIsProtected()
     {
         $enti = $this->createEnti();
-        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $erogatori = $this->createErogatoreWithEnti($enti);
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatori]);
         $client = static::createClient();
         $client->restart();
         $client->request(
@@ -245,7 +249,8 @@ class ApiControllerTest extends AbstractAppTestCase
     public function testSchedaInformativaAPIIsProtectedWithRoleChecking()
     {
         $enti = $this->createEnti();
-        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $erogatori = $this->createErogatoreWithEnti($enti);
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatori]);
         $client = static::createClient();
         $client->restart();
         $client->request(
@@ -269,7 +274,8 @@ class ApiControllerTest extends AbstractAppTestCase
     public function testSchedaInformativaAPIReturnsErrorIfMissingMandatoryQueryStringParameter()
     {
         $enti = $this->createEnti();
-        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $erogatori = $this->createErogatoreWithEnti($enti);
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatori]);
         $client = static::createClient();
         $client->restart();
         $url = $this->formatSchedaInformativaUpdateRoute($servizio, $enti[0]);
@@ -295,7 +301,8 @@ class ApiControllerTest extends AbstractAppTestCase
         $remoteUrl = 'http://www.comune.trento.it/api/opendata/v2/content/read/629089';
         $enti = $this->createEnti();
         $ente = $enti[0];
-        $servizio = $this->createServizioWithAssociatedEnti($enti);
+        $erogatori = $this->createErogatoreWithEnti($enti);
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatori]);
         $client = static::createClient();
         $client->restart();
         $url = $this->formatSchedaInformativaUpdateRoute($servizio, $ente, $remoteUrl);

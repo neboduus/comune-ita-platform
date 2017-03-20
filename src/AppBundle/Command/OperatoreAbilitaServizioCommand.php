@@ -39,8 +39,12 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
 
         $serviziAbilitati = $user->getServiziAbilitati();
 
-        /** @var Servizio[] $servizi */
-        $servizi = $user->getEnte()->getServizi()->toArray();
+        $erogatori = $user->getEnte()->getErogatori()->toArray();
+        $servizi = [];
+        foreach($erogatori as $erogatore) {
+            $serviziErogati = $erogatore->getServizi()->toArray();
+            $servizi = array_merge($servizi, $serviziErogati);
+        }
 
         $serviziNames = ['*' => '(tutti)'];
         foreach ($servizi as $servizio) {

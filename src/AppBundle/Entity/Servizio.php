@@ -43,15 +43,15 @@ class Servizio
     private $slug;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Ente", cascade={"remove"}, inversedBy="servizi")
+     * @ORM\ManyToMany(targetEntity="Erogatore", inversedBy="servizi")
      * @ORM\JoinTable(
-     *     name="servizio_enti",
+     *     name="servizio_erogatori",
      *     joinColumns={@ORM\JoinColumn(name="servizio_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="ente_id", referencedColumnName="id")}
+     *     inverseJoinColumns={@ORM\JoinColumn(name="erogatore_id", referencedColumnName="id")}
      * )
      * @var ArrayCollection
      */
-    private $enti;
+    private $erogatori;
 
     /**
      * @ORM\ManyToOne(targetEntity="Categoria")
@@ -110,6 +110,7 @@ class Servizio
         }
         $this->schedeInformative = new ArrayCollection();
         $this->enti = new ArrayCollection();
+        $this->erogatori = new ArrayCollection();
         $this->status = self::STATUS_AVAILABLE;
     }
 
@@ -166,19 +167,33 @@ class Servizio
      */
     public function getEnti()
     {
-        return $this->enti;
+        $enti = [];
+        foreach ($this->erogatori as $erogatore) {
+            foreach ($erogatore->getEnti() as $ente) {
+                $enti[] = $ente;
+            }
+        }
+        return $enti;
     }
 
     /**
-     * @param mixed $enti
+     * @param mixed $erogatori
      *
      * @return Servizio
      */
-    public function setEnti($enti)
+    public function setErogatori($erogatori)
     {
-        $this->enti = $enti;
+        $this->erogatori = $erogatori;
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getErogatori()
+    {
+        return $this->erogatori;
     }
 
     /**
@@ -364,13 +379,13 @@ class Servizio
     }
 
     /**
-     * @param Ente $ente
-     * @return Servizio
+     * @param Erogatore $erogatore
+     * @return $this
      */
-    public function activateForEnte(Ente $ente)
+    public function activateForErogatore(Erogatore $erogatore)
     {
-        if (!$this->enti->contains($ente)) {
-            $this->enti->add($ente);
+        if (!$this->erogatori->contains($erogatore)) {
+            $this->erogatori->add($erogatore);
         }
 
         return $this;

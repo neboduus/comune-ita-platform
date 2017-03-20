@@ -43,7 +43,8 @@ class PraticaControllerTest extends AbstractAppTestCase
         system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
-        $this->em->getConnection()->executeQuery('DELETE FROM servizio_enti')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
+        $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
@@ -290,7 +291,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Terzo servizio');
+        $servizio = $this->createServizioWithAssociatedErogatori([], 'Terzo servizio');
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
             'pratiche_new',
@@ -321,7 +322,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Terzo servizio');
+        $servizio = $this->createServizioWithAssociatedErogatori([], 'Terzo servizio');
 
         $ente = $this->createEnti()[0];
         $enteSlug = $ente->getSlug();
@@ -372,7 +373,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Terzo servizio');
+        $servizio = $this->createServizioWithAssociatedErogatori([], 'Terzo servizio');
 
         //Lo slug viene passato da gedmo sluggable
         $enteSlug = 'roncella-ionica';
@@ -420,7 +421,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         });
         $user = $this->createCPSUser();
 
-        $servizio = $this->createServizioWithAssociatedEnti([], 'Altro servizio');
+        $servizio = $this->createServizioWithAssociatedErogatori([], 'Altro servizio');
 
         $this->client->followRedirects();
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
@@ -439,10 +440,11 @@ class PraticaControllerTest extends AbstractAppTestCase
     public function testInputFieldsForMyCPSDataAreDisabled()
     {
         $ente = $this->createEnteWithAsili();
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
 
         $fqcn = IscrizioneAsiloNido::class;
         $flow = 'ocsdc.form.flow.asilonido';
-        $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Iscrizione Asilo Nido', $fqcn, $flow);
 
         $user = $this->createCPSUser();
 
@@ -462,7 +464,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
         // Selezione del comune
-        $this->selezioneComune($crawler, $nextButton, $ente, $form);
+        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
 
         // Accettazioni istruzioni
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
@@ -513,12 +515,13 @@ class PraticaControllerTest extends AbstractAppTestCase
     public function testIgetRedirectedIfITryToCreateANewPraticaOnAServiceWithPraticheInDraft()
     {
         $ente = $this->createEnteWithAsili();
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
         $fqcn = IscrizioneAsiloNido::class;
         $flow = 'ocsdc.form.flow.asilonido';
-        $servizio = $this->createServizioWithEnte($ente, 'Iscrizione Asilo Nido', $fqcn, $flow);
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Iscrizione Asilo Nido', $fqcn, $flow);
         $user = $this->createCPSUser();
 
-        $this->createPratica($user, null, Pratica::STATUS_DRAFT, $ente, $servizio);
+        $this->createPratica($user, null, Pratica::STATUS_DRAFT, $erogatore, $servizio);
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
             'pratiche_new',
@@ -558,10 +561,13 @@ class PraticaControllerTest extends AbstractAppTestCase
         $user = $this->createCPSUser();
 
         $ente = $this->createEnteWithAsili('L781');
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
         $ente1 = $this->createEnteWithAsili('L782');
+        $erogatore1 = $this->createErogatoreWithEnti([$ente1]);
         $ente2 = $this->createEnteWithAsili('L783');
+        $erogatore2 = $this->createErogatoreWithEnti([$ente2]);
 
-        $servizio = $this->createServizioWithAssociatedEnti([$ente, $ente1, $ente2], 'Altro servizio');
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatore, $erogatore1, $erogatore2], 'Altro servizio');
 
         $this->client->followRedirects();
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
