@@ -25,6 +25,11 @@ abstract class PraticaFlow extends FormFlow
      */
     private $translator;
 
+    /**
+     * @var bool
+     */
+    protected $revalidatePreviousSteps = false;
+
     protected $handleFileUploads = false;
 
     /**
