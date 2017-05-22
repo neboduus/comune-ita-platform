@@ -4,14 +4,10 @@
 namespace AppBundle\Controller;
 
 
-use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\User;
-use AppBundle\Form\Base\MessageType;
-use Psr\Http\Message\ResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

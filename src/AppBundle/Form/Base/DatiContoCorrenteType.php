@@ -1,11 +1,10 @@
 <?php
 namespace AppBundle\Form\Base;
 
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 
 /**
  * Class DatiContoCorrenteType

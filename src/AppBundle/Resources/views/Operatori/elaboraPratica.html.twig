@@ -21,7 +21,7 @@
             <div class="row step-{{ flow.getCurrentStepNumber() }}">
 
                 <h3>{{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }} - {{ flow.currentStepLabel()|trans }}</h3>
-                {{ form_start(form, {'action': path('operatori_approva_pratica', {'pratica': pratica.id }) } ) }}
+                {{ form_start(form, {'action': path('operatori_elabora_pratica', {'pratica': pratica.id }) } ) }}
                 {{ form_errors(form) }}
 
                 <div>

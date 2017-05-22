@@ -8,8 +8,8 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Protocollo\Exception\AlreadyScheduledException;
 use AppBundle\Protocollo\Exception\AlreadySentException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
-use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 
 class DelayedProtocolloService extends AbstractProtocolloService implements ProtocolloServiceInterface, ScheduledActionHandlerInterface
 {
@@ -70,7 +70,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
         $this->entityManager->flush();
     }
 
-    public function protocollaAllegatiOperatore(Pratica $pratica)
+    public function protocollaRisposta(Pratica $pratica)
     {
         $this->validatePraticaForUploadFile($pratica);
         $params = serialize([
@@ -134,7 +134,6 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
     public function executeScheduledAction(ScheduledAction $action)
     {
         $params = unserialize($action->getParams());
-
         try {
             if ($action->getType() == self::SCHEDULED_ITEM_TYPE_SEND) {
 
@@ -149,7 +148,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
                 $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
 
                 if ($pratica instanceof Pratica) {
-                    $this->protocolloService->protocollaAllegatiOperatore($pratica);
+                    $this->protocolloService->protocollaRisposta($pratica);
                 }
 
             } elseif ($action->getType() == self::SCHEDULED_ITEM_TYPE_UPLOAD) {
@@ -166,4 +165,5 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
             $this->logger->warning($e->getMessage());
         }
     }
+
 }

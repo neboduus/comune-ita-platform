@@ -7,10 +7,10 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Protocollo\PiTreProtocolloParameters;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Cache\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 
 class ProtocolloConfigureCommand extends ContainerAwareCommand
@@ -94,8 +94,8 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
         $this->io->title("Inserisci parametri per {$servizio->getName()} di {$ente->getName()}");
         $data = [];
         $keys = [
-            'recipientID' => 554,
-            'recipientIDType' => 'R',
+            'recipientIDArray' => 554,
+            'recipientTypeIDArray' => 'R',
             'codeNodeClassification' => 1,
             'codeAdm' => 'CCT_CAL'
         ];

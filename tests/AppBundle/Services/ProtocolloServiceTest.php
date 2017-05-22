@@ -17,8 +17,8 @@ class ProtocolloServiceTest extends AbstractAppTestCase
     {
         parent::setUp();
         $this->cleanDb(ScheduledAction::class);
-        $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
+        $this->cleanDb(Allegato::class);
         $this->cleanDb(User::class);
     }
 
@@ -74,12 +74,16 @@ class ProtocolloServiceTest extends AbstractAppTestCase
 
         $protocollo->protocollaPratica($pratica);
 
+
         $allegati = $this->setupNeededAllegatiOperatoreForAllInvolvedUsers(1, $user);
         foreach ($allegati as $allegato) {
             $pratica->addAllegatoOperatore($allegato);
         }
 
-        $protocollo->protocollaAllegatiOperatore($pratica);
+        //Fixme: aggiungere risposta operatore
+        $risposta = $this->setupRispostaOperatoreForAllInvolvedUsers($user);
+        $pratica->addRispostaOperatore($risposta);
+        $protocollo->protocollaRisposta($pratica);
     }
 
     /**

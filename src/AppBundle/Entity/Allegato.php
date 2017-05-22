@@ -9,7 +9,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -19,7 +18,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Table(name="allegato")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"default" = "Allegato", "modulo_compilato" = "ModuloCompilato", "allegato_operatore" = "AllegatoOperatore"})
+ * @ORM\DiscriminatorMap({"default" = "Allegato", "modulo_compilato" = "ModuloCompilato", "allegato_operatore" = "AllegatoOperatore", "risposta_operatore" = "RispostaOperatore"})
  * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable()
  * @SDCAssert\ValidMimeType
@@ -177,6 +176,24 @@ class Allegato implements AllegatoInterface
     {
         $this->description = $description;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNumeroProtocollo()
+    {
+        return $this->numeroProtocollo;
+    }
+
+    /**
+     * @param string $numeroProtocollo
+     * @return AllegatoInterface
+     */
+    public function setNumeroProtocollo(string $numeroProtocollo)
+    {
+        $this->numeroProtocollo = $numeroProtocollo;
         return $this;
     }
 

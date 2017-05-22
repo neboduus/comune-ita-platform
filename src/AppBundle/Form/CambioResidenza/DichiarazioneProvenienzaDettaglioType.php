@@ -3,11 +3,11 @@
 namespace AppBundle\Form\CambioResidenza;
 
 use AppBundle\Entity\CambioResidenza;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 
 
 class DichiarazioneProvenienzaDettaglioType extends AbstractType

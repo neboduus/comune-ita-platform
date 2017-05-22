@@ -1,13 +1,10 @@
 <?php
 namespace AppBundle\Form\AllacciamentoAcquedotto;
 
-use AppBundle\Entity\AutoletturaAcqua;
-use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
-use AppBundle\Form\Base\SelezionaEnteType;
 use AppBundle\Form\Base\DatiRichiedenteType;
-use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\Pratica;
+use AppBundle\Form\Base\PraticaFlow;
+use AppBundle\Form\Base\SelezionaEnteType;
 
 class AllacciamentoAcquedottoFlow extends PraticaFlow
 {

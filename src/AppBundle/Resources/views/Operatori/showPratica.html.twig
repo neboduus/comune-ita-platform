@@ -14,7 +14,7 @@
 
         </div>
         <div class="col-sm-4 col-sm-offset-1 sidebar">
-            {% if pratica.statusName != 'STATUS_COMPLETE' and pratica.statusName != 'STATUS_CANCELLED' and pratica.statusName != 'STATUS_COMPLETE_WAITALLEGATIOPERATORE' %}
+            {% if pratica.statusName != 'STATUS_COMPLETE' and pratica.statusName != 'STATUS_CANCELLED' and pratica.statusName != 'STATUS_COMPLETE_WAITALLEGATIOPERATORE' and pratica.statusName != 'STATUS_CANCELLED_WAITALLEGATIOPERATORE' %}
 
                 {{ include('AppBundle:Operatori/parts:azioni_operatore.html.twig', {'pratica':pratica}) }}
             {% endif %}

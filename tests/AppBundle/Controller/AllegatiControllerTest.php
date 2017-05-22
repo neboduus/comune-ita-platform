@@ -115,6 +115,93 @@ class AllegatiControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
+    public function testOperatoreCanDownloadUnsignedPraticaResponse()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $user = $this->createCPSUser();
+
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_COMPLETE);
+        $pratica->setEsito(Pratica::ACCEPTED);
+        $pratica->setMotivazioneEsito("Hans, Bring the flammenwerfer!");
+        $this->em->persist($pratica);
+        $this->em->flush();
+        $praticaResponseUrl = $this->router->generate('allegati_download_risposta_non_firmata', ['pratica' => $pratica->getId()]);
+
+        $this->client->request('GET', $praticaResponseUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals('application/octet-stream', $this->client->getResponse()->headers->get('content-type'));
+        $this->assertRegExp('/attachment;.*pdf/', $this->client->getResponse()->headers->get('content-disposition'));
+    }
+
+    /**
+     * @test
+     */
+    public function testOperatoreCannotDownloadUnsignedPraticaResponseIfPraticaHasNoEsito()
+    {
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $operatore = $this->createOperatoreUser($username, $password);
+        $user = $this->createCPSUser();
+
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_COMPLETE);
+        $praticaResponseUrl = $this->router->generate('allegati_download_risposta_non_firmata', ['pratica' => $pratica->getId()]);
+
+        $this->client->request('GET', $praticaResponseUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testICannotDownloadUnsignedResponseAsCPSUser(){
+        $myUser = $this->createCPSUser();
+
+        $praticaResponseUrl = $this->router->generate('allegati_download_risposta_non_firmata', ['pratica' => 'abcdefg-0123-gfedcba']);
+
+        $this->clientRequestAsCPSUser($myUser, 'GET', $praticaResponseUrl);
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
+        $this->assertRegExp('/operatori\/login/', $response->headers->get('location'));
+
+    }
+    public function testICannotDownloadUnsignedResponseAsOperatoreIfIAmNotOwningThePratica(){
+        $password = 'pa$$word';
+        $username = 'username';
+
+        $this->createOperatoreUser($username, $password);
+        $altroOperatore = $this->createOperatoreUser($username.'2', $password);
+        $user = $this->createCPSUser();
+
+        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $altroOperatore, Pratica::STATUS_COMPLETE);
+        $praticaResponseUrl = $this->router->generate('allegati_download_risposta_non_firmata', ['pratica' => $pratica->getId()]);
+
+        $this->client->request('GET', $praticaResponseUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+    }
+    public function testICannotDownloadUnsignedResponseAsAnonymousUser() {
+        $praticaResponseUrl = $this->router->generate('allegati_download_risposta_non_firmata', ['pratica' => 'abcdefg-0123-gfedcba']);
+        $this->client->request('GET', $praticaResponseUrl);
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_FOUND, $response->getStatusCode());
+        $this->assertRegExp('/operatori\/login/', $response->headers->get('location'));
+    }
+
+    /**
+     * @test
+     */
     public function testAttachmentCanBeRetrievedIfUserIsOperatoreOfThePratica()
     {
         $fakeFileName = 'lenovo-yoga-xp1.pdf';

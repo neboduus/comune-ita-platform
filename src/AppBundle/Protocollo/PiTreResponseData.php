@@ -34,6 +34,11 @@ class PiTreResponseData
         return $this->data['n_prot'] ?? null;
     }
 
+    public function getIdProj()
+    {
+        return $this->data['id_proj'] ?? null;
+    }
+
     public function __toString()
     {
         return json_encode($this->rawData);

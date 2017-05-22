@@ -5,10 +5,8 @@ namespace AppBundle\Form\Operatore\Base;
 use AppBundle\Entity\Pratica;
 use AppBundle\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlow;
-use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 abstract class PraticaOperatoreFlow extends FormFlow
@@ -62,6 +60,4 @@ abstract class PraticaOperatoreFlow extends FormFlow
     {
         return true;
     }
-
-
 }

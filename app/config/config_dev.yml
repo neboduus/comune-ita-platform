@@ -32,3 +32,7 @@ monolog:
 
 swiftmailer:
     delivery_address: sdc_dev@opencontent.it
+
+services:
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
+    #ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"

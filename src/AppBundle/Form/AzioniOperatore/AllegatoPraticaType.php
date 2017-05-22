@@ -3,11 +3,7 @@ namespace AppBundle\Form\AzioniOperatore;
 
 use AppBundle\Entity\AllegatoOperatore;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Vich\UploaderBundle\Form\Type\VichFileType;
-use Vich\UploaderBundle\VichUploaderBundle;
 
 /**
  * Class AllegatoType

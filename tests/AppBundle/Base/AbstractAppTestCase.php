@@ -11,6 +11,7 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\TerminiUtilizzo;
@@ -798,6 +799,24 @@ abstract class AbstractAppTestCase extends WebTestCase
         $this->em->flush();
 
         return $allegati;
+    }
+
+    /**
+     * @param CPSUser $user
+     *
+     * @return RispostaOperatore[]
+     */
+    protected function setupRispostaOperatoreForAllInvolvedUsers(CPSUser $user)
+    {
+        $risposta = new RispostaOperatore();
+        $risposta->setOwner($user);
+        $risposta->setDescription('Risposta operatore p7m');
+        $risposta->setFilename('risposta.pdf.p7m');
+        $risposta->setOriginalFilename('risposta.pdf.p7m');
+        $risposta->setFile( new File(__DIR__.'/risposta.pdf.p7m'));
+        $this->em->persist($risposta);
+        $this->em->flush();
+        return $risposta;
     }
 
     protected static function fillFormInputWithDummyText(Crawler $node, $i, &$fillData, $dummyText = 'test')

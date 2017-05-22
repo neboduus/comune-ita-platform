@@ -57,9 +57,9 @@ class TestiAccompagnatoriProcedura
      *
      * @return TestiAccompagnatoriProcedura
      */
-    public function setDescriptionText($descriptionText, $translate = false)
+    public function setDescriptionText($descriptionText, $translate = false, $params = [])
     {
-        $this->descriptionText = $translate ? $this->translator->trans($descriptionText) : $descriptionText;
+        $this->descriptionText = $translate ? $this->translator->trans($descriptionText, $params) : $descriptionText;
 
         return $this;
     }

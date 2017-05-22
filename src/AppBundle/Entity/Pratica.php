@@ -36,7 +36,11 @@ class Pratica
     const STATUS_PENDING = 4;
     const STATUS_COMPLETE_WAITALLEGATIOPERATORE = 5;
     const STATUS_COMPLETE = 10;
+    const STATUS_CANCELLED_WAITALLEGATIOPERATORE = 90;
     const STATUS_CANCELLED = 100;
+
+    const ACCEPTED = true;
+    const REJECTED = false;
 
     const TYPE_DEFAULT = "default";
     const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
@@ -114,7 +118,15 @@ class Pratica
     private $allegatiOperatore;
 
     /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\RispostaOperatore", orphanRemoval=false)
+     * @ORM\JoinColumn(nullable=true)
+     * @var RispostaOperatore
+     */
+    private $rispostaOperatore;
+
+    /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=true)
      * @var ArrayCollection
      */
     private $nucleoFamiliare;
@@ -283,6 +295,18 @@ class Pratica
      * @ORM\Column(type="string",nullable=true)
      */
     private $instanceId;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $esito;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $motivazioneEsito;
 
     /**
      * Pratica constructor.
@@ -572,8 +596,6 @@ class Pratica
         return $this;
     }
 
-
-
     /**
      * @param array $numeroDiProtocollo
      *
@@ -628,9 +650,9 @@ class Pratica
     }
 
     /**
- * @param ModuloCompilato $modulo
- * @return $this
- */
+     * @param ModuloCompilato $modulo
+     * @return $this
+     */
     public function removeModuloCompilato(ModuloCompilato $modulo)
     {
         if ($this->moduliCompilati->contains($modulo)) {
@@ -1273,6 +1295,59 @@ class Pratica
     public function setInstanceId($instanceId)
     {
         $this->instanceId = $instanceId;
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getEsito()
+    {
+        return $this->esito;
+    }
+
+    /**
+     * @param bool $esito
+     */
+    public function setEsito(bool $esito)
+    {
+        $this->esito = $esito;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMotivazioneEsito()
+    {
+        return $this->motivazioneEsito;
+    }
+
+    /**
+     * @param string $motivazioneEsito
+     */
+    public function setMotivazioneEsito(string $motivazioneEsito)
+    {
+        $this->motivazioneEsito = $motivazioneEsito;
+    }
+
+
+
+    /**
+     * @return RispostaOperatore
+     */
+    public function getRispostaOperatore()
+    {
+        return $this->rispostaOperatore;
+    }
+
+    /**
+     * @param RispostaOperatore $rispostaOperatore
+     * @return $this
+     */
+    public function addRispostaOperatore($rispostaOperatore)
+    {
+        $this->rispostaOperatore = $rispostaOperatore;
+
         return $this;
     }
 

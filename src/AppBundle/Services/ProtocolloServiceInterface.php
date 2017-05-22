@@ -9,7 +9,7 @@ interface ProtocolloServiceInterface
 {
     public function protocollaPratica(Pratica $pratica);
 
-    public function protocollaAllegatiOperatore(Pratica $pratica);
+    public function protocollaRisposta(Pratica $pratica);
 
     public function protocollaAllegato(Pratica $pratica, AllegatoInterface $allegato);
 

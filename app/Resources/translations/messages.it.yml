@@ -130,12 +130,14 @@ pratica:
     stato_2: 'Inviata'
     stato_3: 'Protocollata'
     stato_4: 'Presa in carico'
-    stato_5: 'Elaborata (in attesa di protocollazione nuovi file allegati)'
+    stato_5: 'Elaborata (in attesa di protocollazione del documento di esito)'
     stato_10: 'Iter completato'
     stato_100: 'Cancellata'
+    stato_90: 'Rifiutata (in attesa di protocollazione del documento di esito)'
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'  
-  
+    descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
+
 
 iscrizione_asilo_nido:
   dettaglio:
@@ -250,7 +252,8 @@ STATUS_SUBMITTED: 'Inviata'
 STATUS_COMPLETE: 'Accettata'
 STATUS_REGISTERED: 'Protocollata'
 STATUS_PENDING: 'In carico'
-STATUS_COMPLETE_WAITALLEGATIOPERATORE: 'Accettata (in attesa di protocollazione nuovi file allegati)'
+STATUS_COMPLETE_WAITALLEGATIOPERATORE: 'Accettata (in attesa di protocollazione del documento di esito)'
+STATUS_CANCELLED_WAITALLEGATIOPERATORE: 'Rifiutata (in attesa di protocollazione del documento di esito)'
 
 user:
   dashboard:
@@ -292,6 +295,7 @@ user:
     salva_informazioni_profilo: 'Salva informazioni profilo'
 
 operatori:
+  allega_risposta_firmata: 'Allega la risposta firmata'
   vai_al_dettaglio: 'Vedi dettaglio'
   prendi_in_carico_pratica: 'Prendi in carico'
   sicuro_di_prendere_in_carico_la_pratica: 'Confermi la presa in carico della pratica %name%?'
@@ -304,6 +308,7 @@ operatori:
   allega: 'Allega'
   approva: 'Approva'
   rifiuta: 'Rifiuta'
+  elabora: 'Elabora'
   richiedi_intergrazioni: 'Richiedi intergrazioni'
   allegati: 'Allegati'
   commenti_e_modifiche: 'Commenti'
@@ -314,7 +319,16 @@ operatori:
   scarica_modulo_compilato: 'Scarica il modulo compilato'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
+    approva_o_rigetta:
+      guida_alla_compilazione: 'Esprimi un esito sulla pratica ed eventualmente una motivazione'
+      esito_label: 'Approva o rifiuta la pratica'
+      motivazione:esito_label: "Esprimi una motivazione sull'esito"
+    upload_risposta_firmata:
+      testo_descrittivo: 'Scarica la risposta dal seguente <strong><a href="%link_download_risposta%">link</a></strong> e ricaricala firmata digitalmente <hr/>'
+      guida_alla_compilazione: 'Scarica la risposta da firmare digitalmente'
+      allega_risposta_firmata: 'Allega la risposta firmata digitalmente'
     allega_documentazione_richiesta: 'Allega documentazione richiesta'
+    concludi: 'Concludi elaborazione'
   profile:
     title: 'Profilo operatore'
     nome: 'Nome'

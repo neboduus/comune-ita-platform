@@ -6,6 +6,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Pratica;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Logging\LogConstants;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
@@ -126,6 +128,24 @@ class AllegatoController extends Controller
         }
         $this->logUnauthorizedAccessAttempt($allegato, $logger);
         throw new NotFoundHttpException(); //security by obscurity
+    }
+
+    /**
+     * @Route("/operatori/{pratica}/risposta_non_firmata",name="allegati_download_risposta_non_firmata")
+     * @param Pratica $pratica
+     */
+    public function scaricaRispostaNonFirmata(Pratica $pratica){
+
+        if( $pratica->getOperatore() !== $this->getUser() ){
+            throw new AccessDeniedHttpException();
+        }
+
+        if( $pratica->getEsito() === null) {
+            throw new NotFoundHttpException();
+        }
+
+        $unsignedResponse = $this->get('ocsdc.modulo_pdf_builder')->createUnsignedResponseForPratica($pratica);
+        return $this->createBinaryResponseForAllegato($unsignedResponse);
     }
 
 
