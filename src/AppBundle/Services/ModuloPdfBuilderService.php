@@ -207,15 +207,21 @@ class ModuloPdfBuilderService
             'user' => $pratica->getUser(),
         ]);
 
-        $header = $this->templating->render('@App/Pratiche/pdf/parts/header.html.twig');
-        $footer = $this->templating->render('@App/Pratiche/pdf/parts/footer.html.twig');
+        $header = $this->templating->render('@App/Pratiche/pdf/parts/header.html.twig', [
+            'pratica' => $pratica,
+            'user' => $pratica->getUser(),
+        ]);
+        $footer = $this->templating->render('@App/Pratiche/pdf/parts/footer.html.twig', [
+            'pratica' => $pratica,
+            'user' => $pratica->getUser(),
+        ]);
 
         $content = $this->generator->getOutputFromHtml($html, array(
             'header-html' => $header,
             'footer-html' => $footer,
-            'margin-top' => 40,
+            'margin-top' => 20,
             'margin-right' => 0,
-            'margin-bottom' => 15,
+            'margin-bottom' => 20,
             'header-spacing' => 6,
             'encoding' => 'UTF-8',
             'margin-left' => 0,

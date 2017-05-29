@@ -84,8 +84,11 @@
     <table align='center' border='0' cellpadding='0' cellspacing='0'>
         <tr>
             <td style="background-color: #F0F0F0 !important; color: #30373d; text-align: left; border-top: 5px solid #e74e26; border-bottom: 1px solid #ccc; padding: 20px;">
-                <img src="{{ absolute_url(asset('bundles/app/images/logo-stanza.png')) }}" alt="Home" alt="Home" title="Home" />
-                <h1 style="display: inline-block; vertical-align: top; margin-left: 10px">{{ 'title'|trans }}</h1>
+                {% if pratica.ente != null %}
+                    <h2>{{ pratica.ente.nameForEmail }}</h2>
+                {% else %}
+                    <h2>{{ 'title'|trans }}</h2>
+                {% endif %}
             </td>
         </tr>
     </table>
