@@ -243,6 +243,10 @@ contributo_associazioni:
   pdf:
     richiesta: "L'erogazione del contributo per la segunte associazione ed attività:"
 
+liste_elettorali:
+  pdf:
+    richiesta: "Di essere inserito nell'Albo delle persone idonee all'ufficio di presidenza e all'ufficio di scrutatore presso i seggi elettorali"
+
 errori:
   allegato:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
