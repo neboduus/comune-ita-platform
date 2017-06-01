@@ -18,7 +18,8 @@ class PiTreProtocolloParameters extends ParameterBag
             'recipientIDArray',
             'recipientTypeIDArray',
             'codeNodeClassification',
-            'codeAdm'
+            'codeAdm',
+            'trasmissionIDArray'
         );
     }
 
@@ -98,6 +99,22 @@ class PiTreProtocolloParameters extends ParameterBag
         }
         $recipientTypeIDArray []= $recipientTypeID;
         $this->set('recipientTypeIDArray', $recipientTypeIDArray );
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrasmissionIDArray()
+    {
+        return $this->get('trasmissionIDArray');
+    }
+
+    /**
+     * @param string $recipientIdType
+     */
+    public function setTrasmissionIDArray($trasmissionIDArray)
+    {
+        $this->set('trasmissionIDArray', $trasmissionIDArray);
     }
 
     /**
