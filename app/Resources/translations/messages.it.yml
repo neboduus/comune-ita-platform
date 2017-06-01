@@ -322,6 +322,7 @@ operatori:
   scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
   scarica_ricevuta_provvisoria_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma.<br /> Puoi controllare l'avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <em>Le mie pratiche</em>."
   scarica_modulo_compilato: 'Scarica il modulo compilato'
+  scarica_risposta_firmata: 'Scarica il file di risposta firmato (formato p7m)'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
     approva_o_rigetta:

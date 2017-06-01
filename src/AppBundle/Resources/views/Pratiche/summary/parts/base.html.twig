@@ -10,6 +10,8 @@
 
         {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
 
+        {{ include('AppBundle:Pratiche/summary/parts:risposta_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
+
     </div>
 </div>
 {% endif %}
