@@ -7,6 +7,13 @@
                 {{ user.fullName }}
             </span>
             </a>
+            -
+            <a href="/Shibboleth.sso/Logout">
+                <i class="fa fa-power-off" aria-hidden="true"></i>
+            <span class="hidden-xs">
+                <small>{{ 'logout'|trans }}</small>
+            </span>
+            </a>
         {% elseif 'ROLE_OPERATORE' in user.roles %}
             <a href="{{ path('operatori_index') }}" title="{{ 'profilo_utente'|trans }}">
                 <i class="fa fa-user"></i>

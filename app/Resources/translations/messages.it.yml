@@ -100,6 +100,7 @@ pratica:
     dichiarazione_cambiamenti: 'di informare tempestivamente il %comune% di mutamenti significativi nelle situazioni familiari ed economiche della famiglia'
     dichiarazione_cambiamenti_detail: "Il dichiarante &egrave; consapevole che in caso di dichiarazione mendace sar&agrave; punito ai sensi del Codice Penale secondo quanto prescritto dall'art. 76 del D.P.R. 445/2000 e che, inoltre, qualora dal controllo effettuato emerga la non veridicit&agrave; del contenuto di taluna delle dichiarazioni rese, decadr&agrave; dai benefici conseguenti al provvedimento eventualmente emanato sulla base della dichiarazione non veritiera (art. 75 D.P.R. 445/2000).Il dichiarante &egrave; informato ed autorizza la raccolta dei dati per l'emanazione del provvedimento amministrativo ai sensi dell'art. 13 del D. Lgs. 196/2003."
     luogo: 'L&igrave;'
+    riferimento_sdc: 'Riferimento in Stanza del cittadino:'
   dettaglio:
     data_ora_presentazione: 'Data e ora di presentazione'
     alle: 'alle'
@@ -242,6 +243,10 @@ contributo_associazioni:
   pdf:
     richiesta: "L'erogazione del contributo per la segunte associazione ed attività:"
 
+liste_elettorali:
+  pdf:
+    richiesta: "Di essere inserito nell'Albo delle persone idonee all'ufficio di presidenza e all'ufficio di scrutatore presso i seggi elettorali"
+
 errori:
   allegato:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
@@ -317,6 +322,7 @@ operatori:
   scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
   scarica_ricevuta_provvisoria_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma.<br /> Puoi controllare l'avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <em>Le mie pratiche</em>."
   scarica_modulo_compilato: 'Scarica il modulo compilato'
+  scarica_risposta_firmata: 'Scarica il file di risposta firmato (formato p7m)'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
     approva_o_rigetta:

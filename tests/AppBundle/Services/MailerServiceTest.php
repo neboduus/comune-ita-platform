@@ -115,4 +115,22 @@ class MailerServiceTest extends AbstractAppTestCase
         $this->assertGreaterThanOrEqual($pratica->getLatestStatusChangeTimestamp(), $pratica->getLatestCPSCommunicationTimestamp());
         $this->assertGreaterThanOrEqual($pratica->getLatestStatusChangeTimestamp(), $pratica->getLatestOperatoreCommunicationTimestamp());
     }
+
+    /**
+     * @test
+     */
+    public function testMailerServiceRendersMailCorrectly()
+    {
+        $cpsUser = $this->createCPSUser();
+        $swiftMailer = $this->setupSwiftmailerMock([$cpsUser]);
+        $pratica = $this->createPratica($cpsUser);
+        $pratica->setStatus(Pratica::STATUS_SUBMITTED);
+        $this->container->set('swiftmailer.mailer.default', $swiftMailer);
+        $mailerService = $this->container->get('ocsdc.mailer');
+        $mailerService->dispatchMailForPratica($pratica, $this->container->getParameter('default_from_email_address'));
+        $invocation = $this->spy->getInvocations()[0];
+        $sentMessage = $invocation->parameters[0];
+        $matchString = '<h2>'.$pratica->getEnte()->getNameForEmail().'<\/h2>';
+        $this->assertRegExp('/'.$matchString.'/', $sentMessage->getBody());
+    }
 }

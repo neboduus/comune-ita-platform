@@ -106,6 +106,11 @@ class Ente
         return $this->name;
     }
 
+    public function getNameForEmail()
+    {
+        return $this->name;
+    }
+
     /**
      * @param string $name
      *

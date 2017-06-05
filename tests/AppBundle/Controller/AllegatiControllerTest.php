@@ -9,6 +9,7 @@ use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
@@ -30,9 +31,9 @@ class AllegatiControllerTest extends AbstractAppTestCase
     {
         parent::setUp();
         system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
+        $this->cleanDb(Pratica::class);
         $this->cleanDb(Allegato::class);
         $this->cleanDb(ComponenteNucleoFamiliare::class);
-        $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
     }
 
@@ -115,6 +116,64 @@ class AllegatiControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
+    public function testRispostaOperatoreCanBeRetrievedIfUserIsOwnerOfThePratica()
+    {
+
+        $fakeFileName = 'AttoFirmatoDiProva.pdf.p7m';
+        $destFileName = md5($fakeFileName).'.pdf.p7m';
+
+        $this->setupMockedLogger([
+            LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
+        ]);
+
+        $myUser = $this->createCPSUser();
+        $risposta = $this->createRispostaOperatore($this->createOperatoreUser('username', 'pass'), $myUser, $destFileName, $fakeFileName);
+
+        $rispostaDownloadUrl = $this->router->generate(
+            'allegati_download_cpsuser',
+            [
+                'allegato' => $risposta->getId(),
+            ]
+        );
+        $this->clientRequestAsCPSUser($myUser, 'GET', $rispostaDownloadUrl);
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertContains('attachment', $response->headers->get('Content-Disposition'));
+        $this->assertContains($risposta->getOriginalFilename(), $response->headers->get('Content-Disposition'));
+    }
+
+    /**
+     * @test
+     */
+    public function testRispostaOperatoreCanNotBeRetrievedIfUserIsNotOwnerOfThePratica()
+    {
+
+        $fakeFileName = 'AttoFirmatoDiProva.pdf.p7m';
+        $destFileName = md5($fakeFileName).'.pdf.p7m';
+
+        $this->setupMockedLogger([
+            LogConstants::ALLEGATO_DOWNLOAD_NEGATO,
+        ]);
+
+        $myUser = $this->createCPSUser();
+        $risposta = $this->createRispostaOperatore($this->createOperatoreUser('username', 'pass'), $myUser, $destFileName, $fakeFileName);
+
+        $rispostaDownloadUrl = $this->router->generate(
+            'allegati_download_cpsuser',
+            [
+                'allegato' => $risposta->getId(),
+            ]
+        );
+
+        $otherUser = $this->createCPSUser();
+        $this->clientRequestAsCPSUser($otherUser, 'GET', $rispostaDownloadUrl);
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
+
+    /**
+     * @test
+     */
     public function testOperatoreCanDownloadUnsignedPraticaResponse()
     {
         $password = 'pa$$word';
@@ -138,6 +197,76 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals('application/octet-stream', $this->client->getResponse()->headers->get('content-type'));
         $this->assertRegExp('/attachment;.*pdf/', $this->client->getResponse()->headers->get('content-disposition'));
+    }
+
+    /**
+     * @test
+     * TODO: testRispostaOperatoreCanBeRetrievedIfOperatoreIsMemberOfErogatore...
+     */
+    public function testRispostaOperatoreCanBeRetrievedIfOperatoreIsAssignedToThePratica()
+    {
+
+        $password = 'pa$$word';
+        $username = 'username';
+        $fakeFileName = 'AttoFirmatoDiProva.pdf.p7m';
+        $destFileName = md5($fakeFileName).'.pdf.p7m';
+
+        $this->setupMockedLogger([
+            LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE,
+        ]);
+
+        $myUser = $this->createCPSUser();
+        $risposta = $this->createRispostaOperatore($this->createOperatoreUser($username, $password), $myUser, $destFileName, $fakeFileName);
+
+        $rispostaDownloadUrl = $this->router->generate(
+            'risposta_download_operatore',
+            [
+                'allegato' => $risposta->getId(),
+            ]
+        );
+        $this->client->request('GET', $rispostaDownloadUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $username,
+            'PHP_AUTH_PW' => $password,
+        ));
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertContains('attachment', $response->headers->get('Content-Disposition'));
+        $this->assertContains($risposta->getOriginalFilename(), $response->headers->get('Content-Disposition'));
+    }
+
+    /**
+     * @test
+     */
+    public function testRispostaOperatoreCannotBeRetrievedIfOperatoreIsNotAssignedToThePratica()
+    {
+
+        $password = 'pa$$word';
+        $username = 'username';
+        $fakeFileName = 'AttoFirmatoDiProva.pdf.p7m';
+        $destFileName = md5($fakeFileName).'.pdf.p7m';
+
+        $this->setupMockedLogger([
+            LogConstants::ALLEGATO_DOWNLOAD_NEGATO,
+        ]);
+
+        $myUser = $this->createCPSUser();
+        $risposta = $this->createRispostaOperatore($this->createOperatoreUser($username, $password), $myUser, $destFileName, $fakeFileName);
+
+        $rispostaDownloadUrl = $this->router->generate(
+            'risposta_download_operatore',
+            [
+                'allegato' => $risposta->getId(),
+            ]
+        );
+        $otherPassword = 'other_pa$$word';
+        $otherUsername = 'other_username';
+        $this->createOperatoreUser($otherPassword, $otherUsername);
+        $this->client->request('GET', $rispostaDownloadUrl, array(), array(), array(
+            'PHP_AUTH_USER' => $otherPassword,
+            'PHP_AUTH_PW' => $otherUsername,
+        ));
+        $response = $this->client->getResponse();
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
     }
 
     /**
@@ -585,6 +714,44 @@ class AllegatiControllerTest extends AbstractAppTestCase
         $destDir = $mapping->getUploadDestination().'/'.$directoryNamer->directoryName($allegato, $mapping);
         mkdir($destDir, 0777, true);
         $this->assertTrue(copy(__DIR__.'/../Assets/'.$fakeFileName, $destDir.'/'.$destFileName));
+        $this->em->persist($allegato);
+        $this->em->flush();
+
+        return $allegato;
+    }
+
+
+    /**
+     * @param $operatore
+     * @param $myUser
+     * @param $destFileName
+     * @param $fakeFileName
+     * @return Allegato
+     */
+    private function createRispostaOperatore($operatore, $myUser, $destFileName, $fakeFileName)
+    {
+        $pratica = $this->createPratica($myUser);
+        $pratica->setOperatore($operatore);
+
+        $allegato = new RispostaOperatore();
+        $allegato->setOwner($myUser);
+        $allegato->setFilename($destFileName);
+        $allegato->setOriginalFilename($fakeFileName);
+        $allegato->setDescription('File Risposta firmato (formato p7m)');
+        $pratica->addRispostaOperatore($allegato);
+
+        $directoryNamer = $this->container->get('ocsdc.allegati.directory_namer');
+        /** @var PropertyMapping $mapping */
+        $mapping = $this->container->get('vich_uploader.property_mapping_factory')->fromObject($allegato)[0];
+
+        $destDir = $mapping->getUploadDestination().'/'.$directoryNamer->directoryName($allegato, $mapping);
+        try {
+            mkdir($destDir, 0777, true);
+        } catch (\Exception $e) {
+            //nothing to see here, move on
+        }
+        $this->assertTrue(copy(__DIR__.'/../Assets/'.$fakeFileName, $destDir.'/'.$destFileName));
+        $this->em->persist($pratica);
         $this->em->persist($allegato);
         $this->em->flush();
 

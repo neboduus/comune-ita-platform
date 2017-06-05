@@ -77,6 +77,8 @@ abstract class AbstractAppTestCase extends WebTestCase
      */
     protected $translator;
 
+    protected $spy;
+
     /**
      * @inheritdoc
      */
@@ -270,6 +272,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         }
 
         $pratica->setErogatore($erogatore);
+        $pratica->setEnte($erogatore->getEnti()[0]);
 
         if ($status !== null) {
             $pratica->setStatus($status);
@@ -481,7 +484,7 @@ abstract class AbstractAppTestCase extends WebTestCase
                      ->disableOriginalConstructor()
                      ->getMock();
 
-        $mock->expects($this->exactly(count($recipients)))
+        $mock->expects($this->spy = $this->exactly(count($recipients)))
              ->method('send')
              ->willReturn(count($recipients));
 
