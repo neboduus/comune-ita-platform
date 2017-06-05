@@ -88,7 +88,6 @@ class AllegatoController extends Controller
             return $this->createBinaryResponseForAllegato($allegato);
         }
         $this->logUnauthorizedAccessAttempt($allegato, $logger);
-
         throw new NotFoundHttpException(); //security by obscurity
     }
 
@@ -107,6 +106,49 @@ class AllegatoController extends Controller
         $becauseOfPratiche = [];
 
         foreach ($allegato->getPratiche() as $pratica) {
+            if ($pratica->getOperatore() === $user) {
+                $becauseOfPratiche[] = $pratica->getId();
+                $isOperatoreAmongstTheAllowedOnes = true;
+            }
+        }
+
+        if ($isOperatoreAmongstTheAllowedOnes) {
+            $logger->info(
+                LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE,
+                [
+                    'user' => $user->getId().' ('.$user->getNome().' '.$user->getCognome().')',
+                    'originalFileName' => $allegato->getOriginalFilename(),
+                    'allegato' => $allegato->getId(),
+                    'pratiche' => $becauseOfPratiche,
+                ]
+            );
+
+            return $this->createBinaryResponseForAllegato($allegato);
+        }
+        $this->logUnauthorizedAccessAttempt($allegato, $logger);
+        throw new NotFoundHttpException(); //security by obscurity
+    }
+
+    /**
+     * @param Request  $request
+     * @param Allegato $allegato
+     * @Route("/operatori/risposta/{allegato}", name="risposta_download_operatore")
+     * @return BinaryFileResponse
+     * @throws NotFoundHttpException
+     */
+    public function operatoreRispostaDownloadAction(Request $request, Allegato $allegato)
+    {
+        $logger = $this->get('logger');
+        $user = $this->getUser();
+        $isOperatoreAmongstTheAllowedOnes = false;
+        $becauseOfPratiche = [];
+
+        $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+        $pratiche = $repo->findBy(
+            array('rispostaOperatore' => $allegato)
+        );
+
+        foreach ($pratiche as $pratica) {
             if ($pratica->getOperatore() === $user) {
                 $becauseOfPratiche[] = $pratica->getId();
                 $isOperatoreAmongstTheAllowedOnes = true;
