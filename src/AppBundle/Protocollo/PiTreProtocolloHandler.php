@@ -51,6 +51,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     {
         $parameters = $this->getParameters($pratica, $allegato);
         $parameters->set('method', 'uploadFileToDocument');
+        // trasmissionIDArray vavalorizzato solo per il metodo createDocumentAndAddInProject
+        $parameters->remove('trasmissionIDArray');
+
         $queryString = http_build_query($parameters->all());
         $response = $this->client->get('?' . $queryString);
         $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
@@ -96,6 +99,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         $risposta = $pratica->getRispostaOperatore();
         $parameters = $this->getRispostaParameters($pratica, $allegato);
         $parameters->set('method', 'uploadFileToDocument');
+        // trasmissionIDArray va valorizzato solo in createDocumentAndAddInProject
+        $parameters->remove('trasmissionIDArray');
+
         $queryString = http_build_query($parameters->all());
         $response = $this->client->get('?' . $queryString);
         $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
