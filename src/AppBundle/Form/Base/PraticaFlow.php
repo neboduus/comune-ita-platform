@@ -4,24 +4,44 @@ namespace AppBundle\Form\Base;
 
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\DematerializedFormAllegatiContainer;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\DematerializedFormAllegatiAttacherService;
+use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\PraticaStatusService;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-abstract class PraticaFlow extends FormFlow
+abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 {
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    protected $translator;
+
+    /**
+     * @var PraticaStatusService
+     */
+    protected $statusService;
+
+    /**
+     * @var ModuloPdfBuilderService
+     */
+    protected $pdfBuilder;
+
+    /**
+     * @var DematerializedFormAllegatiAttacherService
+     */
+    protected $dematerializer;
 
     /**
      * @var bool
@@ -38,10 +58,16 @@ abstract class PraticaFlow extends FormFlow
      */
     public function __construct(
         LoggerInterface $logger,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        PraticaStatusService $statusService,
+        ModuloPdfBuilderService $pdfBuilder,
+        DematerializedFormAllegatiAttacherService $dematerializer
     ) {
         $this->logger = $logger;
         $this->translator = $translator;
+        $this->statusService = $statusService;
+        $this->pdfBuilder = $pdfBuilder;
+        $this->dematerializer = $dematerializer;
     }
 
     public function getFormOptions($step, array $options = array())
@@ -92,6 +118,35 @@ abstract class PraticaFlow extends FormFlow
         }
     }
 
+    public function getResumeUrl(Request $request)
+    {
+        return $request->getUri()
+            . '?instance=' . $this->getInstanceId()
+            . '&step=' . $this->getCurrentStepNumber();
+    }
+
+    public function onFlowCompleted(Pratica $pratica)
+    {
+        if ($pratica instanceof DematerializedFormAllegatiContainer) {
+            $this->dematerializer->attachAllegati($pratica);
+        }
+
+        if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
+            $pratica->setSubmissionTime(time());
+
+            $moduloCompilato = $this->pdfBuilder->createForPratica($pratica);
+            $pratica->addModuloCompilato($moduloCompilato);
+
+            $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+
+        }elseif ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+
+            $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
+
+        }
+    }
+
+
     /**
      * @param ComponenteNucleoFamiliare $componente
      * @param Pratica $pratica
@@ -103,7 +158,7 @@ abstract class PraticaFlow extends FormFlow
         $cloneComponente->setCognome($componente->getCognome());
         $cloneComponente->setCodiceFiscale($componente->getCodiceFiscale());
         $cloneComponente->setRapportoParentela($componente->getRapportoParentela());
-        $pratica->addNucleoFamiliare($cloneComponente);
+        $pratica->addComponenteNucleoFamiliare($cloneComponente);
     }
 
 }

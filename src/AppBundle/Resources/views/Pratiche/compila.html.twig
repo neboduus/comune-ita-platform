@@ -3,15 +3,55 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jquery-ui.min.css') }}"/>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
+    <script src="//unpkg.com/element-ui/lib/index.js"></script>
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+
     <script src="{{ asset('bundles/app/js/jquery-ui.min.js') }}"></script>
+
     <script src="{{ asset('bundles/app/js/datepicker-it.js') }}"></script>
     <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
     <script src="{{ asset('bundles/app/js/chat.js') }}"></script>
+    {%  if form.vars.helper.vueApp %}
+        <script src="{{ asset('bundles/app/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
+        <script>
+        const vueBundledData = {{ form.vars.helper.vueBundledData|raw }};
+        new Vue({
+            el: "#vueApp"
+        });
+        </script>
+    {% endif %}
+        <script>
+            new Vue({
+                el: "#compilationNotes",
+                data: {
+                    compilationNotes: null,
+                    endpointUrl: '/api/v1.0/user/{{ form.vars.data.id}}/notes'
+                },
+                created: function() {
+                    var self = this;
+                    axios.get(this.endpointUrl)
+                        .then(function (res){
+                            if(res.data){
+                                self.compilationNotes = res.data;
+                            }
+                        })
+                },
+                methods: {
+                    onSave: function() {
+                        axios.post(this.endpointUrl, this.compilationNotes)
+                    }
+                }
+            })
+        </script>
     <script>
+
         $(document).ready(function() {
             function addComponenteForm($collectionHolder, $newLinkLi) {
                 var prototype = $collectionHolder.data('prototype');
@@ -133,14 +173,23 @@
 {% endblock %}
 
 {% block main_content %}
-
     {% form_theme form ':form:ocsdc_form_style.html.twig' %}
 
     {#<div class="container-fluid">
         <div class="content">#}
             <div class="row">
                 <div class="col-md-12">
-                    <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+                    {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
+                        <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+                        <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
+                        {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
+                            <div class="alert alert-warning">
+                                {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+                    {% endif %}
                 </div>
             </div>
             <div class="row hidden-xs">
@@ -148,7 +197,6 @@
                     {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-7">
                     <div class="step-{{ flow.getCurrentStepNumber() }}">
@@ -164,7 +212,11 @@
                         </h3>
                         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
                         {{ form_errors(form) }}
-
+                        <div id="vueApp">
+                            {%  if form.vars.helper.vueApp %}
+                            <{{ form.vars.helper.vueApp }}></{{ form.vars.helper.vueApp }}>
+                        {% endif %}
+                    </div>
                         <div>
                             {{ form.vars.helper.descriptionText|raw }}
                         </div>
@@ -205,6 +257,11 @@
                             {{ form.vars.helper.guideText|raw }}
                         </div>
                     {% endif %}
+                    <div id="compilationNotes">
+                        <h4><i class="fa fa-edit" aria-hidden="true"></i> {{ 'pratica.appunti_compilazione.titolo'|trans }}</h4>
+                        <h5>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</h5>
+                        <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave" placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
+                    </div>
 
                     {% if threads and flow.getCurrentStepNumber() >= 2 %}
                         {{ include('@App/Default/parts/chat.html.twig') }}

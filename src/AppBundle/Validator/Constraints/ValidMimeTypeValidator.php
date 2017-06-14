@@ -31,6 +31,7 @@ class ValidMimeTypeValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        $mimeType = $value->getFile()->getMimeType();
         if ($value->getFile() == null || !in_array(
             $value->getFile()->getMimeType(),
             array(
@@ -39,6 +40,7 @@ class ValidMimeTypeValidator extends ConstraintValidator
                 'image/png',
                 'application/postscript',
                 'application/pdf',
+                'application/octet-stream',
             )
         )) {
             $translatedMessage = $this->translator->trans(ValidMimeType::TRANSLATION_ID);

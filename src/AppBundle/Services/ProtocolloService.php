@@ -4,6 +4,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Protocollo\Exception\AlreadyUploadException;
@@ -66,6 +67,53 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
         $this->dispatcher->dispatch(
             ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS,
+            new ProtocollaPraticaSuccessEvent($pratica)
+        );
+    }
+
+    public function protocollaRichiesteIntegrazione(Pratica $pratica)
+    {
+        $this->validatePraticaForUploadFile($pratica);
+        $allegati = $pratica->getRichiestaDiIntegrazioneAttiva();
+        foreach ($allegati as $allegato) {
+            try {
+                $this->validateUploadFile($pratica, $allegato);
+                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+            }catch(AlreadyUploadException $e){}
+        }
+
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
+
+        $this->dispatcher->dispatch(
+            ProtocolloEvents::ON_PROTOCOLLA_RICHIESTE_INTEGRAZIONE_SUCCESS,
+            new ProtocollaPraticaSuccessEvent($pratica)
+        );
+    }
+
+    public function protocollaAllegatiIntegrazione(Pratica $pratica)
+    {
+        $this->validatePraticaForUploadFile($pratica);
+        $allegati = $pratica->getAllegati();
+        foreach ($allegati as $allegato) {
+            try {
+                $this->validateUploadFile($pratica, $allegato);
+                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+            }catch(AlreadyUploadException $e){}
+        }
+
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
+
+        $richiestaIntegrazione = $pratica->getRichiestaDiIntegrazioneAttiva();
+        if ($richiestaIntegrazione instanceof RichiestaIntegrazione){
+            $richiestaIntegrazione->markAsDone();
+            $this->entityManager->persist($richiestaIntegrazione);
+            $this->entityManager->flush();
+        }
+
+        $this->dispatcher->dispatch(
+            ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS,
             new ProtocollaPraticaSuccessEvent($pratica)
         );
     }

@@ -33,6 +33,16 @@ class ProtocollaPraticaListener
             return;
         }
 
+        if ($event->getNewStateIdentifier() == Pratica::STATUS_REQUEST_INTEGRATION) {
+            $this->protocollo->protocollaRichiesteIntegrazione($pratica);
+            return;
+        }
+
+        if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
+            $this->protocollo->protocollaAllegatiIntegrazione($pratica);
+            return;
+        }
+
         if ($event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE || $event->getNewStateIdentifier() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
             $this->protocollo->protocollaRisposta($pratica);
             return;

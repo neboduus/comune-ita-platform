@@ -25,24 +25,24 @@ class ScheduledActionCommand extends ContainerAwareCommand
         $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
         $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        /** @var EntityRepository $repository */
-        $repository = $em->getRepository('AppBundle:ScheduledAction');
+        $scheduleActionService = $this->getContainer()->get('ocsdc.schedule_action_service');
 
-        /** @var ScheduledAction[] $actions */
-        $actions = $repository->findBy([], ['createdAt' => 'ASC']);
-        foreach($actions as $action){
+        $actions = $scheduleActionService->getActions();
+        foreach ($actions as $action) {
             $service = $this->getContainer()->get($action->getService());
-            if ($service instanceof ScheduledActionHandlerInterface){
+            if ($service instanceof ScheduledActionHandlerInterface) {
                 $output->writeln('Execute ' . $action->getType() . ' with params ' . $action->getParams());
                 try {
                     $service->executeScheduledAction($action);
-                    $em->remove($action);
-                }catch(\Exception $e){
+                    $scheduleActionService->markAsDone($action);
+                } catch (\Exception $e) {
                     $this->getContainer()->get('logger')->error($e->getMessage());
                 }
+            } else {
+                $this->getContainer()->get('logger')->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
+                $scheduleActionService->markAsInvalid($action);
             }
         }
-        $em->flush();
+        $scheduleActionService->done();
     }
 }

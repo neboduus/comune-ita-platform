@@ -2,7 +2,7 @@
 
 {% block main_content %}
     <div class="col-sm-12">
-        <a class="btn btn-default" href="{{ path('allegati_create_cpsuser') }}">{{ 'allegato.aggiungi'|trans }}</a>
+        {#<a class="btn btn-default" href="{{ path('allegati_create_cpsuser') }}">{{ 'allegato.aggiungi'|trans }}</a>#}
     </div>
     
     {% for item in allegati %}
@@ -30,7 +30,7 @@
                         <li>
                             <a href="{{ path('pratiche_show', {'pratica': pratica}) }}">
                                 <small>{{ pratica.servizio.name }}
-                                    ({{ pratica.statusName|trans }}
+                                    ({{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}
                                     {% if pratica.statusName == 'STATUS_SUBMITTED' %}{{ pratica.submissionTime|date(ocsdc_default_date_format) }}{% else %}{{ pratica.creationTime|date(ocsdc_default_date_format) }}{% endif %})
                                 </small>
                             </a>

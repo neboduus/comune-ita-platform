@@ -2,10 +2,10 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
-use AppBundle\Form\AzioniOperatore\NumeroFascicoloPraticaType;
-use AppBundle\Form\AzioniOperatore\NumeroProtocolloPraticaType;
+
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Logging\LogConstants;
@@ -38,48 +38,19 @@ class OperatoriController extends Controller
     {
         $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
         $user = $this->getUser();
+        /** @var Ente $ente */
         $ente = $user->getEnte();
 
-        $praticheMie = $praticheRepo->findBy(
-            [
-                'operatore' => $user,
-                'erogatore' => $ente->getErogatori()->toArray(),
-                'status' => [
-                    Pratica::STATUS_PENDING,
-                    Pratica::STATUS_SUBMITTED,
-                    Pratica::STATUS_REGISTERED,
-                ],
-            ]
-        );
+        $praticheMie = $praticheRepo->findPraticheAssignedToOperatore($user);
+        $praticheLibere = $praticheRepo->findPraticheUnAssignedByEnte($ente);
+        $praticheConcluse = $praticheRepo->findPraticheCompletedByOperatore($user);
+        $praticheEnte = $praticheRepo->findPraticheByEnte($ente);
 
-        $praticheLibere = $praticheRepo->findBy(
-            [
-                'operatore' => null,
-                'erogatore' => $ente->getErogatori()->toArray(),
-                'status' => [
-                    Pratica::STATUS_PENDING,
-                    Pratica::STATUS_SUBMITTED,
-                    Pratica::STATUS_REGISTERED,
-                ],
-            ]
-        );
-
-        $praticheConcluse = $praticheRepo->findBy(
-            [
-                'operatore' => $user,
-                'erogatore' => $ente->getErogatori()->toArray(),
-                'status' => [
-                    Pratica::STATUS_COMPLETE,
-                    Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
-                    Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
-                    Pratica::STATUS_CANCELLED,
-                ]
-            ]
-        );
         return array(
             'pratiche_mie'  => $praticheMie,
             'pratiche_libere'  => $praticheLibere,
             'pratiche_concluse'  => $praticheConcluse,
+            'pratiche_ente'  => $praticheEnte,
             'user' => $this->getUser(),
         );
     }

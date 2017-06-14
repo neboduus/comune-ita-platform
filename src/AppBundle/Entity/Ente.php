@@ -79,6 +79,12 @@ class Ente
     private $erogatori;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", unique=true)
+     */
+    private $codiceAmministrativo;
+
+    /**
      * Ente constructor.
      */
     public function __construct()
@@ -274,4 +280,25 @@ class Ente
     {
         return $this->erogatori;
     }
+
+    /**
+     * @return string
+     */
+    public function getCodiceAmministrativo()
+    {
+        return $this->codiceAmministrativo;
+    }
+
+    /**
+     * @param string $codiceAmministrativo
+     *
+     * @return Ente
+     */
+    public function setCodiceAmministrativo($codiceAmministrativo)
+    {
+        $this->codiceAmministrativo = $codiceAmministrativo;
+
+        return $this;
+    }
+
 }

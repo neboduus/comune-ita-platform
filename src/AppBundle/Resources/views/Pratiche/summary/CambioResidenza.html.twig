@@ -147,7 +147,7 @@
                                     <td data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ allegato.originalFilename }}</td>
                                     <td data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ allegato.description }}</td>
                                     <td data-title="">
-                                        {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato': allegato}) }}
+                                        {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': allegato.id}) }}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -195,7 +195,7 @@
                                     <td data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">{{ allegato.originalFilename }}</td>
                                     <td data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">{{ allegato.description }}</td>
                                     <td data-title="">
-                                        {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato': allegato}) }}
+                                        {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': allegato.id}) }}
                                     </td>
                                 </tr>
                             {% endfor %}

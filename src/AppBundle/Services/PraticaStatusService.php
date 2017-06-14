@@ -44,15 +44,37 @@ class PraticaStatusService
         $this->dispatcher = $dispatcher;
 
         $this->validChangeStatusList = [
+
             [Pratica::STATUS_DRAFT => Pratica::STATUS_SUBMITTED],
             [Pratica::STATUS_SUBMITTED => Pratica::STATUS_REGISTERED],
             [Pratica::STATUS_REGISTERED => Pratica::STATUS_PENDING],
+            [Pratica::STATUS_PENDING => Pratica::STATUS_REQUEST_INTEGRATION],
+
+            [Pratica::STATUS_REQUEST_INTEGRATION => Pratica::STATUS_DRAFT_FOR_INTEGRATION],
+            [Pratica::STATUS_DRAFT_FOR_INTEGRATION => Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION],
+            [Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION => Pratica::STATUS_REGISTERED_AFTER_INTEGRATION],
+            [Pratica::STATUS_REGISTERED_AFTER_INTEGRATION => Pratica::STATUS_PENDING_AFTER_INTEGRATION],
+            [Pratica::STATUS_PENDING_AFTER_INTEGRATION => Pratica::STATUS_REQUEST_INTEGRATION],
+            [Pratica::STATUS_PENDING_AFTER_INTEGRATION => Pratica::STATUS_COMPLETE],
+            [Pratica::STATUS_PENDING_AFTER_INTEGRATION => Pratica::STATUS_CANCELLED],
+            [Pratica::STATUS_PENDING_AFTER_INTEGRATION => Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE],
+            [Pratica::STATUS_PENDING_AFTER_INTEGRATION => Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE],
+
+
             [Pratica::STATUS_PENDING => Pratica::STATUS_COMPLETE],
             [Pratica::STATUS_PENDING => Pratica::STATUS_CANCELLED],
             [Pratica::STATUS_PENDING => Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE],
             [Pratica::STATUS_PENDING => Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE],
             [Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE => Pratica::STATUS_COMPLETE],
             [Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE => Pratica::STATUS_CANCELLED],
+            [Pratica::STATUS_REGISTERED_AFTER_INTEGRATION => Pratica::STATUS_PENDING],
+
+
+            [Pratica::STATUS_REGISTERED => Pratica::STATUS_PROCESSING],
+            [Pratica::STATUS_REGISTERED_AFTER_INTEGRATION => Pratica::STATUS_PROCESSING],
+            [Pratica::STATUS_PROCESSING => Pratica::STATUS_PROCESSING],
+
+
         ];
     }
 
@@ -65,7 +87,7 @@ class PraticaStatusService
         if (isset($states[$status]['id'])) {
             $afterStatus = $states[$status]['id'];
             $afterStatusIdentifier = $states[$status]['identifier'];
-        }else{
+        } else {
             throw new \Exception("Pratica status $status not found");
         }
 
@@ -73,7 +95,7 @@ class PraticaStatusService
 
         $this->entityManager->beginTransaction();
 
-        try{
+        try {
             $pratica->setStatus($afterStatus, $statusChange);
 
             $this->entityManager->persist($pratica);
@@ -97,7 +119,7 @@ class PraticaStatusService
 
                 ]
             );
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             $this->entityManager->rollback();
 
             $this->logger->info(
@@ -122,17 +144,18 @@ class PraticaStatusService
         return $this->validChangeStatusList;
     }
 
-    private function validateChangeStatus(Pratica $pratica, $afterStatus)
+    public function validateChangeStatus(Pratica $pratica, $afterStatus)
     {
         $beforeStatus = $pratica->getStatus();
-        foreach($this->validChangeStatusList as $change) {
+
+        foreach ($this->validChangeStatusList as $change) {
             foreach ($change as $before => $after) {
                 if ($before == $beforeStatus && $after == $afterStatus) {
                     return true;
                 }
             }
         }
-        throw new \Exception("Invalid pratica status change form $beforeStatus to $afterStatus");
+        throw new \Exception("Invalid pratica status change from $beforeStatus to $afterStatus for pratica {$pratica->getId()}");
     }
 
 }

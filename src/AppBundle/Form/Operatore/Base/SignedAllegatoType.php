@@ -20,7 +20,7 @@ class SignedAllegatoType extends ChooseAllegatoType
     /**
      * @var P7MSignatureCheckService
      */
-    protected $service;
+    protected $p7mCheckerService;
 
     /**
      * ChooseAllegatoType constructor.
@@ -32,7 +32,7 @@ class SignedAllegatoType extends ChooseAllegatoType
     public function __construct(EntityManager $entityManager, ValidatorInterface $validator, P7MSignatureCheckService $service)
     {
         parent::__construct($entityManager, $validator);
-        $this->service = $service;
+        $this->p7mCheckerService = $service;
     }
 
     /**
@@ -51,15 +51,15 @@ class SignedAllegatoType extends ChooseAllegatoType
         $newAllegato->setOwner($pratica->getUser());
         //$violations = $this->validator->validate($newAllegato);
         $violations = $this->validator->validate(
-            $this->service->check($fileUpload->getPathname()),
+            $this->p7mCheckerService->check($fileUpload->getPathname()),
             new IsTrue(['message' => 'Il file non è p7m'])
         );
 
         if ($violations->count() > 0) {
             return $violations;
-        } elseif (!$this->service->check($fileUpload->getPathname())) {
+        } elseif (!$this->p7mCheckerService->check($fileUpload->getPathname())) {
             $violations = $this->validator->validate(
-                $this->service->check($fileUpload->getPathname()),
+                $this->p7mCheckerService->check($fileUpload->getPathname()),
                 new IsTrue(['message' => 'Il file non è p7m'])
             );
             return $violations;

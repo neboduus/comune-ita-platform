@@ -1,0 +1,128 @@
+<div id="pratica-summary">
+    {{ include('AppBundle:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+    {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
+
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.modulo_scia.label'|trans() }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            <ul class="list-group">
+                {% if pratica.dematerializedForms.moduloDomanda.id|length>0 %}
+                <li class="list-group-item scia-file">
+                    <i class="fa fa-file" aria-hidden="true"></i> {{ pratica.dematerializedForms.moduloDomanda.name }}
+                    <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': pratica.dematerializedForms.moduloDomanda.id}) }}</div>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.allegati_modulo_scia.label'|trans() }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            {% for key, v in pratica.dematerializedForms.elencoAllegatiAllaDomanda %}
+                {% if v|length > 0 %}
+                    <ul class="list-group">
+                        <li class="list-group-item">{{ ('steps.scia.allegati_modulo_scia.files.' ~ key ~ '.title')|trans() }}</li>
+                        {% for f in v %}
+                            {% if f.id|length>0 %}
+                            <li class="list-group-item scia-file">
+                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
+                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.soggetti.label'|trans() }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            {% for key, v in pratica.dematerializedForms.elencoSoggettiAventiTitolo %}
+                <ul class="list-group">
+                    {% if v.id|length>0 %}
+                    <li class="list-group-item scia-file">
+                        <i class="fa fa-file" aria-hidden="true"></i> {{ v.name }}
+                        <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': v.id}) }}</div>
+                    </li>
+                    {% endif %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3">
+            <strong>{{ 'steps.scia.allegati_tecnici.tipo_intervento_label'|trans() }}</strong>
+        </div>
+        <div class="col-xs-12 col-sm-9">{% if pratica.dematerializedForms.tipoIntervento %}
+            {{ ('steps.scia.allegati_tecnici.tipi_intervento.' ~ pratica.dematerializedForms.tipoIntervento)|trans() }}
+        {% endif %}</div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.allegati_tecnici.label'|trans() }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            {% for key, v in pratica.dematerializedForms.elencoAllegatiTecnici %}
+                {% if v|length > 0 %}
+                    <ul class="list-group">
+                        <li class="list-group-item">{{ ('steps.scia.allegati_tecnici.files.' ~ key ~ '.title')|trans() }}</li>
+                        {% for f in v %}
+                            {% if f.id|length>0 %}
+                            <li class="list-group-item scia-file">
+                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
+                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.ulteriori_allegati_tecnici.label'|trans() }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            {% for key, v in pratica.dematerializedForms.elencoUlterioriAllegatiTecnici %}
+                {% if v|length > 0 %}
+                    <ul class="list-group">
+                        <li class="list-group-item">{{ ('steps.scia.ulteriori_allegati_tecnici.files.' ~ key ~ '.title')|trans() }}</li>
+                        {% for f in v %}
+                        {% if f.id|length>0 %}
+                            <li class="list-group-item scia-file">
+                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
+                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
+                            </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row last">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.provvedimenti.label'|trans() }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            {% for key, v in pratica.dematerializedForms.elencoProvvedimenti %}
+                {% if v|length > 0 %}
+                    <ul class="list-group">
+                        <li class="list-group-item">{{ ('steps.scia.provvedimenti.files.' ~ key ~ '.title')|trans() }}</li>
+                        {% for f in v %}
+                        {% if f.id|length>0 %}
+                            <li class="list-group-item scia-file">
+                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
+                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
+                            </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

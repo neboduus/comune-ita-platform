@@ -17,3 +17,13 @@ guzzle:
         timeout: 3
       headers:
         Accept: "application/json"
+    giscom:
+      base_url: "%giscom_adapter_url%"
+      options:
+        timeout: 50
+        verify: false
+        auth:
+          - "%giscom_adapter_username%" # login
+          - "%giscom_adapter_password%" # password
+      headers:
+        Accept: "application/json"

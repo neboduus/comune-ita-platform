@@ -11,10 +11,10 @@
                         <span class="fa fa-calendar"></span>
                         {{ timestamp|date(ocsdc_default_datetime_format) }}
                         {% for change in changes[0] %}
-                            {% if change is not null %}
-                                {% set message = 'pratica.dettaglio.stato_'~change %}
-                                <span class="subdued"><em> {{ message| trans }} </em></span>
+                            {% if change is not null and change is not iterable%}
+                                <span class="subdued"><em> {{ ('pratica.dettaglio.stato_'~change)| trans }} </em></span>
                             {% endif %}
+
                         {% endfor %}
                     </a>
                 </li>

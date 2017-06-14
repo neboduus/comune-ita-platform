@@ -27,10 +27,6 @@ class ChooseAllegatoType extends AbstractType
      */
     protected $entityManager;
 
-    /**
-     * @var \Doctrine\Common\Persistence\ObjectRepository|EntityRepository
-     */
-
     protected $validator;
 
     /**
@@ -135,7 +131,8 @@ class ChooseAllegatoType extends AbstractType
     {
         $resolver->setDefaults(array(
             'purge_files' => false,
-            'class' => Allegato::class
+            'class' => Allegato::class,
+            'multiple' => false,
         ))->setRequired(array(
             'fileDescription',
             'pratica'
@@ -196,7 +193,7 @@ class ChooseAllegatoType extends AbstractType
     /**
      * @param FormInterface $form
      */
-    protected function addChoice(FormInterface $form)
+    private function addChoice(FormInterface $form)
     {
         $options = $form->getConfig()->getOptions();
 
@@ -214,7 +211,7 @@ class ChooseAllegatoType extends AbstractType
             'choice_label' => 'name',
             'mapped' => false,
             'expanded' => true,
-            'multiple' => false,
+            'multiple' => $options['multiple'],
             'required' => $options['required'] && count($fileChoices) > 0,
             'data' => count($fileChoices) > 0 ? $fileChoices[0] : null,
             'label' => false,

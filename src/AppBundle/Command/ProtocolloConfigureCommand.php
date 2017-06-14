@@ -98,7 +98,8 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
             'recipientTypeIDArray'   => 'R',
             'codeNodeClassification' => 1,
             'codeAdm'                => 'CCT_CAL',
-            'trasmissionIDArray'     => 'CCT_CAL'
+            'trasmissionIDArray'     => 'CCT_CAL',
+            'instance'               => 'treville_test'
         ];
         $currentParameters = new PiTreProtocolloParameters((array)$ente->getProtocolloParametersPerServizio($servizio));
 

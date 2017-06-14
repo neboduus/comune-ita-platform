@@ -4,16 +4,13 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
-use AppBundle\Entity\StatusChange;
-use AppBundle\Logging\LogConstants;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class APIController
@@ -39,6 +36,43 @@ class APIController extends Controller
     }
 
     /**
+     * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica")
+     * @Method({"POST"})
+     * @param Request $request
+     * @param Pratica $pratica
+     * @return Response
+     */
+    public function postNotesAction(Request $request, Pratica $pratica)
+    {
+        $user = $this->getUser();
+        if($pratica->getUser() !== $user){
+            return new Response(null, Response::HTTP_NOT_FOUND);
+        }
+        $newNote = $request->getContent();
+        $pratica->setUserCompilationNotes($newNote);
+        $this->getDoctrine()->getManager()->flush();
+        return new Response();
+    }
+
+    /**
+     * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica")
+     * @Method({"GET"})
+     * @param Request $request
+     * @param Pratica $pratica
+     * @return Response
+     */
+    public function getNotesAction(Request $request, Pratica $pratica)
+    {
+        $user = $this->getUser();
+        if($pratica->getUser() !== $user){
+            return new Response(null, Response::HTTP_NOT_FOUND);
+        }
+
+        return new Response($pratica->getUserCompilationNotes());
+    }
+
+
+    /**
      * @Route("/services",name="api_services")
      * @return JsonResponse
      */
@@ -55,38 +89,6 @@ class APIController extends Controller
 
         return new JsonResponse($out);
     }
-
-    /**
-     * @Route("/pratica/{pratica}/status", name="gpa_api_pratica_update_status")
-     * @Method({"POST"})
-     * @Security("has_role('ROLE_GPA')")
-     * @return Response
-     */
-    public function addStatusChangeToPraticaAction(Request $request, Pratica $pratica)
-    {
-        $logger = $this->get('logger');
-        $content = $request->getContent();
-        if (empty($content)) {
-            $logger->info(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA, [ 'statusChange' => null , 'error' => 'missing body altogether' ]);
-
-            return new Response(null, Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
-            $statusChange = new StatusChange(json_decode($content, true));
-        } catch (\Exception $e) {
-            $logger->info(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA, [ 'statusChange' => $content , 'error' => $e ]);
-
-            return new Response(null, Response::HTTP_BAD_REQUEST);
-        }
-
-        $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, $statusChange->getEvento(), $statusChange);
-        $logger->info(LogConstants::PRATICA_UPDATED_STATUS_FROM_GPA, [ 'statusChange' => $statusChange ]);
-
-        return new Response(null, Response::HTTP_NO_CONTENT);
-    }
-
-    //$route = '/api/'.APIController::CURRENT_API_VERSION.'/schedaInformativa/'.$servizio->getSlug().'/'.$ente->getSlug()
 
     /**
      * @Route("/schedaInformativa/{servizio}/{ente}", name="ez_api_scheda_informativa_servizio_ente")

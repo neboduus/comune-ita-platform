@@ -82,7 +82,7 @@ services:
 
     ocsdc.protocollo_delayed:
         class: AppBundle\Services\DelayedProtocolloService
-        arguments: ["@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger"]
+        arguments: ["@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service"]
 
     ocsdc.protocollo_direct:
         class: AppBundle\Services\ProtocolloService
@@ -117,10 +117,52 @@ services:
         tags:
           - { name: form.type }
 
+    ocsdc.form.type.scia_edilizia_modulo_scia_pratica_edilizia_type:
+        class: AppBundle\Form\Scia\PraticaEdiliziaModuloSciaType
+        arguments: ["@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check"]
+        tags:
+          - { name: form.type }
+
+    ocsdc.form.type.scia_edilizia_allegati_modulo_scia_pratica_edilizia_type:
+        class: AppBundle\Form\Scia\PraticaEdiliziaAllegatiModuloSciaType
+        arguments: ["@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check"]
+        tags:
+          - { name: form.type }
+
+    ocsdc.form.type.scia_ediliza_soggetti_type:
+        class: AppBundle\Form\Scia\PraticaEdiliziaSoggettiType
+        arguments: ["@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check"]
+        tags:
+          - { name: form.type }
+
+    ocsdc.form.type.scia_edilizia_allegati_tecnici_type:
+        class: AppBundle\Form\Scia\PraticaEdiliziaAllegatiTecniciType
+        arguments: ["@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check"]
+        tags:
+          - { name: form.type }
+
+    ocsdc.form.type.scia_edilizia_ulteriori_allegati_tecnici_type:
+        class: AppBundle\Form\Scia\PraticaEdiliziaUlterioriAllegatiTecniciType
+        arguments: ["@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check"]
+        tags:
+          - { name: form.type }
+
+    ocsdc.form.type.scia_edilizia_provvedimenti_type:
+        class: AppBundle\Form\Scia\PraticaEdiliziaProvvedimentiType
+        arguments: ["@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check"]
+        tags:
+          - { name: form.type }
+
+
     ocsdc.form.flow.pratica:
         class: AppBundle\Form\Base\PraticaFlow
         parent: craue.form.flow
-        arguments: ["@logger","@translator"]
+        arguments:
+          - "@logger"
+          - "@translator"
+          - "@ocsdc.pratica_status_service"
+          - "@ocsdc.modulo_pdf_builder"
+          - "@ocsdc.allegati.dematerialized_attacher"
 
     ocsdc.form.flow.asilonido:
         class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
@@ -165,8 +207,8 @@ services:
         arguments: ["@logger","@translator"]
 
     ocsdc.form.flow.standardoperatore:
-            class: AppBundle\Form\Operatore\Standard\StandardOperatoreFlow
-            parent: ocsdc.form.flow.praticaoperatore
+        class: AppBundle\Form\Operatore\Standard\StandardOperatoreFlow
+        parent: ocsdc.form.flow.praticaoperatore
 
     ocsdc.form.flow.certificatonascitaoperatore:
         class: AppBundle\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow
@@ -220,10 +262,84 @@ services:
         class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
         parent: ocsdc.form.flow.pratica
 
+    ocsdc.form.flow.scia_pratica_edilizia:
+        class: AppBundle\Form\Scia\SciaPraticaEdiliziaFlow
+        parent: ocsdc.form.flow.pratica
+
     ocsdc.form.flow.contributoassociazioni:
-            class: AppBundle\Form\ContributoAssociazioni\ContributoAssociazioniFlow
-            parent: ocsdc.form.flow.pratica
+        class: AppBundle\Form\ContributoAssociazioni\ContributoAssociazioniFlow
+        parent: ocsdc.form.flow.pratica
 
     ocsdc.p7m_signature_check:
-            class: AppBundle\Services\P7MSignatureCheckService
+        class: AppBundle\Services\P7MSignatureCheckService
 
+    ocsdc.p7m_thumbnailer_service:
+        class: AppBundle\Services\P7MThumbnailerService
+        arguments:
+            - '@ocsdc.allegati.directory_namer'
+            - '@vich_uploader.property_mapping_factory'
+            - '@logger'
+            - '%gsbinary%'
+
+    ocsdc.validator.scia.at_least_one_attachment:
+        class: AppBundle\Validator\Constraints\AtLeastOneAttachmentConstraintValidator
+        arguments:
+            - '@ocsdc.allegati.directory_namer'
+            - '@vich_uploader.property_mapping_factory'
+            - '@filesystem'
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: 'validator.constraint_validator' }
+
+    ocsdc.giscom_api.adapter_direct:
+        class: AppBundle\Services\GiscomAPIAdapterService
+        arguments:
+            - '@guzzle.client.giscom'
+            - '@doctrine.orm.entity_manager'
+            - '@logger'
+            - '@ocsdc.giscom_api.mapper'
+            - '@ocsdc.pratica_status_service'
+            - "@ocsdc.status_mapper.giscom"
+
+    ocsdc.giscom_api.adapter_delayed:
+        class: AppBundle\Services\DelayedGiscomAPIAdapterService
+        arguments:
+            - '@ocsdc.giscom_api.adapter_direct'
+            - '@doctrine.orm.entity_manager'
+            - '@logger'
+            - "@ocsdc.schedule_action_service"
+
+    ocsdc.giscom_api.adapter: "@ocsdc.giscom_api.adapter_delayed"
+
+    ocsdc.allegati.dematerialized_attacher:
+        class: AppBundle\Services\DematerializedFormAllegatiAttacherService
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    ocsdc.protocollo_success_giscom_subscriber:
+        class: AppBundle\EventListener\GiscomSendPraticaListener
+        arguments: ["@ocsdc.giscom_api.adapter", "@logger"]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    ocsdc.schedule_action_service:
+        class: AppBundle\Services\ScheduleActionService
+        arguments: ["@doctrine.orm.entity_manager","@logger"]
+
+    ocsdc.giscom_api.mapper:
+        class: AppBundle\Services\GiscomAPIMapperService
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    ocsdc.status_mapper.giscom:
+        class: AppBundle\Mapper\Giscom\GiscomStatusMapper
+        tags:
+            - { name: 'ocsdc.status_mapper' }
+
+    ocsdc.pratica_integration_service:
+        class: AppBundle\Services\PraticaIntegrationService
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@logger'
+            - '@ocsdc.pratica_status_service'
+            - "@ocsdc.modulo_pdf_builder"

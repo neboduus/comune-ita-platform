@@ -23,7 +23,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12 col-sm-3"><strong>{{ 'pratica.dettaglio.stato'|trans }}</strong></div>
-        <div class="col-xs-12 col-sm-9"> {{ pratica.statusName|trans }}</div>
+        <div class="col-xs-12 col-sm-9"> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</div>
     </div>
 {% endif %}
 

@@ -26,6 +26,8 @@ class ProtocolloSuccessSubscriber implements EventSubscriberInterface
     {
         return[
             ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS => ['onProtocollaPratica'],
+            ProtocolloEvents::ON_PROTOCOLLA_RICHIESTE_INTEGRAZIONE_SUCCESS => ['onProtocollaRichiesteIntegrazione'],
+            ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS => ['onProtocollaAllegatiIntegrazione'],
             ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_OPERATORE_SUCCESS => ['onProtocollaAllegatiOperatore'],
         ];
     }
@@ -33,6 +35,16 @@ class ProtocolloSuccessSubscriber implements EventSubscriberInterface
     public function onProtocollaPratica(ProtocollaPraticaSuccessEvent $event)
     {
         $this->praticaStatusService->setNewStatus($event->getPratica(), Pratica::STATUS_REGISTERED);
+    }
+
+    public function onProtocollaRichiesteIntegrazione(ProtocollaPraticaSuccessEvent $event)
+    {
+        $this->praticaStatusService->setNewStatus($event->getPratica(), Pratica::STATUS_DRAFT_FOR_INTEGRATION);
+    }
+
+    public function onProtocollaAllegatiIntegrazione(ProtocollaPraticaSuccessEvent $event)
+    {
+        $this->praticaStatusService->setNewStatus($event->getPratica(), Pratica::STATUS_REGISTERED_AFTER_INTEGRATION);
     }
 
     public function onProtocollaAllegatiOperatore(ProtocollaAllegatiOperatoreSuccessEvent $event)

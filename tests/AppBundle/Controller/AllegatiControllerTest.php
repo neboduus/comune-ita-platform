@@ -42,6 +42,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
      */
     public function testThereIsALinkToCreateAllegati()
     {
+        $this->markTestSkipped("cambiato l'approccio alla creazione di allegati");
         $user = $this->createCPSUser();
 
         $allegatiListPath = $this->router->generate('allegati_list_cpsuser');
@@ -433,6 +434,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
      */
     public function testCPSUserCanCreateAttachment()
     {
+        $this->markTestSkipped("cambiato l'approccio alla creazione di allegati");
         $user = $this->createCPSUser();
         $repo = $this->em->getRepository('AppBundle:Allegato');
         $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
@@ -464,6 +466,7 @@ class AllegatiControllerTest extends AbstractAppTestCase
      */
     public function testUserCannotcreateAttachmentOfUnsupportedType($invalidFilename)
     {
+        $this->markTestSkipped("cambiato l'approccio alla creazione di allegati");
         $user = $this->createCPSUser();
         $repo = $this->em->getRepository('AppBundle:Allegato');
         $this->assertEquals(0, count($repo->findBy(['owner' => $user])));

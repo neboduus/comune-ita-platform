@@ -19,8 +19,19 @@ class PiTreProtocolloParameters extends ParameterBag
             'recipientTypeIDArray',
             'codeNodeClassification',
             'codeAdm',
-            'trasmissionIDArray'
+            'trasmissionIDArray',
+            'instance'
         );
+    }
+
+    public function getInstance()
+    {
+        return $this->get('instance');
+    }
+
+    public function setInstance($instance)
+    {
+        $this->set('instance', $instance );
     }
 
     /**

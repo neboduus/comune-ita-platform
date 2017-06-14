@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Controller\APIController;
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
@@ -29,6 +30,7 @@ class ApiControllerTest extends AbstractAppTestCase
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Pratica::class);
+        $this->cleanDb(Allegato::class);
         $this->cleanDb(User::class);
         $this->cleanDb(Ente::class);
         $this->cleanDb(Servizio::class);
@@ -39,16 +41,83 @@ class ApiControllerTest extends AbstractAppTestCase
      */
     public function testStatusAPI()
     {
-        $expectedResponse = (object) [
+        $expectedResponse = (object)[
             'status' => 'ok',
             'version' => APIController::CURRENT_API_VERSION,
         ];
-        $this->client->request('GET', '/api/'.APIController::CURRENT_API_VERSION.'/status');
+        $this->client->request('GET', '/api/' . APIController::CURRENT_API_VERSION . '/status');
 
         $response = json_decode($this->client->getResponse()->getContent());
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals($expectedResponse, $response);
         $this->assertEquals('application/json', $this->client->getResponse()->headers->get('Content-Type'));
+    }
+
+    /**
+     * @test
+     */
+    public function testPostAnnotationsAPI()
+    {
+        $user = $this->createCPSUser(true);
+        $pratica = $this->createPratica($user);
+        $notes = "La marianna la va in campagna @#èòàù€’”ß@ł€ ";
+
+        $this->clientRequestAsCPSUser($user, 'POST', '/api/' . APIController::CURRENT_API_VERSION . '/user/' . $pratica->getId() . '/notes', [
+            'ContentType' => 'application/json'
+        ], [], [], $notes);
+
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals($notes, $pratica->getUserCompilationNotes());
+    }
+
+    /**
+     * @test
+     */
+    public function testGetAnnotationsAPI()
+    {
+        $user = $this->createCPSUser(true);
+        $pratica = $this->createPratica($user);
+        $notes = "La marianna la va in campagna @#èòàù€’”ß@ł€ ";
+        $pratica->setUserCompilationNotes($notes);
+        $this->em->flush();
+
+        $this->clientRequestAsCPSUser($user, 'GET', '/api/' . APIController::CURRENT_API_VERSION . '/user/' . $pratica->getId() . '/notes');
+
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals($notes, $this->client->getResponse()->getContent());
+    }
+
+    /**
+     * @test
+     */
+    public function testCannotPostNotesIfPraticaIsNotMine()
+    {
+        $user = $this->createCPSUser(true);
+        $user2 = $this->createCPSUser(true);
+        $pratica = $this->createPratica($user2);
+        $notes = "La marianna la va in campagna @#èòàù€’”ß@ł€ ";
+
+        $this->clientRequestAsCPSUser($user, 'POST', '/api/' . APIController::CURRENT_API_VERSION . '/user/' . $pratica->getId() . '/notes', [
+            'ContentType' => 'application/json'
+        ], [], [], $notes);
+
+        $this->assertEquals(Response::HTTP_NOT_FOUND, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(null, $pratica->getUserCompilationNotes());
+    }
+
+    /**
+     * @test
+     */
+    public function testAnnotationsAPIIsProtected()
+    {
+        $user = $this->createCPSUser(true);
+        $pratica = $this->createPratica($user);
+        $notes = "La marianna la va in campagna @#èòàù€’”ß@ł€ ";
+        $this->client->request('POST', '/api/' . APIController::CURRENT_API_VERSION . '/user/' . $pratica->getId() . '/notes', [
+            'ContentType' => 'application/json'
+        ], [], [], $notes);
+
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -60,169 +129,20 @@ class ApiControllerTest extends AbstractAppTestCase
         $servizio2 = $this->createServizioWithAssociatedErogatori([]);
 
         $expectedResponse = [
-            (object) [
+            (object)[
                 'name' => $servizio1->getName(),
                 'slug' => $servizio1->getSlug(),
             ],
-            (object) [
+            (object)[
                 'name' => $servizio2->getName(),
                 'slug' => $servizio2->getSlug(),
             ],
         ];
 
-        $this->client->request('GET', '/api/'.APIController::CURRENT_API_VERSION.'/services');
+        $this->client->request('GET', '/api/' . APIController::CURRENT_API_VERSION . '/services');
         $response = json_decode($this->client->getResponse()->getContent(), false);
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertEquals($expectedResponse, $response);
-    }
-
-    /**
-     * @test
-     */
-    public function testPraticaStatusCanBeUpdatedViaProtectedAPI()
-    {
-        $this->setupMockedLogger([
-            LogConstants::PRATICA_CHANGED_STATUS,
-            LogConstants::PRATICA_UPDATED_STATUS_FROM_GPA,
-        ]);
-        $user = $user = $this->createCPSUser();
-        $pratica = $this->createPratica($user);
-        $initialStatusCount = $pratica->getStoricoStati()->count();
-
-        $rawStatusChange = [
-            'evento' => Pratica::STATUS_SUBMITTED,
-            'timestamp' => 123,
-            'responsabile' => 'Contessa Serbelloni Mazzanti Viendalmare',
-            'operatore' => 'pippo',
-            'struttura' => 'Anagrafe',
-        ];
-        $this->client->request(
-            'POST',
-            $this->formatPraticaStatusUpdateRoute($pratica),
-            array(),
-            array(),
-            array(
-                'PHP_AUTH_USER' => 'gpa',
-                'PHP_AUTH_PW' => 'gpapass',
-            ),
-            json_encode(
-                $rawStatusChange
-            )
-        );
-
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $this->client->getResponse()->getStatusCode());
-
-        $this->em->refresh($pratica);
-        $finalStatusCount = $pratica->getStoricoStati()->count();
-        $this->assertEquals($initialStatusCount+1, $finalStatusCount);
-        $newStatusTimestamp = $pratica->getLatestTimestampForStatus($rawStatusChange['evento']);
-        $this->assertEquals($rawStatusChange['timestamp'], $newStatusTimestamp);
-        $statoCambiato = $pratica->getStoricoStati()[$newStatusTimestamp];
-        $this->assertContains([$rawStatusChange['evento'], $rawStatusChange], $statoCambiato);
-    }
-
-
-    /**
-     * @test
-     */
-    public function testPraticaStatusThrowsIfMissingBody()
-    {
-        $this->setupMockedLogger([
-            LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA,
-        ]);
-        $user = $user = $this->createCPSUser();
-        $pratica = $this->createPratica($user);
-
-        $this->client->request(
-            'POST',
-            $this->formatPraticaStatusUpdateRoute($pratica),
-            array(),
-            array(),
-            array(
-                'PHP_AUTH_USER' => 'gpa',
-                'PHP_AUTH_PW' => 'gpapass',
-            ),
-            null
-        );
-        $this->assertEquals('', $this->client->getResponse()->getContent());
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function testPraticaStatusThrowsIfMissingMandatoryFields()
-    {
-        $this->setupMockedLogger([
-            LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA,
-        ]);
-        $user = $user = $this->createCPSUser();
-        $pratica = $this->createPratica($user);
-
-        //missing operatore
-        $rawStatusChange = [
-            'evento' => Pratica::STATUS_SUBMITTED,
-            'timestamp' => 123,
-            'responsabile' => 'Contessa Serbelloni Mazzanti Viendalmare',
-            //'operatore' => 'pippo',
-            'struttura' => 'Anagrafe',
-        ];
-
-        $this->client->request(
-            'POST',
-            $this->formatPraticaStatusUpdateRoute($pratica),
-            array(),
-            array(),
-            array(
-                'PHP_AUTH_USER' => 'gpa',
-                'PHP_AUTH_PW' => 'gpapass',
-            ),
-            json_encode($rawStatusChange)
-        );
-        $this->assertEquals('', $this->client->getResponse()->getContent());
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function testPraticaStatusAPIIsProtected()
-    {
-        $user = $user = $this->createCPSUser();
-        $pratica = $this->createPratica($user);
-
-        $client = static::createClient();
-        $client->restart();
-        $client->request(
-            'POST',
-            $this->formatPraticaStatusUpdateRoute($pratica)
-        );
-
-        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $client->getResponse()->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function testPraticaStatusAPIIsProtectedWithRoleChecking()
-    {
-        $user = $user = $this->createCPSUser();
-        $pratica = $this->createPratica($user);
-
-        $client = static::createClient();
-        $client->restart();
-        $client->request(
-            'POST',
-            $this->formatPraticaStatusUpdateRoute($pratica),
-            array(),
-            array(),
-            array(
-                'PHP_AUTH_USER' => 'gpa_no_role',
-                'PHP_AUTH_PW' => 'gpapass',
-            )
-        );
-
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
     /**
@@ -330,26 +250,15 @@ class ApiControllerTest extends AbstractAppTestCase
     }
 
     /**
-     * @param Pratica $pratica
-     * @return string
-     */
-    private function formatPraticaStatusUpdateRoute(Pratica $pratica):string
-    {
-        $route = '/api/'.APIController::CURRENT_API_VERSION.'/pratica/'.$pratica->getId().'/status';
-
-        return $route;
-    }
-
-    /**
      * @param Servizio $servizio
      * @param Ente $ente
      * @return string
      */
-    private function formatSchedaInformativaUpdateRoute(Servizio $servizio, Ente $ente, $remoteUrl = null):string
+    private function formatSchedaInformativaUpdateRoute(Servizio $servizio, Ente $ente, $remoteUrl = null): string
     {
-        $route = '/api/'.APIController::CURRENT_API_VERSION.'/schedaInformativa/'.$servizio->getSlug().'/'.$ente->getCodiceMeccanografico();
+        $route = '/api/' . APIController::CURRENT_API_VERSION . '/schedaInformativa/' . $servizio->getSlug() . '/' . $ente->getCodiceMeccanografico();
 
-        $remoteUrl ? $route .= '?remote='.urlencode($remoteUrl) : null;
+        $remoteUrl ? $route .= '?remote=' . urlencode($remoteUrl) : null;
 
         return $route;
     }

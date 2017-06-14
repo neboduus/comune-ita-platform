@@ -17,16 +17,14 @@
 
                 {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
 
-                {% if pratica.statusName == 'STATUS_DRAFT' and user.id == pratica.user.id %}
-                <h3>Azioni</h3>
-                <div class="list-group">
-                    {% if pratica.statusName == 'STATUS_DRAFT' and user.id == pratica.user.id %}
-                        <a class="list-group-item" data-action="edit_draft" href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                            <i class="fa fa-arrow-circle-o-right"></i>
-                            {{ 'pratica.vai_alla_pratica'|trans }}
-                        </a>
-                    {% endif %}
-                </div>
+                {% if (pratica.statusName == 'STATUS_DRAFT' or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and user.id == pratica.user.id %}
+                    <h3>Azioni</h3>
+
+                    <a class="btn btn-success btn-lg btn-block" style="margin-bottom: 30px" data-action="edit_draft" href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+                        <i class="fa fa-arrow-circle-o-right"></i>
+                        {{ 'pratica.vai_alla_pratica'|trans }}
+                    </a>
+
                 {% endif %}
                 {{ include('@App/Default/parts/chat.html.twig') }}
             </div>
