@@ -1,0 +1,121 @@
+Tecnico (accreditato) del cittadino (all'albo non accediamo, ma va bene così) ->
+Seleziona Scia online
+Cittadino
+carico modulo della domanda e tutti gli allegati
+domanda -> modulo scia.pdf
+
+scia.pdf lo acquisiamo, non lo rendiamo come form
+allegatoA.pdf lo acquisiamo, non lo rendiamo come form
+
+Verifiche -> allegati dimensioni min max [ max 10mb (tentative) ]
+pdfA <- approfondire
+
+aggiungiamo campi per gli allegati obbligatori
+***
+elenco altri sottoscrittori (Allegato A);
+
+elenco degli elaborati (Allegato B) e della documentazione e dei provvedimenti (Allegato C) presentati ai fini
+
+della formazione della S.C.I.A.;
+
+copia fotostatica di valido documento d'identità degli aventi titolo alla presentazione S.C.I.A, del tecnico
+
+progettista (compresi gli eventuali sottoscrittori del modello Allegato A);
+
+fotocopia codice fiscale o partita IVA del richiedente e del tecnico progettista (compresi gli eventuali sottoscrittori
+
+del modello Allegato A);
+
+documentazione attestante l'avvenuto pagamento del contributo di concessione
+****
+
+eventuale allegato A -> elenco di ulteriori richiedenti
+Un allegato A per ogni 4 richiedenti, quindi 10 persone : 3 allegati A
+
+Allgato B -> elenco possibili allegati
+L'elenco di tutti gli allegati è quello in allegato B e il tecnico dice se lo manda o meno
+
+
+(elementi obbligatori)
+Carta identità, bollettino pagamento
+
+**************
+Vari tipi di pratica, partiamo con la scia pratica edilizia
+
+-------------
+Controllo firma forte sui p7m
+
+In uscita solo p7m
+
+levare la dicitura `firma` e `firma e timbro` <-- chi lo fa?
+Se hanno mappato i campi conviene che lo facciano loro  per vedere che nel modificarli non li
+
+§§§§§§§§§§§§§§§§§§
+
+protocollazione pi3 -> preistruttoria (?)
+impacchettato tutto il risultato del form
+
+Accettare quello che viene allegato, memorizazrlo e loro tramite webservice creano la pratica e la compilano, sistemano gli allegati
+
+
+la piattaforma deve permettere la preistruttoria
+accettiamo gli elementi della compilazione, GISCOM va a prenderseli, li inserisce nel backoffice
+
+
+Stati-> preistruttoria
+tecnico comune : "Ho bisogno di una integrazione" "Sospesa per richiesta integrazione" con messaggio ?
+Tecnico cittadino :
+
+-----------
+Includere una collezione di codici fiscali per vedere le pratiche che competono le proprie pratiche solo in view (eentualmente alert)
+
+preview png dei pdf
+
+-*-*-*-*-*-*-*-*-*-*-*-*
+
+Stati: Van definiti
+preistruttoria ->
+<- accettata (va in istruttoria) / rifiutata (se rifiutata la chiudiamo e permettiamo di clonarla)
+<- protocollata se accettata
+<- richiesta integrazioni
+aggiunta informazioni ->
+<- protocollazione della aggiunta
+<- acquisita (viene messo qua il protocollo valido per la dichiarazione dei redditi?)
+richiesta sospensione nell'arco di anni
+<- esito (chiusa in automatico dopo 5 anni)
+
+-*/-*/-*/-*/
+Tempi -> qualcosa di presentabile a settembre
+
+
+-*/-*/-*/-*/-*/-*/-*/-*/-*/
+Ogni punto del modulo B e C avrà una checkbox che se cliccata aprirà una modale. Nella modale va mandato su un allegato che si autocertifica come corretto.
+L'upload lo facciamo in realtà con axios verso un'api che salva allegati attaccandoli alla pratica.
+Da parte ci teniamo l'abbinamento fra i punti dei moduli e gli allegati, in modo da permettere di cambiarli
+sarà una cosa del tipo
+```{
+'1.1': 'uuidv4 dell'allegato',
+'2.1': null (equivale a checkbox non selezionata),
+}```
+Quando vengono cambiati van cancellati (anche in soft-delete) gli allegati orfani
+(che facciamo qua con gli allegati quando siamo in istruttoria?)
+(Se viene chiusa non cancelliamo gli allegati? Teoricamente dobbiamo permettere di clonarla per rimandarla)
+
+carichiamo l'allegato A prima degli altri? osì da poter attaccare gli allegati a più utenti?
+Tendenzialmente teniamo la proprietà dell'allegato per il tecnico, poi permettiamo di accedere agli interessati (in base agli allegati A), loggando l'acesso
+
+Allegati A, ci mandano i dati lato giscom?
+
+
+
+++++++++++++++++++++++++++++++++++++
+Preview dei file p7m:
+gs -q -dNOPAUSE -dBATCH -sDEVICE=png256 -r300 -dEPSCrop -sOutputFile=$FILE.png $FILE.pdf
+
+/*********************************************/
+Aggiungere upload allegato b sotto allegato a
+Togliere parte b dell'allegato b
+togliere controllo stati
+Aggiungere upload CF CI e pagamento
+Vedere se ci sta dentro il quadro sinottico
+/*********************************************/

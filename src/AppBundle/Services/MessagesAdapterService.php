@@ -115,7 +115,7 @@ class MessagesAdapterService
      * @param Servizio $servizio
      * @return mixed
      */
-    public function getThreadsForUserEnteAndService(CPSUser $user, Ente $ente, Servizio $servizio)
+    public function getThreadsForUserEnteAndService(User $user, Ente $ente, Servizio $servizio)
     {
         //find operatore
         $operatore = $this->getOperatoreForEnteAndServizio($ente, $servizio);

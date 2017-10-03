@@ -45,7 +45,7 @@ class LoadData implements FixtureInterface
 
     }
 
-    private function loadAsili(ObjectManager $manager)
+    public function loadAsili(ObjectManager $manager)
     {
         $data = $this->getData('Asili');
         foreach ($data as $item) {
@@ -99,6 +99,7 @@ class LoadData implements FixtureInterface
                 $ente = (new Ente())
                     ->setName($item['name'])
                     ->setCodiceMeccanografico($item['codice'])
+                    ->setCodiceAmministrativo($item['istat'])
                     ->setSiteUrl($item['url']);
                 $manager->persist($ente);
             } else {
@@ -116,7 +117,7 @@ class LoadData implements FixtureInterface
         }
     }
 
-    private function loadCategories(ObjectManager $manager)
+    public function loadCategories(ObjectManager $manager)
     {
         $data = $this->getData('Categorie');
         $categoryRepo = $manager->getRepository('AppBundle:Categoria');
@@ -189,7 +190,7 @@ class LoadData implements FixtureInterface
         }
     }
 
-    private function loadTerminiUtilizzo(ObjectManager $manager)
+    public function loadTerminiUtilizzo(ObjectManager $manager)
     {
         $data = $this->getData('TerminiUtilizzo');
         foreach ($data as $item) {

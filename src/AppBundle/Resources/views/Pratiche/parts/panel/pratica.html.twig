@@ -6,17 +6,17 @@
         <h4 class="blu-italia-base-color">{{ pratica.servizio.name }}</h4>
 
         {% if pratica.statusName == 'STATUS_CANCELLED' %}
-            <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+            <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans() }}</div>
         {% elseif pratica.statusName == 'STATUS_DRAFT' %}
-            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans() }}</div>
         {% elseif pratica.statusName == 'STATUS_SUBMITTED' %}
-            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans() }}</div>
         {% elseif pratica.statusName == 'STATUS_COMPLETE' %}
-            <div class="alert alert-success" role="alert"><i class="fa fa-check" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+            <div class="alert alert-success" role="alert"><i class="fa fa-check" aria-hidden="true"></i> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans() }}</div>
         {% elseif pratica.statusName == 'STATUS_REGISTERED' %}
-            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans() }}</div>
         {% else %}
-            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ pratica.statusName|trans() }}</div>
+            <div class="alert alert-info" role="alert"><i class="fa fa-info" aria-hidden="true"></i> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans() }}</div>
         {% endif %}
 
         <p><b>{{ 'pratica.data_di_creazione'|trans }}:</b> {{ pratica.creationTime|date(ocsdc_default_date_format) }}</p>

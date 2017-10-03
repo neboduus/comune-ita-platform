@@ -52,8 +52,8 @@ class CambioResidenzaTest extends AbstractAppTestCase
         $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
-        $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
+        $this->cleanDb(Allegato::class);
         $this->cleanDb(Servizio::class);
         $this->cleanDb(AsiloNido::class);
         $this->cleanDb(OperatoreUser::class);

@@ -62,7 +62,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     public function testICanSeeMyPraticheInTableView()
     {
         $user = $this->createCPSUser();
-        $this->setupPraticheForUser($user);
+        $this->setupPraticheForUser($user, true);
 
         $crawler = $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate('pratiche'));
 
@@ -100,6 +100,11 @@ class PraticaControllerTest extends AbstractAppTestCase
                 'status' => Pratica::STATUS_CANCELLED
             ]
         );
+
+        $praticheRelated = $repo->findRelatedPraticaForUser($user);
+
+        $praticheCount = $crawler->filter('.list.related')->filter('.pratica')->count();
+        $this->assertEquals(count($praticheRelated), $praticheCount);
 
         $praticheCount = $crawler->filter('.list.draft')->filter('.pratica')->count();
         $this->assertEquals(count($praticheDraft), $praticheCount);
@@ -239,6 +244,66 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         //count allegati
         $nodes = $crawler->filterXPath('//*[@data-title="Nome del file"]');
+        $this->assertEquals($pratica->getAllegati()->count(), $nodes->count());
+
+        $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
+    }
+    /**
+     * @test
+     */
+    public function testAsACPSUserICanSeeTheRelatedPraticaDetailPage()
+    {
+        $myUser = $this->createCPSUser();
+        $this->setupPraticaScia([$myUser->getCodiceFiscale()]);
+        $repo = $this->em->getRepository("AppBundle:Pratica");
+        /** @var Pratica $pratica */
+        $pratica = $repo->findRelatedPraticaForUser($myUser)[0];
+
+        $now = new \DateTime('now');
+        $fileName = 'aaaaa.pdf';
+
+        $moduloCompilato = new ModuloCompilato();
+        $moduloCompilato->setFilename($fileName);
+        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $moduloCompilato->setDescription(
+            $this->container->get('translator')->trans(
+                'pratica.modulo.descrizione',
+                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format')) ]
+            )
+        );
+
+        $pratica->addModuloCompilato($moduloCompilato);
+
+        $this->em->persist($moduloCompilato);
+
+
+        $allegati = $this->setupNeededAllegatiForAllInvolvedUsers(3, $myUser);
+        foreach ($allegati as $allegato) {
+            $pratica->addAllegato($allegato);
+        }
+
+        $operatore = $this->createOperatoreUser('p', 'p');
+        $pratica->setOperatore($operatore);
+        $pratica->setStatus(Pratica::STATUS_PENDING);
+        sleep(1);
+        $pratica->setStatus(Pratica::STATUS_CANCELLED);
+
+        $this->em->persist($pratica);
+        $this->em->flush();
+        $this->em->refresh($pratica);
+
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $nodes = $crawler->filterXPath('//*[@class="modulo"]');
+        $renderedModuliCount = $nodes->count();
+
+        $this->assertEquals($pratica->getModuliCompilati()->count(),$renderedModuliCount);
+
+        $nodes = $crawler->filterXPath('//*[contains(@class, "sidebar")]//*[contains(@class, "fa-calendar")]');
+        $this->assertEquals($pratica->getStoricoStati()->count(), $nodes->count());
+
+        //count allegati
+        $nodes = $crawler->filterXPath('//*[contains(@class, "scia-file")]');
         $this->assertEquals($pratica->getAllegati()->count(), $nodes->count());
 
         $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());

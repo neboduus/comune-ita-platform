@@ -9,6 +9,7 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\User;
 use AppBundle\Services\DelayedProtocolloService;
 use AppBundle\Services\ProtocolloService;
+use AppBundle\Services\ScheduleActionService;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use AppBundle\Protocollo\PiTreProtocolloHandler;
 
@@ -44,7 +45,7 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
 
     /**
      * @test
-     * @expectedException \AppBundle\Protocollo\Exception\AlreadyScheduledException
+     * @expectedException \AppBundle\ScheduledAction\Exception\AlreadyScheduledException
      */
     public function testDelayedProtocolloServiceCannotResend()
     {
@@ -104,16 +105,17 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
         }
 
         $service = $this->getMockDelayedProtocollo($responses);
-        $repository = $this->em->getRepository('AppBundle:ScheduledAction');
+
+        $scheduleService = $this->container->get('ocsdc.schedule_action_service');
         /** @var ScheduledAction[] $actions */
-        $actions = $repository->findBy([], ['createdAt' => 'ASC']);
+        $actions = $scheduleService->getActions();
         foreach($actions as $action){
             if ($action->getService() == 'ocsdc.protocollo'){
                 $service->executeScheduledAction($action);
-                $this->em->remove($action);
+                $scheduleService->markAsDone($action);
             }
         }
-        $this->em->flush();
+        $scheduleService->done();
     }
 
     private function getMockDelayedProtocollo($responses = array())
@@ -122,9 +124,18 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
             new DelayedProtocolloService(
                 $this->getMockProtocollo($responses),
                 $this->em,
-                $this->getMockLogger()
+                $this->getMockLogger(),
+                $this->getMockScheduleActionService()
             );
 
+    }
+
+    private function getMockScheduleActionService()
+    {
+        return new ScheduleActionService(
+            $this->em,
+            $this->getMockLogger()
+        );
     }
 
     private function getMockProtocollo($responses = array(), $dispatcher = null)

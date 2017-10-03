@@ -21,7 +21,7 @@ visualizza_colonne: "Visualizza colonne"
 visualizza_griglia: "Visualizza griglia"
 profilo_utente: "Profilo utente"
 operatore: "Operatore"
-credits: "La Stanza del Cittadino è una iniziativa progettuale del Consorzio dei Comuni Trentini"
+credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del Comune di Tre Ville"
 
 nav:
   home: 'Homepage'
@@ -59,6 +59,8 @@ pratica:
   tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
   nuova_pratica: 'Nuova pratica: %name%'
+  integrazione_pratica: 'Integrazione pratica: %name%'
+  integrazione_pratica_description: "Sono state richieste alcuni integrazioni per la pratica che hai inviato: correggi tutti i campi esposti contrasseganti dall'asterisco (*)"
   passo_uno_di_tanti: 'Passo %current% di %total%'
   riprendi_pratica: "Riprendi compilazione"
   empty: 'Non sono presenti pratiche a tuo nome.'
@@ -70,6 +72,7 @@ pratica:
   data_di_compilazione: 'Data di compilazione'
   data_di_creazione: 'Data di creazione'
   stato: 'Stato'
+  operatore: 'Operatore'
   nessun_allegato: 'Non sono presenti allegati.'
   aggiungi_allegato: 'Aggiungi allegato'
   aggiungi_componente_nucleo_familiare: 'Aggiungi componente nucleo familiare'
@@ -127,17 +130,30 @@ pratica:
       descrizione: 'Descrizione'
       pratiche_list_intro: 'Allegato alle pratiche:'
     modulocompilato: ''
-    stato_1: 'Bozza'
-    stato_2: 'Inviata'
-    stato_3: 'Protocollata'
-    stato_4: 'Presa in carico'
-    stato_5: 'Elaborata (in attesa di protocollazione del documento di esito)'
-    stato_10: 'Iter completato'
-    stato_100: 'Cancellata'
-    stato_90: 'Rifiutata (in attesa di protocollazione del documento di esito)'
+    stato_1000: 'Bozza'
+    stato_2000: 'Inviata'
+    stato_3000: 'Protocollata'
+    stato_4000: 'Presa in carico'
+    stato_5000: 'In elaborazione'
+    stato_6000: 'Elaborata (in attesa di protocollazione del documento di esito)'
+    stato_7000: 'Iter completato'
+    stato_8000: 'Rifiutata (in attesa di protocollazione del documento di esito)'
+    stato_9000: 'Cancellata'
+
+    stato_4100: 'Richiesta integrazioni (in attesa di protocollazione)'
+    stato_4200: 'In attesa di integrazioni'
+    stato_4300: 'Integrazioni in attesa di protocollazione'
+    stato_4400: 'Integrazioni protocollate'
+    stato_4500: 'Presa in carico in seguito a integrazioni'
+
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'  
     descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
+  appunti_compilazione:
+    titolo: 'Aggiungi una descrizione per poter riconoscere la pratica più agevolmente'
+    sottotitolo: 'Questa descrizione può essere vista solo da te'
+    placeholder: 'Inserisci una descrizione breve'
+  noteDiCompilazione: 'Note di compilazione'
 
 
 iscrizione_asilo_nido:
@@ -247,6 +263,10 @@ liste_elettorali:
   pdf:
     richiesta: "Di essere inserito nell'Albo delle persone idonee all'ufficio di presidenza e all'ufficio di scrutatore presso i seggi elettorali"
 
+scia_pratica_edilizia:
+  pdf:
+    segnala: "segnala l'inizio dell'attività edilizia sotto descritta"
+
 errori:
   allegato:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
@@ -263,10 +283,13 @@ STATUS_CANCELLED_WAITALLEGATIOPERATORE: 'Rifiutata (in attesa di protocollazione
 user:
   dashboard:
     title: 'La mia stanza'
-    pratiche_draft: 'Pratiche in bozza'
-    pratiche_pending: 'Pratiche inviate'
-    pratiche_completed: 'Pratiche accettate'
-    pratiche_cancelled: 'Pratiche rifiutate'
+    pratiche_draft: 'In bozza'
+    pratiche_pending: 'Inviate'
+    pratiche_processing: 'In elaborazione'
+    pratiche_completed: 'Accettate'
+    pratiche_cancelled: 'Rifiutate'
+    pratiche_related: 'Aperte per mio conto'
+    pratiche_integration: 'Da integrare'
     vai_al_dettaglio: 'Vedi dettaglio'
     avvisi_notizie: 'Avvisi / Notizie'
     scadenze: 'Scadenze'
@@ -309,6 +332,7 @@ operatori:
   pratiche_mie: 'Pratiche da gestire'
   pratiche_libere: 'Pratiche da assegnare'
   pratiche_concluse: 'Pratiche concluse'
+  pratiche_ente: "Tutte le pratiche dell'ente"
   torna_alle_pratiche: "Torna all'elenco pratiche"
   allega: 'Allega'
   approva: 'Approva'
@@ -348,6 +372,7 @@ allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
   scarica_allegato: 'Scarica file'
+  scarica_allegato_bozza: 'Scarica il file'
   scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'
   crea_allegato: 'Carica un allegato'
   non_supportato: 'Il file che stai cecando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
@@ -373,6 +398,9 @@ email:
         complete.waitallegatioperatore: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi file allegati.'
         pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         draft: ''
+        draft.for.integration: "Le comunichiamo che è stata effettuata una richiesta di integrazione ai dati della sua domanda per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
+        submitted.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+        registered.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della pratica."
     operatore:
       status:
         submitted: "la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
@@ -729,3 +757,276 @@ steps:
             descrizione: 'Descrizione'
             anno: 'Anno di attività'
             guida_alla_compilazione: "Selezionare il tipo di contributo ed inserire descrizione ed anno dell'attività per cui si fa domanda"
+
+    scia:
+        error:
+            allegato_richiesto: "Allegare almeno un file nel campo %field%"
+        modulo_scia:
+            label: 'Domanda S.C.I.A.'
+            title: 'Modulo della domanda S.C.I.A. correttamente compilato'
+            guida_alla_compilazione: 'Allega il modulo della domanda S.C.I.A. correttamente compilato e tutti i documenti elencati'
+        allegati_modulo_scia:
+            label: 'Allegati alla domanda'
+            title: 'Documenti elencati nel modulo della domanda S.C.I.A.'
+            guida_alla_compilazione: 'Allega il modulo della domanda S.C.I.A. correttamente compilato e tutti i documenti elencati'
+            files:
+                DOM_CI:
+                    title: "Documenti d'identità"
+                    description: "Copia fotostatica di valido documento d'identità degli aventi titolo alla presentazione S.C.I.A, del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+                DOM_CF:
+                    title: "Codici fiscali o partite IVA"
+                    description: "Fotocopia codice fiscale o partita IVA del richiedente e del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+                DOM_PAG:
+                    title: "Ricevuta del contributo di concessione"
+                    description: "Documentazione attestante l'avvenuto pagamento del contributo di concessione."
+                DOM_NP:
+                    title: "Notifica preliminare"
+                    description: "Copia della notifica preliminare di cui all'articolo 99 del D.Lgs. 81/2008."
+                DOM_DURC:
+                    title: "DURC"
+                    description: "Dichiarazione dell'impresa esecutrice dei lavori ai fini dell'acquisizione d'ufficio del DURC."
+                DOM_VER:
+                    title: "Dichiarazione verifica documentazione"
+                    description: "Dichiarazione attestante l'avvenuta verifica della documentazione relativa all'art.90, comma 9, lettera a) e b) del D.Lgs.8/2008."
+        soggetti:
+            label: 'Soggetti aventi titolo'
+            title: 'Elenco dei soggetti aventi titolo come richiesto nel modulo A della domanda S.C.I.A.'
+            guida_alla_compilazione: 'Allega il/i modulo/i A correttamente compilato/i'
+        allegati_tecnici:
+            label: 'Allegati tecnici  (A)'
+            title: 'Documentazione tecnica (elencati in Allegato B - parte A della domanda S.C.I.A.)'
+            guida_alla_compilazione: "Documentazione tecnica di progetto <strong>essenziale ai fini dell'ammissibilità</strong> da produrre, in funzione della tipologia dell'intervento in progetto e in coerenza con il quadro sinottico parte integrante del presente allegato, in forma cartacea in <strong>duplice copia</strong> e su idoneo supporto informatico con possibilità di stampa e riproduzione in <strong>copia singola</strong>.<br/>Barrare gli elaborati oggetto di presentazione.<br/>Per le varianti va operato riferimento esclusivamente ai contenuti della variante stessa.<br/><strong>I punti contrassegnati con l'asterisco(<span style='color: red'>*</span>) sono obbligatori.</strong>"
+            tipo_intervento_label: 'Tipologia di intervento'
+            tipi_intervento:
+                nuova: 'Nuova costruzione'
+                ampliamento: 'Ampliamento'
+                demolizione: 'Demolizione e ricorstruzione'
+                straordinaria: 'Manutenzione straordinaria'
+                cambio_uso: "Cambio d'uso senza opere"
+            files:
+                TEC_URB:
+                    title: "1.1 ELABORATI RELATIVI AI VINCOLI E AI DATI URBANISTICI E CATASTALI"
+                    description: "Elaborati con riportati gli estratti degli strumenti urbanistici e la mappa catastale nonché i dati urbanistici ed edilizi di progetto (indici, cubature, superfici, distanze, altezze, ecc.). Sulla mappa catastale deve essere adeguatamente evidenziato l'ambito interessato dall'intervento edilizio."
+                TEC_DF:
+                    title: "2.1 DOCUMENTAZIONE FOTOGRAFICA"
+                    description: "Elaborato contenente adeguata documentazione fotografica relativa all'area di intervento. Devono essere indicati i punti di ripresa delle foto."
+                TEC_RT:
+                    title: "3.1 RELAZIONE TECNICA"
+                    description: "Relazione contenente i criteri di progettazione, la descrizione delle soluzioni adottatee ogni altro elemento di valutazione necessario in funzione dei singoli interventi. Allegato alla relazione deve essereprodotto un elenco degli elaborati depositati comprensivo di quelli essenziali, di ogni altro elaborato prodotto e deiprovvedimenti allegati."
+                TEC_PLANFAT:
+                    title: "4.1 PLANIMETRIA STATO DI FATTO"
+                    description: "Planimetria contenente il rilievo dello stato di fatto (per le varianti: statoautorizzato) riportarne i punti battuti, le quote altimetriche riferite ad un unico punto di origine, le curve di livello, iconfini di proprietà. Sulla planimetria di rilievo dovranno essere indicati gli ingombri delle costruzioni rilevanti aifini delle distanze. Assieme alla planimetria dovranno essere prodotte almeno due sezioni significative ed esteseoltre i confini. La scala dovrà essere adeguata alla dimensione del progetto; di norma 1:100 o 1:200."
+                TEC_PLANPROG:
+                    title: "4.2 PLANIMETRIA DI PROGETTO"
+                    description: "Planimetria contenente i confini di proprietà, gli edifici di progetto(rappresentando il livello della copertura ed evidenziando il sedime nonché eventuali aggetti), le sistemazioniesterne, le alberature, gli accessi, i parcheggi, i percorsi carrabili e pedonali, le distanze dai confini, le fasce dirispetto, le distanze dai fabbricati circostanti, le curve di livello di progetto e le relative quote riferite ad un unicopunto di origine, che deve coincidere con quello riportato sull'elaborato di rilievo. La scala dovrà essere adeguataalla dimensione del progetto; di norma 1:100 o 1:200 e comunque deve essere uguale a quella utilizzata per laplanimetria di rilievo. La planimetria deve riguardare tutta l'area oggetto di intervento"
+                TEC_PLANRAF:
+                    title: "4.3 PLANIMETRIA DI RAFFRONTO"
+                    description: "Planimetria di comparazione (rappresentazione dello stato di progetto,sovrapposizione con rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degli ambitidi costruzione e demolizione)."
+                TEC_SEZPLANRAF:
+                    title: "5.1 SEZIONI PLANIMETRICHE CON RAFFRONTO"
+                    description: "Sezioni riferite alla planimetria di progetto in numeroconveniente ad illustrare l'andamento del livello definitivo del terreno a sistemazioni avvenute con riferimento alprofilo del terreno naturale. Tali sezioni devono essere tratte nella medesima posizione di quelle di rilievo. Gli ambitidi raffronto riferito a riporti e sterri devono essere campiti rispettivamente in rosso e in giallo."
+                TEC_PIANTEFAT:
+                    title: "6.1 PIANTE STATO DI FATTO"
+                    description: "Piante (per le varianti: stato autorizzato) di tutti i piani (entro e fuori terra, compresala copertura) interessati dall'intervento debitamente quotate, corredate da informazioni quali quelle previste per lepiante di progetto qualora rilevanti. La scala dovrà essere adeguata alla dimensione e alla natura del progetto; dinorma 1:50 o 1:100."
+                TEC_PIANTEPROG:
+                    title: "6.2 PIANTE DI PROGETTO"
+                    description: "Piante di tutti i piani (entro e furori terra, compresa la copertura) interessatidall'intervento debitamente quotate, con riportate le destinazioni d'uso, le superfici utili e i rapporti di aero-illuminazione dei singoli locali nonché le dimensioni di porte e finestre. La scala dovrà essere adeguata alladimensione e alla natura del progetto; di norma 1:50 o 1:100."
+                TEC_PIANTERAF:
+                    title: "6.3 PIANTE DI RAFFRONTO"
+                    description: "Piante di comparazione (rappresentazione dello stato di progetto, sovrapposizionecon il rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degli ambiti di costruzionee demolizione)."
+                TEC_SEZFAT:
+                    title: "7.1 SEZIONI STATO DI FATTO"
+                    description: "Sezioni (per le varianti: stato autorizzato) tratte in punti significativi in numerosufficiente a garantire una esaustiva rappresentazione del progetto. Devono essere redatte almeno due sezioni,quotate, non parallele tra loro, assicurando un adeguato livello di restituszione ai vani scale. Le sezioni devonoessere redatte alla medesima scala di quelle di progetto rispetto alle quali possono tuttavia essere in numeroinferiore."
+                TEC_SERPROG:
+                    title: "7.2 SEZIONI DI PROGETTO"
+                    description: "Sezioni tratte in punti significativi in numero sufficiente a garantire una esaustivarappresentazione del progetto. Devono essere redatte almeno due sezioni, quotate, non parallele tra loro,assicurando un adeguato livello di restituzione ai vani scale. Le sezioni devono essere redatte alla medesimascala delle piante."
+                TEC_SEZRAF:
+                    title: "7.3 SEZIONI DI RAFFRONTO"
+                    description: "Sezioni di comparazione (rappresentazione dello stato di progetto, sovrapposizionecon il rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degli ambiti di costruzionee demolizione)."
+                TEC_PROSPFAT:
+                    title: "8.1 PROSPETTI STATO DI FATTO"
+                    description: "Prospetti (per le varianti: stato autorizzato) relativi a tutti i fronti con indicatele altezze di rilievo, i materiali e colori. La rappresentazione deve essere possibilmente estesa fino al confine dellotto. I prospetti devono di norma essere alla medesima scala di piante e sezioni."
+                TEC_PROSPPROG:
+                    title: "8.2 PROSPETTI DI PROGETTO"
+                    description: "Prospetti relativi a tutti i fronti con indicate le altezze di progetto, i materiali ecolori. Dovrà essere mostrato l'andamento del terreno di progetto, indicando altresì quello del terreno naturalesolo qualora sia apprezzabilmente diverso e non si producano i prospetti di raffronto. La rappresentazione deveessere possibilmente estesa fino al confine del lotto. I prospetti devono di norma essere alla medesima scala dipiante e sezioni."
+                TEC_PROSPRAF:
+                    title: "8.3 PROSPETTI DI RAFFRONTO"
+                    description: "Prospetti di comparazione (rappresentazione dello stato di progetto,sovrapposizione con il rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degliambiti di costruzione e demolizione."
+                TEC_BARARC:
+                    title: "9.1 BARRIERE ARCHITETTONICHE"
+                    description: "Elaborati progettuali, relazioni e dichiarazioni previste dalla vigentenormativa provinciale e nazionale per il superamento delle barriere architettoniche."
+                TEC_SPAZIPARC:
+                    title: "10.1 SPAZI DI PARCHEGGIO"
+                    description: "Relazione relativa agli spazi di parcheggio con allegato calcolo e verifica delladotazione minima ai sensi dell'art. 59 della l.p. 1/2008 'Pianificazione urbanistica e governo del territorio' nonchénei casi ove ricorra, il calcolo della c.d. 'monetizzazione'"
+                TEC_GEO:
+                    title: "11.1 PERIZIA/RELAZIONE GEOLOGICA, GEOTECNICA, IDROGEOLOGICA E/O VALANGHIVA"
+                    description: "Perizia/relazione geologica, geotecnica, idrogeologica e/o valanghiva con riferimento alla Carta di sintesi geologica, allaCarta delle risorse idriche e al Piano Generale di Utilizzazione delle Acque Pubbliche (PGUAP) della Provinciaautonoma di Trento. Gli elaborati devono essere controfirmati dal progettista per presa visione."
+                TEC_ENER:
+                    title: "12.1 ELABORATI RELATIVI ALLA CLASSIFICAZIONE ENERGETICA"
+                    description: "Solo se necessari ai fini del computodel 'bonus volumetrico'."
+                TEC_PLANRETI:
+                    title: "PLANIMETRIA RETI"
+                    description: ""
+        ulteriori_allegati_tecnici:
+            label: 'Allegati tecnici (B)'
+            title: 'Ulteriore documentazione tecnica (elencati in AllegatoB - parte B della domanda S.C.I.A.)'
+            guida_alla_compilazione: "Ulteriore documentazione tecnica di progetto"
+            files:
+                allegatoB:
+                    title: "Modulo Allegato B Parte B"
+                    description: "Allega il documento Allegato B Parte B correttamente compilato. Allega poi nei campi sottostanti gli eventuali documenti dichiarati nel file"
+                TEC_PDM:
+                    title: "1) piano di divisione materiale"
+                    description: ""
+                TEC_IMP-EL:
+                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto impianti elettrici"
+                    description: ""
+                TEC_IMP-TER:
+                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto impianti termici"
+                    description: ""
+                TEC_IMP-SOL:
+                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto impianti di sollevamento"
+                    description: ""
+                TEC_IMP-SCAR:
+                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto scariche atmosferiche"
+                    description: ""
+                TEC_PLARETI:
+                    title: "3) relativamente alla planimetria reti, contenente le reti di smaltimento delle acque bianche e nere, i punti di allacciamento alla rete pubblica, collocazione di eventuali vasche di laminazione e dispersori delle acque bianche con relativi disegni di dettaglio e dimensionamento, i punti di raccolta dei rifiuti urbani e ogni altro elemento utile a consentire una valutazione in ordine al grado di adeguatezza delle opere di urbanizzazione."
+                    description: ""
+                TEC_FIBRA-SCHEMA:
+                    title: "5) relativamente alle \"Linee guida per le predisposizioni dei collegamenti in fibra ottica all'interno degli edifici\" come previsto dalla discilpina provinciale - schema generale di accesso, adduzione e distribuzione verticale e orizzontale dei collegamenti con relativi dimensionamenti e/o predisposizioni."
+                    description: ""
+                TEC_FIBRA-REL:
+                    title: "5) relativamente alle \"Linee guida per le predisposizioni dei collegamenti in fibra ottica all'interno degli edifici\" come previsto dalla discilpina provinciale - relazione tecnica descrittiva sui criteri e sul dimensionamento rete."
+                    description: ""
+                TEC_ENERG-LIM:
+                    title: "6) relativamente ai requisiti di prestazione energetica ai sensi del D.P.P. 11-13/Leg. del 13 luglio 2009, recante \"Disposizioni regolamentari in materia di edilizia sostenibile in attuazione del titolo IV della l.p. 1/2008\" - elaborati/relazione energetica (legge 10/91) in cui si dimostri anche il rispetto del valore limite del fabbisogno globale di energia primaria (EPgl) dell'edificio, nel caso in cui gli interventi ricadano nell'art. 4 comma 3 del D.P.P. 11-13/Leg. del 13 luglio 2009."
+                    description: ""
+                TEC_ENERG-REQ:
+                    title: "6) relativamente ai requisiti di prestazione energetica ai sensi del D.P.P. 11-13/Leg. del 13 luglio 2009, recante \"Disposizioni regolamentari in materia di edilizia sostenibile in attuazione del titolo IV della l.p. 1/2008\" - elaborati/relazione energetica necessari a dimostrare il rispetto dei requisiti minimi di prestazione energetica (trasmittenza/rendimenti), nel caso in cui gli interventi ricadano nell'art. 4 comma 4 del D.P.P. 11-13/Leg. del 13 luglio 2009."
+                    description: ""
+                TEC_CARAQ:
+                    title: "7) riguardo alla relazione sulle caratteristiche acustiche ai sensi dell'art. 18, l.p. 6/1991, recante \"Tutela da inquinamento acustico\", dei decreti attuativi della legge 447/1995, \"Legge quadro sull'inquinamento acustico\", l'intervento in progetto - relazione sulle caratteristiche acustiche;"
+                    description: ""
+                TEC_IMPAQ:
+                    title: "8) riguardo alle documentazioni acustiche previste dall'art. 8 della legge 447/1995, \"Legge quadro sull'inquinamento acustico\" e ss.mm., l'intervento in progetto - valutazione previsionale di impatto acustico."
+                    description: ""
+                TEC_CLIMAQ:
+                    title: "8) riguardo alle documentazioni acustiche previste dall'art. 8 della legge 447/1995, \"Legge quadro sull'inquinamento acustico\" e ss.mm., l'intervento in progetto - valutazione previsionale di clima acustico."
+                    description: ""
+                TEC_CERTAQ:
+                    title: "8) riguardo alle documentazioni acustiche previste dall'art. 8 della legge 447/1995, \"Legge quadro sull'inquinamento acustico\" e ss.mm., l'intervento in progetto - si allega autocertificazione, sotto forma di dichiarazione sostitutiva dell'atto di notorietà ai sensi dell'art. 38 del DPR n. 445/2000, del tecnico competente in acustica."
+                    description: ""
+                TEC_SCAVO:
+                    title: "9) relativamente alla documentazione di cui al D.M. 161/2012 per l'utilizzo delle terre e rocce da scavo"
+                    description: ""
+                TEC_STAT:
+                    title: "10) modelli statistici ISTAT e PAT, sottoscritti dal progettista o dal richiedente, per l'intervento in progetto - elaborati progettuali."
+                    description: ""
+                TEC_CONT-ELAB:
+                    title: "11) elaborati relativi al calcolo del contributo di concessione, l'intervento in progetto - elaborati progettuali."
+                    description: ""
+                TEC_CONT-ESEN:
+                    title: "11) elaborati relativi al calcolo del contributo di concessione, l'intervento in progetto - elaborati progettuali."
+                    description: ""
+        provvedimenti:
+            label: 'Provvedimenti'
+            title: 'Provvedimenti (elencati in Allegato C della domanda S.C.I.A.)'
+            guida_alla_compilazione: "Provvedimenti (elencati in Allegato C della domanda S.C.I.A.) da allegare se necessario"
+            files:
+                PROV_PC-PAE:
+                    title: "a) autorizzazione per la tutela paesaggistica di cui alla l.p. 1/2008"
+                    description: ""
+                PROV_PC-CUL:
+                    title: "b) autorizzazioni relative ai beni culturali di cui agli artt. 21 e 22 del d.lgs. 42/2004"
+                    description: ""
+                PROV_AR-VIA:
+                    title: "c) adempimenti di cui alla l.p. 28/1988 \"Disciplina della valutazione dell'impatto ambientale e ulteriori norme di tutela dell'ambiente\""
+                    description: ""
+                PROV_AR-VI:
+                    title: "d) valutazione di incidenza (V.I.) per interventi ricadenti all'interno di Siti di Interesse Comunitario (S.I.C.) o Zone di Protezione Speciale (Z.P.S.) ex art. 25 delle norme di attuazione del PUP"
+                    description: ""
+                PROV_AR-PGUAP:
+                    title: "e) provvedimenti di cui agli artt. 16 e 17 delle relative norme di attuazione del Piano Generale di Utilizzazione delle Acque Pubbliche (PGUAP) della Provincia autonoma di Trento"
+                    description: ""
+                PROV_AR-VINIDRO:
+                    title: "f) autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. 11/2007 e relativo regolamento di attuazione"
+                    description: ""
+                PROV_AR-ACQP:
+                    title: "g) autorizzazione/concessione P.A.T. - Servizio Bacini Montani ai fini della tutela delle acque pubbliche nel caso in cui gli interventi interessino fasce di rispetto regolate dalla l.p. 18/1976 \"Norme in materia di acque pubbliche, opere idauliche e relativi servizi provinciali\" anche ai sensi della l.p. 11/2007"
+                    description: ""
+                PROV_AR-ELETTR:
+                    title: "h) documentazione relativa all'avvenuta determinazione delle fasce di rispetto per gli elettrodotti e la verifica del rispetto dei limiti di esposizione ai relativi campi elettrici e magnetici"
+                    description: ""
+                PROV_AR-RADIO:
+                    title: "i) autorizzazione del Comitato istituito presso l'Agenzia provinciale per la protezione dell'ambiente per la realizzazione di impianti di telecomunicazione, ai sensi della l.p. 9/1997 \"Individuazione dei siti per la localizzazione di impianti di radiodiffusione\""
+                    description: ""
+                PROV_AR-INQ:
+                    title: "j) provvedimenti di cui al T.U.L.P. in materia di tutela dell'ambiente degli inquinamenti - D.P.G.P. n. 1-41/Leg. del 1987 e D.L. 209/1997 e 152/2006"
+                    description: ""
+                PROV_AR-SOIS:
+                    title: "k) parere P.A.T. - Servizio Opere Igientico-Sanitarie qualora previsto da specifiche normative di settore"
+                    description: ""
+                PROV_AR-APSS:
+                    title: "l) parere Azienda Provinciale per i Servizi Sanitari qualora previsto da specifiche normative di settore"
+                    description: ""
+                PROV_AR-ILLU:
+                    title: "m) autorizzazione del Comune per la realizzazione di impianti di illuminazione esterna, ai sensi del D.P.P. n. 2-34/Leg. del 2010 in materia di inquinamento luminoso"
+                    description: ""
+                FRT_FASC-VIA:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
+                    description: ""
+                FRT_FASC-PC:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a passi carrai"
+                    description: ""
+                FRT_FASC-FER:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro fasce di rispetto ferroviarie"
+                    description: ""
+                FRT_FASC-CIM:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto cimiteriali"
+                    description: ""
+                FRT_FASC-ISO:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto di aree di isodanno"
+                    description: ""
+                FRT_FASC-LE:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
+                    description: ""
+                FRT_FASC-DEP:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi entro fasce di rispetto di depuratori"
+                    description: ""
+                FRT_FASC-AER:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
+                    description: ""
+                FRT_FASC-ALTRO:
+                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a altro"
+                    description: ""
+                AGR_SA:
+                    title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 \"Pianificazione urbanistica e governo del territorio\""
+                    description: ""
+                AGR_TUR:
+                    title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, \"Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori\""
+                    description: ""
+                AGR_ALB:
+                    title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
+                    description: ""
+                AGR_MANU:
+                    title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
+                    description: ""
+                PUP_INC:
+                    title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
+                    description: ""
+                PUP_TULPS:
+                    title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
+                    description: ""
+                PUP_GEO:
+                    title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
+                    description: ""
+                PUP_ALB:
+                    title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, \"Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica\""
+                    description: ""
+                PUP_RIFU:
+                    title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, \"Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate\""
+                    description: ""
+                PUP_ALTRO:
+                    title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
+                    description: ""

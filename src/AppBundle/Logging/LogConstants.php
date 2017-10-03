@@ -38,14 +38,16 @@ class LogConstants
     const PRATICA_APPROVED_WAIT_REGISTRATION = "Pratica {pratica} completed by user {user} and wait new registration";
 
     const OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO = "Operatore Admin {operatore_admin} has changed {operatore} ambito";
-    const PRATICA_UPDATED_STATUS_FROM_GPA = "Pratica status has been updated from GPA {statusChange}";
-    const PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GPA = "Error in trying to update Pratica status from GPA {statusChange}, {error}";
+    const PRATICA_UPDATED_STATUS_FROM_GISCOM = "Pratica status has been updated from GISCOM {statusChange}";
+    const PRATICA_UPDATED_PROTOCOLLO_FROM_GISCOM = "Pratica Protocollo has been updated from GISCOM {statusChange}";
+    const PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM = "Error in trying to update Pratica status from GISCOM {statusChange}, {error}";
+    const PRATICA_ERROR_IN_UPDATED_PROTOCOLLI_FROM_GISCOM = "Error in trying to update Pratica Protocolli from GISCOM {statusChange}, {error}";
 
     const PRATICA_CHANGE_STATUS = "Pratica change status handled by listener {listener}: new status is {status}";
 
     const PROTOCOLLO_SEND_ERROR = "Error {error_number} sending pratica {pratica} to protocollo";
     const PROTOCOLLO_UPLOAD_ERROR = "Error {error_number} uploading allegato {allegato} of pratica {pratica} to protocollo";
     const PROTOCOLLO_UPLOADOPERATORE_ERROR = "Error {error_number} uploading allegati operatore of pratica {pratica} to protocollo";
-
+    const RICHIESTA_INTEGRAZIONE_FROM_GISCOM = "Richiesta integrazione from Giscom";
 
 }

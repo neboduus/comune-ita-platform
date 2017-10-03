@@ -39,6 +39,13 @@ class MailerService
         $this->templating = $templating;
     }
 
+    private $blacklistedStates = [
+        Pratica::STATUS_REQUEST_INTEGRATION,
+        Pratica::STATUS_PROCESSING,
+        Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION,
+        Pratica::STATUS_DRAFT,
+    ];
+
     /**
      * @param Pratica $pratica
      * @param $fromAddress
@@ -49,6 +56,10 @@ class MailerService
     public function dispatchMailForPratica(Pratica $pratica, $fromAddress, $resend = false)
     {
         $sentAmount = 0;
+        if (in_array($pratica->getStatus(), $this->blacklistedStates)) {
+            return $sentAmount;
+        }
+
         if ($this->CPSUserHasValidContactEmail($pratica->getUser()) &&
             ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))
         ) {

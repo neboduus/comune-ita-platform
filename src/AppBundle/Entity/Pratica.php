@@ -9,7 +9,7 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\PraticaRepository")
  * @ORM\Table(name="pratica")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
@@ -24,20 +24,31 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "liste_elettorali" = "ListeElettorali",
  *     "stato_famiglia" = "StatoFamiglia",
  *     "occupazione_suolo_pubblico" = "OccupazioneSuoloPubblico",
- *     "contributo_associazioni" = "ContributoAssociazioni"
+ *     "contributo_associazioni" = "ContributoAssociazioni",
+ *     "scia_pratica_edilizia" = "SciaPraticaEdilizia"
  * })
  * @ORM\HasLifecycleCallbacks
  */
-class Pratica
+class Pratica implements IntegrabileInterface
 {
-    const STATUS_DRAFT = 1;
-    const STATUS_SUBMITTED = 2;
-    const STATUS_REGISTERED = 3;
-    const STATUS_PENDING = 4;
-    const STATUS_COMPLETE_WAITALLEGATIOPERATORE = 5;
-    const STATUS_COMPLETE = 10;
-    const STATUS_CANCELLED_WAITALLEGATIOPERATORE = 90;
-    const STATUS_CANCELLED = 100;
+    const STATUS_DRAFT = 1000;
+    const STATUS_SUBMITTED = 2000;
+    const STATUS_REGISTERED = 3000;
+    const STATUS_PENDING = 4000;
+
+    const STATUS_REQUEST_INTEGRATION = 4100;
+    const STATUS_DRAFT_FOR_INTEGRATION = 4200;
+    const STATUS_SUBMITTED_AFTER_INTEGRATION = 4300;
+    const STATUS_REGISTERED_AFTER_INTEGRATION = 4400;
+    const STATUS_PENDING_AFTER_INTEGRATION = 4500;
+
+    const STATUS_PROCESSING = 5000;
+
+    const STATUS_COMPLETE_WAITALLEGATIOPERATORE = 6000;
+    const STATUS_COMPLETE = 7000;
+
+    const STATUS_CANCELLED_WAITALLEGATIOPERATORE = 8000;
+    const STATUS_CANCELLED = 9000;
 
     const ACCEPTED = true;
     const REJECTED = false;
@@ -52,8 +63,11 @@ class Pratica
     const TYPE_ATTESTAZIONE_ANAGRAFICA = "attestazione_anagrafica";
     const TYPE_LISTE_ELETTORALI = "liste_elettorali";
     const TYPE_STATO_FAMIGLIA = "stato_famiglia";
+    const TYPE_SCIA_PRATICA_EDILIZIA = "scia_pratica_edilizia";
     const TYPE_OCCUPAZIONE_SUOLO_PUBBLICO = "occupazione_suolo_pubblico";
     const TYPE_CONTRIBUTO_ASSOCIAZIONI = "contributo_associazioni";
+
+
 
     /**
      * @var string
@@ -309,6 +323,18 @@ class Pratica
     private $motivazioneEsito;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     * @var string $userCompilationNotes
+     */
+    private $userCompilationNotes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\RichiestaIntegrazione", mappedBy="praticaPerCuiServeIntegrazione", orphanRemoval=false)
+     * @var ArrayCollection
+     */
+    private $richiesteIntegrazione;
+
+    /**
      * Pratica constructor.
      */
     public function __construct()
@@ -326,6 +352,18 @@ class Pratica
         $this->nucleoFamiliare = new ArrayCollection();
         $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
         $this->storicoStati = new ArrayCollection();
+        $this->lastCompiledStep = 0;
+        $this->richiesteIntegrazione = new ArrayCollection();
+    }
+
+    public function __clone()
+    {
+        $this->id = Uuid::uuid4();
+        $this->numeroProtocollo = null;
+        $this->numeroFascicolo = null;
+        $this->idDocumentoProtocollo = null;
+        $this->numeriProtocollo = new ArrayCollection();
+        $this->moduliCompilati = new ArrayCollection();
         $this->lastCompiledStep = 0;
     }
 
@@ -597,7 +635,7 @@ class Pratica
     }
 
     /**
-     * @param array $numeroDiProtocollo
+     * @param string $numeroDiProtocollo
      *
      * @return Pratica
      */
@@ -608,6 +646,14 @@ class Pratica
         }
 
         return $this;
+    }
+
+    /**
+     * @param ArrayCollection $numeriProtocollo
+     */
+    public function setNumeriProtocollo($numeriProtocollo)
+    {
+        $this->numeriProtocollo = $numeriProtocollo;
     }
 
     /**
@@ -795,7 +841,7 @@ class Pratica
      *
      * @return $this
      */
-    public function addNucleoFamiliare(ComponenteNucleoFamiliare $componente)
+    public function addComponenteNucleoFamiliare(ComponenteNucleoFamiliare $componente)
     {
         if (!$this->nucleoFamiliare->contains($componente)) {
             $componente->setPratica($this);
@@ -810,7 +856,7 @@ class Pratica
      *
      * @return $this
      */
-    public function removeNucleoFamiliare(ComponenteNucleoFamiliare $componente)
+    public function removeComponenteNucleoFamiliare(ComponenteNucleoFamiliare $componente)
     {
         if ($this->nucleoFamiliare->contains($componente)) {
             $this->nucleoFamiliare->removeElement($componente);
@@ -1215,7 +1261,7 @@ class Pratica
     /**
      * @param boolean $accettoIstruzioni
      *
-     * @return IscrizioneAsiloNido
+     * @return Pratica
      */
     public function setAccettoIstruzioni($accettoIstruzioni)
     {
@@ -1352,7 +1398,7 @@ class Pratica
     }
 
     /**
-     * @return mixed
+     * @return Ente
      */
     public function getEnte()
     {
@@ -1369,4 +1415,75 @@ class Pratica
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getUserCompilationNotes()
+    {
+        return $this->userCompilationNotes;
+    }
+
+    /**
+     * @param string $userCompilationNotes
+     *
+     * @return $this
+     */
+    public function setUserCompilationNotes(string $userCompilationNotes)
+    {
+        $this->userCompilationNotes = $userCompilationNotes;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRichiesteIntegrazione()
+    {
+        return $this->richiesteIntegrazione;
+    }
+
+    /**
+     * @param ArrayCollection $richiesteIntegrazione
+     *
+     * @return $this
+     */
+    public function setRichiesteIntegrazione($richiesteIntegrazione)
+    {
+        $this->richiesteIntegrazione = $richiesteIntegrazione;
+
+        return $this;
+    }
+
+    public function haUnaRichiestaDiIntegrazioneAttiva()
+    {
+        return $this->getRichiestaDiIntegrazioneAttiva() != false;
+    }
+
+    /**
+     * @return RichiestaIntegrazione|null
+     */
+    public function getRichiestaDiIntegrazioneAttiva()
+    {
+
+        foreach($this->getRichiesteIntegrazione() as $richiestaIntegrazione){
+            if ($richiestaIntegrazione->getStatus() == RichiestaIntegrazione::STATUS_PENDING){
+                return $richiestaIntegrazione;
+            }
+        }
+
+        return null;
+    }
+
+    public function addRichiestaIntegrazione(RichiestaIntegrazione $integration)
+    {
+        if (!$this->richiesteIntegrazione->contains($integration)) {
+            $this->richiesteIntegrazione->add($integration);
+            $integration->addPratica($this);
+        }
+
+        return $this;
+    }
+
 }

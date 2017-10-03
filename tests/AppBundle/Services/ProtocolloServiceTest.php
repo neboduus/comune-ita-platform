@@ -4,10 +4,12 @@ namespace Tests\AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\User;
 use AppBundle\Protocollo\PiTreProtocolloHandler;
 use AppBundle\Services\ProtocolloService;
+use Doctrine\DBAL\Schema\Schema;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
@@ -16,6 +18,7 @@ class ProtocolloServiceTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->cleanDb(RichiestaIntegrazione::class);
         $this->cleanDb(ScheduledAction::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Allegato::class);

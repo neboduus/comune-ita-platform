@@ -11,9 +11,9 @@ security:
                 ez:
                   password: '%ez_password%'
                   roles: 'ROLE_EZ'
-                gpa:
-                  password: '%gpa_password%'
-                  roles: 'ROLE_GPA'
+                giscom:
+                  password: '%giscom_password%'
+                  roles: 'ROLE_GISCOM'
         fos_userbundle:
             id: fos_user.user_provider.username
         cps:
@@ -41,15 +41,21 @@ security:
             logout:
               path:   logout
               target: operatori_index
-
-        gpa_api:
-            pattern: ^/api/v\d+\.\d+/pratica/.*/status
+        giscom_api:
+            pattern: ^/api/v\d+\.\d+/giscom/pratica/.*/.*
             http_basic:
                provider: in_memory
         ez_api:
             pattern: ^/api/v\d+\.\d+/schedaInformativa/.*
             http_basic:
                provider: in_memory
+        user_api:
+            pattern: ^/api/v\d+\.\d+/user/.*
+            guard:
+                provider: cps
+                authenticators:
+                    - ocsdc.cps.token_authenticator
+
         main:
             anonymous: ~
 
@@ -64,5 +70,5 @@ security:
         - { path: ^/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/operatori, role: ROLE_OPERATORE }
         - { path: ^/pratiche, role: ROLE_USER }
-        - { path: ^/api/v\d+\.\d+/pratica/.*/status, role: ROLE_GPA }
+        - { path: ^/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
         - { path: ^/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }

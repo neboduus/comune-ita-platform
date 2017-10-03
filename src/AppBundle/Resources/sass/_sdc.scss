@@ -503,6 +503,24 @@ body.canvas-slid {
   margin: 40px auto;
 }
 
+.vue-upload {
+  margin-bottom: 20px;
+  .el-upload-list {
+    .el-upload-list__item {
+      background-color: #fff;
+      border: 1px solid #ccc;
+    }
+  }
+}
+
+.fileinput-preview {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
 @media only screen and (max-width: $screen-sm-min) {
   /* Force table to not be like tables anymore */
   #no-more-tables {
@@ -576,4 +594,7 @@ body.canvas-slid {
   min-height: 100px;
 }
 
+input[type=file].el-upload__input {
+  display:none
+}
 

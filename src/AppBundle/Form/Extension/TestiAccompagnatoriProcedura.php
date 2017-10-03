@@ -17,6 +17,9 @@ class TestiAccompagnatoriProcedura
      */
     private $translator;
 
+    private $vueApp;
+    private $vueBundledData;
+
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
@@ -27,7 +30,7 @@ class TestiAccompagnatoriProcedura
      */
     public function getGuideText()
     {
-        return !empty($this->guideText) ? $this->guideText : null;
+        return !empty( $this->guideText ) ? $this->guideText : null;
     }
 
     /**
@@ -48,7 +51,7 @@ class TestiAccompagnatoriProcedura
      */
     public function getDescriptionText()
     {
-        return !empty($this->descriptionText) ? $this->descriptionText : null;
+        return !empty( $this->descriptionText ) ? $this->descriptionText : null;
     }
 
     /**
@@ -64,8 +67,9 @@ class TestiAccompagnatoriProcedura
         return $this;
     }
 
-    public function translate($palceholder){
-        return $this->translator->trans($palceholder);
+    public function translate($id, array $parameters = array(), $domain = null, $locale = null)
+    {
+        return $this->translator->trans($id, $parameters, $domain, $locale);
     }
 
     /**
@@ -88,4 +92,43 @@ class TestiAccompagnatoriProcedura
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getVueApp()
+    {
+        return $this->vueApp;
+    }
+
+    /**
+     * @param mixed $vueApp
+     *
+     * @return $this
+     */
+    public function setVueApp($vueApp)
+    {
+        $this->vueApp = $vueApp;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVueBundledData()
+    {
+        return $this->vueBundledData;
+    }
+
+    /**
+     * @param mixed $vueBundledData
+     *
+     * @return $this
+     */
+    public function setVueBundledData($vueBundledData)
+    {
+        $this->vueBundledData = $vueBundledData;
+
+        return $this;
+    }
 }

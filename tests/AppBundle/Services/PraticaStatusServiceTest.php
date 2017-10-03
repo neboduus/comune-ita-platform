@@ -26,7 +26,6 @@ class PraticaStatusServiceTest extends AbstractAppTestCase
 
     private function getMockPraticaStatusService()
     {
-        // FIXME: testare tutti i casi
         $dispatcher = $this->getMockBuilder(TraceableEventDispatcher::class)->disableOriginalConstructor()->getMock();
         $dispatcher->expects($this->exactly(1))->method('dispatch');
         return
@@ -36,4 +35,5 @@ class PraticaStatusServiceTest extends AbstractAppTestCase
                 $dispatcher
             );
     }
+
 }

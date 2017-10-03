@@ -4,7 +4,9 @@ namespace AppBundle\Services;
 
 
 use AppBundle\Entity\Allegato;
-use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\RichiestaIntegrazione;
+use AppBundle\Entity\RichiestaIntegrazioneDTO;
+use AppBundle\Entity\RichiestaIntegrazioneRequestInterface;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
@@ -82,7 +84,6 @@ class ModuloPdfBuilderService
 
     /**
      * @param Pratica $pratica
-     * @param CPSUser $user
      *
      * @return RispostaOperatore
      */
@@ -108,7 +109,6 @@ class ModuloPdfBuilderService
 
     /**
      * @param Pratica $pratica
-     * @param CPSUser $user
      *
      * @return ModuloCompilato
      */
@@ -131,6 +131,73 @@ class ModuloPdfBuilderService
         $this->em->persist($moduloCompilato);
 
         return $moduloCompilato;
+    }
+
+    /**
+     * @param Pratica $pratica
+     * @param RichiestaIntegrazioneDTO $integrationRequest
+     *
+     * @return RichiestaIntegrazione
+     */
+    public function creaModuloProtocollabilePerRichiestaIntegrazione(
+        Pratica $pratica,
+        RichiestaIntegrazioneDTO $integrationRequest
+    ) {
+        $integration = new RichiestaIntegrazione();
+        $integration->setPayload($integrationRequest->getPayload());
+        $integration->setOwner($pratica->getUser());
+        $integration->setOriginalFilename((new \DateTime())->format('Ymdhi'));
+        $integration->setDescription($integrationRequest->getMessage());
+        $integration->setPratica($pratica);
+
+        $content = $this->renderForPraticaIntegrationRequest($pratica, $integrationRequest);
+        $destinationDirectory = $this->getDestinationDirectoryFromContext($integration);
+        $fileName = uniqid() . '.pdf';
+        $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
+
+        $this->filesystem->dumpFile($filePath, $content);
+        $integration->setFile(new File($filePath));
+        $integration->setFilename($fileName);
+
+        $this->em->persist($integration);
+
+        return $integration;
+    }
+
+    private function renderForPraticaIntegrationRequest(
+        Pratica $pratica,
+        RichiestaIntegrazioneDTO $integrationRequest
+    ){
+        $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/integration.html.twig', [
+            'pratica' => $pratica,
+            'richiesta_integrazione' => $integrationRequest,
+            'user' => $pratica->getUser(),
+        ]);
+
+        $header = $this->templating->render('@App/Pratiche/pdf/parts/header.html.twig', [
+            'pratica' => $pratica,
+            'user' => $pratica->getUser(),
+        ]);
+        $footer = $this->templating->render('@App/Pratiche/pdf/parts/footer.html.twig', [
+            'pratica' => $pratica,
+            'user' => $pratica->getUser(),
+        ]);
+
+        $content = $this->generator->getOutputFromHtml($html, array(
+            'header-html' => $header,
+            'footer-html' => $footer,
+            'margin-top' => 20,
+            'margin-right' => 0,
+            'margin-bottom' => 20,
+            'header-spacing' => 6,
+            'encoding' => 'UTF-8',
+            'margin-left' => 0,
+            'images' => true,
+            'no-background' => false,
+            'lowquality' => false
+        ));
+
+        return $content;
     }
 
     /**
@@ -158,7 +225,7 @@ class ModuloPdfBuilderService
     }
 
     /**
-     * @param ModuloCompilato $moduloCompilato
+     * @param Allegato $moduloCompilato
      *
      * @return string
      */

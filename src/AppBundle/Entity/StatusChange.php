@@ -16,15 +16,24 @@ class StatusChange
 
     /**
      * StatusChange constructor.
-     * @param object $remoteRequest
+     * @param array $data
      */
-    public function __construct($remoteRequest)
+    public function __construct($data)
     {
-        $this->evento = $remoteRequest['evento'];
-        $this->operatore = $remoteRequest['operatore'];
-        $this->responsabile = $remoteRequest['responsabile'];
-        $this->struttura = $remoteRequest['struttura'];
-        $this->timestamp = $remoteRequest['timestamp'];
+        /**
+         * Since GISCOM uses different codes we have to map them here
+         * We look for the giscom mapping and fallback to the raw value if none is found
+         */
+        $this->evento = $data['evento'];
+        $this->operatore = $data['operatore'];
+        $this->responsabile = $data['responsabile'];
+        $this->struttura = $data['struttura'];
+        $this->timestamp = $data['timestamp'] ?? $data['time'];
+
+        if(!is_int($this->timestamp)){
+            $date = new \DateTime($this->timestamp, new \DateTimeZone('Europe/Rome'));
+            $this->timestamp = $date->getTimestamp();
+        }
     }
 
     /**

@@ -24,7 +24,10 @@ parameters:
     wkhtmlbinary:     '%kernel.root_dir%/../vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64'
 
     # La password usata da gpa per pushare gli status changes
-    gpa_password: gpa
+    giscom_password: giscom
+    giscom_adapter_url: https://www.giscom.cloud/WebAPI/
+    giscom_adapter_username: pippo
+    giscom_adapter_password: passw
 
     # La password usata da comunweb per pushare le schede informative
     ez_password: ez
@@ -35,7 +38,7 @@ parameters:
 
     header_top_title: Provincia autonoma di Trento
     header_top_link: http://www.provincia.tn.it/
-    footer_credits: 'La <strong>Stanza del cittadino</strong> &egrave; una iniziativa progettuale del Consorzio dei Comuni Trentini'
+    footer_credits: 'La <strong>Stanza del cittadino</strong> &egrave; una iniziativa progettuale sperimentale del Comune di Tre Ville'
 
     ocsdc_iter_duration_start_status: 3
     ocsdc_iter_duration_end_statuses: [10,100]
@@ -46,3 +49,6 @@ parameters:
 
     ocsdc_scheme: 'https'
     ocsdc_host:  devsdc.opencontent.it
+
+    generate_p7m_thumbnail: true
+    gsbinary: 'gs'

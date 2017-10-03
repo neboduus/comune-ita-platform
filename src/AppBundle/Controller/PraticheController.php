@@ -2,7 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\DematerializedFormAllegatiContainer;
+use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
@@ -42,50 +45,13 @@ class PraticheController extends Controller
             array('status' => 'DESC')
         );
 
-        $praticheDraft = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_DRAFT,
-            ],
-            [
-                'creationTime' => 'DESC',
-            ]
-        );
-
-        $pratichePending = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => [
-                    Pratica::STATUS_SUBMITTED,
-                    Pratica::STATUS_REGISTERED,
-                    Pratica::STATUS_PENDING,
-                    Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
-                ],
-            ],
-            [
-                'creationTime' => 'DESC',
-            ]
-        );
-
-        $praticheCompleted = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_COMPLETE,
-            ],
-            [
-                'creationTime' => 'DESC',
-            ]
-        );
-
-        $praticheCancelled = $repo->findBy(
-            [
-                'user' => $user,
-                'status' => Pratica::STATUS_CANCELLED,
-            ],
-            [
-                'creationTime' => 'DESC',
-            ]
-        );
+        $praticheDraft = $repo->findDraftPraticaForUser($user);
+        $pratichePending = $repo->findPendingPraticaForUser($user);
+        $praticheProcessing = $repo->findProcessingPraticaForUser($user);
+        $praticheCompleted = $repo->findCompletePraticaForUser($user);
+        $praticheCancelled = $repo->findCancelledPraticaForUser($user);
+        $praticheDraftForIntegration = $repo->findDraftForIntegrationPraticaForUser($user);
+        $praticheRelated = $repo->findRelatedPraticaForUser($user);
 
 
         return [
@@ -95,8 +61,11 @@ class PraticheController extends Controller
             'tab_pratiche' => array(
                 'draft' => $praticheDraft,
                 'pending' => $pratichePending,
+                'processing' => $praticheProcessing,
                 'completed' => $praticheCompleted,
                 'cancelled' => $praticheCancelled,
+                'integration' => $praticheDraftForIntegration,
+                'related' => $praticheRelated,
             ),
         ];
     }
@@ -113,6 +82,15 @@ class PraticheController extends Controller
     public function newAction(Request $request, Servizio $servizio)
     {
         $user = $this->getUser();
+
+        /**
+         * TODO: valutiamo se mettere una flag ai servizi per indicare se possiamo avere
+         * più bozze in contemporanea
+         */
+        $praticaFQCN = $servizio->getPraticaFCQN();
+        $praticaInstance = new  $praticaFQCN();
+        $isServizioScia = $praticaInstance instanceof DematerializedFormPratica;
+
         $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
         $pratiche = $repo->findBy(
             array(
@@ -123,7 +101,7 @@ class PraticheController extends Controller
             array('creationTime' => 'ASC')
         );
 
-        if (!empty( $pratiche )) {
+        if (!$isServizioScia && !empty( $pratiche )) {
             return $this->redirectToRoute(
                 'pratiche_list_draft',
                 ['servizio' => $servizio->getSlug()]
@@ -172,7 +150,10 @@ class PraticheController extends Controller
             array(
                 'user' => $user,
                 'servizio' => $servizio,
-                'status' => Pratica::STATUS_DRAFT,
+                'status' => [
+                    Pratica::STATUS_DRAFT,
+                    Pratica::STATUS_DRAFT_FOR_INTEGRATION,
+                    ],
             ),
             array('creationTime' => 'ASC')
         );
@@ -198,18 +179,17 @@ class PraticheController extends Controller
      */
     public function compilaAction(Request $request, Pratica $pratica)
     {
-        //@todo da testare
-        //@todo scrivere la storia
-        if ($pratica->getStatus() !== Pratica::STATUS_DRAFT) {
+        $em = $this->getDoctrine()->getManager();
+
+        if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION && $pratica->getStatus() !== Pratica::STATUS_DRAFT) {
             return $this->redirectToRoute(
                 'pratiche_show',
                 ['pratica' => $pratica->getId()]
             );
         }
 
-        $this->checkUserCanAccessPratica($pratica);
-
         $user = $this->getUser();
+        $this->checkUserCanAccessPratica($pratica, $user);
 
         /** @var PraticaFlow $praticaFlowService */
         $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
@@ -221,15 +201,11 @@ class PraticheController extends Controller
         if ($pratica->getInstanceId() == null) {
             $pratica->setInstanceId($praticaFlowService->getInstanceId());
         }
-        $resumeURI = $request->getUri()
-            .'?instance='.$praticaFlowService->getInstanceId()
-            .'&step='.$praticaFlowService->getCurrentStepNumber();
-
+        $resumeURI = $praticaFlowService->getResumeUrl($request);
         $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
         $form = $praticaFlowService->createForm();
         if ($praticaFlowService->isValid($form)) {
-
 
             $currentStep = $praticaFlowService->getCurrentStepNumber();
             //Erogatore
@@ -241,34 +217,24 @@ class PraticheController extends Controller
             $praticaFlowService->saveCurrentStepData($form);
             $pratica->setLastCompiledStep($currentStep);
 
-
-
             if ($praticaFlowService->nextStep()) {
-                $this->getDoctrine()->getManager()->flush();
+
+                $em->flush();
                 $form = $praticaFlowService->createForm();
 
-                $resumeURI = $request->getUri()
-                    .'?instance='.$praticaFlowService->getInstanceId()
-                    .'&step='.$praticaFlowService->getCurrentStepNumber();
+                $resumeURI = $praticaFlowService->getResumeUrl($request);
                 $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
             } else {
-                $pratica->setSubmissionTime(time());
 
-                $moduloCompilato = $this->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
-                $pratica->addModuloCompilato($moduloCompilato);
-
-                $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+                $praticaFlowService->onFlowCompleted($pratica);
 
                 $this->get('logger')->info(
                     LogConstants::PRATICA_UPDATED,
                     ['id' => $pratica->getId(), 'pratica' => $pratica]
                 );
 
-                $this->addFlash(
-                    'feedback',
-                    $this->get('translator')->trans('pratica_ricevuta')
-                );
+                $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
 
                 $praticaFlowService->getDataManager()->drop($praticaFlowService);
                 $praticaFlowService->reset();
@@ -299,14 +265,48 @@ class PraticheController extends Controller
      */
     public function showAction(Request $request, Pratica $pratica)
     {
-        $this->checkUserCanAccessPratica($pratica);
-
         $user = $this->getUser();
+        $this->checkUserCanAccessPratica($pratica, $user);
         $resumeURI = $request->getUri();
         $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
         return [
             'pratica' => $pratica,
+            'user' => $user,
+            'threads' => $thread,
+        ];
+    }
+
+    /**
+     * @Route("/{pratica}/protocollo", name="pratiche_show_protocolli")
+     * @ParamConverter("pratica", class="AppBundle:Pratica")
+     * @Template()
+     * @param Pratica $pratica
+     *
+     * @return array
+     */
+    public function showProtocolliAction(Request $request, Pratica $pratica)
+    {
+        $user = $this->getUser();
+        $this->checkUserCanAccessPratica($pratica, $user);
+        $resumeURI = $request->getUri();
+        $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+
+        $allegati = [];
+        foreach($pratica->getNumeriProtocollo() as $protocollo){
+            $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
+            if ($allegato instanceof Allegato){
+                $allegati[] = [
+                    'allegato' => $allegato,
+                    'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
+                    'protocollo' => $protocollo->protocollo
+                ];
+            }
+        }
+
+        return [
+            'pratica' => $pratica,
+            'allegati' => $allegati,
             'user' => $user,
             'threads' => $thread,
         ];
@@ -372,10 +372,14 @@ class PraticheController extends Controller
         return $pratica;
     }
 
-    private function checkUserCanAccessPratica(Pratica $pratica)
+    private function checkUserCanAccessPratica(Pratica $pratica, CPSUser $user)
     {
         $praticaUser = $pratica->getUser();
-        if ( $praticaUser->getId() !== $this->getUser()->getId()) {
+        $isTheOwner = $praticaUser->getId() === $user->getId();
+        $isRelated = $pratica instanceof DematerializedFormPratica && in_array($user->getCodiceFiscale(), $pratica->getRelatedCFs());
+
+
+        if ( !$isTheOwner && !$isRelated ) {
             throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
         }
     }

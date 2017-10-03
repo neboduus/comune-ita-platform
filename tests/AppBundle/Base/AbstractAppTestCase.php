@@ -12,12 +12,18 @@ use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\RispostaOperatore;
+use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\TerminiUtilizzo;
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoSoggettiAventiTitolo;
+use AppBundle\Mapper\Giscom\File as GiscomFile;
+use AppBundle\Mapper\Giscom\FileCollection as GiscomFileCollection;
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
+use EightPoints\Bundle\GuzzleBundle\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -144,7 +150,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         ];
     }
 
-    protected function createCPSUser($termAccepted = true, $profileData = true)
+    protected function createCPSUser($termAccepted = true, $profileData = true, $additionalRole = null)
     {
         $data = $profileData ? $this->getCPSUserData() : $this->getCPSUserBaseData();
         $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($data);
@@ -154,6 +160,10 @@ abstract class AbstractAppTestCase extends WebTestCase
             foreach ($terms as $term) {
                 $user->addTermsAcceptance($term);
             }
+        }
+
+        if ($additionalRole) {
+            $user->addRole($additionalRole);
         }
 
         $this->em->persist($user);
@@ -207,6 +217,9 @@ abstract class AbstractAppTestCase extends WebTestCase
         return $this->client->request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
     }
 
+    /**
+     * @return LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected function getMockLogger()
     {
         return $this->getMockBuilder(Logger::class)->disableOriginalConstructor()->getMock();
@@ -276,7 +289,7 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         if ($status !== null) {
             $pratica->setStatus($status);
-            if ($status > Pratica::STATUS_SUBMITTED){
+            if ($status > Pratica::STATUS_SUBMITTED) {
                 $pratica->setNumeroProtocollo('test');
                 $pratica->setIdDocumentoProtocollo('test');
             }
@@ -294,11 +307,15 @@ abstract class AbstractAppTestCase extends WebTestCase
     /**
      * @param $user
      */
-    protected function setupPraticheForUser(CPSUser $user)
+    protected function setupPraticheForUser(CPSUser $user, $alsoCreateRelatedScia = false)
     {
         $expectedStatuses = $this->getExpectedPraticaStatuses();
         foreach ($expectedStatuses as $status) {
             $this->createPratica($user, null, $status);
+        }
+
+        if ($alsoCreateRelatedScia) {
+            $this->setupPraticaScia([$user->getCodiceFiscale()]);
         }
     }
 
@@ -324,8 +341,11 @@ abstract class AbstractAppTestCase extends WebTestCase
      *
      * @return Pratica|null
      */
-    protected function setupPraticheForUserWithErogatoreAndStatus(CPSUser $user, Erogatore $erogatore = null, $status = null)
-    {
+    protected function setupPraticheForUserWithErogatoreAndStatus(
+        CPSUser $user,
+        Erogatore $erogatore = null,
+        $status = null
+    ) {
         return $this->createPratica($user, null, $status, $erogatore);
     }
 
@@ -349,11 +369,12 @@ abstract class AbstractAppTestCase extends WebTestCase
     }
 
     /**
-     * @param Erogatori[] $erogatori
+     * @param Erogatore[] $erogatori
      * @param string $name
      * @param string $praticaFCQN
      * @param string $praticaFlowServiceName
      * @param string $praticaFlowOperatoreServiceName
+     *
      * @return Servizio
      */
     protected function createServizioWithAssociatedErogatori(
@@ -374,7 +395,7 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         $servizio = new Servizio();
         $servizio
-            ->setName($name.'_'.md5(rand(0, 100).microtime()))
+            ->setName($name . '_' . md5(rand(0, 100) . microtime()))
             ->setErogatori($erogatori)
             ->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies eros eu dignissim bibendum. Praesent tortor nibh, sodales vel ante quis, ultrices consequat ipsum. Praesent vestibulum vel eros nec consectetur. Phasellus et eros vestibulum, ultrices nisl nec, pharetra velit. Donec in ex fermentum, accumsan eros ac, convallis nulla. Donec ut suscipit purus, eget dignissim odio. Duis a congue felis.')
             ->setArea($area)
@@ -387,8 +408,8 @@ abstract class AbstractAppTestCase extends WebTestCase
         foreach ($erogatori as $erogatore) {
             $this->em->persist($erogatore);
             foreach ($erogatore->getEnti() as $ente) {
-                if (\Doctrine\ORM\UnitOfWork::STATE_MANAGED !== $this->em->getUnitOfWork()->getEntityState($ente) ) {
-//                    $this->em->persist($ente);
+                if (\Doctrine\ORM\UnitOfWork::STATE_MANAGED !== $this->em->getUnitOfWork()->getEntityState($ente)) {
+                    //                    $this->em->persist($ente);
                 }
 
             }
@@ -402,7 +423,7 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function createErogatoreWithEnti($enti)
     {
         $erogatore = new Erogatore();
-        $erogatore->setName('Erogatore '.time());
+        $erogatore->setName('Erogatore ' . time());
         foreach ($enti as $ente) {
             $erogatore->addEnte($ente);
         }
@@ -419,19 +440,21 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $repo = $this->em->getRepository('AppBundle:Ente');
         $ente1 = $repo->findOneByCodiceMeccanografico('L378');
-        if(!$ente1) {
+        if (!$ente1) {
             $ente1 = new Ente();
             $ente1->setName('Ente di prova');
             $ente1->setCodiceMeccanografico('L378');
+            $ente1->setCodiceAmministrativo('L378');
             $ente1->setSiteUrl('http://example.com');
             $this->em->persist($ente1);
         }
 
         $ente2 = $repo->findOneByCodiceMeccanografico('L781');
-        if(!$ente2) {
+        if (!$ente2) {
             $ente2 = new Ente();
             $ente2->setName('Ente di prova 2');
             $ente2->setCodiceMeccanografico('L781');
+            $ente2->setCodiceAmministrativo('L781');
             $ente2->setSiteUrl('http://example.com');
             $this->em->persist($ente2);
         }
@@ -451,18 +474,18 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $um = $this->container->get('fos_user.user_manager');
 
-        if(!$serviziAbilitati){
+        if (!$serviziAbilitati) {
             $serviziAbilitati = new ArrayCollection();
         }
 
         $operatore = new OperatoreUser();
         $operatore->setUsername($username)
-             ->setPlainPassword($password)
-             ->setEmail(md5(rand(0, 1000).microtime()).'some@fake.email')
-             ->setNome('a')
-             ->setCognome('b')
-             ->setEnabled(true)
-             ->setServiziAbilitati($serviziAbilitati);
+                  ->setPlainPassword($password)
+                  ->setEmail(md5(rand(0, 1000) . microtime()) . 'some@fake.email')
+                  ->setNome('a')
+                  ->setCognome('b')
+                  ->setEnabled(true)
+                  ->setServiziAbilitati($serviziAbilitati);
 
         if ($ente) {
             $operatore->setEnte($ente);
@@ -533,7 +556,8 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         $ente = new Ente();
         $ente->setName('Comune di Test')
-             ->setCodiceMeccanografico($codiceMeccanografico)
+            ->setCodiceMeccanografico($codiceMeccanografico)
+            ->setCodiceAmministrativo($codiceMeccanografico)
              ->setAsili([$asilo, $asilo1]);
         $this->em->persist($ente);
 
@@ -555,6 +579,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         //'Iscrizione asilo nido'
         $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], $slug, $fqcn, $flow);
         $servizio->setTestoIstruzioni('<strong>Tutto</strong> quello che volevi sapere su ' . $slug . ' e non hai <em>mai</em> osato chiedere!');
+
         $this->em->persist($servizio);
         $this->em->flush();
         $this->em->refresh($servizio);
@@ -708,9 +733,9 @@ abstract class AbstractAppTestCase extends WebTestCase
         $this->em->persist($allegati[0]);
         $this->em->refresh($allegati[0]);
         $this->assertEquals(0, $allegati[0]->getPratiche()->count());
-//        for ($i = 1; $i < count($allegati); $i++) {
-//            $this->assertEquals(1, $allegati[$i]->getPratiche()->count());
-//        }
+        //        for ($i = 1; $i < count($allegati); $i++) {
+        //            $this->assertEquals(1, $allegati[$i]->getPratiche()->count());
+        //        }
     }
 
     /**
@@ -719,8 +744,12 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param $fillData
      * @param $form
      */
-    protected function datiRichiedente(&$crawler, $nextButton, &$fillData, &$form)
+    protected function datiRichiedente(&$crawler, $nextButton, &$fillData, &$form, $asTecnicoAbilitato = false)
     {
+        if ($asTecnicoAbilitato) {
+            $this->assertEquals(1, $crawler->filter('input[name="pratica_richiedente[disclaimer_tecnico]"]')->count());
+        }
+
         // Dati richiedente
         $fillData = array();
         $crawler->filter('form[name="pratica_richiedente"] input[type="text"]')
@@ -749,7 +778,7 @@ abstract class AbstractAppTestCase extends WebTestCase
             $allegato->setDescription(self::CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX . $i);
             $allegato->setFilename('somefile.txt');
             $allegato->setOriginalFilename('somefile.txt');
-            $allegato->setFile( new File(__DIR__.'/somefile.txt'));
+            $allegato->setFile(new File(__DIR__ . '/somefile.txt'));
             $this->em->persist($allegato);
             $allegati[] = $allegato;
         }
@@ -760,7 +789,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);
         $allegato->setFilename('somefile.txt');
         $allegato->setOriginalFilename('somefile.txt');
-        $allegato->setFile( new File(__DIR__.'/somefile.txt'));
+        $allegato->setFile(new File(__DIR__ . '/somefile.txt'));
         $this->em->persist($allegato);
 
         $this->em->flush();
@@ -785,7 +814,7 @@ abstract class AbstractAppTestCase extends WebTestCase
             $allegato->setDescription(self::CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX . $i);
             $allegato->setFilename('somefile.txt');
             $allegato->setOriginalFilename('somefile.txt');
-            $allegato->setFile( new File(__DIR__.'/somefile.txt'));
+            $allegato->setFile(new File(__DIR__ . '/somefile.txt'));
             $this->em->persist($allegato);
             $allegati[] = $allegato;
         }
@@ -796,7 +825,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $allegato->setDescription(self::OTHER_USER_ALLEGATO_DESCRIPTION);
         $allegato->setFilename('somefile.txt');
         $allegato->setOriginalFilename('somefile.txt');
-        $allegato->setFile( new File(__DIR__.'/somefile.txt'));
+        $allegato->setFile(new File(__DIR__ . '/somefile.txt'));
         $this->em->persist($allegato);
 
         $this->em->flush();
@@ -816,21 +845,22 @@ abstract class AbstractAppTestCase extends WebTestCase
         $risposta->setDescription('Risposta operatore p7m');
         $risposta->setFilename('risposta.pdf.p7m');
         $risposta->setOriginalFilename('risposta.pdf.p7m');
-        $risposta->setFile( new File(__DIR__.'/risposta.pdf.p7m'));
+        $risposta->setFile(new File(__DIR__ . '/risposta.pdf.p7m'));
         $this->em->persist($risposta);
         $this->em->flush();
+
         return $risposta;
     }
 
     protected static function fillFormInputWithDummyText(Crawler $node, $i, &$fillData, $dummyText = 'test')
     {
         $type = $node->attr('type');
-        if ($type == 'number'){
+        if ($type == 'number') {
             $dummyText = rand(0, time());
         }
         $name = $node->attr('name');
         $value = $node->attr('value');
-        if (empty($value)){
+        if (empty( $value )) {
             $fillData[$name] = $dummyText;
         }
     }
@@ -862,8 +892,8 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         // Selezione del comune
         $form = $crawler->selectButton($nextButton)->form();
-        copy(__DIR__.'/test.pdf', __DIR__.'/run_test.pdf');
-        $file = new UploadedFile(__DIR__.'/run_test.pdf', 'test.pdf', null, null, null, true);
+        copy(__DIR__ . '/test.pdf', __DIR__ . '/run_test.pdf');
+        $file = new UploadedFile(__DIR__ . '/run_test.pdf', 'test.pdf', null, null, null, true);
         $formData = array('add' => $file);
         $form->submit($formData);
         $crawler = $this->client->submit($form);
@@ -874,22 +904,25 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $ente = $this->createEnti()[0];
         $erogatore = $this->createErogatoreWithEnti([$ente]);
-        $servizio = $this->createServizioWithErogatore($erogatore, 'Test protocollo', '\AppBundle\Entity\CertificatoNascita', 'ocsdc.form.flow.certificatonascita');
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Test protocollo',
+            '\AppBundle\Entity\CertificatoNascita', 'ocsdc.form.flow.certificatonascita');
         $pratica = $this->createPratica($user, null, Pratica::STATUS_SUBMITTED, $erogatore, $servizio);
         $pratica->setEnte($ente);
         $moduloCompilato = $this->container->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
         $pratica->addModuloCompilato($moduloCompilato);
+
         return $pratica;
     }
 
     protected function getMockGuzzleClient(array $responses = [])
     {
-        if (empty($responses)){
+        if (empty( $responses )) {
             $responses = [$this->getPiTreSuccessResponse()];
         }
         $mock = new MockHandler($responses);
 
         $handler = HandlerStack::create($mock);
+
         return new GuzzleClient(['handler' => $handler]);
     }
 
@@ -899,6 +932,7 @@ abstract class AbstractAppTestCase extends WebTestCase
             'status' => 'error',
             'message' => 'Test error',
         ];
+
         return new Response(200, [], json_encode($body));
     }
 
@@ -908,8 +942,8 @@ abstract class AbstractAppTestCase extends WebTestCase
             'status' => 'success',
             'message' => 'Elaborazione eseguita correttamente',
             'data' => [
-                "id_doc" => md5(rand(0, 100).microtime()),
-                "n_prot" => md5(rand(100, 200).microtime()),
+                "id_doc" => md5(rand(0, 100) . microtime()),
+                "n_prot" => md5(rand(100, 200) . microtime()),
             ]
         ];
 
@@ -919,11 +953,11 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function getComunwebRemoteSuccessResponse($contentsCount = 1)
     {
         $hits = [];
-        for($i = 0; $i < $contentsCount; $i++){
+        for ($i = 0; $i < $contentsCount; $i++) {
             $hits[] = [
                 'metadata' => [
                     'published' => (new \DateTime())->format('c'),
-                    'name' => ['ita-IT' => 'Test' . $i ],
+                    'name' => ['ita-IT' => 'Test' . $i],
                     'mainNodeId' => $i,
                     'link' => 'http://example.com/api/opendata/v2/content/read/' . $i
                 ],
@@ -935,6 +969,7 @@ abstract class AbstractAppTestCase extends WebTestCase
                 ]
             ];
         }
+
         return new Response(200, [], json_encode([
             'totalCount' => $contentsCount,
             'searchHits' => $hits
@@ -948,8 +983,8 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     protected function doTestISeeMyNameAsLoggedInUser(
         \AppBundle\Entity\User $user,
-        \Symfony\Component\HttpFoundation\Response $response)
-    {
+        \Symfony\Component\HttpFoundation\Response $response
+    ) {
         $this->assertContains($user->getFullName(), $response->getContent());
     }
 
@@ -957,18 +992,18 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $body = [
             [
-                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
-                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'threadId' => $user->getId() . '~' . ( $operatore ? $operatore->getId() : Uuid::uuid4() ),
+                'title' => ( $operatore ? $operatore->getFullName() : Uuid::uuid4() ),
                 'senderId' => $user->getId(),
             ],
             [
-                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
-                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'threadId' => $user->getId() . '~' . ( $operatore ? $operatore->getId() : Uuid::uuid4() ),
+                'title' => ( $operatore ? $operatore->getFullName() : Uuid::uuid4() ),
                 'senderId' => $user->getId(),
             ],
             [
-                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
-                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'threadId' => $user->getId() . '~' . ( $operatore ? $operatore->getId() : Uuid::uuid4() ),
+                'title' => ( $operatore ? $operatore->getFullName() : Uuid::uuid4() ),
                 'senderId' => $user->getId(),
             ],
         ];
@@ -980,34 +1015,36 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $body = [
             [
-                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
-                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'threadId' => $user->getId() . '~' . ( $operatore ? $operatore->getId() : Uuid::uuid4() ),
+                'title' => ( $operatore ? $operatore->getFullName() : Uuid::uuid4() ),
                 'senderId' => $user->getId(),
-                'nomeThread' => 'Some '.Uuid::uuid4(),
+                'nomeThread' => 'Some ' . Uuid::uuid4(),
             ],
             [
-                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
-                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'threadId' => $user->getId() . '~' . ( $operatore ? $operatore->getId() : Uuid::uuid4() ),
+                'title' => ( $operatore ? $operatore->getFullName() : Uuid::uuid4() ),
                 'senderId' => $user->getId(),
-                'nomeThread' => 'Some '.Uuid::uuid4(),
+                'nomeThread' => 'Some ' . Uuid::uuid4(),
             ],
             [
-                'threadId' => $user->getId().'~'.($operatore ? $operatore->getId() : Uuid::uuid4()),
-                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'threadId' => $user->getId() . '~' . ( $operatore ? $operatore->getId() : Uuid::uuid4() ),
+                'title' => ( $operatore ? $operatore->getFullName() : Uuid::uuid4() ),
                 'senderId' => $user->getId(),
-                'nomeThread' => 'Some '.Uuid::uuid4(),
+                'nomeThread' => 'Some ' . Uuid::uuid4(),
             ],
         ];
 
         return new Response(200, [], json_encode($body));
     }
 
-    protected function getMockedMessagesBackendThreadResponseForUserEnteAndService(CPSUser $user, OperatoreUser $operatore)
-    {
+    protected function getMockedMessagesBackendThreadResponseForUserEnteAndService(
+        CPSUser $user,
+        OperatoreUser $operatore
+    ) {
         $body = [
             [
-                'threadId' => $user->getId().'~'.$operatore->getId(),
-                'title'    => ($operatore ? $operatore->getFullName() : Uuid::uuid4()),
+                'threadId' => $user->getId() . '~' . $operatore->getId(),
+                'title' => ( $operatore ? $operatore->getFullName() : Uuid::uuid4() ),
                 'senderId' => $user->getId(),
             ],
         ];
@@ -1024,9 +1061,78 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         $term = new TerminiUtilizzo();
         $term->setName('memento mori')
-            ->setText('Ricordati che devi Rovereto')
-            ->setMandatory($mandatory);
+             ->setText('Ricordati che devi Rovereto')
+             ->setMandatory($mandatory);
         $this->em->persist($term);
         $this->em->flush();
+    }
+
+    protected function createAllegatoForUser(User $user, $description = 'some description', $fileName = 'somefile.txt')
+    {
+        $allegato = new Allegato();
+        $allegato->setOwner($user);
+        $allegato->setDescription($description);
+        $allegato->setFilename($fileName);
+        $allegato->setOriginalFilename($fileName);
+        $this->em->persist($allegato);
+        $this->em->flush();
+
+        return $allegato;
+    }
+
+    /**
+     * @param array $relatedCFs
+     *
+     * @return SciaPraticaEdilizia
+     */
+    protected function setupPraticaScia($relatedCFs = [], $withProtocolli = false)
+    {
+        $ente = $this->createEnti()[0];
+        $erogatore = $this->createErogatoreWithEnti([$ente]);
+        $fqcn = SciaPraticaEdilizia::class;
+        $flow = 'ocsdc.form.flow.scia_pratica_edilizia';
+        $servizio = $this->createServizioWithErogatore($erogatore, 'Scia', $fqcn, $flow);
+
+        $geometra = $this->createCPSUser(true, true);
+
+        /** @var SciaPraticaEdilizia $pratica */
+        $pratica = $this->createPratica($geometra, null, null, $erogatore, $servizio);
+        $allegati = new ArrayCollection();
+        for ($i = 0; $i < 3; $i++) {
+            $allegati->add($this->createAllegatoForUser($geometra, 'some description', 'signed.pdf.p7m'));
+        }
+
+        $praticaScia = (new MappedPraticaEdilizia($pratica->getDematerializedForms()))
+            ->setModuloDomanda(new GiscomFile([
+                'name' => $allegati[0]->getName(),
+                'id' => $allegati[0]->getId(),
+                'type' => 'scia_ediliza_modulo_scia'
+            ]))
+            ->setElencoSoggettiAventiTitolo(new ElencoSoggettiAventiTitolo([
+                [
+                    'name' => $allegati[1]->getName(),
+                    'id' => $allegati[1]->getId(),
+                ],
+            ]))
+            ->setElencoAllegatoTecnici('TEC_URB', new GiscomFileCollection([
+                [
+                    'name' => $allegati[2]->getName(),
+                    'id' => $allegati[2]->getId(),
+                ]
+            ]));
+
+        $dematerialized = $praticaScia->toHash();
+
+        $pratica->setDematerializedForms($dematerialized);
+        $pratica->setRelatedCFs($relatedCFs);
+        if($withProtocolli){
+            $pratica->setNumeriProtocollo(new ArrayCollection(array(['id'=>1, 'protocollo'=>1])));
+            $pratica->setNumeroProtocollo(1);
+            $pratica->setNumeroFascicolo(1);
+        }
+        $this->em->persist($pratica);
+        $this->em->flush();
+
+        return $pratica;
     }
 }
