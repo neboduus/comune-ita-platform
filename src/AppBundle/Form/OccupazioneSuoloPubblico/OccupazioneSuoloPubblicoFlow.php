@@ -7,6 +7,8 @@ use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
+use AppBundle\Form\Base\SelectPaymentGatewayType;
+use AppBundle\Form\Base\PaymentGatewayType;
 
 /**
  * Class OccupazioneSuoloPubblicoFlow
@@ -26,7 +28,7 @@ class OccupazioneSuoloPubblicoFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
-        return array(
+        $steps =  array(
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
@@ -57,10 +59,26 @@ class OccupazioneSuoloPubblicoFlow extends PraticaFlow
                 'skip' => function($estimatedCurrentStepNumber, FormFlowInterface $flow) {
                     return $flow->getFormData()->getTipologiaOccupazione() == OccupazioneSuoloPubblico::TIPOLOGIA_PERMANENTE;
                 }
-            ),
-            self::STEP_CONFERMA => array(
-                'label' => 'steps.common.conferma.label',
             )
         );
+
+        // Attivo gli step di pagamento solo se è richiesto nel servizio
+        if ($this->isPaymentRequired())
+        {
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.select_payment_gateway.label',
+                'form_type' => SelectPaymentGatewayType::class
+            );
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.payment_gateway.label',
+                'form_type' => PaymentGatewayType::class
+            );
+        }
+
+        $steps[count($steps) + 1] = array(
+            'label' => 'steps.common.conferma.label'
+        );
+
+        return $steps;
     }
 }

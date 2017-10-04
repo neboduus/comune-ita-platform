@@ -1,0 +1,20 @@
+{% set data = pratica.getDelegaDataArray %}
+{% if pratica.delegaType %}
+    <div class="delega_ruolo">
+        <div class="chiede center_title">
+            <strong>{{ 'pratica.dettaglio.delega.ruolo'|trans }}</strong>
+        </div>
+        <p>
+            {% if pratica.delegaType == 'altro' %}
+            <span class="text-uppercase">{{ data.delega_type_text }}</span>>
+            {% elseif pratica.delegaType == 'incaricato' %}
+                {{ ('steps.common.delega.tipi.' ~ pratica.delegaType)|trans }} <span class="text-uppercase">{{ data.delega_type_text }}</span>
+            {% else %}
+                {{ ('steps.common.delega.tipi.' ~ pratica.delegaType)|trans }} <span class="text-uppercase">{{ data.nome_soggetto_certificato }}</span>
+            {% endif %}
+        </p>
+
+    </div>
+{% endif %}
+
+

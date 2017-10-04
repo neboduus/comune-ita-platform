@@ -20,12 +20,6 @@ class SciaPraticaEdilizia extends Pratica implements DematerializedFormPratica, 
     private $dematerializedForms;
 
     /**
-     * @ORM\Column(type="json_array", options={"jsonb":true})
-     * @var $relatedCFs array
-     */
-    private $relatedCFs;
-
-    /**
      * SciaPraticaEdilizia constructor.
      */
     public function __construct()
@@ -50,25 +44,6 @@ class SciaPraticaEdilizia extends Pratica implements DematerializedFormPratica, 
     public function setDematerializedForms($dematerializedForms)
     {
         $this->dematerializedForms = $dematerializedForms;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRelatedCFs()
-    {
-        return $this->relatedCFs;
-    }
-
-    /**
-     * @param array $relatedCFs
-     * @return $this
-     */
-    public function setRelatedCFs($relatedCFs)
-    {
-        $this->relatedCFs = $relatedCFs;
 
         return $this;
     }

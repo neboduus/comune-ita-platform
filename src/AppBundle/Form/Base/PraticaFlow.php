@@ -50,6 +50,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
     protected $handleFileUploads = false;
 
+    protected $paymentRequired = false;
+
     protected $prefix;
 
     /**
@@ -164,5 +166,22 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
         $cloneComponente->setRapportoParentela($componente->getRapportoParentela());
         $pratica->addComponenteNucleoFamiliare($cloneComponente);
     }
+
+    /**
+     * @return bool
+     */
+    public function isPaymentRequired(): bool
+    {
+        return $this->paymentRequired;
+    }
+
+    /**
+     * @param bool $paymentRequired
+     */
+    public function setPaymentRequired(bool $paymentRequired)
+    {
+        $this->paymentRequired = $paymentRequired;
+    }
+
 
 }

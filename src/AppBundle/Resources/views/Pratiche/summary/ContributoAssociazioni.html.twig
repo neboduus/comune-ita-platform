@@ -90,5 +90,7 @@
     </div>
 
     {{ include('AppBundle:Pratiche/summary/parts:conto_corrente.html.twig', {'pratica':pratica, 'user': user}) }}
+
+    {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
     
 </div>

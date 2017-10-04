@@ -18,6 +18,8 @@
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 
+{{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+
 {{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
 </body>
 </html>

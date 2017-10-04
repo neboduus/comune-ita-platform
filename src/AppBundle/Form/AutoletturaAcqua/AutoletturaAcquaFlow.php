@@ -8,6 +8,8 @@ use AppBundle\Form\Base\AccettazioneIstruzioniType;
 use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
+use AppBundle\Form\Base\SelectPaymentGatewayType;
+use AppBundle\Form\Base\PaymentGatewayType;
 
 
 class AutoletturaAcquaFlow extends PraticaFlow
@@ -25,7 +27,7 @@ class AutoletturaAcquaFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
-        return array(
+        $steps =  array(
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
@@ -53,11 +55,27 @@ class AutoletturaAcquaFlow extends PraticaFlow
             self::STEP_NOTE => array(
                 'label' => 'steps.autolettura_acqua.note.label',
                 'form_type' => NoteType::class,
-            ),
-            self::STEP_CONFERMA => array(
-                'label' => 'steps.common.conferma.label',
-            ),
+            )
         );
+
+        // Attivo gli step di pagamento solo se è richiesto nel servizio
+        if ($this->isPaymentRequired())
+        {
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.select_payment_gateway.label',
+                'form_type' => SelectPaymentGatewayType::class
+            );
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.payment_gateway.label',
+                'form_type' => PaymentGatewayType::class
+            );
+        }
+
+        $steps[count($steps) + 1] = array(
+            'label' => 'steps.common.conferma.label'
+        );
+
+        return $steps;
     }
 
     /**

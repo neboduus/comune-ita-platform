@@ -51,4 +51,6 @@
         <div class="col-xs-12 col-sm-9">{{ pratica.note }}</div>
     </div>
 
+    {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+
 </div>

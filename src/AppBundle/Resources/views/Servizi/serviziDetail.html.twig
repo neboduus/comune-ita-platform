@@ -12,6 +12,24 @@
                 {{ servizio.testoIstruzioni|raw }}
             </div>
 
+            {% if servizio.isPaymentRequired %}
+                <br />
+                <div class="alert alert-info">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img class="img-responsive" src="{{ asset('bundles/app/images/bollo.png') }}" alt="Valori bollati" />
+                        </div>
+                        <div class="col-md-8">
+                            <p>
+                                Prima dell'invio del modulo online è necessario acquistare la <strong>marca da bollo</strong> e riportarne gli estremi.<br />
+                                Il numero seriale, la data e l'ora indicati identificano univocamente la marca da bollo che <strong>dovrà essere conservata per eventuali accertamenti e non potrà essere riutilizzata</strong>.<br />
+                                <small>(Ai sensi dell'articolo 3 del Decreto Ministeriale 10/11/2011)</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
             <div class="row">
                 <div class="col-md-12">
                     {#todo: usare constant()#}

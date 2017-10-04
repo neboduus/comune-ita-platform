@@ -1,0 +1,25 @@
+{% set data = pratica.getDelegaDataArray %}
+{% if pratica.delegaType %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'pratica.dettaglio.delega.titolo'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            <strong>{{ 'pratica.dettaglio.delega.ruolo'|trans }}</strong>
+            <ul class="list-unstyled">
+                {% if pratica.delegaType == 'altro' %}
+                    <li>{{ data.delega_type_text }}</li>
+                {% elseif pratica.delegaType == 'incaricato' %}
+                    <li>{{ ('steps.common.delega.tipi.' ~ pratica.delegaType)|trans }} {{ data.delega_type_text }}</li>
+                {% else %}
+                    <li>{{ ('steps.common.delega.tipi.' ~ pratica.delegaType)|trans }} {{ data.nome_soggetto_certificato }}</li>
+                {% endif %}
+            </ul>
+            <strong>{{ 'pratica.dettaglio.delega.dati_soggetto'|trans }}</strong>
+            <ul class="list-unstyled">
+                <li><strong>{{ 'pratica.dettaglio.delega.nome'|trans }}</strong> {{ data.nome_soggetto_certificato }}</li>
+                <li><strong>{{ 'pratica.dettaglio.delega.cf'|trans }}</strong> {{ pratica.relatedCFs }}</li>
+                <li><strong>{{ 'pratica.dettaglio.delega.data_nascita'|trans }}</strong> {{ data.data_nascita_soggetto_certificato }}</li>
+                <li><strong>{{ 'pratica.dettaglio.delega.indirizzo'|trans }}</strong> {{ data.indirizzo_soggetto_certificato }}</li>
+            </ul>
+        </div>
+    </div>
+{% endif %}

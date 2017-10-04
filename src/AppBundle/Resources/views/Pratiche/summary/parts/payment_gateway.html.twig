@@ -1,0 +1,11 @@
+{% if pratica.paymentType %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'pratica.pagamento'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            <strong>{{ pratica.paymentType.name }}</strong>
+            {%  set fcqn_parts = pratica.paymentType.class | split('\\') %}
+            {% set class_name = fcqn_parts|last %}
+            {{ include('AppBundle:Gateway/summary:' ~ class_name ~ '.html.twig', {'pratica':pratica, 'user': user}) }}
+        </div>
+    </div>
+{% endif %}

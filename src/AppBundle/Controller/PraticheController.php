@@ -17,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
@@ -193,6 +194,11 @@ class PraticheController extends Controller
 
         /** @var PraticaFlow $praticaFlowService */
         $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
+
+        if ($pratica->getServizio()->isPaymentRequired())
+        {
+            $praticaFlowService->setPaymentRequired(true);
+        }
 
         $praticaFlowService->setInstanceKey($user->getId());
 
@@ -376,7 +382,12 @@ class PraticheController extends Controller
     {
         $praticaUser = $pratica->getUser();
         $isTheOwner = $praticaUser->getId() === $user->getId();
-        $isRelated = $pratica instanceof DematerializedFormPratica && in_array($user->getCodiceFiscale(), $pratica->getRelatedCFs());
+        $cfs = $pratica->getRelatedCFs();
+        if (!is_array($cfs))
+        {
+            $cfs = [$cfs];
+        }
+        $isRelated = in_array($user->getCodiceFiscale(), $cfs);
 
 
         if ( !$isTheOwner && !$isRelated ) {

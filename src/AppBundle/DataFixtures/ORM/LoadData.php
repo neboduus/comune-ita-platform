@@ -6,6 +6,7 @@ use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
+use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -35,6 +36,10 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
         'categorie' => [
             'new' => 0,
             'updated' => 0,
+        ],
+        'payment_gateways' => [
+            'new' => 0,
+            'updated' => 0,
         ]
         ];
 
@@ -53,6 +58,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
         $this->loadCategories($manager);
         $this->loadServizi($manager);
         $this->loadTerminiUtilizzo($manager);
+        $this->loadPaymentGateways($manager);
 
     }
 
@@ -215,6 +221,34 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
             $manager->flush();
         }
     }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    public function loadPaymentGateways(ObjectManager $manager)
+    {
+        $data = $this->getData('PaymentGateways');
+        $gatewayRepo = $manager->getRepository('AppBundle:PaymentGateway');
+        foreach ($data as $item) {
+            $gateway = $gatewayRepo->findOneByName($item['name']);
+            if (!$gateway) {
+                $this->counters['payment_gateways']['new']++;
+                $gateway = new PaymentGateway();
+                $gateway
+                    ->setName($item['name'])
+                    ->setIdentifier($item['identifier'])
+                    ->setDescription($item['description'])
+                    ->setDisclaimer($item['disclaimer'])
+                    ->setFcqn($item['fcqn'])
+                    ->setEnabled($item['enabled']);
+                $manager->persist($gateway);
+            } else {
+                $this->counters['payment_gateways']['updated']++;
+            }
+            $manager->flush();
+        }
+    }
+
 
     public function loadTerminiUtilizzo(ObjectManager $manager)
     {

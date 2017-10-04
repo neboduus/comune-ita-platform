@@ -5,6 +5,8 @@ use AppBundle\Form\Base\AccettazioneIstruzioniType;
 use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
+use AppBundle\Form\Base\SelectPaymentGatewayType;
+use AppBundle\Form\Base\PaymentGatewayType;
 
 class AllacciamentoAcquedottoFlow extends PraticaFlow
 {
@@ -20,7 +22,7 @@ class AllacciamentoAcquedottoFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
-        return array(
+        $steps =  array(
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
@@ -44,11 +46,28 @@ class AllacciamentoAcquedottoFlow extends PraticaFlow
             self::STEP_DATI_COMUNICAZIONI => array(
                 'label' => 'steps.allacciamento_acquedotto.dati_contatto.label',
                 'form_type' => DatiContattoType::class,
-            ),
-            self::STEP_CONFERMA => array(
-                'label' => 'steps.common.conferma.label',
-            ),
+            )
         );
+
+
+        // Attivo gli step di pagamento solo se è richiesto nel servizio
+        if ($this->isPaymentRequired())
+        {
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.select_payment_gateway.label',
+                'form_type' => SelectPaymentGatewayType::class
+            );
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.payment_gateway.label',
+                'form_type' => PaymentGatewayType::class
+            );
+        }
+
+        $steps[count($steps) + 1] = array(
+            'label' => 'steps.common.conferma.label'
+        );
+
+        return $steps;
     }
 
 }

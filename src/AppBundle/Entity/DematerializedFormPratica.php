@@ -22,13 +22,4 @@ interface DematerializedFormPratica
      */
     public function setDematerializedForms($dematerializedForms);
 
-    /**
-     * @return array
-     */
-    public function getRelatedCFs();
-
-    /**
-     * @param array $relatedCFs
-     */
-    public function setRelatedCFs($relatedCFs);
 }
