@@ -24,9 +24,6 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
 $loader = require __DIR__.'/../app/autoload.php';
 Debug::enable();
 
-$kernel = new AppKernel('dev', true);
-$kernel->loadClassCache();
-
 $_SERVER += [
     "REDIRECT_shibb_pat_attribute_codicefiscale" => "RLDLCU77T05G224",
     "REDIRECT_shibb_pat_attribute_cognome" => "Realdi",
@@ -45,6 +42,26 @@ $_SERVER += [
 ];
 
 $request = Request::createFromGlobals();
+$pathArray = explode('/',$request->server->get('PATH_INFO'));
+// Todo: find better way
+$identifier = $pathArray[1];
+
+switch ($identifier)
+{
+  case 'rovereto';
+      $kernel = new InstanceKernel($identifier, true);
+    break;
+
+  default:
+      $kernel = new AppKernel('dev', true);
+    break;
+}
+
+$kernel->loadClassCache();
+
+
+
+
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);

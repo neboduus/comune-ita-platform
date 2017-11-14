@@ -1,0 +1,14 @@
+_wdt:
+    resource: "@WebProfilerBundle/Resources/config/routing/wdt.xml"
+    prefix:   "/%prefix%/_wdt"
+
+_profiler:
+    resource: "@WebProfilerBundle/Resources/config/routing/profiler.xml"
+    prefix:   "/%prefix%/_profiler"
+
+_errors:
+    resource: "@TwigBundle/Resources/config/routing/errors.xml"
+    prefix:   "/%prefix%/_error"
+
+_main:
+    resource: routing.yml
