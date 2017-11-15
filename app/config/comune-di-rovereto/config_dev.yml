@@ -3,7 +3,7 @@ imports:
 
 framework:
     router:
-        resource: "%kernel.root_dir%/config/%prefix%/routing_dev.yml"
+        resource: "%kernel.root_dir%/config/common/routing_dev.yml"
         strict_requirements: true
     profiler: { only_exceptions: false }
 

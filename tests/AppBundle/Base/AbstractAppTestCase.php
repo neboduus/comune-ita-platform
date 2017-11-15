@@ -85,6 +85,8 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     protected $spy;
 
+    protected $baseUri;
+
     /**
      * @inheritdoc
      */
@@ -95,7 +97,18 @@ abstract class AbstractAppTestCase extends WebTestCase
         $this->em = $this->container->get('doctrine')->getManager();
         $this->router = $this->container->get('router');
         $this->translator = $this->container->get('translator');
+        $this->baseUri = '/' . static::$kernel->getIdentifier();
         parent::setUp();
+    }
+
+    protected static function createClient(array $options = array(), array $server = array())
+    {
+        static::bootKernel($options);
+
+        $client = new InstanceAwareClient(static::$kernel);
+        $client->setServerParameters($server);
+
+        return $client;
     }
 
     protected function cleanDb($entityString)

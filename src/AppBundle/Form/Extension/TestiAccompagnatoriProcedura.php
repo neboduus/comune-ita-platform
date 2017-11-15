@@ -18,11 +18,15 @@ class TestiAccompagnatoriProcedura
     private $translator;
 
     private $vueApp;
+
     private $vueBundledData;
 
-    public function __construct(TranslatorInterface $translator)
+    private $prefix;
+
+    public function __construct(TranslatorInterface $translator, $prefix)
     {
         $this->translator = $translator;
+        $this->prefix = $prefix;
     }
 
     /**
@@ -131,4 +135,13 @@ class TestiAccompagnatoriProcedura
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPrefix()
+    {
+        return $this->prefix ? '/' . $this->prefix : null;
+    }
+
 }

@@ -201,7 +201,8 @@ class PraticaEdiliziaAllegatiTecniciType extends AbstractType
             'allegatiCorrenti' => $allegatiCorrenti,
             'allegatiRichiesti' => $allegatiRichiesti,
             'idPratica' => $pratica->getId(),
-            'allegati' => $allegati
+            'allegati' => $allegati,
+            'prefix' => $helper->getPrefix(),
         ]));
 
         return [

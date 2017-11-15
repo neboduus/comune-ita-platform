@@ -1,0 +1,35 @@
+imports:
+    - { resource: ../parameters.yml }
+    - { resource: ../common/security.yml }
+    - { resource: ../services.yml }
+    - { resource: ../bundles/ }
+    - { resource: "@AppBundle/Resources/config/services.yml" }
+    - { resource: ../config.yml }
+
+
+parameters:
+    prefix: comune-di-tre-ville
+    codice_meccanografico: c_m361
+    database_name: sdc_treville
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/common/routing.yml"
+        strict_requirements: true
+
+twig:
+    globals:
+        endpoint_prefix: %prefix%
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: error
+            handler:      nested
+        nested:
+            type:  stream
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+        console:
+            type:  console

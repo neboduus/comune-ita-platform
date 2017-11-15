@@ -5,8 +5,10 @@ require_once __DIR__.'/AppKernel.php';
 /**
  * Class AppTestKernel
  */
-class AppTestKernel extends AppKernel
+class AppTestKernel extends InstanceKernel
 {
+    protected $identifier = 'comune-di-tre-ville';
+
     private $kernelModifier;
 
     public function boot()

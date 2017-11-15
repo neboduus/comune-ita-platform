@@ -24,6 +24,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends Controller
 {
     /**
+     * @Template()
+     * @return array()
+     */
+    public function commonAction()
+    {
+        return array('enti' => $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll());
+    }
+
+    /**
      * @Route("/", name="home")
      *
      * @return Response

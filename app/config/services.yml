@@ -37,7 +37,7 @@ services:
 
     ocsdc.form.flow.type_extension.help_data:
         class: AppBundle\Form\Extension\HelpDataTypeExtension
-        arguments: ["@translator"]
+        arguments: ["@translator", "%prefix%"]
         tags:
             - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 
@@ -163,6 +163,7 @@ services:
           - "@ocsdc.pratica_status_service"
           - "@ocsdc.modulo_pdf_builder"
           - "@ocsdc.allegati.dematerialized_attacher"
+          - "%prefix%"
 
     ocsdc.form.flow.asilonido:
         class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow

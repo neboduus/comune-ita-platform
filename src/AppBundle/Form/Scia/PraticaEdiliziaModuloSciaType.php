@@ -76,6 +76,7 @@ class PraticaEdiliziaModuloSciaType extends AbstractType
             'type' => 'scia_ediliza_modulo_scia',
             'files' => $allegati,
             'idPratica' => $idPratica,
+            'prefix' => $helper->getPrefix(),
         ]));
 
         $builder

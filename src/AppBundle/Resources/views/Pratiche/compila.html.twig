@@ -3,7 +3,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jquery-ui.min.css') }}"/>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 {% endblock %}
 
 {% block javascripts %}
@@ -32,7 +32,7 @@
                 el: "#compilationNotes",
                 data: {
                     compilationNotes: null,
-                    endpointUrl: '/api/v1.0/user/{{ form.vars.data.id}}/notes'
+                    endpointUrl: '{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/api/v1.0/user/{{ form.vars.data.id}}/notes'
                 },
                 created: function() {
                     var self = this;

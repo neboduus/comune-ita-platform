@@ -52,9 +52,7 @@ class LoadServiziCommandTest extends AbstractAppTestCase
         $command = $application->find('ocsdc:carica-servizi');
         $commandTester = new CommandTester($command);
 
-        $commandTester->execute(array(
-            'command' => $command->getName(),
-        ));
+        $commandTester->execute(['command' => $command->getName()]);
 
         $this->assertEquals($expectedServicesCount, count($serviziRepo->findAll()));
 
@@ -67,11 +65,9 @@ class LoadServiziCommandTest extends AbstractAppTestCase
             $this->assertGreaterThanOrEqual(1, $servizio->getErogatori()->count());
         }
 
-
         //idempotence
-        $commandTester->execute(array(
-            'command' => $command->getName(),
-        ));
+        $commandTester->execute(['command' => $command->getName()]);
+        
         $this->assertEquals($expectedServicesCount, count($serviziRepo->findAll()));
         $output = $commandTester->getDisplay();
         $this->assertContains('Servizi caricati: 0', $output);

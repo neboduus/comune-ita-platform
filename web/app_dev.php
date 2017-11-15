@@ -42,26 +42,33 @@ $_SERVER += [
 ];
 
 $request = Request::createFromGlobals();
-$pathArray = explode('/',$request->server->get('PATH_INFO'));
+//\Symfony\Component\VarDumper\VarDumper::dump($request);
+
+$identifier = '';
+
 // Todo: find better way
-$identifier = $pathArray[1];
-
-switch ($identifier)
+if ($request->server->has('PATH_INFO'))
 {
-  case 'rovereto';
-      $kernel = new InstanceKernel($identifier, true);
-    break;
+    $pathArray = explode('/',$request->server->get('PATH_INFO'));
+    $identifier = $pathArray[1];
+}
+elseif ($request->server->has('REQUEST_URI'))
+{
+    $pathArray = explode('/',$request->server->get('REQUEST_URI'));
+    $identifier = $pathArray[1];
+}
 
-  default:
-      $kernel = new AppKernel('dev', true);
-    break;
+if ( !empty($identifier) && file_exists( __DIR__.'/../app/config/' .$identifier ) )
+{
+    $kernel = new InstanceKernel('dev', true);
+    $kernel->setIdentifier($identifier);
+}
+else
+{
+    $kernel = new AppKernel('dev', true);
 }
 
 $kernel->loadClassCache();
-
-
-
-
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);

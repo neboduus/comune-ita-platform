@@ -16,6 +16,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Validator\Constraints\ValidMimeType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 

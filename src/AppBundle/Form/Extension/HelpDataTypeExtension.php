@@ -17,9 +17,15 @@ class HelpDataTypeExtension extends AbstractTypeExtension
      */
     private $translator;
 
-    public function __construct(TranslatorInterface $translator)
+    /**
+     * @var string
+     */
+    private $prefix;
+
+    public function __construct(TranslatorInterface $translator, $prefix)
     {
         $this->translator = $translator;
+        $this->prefix = $prefix;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -34,7 +40,7 @@ class HelpDataTypeExtension extends AbstractTypeExtension
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['helper' => new TestiAccompagnatoriProcedura($this->translator)]);
+        $resolver->setDefaults(['helper' => new TestiAccompagnatoriProcedura($this->translator, $this->prefix)]);
     }
 
     public function getExtendedType()

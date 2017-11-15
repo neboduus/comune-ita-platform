@@ -8,13 +8,16 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Google\Spreadsheet\DefaultServiceRequest;
 use Google\Spreadsheet\ServiceRequestFactory;
 use Google\Spreadsheet\SpreadsheetService;
 
-class LoadData implements FixtureInterface
+class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
 {
     const PUBLIC_SPREADSHEETS_URL = 'https://docs.google.com/spreadsheets/d/1mbGZN9OIjfsrrjVbs2QB1DjzzMoCPT6MD5cPTJS4308/edit#gid=0';
 
@@ -34,6 +37,14 @@ class LoadData implements FixtureInterface
             'updated' => 0,
         ]
         ];
+
+    /** @var  ContainerInterface */
+    private $container;
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     public function load(ObjectManager $manager)
     {
@@ -92,7 +103,15 @@ class LoadData implements FixtureInterface
     {
         $data = $this->getData('Enti');
         $entiRepo = $manager->getRepository('AppBundle:Ente');
+
         foreach ($data as $item) {
+
+            if ( $this->container->hasParameter('codice_meccanografico') &&
+                 $item['codice'] != $this->container->getParameter('codice_meccanografico') )
+            {
+                continue;
+            }
+
             $ente = $entiRepo->findOneByCodiceMeccanografico($item['codice']);
             if (!$ente) {
                 $this->counters['enti']['new']++;
@@ -153,6 +172,14 @@ class LoadData implements FixtureInterface
         $serviziRepo = $manager->getRepository('AppBundle:Servizio');
         $categoryRepo = $manager->getRepository('AppBundle:Categoria');
         foreach ($data as $item) {
+            $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
+
+            if ( $this->container->hasParameter('codice_meccanografico') &&
+                !in_array( $this->container->getParameter('codice_meccanografico'), $codiciMeccanograficiEnti) )
+            {
+                continue;
+            }
+
             $servizio = $serviziRepo->findOneByName($item['name']);
             if (!$servizio) {
                 $this->counters['servizi']['new']++;
@@ -176,7 +203,6 @@ class LoadData implements FixtureInterface
                 $this->counters['servizi']['updated']++;
             }
 
-            $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
             $enti = $manager->getRepository('AppBundle:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
             foreach ($enti as $ente) {
                 $erogatore = new Erogatore();

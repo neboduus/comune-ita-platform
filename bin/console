@@ -4,6 +4,7 @@
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
+use Symfony\Component\Console\Input\InputOption;
 
 // if you don't want to setup permissions the proper way, just uncomment the following PHP line
 // read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information
@@ -18,12 +19,34 @@ $loader = require __DIR__.'/../app/autoload.php';
 
 $input = new ArgvInput();
 $env = $input->getParameterOption(['--env', '-e'], getenv('SYMFONY_ENV') ?: 'dev');
+$instance = $input->getParameterOption(['--instance', '-i'], '');
+
 $debug = getenv('SYMFONY_DEBUG') !== '0' && !$input->hasParameterOption(['--no-debug', '']) && $env !== 'prod';
 
 if ($debug) {
     Debug::enable();
 }
 
-$kernel = new AppKernel($env, $debug);
+if ( !empty($instance))
+{
+    if (!file_exists( __DIR__.'/../app/config/' .$instance )){
+        throw new Exception("Instance $instance not found");
+    }
+    $kernel = new InstanceKernel($env, $debug);
+    $kernel->setIdentifier($instance);
+}
+else
+{
+    $kernel = new AppKernel($env, $debug);
+}
+
+
 $application = new Application($kernel);
+
+// Aggiungo l'opzione instance all'input definition altrimenti da errore
+$inputDefinition = $application->getDefinition();
+$inputDefinition->addOption(
+    new InputOption('instance', 'i', InputOption::VALUE_OPTIONAL, 'Name of the Instance', null)
+);
+
 $application->run($input);

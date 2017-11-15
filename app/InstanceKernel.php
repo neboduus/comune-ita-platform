@@ -5,6 +5,8 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class InstanceKernel extends Kernel
 {
+    protected $identifier;
+
     public function registerBundles()
     {
         $bundles = [
@@ -43,24 +45,32 @@ class InstanceKernel extends Kernel
 
     public function getCacheDir()
     {
-        return dirname(__DIR__).'/var/cache/'.$this->getEnvironment();
+        return dirname(__DIR__).'/var/cache/'.$this->getIdentifier().'/'.$this->getEnvironment();
     }
 
     public function getLogDir()
     {
-        return dirname(__DIR__).'/var/logs/'.$this->getEnvironment();
+        return dirname(__DIR__).'/var/logs/'.$this->getIdentifier().'/'.$this->getEnvironment();
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        if ($this->debug)
-        {
-            $loader->load($this->getRootDir().'/config/'.$this->getEnvironment().'/config_dev.yml');
-        }
-        else
-        {
-            $loader->load($this->getRootDir().'/config/'.$this->getEnvironment().'/config.yml');
-        }
+        $loader->load($this->getRootDir().'/config/'. $this->getIdentifier() .'/config_'.$this->getEnvironment().'.yml');
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * @param mixed $identifier
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
     }
 }

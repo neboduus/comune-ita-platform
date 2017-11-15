@@ -28,7 +28,7 @@ Vue.component('scia_edilizia_allegati_tecnici', {
                         <el-upload
                           class="vue-upload"
                           :data="{type: allegato.type, index: allegato.identifier}"
-                          :action="'/pratiche/allegati/upload/scia/'+idPratica"
+                          :action="prefix+'/pratiche/allegati/upload/scia/'+idPratica"
                           :file-list="allegato.files"
                           :on-success="onSuccess"
                           :on-remove="onRemove"

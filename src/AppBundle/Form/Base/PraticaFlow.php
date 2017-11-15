@@ -50,6 +50,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
     protected $handleFileUploads = false;
 
+    protected $prefix;
+
     /**
      * PraticaFlow constructor.
      *
@@ -61,13 +63,15 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
         TranslatorInterface $translator,
         PraticaStatusService $statusService,
         ModuloPdfBuilderService $pdfBuilder,
-        DematerializedFormAllegatiAttacherService $dematerializer
+        DematerializedFormAllegatiAttacherService $dematerializer,
+        $prefix
     ) {
         $this->logger = $logger;
         $this->translator = $translator;
         $this->statusService = $statusService;
         $this->pdfBuilder = $pdfBuilder;
         $this->dematerializer = $dematerializer;
+        $this->prefix = $prefix;
     }
 
     public function getFormOptions($step, array $options = array())
@@ -76,7 +80,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
         /** @var Pratica $pratica */
         $pratica = $this->getFormData();
-        $options["helper"] = new TestiAccompagnatoriProcedura($this->translator);
+        $options["helper"] = new TestiAccompagnatoriProcedura($this->translator, $this->prefix);
 
         $this->logger->info(
             LogConstants::PRATICA_COMPILING_STEP,
