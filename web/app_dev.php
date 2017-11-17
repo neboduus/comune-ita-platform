@@ -24,9 +24,6 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
 $loader = require __DIR__.'/../app/autoload.php';
 Debug::enable();
 
-$kernel = new AppKernel('dev', true);
-$kernel->loadClassCache();
-
 $_SERVER += [
     "REDIRECT_shibb_pat_attribute_codicefiscale" => "RLDLCU77T05G224",
     "REDIRECT_shibb_pat_attribute_cognome" => "Realdi",
@@ -45,6 +42,33 @@ $_SERVER += [
 ];
 
 $request = Request::createFromGlobals();
+//\Symfony\Component\VarDumper\VarDumper::dump($request);
+
+$identifier = '';
+
+// Todo: find better way
+if ($request->server->has('PATH_INFO'))
+{
+    $pathArray = explode('/',$request->server->get('PATH_INFO'));
+    $identifier = $pathArray[1];
+}
+elseif ($request->server->has('REQUEST_URI'))
+{
+    $pathArray = explode('/',$request->server->get('REQUEST_URI'));
+    $identifier = $pathArray[1];
+}
+
+if ( !empty($identifier) && file_exists( __DIR__.'/../app/config/' .$identifier ) )
+{
+    $kernel = new InstanceKernel('dev', true);
+    $kernel->setIdentifier($identifier);
+}
+else
+{
+    $kernel = new AppKernel('dev', true);
+}
+
+$kernel->loadClassCache();
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);

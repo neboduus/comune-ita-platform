@@ -12,7 +12,7 @@ Vue.component('scia_ediliza_allegati_modulo_scia', {
             <el-upload
               class="vue-upload"
               :data="{type: allegato.type, index: allegato.identifier}"
-              :action="'/pratiche/allegati/upload/scia/'+idPratica"
+              :action="prefix+'/pratiche/allegati/upload/scia/'+idPratica"
               :file-list="allegato.files"
               :on-success="onSuccess"
               :on-remove="onRemove"

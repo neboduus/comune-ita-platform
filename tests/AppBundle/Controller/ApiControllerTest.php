@@ -11,6 +11,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\VarDumper\VarDumper;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**

@@ -78,6 +78,7 @@ class PraticaEdiliziaSoggettiType extends AbstractType
             'type' => ElencoSoggettiAventiTitolo::TYPE,
             'files' => $allegati,
             'idPratica' => $idPratica,
+            'prefix' => $helper->getPrefix()
         ]));
 
         $builder

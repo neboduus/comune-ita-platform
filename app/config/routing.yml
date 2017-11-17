@@ -1,19 +1,6 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
+home:
+    path:     /{path}
+    defaults: { _controller: AppBundle:Default:common, path: "" }
+    requirements:
+        path: .*
 
-fos_security:
-  resource: "@FOSUserBundle/Resources/config/routing/security.xml"
-  prefix: /operatori
-
-fos_profile:
-  resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
-  prefix: /operatori/profile
-
-fos_resetting:
-  resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
-  prefix: /operatori/resetting
-
-fos_password:
-  resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
-  prefix: /operatori/profile

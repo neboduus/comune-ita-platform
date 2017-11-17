@@ -173,6 +173,7 @@ class PraticaEdiliziaAllegatiModuloSciaType extends AbstractType
             'allegati' => $allegati,
             'allegatiRichiesti' => array_fill_keys($allegatiRichiesti, true),
             'idPratica' => $idPratica,
+            'prefix' => $helper->getPrefix(),
         ]));
 
         return $allegatiCorrenti;

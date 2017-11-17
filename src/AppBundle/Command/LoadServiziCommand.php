@@ -21,6 +21,8 @@ class LoadServiziCommand extends ContainerAwareCommand{
         $manager = $this->getContainer()->get('doctrine')->getManager();
 
         $loader = new LoadData();
+        $loader->setContainer($this->getContainer());
+
         $loader->loadAsili($manager);
         $loader->loadEnti($manager);
         $loader->loadCategories($manager);
