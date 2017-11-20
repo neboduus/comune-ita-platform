@@ -17,6 +17,7 @@ class DatiRichiedenteType extends AbstractType
     const CAMPI_RICHIEDENTE = array(
         'richiedente_nome' => true,
         'richiedente_cognome' => true,
+        'richiedente_codice_fiscale' => true,
         'richiedente_luogo_nascita' => true,
         'richiedente_data_nascita' => true,
         'richiedente_indirizzo_residenza' => true,

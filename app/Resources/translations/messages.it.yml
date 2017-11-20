@@ -1,6 +1,6 @@
 title: 'Stanza del cittadino'
-claim: 'Portale ufficiale dei servizi online degli Enti Locali Trentini'
-intro: '<p>Attraverso "La Stanza del Cittadino" potrai accedere con pochi click a tutti i servizi messi a disposizione degli Enti Locali Trentini.</p><p>Per alcuni di essi dovrai autenticarti seguendo le istruzioni.</p>'
+claim: 'Servizi on-line del %ente_name%'
+intro: '<p>Attraverso "La Stanza del Cittadino" potrai accedere con pochi click a tutti i servizi messi a disposizione dei cittadini.</p>'
 salva: 'Salva'
 elimina: 'Elimina'
 terms_do_il_consenso: 'Dò il consenso'
@@ -12,16 +12,17 @@ lista_pratiche: 'Le mie pratiche'
 bozze_servizio: 'Pratiche in bozza per il servizio'
 msg_bozze_servizio: 'Attenzione, ci sono delle pratiche in compilazione per il servizio selezionato.'
 lista_pratiche_bozza: 'Pratica in bozza'
-pratica_ricevuta: 'La tua pratica è stata registata nel sistema'
+pratica_ricevuta: 'La richiesta è stata trasmessa. Grazie per la collaborazione'
 welcome: 'F: Benvenuta,|M: Benvenuto,'
-completa_profilo: "Completa e conferma i dati del tuo profilo"
+completa_profilo: "Verifica che l'email sia corretta, completa e conferma i dati del tuo profilo"
 error_message: "Ooops! Qualcosa non ha funzionato!"
 error_message_detail: "Per favore contatta il supporto tecnico e comunicagli cosa stavi facendo."
 visualizza_colonne: "Visualizza colonne"
 visualizza_griglia: "Visualizza griglia"
 profilo_utente: "Profilo utente"
 operatore: "Operatore"
-credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del Comune di Tre Ville"
+credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del %ente_name%"
+powered_by: 'powered by <a href="https://www.opencontent.it/">OpenContent Scarl</a>'
 
 nav:
   home: 'Homepage'
@@ -80,7 +81,7 @@ pratica:
   nucleoFamiliare: 'Composizione del nucleo familiare'
   pagamento: 'Pagamento'
   pdf:
-    dati_autenticazione: 'Dati autenticazione'
+    dati_autenticazione: '<strong><small>Dati generati automaticamente dalla Stanza del Cittadino</small><br>Informazioni tecniche</strong>'
     spett_le: 'Spett.le'
     oggetto: 'Oggetto:'
     il_sottoscritto: 'Il/La sottoscritto/a'
@@ -118,6 +119,9 @@ pratica:
     richiedente.telefono: 'Telefono'
     richiedente.email: 'Email'
     nucleo_familiare: 'Nucleo familiare'
+    esito:
+      accettata: 'La richiesta è stata <strong>accettata</strong>'
+      rifiutata: 'La richiesta è stata <strong>rifiutata</strong>'
     componente_nucleo_familiare:
       cognome: 'Cognome'
       nome: 'Nome'
@@ -258,6 +262,34 @@ certificato_nascita:
   pdf:
     richiesta: "Il rilascio del certificato di nascita"
 
+atto_nascita:
+  pdf:
+    richiesta: "La copia integrale dell'atto di nascita"
+
+certificato_morte:
+  pdf:
+    richiesta: "Il rilascio del certificato di morte"
+
+atto_morte:
+  pdf:
+    richiesta: "La copia integrale dell'atto di morte"
+
+estratto_morte:
+  pdf:
+    richiesta: "L'estratto dell'atto di morte"
+
+certificato_matrimonio:
+  pdf:
+    richiesta: "Il rilascio del certificato di matrimonio"
+
+estratto_matrimonio:
+  pdf:
+    richiesta: "L'estratto dell'atto di matrimonio"
+
+atto_matrimonio:
+  pdf:
+    richiesta: "La copia integrale dell'atto di matrimonio"
+
 stato_famiglia:
   pdf:
     richiesta: "Il rilascio del certificato dello stato di famiglia"
@@ -321,7 +353,7 @@ user:
     sesso: 'Sesso'
     codice_fiscale: 'Codice fiscale'
     telefono: 'Numero di telefono'
-    email: 'Indirizzo email'
+    email: 'Indirizzo email (*)'
     data_nascita: 'Data di nascita'
     luogo_nascita: 'Luogo di nascita'
     contatti_per_sdc: 'Contatti per la Stanza del cittadino'
@@ -361,7 +393,7 @@ operatori:
   scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
   scarica_ricevuta_provvisoria_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma.<br /> Puoi controllare l'avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <em>Le mie pratiche</em>."
   scarica_modulo_compilato: 'Scarica il modulo compilato'
-  scarica_risposta_firmata: 'Scarica il file di risposta firmato (formato p7m)'
+  scarica_risposta_firmata: 'Scarica il file di risposta'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
     approva_o_rigetta:
@@ -403,13 +435,15 @@ email:
     dear: 'Gentile <strong>%user_name%</strong>,'
     thanks: 'La ringraziamo per aver utilizzato la stanza del cittadino.'
     link: 'Per ulteriori dettagli visiti il seguente '
+    link_download: 'Può scaricare i documenti  da lei richiesti al seguente '
     link_txt: 'Per ulteriori dettagli visiti il seguente link: '
+    link_download_txt: 'Per ulteriori dettagli visiti il seguente link: '
     user:
       status:
         submitted: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
         registered: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della pratica."
         cancelled: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata rifiutata.'
-        complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata accettata.'
+        complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata evasa.'
         complete.waitallegatioperatore: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi file allegati.'
         pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         draft: ''
@@ -456,6 +490,7 @@ steps:
             guida_alla_compilazione: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al <u>tuo profilo</u></a>'
             richiedente_nome: 'Nome'
             richiedente_cognome: 'Cognome'
+            richiedente_codice_fiscale: 'Codice Fiscale'
             richiedente_luogo_nascita: 'Luogo di nascita'
             richiedente_data_nascita: 'Data di nascita'
             richiedente_indirizzo_residenza: 'Indirizzo'
@@ -470,6 +505,8 @@ steps:
             sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
             si: 'Sì, sono sicuro'
             no: 'No'
+            help_text_top: 'Controlla i dati che hai inserito.  Per inviare la richiesta, premere il pulsante "Invia"'
+            help_text_bottom: 'Per inviare la richiesta, premere il pulsante "Invia"'
 
         nucleo_familiare:
             label: 'Nucleo familiare'
@@ -515,28 +552,91 @@ steps:
         delega:
             label: 'Delega'
             title: 'Delega'
-            guida_alla_compilazione: 'Seleziona il tipo di delega e specifica i campi sottostanti. Se sei il titolare del certificato vai avanti.'
+            guida_alla_compilazione: 'Specifica se hai una delega.'
+            has_delega: 'Hai una delega?'
+            tipi:
+                delegato: 'delegato dal / la Sig. / Sig.ra'
+                incaricato: 'incaricato dallo studio'
+                altro: 'altro'
+
+        specifica_delega:
+            label: 'Specifica delega'
+            title: 'Specifica delega'
+            guida_alla_compilazione: "Se la richiesta del certificato è riferita ad un'altra persona è necessario indicare le generalità."
             tipi:
                 delegato: 'delegato dal / la Sig. / Sig.ra'
                 incaricato: 'incaricato dallo studio'
                 altro: 'altro'
             type_text: 'Specificare nome Studio / Altro'
-            nome_soggetto_certificato: 'Nome esteso della persona per cui si richiede il certificato'
-            related_cfs: 'Codice Fiscale della Persona per cui si richiede il certificato'
-            data_nascita_soggetto_certificato: 'Data di nascita della Persona per cui si richiede il certificato'
-            indirizzo_soggetto_certificato: 'Indirizzo della Persona per cui si richiede il certificato'
-            required_field_error: 'Se hai selezionato un tipo di delega devi specificare anche gli altri valori'
+            nome_soggetto_certificato: 'Nome e cognome della persona per cui si richiede il certificato'
+            related_cfs: 'Codice Fiscale della persona per cui si richiede il certificato'
+            data_nascita_soggetto_certificato: 'Data di nascita della persona per cui si richiede il certificato'
+            required_field_error: 'Se hai selezionato "incaricato dallo studio" o "altro" nel campo "In qualità di" devi riempire anche il campo "Specificare nome Studio / Altro"'
 
         certificato_anagrafico:
-            label: 'Tipologia certificato'
-            title: 'Tipologia certificato'
-            guida_alla_compilazione: 'Scegli la tipologia per il certificato riciesto'
+            label: 'Tipologia ed uso'
             tipologia_certificato: 'Tipologia certificato'
             tipologie:
                 semplice: 'semplice'
                 genitori: 'con paternità e maternità'
-                internazionale: 'su modello intenazionale'
+                internazionale: 'su modello internazionale'
             uso: 'Per il seguente uso'
+            CertificatoNascita:
+                label: 'Tipologia ed uso'
+                title: 'Tipologia ed uso'
+                description: 'Il certificato di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore'
+                guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
+                tipologia_certificato: 'Tipologia certificato'
+                uso: "Precisare la motivata richiesta"
+            EstrattoNascita:
+                label: 'Tipologia ed uso'
+                title: 'Tipologia ed uso'
+                description: "L'estratto di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore."
+                guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
+                tipologia_certificato: 'Tipologia certificato'
+                uso: "Precisare la motivata richiesta"
+            AttoMorte:
+                label: 'Tipologia ed uso'
+                title: 'Tipologia ed uso'
+                description: "Specifica dettagliata dell'uso del certificato"
+                guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+                tipologia_certificato: 'Tipologia certificato'
+                uso: "Precisare la motivata richiesta"
+            EstrattoMorte:
+                label: 'Tipologia ed uso'
+                title: 'Tipologia ed uso'
+                description: "Specifica dettagliata dell'uso del certificato"
+                guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+                tipologia_certificato: 'Tipologia certificato'
+                uso: "Precisare la motivata richiesta"
+            CertificatoMatrimonio:
+                label: 'Tipologia ed uso'
+                title: 'Tipologia ed uso'
+                description: "Specificare tipologia di certificato"
+                guida_alla_compilazione: "Specificare tipologia di certificato"
+                tipologia_certificato: 'Tipologia certificato'
+                uso: "Precisare la motivata richiesta"
+            EstrattoMatrimonio:
+                label: 'Tipologia ed uso'
+                title: 'Tipologia ed uso'
+                description: "Specificare tipologia di certificato"
+                guida_alla_compilazione: "Specificare tipologia di certificato"
+                tipologia_certificato: 'Tipologia certificato'
+                uso: "Precisare la motivata richiesta"
+            AttoMatrimonio:
+                label: 'Tipologia ed uso'
+                title: "Tipologia ed uso"
+                description: "Specifica dettagliata dell'uso del certificato"
+                guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+                tipologia_certificato: 'Tipologia certificato'
+                uso: "Precisare la motivata richiesta"
+
+        uso:
+            label: 'Tipologia ed uso'
+            title: 'Tipologia ed uso'
+            description: 'Specifica uso per il certificato'
+            guida_alla_compilazione: 'Specifica uso per il certificato'
+            uso: 'Specifica uso per il certificato'
 
 
     allacciamento_acquedotto:
@@ -1081,6 +1181,42 @@ steps:
                 PUP_ALTRO:
                     title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
                     description: ""
+    atto_nascita:
+        dati_atto:
+            title: 'Dati atto'
+            label: 'Dati atto'
+            guida_alla_compilazione: "Se altra persona diversa dal richiedente, indicare i dati completi della persona cui si riferisce l'atto"
+            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+            cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+
+    certificato_morte:
+        dati_atto:
+            title: 'Dati identificativi deceduto'
+            label: 'Dati deceduto'
+            guida_alla_compilazione: "Indicare i dati completi del defunto"
+            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+            data_morte_soggetto_certificato: "Data del decesso"
+
+    atto_morte:
+        dati_atto:
+            title: "Dati completi della persona cui si riferisce l'atto"
+            label: 'Dati deceduto'
+            guida_alla_compilazione: "Indicare i dati completi del defunto"
+            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+            cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+    certificato_matrimonio:
+        dati_atto:
+            title: "Dati identificativi dello sposo o della sposa"
+            label: 'Dati identificativi dello sposo o della sposa'
+            guida_alla_compilazione: "Indicare i dati identificativi dello sposo o della sposa"
+            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+            cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
 
 gateway:
     bollo:

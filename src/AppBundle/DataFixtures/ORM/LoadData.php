@@ -125,7 +125,10 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
                     ->setName($item['name'])
                     ->setCodiceMeccanografico($item['codice'])
                     ->setCodiceAmministrativo($item['istat'])
-                    ->setSiteUrl($item['url']);
+                    ->setSiteUrl($item['url'])
+                    ->setContatti($item['contatti'])
+                    ->setEmail($item['email'])
+                    ->setEmailCertificata($item['email_certificata']);
                 $manager->persist($ente);
             } else {
                 $this->counters['enti']['updated']++;

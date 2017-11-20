@@ -79,6 +79,8 @@
                 $collectionHolder.data('index', $collectionHolder.find(':input').length);
             }
 
+
+
             {% if form.nucleo_familiare is defined %}
             var $addComponenteNucleoFamiliare = $('<a href="#" class="btn btn-md btn-primary add_componente_nucleo_familiare">{{ 'pratica.aggiungi_componente_nucleo_familiare'|trans() }}</a>');
             var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
@@ -89,6 +91,53 @@
                 addComponenteForm($collectionHolder, $newLinkLi);
             });
             setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+
+            {% elseif form.delega_type is defined %}
+
+            var specDelegaLabel = $('#pratica_specifica_delega_delega_type_text_label');
+            var specDelegaInput = $('#pratica_specifica_delega_delega_type_text');
+
+            if ($('#pratica_specifica_delega_delega_type :checked').val() != 'delegato') {
+                specDelegaLabel.show();
+                specDelegaInput.show();
+            }
+
+            $('#pratica_specifica_delega_delega_type input').click(function(){
+                if ($(this).val() == 'delegato')
+                {
+                    specDelegaLabel.hide(500);
+                    specDelegaInput.hide(500);
+                }
+                else
+                {
+                    specDelegaLabel.show(500);
+                    specDelegaInput.show(500);
+                }
+            });
+
+            {% elseif form.tipologia_certificato_anagrafico is defined %}
+
+
+            var specDelegaLabel = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico_label');
+            var specDelegaInput = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico');
+
+            if ($('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico :checked').val() == 'internazionale') {
+                specDelegaLabel.show();
+                specDelegaInput.show();
+            }
+
+            $('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico input').click(function(){
+                if ($(this).val() != 'internazionale')
+                {
+                    specDelegaLabel.hide(500);
+                    specDelegaInput.hide(500);
+                }
+                else
+                {
+                    specDelegaLabel.show(500);
+                    specDelegaInput.show(500);
+                }
+            });
 
             {% elseif form.allegati is defined %}
             var $addAllegato = $('<a href="#" class="btn btn-md btn-primary add_allegato">{{ 'pratica.aggiungi_allegato'|trans() }}</a>');
@@ -179,6 +228,7 @@
         <div class="content">#}
             <div class="row">
                 <div class="col-md-12">
+
                     {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
                         <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
                         <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
@@ -217,10 +267,11 @@
                             <{{ form.vars.helper.vueApp }}></{{ form.vars.helper.vueApp }}>
                         {% endif %}
                     </div>
-                        <div>
-                            {{ form.vars.helper.descriptionText|raw }}
-                        </div>
-
+                        {% if form.vars.helper.descriptionText|length > 0 %}
+                            <blockquote>
+                                {{ form.vars.helper.descriptionText|raw }}
+                            </blockquote>
+                        {% endif %}
                         {% if form.nucleo_familiare is defined %}
                             <ul class="list-unstyled nucleo_familiare" data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
                                 {% for componente in form.nucleo_familiare %}
@@ -238,7 +289,13 @@
                         {% endif %}
 
                         {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+                            <blockquote>
+                                {{ 'steps.common.conferma.help_text_top'|trans }}
+                            </blockquote>
                             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+                            <blockquote style="margin-top: 20px">
+                                {{ 'steps.common.conferma.help_text_bottom'|trans }}
+                            </blockquote>
                         {% endif %}
 
                         {{ form_rest(form) }}

@@ -1,5 +1,9 @@
 {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
 {{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|striptags }}
 {{ 'email.pratica.thanks'|trans() }}
-{{ 'email.pratica.link_txt'|trans }}
+{% if pratica.rispostaOperatore %}
+    {{ 'email.pratica.link_download_txt'|trans }}
+{% else %}
+    {{ 'email.pratica.link_txt'|trans }}
+{% endif %}
 {{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}

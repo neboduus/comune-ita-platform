@@ -16,11 +16,12 @@ class UploadRispostaOperatoreType extends AbstractType
     {
         /** @var Pratica $pratica */
         $pratica = $builder->getData();
+        $slugEnte = $pratica->getEnte()->getSlug();
 
         $helper = $options["helper"];
         $helper->setGuideText('operatori.flow.upload_risposta_firmata.guida_alla_compilazione', true);
         $helper->setDescriptionText('operatori.flow.upload_risposta_firmata.testo_descrittivo', true, [
-            '%link_download_risposta%' => '/operatori/'.$pratica->getId().'/risposta_non_firmata'
+            '%link_download_risposta%' => '/' . $slugEnte . '/operatori/'.$pratica->getId().'/risposta_non_firmata'
         ]);
 
         $builder

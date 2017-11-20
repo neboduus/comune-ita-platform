@@ -52,7 +52,7 @@ services:
 
     ocsdc.mailer:
         class: AppBundle\Services\MailerService
-        arguments: ["@mailer", "@translator", "@templating"]
+        arguments: ["@mailer", "@translator", "@templating", "@doctrine"]
 
 
     ocsdc.modulo_pdf_builder:
@@ -78,7 +78,7 @@ services:
         class: AppBundle\Protocollo\DummyProtocolloHandler
         public: false
 
-    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
 
     ocsdc.protocollo_delayed:
         class: AppBundle\Services\DelayedProtocolloService
@@ -107,6 +107,12 @@ services:
 
     ocsdc.form.type.choose_allegato:
         class: AppBundle\Form\Base\ChooseAllegatoType
+        arguments: ["@doctrine.orm.entity_manager", "@validator"]
+        tags:
+            - { name: form.type }
+
+    ocsdc.form.type.upload_allegato:
+        class: AppBundle\Form\Base\UploadAllegatoType
         arguments: ["@doctrine.orm.entity_manager", "@validator"]
         tags:
             - { name: form.type }
@@ -203,6 +209,42 @@ services:
         class: AppBundle\Form\CertificatoNascita\CertificatoNascitaFlow
         parent: ocsdc.form.flow.pratica
 
+    ocsdc.form.flow.estrattonascita:
+        class: AppBundle\Form\EstrattoNascita\EstrattoNascitaFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.attonascita:
+            class: AppBundle\Form\AttoNascita\AttoNascitaFlow
+            parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.certificatomorte:
+        class: AppBundle\Form\CertificatoMorte\CertificatoMorteFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.estrattomorte:
+        class: AppBundle\Form\EstrattoMorte\EstrattoMorteFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.attomorte:
+        class: AppBundle\Form\AttoMorte\AttoMorteFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.certificatomatrimonio:
+        class: AppBundle\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.estrattomatrimonio:
+        class: AppBundle\Form\EstrattoMatrimonio\EstrattoMatrimonioFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.attomatrimonio:
+        class: AppBundle\Form\AttoMatrimonio\AttoMatrimonioFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.nullaostamatrimonio:
+        class: AppBundle\Form\CertificatoAnagrafico\CertificatoAnagraficoFlow
+        parent: ocsdc.form.flow.pratica
+
     ocsdc.form.flow.attestazioneanagrafica:
         class: AppBundle\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow
         parent: ocsdc.form.flow.pratica
@@ -222,6 +264,10 @@ services:
 
     ocsdc.form.flow.standardoperatore:
         class: AppBundle\Form\Operatore\Standard\StandardOperatoreFlow
+        parent: ocsdc.form.flow.praticaoperatore
+
+    ocsdc.form.flow.operatore.standardallegatonofirma:
+        class: AppBundle\Form\Operatore\Standard\StandardAllegatoNoFirmaFlow
         parent: ocsdc.form.flow.praticaoperatore
 
     ocsdc.form.flow.certificatonascitaoperatore:
@@ -258,6 +304,11 @@ services:
         tags:
             - { name: twig.extension }
 
+    ocsdc.twig.json_decode:
+        class: AppBundle\Twig\JsonDecode
+        tags:
+            - { name: twig.extension }
+
     ocsdc.pratica_status_service:
         class: AppBundle\Services\PraticaStatusService
         arguments: ["@doctrine.orm.entity_manager", "@logger", "@event_dispatcher"]
@@ -271,6 +322,10 @@ services:
     ocsdc.cps.terms_acceptance_checker:
         class: AppBundle\Services\TermsAcceptanceCheckerService
         arguments: ["@doctrine"]
+
+    ocsdc.instance_service:
+        class: AppBundle\Services\InstanceService
+        arguments: ["@doctrine", "%prefix%"]
 
     ocsdc.form.flow.occupazionesuolopubblico:
         class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow

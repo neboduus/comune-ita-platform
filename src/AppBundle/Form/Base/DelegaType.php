@@ -32,58 +32,20 @@ class DelegaType extends AbstractType
         $data = is_array($pratica->getDelegaData()) ? $pratica->getDelegaData() : json_decode($pratica->getDelegaData(), true);
 
 
-        $choices = array();
-        foreach ($pratica->getTipiDelega() as $delega) {
-            $choices[$helper->translate('steps.common.delega.tipi.' . $delega)] = $delega;
-        }
+        $choices = array(
+            'Si' => true,
+            'No' => false
+        );
 
-        $builder->add('delega_type', ChoiceType::class, [
-            'choices' => $choices,
+        $builder->add('has_delega', ChoiceType::class, [
+            'choices'  => $choices,
             'multiple' => false,
-            'required' => false,
-            'label' => 'pratica.dettaglio.delega.ruolo'
-        ])
-            ->add('delega_type_text', TextType::class, [
-                'mapped' => false,
-                'required' => false,
-                'data'   => isset($data['delega_type_text']) ? (string)$data['delega_type_text'] : '',
-                'label' => 'steps.common.delega.type_text'
-            ])
-
-            ->add('nome_soggetto_certificato', TextType::class, [
-                'mapped' => false,
-                'required' => false,
-                'data'     => isset($data['nome_soggetto_certificato']) ? (string)$data['nome_soggetto_certificato'] : '',
-                'label' => 'steps.common.delega.nome_soggetto_certificato'
-            ])
-
-            ->add('related_cfs', TextType::class, [
-//                'data' => $cf
-                'required' => false,
-                'label' => 'steps.common.delega.related_cfs'
-            ])
-
-           ->add('data_nascita_soggetto_certificato', DateType::class, [
-                'required' => false,
-                'mapped'   => false,
-                'label'    => 'steps.common.delega.data_nascita_soggetto_certificato',
-                'widget'   => 'single_text',
-                'format'   => 'dd-MM-yyyy',
-                'data'     => new \DateTime(  (isset($data['data_nascita_soggetto_certificato']) ? (string)$data['data_nascita_soggetto_certificato'] : null) ),
-                'attr' => [
-                    'class' => 'form-control input-inline datepicker',
-                    'data-provide' => 'datepicker',
-                    'data-date-format' => 'dd-mm-yyyy'
-                ]
-            ])
-
-            ->add('indirizzo_soggetto_certificato', TextType::class, [
-                'mapped'   => false,
-                'required' => false,
-                'data'     => isset($data['indirizzo_soggetto_certificato']) ? (string)$data['indirizzo_soggetto_certificato'] : '',
-                'label'    => 'steps.common.delega.indirizzo_soggetto_certificato'
-            ]);
-
+            'required' => true,
+            'mapped'   => false,
+            'expanded' => true,
+            'data'     => isset($data['has_delega']) ? $data['has_delega'] : false,
+            'label'    => 'steps.common.delega.has_delega'
+        ]);
 
         $builder
             ->add('delega_data', HiddenType::class,
@@ -110,27 +72,23 @@ class DelegaType extends AbstractType
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
         $delegaData = [];
-        if ( empty($data['delega_type']) )
+        if ( !$data['has_delega'] )
         {
-            $data['related_cfs'] = '';
+            $delegaData = array(
+                'has_delega' => $data['has_delega']
+            );
+            //Todo: eliminare via entity
+            //$data['related_cfs'] = '';
         }
         else
         {
-            if ( ($data['delega_type'] != 'semplice' && empty($data['delega_type_text'])) || empty($data['nome_soggetto_certificato'])
-                || empty($data['data_nascita_soggetto_certificato']) || empty($data['indirizzo_soggetto_certificato']) || empty($data['related_cfs']))
-            {
-                $event->getForm()->addError(
-                    new FormError($helper->translate('steps.common.delega.required_field_error'))
-                );
-            }
-
             $delegaData = array(
-                'delega_type' => $data['delega_type'],
-                'delega_type_text' => $data['delega_type_text'],
-                'nome_soggetto_certificato' => $data['nome_soggetto_certificato'],
-                'data_nascita_soggetto_certificato' => $data['data_nascita_soggetto_certificato'],
-                'indirizzo_soggetto_certificato' => $data['indirizzo_soggetto_certificato'],
-                'cf_soggetto_certificato' => $data['related_cfs'],
+                'has_delega' => $data['has_delega'],
+                'delega_type' => isset($data['delega_type']) ? $data['delega_type'] : '',
+                'delega_type_text' => isset($data['delega_type_text']) ? $data['delega_type_text'] : '',
+                'nome_soggetto_certificato' => isset($data['nome_soggetto_certificato']) ? $data['nome_soggetto_certificato'] : '',
+                'data_nascita_soggetto_certificato' => isset($data['data_nascita_soggetto_certificato']) ? $data['data_nascita_soggetto_certificato'] : '',
+                'cf_soggetto_certificato' => isset($data['related_cfs']) ? $data['related_cfs'] : '',
             );
         }
         $data['delega_data'] = json_encode( $delegaData );

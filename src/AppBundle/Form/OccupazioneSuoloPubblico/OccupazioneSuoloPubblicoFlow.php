@@ -29,10 +29,6 @@ class OccupazioneSuoloPubblicoFlow extends PraticaFlow
     protected function loadStepsConfig()
     {
         $steps =  array(
-            self::STEP_SELEZIONA_ENTE => array(
-                'label' => 'steps.common.seleziona_ente.label',
-                'form_type' => SelezionaEnteType::class,
-            ),
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
                 'label' => 'steps.common.accettazione_istruzioni.label',
                 'form_type' => AccettazioneIstruzioniType::class,
@@ -62,20 +58,34 @@ class OccupazioneSuoloPubblicoFlow extends PraticaFlow
             )
         );
 
+        // Mostro lo step del'ente solo se è necesario
+        if ($this->getFormData()->getEnte() == null && $this->prefix == null)
+        {
+            $steps [self::STEP_SELEZIONA_ENTE] = array(
+                'label' => 'steps.common.seleziona_ente.label',
+                'form_type' => SelezionaEnteType::class,
+                'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
+                    return ($flow->getFormData()->getEnte() != null && $this->prefix != null);
+                }
+            );
+        }
+        ksort($steps);
+
         // Attivo gli step di pagamento solo se è richiesto nel servizio
         if ($this->isPaymentRequired())
         {
-            $steps[count($steps) + 1] = array(
+
+            $steps[]= array(
                 'label' => 'steps.common.select_payment_gateway.label',
                 'form_type' => SelectPaymentGatewayType::class
             );
-            $steps[count($steps) + 1] = array(
+            $steps[]= array(
                 'label' => 'steps.common.payment_gateway.label',
                 'form_type' => PaymentGatewayType::class
             );
         }
 
-        $steps[count($steps) + 1] = array(
+        $steps[]= array(
             'label' => 'steps.common.conferma.label'
         );
 

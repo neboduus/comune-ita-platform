@@ -1,3 +1,4 @@
+{% set ente = instance_service.getCurrentInstance() %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -98,7 +99,9 @@
     <table align='center' border='0' cellpadding='0' cellspacing='0'>
         <tr>
             <td>
-                <p style="color: #30373d;background: #F0F0F0; padding: 20px; font-size: 13px; border-top: 1px solid #e74e26;">{{ footer_credits|raw }}
+                {% if ente %}
+                    <p style="color: #30373d;background: #F0F0F0; padding: 20px; font-size: 13px; border-top: 1px solid #e74e26;">{{ 'credits'|trans({'%ente_name%': ente.name}) }}</p>
+                {% endif %}
             </td>
         </tr>
     </table>

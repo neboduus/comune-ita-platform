@@ -104,6 +104,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     {
         $pratica->setRichiedenteNome($user->getNome());
         $pratica->setRichiedenteCognome($user->getCognome());
+        $pratica->setRichiedenteCodiceFiscale($user->getCodiceFiscale());
         $pratica->setRichiedenteLuogoNascita($user->getLuogoNascita());
         $pratica->setRichiedenteDataNascita($user->getDataNascita());
         $pratica->setRichiedenteIndirizzoResidenza($user->getIndirizzoResidenza());

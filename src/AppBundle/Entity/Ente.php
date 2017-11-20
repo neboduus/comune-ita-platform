@@ -85,6 +85,24 @@ class Ente
     private $codiceAmministrativo;
 
     /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $contatti;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $email;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $emailCertificata;
+
+    /**
      * Ente constructor.
      */
     public function __construct()
@@ -298,6 +316,57 @@ class Ente
     {
         $this->codiceAmministrativo = $codiceAmministrativo;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContatti()
+    {
+        return $this->contatti;
+    }
+
+    /**
+     * @param string $contatti
+     */
+    public function setContatti(string $contatti)
+    {
+        $this->contatti = $contatti;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail(string $email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmailCertificata()
+    {
+        return $this->emailCertificata;
+    }
+
+    /**
+     * @param string $emailCertificata
+     */
+    public function setEmailCertificata(string $emailCertificata)
+    {
+        $this->emailCertificata = $emailCertificata;
         return $this;
     }
 

@@ -22,6 +22,8 @@ class Version20171116174650 extends AbstractMigration
         $this->addSql('ALTER TABLE pratica ADD delega_data JSON DEFAULT NULL');
         $this->addSql('ALTER TABLE pratica ADD tipologia_certificato_anagrafico VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE pratica ADD uso_certificato_anagrafico VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE pratica ADD stato_estero_certificato_anagrafico VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE pratica ADD richiedente_codice_fiscale VARCHAR(255) DEFAULT NULL');
     }
 
     /**
@@ -37,5 +39,7 @@ class Version20171116174650 extends AbstractMigration
         $this->addSql('ALTER TABLE pratica DROP delega_data');
         $this->addSql('ALTER TABLE pratica DROP tipologia_certificato_anagrafico');
         $this->addSql('ALTER TABLE pratica DROP uso_certificato_anagrafico');
+        $this->addSql('ALTER TABLE pratica DROP stato_estero_certificato_anagrafico');
+        $this->addSql('ALTER TABLE pratica DROP richiedente_codice_fiscale');
     }
 }

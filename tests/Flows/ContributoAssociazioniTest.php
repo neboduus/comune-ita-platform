@@ -100,7 +100,9 @@ class ContributoAssociazioniTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
+        if ($currentPratica->getEnte() == null && $this->container->getParameter('prefix') == null) {
+            $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
+        }
 
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
 

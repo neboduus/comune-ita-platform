@@ -25,7 +25,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "stato_famiglia" = "StatoFamiglia",
  *     "occupazione_suolo_pubblico" = "OccupazioneSuoloPubblico",
  *     "contributo_associazioni" = "ContributoAssociazioni",
- *     "scia_pratica_edilizia" = "SciaPraticaEdilizia"
+ *     "scia_pratica_edilizia" = "SciaPraticaEdilizia",
+ *     "estratto_nascita" = "EstrattoNascita",
+ *     "atto_nascita" = "AttoNascita",
+ *     "certificato_morte" = "CertificatoMorte",
+ *     "estratto_morte" = "EstrattoMorte",
+ *     "atto_morte" = "AttoMorte",
+ *     "certificato_matrimonio" = "CertificatoMatrimonio",
+ *     "estratto_matrimonio" = "EstrattoMatrimonio",
+ *     "atto_matrimonio" = "AttoMatrimonio",
+ *     "nulla_osta_matrimonio" = "NullaOstaMatrimonio"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -66,6 +75,16 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     const TYPE_SCIA_PRATICA_EDILIZIA = "scia_pratica_edilizia";
     const TYPE_OCCUPAZIONE_SUOLO_PUBBLICO = "occupazione_suolo_pubblico";
     const TYPE_CONTRIBUTO_ASSOCIAZIONI = "contributo_associazioni";
+
+    const TYPE_ESTRATTO_NASCITA = "estratto_nascita";
+    const TYPE_ATTO_NASCITA = "atto_nascita";
+    const TYPE_CERTIFICATO_MORTE = "certificato_morte";
+    const TYPE_ESTRATTO_MORTE = "estratto_morte";
+    const TYPE_ATTO_MORTE = "atto_morte";
+    const TYPE_CERTIFICATO_MATRIMONIO = "certificato_matrimonio";
+    const TYPE_ESTRATTO_MATRIMONIO = "estratto_matrimonio";
+    const TYPE_ATTO_MATRIMONIO = "atto_matrimonio";
+    const TYPE_NULLA_OSTA_MATRIMONIO = "nulla_osta_matrimonio";
 
     const TIPO_DELEGA_DELEGATO   = 'delegato';
     const TIPO_DELEGA_INCARICATO = 'incaricato';
@@ -245,6 +264,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
+    private $richiedenteCodiceFiscale;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
     private $richiedenteLuogoNascita;
 
     /**
@@ -350,7 +375,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     private $delegaData;
 
     /**
-     * @ORM\Column(type="json_array", options={"jsonb":true})
+     * @ORM\Column(type="json_array", options={"jsonb":true}, nullable=true)
      * @var $relatedCFs array
      */
     private $relatedCFs;
@@ -1144,6 +1169,25 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     {
         $this->richiedenteCognome = $richiedenteCognome;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRichiedenteCodiceFiscale()
+    {
+        return $this->richiedenteCodiceFiscale;
+    }
+
+    /**
+     * @param string $richiedenteCodiceFiscale
+     *
+     * @return Pratica
+     */
+    public function setRichiedenteCodiceFiscale(string $richiedenteCodiceFiscale)
+    {
+        $this->richiedenteCodiceFiscale = $richiedenteCodiceFiscale;
         return $this;
     }
 

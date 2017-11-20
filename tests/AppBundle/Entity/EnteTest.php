@@ -3,6 +3,7 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
+use AppBundle\Entity\Pratica;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
 /**
@@ -20,6 +21,7 @@ class EnteTest extends AbstractAppTestCase
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
+        $this->cleanDb(Pratica::class);
         $this->cleanDb(Ente::class);
         $this->cleanDb(Erogatore::class);
     }

@@ -85,12 +85,16 @@ class LoadServiziCommandTest extends AbstractAppTestCase
 
         $data = $worksheet->getCsv();
         $dataArray = str_getcsv($data, "\r\n");
+        $services = array();
         foreach ($dataArray as &$row) {
             $row = str_getcsv($row, ",");
+            $codes = explode('##', $row[1]);
+            if (in_array($this->client->getContainer()->getParameter('codice_meccanografico'), $codes))
+            {
+                $services []= $row;
+            }
         }
-
-        array_shift($dataArray); # remove column header
-
-        return count($dataArray);
+        //array_shift($dataArray); # remove column header
+        return count($services);
     }
 }

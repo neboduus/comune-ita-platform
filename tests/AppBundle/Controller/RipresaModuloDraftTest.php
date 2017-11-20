@@ -83,7 +83,9 @@ class RipresaModuloDraftTest extends AbstractAppTestCase
         $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
-        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
+        if ($currentPratica->getEnte() == null && $this->container->getParameter('prefix') == null) {
+            $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
+        }
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
         /** @var AsiloNido $asiloSelected*/
         $this->selezioneAsilo($ente, $crawler, $nextButton, $asiloSelected, $form);
@@ -91,7 +93,13 @@ class RipresaModuloDraftTest extends AbstractAppTestCase
 
         $this->em->persist($currentPratica);
         $this->em->refresh($currentPratica);
-        $this->assertEquals(IscrizioneAsiloNidoFlow::STEP_ACCETTAZIONE_UTILIZZO_NIDO, $currentPratica->getLastCompiledStep());
+
+        $expettedStep = IscrizioneAsiloNidoFlow::STEP_ACCETTAZIONE_UTILIZZO_NIDO;
+        if ($currentPratica->getEnte() != null && $this->container->getParameter('prefix') != null) {
+            $expettedStep--;
+        }
+
+        $this->assertEquals($expettedStep, $currentPratica->getLastCompiledStep());
 
         $this->client->request('GET', $this->router->generate('home'));
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());

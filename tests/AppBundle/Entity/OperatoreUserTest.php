@@ -1,6 +1,7 @@
 <?php
 namespace Tests\AppBundle\Entity;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
@@ -21,6 +22,7 @@ class OperatoreUserTest extends AbstractAppTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(User::class);
     }

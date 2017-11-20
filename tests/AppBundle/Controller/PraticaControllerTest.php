@@ -356,7 +356,8 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = $this->createServizioWithAssociatedErogatori([], 'Terzo servizio');
+        $erogatore = $this->createErogatoreWithEnti($this->createEnti());
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], 'Terzo servizio');
 
         $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
             'pratiche_new',
@@ -387,7 +388,8 @@ class PraticaControllerTest extends AbstractAppTestCase
         $tutteLePratiche = count($praticheRepository->findAll());
         $miePratiche = count($praticheRepository->findByUser($user));
 
-        $servizio = $this->createServizioWithAssociatedErogatori([], 'Terzo servizio');
+        $erogatore = $this->createErogatoreWithEnti($this->createEnti());
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], 'Terzo servizio');
 
         $ente = $this->createEnti()[0];
         $enteSlug = $ente->getSlug();
@@ -469,6 +471,7 @@ class PraticaControllerTest extends AbstractAppTestCase
      */
     public function testISeeSceltaComuneFormWhenIStartTheFormAsLoggedUser()
     {
+        $this->markTestSkipped("Passati ad  approccio con più instanze");
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->exactly(2))
             ->method('info')
@@ -529,7 +532,9 @@ class PraticaControllerTest extends AbstractAppTestCase
         $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
 
         // Selezione del comune
-        $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
+        if ($currentPratica->getEnte() == null && $this->container->getParameter('prefix') == null) {
+            $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
+        }
 
         // Accettazioni istruzioni
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
@@ -607,6 +612,7 @@ class PraticaControllerTest extends AbstractAppTestCase
      */
     public function testISeeChoiceOfEnteWhenIStartTheFormAsLoggedUser()
     {
+        $this->markTestSkipped("Passati ad  approccio con più instanze");
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->exactly(2))
             ->method('info')

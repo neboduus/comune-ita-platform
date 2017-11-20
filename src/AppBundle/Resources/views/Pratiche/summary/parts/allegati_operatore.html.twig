@@ -1,18 +1,27 @@
 {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
 {% if pratica.statusName == 'STATUS_COMPLETE' %}
     <div class="row last">
-        <div class="col-xs-12 col-sm-9 col-sm-offset-3">
+        <div class="col-xs-12 col-sm-12">
+            {% if pratica.esito %}
+                <p>{{ 'pratica.dettaglio.esito.accettata'|trans|raw }}</p>
+            {% else %}
+                <p>{{ 'pratica.dettaglio.esito.rifiutata'|trans|raw }}</p>
+            {% endif %}
+
+            {% if pratica.motivazioneEsito %}
+                <p>{{ pratica.motivazioneEsito }}</p>
+            {% endif %}
+
             {% if pratica.allegatiOperatore|length > 0 %}
                 <div id="no-more-tables">
                     <h5>{{ 'pratica.dettaglio.modulocompilato'|trans }}</h5>
                     {% for allegato in pratica.allegatiOperatore %}
-                        <p class="modulo">
-                            <span>{{ allegato.description }}</span>
-                            <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-success btn-block btn-lg">{{ 'operatori.scarica'|trans }}</a>
-                        </p>
+                        <span>{{ allegato.description }}</span>
+                        <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-success btn-block btn-lg">{{ 'operatori.scarica'|trans }}</a>
                     {% endfor %}
                 </div>
             {% endif %}
         </div>
     </div>
 {% endif %}
+{{ include('AppBundle:Pratiche/summary/parts:risposta_operatore.html.twig', {'pratica':pratica, 'user': user}) }}

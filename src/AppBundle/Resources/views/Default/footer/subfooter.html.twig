@@ -1,3 +1,4 @@
+{% set ente = instance_service.getCurrentInstance() %}
 <section id="subfooter" class="clearfix">
     <div class="container-fluid">
         <div class="row">
@@ -8,7 +9,10 @@
                         <li><a href="{{ path('privacy') }}">{{ 'nav.informativa_privacy'|trans() }}</a></li>
                         <li class="pull-right"><a href="{{ path('operatori_index') }}">{{ 'nav.operatori.accesso_operatori'|trans() }}</a></li>
                     </ul>
-                    <p>{{ 'credits'|trans() }}</p>
+                    {% if ente %}
+                        <p>{{ 'credits'|trans({'%ente_name%': ente.name}) }}</p>
+                    {% endif %}
+                    <p>{{ 'powered_by'|trans()|raw() }}</p>
                 </div>
             </div>
         </div>

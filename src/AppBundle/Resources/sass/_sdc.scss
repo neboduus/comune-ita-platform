@@ -122,33 +122,60 @@ h1, h2, h3, h4, h5, h5 {
     #site-name {
       h1 {
         margin-top: 0;
+        margin-bottom: 0;
         font-size: 1em;
-        text-align: center;
+        text-align: left;
+        color: #000;
 
         /* Extra Small Devices, Phones */
         @media only screen and (max-width: $screen-xs-min) {
-          text-align: center;
           font-size: 1.35em;
+          display: none;
         }
 
         /* Small Devices, Tablets */
         @media only screen and (min-width: $screen-xs-min) {
-          text-align: left;
           font-size: 2em;
         }
 
         /* Medium Devices, Desktops */
         @media only screen and (min-width: $screen-md-min) {
-          text-align: left;
           font-size: 2.5em;
         }
 
         /* Large Devices, Wide Screens */
         @media only screen and (min-width: $screen-lg-min) {
-          text-align: left;
           font-size: 2.5em;
         }
         @include transition(0.2s);
+      }
+      .claim {
+        /* Extra Small Devices, Phones */
+        @media only screen and (max-width: $screen-xs-min) {
+          font-size: .9em;
+          font-weight:600;
+        }
+
+        /* Small Devices, Tablets */
+        @media only screen and (min-width: $screen-xs-min) {
+          font-weight:600;
+        }
+      }
+      .logo-ente {
+        /* Extra Small Devices, Phones */
+        @media only screen and (max-width: $screen-xs-min) {
+          height: 50px;
+        }
+
+        /* Small Devices, Tablets */
+        @media only screen and (min-width: $screen-xs-min) {
+          height: 60px;
+        }
+
+        /* Medium Devices, Desktops */
+        @media only screen and (min-width: $screen-md-min) {
+          height: 76px;
+        }
       }
     }
   }
@@ -247,7 +274,7 @@ h1, h2, h3, h4, h5, h5 {
 
           /* Extra Small Devices, Phones */
           @media only screen and (max-width: $screen-xs-min) {
-            text-align: center;
+            text-align: left;
             font-size: 1.35em;
           }
 
@@ -598,3 +625,48 @@ input[type=file].el-upload__input {
   display:none
 }
 
+/* Alerts */
+.alert {
+  border-radius: 0 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  box-shadow: 0 -5px 5px -5px #e0e0e0;
+  border-left: 10px solid #ccc ;
+  background-color: #fbfbfb;
+  p:before {
+    padding-right: 10px;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 2em;
+  }
+  &.alert-danger {
+    border-left-color: #ff0000 !important;
+    p:before {
+      content: "\f06a";
+    }
+  }
+  &.alert-warning {
+    border-left-color: #d1ae00 !important;
+    p:before {
+      content: "\f071";
+    }
+  }
+  &.alert-info {
+    border-left-color: #24c3cc !important;
+    p:before {
+      content: "\f129";
+    }
+  }
+  &.alert-success {
+    border-left-color: #65b446 !important;
+    p:before {
+      content: "\f00c";
+    }
+  }
+}
+
+.flash-message {
+  margin: 20px 24px 0;
+  /*-webkit-box-shadow: 0 2px 4px 0 rgba(28,32,36,.26);
+  box-shadow: 0 2px 4px 0 rgba(28,32,36,.26);*/
+}

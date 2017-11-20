@@ -1,3 +1,4 @@
+{% set ente = instance_service.getCurrentInstance() %}
 <section id="pre-footer" class="clearfix container-fluid">
     <div class="row">
         <div class="col-xs-2 col-sm-1">
@@ -13,7 +14,9 @@
                 <h2 style="margin-bottom: 0">
                     <a href="#" title="Home">Stanza del cittadino</a>
                 </h2>
-                <p class="white-color">{{ 'claim'|trans }}</p>
+                {% if ente %}
+                    <p class="white-color">{{ 'claim'|trans({'%ente_name%': ente.name}) }}</p>
+                {% endif %}
             </div>
         </div>
     </div>

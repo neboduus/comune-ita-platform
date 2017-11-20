@@ -18,3 +18,9 @@
     {% if form.parent %}</span>{% else %}</div>{% endif %}
     {%- endif %}
 {%- endblock form_errors %}
+
+{% block blockquote_widget %}
+    <blockquote>
+        {{ data|raw }}
+    </blockquote>
+{% endblock %}
