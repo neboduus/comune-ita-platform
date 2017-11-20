@@ -16,7 +16,7 @@ $loader = require __DIR__.'/../app/autoload.php';
 include_once __DIR__.'/../var/bootstrap.php.cache';
 
 
-$_SERVER += [
+/*$_SERVER += [
     "REDIRECT_shibb_pat_attribute_codicefiscale" => "RLDLCU77T05G224",
     "REDIRECT_shibb_pat_attribute_cognome" => "Realdi",
     "REDIRECT_shibb_pat_attribute_emailaddress" => "lr@opencontent.it",
@@ -30,7 +30,7 @@ $_SERVER += [
     "REDIRECT_shibb_pat_attribute_x509certificate_issuerdn" => "FAKE_issuerdn",
     "REDIRECT_shibb_pat_attribute_x509certificate_subjectdn" => "FAKE_subjectdn",
     "REDIRECT_shibb_pat_attribute_x509certificate_base64" => "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg==",
-];
+];*/
 
 
 // When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter

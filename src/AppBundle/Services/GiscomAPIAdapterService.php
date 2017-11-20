@@ -103,41 +103,44 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
         try {
             $response = $this->client->send($request);
 
-            $this->logger->info('Giscom response: ', [$response->getBody()]);
+            $this->logger->debug('Giscom response: ', [$response->getBody()]);
             $status = $response->getStatusCode();
             if ($status == 201 || $status == 204) {
                 if ($status == 204) {
-                    $responseBody = [
-                        'Stato' => [
-                            'Codice' => 'invio_integrazioni',
-                            'Note' => 'Risposta nulla da Giscom su invio integrazioni, codice 204',
-                        ],
-                    ];
+                    
+                    $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
+                    $this->logger->debug('Correctly updated pratica on Giscom Side', $logContext);
+
+
                 } else {
                     $responseBody = json_decode($response->getBody(), true);
+                    if (!isset($responseBody['Stato']['Codice'])) {
+                        throw new \Exception("Error parsing Giscom response");
+                    }
+
+                    $statusCode = strtolower($responseBody['Stato']['Codice']);
+                    $mappedStatus = $this->giscomStatusMapper->map($statusCode);
+                    $statusChange['evento'] = $mappedStatus;
+                    $statusChange['operatore'] = 'Giscom';
+                    $statusChange['responsabile'] = 'Giscom';
+                    $statusChange['struttura'] = 'Giscom';
+                    $statusChange['timestamp'] = time();
+                    $statusChange = new StatusChange($statusChange);
+
+                    $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);
+
+                    $this->logger->debug('Correctly created pratica on Giscom Side', $logContext);
+
+                    $this->askRelatedCFsForPraticaToGiscom($pratica);
                 }
-
-                if ($status == 201 && !isset($responseBody['Stato']['Codice'])) {
-                    throw new \Exception("Error parsing Giscom response");
-                }
-
-
-                $statusCode = strtolower($responseBody['Stato']['Codice']);
-                $mappedStatus = $this->giscomStatusMapper->map($statusCode);
-                $statusChange['evento'] = $mappedStatus;
-                $statusChange['operatore'] = 'Giscom';
-                $statusChange['responsabile'] = 'Giscom';
-                $statusChange['struttura'] = 'Giscom';
-                $statusChange['timestamp'] = time();
-                $statusChange = new StatusChange($statusChange);
-
-                $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);
-
-                $this->logger->info('Correctly created pratica on Giscom Side', $logContext);
+                
             } else {
-                $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side ", $logContext);
-                throw new \Exception("Error when creating pratica {$pratica->getId()} on Giscom Side");
+                $this->logger->error("Error when sending pratica {$pratica->getId()} on Giscom Side ", $logContext);
+                throw new \Exception("Error when sending pratica {$pratica->getId()} on Giscom Side");
             }
+
+            return $response;
+
         }catch (\Exception $e){
             /**
              * TODO: catch log e throw è un antipattern bello solido, va rifattorizzato
@@ -146,10 +149,20 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
                 $logContext['remote_error_response'] = $e->getResponse()->getBody()."";
             }
             $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side", $logContext);
-            throw $e;
+            
+            $mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
+            $statusChange['evento'] = $mappedStatus;
+            $statusChange['operatore'] = 'Giscom';
+            $statusChange['responsabile'] = 'Giscom';
+            $statusChange['struttura'] = 'Giscom';
+            $statusChange['timestamp'] = time();
+            $statusChange = new StatusChange($statusChange);
+
+            $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);
+
+            return false;
         }
 
-        return $response;
     }
 
     /**
@@ -162,7 +175,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
     {
         $logContext = ['id' => $pratica->getId()];
 
-        $this->logger->info('Asking related CFs for pratica on Giscom side', $logContext);
+        $this->logger->debug('Asking related CFs for pratica on Giscom side', $logContext);
 
 
         $request = new Request(
@@ -173,7 +186,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
         $response = $this->client->send($request);
 
         if ($response->getStatusCode() == 200) {
-            $this->logger->info('Correctly retrieve cfs from Giscom Side', $logContext);
+            $this->logger->debug('Correctly retrieve cfs from Giscom Side', $logContext);
         } else {
             $this->logger->error('Error when retrieving cfs from Giscom Side', $logContext);
             throw new \Exception("Error when retrieving cfs of pratica {$pratica->getId()} from Giscom Side");

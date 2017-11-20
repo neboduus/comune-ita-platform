@@ -345,7 +345,7 @@ class PraticheController extends Controller
         }
         $pratica
             ->setServizio($servizio)
-            ->setType($servizio->getSlug())
+            //->setType($servizio->getSlug())
             ->setUser($user)
             ->setStatus(Pratica::STATUS_DRAFT);
 

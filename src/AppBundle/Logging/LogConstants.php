@@ -43,6 +43,9 @@ class LogConstants
     const PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM = "Error in trying to update Pratica status from GISCOM {statusChange}, {error}";
     const PRATICA_ERROR_IN_UPDATED_PROTOCOLLI_FROM_GISCOM = "Error in trying to update Pratica Protocolli from GISCOM {statusChange}, {error}";
 
+    const PRATICA_ERROR_IN_CREATE_FROM_GISCOM = "Error in trying to create Pratica from GISCOM {payload}, {error}";
+    const PRATICA_CREATED_FROM_GISCOM = "A new {type} pratica has been created";
+
     const PRATICA_CHANGE_STATUS = "Pratica change status handled by listener {listener}: new status is {status}";
 
     const PROTOCOLLO_SEND_ERROR = "Error {error_number} sending pratica {pratica} to protocollo";

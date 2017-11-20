@@ -104,7 +104,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $user;
@@ -430,7 +430,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     }
 
     /**
-     * @return CPSUser
+     * @return User
      */
     public function getUser()
     {
@@ -438,11 +438,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     }
 
     /**
-     * @param CPSUser $user
+     * @param User $user
      *
      * @return $this
      */
-    public function setUser(CPSUser $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
 
@@ -654,6 +654,16 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param Uuid $id
+     * @return $this
+     */
+    public function setId( Uuid $id )
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**

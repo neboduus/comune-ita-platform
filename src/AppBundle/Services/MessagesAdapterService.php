@@ -63,8 +63,13 @@ class MessagesAdapterService
             }
 
             return $response;
-        } catch (RequestException $e) {
-            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
+        } catch (RequestException $e) {            
+            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE,[
+                'message' => $e->getMessage(),
+                'response' => $e->getResponse() ? $e->getResponse()->getBody() : null,
+                'code' => $e->getCode(),
+            ]);
+
 
             return null;
         }
@@ -86,8 +91,13 @@ class MessagesAdapterService
         try {
             $response = \GuzzleHttp\json_decode((string) $this->client->put('/thread/'.$threadId, ['json' => $message])->getBody());
             return $this->decorateMessages($response, $sender);
-        } catch (RequestException $e) {
-            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
+        } catch (RequestException $e) {            
+            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE,[
+                'message' => $e->getMessage(),
+                'response' => $e->getResponse() ? $e->getResponse()->getBody() : null,
+                'code' => $e->getCode(),
+            ]);
+
 
             return null;
         }
@@ -103,7 +113,12 @@ class MessagesAdapterService
             $response = \GuzzleHttp\json_decode((string) $this->client->get('/thread/'.$threadId)->getBody());
             return $this->decorateMessages($response, $user);
         } catch (RequestException $e) {
-            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
+            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE,[
+                'message' => $e->getMessage(),
+                'response' => $e->getResponse() ? $e->getResponse()->getBody() : null,
+                'code' => $e->getCode(),
+            ]);
+
 
             return null;
         }
@@ -131,7 +146,13 @@ class MessagesAdapterService
                 return $response;
             }
         } catch (RequestException $e) {
-            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
+            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE,[
+                'message' => $e->getMessage(),
+                'custom' => $e->getRequest()->getUri(),
+                'response' => $e->getResponse() ? $e->getResponse()->getBody() : null,
+                'code' => $e->getCode(),
+            ]);
+
             return null;
         }
         return $this->createThreadsForUserEnteAndService($user, $ente, $servizio);
@@ -154,7 +175,12 @@ class MessagesAdapterService
             $response = $this->decorateThreadsForUser($response, $repo);
             return $response;
         } catch (RequestException $e) {
-            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE);
+            $this->logger->error(self::REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE,[
+                'message' => $e->getMessage(),
+                'response' => $e->getResponse() ? $e->getResponse()->getBody() : null,
+                'code' => $e->getCode(),
+            ]);
+
             return null;
         }
     }

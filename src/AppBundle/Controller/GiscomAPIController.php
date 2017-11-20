@@ -2,19 +2,25 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\SciaPraticaEdilizia;
+use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Mapper\Giscom\GiscomStatusMapper;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Ramsey\Uuid\Uuid;
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class APIController
@@ -56,6 +62,115 @@ class GiscomAPIController extends Controller
     }
 
     /**
+     * @Route("/giscom/", name="giscom_api_ping")
+     * @Method({"GET"})     
+     * @return Response
+     */
+    public function indexAction(Request $request)
+    {
+        return new Response('1', 200);
+    }
+
+    /**
+     * @Route("/giscom/pratica/offline/create", name="giscom_api_offline_pratica_create")
+     * @Method({"POST"})
+     * @Security("has_role('ROLE_GISCOM')")
+     * @return Response
+     */
+    public function createOfflinePraticaAction( Request $request )
+    {
+
+        $content = $request->getContent();
+        if (empty($content)) {
+            $this->logger->error(LogConstants::PRATICA_ERROR_IN_CREATE_FROM_GISCOM, [ 'payload' =>  $content, 'error' => 'missing body' ]);
+            return new Response(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+
+            $content = $request->getContent();
+            $data = json_decode($content, true);
+
+            $securityUser = $this->getUser();
+            $user = $this->getDoctrine()
+                ->getRepository('AppBundle:OperatoreUser')
+                ->findOneByUsername($securityUser->getUsername());
+
+
+            $pratica = new SciaPraticaEdilizia();
+
+            /** @var Servizio $servizio */
+            $servizio = $this->getDoctrine()
+                ->getRepository('AppBundle:Servizio')
+                ->findOneByPraticaFCQN(SciaPraticaEdilizia::class);
+
+            $enteSlug = $ente = null;
+            if ($this->getParameter('prefix') != null) {
+                $enteSlug = $this->getParameter('prefix');
+            }
+
+            if ($enteSlug != null) {
+                /** @var Ente $ente */
+                $ente = $this->getDoctrine()
+                    ->getRepository('AppBundle:Ente')
+                    ->findOneBySlug($enteSlug);
+            }
+
+            $pratica
+                ->setUser($user)
+                ->setEnte($ente)
+                ->setServizio($servizio)
+                ->setStatus(Pratica::STATUS_PENDING);
+
+            $erogatori = $servizio->getErogatori();
+            foreach ($erogatori as $erogatore) {
+                if ($erogatore->getEnti()->contains($ente)) {
+                    $pratica->setErogatore($erogatore);
+                    break;
+                }
+            }
+            $id = Uuid::fromString($data['id']);
+            $pratica->setId($id);
+            $pratica->setNumeroProtocollo( $data['protocolloPrincipale'] );
+            if ( isset($data['numeroDiDocumento']))
+            {
+                $pratica->setIdDocumentoProtocollo( $data['numeroDiDocumento'] );
+            }
+            if ( isset($data['numeroDiFascicolo']))
+            {
+                $pratica->setNumeroFascicolo($data['numeroDiFascicolo']);
+            }
+
+            // Assegno la pratica all'operatore giscom (per impedire la presa in carico da parte di altri operatori)
+            $pratica->setOperatore( $user );
+
+            $mappedPratica = new MappedPraticaEdilizia($data);
+            $mappedPratica->setId($id);
+            $pratica->setDematerializedForms($mappedPratica->toHash());
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($pratica);
+            $em->flush();
+
+
+            // Richiesta codici fiscali relazionati
+            $giscomAdpterService = $this->get( 'ocsdc.giscom_api.adapter_delayed' );
+            $giscomAdpterService->askRelatedCFsForPraticaToGiscom( $pratica );
+
+        }catch (UniqueConstraintViolationException $e){
+            $this->logger->error(LogConstants::PRATICA_ERROR_IN_CREATE_FROM_GISCOM, [ 'payload' =>  $content, 'error' => $e ]);
+            return new Response('Pratica already exists', Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+            $this->logger->error(LogConstants::PRATICA_ERROR_IN_CREATE_FROM_GISCOM, [ 'payload' =>  $content, 'error' => $e ]);
+            return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->logger->info(LogConstants::PRATICA_CREATED_FROM_GISCOM, ['type' => $pratica]);
+
+        return new Response(null, Response::HTTP_CREATED);
+    }
+
+    /**
      * @Route("/giscom/pratica/{pratica}/status", name="giscom_api_pratica_update_status")
      * @Method({"POST"})
      * @Security("has_role('ROLE_GISCOM')")
@@ -65,8 +180,7 @@ class GiscomAPIController extends Controller
     {
         $content = $request->getContent();
         if (empty($content)) {
-            $this->logger->info(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => null, 'error' => 'missing body altogether']);
-
+            $this->logger->error(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => null, 'error' => 'missing body altogether']);
             return new Response(null, Response::HTTP_BAD_REQUEST);
         }
 
@@ -74,7 +188,7 @@ class GiscomAPIController extends Controller
             $statusChange = $this->statusMapper->getStatusChangeFromRequest($request);
             $this->statusService->setNewStatus($pratica, $statusChange->getEvento(), $statusChange);
         } catch (\Exception $e) {
-            $this->logger->info(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $content, 'error' => $e]);
+            $this->logger->error(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $content, 'error' => $e]);
             return new Response(null, Response::HTTP_BAD_REQUEST);
         }
 
