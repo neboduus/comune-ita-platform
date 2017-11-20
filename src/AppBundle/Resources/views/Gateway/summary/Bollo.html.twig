@@ -1,0 +1,6 @@
+{% set data = pratica.getPaymentDataArray %}
+<ul class="list-unstyled">
+    <li><strong>{{ 'gateway.bollo.identifier'|trans }}</strong> {{ data.bollo_identifier }}</li>
+    <li><strong>{{ 'gateway.bollo.data'|trans }}</strong> {{ data.bollo_data_emissione }}</li>
+    <li><strong>{{ 'gateway.bollo.ora'|trans }}</strong> {{ data.bollo_ora_emissione.hour }}:{{ data.bollo_ora_emissione.minute }}:{{ data.bollo_ora_emissione.second }}</li>
+</ul>

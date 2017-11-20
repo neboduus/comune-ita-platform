@@ -1,0 +1,28 @@
+{% set data = pratica.getDelegaDataArray %}
+<div class="richiesta">
+    <p style="text-align: center">
+        {{ 'certificato_nascita.pdf.richiesta'|trans() }}
+        {% if pratica.tipologiaCertificatoAnagrafico != 'semplice' %}
+            <i>{{ ('steps.common.certificato_anagrafico.tipologie.' ~ pratica.tipologiaCertificatoAnagrafico)|trans }}</i>
+        {% endif %}
+        {% if pratica.delegaType %}
+            relativo alla persona:
+        {% endif %}
+    </p>
+</div>
+{% if pratica.delegaType %}
+    <div class="delega_richiesta">
+        <p>
+            <span class="text-uppercase">{{ data.nome_soggetto_certificato }}</span> {{ 'pratica.dettaglio.delega.cf'|trans }} <span class="text-uppercase">{{ pratica.relatedCfs }}</span>
+            {{ 'pratica.pdf.nato_il'|trans() }} <span class="text-uppercase">{{ data.data_nascita_soggetto_certificato }}</span> {{ 'pratica.pdf.residente_in'|trans() }} <span class="text-uppercase">{{ data.indirizzo_soggetto_certificato }}</span>
+        </p>
+
+        <p>
+            {{ 'steps.common.certificato_anagrafico.uso'|trans }} <span class="text-uppercase">{{ pratica.usoCertificatoAnagrafico }}</span>
+        </p>
+    </div>
+{% endif %}
+
+<p>
+    {{ 'certificato_anagrafico.pdf.dichiara'|trans|raw }}
+</p>

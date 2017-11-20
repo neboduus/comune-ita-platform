@@ -90,6 +90,8 @@ class CertificatoNascitaTest extends AbstractAppTestCase
         $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
         $this->accettazioneIstruzioni($crawler, $nextButton, $form);
         $this->datiRichiedente($crawler, $nextButton, $fillData, $form);
+        $this->datiDelega($crawler, $nextButton, $fillData, $form);
+        $this->datiCertificatoAnagrafico($crawler, $nextButton, $fillData, $form);
 
         $form = $crawler->selectButton($finishButton)->form();
         $this->client->submit($form);

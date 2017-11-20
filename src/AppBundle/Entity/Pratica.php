@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * })
  * @ORM\HasLifecycleCallbacks
  */
-class Pratica implements IntegrabileInterface
+class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 {
     const STATUS_DRAFT = 1000;
     const STATUS_SUBMITTED = 2000;
@@ -66,6 +66,10 @@ class Pratica implements IntegrabileInterface
     const TYPE_SCIA_PRATICA_EDILIZIA = "scia_pratica_edilizia";
     const TYPE_OCCUPAZIONE_SUOLO_PUBBLICO = "occupazione_suolo_pubblico";
     const TYPE_CONTRIBUTO_ASSOCIAZIONI = "contributo_associazioni";
+
+    const TIPO_DELEGA_DELEGATO   = 'delegato';
+    const TIPO_DELEGA_INCARICATO = 'incaricato';
+    const TIPO_DELEGA_ALTRO      = 'altro';
 
 
 
@@ -335,6 +339,38 @@ class Pratica implements IntegrabileInterface
     private $richiesteIntegrazione;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $delegaType;
+
+    /**
+     * @ORM\Column(type="json_array", nullable=true)
+     * @var $paymentData array
+     */
+    private $delegaData;
+
+    /**
+     * @ORM\Column(type="json_array", options={"jsonb":true})
+     * @var $relatedCFs array
+     */
+    private $relatedCFs;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PaymentGateway")
+     * @ORM\JoinColumn(name="payment_type", referencedColumnName="id", nullable=true)
+     */
+    private $paymentType;
+
+    /**
+     * @ORM\Column(type="json_array", nullable=true)
+     * @var $paymentData array
+     */
+    private $paymentData;
+
+
+    private $tipiDelega;
+
+    /**
      * Pratica constructor.
      */
     public function __construct()
@@ -354,6 +390,7 @@ class Pratica implements IntegrabileInterface
         $this->storicoStati = new ArrayCollection();
         $this->lastCompiledStep = 0;
         $this->richiesteIntegrazione = new ArrayCollection();
+
     }
 
     public function __clone()
@@ -1484,6 +1521,124 @@ class Pratica implements IntegrabileInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDelegaType()
+    {
+        return $this->delegaType;
+    }
+
+    /**
+     * @param mixed $delegaType
+     */
+    public function setDelegaType($delegaType)
+    {
+        $this->delegaType = $delegaType;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDelegaData()
+    {
+        return $this->delegaData;
+    }
+
+    /**
+     * @param $delegaData
+     */
+    public function setDelegaData( $delegaData )
+    {
+        $this->delegaData = $delegaData;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDelegaDataArray()
+    {
+        if (is_array($this->getDelegaData()))
+        {
+            return $this->getDelegaData();
+        }
+        return \json_decode($this->getDelegaData(), true);
+    }
+
+    public function getTipiDelega()
+    {
+        if ($this->tipiDelega === null) {
+            $this->tipiDelega = array();
+            $class = new \ReflectionClass(__CLASS__);
+            $constants = $class->getConstants();
+            foreach ($constants as $name => $value) {
+                if (strpos($name, 'TIPO_DELEGA_') !== false) {
+                    $this->tipiDelega[] = $value;
+                }
+            }
+        }
+        return $this->tipiDelega;
+    }
+
+    public function getRelatedCFs()
+    {
+        return $this->relatedCFs;
+    }
+
+    /**
+     * @param array $relatedCFs
+     * @return $this
+     */
+    public function setRelatedCFs($relatedCFs)
+    {
+        $this->relatedCFs = $relatedCFs;
+
+        return $this;
+    }
+
+    /**
+     * @return PaymentGateway
+     */
+    public function getPaymentType()
+    {
+        return $this->paymentType;
+    }
+
+    /**
+     * @param mixed $paymentType
+     *
+     * @return Pratica
+     */
+    public function setPaymentType($paymentType)
+    {
+        $this->paymentType = $paymentType;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentData()
+    {
+        return $this->paymentData;
+    }
+
+    /**
+     * @param array $paymentData
+     */
+    public function setPaymentData($paymentData)
+    {
+        $this->paymentData = $paymentData;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentDataArray()
+    {
+        return \json_decode($this->getPaymentData());
     }
 
 }

@@ -9,6 +9,8 @@ use AppBundle\Form\Base\NucleoFamiliareType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
+use AppBundle\Form\Base\SelectPaymentGatewayType;
+use AppBundle\Form\Base\PaymentGatewayType;
 
 
 class CambioResidenzaFlow extends PraticaFlow
@@ -30,7 +32,7 @@ class CambioResidenzaFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
-        return array(
+        $steps =  array(
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
@@ -77,10 +79,26 @@ class CambioResidenzaFlow extends PraticaFlow
             self::STEP_INFORMAZIONI_ACCERTAMENTO => array(
                 'label' => 'steps.cambio_residenza.informazioni_accertamento.label',
                 'form_type' => InformazioneAccertamentoType::class,
-            ),
-            self::STEP_CONFERMA => array(
-                'label' => 'steps.common.conferma.label',
-            ),
+            )
         );
+
+        // Attivo gli step di pagamento solo se è richiesto nel servizio
+        if ($this->isPaymentRequired())
+        {
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.select_payment_gateway.label',
+                'form_type' => SelectPaymentGatewayType::class
+            );
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.payment_gateway.label',
+                'form_type' => PaymentGatewayType::class
+            );
+        }
+
+        $steps[count($steps) + 1] = array(
+            'label' => 'steps.common.conferma.label'
+        );
+
+        return $steps;
     }
 }

@@ -154,6 +154,19 @@ services:
           - { name: form.type }
 
 
+    ocsdc.form.type.select_payment_gateway_type:
+            class: AppBundle\Form\Base\SelectPaymentGatewayType
+            arguments: ["@doctrine.orm.entity_manager"]
+            tags:
+              - { name: form.type }
+
+    ocsdc.form.type.payment_gateway_type:
+            class: AppBundle\Form\Base\PaymentGatewayType
+            arguments: ["@doctrine.orm.entity_manager"]
+            tags:
+              - { name: form.type }
+
+
     ocsdc.form.flow.pratica:
         class: AppBundle\Form\Base\PraticaFlow
         parent: craue.form.flow

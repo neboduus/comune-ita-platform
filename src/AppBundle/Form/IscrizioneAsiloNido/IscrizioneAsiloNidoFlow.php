@@ -7,6 +7,8 @@ use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\NucleoFamiliareType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
+use AppBundle\Form\Base\SelectPaymentGatewayType;
+use AppBundle\Form\Base\PaymentGatewayType;
 
 class IscrizioneAsiloNidoFlow extends PraticaFlow
 {
@@ -28,7 +30,7 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
-        return array(
+        $steps =  array(
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
@@ -64,10 +66,26 @@ class IscrizioneAsiloNidoFlow extends PraticaFlow
             self::STEP_ALLEGA_ATTESTAZIONE_ICEF => array(
                 'label' => 'steps.iscrizione_asilo_nido.allega_attestazione_icef.label',
                 'form_type' => AttestazioneIcefType::class,
-            ),
-            self::STEP_CONFERMA => array(
-                'label' => 'steps.common.conferma.label',
-            ),
+            )
         );
+
+        // Attivo gli step di pagamento solo se è richiesto nel servizio
+        if ($this->isPaymentRequired())
+        {
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.select_payment_gateway.label',
+                'form_type' => SelectPaymentGatewayType::class
+            );
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.payment_gateway.label',
+                'form_type' => PaymentGatewayType::class
+            );
+        }
+
+        $steps[count($steps) + 1] = array(
+            'label' => 'steps.common.conferma.label'
+        );
+
+        return $steps;
     }
 }

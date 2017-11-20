@@ -1,0 +1,10 @@
+<div class="row">
+    <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.common.certificato_anagrafico.tipologia_certificato'|trans }}</strong></div>
+    <div class="col-xs-12 col-sm-9">
+        {{ ('steps.common.certificato_anagrafico.tipologie.' ~ pratica.tipologiaCertificatoAnagrafico)|trans }}<br />
+        <strong>{{ 'steps.common.certificato_anagrafico.uso'|trans }}</strong>
+        <ul class="list-unstyled">
+            <li>{{ pratica.usoCertificatoAnagrafico }}</li>
+        </ul>
+    </div>
+</div>

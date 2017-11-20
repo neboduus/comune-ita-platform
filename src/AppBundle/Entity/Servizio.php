@@ -101,6 +101,12 @@ class Servizio
     private $schedeInformative;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $paymentRequired;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -390,4 +396,37 @@ class Servizio
 
         return $this;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getSchedeInformative(): ArrayCollection
+    {
+        return $this->schedeInformative;
+    }
+
+    /**
+     * @param ArrayCollection $schedeInformative
+     */
+    public function setSchedeInformative(ArrayCollection $schedeInformative)
+    {
+        $this->schedeInformative = $schedeInformative;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaymentRequired()
+    {
+        return $this->paymentRequired;
+    }
+
+    /**
+     * @param bool $paymentRequired
+     */
+    public function setPaymentRequired(bool $paymentRequired)
+    {
+        $this->paymentRequired = $paymentRequired;
+    }
+
 }

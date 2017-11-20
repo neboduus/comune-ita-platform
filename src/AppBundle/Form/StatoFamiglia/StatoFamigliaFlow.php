@@ -6,6 +6,8 @@ use AppBundle\Form\Base\AccettazioneIstruzioniType;
 use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
+use AppBundle\Form\Base\SelectPaymentGatewayType;
+use AppBundle\Form\Base\PaymentGatewayType;
 
 /**
  * Class StatoFamigliaFlow
@@ -21,7 +23,7 @@ class StatoFamigliaFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
-        return array(
+        $steps =  array(
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
@@ -38,5 +40,24 @@ class StatoFamigliaFlow extends PraticaFlow
                 'label' => 'steps.common.conferma.label',
             ),
         );
+
+        // Attivo gli step di pagamento solo se è richiesto nel servizio
+        if ($this->isPaymentRequired())
+        {
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.select_payment_gateway.label',
+                'form_type' => SelectPaymentGatewayType::class
+            );
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.payment_gateway.label',
+                'form_type' => PaymentGatewayType::class
+            );
+        }
+
+        $steps[count($steps) + 1] = array(
+            'label' => 'steps.common.conferma.label'
+        );
+
+        return $steps;
     }
 }

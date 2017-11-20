@@ -21,7 +21,7 @@ class AttestazioneAnagraficaFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
-        return array(
+        $steps =  array(
             self::STEP_SELEZIONA_ENTE => array(
                 'label' => 'steps.common.seleziona_ente.label',
                 'form_type' => SelezionaEnteType::class,
@@ -33,10 +33,27 @@ class AttestazioneAnagraficaFlow extends PraticaFlow
             self::STEP_DATI_RICHIEDENTE => array(
                 'label' => 'steps.common.dati_richiedente.label',
                 'form_type' => DatiRichiedenteType::class,
-            ),
-            self::STEP_CONFERMA => array(
-                'label' => 'steps.common.conferma.label',
-            ),
+            )
         );
+
+
+        // Attivo gli step di pagamento solo se è richiesto nel servizio
+        if ($this->isPaymentRequired())
+        {
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.select_payment_gateway.label',
+                'form_type' => SelectPaymentGatewayType::class
+            );
+            $steps[count($steps) + 1] = array(
+                'label' => 'steps.common.payment_gateway.label',
+                'form_type' => PaymentGatewayType::class
+            );
+        }
+
+        $steps[count($steps) + 1] = array(
+            'label' => 'steps.common.conferma.label'
+        );
+
+        return $steps;
     }
 }

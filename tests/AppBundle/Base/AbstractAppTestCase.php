@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Base;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\AsiloNido;
+use AppBundle\Entity\CertificatoNascita;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\CPSUser as User;
 use AppBundle\Entity\Ente;
@@ -769,6 +770,56 @@ abstract class AbstractAppTestCase extends WebTestCase
                 ->each(function ($node, $i) use (&$fillData) {
                     self::fillFormInputWithDummyText($node, $i, $fillData);
                 });
+        $form = $crawler->selectButton($nextButton)->form($fillData);
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $fillData
+     * @param $form
+     */
+    protected function datiDelega(&$crawler, $nextButton, &$fillData, &$form)
+    {
+
+        /*$fillData = array();
+        $form = $crawler->selectButton($nextButton)->form(array(
+            'pratica_delega[delega_type]' => Pratica::TIPO_DELEGA_DELEGATO,
+        ));
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+
+        $msg = trim($crawler->filter('.alert-danger ul')->first()->text());
+        $this->assertEquals($msg, "Se hai selezionato un tipo di delega devi specificare anche gli altri valori", "Delega selezionata e campi non riempiti");*/
+
+        $fillData = array();
+        $crawler->filter('form[name="pratica_delega"] input[type="text"]')
+            ->each(function ($node, $i) use (&$fillData) {
+                self::fillFormInputWithDummyText($node, $i, $fillData);
+            });
+        $fillData['pratica_delega[delega_type]'] = Pratica::TIPO_DELEGA_DELEGATO;
+        $form = $crawler->selectButton($nextButton)->form($fillData);
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
+
+
+    /**
+     * @param Crawler $crawler
+     * @param $nextButton
+     * @param $fillData
+     * @param $form
+     */
+    protected function datiCertificatoAnagrafico(&$crawler, $nextButton, &$fillData, &$form)
+    {
+        $fillData = array();
+        $crawler->filter('form[name="pratica_certificato_anagrafico"] input[type="text"]')
+            ->each(function ($node, $i) use (&$fillData) {
+                self::fillFormInputWithDummyText($node, $i, $fillData);
+            });
+        $fillData['pratica_certificato_anagrafico[tipologia_certificato_anagrafico]'] = 'semplice';
         $form = $crawler->selectButton($nextButton)->form($fillData);
         $crawler = $this->client->submit($form);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");

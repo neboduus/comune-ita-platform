@@ -77,7 +77,8 @@ pratica:
   aggiungi_allegato: 'Aggiungi allegato'
   aggiungi_componente_nucleo_familiare: 'Aggiungi componente nucleo familiare'
   cancella_elemento: 'Cancella elemento'
-  nucleoFamiliare: 'Composizione del nucleo familiare'    
+  nucleoFamiliare: 'Composizione del nucleo familiare'
+  pagamento: 'Pagamento'
   pdf:
     dati_autenticazione: 'Dati autenticazione'
     spett_le: 'Spett.le'
@@ -145,6 +146,16 @@ pratica:
     stato_4300: 'Integrazioni in attesa di protocollazione'
     stato_4400: 'Integrazioni protocollate'
     stato_4500: 'Presa in carico in seguito a integrazioni'
+
+    delega:
+        titolo: 'Delega'
+        ruolo: 'In qualità di'
+        dati_soggetto: 'Dati del soggetto per cui si richiede il certificato'
+        nome: 'Nome'
+        cf: 'Codice Fiscale'
+        data_nascita: 'Data di nascita'
+        indirizzo: 'Indirizzo'
+
 
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'  
@@ -266,6 +277,10 @@ liste_elettorali:
 scia_pratica_edilizia:
   pdf:
     segnala: "segnala l'inizio dell'attività edilizia sotto descritta"
+
+certificato_anagrafico:
+  pdf:
+    dichiara: "DICHIARA inoltre di essere a conoscenza che l'eventuale utilizzo della certificazione richiesta in esenzione da bollo per usi per i quali è viceversa prescritto l'assolvimento dell'imposta, comporta responsabilità patrimoniale e amministrativa, consistente nel pagamento dell'imposta e delle relative sanzioni previste dalla Legge.<br />DICHIARA altresì di essere a conoscenza che, ai sensi dell'art. 76 D.P.R. 28/12/2000 n° 445, le dichiarazioni mendaci, la falsità negli atti e l'uso di atti falsi sono puniti ai sensi del codice penale e delle Leggi speciali in materia."
 
 errori:
   allegato:
@@ -487,6 +502,42 @@ steps:
             iban: 'Codice Iban'
             intestatario: 'Intestatario conto'
             guida_alla_compilazione: 'Inserisci i dati del conto corrente'
+
+        select_payment_gateway:
+            label: 'Seleziona metodo di pagamento'
+            title: 'Seleziona metodo di pagamento'
+            guida_alla_compilazione: 'Utilizza il menù a tendina per selezionare il metodo di pagamento desiderato'
+
+        payment_gateway:
+            label: 'Metodo di pagamento'
+            title: 'Metodo di pagamento'
+
+        delega:
+            label: 'Delega'
+            title: 'Delega'
+            guida_alla_compilazione: 'Seleziona il tipo di delega e specifica i campi sottostanti. Se sei il titolare del certificato vai avanti.'
+            tipi:
+                delegato: 'delegato dal / la Sig. / Sig.ra'
+                incaricato: 'incaricato dallo studio'
+                altro: 'altro'
+            type_text: 'Specificare nome Studio / Altro'
+            nome_soggetto_certificato: 'Nome esteso della persona per cui si richiede il certificato'
+            related_cfs: 'Codice Fiscale della Persona per cui si richiede il certificato'
+            data_nascita_soggetto_certificato: 'Data di nascita della Persona per cui si richiede il certificato'
+            indirizzo_soggetto_certificato: 'Indirizzo della Persona per cui si richiede il certificato'
+            required_field_error: 'Se hai selezionato un tipo di delega devi specificare anche gli altri valori'
+
+        certificato_anagrafico:
+            label: 'Tipologia certificato'
+            title: 'Tipologia certificato'
+            guida_alla_compilazione: 'Scegli la tipologia per il certificato riciesto'
+            tipologia_certificato: 'Tipologia certificato'
+            tipologie:
+                semplice: 'semplice'
+                genitori: 'con paternità e maternità'
+                internazionale: 'su modello intenazionale'
+            uso: 'Per il seguente uso'
+
 
     allacciamento_acquedotto:
         dati_immobile:
@@ -1030,3 +1081,9 @@ steps:
                 PUP_ALTRO:
                     title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
                     description: ""
+
+gateway:
+    bollo:
+        identifier: 'Identificatore'
+        data: 'Data emissione'
+        ora: 'Ora emissione'
