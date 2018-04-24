@@ -1124,6 +1124,63 @@ steps:
                 PROV_AR-ILLU:
                     title: "m) autorizzazione del Comune per la realizzazione di impianti di illuminazione esterna, ai sensi del D.P.P. n. 2-34/Leg. del 2010 in materia di inquinamento luminoso"
                     description: ""
+                PROV_FRT_FASC-VIA:
+                    title: "o.a) Fasce di rispetto e trasporti: viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
+                    description: ""
+                PROV_FRT_FASC-PC:
+                    title: "o.b) Fasce di rispetto e trasporti: passi carrai"
+                    description: ""
+                PROV_FRT_FASC-FER:
+                    title: "o.c) Fasce di rispetto e trasporti: interventi entro fasce di rispetto ferroviarie"
+                    description: ""
+                PROV_FRT_FASC-CIM:
+                    title: "o.d) Fasce di rispetto e trasporti: interventi entro fasce di rispetto cimiteriali"
+                    description: ""
+                PROV_FRT_FASC-ISO:
+                    title: "o.e) Fasce di rispetto e trasporti: interventi entro le fasce di rispetto di aree di isodanno"
+                    description: ""
+                PROV_FRT_FASC-LE:
+                    title: "o.f) Fasce di rispetto e trasporti: autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
+                    description: ""
+                PROV_FRT_FASC-DEP:
+                    title: "o.g) Fasce di rispetto e trasporti: autorizzazione per interventi entro fasce di rispetto di depuratori"
+                    description: ""
+                PROV_FRT_FASC-AER:
+                    title: "o.h) Fasce di rispetto e trasporti: avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
+                    description: ""
+                PROV_FRT_FASC-ALTRO:
+                    title: "o.i) Fasce di rispetto e trasporti: altro"
+                    description: ""
+                PROV_AGR_SA:
+                    title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 'Pianificazione urbanistica e governo del territorio'"
+                    description: ""
+                PROV_AGR_TUR:
+                    title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, 'Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori'"
+                    description: ""
+                PROV_AGR_ALB:
+                    title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
+                    description: ""
+                PROV_AGR_MANU:
+                    title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
+                    description: ""
+                PROV_PUP_INC:
+                    title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
+                    description: ""
+                PROV_PUP_TULPS:
+                    title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
+                    description: ""
+                PROV_PUP_GEO:
+                    title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
+                    description: ""
+                PROV_PUP_ALB:
+                    title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, 'Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica'"
+                    description: ""
+                PROV_PUP_RIFU:
+                    title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, 'Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate'"
+                    description: ""
+                PROV_PUP_ALTRO:
+                    title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
+                    description: ""
                 FRT_FASC-VIA:
                     title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
                     description: ""

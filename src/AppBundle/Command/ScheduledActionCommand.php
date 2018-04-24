@@ -37,7 +37,9 @@ class ScheduledActionCommand extends ContainerAwareCommand
                     $scheduleActionService->markAsDone($action);
                 } catch (\Exception $e) {
                     $this->getContainer()->get('logger')->error($e->getMessage());
-                }
+                } catch (\ErrorException $e) {                    
+                    $this->getContainer()->get('logger')->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
+                }                            
             } else {
                 $this->getContainer()->get('logger')->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
                 $scheduleActionService->markAsInvalid($action);

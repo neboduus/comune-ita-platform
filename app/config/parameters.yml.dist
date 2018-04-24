@@ -26,7 +26,7 @@ parameters:
 
     # La password usata da gpa per pushare gli status changes
     giscom_password: giscom
-    giscom_adapter_url: https://www.giscom.cloud/WebAPI/
+    giscom_adapter_url: https://www.giscom.cloud/WebAPI/SDC/
     giscom_adapter_username: pippo
     giscom_adapter_password: passw
 
