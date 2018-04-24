@@ -195,6 +195,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
                 $servizio = new Servizio();
                 $servizio
                     ->setName($item['name'])
+                    ->setHandler($item['handler'])
                     ->setDescription($item['description'])
                     ->setTestoIstruzioni($item['testoIstruzioni'])
                     ->setStatus($item['status'])

@@ -48,8 +48,11 @@ servizio:
   attivo_per: "Servizio attivo per:"
   servizi_area_title: '%area%'
   vai: "Vai al servizio"
+  torna: "Torna al servizio"
   il_servizio: 'Il servizio'
   area_tematica: 'Area tematica'
+  imis:
+    download_pdf_imis: 'Esegui il download del pdf %name%'
 
 pratica:
   guida_utente: 'Guida alla compilazione'

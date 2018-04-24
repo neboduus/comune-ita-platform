@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Servizio;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,6 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+
+
 
 /**
  * Class ServiziController
@@ -224,6 +227,7 @@ class ServiziController extends Controller
     {
         $user = $this->getUser();
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+
         /** @var Servizio $servizio */
         $servizio = $serviziRepository->findOneBySlug($slug);
         if (!$servizio instanceof Servizio){
@@ -232,12 +236,18 @@ class ServiziController extends Controller
         $servizi = $serviziRepository->findAll();
         $serviziArea = $serviziRepository->findBy(['area' => $servizio->getArea()]);
 
+        $handler = null;
+        if ($servizio->getHandler() != null && !empty($servizio->getHandler()) && $servizio->getHandler() != 'default') {
+            $handler = $this->get($servizio->getHandler());
+        }
+
         return [
-            'user' => $user,
-            'servizio' => $servizio,
-            'servizi' => $servizi,
+            'user'         => $user,
+            'servizio'     => $servizio,
+            'servizi'      => $servizi,
             'servizi_area' => $serviziArea,
-            'user' => $this->getUser(),
+            'user'         => $this->getUser(),
+            'handler'      => $handler
         ];
 
     }

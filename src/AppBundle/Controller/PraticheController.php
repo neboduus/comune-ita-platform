@@ -83,64 +83,80 @@ class PraticheController extends Controller
     public function newAction(Request $request, Servizio $servizio)
     {
         $user = $this->getUser();
-        $praticaFQCN = $servizio->getPraticaFCQN();
-        $praticaInstance = new  $praticaFQCN();
-        $isServizioScia = $praticaInstance instanceof DematerializedFormPratica;
+        if ($servizio->getHandler() == null || empty($servizio->getHandler()) || $servizio->getHandler() == 'default') {
 
-        $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-        $pratiche = $repo->findBy(
-            array(
-                'user' => $user,
-                'servizio' => $servizio,
-                'status' => Pratica::STATUS_DRAFT,
-            ),
-            array('creationTime' => 'ASC')
-        );
+            $praticaFQCN = $servizio->getPraticaFCQN();
+            $praticaInstance = new  $praticaFQCN();
+            $isServizioScia = $praticaInstance instanceof DematerializedFormPratica;
 
-        if (!$isServizioScia && !empty( $pratiche )) {
+            $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+            $pratiche = $repo->findBy(
+                array(
+                    'user' => $user,
+                    'servizio' => $servizio,
+                    'status' => Pratica::STATUS_DRAFT,
+                ),
+                array('creationTime' => 'ASC')
+            );
+
+            if (!$isServizioScia && !empty( $pratiche )) {
+                return $this->redirectToRoute(
+                    'pratiche_list_draft',
+                    ['servizio' => $servizio->getSlug()]
+                );
+            }
+
+            $pratica = $this->createNewPratica($servizio, $user);
+
+            $enteSlug = $ente = null;
+            if ($this->getParameter('prefix') != null)
+            {
+                $enteSlug = $this->getParameter('prefix');
+            }
+            else {
+                $enteSlug = $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null);
+            }
+
+            if ($enteSlug != null)
+            {
+                $ente = $this->getDoctrine()
+                    ->getRepository('AppBundle:Ente')
+                    ->findOneBySlug($enteSlug);
+            }
+
+            if ($ente != null) {
+                $pratica->setEnte($ente);
+                $this->infereErogatoreFromEnteAndServizio($pratica);
+                $this->getDoctrine()->getManager()->flush();
+            } else {
+                $this->get('logger')->info(
+                    LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
+                    [
+                        'pratica' => $pratica,
+                        'headers' => $request->headers,
+                    ]
+                );
+            }
+
             return $this->redirectToRoute(
-                'pratiche_list_draft',
-                ['servizio' => $servizio->getSlug()]
+                'pratiche_compila',
+                ['pratica' => $pratica->getId()]
             );
-        }
 
-        $pratica = $this->createNewPratica($servizio, $user);
-
-        $enteSlug = $ente = null;
-        if ($this->getParameter('prefix') != null)
-        {
-            $enteSlug = $this->getParameter('prefix');
-        }
-        else {
-            $enteSlug = $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null);
-        }
-
-        if ($enteSlug != null)
-        {
-            $ente = $this->getDoctrine()
-                ->getRepository('AppBundle:Ente')
-                ->findOneBySlug($enteSlug);
-        }
-
-        if ($ente != null) {
-            $pratica->setEnte($ente);
-            $this->infereErogatoreFromEnteAndServizio($pratica);
-            $this->getDoctrine()->getManager()->flush();
         } else {
-            $this->get('logger')->info(
-                LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
-                [
-                    'pratica' => $pratica,
-                    'headers' => $request->headers,
-                ]
-            );
+            /** @var ServizioHandlerInterface $handler */
+            $handler = $this->get($servizio->getHandler());
+
+            if ($result = $handler->execute()) {
+                return $handler->execute();
+            }
+            /*throw new \Exception("Si è verificato un problema durante l'esecuzione del servizio {$servizio->getName()}");*/
+            return $this->render('@App/Servizi/serviziFeedback.html.twig', array(
+                'servizio' => $servizio,
+                'status'   => 'danger',
+                'msg'      => "Si è verificato un problema durante l'esecuzione del servizio {$servizio->getName()}"
+            ));
         }
-
-
-        return $this->redirectToRoute(
-            'pratiche_compila',
-            ['pratica' => $pratica->getId()]
-        );
     }
 
     /**

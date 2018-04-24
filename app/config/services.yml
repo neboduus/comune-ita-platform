@@ -412,3 +412,8 @@ services:
             - '@logger'
             - '@ocsdc.pratica_status_service'
             - "@ocsdc.modulo_pdf_builder"
+
+    # Handlers servizi
+    ocsdc.handlers.servizio.imis:
+        class: AppBundle\Handlers\Servizio\ImisHandler
+        arguments: ["@security.token_storage", "@logger"]

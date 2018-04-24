@@ -251,7 +251,7 @@ class GiscomApiControllerTest extends AbstractAppTestCase
     {
         $this->setupMockedLogger([
             LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM,
-        ]);
+        ], 'error');
         $user = $user = $this->createCPSUser();
         $pratica = $this->createPratica($user);
 
@@ -277,7 +277,7 @@ class GiscomApiControllerTest extends AbstractAppTestCase
     {
         $this->setupMockedLogger([
             LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM,
-        ]);
+        ], 'error');
         $user = $user = $this->createCPSUser();
         $pratica = $this->createPratica($user);
 

@@ -21,6 +21,7 @@ class Servizio
     const STATUS_AVAILABLE = 1;
     const STATUS_SUSPENDED = 2;
 
+
     /**
      * @ORM\Column(type="guid")
      * @ORM\Id
@@ -105,6 +106,12 @@ class Servizio
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $paymentRequired;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $handler;
 
     /**
      * Servizio constructor.
@@ -427,6 +434,24 @@ class Servizio
     public function setPaymentRequired(bool $paymentRequired)
     {
         $this->paymentRequired = $paymentRequired;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHandler()
+    {
+        return $this->handler;
+    }
+
+    /**
+     * @param string $handler
+     * @return $this
+     */
+    public function setHandler(string $handler)
+    {
+        $this->handler = $handler;
+        return $this;
     }
 
 }

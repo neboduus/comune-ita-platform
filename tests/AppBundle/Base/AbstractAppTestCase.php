@@ -536,11 +536,11 @@ abstract class AbstractAppTestCase extends WebTestCase
         return $mock;
     }
 
-    protected function setupMockedLogger($expectedArgs)
+    protected function setupMockedLogger($expectedArgs, $loggerMethod = 'info')
     {
         $mockLogger = $this->getMockLogger();
         $mockLogger->expects($this->exactly(count($expectedArgs)))
-                   ->method('info')
+                   ->method($loggerMethod)
                    ->with($this->callback(function ($subject) use ($expectedArgs) {
                        return in_array($subject, $expectedArgs);
                    }));
@@ -803,11 +803,13 @@ abstract class AbstractAppTestCase extends WebTestCase
         $this->assertEquals($msg, "Se hai selezionato un tipo di delega devi specificare anche gli altri valori", "Delega selezionata e campi non riempiti");*/
 
         $fillData = array();
-        $crawler->filter('form[name="pratica_delega"] input[type="text"]')
+        // Todo: sistemare per cambiamenti delega voluti daRovereto
+        /*$crawler->filter('form[name="pratica_delega"] input[type="text"]')
             ->each(function ($node, $i) use (&$fillData) {
                 self::fillFormInputWithDummyText($node, $i, $fillData);
             });
-        $fillData['pratica_delega[delega_type]'] = Pratica::TIPO_DELEGA_DELEGATO;
+        $fillData['pratica_delega[delega_type]'] = Pratica::TIPO_DELEGA_DELEGATO;*/
+        $fillData['pratica_delega[has_delega]'] = 0;
         $form = $crawler->selectButton($nextButton)->form($fillData);
         $crawler = $this->client->submit($form);
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
