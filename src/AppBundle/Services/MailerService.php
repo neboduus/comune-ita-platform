@@ -6,10 +6,12 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class MailerService
 {
@@ -29,14 +31,20 @@ class MailerService
     private $templating;
 
     /**
+     * @var RegistryInterface
+     */
+    private $doctrine;
+
+    /**
      * MailerService constructor.
      * @param \Swift_Mailer $mailer
      */
-    public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating)
+    public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine)
     {
         $this->mailer = $mailer;
         $this->translator = $translator;
         $this->templating = $templating;
+        $this->doctrine = $doctrine;
     }
 
     private $blacklistedStates = [
@@ -44,6 +52,7 @@ class MailerService
         Pratica::STATUS_PROCESSING,
         Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION,
         Pratica::STATUS_DRAFT,
+        Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE
     ];
 
     /**
@@ -66,6 +75,37 @@ class MailerService
             $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
             $sentAmount += $this->mailer->send($CPSUsermessage);
             $pratica->setLatestCPSCommunicationTimestamp(time());
+        }
+
+        /**
+         *Todo: se la pratica è in stato submitted (ancora non ha associato un operatore)
+         *  - recuperare indirizzi email degli operatori abilitati alla pratica
+         *  - inviare email ad operatori recuperati
+         */
+
+        if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED)
+        {
+
+            $sql = "SELECT id from utente where servizi_abilitati like '%".$pratica->getServizio()->getId()."%'";
+            $stmt = $this->doctrine->getEntityManager()->getConnection()->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll();
+
+            $ids = [];
+            foreach ($result as $id) {
+                $ids[] = $id['id'];
+            }
+
+            $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+            $operatori = $repo->findById($ids);
+            if ( $operatori != null && !empty($operatori))
+            {
+                foreach ($operatori as $operatore)
+                {
+                    $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $operatore);
+                    $sentAmount += $this->mailer->send($operatoreUserMessage);
+                }
+            }
         }
 
         if ($pratica->getOperatore() != null &&
@@ -120,10 +160,15 @@ class MailerService
     }
 
 
-    private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress)
+    private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress, OperatoreUser $operatore = null)
     {
-        $toEmail = $pratica->getOperatore()->getEmail();
-        $toName = $pratica->getOperatore()->getFullName();
+        if ($operatore == null)
+        {
+            $operatore = $pratica->getOperatore();
+        }
+
+        $toEmail = $operatore->getEmail();
+        $toName = $operatore->getFullName();
 
         $ente = $pratica->getEnte();
         $fromName = $ente instanceof Ente ? $ente->getName() : null;
@@ -137,7 +182,7 @@ class MailerService
                     'AppBundle:Emails/Operatore:pratica_status_change.html.twig',
                     array(
                         'pratica' => $pratica,
-                        'user_name'    => $pratica->getOperatore()->getFullName()
+                        'user_name'    => $operatore->getFullName()
                     )
                 ),
                 'text/html'
@@ -147,7 +192,7 @@ class MailerService
                     'AppBundle:Emails/Operatore:pratica_status_change.txt.twig',
                     array(
                         'pratica' => $pratica,
-                        'user_name'    => $pratica->getOperatore()->getFullName()
+                        'user_name'    => $operatore->getFullName()
                     )
                 ),
                 'text/plain'

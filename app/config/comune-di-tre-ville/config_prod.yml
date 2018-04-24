@@ -33,3 +33,6 @@ monolog:
             level: debug
         console:
             type:  console
+
+services:
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"

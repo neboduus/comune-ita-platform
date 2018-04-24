@@ -12,7 +12,6 @@ class CertificatoNascita extends Pratica
 {
     const TIPOLOGIA_CERTIFICATO_ANAGRAFICO_SEMPLICE = 'semplice';
     const TIPOLOGIA_CERTIFICATO_ANAGRAFICO_GENITORI = 'genitori';
-    const TIPOLOGIA_CERTIFICATO_ANAGRAFICO_INTERNAZIONALE = 'internazionale';
 
     /**
      * @var string
@@ -25,6 +24,12 @@ class CertificatoNascita extends Pratica
      * @ORM\Column(type="string", nullable=true)
      */
     private $usoCertificatoAnagrafico;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $statoEsteroCertificatoAnagrafico;
 
     /**
      * @var boolean
@@ -55,6 +60,22 @@ class CertificatoNascita extends Pratica
     public function setTipologiaCertificatoAnagrafico(string $tipologiaCertificatoAnagrafico)
     {
         $this->tipologiaCertificatoAnagrafico = $tipologiaCertificatoAnagrafico;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatoEsteroCertificatoAnagrafico()
+    {
+        return $this->statoEsteroCertificatoAnagrafico;
+    }
+
+    /**
+     * @param string $statoEsteroCertificatoAnagrafico
+     */
+    public function setStatoEsteroCertificatoAnagrafico(string $statoEsteroCertificatoAnagrafico)
+    {
+        $this->statoEsteroCertificatoAnagrafico = $statoEsteroCertificatoAnagrafico;
     }
 
     /**

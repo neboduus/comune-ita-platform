@@ -83,11 +83,6 @@ class PraticheController extends Controller
     public function newAction(Request $request, Servizio $servizio)
     {
         $user = $this->getUser();
-
-        /**
-         * TODO: valutiamo se mettere una flag ai servizi per indicare se possiamo avere
-         * più bozze in contemporanea
-         */
         $praticaFQCN = $servizio->getPraticaFCQN();
         $praticaInstance = new  $praticaFQCN();
         $isServizioScia = $praticaInstance instanceof DematerializedFormPratica;
@@ -111,23 +106,36 @@ class PraticheController extends Controller
 
         $pratica = $this->createNewPratica($servizio, $user);
 
-        $enteSlug = $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null);
-        if ($enteSlug != null) {
-            $ente = $this->getDoctrine()
-                         ->getRepository('AppBundle:Ente')
-                         ->findOneBySlug($enteSlug);
-            if ($ente != null) {
-                $pratica->setEnte($ente);
-            } else {
-                $this->get('logger')->info(
-                    LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
-                    [
-                        'pratica' => $pratica,
-                        'headers' => $request->headers,
-                    ]
-                );
-            }
+        $enteSlug = $ente = null;
+        if ($this->getParameter('prefix') != null)
+        {
+            $enteSlug = $this->getParameter('prefix');
         }
+        else {
+            $enteSlug = $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null);
+        }
+
+        if ($enteSlug != null)
+        {
+            $ente = $this->getDoctrine()
+                ->getRepository('AppBundle:Ente')
+                ->findOneBySlug($enteSlug);
+        }
+
+        if ($ente != null) {
+            $pratica->setEnte($ente);
+            $this->infereErogatoreFromEnteAndServizio($pratica);
+            $this->getDoctrine()->getManager()->flush();
+        } else {
+            $this->get('logger')->info(
+                LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
+                [
+                    'pratica' => $pratica,
+                    'headers' => $request->headers,
+                ]
+            );
+        }
+
 
         return $this->redirectToRoute(
             'pratiche_compila',
@@ -180,6 +188,7 @@ class PraticheController extends Controller
      */
     public function compilaAction(Request $request, Pratica $pratica)
     {
+        echo ' ';
         $em = $this->getDoctrine()->getManager();
 
         if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION && $pratica->getStatus() !== Pratica::STATUS_DRAFT) {

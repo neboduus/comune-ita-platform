@@ -52,7 +52,8 @@ class ServizioControllerTest extends AbstractAppTestCase
 
         $repo = $this->em->getRepository("AppBundle:Servizio");
 
-        $this->createServizioWithAssociatedErogatori([], 'Primo servizio');
+        $erogatori = $this->createErogatoreWithEnti($this->createEnti());
+        $this->createServizioWithAssociatedErogatori([$erogatori], 'Primo servizio');
 
         $serviceCountAfterInsert = count($repo->findAll());
 
@@ -68,7 +69,8 @@ class ServizioControllerTest extends AbstractAppTestCase
     {
         $user = $this->createCPSUser();
 
-        $servizio = $this->createServizioWithAssociatedErogatori([], 'Secondo servizio');
+        $erogatori = $this->createErogatoreWithEnti($this->createEnti());
+        $servizio = $this->createServizioWithAssociatedErogatori([$erogatori], 'Secondo servizio');
 
         $servizioDetailUrl = $this->router->generate('servizi_show', ['slug' => $servizio->getSlug()], Router::ABSOLUTE_URL);
 

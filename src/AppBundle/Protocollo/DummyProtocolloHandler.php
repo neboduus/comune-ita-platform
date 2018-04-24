@@ -15,9 +15,9 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
      */
     public function sendPraticaToProtocollo(Pratica $pratica)
     {
-        $pratica->setIdDocumentoProtocollo(rand(0,100));
-        $pratica->setNumeroProtocollo(rand(100,200));
-        $pratica->setNumeroFascicolo(rand(200,300));
+        $pratica->setIdDocumentoProtocollo( 'pdp-' . $pratica->getId() );
+        $pratica->setNumeroProtocollo( 'pnp-' . $pratica->getId() );
+        $pratica->setNumeroFascicolo( 'pnf-' . $pratica->getId() );
     }
 
     /**
@@ -28,15 +28,15 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
     {
         $pratica->addNumeroDiProtocollo([
             'id' => $allegato->getId(),
-            'protocollo' => rand(0,100),
+            'protocollo' => 'a-' . $allegato->getId(),
         ]);
     }
 
     public function sendRispostaToProtocollo(Pratica $pratica)
     {
         $risposta = $pratica->getRispostaOperatore();
-        $risposta->setNumeroProtocollo(rand(0,100));
-        $risposta->setIdDocumentoProtocollo(rand(100,200));
+        $risposta->setNumeroProtocollo( 'rnp-' . $risposta->getId() );
+        $risposta->setIdDocumentoProtocollo( 'rdp-' . $risposta->getId() );
     }
 
     public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
@@ -44,7 +44,7 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
         $risposta = $pratica->getRispostaOperatore();
         $risposta->addNumeroDiProtocollo([
             'id' => $allegato->getId(),
-            'protocollo' => rand(0,100),
+            'protocollo' => 'a-' . $allegato->getId(),
         ]);
     }
 

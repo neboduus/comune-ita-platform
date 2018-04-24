@@ -107,6 +107,33 @@ class ModuloPdfBuilderService
         return $unsignedResponse;
     }
 
+
+    /**
+     * @param Pratica $pratica
+     *
+     * @return RispostaOperatore
+     */
+    public function createSignedResponseForPratica(Pratica $pratica)
+    {
+        $signedResponse = new RispostaOperatore();
+        $this->createAllegatoInstance($pratica, $signedResponse);
+        $servizioName = $pratica->getServizio()->getName();
+        $now = new \DateTime();
+        $now->setTimestamp($pratica->getSubmissionTime());
+        $signedResponse->setOriginalFilename("Servizio {$servizioName} " . $now->format('Ymdhi'));
+        $signedResponse->setDescription(
+            $this->translator->trans(
+                'pratica.modulo.descrizioneRisposta',
+                [
+                    'nomeservizio' => $pratica->getServizio()->getName(),
+                    'datacompilazione' => $now->format($this->dateTimeFormat)
+                ])
+        );
+        $this->em->persist($signedResponse);
+        return $signedResponse;
+    }
+
+
     /**
      * @param Pratica $pratica
      *

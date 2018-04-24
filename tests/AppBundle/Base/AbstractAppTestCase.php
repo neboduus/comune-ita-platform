@@ -398,6 +398,8 @@ abstract class AbstractAppTestCase extends WebTestCase
         $praticaFlowServiceName = 'ocsdc.form.flow.asilonido',
         $praticaFlowOperatoreServiceName = ''
     ) {
+
+
         $area = new Categoria();
         $area
             ->setName('Nome categoria di Prova')
@@ -436,6 +438,11 @@ abstract class AbstractAppTestCase extends WebTestCase
 
     protected function createErogatoreWithEnti($enti)
     {
+        if (empty($enti))
+        {
+            $enti = $this->createEnti();
+        }
+
         $erogatore = new Erogatore();
         $erogatore->setName('Erogatore ' . time());
         foreach ($enti as $ente) {
@@ -456,7 +463,8 @@ abstract class AbstractAppTestCase extends WebTestCase
         $ente1 = $repo->findOneByCodiceMeccanografico('L378');
         if (!$ente1) {
             $ente1 = new Ente();
-            $ente1->setName('Ente di prova');
+            // Modifico in comune di tre ville per avere uniformità tra enti creati ed identificatore del test
+            $ente1->setName('Comune di Tre Ville');
             $ente1->setCodiceMeccanografico('L378');
             $ente1->setCodiceAmministrativo('L378');
             $ente1->setSiteUrl('http://example.com');
@@ -569,7 +577,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $this->em->persist($asilo1);
 
         $ente = new Ente();
-        $ente->setName('Comune di Test')
+        $ente->setName('Comune di Tre Ville')
             ->setCodiceMeccanografico($codiceMeccanografico)
             ->setCodiceAmministrativo($codiceMeccanografico)
              ->setAsili([$asilo, $asilo1]);

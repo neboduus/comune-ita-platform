@@ -1,3 +1,4 @@
+{% set ente = instance_service.getCurrentInstance() %}
 <header id="header">
     <div id="header-top" class="container-fluid clearfix">
         <div class="row">
@@ -38,15 +39,19 @@
             </div>
             <div class="col-xs-10">
                 <div id="site-name">
-                    <a class="hidden-xs" href="http://www.comunetreville.tn.it/" target="_blank">
-                        <img class="img-responsive pull-right" src="{{ asset('bundles/app/images/logo-ente.png') }}" alt="{{ 'title'|trans }}" />
-                    </a>
-                    <h1 style="margin-bottom: 0">
+                    {% if ente %}
+                        <a  href="{{ ente.siteUrl }}" target="_blank">
+                            <img class="img-responsive pull-right logo-ente" src="{{ asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') }}" alt="{{ 'title'|trans }}" style="max-height: 76px" />
+                        </a>
+                    {% endif %}
+                    <h1 class="hidden-xs">
                         <a href="{{ path('home') }}" title="Home" style="color: #000">
                             {{ 'title'|trans }}
                         </a>
                     </h1>
-                    <p class="hidden-xs">{{ 'claim'|trans }}</p>
+                    {% if ente %}
+                        <p class="claim">{{ 'claim'|trans({'%ente_name%': ente.name}) }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -18,6 +18,9 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class CPSUserProvider implements UserProviderInterface
 {
+
+    const EMAIL_BLACKLIST = array('noreply@infotn.it', 'nobody@infotn.it');
+
     /**
      * @var EntityManager
      */
@@ -252,7 +255,8 @@ class CPSUserProvider implements UserProviderInterface
                && $user->getCapResidenza() !== null
                && $user->getCittaResidenza() !== null
                && $user->getCellulare() !== null
-               && $user->getEmail() !== null;
+               && $user->getEmail() !== null
+               && !in_array($user->getEmail(), self::EMAIL_BLACKLIST);
     }
 
 }

@@ -132,6 +132,9 @@ class OperatoriController extends Controller
      */
     public function elaboraPraticaAction(Pratica $pratica)
     {
+
+        echo ' ';
+
         if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }
@@ -327,6 +330,14 @@ class OperatoriController extends Controller
      */
     private function completePraticaFlow(Pratica $pratica, $hasNewAllegati = false)
     {
+
+        if ($pratica->getRispostaOperatore() == null)
+        {
+            $signedResponse = $this->get('ocsdc.modulo_pdf_builder')->createSignedResponseForPratica($pratica);
+            $pratica->addRispostaOperatore($signedResponse);
+        }
+
+
         if ($pratica->getEsito())
         {
             $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);

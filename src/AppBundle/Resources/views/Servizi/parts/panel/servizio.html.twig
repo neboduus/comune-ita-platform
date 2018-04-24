@@ -10,7 +10,7 @@
         <h4><a href="{{ path('servizi_show', {'slug': servizio.slug}) }}">{{ servizio.name }}</a></h4>
         <p>{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit) ~ '...' : servizio.description  }}</p>
 
-        {% if servizio.enti|length > 0 %}
+        {% if servizio.enti|length > 1 %}
             <p><small><b>{{ 'servizio.attivo_per'|trans }}</b></small>
             {% for ente in servizio.enti %}<a href="{{ ente.siteUrl }}"><small>{{ ente.name }} </small></a>{% endfor %}
             </p>

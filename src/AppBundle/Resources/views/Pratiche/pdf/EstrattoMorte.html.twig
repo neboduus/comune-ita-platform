@@ -1,0 +1,50 @@
+<html>
+<head>
+    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+
+{{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+
+<div class="chiede center_title">
+    {{ 'pratica.pdf.chiede'|trans() }}
+</div>
+
+<div class="richiesta">
+    <p style="text-align: center">
+        {{ 'estratto_morte.pdf.richiesta'|trans() }}
+        {% if pratica.tipologiaCertificatoAnagrafico != 'semplice' %}
+            <i>{{ ('steps.common.certificato_anagrafico.tipologie.' ~ pratica.tipologiaCertificatoAnagrafico)|trans }}</i>
+        {% endif %}
+
+        {% if pratica.delegaType %}
+            relativo alla persona:
+        {% endif %}
+
+        {% if pratica.dematerializedForms %}
+            relativo alla persona:
+        {% endif %}
+    </p>
+</div>
+{% if pratica.dematerializedForms %}
+    {% set data = pratica.dematerializedForms|json_decode %}
+    <div class="delega_richiesta">
+        <p>
+            <span class="text-uppercase">{{ data.nome_soggetto_certificato }} {{ data.cognome_soggetto_certificato }}</span> {{ 'steps.certificato_morte.dati_atto.data_morte_soggetto_certificato'|trans }} <span class="text-uppercase">{{ data.data_morte_soggetto_certificato }}</span>
+        </p>
+
+        <p>
+            {{ 'steps.common.certificato_anagrafico.uso'|trans }} <span class="text-uppercase">{{ pratica.usoCertificatoAnagrafico }}</span>
+        </p>
+    </div>
+{% endif %}
+
+<p>
+    {{ 'certificato_anagrafico.pdf.dichiara'|trans|raw }}
+</p>
+
+{{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
+{{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+{{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
+</body>
+</html>

@@ -9,7 +9,7 @@
             <h3>{{ servizio.description }}</h3>
 
             <div class="service-istruzioni">
-                {{ servizio.testoIstruzioni|raw }}
+                {{ servizio.testoIstruzioni|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
             </div>
 
             {% if servizio.isPaymentRequired %}
@@ -44,7 +44,7 @@
                                 <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%':null}) }}</span>
                             </a>
 
-                            {% if servizio.enti|length > 0 %}
+                            {% if servizio.enti|length > 1 %}
                                 <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}:</strong>
                                     <ul class="list-unstyled">
                                         {% for ente in servizio.enti %}

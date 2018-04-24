@@ -12,7 +12,11 @@
                 <p>
                     {{ 'email.pratica.thanks'|trans() }}
                 </p>
-                <p>{{ 'email.pratica.link'|trans()}} <a href="{{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}">{{ 'email.detail_link'|trans }}</a></p>
+                {% if pratica.rispostaOperatore %}
+                    <p>{{ 'email.pratica.link_download'|trans()}} <a href="{{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}">{{ 'email.detail_link'|trans }}</a></p>
+                {% else %}
+                    <p>{{ 'email.pratica.link'|trans()}} <a href="{{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}">{{ 'email.detail_link'|trans }}</a></p>
+                {% endif %}
             </td>
         </tr>
     </table>
