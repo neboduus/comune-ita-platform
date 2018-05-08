@@ -30,10 +30,19 @@ class ServiziController extends Controller
     public function serviziAction(Request $request)
     {
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $stickyServices = $serviziRepository->findBy(
+            [
+                'sticky' => true
+            ],
+            [
+                'name' => 'ASC',
+            ]
+        );
         $servizi = $serviziRepository->findAll();
 
 
         return [
+            'sticky_services' => $stickyServices,
             'servizi' => $servizi,
             'user' => $this->getUser(),
         ];

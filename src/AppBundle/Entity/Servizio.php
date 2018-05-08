@@ -114,6 +114,12 @@ class Servizio
     protected $handler;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $sticky;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -453,5 +459,25 @@ class Servizio
         $this->handler = $handler;
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isSticky()
+    {
+        return $this->sticky;
+    }
+
+    /**
+     * @param bool $sticky
+     * @return $this
+     */
+    public function setSticky(bool $sticky)
+    {
+        $this->sticky = $sticky;
+        return $this;
+    }
+
+
 
 }
