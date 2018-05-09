@@ -461,6 +461,7 @@ body.canvas-slid {
 
 /* Panels */
 .panel {
+  border-radius: 0;
   &.no-border-radius{
     border: none;
     .panel-heading {
@@ -468,6 +469,36 @@ body.canvas-slid {
       border-top-left-radius: 0;
     }
   }
+}
+
+.servizio {
+  &.sticky {
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    border-radius: 0;
+    box-shadow: 5px 5px 5px #888888;
+
+    .row {
+      @include flexbox();
+      @include flex-wrap(wrap) ;
+    }
+    [class*="col-"] {
+      @include flexbox();
+      @include flex-direction(column);
+    }
+    .action {
+      &:before {
+        content: "";
+        @include flex-grow(1);
+      }
+    }
+  }
+}
+
+.equal {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
 }
 
 
@@ -634,6 +665,11 @@ input[type=file].el-upload__input {
   box-shadow: 0 -5px 5px -5px #e0e0e0;
   border-left: 10px solid #ccc ;
   background-color: #fbfbfb;
+  p {
+    span {
+      display: inline-table;
+    }
+  }
   p:before {
     padding-right: 10px;
     font: normal normal normal 14px/1 FontAwesome;

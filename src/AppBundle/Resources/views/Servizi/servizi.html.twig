@@ -8,6 +8,17 @@
             </div>
         </div>
     </div>
+    {% if sticky_services %}
+        <h1>{{ 'servizi_primo_piano'|trans() }}</h1>
+        <div class="row">
+            <div class="col-sm-12">
+                {% for servizio in sticky_services %}
+                    {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
+                {% endfor %}
+            </div>
+                </div>
+
+    {%  endif %}
     <div class="row">
         <div class="col-sm-9">
             <h1>{{ 'esplora_i_servizi'|trans() }}</h1>
