@@ -155,7 +155,7 @@ class PraticheController extends Controller
             return $this->render('@App/Servizi/serviziFeedback.html.twig', array(
                 'servizio' => $servizio,
                 'status'   => 'danger',
-                'msg'      => "Non é possibile effettuare il download del file.<br />Non risultano immobili a suo nome all'interno del comune."
+                'msg'      => "Non é possibile effettuare il download del file. Non risultano immobili a suo nome all'interno del comune."
             ));
         }
     }
