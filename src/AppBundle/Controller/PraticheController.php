@@ -151,10 +151,11 @@ class PraticheController extends Controller
                 return $handler->execute();
             }
             /*throw new \Exception("Si è verificato un problema durante l'esecuzione del servizio {$servizio->getName()}");*/
+            //todo: recuperare mes da handler, per adesso faccio fix specifico per imis
             return $this->render('@App/Servizi/serviziFeedback.html.twig', array(
                 'servizio' => $servizio,
                 'status'   => 'danger',
-                'msg'      => "Si è verificato un problema durante l'esecuzione del servizio {$servizio->getName()}"
+                'msg'      => "Non é possibile effettuare il download del file.<br />Non risultano immobili a suo nome all'interno del comune."
             ));
         }
     }
