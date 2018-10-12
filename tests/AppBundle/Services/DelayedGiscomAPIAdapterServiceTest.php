@@ -97,7 +97,6 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
 
     public function testServiceLogsRemoteResponse()
     {
-        $this->markTestSkipped('Need to look into how the logger has been changed. This test should actually work');
         $pratica = $this->setupPraticaScia([], true);
         $pratica->setStatus(SciaPraticaEdilizia::STATUS_REGISTERED);
         $this->em->flush();
@@ -109,6 +108,11 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 
@@ -132,7 +136,6 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
 
     public function testServiceReadsRemoteCF()
     {
-        $this->markTestSkipped('Need to look into how the logger has been changed. This test should works if log expectation is avoided');
         $pratica = $this->setupPraticaScia();
 
         $guzzleMock = $this->getMockGuzzleClient([
@@ -184,5 +187,4 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
     {
         return new GiscomAPIMapperService($em);
     }
-
 }

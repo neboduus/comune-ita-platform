@@ -360,6 +360,8 @@ services:
         tags:
             - { name: 'validator.constraint_validator' }
 
+    AppBundle\Validator\Constraints\AtLeastOneAttachmentConstraintValidator: '@ocsdc.validator.scia.at_least_one_attachment'
+
     ocsdc.giscom_api.adapter_direct:
         class: AppBundle\Services\GiscomAPIAdapterService
         arguments:

@@ -32,7 +32,6 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
 
     public function testServiceSendsPraticaToGISCOM()
     {
-        $this->markTestSkipped('This test is broken and so is the code underneath. Return types should be implemented to avoid this kind of .... ');
         $pratica = $this->setupPraticaScia([], true);
         $pratica->setStatus(SciaPraticaEdilizia::STATUS_REGISTERED);
         $this->em->flush();
@@ -44,6 +43,11 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 
@@ -66,9 +70,8 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
 
     public function testServiceSendsPraticaToGISCOMWithPUTIfForIntegrazione()
     {
-        $this->markTestSkipped('This test is broken and so is the code underneath. Return types should be implemented to avoid this kind of .... ');
         $pratica = $this->setupPraticaScia([], true);
-        $pratica->setStatus(Pratica::STATUS_REGISTERED_AFTER_INTEGRATION);
+        $pratica->setStatus(Pratica::STATUS_PENDING_AFTER_INTEGRATION);
         $this->em->flush();
 
         $guzzleMock = $this->getMockGuzzleClient([
@@ -78,6 +81,11 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 
@@ -137,7 +145,6 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
 
     public function testServiceLogsRemoteResponse()
     {
-        $this->markTestSkipped('This test is broken and so is the code underneath. Return types should be implemented to avoid this kind of .... ');
         $pratica = $this->setupPraticaScia([], true);
         $pratica->setStatus(SciaPraticaEdilizia::STATUS_REGISTERED);
         $this->em->flush();
@@ -149,6 +156,11 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 
@@ -172,7 +184,6 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
 
     public function testServiceReadsRemoteCF()
     {
-        $this->markTestSkipped('This test is broken due to changes in logging');
         $pratica = $this->setupPraticaScia();
 
         $guzzleMock = $this->getMockGuzzleClient([

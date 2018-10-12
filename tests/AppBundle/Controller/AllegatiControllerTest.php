@@ -41,24 +41,6 @@ class AllegatiControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testThereIsALinkToCreateAllegati()
-    {
-        $this->markTestSkipped("cambiato l'approccio alla creazione di allegati");
-        $user = $this->createCPSUser();
-
-        $allegatiListPath = $this->router->generate('allegati_list_cpsuser');
-
-        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiListPath);
-        $newPath = $this->router->generate('allegati_create_cpsuser');
-        $linkToNew = $crawler->filterXpath('//*[@href="'.$newPath.'"]');
-        $this->assertGreaterThan(0, $linkToNew->count());
-
-        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
-    }
-
-    /**
-     * @test
-     */
     public function testAttachmentCanBeRetrievedIfUserIsOwnerOfThePratica()
     {
 
@@ -428,70 +410,6 @@ class AllegatiControllerTest extends AbstractAppTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
-    }
-
-    /**
-     * @test
-     */
-    public function testCPSUserCanCreateAttachment()
-    {
-        $this->markTestSkipped("cambiato l'approccio alla creazione di allegati");
-        $user = $this->createCPSUser();
-        $repo = $this->em->getRepository('AppBundle:Allegato');
-        $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
-        $allegatiCreatePath = $this->router->generate('allegati_create_cpsuser');
-        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiCreatePath);
-
-        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
-
-        $form = $crawler->selectButton($this->translator->trans('salva'))->form();
-        $values = $form->getValues();
-        $values['ocsdc_allegato[description]'] = 'pippo';
-        $values['ocsdc_allegato[file][file]'] = new UploadedFile(
-            __DIR__.'/../Assets/lenovo-yoga-xp1.pdf',
-            'lenovo-yoga-xp1.pdf',
-            'application/postscript',
-            filesize(__DIR__.'/../Assets/lenovo-yoga-xp1.pdf')
-        );
-
-        $form->setValues($values);
-        $this->client->submit($form);
-        //an allegato is created for this user with the correct file
-        $this->assertEquals(1, count($repo->findBy(['owner' => $user])));
-    }
-
-    /**
-     * @test
-     * @dataProvider invalidUploadFilesProvider
-     * @param string $invalidFilename
-     */
-    public function testUserCannotcreateAttachmentOfUnsupportedType($invalidFilename)
-    {
-        $this->markTestSkipped("cambiato l'approccio alla creazione di allegati");
-        $user = $this->createCPSUser();
-        $repo = $this->em->getRepository('AppBundle:Allegato');
-        $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
-        $allegatiCreatePath = $this->router->generate('allegati_create_cpsuser');
-        $crawler = $this->clientRequestAsCPSUser($user, 'GET', $allegatiCreatePath);
-        $form = $crawler->selectButton($this->translator->trans('salva'))->form();
-        $values = $form->getValues();
-
-        $values['ocsdc_allegato[description]'] = 'pippo';
-        $values['ocsdc_allegato[file][file]'] = new UploadedFile(
-            __DIR__.'/../Assets/'.$invalidFilename,
-            $invalidFilename,
-            'application/postscript',
-            filesize(__DIR__.'/../Assets/'.$invalidFilename)
-        );
-
-        $form->setValues($values);
-        $crawler = $this->client->submit($form);
-        //an allegato is not created for this user
-        $this->assertEquals(0, count($repo->findBy(['owner' => $user])));
-
-        $expectedErrorMessage = $this->translator->trans(ValidMimeType::TRANSLATION_ID);
-        $errorMessage = $crawler->filter('.has-error')->html();
-        $this->assertContains($expectedErrorMessage, $errorMessage);
     }
 
     /**

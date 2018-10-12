@@ -11,6 +11,7 @@ use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as PraticaEdilizia;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
@@ -80,7 +81,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function sendPraticaToGiscom(GiscomPratica $pratica)
+    public function sendPraticaToGiscom(GiscomPratica $pratica): ResponseInterface
     {
 
         if (!$pratica instanceof SciaPraticaEdilizia) {
@@ -142,12 +143,11 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             return $response;
 
         }catch (\Exception $e){
-            /**
-             * TODO: catch log e throw è un antipattern bello solido, va rifattorizzato
-             */
+            $response = new Response(500,[], $e->getMessage());
             if (method_exists($e, 'getResponse')) {
-                $logContext['remote_error_response'] = $e->getResponse()->getBody()."";
+                $response = $e->getResponse();
             }
+            $logContext['remote_error_response'] = $response->getBody()."";
             $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side", $logContext);
             
             $mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
@@ -161,7 +161,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
 
             $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);
 
-            return false;
+            return $response;
         }
 
     }
@@ -177,7 +177,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
         $logContext = ['id' => $pratica->getId()];
 
         $this->logger->debug('Asking related CFs for pratica on Giscom side', $logContext);
-
+        $this->logger->info('Asking related CFs for pratica on Giscom side', $logContext);
 
         $request = new Request(
             'GET',
@@ -188,6 +188,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
 
         if ($response->getStatusCode() == 200) {
             $this->logger->debug('Correctly retrieve cfs from Giscom Side', $logContext);
+            $this->logger->info('Correctly retrieve cfs from Giscom Side', $logContext);
         } else {
             $this->logger->error('Error when retrieving cfs from Giscom Side', $logContext);
             throw new \Exception("Error when retrieving cfs of pratica {$pratica->getId()} from Giscom Side");
