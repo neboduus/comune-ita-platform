@@ -151,6 +151,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side", $logContext);
             
             $mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
+            $statusChange = null;
             $statusChange['evento'] = $mappedStatus;
             $statusChange['operatore'] = 'Giscom';
             $statusChange['responsabile'] = 'Giscom';
