@@ -1,0 +1,4 @@
+#!/bin/bash
+setfacl -dR -m u:"www-data":rwX var
+setfacl -R -m u:"www-data":rwX var
+apachectl -D FOREGROUND

@@ -38,7 +38,7 @@
         "ramsey/uuid": "^3.4",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "gedmo/doctrine-extensions": "^2.4",
-        "symfony/translation": "^3.1",
+        "symfony/translation": "^4.0",
         "craue/formflow-bundle": "~3.0@dev",
         "vich/uploader-bundle": "^1.2",
         "symfony/assetic-bundle": "^2.8",
@@ -46,7 +46,8 @@
         "jms/serializer-bundle": "^1.1",
         "doctrine/doctrine-migrations-bundle": "^1.2",
         "h4cc/wkhtmltopdf-amd64": "^0.12.3",
-        "eightpoints/guzzle-bundle": "^6.0"
+        "eightpoints/guzzle-bundle": "^6.0",
+        "nesbot/carbon": "^2.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

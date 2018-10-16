@@ -226,7 +226,8 @@ abstract class AbstractAppTestCase extends WebTestCase
         $content = null,
         $changeHistory = true
     ) {
-        $server += ['REDIRECT_shibb_pat_attribute_codicefiscale' => $user->getCodiceFiscale()];
+        $server += ['shibb_pat_attribute_codicefiscale' => $user->getCodiceFiscale()];
+//        $server += ['REDIRECT_shibb_pat_attribute_codicefiscale' => $user->getCodiceFiscale()];
 
         return $this->client->request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
     }

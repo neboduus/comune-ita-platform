@@ -9,7 +9,7 @@ var ghPages = require('gulp-gh-pages');
 var del = require('del');
 
 const Writable = require('stream').Writable;
-const buildDir = 'var/build';
+const buildDir = 'build';
 const baseResourcesDir = 'src/AppBundle/Resources';
 const sassDir = baseResourcesDir + '/sass';
 const distDir = 'web/';

@@ -15,6 +15,7 @@
 /vendor/
 /web/bundles/
 /bin/*
+!/bin/dockerized_startup
 /web/css
 /bower_components
 /node_modules

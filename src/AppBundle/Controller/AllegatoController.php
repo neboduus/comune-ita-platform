@@ -284,7 +284,8 @@ class AllegatoController extends Controller
                 ->getManager()
                 ->createQuery("SELECT allegato 
                 FROM AppBundle\Entity\Allegato allegato 
-                WHERE (allegato INSTANCE OF AppBundle\Entity\Allegato OR allegato INSTANCE OF AppBundle\Entity\AllegatoScia)
+                WHERE (allegato INSTANCE OF AppBundle\Entity\Allegato OR allegato INSTANCE OF AppBundle\Entity\AllegatoScia) 
+                AND (allegato NOT INSTANCE OF AppBundle\Entity\ModuloCompilato )
                 AND allegato.owner = :user
                 ORDER BY allegato.filename ASC")
                 ->setParameter('user', $this->getUser());
