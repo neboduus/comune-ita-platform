@@ -60,6 +60,10 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
         );
         $delayedGiscomApiAdapter->sendPraticaToGiscom($pratica);
         $this->executeCron($delayedGiscomApiAdapter);
+        /**
+         * if we reached this point all is fine
+         */
+        $this->assertTrue(true);
     }
 
     public function testServiceLogsRemoteError()

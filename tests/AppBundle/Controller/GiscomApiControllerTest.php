@@ -243,11 +243,6 @@ class GiscomApiControllerTest extends AbstractAppTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
-    public function testPraticaIntegrazioneAPICreatesAnIntegrazioneObject()
-    {
-
-    }
-
     /**
      * @param Pratica $pratica
      * @return string
