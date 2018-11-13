@@ -62,7 +62,7 @@ class ContributoPannoliniTest extends AbstractAppTestCase
         $erogatore = $this->createErogatoreWithEnti([$ente]);
         //create the autolettura service bound to that ente
         $fqcn = ContributoPannolini::class;
-        $flow = 'ocsdc.form.flow.contributo_pannolini';
+        $flow = 'ocsdc.form.flow.contributopannolini';
         $servizio = $this->createServizioWithErogatore($erogatore, 'Contributo Acquisto Pannolini', $fqcn, $flow);
 
         $user = $this->createCPSUser();

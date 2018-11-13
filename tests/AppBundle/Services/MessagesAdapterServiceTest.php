@@ -20,9 +20,6 @@ use Tests\AppBundle\Base\AbstractAppTestCase;
  */
 class MessagesAdapterServiceTest extends AbstractAppTestCase
 {
-    /**
-     * @test
-     */
     public function setUp()
     {
         parent::setUp();

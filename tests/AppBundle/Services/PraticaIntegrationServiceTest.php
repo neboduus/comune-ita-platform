@@ -55,7 +55,7 @@ class PraticaIntegrationServiceTest extends AbstractAppTestCase
         $service->requestIntegration($pratica, $request);
 
         $this->assertTrue($pratica->haUnaRichiestaDiIntegrazioneAttiva());
-        $this->assertEquals(1, count($pratica->getRichiestaDiIntegrazioneAttiva()));
+        $this->assertNotNull($pratica->getRichiestaDiIntegrazioneAttiva());
 
         $this->assertEquals($message, $pratica->getRichiestaDiIntegrazioneAttiva()->getDescription());
         $this->assertEquals($payload, $pratica->getRichiestaDiIntegrazioneAttiva()->getPayload());

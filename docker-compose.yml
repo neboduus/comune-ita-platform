@@ -1,0 +1,16 @@
+version: '3'
+services:
+  ocsdc:
+    build: .
+    network_mode: "host"
+    volumes:
+      - /var/ocsdc/:/docroot/var
+      - ./compose_conf/fpm_pool:/etc/php/7.2/fpm/pool.d
+      - ./compose_conf/php-fpm.conf:/etc/php/7.2/fpm/php-fpm.conf
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web:/usr/share/nginx/html
+      - ./compose_conf/site.conf:/etc/nginx/conf.d/default.conf

@@ -25,6 +25,9 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
      */
     //TODO:test this mapping
     private static $userDataKeys = [
+        /**
+         * The mod_php process receives these values as $_SERVER from apache+mod_shib
+         */
         "REDIRECT_shibb_pat_attribute_codicefiscale" => "codiceFiscale",
         "REDIRECT_shibb_pat_attribute_capdomicilio" => "capDomicilio",
         "REDIRECT_shibb_pat_attribute_capresidenza" => "capResidenza",
@@ -51,6 +54,38 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
         "REDIRECT_shibb_pat_attribute_x509certificate_issuerdn" => "x509certificate_issuerdn",
         "REDIRECT_shibb_pat_attribute_x509certificate_subjectdn" => "x509certificate_subjectdn",
         "REDIRECT_shibb_pat_attribute_x509certificate_base64" => "x509certificate_base64",
+
+        /**
+         * The fpm process receives these values as $_SERVER from apache+mod_shib
+         */
+        "shibb_pat_attribute_codicefiscale" => "codiceFiscale",
+        "shibb_pat_attribute_capdomicilio" => "capDomicilio",
+        "shibb_pat_attribute_capresidenza" => "capResidenza",
+        "shibb_pat_attribute_cellulare" => "cellulare",
+        "shibb_pat_attribute_cittadomicilio" => "cittaDomicilio",
+        "shibb_pat_attribute_cittaresidenza" => "cittaResidenza",
+        "shibb_pat_attribute_cognome" => "cognome",
+        "shibb_pat_attribute_datanascita" => "dataNascita",
+        "shibb_pat_attribute_emailaddress" => "emailAddress",
+        "shibb_pat_attribute_emailaddresspersonale" => "emailAddressPersonale",
+        "shibb_pat_attribute_indirizzodomicilio" => "indirizzoDomicilio",
+        "shibb_pat_attribute_indirizzoresidenza" => "indirizzoResidenza",
+        "shibb_pat_attribute_luogonascita" => "luogoNascita",
+        "shibb_pat_attribute_nome" => "nome",
+        "shibb_pat_attribute_provinciadomicilio" => "provinciaDomicilio",
+        "shibb_pat_attribute_provincianascita" => "provinciaNascita",
+        "shibb_pat_attribute_provinciaresidenza" => "provinciaResidenza",
+        "shibb_pat_attribute_sesso" => "sesso",
+        "shibb_pat_attribute_statodomicilio" => "statoDomicilio",
+        "shibb_pat_attribute_statonascita" => "statoNascita",
+        "shibb_pat_attribute_statoresidenza" => "statoResidenza",
+        "shibb_pat_attribute_telefono" => "telefono",
+        "shibb_pat_attribute_titolo" => "titolo",
+        "shibb_pat_attribute_x509certificate_issuerdn" => "x509certificate_issuerdn",
+        "shibb_pat_attribute_x509certificate_subjectdn" => "x509certificate_subjectdn",
+        "shibb_pat_attribute_x509certificate_base64" => "x509certificate_base64",        
+        
+        
     ];
 
     /**

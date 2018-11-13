@@ -43,6 +43,11 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 
@@ -66,7 +71,7 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
     public function testServiceSendsPraticaToGISCOMWithPUTIfForIntegrazione()
     {
         $pratica = $this->setupPraticaScia([], true);
-        $pratica->setStatus(Pratica::STATUS_REGISTERED_AFTER_INTEGRATION);
+        $pratica->setStatus(Pratica::STATUS_PENDING_AFTER_INTEGRATION);
         $this->em->flush();
 
         $guzzleMock = $this->getMockGuzzleClient([
@@ -76,6 +81,11 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 
@@ -146,6 +156,11 @@ class GiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 

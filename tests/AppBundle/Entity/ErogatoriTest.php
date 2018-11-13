@@ -4,11 +4,12 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
 use Doctrine\Common\Collections\Collection;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ErogatoriTest
  */
-class ErogatoriTest extends \PHPUnit_Framework_TestCase
+class ErogatoriTest extends TestCase
 {
     /**
      * @test

@@ -40,7 +40,7 @@ class PraticaControllerTest extends AbstractAppTestCase
     {
         parent::setUp();
 
-        system('rm -rf '.__DIR__."/../../../var/uploads/pratiche/allegati/*");
+        system('rm -rf ' . __DIR__ . "/../../../var/uploads/pratiche/allegati/*");
 
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
@@ -139,12 +139,12 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/');
 
-        $nodes = $crawler->filterXPath('//*[@class="pratica" and @data-user="'.$myUser->getId().'"]');
+        $nodes = $crawler->filterXPath('//*[@class="pratica" and @data-user="' . $myUser->getId() . '"]');
         //the data-user property gets rendered twice
         $renderedPraticheCount = $nodes->count();
         $this->assertEquals($myUserPraticheCountAfterInsert, $renderedPraticheCount);
 
-        $renderedOtherUserPraticheCount = $crawler->filterXPath('//*[@data-user="'.$otherUser->getId().'"]')->count();
+        $renderedOtherUserPraticheCount = $crawler->filterXPath('//*[@data-user="' . $otherUser->getId() . '"]')->count();
         $this->assertEquals(0, $renderedOtherUserPraticheCount);
 
         $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
@@ -164,11 +164,11 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $moduloCompilato = new ModuloCompilato();
         $moduloCompilato->setFilename($fileName);
-        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido ' . $now->format('Ymdhi'));
         $moduloCompilato->setDescription(
             $this->container->get('translator')->trans(
                 'pratica.modulo.descrizione',
-                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format')) ]
+                ['nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format'))]
             )
         );
 
@@ -178,12 +178,12 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->em->persist($pratica);
         $this->em->flush();
 
-        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/' . $pratica->getId());
 
         $nodes = $crawler->filterXPath('//*[@class="modulo"]');
         $renderedModuliCount = $nodes->count();
 
-        $this->assertEquals($pratica->getModuliCompilati()->count(),$renderedModuliCount);
+        $this->assertEquals($pratica->getModuliCompilati()->count(), $renderedModuliCount);
 
         $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
     }
@@ -204,11 +204,11 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $moduloCompilato = new ModuloCompilato();
         $moduloCompilato->setFilename($fileName);
-        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido ' . $now->format('Ymdhi'));
         $moduloCompilato->setDescription(
             $this->container->get('translator')->trans(
                 'pratica.modulo.descrizione',
-                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format')) ]
+                ['nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format'))]
             )
         );
 
@@ -232,12 +232,12 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->em->flush();
         $this->em->refresh($pratica);
 
-        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/' . $pratica->getId());
 
         $nodes = $crawler->filterXPath('//*[@class="modulo"]');
         $renderedModuliCount = $nodes->count();
 
-        $this->assertEquals($pratica->getModuliCompilati()->count(),$renderedModuliCount);
+        $this->assertEquals($pratica->getModuliCompilati()->count(), $renderedModuliCount);
 
         $nodes = $crawler->filterXPath('//*[contains(@class, "sidebar")]//*[contains(@class, "fa-calendar")]');
         $this->assertEquals($pratica->getStoricoStati()->count(), $nodes->count());
@@ -248,6 +248,7 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $this->doTestISeeMyNameAsLoggedInUser($myUser, $this->client->getResponse());
     }
+
     /**
      * @test
      */
@@ -264,11 +265,11 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $moduloCompilato = new ModuloCompilato();
         $moduloCompilato->setFilename($fileName);
-        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido '.$now->format('Ymdhi'));
+        $moduloCompilato->setOriginalFilename('Modulo Iscrizione Nido ' . $now->format('Ymdhi'));
         $moduloCompilato->setDescription(
             $this->container->get('translator')->trans(
                 'pratica.modulo.descrizione',
-                [ 'nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format')) ]
+                ['nomeservizio' => $pratica->getServizio()->getName(), 'datacompilazione' => $now->format($this->container->getParameter('ocsdc_default_datetime_format'))]
             )
         );
 
@@ -292,12 +293,12 @@ class PraticaControllerTest extends AbstractAppTestCase
         $this->em->flush();
         $this->em->refresh($pratica);
 
-        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/' . $pratica->getId());
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $nodes = $crawler->filterXPath('//*[@class="modulo"]');
         $renderedModuliCount = $nodes->count();
 
-        $this->assertEquals($pratica->getModuliCompilati()->count(),$renderedModuliCount);
+        $this->assertEquals($pratica->getModuliCompilati()->count(), $renderedModuliCount);
 
         $nodes = $crawler->filterXPath('//*[contains(@class, "sidebar")]//*[contains(@class, "fa-calendar")]');
         $this->assertEquals($pratica->getStoricoStati()->count(), $nodes->count());
@@ -317,7 +318,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $myUser = $this->createCPSUser();
         $pratica = $this->createPratica($myUser, null, Pratica::STATUS_DRAFT);
 
-        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+        $crawler = $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/' . $pratica->getId());
 
         $nodes = $crawler->filterXPath('//*[@data-action="edit_draft"]');
         $this->assertEquals(1, $nodes->count());
@@ -334,7 +335,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $otherUser = $this->createCPSUser();
         $pratica = $this->createPratica($otherUser, null, Pratica::STATUS_DRAFT);
 
-        $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/'.$pratica->getId());
+        $this->clientRequestAsCPSUser($myUser, 'GET', '/pratiche/' . $pratica->getId());
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
 
     }
@@ -427,8 +428,8 @@ class PraticaControllerTest extends AbstractAppTestCase
                 return in_array(
                     $arg,
                     [
-                    LogConstants::PRATICA_CREATED,
-                    LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
+                        LogConstants::PRATICA_CREATED,
+                        LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
                     ]
                 );
             }));
@@ -464,42 +465,6 @@ class PraticaControllerTest extends AbstractAppTestCase
 
         $this->assertEquals($tutteLePratiche + 1, $tutteLePraticheNew);
         $this->assertEquals($miePratiche + 1, $miePraticheNew);
-    }
-
-    /**
-     * @test
-     */
-    public function testISeeSceltaComuneFormWhenIStartTheFormAsLoggedUser()
-    {
-        $this->markTestSkipped("Passati ad  approccio con più instanze");
-        $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->exactly(2))
-            ->method('info')
-            ->with($this->callback(function ($subject) {
-                $expectedArgs = [
-                    LogConstants::PRATICA_CREATED,
-                    LogConstants::PRATICA_COMPILING_STEP,
-                ];
-
-                return in_array($subject, $expectedArgs);
-            }));
-
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
-            $kernel->getContainer()->set('logger', $mockLogger);
-        });
-        $user = $this->createCPSUser();
-
-        $servizio = $this->createServizioWithAssociatedErogatori([], 'Altro servizio');
-
-        $this->client->followRedirects();
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
-            'pratiche_new',
-            ['servizio' => $servizio->getSlug()]
-        ));
-
-        $this->assertContains('pratica_seleziona_ente', $this->client->getResponse()->getContent());
-
-        $this->doTestISeeMyNameAsLoggedInUser($user, $this->client->getResponse());
     }
 
     /**
@@ -561,7 +526,7 @@ class PraticaControllerTest extends AbstractAppTestCase
         $form = $crawler->selectButton($nextButton)->form();
 
         foreach (DatiRichiedenteType::CAMPI_RICHIEDENTE as $campo => $statoDisabledAtteso) {
-            $field = $form->get('pratica_richiedente['.$campo.']');
+            $field = $form->get('pratica_richiedente[' . $campo . ']');
             switch ($campo) {
                 case 'richiedente_telefono':
                     $statoDisabledAtteso = $user->getTelefono() == null ? false : true;
@@ -572,7 +537,7 @@ class PraticaControllerTest extends AbstractAppTestCase
                 default:
                     break;
             }
-            $this->assertEquals($statoDisabledAtteso, $field->isDisabled(), 'Il campo '.$field->getName().' doveva essere disabled: '.$statoDisabledAtteso);
+            $this->assertEquals($statoDisabledAtteso, $field->isDisabled(), 'Il campo ' . $field->getName() . ' doveva essere disabled: ' . $statoDisabledAtteso);
         }
 
         $this->client->submit($form);
@@ -605,47 +570,5 @@ class PraticaControllerTest extends AbstractAppTestCase
                 ['servizio' => $servizio->getSlug()]
             )
         );
-    }
-
-    /**
-     * @test
-     */
-    public function testISeeChoiceOfEnteWhenIStartTheFormAsLoggedUser()
-    {
-        $this->markTestSkipped("Passati ad  approccio con più instanze");
-        $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->exactly(2))
-            ->method('info')
-            ->with($this->callback(function ($subject) {
-                $expectedArgs = [
-                    LogConstants::PRATICA_CREATED,
-                    LogConstants::PRATICA_COMPILING_STEP,
-                ];
-
-                return in_array($subject, $expectedArgs);
-            }));
-
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
-            $kernel->getContainer()->set('logger', $mockLogger);
-        });
-
-        $user = $this->createCPSUser();
-
-        $ente = $this->createEnteWithAsili('L781');
-        $erogatore = $this->createErogatoreWithEnti([$ente]);
-        $ente1 = $this->createEnteWithAsili('L782');
-        $erogatore1 = $this->createErogatoreWithEnti([$ente1]);
-        $ente2 = $this->createEnteWithAsili('L783');
-        $erogatore2 = $this->createErogatoreWithEnti([$ente2]);
-
-        $servizio = $this->createServizioWithAssociatedErogatori([$erogatore, $erogatore1, $erogatore2], 'Altro servizio');
-
-        $this->client->followRedirects();
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
-            'pratiche_new',
-            ['servizio' => $servizio->getSlug()]
-        ));
-
-        $this->assertContains('pratica_seleziona_ente', $this->client->getResponse()->getContent());
     }
 }

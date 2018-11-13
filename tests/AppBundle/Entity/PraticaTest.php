@@ -4,12 +4,13 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\ClockMock;
 
 /**
  * Class PraticaTest
  */
-class PraticaTest extends \PHPUnit_Framework_TestCase
+class PraticaTest extends TestCase
 {
     /**
      * @inheritdoc

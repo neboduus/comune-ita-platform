@@ -3,6 +3,8 @@
 namespace AppBundle\Twig;
 
 
+use Twig\TwigFilter;
+
 class JsonDecode  extends \Twig_Extension
 {
 
@@ -14,7 +16,7 @@ class JsonDecode  extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'json_decode'   => new \Twig_Filter_Method($this, 'jsonDecode')
+            new TwigFilter('json_decode', array($this, 'jsonDecode'))
         );
     }
 

@@ -12,9 +12,7 @@ use Tests\AppBundle\Base\AbstractAppTestCase;
  */
 class MailerServiceTest extends AbstractAppTestCase
 {
-    /**
-     * @test
-     */
+
     public function setUp()
     {
         parent::setUp();
@@ -129,7 +127,7 @@ class MailerServiceTest extends AbstractAppTestCase
         $mailerService = $this->container->get('ocsdc.mailer');
         $mailerService->dispatchMailForPratica($pratica, $this->container->getParameter('default_from_email_address'));
         $invocation = $this->spy->getInvocations()[0];
-        $sentMessage = $invocation->parameters[0];
+        $sentMessage = $invocation->getParameters()[0];
         $matchString = '<h2>'.$pratica->getEnte()->getNameForEmail().'<\/h2>';
         $this->assertRegExp('/'.$matchString.'/', $sentMessage->getBody());
     }

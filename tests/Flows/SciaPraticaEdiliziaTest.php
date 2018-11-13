@@ -66,73 +66,9 @@ class SciaPraticaEdiliziaTest extends AbstractAppTestCase
     }
 
     /**
-     * @test
+     * Here there was a test called
+     * testICanFillOutTheSciaAsLoggedTecnico
+     * which has been left marked as incomplete for more than one year
+     * It has been deleted for the sake of being clean, it can be retrieved from git history
      */
-    public function testICanFillOutTheSciaAsLoggedTecnico()
-    {
-        //create an ente
-        $ente = $this->createEnti()[0];
-        $erogatore = $this->createErogatoreWithEnti([$ente]);
-        //create the autolettura service bound to that ente
-        $fqcn = SciaPraticaEdilizia::class;
-        $flow = 'ocsdc.form.flow.scia_pratica_edilizia';
-        $servizio = $this->createServizioWithErogatore($erogatore, 'Scia', $fqcn, $flow, 'ROLE_SCIA_TECNICO_ACCREDITATO');
-
-        $user = $this->createCPSUser(true,true, 'ROLE_SCIA_TECNICO_ACCREDITATO');
-
-        $mockMailer = $this->setupSwiftmailerMock([$user]);
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockMailer) {
-            $kernel->getContainer()->set('swiftmailer.mailer.default', $mockMailer);
-        });
-
-        $this->clientRequestAsCPSUser($user, 'GET', $this->router->generate(
-            'pratiche_new',
-            ['servizio' => $servizio->getSlug()]
-        ));
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-        $crawler = $this->client->followRedirect();
-
-        $currentUriParts = explode('/', $this->client->getHistory()->current()->getUri());
-        $currentPraticaId = array_pop($currentUriParts);
-        $currentPratica = $this->em->getRepository('AppBundle:SciaPraticaEdilizia')->find($currentPraticaId);
-        $this->assertEquals(SciaPraticaEdilizia::class, get_class($currentPratica));
-        $this->assertEquals(0, $currentPratica->getModuliCompilati()->count());
-
-        $nextButton = $this->translator->trans('button.next', [], 'CraueFormFlowBundle');
-        $finishButton = $this->translator->trans('button.finish', [], 'CraueFormFlowBundle');
-
-        if ($currentPratica->getEnte() == null && $this->container->getParameter('prefix') == null) {
-            $this->selezioneComune($crawler, $nextButton, $ente, $form, $currentPratica, $erogatore);
-        }
-        $this->accettazioneIstruzioni($crawler, $nextButton, $form);
-        $this->datiRichiedente($crawler, $nextButton, $fillData, $form, true);
-        $this->markTestIncomplete('Actual steps need to be tested');
-//
-//        $form = $crawler->selectButton($finishButton)->form();
-//        $this->client->submit($form);
-//        $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-//        $this->client->followRedirect();
-//
-//        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-//        $this->assertContains($currentPraticaId, $this->client->getRequest()->getRequestUri());
-//
-//        $this->em->refresh($currentPratica);
-//
-//        $this->assertEquals(
-//            $currentPratica->getRichiedenteNome(),
-//            $user->getNome()
-//        );
-//
-//        //modulo stampato
-//        $this->assertEquals(1, $currentPratica->getModuliCompilati()->count());
-//        $pdfExportedForm = $currentPratica->getModuliCompilati()->get(0);
-//        $this->assertNotNull($pdfExportedForm);
-//        $this->assertTrue($pdfExportedForm instanceof ModuloCompilato);
-//
-//        $this->assertNotNull($currentPratica->getSubmissionTime());
-//        $submissionDate = new \DateTime();
-//        $submissionDate->setTimestamp($currentPratica->getSubmissionTime());
-//
-//        $this->assertEquals('Modulo '.$currentPratica->getServizio()->getName().' compilato il '.$submissionDate->format($this->container->getParameter('ocsdc_default_datetime_format')), $pdfExportedForm->getDescription());
-    }
 }
