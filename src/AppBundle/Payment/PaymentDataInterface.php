@@ -17,4 +17,9 @@ interface PaymentDataInterface
      */
     public function getFieldValue( string $field );
 
+    /**
+     * @param $data
+     * @return PaymentDataInterface
+     */
+    public static function fromData($data): PaymentDataInterface;
 }

@@ -55,19 +55,11 @@ class GiscomAPIMapperService
 
         $hash = $mappedPratica->toHash();
 
-        $allegatoB = $hash['elencoUlterioriAllegatiTecnici']['allegatoB'];
-        if (is_array($allegatoB) && isset($allegatoB[0])) {
-            $hash['allegatoB'] = $allegatoB[0];
-        } else {
-            $hash['allegatoB'] = null;
-        }
-        unset($hash['elencoUlterioriAllegatiTecnici']['allegatoB']);
-
         $hash['elencoAllegatiTecnici'] = array_merge(
             $hash['elencoAllegatiTecnici'],
-            $hash['elencoUlterioriAllegatiTecnici']
+            $hash['vincoli']
         );
-        unset($hash['elencoUlterioriAllegatiTecnici']);
+        unset($hash['vincoli']);
 
         return $hash;
     }
@@ -90,17 +82,12 @@ class GiscomAPIMapperService
             }
         }
 
-        foreach ($mappedPratica->getElencoUlterioriAllegatiTecnici() as $key => $value) {
+        foreach ($mappedPratica->getVincoli() as $key => $value) {
             if ($value instanceof FileCollection) {
                 $this->prepareFileCollection($value);
             }
         }
 
-        foreach ($mappedPratica->getElencoProvvedimenti() as $key => $value) {
-            if ($value instanceof FileCollection) {
-                $this->prepareFileCollection($value);
-            }
-        }
     }
 
     private function prepareFileCollection(FileCollection $collection)

@@ -1,10 +1,25 @@
 version: '3'
 services:
+  cron:
+    depends_on: 
+      - ocsdc
+    build:
+      context: .
+      dockerfile: Dockerfile_cron
+    network_mode: "host"
+    volumes:
+      - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads"
+      - "${CRON_LOGS_MOUNT}_cron:/docroot/var/logs"
+      - "${CACHE_MOUNT}_cron:/docroot/var/cache"
+
   ocsdc:
     build: .
     network_mode: "host"
     volumes:
-      - /var/ocsdc/:/docroot/var
+      - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads"
+      - "${LOGS_MOUNT}:/docroot/var/logs"
+      - "${CACHE_MOUNT}:/docroot/var/cache"
+      - "${SESSIONS_MOUNT}:/docroot/var/sessions"
       - ./compose_conf/fpm_pool:/etc/php/7.2/fpm/pool.d
       - ./compose_conf/php-fpm.conf:/etc/php/7.2/fpm/php-fpm.conf
   nginx:

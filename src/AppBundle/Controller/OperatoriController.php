@@ -132,9 +132,6 @@ class OperatoriController extends Controller
      */
     public function elaboraPraticaAction(Pratica $pratica)
     {
-
-        echo ' ';
-
         if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }

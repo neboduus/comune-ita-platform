@@ -49,7 +49,6 @@ class Version20170123171018 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE ente ALTER protocollo_parameters SET DEFAULT \'a:0:{}\'');
         $this->addSql('ALTER TABLE ente ALTER protocollo_parameters DROP NOT NULL');
         $this->addSql('ALTER TABLE pratica DROP ruolo_utente_org_richiedente');

@@ -31,7 +31,6 @@ class Version20161118151412 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE utente ALTER email SET NOT NULL');
         $this->addSql('ALTER TABLE utente ALTER email_canonical SET NOT NULL');
         $this->addSql('CREATE UNIQUE INDEX uniq_de45b3e0a0d96fbf ON utente (email_canonical)');

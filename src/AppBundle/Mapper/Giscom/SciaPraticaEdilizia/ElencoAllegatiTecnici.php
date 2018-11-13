@@ -2,6 +2,8 @@
 
 namespace AppBundle\Mapper\Giscom\SciaPraticaEdilizia;
 
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia;
+
 class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
 {
     const TYPE = 'scia_edilizia_allegati_tecnici';
@@ -12,97 +14,51 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'TEC_URB',
             'TEC_DF',
             'TEC_RT',
-            'TEC_PLANFAT',
-            'TEC_PLANPROG',
-            'TEC_PLANRAF',
-            'TEC_SEZPLANRAF',
-            'TEC_PIANTEFAT',
-            'TEC_PIANTEPROG',
-            'TEC_PIANTERAF',
-            'TEC_SEZFAT',
-            'TEC_SERPROG',
-            'TEC_SEZRAF',
-            'TEC_PROSPFAT',
-            'TEC_PROSPPROG',
-            'TEC_PROSPRAF',
-            'TEC_BARARC',
-            'TEC_SPAZIPARC',
-            'TEC_GEO',
-            'TEC_ENER',
+            'TEC_PLAN',
+            'TEC_SEZALT',
+            'TEC_PIANTE',
+            'TEC_SEZ',
+            'TEC_PROSP',
+            'TEC_CONTRIB',
+            'TEC_SCAVO',
+            'TEC_AMIANTO',
+            'TEC_IMP-ELET',
+            'TEC_IMP-SCAR',
+            'TEC_IMP-RADIO',
+            'TEC_IMP-CLIMA',
+            'TEC_IMP-IDRIC',
+            'TEC_IMP-GAS',
+            'TEC_IMP-ELEV',
+            'TEC_IMP-INCEN',
+            'TEC_RETI_SCARIC',
+            'TEC_RETI_RIFIU',
+            'TEC_RETI_ACQ',
+            'TEC_RETI_ELET',
+            'TEC_RETI_GAS',
+            'TEC_RETI_CUSTOM1',
+            'TEC_RETI_CUSTOM2',
+            'TEC_RETI_CUSTOM3',
+            'TEC_FIBRA',
+            'TEC_RICAR',
+            'TEC_ACUSTIC',
+            'TEC_IMP-ACUSTIC',
+            'TEC_CLIMA-ACUSTIC',
         ];
     }
 
     public function getRequiredFields($tipoIntervento)
     {
         switch ($tipoIntervento) {
-            case 'nuova':
+            case SciaPraticaEdilizia::MANUTENZIONE_STRAORDINARIA:
+            case SciaPraticaEdilizia::RESTAURO_E_RISANAMENTO_CONSERVATIVO:
+            case SciaPraticaEdilizia::RISTRUTTURAZIONE_EDILIZIA:
+            case SciaPraticaEdilizia::RISTRUTTURAZIONE_URBANISTICA:
                 return [
                     'TEC_URB',
                     'TEC_DF',
                     'TEC_RT',
-                    'TEC_PLANFAT',
-                    'TEC_PLANPROG',
-                    'TEC_PLANRAF',
-                    'TEC_SEZPLANRAF',
-                    'TEC_PIANTEFAT',
-                    'TEC_SERPROG',
-                    'TEC_PROSPPROG',
-                    'TEC_BARARC',
-                    'TEC_SPAZIPARC',
-                    'TEC_GEO',
-                    'TEC_ENER'
                 ];
-
-            case 'ampliamento':
-                return [
-                    'TEC_URB',
-                    'TEC_DF',
-                    'TEC_RT',
-                    'TEC_SEZFAT',
-                    'TEC_SERPROG',
-                    'TEC_SEZRAF',
-                    'TEC_PROSPFAT',
-                    'TEC_PROSPPROG',
-                    'TEC_PROSPRAF',
-                    'TEC_BARARC',
-                    'TEC_SPAZIPARC',
-                    'TEC_GEO',
-                ];
-
-            case 'demolizione':
-                return [
-                    'TEC_URB',
-                    'TEC_DF',
-                    'TEC_RT',
-                    'TEC_PLANFAT',
-                    'TEC_PLANPROG',
-                    'TEC_PLANRAF',
-                    'TEC_SEZPLANRAF',
-                    'TEC_PIANTEFAT',
-                    'TEC_SEZFAT',
-                    'TEC_SERPROG',
-                    'TEC_PROSPPROG',
-                    'TEC_SPAZIPARC',
-                    'TEC_GEO',
-                    'TEC_ENER',
-                ];
-
-            case 'straordinaria':
-                return [
-                    'TEC_DF',
-                    'TEC_RT',
-                ];
-
-            case 'cambio_uso':
-                return [
-                    'TEC_DF',
-                    'TEC_RT',
-                    'TEC_SEZFAT',
-                    'TEC_SERPROG',
-                    'TEC_SPAZIPARC',
-                    'TEC_GEO'
-                ];
-
+                break;
             default:
                 return [];
         }

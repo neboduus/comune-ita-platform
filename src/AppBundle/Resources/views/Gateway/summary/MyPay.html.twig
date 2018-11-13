@@ -1,0 +1,11 @@
+{% set data = pratica.getPaymentData %}
+{% if true or data.latest_attempt_id %}
+    <div class="payment_details">
+        {% if data.payment_attempts[data.latest_attempt_id] is defined and data.payment_attempts[data.latest_attempt_id].outcome_response and data.payment_attempts[data.latest_attempt_id].outcome_response.json.pagati is defined %}
+            {% set pagati = data.payment_attempts[data.latest_attempt_id].outcome_response.json.pagati %}
+            <pre style="font-size:10px">{{ pagati }}</pre>
+        {% else %}
+            <p>Pagamento non ancora effettuato</p>
+        {% endif %}
+    </div>
+{% endif %}

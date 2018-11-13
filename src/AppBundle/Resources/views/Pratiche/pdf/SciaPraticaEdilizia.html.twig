@@ -95,13 +95,13 @@
     <tbody>
     <tr>
         <th>
-            {{ 'steps.scia.ulteriori_allegati_tecnici.label'|trans() }}
+            {{ 'steps.scia.vincoli.label'|trans() }}
         </th>
         <td>
-            {% if pratica.dematerializedForms.elencoUlterioriAllegatiTecnici is defined %}
-                {% for key, v in pratica.dematerializedForms.elencoUlterioriAllegatiTecnici %}
+            {% if pratica.dematerializedForms.vincoli is defined %}
+                {% for key, v in pratica.dematerializedForms.vincoli %}
                     {% if v|length > 0 %}
-                        <strong>{{ ('steps.scia.ulteriori_allegati_tecnici.files.' ~ key ~ '.title')|trans() }}</strong>
+                        <strong>{{ ('steps.scia.vincoli.files.' ~ key ~ '.title')|trans() }}</strong>
                         {% for f in v %}
                             <p>{{ f.name }}</p>
                         {% endfor %}
@@ -112,30 +112,6 @@
     </tr>
     </tbody>
 </table>
-
-<table class="table">
-    <tbody>
-    <tr>
-        <th>
-            {{ 'steps.scia.provvedimenti.label'|trans() }}
-        </th>
-        <td>
-            {% if pratica.dematerializedForms.elencoProvvedimenti is defined %}
-                {% for key, v in pratica.dematerializedForms.elencoProvvedimenti %}
-                    {% if v|length > 0 %}
-                        <strong>{{ ('steps.scia.provvedimenti.files.' ~ key ~ '.title')|trans() }}</strong>
-                        {% for f in v %}
-                            <p>{{ f.name }}</p>
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        </td>
-    </tr>
-
-    </tbody>
-</table>
-
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 

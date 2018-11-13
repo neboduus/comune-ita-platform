@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\OccupazioneSuoloPubblico;
 
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -11,12 +12,15 @@ class OccupazioneType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('indirizzoOccupazione', TextType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.indirizzo'])
+        /** @var TestiAccompagnatoriProcedura $helper */
+        $helper = $options["helper"];
+        $helper->setGuideText('steps.occupazione_suolo_pubblico.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.occupazione_suolo_pubblico.occupazione.title', true);
+        $builder
+            ->add('nomeIniziativa', TextType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.nomeIniziativa'])
+            ->add('indirizzoOccupazione', TextType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.indirizzo'])
             ->add('civicoOccupazione', TextType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.civico'])
-            ->add('lunghezzaOccupazione', TextType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.lunghezza'])
-            ->add('larghezzaOccupazione', TextType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.larghezza'])
-            ->add('metriQuadriOccupazione', TextType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.metri_quadri'])
-            ->add('motivazioneOccupazione', TextareaType::class, ["label" => 'steps.occupazione_suolo_pubblico.occupazione.motivazione']);
+            ;
     }
 
     public function getBlockPrefix()

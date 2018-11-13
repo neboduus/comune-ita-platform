@@ -4,6 +4,7 @@ namespace AppBundle\Payment\Gateway;
 
 
 use AppBundle\Entity\Pratica;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\AbstractPaymentData;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -44,7 +45,6 @@ class Bollo extends AbstractPaymentData implements EventSubscriberInterface
         $day         = $paymentData->getFieldValue('bollo_data_emissione') ? $paymentData->getFieldValue('bollo_data_emissione') : null;
         $hour        = $paymentData->getFieldValue('bollo_ora_emissione') ? implode(':', $paymentData->getFieldValue('bollo_ora_emissione')) : null;
 
-
         $form    = $event->getForm();
         $form
             ->add('bollo_identifier', TextType::class, [
@@ -79,7 +79,7 @@ class Bollo extends AbstractPaymentData implements EventSubscriberInterface
     public function onPreSubmit(FormEvent $event)
     {
         $data = $event->getData();
-        $paymentData = parent::fromArray($event->getData());
+        $paymentData = parent::fromData($event->getData());
         $data['payment_data'] = $paymentData->toJson();
         $event->setData($data);
     }

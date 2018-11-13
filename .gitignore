@@ -22,3 +22,5 @@
 /web/js
 /coverage
 .idea/
+.env
+/servizi/

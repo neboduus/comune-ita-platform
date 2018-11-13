@@ -86,13 +86,13 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.ulteriori_allegati_tecnici.label'|trans() }}</strong></div>
+    <div class="row last">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.vincoli.label'|trans() }}</strong></div>
         <div class="col-xs-12 col-sm-9">
-            {% for key, v in pratica.dematerializedForms.elencoUlterioriAllegatiTecnici %}
+            {% for key, v in pratica.dematerializedForms.vincoli %}
                 {% if v|length > 0 %}
                     <ul class="list-group">
-                        <li class="list-group-item">{{ ('steps.scia.ulteriori_allegati_tecnici.files.' ~ key ~ '.title')|trans() }}</li>
+                        <li class="list-group-item">{{ ('steps.scia.vincoli.files.' ~ key ~ '.title')|trans() }}</li>
                         {% for f in v %}
                         {% if f.id|length>0 %}
                             <li class="list-group-item scia-file">
@@ -107,24 +107,4 @@
         </div>
     </div>
 
-    <div class="row last">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.provvedimenti.label'|trans() }}</strong></div>
-        <div class="col-xs-12 col-sm-9">
-            {% for key, v in pratica.dematerializedForms.elencoProvvedimenti %}
-                {% if v|length > 0 %}
-                    <ul class="list-group">
-                        <li class="list-group-item">{{ ('steps.scia.provvedimenti.files.' ~ key ~ '.title')|trans() }}</li>
-                        {% for f in v %}
-                        {% if f.id|length>0 %}
-                            <li class="list-group-item scia-file">
-                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
-                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
-                            </li>
-                        {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
 </div>

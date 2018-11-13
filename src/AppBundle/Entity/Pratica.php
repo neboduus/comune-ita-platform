@@ -25,6 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "stato_famiglia" = "StatoFamiglia",
  *     "occupazione_suolo_pubblico" = "OccupazioneSuoloPubblico",
  *     "contributo_associazioni" = "ContributoAssociazioni",
+ *     "iscrizione_registro_associazioni" = "IscrizioneRegistroAssociazioni",
  *     "scia_pratica_edilizia" = "SciaPraticaEdilizia",
  *     "estratto_nascita" = "EstrattoNascita",
  *     "atto_nascita" = "AttoNascita",
@@ -75,6 +76,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     const TYPE_SCIA_PRATICA_EDILIZIA = "scia_pratica_edilizia";
     const TYPE_OCCUPAZIONE_SUOLO_PUBBLICO = "occupazione_suolo_pubblico";
     const TYPE_CONTRIBUTO_ASSOCIAZIONI = "contributo_associazioni";
+    const TYPE_ISCRIZIONE_REGISTRO_ASSOCIAZIONI = "iscrizione_registro_associazioni";
 
     const TYPE_ESTRATTO_NASCITA = "estratto_nascita";
     const TYPE_ATTO_NASCITA = "atto_nascita";

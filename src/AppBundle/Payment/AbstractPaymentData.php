@@ -59,7 +59,7 @@ abstract class AbstractPaymentData implements PaymentDataInterface
         return false;
     }
 
-    public static function fromData ($data)
+    public static function fromData ($data): PaymentDataInterface
     {
         if (is_array($data))
         {
@@ -71,17 +71,17 @@ abstract class AbstractPaymentData implements PaymentDataInterface
         }
     }
 
-    public static function fromArray($array)
+    private static function fromArray($array)
     {
         return new static($array);
     }
 
-    public function toArray()
+    private function toArray()
     {
         return $this->attributes;
     }
 
-    public static function fromJson( $json )
+    private static function fromJson( $json )
     {
         return new static( json_decode( $json, true) );
     }
@@ -90,5 +90,4 @@ abstract class AbstractPaymentData implements PaymentDataInterface
     {
         return json_encode( $this->toArray() );
     }
-
 }

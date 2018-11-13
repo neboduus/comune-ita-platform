@@ -31,7 +31,6 @@ class Version20170322170646 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('COMMENT ON COLUMN craue_form_flow_storage.value IS \'(DC2Type:array)\'');
         $this->addSql('ALTER TABLE allegato DROP id_documento_protocollo');
         $this->addSql('ALTER TABLE allegato DROP numeri_protocollo');

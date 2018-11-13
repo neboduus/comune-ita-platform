@@ -52,7 +52,6 @@ class Version20161110105957 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE pratica DROP allacciamento_acquedotto_immobile_provincia');
         $this->addSql('ALTER TABLE pratica DROP allacciamento_acquedotto_immobile_comune');
         $this->addSql('ALTER TABLE pratica DROP allacciamento_acquedotto_immobile_indirizzo');

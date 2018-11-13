@@ -120,6 +120,12 @@ class Servizio
     private $sticky;
 
     /**
+     * @var array
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    private $paymentParameters;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -436,10 +442,12 @@ class Servizio
 
     /**
      * @param bool $paymentRequired
+     * @return $this;
      */
     public function setPaymentRequired(bool $paymentRequired)
     {
         $this->paymentRequired = $paymentRequired;
+        return $this;
     }
 
     /**
@@ -478,6 +486,21 @@ class Servizio
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getPaymentParameters(): array
+    {
+        return $this->paymentParameters;
+    }
 
-
+    /**
+     * @param array $paymentParameters
+     * @return $this
+     */
+    public function setPaymentParameters(array $paymentParameters)
+    {
+        $this->paymentParameters = $paymentParameters;
+        return $this;
+    }
 }
