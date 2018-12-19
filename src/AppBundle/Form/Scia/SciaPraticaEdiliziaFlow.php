@@ -21,7 +21,7 @@ class SciaPraticaEdiliziaFlow extends PraticaFlow
     const STEP_ALLEGATI_MODULO_SCIA = 5;
     const STEP_SOGGETTI = 6;
     const STEP_ALLEGATI_TECNICI = 7;
-    const STEP_ULTERIORI_ALLEGATI_TECNICI = 8;
+    const STEP_VINCOLI = 8;
     const STEP_PROVVEDIMENTI = 9;
     const STEP_CONFERMA = 10;
 
@@ -58,13 +58,6 @@ class SciaPraticaEdiliziaFlow extends PraticaFlow
                     return $flow->getFormData()->haUnaRichiestaDiIntegrazioneAttiva() && !PraticaEdiliziaAllegatiModuloSciaType::getRequestIntegrations($flow->getFormData());
                 },
             ),
-            self::STEP_SOGGETTI => array(
-                'label' => 'steps.scia.soggetti.label',
-                'form_type' => PraticaEdiliziaSoggettiType::class,
-                'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
-                    return $flow->getFormData()->haUnaRichiestaDiIntegrazioneAttiva() && !PraticaEdiliziaSoggettiType::getRequestIntegrations($flow->getFormData());
-                },
-            ),
             self::STEP_ALLEGATI_TECNICI => array(
                 'label' => 'steps.scia.allegati_tecnici.label',
                 'form_type' => PraticaEdiliziaAllegatiTecniciType::class,
@@ -72,20 +65,13 @@ class SciaPraticaEdiliziaFlow extends PraticaFlow
                     return $flow->getFormData()->haUnaRichiestaDiIntegrazioneAttiva() && !PraticaEdiliziaAllegatiTecniciType::getRequestIntegrations($flow->getFormData());
                 },
             ),
-            self::STEP_ULTERIORI_ALLEGATI_TECNICI => array(
-                'label' => 'steps.scia.ulteriori_allegati_tecnici.label',
-                'form_type' => PraticaEdiliziaUlterioriAllegatiTecniciType::class,
+            self::STEP_VINCOLI => array(
+                'label' => 'steps.scia.vincoli.label',
+                'form_type' => PraticaEdiliziaVincoliType::class,
                 'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
-                    return $flow->getFormData()->haUnaRichiestaDiIntegrazioneAttiva() && !PraticaEdiliziaUlterioriAllegatiTecniciType::getRequestIntegrations($flow->getFormData());
+                    return $flow->getFormData()->haUnaRichiestaDiIntegrazioneAttiva() && !PraticaEdiliziaVincoliType::getRequestIntegrations($flow->getFormData());
                 },
             ),
-            self::STEP_PROVVEDIMENTI => array(
-                'label' => 'steps.scia.provvedimenti.label',
-                'form_type' => PraticaEdiliziaProvvedimentiType::class,
-                'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
-                    return $flow->getFormData()->haUnaRichiestaDiIntegrazioneAttiva() && !PraticaEdiliziaProvvedimentiType::getRequestIntegrations($flow->getFormData());
-                },
-            )
         );
 
         // Mostro lo step del'ente solo se è necesario

@@ -1,0 +1,11 @@
+
+FROM ocsdc_ocsdc
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y cron
+
+ADD crontab /etc/cron.d/ocsdc_cron
+RUN chmod 0644 /etc/cron.d/ocsdc_cron
+RUN crontab /etc/cron.d/ocsdc_cron
+RUN touch /var/log/cron.log
+RUN service cron start
+
+CMD ["cron", "-f" ]

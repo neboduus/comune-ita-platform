@@ -36,7 +36,6 @@ class Version20170904103640 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('DROP INDEX UNIQ_197E1722B067413');
         $this->addSql('ALTER TABLE ente DROP codice_amministrativo');
         $this->addSql('ALTER TABLE allegato DROP CONSTRAINT FK_622BC057A8102107');

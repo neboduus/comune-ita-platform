@@ -45,6 +45,7 @@ class SelectPaymentGatewayType extends AbstractType
             'choice_label' => 'name',
             'expanded' => false,
             'multiple' => false,
+            'required' => true,
             'label' => false,
             'placeholder' => 'Seleziona il metodo di pagamento'
         ]);

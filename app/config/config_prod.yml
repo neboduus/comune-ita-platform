@@ -16,11 +16,18 @@ monolog:
     handlers:
         main:
             type:         fingers_crossed
-            action_level: error
+            action_level: info
             handler:      nested
         nested:
             type:  stream
             path:  "%kernel.logs_dir%/%kernel.environment%.log"
             level: info
+            action_level: info
         console:
             type:  console
+
+        slack:
+            type:       slackwebhook
+            webhook_url:    '%slack_logs_webhook_url%'
+            level:      notice
+            action_level: notice

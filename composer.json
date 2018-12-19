@@ -30,7 +30,7 @@
         "doctrine/doctrine-fixtures-bundle": "^2.3",
         "doctrine/data-fixtures": "^1.2.2",
         "symfony/swiftmailer-bundle": "^2.3",
-        "symfony/monolog-bundle": "^2.8",
+        "symfony/monolog-bundle": "^3.3.0",
         "symfony/polyfill-apcu": "^1.0",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
@@ -47,7 +47,11 @@
         "doctrine/doctrine-migrations-bundle": "^1.2",
         "h4cc/wkhtmltopdf-amd64": "^0.12.3",
         "eightpoints/guzzle-bundle": "^6.0",
-        "nesbot/carbon": "^2.4"
+        "nesbot/carbon": "^2.4",
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-simplexml": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

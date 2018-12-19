@@ -71,7 +71,7 @@ Vue.component('scia_edilizia_ulteriori_allegati_tecnici', {
         updateFormValue() {
             var el = document.getElementById('scia_pratica_edilizia_ulteriori_allegati_tecnici_dematerialized_forms'),
                 formValue = {
-                    'elencoUlterioriAllegatiTecnici' : this.allegatiCorrenti
+                    'vincoli' : this.allegatiCorrenti
                 };
             el.value = JSON.stringify(formValue)
             this.enableButtons()

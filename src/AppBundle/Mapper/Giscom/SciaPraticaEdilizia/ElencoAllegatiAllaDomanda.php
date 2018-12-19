@@ -11,10 +11,8 @@ class ElencoAllegatiAllaDomanda extends AbstractSciaPraticaEdiliziaMappable
         return [
             'DOM_CI',
             'DOM_CF',
-            'DOM_PAG',
-            'DOM_NP',
-            'DOM_DURC',
-            'DOM_VER',
+            'DOM_PRIVACY',
+            'DOM_ISPAT',
         ];
     }
 

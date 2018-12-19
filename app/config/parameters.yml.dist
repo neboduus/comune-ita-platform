@@ -53,3 +53,7 @@ parameters:
 
     generate_p7m_thumbnail: true
     gsbinary: 'gs'
+
+    mypay_adapter_url: 'http://localhost:3000'
+
+    slack_logs_webhook_url: 'http://slack.com'

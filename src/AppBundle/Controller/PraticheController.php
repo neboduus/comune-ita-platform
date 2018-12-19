@@ -205,7 +205,6 @@ class PraticheController extends Controller
      */
     public function compilaAction(Request $request, Pratica $pratica)
     {
-        echo ' ';
         $em = $this->getDoctrine()->getManager();
 
         if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION && $pratica->getStatus() !== Pratica::STATUS_DRAFT) {

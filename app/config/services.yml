@@ -4,6 +4,35 @@ parameters:
 #    parameter_name: value
 
 services:
+    GuzzleHttp\Client: '@guzzle.client.mypay'
+
+    AppBundle\Form\Scia\PraticaEdiliziaVincoliType:
+        autowire: true
+        tags:
+            - { name: form.type }
+
+    AppBundle\Form\OccupazioneSuoloPubblico\ImportoType:
+        autowire: true
+        tags:
+            - { name: form.type }
+
+    AppBundle\Form\OccupazioneSuoloPubblico\ImportoChecker:
+        autowire: true
+
+    AppBundle\Services\MyPayService:
+        autowire: true
+
+    AppBundle\Payment\Gateway\Bollo:
+        autowire: true
+
+    AppBundle\Payment\Gateway\MyPay:
+        autowire: true
+
+    AppBundle\Validator\Constraints:
+        autowire: true
+
+    Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
+
     ocsdc.cps.userprovider:
         class: AppBundle\Services\CPSUserProvider
         arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
@@ -79,6 +108,12 @@ services:
         public: false
 
     ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
+
+    ocsdc.protocollo.handlers.infor:
+        class: AppBundle\Protocollo\InforProtocolloHandler
+        autowire: true
+#        arguments: ["@doctrine.orm.entity_manager",'@logger', '@ocsdc.allegati.directory_namer',  '@vich_uploader.property_mapping_factory' ]
+        public: false
 
     ocsdc.protocollo_delayed:
         class: AppBundle\Services\DelayedProtocolloService
@@ -166,12 +201,12 @@ services:
             tags:
               - { name: form.type }
 
-    ocsdc.form.type.payment_gateway_type:
-            class: AppBundle\Form\Base\PaymentGatewayType
-            arguments: ["@doctrine.orm.entity_manager"]
-            tags:
+    AppBundle\Form\Base\PaymentGatewayType:
+        autowire: true
+        tags:
               - { name: form.type }
 
+    ocsdc.form.type.payment_gateway_type: '@AppBundle\Form\Base\PaymentGatewayType'
 
     ocsdc.form.flow.pratica:
         class: AppBundle\Form\Base\PraticaFlow
@@ -190,6 +225,10 @@ services:
 
     ocsdc.form.flow.autoletturaacqua:
         class: AppBundle\Form\AutoletturaAcqua\AutoletturaAcquaFlow
+        parent: ocsdc.form.flow.pratica
+
+    ocsdc.form.flow.iscrizioneregistroassociazioni:
+        class: AppBundle\Form\IscrizioneRegistroAssociazioni\IscrizioneRegistroAssociazioniFlow
         parent: ocsdc.form.flow.pratica
 
     ocsdc.form.flow.contributopannolini:

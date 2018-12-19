@@ -111,6 +111,12 @@ class OccupazioneSuoloPubblico extends Pratica
      */
     private $limitazioneTraffico;
 
+    /**
+     * @ORM\Column(type="text", nullable=false)
+     * @var $nomeIniziativa
+     */
+    private $nomeIniziativa;
+
     private $tipologieOccupazione;
 
     private $orari;
@@ -122,6 +128,7 @@ class OccupazioneSuoloPubblico extends Pratica
     {
         parent::__construct();
         $this->type = self::TYPE_OCCUPAZIONE_SUOLO_PUBBLICO;
+        $this->tipologiaOccupazione = self::TIPOLOGIA_TEMPORANEA;
     }
 
     public function getTipologieOccupazione()
@@ -363,7 +370,7 @@ class OccupazioneSuoloPubblico extends Pratica
      */
     public function getTipologiaOccupazione()
     {
-        return $this->tipologiaOccupazione;
+        return $this->tipologiaOccupazione ?? self::TIPOLOGIA_TEMPORANEA;
     }
 
     /**
@@ -462,7 +469,20 @@ class OccupazioneSuoloPubblico extends Pratica
         $this->limitazioneTraffico = $limitazioneTraffico;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getNomeIniziativa()
+    {
+        return $this->nomeIniziativa;
+    }
 
-
+    /**
+     * @param mixed $nomeIniziativa
+     */
+    public function setNomeIniziativa($nomeIniziativa): void
+    {
+        $this->nomeIniziativa = $nomeIniziativa;
+    }
 
 }

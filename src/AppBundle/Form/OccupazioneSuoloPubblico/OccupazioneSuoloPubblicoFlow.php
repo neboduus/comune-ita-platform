@@ -22,7 +22,9 @@ class OccupazioneSuoloPubblicoFlow extends PraticaFlow
     const STEP_OCCUPAZIONE = 5;
     const STEP_TIPO_OCCUPAZIONE = 6;
     const STEP_TEMPO_OCCUPAZIONE = 7;
-    const STEP_CONFERMA = 8;
+    const STEP_ALLEGATI = 8;
+    const STEP_IMPORTO = 9;
+    const STEP_CONFERMA = 10;
 
     protected $allowDynamicStepNavigation = true;
 
@@ -45,18 +47,31 @@ class OccupazioneSuoloPubblicoFlow extends PraticaFlow
                 'label' => 'steps.occupazione_suolo_pubblico.occupazione.label',
                 'form_type' => OccupazioneType::class
             ),
-            self::STEP_TIPO_OCCUPAZIONE => array(
-                'label' => 'steps.occupazione_suolo_pubblico.tipologia_occupazione.label',
-                'form_type' => TipologiaOccupazioneType::class
-            ),
             self::STEP_TEMPO_OCCUPAZIONE => array(
                 'label' => 'steps.occupazione_suolo_pubblico.tempo_occupazione.label',
                 'form_type' => TempoOccupazioneType::class,
                 'skip' => function($estimatedCurrentStepNumber, FormFlowInterface $flow) {
                     return $flow->getFormData()->getTipologiaOccupazione() == OccupazioneSuoloPubblico::TIPOLOGIA_PERMANENTE;
                 }
-            )
+            ),
+            self::STEP_ALLEGATI => array(
+                'label' => 'steps.occupazione_suolo_pubblico.allegati.label',
+                'form_type' => AllegatiType::class
+            ),
         );
+
+
+        if(!$this->isPaymentRequired()) {
+            $steps[self::STEP_TIPO_OCCUPAZIONE] = array(
+                'label' => 'steps.occupazione_suolo_pubblico.tipologia_occupazione.label',
+                'form_type' => TipologiaOccupazioneType::class
+            );
+        } else {
+            $steps[self::STEP_IMPORTO] = array(
+                'label' => 'steps.common.inserisci_importo.label',
+                'form_type' => ImportoType::class,
+            );
+        }
 
         // Mostro lo step del'ente solo se è necesario
         if ($this->getFormData()->getEnte() == null && $this->prefix == null)
@@ -74,7 +89,6 @@ class OccupazioneSuoloPubblicoFlow extends PraticaFlow
         // Attivo gli step di pagamento solo se è richiesto nel servizio
         if ($this->isPaymentRequired())
         {
-
             $steps[]= array(
                 'label' => 'steps.common.select_payment_gateway.label',
                 'form_type' => SelectPaymentGatewayType::class

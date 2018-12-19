@@ -1010,6 +1010,46 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         return new Response(200, [], json_encode($body));
     }
+    
+    protected function getInforSuccessResponse() {
+        return <<<HEREDOC
+<?xml version="1.0" ?>
+ <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://webservices.jprotocollo.jente.infor.arezzo.it/">
+  <soapenv:Body>
+   <ns1:inserisciPartenzaResponse>
+    <rispostaProtocolla>
+     <ns1:esito>OK</ns1:esito>
+     <ns1:segnatura>
+      <ns1:registro>
+       <ns1:codice>GE</ns1:codice>
+       <ns1:descrizione>REGISTRO GENERALE</ns1:descrizione>
+      </ns1:registro>
+      <ns1:sezione>
+       <ns1:codice>GE</ns1:codice>
+       <ns1:descrizione>SEZIONE GENERALE</ns1:descrizione>
+      </ns1:sezione>
+      <ns1:anno>2018</ns1:anno>
+      <ns1:numero>50</ns1:numero>
+      <ns1:data>14/11/2018</ns1:data>
+      <ns1:ora>18:37</ns1:ora>
+      <ns1:amministrazione>
+       <ns1:ente>
+        <ns1:codice>c_h612</ns1:codice>
+        <ns1:descrizione>Comune di Rovereto</ns1:descrizione>
+       </ns1:ente>
+       <ns1:aoo>
+        <ns1:codice>c_h612</ns1:codice>
+        <ns1:descrizione>Comune di Rovereto</ns1:descrizione>
+       </ns1:aoo>
+      </ns1:amministrazione>
+     </ns1:segnatura>
+    </rispostaProtocolla>
+   </ns1:inserisciPartenzaResponse>
+  </soapenv:Body>
+ </soapenv:Envelope>
+</xml>
+HEREDOC;
+    }
 
     protected function getPiTreSuccessResponse()
     {

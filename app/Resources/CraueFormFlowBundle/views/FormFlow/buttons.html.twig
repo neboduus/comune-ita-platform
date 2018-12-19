@@ -43,7 +43,18 @@
     ] -%}
 
     {% for button in craue_buttons if button.render %}
-        <button type="submit"{% for key, value in button.attr %} {{ key }}="{{ value }}"{% endfor %}>
+        {% if pratica
+            and flow.getCurrentStepLabel() is same as(constant('\\AppBundle\\Payment\\Gateway\\MyPay::PAYMENT_STEP_LABEL'))
+            and pratica.paymentData is defined
+            and pratica.paymentData.overall_outcome is defined
+            and pratica.paymentData.overall_outcome is same as(constant('\\AppBundle\\Payment\\Gateway\\MyPay::ESITO_PENDING'))
+            and button.label is same as('button.next') %}
+            {% set disabled='disabled="disabled"' %}
+        {% else %}
+            {% set disabled='' %}
+        {% endif %}
+
+        <button type="submit"{% for key, value in button.attr %} {{ key }}="{{ value }}"{% endfor %} {{ disabled }}>
         <i class="{{ button.attr.i_class }}" aria-hidden="true"></i>
         {{- button.label | trans({}, 'CraueFormFlowBundle') -}}
         </button>
