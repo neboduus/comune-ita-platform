@@ -46,6 +46,9 @@ parameters:
 
     ocsdc_default_date_format: "d-m-Y"
     ocsdc_default_datetime_format: "d-m-Y H:i"
+
+    ocsdc_default_moment_datetime_format: "DD-MM-YYYY HH:mm"
+
     ocsdc_default_time_format: "H:i"
 
     ocsdc_scheme: 'https'

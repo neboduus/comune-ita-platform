@@ -9,6 +9,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\InstanceService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -56,10 +57,23 @@ class OperatoriController extends Controller
     }
 
     /**
+     * @param InstanceService $instanceService
+     *
+     * @Route("/parametri-protocollo", name="operatori_impostazioni_protocollo_list")
+     * @Template("@App/Operatori/impostazioniProtocollo.html.twig")
+     * @return array
+     */
+    public function impostazioniProtocolloListAction()
+    {
+        return array('parameters' =>  $this->get('ocsdc.instance_service')->getCurrentInstance()->getProtocolloParameters());
+    }
+
+    /**
      * @Route("/{pratica}/autoassign",name="operatori_autoassing_pratica")
      * @param Pratica $pratica
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Exception
      */
     public function autoAssignPraticaAction(Pratica $pratica)
     {

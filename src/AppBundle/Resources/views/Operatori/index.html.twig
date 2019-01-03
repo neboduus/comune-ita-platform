@@ -8,8 +8,11 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('bundles/app/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/moment.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/datatable-moment.js') }}"></script>
     <script>
         $(document).ready(function() {
+            $.fn.dataTable.moment('{{ ocsdc_default_moment_datetime_format }}');
             $('table').DataTable();
         });
     </script>

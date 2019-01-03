@@ -37,6 +37,7 @@ nav:
     panello_controllo: "Pannello di controllo"
     lista_operatori: 'Gestisci operatori comune'
     accesso_operatori: 'Accesso operatori'
+    protocollo: 'Configurazione di Protocollo'
 
 terms:
   title: 'Accettazione termini di utilizzo'
@@ -536,7 +537,7 @@ steps:
         org_richiedente:
             label: 'Organizzazione richiedente'
             title: 'Organizzazione richiedente'
-            ruolo_utente: 'In qualità di (ruolo del richiedente)'
+            ruolo_utente: 'In qualità di '
             ragione_sociale: 'Ragione sociale'
             cf: 'Codice fiscale'
             piva: 'Partita Iva'

@@ -32,7 +32,7 @@ class ProtocolloServiceTest extends AbstractAppTestCase
     public function testProtocolloServiceSendPratica()
     {
         $expectedAllegati = 3;
-        $responses = [$this->getPiTreSuccessResponse()];
+        $responses = [$this->getPiTreSuccessResponse(), $this->getPiTreSuccessResponse()];
         for ($i = 1; $i <= $expectedAllegati; $i++) {
             $responses[] = $this->getPiTreSuccessResponse();
         }
@@ -54,7 +54,7 @@ class ProtocolloServiceTest extends AbstractAppTestCase
             $protocollo->protocollaAllegato($pratica, $allegato);
         }
 
-        $this->assertEquals($expectedAllegati, count($pratica->getNumeriProtocollo()));
+        $this->assertEquals($expectedAllegati+1, count($pratica->getNumeriProtocollo()));
     }
 
     /**
@@ -94,7 +94,11 @@ class ProtocolloServiceTest extends AbstractAppTestCase
     public function testProtocolloServiceDispatchEvent()
     {
         $expectedAllegati = 2;
-        $responses = [$this->getPiTreSuccessResponse()];
+        $responses = [
+            $this->getPiTreSuccessResponse(),
+            $this->getPiTreSuccessResponse(),
+            $this->getPiTreSuccessResponse()
+        ];
         for ($i = 1; $i <= $expectedAllegati; $i++) {
             $responses[] = $this->getPiTreSuccessResponse();
         }
@@ -109,13 +113,11 @@ class ProtocolloServiceTest extends AbstractAppTestCase
 
         $protocollo->protocollaPratica($pratica);
 
-
         $allegati = $this->setupNeededAllegatiOperatoreForAllInvolvedUsers(1, $user);
         foreach ($allegati as $allegato) {
             $pratica->addAllegatoOperatore($allegato);
         }
 
-        //Fixme: aggiungere risposta operatore
         $risposta = $this->setupRispostaOperatoreForAllInvolvedUsers($user);
         $pratica->addRispostaOperatore($risposta);
         $protocollo->protocollaRisposta($pratica);
@@ -184,7 +186,7 @@ class ProtocolloServiceTest extends AbstractAppTestCase
      */
     public function testProtocolloServiceCanNotUploadAllegatoTwice()
     {
-        $protocollo = $this->getMockProtocollo([$this->getPiTreSuccessResponse(), $this->getPiTreSuccessResponse()]);
+        $protocollo = $this->getMockProtocollo([$this->getPiTreSuccessResponse(), $this->getPiTreSuccessResponse(),$this->getPiTreSuccessResponse()]);
         $user = $this->createCPSUser();
         $pratica = $this->createSubmittedPraticaForUser($user);
         $protocollo->protocollaPratica($pratica);

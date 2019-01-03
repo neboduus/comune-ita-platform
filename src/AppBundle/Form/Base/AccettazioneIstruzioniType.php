@@ -16,10 +16,13 @@ class AccettazioneIstruzioniType extends AbstractType
         /** @var Pratica $pratica */
         $pratica = $builder->getData();
 
+        $servizio = $pratica->getServizio();
+
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
         $helper->setDescriptionText(
-            $builder->getData()->getServizio()->getTestoIstruzioni(),
+            $servizio->getTestoIstruzioni(). '' .$servizio->getCustomTextForStep('accettazione')
+            ,
            true,
            ['%comune%' => $pratica->getEnte()->getName()]
         );

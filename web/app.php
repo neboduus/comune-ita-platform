@@ -27,12 +27,12 @@ elseif ($request->server->has('REQUEST_URI'))
 
 if ( !empty($identifier) && file_exists( __DIR__.'/../app/config/' .$identifier ) )
 {
-    $kernel = new InstanceKernel('prod', true);
+    $kernel = new InstanceKernel('prod', false);
     $kernel->setIdentifier($identifier);
 }
 else
 {
-    $kernel = new AppKernel('prod', true);
+    $kernel = new AppKernel('prod', false);
 }
 $kernel->loadClassCache();
 $response = $kernel->handle($request);

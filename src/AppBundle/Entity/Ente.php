@@ -370,4 +370,12 @@ class Ente
         return $this;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getProtocolloParameters(): ArrayCollection
+    {
+        $this->parseProtocolloParameters();
+        return $this->protocolloParameters;
+    }
 }

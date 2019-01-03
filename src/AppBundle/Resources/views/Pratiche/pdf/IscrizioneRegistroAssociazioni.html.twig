@@ -5,6 +5,12 @@
 <body>
 {{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
 
+<div class="dati_richiedente">
+    <p>
+        {{ 'steps.common.org_richiedente.ruolo_utente'|trans }} {{ pratica.getRuoloUtenteOrgRichiedente }}
+    </p>
+</div>
+
 <div class="chiede center-title">
     {{ 'pratica.pdf.chiede'|trans() }}
 </div>
@@ -16,10 +22,6 @@
  
     <p><strong>{{ 'steps.common.org_richiedente.title'|trans }}</strong></p>
     <table class="table">
-        <tr>
-            <th width="1">{{ 'steps.common.org_richiedente.ruolo_utente'|trans }}</th>
-            <td>{{ pratica.getRuoloUtenteOrgRichiedente }}</td>
-        </tr>
         <tr>
             <th width="1">{{ 'steps.common.org_richiedente.nome_associazione'|trans }}</th>
             <td>{{ pratica.nomeAssociazione }}</td>

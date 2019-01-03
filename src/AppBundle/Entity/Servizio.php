@@ -126,6 +126,12 @@ class Servizio
     private $paymentParameters;
 
     /**
+     * @var array
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    private $customTexts;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -501,6 +507,51 @@ class Servizio
     public function setPaymentParameters(array $paymentParameters)
     {
         $this->paymentParameters = $paymentParameters;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomTexts(): array
+    {
+        return $this->customTexts;
+    }
+
+    /**
+     * @param array $customTexts
+     * @return Servizio
+     */
+    public function setCustomTexts(array $customTexts): Servizio
+    {
+        $this->customTexts = $customTexts;
+        return $this;
+    }
+
+    /**
+     * @param Servizio $servizio
+     * @param $step
+     * @return string
+     */
+    public function getCustomTextForStep($step): string
+    {
+        if(!isset($this->customTexts[$step]))
+        {
+            return '';
+        }
+
+        return $this->customTexts[$step];
+    }
+
+    /**
+     * @param $step
+     * @param $content
+     * @return Servizio
+     */
+    public function setCustomTextForServizioAndStep($step, $content): Servizio
+    {
+
+        $this->customTexts[$step] = $content;
         return $this;
     }
 }

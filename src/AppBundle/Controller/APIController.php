@@ -118,4 +118,23 @@ class APIController extends Controller
 
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
+
+    /**
+     * @Route("/servizioTexts/{servizio}/{ente}/{step}", name="ez_api_testi_custom_servizio_ente")
+     * @ParamConverter("servizio", options={"mapping": {"servizio": "slug"}})
+     * @ParamConverter("ente", options={"mapping": {"ente": "codiceMeccanografico"}})
+     * @Method({"POST"})
+     * @param Request  $request
+     * @param Servizio $servizio
+     * @param Ente     $ente
+     *
+     * @return Response
+     */
+    public function putServizioSpecificTexts(Request $request, Servizio $servizio, Ente $ente, $step)
+    {
+        $content = $request->getContent();
+        $servizio->setCustomTextForServizioAndStep($step, $content);
+        $this->getDoctrine()->getManager()->flush();
+        return new Response(null, Response::HTTP_NO_CONTENT);
+    }
 }

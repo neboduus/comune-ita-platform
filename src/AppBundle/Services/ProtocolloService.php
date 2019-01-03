@@ -62,6 +62,13 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
             }catch(AlreadyUploadException $e){}
         }
 
+        foreach ($pratica->getModuliCompilati() as $allegato) {
+            try {
+                $this->validateUploadFile($pratica, $allegato);
+                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+            }catch(AlreadyUploadException $e){}
+        }
+
         $this->entityManager->persist($pratica);
         $this->entityManager->flush();
 
@@ -124,12 +131,22 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
         $this->handler->sendRispostaToProtocollo($pratica);
 
+        $this->logger->notice('Sending risposta operatore as allegato : id '.$pratica->getRispostaOperatore()->getId());
+        try {
+            $this->validateUploadFile($pratica, $pratica->getRispostaOperatore());
+            $this->handler->sendAllegatoRispostaToProtocollo($pratica, $pratica->getRispostaOperatore());
+        } catch(AlreadyUploadException $e) {
+            $this->logger->error($e->getMessage());
+        }
+
         $allegati = $pratica->getAllegatiOperatore();
         foreach ($allegati as $allegato) {
             try {
                 $this->validateUploadFile($pratica, $allegato);
                 $this->handler->sendAllegatoRispostaToProtocollo($pratica, $allegato);
-            }catch(AlreadyUploadException $e){}
+            }catch(AlreadyUploadException $e){
+                $this->logger->error($e->getMessage());
+            }
         }
 
         $this->entityManager->persist($pratica);

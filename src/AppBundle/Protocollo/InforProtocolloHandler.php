@@ -91,42 +91,9 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
         $richiesta->addChild('web:username', $parameters['infor_username'], 'web');
         $protocollaArrivo = $richiesta->addChild('web:protocollaArrivo', null, 'web');
 
+        $this->createClassificazioneNode($protocollaArrivo, $parameters['arrivo']);
 
-        /**
-         * <web:classificazione>
-        <web:titolario>11.01</web:titolario>
-        <web:fascicolo>
-        <web:anno>2016</web:anno>
-        <web:numero>2</web:numero>
-        </web:fascicolo>
-        </web:classificazione>
-         */
-        $classificazione = $protocollaArrivo->addChild('web:classificazione', null, 'web');
-        $titolario = $classificazione->addChild('web:titolario', $parameters['arrivo']['classifica'], 'web');
-        $fascicolo = $classificazione->addChild('web:fascicolo', null, 'web');
-        $anno = $fascicolo->addChild('web:anno', explode('/', $parameters['arrivo']['fascicolo'])[0], 'web');
-        $numero = $fascicolo->addChild('web:numero', explode('/', $parameters['arrivo']['fascicolo'])[1], 'web');
-
-
-        /**
-            <!--Optional:-->
-           <web:altriDati>
-            <!--Optional:-->
-            <web:tipoDocumento>
-             <web:codice>CV</web:codice>
-            </web:tipoDocumento>
-            <web:tramite>
-             <web:codice>WEB</web:codice>
-            </web:tramite>
-            <!--Optional:-->
-            <web:visibilita>5</web:visibilita>
-           </web:altriDati>
-         */
-        $altriDati = $protocollaArrivo->addChild('web:altriDati', null, 'web');
-        $tipoDocumento = $altriDati->addChild('web:tipoDocumento', null, 'web');
-        $tipoDocumento_codice = $tipoDocumento->addChild('web:codice', $parameters['arrivo']['tipo_documento'], 'web');
-        $tramite = $altriDati->addChild('web:tramite', null, 'web');
-        $tramite_codice = $tramite->addChild('web:codice', $parameters['arrivo']['tramite'], 'web');
+        $this->createAltriDatiNode($protocollaArrivo, $parameters['arrivo']);
 
         $soggetti = $protocollaArrivo->addChild('web:soggetti', null, 'web');
         $soggetto = $soggetti->addChild('web:soggetto', null, 'web');
@@ -136,10 +103,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
             $soggetto->addChild('web:indirizzo', $pratica->getRichiedenteEmail(), 'web');
         }
 
-        $smistamenti = $protocollaArrivo->addChild('web:smistamenti', null, 'web');
-        $smistamento = $smistamenti->addChild('web:smistamento', null, 'web');
-        $corrispondente = $smistamento->addChild('web:corrispondente', null, 'web');
-        $corrispondente->addChild('web:codice', 'STC', 'web');
+        $this->createSmistamentoNode($protocollaArrivo, $parameters['arrivo']);
 
         $protocollaArrivo->addChild('web:oggetto', $this->retrieveOggettoFromPratica($pratica), 'web');
 
@@ -157,9 +121,10 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     {
         $parameters = $this->retrieveProtocolloParametersForEnteAndServizio($pratica);
 
-        $request = $this->createSendAllegatoRequestBody($pratica, $allegato, $parameters);
+        $request = $this->createSendAllegatoRequestBody($pratica->getNumeroProtocollo(), $allegato, $parameters);
 
         $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl']);
+
         $pratica->addNumeroDiProtocollo([
             'id' => $allegato->getId(),
             'protocollo' => $response,
@@ -181,10 +146,13 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
         $protocollaPartenza = $richiesta->addChild('web:protocollaPartenza', null, 'web');
         $soggetti = $protocollaPartenza->addChild('web:soggetti', null, 'web');
         $soggetto = $soggetti->addChild('web:soggetto', null, 'web');
-        $soggetto->addChild('web:denominazione', 'Stanza del Cittadino', 'web');
-        $soggetto->addChild('web:indirizzo', 'no-reply@stanzadelcittadino.it', 'web');
+        $soggetto->addChild('web:denominazione', $pratica->getRichiedenteCognome(). ' '. $pratica->getRichiedenteNome() .' '. $pratica->getRichiedenteCodiceFiscale() , 'web');
+        $soggetto->addChild('web:indirizzo', $pratica->getRichiedenteEmail() || $pratica->getRichiedenteEmail()  , 'web');
 
-//        $soggetti->addChild('web:altriSoggetti', '', 'web');
+        $this->createClassificazioneNode($protocollaPartenza, $parameters['risposta']);
+        $this->createAltriDatiNode($protocollaPartenza, $parameters['risposta']);
+        $this->createSmistamentoNode($protocollaPartenza, $parameters['risposta']);
+
         $protocollaPartenza->addChild('web:oggetto', $this->retrieveOggettoRispostaFromPratica($pratica), 'web');
         $request = trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
         $response = $this->sendRequest(self::ACTION_INSERISCI_PARTENZA , $request, $parameters['infor_wsUrl']);
@@ -195,7 +163,17 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
     {
-        $this->sendAllegatoToProtocollo($pratica, $allegato);
+        $parameters = $this->retrieveProtocolloParametersForEnteAndServizio($pratica);
+        $risposta = $pratica->getRispostaOperatore();
+
+        $request = $this->createSendAllegatoRequestBody($risposta->getNumeroProtocollo(), $allegato, $parameters);
+
+        $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl']);
+
+        $risposta->addNumeroDiProtocollo([
+            'id' => $allegato->getId(),
+            'protocollo' => $response,
+        ]);
     }
 
     private function sendRequest($action, $request, $url)
@@ -273,13 +251,13 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     private function retrieveOggettoRispostaFromPratica(Pratica $pratica): string
     {
         if($pratica->getEsito() === Pratica::ACCEPTED) {
-            return "STANZA DEL CITTADINO : rifiuto  ".$pratica->getServizio()->getName().
-                " ". $pratica->getRichiedenteCognome() .
-                " " .$pratica->getRichiedenteNome();
+            return "STANZA DEL CITTADINO : rilascio  ".$pratica->getServizio()->getName().
+                " " . $pratica->getRispostaOperatore()->getOriginalFilename();
         }
 
-        return "STANZA DEL CITTADINO : rilascio  ".$pratica->getServizio()->getName().
-            " " . $pratica->getRispostaOperatore()->getOriginalFilename();
+        return "STANZA DEL CITTADINO : rifiuto  ".$pratica->getServizio()->getName().
+            " ". $pratica->getRichiedenteCognome() .
+            " " .$pratica->getRichiedenteNome();
     }
 
     private function retrieveProtocolloParametersForEnteAndServizio(Pratica $pratica): array
@@ -295,12 +273,12 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
      * @param array $parameters
      * @return string
      */
-    protected function createSendAllegatoRequestBody(Pratica $pratica, AllegatoInterface $allegato, array $parameters): ?string
+    protected function createSendAllegatoRequestBody($numeroDiProtocollo, AllegatoInterface $allegato, array $parameters): ?string
     {
         /**
          * Protocol number has the format \d{4}/\d{2}
          */
-        $numeroDiProtocollo = explode('/', $pratica->getNumeroProtocollo());
+        $numeroDiProtocollo = explode('/', $numeroDiProtocollo);
         $anno = $numeroDiProtocollo[0];
         $numero = $numeroDiProtocollo[1];
 
@@ -330,5 +308,43 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
             $this->logger->critical('Missing actual allegato file for allegato, NOT sending it to Infor protocol ', [$allegato]);
 
         throw new \Error('Missing actual allegato file for allegato, NOT sending it to Infor protocol');
+    }
+
+    /**
+     * @param SimpleXMLElement $protocollaArrivo
+     * @param array $parameters
+     */
+    private function createClassificazioneNode(SimpleXMLElement $protocollaArrivo, array $parameters): void
+    {
+        $classificazione = $protocollaArrivo->addChild('web:classificazione', null, 'web');
+        $classificazione->addChild('web:titolario', $parameters['classifica'], 'web');
+        $fascicolo = $classificazione->addChild('web:fascicolo', null, 'web');
+        $fascicolo->addChild('web:anno', explode('/', $parameters['fascicolo'])[0], 'web');
+        $fascicolo->addChild('web:numero', explode('/', $parameters['fascicolo'])[1], 'web');
+    }
+
+    /**
+     * @param SimpleXMLElement $protocollaArrivo
+     * @param array $parameters
+     */
+    private function createAltriDatiNode(SimpleXMLElement $protocollaArrivo, array $parameters): void
+    {
+        $altriDati = $protocollaArrivo->addChild('web:altriDati', null, 'web');
+        $tipoDocumento = $altriDati->addChild('web:tipoDocumento', null, 'web');
+        $tipoDocumento->addChild('web:codice', $parameters['tipo_documento'], 'web');
+        $tramite = $altriDati->addChild('web:tramite', null, 'web');
+        $tramite->addChild('web:codice', $parameters['tramite'], 'web');
+    }
+
+    /**
+     * @param SimpleXMLElement $protocollaArrivo
+     * @param array $parameters
+     */
+    private function createSmistamentoNode(SimpleXMLElement $protocollaArrivo, array $parameters): void
+    {
+        $smistamenti = $protocollaArrivo->addChild('web:smistamenti', null, 'web');
+        $smistamento = $smistamenti->addChild('web:smistamento', null, 'web');
+        $corrispondente = $smistamento->addChild('web:corrispondente', null, 'web');
+        $corrispondente->addChild('web:codice', $parameters['smistamento'], 'web');
     }
 }

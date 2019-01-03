@@ -841,6 +841,8 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param CPSUser $user
      *
      * @return Allegato[]
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     protected function setupNeededAllegatiForAllInvolvedUsers($numberOfExpectedAttachments, CPSUser $user)
     {
