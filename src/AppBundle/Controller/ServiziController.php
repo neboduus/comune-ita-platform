@@ -38,7 +38,14 @@ class ServiziController extends Controller
                 'name' => 'ASC',
             ]
         );
-        $servizi = $serviziRepository->findAll();
+        $servizi = $serviziRepository->findBy(
+            [
+                'status' => [1,2]
+            ],
+            [
+                'name' => 'ASC',
+            ]
+        );
 
 
         return [

@@ -132,6 +132,12 @@ class Servizio
     private $customTexts;
 
     /**
+     * @var array
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    private $additionalData;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -552,6 +558,25 @@ class Servizio
     {
 
         $this->customTexts[$step] = $content;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdditionalData(): array
+    {
+        return $this->additionalData;
+    }
+
+    /**
+     * @param array $additionalData
+     * @return $this;
+     *
+     */
+    public function setAdditionalData(array $additionalData): Servizio
+    {
+        $this->additionalData = $additionalData;
         return $this;
     }
 }

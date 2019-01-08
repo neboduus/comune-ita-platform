@@ -211,7 +211,7 @@ class ProtocolloServiceTest extends AbstractAppTestCase
         }
         return
             new ProtocolloService(
-                $protocollohandlerMock ?? new PiTreProtocolloHandler($this->getMockGuzzleClient($responses)),
+                $protocollohandlerMock ?? new PiTreProtocolloHandler($this->getMockGuzzleClient($responses), 'comune-di-tre-ville'),
                 $this->em,
                 $this->getMockLogger(),
                 $dispatcher

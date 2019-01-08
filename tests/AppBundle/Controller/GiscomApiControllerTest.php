@@ -78,6 +78,7 @@ class GiscomApiControllerTest extends AbstractAppTestCase
             'responsabile' => 'Contessa Serbelloni Mazzanti Viendalmare',
             'operatore' => 'giscom',
             'struttura' => 'Edilizia',
+            'message' => null,
         ];
         $this->client->request(
             'POST',

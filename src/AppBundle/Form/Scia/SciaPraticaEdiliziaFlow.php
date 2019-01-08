@@ -1,9 +1,8 @@
 <?php
 namespace AppBundle\Form\Scia;
 
-use AppBundle\Entity\DematerializedFormAllegatiContainer;
+use AppBundle\Entity\ComunicazioneOpereLibere;
 use AppBundle\Entity\Pratica;
-use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
 use AppBundle\Form\Base\DatiTecnicoType;
 use AppBundle\Form\Base\PraticaFlow;
@@ -29,6 +28,10 @@ class SciaPraticaEdiliziaFlow extends PraticaFlow
 
     protected function loadStepsConfig()
     {
+
+        $pratica = $this->getFormData();
+        $tipo = $pratica->getDematerializedForms()['tipo'];
+
         $steps =  array(
             self::STEP_ACCETTAZIONE_ISTRUZIONI => array(
                 'label' => 'steps.common.accettazione_istruzioni.label',
@@ -45,7 +48,7 @@ class SciaPraticaEdiliziaFlow extends PraticaFlow
                 },
             ),
             self::STEP_MODULO_SCIA => array(
-                'label' => 'steps.scia.modulo_scia.label',
+                'label' => 'steps.scia.modulo_default.label',
                 'form_type' => PraticaEdiliziaModuloSciaType::class,
                 'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
                     return $flow->getFormData()->haUnaRichiestaDiIntegrazioneAttiva() && !PraticaEdiliziaModuloSciaType::getRequestIntegrations($flow->getFormData());
@@ -74,8 +77,22 @@ class SciaPraticaEdiliziaFlow extends PraticaFlow
             ),
         );
 
+
+
+
+        switch($tipo) {
+            case Pratica::TYPE_COMUNICAZIONE_OPERE_LIBERE:
+            case Pratica::TYPE_DICHIARAZIONE_ULTIMAZIONE_LAVORI:
+            case Pratica::TYPE_AUTORIZZAZIONE_PAESAGGISTICA_SINDACO:
+                unset($steps[self::STEP_VINCOLI]);
+                break;
+            default:
+                break;
+        }
+
+
         // Mostro lo step del'ente solo se è necesario
-        if ($this->getFormData()->getEnte() == null && $this->prefix == null)
+        if ($pratica->getEnte() == null && $this->prefix == null)
         {
             $steps [self::STEP_SELEZIONA_ENTE] = array(
                 'label' => 'steps.common.seleziona_ente.label',
@@ -107,5 +124,4 @@ class SciaPraticaEdiliziaFlow extends PraticaFlow
 
         return $steps;
     }
-
 }

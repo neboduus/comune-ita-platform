@@ -100,7 +100,7 @@ services:
 
     ocsdc.protocollo.handlers.pitre:
         class: AppBundle\Protocollo\PiTreProtocolloHandler
-        arguments: ["@ocsdc.protocollo.client"]
+        arguments: ["@ocsdc.protocollo.client", "%prefix%"]
         public: false
 
     ocsdc.protocollo.handlers.dummy:

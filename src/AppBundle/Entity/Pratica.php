@@ -27,6 +27,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "contributo_associazioni" = "ContributoAssociazioni",
  *     "iscrizione_registro_associazioni" = "IscrizioneRegistroAssociazioni",
  *     "scia_pratica_edilizia" = "SciaPraticaEdilizia",
+ *     "comunicazione_opere_libere" = "ComunicazioneOpereLibere",
+ *     "comunicazione_inizio_lavori_asseverata" = "ComunicazioneInizioLavoriAsseverata",
+ *     "domanda_di_permesso_di_costruire" = "DomandaDiPermessoDiCostruire",
+ *     "domanda_di_permesso_di_costruire_in_sanatoria" = "DomandaDiPermessoDiCostruireInSanatoria",
+ *     "comunicazione_inizio_lavori" = "ComunicazioneInizioLavori",
+ *     "dichiarazione_ultimazione_lavori" = "DichiarazioneUltimazioneLavori",
+ *     "autorizzazione_paesaggistica_sindaco" = "AutorizzazionePaesaggisticaSindaco",
+ *     "segnalazione_certificata_agibilita" = "SegnalazioneCertificataAgibilita",
  *     "estratto_nascita" = "EstrattoNascita",
  *     "atto_nascita" = "AttoNascita",
  *     "certificato_morte" = "CertificatoMorte",
@@ -73,7 +81,17 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     const TYPE_ATTESTAZIONE_ANAGRAFICA = "attestazione_anagrafica";
     const TYPE_LISTE_ELETTORALI = "liste_elettorali";
     const TYPE_STATO_FAMIGLIA = "stato_famiglia";
+
     const TYPE_SCIA_PRATICA_EDILIZIA = "scia_pratica_edilizia";
+    const TYPE_COMUNICAZIONE_OPERE_LIBERE = "comunicazione_opere_libere";
+    const TYPE_COMUNICAZIONE_INIZIO_LAVORI_ASSEVERATA = 'comunicazione_inizio_lavori_asseverata';
+    const TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE = 'domanda_di_permesso_di_costruire';
+    const TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE_IN_SANATORIA = 'domanda_di_permesso_di_costruire_in_sanatoria';
+    const TYPE_COMUNICAZIONE_INIZIO_LAVORI = 'comunicazione_inizio_lavori';
+    const TYPE_DICHIARAZIONE_ULTIMAZIONE_LAVORI = 'dichiarazione_ultimazione_lavori';
+    const TYPE_AUTORIZZAZIONE_PAESAGGISTICA_SINDACO = 'autorizzazione_paesaggistica_sindaco';
+    const TYPE_SEGNALAZIONE_CERTIFICATA_AGIBILITA = 'segnalazione_certificata_agibilita';
+
     const TYPE_OCCUPAZIONE_SUOLO_PUBBLICO = "occupazione_suolo_pubblico";
     const TYPE_CONTRIBUTO_ASSOCIAZIONI = "contributo_associazioni";
     const TYPE_ISCRIZIONE_REGISTRO_ASSOCIAZIONI = "iscrizione_registro_associazioni";

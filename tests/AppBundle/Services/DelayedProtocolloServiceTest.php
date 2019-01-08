@@ -145,12 +145,10 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
         }
         return
             new ProtocolloService(
-                new PiTreProtocolloHandler($this->getMockGuzzleClient($responses)),
+                new PiTreProtocolloHandler($this->getMockGuzzleClient($responses), 'comune-di-tre-ville'),
                 $this->em,
                 $this->getMockLogger(),
                 $dispatcher
             );
-
     }
-
 }

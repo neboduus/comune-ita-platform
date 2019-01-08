@@ -8,6 +8,9 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Protocollo\Exception\ResponseErrorException;
 use GuzzleHttp\Client;
 
+/**
+ * @property $instance string
+ */
 class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 {
     /**
@@ -15,9 +18,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
      */
     private $client;
 
-    public function __construct(Client $client)
+    public function __construct(Client $client, $instance)
     {
         $this->client = $client;
+        $this->instance = $instance;
     }
 
     /**
@@ -122,6 +126,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
         $parameters = new PiTreProtocolloParameters($parameters);
 
+        if(!$parameters->getInstance()) {
+            $parameters->setInstance($this->instance);
+        }
+
         if ($allegato instanceof AllegatoInterface){
             $parameters->setDocumentId($pratica->getIdDocumentoProtocollo());
             $parameters->setFilePath($allegato->getFile()->getPathname());
@@ -146,6 +154,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         $servizio   = $pratica->getServizio();
         $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
         $parameters = new PiTreProtocolloParameters($parameters);
+
+        if(!$parameters->getInstance()) {
+            $parameters->setInstance($this->instance);
+        }
 
         if ($allegato instanceof AllegatoInterface){
             $parameters->setDocumentId($risposta->getIdDocumentoProtocollo());
