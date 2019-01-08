@@ -275,7 +275,8 @@ abstract class AbstractAppTestCase extends WebTestCase
         OperatoreUser $operatore = null,
         $status = null,
         Erogatore $erogatore = null,
-        Servizio $servizio = null
+        Servizio $servizio = null,
+        $year = null
     ) {
         if (!$erogatore) {
             $erogatore = $this->createErogatoreWithEnti(
@@ -293,6 +294,7 @@ abstract class AbstractAppTestCase extends WebTestCase
         $pratica = new $praticaClass();
         $pratica->setUser($user);
         $pratica->setServizio($servizio);
+
         if ($operatore) {
             /** @var OperatoreUser $operatore */
             $operatore = $this->em->merge($operatore);
