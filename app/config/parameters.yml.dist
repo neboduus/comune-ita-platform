@@ -34,7 +34,7 @@ parameters:
     ez_password: ez
 
     pitre_adapter_url: http://localhost:8080/
-
+    messages_enabled: false
     messages_backend_url: http://localhost:3000/
 
     header_top_title: Provincia autonoma di Trento

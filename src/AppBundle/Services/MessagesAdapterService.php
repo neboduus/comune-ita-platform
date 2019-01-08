@@ -14,6 +14,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Class MessagesAdapterService
+ * @property RegistryInterface doctrine
+ * @property boolean
  */
 class MessagesAdapterService
 {
@@ -31,14 +33,17 @@ class MessagesAdapterService
 
     /**
      * MessagesAdapterService constructor.
-     * @param Client          $client
+     * @param Client $client
      * @param LoggerInterface $logger
+     * @param RegistryInterface $doctrine
+     * @param $messagesEnabled
      */
-    public function __construct(Client $client, LoggerInterface $logger, RegistryInterface $doctrine)
+    public function __construct(Client $client, LoggerInterface $logger, RegistryInterface $doctrine, $messagesEnabled)
     {
         $this->client = $client;
         $this->logger = $logger;
         $this->doctrine = $doctrine;
+        $this->messagesEnabled = $messagesEnabled;
     }
 
     /**
@@ -47,6 +52,10 @@ class MessagesAdapterService
      */
     public function getDecoratedThreadsForUser(User $user)
     {
+        if(!$this->messagesEnabled) {
+            return null;
+        }
+
         try {
             $response = \GuzzleHttp\json_decode((string) $this->client->get('/user/'.$user->getId().'/threads')->getBody());
 
@@ -83,6 +92,10 @@ class MessagesAdapterService
      */
     public function postMessageToThread(UserInterface $sender, $content, $threadId)
     {
+        if(!$this->messagesEnabled) {
+            return null;
+        }
+
         $message = [
             'senderId' => $sender->getId(),
             'content' => $content,
@@ -109,6 +122,10 @@ class MessagesAdapterService
      */
     public function getDecoratedMessagesForThread($threadId, User $user)
     {
+        if(!$this->messagesEnabled) {
+            return null;
+        }
+
         try {
             $response = \GuzzleHttp\json_decode((string) $this->client->get('/thread/'.$threadId)->getBody());
             return $this->decorateMessages($response, $user);
@@ -132,6 +149,10 @@ class MessagesAdapterService
      */
     public function getThreadsForUserEnteAndService(User $user, Ente $ente, Servizio $servizio)
     {
+        if(!$this->messagesEnabled) {
+            return null;
+        }
+
         //find operatore
         $operatore = $this->getOperatoreForEnteAndServizio($ente, $servizio);
         if (!$operatore) {
@@ -166,6 +187,10 @@ class MessagesAdapterService
      */
     public function createThreadsForUserEnteAndService(CPSUser $user, Ente $ente, Servizio $servizio)
     {
+        if(!$this->messagesEnabled) {
+            return null;
+        }
+
         //find operatore
         $operatore = $this->getOperatoreForEnteAndServizio($ente, $servizio);
         $threadId = $user->getId().'~'.$operatore->getId();
