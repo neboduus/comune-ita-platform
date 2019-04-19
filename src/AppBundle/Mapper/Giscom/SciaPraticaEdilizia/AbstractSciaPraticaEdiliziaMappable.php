@@ -7,8 +7,11 @@ use AppBundle\Mapper\HashableInterface;
 
 abstract class AbstractSciaPraticaEdiliziaMappable implements HashableInterface
 {
-    public function __construct($data)
+    protected $tipo;
+
+    public function __construct($data, $tipo = null)
     {
+        $this->tipo = $tipo;
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 if (in_array($key, $this->getProperties())) {

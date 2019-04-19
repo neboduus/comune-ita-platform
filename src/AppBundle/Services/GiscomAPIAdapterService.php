@@ -66,7 +66,8 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
         GiscomAPIMapperService $mapper,
         PraticaStatusService $statusService,
         GiscomStatusMapper $giscomStatusMapper
-    ) {
+    )
+    {
         $this->client = $client;
         $this->em = $em;
         $this->logger = $logger;
@@ -108,7 +109,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             $status = $response->getStatusCode();
             if ($status == 201 || $status == 204) {
                 if ($status == 204) {
-                    
+
                     $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
                     $this->logger->debug('Correctly updated pratica on Giscom Side', $logContext);
 
@@ -134,7 +135,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
 
                     $this->askRelatedCFsForPraticaToGiscom($pratica);
                 }
-                
+
             } else {
                 $this->logger->error("Error when sending pratica {$pratica->getId()} on Giscom Side ", $logContext);
                 throw new \Exception("Error when sending pratica {$pratica->getId()} on Giscom Side");
@@ -142,14 +143,25 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
 
             return $response;
 
-        }catch (\Exception $e){
-            $response = new Response(500,[], $e->getMessage());
+        } catch (\Exception $e) {
+            $response = new Response(500, [], $e->getMessage());
             if (method_exists($e, 'getResponse')) {
                 $response = $e->getResponse();
             }
-            $logContext['remote_error_response'] = $response->getBody()."";
+
+            /**
+             * Remote response body here should be  {Message: somestring}
+             */
+            $logContext['remote_error_response'] = $response->getBody() . "";
+            if (!is_object($logContext['remote_error_response'])) {
+                try {
+                    $logContext['remote_error_response'] = json_decode($logContext['remote_error_response'],true);
+                } catch (\Exception $e) {
+                    /* NOOP: null or already  */
+                }
+            }
             $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side", $logContext);
-            
+
             $mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
             $statusChange = null;
             $statusChange['evento'] = $mappedStatus;
@@ -157,6 +169,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             $statusChange['responsabile'] = 'Giscom';
             $statusChange['struttura'] = 'Giscom';
             $statusChange['timestamp'] = time();
+            $statusChange['message'] = isset($logContext['remote_error_response']['Message']) ? $logContext['remote_error_response']['Message'] : null;
             $statusChange = new StatusChange($statusChange);
 
             $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);

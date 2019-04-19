@@ -2,6 +2,7 @@
 
 namespace AppBundle\Mapper\Giscom;
 
+use AppBundle\Entity\Pratica;
 use AppBundle\Mapper\HashableInterface;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ModuloDomanda;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoAllegatiAllaDomanda;
@@ -19,76 +20,76 @@ class SciaPraticaEdilizia implements HashableInterface
     /**
      * @var string Uuid
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      */
-    private $tipo = 'SCIA';
+    protected $tipo = 'SCIA';
 
     /**
      * @var string
      */
-    private $cfPresentante;
+    protected $cfPresentante;
 
     /**
      * @var string
      */
-    private $tipoIntervento;
+    protected $tipoIntervento;
 
     /**
      * @var ModuloDomanda
      */
-    private $moduloDomanda;
+    protected $moduloDomanda;
 
     /**
      * @var ElencoAllegatiAllaDomanda
      */
-    private $elencoAllegatiAllaDomanda;
+    protected $elencoAllegatiAllaDomanda;
 
     /**
      * @var ElencoSoggettiAventiTitolo
      */
-    private $elencoSoggettiAventiTitolo;
+    protected $elencoSoggettiAventiTitolo;
 
     /**
      * @var ElencoAllegatiTecnici
      */
-    private $elencoAllegatiTecnici;
+    protected $elencoAllegatiTecnici;
 
     /**
      * @var Vincoli
      */
-    private $vincoli;
+    protected $vincoli;
 
     /**
      * @var ElencoProvvedimenti
      */
-    private $elencoProvvedimenti;
+    protected $elencoProvvedimenti;
 
     /**
      * @var string
      */
-    private $numeroDiFascicolo;
+    protected $numeroDiFascicolo;
 
     /**
      * @var string
      */
-    private $protocolloPrincipale;
+    protected $protocolloPrincipale;
 
     /**
      * @var []
      */
-    private $protocolliAllegati;
+    protected $protocolliAllegati;
 
-    public function __construct(array $data = null)
+    public function __construct(array $data = [])
     {
-        $data = $data ?? [];
+        $this->tipo = $data['tipo'] ?? Pratica::TYPE_SCIA_PRATICA_EDILIZIA ;
         $this->moduloDomanda = new ModuloDomanda($data['moduloDomanda'] ?? null);
-        $this->elencoAllegatiAllaDomanda = new ElencoAllegatiAllaDomanda($data['elencoAllegatiAllaDomanda'] ?? null);
+        $this->elencoAllegatiAllaDomanda = new ElencoAllegatiAllaDomanda($data['elencoAllegatiAllaDomanda'] ?? null, $this->tipo);
         $this->elencoSoggettiAventiTitolo = new ElencoSoggettiAventiTitolo($data['elencoSoggettiAventiTitolo'] ?? []);
-        $this->elencoAllegatiTecnici = new ElencoAllegatiTecnici($data['elencoAllegatiTecnici'] ?? []);
-        $this->vincoli = new Vincoli($data['vincoli'] ?? []);
+        $this->elencoAllegatiTecnici = new ElencoAllegatiTecnici($data['elencoAllegatiTecnici'] ?? [], $this->tipo);
+        $this->vincoli = new Vincoli($data['vincoli'] ?? [], $this->tipo);
         $this->tipoIntervento = $data['tipoIntervento'] ?? null;
         $this->protocolliAllegati = [];
     }
@@ -119,18 +120,6 @@ class SciaPraticaEdilizia implements HashableInterface
     public function getTipo()
     {
         return $this->tipo;
-    }
-
-    /**
-     * @param string $tipo
-     *
-     * @return $this
-     */
-    public function setTipo($tipo)
-    {
-        $this->tipo = $tipo;
-
-        return $this;
     }
 
     /**
@@ -299,12 +288,20 @@ class SciaPraticaEdilizia implements HashableInterface
 
     public function getTipiIntervento()
     {
-        return [
-            self::MANUTENZIONE_STRAORDINARIA,
-            self::RISTRUTTURAZIONE_EDILIZIA,
-            self::RESTAURO_E_RISANAMENTO_CONSERVATIVO,
-            self::RISTRUTTURAZIONE_URBANISTICA
-        ];
+        switch($this->tipo) {
+            case \AppBundle\Entity\SciaPraticaEdilizia::TYPE_SCIA_PRATICA_EDILIZIA:
+//            case \AppBundle\Entity\SciaPraticaEdilizia::TYPE_PERMESSO_DI_COSTRUIRE:
+                return [
+                    self::MANUTENZIONE_STRAORDINARIA,
+                    self::RISTRUTTURAZIONE_EDILIZIA,
+                    self::RESTAURO_E_RISANAMENTO_CONSERVATIVO,
+                    self::RISTRUTTURAZIONE_URBANISTICA
+                ];
+            default:
+                return [
+                    'default'
+                ];
+        }
     }
 
     public function toHash()

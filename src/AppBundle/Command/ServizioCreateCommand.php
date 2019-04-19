@@ -41,11 +41,15 @@ class ServizioCreateCommand extends ContainerAwareCommand
         $paymentParameters = [];
         $paymentRequired = false;
         $status = 1;
+        $additionalData = [
+            'urlModuloPrincipale' => '',
+            'urlModuliAggiuntivi' => []
+        ];
 
         $shouldLoadFromFile = $input->getOption('file');
         if ($shouldLoadFromFile) {
             $output->writeln("<info>Loading data from file $shouldLoadFromFile</info>");
-            if(!file_exists($shouldLoadFromFile)){
+            if (!file_exists($shouldLoadFromFile)) {
                 $output->writeln("<error>$shouldLoadFromFile file not found</error>");
                 die(1);
             }
@@ -61,6 +65,8 @@ class ServizioCreateCommand extends ContainerAwareCommand
             $paymentParameters = $parsed['paymentParameters'];
             $paymentRequired = $parsed['paymentRequired'];
             $status = $parsed['status'];
+            $additionalData['urlModuloPrincipale'] = $parsed['url_modulo_principale'] ?? '';
+            $additionalData['urlModuliAggiuntivi'] = $parsed['url_moduli_aggiuntivi'] ?? [];
         } else {
             $output->writeln("<info>Loading data interactively</info>");
             $helper = $this->getHelper('question');
@@ -145,6 +151,7 @@ class ServizioCreateCommand extends ContainerAwareCommand
                 ->setPraticaFlowOperatoreServiceName($flowOperator)
                 ->setPaymentParameters($paymentParameters)
                 ->setPaymentRequired($paymentRequired)
+                ->setAdditionalData($additionalData)
                 ->setStatus($status);
 
             $area = $categoryRepo->findOneByTreeId($area);

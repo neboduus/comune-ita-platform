@@ -13,10 +13,12 @@ class StatusChange
     private $operatore;
     private $responsabile;
     private $struttura;
+    private $message;
 
     /**
      * StatusChange constructor.
      * @param array $data
+     * @throws \Exception
      */
     public function __construct($data)
     {
@@ -29,6 +31,10 @@ class StatusChange
         $this->responsabile = $data['responsabile'];
         $this->struttura = $data['struttura'];
         $this->timestamp = $data['timestamp'] ?? $data['time'];
+        /**
+         * Giscom is asking for SDC to relay the error message to the user
+         */
+        $this->message = $data['message'] ?? null;
 
         if(!is_int($this->timestamp)){
             $date = new \DateTime($this->timestamp, new \DateTimeZone('Europe/Rome'));
@@ -97,6 +103,7 @@ class StatusChange
             'responsabile' => $this->responsabile,
             'struttura' => $this->struttura,
             'timestamp' => $this->timestamp,
+            'message' => $this->message
         ];
     }
 }

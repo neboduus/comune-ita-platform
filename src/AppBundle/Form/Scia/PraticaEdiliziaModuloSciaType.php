@@ -63,8 +63,8 @@ class PraticaEdiliziaModuloSciaType extends AbstractType
 
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('steps.scia.modulo_scia.guida_alla_compilazione', true);
-        $helper->setStepTitle('steps.scia.modulo_scia.title', true);
+        $helper->setGuideText('steps.scia.modulo_default.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.scia.modulo_default.title', true);
 
         $skeleton = new MappedPraticaEdilizia($pratica->getDematerializedForms());
         $allegati = $skeleton->getModuloDomanda()->hasContent() ? [$skeleton->getModuloDomanda()->toHash()] : [];
@@ -111,7 +111,7 @@ class PraticaEdiliziaModuloSciaType extends AbstractType
             $event->getForm()->addError(
                 new FormError($helper->translate(
                     'steps.scia.error.allegato_richiesto',
-                    ['%field%' => $helper->translate('steps.scia.modulo_scia.title')]
+                    ['%field%' => $helper->translate('steps.scia.modulo_default.title')]
                 ))
             );
         } else {
@@ -128,7 +128,7 @@ class PraticaEdiliziaModuloSciaType extends AbstractType
                 $event->getForm()->addError(
                     new FormError($helper->translate(
                         'steps.scia.error.allegato_richiesto',
-                        ['%field%' => $helper->translate('steps.scia.modulo_scia.title')]
+                        ['%field%' => $helper->translate('steps.scia.modulo_default.title')]
                     ))
                 );
             }

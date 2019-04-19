@@ -1,19 +1,12 @@
 # OpenContent - Stanza Del Cittadino
 
-## Server di sviluppo
+## Caricamento dei servizi
+Nella cartella `servizi_config_templates` si trovano dei file standard di configurazione dei servizi, pronti per essere adattati per il singolo tenant e  caricati nella sua istanza tramite
 
-ssh developer@devsdc.opencontent.it -p222
+`bin/console ocsdc:crea-servizi -f nome_del_file_del_servizio.json -i slug-istanza-tenant`
 
-Vedi https://support.opencontent.it/opencontent/wiki/devsdc
+Prestare attenzione in particolare alla configurazione MyPay se necessaria, all'url del modulo principale se presente e allo stato del servizio:
 
-## Servizio di chat
-Perché funzioni il servizio di messaggistica interna bisogna che giri il progetto `ocsdc_messaggistica`
-Questo a sua volta ha necessità di alcuni requisiti
-
-Nel Parameters vanno messi i puntamenti: 
-
-`messages_backend_url: http://localhost:3000/`
-
-Fare riferimento a quel progetto per il setup specifico
-
-Gli endpoint per postare messaggi sono separati per cittadino e operatore perché mi servono i rispettivi utenti dal firewall di Symfony
+ * 0 = disattivo
+ * 1 = attivo
+ * 2 = sospeso

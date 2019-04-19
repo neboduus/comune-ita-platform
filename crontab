@@ -1,0 +1,3 @@
+*/1 * * * * /docroot/bin/console o:s:e --env=dev -i comune-di-rovereto
+*/1 * * * * /docroot/bin/console o:s:e --env=dev -i comune-di-tre-ville
+*/1 * * * * /docroot/bin/console o:s:e --env=dev -i comune-di-vallelaghi
