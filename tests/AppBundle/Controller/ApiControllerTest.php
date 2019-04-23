@@ -57,6 +57,37 @@ class ApiControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
+    public function testUsageAPI()
+    {
+        $pratiche = [
+            '2019' => [
+                $this->createPratica($this->createCPSUser(),null,Pratica::STATUS_SUBMITTED)->setSubmissionTime(1553763008)
+                ],
+            '2017' => [
+        $this->createPratica($this->createCPSUser(),null,Pratica::STATUS_SUBMITTED)->setSubmissionTime(1491004800),
+        $this->createPratica($this->createCPSUser(),null,Pratica::STATUS_SUBMITTED)->setSubmissionTime(1491004802)
+                ]
+        ];
+
+        $expectedResponse = (object)[
+            'status' => 'ok',
+            'version' => APIController::CURRENT_API_VERSION,
+            'count' => (object)[
+                '2019' => count($pratiche['2019']),
+                '2017' => count($pratiche['2017'])
+            ]
+        ];
+        $this->client->request('GET', '/api/' . APIController::CURRENT_API_VERSION . '/usage');
+
+        $response = json_decode($this->client->getResponse()->getContent());
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals($expectedResponse, $response);
+        $this->assertEquals('application/json', $this->client->getResponse()->headers->get('Content-Type'));
+    }
+
+    /**
+     * @test
+     */
     public function testPostAnnotationsAPI()
     {
         $user = $this->createCPSUser(true);

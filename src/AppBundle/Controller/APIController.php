@@ -3,7 +3,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
+use AppBundle\Services\InstanceService;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,14 +17,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class APIController
+ * @property EntityManager em
+ * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/api/v1.0")
  */
 class APIController extends Controller
 {
-
     const CURRENT_API_VERSION = 'v1.0';
     const SCHEDA_INFORMATIVA_REMOTE_PARAMETER = 'remote';
+
+    public function __construct(EntityManager $em, InstanceService $is)
+    {
+        $this->em = $em;
+        $this->is = $is;
+    }
 
     /**
      * @Route("/status",name="api_status")
@@ -32,6 +42,33 @@ class APIController extends Controller
         return new JsonResponse([
             'version' => self::CURRENT_API_VERSION,
             'status' => 'ok',
+        ]);
+    }
+
+    /**
+     * @Route("/usage",name="api_usage")
+     * @return JsonResponse
+     */
+    public function usageAction()
+    {
+        $repo = $this->em->getRepository(Pratica::class);
+        $pratiche = $repo->findSubmittedPraticheByEnte($this->is->getCurrentInstance());
+
+        $count = array_reduce($pratiche,function($acc, $el) {
+            $year = (new \DateTime())->setTimestamp($el->getSubmissionTime())->format('Y');
+            try {
+                $acc[$year]++;
+            } catch(\Exception $e) {
+                $acc[$year] = 1;
+            }
+
+            return $acc;
+        },[]);
+
+        return new JsonResponse([
+            'version' => self::CURRENT_API_VERSION,
+            'status' => 'ok',
+            'count' => $count
         ]);
     }
 
