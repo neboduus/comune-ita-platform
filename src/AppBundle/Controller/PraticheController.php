@@ -16,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -306,6 +307,56 @@ class PraticheController extends Controller
             'user' => $user,
             'threads' => $thread,
         ];
+    }
+
+    /**
+     * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
+     * @ParamConverter("pratica", class="AppBundle:Pratica")
+     * @Template()
+     * @param Pratica $pratica
+     *
+     * @return array
+     */
+    public function showPdfAction(Request $request, Pratica $pratica)
+    {
+        $user = $this->getUser();
+        $this->checkUserCanAccessPratica($pratica, $user);
+        $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+
+
+        return new BinaryFileResponse(
+            $allegato->getFile()->getPath() .'/' . $allegato->getFile()->getFilename(),
+            200,
+            [
+                'Content-type' => 'application/octet-stream',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
+            ]
+        );
+    }
+
+
+    /**
+     * @Route("/{pratica}/delete", name="pratiche_delete")
+     * @ParamConverter("pratica", class="AppBundle:Pratica")
+     * @Template()
+     * @param Pratica $pratica
+     *
+     * @return array
+     */
+    public function deleteAction(Request $request, Pratica $pratica)
+    {
+        $user = $this->getUser();
+        $this->checkUserCanAccessPratica($pratica, $user);
+        if ( $pratica->getStatus() != Pratica::STATUS_DRAFT ) {
+            throw new UnauthorizedHttpException("Pratica can't be deleted, not in draft status");
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($pratica);
+        $em->flush();
+
+
+        return $this->redirectToRoute('pratiche');
     }
 
     /**

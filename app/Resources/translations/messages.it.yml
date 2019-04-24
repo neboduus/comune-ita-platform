@@ -38,6 +38,7 @@ nav:
     lista_operatori: 'Gestisci operatori comune'
     accesso_operatori: 'Accesso operatori'
     protocollo: 'Configurazione di Protocollo'
+    usage: 'Metriche di utilizzo'
 
 terms:
   title: 'Accettazione termini di utilizzo'
@@ -85,6 +86,7 @@ pratica:
   cancella_elemento: 'Cancella elemento'
   nucleoFamiliare: 'Composizione del nucleo familiare'
   pagamento: 'Pagamento'
+  non_specificato: 'Non specificato'
   pdf:
     dati_autenticazione: '<strong><small>Dati generati automaticamente dalla Stanza del Cittadino</small><br>Informazioni tecniche</strong>'
     spett_le: 'Spett.le'
@@ -135,6 +137,7 @@ pratica:
       rapporto_di_parentela: 'Rapporto di parentela'
       abbr_rapporto_di_parentela: 'Parentela'
     allegati: 'File allegati'
+    richiesta_integrazioni: 'Richiesta integrazioni'
     allegato:
       file: 'Nome del file'
       descrizione: 'Descrizione'
@@ -403,6 +406,7 @@ operatori:
   scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
   scarica_ricevuta_provvisoria_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma.<br /> Puoi controllare l'avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <em>Le mie pratiche</em>."
   scarica_modulo_compilato: 'Scarica il modulo compilato'
+  scarica_richiesta_protocollata: 'Scarica la richiesta protocollata'
   scarica_risposta_firmata: 'Scarica il file di risposta'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
@@ -424,6 +428,10 @@ operatori:
     ente: 'Ente'
     ambito: 'Ambito'
     salva_modifiche: 'Salva modifiche'
+  usage:
+    title: 'Metriche di utilizzo'
+    service_title: 'Servizi attivi'
+    pratiche_title: 'Pratiche per anno'
 
 allegato:
   nome_file: 'Nome del file'
@@ -431,6 +439,7 @@ allegato:
   scarica_allegato: 'Scarica file'
   scarica_allegato_bozza: 'Scarica il file'
   scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'
+  scarica_allegato_richiesta_integrazione: "Scarica file contenente la richiesta  d'integrazione"
   crea_allegato: 'Carica un allegato'
   non_supportato: 'Il file che stai cecando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
   guida_alla_compilazione:
@@ -460,6 +469,7 @@ email:
         draft.for.integration: "Le comunichiamo che è stata effettuata una richiesta di integrazione ai dati della sua domanda per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
         submitted.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
         registered.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della pratica."
+        pending.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
     operatore:
       status:
         submitted: "la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
@@ -1286,6 +1296,12 @@ steps:
               VIN_ALTRO_AMBIENTI:
                 title: ''
                 description: Altri provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti per gli inquinamenti
+              VIN_IMPIANTI_TELECOMUNICAZIONI:
+                title: ''
+                description: Autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+              VIN_AREE_AGRICOLE:
+                title: ''
+                description: Autorizzazione per interventi nelle aree agricole del PUP
 
         provvedimenti:
             label: 'Provvedimenti'
