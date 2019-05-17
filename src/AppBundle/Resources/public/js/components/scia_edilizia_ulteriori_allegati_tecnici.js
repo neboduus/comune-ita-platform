@@ -69,7 +69,7 @@ Vue.component('scia_edilizia_ulteriori_allegati_tecnici', {
             return isP7m;
         },
         updateFormValue() {
-            var el = document.getElementById('scia_pratica_edilizia_ulteriori_allegati_tecnici_dematerialized_forms'),
+            var el = document.getElementById('scia_pratica_edilizia_vincoli_dematerialized_forms'),
                 formValue = {
                     'vincoli' : this.allegatiCorrenti
                 };

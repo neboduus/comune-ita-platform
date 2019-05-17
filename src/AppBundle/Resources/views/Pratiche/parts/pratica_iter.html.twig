@@ -17,7 +17,7 @@
                             {% endif %}
 
                         {% endfor %}
-                        {% if changes[0][1] is defined and changes[0][1]['message'] is defined %}
+                        {% if changes[0][1] is defined and changes[0][1]['message'] is defined  and changes[0][1]['message'] is not null %}
                             <small class="clearfix subdued">Motivo: {{ changes[0][1]['message']}}</small>
                         {% endif %}
                         </span>

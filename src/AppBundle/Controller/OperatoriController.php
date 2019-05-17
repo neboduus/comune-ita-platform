@@ -57,6 +57,41 @@ class OperatoriController extends Controller
     }
 
     /**
+     * @Route("/usage",name="operatori_usage")
+     * @Template()
+     * @return array
+     */
+    public function usageAction()
+    {
+        $repo = $this->getDoctrine()->getRepository(Pratica::class);
+        $pratiche = $repo->findSubmittedPraticheByEnte($this->get('ocsdc.instance_service')->getCurrentInstance());
+
+        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $servizi = $serviziRepository->findBy(
+            [
+                'status' => [1]
+            ]
+        );
+
+        $count = array_reduce($pratiche,function($acc, $el) {
+            $year = (new \DateTime())->setTimestamp($el->getSubmissionTime())->format('Y');
+            try {
+                $acc[$year]++;
+            } catch(\Exception $e) {
+                $acc[$year] = 1;
+            }
+
+            return $acc;
+        },[]);
+
+        return array(
+            'servizi'  => count($servizi),
+            'pratiche' => $count
+        );
+    }
+
+
+    /**
      * @param InstanceService $instanceService
      *
      * @Route("/parametri-protocollo", name="operatori_impostazioni_protocollo_list")

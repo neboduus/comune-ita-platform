@@ -1,12 +1,17 @@
 {% if is_granted('ROLE_OPERATORE') %}
-    <li>
+    <li{% if  'parametri-protocollo' not in app.request.pathInfo and 'usage' not in app.request.pathInfo %} class="active" {% endif %}>
         <a href="{{ path('operatori_index') }}">
             <i class="fa fa-tachometer" aria-hidden="true"></i> {{ 'nav.operatori.panello_controllo'|trans }}
         </a>
     </li>
-    <li>
+    <li{% if 'parametri-protocollo' in app.request.pathInfo %} class="active" {% endif %}>
         <a href="{{ path('operatori_impostazioni_protocollo_list') }}">
             <i class="fa fa-book" aria-hidden="true"></i> {{ 'nav.operatori.protocollo'|trans }}
+        </a>
+    </li>
+    <li{% if 'usage' in app.request.pathInfo %} class="active" {% endif %}>
+        <a href="{{ path('operatori_usage') }}">
+            <i class="fa fa-bar-chart" aria-hidden="true"></i> {{ 'nav.operatori.usage'|trans }}
         </a>
     </li>
 {% else %}

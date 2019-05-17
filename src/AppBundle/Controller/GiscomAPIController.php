@@ -236,6 +236,12 @@ class GiscomAPIController extends Controller
         $payload = json_decode($request->getContent(), true);
         $message = isset($payload['Nota']) ? $payload['Nota'] : '';
 
+        $file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
+
+        if (!$file) {
+            return new Response(null, Response::HTTP_BAD_REQUEST);
+        }
+
         $this->get('logger')->info(LogConstants::RICHIESTA_INTEGRAZIONE_FROM_GISCOM, [
             'id'=> $pratica->getId(),
             'request' => $payload

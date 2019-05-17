@@ -54,6 +54,13 @@ class APIController extends Controller
         $repo = $this->em->getRepository(Pratica::class);
         $pratiche = $repo->findSubmittedPraticheByEnte($this->is->getCurrentInstance());
 
+        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $servizi = $serviziRepository->findBy(
+            [
+                'status' => [1]
+            ]
+        );
+
         $count = array_reduce($pratiche,function($acc, $el) {
             $year = (new \DateTime())->setTimestamp($el->getSubmissionTime())->format('Y');
             try {
@@ -66,9 +73,10 @@ class APIController extends Controller
         },[]);
 
         return new JsonResponse([
-            'version' => self::CURRENT_API_VERSION,
-            'status' => 'ok',
-            'count' => $count
+            'version'  => self::CURRENT_API_VERSION,
+            'status'   => 'ok',
+            'servizi'  => count($servizi),
+            'pratiche' => $count
         ]);
     }
 

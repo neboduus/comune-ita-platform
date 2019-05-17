@@ -68,8 +68,11 @@
                                         <td style="white-space: nowrap" data-title="{{ 'pratica.stato'|trans }}">{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
                                         <td data-title="{{ 'pratica.noteDiCompilazione'|trans }}">{{ pratica.userCompilationNotes|escape}}</td>
                                         <td data-title="">
+                                            {% if pratica.status == 1000 %}
+                                                <a href="{{ path('pratiche_delete', {'pratica': pratica}) }}"class="btn btn-danger btn-xs" onclick="return confirm('Vuoi veramente eliminare la pratica?');"><i class="fa fa-trash" aria-hidden="true"></i> Elimina</a>
+                                            {% endif %}
                                             <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
-                                               class="btn btn-primary btn-xs">{{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
+                                               class="btn btn-primary btn-xs"><i class="fa fa-eye" aria-hidden="true"></i> {{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
                                         </td>
 
                                     </tr>
