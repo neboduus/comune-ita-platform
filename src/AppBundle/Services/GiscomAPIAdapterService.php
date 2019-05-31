@@ -107,6 +107,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
 
             $this->logger->debug('Giscom response: ', [$response->getBody()]);
             $status = $response->getStatusCode();
+
             if ($status == 201 || $status == 204) {
                 if ($status == 204) {
 

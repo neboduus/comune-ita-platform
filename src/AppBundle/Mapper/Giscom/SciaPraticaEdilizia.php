@@ -3,6 +3,7 @@
 namespace AppBundle\Mapper\Giscom;
 
 use AppBundle\Entity\Pratica;
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\Meta;
 use AppBundle\Mapper\HashableInterface;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ModuloDomanda;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoAllegatiAllaDomanda;
@@ -82,6 +83,11 @@ class SciaPraticaEdilizia implements HashableInterface
      */
     protected $protocolliAllegati;
 
+    /**
+     * @var []
+     */
+    protected $meta;
+
     public function __construct(array $data = [])
     {
         $this->tipo = $data['tipo'] ?? Pratica::TYPE_SCIA_PRATICA_EDILIZIA ;
@@ -92,6 +98,7 @@ class SciaPraticaEdilizia implements HashableInterface
         $this->vincoli = new Vincoli($data['vincoli'] ?? [], $this->tipo);
         $this->tipoIntervento = $data['tipoIntervento'] ?? null;
         $this->protocolliAllegati = [];
+        $this->meta = [];
     }
 
     /**
@@ -379,5 +386,47 @@ class SciaPraticaEdilizia implements HashableInterface
     public function setProtocolliAllegati($protocolliAllegati)
     {
         $this->protocolliAllegati = $protocolliAllegati;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    /**
+     * @param mixed $meta
+     */
+    public function setMeta($meta)
+    {
+        if (is_array($meta)) {
+            $this->meta = new Meta($meta ?? null);
+        } else {
+            $this->meta = $meta;
+        }
+    }
+
+    /**
+     * @param $key
+     * @param $data
+     */
+    public function addMeta($key, $data)
+    {
+        $this->meta[$key] = $data;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getAllowedProperties()
+    {
+        $properties = array();
+        $properties = array_merge($properties, $this->elencoAllegatiAllaDomanda->getProperties());
+        $properties = array_merge($properties, $this->elencoAllegatiTecnici->getProperties());
+        $properties = array_merge($properties, $this->vincoli->getProperties());
+        return $properties;
     }
 }

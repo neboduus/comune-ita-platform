@@ -18,7 +18,7 @@
     "password": "999999999999",
     "importo": "1200"
   },
-  "paymentRequired": true,
+  "paymentRequired": false,
   "status": 1
 }
 

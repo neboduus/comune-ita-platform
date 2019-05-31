@@ -1,14 +1,14 @@
 {
-  "slug": "comunicazione-opere-libere",
-  "name": "Comunicazione Opere Libere",
+  "slug": "segnalazione-certificata-agibilita",
+  "name": "Segnalazione certificata di agibilità",
   "handler": "",
   "area": 32,
-  "fcqn": "AppBundle\\Entity\\ComunicazioneOpereLibere",
+  "fcqn": "AppBundle\\Entity\\SegnalazioneCertificataAgibilita",
   "flow": "ocsdc.form.flow.scia_pratica_edilizia",
   "flowOperator": "ocsdc.form.flow.operatore.standardallegatonofirma",
-  "description": "Comunicazione Opere Libere",
+  "description": "Segnalazione certificata di agibilità",
   "istruzioni": "Durante la compilazione della pratica ti sarà chiesto di inserire gli allegati relativi alla pratica e di effettuare un pagamento (tramite annullamento di una marca da bollo o MyPay)",
-  "url_modulo_principale": "https://s3.eu-west-3.amazonaws.com/ocsdc-moduli/1_Comunicazione+OPERE+LIBERE_rev24ott2018.pdf",
+  "url_modulo_principale": "https://s3.eu-west-3.amazonaws.com/ocsdc-moduli/1_Some_File.pdf",
   "url_moduli_aggiuntivi": [
 
   ],

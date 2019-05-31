@@ -55,7 +55,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     {
         $parameters = $this->getParameters($pratica, $allegato);
         $parameters->set('method', 'uploadFileToDocument');
-        // trasmissionIDArray vavalorizzato solo per il metodo createDocumentAndAddInProject
+        // trasmissionIDArray va valorizzato solo per il metodo createDocumentAndAddInProject
         $parameters->remove('trasmissionIDArray');
 
         $queryString = http_build_query($parameters->all());
@@ -133,7 +133,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         if ($allegato instanceof AllegatoInterface){
             $parameters->setDocumentId($pratica->getIdDocumentoProtocollo());
             $parameters->setFilePath($allegato->getFile()->getPathname());
-            $parameters->setAttachmentDescription($allegato->getDescription());
+            $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $pratica->getUser()->getFullName());
         }else{
             /** @var ModuloCompilato $moduloCompilato */
             $moduloCompilato = $pratica->getModuliCompilati()->first();
@@ -162,10 +162,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         if ($allegato instanceof AllegatoInterface){
             $parameters->setDocumentId($risposta->getIdDocumentoProtocollo());
             $parameters->setFilePath($allegato->getFile()->getPathname());
-            $parameters->setAttachmentDescription($allegato->getDescription());
+            $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $pratica->getUser()->getFullName());
         }else{
             // FIXME: translate risposta
-            $parameters->setDocumentDescription('Risposta ' . $risposta->getDescription());
+            $parameters->setDocumentDescription('Risposta ' . $risposta->getDescription() . ' ' . $pratica->getUser()->getFullName());
             $parameters->setDocumentObj('Risposta ' . $pratica->getServizio()->getName());
             $parameters->setFilePath($risposta->getFile()->getPathname());
             $parameters->setIdProject($pratica->getNumeroFascicolo());

@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class RispostaOperatore extends Allegato
 {
+    const TYPE_DEFAULT = 'risposta_operatore';
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -35,6 +36,7 @@ class RispostaOperatore extends Allegato
         $this->type = 'risposta_operatore';
         $this->numeriProtocollo = new ArrayCollection();
     }
+
 
     /**
      * @return string|null

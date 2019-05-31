@@ -3,109 +3,29 @@
     {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
     {{ include('AppBundle:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+
     {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.modulo_default.label'|trans() }}</strong></div>
-        <div class="col-xs-12 col-sm-9">
-            <ul class="list-group">
-                {% if pratica.dematerializedForms.moduloDomanda.id|length>0 %}
-                <li class="list-group-item scia-file">
-                    <i class="fa fa-file" aria-hidden="true"></i> {{ pratica.dematerializedForms.moduloDomanda.name }}
-                    <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': pratica.dematerializedForms.moduloDomanda.id}) }}</div>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.allegati_modulo_scia.label'|trans() }}</strong></div>
-        <div class="col-xs-12 col-sm-9">
-            {% for key, v in pratica.dematerializedForms.elencoAllegatiAllaDomanda %}
-                {% if v|length > 0 %}
-                    <ul class="list-group">
-                        <li class="list-group-item">{{ ('steps.scia.allegati_modulo_scia.files.' ~ key ~ '.title')|trans() }}</li>
-                        {% for f in v %}
-                            {% if f.id|length>0 %}
-                            <li class="list-group-item scia-file">
-                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
-                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
-                            </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
+    {# Modulo domanda #}
+    {{ include('AppBundle:Pratiche/summary/parts/giscom:modulo_domanda.html.twig', {'pratica':pratica, 'user': user}) }}
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.soggetti.label'|trans() }}</strong></div>
-        <div class="col-xs-12 col-sm-9">
-            {% for key, v in pratica.dematerializedForms.elencoSoggettiAventiTitolo %}
-                <ul class="list-group">
-                    {% if v.id|length>0 %}
-                    <li class="list-group-item scia-file">
-                        <i class="fa fa-file" aria-hidden="true"></i> {{ v.name }}
-                        <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': v.id}) }}</div>
-                    </li>
-                    {% endif %}
-                </ul>
-            {% endfor %}
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-3">
-            <strong>{{ 'steps.scia.allegati_tecnici.tipo_intervento_label'|trans() }}</strong>
-        </div>
-        <div class="col-xs-12 col-sm-9">{% if pratica.dematerializedForms.tipoIntervento %}
-            {{ ('steps.scia.allegati_tecnici.tipi_intervento.' ~ pratica.dematerializedForms.tipoIntervento)|trans() }}
-        {% endif %}</div>
-    </div>
+    {# Allegati alla domanda #}
+    {{ include('AppBundle:Pratiche/summary/parts/giscom:allegati_domanda.html.twig', {'pratica':pratica, 'user': user}) }}
 
-    <div class="row">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.allegati_tecnici.label'|trans() }}</strong></div>
-        <div class="col-xs-12 col-sm-9">
-            {% for key, v in pratica.dematerializedForms.elencoAllegatiTecnici %}
-                {% if v|length > 0 %}
-                    <ul class="list-group">
-                        <li class="list-group-item">{{ ('steps.scia.allegati_tecnici.files.' ~ key ~ '.title')|trans() }}</li>
-                        {% for f in v %}
-                            {% if f.id|length>0 %}
-                            <li class="list-group-item scia-file">
-                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
-                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
-                            </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
+    {# Soggetti #}
+    {{ include('AppBundle:Pratiche/summary/parts/giscom:soggetti.html.twig', {'pratica':pratica, 'user': user}) }}
 
-    <div class="row last">
-        <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.vincoli.label'|trans() }}</strong></div>
-        <div class="col-xs-12 col-sm-9">
-            {% if pratica.dematerializedForms.vincoli is defined %}
-            {% for key, v in pratica.dematerializedForms.vincoli %}
-                {% if v|length > 0 %}
-                    <ul class="list-group">
-                        <li class="list-group-item">{{ ('steps.scia.vincoli.files.' ~ key ~ '.title')|trans() }}</li>
-                        {% for f in v %}
-                        {% if f.id|length>0 %}
-                            <li class="list-group-item scia-file">
-                                <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
-                                <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
-                            </li>
-                        {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endfor %}
-            {% endif %}
-        </div>
-    </div>
+
+    {# Allegati tecnici #}
+    {{ include('AppBundle:Pratiche/summary/parts/giscom:allegati_tecnici.html.twig', {'pratica':pratica, 'user': user}) }}
+
+
+    {# Vincoli #}
+    {{ include('AppBundle:Pratiche/summary/parts/giscom:vincoli.html.twig', {'pratica':pratica, 'user': user}) }}
+
+
+    {# Integrazioni #}
+    {{ include('AppBundle:Pratiche/summary/parts:richieste_integrazioni.html.twig', {'pratica':pratica, 'user': user}) }}
 </div>
