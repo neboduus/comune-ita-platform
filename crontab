@@ -1,4 +1,2 @@
-*/1 * * * * /docroot/bin/console o:s:e --env=dev -i comune-di-rovereto
-*/1 * * * * /docroot/bin/console o:s:e --env=dev -i comune-di-tre-ville
-*/1 * * * * /docroot/bin/console o:s:e --env=dev -i comune-di-vallelaghi
-*/1 * * * * /docroot/bin/console o:s:e --env=dev -i comune-di-cavedine
+*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-rovereto --env=prod
+*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-tre-ville --env=prod
