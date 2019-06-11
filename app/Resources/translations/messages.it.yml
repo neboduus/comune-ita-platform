@@ -1024,8 +1024,8 @@ steps:
                 ristrutturazione_urbanistica: Ristrutturazione Urbanistica
             files:
               TEC_ELABORATI_VINCOLI:
-                title: ''
-                description: 	elaborati relativi ai vincoli e ai dati urbanistici e catastali
+                title: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
+                description: ''
               TEC_DOC_FOTOGRAFICA:
                 title: ''
                 description: 	documentazione fotografica dello stato di fatto
@@ -1069,8 +1069,8 @@ steps:
                 title: ''
                 description: 	risultati delle analisi ambientali sulla qualità dei terreni
               TEC_COMUNICAZIONI_MATERIA:
-                title: ''
-                description: 	comunicazioni in materia di gestione delle terre e rocce da scavo
+                title: 'Comunicazioni in materia di gestione delle terre e rocce da scavo'
+                description: ''
               TEC_PIANO_LAVORO:
                 title: ''
                 description: 	piano di lavoro di demolizione o rimozione dell'amianto

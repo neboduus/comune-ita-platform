@@ -20,39 +20,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'OP_RELAZIONE_TECNICA',
             'OP_CATASTO',
         ],
-        Pratica::TYPE_AUTORIZZAZIONE_PAESAGGISTICA_SINDACO => [
-            'AMB_PRECETTIVI',
-            'AMB_DESCRIZIONE',
-            'AMB_CONFORMITA',
-            'AMB_COMPATIBILITA',
-            'AMB_MISURE'
-        ],
-        Pratica::TYPE_DICHIARAZIONE_ULTIMAZIONE_LAVORI => [
-            'DUL_NUM_CIVICA',
-            'DUL_COPERTURE',
-            'DUL_CONF_IMPIANTI',
-            'DUL_CERT_ENERGETICA',
-            'DUL_ASSEVERA',
-            'DUL_CERT_STATICO',
-            'DUL_ANTINCENDIO',
-            'DUL_CATASTO',
-            'DUL_PLANIMETRIE',
-            'DUL_TULPS'
-        ],
-        Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI => [
-            'TEC_COMUNICAZIONI_MATERIA',
-            'TEC_RETI_SCARIC',
-            'TEC_RETI_RIFIU',
-            'TEC_RETI_ACQ',
-            'TEC_RETI_ELET',
-            'TEC_RETI_GAS',
-            'TEC_RETI_ALTRO',
-            'TEC_COLLEGAMENTO_FIBRA',
-            'OP_DOC_FOTOGRAFICA',
-            'OP_RELAZIONE_ENERGETICA',
-            'OP_NOTIFICA',
-            'OP_ALTRO'
-        ],
+
         Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI_ASSEVERATA => [
             'OP_DOC_FOTOGRAFICA',
             'OP_PLANIMETRIA_CILA',
@@ -60,6 +28,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'OP_RELAZIONE_DITTA',
             'OP_RELAZIONE_ENERGETICA'
         ],
+
         Pratica::TYPE_SCIA_PRATICA_EDILIZIA => [
             'TEC_ELABORATI_VINCOLI',
             'TEC_DOC_FOTOGRAFICA',
@@ -98,6 +67,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'TEC_DOC_IMPATTO_ACUSTICO',
             'TEC_DOC_CLIMA_ACUSTICO',
         ],
+
         Pratica::TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE => [
             'TEC_ELABORATI_VINCOLI',
             'TEC_DOC_FOTOGRAFICA',
@@ -136,6 +106,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'TEC_DOC_IMPATTO_ACUSTICO',
             'TEC_DOC_CLIMA_ACUSTICO',
         ],
+
         Pratica::TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE_IN_SANATORIA => [
             'TEC_ELABORATI_VINCOLI',
             'TEC_DOC_FOTOGRAFICA',
@@ -163,6 +134,47 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'TEC_RELAZIONE_ACUSTICHE',
             'TEC_DOC_IMPATTO_ACUSTICO',
             'TEC_DOC_CLIMA_ACUSTICO',
+        ],
+
+        Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI => [
+            'TEC_COMUNICAZIONI_MATERIA',
+            'TEC_RETI_SCARIC',
+            'TEC_RETI_RIFIU',
+            'TEC_RETI_ACQ',
+            'TEC_RETI_ELET',
+            'TEC_RETI_GAS',
+            'TEC_RETI_ALTRO',
+            'TEC_COLLEGAMENTO_FIBRA',
+            'OP_DOC_FOTOGRAFICA',
+            'OP_RELAZIONE_ENERGETICA',
+            'OP_NOTIFICA',
+            'OP_ALTRO'
+        ],
+
+        Pratica::TYPE_DICHIARAZIONE_ULTIMAZIONE_LAVORI => [
+            'DUL_NUM_CIVICA',
+            'DUL_COPERTURE',
+            'DUL_CONF_IMPIANTI',
+            'DUL_CERT_ENERGETICA',
+            'DUL_ASSEVERA',
+            'DUL_CERT_STATICO',
+            'DUL_ANTINCENDIO',
+            'DUL_CATASTO',
+            'DUL_PLANIMETRIE',
+            'DUL_TULPS'
+        ],
+
+        Pratica::TYPE_AUTORIZZAZIONE_PAESAGGISTICA_SINDACO => [
+            'AMB_PRECETTIVI',
+            'AMB_DESCRIZIONE',
+            'AMB_CONFORMITA',
+            'AMB_COMPATIBILITA',
+            'AMB_MISURE'
+        ],
+
+        Pratica::TYPE_SEGNALAZIONE_CERTIFICATA_AGIBILITA => [
+            'TEC_RELAZIONE_ACUSTICHE',
+            'OP_ALTRO'
         ]
     ];
 

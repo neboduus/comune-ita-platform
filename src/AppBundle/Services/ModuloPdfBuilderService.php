@@ -10,6 +10,7 @@ use AppBundle\Entity\RichiestaIntegrazioneRequestInterface;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
+use AppBundle\Entity\RispostaOperatoreDTO;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Snappy\GeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -227,6 +228,43 @@ class ModuloPdfBuilderService
         $this->em->persist($integration);
 
         return $integration;
+    }
+
+    /**
+     * @param Pratica $pratica
+     * @param RispostaOperatoreDTO $rispostaOperatore
+     * @return RispostaOperatore|null
+     * @throws \Exception
+     */
+    public function creaRispostaOperatore(
+        Pratica $pratica,
+        RispostaOperatoreDTO $rispostaOperatore
+    ) {
+        $response = new RispostaOperatore();
+        $payload = $rispostaOperatore->getPayload();
+
+        if (isset($payload['FileRichiesta'])  && !empty($payload['FileRichiesta'])) {
+            $content = base64_decode($payload['FileRichiesta']);
+            unset($payload['FileRichiesta']);
+            $fileName = uniqid() . '.p7m';
+        } else {
+            return null;
+        }
+
+        $response->setOwner($pratica->getUser());
+        $response->setOriginalFilename((new \DateTime())->format('Ymdhi'));
+        $response->setDescription($rispostaOperatore->getMessage() ?? '');
+
+        $destinationDirectory = $this->getDestinationDirectoryFromContext($response);
+        $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
+
+        $this->filesystem->dumpFile($filePath, $content);
+        $response->setFile(new File($filePath));
+        $response->setFilename($fileName);
+
+        $this->em->persist($response);
+
+        return $response;
     }
 
     private function renderForPraticaIntegrationRequest(
