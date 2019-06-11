@@ -55,7 +55,6 @@ class Version20161028141644 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE allegato DROP created_at');
         $this->addSql('ALTER TABLE allegato ALTER updated_at TYPE TIMESTAMP(0) WITH TIME ZONE');
         $this->addSql('ALTER TABLE allegato ALTER updated_at DROP DEFAULT');

@@ -87,7 +87,7 @@ class MailerService
         {
 
             $sql = "SELECT id from utente where servizi_abilitati like '%".$pratica->getServizio()->getId()."%'";
-            $stmt = $this->doctrine->getEntityManager()->getConnection()->prepare($sql);
+            $stmt = $this->doctrine->getManager()->getConnection()->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll();
 

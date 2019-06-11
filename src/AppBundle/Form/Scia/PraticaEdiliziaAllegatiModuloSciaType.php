@@ -196,7 +196,7 @@ class PraticaEdiliziaAllegatiModuloSciaType extends AbstractType
     {
         return is_array($integrazioneAllegati) ?
             $integrazioneAllegati :
-            $skeleton->getElencoAllegatiAllaDomanda()->getRequiredFields($skeleton->getTipoIntervento());
+            $skeleton->getElencoAllegatiAllaDomanda()->getRequiredFields($skeleton->getTipoIntervento() ?? $skeleton->getTipo());
     }
 
 }

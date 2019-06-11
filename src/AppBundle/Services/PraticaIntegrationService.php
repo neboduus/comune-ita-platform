@@ -6,6 +6,7 @@ use AppBundle\Entity\IntegrabileInterface;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\RichiestaIntegrazioneRequestInterface;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RispostaOperatoreDTO;
 use AppBundle\Entity\StatusChange;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -67,5 +68,22 @@ class PraticaIntegrationService
         } else {
             throw new \InvalidArgumentException("Pratica must be implements " . IntegrabileInterface::class . " interface");
         }
+    }
+
+
+    /**
+     * @param Pratica $pratica
+     * @param RichiestaIntegrazioneDTO $integration
+     *
+     * @throws \Exception
+     */
+    public function createRispostaOperatore(Pratica $pratica, RispostaOperatoreDTO $risposta)
+    {
+        $risposta = $this->pdfBuilder->creaRispostaOperatore($pratica, $risposta);
+        $pratica->addRispostaOperatore($risposta);
+        $pratica->setInstanceId(null);
+
+        $this->em->persist($pratica);
+        $this->em->flush();
     }
 }

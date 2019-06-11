@@ -15,9 +15,6 @@ use Symfony\Bundle\TwigBundle\TwigEngine;
 
 class ModuloPdfBuilderServiceTest extends AbstractAppTestCase
 {
-    /**
-     * @test
-     */
     public function setUp()
     {
         parent::setUp();

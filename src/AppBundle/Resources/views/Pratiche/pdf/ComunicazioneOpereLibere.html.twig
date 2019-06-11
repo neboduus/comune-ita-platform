@@ -1,0 +1,122 @@
+<html>
+<head>
+    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+
+{{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+
+<div class="chiede center_title">
+    {{ 'scia_pratica_edilizia.pdf.segnala'|trans() }}
+</div>
+
+<table class="table">
+    <tbody>
+    <tr>
+        <th>
+            {{ 'steps.scia.modulo_default.label'|trans() }}
+        </th>
+        <td>
+            <p>{{ pratica.dematerializedForms.moduloDomanda.name }}</p>
+        </td>
+    </tr>
+
+    <tr>
+        <th>
+            {{ 'steps.scia.allegati_modulo_scia.label'|trans() }}
+        </th>
+        <td>
+            {% if pratica.dematerializedForms.elencoAllegatiAllaDomanda is defined %}
+                {% for key, v in pratica.dematerializedForms.elencoAllegatiAllaDomanda %}
+                    {% if v|length > 0 %}
+                        <strong>{{ ('steps.scia.allegati_modulo_scia.files.' ~ key ~ '.title')|trans() }}</strong>
+                        {% for f in v %}
+                            <p>{{ f.name }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <tbody>
+    <tr>
+        <th>
+            {{ 'steps.scia.soggetti.label'|trans() }}
+        </th>
+        <td>
+            {% if pratica.dematerializedForms.elencoSoggettiAventiTitolo is defined %}
+                {% for key, v in pratica.dematerializedForms.elencoSoggettiAventiTitolo %}
+                    <p>{{ v.name }}</p>
+                {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <tbody>
+    <tr>
+        <th>
+            {{ 'steps.scia.allegati_tecnici.tipo_intervento_label'|trans() }}
+        </th>
+        <td>
+            {% if pratica.dematerializedForms.tipoIntervento is defined %}
+                <p>{{ ('steps.scia.allegati_tecnici.tipi_intervento.' ~ pratica.dematerializedForms.tipoIntervento)|trans() }}</p>
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <th>
+            {{ 'steps.scia.allegati_tecnici.label'|trans() }}
+        </th>
+        <td>
+            {% if pratica.dematerializedForms.elencoAllegatiTecnici is defined %}
+                {% for key, v in pratica.dematerializedForms.elencoAllegatiTecnici %}
+                    {% if v|length > 0 %}
+                        <strong>{{ ('steps.scia.allegati_tecnici.files.' ~ key ~ '.title')|trans() }}</strong>
+                        {% for f in v %}
+                            <p>{{ f.name }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <tbody>
+    <tr>
+        <th>
+            {{ 'steps.scia.vincoli.label'|trans() }}
+        </th>
+        <td>
+            {% if pratica.dematerializedForms.vincoli is defined %}
+                {% for key, v in pratica.dematerializedForms.vincoli %}
+                    {% if v|length > 0 %}
+                        <strong>{{ ('steps.scia.vincoli.files.' ~ key ~ '.title')|trans() }}</strong>
+                        {% for f in v %}
+                            <p>{{ f.name }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
+
+{{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+
+{{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
+</body>
+</html>

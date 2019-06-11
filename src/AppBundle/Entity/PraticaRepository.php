@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 
@@ -148,6 +149,17 @@ class PraticaRepository extends EntityRepository
                 'erogatore' => $ente->getErogatori()->toArray(),
             ]
         );
+    }
+
+    public function findSubmittedPraticheByEnte(Ente $ente)
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->where('p.status >= '. Pratica::STATUS_SUBMITTED)
+            ->andWhere('p.ente = :ente')
+            ->setParameter('ente', $ente);
+
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findPraticheUnAssignedByEnte(Ente $ente)

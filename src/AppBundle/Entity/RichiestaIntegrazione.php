@@ -13,8 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class RichiestaIntegrazione extends Allegato
 {
     const STATUS_PENDING = 1000;
-
     const STATUS_DONE = 2000;
+
+    const TYPE_DEFAULT = 'richiesta_integrazione';
 
     /**
      * @ORM\Column(type="json_array", options={"jsonb":true})
@@ -37,7 +38,7 @@ class RichiestaIntegrazione extends Allegato
     public function __construct()
     {
         parent::__construct();
-        $this->type = 'richiesta_integrazione';
+        $this->type = self::TYPE_DEFAULT;
         $this->status = self::STATUS_PENDING;
     }
 

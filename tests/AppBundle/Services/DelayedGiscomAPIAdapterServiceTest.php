@@ -60,6 +60,10 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
         );
         $delayedGiscomApiAdapter->sendPraticaToGiscom($pratica);
         $this->executeCron($delayedGiscomApiAdapter);
+        /**
+         * if we reached this point all is fine
+         */
+        $this->assertTrue(true);
     }
 
     public function testServiceLogsRemoteError()
@@ -108,6 +112,11 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
                     'Codice' => GiscomStatusMapper::GISCOM_STATUS_PREISTRUTTORIA,
                     'Note' => '',
                 ]
+            ])),
+            new Response(200, [], json_encode([
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
+                $this->getCPSUserBaseData()['codiceFiscale'],
             ]))
         ]);
 
@@ -182,5 +191,4 @@ class DelayedGiscomAPIAdapterServiceTest extends AbstractAppTestCase
     {
         return new GiscomAPIMapperService($em);
     }
-
 }

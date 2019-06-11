@@ -4,7 +4,7 @@ namespace AppBundle\Form\Scia;
 
 use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
-use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoUlterioriAllegatiTecnici;
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\Vincoli;
 use AppBundle\Mapper\Giscom\FileCollection;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
 use AppBundle\Services\P7MSignatureCheckService;
@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Form\FormError;
 
 
-class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
+class PraticaEdiliziaVincoliType extends AbstractType
 {
     /**
      * @var P7MSignatureCheckService
@@ -61,14 +61,14 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
 
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setStepTitle('steps.scia.ulteriori_allegati_tecnici.title', true);
-        $helper->setGuideText('steps.scia.ulteriori_allegati_tecnici.guida_alla_compilazione', true);
+        $helper->setStepTitle('steps.scia.vincoli.title', true);
+        $helper->setGuideText('steps.scia.vincoli.guida_alla_compilazione', true);
 
-        $elencoUlterioriAllegatiTecnici = $this->setupHelperData($pratica, $helper);
+        $vincoli = $this->setupHelperData($pratica, $helper);
         $builder
             ->add('dematerialized_forms', HiddenType::class,
                 [
-                    'attr' => ['value'=> json_encode(['elencoUlterioriAllegatiTecnici' => $elencoUlterioriAllegatiTecnici])],
+                    'attr' => ['value'=> json_encode(['vincoli' => $vincoli])],
                     'mapped' => false,
                     'required' => false,
                 ]
@@ -86,7 +86,7 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'scia_pratica_edilizia_ulteriori_allegati_tecnici';
+        return 'scia_pratica_edilizia_vincoli';
     }
 
     public function onPreSubmit(FormEvent $event)
@@ -101,25 +101,25 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
 
         $compilazione = json_decode($event->getData()['dematerialized_forms'], true);
 
-        foreach($compilazione['elencoUlterioriAllegatiTecnici'] as $key => $value){
-            $skeleton->setElencoUlterioriAllegatiTecnici($key, new FileCollection($value));
+        foreach($compilazione['vincoli'] as $key => $value){
+            $skeleton->setVincoli($key, new FileCollection($value));
         }
 
         $integrazioneAllegati = self::getRequestIntegrations($pratica);
         $allegatiRichiesti = $this->getRequiredFields($skeleton, $integrazioneAllegati);
 
-        $elencoUlterioriAllegatiTecnici = $skeleton->getElencoUlterioriAllegatiTecnici();
-        foreach ($elencoUlterioriAllegatiTecnici->getProperties() as $key) {
-            if ($elencoUlterioriAllegatiTecnici->isRequired($key, $allegatiRichiesti)) {
+        $vincoli = $skeleton->getVincoli();
+        foreach ($vincoli->getProperties() as $key) {
+            if ($vincoli->isRequired($key, $allegatiRichiesti)) {
                 $errors = $this->validator->validate(
-                    $elencoUlterioriAllegatiTecnici->{$key}->toIdArray(),
+                    $vincoli->{$key}->toIdArray(),
                     new AtLeastOneAttachmentConstraint(), null
                 );
                 if (count($errors) > 0) {
                     $event->getForm()->addError(
                         new FormError($helper->translate(
                             'steps.scia.error.allegato_richiesto',
-                            ['%field%' => $helper->translate('steps.scia.ulteriori_allegati_tecnici.files.' . $key . '.title')]
+                            ['%field%' => $helper->translate('steps.scia.vincoli.files.' . $key . '.title')]
                         ))
                     );
                 }
@@ -142,7 +142,7 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
         $integrazioneAllegati = self::getRequestIntegrations($pratica);
 
         $allegati = array();
-        $allegatiCorrenti = $skeleton->getElencoUlterioriAllegatiTecnici()->toHash();
+        $allegatiCorrenti = $skeleton->getVincoli()->toHash();
         $allegatiRichiesti = $this->getRequiredFields($skeleton, $integrazioneAllegati);
 
         foreach ($allegatiCorrenti as $key => $value) {
@@ -150,9 +150,9 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
                 unset($allegatiCorrenti[$key]);
                 continue;
             }
-            $allegati[$key]['title'] = $helper->translate('steps.scia.ulteriori_allegati_tecnici.files.' . $key . '.title');
-            $allegati[$key]['description'] = $helper->translate('steps.scia.ulteriori_allegati_tecnici.files.' . $key . '.description');
-            $allegati[$key]['type'] = ElencoUlterioriAllegatiTecnici::TYPE;
+            $allegati[$key]['title'] = $helper->translate('steps.scia.vincoli.files.' . $key . '.title');
+            $allegati[$key]['description'] = $helper->translate('steps.scia.vincoli.files.' . $key . '.description');
+            $allegati[$key]['type'] = Vincoli::TYPE;
             $allegati[$key]['identifier'] = $key;
             $allegati[$key]['checked'] = false;
             $allegati[$key]['files'] = [];
@@ -164,7 +164,7 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
 
         $idPratica = $pratica->getId();
 
-        $helper->setVueApp(ElencoUlterioriAllegatiTecnici::TYPE);
+        $helper->setVueApp(Vincoli::TYPE);
         $helper->setVueBundledData(json_encode([
             'allegatiCorrenti' => $allegatiCorrenti,
             'allegati' => $allegati,
@@ -181,11 +181,11 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
         $integrazioneAllegati = null;
         if ($pratica->haUnaRichiestaDiIntegrazioneAttiva()) {
             $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva()->getPayload();
-            if (isset( $integrationRequest['elencoAllegatiTecnici'] )) {
-                $elencoUlterioriAllegatiTecnici = (new MappedPraticaEdilizia())->getElencoUlterioriAllegatiTecnici()->getProperties();
+            if (isset( $integrationRequest['vincoli'] )) {
+                $vincoli = (new MappedPraticaEdilizia())->getVincoli()->getProperties();
                 $integrazioneAllegati = array_intersect(
-                    $elencoUlterioriAllegatiTecnici,
-                    (array)$integrationRequest['elencoAllegatiTecnici']
+                    $vincoli,
+                    (array)$integrationRequest['vincoli']
                 );
             }
         }
@@ -197,6 +197,6 @@ class PraticaEdiliziaUlterioriAllegatiTecniciType extends AbstractType
     {
         return is_array($integrazioneAllegati) ?
             $integrazioneAllegati :
-            $skeleton->getElencoUlterioriAllegatiTecnici()->getRequiredFields($skeleton->getTipoIntervento());
+            $skeleton->getVincoli()->getRequiredFields($skeleton->getTipoIntervento());
     }
 }

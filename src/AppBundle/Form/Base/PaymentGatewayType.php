@@ -4,16 +4,13 @@ namespace AppBundle\Form\Base;
 
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
-use AppBundle\Payment\AbstractPaymentData;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use AppBundle\Payment\Gateway\MyPay;
+use AppBundle\Services\MyPayService;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\VarDumper\VarDumper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 
 class PaymentGatewayType extends AbstractType
@@ -23,36 +20,62 @@ class PaymentGatewayType extends AbstractType
      */
     private $em;
 
-    public function __construct( EntityManager $entityManager )
+    /**
+     * @var Container
+     */
+    private $container;
+
+    public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
+        $this->container = $container;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var Pratica $pratica */
-        $pratica  = $builder->getData();
+        $pratica = $builder->getData();
         $entityRepository = $this->em->getRepository('AppBundle:PaymentGateway');
         $gateway = $pratica->getPaymentType();
-
+        $gatewayClassHandler = $gateway->getFcqn();
 
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
+
         $helper->setStepTitle($gateway->getDescription());
         $helper->setGuideText($gateway->getDisclaimer());
 
-        $paymentData = $pratica->getPaymentData() ? $pratica->getPaymentData() : [];
-        $builder
-            ->add('payment_data', HiddenType::class,
-                [
-                    'attr' => ['value' =>  json_encode($paymentData)],
-                    'mapped' => true,
-                    'required' => false,
-                ]
-            );
+        $paymentData = $pratica->getPaymentData() ?? [];
 
-        $gatewayClassHandler = $gateway->getFcqn();
-        $builder->addEventSubscriber(new $gatewayClassHandler());
+        if ($gatewayClassHandler === MyPay::class) {
+            //This stinks like fresh cat shit
+            //I wrote it, I know it
+            $mypayService = $this->container->get(MyPayService::class);
+
+            $pratica->setPaymentData($mypayService->getSanitizedPaymentData($pratica));
+
+            $builder
+                ->add('payment_data', HiddenType::class,
+                    [
+                        'attr' => ['value' => 'aaa'],
+                        'mapped' => false,
+                        'required' => false,
+                    ]
+                );
+        } else {
+            $builder
+                ->add('payment_data', HiddenType::class,
+                    [
+                        'attr' => ['value' =>  json_encode($paymentData)],
+                        'mapped' => true,
+                        'required' => false,
+                    ]
+                );
+        }
+
+
+
+        $builder->addEventSubscriber($this->container->get($gatewayClassHandler));
     }
 
     public function getBlockPrefix()

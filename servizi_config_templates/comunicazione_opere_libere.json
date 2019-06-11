@@ -1,0 +1,24 @@
+{
+  "slug": "comunicazione-opere-libere",
+  "name": "Comunicazione Opere Libere",
+  "handler": "",
+  "area": 32,
+  "fcqn": "AppBundle\\Entity\\ComunicazioneOpereLibere",
+  "flow": "ocsdc.form.flow.scia_pratica_edilizia",
+  "flowOperator": "ocsdc.form.flow.operatore.standardallegatonofirma",
+  "description": "Comunicazione Opere Libere",
+  "istruzioni": "Durante la compilazione della pratica ti sarà chiesto di inserire gli allegati relativi alla pratica e di effettuare un pagamento (tramite annullamento di una marca da bollo o MyPay)",
+  "url_modulo_principale": "https://s3.eu-west-3.amazonaws.com/ocsdc-moduli/1_Comunicazione+OPERE+LIBERE_rev24ott2018.pdf",
+  "url_moduli_aggiuntivi": [
+
+  ],
+  "paymentParameters": {
+    "datiSpecificiRiscossione": "9/9999.9",
+    "codIpaEnte": "C_H999",
+    "password": "999999999999",
+    "importo": "1200"
+  },
+  "paymentRequired": false,
+  "status": 1
+}
+

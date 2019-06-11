@@ -9,6 +9,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\InstanceService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -56,10 +57,58 @@ class OperatoriController extends Controller
     }
 
     /**
+     * @Route("/usage",name="operatori_usage")
+     * @Template()
+     * @return array
+     */
+    public function usageAction()
+    {
+        $repo = $this->getDoctrine()->getRepository(Pratica::class);
+        $pratiche = $repo->findSubmittedPraticheByEnte($this->get('ocsdc.instance_service')->getCurrentInstance());
+
+        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $servizi = $serviziRepository->findBy(
+            [
+                'status' => [1]
+            ]
+        );
+
+        $count = array_reduce($pratiche,function($acc, $el) {
+            $year = (new \DateTime())->setTimestamp($el->getSubmissionTime())->format('Y');
+            try {
+                $acc[$year]++;
+            } catch(\Exception $e) {
+                $acc[$year] = 1;
+            }
+
+            return $acc;
+        },[]);
+
+        return array(
+            'servizi'  => count($servizi),
+            'pratiche' => $count
+        );
+    }
+
+
+    /**
+     * @param InstanceService $instanceService
+     *
+     * @Route("/parametri-protocollo", name="operatori_impostazioni_protocollo_list")
+     * @Template("@App/Operatori/impostazioniProtocollo.html.twig")
+     * @return array
+     */
+    public function impostazioniProtocolloListAction()
+    {
+        return array('parameters' =>  $this->get('ocsdc.instance_service')->getCurrentInstance()->getProtocolloParameters());
+    }
+
+    /**
      * @Route("/{pratica}/autoassign",name="operatori_autoassing_pratica")
      * @param Pratica $pratica
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Exception
      */
     public function autoAssignPraticaAction(Pratica $pratica)
     {
@@ -132,9 +181,6 @@ class OperatoriController extends Controller
      */
     public function elaboraPraticaAction(Pratica $pratica)
     {
-
-        echo ' ';
-
         if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
             return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
         }

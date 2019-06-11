@@ -12,6 +12,11 @@
     <div class="col-xs-12">
         {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
     </div>
+    {% if pratica.numeroProtocollo %}
+        <div class="col-xs-12">
+            {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
+        </div>
+    {% endif %}
 </div>
 {% endif %}
 

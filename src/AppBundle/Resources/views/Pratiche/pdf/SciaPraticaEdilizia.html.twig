@@ -14,7 +14,7 @@
     <tbody>
     <tr>
         <th>
-            {{ 'steps.scia.modulo_scia.label'|trans() }}
+            {{ 'steps.scia.modulo_default.label'|trans() }}
         </th>
         <td>
             <p>{{ pratica.dematerializedForms.moduloDomanda.name }}</p>
@@ -48,10 +48,15 @@
             {{ 'steps.scia.soggetti.label'|trans() }}
         </th>
         <td>
+            {% set has_data = false %}
             {% if pratica.dematerializedForms.elencoSoggettiAventiTitolo is defined %}
                 {% for key, v in pratica.dematerializedForms.elencoSoggettiAventiTitolo %}
+                    {% set has_data = true %}
                     <p>{{ v.name }}</p>
                 {% endfor %}
+            {% endif %}
+            {% if not has_data %}
+                <em>{{ 'pratica.non_specificato'|trans() }}</em>
             {% endif %}
         </td>
     </tr>
@@ -95,47 +100,28 @@
     <tbody>
     <tr>
         <th>
-            {{ 'steps.scia.ulteriori_allegati_tecnici.label'|trans() }}
+            {{ 'steps.scia.vincoli.label'|trans() }}
         </th>
         <td>
-            {% if pratica.dematerializedForms.elencoUlterioriAllegatiTecnici is defined %}
-                {% for key, v in pratica.dematerializedForms.elencoUlterioriAllegatiTecnici %}
+            {% set has_data = false %}
+            {% if pratica.dematerializedForms.vincoli is defined %}
+                {% for key, v in pratica.dematerializedForms.vincoli %}
                     {% if v|length > 0 %}
-                        <strong>{{ ('steps.scia.ulteriori_allegati_tecnici.files.' ~ key ~ '.title')|trans() }}</strong>
+                        {% set has_data = true %}
+                        <strong>{{ ('steps.scia.vincoli.files.' ~ key ~ '.title')|trans() }}</strong>
                         {% for f in v %}
                             <p>{{ f.name }}</p>
                         {% endfor %}
                     {% endif %}
                 {% endfor %}
             {% endif %}
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<table class="table">
-    <tbody>
-    <tr>
-        <th>
-            {{ 'steps.scia.provvedimenti.label'|trans() }}
-        </th>
-        <td>
-            {% if pratica.dematerializedForms.elencoProvvedimenti is defined %}
-                {% for key, v in pratica.dematerializedForms.elencoProvvedimenti %}
-                    {% if v|length > 0 %}
-                        <strong>{{ ('steps.scia.provvedimenti.files.' ~ key ~ '.title')|trans() }}</strong>
-                        {% for f in v %}
-                            <p>{{ f.name }}</p>
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
+            {% if not has_data %}
+                <em>{{ 'pratica.non_specificato'|trans() }}</em>
             {% endif %}
         </td>
     </tr>
-
     </tbody>
 </table>
-
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 

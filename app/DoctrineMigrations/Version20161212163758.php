@@ -32,7 +32,6 @@ class Version20161212163758 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE termini_utilizzo DROP mandatory');
         $this->addSql('ALTER TABLE termini_utilizzo DROP latest_revision');
         $this->addSql('ALTER TABLE utente ADD terms_accepted BOOLEAN DEFAULT NULL');

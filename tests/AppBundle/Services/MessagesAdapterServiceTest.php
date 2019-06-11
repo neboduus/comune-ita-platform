@@ -20,9 +20,6 @@ use Tests\AppBundle\Base\AbstractAppTestCase;
  */
 class MessagesAdapterServiceTest extends AbstractAppTestCase
 {
-    /**
-     * @test
-     */
     public function setUp()
     {
         parent::setUp();
@@ -59,7 +56,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $mockedGuzzle = $this->getMockGuzzleClient([$this->getMockedMessagesBackendThreadResponseForUser($user, $operatore)]);
         $mockedLogger = $this->getMockLogger();
 
-        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
+        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'), true);
         $threads = $service->getDecoratedThreadsForUser($user);
         foreach ($threads as $thread) {
             $this->assertTrue($this->checkThreadObjectIsCorrect($thread));
@@ -76,7 +73,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $operatore = $this->createOperatoreUser('pippo', 'pippo', $ente);
         $mockedGuzzle = $this->getMockGuzzleClient([$this->getMockedMessagesBackendThreadResponseForUser($user, $operatore)]);
         $mockedLogger = $this->getMockLogger();
-        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
+        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'), true);
         $threads = $service->getDecoratedThreadsForUser($user);
         foreach ($threads as $thread) {
             $this->assertTrue(strpos($thread->title, $operatore->getFullName()) >= 0);
@@ -92,7 +89,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $operatore = $this->createOperatoreUser('pippo', 'pippo');
         $mockedGuzzle = $this->getMockGuzzleClient([$this->getMockedMessagesBackendThreadResponseForUser($user)]);
         $mockedLogger = $this->getMockLogger();
-        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
+        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'), true);
         $threads = $service->getDecoratedThreadsForUser($operatore);
         foreach ($threads as $thread) {
             $this->assertTrue(strpos($thread->title, $user->getFullName()) >= 0);
@@ -115,7 +112,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $enteMock->expects($this->once())->method('getOperatori')
             ->willReturn(new ArrayCollection([$operatore]));
 
-        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
+        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'), true);
         $thread = $service->getThreadsForUserEnteAndService($user, $enteMock, $servizio);
 
         $this->assertTrue($this->checkThreadObjectIsCorrect($thread[0]));
@@ -138,7 +135,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $enteMock->expects($this->once())->method('getOperatori')
             ->willReturn(new ArrayCollection([$operatore]));
 
-        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
+        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'), true);
         $thread = $service->createThreadsForUserEnteAndService($user, $enteMock, $servizio);
 
         $this->assertTrue($this->checkThreadObjectIsCorrect($thread[0]));
@@ -163,7 +160,7 @@ class MessagesAdapterServiceTest extends AbstractAppTestCase
         $enteMock->expects($this->once())->method('getOperatori')
             ->willReturn(new ArrayCollection([$operatore]));
 
-        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'));
+        $service = new MessagesAdapterService($mockedGuzzle, $mockedLogger, $this->container->get('doctrine'), true);
         $threads = $service->getThreadsForUserEnteAndService($user, $enteMock, $servizio);
         $this->assertNull($threads);
     }

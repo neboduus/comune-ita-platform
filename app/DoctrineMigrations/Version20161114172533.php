@@ -67,7 +67,6 @@ class Version20161114172533 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE utente ADD cap_domicilio VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE utente ADD cap_residenza VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE utente ADD cellulare VARCHAR(255) DEFAULT NULL');

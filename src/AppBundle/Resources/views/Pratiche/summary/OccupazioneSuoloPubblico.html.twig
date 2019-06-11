@@ -46,6 +46,10 @@
         <div class="col-xs-12 col-sm-9">
             <table class="table table-bordered table-striped table-condensed cf">
                 <tr>
+                    <th width="1">{{ 'steps.occupazione_suolo_pubblico.nomeIniziativa'|trans }}</th>
+                    <td>{{ pratica.nomeIniziativa }}</td>
+                </tr>
+                <tr>
                     <th width="1">{{ 'steps.occupazione_suolo_pubblico.occupazione.indirizzo'|trans }}</th>
                     <td>{{ pratica.indirizzoOccupazione }}</td>
                 </tr>
@@ -53,22 +57,7 @@
                     <th width="1">{{ 'steps.occupazione_suolo_pubblico.occupazione.civico'|trans }}</th>
                     <td>{{ pratica.civicoOccupazione }}</td>
                 </tr>
-                <tr>
-                    <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.lunghezza'|trans }}</th>
-                    <td>{{ pratica.lunghezzaOccupazione }}</td>
-                </tr>
-                <tr>
-                    <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.larghezza'|trans }}</th>
-                    <td>{{ pratica.larghezzaOccupazione }}</td>
-                </tr>
-                <tr>
-                    <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.metri_quadri'|trans }}</th>
-                    <td>{{ pratica.metriQuadriOccupazione }}</td>
-                </tr>
-                <tr>
-                    <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.motivazione'|trans }}</th>
-                    <td>{{ pratica.motivazioneOccupazione }}</td>
-                </tr>
+
             </table>
 
         </div>
@@ -78,11 +67,12 @@
         <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.title'|trans }}</strong></div>
         <div class="col-xs-12 col-sm-9">
             <table class="table table-bordered table-striped table-condensed cf">
-                <tr>
-                    <th width="1">{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.tipologia'|trans }}</th>
-                    <td>{{ pratica.tipologiaOccupazione }}</td>
-                </tr>
-                {% if pratica.tipologiaOccupazione == 'temporanea' %}
+
+                {% if pratica.tipologiaOccupazione is null or pratica.tipologiaOccupazione == 'temporanea' %}
+                    <tr>
+                        <th width="1">{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.tipologia'|trans }}</th>
+                        <td>Temporanea</td>
+                    </tr>
                     <tr>
                         <th width="1">{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.inizio_giorno'|trans }}</th>
                         <td>{{ pratica.inizioOccupazioneGiorno|date(ocsdc_default_date_format) }} - {{ pratica.inizioOccupazioneOra }}</td>
@@ -97,6 +87,7 @@
         </div>
     </div>
 
+    {{ include('AppBundle:Pratiche/summary/parts:allegati.html.twig', {'pratica':pratica, 'user': user}) }}
     {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 
 </div>

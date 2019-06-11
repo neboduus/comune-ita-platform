@@ -1,0 +1,22 @@
+{
+  "infor_username": "InforJente",
+  "infor_denominazione": "CUMER DORIS CMRDRS68P42Z112Q",
+  "infor_email": "cumerdoris@comune.rovereto.tn.it",
+  "infor_wsdl": "https://www2.comune.rovereto.tn.it/jente/JProtocolloServices?wsdl",
+  "infor_wsUrl": "https://www2.comune.rovereto.tn.it/jente/JProtocolloServices",
+  "arrivo": {
+    "tipo_documento": "CW",
+    "tramite": "WEB",
+    "smistamento": "STATO CIVILE",
+    "classifica": "11.01",
+    "fascicolo": "2017/6"
+  },
+  "risposta": {
+    "mittente interno": "STANZA DEL CITTADINO",
+    "tipo_documento": "CW",
+    "tramite": "WEB",
+    "smistamento": "STATO CIVILE",
+    "classifica": "11.01",
+    "fascicolo": "2017/6"
+  }
+}

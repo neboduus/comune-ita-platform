@@ -5,11 +5,13 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
+use AppBundle\Entity\RispostaOperatoreDTO;
 use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Mapper\Giscom\GiscomStatusMapper;
+use AppBundle\Services\PraticaStatusService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -187,8 +189,20 @@ class GiscomAPIController extends Controller
         try {
             $statusChange = $this->statusMapper->getStatusChangeFromRequest($request);
             $this->statusService->setNewStatus($pratica, $statusChange->getEvento(), $statusChange);
+
+            if ($statusChange->getEvento() == Pratica::STATUS_CANCELLED || $statusChange->getEvento() == Pratica::STATUS_COMPLETE) {
+                $payload = json_decode($request->getContent(), true);
+                $file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
+
+                if ($file) {
+                    $rispostaOperatore = new RispostaOperatoreDTO($payload, null, null);
+                    $this->integrationService->createRispostaOperatore($pratica, $rispostaOperatore);
+                }
+            }
+
+
         } catch (\Exception $e) {
-            $this->logger->error(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $content, 'error' => $e]);
+            $this->logger->error(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $content, 'error' => $e->getMessage()]);
             return new Response(null, Response::HTTP_BAD_REQUEST);
         }
 
@@ -235,6 +249,27 @@ class GiscomAPIController extends Controller
     {
         $payload = json_decode($request->getContent(), true);
         $message = isset($payload['Nota']) ? $payload['Nota'] : '';
+
+        // Check FileRichiesta
+        $file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
+        if (!$file) {
+            return new Response(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        $mappedPratica = new MappedPraticaEdilizia($pratica->getDematerializedForms());
+        $allowedProperties = $mappedPratica->getAllowedProperties();
+
+        // Check if integration request is correct for current paperwork
+        $integrationsKeys = array('elencoAllegatiAllaDomanda', 'elencoAllegatiTecnici', 'elencoProvvedimenti');
+        foreach ($integrationsKeys as $key) {
+            if (!empty($payload[$key])) {
+                foreach ($payload[$key] as $request) {
+                    if (!in_array($request, $allowedProperties)) {
+                        return new Response('Key not allowed fot pratica: ' . $mappedPratica->getTipo(), Response::HTTP_BAD_REQUEST);
+                    }
+                }
+            }
+        }
 
         $this->get('logger')->info(LogConstants::RICHIESTA_INTEGRAZIONE_FROM_GISCOM, [
             'id'=> $pratica->getId(),

@@ -16,24 +16,28 @@ $loader = require __DIR__.'/../app/autoload.php';
 include_once __DIR__.'/../var/bootstrap.php.cache';
 
 // Modifico cf per testare imis, vecchio cf: RLDLCU77T05G224
-
-
-$_SERVER += [
-    "REDIRECT_shibb_pat_attribute_codicefiscale" => "CMRDRS68P42Z112Q",
-    "REDIRECT_shibb_pat_attribute_cognome" => "Realdi",
-    "REDIRECT_shibb_pat_attribute_emailaddress" => "lr@opencontent.it",
-    "REDIRECT_shibb_pat_attribute_nome" => "Luca",
-    "REDIRECT_shibb_pat_attribute_telefono" => "1234567890",
-    "REDIRECT_shibb_pat_attribute_indirizzoresidenza" => "Via Monte Pertica 25",
-    "REDIRECT_shibb_pat_attribute_capresidenza" => "38100",
-    "REDIRECT_shibb_pat_attribute_cittaresidenza" => "Trento",
-    "REDIRECT_shibb_pat_attribute_provinciaresidenza" => "Trento",
-    "REDIRECT_shibb_pat_attribute_statoresidenza" => "Italia",
-    "REDIRECT_shibb_pat_attribute_x509certificate_issuerdn" => "FAKE_issuerdn",
-    "REDIRECT_shibb_pat_attribute_x509certificate_subjectdn" => "FAKE_subjectdn",
-    "REDIRECT_shibb_pat_attribute_x509certificate_base64" => "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg==",
-];
-
+// CF di doris: CMRDRS68P42Z112Q
+if(!isset($_SERVER['shibb_pat_attribute_codicefiscale'])) {
+    /**
+     * Empty or missing data from mod_shibd, falling back to hardcoded data
+     */
+    $_SERVER += [
+        "shibb_pat_attribute_codicefiscale" => "DLLSFN65A20L378E",
+        "shibb_pat_attribute_cognome" => "Dalla Torre",
+//        "shibb_pat_attribute_emailaddress" => "stefano@geopartner.it",
+        "shibb_pat_attribute_emailaddress" => "lr@opencontent.it",
+        "shibb_pat_attribute_nome" => "Stefano",
+        "shibb_pat_attribute_telefono" => "1234567890",
+        "shibb_pat_attribute_indirizzoresidenza" => "Via Matteotti, 121",
+        "shibb_pat_attribute_capresidenza" => "38122",
+        "shibb_pat_attribute_cittaresidenza" => "Trento",
+        "shibb_pat_attribute_provinciaresidenza" => "Trento",
+        "shibb_pat_attribute_statoresidenza" => "Italia",
+        "shibb_pat_attribute_x509certificate_issuerdn" => "FAKE_issuerdn",
+        "shibb_pat_attribute_x509certificate_subjectdn" => "FAKE_subjectdn",
+        "shibb_pat_attribute_x509certificate_base64" => "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg==",
+    ];
+}
 
 // When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter
 //Request::enableHttpMethodParameterOverride();

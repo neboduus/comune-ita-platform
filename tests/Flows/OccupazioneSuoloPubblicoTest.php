@@ -133,6 +133,8 @@ class OccupazioneSuoloPubblicoTest extends AbstractAppTestCase
             $this->tempoOccupazione($crawler, $nextButton, $fillData, $form);
         }
 
+        $this->uploadAllegati($crawler, $nextButton, $fillData, $form);
+
         $form = $crawler->selectButton($finishButton)->form();
         $this->client->submit($form);
 
@@ -239,4 +241,18 @@ class OccupazioneSuoloPubblicoTest extends AbstractAppTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
     }
 
+    /**
+     * @param $crawler
+     * @param $nextButton
+     * @param $fillData
+     * @param $form
+     */
+    private function uploadAllegati(&$crawler, $nextButton, &$fillData, &$form)
+    {
+        /** All attachments are optional, simply skip ahead */
+
+        $form = $crawler->selectButton($nextButton)->form();
+        $crawler = $this->client->submit($form);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
+    }
 }

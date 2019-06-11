@@ -58,7 +58,7 @@ class P7MThumbnailerTest extends AbstractAppTestCase
         $user = $this->createCPSUser();
 
         $uploadPath = __DIR__.'/../../../var/uploads/pratiche/allegati/'.$user->getId();
-        $userThumbnailPath = $uploadPath.'/thumbnails/';
+        $userThumbnailPath = $uploadPath.'/thumbnails';
 
         mkdir($uploadPath, 0777, true);
         copy(__DIR__.'/../Assets/signed.pdf.p7m', $uploadPath.'/signed.pdf.p7m');

@@ -1,29 +1,31 @@
 guzzle:
   clients:
     messages:
-      base_url: "%messages_backend_url%"
+      base_url: '%messages_backend_url%'
       options:
         timeout: 1
       headers:
-        Accept: "application/json"
+        Accept: 'application/json'
     protocollo_cct:
-      base_url: "%pitre_adapter_url%"
+      base_url: '%pitre_adapter_url%'
       options:
         timeout: 50
       headers:
-        Accept: "application/json"
+        Accept: 'application/json'
     comunweb:
       options:
         timeout: 3
       headers:
-        Accept: "application/json"
+        Accept: 'application/json'
+    mypay:
+      base_url: '%mypay_adapter_url%'
     giscom:
-      base_url: "%giscom_adapter_url%"
+      base_url: '%giscom_adapter_url%'
       options:
         timeout: 50
         verify: false
         auth:
-          - "%giscom_adapter_username%" # login
-          - "%giscom_adapter_password%" # password
+          - '%giscom_adapter_username%' # login
+          - '%giscom_adapter_password%' # password
       headers:
-        Accept: "application/json"
+        Accept: 'application/json'

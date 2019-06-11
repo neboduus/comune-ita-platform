@@ -37,6 +37,8 @@ nav:
     panello_controllo: "Pannello di controllo"
     lista_operatori: 'Gestisci operatori comune'
     accesso_operatori: 'Accesso operatori'
+    protocollo: 'Configurazione di Protocollo'
+    usage: 'Metriche di utilizzo'
 
 terms:
   title: 'Accettazione termini di utilizzo'
@@ -84,6 +86,7 @@ pratica:
   cancella_elemento: 'Cancella elemento'
   nucleoFamiliare: 'Composizione del nucleo familiare'
   pagamento: 'Pagamento'
+  non_specificato: 'Non specificato'
   pdf:
     dati_autenticazione: '<strong><small>Dati generati automaticamente dalla Stanza del Cittadino</small><br>Informazioni tecniche</strong>'
     spett_le: 'Spett.le'
@@ -134,6 +137,7 @@ pratica:
       rapporto_di_parentela: 'Rapporto di parentela'
       abbr_rapporto_di_parentela: 'Parentela'
     allegati: 'File allegati'
+    richiesta_integrazioni: 'Richiesta integrazioni'
     allegato:
       file: 'Nome del file'
       descrizione: 'Descrizione'
@@ -300,11 +304,16 @@ stato_famiglia:
 
 occupazione_suolo_pubblico:
   pdf:
-    richiesta: "Il rilascio della concessione di occupazione di suolo pubblico:"
+    richiesta: "il rilascio delle sottoelencate autorizzazioni necessarie per lo svolgimento della manifestazione/evento
+                denominata/o: %nomeIniziativa%"
 
 contributo_associazioni:
   pdf:
-    richiesta: "L'erogazione del contributo per la segunte associazione ed attività:"
+    richiesta: "L'erogazione del contributo per la seguente associazione ed attività:"
+
+iscrizione_registro_associazioni:
+  pdf:
+    richiesta: "che l'Associazione %associazione% venga iscritta nell'Albo delle Associazioni di questo Comune. Al fine di consentire l'istruttoria della richiesta allega i seguenti documenti, se non già in possesso dell’Amministrazione comunale:<br>• ELENCO DELLE CARICHE SOCIALI E RELATIVI NOMINATIVI<br/>• copia dello STATUTO o ATTO COSTITUTIVO, avente data certa, da cui risulti l'eleggibilità delle cariche, la volontarietà dell'adesione e del recesso dei membri, l'assenza di fini di lucro e la compatibilità dello scopo sociale con le finalità generali e gli obiettivi stabiliti dallo statuto comunale)<br>• attribuzione codice fiscale da parte dell’Agenzia delle Entrate<br>• (opzionalmente) logo in formato jpeg"
 
 liste_elettorali:
   pdf:
@@ -397,6 +406,7 @@ operatori:
   scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
   scarica_ricevuta_provvisoria_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma.<br /> Puoi controllare l'avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <em>Le mie pratiche</em>."
   scarica_modulo_compilato: 'Scarica il modulo compilato'
+  scarica_richiesta_protocollata: 'Scarica la richiesta protocollata'
   scarica_risposta_firmata: 'Scarica il file di risposta'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
@@ -418,6 +428,10 @@ operatori:
     ente: 'Ente'
     ambito: 'Ambito'
     salva_modifiche: 'Salva modifiche'
+  usage:
+    title: 'Metriche di utilizzo'
+    service_title: 'Servizi attivi'
+    pratiche_title: 'Pratiche per anno'
 
 allegato:
   nome_file: 'Nome del file'
@@ -425,6 +439,7 @@ allegato:
   scarica_allegato: 'Scarica file'
   scarica_allegato_bozza: 'Scarica il file'
   scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'
+  scarica_allegato_richiesta_integrazione: "Scarica file contenente la richiesta  d'integrazione"
   crea_allegato: 'Carica un allegato'
   non_supportato: 'Il file che stai cecando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
   guida_alla_compilazione:
@@ -454,6 +469,7 @@ email:
         draft.for.integration: "Le comunichiamo che è stata effettuata una richiesta di integrazione ai dati della sua domanda per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
         submitted.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
         registered.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della pratica."
+        pending.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
     operatore:
       status:
         submitted: "la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
@@ -477,6 +493,12 @@ chat:
         
 steps:
     common:
+        inserisci_importo:
+            label: "Inserisci l'importo"
+        seleziona_gateway_pagament:
+            title: "Selezione del gateway di pagamento"
+            guida_alla_compilazione: "Seleziona dal menu a tendina il gateway di pagamento che intendi utilizzare"
+
         seleziona_ente:
             label: "Ente"
             title: 'Selezione del comune di riferimento'
@@ -525,7 +547,7 @@ steps:
         org_richiedente:
             label: 'Organizzazione richiedente'
             title: 'Organizzazione richiedente'
-            ruolo_utente: 'In qualità di'
+            ruolo_utente: 'In qualità di '
             ragione_sociale: 'Ragione sociale'
             cf: 'Codice fiscale'
             piva: 'Partita Iva'
@@ -536,6 +558,25 @@ steps:
             provincia: 'Provincia'
             email: 'Indirizzo Email'
             tel: 'Numero di telefono'
+            
+            nome_associazione: "Nome dell'associazione"
+            natura_giuridica: "Natura giuridica"
+            sito: "Sito"
+            pagina_social: "Pagina social"
+            e_mail: "email"
+            numero_iscritti: "Numero di iscritti"
+            modalita_di_adesione: "Modalità di adesione (come si diventa soci)"
+            attivita: "Attività (indicare in modo sintetico le attività principali)"
+            obiettivi: "Obiettivi"
+            sede_legale: "Sede legale"
+            sede_operativa: "Sede operativa"
+            contatti: "Contatti"
+
+            allegato_statuto: "Statuto"
+            allegato_attribuzione_cf: "Attribuzione del Codice Fiscale"
+            allegato_cariche_sociali: "elenco delle Cariche sociali"
+            allegato_logo: "Logo"
+
 
         dati_conto_corrente:
             label: 'Dati Conto Corrente'
@@ -550,8 +591,8 @@ steps:
             guida_alla_compilazione: 'Utilizza il menù a tendina per selezionare il metodo di pagamento desiderato'
 
         payment_gateway:
-            label: 'Metodo di pagamento'
-            title: 'Metodo di pagamento'
+            label: 'Pagamento'
+            title: 'Pagamento'
 
         delega:
             label: 'Delega'
@@ -642,7 +683,6 @@ steps:
             guida_alla_compilazione: 'Specifica uso per il certificato'
             uso: 'Specifica uso per il certificato'
 
-
     allacciamento_acquedotto:
         dati_immobile:
             label: 'Immobile'
@@ -683,7 +723,7 @@ steps:
             numero_civico: "Numero civico"
             cap: "CAP"
             comune: "Comune"
-    
+
     autolettura_acqua:
         dati_intestatario:
             label: 'Intestatario'
@@ -856,20 +896,27 @@ steps:
             guida_alla_compilazione: "Allega l'attestazione ICEF per i servizi alla prima infanzia (in mancanza dell’attestazione verranno applicate le tariffe massime. L’eventuale tariffa agevolata sarà applicata dal primo giorno del mese successivo a quello di presentazione dell’attestazione al Comune)"
 
     occupazione_suolo_pubblico:
+        nomeIniziativa: 'Nome Manifestazione/Evento'
+        guida_alla_compilazione: 'Inserisci i campi richiesti. I campi marcati con un asterisco (*) sono obbligatori'
+        allegati:
+            label: 'Allegati'
+            guida_alla_compilazione: 'Carica gli allegati richiesti (in formato PDF)'
         org_richiedente:
             label: 'Organizzazione richiedente'
             title: 'Organizzazione richiedente'
-            ruolo_utente: 'In qualità di'
-            ragione_sociale: 'Ragione sociale'
+            ruolo_utente: 'Il sottoscritto in qualità di'
+            ragione_sociale: 'Ragione sociale associazione'
             indirizzo: 'Indirizzo'
             civico: 'Numero civico'
             cap: 'Cap'
             comune: 'Comune'
             provincia: 'Provincia'
 
+
         occupazione:
+            nomeIniziativa: 'Nome Manifestazione/Evento'
             label: 'Luogo occupazione'
-            title: 'Luogo occupazione'
+            title: 'Luogo occupazione e Nome Manifestazione/Evento'
             indirizzo: 'Indirizzo'
             civico: 'Numero civico'
             lunghezza: 'Lunghezza in cm'
@@ -890,6 +937,8 @@ steps:
             fine_giorno: 'Giorno fine occupazione'
             fine_ora: 'Ora fine occupazione'
             error: 'Selezionare un giorno di inizio precedente a quello di fine'
+        importo:
+            guida_alla_compilazione: "Inserisci l'importo corretto per la pratica.<br/>Trovi le istruzioni per il calcolo a questo indirizzo: <a href='http://www.comune.rovereto.tn.it/istruzioni-per-calcolo-importi'>Comune di Rovereto - Istruzioni per il calcolo degli importi</a>"
 
     contributo_associazioni:
         tipologia_attivita:
@@ -916,174 +965,344 @@ steps:
     scia:
         error:
             allegato_richiesto: "Allegare almeno un file nel campo %field%"
-        modulo_scia:
-            label: 'Domanda S.C.I.A.'
-            title: 'Modulo della domanda S.C.I.A. correttamente compilato'
-            guida_alla_compilazione: 'Allega il modulo della domanda S.C.I.A. correttamente compilato e tutti i documenti elencati'
+
+        modulo_default :
+          label: 'Modulo Domanda'
+          title: 'Modulo principale della domanda'
+          guida_alla_compilazione: 'Allega il modulo della domanda correttamente compilato'
+
         allegati_modulo_scia:
             label: 'Allegati alla domanda'
-            title: 'Documenti elencati nel modulo della domanda S.C.I.A.'
-            guida_alla_compilazione: 'Allega il modulo della domanda S.C.I.A. correttamente compilato e tutti i documenti elencati'
+            title: 'Documentaziona allegata alla domanda'
+            guida_alla_compilazione: 'Allega tutti i documenti elencati'
             files:
-                DOM_CI:
-                    title: "Documenti d'identità"
-                    description: "Copia fotostatica di valido documento d'identità degli aventi titolo alla presentazione S.C.I.A, del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
-                DOM_CF:
-                    title: "Codici fiscali o partite IVA"
-                    description: "Fotocopia codice fiscale o partita IVA del richiedente e del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
-                DOM_PAG:
-                    title: "Ricevuta del contributo di concessione"
-                    description: "Documentazione attestante l'avvenuto pagamento del contributo di concessione."
-                DOM_NP:
-                    title: "Notifica preliminare"
-                    description: "Copia della notifica preliminare di cui all'articolo 99 del D.Lgs. 81/2008."
-                DOM_DURC:
-                    title: "DURC"
-                    description: "Dichiarazione dell'impresa esecutrice dei lavori ai fini dell'acquisizione d'ufficio del DURC."
-                DOM_VER:
-                    title: "Dichiarazione verifica documentazione"
-                    description: "Dichiarazione attestante l'avvenuta verifica della documentazione relativa all'art.90, comma 9, lettera a) e b) del D.Lgs.8/2008."
+              DOM_DELEGA:
+                title: Delega
+                description: Procura/Delega a presentare la pratica
+              DOM_PRIVACY:
+                title: Privacy
+                description: Informativa sul trattamento dei dati personali
+              DOM_ISPAT:
+                title: Modelli ISPAT
+                description: Modelli statistici ISPAT
+              DOM_CI:
+                title: "Documenti d'identità"
+                description: "Copia fotostatica di valido documento d'identità degli aventi titolo alla presentazione S.C.I.A, del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+              DOM_CF:
+                title: "Codici fiscali o partite IVA"
+                description: "Fotocopia codice fiscale o partita IVA del richiedente e del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+              DOM_EDIFICI-STORICI:
+                title: ''
+                description: Documentazione fotografica con l'indicazione degli interventi previsti per la tutela e la valorizzazione degni edifici soggetti alla disciplina degli insediamenti storici o del patrimonio edilizio tradizionale montano.
+              DOM_OBBLIGHI_SICUREZZA:
+                title: ''
+                description: Obblighi in materia di sicurezza nei luoghi di lavoro di cui al d.lgs n. 81/2008
+              DOM_DOC_PAGAMENTO_CONTRIBUTO:
+                title: ''
+                description: Documentazione attestante il pagamento del contributo di costruzione
+              DOM_PROGETTO_OPERE:
+                title: ''
+                description: Progetto delle opere di urbanizzazione
+              DOM_CONDOMINIO:
+                title: ''
+                description: Atto di assenso del condominio e pertanto si allega il verbale di assemblea
+
         soggetti:
             label: 'Soggetti aventi titolo'
             title: 'Elenco dei soggetti aventi titolo come richiesto nel modulo A della domanda S.C.I.A.'
             guida_alla_compilazione: 'Allega il/i modulo/i A correttamente compilato/i'
         allegati_tecnici:
             label: 'Allegati tecnici  (A)'
-            title: 'Documentazione tecnica (elencati in Allegato B - parte A della domanda S.C.I.A.)'
+            title: 'Attestazione tipologia di intervento e allegati di Documentazione tecnica'
             guida_alla_compilazione: "Documentazione tecnica di progetto <strong>essenziale ai fini dell'ammissibilità</strong> da produrre, in funzione della tipologia dell'intervento in progetto e in coerenza con il quadro sinottico parte integrante del presente allegato, in forma cartacea in <strong>duplice copia</strong> e su idoneo supporto informatico con possibilità di stampa e riproduzione in <strong>copia singola</strong>.<br/>Barrare gli elaborati oggetto di presentazione.<br/>Per le varianti va operato riferimento esclusivamente ai contenuti della variante stessa.<br/><strong>I punti contrassegnati con l'asterisco(<span style='color: red'>*</span>) sono obbligatori.</strong>"
             tipo_intervento_label: 'Tipologia di intervento'
             tipi_intervento:
-                nuova: 'Nuova costruzione'
-                ampliamento: 'Ampliamento'
-                demolizione: 'Demolizione e ricorstruzione'
-                straordinaria: 'Manutenzione straordinaria'
-                cambio_uso: "Cambio d'uso senza opere"
+                default: "Standard"
+                manutenzione_straordinaria: Manutenzione Straordinaria
+                ristrutturazione_edilizia: Ristrutturazione Edilizia
+                restauro_e_risanamento_conservativo: Restauro e Risanamento Conservativo
+                ristrutturazione_urbanistica: Ristrutturazione Urbanistica
             files:
-                TEC_URB:
-                    title: "1.1 ELABORATI RELATIVI AI VINCOLI E AI DATI URBANISTICI E CATASTALI"
-                    description: "Elaborati con riportati gli estratti degli strumenti urbanistici e la mappa catastale nonché i dati urbanistici ed edilizi di progetto (indici, cubature, superfici, distanze, altezze, ecc.). Sulla mappa catastale deve essere adeguatamente evidenziato l'ambito interessato dall'intervento edilizio."
-                TEC_DF:
-                    title: "2.1 DOCUMENTAZIONE FOTOGRAFICA"
-                    description: "Elaborato contenente adeguata documentazione fotografica relativa all'area di intervento. Devono essere indicati i punti di ripresa delle foto."
-                TEC_RT:
-                    title: "3.1 RELAZIONE TECNICA"
-                    description: "Relazione contenente i criteri di progettazione, la descrizione delle soluzioni adottatee ogni altro elemento di valutazione necessario in funzione dei singoli interventi. Allegato alla relazione deve essereprodotto un elenco degli elaborati depositati comprensivo di quelli essenziali, di ogni altro elaborato prodotto e deiprovvedimenti allegati."
-                TEC_PLANFAT:
-                    title: "4.1 PLANIMETRIA STATO DI FATTO"
-                    description: "Planimetria contenente il rilievo dello stato di fatto (per le varianti: statoautorizzato) riportarne i punti battuti, le quote altimetriche riferite ad un unico punto di origine, le curve di livello, iconfini di proprietà. Sulla planimetria di rilievo dovranno essere indicati gli ingombri delle costruzioni rilevanti aifini delle distanze. Assieme alla planimetria dovranno essere prodotte almeno due sezioni significative ed esteseoltre i confini. La scala dovrà essere adeguata alla dimensione del progetto; di norma 1:100 o 1:200."
-                TEC_PLANPROG:
-                    title: "4.2 PLANIMETRIA DI PROGETTO"
-                    description: "Planimetria contenente i confini di proprietà, gli edifici di progetto(rappresentando il livello della copertura ed evidenziando il sedime nonché eventuali aggetti), le sistemazioniesterne, le alberature, gli accessi, i parcheggi, i percorsi carrabili e pedonali, le distanze dai confini, le fasce dirispetto, le distanze dai fabbricati circostanti, le curve di livello di progetto e le relative quote riferite ad un unicopunto di origine, che deve coincidere con quello riportato sull'elaborato di rilievo. La scala dovrà essere adeguataalla dimensione del progetto; di norma 1:100 o 1:200 e comunque deve essere uguale a quella utilizzata per laplanimetria di rilievo. La planimetria deve riguardare tutta l'area oggetto di intervento"
-                TEC_PLANRAF:
-                    title: "4.3 PLANIMETRIA DI RAFFRONTO"
-                    description: "Planimetria di comparazione (rappresentazione dello stato di progetto,sovrapposizione con rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degli ambitidi costruzione e demolizione)."
-                TEC_SEZPLANRAF:
-                    title: "5.1 SEZIONI PLANIMETRICHE CON RAFFRONTO"
-                    description: "Sezioni riferite alla planimetria di progetto in numeroconveniente ad illustrare l'andamento del livello definitivo del terreno a sistemazioni avvenute con riferimento alprofilo del terreno naturale. Tali sezioni devono essere tratte nella medesima posizione di quelle di rilievo. Gli ambitidi raffronto riferito a riporti e sterri devono essere campiti rispettivamente in rosso e in giallo."
-                TEC_PIANTEFAT:
-                    title: "6.1 PIANTE STATO DI FATTO"
-                    description: "Piante (per le varianti: stato autorizzato) di tutti i piani (entro e fuori terra, compresala copertura) interessati dall'intervento debitamente quotate, corredate da informazioni quali quelle previste per lepiante di progetto qualora rilevanti. La scala dovrà essere adeguata alla dimensione e alla natura del progetto; dinorma 1:50 o 1:100."
-                TEC_PIANTEPROG:
-                    title: "6.2 PIANTE DI PROGETTO"
-                    description: "Piante di tutti i piani (entro e furori terra, compresa la copertura) interessatidall'intervento debitamente quotate, con riportate le destinazioni d'uso, le superfici utili e i rapporti di aero-illuminazione dei singoli locali nonché le dimensioni di porte e finestre. La scala dovrà essere adeguata alladimensione e alla natura del progetto; di norma 1:50 o 1:100."
-                TEC_PIANTERAF:
-                    title: "6.3 PIANTE DI RAFFRONTO"
-                    description: "Piante di comparazione (rappresentazione dello stato di progetto, sovrapposizionecon il rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degli ambiti di costruzionee demolizione)."
-                TEC_SEZFAT:
-                    title: "7.1 SEZIONI STATO DI FATTO"
-                    description: "Sezioni (per le varianti: stato autorizzato) tratte in punti significativi in numerosufficiente a garantire una esaustiva rappresentazione del progetto. Devono essere redatte almeno due sezioni,quotate, non parallele tra loro, assicurando un adeguato livello di restituszione ai vani scale. Le sezioni devonoessere redatte alla medesima scala di quelle di progetto rispetto alle quali possono tuttavia essere in numeroinferiore."
-                TEC_SERPROG:
-                    title: "7.2 SEZIONI DI PROGETTO"
-                    description: "Sezioni tratte in punti significativi in numero sufficiente a garantire una esaustivarappresentazione del progetto. Devono essere redatte almeno due sezioni, quotate, non parallele tra loro,assicurando un adeguato livello di restituzione ai vani scale. Le sezioni devono essere redatte alla medesimascala delle piante."
-                TEC_SEZRAF:
-                    title: "7.3 SEZIONI DI RAFFRONTO"
-                    description: "Sezioni di comparazione (rappresentazione dello stato di progetto, sovrapposizionecon il rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degli ambiti di costruzionee demolizione)."
-                TEC_PROSPFAT:
-                    title: "8.1 PROSPETTI STATO DI FATTO"
-                    description: "Prospetti (per le varianti: stato autorizzato) relativi a tutti i fronti con indicatele altezze di rilievo, i materiali e colori. La rappresentazione deve essere possibilmente estesa fino al confine dellotto. I prospetti devono di norma essere alla medesima scala di piante e sezioni."
-                TEC_PROSPPROG:
-                    title: "8.2 PROSPETTI DI PROGETTO"
-                    description: "Prospetti relativi a tutti i fronti con indicate le altezze di progetto, i materiali ecolori. Dovrà essere mostrato l'andamento del terreno di progetto, indicando altresì quello del terreno naturalesolo qualora sia apprezzabilmente diverso e non si producano i prospetti di raffronto. La rappresentazione deveessere possibilmente estesa fino al confine del lotto. I prospetti devono di norma essere alla medesima scala dipiante e sezioni."
-                TEC_PROSPRAF:
-                    title: "8.3 PROSPETTI DI RAFFRONTO"
-                    description: "Prospetti di comparazione (rappresentazione dello stato di progetto,sovrapposizione con il rilievo restituito a tratto unico sottile, campitura rispettivamente in rosso e in giallo degliambiti di costruzione e demolizione."
-                TEC_BARARC:
-                    title: "9.1 BARRIERE ARCHITETTONICHE"
-                    description: "Elaborati progettuali, relazioni e dichiarazioni previste dalla vigentenormativa provinciale e nazionale per il superamento delle barriere architettoniche."
-                TEC_SPAZIPARC:
-                    title: "10.1 SPAZI DI PARCHEGGIO"
-                    description: "Relazione relativa agli spazi di parcheggio con allegato calcolo e verifica delladotazione minima ai sensi dell'art. 59 della l.p. 1/2008 'Pianificazione urbanistica e governo del territorio' nonchénei casi ove ricorra, il calcolo della c.d. 'monetizzazione'"
-                TEC_GEO:
-                    title: "11.1 PERIZIA/RELAZIONE GEOLOGICA, GEOTECNICA, IDROGEOLOGICA E/O VALANGHIVA"
-                    description: "Perizia/relazione geologica, geotecnica, idrogeologica e/o valanghiva con riferimento alla Carta di sintesi geologica, allaCarta delle risorse idriche e al Piano Generale di Utilizzazione delle Acque Pubbliche (PGUAP) della Provinciaautonoma di Trento. Gli elaborati devono essere controfirmati dal progettista per presa visione."
-                TEC_ENER:
-                    title: "12.1 ELABORATI RELATIVI ALLA CLASSIFICAZIONE ENERGETICA"
-                    description: "Solo se necessari ai fini del computodel 'bonus volumetrico'."
-                TEC_PLANRETI:
-                    title: "PLANIMETRIA RETI"
-                    description: ""
-        ulteriori_allegati_tecnici:
-            label: 'Allegati tecnici (B)'
-            title: 'Ulteriore documentazione tecnica (elencati in AllegatoB - parte B della domanda S.C.I.A.)'
-            guida_alla_compilazione: "Ulteriore documentazione tecnica di progetto"
+              TEC_ELABORATI_VINCOLI:
+                title: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
+                description: ''
+              TEC_DOC_FOTOGRAFICA:
+                title: ''
+                description: 	documentazione fotografica dello stato di fatto
+              TEC_RELAZIONE_TECNICA:
+                title: ''
+                description: 	relazione tecnica
+              TEC_PLANIMETRIE:
+                title: ''
+                description: 	planimetrie
+              TEC_SEZ_ALTIMETRICHE:
+                title: ''
+                description: 	sezioni altimetriche con raffronto
+              TEC_PIANTE:
+                title: ''
+                description: 	piante
+              TEC_SEZIONI:
+                title: ''
+                description: 	sezioni
+              TEC_PROSPETTI:
+                title: ''
+                description: 	prospetti
+              TEC_TECNICA_COSTR:
+                title: ''
+                description: 	documentazione tecnica necessaria alla determinazione del contributo di costruzione
+              TEC_SPAZI_PARCHEGGIO:
+                title: ''
+                description: 	spazi di parcheggio
+              TEC_BARRIERE_ARCHITETTONICHE:
+                title: ''
+                description: 	elaborati relativi al superamento delle barriere architettoniche
+              TEC_RELAZIONE_GEOLOGICA:
+                title: ''
+                description: 	perizia, studio o relazione geologica di fattibilità dell’intervento
+              TEC_STUDIO_COMPATIBILITA:
+                title: ''
+                description: 	studio di compatibilità
+              TEC_RELAZIONE_ENERGETICA:
+                title: ''
+                description: 	relazione energetica
+              TEC_RISULTATI_ANALISI:
+                title: ''
+                description: 	risultati delle analisi ambientali sulla qualità dei terreni
+              TEC_COMUNICAZIONI_MATERIA:
+                title: 'Comunicazioni in materia di gestione delle terre e rocce da scavo'
+                description: ''
+              TEC_PIANO_LAVORO:
+                title: ''
+                description: 	piano di lavoro di demolizione o rimozione dell'amianto
+              TEC_IMP-ELET:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici di produzione, trasformazione, trasporto, distribuzione, utilizzazione dell'energia elettrica
+              TEC_IMP-SCAR:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici di protezione contro le scariche atmosferiche
+              TEC_IMP-RADIO:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici radiotelevisivi, antenne ed elettronici in genere
+              TEC_IMP-CLIMA:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici di riscaldamento, di climatizzazione, di condizionamento e di refrigerazione di qualsiasi natura o specie, comprese le opere di evacuazione dei prodotti della combustione e delle condense, e di ventilazione ed aerazione dei locali
+              TEC_IMP-IDRIC:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici idrici e sanitari di qualsiasi natura o specie
+              TEC_IMP-GAS:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici per la distribuzione e l'utilizzazione di gas di qualsiasi tipo, comprese le opere di evacuazione dei prodotti della combustione e ventilazione ed aerazione dei locali
+              TEC_IMP-ELEV:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici di sollevamento di persone o di cose per mezzo di ascensori, di montacarichi, di scale mobili e simili
+              TEC_IMP-INCEN:
+                title: ''
+                description: 	schema del progetto degli impianti tecnologici di protezione incendio
+              TEC_RETI_SCARIC:
+                title: ''
+                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi scarichi acque nere e bianche
+              TEC_RETI_RIFIU:
+                title: ''
+                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi spazi di raccolta dei rifiuti solidi urbani
+              TEC_RETI_ACQ:
+                title: ''
+                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di acqua
+              TEC_RETI_ELET:
+                title: ''
+                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di energia elettrica
+              TEC_RETI_GAS:
+                title: ''
+                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di calore, gas, ecc.
+              TEC_RETI_ALTRO:
+                title: ''
+                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore di altri servizi
+              TEC_COLLEGAMENTO_FIBRA:
+                title: ''
+                description: 	collegamenti in fibra ottica
+              TEC_DOTAZIONI_RICARICA:
+                title: ''
+                description: 	dotazioni per la ricarica dei veicoli elettrici
+              TEC_RELAZIONE_ACUSTICHE:
+                title: ''
+                description: 	relazione sulle caratteristiche acustiche
+              TEC_DOC_IMPATTO_ACUSTICO:
+                title: ''
+                description: 	documentazione di impatto acustico
+              TEC_DOC_CLIMA_ACUSTICO:
+                title: ''
+                description: 	documentazione di valutazione previsionale di clima acustico
+              OP_DOC_FOTOGRAFICA:
+                title: ''
+                description: 	documentazione fotografica
+              OP_PLANIMETRIA:
+                title: ''
+                description: 	elaborati progettuali a firma di un tecnico abilitato, che rappresenti lo stato di raffronto nel caso di interventi di manutenzione straordinaria che comportano la modifica dell'impianto distributivo interno; e relativa attestazione ai sensi dell'art. 15, comma 2, della l.p. n. 15/2015 in merito alla corrispondenza dei contenuti del progetto rispetto alle disposizioni vigenti e la corrispondenza dei relativi contenuti rispetto a studi o perizie allegate, quali parti integranti al progetto.
+              OP_PLANIMETRIA_CILA:
+                title: ''
+                description: 	elaborati progettuali rappresentativi dell'intervento.
+              OP_ATTESTAZIONE:
+                title: ''
+                description: 	attestazione di un tecnico abilitato che dimostri l’irrilevanza strutturale.
+              OP_ELABORATO_PROGETTUALE:
+                title: ''
+                description: 	elaborato/i progettuale/i relativo/i agli impianti di cui al d.m. 37/2008.
+              OP_RELAZIONE_DITTA:
+                title: ''
+                description: 	relazione della ditta/tecnico attestante i requisiti di prestazione energetica (nel caso in cui gli interventi ricadano nell'articolo 4, del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e ss.mm).
+              OP_RELAZIONE_ENERGETICA:
+                title: ''
+                description: 	relazione energetica (allegati dm. 26 giugno 2009 schemi e modalità di riferimento per la compilazione della relazione tecnica di progetto ai fini dell’applicazione delle prescrizioni e dei requisiti minimi di prestazione energetica negli edifici) nel caso in cui gli interventi ricadano nell'articolo 4, commi 3, 4 o 5 del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e s.m.i
+              OP_RELAZIONE_TECNICA:
+                title: ''
+                description: 	relazione tecnica descrittiva delle opere , della loro funzione temporanea e improrogabile, dei tempi previsti di utilizzazione e delle modalità di rimozione e rimessa in pristino dei luoghi ed elaborati cartografici relativi al manufatto o alle opere.
+              OP_CATASTO:
+                title: ''
+                description: 	denuncia di variazione catastale comprensiva delle planimetrie e visure catastali o le planimetrie catastali firmate dal tecnico abilitato unitamente alla ricevuta di deposito della richiesta di accatastamento dell'immobile.
+              OP_NOTIFICA:
+                title: ''
+                description: 	documentazione necessaria per la notifica, il cui contenuto sarà riprodotto su apposita tabella esposta in cantiere per tutta la durata dei lavori, in luogo visibile dall'esterno.
+              OP_ALTRO:
+                title: ''
+                description: 	altra documentazione tecnica
+              DUL_NUM_CIVICA:
+                title: ''
+                description: 	nota di assegnazione o aggiornamento di numerazione civica rilasciata dagli uffici comunali competenti
+              DUL_COPERTURE:
+                title: ''
+                description: 	ai sensi dell'art. 91 ter della l.p. 22/91 e dell'art. 4 del d.p.p. 25 febbraio 2008, n.7-114/leg, la documentazione sulla prevenzione dei rischi di infortunio a seguito di cadute dall'alto nei lavori di manutenzione ordinarie delle coperture
+              DUL_CONF_IMPIANTI:
+                title: ''
+                description: 	modello “deposito dichiarazioni di conformità degli impianti” - va allegata copia della ricevuta di avvenuto deposito delle dichiarazioni di conformità relative a tutti gli impianti installati e/o modificati, come previsto dal d.m. 37/2008
+              DUL_CERT_ENERGETICA:
+                title: ''
+                description: 	attestato di prestazione certificazione energetica ai sensi dell'art. 6, comma 5 2, del d.p.p. 11-13/leg. del 13 luglio 2009 e della d.g.p. 163/2017 3110/2009 unitamente all'asseverazione del direttore lavori ai sensi dell'art. 8, comma2, del d.lgs. n. 192/2005
+              DUL_ASSEVERA:
+                title: ''
+                description: 	asseverazione del direttore lavori ai sensi dell'art. 8, comma 2, del d. lgs. n. 192/2005, in merito alla “conformità delle opere realizzate rispetto al progetto ed alle sue eventuali varianti ed alla relazione tecnica di cui al comma 1 del medesimo articolo” (quando è soggetto diverso dal tecnico abilitato sottoscrittore del presente modello
+              DUL_CERT_STATICO:
+                title: ''
+                description: 	copia del certificato di collaudo statico e di conformità alle norme antisismiche ove richiesto.
+              DUL_ANTINCENDIO:
+                title: ''
+                description: 	copia della ricevuta dell'avvenuta presentazione della dichiarazione che costituisce ai soli fini antincendio, autorizzazione provvisoria all'esercizio dell'attività (ai sensi dell'art. 3, comma 5, del d.p.r. 37/1998) ovvero copia del certificato di prevenzione antincendi ove necessario (legge 966/1965).
+              DUL_CATASTO:
+                title: ''
+                description: 	planimetrie e visure catastali oppure planimetrie catastali firmate dal tecnico abilitato e ricevuta di deposito della richiesta di accatastamento dell'immobile.
+              DUL_PLANIMETRIE:
+                title: ''
+                description: 	planimetrie fine lavori parziale
+              DUL_TULPS:
+                title: ''
+                description: 	autorizzazione ai sensi del tulps per locali destinati a esercizi pubblici.
+              AMB_PRECETTIVI:
+                title: ''
+                description: 	indicazione dei contenuti precettivi della disciplina paesaggistica vigente nell'area
+              AMB_DESCRIZIONE:
+                title: ''
+                description: 	descrizione dello stato attuale dell'area interessata dall'intervento
+              AMB_CONFORMITA:
+                title: ''
+                description: 	attestazione di conformità del progetto alle specifiche prescrizioni d'uso dei beni paesaggisticia, se esistenti
+              AMB_COMPATIBILITA:
+                title: ''
+                description: 	descrizione della compatibilità del progetto stesso con i valori paesaggistici che qualificano il contenuto di riferimento
+              AMB_MISURE:
+                title: ''
+                description: Indicazione di eventuali misure di inserimento paesaggistico se previste
+
+        vincoli:
+            label: Vincoli
+            title: Vincoli e relativi provvedimenti
+            guida_alla_compilazione: Vincoli e relativi provvedimenti
             files:
-                allegatoB:
-                    title: "Modulo Allegato B Parte B"
-                    description: "Allega il documento Allegato B Parte B correttamente compilato. Allega poi nei campi sottostanti gli eventuali documenti dichiarati nel file"
-                TEC_PDM:
-                    title: "1) piano di divisione materiale"
-                    description: ""
-                TEC_IMP-EL:
-                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto impianti elettrici"
-                    description: ""
-                TEC_IMP-TER:
-                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto impianti termici"
-                    description: ""
-                TEC_IMP-SOL:
-                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto impianti di sollevamento"
-                    description: ""
-                TEC_IMP-SCAR:
-                    title: "2) relativamente agli impianti tecnologici di cui al D.M. 37/2008, recante \"Disposizioni in materia di impianti negli edifici\" - progetto scariche atmosferiche"
-                    description: ""
-                TEC_PLARETI:
-                    title: "3) relativamente alla planimetria reti, contenente le reti di smaltimento delle acque bianche e nere, i punti di allacciamento alla rete pubblica, collocazione di eventuali vasche di laminazione e dispersori delle acque bianche con relativi disegni di dettaglio e dimensionamento, i punti di raccolta dei rifiuti urbani e ogni altro elemento utile a consentire una valutazione in ordine al grado di adeguatezza delle opere di urbanizzazione."
-                    description: ""
-                TEC_FIBRA-SCHEMA:
-                    title: "5) relativamente alle \"Linee guida per le predisposizioni dei collegamenti in fibra ottica all'interno degli edifici\" come previsto dalla discilpina provinciale - schema generale di accesso, adduzione e distribuzione verticale e orizzontale dei collegamenti con relativi dimensionamenti e/o predisposizioni."
-                    description: ""
-                TEC_FIBRA-REL:
-                    title: "5) relativamente alle \"Linee guida per le predisposizioni dei collegamenti in fibra ottica all'interno degli edifici\" come previsto dalla discilpina provinciale - relazione tecnica descrittiva sui criteri e sul dimensionamento rete."
-                    description: ""
-                TEC_ENERG-LIM:
-                    title: "6) relativamente ai requisiti di prestazione energetica ai sensi del D.P.P. 11-13/Leg. del 13 luglio 2009, recante \"Disposizioni regolamentari in materia di edilizia sostenibile in attuazione del titolo IV della l.p. 1/2008\" - elaborati/relazione energetica (legge 10/91) in cui si dimostri anche il rispetto del valore limite del fabbisogno globale di energia primaria (EPgl) dell'edificio, nel caso in cui gli interventi ricadano nell'art. 4 comma 3 del D.P.P. 11-13/Leg. del 13 luglio 2009."
-                    description: ""
-                TEC_ENERG-REQ:
-                    title: "6) relativamente ai requisiti di prestazione energetica ai sensi del D.P.P. 11-13/Leg. del 13 luglio 2009, recante \"Disposizioni regolamentari in materia di edilizia sostenibile in attuazione del titolo IV della l.p. 1/2008\" - elaborati/relazione energetica necessari a dimostrare il rispetto dei requisiti minimi di prestazione energetica (trasmittenza/rendimenti), nel caso in cui gli interventi ricadano nell'art. 4 comma 4 del D.P.P. 11-13/Leg. del 13 luglio 2009."
-                    description: ""
-                TEC_CARAQ:
-                    title: "7) riguardo alla relazione sulle caratteristiche acustiche ai sensi dell'art. 18, l.p. 6/1991, recante \"Tutela da inquinamento acustico\", dei decreti attuativi della legge 447/1995, \"Legge quadro sull'inquinamento acustico\", l'intervento in progetto - relazione sulle caratteristiche acustiche;"
-                    description: ""
-                TEC_IMPAQ:
-                    title: "8) riguardo alle documentazioni acustiche previste dall'art. 8 della legge 447/1995, \"Legge quadro sull'inquinamento acustico\" e ss.mm., l'intervento in progetto - valutazione previsionale di impatto acustico."
-                    description: ""
-                TEC_CLIMAQ:
-                    title: "8) riguardo alle documentazioni acustiche previste dall'art. 8 della legge 447/1995, \"Legge quadro sull'inquinamento acustico\" e ss.mm., l'intervento in progetto - valutazione previsionale di clima acustico."
-                    description: ""
-                TEC_CERTAQ:
-                    title: "8) riguardo alle documentazioni acustiche previste dall'art. 8 della legge 447/1995, \"Legge quadro sull'inquinamento acustico\" e ss.mm., l'intervento in progetto - si allega autocertificazione, sotto forma di dichiarazione sostitutiva dell'atto di notorietà ai sensi dell'art. 38 del DPR n. 445/2000, del tecnico competente in acustica."
-                    description: ""
-                TEC_SCAVO:
-                    title: "9) relativamente alla documentazione di cui al D.M. 161/2012 per l'utilizzo delle terre e rocce da scavo"
-                    description: ""
-                TEC_STAT:
-                    title: "10) modelli statistici ISTAT e PAT, sottoscritti dal progettista o dal richiedente, per l'intervento in progetto - elaborati progettuali."
-                    description: ""
-                TEC_CONT-ELAB:
-                    title: "11) elaborati relativi al calcolo del contributo di concessione, l'intervento in progetto - elaborati progettuali."
-                    description: ""
-                TEC_CONT-ESEN:
-                    title: "11) elaborati relativi al calcolo del contributo di concessione, l'intervento in progetto - elaborati progettuali."
-                    description: ""
+              VIN_TUTELA_PAESAGGISTICA:
+                title: ''
+                description: 	autorizzazione per la tutela paesaggistica di cui alla l.p. n. 15/2015
+              VIN_BENI_CULTURALI:
+                title: ''
+                description: 	autorizzazioni relative ai beni culturali di cui al d.lgs. n. 42/2004
+              VIN_IMPATTO_AMBIENTALE:
+                title: ''
+                description: 	adempimenti in materia di valutazione di impatto ambientale
+              VIN_VALUTAZIONE_INCIDENZA:
+                title: ''
+                description: 	valutazione di incidenza per interventi che interessano le zone speciali di conservazione o altre aree protette di cui alla l.p. 11/2007
+              VIN_AREE:
+                title: ''
+                description: agricole	autorizzazione per interventi nelle aree agricole del pup
+              VIN_UTILIZZO_ACQUE_PUBBLICHE:
+                title: ''
+                description: 	autorizzazione al fine della compatibilità con riferimento al piano generale di utilizzazione delle acque pubbliche (pguap) della provincia autonoma di trento. sono asseverati gli elaborati nei casi di cui all'articolo 15, comma 3 della l.p. n. 15/2015
+              VIN_VINCOLO_IDROGEOLOGICO:
+                title: ''
+                description: 	autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. n. 11/2007
+              VIN_TUTELA_ACQUE_PUBBLICHE:
+                title: ''
+                description: 	autorizzazione/concessione di cui alla l.p. n. 18/1976 ai fini della tutela delle acque pubbliche
+              VIN_TUTELA_AMBIENTI_INQUINAMENTO:
+                title: ''
+                description: 	provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti dagli inquinamenti
+              VIN_TULP:
+                title: ''
+                description: 	provvedimenti di cui al tulp in materia di tutela dell'ambiente dagli inquinamenti
+              VIN_LIMITI_ELETTROMAGNETICI:
+                title: ''
+                description: 	documentazione relativa all'avvenuta determinazione delle fasce di rispetto degli elettrodotti e alla verifica del rispetto dei limiti di esposizione ai relativi campi elettromagnetici
+              VIN_FASCE_RISPETTO_STRADALE:
+                title: ''
+                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto stradale
+              VIN_FASCE_RISPETTO_FERROVIARIE:
+                title: ''
+                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto ferroviarie
+              VIN_FASCE_RISPETTO_AEROPORTUALE:
+                title: ''
+                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto aeroportuali (avvenuta trasmissione del progetto agli enti competenti al controllo, gestione e sicurezza della navigazione)
+              VIN_FASCE_RISPETTO_CIMITERIALE:
+                title: ''
+                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto cimiteriale
+              VIN_FASCE_RISPETTO_DEPURATORE:
+                title: ''
+                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto dei depuratori
+              VIN_FASCE_RISPETTO_INCIDENTE:
+                title: ''
+                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di aree di danno da incidente
+              VIN_FASCE_RISPETTO_ALTRO:
+                title: ''
+                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di altro tipo
+              VIN_IMPIANTI:
+                title: ''
+                description:  telecomunicazioni	autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+              VIN_PREVENZIONE_INCENDI:
+                title: ''
+                description: 	parere di prevenzione incendi per attività soggetti ai sensi del dpr 151/2001
+              VIN_TULPS_ESERCIZI_PUBBLICI:
+                title: ''
+                description: 	autorizzazione ai sensi del tulps per locali destinati esercizi pubblici
+              VIN_VISTO_CORRISPONDENZA:
+                title: ''
+                description: 	visto di corrispondenza ai sensi della l.p. n. 7/2002
+              VIN_IMPIANTI_ILLUMINAZIONE_ESTERNA:
+                title: ''
+                description: 	autorizzazione per impianti di illuminazione esterna di cui al d.p.p. n. 2-34/2010
+              VIN_VERBALE_ASSEMBLEA:
+                title: ''
+                description: 	si allega il verbale di assemblea
+              VIN_ASSENSO_COMPROPRIETARI:
+                title: ''
+                description: 	atto di assenso dei comproprietari, che si allega
+              VIN_ALTRO:
+                title: ''
+                description: 	ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari
+              VIN_ALTRO_AMBIENTI:
+                title: ''
+                description: Altri provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti per gli inquinamenti
+              VIN_IMPIANTI_TELECOMUNICAZIONI:
+                title: ''
+                description: Autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+              VIN_AREE_AGRICOLE:
+                title: ''
+                description: Autorizzazione per interventi nelle aree agricole del PUP
+
         provvedimenti:
             label: 'Provvedimenti'
             title: 'Provvedimenti (elencati in Allegato C della domanda S.C.I.A.)'
@@ -1242,6 +1461,7 @@ steps:
                 PUP_ALTRO:
                     title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
                     description: ""
+
     atto_nascita:
         dati_atto:
             title: 'Dati atto'
@@ -1250,7 +1470,6 @@ steps:
             nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
             cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
             cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
-
 
     certificato_morte:
         dati_atto:
@@ -1278,6 +1497,11 @@ steps:
             nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
             cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
             cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+    iscrizione_registro_associazioni:
+      allegati:
+        label: Allegati
+        guida_alla_compilazione: Carica gli allegati richiesti. Il logo deve essere in formato jpeg, i documenti in formato PDF
 
 gateway:
     bollo:

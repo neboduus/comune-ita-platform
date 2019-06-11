@@ -76,12 +76,12 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
         $repo = $this->em->getRepository('AppBundle:ScheduledAction');
         $this->assertEquals(1, count($repo->findAll()));
 
-        $this->executeCron(4); //pratica + 3 allegati
+        $this->executeCron(5); //pratica + 3 allegati
 
         $repo = $this->em->getRepository('AppBundle:ScheduledAction');
         $this->assertEquals(0, count($repo->findAll()));
         $this->assertEquals(Pratica::STATUS_REGISTERED, $pratica->getStatus());
-        $this->assertEquals(3, count($pratica->getNumeriProtocollo()));
+        $this->assertEquals(4, count($pratica->getNumeriProtocollo()));
 
 
         $allegati = $this->setupNeededAllegatiForAllInvolvedUsers(3, $user);
@@ -94,7 +94,7 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
         $this->assertEquals(3, count($repo->findAll()));
 
         $this->executeCron(3); // tre allegati
-        $this->assertEquals(6, count($pratica->getNumeriProtocollo()));
+        $this->assertEquals(7, count($pratica->getNumeriProtocollo()));
     }
 
     private function executeCron($expectedRemoteCalls)
@@ -145,12 +145,10 @@ class DelayedProtocolloServiceTest extends AbstractAppTestCase
         }
         return
             new ProtocolloService(
-                new PiTreProtocolloHandler($this->getMockGuzzleClient($responses)),
+                new PiTreProtocolloHandler($this->getMockGuzzleClient($responses), 'comune-di-tre-ville'),
                 $this->em,
                 $this->getMockLogger(),
                 $dispatcher
             );
-
     }
-
 }

@@ -10,6 +10,7 @@ use AppBundle\Entity\RichiestaIntegrazioneRequestInterface;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
+use AppBundle\Entity\RispostaOperatoreDTO;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Snappy\GeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -135,10 +136,10 @@ class ModuloPdfBuilderService
 
 
     /**
-     * @param Pratica $pratica
-     *
-     * @return ModuloCompilato
-     */
+ * @param Pratica $pratica
+ *
+ * @return ModuloCompilato
+ */
     public function createForPratica(Pratica $pratica)
     {
         $moduloCompilato = new ModuloCompilato();
@@ -162,6 +163,35 @@ class ModuloPdfBuilderService
 
     /**
      * @param Pratica $pratica
+     *
+     * @return ModuloCompilato
+     */
+    public function showForPratica(Pratica $pratica)
+    {
+        $allegato = new ModuloCompilato();
+        $content = $this->renderForPratica($pratica);
+
+        $allegato->setOwner($pratica->getUser());
+        $destinationDirectory = $this->getDestinationDirectoryFromContext($allegato);
+        $fileName = $pratica->getId().'-prot.pdf';
+        $filePath = $destinationDirectory.DIRECTORY_SEPARATOR.$fileName;
+
+        $this->filesystem->dumpFile($filePath, $content);
+        $allegato->setFile(new File($filePath));
+        $allegato->setFilename($fileName);
+
+
+        $servizioName = $pratica->getServizio()->getName();
+        $now = new \DateTime();
+        $now->setTimestamp($pratica->getSubmissionTime());
+        $allegato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi'));
+
+        return $allegato;
+    }
+
+
+    /**
+     * @param Pratica $pratica
      * @param RichiestaIntegrazioneDTO $integrationRequest
      *
      * @return RichiestaIntegrazione
@@ -171,15 +201,24 @@ class ModuloPdfBuilderService
         RichiestaIntegrazioneDTO $integrationRequest
     ) {
         $integration = new RichiestaIntegrazione();
-        $integration->setPayload($integrationRequest->getPayload());
+        $payload = $integrationRequest->getPayload();
+
+        if (isset($payload['FileRichiesta'])  && !empty($payload['FileRichiesta'])) {
+            $content = base64_decode($payload['FileRichiesta']);
+            unset($payload['FileRichiesta']);
+            $fileName = uniqid() . '.p7m';
+        } else {
+            $content = $this->renderForPraticaIntegrationRequest($pratica, $integrationRequest);
+            $fileName = uniqid() . '.pdf';
+        }
+
+        $integration->setPayload($payload);
         $integration->setOwner($pratica->getUser());
         $integration->setOriginalFilename((new \DateTime())->format('Ymdhi'));
         $integration->setDescription($integrationRequest->getMessage());
         $integration->setPratica($pratica);
 
-        $content = $this->renderForPraticaIntegrationRequest($pratica, $integrationRequest);
         $destinationDirectory = $this->getDestinationDirectoryFromContext($integration);
-        $fileName = uniqid() . '.pdf';
         $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
 
         $this->filesystem->dumpFile($filePath, $content);
@@ -189,6 +228,43 @@ class ModuloPdfBuilderService
         $this->em->persist($integration);
 
         return $integration;
+    }
+
+    /**
+     * @param Pratica $pratica
+     * @param RispostaOperatoreDTO $rispostaOperatore
+     * @return RispostaOperatore|null
+     * @throws \Exception
+     */
+    public function creaRispostaOperatore(
+        Pratica $pratica,
+        RispostaOperatoreDTO $rispostaOperatore
+    ) {
+        $response = new RispostaOperatore();
+        $payload = $rispostaOperatore->getPayload();
+
+        if (isset($payload['FileRichiesta'])  && !empty($payload['FileRichiesta'])) {
+            $content = base64_decode($payload['FileRichiesta']);
+            unset($payload['FileRichiesta']);
+            $fileName = uniqid() . '.p7m';
+        } else {
+            return null;
+        }
+
+        $response->setOwner($pratica->getUser());
+        $response->setOriginalFilename((new \DateTime())->format('Ymdhi'));
+        $response->setDescription($rispostaOperatore->getMessage() ?? '');
+
+        $destinationDirectory = $this->getDestinationDirectoryFromContext($response);
+        $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
+
+        $this->filesystem->dumpFile($filePath, $content);
+        $response->setFile(new File($filePath));
+        $response->setFilename($fileName);
+
+        $this->em->persist($response);
+
+        return $response;
     }
 
     private function renderForPraticaIntegrationRequest(
@@ -223,7 +299,6 @@ class ModuloPdfBuilderService
             'no-background' => false,
             'lowquality' => false
         ));
-
         return $content;
     }
 
@@ -323,6 +398,9 @@ class ModuloPdfBuilderService
             'no-background' => false,
             'lowquality' => false
         ));
+
+
+
 
         return $content;
     }

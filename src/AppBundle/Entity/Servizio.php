@@ -120,6 +120,24 @@ class Servizio
     private $sticky;
 
     /**
+     * @var array
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    private $paymentParameters;
+
+    /**
+     * @var array
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    private $customTexts;
+
+    /**
+     * @var array
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    private $additionalData;
+
+    /**
      * Servizio constructor.
      */
     public function __construct()
@@ -436,10 +454,12 @@ class Servizio
 
     /**
      * @param bool $paymentRequired
+     * @return $this;
      */
     public function setPaymentRequired(bool $paymentRequired)
     {
         $this->paymentRequired = $paymentRequired;
+        return $this;
     }
 
     /**
@@ -478,6 +498,85 @@ class Servizio
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getPaymentParameters(): array
+    {
+        return $this->paymentParameters;
+    }
 
+    /**
+     * @param array $paymentParameters
+     * @return $this
+     */
+    public function setPaymentParameters(array $paymentParameters)
+    {
+        $this->paymentParameters = $paymentParameters;
+        return $this;
+    }
 
+    /**
+     * @return array
+     */
+    public function getCustomTexts(): array
+    {
+        return $this->customTexts;
+    }
+
+    /**
+     * @param array $customTexts
+     * @return Servizio
+     */
+    public function setCustomTexts(array $customTexts): Servizio
+    {
+        $this->customTexts = $customTexts;
+        return $this;
+    }
+
+    /**
+     * @param Servizio $servizio
+     * @param $step
+     * @return string
+     */
+    public function getCustomTextForStep($step): string
+    {
+        if(!isset($this->customTexts[$step]))
+        {
+            return '';
+        }
+
+        return $this->customTexts[$step];
+    }
+
+    /**
+     * @param $step
+     * @param $content
+     * @return Servizio
+     */
+    public function setCustomTextForServizioAndStep($step, $content): Servizio
+    {
+
+        $this->customTexts[$step] = $content;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdditionalData(): array
+    {
+        return $this->additionalData;
+    }
+
+    /**
+     * @param array $additionalData
+     * @return $this;
+     *
+     */
+    public function setAdditionalData(array $additionalData): Servizio
+    {
+        $this->additionalData = $additionalData;
+        return $this;
+    }
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Form\ContributoAssociazioni;
 
 use AppBundle\Entity\ContributoAssociazioni;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -42,6 +43,4 @@ class TipologiaAttivitaType extends AbstractType
     {
         return 'contributo_associazioni_tipologia_attivita';
     }
-
-
 }

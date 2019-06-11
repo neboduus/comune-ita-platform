@@ -19,20 +19,27 @@ framework:
 
 twig:
     globals:
-        endpoint_prefix: %prefix%
+        endpoint_prefix: '%prefix%'
 
 monolog:
     handlers:
         main:
             type:         fingers_crossed
-            action_level: error
+            action_level: info
+            level:        info
             handler:      nested
         nested:
             type:  stream
             path:  "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
+            level: info
+            action_level: debug
         console:
             type:  console
+        slack:
+            type:           slackwebhook
+            webhook_url:    '%slack_logs_webhook_url%'
+            action_level:   error
+            level:          error
 
 services:
-    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.infor"

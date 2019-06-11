@@ -1,0 +1,45 @@
+imports:
+    - { resource: ../parameters.yml }
+    - { resource: ../common/security.yml }
+    - { resource: ../services.yml }
+    - { resource: ../bundles/ }
+    - { resource: "@AppBundle/Resources/config/services.yml" }
+    - { resource: ../config.yml }
+
+
+parameters:
+    prefix: comune-di-cavedine
+    codice_meccanografico: c_c393
+    database_name: sdc_cavedine
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/common/routing.yml"
+        strict_requirements: true
+
+twig:
+    globals:
+        endpoint_prefix: '%prefix%'
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: info
+            level:        info
+            handler:      nested
+        nested:
+            type:  stream
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: info
+            action_level: debug
+        console:
+            type:  console
+        slack:
+            type:           slackwebhook
+            webhook_url:    '%slack_logs_webhook_url%'
+            action_level:   error
+            level:          error
+
+services:
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"

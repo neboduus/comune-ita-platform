@@ -6,8 +6,9 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Pratica;
+use PHPUnit\Framework\TestCase;
 
-class ComponenteNucleoFamiliareTest extends \PHPUnit_Framework_TestCase
+class ComponenteNucleoFamiliareTest extends TestCase
 {
     public function testComponenteCanBeBoundToPratica()
     {

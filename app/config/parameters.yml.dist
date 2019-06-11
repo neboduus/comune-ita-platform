@@ -34,7 +34,7 @@ parameters:
     ez_password: ez
 
     pitre_adapter_url: http://localhost:8080/
-
+    messages_enabled: false
     messages_backend_url: http://localhost:3000/
 
     header_top_title: Provincia autonoma di Trento
@@ -46,6 +46,9 @@ parameters:
 
     ocsdc_default_date_format: "d-m-Y"
     ocsdc_default_datetime_format: "d-m-Y H:i"
+
+    ocsdc_default_moment_datetime_format: "DD-MM-YYYY HH:mm"
+
     ocsdc_default_time_format: "H:i"
 
     ocsdc_scheme: 'https'
@@ -53,3 +56,7 @@ parameters:
 
     generate_p7m_thumbnail: true
     gsbinary: 'gs'
+
+    mypay_adapter_url: 'http://localhost:3000'
+
+    slack_logs_webhook_url: 'http://slack.com'

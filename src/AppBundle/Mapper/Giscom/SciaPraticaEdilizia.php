@@ -2,92 +2,103 @@
 
 namespace AppBundle\Mapper\Giscom;
 
+use AppBundle\Entity\Pratica;
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\Meta;
 use AppBundle\Mapper\HashableInterface;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ModuloDomanda;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoAllegatiAllaDomanda;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoAllegatiTecnici;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoSoggettiAventiTitolo;
-use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoUlterioriAllegatiTecnici;
+use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\Vincoli;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia\ElencoProvvedimenti;
 
 class SciaPraticaEdilizia implements HashableInterface
 {
+    const MANUTENZIONE_STRAORDINARIA = 'manutenzione_straordinaria';
+    const RISTRUTTURAZIONE_EDILIZIA = 'ristrutturazione_edilizia';
+    const RESTAURO_E_RISANAMENTO_CONSERVATIVO = 'restauro_e_risanamento_conservativo';
+    const RISTRUTTURAZIONE_URBANISTICA = 'ristrutturazione_urbanistica';
     /**
      * @var string Uuid
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      */
-    private $tipo = 'SCIA';
+    protected $tipo = 'SCIA';
 
     /**
      * @var string
      */
-    private $cfPresentante;
+    protected $cfPresentante;
 
     /**
      * @var string
      */
-    private $tipoIntervento;
+    protected $tipoIntervento;
 
     /**
      * @var ModuloDomanda
      */
-    private $moduloDomanda;
+    protected $moduloDomanda;
 
     /**
      * @var ElencoAllegatiAllaDomanda
      */
-    private $elencoAllegatiAllaDomanda;
+    protected $elencoAllegatiAllaDomanda;
 
     /**
      * @var ElencoSoggettiAventiTitolo
      */
-    private $elencoSoggettiAventiTitolo;
+    protected $elencoSoggettiAventiTitolo;
 
     /**
      * @var ElencoAllegatiTecnici
      */
-    private $elencoAllegatiTecnici;
+    protected $elencoAllegatiTecnici;
 
     /**
-     * @var ElencoUlterioriAllegatiTecnici
+     * @var Vincoli
      */
-    private $elencoUlterioriAllegatiTecnici;
+    protected $vincoli;
 
     /**
      * @var ElencoProvvedimenti
      */
-    private $elencoProvvedimenti;
+    protected $elencoProvvedimenti;
 
     /**
      * @var string
      */
-    private $numeroDiFascicolo;
+    protected $numeroDiFascicolo;
 
     /**
      * @var string
      */
-    private $protocolloPrincipale;
+    protected $protocolloPrincipale;
 
     /**
      * @var []
      */
-    private $protocolliAllegati;
+    protected $protocolliAllegati;
 
-    public function __construct(array $data = null)
+    /**
+     * @var []
+     */
+    protected $meta;
+
+    public function __construct(array $data = [])
     {
-        $data = $data ?? [];
+        $this->tipo = $data['tipo'] ?? Pratica::TYPE_SCIA_PRATICA_EDILIZIA ;
         $this->moduloDomanda = new ModuloDomanda($data['moduloDomanda'] ?? null);
-        $this->elencoAllegatiAllaDomanda = new ElencoAllegatiAllaDomanda($data['elencoAllegatiAllaDomanda'] ?? null);
+        $this->elencoAllegatiAllaDomanda = new ElencoAllegatiAllaDomanda($data['elencoAllegatiAllaDomanda'] ?? null, $this->tipo);
         $this->elencoSoggettiAventiTitolo = new ElencoSoggettiAventiTitolo($data['elencoSoggettiAventiTitolo'] ?? []);
-        $this->elencoAllegatiTecnici = new ElencoAllegatiTecnici($data['elencoAllegatiTecnici'] ?? []);
-        $this->elencoUlterioriAllegatiTecnici = new ElencoUlterioriAllegatiTecnici($data['elencoUlterioriAllegatiTecnici'] ?? []);
-        $this->elencoProvvedimenti = new ElencoProvvedimenti($data['elencoProvvedimenti'] ?? []);
+        $this->elencoAllegatiTecnici = new ElencoAllegatiTecnici($data['elencoAllegatiTecnici'] ?? [], $this->tipo);
+        $this->vincoli = new Vincoli($data['vincoli'] ?? [], $this->tipo);
         $this->tipoIntervento = $data['tipoIntervento'] ?? null;
         $this->protocolliAllegati = [];
+        $this->meta = [];
     }
 
     /**
@@ -116,18 +127,6 @@ class SciaPraticaEdilizia implements HashableInterface
     public function getTipo()
     {
         return $this->tipo;
-    }
-
-    /**
-     * @param string $tipo
-     *
-     * @return $this
-     */
-    public function setTipo($tipo)
-    {
-        $this->tipo = $tipo;
-
-        return $this;
     }
 
     /**
@@ -253,11 +252,11 @@ class SciaPraticaEdilizia implements HashableInterface
     }
 
     /**
-     * @return ElencoUlterioriAllegatiTecnici
+     * @return Vincoli
      */
-    public function getElencoUlterioriAllegatiTecnici()
+    public function getVincoli()
     {
-        return $this->elencoUlterioriAllegatiTecnici;
+        return $this->vincoli;
     }
 
     /**
@@ -266,9 +265,9 @@ class SciaPraticaEdilizia implements HashableInterface
      *
      * @return $this
      */
-    public function setElencoUlterioriAllegatiTecnici($name, FileCollection $value)
+    public function setVincoli($name, FileCollection $value)
     {
-        $this->elencoUlterioriAllegatiTecnici->{$name} = $value;
+        $this->vincoli->{$name} = $value;
 
         return $this;
     }
@@ -296,13 +295,20 @@ class SciaPraticaEdilizia implements HashableInterface
 
     public function getTipiIntervento()
     {
-        return [
-            'nuova',
-            'ampliamento',
-            'demolizione',
-            'straordinaria',
-            'cambio_uso'
-        ];
+        switch($this->tipo) {
+            case \AppBundle\Entity\SciaPraticaEdilizia::TYPE_SCIA_PRATICA_EDILIZIA:
+//            case \AppBundle\Entity\SciaPraticaEdilizia::TYPE_PERMESSO_DI_COSTRUIRE:
+                return [
+                    self::MANUTENZIONE_STRAORDINARIA,
+                    self::RISTRUTTURAZIONE_EDILIZIA,
+                    self::RESTAURO_E_RISANAMENTO_CONSERVATIVO,
+                    self::RISTRUTTURAZIONE_URBANISTICA
+                ];
+            default:
+                return [
+                    'default'
+                ];
+        }
     }
 
     public function toHash()
@@ -325,8 +331,7 @@ class SciaPraticaEdilizia implements HashableInterface
             $this->getElencoAllegatiAllaDomanda()->getAllegatiIdArray(),
             $this->getElencoSoggettiAventiTitolo()->toIdArray(),
             $this->getElencoAllegatiTecnici()->getAllegatiIdArray(),
-            $this->getElencoUlterioriAllegatiTecnici()->getAllegatiIdArray(),
-            $this->getElencoProvvedimenti()->getAllegatiIdArray()
+            $this->getVincoli()->getAllegatiIdArray()
         );
         if ($this->getModuloDomanda()->hasContent()){
             $idList[] = $this->getModuloDomanda()->getId();
@@ -381,5 +386,47 @@ class SciaPraticaEdilizia implements HashableInterface
     public function setProtocolliAllegati($protocolliAllegati)
     {
         $this->protocolliAllegati = $protocolliAllegati;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    /**
+     * @param mixed $meta
+     */
+    public function setMeta($meta)
+    {
+        if (is_array($meta)) {
+            $this->meta = new Meta($meta ?? null);
+        } else {
+            $this->meta = $meta;
+        }
+    }
+
+    /**
+     * @param $key
+     * @param $data
+     */
+    public function addMeta($key, $data)
+    {
+        $this->meta[$key] = $data;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getAllowedProperties()
+    {
+        $properties = array();
+        $properties = array_merge($properties, $this->elencoAllegatiAllaDomanda->getProperties());
+        $properties = array_merge($properties, $this->elencoAllegatiTecnici->getProperties());
+        $properties = array_merge($properties, $this->vincoli->getProperties());
+        return $properties;
     }
 }

@@ -11,8 +11,13 @@ La lista dei campi necessari al servizio è pronta, assieme ai relativi testi di
  2. Da console richiamare il comando `bin/console ocsdc:crea-servizio` che vuole i seguenti argomenti:
    * slug del servizio (sarà usato anche per le rotte)
    * Il nome del servizio (testo libero)
+   * handler
+   * area
+   * descrizione
+   * istruzioni
    * L'FQCN della classe persistita che rappresenta il servizio (quella in /Entity/...)
-   * Il nome del servizio che rappresenta il flow
+   * Il nome del servizio che rappresenta il flow   * 
+   * Il nome del servizio che rappresenta il flow operatore
  
  3. fatto questo bisogna creare la classe che rappresenta il servizio. Questa classe deve estendere 
  `AppBundle/Entity/Pratica`, deve essere marcata come `@Entity` e deve mappare i campi necessari.
@@ -23,7 +28,7 @@ La lista dei campi necessari al servizio è pronta, assieme ai relativi testi di
  il caso tipico è che venga aggiunto un campo not null e che quindi vada definita la strategia per popolare
  il campo nelle righe già presenti
  
- * TODO: docuemntazione per lo script di importazione/aggiornamento
+ * TODO: documentazione per lo script di importazione/aggiornamento
  
  * Lo step successivo è la definizione del servizio del flow
 Va creata una classe prendendo come spunto quelle già esistenti.

@@ -3,7 +3,10 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\GiscomPratica;
+use AppBundle\Entity\RichiestaIntegrazione;
+use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Mapper\Giscom\File;
 use AppBundle\Mapper\Giscom\FileCollection;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
@@ -39,6 +42,16 @@ class GiscomAPIMapperService
         $mappedPratica->setId($pratica->getId());
         $mappedPratica->setCfPresentante($pratica->getUser()->getCodiceFiscale());
 
+        $meta = array();
+        // Recupero i file collegati alle richieste di integrazione
+        $this->prepareIntegrationRequests($pratica, $meta);
+
+        // Recupero gli allegati degli operatori
+        $this->prepareOperatorAnswer($pratica, $meta);
+
+        // Set meta documents
+        $mappedPratica->setMeta($meta);
+
         if ($prepareFiles) {
             $this->prepareAllegati($mappedPratica);
         }
@@ -54,20 +67,6 @@ class GiscomAPIMapperService
         }
 
         $hash = $mappedPratica->toHash();
-
-        $allegatoB = $hash['elencoUlterioriAllegatiTecnici']['allegatoB'];
-        if (is_array($allegatoB) && isset($allegatoB[0])) {
-            $hash['allegatoB'] = $allegatoB[0];
-        } else {
-            $hash['allegatoB'] = null;
-        }
-        unset($hash['elencoUlterioriAllegatiTecnici']['allegatoB']);
-
-        $hash['elencoAllegatiTecnici'] = array_merge(
-            $hash['elencoAllegatiTecnici'],
-            $hash['elencoUlterioriAllegatiTecnici']
-        );
-        unset($hash['elencoUlterioriAllegatiTecnici']);
 
         return $hash;
     }
@@ -90,17 +89,18 @@ class GiscomAPIMapperService
             }
         }
 
-        foreach ($mappedPratica->getElencoUlterioriAllegatiTecnici() as $key => $value) {
+        foreach ($mappedPratica->getVincoli() as $key => $value) {
             if ($value instanceof FileCollection) {
                 $this->prepareFileCollection($value);
             }
         }
 
-        foreach ($mappedPratica->getElencoProvvedimenti() as $key => $value) {
+        foreach ($mappedPratica->getMeta() as $key => $value) {
             if ($value instanceof FileCollection) {
                 $this->prepareFileCollection($value);
             }
         }
+
     }
 
     private function prepareFileCollection(FileCollection $collection)
@@ -117,6 +117,58 @@ class GiscomAPIMapperService
             $realFile = $this->repository->find($file->getId());
             if ($realFile instanceof Allegato && $realFile->getFile() instanceof \Symfony\Component\HttpFoundation\File\File) {
                 $file->setContent(base64_encode(file_get_contents($realFile->getFile()->getPathname())));
+            }
+        }
+    }
+
+    /**
+     * @param GiscomPratica $pratica
+     * @param $meta
+     */
+    private function prepareIntegrationRequests(GiscomPratica $pratica, &$meta)
+    {
+        // Recupero i file collegati alle richieste di integrazione
+        $richiesteIntegrazione = $pratica->getRichiesteIntegrazione();
+        $richieste = array();
+        if (count($richiesteIntegrazione) > 0 ) {
+            /** @var RichiestaIntegrazione $richiesta */
+            foreach ($richiesteIntegrazione as $richiesta) {
+                $temp = array(
+                    'id'      => $richiesta->getId(),
+                    'name'    => $richiesta->getFilename(),
+                    'type'    => !empty($richiesta->getType()) ? $richiesta->getType() : RichiestaIntegrazione::TYPE_DEFAULT,
+                    'content' => null
+                );
+                $richieste []= $temp;
+            }
+            $meta['DOC_RIC'] = $richieste;
+        }
+    }
+
+    /**
+     * @param GiscomPratica $pratica
+     * @param $meta
+     */
+    private function prepareOperatorAnswer(GiscomPratica $pratica, &$meta)
+    {
+        if ($pratica->getEsito() != null ) {
+            $rispostaOperatore = $pratica->getRispostaOperatore();
+            $risposta = array();
+
+            if ( $rispostaOperatore ) {
+
+                $temp = array(
+                    'id'      => $rispostaOperatore->getId(),
+                    'name'    => $rispostaOperatore->getFilename(),
+                    'type'    => !empty($rispostaOperatore->getType()) ? $rispostaOperatore->getType() : RispostaOperatore::TYPE_DEFAULT,
+                    'content' => null
+                );
+                $risposta []= $temp;
+                if ($pratica->getEsito()) {
+                    $meta['DOC_ACC'] = $risposta;
+                } else {
+                    $meta['DOC_RIG'] = $risposta;
+                }
             }
         }
     }
