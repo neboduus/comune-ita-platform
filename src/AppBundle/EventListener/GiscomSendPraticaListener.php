@@ -50,6 +50,7 @@ class GiscomSendPraticaListener implements EventSubscriberInterface
         return[
             ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS => ['onPraticaProtocollata'],
             ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS => ['onPraticaConIntegrazioniProtocollata'],
+            ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_OPERATORE_SUCCESS => ['onPraticaConAllegatiOperatoreProtocollata']
         ];
     }
 
@@ -65,6 +66,14 @@ class GiscomSendPraticaListener implements EventSubscriberInterface
     }
 
     public function onPraticaConIntegrazioniProtocollata(ProtocollaPraticaSuccessEvent $event)
+    {
+        $pratica = $event->getPratica();
+        if ($pratica instanceof GiscomPratica) {
+            $this->giscomAPIAdapterService->sendPraticaToGiscom($pratica);
+        }
+    }
+
+    public function onPraticaConAllegatiOperatoreProtocollata(ProtocollaPraticaSuccessEvent $event)
     {
         $pratica = $event->getPratica();
         if ($pratica instanceof GiscomPratica) {
