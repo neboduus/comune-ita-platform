@@ -2,6 +2,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
@@ -88,6 +89,41 @@ class OperatoriController extends Controller
             'servizi'  => count($servizi),
             'pratiche' => $count
         );
+    }
+
+    /**
+     * @Route("/{pratica}/protocollo", name="operatori_pratiche_show_protocolli")
+     * @Template("@App/Operatori/showProtocolli.html.twig")
+     * @param Pratica $pratica
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function showProtocolliAction(Request $request, Pratica $pratica)
+    {
+        $user = $this->getUser();
+        $this->checkUserCanAccessPratica($this->getUser(), $pratica);
+        $resumeURI = $request->getUri();
+        $threads = $this->createThreadElementsForOperatoreAndPratica( $this->getUser(), $pratica);
+
+        $allegati = [];
+        foreach($pratica->getNumeriProtocollo() as $protocollo){
+            $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
+            if ($allegato instanceof Allegato){
+                $allegati[] = [
+                    'allegato' => $allegato,
+                    'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
+                    'protocollo' => $protocollo->protocollo
+                ];
+            }
+        }
+
+        return [
+            'pratica' => $pratica,
+            'allegati' => $allegati,
+            'user' => $user,
+            'threads' => $threads,
+        ];
     }
 
 
