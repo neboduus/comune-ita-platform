@@ -3,7 +3,7 @@
   "name": "Domanda Permesso di Costruire in Sanatoria",
   "handler": "",
   "area": 32,
-  "fcqn": "AppBundle\\Entity\\DomandaPermessoDiCostruireInSanatoria",
+  "fcqn": "AppBundle\\Entity\\DomandaDiPermessoDiCostruireInSanatoria",
   "flow": "ocsdc.form.flow.scia_pratica_edilizia",
   "flowOperator": "ocsdc.form.flow.operatore.standardallegatonofirma",
   "description": "Domanda Permesso di Costruire",
