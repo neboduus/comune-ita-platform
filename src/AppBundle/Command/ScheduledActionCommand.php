@@ -28,6 +28,7 @@ class ScheduledActionCommand extends ContainerAwareCommand
         $scheduleActionService = $this->getContainer()->get('ocsdc.schedule_action_service');
 
         $actions = $scheduleActionService->getActions();
+        $actionsToFlush = array();
         foreach ($actions as $action) {
             $service = $this->getContainer()->get($action->getService());
             if ($service instanceof ScheduledActionHandlerInterface) {
@@ -35,16 +36,19 @@ class ScheduledActionCommand extends ContainerAwareCommand
                 try {
                     $service->executeScheduledAction($action);
                     $scheduleActionService->markAsDone($action);
+                    $actionsToFlush []= $action;
                 } catch (\Exception $e) {
                     $this->getContainer()->get('logger')->error($e->getMessage());
-                } catch (\ErrorException $e) {                    
+                } catch (\ErrorException $e) {
                     $this->getContainer()->get('logger')->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
                 }                            
             } else {
                 $this->getContainer()->get('logger')->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
                 $scheduleActionService->markAsInvalid($action);
+                $actionsToFlush []= $action;
             }
         }
-        $scheduleActionService->done();
+
+        $scheduleActionService->done($actionsToFlush);
     }
 }

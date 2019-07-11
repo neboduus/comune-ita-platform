@@ -73,9 +73,9 @@ class ScheduleActionService
         $this->entityManager->remove($action); //TODO: usare un campo separato?
     }
 
-    public function done()
+    public function done($entity = null)
     {
-        $this->entityManager->flush();
+        $this->entityManager->flush($entity);
     }
 
     /**
