@@ -81,6 +81,7 @@ class PraticaStatusService
             [Pratica::STATUS_PROCESSING => Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE],
             [Pratica::STATUS_PROCESSING => Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE],
 
+            [Pratica::STATUS_REGISTERED => Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE],
             [Pratica::STATUS_REGISTERED => Pratica::STATUS_CANCELLED],
             [Pratica::STATUS_CANCELLED => Pratica::STATUS_CANCELLED],
 

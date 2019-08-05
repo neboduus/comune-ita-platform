@@ -191,4 +191,14 @@ class PiTreProtocolloParameters extends ParameterBag
         $this->set('createProject', $createProject);
     }
 
+    public function setDocumentType($documentType)
+    {
+        $this->set('documentType', $documentType);
+    }
+
+
+    public function getDocumentType()
+    {
+        return $this->get('documentType');
+    }
 }

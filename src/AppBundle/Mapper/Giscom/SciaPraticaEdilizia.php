@@ -18,6 +18,7 @@ class SciaPraticaEdilizia implements HashableInterface
     const RISTRUTTURAZIONE_EDILIZIA = 'ristrutturazione_edilizia';
     const RESTAURO_E_RISANAMENTO_CONSERVATIVO = 'restauro_e_risanamento_conservativo';
     const RISTRUTTURAZIONE_URBANISTICA = 'ristrutturazione_urbanistica';
+    const ALTRO_TIPO = 'altro_tipo';
     /**
      * @var string Uuid
      */
@@ -302,7 +303,8 @@ class SciaPraticaEdilizia implements HashableInterface
                     self::MANUTENZIONE_STRAORDINARIA,
                     self::RISTRUTTURAZIONE_EDILIZIA,
                     self::RESTAURO_E_RISANAMENTO_CONSERVATIVO,
-                    self::RISTRUTTURAZIONE_URBANISTICA
+                    self::RISTRUTTURAZIONE_URBANISTICA,
+                    self::ALTRO_TIPO
                 ];
             default:
                 return [

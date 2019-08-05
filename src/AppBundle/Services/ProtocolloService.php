@@ -88,9 +88,8 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         if (!empty($allegati)) {
             foreach ($allegati as $allegato) {
                 try {
-
                     $this->validateUploadFile($pratica, $allegato);
-                    $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+                    $this->handler->sendRichiestaIntegrazioneToProtocollo($pratica, $allegato);
 
                 } catch(AlreadyUploadException $e) {}
             }
@@ -139,6 +138,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         $this->handler->sendRispostaToProtocollo($pratica);
 
         $this->logger->notice('Sending risposta operatore as allegato : id '.$pratica->getRispostaOperatore()->getId());
+
         try {
             $this->validateUploadFile($pratica, $pratica->getRispostaOperatore());
             $this->handler->sendAllegatoRispostaToProtocollo($pratica, $pratica->getRispostaOperatore());

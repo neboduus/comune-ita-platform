@@ -29,8 +29,10 @@ class GiscomStatusMapper implements StatusMapperInterface
         //self::GISCOM_STATUS_INVIO_INTEGRAZIONI => Pratica::STATUS_PROCESSING,
         self::GISCOM_STATUS_PROTOCOLLATA_INTEGRAZIONI => Pratica::STATUS_PENDING_AFTER_INTEGRATION,
         //self::GISCOM_STATUS_ACQUISITA => Pratica::STATUS_PROCESSING,
-        self::GISCOM_STATUS_RIFIUTATA => Pratica::STATUS_CANCELLED, //@todo
-        self::GISCOM_STATUS_ESITATA => Pratica::STATUS_COMPLETE, //@todo
+        #self::GISCOM_STATUS_RIFIUTATA => Pratica::STATUS_CANCELLED, //@todo
+        #self::GISCOM_STATUS_ESITATA => Pratica::STATUS_COMPLETE, //@todo
+        self::GISCOM_STATUS_RIFIUTATA => Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
+        self::GISCOM_STATUS_ESITATA => Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE
     ];
 
     public function map($giscomStatus)

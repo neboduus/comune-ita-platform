@@ -76,6 +76,28 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
      *
      * @throws ResponseErrorException
      */
+    public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiesta)
+    {
+        $parameters = $this->getRichiestaIntegrazioneParameters($pratica, $richiesta);
+        $parameters->set('method', 'createDocumentAndAddInProject');
+        $queryString = http_build_query($parameters->all());
+
+        $response = $this->client->get('?' . $queryString);
+        $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
+
+        if ($responseData->getStatus() == 'success') {
+            $richiesta->setNumeroProtocollo($responseData->getNProt());
+            $richiesta->setIdDocumentoProtocollo($responseData->getIdDoc());
+        } else {
+            throw new ResponseErrorException($responseData . ' on query ' . $queryString);
+        }
+    }
+
+    /**
+     * @param Pratica $pratica
+     *
+     * @throws ResponseErrorException
+     */
     public function sendRispostaToProtocollo(Pratica $pratica)
     {
         $risposta = $pratica->getRispostaOperatore();
@@ -142,6 +164,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
             $parameters->setDocumentObj($pratica->getServizio()->getName());
             $parameters->setFilePath($moduloCompilato->getFile()->getPathname());
             $parameters->setCreateProject(true);
+            $parameters->setDocumentType("A");
         }
 
         return $parameters;
@@ -170,7 +193,29 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
             $parameters->setFilePath($risposta->getFile()->getPathname());
             $parameters->setIdProject($pratica->getNumeroFascicolo());
             $parameters->setCreateProject(false);
+            $parameters->setDocumentType("P");
         }
+
+        return $parameters;
+    }
+
+    private function getRichiestaIntegrazioneParameters(Pratica $pratica, AllegatoInterface $richiesta)
+    {
+        $ente       = $pratica->getEnte();
+        $servizio   = $pratica->getServizio();
+        $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+        $parameters = new PiTreProtocolloParameters($parameters);
+
+        if(!$parameters->getInstance()) {
+            $parameters->setInstance($this->instance);
+        }
+
+        $parameters->setDocumentDescription('Richiesta integrazione ' . $richiesta->getDescription());
+        $parameters->setDocumentObj('Richiesta integrazione ' . $pratica->getServizio()->getName());
+        $parameters->setFilePath($richiesta->getFile()->getPathname());
+        $parameters->setIdProject($pratica->getNumeroFascicolo());
+        $parameters->setCreateProject(false);
+        $parameters->setDocumentType("P");
 
         return $parameters;
     }

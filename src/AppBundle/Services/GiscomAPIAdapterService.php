@@ -111,7 +111,10 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             if ($status == 201 || $status == 204) {
                 if ($status == 204) {
 
-                    $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
+
+                    if ($pratica->getStatus() !== Pratica::STATUS_COMPLETE && $pratica->getStatus() !== Pratica::STATUS_CANCELLED) {
+                        $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
+                    }
                     $this->logger->debug('Correctly updated pratica on Giscom Side', $logContext);
 
 
@@ -163,8 +166,10 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             }
             $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side", $logContext);
 
-            $mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
-            $statusChange = null;
+            // La pratica non va più rifiutata ma lasciata in Stato Pending, da Giscom manualmente rifiuteranno la pratica
+            //$mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
+            //$mappedStatus = Pratica::STATUS_CANCELLED;
+            /*$statusChange = null;
             $statusChange['evento'] = $mappedStatus;
             $statusChange['operatore'] = 'Giscom';
             $statusChange['responsabile'] = 'Giscom';
@@ -173,7 +178,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             $statusChange['message'] = isset($logContext['remote_error_response']['Message']) ? $logContext['remote_error_response']['Message'] : null;
             $statusChange = new StatusChange($statusChange);
 
-            $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);
+            $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);*/
 
             return $response;
         }
@@ -204,8 +209,9 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
             $this->logger->debug('Correctly retrieve cfs from Giscom Side', $logContext);
             $this->logger->info('Correctly retrieve cfs from Giscom Side', $logContext);
         } else {
-            $this->logger->error('Error when retrieving cfs from Giscom Side', $logContext);
-            throw new \Exception("Error when retrieving cfs of pratica {$pratica->getId()} from Giscom Side");
+            $this->logger->error('Error when retrieving cfs from Giscom Side, no action due manual cancellation by Giscom', $logContext);
+            return;
+            //throw new \Exception("Error when retrieving cfs of pratica {$pratica->getId()} from Giscom Side");
         }
 
         $relatedCFs = json_decode($response->getBody());

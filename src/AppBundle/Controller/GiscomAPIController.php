@@ -186,11 +186,13 @@ class GiscomAPIController extends Controller
             return new Response(null, Response::HTTP_BAD_REQUEST);
         }
 
+        //$this->logger->info("LOG STATUS CHANGE", ['Request content' => $content]);
+
         try {
             $statusChange = $this->statusMapper->getStatusChangeFromRequest($request);
             $this->statusService->setNewStatus($pratica, $statusChange->getEvento(), $statusChange);
 
-            if ($statusChange->getEvento() == Pratica::STATUS_CANCELLED || $statusChange->getEvento() == Pratica::STATUS_COMPLETE) {
+            if ($statusChange->getEvento() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE || $statusChange->getEvento() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
                 $payload = json_decode($request->getContent(), true);
                 $file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
 
@@ -198,6 +200,15 @@ class GiscomAPIController extends Controller
                     $rispostaOperatore = new RispostaOperatoreDTO($payload, null, null);
                     $this->integrationService->createRispostaOperatore($pratica, $rispostaOperatore);
                 }
+
+                // Approvo la pratica
+                if ($statusChange->getEvento() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
+                    $pratica->setEsito(true);
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($pratica);
+                    $em->flush();
+                }
+
             }
 
 

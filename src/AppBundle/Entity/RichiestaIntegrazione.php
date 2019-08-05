@@ -18,6 +18,12 @@ class RichiestaIntegrazione extends Allegato
     const TYPE_DEFAULT = 'richiesta_integrazione';
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $idDocumentoProtocollo;
+
+    /**
      * @ORM\Column(type="json_array", options={"jsonb":true})
      * @var \JsonSerializable
      */
@@ -40,6 +46,24 @@ class RichiestaIntegrazione extends Allegato
         parent::__construct();
         $this->type = self::TYPE_DEFAULT;
         $this->status = self::STATUS_PENDING;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIdDocumentoProtocollo()
+    {
+        return $this->idDocumentoProtocollo;
+    }
+
+    /**
+     * @param string $idDocumentoProtocollo
+     * @return RichiestaIntegrazione
+     */
+    public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
+    {
+        $this->idDocumentoProtocollo = $idDocumentoProtocollo;
+        return $this;
     }
 
     /**
