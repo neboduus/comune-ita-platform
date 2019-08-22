@@ -11,6 +11,7 @@ use AppBundle\Services\GiscomAPIAdapterServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use AppBundle\Services\ScheduleActionService;
+use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 
 /**
  * Class GiscomSendPraticaListener
@@ -73,7 +74,7 @@ class GiscomSendPraticaListener implements EventSubscriberInterface
         }
     }
 
-    public function onPraticaConAllegatiOperatoreProtocollata(ProtocollaPraticaSuccessEvent $event)
+    public function onPraticaConAllegatiOperatoreProtocollata(ProtocollaAllegatiOperatoreSuccessEvent $event)
     {
         $pratica = $event->getPratica();
         if ($pratica instanceof GiscomPratica) {

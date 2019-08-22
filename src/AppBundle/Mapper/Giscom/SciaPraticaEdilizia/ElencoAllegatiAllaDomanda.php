@@ -18,7 +18,9 @@ class ElencoAllegatiAllaDomanda extends AbstractSciaPraticaEdiliziaMappable
         Pratica::TYPE_SCIA_PRATICA_EDILIZIA => [
             'DOM_ISPAT',
             'DOM_EDIFICI-STORICI',
+            'DOM_DOC_DIRITTI_SEGRETERIA',
             'DOM_DOC_PAGAMENTO_CONTRIBUTO'
+
         ],
 
         Pratica::TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE => [

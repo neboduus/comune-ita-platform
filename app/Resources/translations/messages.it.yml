@@ -973,7 +973,7 @@ steps:
 
         allegati_modulo_scia:
             label: 'Allegati alla domanda'
-            title: 'Documentaziona allegata alla domanda'
+            title: 'Documentazione allegata alla domanda'
             guida_alla_compilazione: 'Allega tutti i documenti elencati'
             files:
               DOM_DELEGA:
@@ -997,6 +997,9 @@ steps:
               DOM_OBBLIGHI_SICUREZZA:
                 title: ''
                 description: Obblighi in materia di sicurezza nei luoghi di lavoro di cui al d.lgs n. 81/2008
+              DOM_DOC_DIRITTI_SEGRETERIA:
+                title: ''
+                description: 'Ricevuta attestante il pagamento dei diritti di segreteria o di istruttoria'
               DOM_DOC_PAGAMENTO_CONTRIBUTO:
                 title: ''
                 description: Documentazione attestante il pagamento del contributo di costruzione
@@ -1022,6 +1025,7 @@ steps:
                 ristrutturazione_edilizia: Ristrutturazione Edilizia
                 restauro_e_risanamento_conservativo: Restauro e Risanamento Conservativo
                 ristrutturazione_urbanistica: Ristrutturazione Urbanistica
+                altro_tipo: Altro tipo
             files:
               TEC_ELABORATI_VINCOLI:
                 title: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
