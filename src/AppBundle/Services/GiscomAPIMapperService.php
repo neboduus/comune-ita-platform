@@ -137,6 +137,7 @@ class GiscomAPIMapperService
                     'id'      => $richiesta->getId(),
                     'name'    => $richiesta->getFilename(),
                     'type'    => !empty($richiesta->getType()) ? $richiesta->getType() : RichiestaIntegrazione::TYPE_DEFAULT,
+                    'protocollo' => $richiesta->getNumeroProtocollo(),
                     'content' => null
                 );
                 $richieste []= $temp;
@@ -152,6 +153,7 @@ class GiscomAPIMapperService
     private function prepareOperatorAnswer(GiscomPratica $pratica, &$meta)
     {
         if ($pratica->getEsito() != null ) {
+            /** @var RispostaOperatore $rispostaOperatore */
             $rispostaOperatore = $pratica->getRispostaOperatore();
             $risposta = array();
 
@@ -161,6 +163,7 @@ class GiscomAPIMapperService
                     'id'      => $rispostaOperatore->getId(),
                     'name'    => $rispostaOperatore->getFilename(),
                     'type'    => !empty($rispostaOperatore->getType()) ? $rispostaOperatore->getType() : RispostaOperatore::TYPE_DEFAULT,
+                    'protocollo' => $rispostaOperatore->getNumeroProtocollo(),
                     'content' => null
                 );
                 $risposta []= $temp;

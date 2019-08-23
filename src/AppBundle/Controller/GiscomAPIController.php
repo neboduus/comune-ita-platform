@@ -11,10 +11,12 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Mapper\Giscom\GiscomStatusMapper;
+use AppBundle\Services\GiscomAPIMapperService;
 use AppBundle\Services\PraticaStatusService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ramsey\Uuid\Uuid;
@@ -71,6 +73,26 @@ class GiscomAPIController extends Controller
     public function indexAction(Request $request)
     {
         return new Response('1', 200);
+    }
+
+    /**
+     * @Route("/giscom/pratica/{pratica}/view", name="giscom_api_pratica_view")
+     * @Method({"GET"})
+     * @Security("has_role('ROLE_GISCOM')")
+     * @return Response
+     */
+    public function viePraticaAction(Request $request, Pratica $pratica)
+    {
+        $content = $request->getContent();
+        $em = $this->getDoctrine()->getManager();
+        $mapper = new GiscomAPIMapperService($em);
+
+        $giscomPratica = $mapper->map($pratica);
+
+        return new JsonResponse([
+            'pratica' => $giscomPratica,
+        ]);
+
     }
 
     /**
@@ -301,4 +323,5 @@ class GiscomAPIController extends Controller
 
         return new Response(null, 201);
     }
+
 }
