@@ -13,6 +13,8 @@ class File  implements HashableInterface
 
     private $type;
 
+    private $protocollo;
+
     private $content;
 
     public function __construct(array $file = null)
@@ -109,6 +111,22 @@ class File  implements HashableInterface
         $this->content = $content;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProtocollo()
+    {
+        return $this->protocollo;
+    }
+
+    /**
+     * @param mixed $protocollo
+     */
+    public function setProtocollo($protocollo)
+    {
+        $this->protocollo = $protocollo;
     }
 
     public function toHash()

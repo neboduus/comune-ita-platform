@@ -71,7 +71,7 @@ pratica:
   passo_uno_di_tanti: 'Passo %current% di %total%'
   riprendi_pratica: "Riprendi compilazione"
   empty: 'Non sono presenti pratiche a tuo nome.'
-  protocollo: 'Protocollo'
+  protocollo: 'Protocollo pratica'
   in_attesa_protocollo: 'In attesa di protocollazione'
   richiedente: 'Richiedente'
   servizio: 'Servizio'

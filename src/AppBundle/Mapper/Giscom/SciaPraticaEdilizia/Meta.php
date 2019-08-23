@@ -12,7 +12,6 @@ class Meta extends AbstractSciaPraticaEdiliziaMappable
             'DOC_RIC',
             'DOC_ACC',
             'DOC_RIG'
-
         ];
     }
 
