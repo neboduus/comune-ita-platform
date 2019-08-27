@@ -1,6 +1,6 @@
 {
-    "name": "marco/ocsdc",
-    "license": "proprietary",
+    "name": "opencontent/stanzadelcittadino",
+    "license": "GPL-2.0-only",
     "type": "project",
     "config": {
         "bin-dir": "bin",
