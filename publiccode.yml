@@ -4,11 +4,11 @@
 
 publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
-name: Area personale sito comunale
+name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
 releaseDate: '2019-09-03'
 softwareVersion: 1.2.0
-developmentStatus: beta
+developmentStatus: stable
 softwareType: standalone/web
 platforms:
   - web
@@ -57,7 +57,7 @@ localisation:
     - it
 it:
   piattaforme:
-    spid: false
+    spid: true
     pagopa: true
   conforme:
     lineeGuidaDesign: true
@@ -66,10 +66,45 @@ it:
     modelloInteroperabilita: true
 description:
   it:
-    genericName: Area personale
+    genericName: ' L’area personale del cittadino'
     apiDocumentation: 'https://documenter.getpostman.com/view/7046499/S17wM5XS?version=latest'
     documentation: 'https://manuale-stanza-del-cittadino.readthedocs.io/it/latest/'
     shortDescription: >-
-      Area personale del cittadino, punto di raccolta di comunicazioni e
-      pagamenti personali e punto di ingresso per i servizi online del comune.
-    longDescription: "La \"Stanza del Cittadino\"\_mette a disposizione\_di ogni cittadino un'area riservata, accessibile via web previa autenticazione con SPID, attraverso la quale può usare i servizi a lui dedicati.All'interno della propria \"stanza\" il cittadino trova\_in primo luogo le\_opportunità (quali agevolazioni, scadenze, concorsi, bandi, finanziamenti, ...) e gli avvisi (relativi\_ad imposte, allerte, ...)\_esclusivamente di suo interesse. Il cittadino può accedere a servizi pubblici dal proprio pc o smartphone e interagire a distanza con i funzionari (anche attraverso domande specifiche per le proprie pratiche).\_Il sistema permette di gestire in maniera intuitiva l’iter delle pratiche, che una volta chiuse rimangono sempre disponibili nell'archivio on-line, sia dal cittadino che dall’amministrazione.\n"
+      Progettato con il Team Digitale utilizzando lo “starter KIT per il sito di
+      un comune
+    longDescription: >
+      L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
+      asilo nido), verificare lo stato delle pratiche, ricevere comunicazioni da
+      parte dell’ente (messaggi, scadenze, ...) ed effettuare pagamenti.
+      Progettata con lo starter KIT per il sito di un comune insieme al Team per
+      la Trasformazione Digitale, permette di creare nuovi servizi digitali
+      secondo un flusso definito nelle Linee Guida di Design e integrato con le
+      piattaforme abilitanti. Si integra facilmente con le applicazioni presenti
+      presso l’ente (interoperabile, separando back end e front end); il profilo
+      del cittadino si arricchisce ad ogni interazione e riduce la necessità di
+      chiedere più volte le stesse informazioni (once only). Una soluzione
+      pratica per gestire il processo di trasformazione digitale in linea col
+      Piano Triennale. Nasce da un progetto condiviso con il Consorzio Comuni
+      Trentini - ANCI Trentino, che accompagna i comuni nella revisione dei
+      servizi al cittadino in un’ottica digitale (digital first)
+    features:
+      - Interfaccia responsive (Bootstrap Italia), conforme Linee Guida di design per i servizi web della PA
+      - Autenticazione con SPID
+      - Integrazione con PagoPA attraverso MyPAY
+      - Meccanismo di compilazione on-line dei moduli a step
+      - >-
+        Gestione completa dell’iter: invio, presa in carico, risposta al cittadino,
+        richiesta integrazioni
+      - >-
+        Controllo della validità di firme digitali e formati dei file, per la 
+        conservazione sostitutiva
+      - >-
+        Generazione automatica delle ricevuta di invio dell’istanza, in formato
+        pdf
+      - >-
+        Integrazione con il sito comunale Comunweb: prossime scadenze e
+        descrizione dei servizi
+      - >-
+        Integrazione con alcuni dei sistemi di protocollazione più diffusi
+        presso i comuni (tra cui, PiTre)
+      - Integrazione con Shibboleth (SAML 2.0)
