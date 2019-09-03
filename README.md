@@ -1,7 +1,5 @@
 # La Stanza Del Cittadino
 
-![La stanza del Cittadino - Area Personale][sdc1]
-
 L’area personale del cittadino, progettata con il [Team Digitale](https://teamdigitale.governo.it) utilizzando lo [starter KIT per il sito di un comune](https://designers.italia.it/progetti/siti-web-comuni/)
 
 ## Descrizione
@@ -31,9 +29,18 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 
 ## Screenshots
 
+### pagina principale
+
 ![sdc2]
+
+### elenco dei servizi on-line
+
 ![sdc3]
+
+### esempio di compilazione di una pratica
 ![sdc4]
+
+### invio di una pratica
 ![sdc5]
 
 ## Struttura del progetto
@@ -44,7 +51,7 @@ facilmente sostituibili in caso di necessità:
 * symfony-app: costituisce l'interfaccia principale dell'applicativo, sia di front-end che di backend (utilizza postgresql come layer di persistenza) ed e' il software presente in questo repository
 * apache+shibboleth: il webserver apache distribuito nel presente repository contiene anche shibboleth per l'autenticazione mediante SPID, questo componente può essere sostituito facilmente da un altro sistema utilizzabile per l'autenticazione.
 * [wkhtmltopdf](https://hub.docker.com/r/traumfewo/docker-wkhtmltopdf-aas): questo microservizio è necessario per creazione di PDF, il formato con cui vengono creati e protocollati i documenti durante l'esecuzione delle pratiche del cittadino,
-* mypay-proxy e pitre-proxy: due semplice proxy che espongono una semplice interfaccia ReST verso l'applicativo e inoltrano le chiamate ai servizi MyPAY e PiTRE mediante protocollo SOAP; questi due proxy sono in fase di rilascio
+* mypay-proxy e pitre-proxy: due proxy che espongono una semplice interfaccia ReST verso l'applicativo e inoltrano le chiamate ai servizi MyPAY e PiTRE mediante protocollo SOAP; questi due proxy sono in fase di rilascio.
 
 ## Requisiti
 
@@ -55,9 +62,9 @@ Lo stack applicativo è composto da:
 * Java per lo sviluppo del proxy MyPay, che richiede quindi OpenJDK 8.x
 * PostgreSQL 10.x come database principale
 
-La distribuzione di questi componenti avviene mediante immagini [Docker](https://it.wikipedia.org/wiki/Docker),  
-non si tratta di un requisito, i singoli applicativi possono essere installati anche in assenza
-di esso, su un qualunque server Linux.
+La distribuzione di questi componenti avviene mediante immagini [Docker](https://it.wikipedia.org/wiki/Docker), 
+non si tratta di un requisito, i singoli applicativi possono essere installati anche in assenza di esso, su un 
+qualunque server Linux.
 
 ## Installazione
 
