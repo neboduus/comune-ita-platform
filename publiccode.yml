@@ -1,0 +1,75 @@
+# This repository adheres to the publiccode.yml standard by including this 
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+applicationSuite: Sito comunale
+name: Area personale sito comunale
+url: 'https://gitlab.com/opencontent/stanzadelcittadino'
+releaseDate: '2019-09-03'
+softwareVersion: 1.2.0
+developmentStatus: beta
+softwareType: standalone/web
+platforms:
+  - web
+usedBy:
+  - Comune di Rovereto (TN)
+  - Comune di Tre Ville (TN)
+  - Comune di Vallelaghi (TN)
+  - Comune di Cavedine (TN)
+  - Comune di Ala (TN)
+categories:
+  - communications
+  - crm
+  - digital-citizenship
+dependsOn:
+  open:
+    - name: PHP
+      versionMin: '7.2'
+    - name: PostgreSQL
+      versionMin: '10'
+    - name: Apache
+      versionMin: '2.4'
+    - name: Shibboleth
+      versionMin: '3'
+    - name: Docker
+      versionMin: '18.03'
+      optional: true
+maintenance:
+  type: community
+  contacts:
+    - name: Gabriele Francescotto
+      phone: +39 0461 186 2844
+      affiliation: Opencontent SCARL
+      email: gabriele.francescotto@opencontent.it
+legal:
+  license: GPL-3.0-only
+  mainCopyrightOwner: Opencontent scarl
+  repoOwner: Opencontent scarl
+intendedAudience:
+  scope:
+    - local-authorities
+  countries:
+    - it
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - it
+it:
+  piattaforme:
+    spid: false
+    pagopa: true
+  conforme:
+    lineeGuidaDesign: true
+    gdpr: true
+    misureMinimeSicurezza: true
+    modelloInteroperabilita: true
+description:
+  it:
+    genericName: Area personale
+    apiDocumentation: 'https://documenter.getpostman.com/view/7046499/S17wM5XS?version=latest'
+    documentation: 'https://manuale-stanza-del-cittadino.readthedocs.io/it/latest/'
+    shortDescription: >-
+      Area personale del cittadino, punto di raccolta di comunicazioni e
+      pagamenti personali e punto di ingresso per i servizi online del comune.
+    longDescription: "La \"Stanza del Cittadino\"\_mette a disposizione\_di ogni cittadino un'area riservata, accessibile via web previa autenticazione con SPID, attraverso la quale può usare i servizi a lui dedicati.All'interno della propria \"stanza\" il cittadino trova\_in primo luogo le\_opportunità (quali agevolazioni, scadenze, concorsi, bandi, finanziamenti, ...) e gli avvisi (relativi\_ad imposte, allerte, ...)\_esclusivamente di suo interesse. Il cittadino può accedere a servizi pubblici dal proprio pc o smartphone e interagire a distanza con i funzionari (anche attraverso domande specifiche per le proprie pratiche).\_Il sistema permette di gestire in maniera intuitiva l’iter delle pratiche, che una volta chiuse rimangono sempre disponibili nell'archivio on-line, sia dal cittadino che dall’amministrazione.\n"
