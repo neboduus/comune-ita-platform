@@ -4,6 +4,7 @@ image: docker:latest
 stages:
   - build
   - push
+  - test
 #  - delivery
 
 variables:
@@ -112,6 +113,25 @@ push_latest_to_ecr:
   only:
     - master
 
+zap_baseline:
+    stage: test 
+    allow_failure: true
+    script:
+      - docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t https://devsdc.opencontent.it/comune-di-ala/
+     # -z -config rules.csrf.ignorelist=search,login then ZAP will not fail the scan if forms with an ID of "search" or "login" do not have anti CSRF tokens.
+     # - docker run -t owasp/zap2docker-stable zap-baseline.py -j -t https://10.0.1.22/ # with ajax scanning
+
+publiccode:
+    stage: test
+    allow_failure: false
+    script:
+      - docker run -v $(pwd):/var/tmp:ro -t --rm golang sh -c "go get github.com/italia/publiccode-parser-go/pcvalidate; cd /var/tmp; /go/bin/pcvalidate -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master publiccode.yml"
+
+
+# vim: set noet sw=4 ts=4:        
+
+
+
 #deploy_qa:
 #  stage: delivery
 #  variables:
@@ -163,4 +183,4 @@ push_latest_to_ecr:
 #    - branches
 #  except:
 #    - master
-
+-
