@@ -39,7 +39,7 @@ maintenance:
   type: community
   contacts:
     - name: Gabriele Francescotto
-      phone: +39 0461 186 2844
+      phone: +39 0461 917437 
       affiliation: Opencontent SCARL
       email: gabriele.francescotto@opencontent.it
 legal:
@@ -108,3 +108,11 @@ description:
         Integrazione con alcuni dei sistemi di protocollazione più diffusi
         presso i comuni (tra cui, PiTre)
       - Integrazione con Shibboleth (SAML 2.0)
+    screenshots:
+      - images/sdc001.jpg
+      - images/sdc002.jpg
+      - images/sdc003.jpg
+      - images/sdc004.jpg
+      - images/sdc005.jpg
+      - images/sdc006.jpg
+      - images/sdc007.jpg
