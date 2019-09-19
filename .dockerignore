@@ -1,5 +1,6 @@
+app/config/parameters.yml
 vendor/
 bower_components/
 node_modules/
+docker-sync/
 example/
-var/

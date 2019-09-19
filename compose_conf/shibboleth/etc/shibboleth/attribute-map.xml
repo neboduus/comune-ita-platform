@@ -1,0 +1,82 @@
+<Attributes xmlns="urn:mace:shibboleth:2.0:attribute-map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <Attribute name="CodiceFiscale" id="pat_attribute_codicefiscale" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="capDomicilio" id="pat_attribute_capdomicilio" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="capResidenza" id="pat_attribute_capresidenza" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="cellulare" id="pat_attribute_cellulare" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="cittaDomicilio" id="pat_attribute_cittadomicilio" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="cittaResidenza" id="pat_attribute_cittaresidenza" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="cognome" id="pat_attribute_cognome" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="dataNascita" id="pat_attribute_datanascita" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="emailAddress" id="pat_attribute_emailaddress" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="emailAddressPersonale" id="pat_attribute_emailaddresspersonale" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="indirizzoDomicilio" id="pat_attribute_indirizzodomicilio" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="indirizzoResidenza" id="pat_attribute_indirizzoresidenza" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="luogoNascita" id="pat_attribute_luogonascita" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="nome" id="pat_attribute_nome" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="provinciaDomicilio" id="pat_attribute_provinciadomicilio" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="provinciaNascita" id="pat_attribute_provincianascita" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="provinciaResidenza" id="pat_attribute_provinciaresidenza" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="sesso" id="pat_attribute_sesso" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="statoDomicilio" id="pat_attribute_statodomicilio" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="statoNascita" id="pat_attribute_statonascita" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="statoResidenza" id="pat_attribute_statoresidenza" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="telefono" id="pat_attribute_telefono" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="tiolo" id="pat_attribute_titolo" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="x509certificate_issuerdn" id="pat_attribute_x509certificate_issuerdn" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="x509certificate_subjectdn" id="pat_attribute_x509certificate_subjectdn" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+    <Attribute name="x509certificate_base64" id="pat_attribute_x509certificate_base64" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
+
+</Attributes>

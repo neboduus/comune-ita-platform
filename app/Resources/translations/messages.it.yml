@@ -1469,7 +1469,7 @@ steps:
           title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
           description: ""
         PUP_GEO:
-          title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
+          title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
           description: ""
         PUP_ALB:
           title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, \"Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica\""
@@ -1554,6 +1554,5 @@ gateway:
     identifier: 'Identificatore'
     data: 'Data emissione'
     ora: 'Ora emissione'
-
 
 

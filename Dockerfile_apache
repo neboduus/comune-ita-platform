@@ -1,0 +1,35 @@
+FROM centos:7
+
+# add Shibboleth repo
+COPY ./compose_conf/shibboleth/etc/yum.repos.d/shibboleth.repo /etc/yum.repos.d/
+
+# install dependencies
+RUN yum install -y \
+        httpd \
+        java-1.8.0-openjdk-headless \
+        mod_ssl \
+        shibboleth.x86_64 \
+        unzip \
+    && yum -y clean all
+
+
+# add application paths
+COPY ./compose_conf/shibboleth/opt/shibboleth-sp /opt/shibboleth-sp
+
+# add configurations
+COPY ./compose_conf/shibboleth/etc/shibboleth/ /etc/shibboleth/
+COPY ./compose_conf/apache/conf.d/ /etc/httpd/conf.d/
+
+
+# copy bootstrap script
+COPY ./compose_conf/shibboleth/usr/local/bin/ /usr/local/bin/
+RUN chmod +x \
+    /usr/local/bin/docker-bootstrap.sh
+
+# run it
+EXPOSE 80 443
+CMD ["docker-bootstrap.sh"]
+
+
+
+

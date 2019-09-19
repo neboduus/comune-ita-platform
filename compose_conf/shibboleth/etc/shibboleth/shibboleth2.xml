@@ -1,0 +1,201 @@
+<SPConfig xmlns="urn:mace:shibboleth:2.0:native:sp:config"
+          xmlns:conf="urn:mace:shibboleth:2.0:native:sp:config"
+          xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+          xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+          xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+          clockSkew="180">
+
+    <!--
+    20190329 Marco: Abilitare la cache per sopravvivere ai restart
+    settare relayState="ss:sdcmc" come attributo alle <Session>
+    Si può avere quanti <StorageService> si vuole e li si può separare
+    col prefix o direttamente puntandoli a <Hosts> diversi
+    Gli <Hosts> sono comma separated e anche se la doc non è esplicita
+    è ragionevole che vengano usati in RR
+    -->
+    <!-- The OutOfProcess section contains properties affecting the shibd daemon. -->
+    <!--
+    <OutOfProcess logger="shibd.logger" tranLogFormat="%u|%s|%IDP|%i|%ac|%t|%attr|%n|%b|%E|%S|%SS|%L|%UA|
+%a">
+        <Extensions>
+            <Library path="memcache-store.so" fatal="true"/>
+        </Extensions>
+    </OutOfProcess>
+    <StorageService type="MEMCACHE" id="sdcmc" prefix="SERVICE_PREFIX:" buildMap="1" cleanupInterval="900">
+        <Hosts>
+          127.0.0.1
+        </Hosts>
+    </StorageService>
+    <SessionCache type="StorageService" StorageService="sdcmc" cacheAssertions="false"
+                  cacheTimeout="3600" inprocTimeout="900" cleanupInterval="900"/>
+    <ReplayCache StorageService="sdcmc"/>
+    <ArtifactMap StorageService="sdcmc" artifactTTL="180"/>
+    -->
+
+
+
+    <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
+    <ApplicationDefaults entityID="https://devsdc.opencontent.it"
+                         REMOTE_USER="eppn persistent-id targeted-id" attributePrefix='shibb_'>
+
+        <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
+                  checkAddress="false" handlerSSL="true"
+                  cookieProps="https"
+                  handlerURL="https://devsdc.opencontent.it/Shibboleth.sso"
+                  consistentAddress="false" >
+
+            <!-- SAML and local-only logout. -->
+            <Logout>SAML2</Logout>
+            <SessionInitiator type="Chaining" Location="/Login" isDefault="true" id="Login" entityID="https://idp-test.infotn.it/icar-lp/metadata">
+
+                <SessionInitiator type="SAML2" acsIndex="1" template="bindingTemplate.html" outgoingBindings="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect">
+                    <samlp:AuthnRequest IssueInstant="2009-09-17T14:37:47.093Z" ID="s2a349b37a35edf50a7ed265787a2485e454ef9a" Version="2.0">
+                        <samlp:NameIDPolicy AllowCreate="false" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
+                        <samlp:RequestedAuthnContext Comparison="exact">
+                            <saml:AuthnContextClassRef xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard</saml:AuthnContextClassRef>
+                            <saml:AuthnContextClassRef xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>
+                        </samlp:RequestedAuthnContext>
+                    </samlp:AuthnRequest>
+                </SessionInitiator>
+
+                <SessionInitiator type="Shib1" acsIndex="5"/>
+
+            </SessionInitiator>
+
+            <md:AssertionConsumerService Location="/SAML2/POST" index="1" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
+            <md:AssertionConsumerService Location="/SAML2/POST-SimpleSign" index="2" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"/>
+            <md:AssertionConsumerService Location="/SAML2/Artifact" index="3" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"/>
+            <md:AssertionConsumerService Location="/SAML2/ECP" index="4" Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"/>
+            <md:AssertionConsumerService Location="/SAML/POST" index="5" Binding="urn:oasis:names:tc:SAML:1.0:profiles:browser-post"/>
+            <md:AssertionConsumerService Location="/SAML/Artifact" index="6" Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01"/>
+
+            <md:ManageNameIDService Location="/NIM/SOAP" Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"/>
+            <md:ManageNameIDService Location="/NIM/Redirect" conf:template="bindingTemplate.html" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
+            <md:ManageNameIDService Location="/NIM/POST" conf:template="bindingTemplate.html" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
+            <md:ManageNameIDService Location="/NIM/Artifact" conf:template="bindingTemplate.html" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"/>
+
+            <md:ArtifactResolutionService Location="/Artifact/SOAP" index="1" Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"/>
+
+            <!-- Extension service that generates "approximate" metadata based on SP configuration. -->
+            <Handler type="MetadataGenerator" Location="/Metadata" signing="false"/>
+
+            <!-- Status reporting service. -->
+            <Handler type="Status" Location="/Status" acl="127.0.0.1 ::1"/>
+
+            <!-- Session diagnostic service. -->
+            <Handler type="Session" Location="/Session" showAttributeValues="false"/>
+
+            <!-- JSON feed of discovery information. -->
+            <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
+        </Sessions>
+
+        <Errors supportContact="info@opencontent.it"
+                helpLocation="/about.html"
+                styleSheet="/shibboleth-sp/main.css"/>
+
+
+        <MetadataProvider type="XML" uri="https://idp-test.infotn.it/icar-lp/metadata"
+                          backingFilePath="federation-metadata.xml" reloadInterval="7200">
+        </MetadataProvider>
+
+        <!-- Map to extract attributes from SAML assertions. -->
+        <AttributeExtractor type="XML" validate="true" reloadChanges="true" path="attribute-map.xml"/>
+
+        <!-- Use a SAML query if no attributes are supplied during SSO. -->
+        <AttributeResolver type="Query" subjectMatch="true"/>
+
+        <!-- Default filtering policy for recognized attributes, lets other data pass. -->
+        <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>
+
+        <!-- Simple file-based resolver for using a single keypair. -->
+        <CredentialResolver type="File" key="sp-key.pem" certificate="sp-cert.pem"/>
+
+        <ApplicationOverride id="comune-di-opencontent" entityID="https://devsdc.opencontent.it/comune-di-opencontent"
+                             signing="true"
+                             signingAlg="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+                             encryption="false"
+                             authnContextClassRef="https://www.spid.gov.it/SpidL2"
+                             authnContextComparison="exact"
+                             NameIDFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" >
+            <Sessions lifetime="2800" timeout="600" relayState="ss:mem"
+                      checkAddress="false" handlerSSL="true"
+                      cookieProps="https"
+                      handlerURL="https://devsdc.opencontent.it/comune-di-opencontent/Shibboleth.sso"
+                      consistentAddress="false" >
+                <SessionInitiator type="SAML2" Location="/Login" isDefault="true"
+                                  entityID="http://52.47.202.41:8098"
+                                  outgoingBinding="urn:oasis:names:tc:SAML:profiles:SSO:request-init"
+                                  isPassive="false"
+                                  signing="true">
+                    <samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+                                        xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="id..." Version="2.0" IssueInstant="2017-01-01T00:00:00Z"
+                                        AttributeConsumingServiceIndex="0" ForceAuthn="true">
+                        <saml:Issuer Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity" NameQualifier="https://url">https://url</saml:Issuer>
+                    </samlp:AuthnRequest>
+                </SessionInitiator>
+                <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                             Location="/SAML2/POST" index="0"/>
+                <!-- Logout -->
+                <LogoutInitiator type="Chaining" Location="/Logout">
+                    <LogoutInitiator type="SAML2"
+                                     outgoingBindings="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                     signing="true"/>
+                    <LogoutInitiator type="Local" signing="true"/>
+                </LogoutInitiator>
+                <md:SingleLogoutService Location="/SLO/POST"
+                                        Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"/>
+                <md:SingleLogoutService Location="/SLO/Redirect"
+                                        Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"/>
+                <Handler type="Session" Location="/Session" showAttributeValues="true"/>
+            </Sessions>
+
+            <!--
+            <MetadataProvider type="XML"
+             validate="true"
+             uri="https://auth.agid.gov.it/spid-entities-idps.xml"
+             backingFilePath="metadata/spid-entities-idps.xml"
+             reloadInterval="3600">
+            </MetadataProvider>
+            -->
+
+            <!-- Map to extract attributes from SAML assertions. -->
+            <AttributeExtractor type="XML" validate="true" reloadChanges="true" path="attribute-map.xml"/>
+            <AttributeResolver type="Query" subjectMatch="true"/>
+            <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>
+
+            <!-- Assertion signing cert -->
+            <CredentialResolver type="File" key="sp-key.pem" certificate="sp-cert.pem" use="signing"/>
+
+        </ApplicationOverride>
+
+        <ApplicationOverride id="comune-di-rovereto" entityID="https://devsdc.opencontent.it">
+            <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
+                      checkAddress="false" handlerSSL="true"
+                      cookieProps="https"
+                      handlerURL="https://devsdc.opencontent.it/comune-di-rovereto/Shibboleth.sso"
+                      consistentAddress="false" />
+        </ApplicationOverride>
+        <ApplicationOverride id="comune-di-tre-ville" entityID="https://devsdc.opencontent.it">
+            <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
+                      checkAddress="false" handlerSSL="true"
+                      cookieProps="https"
+                      handlerURL="https://devsdc.opencontent.it/comune-di-tre-ville/Shibboleth.sso"
+                      consistentAddress="false" />
+        </ApplicationOverride>
+        <ApplicationOverride id="comune-di-vallelaghi" entityID="https://devsdc.opencontent.it">
+            <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
+                      checkAddress="false" handlerSSL="true"
+                      cookieProps="https"
+                      handlerURL="https://devsdc.opencontent.it/comune-di-vallelaghi/Shibboleth.sso"
+                      consistentAddress="false" />
+        </ApplicationOverride>
+
+    </ApplicationDefaults>
+
+    <!-- Policies that determine how to process and authenticate runtime messages. -->
+    <SecurityPolicyProvider type="XML" validate="true" path="security-policy.xml"/>
+
+    <!-- Low-level configuration about protocols and bindings available for use. -->
+    <ProtocolProvider type="XML" validate="true" reloadChanges="false" path="protocols.xml"/>
+
+</SPConfig>

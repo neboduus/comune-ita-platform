@@ -54,6 +54,11 @@ class ModuloPdfBuilderService
     private $generator;
 
     /**
+     * @var WkhtmltopdfService
+     */
+    private $wkhtmltopdfService;
+
+    /**
      * @var EngineInterface
      */
     private $templating;
@@ -70,6 +75,7 @@ class ModuloPdfBuilderService
         PropertyMappingFactory $propertyMappingFactory,
         DirectoryNamerInterface $directoryNamer,
         GeneratorInterface $generator,
+        string $wkhtmltopdfService,
         EngineInterface $templating,
         $dateTimeFormat
     ) {
@@ -79,6 +85,7 @@ class ModuloPdfBuilderService
         $this->propertyMappingFactory = $propertyMappingFactory;
         $this->directoryNamer = $directoryNamer;
         $this->generator = $generator;
+        $this->wkhtmltopdfService = $wkhtmltopdfService;
         $this->templating = $templating;
         $this->dateTimeFormat = $dateTimeFormat;
     }
@@ -286,7 +293,7 @@ class ModuloPdfBuilderService
             'user' => $pratica->getUser(),
         ]);
 
-        $content = $this->generator->getOutputFromHtml($html, array(
+        /*$content = $this->generator->getOutputFromHtml($html, array(
             'header-html' => $header,
             'footer-html' => $footer,
             'margin-top' => 20,
@@ -300,6 +307,27 @@ class ModuloPdfBuilderService
             'lowquality' => false
         ));
         return $content;
+        ));*/
+
+        $options = array(
+            'margin-top' => "20",
+            'margin-right' => "0",
+            'margin-bottom' => "25",
+            'header-spacing' => "6",
+            'encoding' => 'UTF-8',
+            'margin-left' => "0",
+            'no-background' => false,
+            'lowquality' => false
+        );
+
+        $body = json_encode([
+            'contents' => base64_encode($html),
+            'options'  => $options,
+            'header'   => base64_encode($header),
+            'footer'   => base64_encode($footer)
+        ]);
+
+        return $this->generatePdfFromHtml($body);
     }
 
     /**
@@ -385,7 +413,7 @@ class ModuloPdfBuilderService
             'user' => $pratica->getUser(),
         ]);
 
-        $content = $this->generator->getOutputFromHtml($html, array(
+        /*$content = $this->generator->getOutputFromHtml($html, array(
             'header-html' => $header,
             'footer-html' => $footer,
             'margin-top' => 20,
@@ -397,7 +425,51 @@ class ModuloPdfBuilderService
             'images' => true,
             'no-background' => false,
             'lowquality' => false
-        ));
+        ));*/
+
+        $options = array(
+            'margin-top' => "20",
+            'margin-right' => "0",
+            'margin-bottom' => "25",
+            'header-spacing' => "6",
+            'encoding' => 'UTF-8',
+            'margin-left' => "0",
+            'no-background' => false,
+            'lowquality' => false
+        );
+
+
+        $body = json_encode([
+            'contents' => base64_encode($html),
+            'options'  => $options,
+            'header'   => base64_encode($header),
+            'footer'   => base64_encode($footer)
+        ]);
+
+        return $this->generatePdfFromHtml($body);
+
+    }
+
+    private function generatePdfFromHtml($data)
+    {
+        // todo: parametrizzare
+        $url = 'pdf:pdf@' . $this->wkhtmltopdfService . ':5555';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        $content = curl_exec($ch);
+        if(curl_errno($ch)){
+            throw new \Exception(curl_error($ch));
+        }
+
+        $info = curl_getinfo($ch);
+
+        if ( $info['http_code'] != 200) {
+            throw new \Exception("Si è verificato un errore nella creazione del pdf");
+        }
 
 
 

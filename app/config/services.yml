@@ -4,6 +4,7 @@ parameters:
 #    parameter_name: value
 
 services:
+
   AppBundle\Controller\APIController:
     autowire: true
 
@@ -518,5 +519,3 @@ services:
   ocsdc.handlers.servizio.imis:
     class: AppBundle\Handlers\Servizio\ImisHandler
     arguments: ["@security.token_storage", "@logger"]
-
-

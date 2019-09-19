@@ -1,40 +1,120 @@
-version: '3'
-services:
-  cron:
-    depends_on:
-      - ocsdc
-    build:
-      context: .
-      dockerfile: Dockerfile_cron
-    network_mode: "host"
-    restart: unless-stopped
-    volumes:
-      - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads"
-      - "${CRON_LOGS_MOUNT}_cron:/docroot/var/logs"
-      #- "${CACHE_MOUNT}_cron:/docroot/var/cache"
+version: "3"
 
-  ocsdc:
-    build: .
-    network_mode: "host"
-    restart: unless-stopped
+services:
+
+  postgres:
+    image: wodby/postgres:$POSTGRES_TAG
+    stop_grace_period: 30s
+    environment:
+      POSTGRES_PASSWORD: $DB_ROOT_PASSWORD
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - web:/docroot/web
-      - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads"
-      - "${LOGS_MOUNT}:/docroot/var/logs"
-      #- "${CACHE_MOUNT}:/docroot/var/cache"
-      - "${SESSIONS_MOUNT}:/docroot/var/sessions"
-      - ./compose_conf/fpm_pool:/etc/php/7.3/fpm/pool.d
-      - ./compose_conf/php-fpm.conf:/etc/php/7.3/fpm/php-fpm.conf
-  nginx:
+      - ./compose_conf/postgres:/docker-entrypoint-initdb.d 
+      - pgdata:/var/lib/postgresql/data/pgdata
+
+  php:
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:docker-demo
+    environment:
+      ENV: DEMO
+      SYMFONY_ENV: $SYMFONY_ENV
+      PREFIX: $PREFIX
+      DB_DRIVER: $DB_DRIVER
+      DB_HOST: $DB_HOST 
+      DB_PORT: $DB_PORT
+      DB_NAME: $DB_NAME
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      MAILER_TRANSPORT: $MAILER_TRANSPORT
+      MAILER_HOST: $MAILER_HOST
+      MAILER_USER: $MAILER_USER
+      MAILER_PASSWORD: $MAILER_PASSWORD
+      SECRET: $SECRET
+      DEFAULT_FROM_EMAIL_ADDRESS: $DEFAULT_FROM_EMAIL_ADDRESS
+      WKHTMLBINARY: $WKHTMLBINARY
+      WKHTMLTOPDF_SERVICE: $WKHTMLTOPDF_SERVICE
+      EZ_PASSWORD: $EZ_PASSWORD
+      PITRE_ADAPTER_URL: $PITRE_ADAPTER_URL
+      HEADER_TOP_TITLE: $HEADER_TOP_TITLE
+      HEADER_TOP_LINK: $HEADER_TOP_LINK
+      FOOTER_CREDITS: $FOOTER_CREDITS
+      OCSDC_SCHEME: $OCSDC_SCHEME
+      OCSDC_HOST: $OCSDC_HOST
+      GISCOM_PASSWORD: $GISCOM_PASSWORD
+      GISCOM_ADAPTER_URL: $GISCOM_ADAPTER_URL
+      GISCOM_ADAPTER_USERNAME: $GISCOM_ADAPTER_USERNAME
+      GISCOM_ADAPTER_PASSWORD: $GISCOM_ADAPTER_PASSWORD
+      MYPAY_ADAPTER_URL: $MYPAY_ADAPTER_URL
+      FORMSERVER_PRIVATE_URL: $FORMSERVER_PRIVATE_URL
+      FORMSERVER_PUBLIC_URL: $FORMSERVER_PUBLIC_URL
+      AWS_ACCESS_KEY_ID_BACKUP: $AWS_ACCESS_KEY_ID_BACKUP
+      AWS_SECRET_ACCESS_KEY_BACKUP: $AWS_SECRET_ACCESS_KEY_BACKUP
+      BUCKET_BACKUP: $BUCKET_BACKUP
+      PHP_FPM_USER: wodby
+      PHP_FPM_GROUP: wodby
+      PHP_APCU_ENABLED: 0
+      PHP_OPCACHE_ENABLE: 0
+    volumes:
+      - "uploads:/docroot/var/uploads"
+      - "app:/var/www/html"
+
+
+
+#  cron:
+#     container_name: "${PROJECT_NAME}_cron"
+#     depends_on:
+#       - php
+#     #network_mode: "host"
+#     volumes:
+#       - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads:cached"
+
+
+  apache:
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:docker-demo
     depends_on:
-      - ocsdc
-    image: nginx:alpine
-    ports:
-      - "8080:80"
-    restart: unless-stopped
+      - php
+    environment:
+      WEB_DOCUMENT_ROOT: /var/www/html/web
+      WEB_PHP_SOCKET: php:9000
+      ORGANIZATION: $ORGANIZATION
+      SERVER_NAME: $SERVER_NAME
+      ENTITY_ID: $ENTITY_ID
+      PROJECT_BASE_URL: $PROJECT_BASE_URL
     volumes:
-      - web:/usr/share/nginx/html:ro
-      - ./compose_conf/site.conf:/etc/nginx/conf.d/default.conf
+      - "app:/var/www/html"
+    ports:
+      - "443:443"
+    labels:
+      traefik.frontend.rule: 'Host:stanzadelcittadino.localtest.me'
+
+#healthcheck:
+#  test: "test -S /var/run/shibboleth/shib.sock"
+#  interval: 30s      # the $interval between checks
+#  timeout: 1s       # the check must finish before timeout, or it will result in a failure
+#  retries: 1           # It takes retries consecutive failures of the health check for the container to be considered unhealthy. (default: 3)
+#  start_period: 10s    # first time check starts after the $start_period
+
+
+  wkhtmltopdf:
+    image: traumfewo/docker-wkhtmltopdf-aas
+    environment:
+      USER: pdf
+      PASS: pdf
+    labels:
+      - 'traefik.port=5555'
+
+  traefik:
+    image: traefik:1.7
+    restart: unless-stopped
+    command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
+    #command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me --defaultentrypoints=http,https --entrypoints="Name:http Address::80" --entrypoints="Name:https Address::443 TLS" --acme --acme.email=sistemisti@opencontent.it --acme.storage=/certificates/acme.json --acme.entryPoint=https --acme.httpChallenge.entryPoint=http --acme.onhostrule=true --acme.acmelogging=true
+    ports:
+      - '80:80'
+        # - '443:443'
+      - '8080:8080' # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   mongo:
     image: mongo
@@ -58,9 +138,9 @@ services:
     image: deenoize/mongodb-backup-s3
     restart: unless-stopped
     environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID_BACKUP}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_BACKUP}
-      BUCKET: ${BUCKET_BACKUP}
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_BACKUP
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_BACKUP
+      BUCKET: $BUCKET_BACKUP
       BUCKET_REGION: eu-west-1
       MONGODB_DBNAME: formmanager
       TZ: EU/Rome
@@ -75,6 +155,7 @@ services:
       - mongo
 
 volumes:
-  web:
+  pgdata:
+  uploads:
+  app:
   mongo:
-  #mongo-backup:

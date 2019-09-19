@@ -1,33 +1,48 @@
-FROM ubuntu:18.04
+FROM wodby/php:7.3
 
-RUN apt-get update
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository ppa:ondrej/php
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y acl php7.3 php7.3-fpm php7.3-pgsql php7.3-dom wkhtmltopdf php7.3-curl php7.3-mbstring php7.3-gd php7.3-zip ghostscript curl git unzip python make g++ gnupg2
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y yarn
-RUN ln -snf /usr/share/zoneinfo/Europe/Rome /etc/localtime
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer selfupdate 1.7.2
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+USER root
 
-COPY . /docroot
-WORKDIR /docroot
+# Installo node e yarn per webpack encore
+RUN apk add --update nodejs npm
+RUN apk add --update yarn
 
-RUN ln -s /docroot/bin/console /docroot/app
-RUN composer global require hirak/prestissimo && composer install
+USER wodby
 
+# configurazione di composer
+RUN composer global require hirak/prestissimo
+
+#ARG SYMFONY_ENV=prod
+ENV PHP_FPM_USER=wodby
+ENV PHP_FPM_GROUP=wodby
+
+WORKDIR /var/www/html
+
+# prendiamo i file dal primo container creati in /srv/ e li metto in $WORKDIR
+#COPY --from=builder /srv/. ./
+
+# FIXME: per non ripetere ogni volta il download delle dipendenze del progetto
+# il composer install dovrebbe avvenire prima della copia del codice, ma
+# facendolo si ottiene un errore, probabilmente c'e' qualcosa nel composer
+# install che dipende dall'applicazione. Scommentare per credere.
+#COPY composer.json composer.lock ./ 
+#RUN composer install --no-scripts
+
+COPY --chown=wodby:wodby ./ .
+
+RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
+
+#RUN sleep 3600;
+
+RUN composer install --no-scripts
+
+# lo script richiede che il file dei parametri sia già al suo posto
+RUN composer run-script post-docker-install-cmd
+
+# Compilo css e js
 RUN yarn install
 RUN yarn encore production
 
-# Necessario per evitare: Unable to create the PID file (/run/php/php7.3-fpm.pid).: No such file or directory
-# Da verificare
-RUN mkdir /run/php
 
-RUN chown www-data /docroot/var -R
-
-
-CMD [ "php-fpm7.3" , "-R", "-F" ]
-
+COPY compose_conf/php/init-db.sh /docker-entrypoint-init.d/
+COPY compose_conf/php/init-demo.sh /docker-entrypoint-init.d/
 

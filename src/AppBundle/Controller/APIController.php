@@ -54,7 +54,6 @@ class APIController extends AbstractFOSRestController
     {
         $repo = $this->em->getRepository(Pratica::class);
         $pratiche = $repo->findSubmittedPraticheByEnte($this->is->getCurrentInstance());
-
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
         $servizi = $serviziRepository->findBy(
             [
@@ -78,6 +77,7 @@ class APIController extends AbstractFOSRestController
             'status'   => 'ok',
             'servizi'  => count($servizi),
             'pratiche' => $count
+
         ]);
     }
 
