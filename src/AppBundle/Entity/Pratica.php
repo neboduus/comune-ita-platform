@@ -154,6 +154,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     private $operatore;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     * @var string
+     */
+    private $oggetto;
+
+    /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Allegato", inversedBy="pratiche", orphanRemoval=false)
      * @var ArrayCollection
      * @Assert\Valid(traverse=true)
@@ -856,6 +862,24 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
             $allegato->addPratica( $this );
         }
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOggetto()
+    {
+        return $this->oggetto;
+    }
+
+    /**
+     * @param string $oggetto
+     * @return $this
+     */
+    public function setOggetto(string $oggetto)
+    {
+        $this->oggetto = $oggetto;
         return $this;
     }
 

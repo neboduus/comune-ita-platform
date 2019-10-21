@@ -49,7 +49,7 @@ class PraticheController extends Controller
 
         $praticheDraft = $repo->findDraftPraticaForUser($user);
         $pratichePending = $repo->findPendingPraticaForUser($user);
-        $praticheProcessing = $repo->findProcessingPraticaForUser($user);
+        //$praticheProcessing = $repo->findProcessingPraticaForUser($user);
         $praticheCompleted = $repo->findCompletePraticaForUser($user);
         $praticheCancelled = $repo->findCancelledPraticaForUser($user);
         $praticheDraftForIntegration = $repo->findDraftForIntegrationPraticaForUser($user);
@@ -63,7 +63,7 @@ class PraticheController extends Controller
             'tab_pratiche' => array(
                 'draft' => $praticheDraft,
                 'pending' => $pratichePending,
-                'processing' => $praticheProcessing,
+                //'processing' => $praticheProcessing,
                 'completed' => $praticheCompleted,
                 'cancelled' => $praticheCancelled,
                 'integration' => $praticheDraftForIntegration,

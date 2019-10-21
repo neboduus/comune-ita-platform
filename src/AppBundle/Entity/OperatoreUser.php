@@ -5,12 +5,14 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Xiidea\EasyAuditBundle\Annotation\ORMSubscribedEvents;
 
 /**
  * Class OperatoreUser
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @package AppBundle\Entity
+ * @ORMSubscribedEvents("updated, created, deleted")
  */
 class OperatoreUser extends User
 {
@@ -34,6 +36,14 @@ class OperatoreUser extends User
      * @ORM\Column(name="servizi_abilitati", type="text")
      */
     private $serviziAbilitati;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_change_password", type="datetime", nullable=true)
+     */
+    private $lastChangePassword;
+
 
     /**
      * OperatoreUser constructor.
@@ -124,4 +134,21 @@ class OperatoreUser extends User
             $this->serviziAbilitati = json_encode($this->getServiziAbilitati()->toArray());
         }
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastChangePassword()
+    {
+        return $this->lastChangePassword;
+    }
+
+    /**
+     * @param \DateTime $lastChangePassword
+     */
+    public function setLastChangePassword(\DateTime $lastChangePassword)
+    {
+        $this->lastChangePassword = $lastChangePassword;
+    }
+
 }

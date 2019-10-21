@@ -1,71 +1,97 @@
 {% set ente = instance_service.getCurrentInstance() %}
-<header id="header">
-    <div id="header-top" class="container-fluid clearfix">
-        <div class="row">
-            <div class="col-md-4 col-md-offset-2 col-xs-4 col-xs-offset-2">
-                <div id="header-top-left" class="clearfix hidden-xs">
-                   <a href="{{ header_top.link }}">{{ header_top.title }}</a>
-                </div>
-            </div>
-            {% if user is defined %}
-                <div class="col-md-6">
-                    {{ include('@App/Default/parts/user_badge.html.twig', {'user': user}) }}
-                </div>
-            {% endif %}
-        </div>
-    </div>
+{% set service = ente.getMetaAsArray('service') %}
+{% set social = ente.getMetaAsArray('social') %}
 
-    <div id="header-inside" class="container-fluid clearfix">
-        <div class="row">
-            <div class="col-xs-2 col-sm-1 hidden-md hidden-lg burger-wrapper-container">
-                <h2 class="sr-only">Menu principale</h2>
-                <div class="burger-wrapper">
-                    <div class="burger-container">
-                        <!--<button id="showLeftPush">Show/Hide Left Push Menu</button>-->
-                        <a class="toggle-menu" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                            <span class="bar"></span>
-                        </a>
+<header class="it-header-wrapper it-header-sticky">
+    <div class="it-header-slim-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="it-header-slim-wrapper-content">
+
+                        {% if service.amministrazione_afferente is defined %}
+                            <a class="d-none d-lg-block navbar-brand" href="{{ service.amministrazione_afferente.url }}">{{ service.amministrazione_afferente.text }}</a>
+                        {% endif %}
+
+                        <div class="nav-mobile">
+                            <nav>
+                                {% if service.nav is defined %}
+                                <a class="d-lg-none navbar-brand" data-toggle="collapse" href="#service-menu" role="button" aria-expanded="false" aria-controls="service-menu">
+                                    <span>{% if service.amministrazione_afferente is defined %}{{ service.amministrazione_afferente.text }}{% endif %}</span>
+                                    <svg class="icon icon-white"><use xlink:href="{{asset('bootstrap-italia/dist/svg/sprite.svg#it-expand')}}"></use></svg>
+                                </a>
+                                <div class="link-list-wrapper collapse" id="service-menu">
+                                    <ul class="link-list">
+                                        {% for item in service.nav %}
+                                            <li>
+                                                <a href="{{ item.url }}" title="Link a {{ item.text }}">
+                                                    {{ item.text }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            </nav>
+                        </div>
+                        {{ include('@App/Default/parts/user_badge.html.twig') }}
                     </div>
                 </div>
             </div>
-            <div class="col-sm-1 hidden-xs">
-                <div id="logo">
-                    <a href="{{ path('home') }}" title="Home" rel="home">
-                        <img class="img-responsive pull-right" src="{{ asset('bundles/app/images/logo-stanza.png') }}" alt="{{ 'title'|trans }}" />
-                    </a>
-                </div>
-            </div>
-            <div class="col-xs-10">
-                <div id="site-name">
-                    {% if ente %}
-                        <a  href="{{ ente.siteUrl }}" target="_blank">
-                            <img class="img-responsive pull-right logo-ente" src="{{ asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') }}" alt="{{ 'title'|trans }}" style="max-height: 76px" />
-                        </a>
-                    {% endif %}
-                    <h1 class="hidden-xs">
-                        <a href="{{ path('home') }}" title="Home" style="color: #000">
-                            {{ 'title'|trans }}
-                        </a>
-                    </h1>
-                    {% if ente %}
-                        <p class="claim">{{ 'claim'|trans({'%ente_name%': ente.name}) }}</p>
-                    {% endif %}
-                </div>
-            </div>
         </div>
     </div>
 
-    <div id="nav-aree" class="container-fluid clearfix hidden-sm hidden-xs">
-        <div class="row">
-            <div class="no-pad-b">
-                <h2 class="sr-only">Sezioni principali</h2>
-                <ul class="nav nav-pills">
-                    {{ include('@App/Default/parts/menu_list.html.twig') }}
-                </ul>
+    <div class="it-nav-wrapper">
+        <div class="it-header-center-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="it-header-center-content-wrapper">
+                            <div class="it-brand-wrapper">
+                                {% if ente %}
+                                <a href="{{ ente.siteUrl }}">
+                                    <img class="icon" src="{{ asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') }}" alt="{{ ente.name }}"/>
+                                    <div class="it-brand-text">
+                                        <h2 class="no_toc">{{ ente.name }}</h2>
+                                        <h3 class="no_toc d-none d-md-block">
+                                            {#{{ 'claim'|trans({'%ente_name%': ente.name}) }}#}
+                                            {#Servizi online per i cittadini#}
+                                        </h3>
+                                    </div>
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="it-right-zone">
+
+                                {% if social %}
+                                    <div class="it-socials d-none d-md-flex">
+                                        <span>Seguici su</span>
+                                        <ul>
+                                            {% for key,value in social %}
+                                                <li>
+                                                    <a href="{{ value }}" aria-label="{{ key }}" target="_blank">
+                                                        <svg class="icon">
+                                                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
+                                                        </svg>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                                {#<div class="it-search-wrapper">
+                                    <span class="d-none d-md-block">Cerca</span>
+                                    <a class="search-link rounded-icon" href="#" aria-label="Cerca" id="toggleGlobalSearch">
+                                        <svg class="icon"><use xlink:href="{{asset('bootstrap-italia/dist/svg/sprite.svg#it-search')}}"></use></svg>
+                                    </a>
+                                </div>#}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        {{ include('@App/Default/nav/main.html.twig') }}
     </div>
-
 </header>

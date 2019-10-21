@@ -1,29 +1,104 @@
+{#
 {% set duration = pratica|iter_duration(app.request.locale) %}
-<h3>{{ 'pratica.iter'|trans }} {% if duration != '' %}<i class="fa fa-clock-o has_tooltip" data-toggle="tooltip" data-placement="top" title="{{ 'pratica.tooltip_durata_iter'|trans }} {{ pratica|iter_duration }}"></i>{% endif %}</h3>
-<div class="panel no-border-radius">
+<h4>{{ 'pratica.iter'|trans }} {% if duration != '' %}<i class="fa fa-clock-o has_tooltip" data-toggle="tooltip" data-placement="top" title="{{ 'pratica.tooltip_durata_iter'|trans }} {{ pratica|iter_duration }}"></i>{% endif %}</h4>
+
+<div class="link-list-wrapper multiline">
+    <ul class="link-list">
+        {% for timestamp, changes in pratica.storicoStati %}
+        <li>
+            <a class="list-item active left-icon p-0" href="#">
+                <svg class="icon icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use></svg>
+                <span>
+                    {{ timestamp|date(ocsdc_slim_datetime_format) }}
+                    {% for change in changes[0] %}
+                        {% if change is not null and change is not iterable%}
+                            - {{ ('pratica.dettaglio.stato_'~change)| trans }}
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                {% if changes[0][1] is defined and changes[0][1]['message'] is defined  and changes[0][1]['message'] is not null %}
+                    <p>Motivo: {{ changes[0][1]['message']}}</p>
+                {% endif %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+#}
+
+{#  old #}
+{% set duration = pratica|iter_duration(app.request.locale) %}
+<h4 class="m-3">{{ 'pratica.iter'|trans }}
+    {% if duration != '' %}<i class="fa fa-clock-o has_tooltip" data-toggle="tooltip"
+                                                         data-placement="top"
+                                                         title="{{ 'pratica.tooltip_durata_iter'|trans }} {{ pratica|iter_duration }}"></i>{% endif %}
+</h4>
+{#<div class="panel no-border-radius">
     <div class="panel-body">
         <ul class="progress-indicator stepped stacked nocenter">
             {% for timestamp, changes in pratica.storicoStati %}
                 <li class="completed info{% for change in changes[0] %}{% if change and (change == 10 or change == 100) %} last{% endif %}{% endfor %}">
-                    <a href="#">
+                    <a href="#" style="text-decoration: none">
                         <span class="bubble"></span>
                         <span class="stacked-text">
-                        <span class="fa fa-calendar"></span>
+                        <svg class="icon icon-primary icon-sm"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use></svg>
                         {{ timestamp|date(ocsdc_default_datetime_format) }}
 
-                        {% for change in changes[0] %}
-                            {% if change is not null and change is not iterable%}
-                                <span class="subdued"><em> {{ ('pratica.dettaglio.stato_'~change)| trans }} </em></span>
-                            {% endif %}
+                            {% for change in changes[0] %}
+                                {% if change is not null and change is not iterable%}
+                                    <span class="subdued"><em> {{ ('pratica.dettaglio.stato_'~change)| trans }} </em></span>
+                                {% endif %}
 
-                        {% endfor %}
-                        {% if changes[0][1] is defined and changes[0][1]['message'] is defined  and changes[0][1]['message'] is not null %}
-                            <small class="clearfix subdued">Motivo: {{ changes[0][1]['message']}}</small>
-                        {% endif %}
+                            {% endfor %}
+                            {% if changes[0][1] is defined and changes[0][1]['message'] is defined  and changes[0][1]['message'] is not null %}
+                                <small class="clearfix subdued">Motivo: {{ changes[0][1]['message']}}</small>
+                            {% endif %}
                         </span>
                     </a>
                 </li>
             {% endfor %}
         </ul>
+    </div>
+</div>#}
+
+<div class="iter-timeline-wrapper mt-4">
+    <div class="row">
+        {% for timestamp, changes in pratica.storicoStati %}
+            <div class="col-12">
+                <div class="timeline-element">
+                    <div class="it-pin-wrapper it-evidence">
+                        <div class="pin-icon">
+                            <svg class="icon">
+                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+                            </svg>
+                        </div>
+                        <div class="pin-text"><span>{{ timestamp|date(ocsdc_default_datetime_format) }}</span></div>
+                    </div>
+                    <div class="card-wrapper">
+                        <div class="card">
+                            <div class="card-body">
+                                {#<div class="category-top">
+                                    <a class="category" href="#">Category</a>
+                                    <span class="data">10/12/2018</span>
+                                </div>
+                                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>#}
+                                <div class="category-top">
+                                    {% for change in changes[0] %}
+                                        {% if change is not null and change is not iterable %}
+                                            <a class="category"
+                                               href="#">{{ ('pratica.dettaglio.stato_'~change)| trans }} </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% if changes[0][1] is defined and changes[0][1]['message'] is defined  and changes[0][1]['message'] is not null %}
+                                    <p class="card-text"><em>Motivo: {{ changes[0][1]['message'] }}</em></p>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </div>

@@ -247,23 +247,23 @@ class ModuloPdfBuilderService
             $content = base64_decode($payload['FileRichiesta']);
             unset($payload['FileRichiesta']);
             $fileName = uniqid() . '.p7m';
+
+            $response->setOwner($pratica->getUser());
+            $response->setOriginalFilename((new \DateTime())->format('Ymdhi'));
+            $response->setDescription($rispostaOperatore->getMessage() ?? '');
+
+            $destinationDirectory = $this->getDestinationDirectoryFromContext($response);
+            $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
+
+            $this->filesystem->dumpFile($filePath, $content);
+            $response->setFile(new File($filePath));
+            $response->setFilename($fileName);
+
+            $this->em->persist($response);
+
         } else {
-            return null;
+            $response = $this->createUnsignedResponseForPratica($pratica);
         }
-
-        $response->setOwner($pratica->getUser());
-        $response->setOriginalFilename((new \DateTime())->format('Ymdhi'));
-        $response->setDescription($rispostaOperatore->getMessage() ?? '');
-
-        $destinationDirectory = $this->getDestinationDirectoryFromContext($response);
-        $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
-
-        $this->filesystem->dumpFile($filePath, $content);
-        $response->setFile(new File($filePath));
-        $response->setFilename($fileName);
-
-        $this->em->persist($response);
-
         return $response;
     }
 

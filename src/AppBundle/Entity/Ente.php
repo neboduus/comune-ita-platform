@@ -103,6 +103,12 @@ class Ente
     private $emailCertificata;
 
     /**
+     * @var string
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $meta;
+
+    /**
      * Ente constructor.
      */
     public function __construct()
@@ -378,4 +384,37 @@ class Ente
         $this->parseProtocolloParameters();
         return $this->protocolloParameters;
     }
+
+    /**
+     * @return string
+     */
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    /**
+     * @param bool $attribute
+     * @return mixed
+     */
+    public function getMetaAsArray($attribute = false)
+    {
+        $meta = \json_decode($this->meta, 1);
+        if ( $attribute ) {
+            if (isset($meta[$attribute])) {
+                return $meta[$attribute];
+            }
+            return null;
+        }
+        return $meta;
+    }
+
+    /**
+     * @param string $meta
+     */
+    public function setMeta(string $meta)
+    {
+        $this->meta = $meta;
+    }
+
 }

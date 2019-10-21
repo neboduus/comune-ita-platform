@@ -36,25 +36,16 @@ Vue.component('scia_ediliza_soggetti', {
             this.updateFormValue()
         },
         onBeforeUpload(file) {
-            this.disableButtons()
             const isP7m = (file.type === 'application/pkcs7-mime' || file.type === '');
             if (!isP7m)
             {
                 this.$message.error('Attenzione: Sono permessi solo file di tipo p7m!!!');
-                this.enableButtons()
             }
             return isP7m;
         },
         updateFormValue() {
             var el = document.getElementById('scia_pratica_edilizia_soggetti_dematerialized_forms')
             el.value = JSON.stringify(this.elencoSoggettiAventiTitolo);
-            this.enableButtons()
-        },
-        enableButtons(){
-            $('[type=submit]').attr('disabled', false);
-        },
-        disableButtons(){
-            $('[type=submit]').attr('disabled', 'disabled');
         }
     }
 })

@@ -51,7 +51,7 @@ services:
 
     ocsdc.cps.complete_profile_listener:
         class: AppBundle\EventListener\CompleteProfileListener
-        arguments: ["@router","@security.token_storage", "@ocsdc.cps.userprovider"]
+        arguments: ["@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%"]
         tags:
             - { name: kernel.event_listener, event: kernel.request, priority: -100 }
 
@@ -358,6 +358,12 @@ services:
     ocsdc.protocollo_success_events_subscriber:
         class: AppBundle\EventListener\ProtocolloSuccessSubscriber
         arguments: ["@ocsdc.pratica_status_service", "@logger"]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    ocsdc.user_security_subscriber:
+        class: AppBundle\EventListener\UserSecuritySubscriber
+        arguments: ["@fos_user.user_manager", "@router"]
         tags:
             - { name: kernel.event_subscriber }
 

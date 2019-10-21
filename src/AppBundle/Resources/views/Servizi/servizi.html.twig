@@ -1,25 +1,61 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="alert alert-info">
-                {{ 'intro'|trans|raw }}
+
+    {#<section id="intro" class="section container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-8 px-lg-4 py-lg-2">
+                <h1>Servizi</h1>
+                <p>
+                    {{ 'intro'|trans|raw }}
+                </p>
+            </div>
+            <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
             </div>
         </div>
-    </div>
-    {% if sticky_services %}
-        <h1>{{ 'servizi_primo_piano'|trans() }}</h1>
-        <div class="row">
-            <div class="col-sm-12">
-                {% for servizio in sticky_services %}
-                    {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
-                {% endfor %}
-            </div>
-                </div>
+    </section>#}
 
-    {%  endif %}
-    <div class="row">
+    {% if sticky_services %}
+        <section id="section container px-4 my-4">
+            <div class="pb-5">
+                <div class="container px-4">
+                    <div class="row mt-5">
+                        <div class="col">
+                            <h3 class="mb-4 text-primary">{{ 'servizi_primo_piano'|trans() }}</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        {% for servizio in sticky_services %}
+                            <div class="col-12">
+                                {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    <section id="section container px-4 my-4">
+        <div class="pb-5">
+            <div class="container px-4">
+                <div class="row mt-5">
+                    <div class="col">
+                        <h3 class="mb-4 text-primary">In evidenza</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for servizio in servizi %}
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            {{ include('@App/Servizi/parts/panel/servizio.html.twig') }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {#<div class="row">
         <div class="col-sm-9">
             <h1>{{ 'esplora_i_servizi'|trans() }}</h1>
         </div>
@@ -30,21 +66,7 @@
                 </a>
             </p>
         </div>
-    </div>
-    {% for servizio in servizi %}
+    </div>#}
 
-        {% if loop.index % 3 == 1 %}
-            <div class="row list">
-        {% endif %}
-
-            <div class="col-sm-4">
-                {{ include('@App/Servizi/parts/panel/servizio.html.twig') }}
-            </div>
-
-        {% if (loop.index % 3 == 0 or loop.last) %}
-        </div>
-        {% endif %}
-
-    {% endfor %}
 
 {% endblock %}

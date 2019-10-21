@@ -23,7 +23,7 @@ visualizza_griglia: "Visualizza griglia"
 profilo_utente: "Profilo utente"
 operatore: "Operatore"
 credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del %ente_name%"
-powered_by: 'powered by <a href="https://www.opencontent.it/">OpenContent Scarl</a>'
+powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 
 nav:
   home: 'Homepage'
@@ -58,7 +58,7 @@ servizio:
     download_pdf_imis: 'Esegui il download del pdf %name%'
 
 pratica:
-  guida_utente: 'Guida alla compilazione'
+  guida_utente: 'Guida'
   email:
     status_change:
       subject: 'La pratica è stata aggiornata'
@@ -119,6 +119,7 @@ pratica:
     stato: 'Stato corrente'
     servizio: 'Servizio'
     ente: 'Ente'
+    oggetto: 'Oggetto'
     richiedente: 'Richiedente'
     richiedente.nato_a: 'Luogo di nascita'
     richiedente.nato_il: 'Data di nascita'
@@ -173,8 +174,8 @@ pratica:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'  
     descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
   appunti_compilazione:
-    titolo: 'Aggiungi una descrizione per poter riconoscere la pratica più agevolmente'
-    sottotitolo: 'Questa descrizione può essere vista solo da te'
+    titolo: 'Aggiungi una descrizione ala pratica'
+    sottotitolo: 'Questa descrizione può essere vista solo da te e ti servirà per riconoscere la pratica più agevolmente'
     placeholder: 'Inserisci una descrizione breve'
   noteDiCompilazione: 'Note di compilazione'
 
@@ -350,7 +351,7 @@ user:
     pratiche_cancelled: 'Rifiutate'
     pratiche_related: 'Aperte per mio conto'
     pratiche_integration: 'Da integrare'
-    vai_al_dettaglio: 'Vedi dettaglio'
+    vai_al_dettaglio: 'Dettaglio'
     avvisi_notizie: 'Avvisi / Notizie'
     scadenze: 'Scadenze'
     servizi_primo_piano: 'Servizi in primo piano'
@@ -998,8 +999,8 @@ steps:
                 title: ''
                 description: Obblighi in materia di sicurezza nei luoghi di lavoro di cui al d.lgs n. 81/2008
               DOM_DOC_DIRITTI_SEGRETERIA:
-                title: ''
-                description: 'Ricevuta attestante il pagamento dei diritti di segreteria o di istruttoria'
+                title: 'Ricevuta attestante il pagamento dei diritti di segreteria'
+                description: ''
               DOM_DOC_PAGAMENTO_CONTRIBUTO:
                 title: ''
                 description: Documentazione attestante il pagamento del contributo di costruzione
@@ -1028,59 +1029,59 @@ steps:
                 altro_tipo: Altro tipo
             files:
               TEC_ELABORATI_VINCOLI:
-                title: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
-                description: ''
+                title: ''
+                description: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
               TEC_DOC_FOTOGRAFICA:
                 title: ''
-                description: 	documentazione fotografica dello stato di fatto
+                description: 	Documentazione fotografica dello stato di fatto
               TEC_RELAZIONE_TECNICA:
                 title: ''
-                description: 	relazione tecnica
+                description: 	Relazione tecnica
               TEC_PLANIMETRIE:
                 title: ''
-                description: 	planimetrie
+                description: 	Planimetrie
               TEC_SEZ_ALTIMETRICHE:
                 title: ''
-                description: 	sezioni altimetriche con raffronto
+                description: 	Sezioni altimetriche con raffronto
               TEC_PIANTE:
                 title: ''
-                description: 	piante
+                description: 	Piante
               TEC_SEZIONI:
                 title: ''
-                description: 	sezioni
+                description: 	Sezioni
               TEC_PROSPETTI:
                 title: ''
-                description: 	prospetti
+                description: 	Prospetti
               TEC_TECNICA_COSTR:
                 title: ''
-                description: 	documentazione tecnica necessaria alla determinazione del contributo di costruzione
+                description: 	Documentazione tecnica necessaria alla determinazione del contributo di costruzione
               TEC_SPAZI_PARCHEGGIO:
                 title: ''
-                description: 	spazi di parcheggio
+                description: 	Spazi di parcheggio
               TEC_BARRIERE_ARCHITETTONICHE:
                 title: ''
-                description: 	elaborati relativi al superamento delle barriere architettoniche
+                description: 	Elaborati relativi al superamento delle barriere architettoniche
               TEC_RELAZIONE_GEOLOGICA:
                 title: ''
-                description: 	perizia, studio o relazione geologica di fattibilità dell’intervento
+                description: 	Perizia, studio o relazione geologica di fattibilità dell’intervento
               TEC_STUDIO_COMPATIBILITA:
                 title: ''
-                description: 	studio di compatibilità
+                description: 	Studio di compatibilità
               TEC_RELAZIONE_ENERGETICA:
                 title: ''
-                description: 	relazione energetica
+                description: 	Relazione energetica
               TEC_RISULTATI_ANALISI:
                 title: ''
-                description: 	risultati delle analisi ambientali sulla qualità dei terreni
+                description: 	Risultati delle analisi ambientali sulla qualità dei terreni
               TEC_COMUNICAZIONI_MATERIA:
-                title: 'Comunicazioni in materia di gestione delle terre e rocce da scavo'
-                description: ''
+                title: ''
+                description: 'Comunicazioni in materia di gestione delle terre e rocce da scavo'
               TEC_PIANO_LAVORO:
                 title: ''
-                description: 	piano di lavoro di demolizione o rimozione dell'amianto
+                description: 	Piano di lavoro di demolizione o rimozione dell'amianto
               TEC_IMP-ELET:
                 title: ''
-                description: 	schema del progetto degli impianti tecnologici di produzione, trasformazione, trasporto, distribuzione, utilizzazione dell'energia elettrica
+                description: 	Schema del progetto degli impianti tecnologici di produzione, trasformazione, trasporto, distribuzione, utilizzazione dell'energia elettrica
               TEC_IMP-SCAR:
                 title: ''
                 description: 	schema del progetto degli impianti tecnologici di protezione contro le scariche atmosferiche

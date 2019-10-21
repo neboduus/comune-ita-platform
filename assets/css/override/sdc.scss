@@ -1,0 +1,173 @@
+.user-menu {
+  a {
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+
+.checkbox-wrapper {
+  border: solid 1px $red;
+  border-radius: 10px;
+  padding: 1rem 1.222rem;
+}
+
+.it-footer-main {
+  a {
+    color: $white !important;
+  }
+  h4 {
+
+    span {
+      color: $white;
+      text-decoration: none;
+      text-transform: uppercase;
+      font-size: 16px;
+    }
+  }
+}
+
+i.mandatory::after {
+  content: "*";
+  font-size: x-large;
+  color: $red;
+}
+
+.vue-upload {
+  padding-bottom: 20px;
+}
+
+@include media-breakpoint-down(md) {
+  /* Force table to not be like tables anymore */
+  #no-more-tables {
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    tr {
+      border: 1px solid #ccc;
+    }
+    td {
+      /* Behave  like a "row" */
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 50%;
+      white-space: normal;
+      text-align: left;
+      &:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        content: attr(data-title);
+      }
+    }
+  }
+}
+
+#pswd_info{
+  position: absolute;
+  z-index: 10000000;
+  background: rgb(255, 255, 255) none repeat scroll 0% 0%;
+  top: -180px;
+  left: 25%;
+  padding: 20px;
+  border-radius:5px;
+  box-shadow:0 1px 3px #ccc;
+  border:1px solid #ddd;
+  width: 320px;
+  height: 180px;
+  text-align: left;
+  &:after {
+    content: "\25BC";
+    position:absolute;
+    bottom:-15px;
+    left:45%;
+    font-size:14px;
+    line-height:14px;
+    color:#ddd;
+    text-shadow:none;
+    display:block;
+  }
+
+  li {
+    padding: 5px 0;
+    font-size: 14px !important;
+    line-height: 1.1;
+    text-align: left;
+  }
+}
+
+#pratica-summary {
+  .row {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    &.last {
+      border-bottom: none;
+    }
+  }
+}
+
+#pratica-summary .row:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+// Vue elements
+
+.el-textarea__inner {
+  border-radius: 0 !important;
+}
+
+#vueApp {
+  .el-upload__tip {
+    font-size: 0.7rem !important;
+  }
+
+  .el-upload-list__item {
+    line-height: 2.5 !important;
+    font-size: 0.8rem !important;
+    background-color: #f2f2f2 !important;
+
+    .el-icon-close {
+      top: 12px !important;
+    }
+  }
+
+  .row-upload{
+    padding: 8px;
+    margin-bottom: 10px;
+
+    &:nth-child(even) {
+      background-color: #f2f2f2;
+
+      .el-upload-list__item {
+        background-color: #fff !important;
+      }
+    }
+
+    .description {
+      font-size: .9rem;
+    }
+  }
+}
+
+.alert {
+  &.no-icon {
+    background: none !important;
+    padding-left: 1rem;
+  }
+}
+

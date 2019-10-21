@@ -32,7 +32,7 @@ security:
                     - ocsdc.cps.token_authenticator
         operatori:
             anonymous: ~
-            pattern: ^/%prefix%/operatori
+            pattern: ^/%prefix%/(operatori|admin)
             form_login:
                 check_path: fos_user_security_check
                 login_path: fos_user_security_login
@@ -40,7 +40,7 @@ security:
                 csrf_token_generator: security.csrf.token_manager
             logout:
               path:   logout
-              target: operatori_index
+              target: /%prefix%/
         giscom_api:
             pattern: ^/%prefix%/api/v\d+\.\d+/giscom/pratica/.*/.*
             http_basic:
@@ -55,20 +55,20 @@ security:
                 provider: cps
                 authenticators:
                     - ocsdc.cps.token_authenticator
-
         main:
             anonymous: ~
 
     role_hierarchy:
-            ROLE_ADMIN:           ROLE_OPERATORE_ADMIN
-            ROLE_OPERATORE_ADMIN: ROLE_OPERATORE
-            ROLE_OPERATORE:       ROLE_USER
+        ROLE_ADMIN:           ROLE_USER
+        ROLE_OPERATORE_ADMIN: ROLE_OPERATORE
+        ROLE_OPERATORE:       ROLE_USER
 
     access_control:
         - { path: ^/%prefix%/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/%prefix%/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/%prefix%/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/%prefix%/operatori, role: ROLE_OPERATORE }
         - { path: ^/%prefix%/pratiche, role: ROLE_USER }
         - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
         - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
+        - { path: ^/%prefix%/admin, role: ROLE_ADMIN }

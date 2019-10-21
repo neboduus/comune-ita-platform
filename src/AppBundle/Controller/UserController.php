@@ -33,7 +33,7 @@ class UserController extends Controller
         $user = $this->getUser();
 
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-        $servizi = $serviziRepository->findBy([], [], 4);
+        $servizi = $serviziRepository->findBy([], [], 3);
 
         $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
         $pratiche = $praticheRepo->findBy(

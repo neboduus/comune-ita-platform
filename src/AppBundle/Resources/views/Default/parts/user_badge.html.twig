@@ -1,34 +1,84 @@
 {% if user.roles is defined %}
-    <div class="pull-right">
-        {% if 'ROLE_CPS_USER' in user.roles %}
-            <a href="{{ path('user_profile') }}" title="{{ 'profilo_utente'|trans }}">
-                <i class="fa fa-lock"></i> <i class="fa fa-credit-card"></i>
-            <span class="hidden-xs">
-                {{ user.fullName }}
-            </span>
+    <div class="header-slim-right-zone">
+        <div class="it-access-top-wrapper">
+            {% if 'ROLE_CPS_USER' in user.roles %}
+                <div class="dropdown">
+                    <a class="btn btn-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <svg class="icon icon-lg">
+                            <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-expand') }}"></use>
+                        </svg>
+                        <span>{{ user.fullName }}</span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <div class="link-list-wrapper">
+                            <ul class="link-list">
+                                <li>
+                                    <a class="list-item left-icon" href="{{ path('user_profile') }}">
+                                        <svg class="icon icon-sm icon-primary left">
+                                            <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-user') }}"></use>
+                                        </svg>
+                                        <span>Profilo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="list-item left-icon" href="/Shibboleth.sso/Logout">
+                                        <svg class="icon icon-sm icon-primary left">
+                                            <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-link') }}"></use>
+                                        </svg>
+                                        <span>Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% elseif ('ROLE_OPERATORE' in user.roles) or ('ROLE_ADMIN' in user.roles) %}
+                <div class="dropdown">
+                    <a class="btn btn-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <svg class="icon icon-lg">
+                            <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-expand') }}"></use>
+                        </svg>
+                        <span class="d-none d-lg-block">{{ user.fullName }}</span>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <div class="link-list-wrapper">
+                            <ul class="link-list">
+                                <li>
+                                    <a class="list-item left-icon" href="{{ path('fos_user_profile_show') }}">
+                                        <svg class="icon icon-sm icon-primary left">
+                                            <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-user') }}"></use>
+                                        </svg>
+                                        <span>Profilo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="list-item left-icon" href="{{ logout_path('operatori') }}">
+                                        <svg class="icon icon-sm icon-primary left">
+                                            <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-link') }}"></use>
+                                        </svg>
+                                        <span>Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+    <div class="header-slim-right-zone">
+        <div class="it-access-top-wrapper">
+            <a data-login-top-button="" class="btn btn-icon btn-full" href="{{ path('user_dashboard') }}"
+               title="Esegui il login al sito" style="">
+                                 <span class="rounded-icon">
+                                     <svg class="icon icon-primary"><use
+                                                 xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-user') }}"></use></svg>
+                                </span>
+                <span class="d-none d-lg-block">Accedi all'area personale</span>
             </a>
-            -
-            <a href="/Shibboleth.sso/Logout">
-                <i class="fa fa-power-off" aria-hidden="true"></i>
-            <span class="hidden-xs">
-                <small>{{ 'logout'|trans }}</small>
-            </span>
-            </a>
-        {% elseif 'ROLE_OPERATORE' in user.roles %}
-            <a href="{{ path('operatori_index') }}" title="{{ 'profilo_utente'|trans }}">
-                <i class="fa fa-user"></i>
-            <span class="hidden-xs">
-                {{ user.fullName }}
-                <small>{{ 'operatore'|trans }}</small>
-            </span>
-            </a>
-            -
-            <a href="{{ logout_path('operatori') }}">
-                <i class="fa fa-power-off" aria-hidden="true"></i>
-            <span class="hidden-xs">
-                <small>{{ 'logout'|trans }}</small>
-            </span>
-            </a>
-        {% endif %}
+        </div>
     </div>
 {% endif %}

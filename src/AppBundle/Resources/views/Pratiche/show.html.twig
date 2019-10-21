@@ -1,35 +1,38 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-    <div class="content">
+    <section id="intro" class="container px-4 my-4">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-12 px-lg-4 py-lg-2">
                 <h1>{{ pratica.servizio.name }}</h1>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-7">
+
+            <div class="col-lg-8 px-lg-4 py-lg-2">
                 {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
             </div>
 
 
-            <div class="col-md-4 col-md-offset-1 sidebar">
+            <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
+                <div class="row">
+                    <div class="col-12 pb-5" style="border: 1px solid #ccc; background-color: #efefef; border-radius: 2px">
+                        {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
+                    </div>
 
-                {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
-
-                {% if (pratica.statusName == 'STATUS_DRAFT' or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and user.id == pratica.user.id %}
-                    <h3>Azioni</h3>
-
-                    <a class="btn btn-success btn-lg btn-block" style="margin-bottom: 30px" data-action="edit_draft" href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                        <i class="fa fa-arrow-circle-o-right"></i>
-                        {{ 'pratica.vai_alla_pratica'|trans }}
-                    </a>
-
-                {% endif %}
-                {{ include('@App/Default/parts/chat.html.twig') }}
+                    <div class="col-12 mt-5">
+                        {% if (pratica.statusName == 'STATUS_DRAFT' or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and user.id == pratica.user.id %}
+                            <h4>Azioni</h4>
+                            <a class="btn btn-success btn-lg btn-block" style="margin-bottom: 30px" data-action="edit_draft"
+                               href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+                                <i class="fa fa-arrow-circle-o-right"></i>
+                                {{ 'pratica.vai_alla_pratica'|trans }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {#{{ include('@App/Default/parts/chat.html.twig') }}#}
             </div>
         </div>
-    </div>
+    </section>
 {% endblock %}
 
 {% block javascripts %}

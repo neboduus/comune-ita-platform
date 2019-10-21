@@ -1,110 +1,117 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block main_content %}
 
-    <h1>{{ servizio.name }}</h1>
 
-    <div class="row">
-        <div class="col-sm-7">
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-12 px-lg-4 py-lg-2">
+                <h1>{{ servizio.name }}</h1>
+            </div>
+            <div class="col-lg-8 px-lg-4 py-lg-2">
 
-            <h3>{{ servizio.description }}</h3>
+                <p>
+                    {{ servizio.description }}
+                </p>
 
-            <div class="service-istruzioni">
-                {{ servizio.testoIstruzioni|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+                <p>
+                    {{ servizio.testoIstruzioni|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+                </p>
+
+                {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale %}
+                    <br/>
+                    <div class="alert alert-info">
+                        <a class="" href="{{ servizio.additionalData.urlModuloPrincipale }}"><b>Scarica il modulo da
+                                compilare</b></a><br/>
+                        <a class="" href="{{ servizio.additionalData.urlModuloPrincipale }}"><b>Questo è il modulo
+                                principale del servizio</b></a> e andrà compilato e caricato quando il sistema lo
+                        chiederà
+                        <br/>
+                    </div>
+                {% endif %}
+
+                {% if servizio.isPaymentRequired %}
+                    <br/>
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p>
+                                    Prima dell'invio del modulo online <b>sarà necessario completare il pagamento nella
+                                        modalità indicata</b><br/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {#todo: usare constant()#}
+                        {% if servizio.status == 0 %}
+                            <div class="alert alert-danger" role="alert"><i class="fa fa-times"
+                                                                            aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}
+                            </div>
+                        {% elseif servizio.status == 2 %}
+                            <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle"
+                                                                             aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}
+                            </div>
+                        {% else %}
+                            <div class="text-center">
+
+                                <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
+                                   class="btn btn-success btn-lg service-access-button">
+                                    {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
+                                        <span class="hidden-xs">{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
+                                        <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil"
+                                                                                                 aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%':null}) }}</span>
+                                    {% else %}
+                                        <span class="hidden-xs">{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                                        <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil"
+                                                                                                 aria-hidden="true"></i> {{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                                    {% endif %}
+                                </a>
+
+                                {% if servizio.enti|length > 1 %}
+                                    <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
+                                            :</strong>
+                                        <ul class="list-unstyled">
+                                            {% for ente in servizio.enti %}
+                                                <li><a href="{{ ente.siteUrl }}">
+                                                        <small>{{ ente.name }}</small>
+                                                    </a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
 
-            {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale %}
-                <br/>
-                <div class="alert alert-info">
-                    <a class="" href="{{ servizio.additionalData.urlModuloPrincipale }}"><b>Scarica il modulo da compilare</b></a><br/>
-                    <a class="" href="{{ servizio.additionalData.urlModuloPrincipale }}"><b>Questo è il modulo principale del servizio</b></a> e andrà compilato e caricato quando il sistema lo chiederà
-                    <br/>
-                </div>
-            {% endif %}
 
-            {% if servizio.isPaymentRequired %}
-                <br />
-                <div class="alert alert-info">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <p>
-                                Prima dell'invio del modulo online <b>sarà necessario completare il pagamento nella modalità indicata</b><br/>
-                            </p>
+            <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
+                <div class="row">
+                    <div class="col-12 pb-5"
+                         style="border: 1px solid #ccc; background-color: #efefef; border-radius: 2px">
+                        <div class="link-list-wrapper mt-5">
+                            <ul class="link-list">
+                                <li>
+                                    <h3 id="heading-senza-link">{{ "servizio.servizi_area_title"|trans({'%area%': servizio.area.name}) }}</h3>
+                                </li>
+
+                                {% for s in servizi_area %}
+                                    <li>
+                                        <a class="list-item {% if s.id == servizio.id %} active{% endif %}"
+                                           href="{{ path('servizi_show', {'slug': s.slug}) }}">{{ s.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     </div>
                 </div>
-            {% endif %}
-
-            <div class="row">
-                <div class="col-md-12">
-                    {#todo: usare constant()#}
-                    {% if servizio.status == 0 %}
-                        <div class="alert alert-danger" role="alert"><i class="fa fa-times" aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}</div>
-                    {% elseif servizio.status == 2 %}
-                        <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}</div>
-                    {% else %}
-                        <div class="text-center">
-
-                            <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg service-access-button">
-                                {%  if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
-                                    <span class="hidden-xs">{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
-                                    <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil" aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%':null}) }}</span>
-                                {% else %}
-                                    <span class="hidden-xs">{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                                    <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil" aria-hidden="true"></i> {{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                                {% endif %}
-                            </a>
-
-                            {% if servizio.enti|length > 1 %}
-                                <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}:</strong>
-                                    <ul class="list-unstyled">
-                                        {% for ente in servizio.enti %}
-                                            <li><a href="{{ ente.siteUrl }}"><small>{{ ente.name }}</small></a></li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-
-                        </div>
-                    {% endif %}
-                </div>
             </div>
-
         </div>
-
-
-        {% if servizi_area|length > 0 %}
-        <div class="col-sm-4 col-sm-offset-1 sidebar">
-            <h4>{{ "servizio.servizi_area_title"|trans({'%area%': servizio.area.name}) }}</h4>
-            <div class="list-group">
-                {% for s in servizi_area %}
-                    <a href="{{ path('servizi_show', {'slug': s.slug}) }}" class="list-group-item{% if s.id == servizio.id %} active{% endif %}">{{ s.name }}</a>
-                {% endfor %}
-            </div>
-
-            {#<h3>Condividi</h3>
-            <p class="nav_social clearfix">
-                <a href="#" title="Seguici su Twitter">
-                <span class="fa-stack fa-lg">
-                  <span class="fa fa-circle fa-stack-2x"></span>
-                  <span class="fa fa-twitter fa-stack-1x fa-inverse"></span>
-                </span><span class="sr-only">Twitter</span>
-                </a>
-                <a href="#" title="Seguici su Facebook">
-                <span class="fa-stack fa-lg">
-                  <span class="fa fa-circle fa-stack-2x"></span>
-                  <span class="fa fa-facebook fa-stack-1x fa-inverse"></span>
-                </span><span class="sr-only">Facebook</span>
-                </a>
-                <a href="#" title="Seguici su Youtube">
-                <span class="fa-stack fa-lg">
-                  <span class="fa fa-circle fa-stack-2x"></span>
-                  <span class="fa fa-youtube-play fa-stack-1x fa-inverse"></span>
-                </span><span class="sr-only">Youtube</span>
-                </a>
-            </p>#}
-        </div>
-        {% endif %}
-    </div>
-
+    </section>
 
 {% endblock %}

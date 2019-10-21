@@ -8,9 +8,15 @@
     <tr>
         <td width="60%">
             <div class="oggetto">
-                <p>
-                    {{ 'pratica.pdf.oggetto'|trans() }} {{ oggetto|default(pratica.servizio.name) }}
-                </p>
+                {% if pratica.oggetto != null %}
+                    <p>
+                        {{ 'pratica.pdf.oggetto'|trans() }}<br />{{ pratica.oggetto }}
+                    </p>
+                {% else %}
+                    <p>
+                        {{ 'pratica.pdf.oggetto'|trans() }}<br />{{ oggetto|default(pratica.servizio.name) }}
+                    </p>
+                {% endif %}
             </div>
         </td>
         <td>

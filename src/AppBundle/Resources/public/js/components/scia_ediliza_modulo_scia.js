@@ -2,7 +2,7 @@
 
 Vue.component('scia_ediliza_modulo_scia', {
     template: `<div>
-        <div>
+        <div class="row-upload">
             <el-upload
               class="vue-upload"
               :data="{type: 'type'}"
@@ -52,11 +52,9 @@ Vue.component('scia_ediliza_modulo_scia', {
             this.updateFormValue()
         },
         onBeforeUpload(file) {
-            this.disableButtons()
             if (this.attachments.length > 0)
             {
                 this.$message.error('Attenzione: è possibile caricare solo un file!!!');
-                this.enableButtons()
                 return false;
             }
 
@@ -64,22 +62,12 @@ Vue.component('scia_ediliza_modulo_scia', {
             if (!isP7m)
             {
                 this.$message.error('Attenzione: Sono permessi solo file di tipo p7m!!!');
-                this.enableButtons()
             }
             return isP7m;
         },
         updateFormValue() {
             var el = document.getElementById('scia_pratica_edilizia_modulo_scia_dematerialized_forms')
             el.value = JSON.stringify(this.attachments);
-            this.enableButtons()
-        },
-        enableButtons(){
-            $('[type=submit]').attr('disabled', false);
-            $('.el-button').attr('disabled', false);
-        },
-        disableButtons(){
-            $('[type=submit]').attr('disabled', 'disabled');
-            $('.el-button').attr('disabled', 'disabled');
         }
     }
 })

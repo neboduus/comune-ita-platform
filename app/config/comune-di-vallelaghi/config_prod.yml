@@ -30,7 +30,7 @@ monolog:
             handler:      nested
         nested:
             type:  stream
-            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            path:  "%logs_path%"
             level: info
             action_level: debug
         console:
@@ -40,6 +40,7 @@ monolog:
             webhook_url:    '%slack_logs_webhook_url%'
             action_level:   error
             level:          error
+            formatter: '%logs_formatter%'
 
 services:
     ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"

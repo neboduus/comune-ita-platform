@@ -3,6 +3,7 @@
 namespace AppBundle\Protocollo;
 
 use AppBundle\Entity\AllegatoInterface;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Protocollo\Exception\ResponseErrorException;
@@ -145,26 +146,44 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     {
         $ente = $pratica->getEnte();
         $servizio = $pratica->getServizio();
+        /** @var CPSUser $user */
+        $user = $pratica->getUser();
+
         $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
         $parameters = new PiTreProtocolloParameters($parameters);
+
+
 
         if(!$parameters->getInstance()) {
             $parameters->setInstance($this->instance);
         }
 
-        if ($allegato instanceof AllegatoInterface){
+        if ($allegato instanceof AllegatoInterface) {
             $parameters->setDocumentId($pratica->getIdDocumentoProtocollo());
             $parameters->setFilePath($allegato->getFile()->getPathname());
-            $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $pratica->getUser()->getFullName());
-        }else{
+            $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $user->getFullName(). ' ' . $user->getCodiceFiscale());
+        } else {
+
+            $object =  $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+            if ( $pratica->getOggetto() != null && !empty($pratica->getOggetto())) {
+                $object = $pratica->getOggetto() . ' - ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+            }
+
             /** @var ModuloCompilato $moduloCompilato */
             $moduloCompilato = $pratica->getModuliCompilati()->first();
-            $parameters->setProjectDescription($pratica->getServizio()->getName() . ' ' . $pratica->getUser()->getFullName());
+            $parameters->setProjectDescription($pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
+
+            $parameters->setDocumentObj($object);
             $parameters->setDocumentDescription($moduloCompilato->getDescription());
-            $parameters->setDocumentObj($pratica->getServizio()->getName());
+
             $parameters->setFilePath($moduloCompilato->getFile()->getPathname());
             $parameters->setCreateProject(true);
             $parameters->setDocumentType("A");
+
+            $parameters->setSenderName($user->getNome());
+            $parameters->setSenderSurname($user->getCognome());
+            $parameters->setSenderCf($user->getCodiceFiscale());
+            $parameters->setSenderEmail($user->getEmail());
         }
 
         return $parameters;
@@ -175,6 +194,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         $risposta   = $pratica->getRispostaOperatore();
         $ente       = $pratica->getEnte();
         $servizio   = $pratica->getServizio();
+        /** @var CPSUser $user */
+        $user = $pratica->getUser();
+
         $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
         $parameters = new PiTreProtocolloParameters($parameters);
 
@@ -182,18 +204,29 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
             $parameters->setInstance($this->instance);
         }
 
-        if ($allegato instanceof AllegatoInterface){
+        if ($allegato instanceof AllegatoInterface) {
             $parameters->setDocumentId($risposta->getIdDocumentoProtocollo());
             $parameters->setFilePath($allegato->getFile()->getPathname());
-            $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $pratica->getUser()->getFullName());
-        }else{
-            // FIXME: translate risposta
-            $parameters->setDocumentDescription('Risposta ' . $risposta->getDescription() . ' ' . $pratica->getUser()->getFullName());
-            $parameters->setDocumentObj('Risposta ' . $pratica->getServizio()->getName());
+            $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
+        } else {
+
+            $object =  $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+            if ( $pratica->getOggetto() != null && !empty($pratica->getOggetto())) {
+                $object = $pratica->getOggetto() . ' - ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+            }
+
+            $parameters->setDocumentObj('Risposta ' . $object);
+            $parameters->setDocumentDescription('Risposta ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
+
             $parameters->setFilePath($risposta->getFile()->getPathname());
             $parameters->setIdProject($pratica->getNumeroFascicolo());
             $parameters->setCreateProject(false);
             $parameters->setDocumentType("P");
+
+            $parameters->setSenderName($user->getNome());
+            $parameters->setSenderSurname($user->getCognome());
+            $parameters->setSenderCf($user->getCodiceFiscale());
+            $parameters->setSenderEmail($user->getEmail());
         }
 
         return $parameters;
@@ -203,6 +236,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     {
         $ente       = $pratica->getEnte();
         $servizio   = $pratica->getServizio();
+        /** @var CPSUser $user */
+        $user = $pratica->getUser();
+
         $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
         $parameters = new PiTreProtocolloParameters($parameters);
 
@@ -210,12 +246,23 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
             $parameters->setInstance($this->instance);
         }
 
-        $parameters->setDocumentDescription('Richiesta integrazione ' . $richiesta->getDescription());
-        $parameters->setDocumentObj('Richiesta integrazione ' . $pratica->getServizio()->getName());
+        $object =  $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+        if ( $pratica->getOggetto() != null && !empty($pratica->getOggetto())) {
+            $object = $pratica->getOggetto() . ' - ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+        }
+
+        $parameters->setDocumentObj('Richiesta integrazione ' . $object);
+        $parameters->setDocumentDescription('Richiesta integrazione '  . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
+
         $parameters->setFilePath($richiesta->getFile()->getPathname());
         $parameters->setIdProject($pratica->getNumeroFascicolo());
         $parameters->setCreateProject(false);
         $parameters->setDocumentType("P");
+
+        $parameters->setSenderName($user->getNome());
+        $parameters->setSenderSurname($user->getCognome());
+        $parameters->setSenderCf($user->getCodiceFiscale());
+        $parameters->setSenderEmail($user->getEmail());
 
         return $parameters;
     }

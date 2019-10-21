@@ -1,7 +1,7 @@
 version: '3'
 services:
   cron:
-    depends_on: 
+    depends_on:
       - ocsdc
     build:
       context: .
@@ -18,17 +18,23 @@ services:
     network_mode: "host"
     restart: unless-stopped
     volumes:
+      - web:/docroot/web
       - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads"
       - "${LOGS_MOUNT}:/docroot/var/logs"
       - "${CACHE_MOUNT}:/docroot/var/cache"
       - "${SESSIONS_MOUNT}:/docroot/var/sessions"
-      - ./compose_conf/fpm_pool:/etc/php/7.2/fpm/pool.d
-      - ./compose_conf/php-fpm.conf:/etc/php/7.2/fpm/php-fpm.conf
+      - ./compose_conf/fpm_pool:/etc/php/7.3/fpm/pool.d
+      - ./compose_conf/php-fpm.conf:/etc/php/7.3/fpm/php-fpm.conf
   nginx:
+    depends_on:
+      - ocsdc
     image: nginx:alpine
     ports:
       - "8080:80"
     restart: unless-stopped
     volumes:
-      - ./web:/usr/share/nginx/html
+      - web:/usr/share/nginx/html:ro
       - ./compose_conf/site.conf:/etc/nginx/conf.d/default.conf
+
+volumes:
+  web:

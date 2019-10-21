@@ -1,0 +1,41 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {#<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.css"/>#}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+    <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+    <script>
+      $(function() {
+        $('#presidents').initDataTables({{ datatable_settings(datatable) }});
+      });
+    </script>
+{% endblock %}
+
+{% block main_content %}
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-12 px-lg-4 py-lg-2">
+                <h1>Security Logs</h1>
+            </div>
+
+            <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+                <div id="no-more-tables">
+                    <!-- Insert this where you want the table to appear -->
+                    <div id="presidents">Loading...</div>
+
+                    <!-- Insert this at the end of your body element, but before the closing tag -->
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

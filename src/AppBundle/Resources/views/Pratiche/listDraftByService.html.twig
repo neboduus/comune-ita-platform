@@ -2,20 +2,28 @@
 
 {% block main_content %}
 
-    <h2>{{ 'lista_pratiche_bozza'|trans() }}</h2>
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-12 px-lg-4 py-lg-2">
 
-    <div class="row">
-        {% for pratica in pratiche %}
-            <div class="col-sm-4">
-                {{ include('@App/Pratiche/parts/panel/pratica.html.twig') }}
+                <h1>{{ 'lista_pratiche_bozza'|trans() }}</h1>
+
+                <div class="row">
+                    {% for pratica in pratiche %}
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            {{ include('@App/Pratiche/parts/panel/pratica.html.twig') }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if ente is defined and servizio is defined %}
+                    <a href="{{ path('pratiche_accedi', {'servizio': servizio.slug, 'ente': ente.slug, 'id': 'new'}) }}">
+                        Crea nuovo
+                    </a>
+                {% endif %}
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    </section>
 
-    {% if ente is defined and servizio is defined %}
-        <a href="{{ path('pratiche_accedi', {'servizio': servizio.slug, 'ente': ente.slug, 'id': 'new'}) }}">
-            Crea nuovo
-        </a>
-    {% endif %}
 
 {% endblock %}

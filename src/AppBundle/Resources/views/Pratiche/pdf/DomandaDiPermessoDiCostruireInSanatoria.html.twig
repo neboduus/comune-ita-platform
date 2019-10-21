@@ -48,10 +48,12 @@
             {{ 'steps.scia.soggetti.label'|trans() }}
         </th>
         <td>
-            {% if pratica.dematerializedForms.elencoSoggettiAventiTitolo is defined %}
-                {% for key, v in pratica.dematerializedForms.elencoSoggettiAventiTitolo %}
-                    <p>{{ v.name }}</p>
+            {% if pratica.getRelatedCfs %}
+                {% for key, v in pratica.getRelatedCfs %}
+                    <p>{{ v }}</p>
                 {% endfor %}
+            {% else %}
+                <em>{{ 'pratica.non_specificato'|trans() }}</em>
             {% endif %}
         </td>
     </tr>

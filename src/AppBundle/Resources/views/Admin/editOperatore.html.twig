@@ -1,0 +1,33 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block main_content %}
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-12 px-lg-4 py-lg-2">
+                <h1>Modifica operatore</h1>
+            </div>
+
+            <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+                {{ form_start(edit_form) }}
+                {{ form_widget(edit_form) }}
+                <a class="btn btn-100 mr-1" href="{{ path('admin_operatore_index') }}" style="float: left">Torna alla lista</a>
+                <input class="btn btn-warning mr-1" type="submit" value="Modifica"  style="float: left"/>
+                {{ form_end(edit_form) }}
+
+                {# Form di cancellazione #}
+                {{ form_start(delete_form) }}
+                <a class="btn btn-dark mr-1" href="{{ path('admin_operatore_reset_password', {'id': operatoreUser.id}) }}" style="float: left">Resetta password</a>
+                <input class="btn btn-danger mr-1" type="submit" value="Elimina" style="float: left" onclick="return confirm('Sei sicuro di voler procedere?')">
+                {{ form_end(delete_form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -215,28 +215,43 @@ class GiscomAPIController extends Controller
             $this->statusService->setNewStatus($pratica, $statusChange->getEvento(), $statusChange);
 
             if ($statusChange->getEvento() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE || $statusChange->getEvento() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
-                $payload = json_decode($request->getContent(), true);
-                $file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
 
-                if ($file) {
-                    $rispostaOperatore = new RispostaOperatoreDTO($payload, null, null);
-                    $this->integrationService->createRispostaOperatore($pratica, $rispostaOperatore);
+                $payload = json_decode($request->getContent(), true);
+                if ( (!isset($payload['FileRichiesta']) || empty($payload['FileRichiesta'])) && (!isset($payload['NoteRichiesta']) || empty($payload['NoteRichiesta'])) ) {
+                    throw new \Exception('If new status is "accettazione" or "rifiuto" one of fields "FileRichiesta" or "NoteRichiesta" is mandatory');
                 }
 
-                // Approvo la pratica
+                // Approvo o rifiuto la pratica ed inserisco anche la motivazione di esito se presente
                 if ($statusChange->getEvento() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
                     $pratica->setEsito(true);
+                    $pratica->setMotivazioneEsito((isset($payload['NoteRichiesta']) && !empty($payload['NoteRichiesta']) ? $payload['NoteRichiesta'] : ' - ') );
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($pratica);
+                    $em->flush();
+                } else {
+                    $pratica->setEsito(false);
+                    $pratica->setMotivazioneEsito((isset($payload['NoteRichiesta']) && !empty($payload['NoteRichiesta']) ? $payload['NoteRichiesta'] : ' - ') );
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($pratica);
                     $em->flush();
                 }
+
+                $rispostaOperatore = new RispostaOperatoreDTO($payload, null, null);
+                $this->integrationService->createRispostaOperatore($pratica, $rispostaOperatore);
+
+
+                /*$file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
+                if ($file) {
+                    $rispostaOperatore = new RispostaOperatoreDTO($payload, null, null);
+                    $this->integrationService->createRispostaOperatore($pratica, $rispostaOperatore);
+                }*/
 
             }
 
 
         } catch (\Exception $e) {
             $this->logger->error(LogConstants::PRATICA_ERROR_IN_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $content, 'error' => $e->getMessage()]);
-            return new Response(null, Response::HTTP_BAD_REQUEST);
+            return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
         }
 
         $this->logger->info(LogConstants::PRATICA_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $statusChange]);
@@ -281,12 +296,15 @@ class GiscomAPIController extends Controller
     public function createIntegrationRequestAction(Request $request, SciaPraticaEdilizia $pratica)
     {
         $payload = json_decode($request->getContent(), true);
-        $message = isset($payload['Nota']) ? $payload['Nota'] : '';
+
 
         // Check FileRichiesta
-        $file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
+        /*$file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
         if (!$file) {
             return new Response(null, Response::HTTP_BAD_REQUEST);
+        }*/
+        if ( (!isset($payload['FileRichiesta']) || empty($payload['FileRichiesta'])) && (!isset($payload['NoteRichiesta']) || empty($payload['NoteRichiesta'])) ) {
+            return new Response('Fields "FileRichiesta" or "NoteRichiesta" are mandatory', Response::HTTP_BAD_REQUEST);
         }
 
         $mappedPratica = new MappedPraticaEdilizia($pratica->getDematerializedForms());
@@ -304,6 +322,8 @@ class GiscomAPIController extends Controller
             }
         }
 
+        $message = isset($payload['NoteRichiesta']) ? $payload['NoteRichiesta'] : '';
+
         $this->get('logger')->info(LogConstants::RICHIESTA_INTEGRAZIONE_FROM_GISCOM, [
             'id'=> $pratica->getId(),
             'request' => $payload
@@ -311,13 +331,13 @@ class GiscomAPIController extends Controller
 
         $richiestaIntegrazione = new RichiestaIntegrazioneDTO($payload, null, $message);
 
-        $statusChange = new StatusChange([
+        /*$statusChange = new StatusChange([
             'evento' => $this->statusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RICHIESTA_INTEGRAZIONI),
             'responsabile' => 'Giscom',
             'operatore' => 'Giscom',
             'struttura' => 'Giscom',
             'timestamp' => time(),
-        ]);
+        ]);*/
 
         $this->integrationService->requestIntegration($pratica, $richiestaIntegrazione);
 

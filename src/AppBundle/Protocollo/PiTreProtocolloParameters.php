@@ -201,4 +201,52 @@ class PiTreProtocolloParameters extends ParameterBag
     {
         return $this->get('documentType');
     }
+    
+    // Sender name
+    public function setSenderName($senderName)
+    {
+        $this->set('senderName', $senderName);
+    }
+
+
+    public function getSenderName()
+    {
+        return $this->get('senderName');
+    }
+
+    // Sender surname
+    public function setSenderSurname($senderSurname)
+    {
+        $this->set('senderSurname', $senderSurname);
+    }
+
+
+    public function getSenderSurname()
+    {
+        return $this->get('senderSurname');
+    }
+
+    // Sender cf
+    public function setSenderCf($senderCf)
+    {
+        $this->set('senderCf', $senderCf);
+    }
+
+
+    public function getSenderCf()
+    {
+        return $this->get('senderCf');
+    }
+
+    // Sender Email
+    public function setSenderEmail($senderEmail)
+    {
+        $this->set('senderEmail', $senderEmail);
+    }
+
+
+    public function getSenderEmail()
+    {
+        return $this->get('senderEmail');
+    }
 }

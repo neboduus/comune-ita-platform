@@ -2,7 +2,7 @@
 {% if route is not defined %}
     {% set route = 'esplora_servizi_show' %}
 {% endif %}
-<article class="panel panel-default servizio sticky">
+{#<article class="panel panel-default servizio sticky">
     <div class="panel-body">
         <div class="row">
             <div class="col-sm-9">
@@ -24,6 +24,25 @@
                     {{ "servizio.vai"|trans()  }}
                 </a>
             </div>
+        </div>
+    </div>
+</article>#}
+
+<article class="card-wrapper card-space">
+    <div class="card card-bg card-big rounded shadow">
+        <div class="flag-icon"></div>
+        <div class="card-body">
+            <div class="category-top">
+                <span class="category">{{ servizio.area.name }}</span>
+            </div>
+            <h5 class="card-title">{{ servizio.name }}</h5>
+            <p class="card-text">{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit) ~ '...' : servizio.description  }}</p>
+            <a class="read-more" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
+                <span class="text">Leggi di più</span>
+                <svg class="icon">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-right"></use>
+                </svg>
+            </a>
         </div>
     </div>
 </article>

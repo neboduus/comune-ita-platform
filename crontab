@@ -2,3 +2,4 @@
 */1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-tre-ville --env=prod
 */1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-cavedine --env=prod
 */1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-vallelaghi --env=prod
+*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-ala --env=prod

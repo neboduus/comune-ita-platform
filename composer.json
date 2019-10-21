@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.3.0",
         "symfony/symfony": "3.4.*",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
@@ -41,7 +41,6 @@
         "symfony/translation": "3.4.*",
         "craue/formflow-bundle": "~3.0@dev",
         "vich/uploader-bundle": "^1.2",
-        "symfony/assetic-bundle": "^2.8",
         "knplabs/knp-snappy-bundle": "^1.4",
         "jms/serializer-bundle": "^1.1",
         "doctrine/doctrine-migrations-bundle": "^1.2",
@@ -51,7 +50,11 @@
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-simplexml": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "symfony/webpack-encore-bundle": "^1.6",
+        "anyx/login-gate-bundle": "^0.7.1",
+        "xiidea/easy-audit": "^1.4",
+        "omines/datatables-bundle": "^0.3.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
@@ -86,7 +89,7 @@
         "symfony-var-dir": "var",
         "symfony-web-dir": "web",
         "symfony-tests-dir": "tests",
-        "symfony-assets-install": "relative",
+        "symfony-assets-install": "hard",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         }

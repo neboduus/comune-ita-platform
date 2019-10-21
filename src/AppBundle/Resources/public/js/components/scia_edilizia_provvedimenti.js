@@ -3,8 +3,9 @@
 Vue.component('scia_edilizia_provvedimenti', {
     template: `<div>
         <template v-for="(allegato, i) in allegati">
+        <div  class="row-upload">
         <div>
-            <strong>{{allegato.title}} <i class="text-danger fa fa-asterisk" style="padding-left: 5px;" v-if="allegatiRichiesti[i]"></i></strong>
+            <strong>{{allegato.title}} <i class="mandatory" v-if="allegatiRichiesti[i]"></i></strong>
             <p class="description" v-html="allegato.description"></p>
         </div>
 
@@ -20,6 +21,7 @@ Vue.component('scia_edilizia_provvedimenti', {
               <el-button size="small" type="primary">Carica allegato</el-button>
               <div slot="tip" class="el-upload__tip">Sono permessi solo file di tipo p7m</div>
             </el-upload>
+        </div>
         </div>
         </template>
     </div>`,
@@ -59,12 +61,10 @@ Vue.component('scia_edilizia_provvedimenti', {
             this.updateFormValue()
         },
         onBeforeUpload(file) {
-            this.disableButtons()
             const isP7m = (file.type === 'application/pkcs7-mime' || file.type === '');
             if (!isP7m)
             {
                 this.$message.error('Attenzione: Sono permessi solo file di tipo p7m!!!');
-                this.enableButtons()
             }
             return isP7m;
         },
@@ -74,13 +74,6 @@ Vue.component('scia_edilizia_provvedimenti', {
                     'elencoProvvedimenti' : this.allegatiCorrenti
                 };
             el.value = JSON.stringify(formValue)
-            this.enableButtons()
-        },
-        enableButtons(){
-            $('[type=submit]').attr('disabled', false);
-        },
-        disableButtons(){
-            $('[type=submit]').attr('disabled', 'disabled');
         }
     }
 })

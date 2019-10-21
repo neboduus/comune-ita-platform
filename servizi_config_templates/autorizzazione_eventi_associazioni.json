@@ -1,0 +1,24 @@
+{
+  "slug": "autorizzazione-eventi-per-associazioni",
+  "name": "Autorizzazione Eventi per Associazioni",
+  "handler": "",
+  "area": 1,
+  "fcqn": "AppBundle\\Entity\\OccupazioneSuoloPubblico",
+  "flow": "ocsdc.form.flow.occupazionesuolopubblico",
+  "flowOperator": "ocsdc.form.flow.operatore.standardallegatonofirma",
+  "description": "Autorizzazione Eventi per Associazioni",
+  "istruzioni": "Autorizzazione Eventi per Associazioni",
+  "url_modulo_principale": "",
+  "url_moduli_aggiuntivi": [
+
+  ],
+  "paymentParameters": {
+    "datiSpecificiRiscossione": "9/3300.1",
+    "codIpaEnte": "C_A116",
+    "password": "9DBUB3TC4NU9",
+    "importo": "1"
+  },
+  "paymentRequired": true,
+  "status": 1
+}
+

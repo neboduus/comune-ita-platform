@@ -10,17 +10,20 @@ class ElencoAllegatiAllaDomanda extends AbstractSciaPraticaEdiliziaMappable
 
     private $mappings = [
         Pratica::TYPE_COMUNICAZIONE_OPERE_LIBERE => [
-            'DOM_CONDOMINIO'
+            'DOM_CONDOMINIO',
+            'DOM_DOC_DIRITTI_SEGRETERIA'
         ],
 
-        Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI_ASSEVERATA => [],
+        Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI_ASSEVERATA => [
+            'DOM_DOC_DIRITTI_SEGRETERIA'
+        ],
 
         Pratica::TYPE_SCIA_PRATICA_EDILIZIA => [
             'DOM_ISPAT',
             'DOM_EDIFICI-STORICI',
             'DOM_DOC_DIRITTI_SEGRETERIA',
-            'DOM_DOC_PAGAMENTO_CONTRIBUTO'
-
+            'DOM_DOC_PAGAMENTO_CONTRIBUTO',
+            'DOM_DOC_DIRITTI_SEGRETERIA'
         ],
 
         Pratica::TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE => [
@@ -28,24 +31,32 @@ class ElencoAllegatiAllaDomanda extends AbstractSciaPraticaEdiliziaMappable
             'DOM_EDIFICI-STORICI',
             'DOM_OBBLIGHI_SICUREZZA',
             'DOM_DOC_PAGAMENTO_CONTRIBUTO',
-            'DOM_PROGETTO_OPERE'
+            'DOM_PROGETTO_OPERE',
+            'DOM_DOC_DIRITTI_SEGRETERIA'
         ],
 
         Pratica::TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE_IN_SANATORIA => [
             'DOM_EDIFICI-STORICI',
-            'DOM_DOC_PAGAMENTO_CONTRIBUTO'
+            'DOM_DOC_PAGAMENTO_CONTRIBUTO',
+            'DOM_DOC_DIRITTI_SEGRETERIA'
         ],
 
         Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI => [
             'DOM_OBBLIGHI_SICUREZZA',
-            'DOM_DOC_PAGAMENTO_CONTRIBUTO'
+            'DOM_DOC_PAGAMENTO_CONTRIBUTO',
+            'DOM_DOC_DIRITTI_SEGRETERIA'
         ],
-        Pratica::TYPE_DICHIARAZIONE_ULTIMAZIONE_LAVORI => [],
+        Pratica::TYPE_DICHIARAZIONE_ULTIMAZIONE_LAVORI => [
+            'DOM_DOC_DIRITTI_SEGRETERIA',
+        ],
 
-        Pratica::TYPE_AUTORIZZAZIONE_PAESAGGISTICA_SINDACO => [],
+        Pratica::TYPE_AUTORIZZAZIONE_PAESAGGISTICA_SINDACO => [
+            'DOM_DOC_DIRITTI_SEGRETERIA'
+        ],
 
         Pratica::TYPE_SEGNALAZIONE_CERTIFICATA_AGIBILITA => [
-            'DOM_DOC_PAGAMENTO_CONTRIBUTO'
+            'DOM_DOC_PAGAMENTO_CONTRIBUTO',
+            'DOM_DOC_DIRITTI_SEGRETERIA'
         ]
     ];
 

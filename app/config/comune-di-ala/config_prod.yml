@@ -1,0 +1,48 @@
+imports:
+    - { resource: ../parameters.yml }
+    - { resource: ../common/security.yml }
+    - { resource: ../services.yml }
+    - { resource: ../bundles/ }
+    - { resource: "@AppBundle/Resources/config/services.yml" }
+    - { resource: ../config.yml }
+
+
+parameters:
+    prefix: comune-di-ala
+    codice_meccanografico: c_a116
+    database_name: sdc_ala
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/common/routing.yml"
+        strict_requirements: true
+
+twig:
+    globals:
+        endpoint_prefix: '%prefix%'
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: info
+            level:        info
+            handler:      nested
+            formatter: "%logs_formatter%"
+        nested:
+            type:  stream
+            path:  "%logs_path%"
+            level: info
+            action_level: debug
+            formatter: "%logs_formatter%"
+        console:
+            type:  console
+        slack:
+            type:           slackwebhook
+            webhook_url:    '%slack_logs_webhook_url%'
+            action_level:   error
+            level:          error
+            formatter: "%logs_formatter%"
+
+services:
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"

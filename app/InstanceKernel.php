@@ -24,6 +24,10 @@ class InstanceKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Knp\Bundle\SnappyBundle\KnpSnappyBundle(),
             new EightPoints\Bundle\GuzzleBundle\GuzzleBundle(),
+            new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
+            new Anyx\LoginGateBundle\LoginGateBundle(),
+            new Xiidea\EasyAuditBundle\XiideaEasyAuditBundle(),
+            new \Omines\DataTablesBundle\DataTablesBundle(),
             new AppBundle\AppBundle(),
         ];
 

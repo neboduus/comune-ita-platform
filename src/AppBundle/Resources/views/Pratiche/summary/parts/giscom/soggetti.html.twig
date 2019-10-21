@@ -1,21 +1,15 @@
 <div class="row">
     <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.soggetti.label'|trans() }}</strong></div>
     <div class="col-xs-12 col-sm-9">
-        {% set has_data = false %}
-        {% if pratica.dematerializedForms.elencoSoggettiAventiTitolo is defined %}
-            {% for key, v in pratica.dematerializedForms.elencoSoggettiAventiTitolo %}
-                {% set has_data = true %}
-                <ul class="list-group">
-                    {% if v.id|length>0 %}
-                        <li class="list-group-item scia-file">
-                            <i class="fa fa-file" aria-hidden="true"></i> {{ v.name }}
-                            <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': v.id}) }}</div>
-                        </li>
-                    {% endif %}
-                </ul>
-            {% endfor %}
-        {% endif %}
-        {% if not has_data %}
+        {% if pratica.getRelatedCfs %}
+            <ul class="list-group">
+                {% for key, v in pratica.getRelatedCfs %}
+                    <li class="list-group-item scia-file">
+                        {{ v }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
             <em>{{ 'pratica.non_specificato'|trans() }}</em>
         {% endif %}
     </div>

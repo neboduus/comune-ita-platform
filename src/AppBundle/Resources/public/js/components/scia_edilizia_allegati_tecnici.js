@@ -19,9 +19,10 @@ Vue.component('scia_edilizia_allegati_tecnici', {
         <hr />
         <div id="loop_tipi_allegato" >
             <template v-for="(allegato, i) in allegati">
-                <div v-if="tipoIntervento">
+                <div v-if="tipoIntervento" class="row-upload">
+                    
                     <div>
-                        <strong>{{allegato.title}} <i class="text-danger fa fa-asterisk" style="padding-left: 5px;" v-if="tipoIntervento && allegatiRichiesti[tipoIntervento][i]"></i></strong>
+                        <strong>{{allegato.title}} <i class="mandatory" v-if="tipoIntervento && allegatiRichiesti[tipoIntervento][i]"></i></strong>
                         <p class="description" v-html="allegato.description"></p>
                     </div>
                     <div>
@@ -37,6 +38,7 @@ Vue.component('scia_edilizia_allegati_tecnici', {
                           <div slot="tip" class="el-upload__tip">Sono permessi solo file di tipo p7m</div>
                         </el-upload>
                     </div>
+                    
                 </div>
             </template>
         </div>
@@ -83,11 +85,9 @@ Vue.component('scia_edilizia_allegati_tecnici', {
             this.updateFormValue()
         },
         onBeforeUpload(file) {
-            this.disableButtons()
             const isP7m = (file.type === 'application/pkcs7-mime' || file.type === '');
             if (!isP7m) {
                 this.$message.error('Attenzione: Sono permessi solo file di tipo p7m!!!');
-                this.enableButtons()
             }
             return isP7m;
         },
@@ -98,13 +98,6 @@ Vue.component('scia_edilizia_allegati_tecnici', {
                     'elencoAllegatiTecnici' : this.allegatiCorrenti
                 };
             el.value = JSON.stringify(formValue)
-            this.enableButtons()
-        },
-        enableButtons(){
-            $('[type=submit]').attr('disabled', false);
-        },
-        disableButtons(){
-            $('[type=submit]').attr('disabled', 'disabled');
         }
     }
 })

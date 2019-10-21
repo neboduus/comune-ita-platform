@@ -25,7 +25,6 @@ framework:
     #serializer:      { enable_annotations: true }
     templating:
         engines: ['twig']
-    default_locale:  "%locale%"
     trusted_hosts:   ~
     trusted_proxies: ~
     session:
@@ -36,11 +35,21 @@ framework:
     http_method_override: true
     assets: ~
 
+# Fos User Configuration
+fos_user:
+    registration:
+        form:
+            validation_groups: [strengthPassword]
+    change_password:
+        form:
+            validation_groups: [strengthPassword]
+
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form_themes:
+        - 'bootstrap_4_layout.html.twig'
         - 'VichUploaderBundle:Form:fields.html.twig'
     globals:
         header_top:
@@ -51,6 +60,7 @@ twig:
         ocsdc_iter_duration_end_statuses: "%ocsdc_iter_duration_end_statuses%"
         ocsdc_default_date_format: "%ocsdc_default_date_format%"
         ocsdc_default_datetime_format: "%ocsdc_default_datetime_format%"
+        ocsdc_slim_datetime_format: "%ocsdc_slim_datetime_format%"
         ocsdc_default_moment_datetime_format: "%ocsdc_default_moment_datetime_format%"
         ocsdc_default_time_format: "%ocsdc_default_time_format%"
         instance_service: "@ocsdc.instance_service"
@@ -87,3 +97,51 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+# LoginGate Configuration
+login_gate:
+    storages: ['orm'] # Attempts storages. Available storages: ['orm', 'session', 'mongodb']
+    options:
+        max_count_attempts: 3
+        timeout: 600 #Ban period
+        watch_period: 3600 #Only for databases storage. Period of actuality attempts
+
+# EasyAudit Configuration
+xiidea_easy_audit:
+    entity_class: AppBundle\Entity\AuditLog
+    user_property: username
+    #doctrine_entities:
+    #    AppBundle\Entity\OperatorUser: [created, updated, deleted]
+    #    AppBundle\Entity\AdminUser: [created, updated, deleted]
+    events:
+        - security.interactive_login
+        - security.authentication.failure
+        - fos_user.change_password.edit.completed
+        - fos_user.resetting.reset.completed
+    logger_channel:
+        xiidea.easy_audit.logger.service: ["info", "debug"]
+        file.logger: ["!info", "!debug"]
+
+# DataTables Configuration
+datatables:
+    # Load i18n data from DataTables CDN or locally
+    language_from_cdn: true
+    # Default HTTP method to be used for callbacks
+    method: POST # One of "GET"; "POST"
+    # Default options to load into DataTables
+    #options:
+    #    option: value
+    # Where to persist the current table state automatically
+    persist_state: fragment # One of "none"; "query"; "fragment"; "local"; "session"
+    # Default service used to render templates, built-in TwigRenderer uses global Twig environment
+    renderer: Omines\DataTablesBundle\Twig\TwigRenderer
+    # Default template to be used for DataTables HTML
+    template: '@DataTables/datatable_html.html.twig'
+    # Default parameters to be passed to the template
+    template_parameters:
+        # Default class attribute to apply to the root table elements
+        className: 'table table-bordered'
+        # If and where to enable the DataTables Filter module
+        columnFilter: null # One of "thead"; "tfoot"; "both"; null
+    # Default translation domain to be used
+    translation_domain: messages

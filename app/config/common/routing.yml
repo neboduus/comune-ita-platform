@@ -17,5 +17,5 @@ fos_resetting:
 
 fos_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
-    prefix: "/%prefix%/operatori/change_password"
+    prefix: "/%prefix%/operatori/profile"
 

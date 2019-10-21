@@ -14,7 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="utente")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"operatore" = "OperatoreUser", "cps" = "CPSUser"})
+ * @ORM\DiscriminatorMap({"operatore" = "OperatoreUser", "cps" = "CPSUser", "admin" = "AdminUser"})
  * @UniqueEntity(fields="usernameCanonical", errorPath="username", message="fos_user.username.already_used")
  * @ORM\AttributeOverrides({
  *      @ORM\AttributeOverride(name="email", column=@ORM\Column(type="string", name="email", length=255, unique=false, nullable=true)),
@@ -28,10 +28,12 @@ abstract class User extends BaseUser
     const ROLE_OPERATORE_ADMIN = 'ROLE_OPERATORE_ADMIN';
     const ROLE_OPERATORE = 'ROLE_OPERATORE';
     const ROLE_USER = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
 
 
     const USER_TYPE_OPERATORE = 'operatore';
     const USER_TYPE_CPS = 'cps';
+    const USER_TYPE_ADMIN = 'admin';
 
     const FAKE_EMAIL_DOMAIN = 'cps.didnt.have.my.email.tld';
 

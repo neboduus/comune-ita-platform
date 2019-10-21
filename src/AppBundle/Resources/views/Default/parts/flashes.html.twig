@@ -1,30 +1,36 @@
-{% for flashMessage in app.session.flashbag.get('error') %}
-    <div class="alert alert-danger flash-message">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <p>{{ flashMessage }}</p>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {% for flashMessage in app.session.flashbag.get('error') %}
+                <div class="alert alert-danger flash-message">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <p>{{ flashMessage }}</p>
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('danger') %}
+                <div class="alert alert-danger flash-message">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <p>{{ flashMessage }}</p>
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('warning') %}
+                <div class="alert alert-warning flash-message">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <p>{{ flashMessage }}</p>
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('info') %}
+                <div class="alert alert-info flash-message">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <p>{{ flashMessage }}</p>
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.session.flashbag.get('feedback') %}
+                <div class="alert alert-success flash-message">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <p>{{ flashMessage }}</p>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-{% endfor %}
-{% for flashMessage in app.session.flashbag.get('danger') %}
-    <div class="alert alert-danger flash-message">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <p>{{ flashMessage }}</p>
-    </div>
-{% endfor %}
-{% for flashMessage in app.session.flashbag.get('warning') %}
-    <div class="alert alert-warning flash-message">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <p>{{ flashMessage }}</p>
-    </div>
-{% endfor %}
-{% for flashMessage in app.session.flashbag.get('info') %}
-    <div class="alert alert-info flash-message">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <p>{{ flashMessage }}</p>
-    </div>
-{% endfor %}
-{% for flashMessage in app.session.flashbag.get('feedback') %}
-    <div class="alert alert-success flash-message">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <p>{{ flashMessage }}</p>
-    </div>
-{% endfor %}
+</div>

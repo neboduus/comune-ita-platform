@@ -3,12 +3,9 @@
 {% block title %}Stanza del cittadino{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/ita-bootstrap.css') }}"/>
-    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jasny-bootstrap.min.css') }}"/>
-{% endblock %}
-
-{% block nav %}
-    {{ include('@App/Default/nav/main.html.twig') }}
+    {{ encore_entry_link_tags('app') }}
+    {#<link rel="stylesheet" type="text/css" href="{{ asset('css/ita-bootstrap.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jasny-bootstrap.min.css') }}"/>#}
 {% endblock %}
 
 {% block header %}
@@ -16,16 +13,18 @@
 {% endblock %}
 
 {% block content_container %}
-    {{ include('@App/Default/parts/breadcrumb.html.twig') }}
-    {{ include('@App/Default/parts/flashes.html.twig') }}
+    <main>
 
-    <section id="main-content">
-        <div class="container-fluid">
-            {% block main_content %}{% endblock %}
-        </div>
-    </section>
+        {{ include('@App/Default/nav/user.html.twig') }}
 
-    {{ include('@App/Default/parts/survey.html.twig') }}
+        {{ include('@App/Default/parts/breadcrumb.html.twig') }}
+        {{ include('@App/Default/parts/flashes.html.twig') }}
+
+        {% block main_content %}{% endblock %}
+
+
+        {{ include('@App/Default/parts/survey.html.twig') }}
+    </main>
 {% endblock %}
 
 {% block footer %}
@@ -35,8 +34,12 @@
 {% endblock %}
 
 {% block javascripts %}
+
+    {{ encore_entry_script_tags('app') }}
+
+
     <!-- !Javascript - at the bottom for fast page loading -->
-    <script src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
+    {#<script src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('bundles/app/js/jasny-bootstrap.min.js') }}"></script>
     <script>
@@ -59,6 +62,7 @@
             });
             $('.has_tooltip').tooltip();
         });
-    </script>
-    {{ include('@App/Default/footer/devscripts.html.twig') }}
+    </script>#}
+    {#{{ include('@App/Default/footer/devscripts.html.twig') }}#}
 {% endblock %}
+
