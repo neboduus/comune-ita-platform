@@ -45,4 +45,4 @@ monolog:
             formatter: "%logs_formatter%"
 
 services:
-    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"
