@@ -5,7 +5,6 @@ stages:
   - build
   - push
   - test
-#  - delivery
 
 variables:
   CONTAINER_TMP_IMAGE: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
@@ -132,59 +131,13 @@ publiccode:
       - docker run -v $(pwd):/var/tmp:ro -t --rm golang sh -c "go get github.com/italia/publiccode-parser-go/pcvalidate; cd /var/tmp; /go/bin/pcvalidate -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master publiccode.yml"
 
 
+dummy_protocol:
+    stage: test
+    allow_failure: false
+    script:
+      - echo "Looking for configuration files containing protocollo.handlers.dummy:"
+      - find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \;
+      - if [[ $(find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \; | wc -l) -gt 0 ]]; then echo "Error, at least one production file contains dummy protocol!" && exit 1; else echo "OK, no dummy protocol in production files"; fi
+
 # vim: set noet sw=4 ts=4:        
 
-
-
-#deploy_qa:
-#  stage: delivery
-#  variables:
-#    FARGATE_SERVICE: "${CI_PROJECT_NAME}-qa"
-#  before_script:
-#    - apk add --no-cache curl gzip
-#    - curl --silent -L https://github.com/jpignata/fargate/releases/download/v0.3.1/fargate-0.3.1-linux-amd64.zip | gunzip - > fargate
-#    - mv -v fargate /usr/local/bin/
-#    - chmod +x /usr/local/bin/fargate
-#  script:
-#    - echo -e "\n==> Fargate will deploy $FARGATE_SERVICE to cluster '${FARGATE_CLUSTER:-fargate}' in region '${AWS_DEFAULT_REGION:-default}' with image $AWS_ECR_IMAGE:latest\n"
-#    - fargate service ps ${FARGATE_SERVICE} >/dev/null 2>&1 && fargate service deploy $FARGATE_SERVICE --image $AWS_ECR_IMAGE:latest || fargate service create ${FARGATE_SERVICE} --image ${AWS_ECR_IMAGE}:latest --env NODE_ENV=production --lb $LB --port $PORT --rule host=${FARGATE_SERVICE}.${FARGATE_DOMAIN} ${NETWORKING}
-#    - fargate service info $FARGATE_SERVICE
-#  only:
-#    - master
-#
-#deploy_production:
-#  stage: delivery
-#  when: manual
-#  variables:
-#    FARGATE_SERVICE: "${CI_PROJECT_NAME}"
-#  before_script:
-#    - apk add --no-cache curl gzip
-#    - curl --silent -L https://github.com/jpignata/fargate/releases/download/v0.3.1/fargate-0.3.1-linux-amd64.zip | gunzip - > fargate
-#    - mv -v fargate /usr/local/bin/
-#    - chmod +x /usr/local/bin/fargate
-#  script:
-#    - echo -e "\n==> Fargate will deploy $FARGATE_SERVICE to cluster '${FARGATE_CLUSTER:-fargate}' in region '${AWS_DEFAULT_REGION:-default}' with image $AWS_ECR_IMAGE:$CI_COMMIT_TAG\n"
-#    - fargate service ps ${FARGATE_SERVICE} >/dev/null 2>&1 && fargate service deploy $FARGATE_SERVICE --image $AWS_ECR_IMAGE:$CI_COMMIT_TAG || fargate service create ${FARGATE_SERVICE} --image ${AWS_ECR_IMAGE}:$CI_COMMIT_TAG --env NODE_ENV=production --lb $LB --port $PORT --rule host=${FARGATE_SERVICE}.${FARGATE_DOMAIN} ${NETWORKING}
-#    - fargate service info $FARGATE_SERVICE
-#  only:
-#    - tags
-#
-#deploy_branch:
-#  stage: delivery
-#  when: manual
-#  variables:
-#    FARGATE_SERVICE: "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}"
-#  before_script:
-#    - apk add --no-cache curl gzip
-#    - curl --silent -L https://github.com/jpignata/fargate/releases/download/v0.3.1/fargate-0.3.1-linux-amd64.zip | gunzip - > fargate
-#    - mv -v fargate /usr/local/bin/
-#    - chmod +x /usr/local/bin/fargate
-#  script:
-#    - echo -e "\n==> Fargate will deploy $FARGATE_SERVICE to cluster '${FARGATE_CLUSTER:-fargate}' in region '${AWS_DEFAULT_REGION:-default}' with image $AWS_ECR_IMAGE:$CI_COMMIT_REF_NAME\n"
-#    - fargate service ps ${FARGATE_SERVICE} >/dev/null 2>&1 && fargate service deploy $FARGATE_SERVICE --image $AWS_ECR_IMAGE:$CI_COMMIT_REF_NAME || fargate service create ${FARGATE_SERVICE} --image ${AWS_ECR_IMAGE}:$CI_COMMIT_REF_NAME --env NODE_ENV=production --lb $LB --port $PORT --rule host=${FARGATE_SERVICE}.${FARGATE_DOMAIN} ${NETWORKING}
-#    - fargate service info $FARGATE_SERVICE
-#  only:
-#    - branches
-#  except:
-#    - master
--
