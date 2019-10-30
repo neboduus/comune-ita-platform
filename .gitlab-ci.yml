@@ -39,8 +39,8 @@ push_branches:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $CONTAINER_TMP_IMAGE
-    - docker tag $CONTAINER_TMP_IMAGE "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"      # ...:branch-name
-    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME"
+    - docker tag $CONTAINER_TMP_IMAGE "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/\//-}"      # ...:branch-name
+    - docker push "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME/\//-}"
   only:
     - branches
   except:
@@ -79,8 +79,8 @@ push_branches_to_ecr:
     - aws ecr describe-repositories --repository-names $CI_PROJECT_NAME 2> /dev/null || aws ecr create-repository --repository-name $CI_PROJECT_NAME
   script:
     - docker pull $CONTAINER_TMP_IMAGE
-    - docker tag $CONTAINER_TMP_IMAGE "$AWS_ECR_IMAGE:$CI_COMMIT_REF_NAME"  # ...:branch-name
-    - docker push "$AWS_ECR_IMAGE:$CI_COMMIT_REF_NAME"      # ...:branch-name
+    - docker tag $CONTAINER_TMP_IMAGE "$AWS_ECR_IMAGE:${CI_COMMIT_REF_NAME/\//-}"
+    - docker push "$AWS_ECR_IMAGE:${CI_COMMIT_REF_NAME/\//-}"
   only:
     - branches
   except:
