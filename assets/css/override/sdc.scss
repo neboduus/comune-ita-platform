@@ -171,3 +171,19 @@ i.mandatory::after {
   }
 }
 
+/* Upload allegato operatore - fix volante */
+
+form[name="upload_allegato_operatore"] {
+  .alert {
+    border-left: 1px solid #b1b1b3 !important;
+    .badge {
+      display: none !important;
+    }
+  }
+}
+
+#upload_allegato_operatore_allegati_operatore {
+  .invalid-feedback {
+    display: none !important;
+  }
+}
