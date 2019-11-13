@@ -1,15 +1,5 @@
 {% extends '@App/Default/index.html.twig' %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    {{ encore_entry_link_tags('compile') }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ encore_entry_script_tags('compile') }}
-{% endblock %}
-
 {% block main_content %}
 
     {% form_theme form ':form:ocsdc_form_style.html.twig' %}
@@ -19,22 +9,28 @@
         <div class="col-lg-12 px-lg-4 py-lg-2">
             <h1>Pratica - {{ pratica.servizio.name }} {{ pratica.user.nome }} {{  pratica.user.cognome }}</h1>
         </div>
+    </div>
 
-        <div class="row hidden-xs">
+    <div class="row hidden-xs">
+        <div class="col-lg-12 px-lg-4 py-lg-2">
+            {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+        </div>
+    </div>
+
+    <div class="row step-{{ flow.getCurrentStepNumber() }} ">
+        <div class="row ">
             <div class="col-lg-12 px-lg-4 py-lg-2">
-                {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+                <h4>{{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }} - {{ flow.currentStepLabel()|trans }}</h4>
             </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-lg-{%  if form.vars.helper.guideText|length > 0  %}8{% else %}12{% endif %} px-lg-4 py-lg-2">
-            <div class="row step-{{ flow.getCurrentStepNumber() }}">
 
-                <h4>{{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }} - {{ flow.currentStepLabel()|trans }}</h4>
-                {{ form_start(form, {'action': path('operatori_elabora_pratica', {'pratica': pratica.id }) } ) }}
-                {{ form_errors(form) }}
-            </div>
+            {{ form_start(form, {'action': path('operatori_elabora_pratica', {'pratica': pratica.id }) } ) }}
+            {{ form_errors(form) }}
+
             <div>
                 {{ form.vars.helper.descriptionText|raw }}
             </div>
