@@ -43,7 +43,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "certificato_matrimonio" = "CertificatoMatrimonio",
  *     "estratto_matrimonio" = "EstrattoMatrimonio",
  *     "atto_matrimonio" = "AttoMatrimonio",
- *     "nulla_osta_matrimonio" = "NullaOstaMatrimonio"
+ *     "nulla_osta_matrimonio" = "NullaOstaMatrimonio",
+ *     "form_io" = "FormIO"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -105,6 +106,8 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     const TYPE_ESTRATTO_MATRIMONIO = "estratto_matrimonio";
     const TYPE_ATTO_MATRIMONIO = "atto_matrimonio";
     const TYPE_NULLA_OSTA_MATRIMONIO = "nulla_osta_matrimonio";
+
+    const TYPE_FORMIO = 'form_io';
 
     const TIPO_DELEGA_DELEGATO   = 'delegato';
     const TIPO_DELEGA_INCARICATO = 'incaricato';

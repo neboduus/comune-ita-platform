@@ -42,7 +42,7 @@
         "craue/formflow-bundle": "~3.0@dev",
         "vich/uploader-bundle": "^1.2",
         "knplabs/knp-snappy-bundle": "^1.4",
-        "jms/serializer-bundle": "^1.1",
+        "jms/serializer-bundle": "^3.4",
         "doctrine/doctrine-migrations-bundle": "^1.2",
         "h4cc/wkhtmltopdf-amd64": "^0.12.3",
         "eightpoints/guzzle-bundle": "^6.0",
@@ -54,7 +54,10 @@
         "symfony/webpack-encore-bundle": "^1.6",
         "anyx/login-gate-bundle": "^0.7.1",
         "xiidea/easy-audit": "^1.4",
-        "omines/datatables-bundle": "^0.3.1"
+        "omines/datatables-bundle": "^0.3.1",
+        "friendsofsymfony/rest-bundle": "^2.5",
+        "nelmio/api-doc-bundle": "^3.4",
+        "lexik/jwt-authentication-bundle": "^2.6"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

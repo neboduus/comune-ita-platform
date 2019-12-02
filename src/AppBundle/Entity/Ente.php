@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -51,12 +53,14 @@ class Ente
      *     joinColumns={@ORM\JoinColumn(name="ente_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="asilo_id", referencedColumnName="id")}
      * )
+     * @Serializer\Exclude()
      */
     private $asili;
 
     /**
      * @var ArrayCollection
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperatoreUser", mappedBy="ente", fetch="EAGER")
+     * @Serializer\Exclude()
      */
     private $operatori;
 
@@ -75,6 +79,7 @@ class Ente
     /**
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Erogatore", mappedBy="enti")
      * @var Collection;
+     * @Serializer\Exclude()
      */
     private $erogatori;
 
@@ -399,7 +404,12 @@ class Ente
      */
     public function getMetaAsArray($attribute = false)
     {
-        $meta = \json_decode($this->meta, 1);
+        if (!is_array($this->meta)) {
+            $meta = \json_decode($this->meta, 1);
+        } else {
+            $meta = $this->meta;
+        }
+
         if ( $attribute ) {
             if (isset($meta[$attribute])) {
                 return $meta[$attribute];

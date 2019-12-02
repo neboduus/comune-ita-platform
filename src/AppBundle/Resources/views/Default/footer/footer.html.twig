@@ -173,16 +173,27 @@
     </div>
     <div class="it-footer-small-prints clearfix">
         <div class="container">
-            <h3 class="sr-only">Sezione Link Utili</h3>
-            <ul class="it-footer-small-prints-list list-inline mb-0 d-flex flex-column flex-md-row">
+          <div class="row">
+            <div class="col-10">
+              <h3 class="sr-only">Sezione Link Utili</h3>
+              <ul class="it-footer-small-prints-list list-inline mb-0 d-flex flex-column flex-md-row">
                 {% if utils %}
-                    {% for item in utils %}
-                        <li class="list-inline-item">
-                            <a class="nav-link " href="{{ item.url }}" title="Link a Dataset">{{ item.text }}</a>
-                        </li>
-                    {% endfor %}
+                  {% for item in utils %}
+                    <li class="list-inline-item">
+                      <a class="nav-link " href="{{ item.url }}" title="Link a Dataset">{{ item.text }}</a>
+                    </li>
+                  {% endfor %}
                 {% endif %}
-            </ul>
+              </ul>
+            </div>
+            <div class="col-2">
+              <ul class="it-footer-small-prints-list list-inline mb-0 d-flex flex-column flex-md-row text-right">
+                <li class="list-inline-item float-right text-right">
+                  <a href="{{ path('operatori_index') }}">{{ 'nav.operatori.accesso_operatori'|trans() }}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
     </div>
     <div class="container text-secondary x-small mt-1 mb-1 text-right">

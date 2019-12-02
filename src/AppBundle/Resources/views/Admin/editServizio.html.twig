@@ -1,0 +1,146 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% set ente = instance_service.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('service-manager') }}
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel='stylesheet' href='https://unpkg.com/formiojs@latest/dist/formio.full.min.css'>
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('service-manager') }}
+  <script src='https://unpkg.com/formiojs@latest/dist/formio.full.min.js'></script>
+{% endblock %}
+
+{% block main_content %}
+
+
+  <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        {% if servizio.name == '' %}
+          <h1>{{ 'servizio.crea'|trans() }}</h1>
+        {% else %}
+          <h1>{{ 'servizio.modifica'|trans({'%name%':servizio.name}) }}</h1>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row hidden-xs">
+      <div class="col-md-12 mt-4 mb-4">
+        {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4">
+        <h4 class="mb-5">
+          {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
+          -
+          {% if form.vars.helper.stepTitle|length > 0 %}
+            {{ form.vars.helper.stepTitle }}
+          {% else %}
+            {{ flow.currentStepLabel()|trans }}
+          {% endif %}
+        </h4>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4">
+        <div class="step-{{ flow.getCurrentStepNumber() }}">
+
+          {{ form_start(form, {'action': path('admin_servizio_edit', {'servizio': servizio.id }) } ) }}
+          {{ form_errors(form) }}
+
+          {% if form.vars.helper.descriptionText|length > 0 %}
+            <blockquote>
+              {{ form.vars.helper.descriptionText|raw }}
+            </blockquote>
+          {% endif %}
+
+          {#<ul id="email-fields-list"
+              data-prototype="{{ form_widget(form.coverage.vars.prototype)|e }}"
+              data-widget-tags="{{ '<li></li>'|e }}"
+              data-widget-counter="{{ form.coverage|length }}">
+              {% for coverageField in form.coverage %}
+                  <li>
+                      {{ form_errors(coverageField) }}
+                      {{ form_widget(coverageField) }}
+                  </li>
+              {% endfor %}
+          </ul>#}
+
+          {#% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+              <blockquote>
+                  {{ 'steps.common.conferma.help_text_top'|trans }}
+              </blockquote>
+              {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+              <blockquote style="margin-top: 20px">
+                  {{ 'steps.common.conferma.help_text_bottom'|trans }}
+              </blockquote>
+          {% endif %#}
+
+          {{ form_rest(form) }}
+
+          <div id="vueApp">
+            {% if form.vars.helper.vueApp %}
+            <{{ form.vars.helper.vueApp }}>
+          </{{ form.vars.helper.vueApp }}>
+          {% endif %}
+        </div>
+
+        <div class="row d-none">
+          <div class="col-lg-12">
+            <div class="alert alert-info">
+              <p>Seleziona un template di partenza per la creazione del form</p>
+            </div>
+          </div>
+          <div class="card-wrapper card-teaser-wrapper col-lg-12" id="formio-templates-container"></div>
+        </div>
+        <div id="formio"></div>
+        <div id="builder"></div>
+
+        <div class="mt-5">
+          {% include '@App/FormFlow/serviceButtons.html.twig' %}
+        </div>
+        {{ form_end(form) }}
+      </div>
+
+    </div>
+
+  </section>
+
+  <div class="modal fade" id="confirm" tabindex="-1"
+       role="dialog"
+       aria-labelledby="confirmAutoAssignLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-dismiss="modal"
+                  class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
+          <button type="button" data-dismiss="modal" class="btn btn-primary"
+                  id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% verbatim %}
+  <script id="tpl-form" type="text/x-jsrender">
+    <div class="card card-teaser rounded shadow formio-template" data-id="{{:_id}}" id="{{:_id}}">
+      <div class="card-body">
+        <h5 class="card-title">{{:title}}</h5>
+        <p class="card-text">{{:description}}</p>
+      </div>
+    </div>
+  </script>
+  {% endverbatim %}
+
+{% endblock %}

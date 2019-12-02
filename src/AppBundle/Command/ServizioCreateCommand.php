@@ -138,6 +138,7 @@ class ServizioCreateCommand extends ContainerAwareCommand
         $categoryRepo = $manager->getRepository('AppBundle:Categoria');
 
         $servizio = $serviziRepo->findOneByName($name);
+        $ente = $this->getContainer()->get('ocsdc.instance_service')->getCurrentInstance();
         if (!$servizio instanceof Servizio) {
 
             $servizio = new Servizio();
@@ -145,18 +146,19 @@ class ServizioCreateCommand extends ContainerAwareCommand
                 ->setName($name)
                 ->setHandler($handler)
                 ->setDescription($description)
-                ->setTestoIstruzioni($istruzioni)
+                ->setHowto($istruzioni)
                 ->setPraticaFCQN($fcqn)
                 ->setPraticaFlowServiceName($flow)
                 ->setPraticaFlowOperatoreServiceName($flowOperator)
                 ->setPaymentParameters($paymentParameters)
                 ->setPaymentRequired($paymentRequired)
                 ->setAdditionalData($additionalData)
-                ->setStatus($status);
+                ->setStatus($status)
+                ->setEnte($ente);
 
             $area = $categoryRepo->findOneByTreeId($area);
             if ($area instanceof Categoria) {
-                $servizio->setArea($area);
+                $servizio->setTopics($area);
             }
 
             $manager->persist($servizio);

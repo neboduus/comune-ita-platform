@@ -180,6 +180,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
         $data = $this->getData('Servizi');
         $serviziRepo = $manager->getRepository('AppBundle:Servizio');
         $categoryRepo = $manager->getRepository('AppBundle:Categoria');
+        $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
         foreach ($data as $item) {
             $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
 
@@ -197,15 +198,16 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
                     ->setName($item['name'])
                     ->setHandler($item['handler'])
                     ->setDescription($item['description'])
-                    ->setTestoIstruzioni($item['testoIstruzioni'])
+                    ->setHowto($item['testoIstruzioni'])
                     ->setStatus($item['status'])
                     ->setPraticaFCQN($item['fcqn'])
                     ->setPraticaFlowServiceName($item['flow'])
-                    ->setPraticaFlowOperatoreServiceName($item['flow_operatore']);
+                    ->setPraticaFlowOperatoreServiceName($item['flow_operatore'])
+                    ->setEnte($ente);
 
                 $area = $categoryRepo->findOneByTreeId($item['area']);
                 if ($area instanceof Categoria){
-                    $servizio->setArea($area);
+                    $servizio->setTopics($area);
                 }
 
                 $manager->persist($servizio);

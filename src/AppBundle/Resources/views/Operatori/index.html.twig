@@ -67,13 +67,13 @@
                                     <table class="table table-striped" style="width: 100%">
                                         <thead>
                                         <tr>
-                                            <td>{{ 'pratica.protocollo'|trans }}</td>
-                                            <td>{{ 'pratica.richiedente'|trans }}</td>
-                                            <td>{{ 'pratica.servizio'|trans }}</td>
-                                            <td>{{ 'pratica.categoria'|trans }}</td>
-                                            <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
-                                            <td>{{ 'pratica.stato'|trans }}</td>
-                                            <td></td>
+                                            <th>{{ 'pratica.protocollo'|trans }}</th>
+                                            <th>{{ 'pratica.richiedente'|trans }}</th>
+                                            <th>{{ 'pratica.servizio'|trans }}</th>
+                                            <th>{{ 'pratica.categoria'|trans }}</th>
+                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
+                                            <th>{{ 'pratica.stato'|trans }}</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -86,7 +86,7 @@
                                                 <td>{{ pratica.numeroProtocollo }}</td>
                                                 <td>{{ pratica.user.fullName }}</td>
                                                 <td>{{ pratica.servizio.name }}</td>
-                                                <td>{{ pratica.servizio.area.name }}</td>
+                                                <td>{% if pratica.servizio.topics %}{{ pratica.servizio.topics.name }}{% endif %}</td>
                                                 <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
                                                 <td>{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
                                                 <td>
@@ -110,12 +110,12 @@
                                     <table class="table table-striped" style="width: 100%">
                                         <thead>
                                         <tr>
-                                            <td>{{ 'pratica.protocollo'|trans }}</td>
-                                            <td>{{ 'pratica.richiedente'|trans }}</td>
-                                            <td>{{ 'pratica.categoria'|trans }}</td>
-                                            <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
-                                            <td>{{ 'pratica.stato'|trans }}</td>
-                                            <td></td>
+                                            <th>{{ 'pratica.protocollo'|trans }}</th>
+                                            <th>{{ 'pratica.richiedente'|trans }}</th>
+                                            <th>{{ 'pratica.categoria'|trans }}</th>
+                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
+                                            <th>{{ 'pratica.stato'|trans }}</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -179,12 +179,12 @@
                                     <table class="table table-striped" style="width: 100%">
                                         <thead>
                                         <tr>
-                                            <td>{{ 'pratica.protocollo'|trans }}</td>
-                                            <td>{{ 'pratica.richiedente'|trans }}</td>
-                                            <td>{{ 'pratica.categoria'|trans }}</td>
-                                            <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
-                                            <td>{{ 'pratica.stato'|trans }}</td>
-                                            <td></td>
+                                            <th>{{ 'pratica.protocollo'|trans }}</th>
+                                            <th>{{ 'pratica.richiedente'|trans }}</th>
+                                            <th>{{ 'pratica.categoria'|trans }}</th>
+                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
+                                            <th>{{ 'pratica.stato'|trans }}</th>
+                                            <th></th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -217,12 +217,12 @@
                                     <table class="table table-striped" style="width: 100%">
                                         <thead>
                                         <tr>
-                                            <td>{{ 'pratica.protocollo'|trans }}</td>
-                                            <td>{{ 'pratica.richiedente'|trans }}</td>
-                                            <td>{{ 'pratica.categoria'|trans }}</td>
-                                            <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
-                                            <td>{{ 'pratica.stato'|trans }}</td>
-                                            <td>{{ 'pratica.operatore'|trans }}</td>
+                                            <th>{{ 'pratica.protocollo'|trans }}</th>
+                                            <th>{{ 'pratica.richiedente'|trans }}</th>
+                                            <th>{{ 'pratica.categoria'|trans }}</th>
+                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
+                                            <th>{{ 'pratica.stato'|trans }}</th>
+                                            <th>{{ 'pratica.operatore'|trans }}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
