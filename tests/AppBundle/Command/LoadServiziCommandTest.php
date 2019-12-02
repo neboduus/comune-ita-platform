@@ -4,11 +4,13 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Command\LoadServiziCommand;
 use AppBundle\DataFixtures\ORM\LoadData;
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Tests\AppBundle\Base\AbstractAppTestCase;
@@ -31,10 +33,13 @@ class LoadServiziCommandTest extends AbstractAppTestCase
         $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
+        $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
+        $this->cleanDb(Servizio::class);
+        $this->cleanDb(AsiloNido::class);
         $this->cleanDb(OperatoreUser::class);
         $this->cleanDb(Ente::class);
-        $this->cleanDb(Servizio::class);
+        $this->cleanDb(User::class);
     }
 
     /**

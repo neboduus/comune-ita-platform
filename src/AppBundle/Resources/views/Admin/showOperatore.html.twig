@@ -20,28 +20,20 @@
                     <table class="table table-bordered table-striped table-condensed cf">
                         <tbody>
                         <tr>
-                            <th>Ambito</th>
-                            <td>{{ operatoreUser.ambito }}</td>
+                            <th>Nome</th>
+                            <td>{{ operatoreUser.fullName }}</td>
                         </tr>
                         <tr>
-                            <th>Serviziabilitati</th>
-                            <td>{{ operatoreUser.serviziAbilitati }}</td>
+                            <th>Username</th>
+                            <td>{{ operatoreUser.username }}</td>
                         </tr>
                         <tr>
-                            <th>Lastchangepassword</th>
+                            <th>Ultima modifica password</th>
                             <td>{% if operatoreUser.lastChangePassword %}{{ operatoreUser.lastChangePassword|date('Y-m-d H:i:s') }}{% endif %}</td>
                         </tr>
                         <tr>
-                            <th>Id</th>
-                            <td>{{ operatoreUser.id }}</td>
-                        </tr>
-                        <tr>
-                            <th>Emailcontatto</th>
-                            <td>{{ operatoreUser.emailContatto }}</td>
-                        </tr>
-                        <tr>
-                            <th>Cellularecontatto</th>
-                            <td>{{ operatoreUser.cellulareContatto }}</td>
+                            <th>Email</th>
+                            <td>{{ operatoreUser.email }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -49,12 +41,12 @@
 
                 <div class="row">
                     <div class="col-8">
-                        <a class="btn btn-default" href="{{ path('admin_operatore_index') }}">Torna alla lista</a>
-                        <a class="btn btn-warning" href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">Modifca</a>
+                        <a class="btn btn-default btn-sm" href="{{ path('admin_operatore_index') }}">Torna alla lista</a>
+                        <a class="btn btn-warning btn-sm" href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">Modifca</a>
                     </div>
                     <div class="col-4">
                         {{ form_start(delete_form) }}
-                        <input class="btn btn-danger" type="submit" value="Delete">
+                        <input class="btn btn-danger btn-sm" type="submit" value="Delete">
                         {{ form_end(delete_form) }}
                     </div>
                 </div>

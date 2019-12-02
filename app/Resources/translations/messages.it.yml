@@ -44,6 +44,8 @@ terms:
   title: 'Accettazione termini di utilizzo'
 
 servizio:
+  crea: 'Crea nuovo servizio'
+  modifica: 'Modifica servizio - %name%'
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Il servizio è stato sospeso'
@@ -161,17 +163,17 @@ pratica:
     stato_4500: 'Presa in carico in seguito a integrazioni'
 
     delega:
-        titolo: 'Delega'
-        ruolo: 'In qualità di'
-        dati_soggetto: 'Dati del soggetto per cui si richiede il certificato'
-        nome: 'Nome'
-        cf: 'Codice Fiscale'
-        data_nascita: 'Data di nascita'
-        indirizzo: 'Indirizzo'
+      titolo: 'Delega'
+      ruolo: 'In qualità di'
+      dati_soggetto: 'Dati del soggetto per cui si richiede il certificato'
+      nome: 'Nome'
+      cf: 'Codice Fiscale'
+      data_nascita: 'Data di nascita'
+      indirizzo: 'Indirizzo'
 
 
   modulo:
-    descrizione: 'Modulo nomeservizio compilato il datacompilazione'  
+    descrizione: 'Modulo nomeservizio compilato il datacompilazione'
     descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
   appunti_compilazione:
     titolo: 'Aggiungi una descrizione ala pratica'
@@ -195,9 +197,9 @@ iscrizione_asilo_nido:
     periodo: 'Periodo di iscrizione'
     periodo_da: 'dal'
     periodo_a: 'al'
-    
 
-contributo_pannolini:    
+
+contributo_pannolini:
   pdf:
     rimborso: "Il rimborso per la spesa sostenuta nell'acquisto dei pannolini di tipo "
     per_il_bambino: 'per il bambino'
@@ -216,7 +218,7 @@ contributo_pannolini:
       1: 'Lavabile'
       2: 'BioPannolino'
 
-autolettura_acqua:    
+autolettura_acqua:
   dettaglio:
     intestatario: "Dati dell'intestatario del contratto"
     intestatario_codice_utente: "Codice utente"
@@ -240,8 +242,8 @@ autolettura_acqua:
     lettura_metri_cubi: "Metri cubi"
     lettura_in_data: "In data"
     comunica_inoltre: "Comunica inoltre"
-  
-cambio_residenza:  
+
+cambio_residenza:
   aggiungi_persona_residente: "Aggiungi persona"
   pdf:
     comune: ' - comune '
@@ -252,14 +254,14 @@ cambio_residenza:
     iscritti: "Che nell’abitazione sita al nuovo indirizzo sono già iscritte le seguenti persone"
     accertamento_dati: "Di aver rilasciato le seguenti informazioni per l'accertamento dei dati"
     occupazione:
-        proprietario: "Di essere proprietario dell'abitazione:"
-        locazione: "Di essere intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
-        locazione_erp: "Di essere intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
-        comodato: "Di essere comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
-        usufruttuario: "Di essere usufruttuario"
-        autocertificazione: "Di occupare legittimamente l'abitazione in base all' autocertificazione del proprietario dell'appartamento"
+      proprietario: "Di essere proprietario dell'abitazione:"
+      locazione: "Di essere intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+      locazione_erp: "Di essere intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+      comodato: "Di essere comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+      usufruttuario: "Di essere usufruttuario"
+      autocertificazione: "Di occupare legittimamente l'abitazione in base all' autocertificazione del proprietario dell'appartamento"
 
-allacciamento_acquedotto:        
+allacciamento_acquedotto:
   pdf:
     chiede: "L’autorizzazione ad effettuare l’allacciamento all’acquedotto comunale, secondo le modalità fissate nel regolamento vigente"
 
@@ -491,1025 +493,1129 @@ chat:
   io:
     chat_name: 'Io'
 
-        
+
 steps:
-    common:
-        inserisci_importo:
-            label: "Inserisci l'importo"
-        seleziona_gateway_pagament:
-            title: "Selezione del gateway di pagamento"
-            guida_alla_compilazione: "Seleziona dal menu a tendina il gateway di pagamento che intendi utilizzare"
 
-        seleziona_ente:
-            label: "Ente"
-            title: 'Selezione del comune di riferimento'
-            guida_alla_compilazione: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
+  common:
+    inserisci_importo:
+      label: "Inserisci l'importo"
+    seleziona_gateway_pagament:
+      title: "Selezione del gateway di pagamento"
+      guida_alla_compilazione: "Seleziona dal menu a tendina il gateway di pagamento che intendi utilizzare"
 
-        accettazione_istruzioni:
-            label: 'Istruzioni'
-            title: 'Istruzioni sulla procedura'
-            guida_alla_compilazione: 'Leggi e accetta le istruzioni di compilazione'
-            accetto_istruzioni: 'Ok mi è chiaro'
+    seleziona_ente:
+      label: "Ente"
+      title: 'Selezione del comune di riferimento'
+      guida_alla_compilazione: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
 
-        dati_richiedente:
-            label: 'Richiedente'
-            title: 'Dati del richiedente'
-            guida_alla_compilazione: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al <u>tuo profilo</u></a>'
-            richiedente_nome: 'Nome'
-            richiedente_cognome: 'Cognome'
-            richiedente_codice_fiscale: 'Codice Fiscale'
-            richiedente_luogo_nascita: 'Luogo di nascita'
-            richiedente_data_nascita: 'Data di nascita'
-            richiedente_indirizzo_residenza: 'Indirizzo'
-            richiedente_cap_residenza: 'CAP'
-            richiedente_citta_residenza: 'Città'
-            richiedente_telefono: 'Telefono'
-            richiedente_email: 'Email'
+    accettazione_istruzioni:
+      label: 'Istruzioni'
+      title: 'Istruzioni sulla procedura'
+      guida_alla_compilazione: 'Leggi e accetta le istruzioni di compilazione'
+      accetto_istruzioni: 'Ok mi è chiaro'
 
-        conferma:
-            label: 'Controllo e conferma'
-            title: 'Controllo e conferma'
-            sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
-            si: 'Sì, sono sicuro'
-            no: 'No'
-            help_text_top: 'Controlla i dati che hai inserito.  Per inviare la richiesta, premere il pulsante "Invia"'
-            help_text_bottom: 'Per inviare la richiesta, premere il pulsante "Invia"'
+    dati_richiedente:
+      label: 'Richiedente'
+      title: 'Dati del richiedente'
+      guida_alla_compilazione: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al <u>tuo profilo</u></a>'
+      richiedente_nome: 'Nome'
+      richiedente_cognome: 'Cognome'
+      richiedente_codice_fiscale: 'Codice Fiscale'
+      richiedente_luogo_nascita: 'Luogo di nascita'
+      richiedente_data_nascita: 'Data di nascita'
+      richiedente_indirizzo_residenza: 'Indirizzo'
+      richiedente_cap_residenza: 'CAP'
+      richiedente_citta_residenza: 'Città'
+      richiedente_telefono: 'Telefono'
+      richiedente_email: 'Email'
 
-        nucleo_familiare:
-            label: 'Nucleo familiare'
-            title: 'Composizione del nucleo familiare'
-            guida_alla_compilazione: 'Inserisci i componenti del nucleo familiare'
+    conferma:
+      label: 'Controllo e conferma'
+      title: 'Controllo e conferma'
+      sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
+      si: 'Sì, sono sicuro'
+      no: 'No'
+      help_text_top: 'Controlla i dati che hai inserito.  Per inviare la richiesta, premere il pulsante "Invia"'
+      help_text_bottom: 'Per inviare la richiesta, premere il pulsante "Invia"'
 
-        carica_allegati:
-            label: 'Allegati'
-            title: 'Caricamento degli allegati'
-            guida_alla_compilazione: "Inserisci gli allegati"
+    nucleo_familiare:
+      label: 'Nucleo familiare'
+      title: 'Composizione del nucleo familiare'
+      guida_alla_compilazione: 'Inserisci i componenti del nucleo familiare'
 
-        org_richiedente:
-            label: 'Organizzazione richiedente'
-            title: 'Organizzazione richiedente'
-            ruolo_utente: 'In qualità di '
-            ragione_sociale: 'Ragione sociale'
-            cf: 'Codice fiscale'
-            piva: 'Partita Iva'
-            indirizzo: 'Indirizzo'
-            civico: 'Numero civico'
-            cap: 'Cap'
-            comune: 'Comune'
-            provincia: 'Provincia'
-            email: 'Indirizzo Email'
-            tel: 'Numero di telefono'
-            
-            nome_associazione: "Nome dell'associazione"
-            natura_giuridica: "Natura giuridica"
-            sito: "Sito"
-            pagina_social: "Pagina social"
-            e_mail: "email"
-            numero_iscritti: "Numero di iscritti"
-            modalita_di_adesione: "Modalità di adesione (come si diventa soci)"
-            attivita: "Attività (indicare in modo sintetico le attività principali)"
-            obiettivi: "Obiettivi"
-            sede_legale: "Sede legale"
-            sede_operativa: "Sede operativa"
-            contatti: "Contatti"
+    carica_allegati:
+      label: 'Allegati'
+      title: 'Caricamento degli allegati'
+      guida_alla_compilazione: "Inserisci gli allegati"
 
-            allegato_statuto: "Statuto"
-            allegato_attribuzione_cf: "Attribuzione del Codice Fiscale"
-            allegato_cariche_sociali: "elenco delle Cariche sociali"
-            allegato_logo: "Logo"
+    org_richiedente:
+      label: 'Organizzazione richiedente'
+      title: 'Organizzazione richiedente'
+      ruolo_utente: 'In qualità di '
+      ragione_sociale: 'Ragione sociale'
+      cf: 'Codice fiscale'
+      piva: 'Partita Iva'
+      indirizzo: 'Indirizzo'
+      civico: 'Numero civico'
+      cap: 'Cap'
+      comune: 'Comune'
+      provincia: 'Provincia'
+      email: 'Indirizzo Email'
+      tel: 'Numero di telefono'
 
+      nome_associazione: "Nome dell'associazione"
+      natura_giuridica: "Natura giuridica"
+      sito: "Sito"
+      pagina_social: "Pagina social"
+      e_mail: "email"
+      numero_iscritti: "Numero di iscritti"
+      modalita_di_adesione: "Modalità di adesione (come si diventa soci)"
+      attivita: "Attività (indicare in modo sintetico le attività principali)"
+      obiettivi: "Obiettivi"
+      sede_legale: "Sede legale"
+      sede_operativa: "Sede operativa"
+      contatti: "Contatti"
 
-        dati_conto_corrente:
-            label: 'Dati Conto Corrente'
-            title: 'Dati Conto Corrente'
-            iban: 'Codice Iban'
-            intestatario: 'Intestatario conto'
-            guida_alla_compilazione: 'Inserisci i dati del conto corrente'
-
-        select_payment_gateway:
-            label: 'Seleziona metodo di pagamento'
-            title: 'Seleziona metodo di pagamento'
-            guida_alla_compilazione: 'Utilizza il menù a tendina per selezionare il metodo di pagamento desiderato'
-
-        payment_gateway:
-            label: 'Pagamento'
-            title: 'Pagamento'
-
-        delega:
-            label: 'Delega'
-            title: 'Delega'
-            guida_alla_compilazione: 'Specifica se hai una delega.'
-            has_delega: 'Hai una delega?'
-            tipi:
-                delegato: 'delegato dal / la Sig. / Sig.ra'
-                incaricato: 'incaricato dallo studio'
-                altro: 'altro'
-
-        specifica_delega:
-            label: 'Specifica delega'
-            title: 'Specifica delega'
-            guida_alla_compilazione: "Se la richiesta del certificato è riferita ad un'altra persona è necessario indicare le generalità."
-            tipi:
-                delegato: 'delegato dal / la Sig. / Sig.ra'
-                incaricato: 'incaricato dallo studio'
-                altro: 'altro'
-            type_text: 'Specificare nome Studio / Altro'
-            nome_soggetto_certificato: 'Nome e cognome della persona per cui si richiede il certificato'
-            related_cfs: 'Codice Fiscale della persona per cui si richiede il certificato'
-            data_nascita_soggetto_certificato: 'Data di nascita della persona per cui si richiede il certificato'
-            required_field_error: 'Se hai selezionato "incaricato dallo studio" o "altro" nel campo "In qualità di" devi riempire anche il campo "Specificare nome Studio / Altro"'
-
-        certificato_anagrafico:
-            label: 'Tipologia ed uso'
-            tipologia_certificato: 'Tipologia certificato'
-            tipologie:
-                semplice: 'semplice'
-                genitori: 'con paternità e maternità'
-                internazionale: 'su modello internazionale'
-            uso: 'Per il seguente uso'
-            CertificatoNascita:
-                label: 'Tipologia ed uso'
-                title: 'Tipologia ed uso'
-                description: 'Il certificato di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore'
-                guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
-                tipologia_certificato: 'Tipologia certificato'
-                uso: "Precisare la motivata richiesta"
-            EstrattoNascita:
-                label: 'Tipologia ed uso'
-                title: 'Tipologia ed uso'
-                description: "L'estratto di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore."
-                guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
-                tipologia_certificato: 'Tipologia certificato'
-                uso: "Precisare la motivata richiesta"
-            AttoMorte:
-                label: 'Tipologia ed uso'
-                title: 'Tipologia ed uso'
-                description: "Specifica dettagliata dell'uso del certificato"
-                guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
-                tipologia_certificato: 'Tipologia certificato'
-                uso: "Precisare la motivata richiesta"
-            EstrattoMorte:
-                label: 'Tipologia ed uso'
-                title: 'Tipologia ed uso'
-                description: "Specifica dettagliata dell'uso del certificato"
-                guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
-                tipologia_certificato: 'Tipologia certificato'
-                uso: "Precisare la motivata richiesta"
-            CertificatoMatrimonio:
-                label: 'Tipologia ed uso'
-                title: 'Tipologia ed uso'
-                description: "Specificare tipologia di certificato"
-                guida_alla_compilazione: "Specificare tipologia di certificato"
-                tipologia_certificato: 'Tipologia certificato'
-                uso: "Precisare la motivata richiesta"
-            EstrattoMatrimonio:
-                label: 'Tipologia ed uso'
-                title: 'Tipologia ed uso'
-                description: "Specificare tipologia di certificato"
-                guida_alla_compilazione: "Specificare tipologia di certificato"
-                tipologia_certificato: 'Tipologia certificato'
-                uso: "Precisare la motivata richiesta"
-            AttoMatrimonio:
-                label: 'Tipologia ed uso'
-                title: "Tipologia ed uso"
-                description: "Specifica dettagliata dell'uso del certificato"
-                guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
-                tipologia_certificato: 'Tipologia certificato'
-                uso: "Precisare la motivata richiesta"
-
-        uso:
-            label: 'Tipologia ed uso'
-            title: 'Tipologia ed uso'
-            description: 'Specifica uso per il certificato'
-            guida_alla_compilazione: 'Specifica uso per il certificato'
-            uso: 'Specifica uso per il certificato'
-
-    allacciamento_acquedotto:
-        dati_immobile:
-            label: 'Immobile'
-            title: "Dati dell'immobile"
-            guida_alla_compilazione: "Inserire i dati dell'immobile e a che titolo viene fatta la richiesta"
-            datiImmobile: "Dati dell'immobile"
-            qualifica: "Qualifica del richiedente"
-            provincia: "Provincia"
-            comune: "Comune"
-            indirizzo: "Indirizzo"
-            numero_civico: "Numero civico"
-            cap: "CAP"
-            scala: "Scala"
-            piano: "Piano"
-            interno: "Interno"
-            catasto_categoria: "Categoria catastale"
-            catasto_codice_comune: "Codice catastale del comune"
-            catasto_foglio: "Foglio"
-            catasto_sezione: "Sezione"
-            catasto_mappale: "Particella Mappale"
-            catasto_subalterno: "Subalterno"
-
-        dati_intervento:
-            label: 'Intervento'
-            title: "Tipologia di intervento"
-            guida_alla_compilazione: "Inserire i dati dell'intervento"
-            tipo_intervento: "Tipologia di intervento"
-            tipo_allaccio: "Tipologia di allaccio"
-            tipo_uso: "Tipologia d'utilizzo"
-            diametro_rete_interna: "Diametro rete interna"
-
-        dati_contatto:
-            label: 'Contatti'
-            title: 'Contatti'
-            guida_alla_compilazione: "Specificare indirizzo per comunicazioni e rimborsi"
-            use_alternate: "Utilizza i segenti dati"
-            indirizzo: "Indirizzo"
-            numero_civico: "Numero civico"
-            cap: "CAP"
-            comune: "Comune"
-
-    autolettura_acqua:
-        dati_intestatario:
-            label: 'Intestatario'
-            title: "Dati dell'intestatario del contratto"
-            guida_alla_compilazione: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
-            intestatario_codice_utente: "Codice utenza"
-            intestatario_nome: "Nome"
-            intestatario_cognome: "Cognome"
-            intestatario_indirizzo: "Indirizzo"
-            intestatario_cap: "CAP"
-            intestatario_citta: "Città"
-            intestatario_telefono: "Recapito telefonico per eventuali comunicazioni"
-            intestatario_email: "Recapito email per eventuali comunicazioni"
-
-        dati_contatore:
-            label: "Contatore"
-            title: "Contatore"
-            guida_alla_compilazione: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
-            contatore_numero: "Numero (da leggere sulla ghiera d'ottone del contatore)"
-            contatore_uso: "Tipologia di utilizzo del contatore"
-            contatore_unita_immobiliari: "Numero di unità immobiliari (appartamenti, negozi, uffici, ...) serviti dal contatore"
-
-        dati_lettura:
-            label: "Lettura"
-            title: "Dati della lettura"
-            guida_alla_compilazione: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
-            lettura_metri_cubi: "Lettura dei metri cubi"
-            lettura_data: "Data della rilevazione"
-
-        note:
-            label: "Altre comunicazioni"
-            title: "Altre comunicazioni"
-            guida_alla_compilazione: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
-
-    cambio_residenza:
-
-        dichiarazione_provenienza:
-            label: "Provenienza"
-            title: "Dichiarazione della provenienza"
-            guida_alla_compilazione: "Dichiarazione della provenienza: da un altro comune, dall'estero o dallo stesso comune"
-            comune: "Dichiarazione di cambiamento di abitazione nell’ambito dello stesso comune"
-            altro_comune: "Dichiarazione di residenza con provenienza da altro comune"
-            estero: "Dichiarazione di residenza con provenienza dall’estero"
-            aire: "Dichiarazione di residenza di cittadini italiani iscritti all’AIRE (Anagrafe degli italiani residenti all’estero) con provenienza dall’estero"
-            altro: "Dichiarazione di residenza per altro motivo"
-
-        dichiarazione_provenienza_dettaglio:
-            label: 'Provenienza (dettaglio)'
-            title: "Dettagli provenienza"
-            guida_alla_compilazione:
-                nessun_allegato: "Per il tipo di provenienza selezionato non sono necessarie altre informazioni"
-                altro_comune: "Indicare il comune di provenienza"
-                stato_estero: "Indicare lo Stato estero di provenienza"
-                aire: "Indicare lo Stato estero e il comune AIRE di provenienza"
-                altro_motivo: "Specificare il motivo"
-
-        dati_residenza:
-            label: "Residenza"
-            title: "Dati residenza"
-            guida_alla_compilazione: "Specifica il nuovo indirizzo di residenza"
-            provincia: "Provincia"
-            comune: "Comune"
-            indirizzo: "Via/Piazza"
-            numero_civico: "Numero civico"
-            scala: "Scala"
-            piano: "Piano"
-            interno: "Interno"
-
-        attualmente_residenti:
-            label: "Residenti"
-            title: "Persone già iscritte nella nuova abitazione"
-            guida_alla_compilazione: "Inserisci le eventuali persone già residenti nell'abitazione per la quale chiedi la residenza"
-
-        tipologia_occupazione:
-            label: "Tipologia"
-            title: "Tipologia di occupazione"
-            guida_alla_compilazione: "Dichiarazione riguardante la tipologia di occupazione della nuova residenza"
-            proprietario: "Proprietario dell'abitazione"
-            locazione: "Intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
-            locazione_erp: "Intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
-            comodato: "Comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
-            usufruttuario: "Usufruttuario"
-            autocertificazione: "Autocertificazione del proprietario dell'appartamento"
-
-        tipologia_occupazione_dettaglio:
-            label: "Tipologia (dettaglio)"
-            title: "Dettagli della tipologia di occupazione"
-            guida_alla_compilazione:
-                proprietario: "Specifica i valori catastali dell'abitazione di proprietà"
-                locazione: "Specifica i dettagli del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
-                locazione_erp: "Allega il contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
-                comodato: "Specifica i dettagli del contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
-                usufruttuario: "Indicare dati utili a consentirne la verifica"
-                autocertificazione: "Allega l'autocertificazione del proprietario dell'appartamento"
-            proprietario:
-                catasto_sezione: "Sezione"
-                catasto_foglio: "Foglio"
-                catasto_particella: "Particella/Mappale"
-                catasto_subalterno: "Subalterno"
-            contratto:
-                agenzia: "Indirizzo agenzia entrate"
-                numero: "Numero contratto"
-                data: "Data di stipula del contratto"
-            verbale_consegna: "Scansione del contratto o del verbale di consegna dell'immobile"
-            usufruttuario_info: "Titolo costitutivo"
-            autocertificazione: "Autocertificazione del proprietario dell'appartamento"
-
-        informazioni_accertamento:
-            label: "Accertamento"
-            title: "Informazioni per accertamento dei dati"
-            guida_alla_compilazione: "Segnalare eventuali giorni ed orari di preferenza per la verifica delle autorità giudiziarie"
-
-    contributo_pannolini:
-        dati_bambino:
-            label: 'Dati del bambino'
-            title: 'Dati del bambino'
-            guida_alla_compilazione: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
-            nome: 'Nome'
-            cognome: 'Cognome'
-            luogo_nascita: 'Luogo di nascita'
-            data_nascita: 'Data di nascita'
-
-        dati_acquisto:
-            label: "Dati dell'Acquisto"
-            title: "Dati dell'Acquisto"
-            guida_alla_compilazione: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello passaggio successivo'
-            tipo_pannolini: 'Tipo dei pannolini acquistati'
-            punto_vendita: 'Nome del punto vendita'
-            data_acquisto: 'Data di acquisto'
-            totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
-
-        dati_conto_corrente:
-            label: 'Dati Conto Corrente'
-            title: 'Dati Conto Corrente'
-            guida_alla_compilazione: 'Inserisci i dati del conto corrente'
-
-    iscrizione_asilo_nido:
-        seleziona_nido:
-            label: 'Struttura'
-            title: 'Selezione della struttura'
-            guida_alla_compilazione: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
-
-        accettazione_utilizzo:
-            label: 'Accettazione'
-            title: 'Termini di fruizione della struttura'
-            guida_alla_compilazione: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
-            accetto_utilizzo: 'Ho letto i termini di fruizione della struttura'
-
-        seleziona_orari:
-            label: 'Orari e periodo'
-            title: 'Selezione degli orari e del periodo di iscrizione'
-            guida_alla_compilazione: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
-            seleziona_orario: 'Orario prescelto'
-            periodo_iscrizione_da: 'Periodo iscrizione da'
-            periodo_iscrizione_a: 'Periodo iscrizione a'
-            error: "La data di fine iscrizione deve essere maggiore di quella d'inizio"
-
-        dati_bambino:
-            label: 'Dati del bambino'
-            title: 'Dati del bambino'
-            guida_alla_compilazione: 'Inserisci i dati del bambino che intendi iscrivere'
-            nome: 'Nome'
-            cognome: 'Cognome'
-            luogo_nascita: 'Luogo di nascita'
-            data_nascita: 'Data di nascita'
-
-        allega_attestazione_icef:
-            label: 'Attestazione ICEF'
-            title: 'Attestazione ICEF per i servizi alla prima infanzia'
-            guida_alla_compilazione: "Allega l'attestazione ICEF per i servizi alla prima infanzia (in mancanza dell’attestazione verranno applicate le tariffe massime. L’eventuale tariffa agevolata sarà applicata dal primo giorno del mese successivo a quello di presentazione dell’attestazione al Comune)"
-
-    occupazione_suolo_pubblico:
-        nomeIniziativa: 'Nome Manifestazione/Evento'
-        guida_alla_compilazione: 'Inserisci i campi richiesti. I campi marcati con un asterisco (*) sono obbligatori'
-        allegati:
-            label: 'Allegati'
-            guida_alla_compilazione: 'Carica gli allegati richiesti (in formato PDF)'
-        org_richiedente:
-            label: 'Organizzazione richiedente'
-            title: 'Organizzazione richiedente'
-            ruolo_utente: 'Il sottoscritto in qualità di'
-            ragione_sociale: 'Ragione sociale associazione'
-            indirizzo: 'Indirizzo'
-            civico: 'Numero civico'
-            cap: 'Cap'
-            comune: 'Comune'
-            provincia: 'Provincia'
+      allegato_statuto: "Statuto"
+      allegato_attribuzione_cf: "Attribuzione del Codice Fiscale"
+      allegato_cariche_sociali: "elenco delle Cariche sociali"
+      allegato_logo: "Logo"
 
 
-        occupazione:
-            nomeIniziativa: 'Nome Manifestazione/Evento'
-            label: 'Luogo occupazione'
-            title: 'Luogo occupazione e Nome Manifestazione/Evento'
-            indirizzo: 'Indirizzo'
-            civico: 'Numero civico'
-            lunghezza: 'Lunghezza in cm'
-            larghezza: 'Larghezza in cm'
-            metri_quadri: 'Metri quadrati'
-            motivazione: 'Motivazione'
+    dati_conto_corrente:
+      label: 'Dati Conto Corrente'
+      title: 'Dati Conto Corrente'
+      iban: 'Codice Iban'
+      intestatario: 'Intestatario conto'
+      guida_alla_compilazione: 'Inserisci i dati del conto corrente'
 
-        tipologia_occupazione:
-            label: 'Tipologia occupazione'
-            title: 'Tipologia occupazione'
-            tipologia: 'Tipologia'
+    select_payment_gateway:
+      label: 'Seleziona metodo di pagamento'
+      title: 'Seleziona metodo di pagamento'
+      guida_alla_compilazione: 'Utilizza il menù a tendina per selezionare il metodo di pagamento desiderato'
 
-        tempo_occupazione:
-            label: 'Tempo di occupazione'
-            title: 'Tempo di occupazione'
-            inizio_giorno: 'Giorno inizio occupazione'
-            inizio_ora: 'Ora inizio occupazione'
-            fine_giorno: 'Giorno fine occupazione'
-            fine_ora: 'Ora fine occupazione'
-            error: 'Selezionare un giorno di inizio precedente a quello di fine'
-        importo:
-            guida_alla_compilazione: "Inserisci l'importo corretto per la pratica.<br/>Trovi le istruzioni per il calcolo a questo indirizzo: <a href='http://www.comune.rovereto.tn.it/istruzioni-per-calcolo-importi'>Comune di Rovereto - Istruzioni per il calcolo degli importi</a>"
+    payment_gateway:
+      label: 'Pagamento'
+      title: 'Pagamento'
 
-    contributo_associazioni:
-        tipologia_attivita:
-            label: 'Tipologia attività'
-            title: 'Tipologia attività'
-            tipologia: 'Selezionare il tipo di attività'
-            commerciale: 'Svolge attività commerciale'
-            non_commerciale: 'Non svolge attività commerciale (art. 108 del Testo Unico delle Imposte sui redditi)'
-            guida_alla_compilazione: "Seleziona la tipologia di attività che l'organizzazione svolge"
+    delega:
+      label: 'Delega'
+      title: 'Delega'
+      guida_alla_compilazione: 'Specifica se hai una delega.'
+      has_delega: 'Hai una delega?'
+      tipi:
+        delegato: 'delegato dal / la Sig. / Sig.ra'
+        incaricato: 'incaricato dallo studio'
+        altro: 'altro'
 
-        contributo:
-            label: 'Uso del contributo'
-            title: 'Uso del contributo'
-            tipologia_contributo: 'Tipologia contributo'
-            beni_strumentali: 'Acquisto di beni strumentali'
-            fini_istituzionali_commerciali: 'Attività per il perseguimento di fini istituzionali a carattere commerciale'
-            fini_istituzionali_non_commerciali: 'Attività per il perseguimento di fini istituzionali non a carattere commerciale'
-            manifestazione_istituzionale_non_commerciale: 'Manifestazione rientrante nell’attività istituzionale non a carattere commerciale'
-            commerciale: 'Attività a carattere commerciale'
-            descrizione: 'Descrizione'
-            anno: 'Anno di attività'
-            guida_alla_compilazione: "Selezionare il tipo di contributo ed inserire descrizione ed anno dell'attività per cui si fa domanda"
+    specifica_delega:
+      label: 'Specifica delega'
+      title: 'Specifica delega'
+      guida_alla_compilazione: "Se la richiesta del certificato è riferita ad un'altra persona è necessario indicare le generalità."
+      tipi:
+        delegato: 'delegato dal / la Sig. / Sig.ra'
+        incaricato: 'incaricato dallo studio'
+        altro: 'altro'
+      type_text: 'Specificare nome Studio / Altro'
+      nome_soggetto_certificato: 'Nome e cognome della persona per cui si richiede il certificato'
+      related_cfs: 'Codice Fiscale della persona per cui si richiede il certificato'
+      data_nascita_soggetto_certificato: 'Data di nascita della persona per cui si richiede il certificato'
+      required_field_error: 'Se hai selezionato "incaricato dallo studio" o "altro" nel campo "In qualità di" devi riempire anche il campo "Specificare nome Studio / Altro"'
 
-    scia:
-        error:
-            allegato_richiesto: "Allegare almeno un file nel campo %field%"
+    certificato_anagrafico:
+      label: 'Tipologia ed uso'
+      tipologia_certificato: 'Tipologia certificato'
+      tipologie:
+        semplice: 'semplice'
+        genitori: 'con paternità e maternità'
+        internazionale: 'su modello internazionale'
+      uso: 'Per il seguente uso'
+      CertificatoNascita:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: 'Il certificato di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore'
+        guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      EstrattoNascita:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "L'estratto di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore."
+        guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      AttoMorte:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specifica dettagliata dell'uso del certificato"
+        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      EstrattoMorte:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specifica dettagliata dell'uso del certificato"
+        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      CertificatoMatrimonio:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specificare tipologia di certificato"
+        guida_alla_compilazione: "Specificare tipologia di certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      EstrattoMatrimonio:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specificare tipologia di certificato"
+        guida_alla_compilazione: "Specificare tipologia di certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      AttoMatrimonio:
+        label: 'Tipologia ed uso'
+        title: "Tipologia ed uso"
+        description: "Specifica dettagliata dell'uso del certificato"
+        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
 
-        modulo_default :
-          label: 'Modulo Domanda'
-          title: 'Modulo principale della domanda'
-          guida_alla_compilazione: 'Allega il modulo della domanda correttamente compilato'
+    uso:
+      label: 'Tipologia ed uso'
+      title: 'Tipologia ed uso'
+      description: 'Specifica uso per il certificato'
+      guida_alla_compilazione: 'Specifica uso per il certificato'
+      uso: 'Specifica uso per il certificato'
 
-        allegati_modulo_scia:
-            label: 'Allegati alla domanda'
-            title: 'Documentazione allegata alla domanda'
-            guida_alla_compilazione: 'Allega tutti i documenti elencati'
-            files:
-              DOM_DELEGA:
-                title: Delega
-                description: Procura/Delega a presentare la pratica
-              DOM_PRIVACY:
-                title: Privacy
-                description: Informativa sul trattamento dei dati personali
-              DOM_ISPAT:
-                title: Modelli ISPAT
-                description: Modelli statistici ISPAT
-              DOM_CI:
-                title: "Documenti d'identità"
-                description: "Copia fotostatica di valido documento d'identità degli aventi titolo alla presentazione S.C.I.A, del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
-              DOM_CF:
-                title: "Codici fiscali o partite IVA"
-                description: "Fotocopia codice fiscale o partita IVA del richiedente e del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
-              DOM_EDIFICI-STORICI:
-                title: ''
-                description: Documentazione fotografica con l'indicazione degli interventi previsti per la tutela e la valorizzazione degni edifici soggetti alla disciplina degli insediamenti storici o del patrimonio edilizio tradizionale montano.
-              DOM_OBBLIGHI_SICUREZZA:
-                title: ''
-                description: Obblighi in materia di sicurezza nei luoghi di lavoro di cui al d.lgs n. 81/2008
-              DOM_DOC_DIRITTI_SEGRETERIA:
-                title: 'Ricevuta attestante il pagamento dei diritti di segreteria'
-                description: ''
-              DOM_DOC_PAGAMENTO_CONTRIBUTO:
-                title: ''
-                description: Documentazione attestante il pagamento del contributo di costruzione
-              DOM_PROGETTO_OPERE:
-                title: ''
-                description: Progetto delle opere di urbanizzazione
-              DOM_CONDOMINIO:
-                title: ''
-                description: Atto di assenso del condominio e pertanto si allega il verbale di assemblea
+  allacciamento_acquedotto:
+    dati_immobile:
+      label: 'Immobile'
+      title: "Dati dell'immobile"
+      guida_alla_compilazione: "Inserire i dati dell'immobile e a che titolo viene fatta la richiesta"
+      datiImmobile: "Dati dell'immobile"
+      qualifica: "Qualifica del richiedente"
+      provincia: "Provincia"
+      comune: "Comune"
+      indirizzo: "Indirizzo"
+      numero_civico: "Numero civico"
+      cap: "CAP"
+      scala: "Scala"
+      piano: "Piano"
+      interno: "Interno"
+      catasto_categoria: "Categoria catastale"
+      catasto_codice_comune: "Codice catastale del comune"
+      catasto_foglio: "Foglio"
+      catasto_sezione: "Sezione"
+      catasto_mappale: "Particella Mappale"
+      catasto_subalterno: "Subalterno"
 
-        soggetti:
-            label: 'Soggetti aventi titolo'
-            title: 'Elenco dei soggetti aventi titolo come richiesto nel modulo A della domanda S.C.I.A.'
-            guida_alla_compilazione: 'Allega il/i modulo/i A correttamente compilato/i'
-        allegati_tecnici:
-            label: 'Allegati tecnici  (A)'
-            title: 'Attestazione tipologia di intervento e allegati di Documentazione tecnica'
-            guida_alla_compilazione: "Documentazione tecnica di progetto <strong>essenziale ai fini dell'ammissibilità</strong> da produrre, in funzione della tipologia dell'intervento in progetto e in coerenza con il quadro sinottico parte integrante del presente allegato, in forma cartacea in <strong>duplice copia</strong> e su idoneo supporto informatico con possibilità di stampa e riproduzione in <strong>copia singola</strong>.<br/>Barrare gli elaborati oggetto di presentazione.<br/>Per le varianti va operato riferimento esclusivamente ai contenuti della variante stessa.<br/><strong>I punti contrassegnati con l'asterisco(<span style='color: red'>*</span>) sono obbligatori.</strong>"
-            tipo_intervento_label: 'Tipologia di intervento'
-            tipi_intervento:
-                default: "Standard"
-                manutenzione_straordinaria: Manutenzione Straordinaria
-                ristrutturazione_edilizia: Ristrutturazione Edilizia
-                restauro_e_risanamento_conservativo: Restauro e Risanamento Conservativo
-                ristrutturazione_urbanistica: Ristrutturazione Urbanistica
-                altro_tipo: Altro tipo
-            files:
-              TEC_ELABORATI_VINCOLI:
-                title: ''
-                description: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
-              TEC_DOC_FOTOGRAFICA:
-                title: ''
-                description: 	Documentazione fotografica dello stato di fatto
-              TEC_RELAZIONE_TECNICA:
-                title: ''
-                description: 	Relazione tecnica
-              TEC_PLANIMETRIE:
-                title: ''
-                description: 	Planimetrie
-              TEC_SEZ_ALTIMETRICHE:
-                title: ''
-                description: 	Sezioni altimetriche con raffronto
-              TEC_PIANTE:
-                title: ''
-                description: 	Piante
-              TEC_SEZIONI:
-                title: ''
-                description: 	Sezioni
-              TEC_PROSPETTI:
-                title: ''
-                description: 	Prospetti
-              TEC_TECNICA_COSTR:
-                title: ''
-                description: 	Documentazione tecnica necessaria alla determinazione del contributo di costruzione
-              TEC_SPAZI_PARCHEGGIO:
-                title: ''
-                description: 	Spazi di parcheggio
-              TEC_BARRIERE_ARCHITETTONICHE:
-                title: ''
-                description: 	Elaborati relativi al superamento delle barriere architettoniche
-              TEC_RELAZIONE_GEOLOGICA:
-                title: ''
-                description: 	Perizia, studio o relazione geologica di fattibilità dell’intervento
-              TEC_STUDIO_COMPATIBILITA:
-                title: ''
-                description: 	Studio di compatibilità
-              TEC_RELAZIONE_ENERGETICA:
-                title: ''
-                description: 	Relazione energetica
-              TEC_RISULTATI_ANALISI:
-                title: ''
-                description: 	Risultati delle analisi ambientali sulla qualità dei terreni
-              TEC_COMUNICAZIONI_MATERIA:
-                title: ''
-                description: 'Comunicazioni in materia di gestione delle terre e rocce da scavo'
-              TEC_PIANO_LAVORO:
-                title: ''
-                description: 	Piano di lavoro di demolizione o rimozione dell'amianto
-              TEC_IMP-ELET:
-                title: ''
-                description: 	Schema del progetto degli impianti tecnologici di produzione, trasformazione, trasporto, distribuzione, utilizzazione dell'energia elettrica
-              TEC_IMP-SCAR:
-                title: ''
-                description: 	schema del progetto degli impianti tecnologici di protezione contro le scariche atmosferiche
-              TEC_IMP-RADIO:
-                title: ''
-                description: 	schema del progetto degli impianti tecnologici radiotelevisivi, antenne ed elettronici in genere
-              TEC_IMP-CLIMA:
-                title: ''
-                description: 	schema del progetto degli impianti tecnologici di riscaldamento, di climatizzazione, di condizionamento e di refrigerazione di qualsiasi natura o specie, comprese le opere di evacuazione dei prodotti della combustione e delle condense, e di ventilazione ed aerazione dei locali
-              TEC_IMP-IDRIC:
-                title: ''
-                description: 	schema del progetto degli impianti tecnologici idrici e sanitari di qualsiasi natura o specie
-              TEC_IMP-GAS:
-                title: ''
-                description: 	schema del progetto degli impianti tecnologici per la distribuzione e l'utilizzazione di gas di qualsiasi tipo, comprese le opere di evacuazione dei prodotti della combustione e ventilazione ed aerazione dei locali
-              TEC_IMP-ELEV:
-                title: ''
-                description: 	schema del progetto degli impianti tecnologici di sollevamento di persone o di cose per mezzo di ascensori, di montacarichi, di scale mobili e simili
-              TEC_IMP-INCEN:
-                title: ''
-                description: 	schema del progetto degli impianti tecnologici di protezione incendio
-              TEC_RETI_SCARIC:
-                title: ''
-                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi scarichi acque nere e bianche
-              TEC_RETI_RIFIU:
-                title: ''
-                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi spazi di raccolta dei rifiuti solidi urbani
-              TEC_RETI_ACQ:
-                title: ''
-                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di acqua
-              TEC_RETI_ELET:
-                title: ''
-                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di energia elettrica
-              TEC_RETI_GAS:
-                title: ''
-                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di calore, gas, ecc.
-              TEC_RETI_ALTRO:
-                title: ''
-                description: 	planimetria delle reti ed eventuale documentazione del soggetto gestore di altri servizi
-              TEC_COLLEGAMENTO_FIBRA:
-                title: ''
-                description: 	collegamenti in fibra ottica
-              TEC_DOTAZIONI_RICARICA:
-                title: ''
-                description: 	dotazioni per la ricarica dei veicoli elettrici
-              TEC_RELAZIONE_ACUSTICHE:
-                title: ''
-                description: 	relazione sulle caratteristiche acustiche
-              TEC_DOC_IMPATTO_ACUSTICO:
-                title: ''
-                description: 	documentazione di impatto acustico
-              TEC_DOC_CLIMA_ACUSTICO:
-                title: ''
-                description: 	documentazione di valutazione previsionale di clima acustico
-              OP_DOC_FOTOGRAFICA:
-                title: ''
-                description: 	documentazione fotografica
-              OP_PLANIMETRIA:
-                title: ''
-                description: 	elaborati progettuali a firma di un tecnico abilitato, che rappresenti lo stato di raffronto nel caso di interventi di manutenzione straordinaria che comportano la modifica dell'impianto distributivo interno; e relativa attestazione ai sensi dell'art. 15, comma 2, della l.p. n. 15/2015 in merito alla corrispondenza dei contenuti del progetto rispetto alle disposizioni vigenti e la corrispondenza dei relativi contenuti rispetto a studi o perizie allegate, quali parti integranti al progetto.
-              OP_PLANIMETRIA_CILA:
-                title: ''
-                description: 	elaborati progettuali rappresentativi dell'intervento.
-              OP_ATTESTAZIONE:
-                title: ''
-                description: 	attestazione di un tecnico abilitato che dimostri l’irrilevanza strutturale.
-              OP_ELABORATO_PROGETTUALE:
-                title: ''
-                description: 	elaborato/i progettuale/i relativo/i agli impianti di cui al d.m. 37/2008.
-              OP_RELAZIONE_DITTA:
-                title: ''
-                description: 	relazione della ditta/tecnico attestante i requisiti di prestazione energetica (nel caso in cui gli interventi ricadano nell'articolo 4, del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e ss.mm).
-              OP_RELAZIONE_ENERGETICA:
-                title: ''
-                description: 	relazione energetica (allegati dm. 26 giugno 2009 schemi e modalità di riferimento per la compilazione della relazione tecnica di progetto ai fini dell’applicazione delle prescrizioni e dei requisiti minimi di prestazione energetica negli edifici) nel caso in cui gli interventi ricadano nell'articolo 4, commi 3, 4 o 5 del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e s.m.i
-              OP_RELAZIONE_TECNICA:
-                title: ''
-                description: 	relazione tecnica descrittiva delle opere , della loro funzione temporanea e improrogabile, dei tempi previsti di utilizzazione e delle modalità di rimozione e rimessa in pristino dei luoghi ed elaborati cartografici relativi al manufatto o alle opere.
-              OP_CATASTO:
-                title: ''
-                description: 	denuncia di variazione catastale comprensiva delle planimetrie e visure catastali o le planimetrie catastali firmate dal tecnico abilitato unitamente alla ricevuta di deposito della richiesta di accatastamento dell'immobile.
-              OP_NOTIFICA:
-                title: ''
-                description: 	documentazione necessaria per la notifica, il cui contenuto sarà riprodotto su apposita tabella esposta in cantiere per tutta la durata dei lavori, in luogo visibile dall'esterno.
-              OP_ALTRO:
-                title: ''
-                description: 	altra documentazione tecnica
-              DUL_NUM_CIVICA:
-                title: ''
-                description: 	nota di assegnazione o aggiornamento di numerazione civica rilasciata dagli uffici comunali competenti
-              DUL_COPERTURE:
-                title: ''
-                description: 	ai sensi dell'art. 91 ter della l.p. 22/91 e dell'art. 4 del d.p.p. 25 febbraio 2008, n.7-114/leg, la documentazione sulla prevenzione dei rischi di infortunio a seguito di cadute dall'alto nei lavori di manutenzione ordinarie delle coperture
-              DUL_CONF_IMPIANTI:
-                title: ''
-                description: 	modello “deposito dichiarazioni di conformità degli impianti” - va allegata copia della ricevuta di avvenuto deposito delle dichiarazioni di conformità relative a tutti gli impianti installati e/o modificati, come previsto dal d.m. 37/2008
-              DUL_CERT_ENERGETICA:
-                title: ''
-                description: 	attestato di prestazione certificazione energetica ai sensi dell'art. 6, comma 5 2, del d.p.p. 11-13/leg. del 13 luglio 2009 e della d.g.p. 163/2017 3110/2009 unitamente all'asseverazione del direttore lavori ai sensi dell'art. 8, comma2, del d.lgs. n. 192/2005
-              DUL_ASSEVERA:
-                title: ''
-                description: 	asseverazione del direttore lavori ai sensi dell'art. 8, comma 2, del d. lgs. n. 192/2005, in merito alla “conformità delle opere realizzate rispetto al progetto ed alle sue eventuali varianti ed alla relazione tecnica di cui al comma 1 del medesimo articolo” (quando è soggetto diverso dal tecnico abilitato sottoscrittore del presente modello
-              DUL_CERT_STATICO:
-                title: ''
-                description: 	copia del certificato di collaudo statico e di conformità alle norme antisismiche ove richiesto.
-              DUL_ANTINCENDIO:
-                title: ''
-                description: 	copia della ricevuta dell'avvenuta presentazione della dichiarazione che costituisce ai soli fini antincendio, autorizzazione provvisoria all'esercizio dell'attività (ai sensi dell'art. 3, comma 5, del d.p.r. 37/1998) ovvero copia del certificato di prevenzione antincendi ove necessario (legge 966/1965).
-              DUL_CATASTO:
-                title: ''
-                description: 	planimetrie e visure catastali oppure planimetrie catastali firmate dal tecnico abilitato e ricevuta di deposito della richiesta di accatastamento dell'immobile.
-              DUL_PLANIMETRIE:
-                title: ''
-                description: 	planimetrie fine lavori parziale
-              DUL_TULPS:
-                title: ''
-                description: 	autorizzazione ai sensi del tulps per locali destinati a esercizi pubblici.
-              AMB_PRECETTIVI:
-                title: ''
-                description: 	indicazione dei contenuti precettivi della disciplina paesaggistica vigente nell'area
-              AMB_DESCRIZIONE:
-                title: ''
-                description: 	descrizione dello stato attuale dell'area interessata dall'intervento
-              AMB_CONFORMITA:
-                title: ''
-                description: 	attestazione di conformità del progetto alle specifiche prescrizioni d'uso dei beni paesaggisticia, se esistenti
-              AMB_COMPATIBILITA:
-                title: ''
-                description: 	descrizione della compatibilità del progetto stesso con i valori paesaggistici che qualificano il contenuto di riferimento
-              AMB_MISURE:
-                title: ''
-                description: Indicazione di eventuali misure di inserimento paesaggistico se previste
+    dati_intervento:
+      label: 'Intervento'
+      title: "Tipologia di intervento"
+      guida_alla_compilazione: "Inserire i dati dell'intervento"
+      tipo_intervento: "Tipologia di intervento"
+      tipo_allaccio: "Tipologia di allaccio"
+      tipo_uso: "Tipologia d'utilizzo"
+      diametro_rete_interna: "Diametro rete interna"
 
-        vincoli:
-            label: Vincoli
-            title: Vincoli e relativi provvedimenti
-            guida_alla_compilazione: Vincoli e relativi provvedimenti
-            files:
-              VIN_TUTELA_PAESAGGISTICA:
-                title: ''
-                description: 	autorizzazione per la tutela paesaggistica di cui alla l.p. n. 15/2015
-              VIN_BENI_CULTURALI:
-                title: ''
-                description: 	autorizzazioni relative ai beni culturali di cui al d.lgs. n. 42/2004
-              VIN_IMPATTO_AMBIENTALE:
-                title: ''
-                description: 	adempimenti in materia di valutazione di impatto ambientale
-              VIN_VALUTAZIONE_INCIDENZA:
-                title: ''
-                description: 	valutazione di incidenza per interventi che interessano le zone speciali di conservazione o altre aree protette di cui alla l.p. 11/2007
-              VIN_AREE:
-                title: ''
-                description: agricole	autorizzazione per interventi nelle aree agricole del pup
-              VIN_UTILIZZO_ACQUE_PUBBLICHE:
-                title: ''
-                description: 	autorizzazione al fine della compatibilità con riferimento al piano generale di utilizzazione delle acque pubbliche (pguap) della provincia autonoma di trento. sono asseverati gli elaborati nei casi di cui all'articolo 15, comma 3 della l.p. n. 15/2015
-              VIN_VINCOLO_IDROGEOLOGICO:
-                title: ''
-                description: 	autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. n. 11/2007
-              VIN_TUTELA_ACQUE_PUBBLICHE:
-                title: ''
-                description: 	autorizzazione/concessione di cui alla l.p. n. 18/1976 ai fini della tutela delle acque pubbliche
-              VIN_TUTELA_AMBIENTI_INQUINAMENTO:
-                title: ''
-                description: 	provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti dagli inquinamenti
-              VIN_TULP:
-                title: ''
-                description: 	provvedimenti di cui al tulp in materia di tutela dell'ambiente dagli inquinamenti
-              VIN_LIMITI_ELETTROMAGNETICI:
-                title: ''
-                description: 	documentazione relativa all'avvenuta determinazione delle fasce di rispetto degli elettrodotti e alla verifica del rispetto dei limiti di esposizione ai relativi campi elettromagnetici
-              VIN_FASCE_RISPETTO_STRADALE:
-                title: ''
-                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto stradale
-              VIN_FASCE_RISPETTO_FERROVIARIE:
-                title: ''
-                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto ferroviarie
-              VIN_FASCE_RISPETTO_AEROPORTUALE:
-                title: ''
-                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto aeroportuali (avvenuta trasmissione del progetto agli enti competenti al controllo, gestione e sicurezza della navigazione)
-              VIN_FASCE_RISPETTO_CIMITERIALE:
-                title: ''
-                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto cimiteriale
-              VIN_FASCE_RISPETTO_DEPURATORE:
-                title: ''
-                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto dei depuratori
-              VIN_FASCE_RISPETTO_INCIDENTE:
-                title: ''
-                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di aree di danno da incidente
-              VIN_FASCE_RISPETTO_ALTRO:
-                title: ''
-                description: 	parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di altro tipo
-              VIN_IMPIANTI:
-                title: ''
-                description:  telecomunicazioni	autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
-              VIN_PREVENZIONE_INCENDI:
-                title: ''
-                description: 	parere di prevenzione incendi per attività soggetti ai sensi del dpr 151/2001
-              VIN_TULPS_ESERCIZI_PUBBLICI:
-                title: ''
-                description: 	autorizzazione ai sensi del tulps per locali destinati esercizi pubblici
-              VIN_VISTO_CORRISPONDENZA:
-                title: ''
-                description: 	visto di corrispondenza ai sensi della l.p. n. 7/2002
-              VIN_IMPIANTI_ILLUMINAZIONE_ESTERNA:
-                title: ''
-                description: 	autorizzazione per impianti di illuminazione esterna di cui al d.p.p. n. 2-34/2010
-              VIN_VERBALE_ASSEMBLEA:
-                title: ''
-                description: 	si allega il verbale di assemblea
-              VIN_ASSENSO_COMPROPRIETARI:
-                title: ''
-                description: 	atto di assenso dei comproprietari, che si allega
-              VIN_ALTRO:
-                title: ''
-                description: 	ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari
-              VIN_ALTRO_AMBIENTI:
-                title: ''
-                description: Altri provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti per gli inquinamenti
-              VIN_IMPIANTI_TELECOMUNICAZIONI:
-                title: ''
-                description: Autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
-              VIN_AREE_AGRICOLE:
-                title: ''
-                description: Autorizzazione per interventi nelle aree agricole del PUP
+    dati_contatto:
+      label: 'Contatti'
+      title: 'Contatti'
+      guida_alla_compilazione: "Specificare indirizzo per comunicazioni e rimborsi"
+      use_alternate: "Utilizza i segenti dati"
+      indirizzo: "Indirizzo"
+      numero_civico: "Numero civico"
+      cap: "CAP"
+      comune: "Comune"
 
-        provvedimenti:
-            label: 'Provvedimenti'
-            title: 'Provvedimenti (elencati in Allegato C della domanda S.C.I.A.)'
-            guida_alla_compilazione: "Provvedimenti (elencati in Allegato C della domanda S.C.I.A.) da allegare se necessario"
-            files:
-                PROV_PC-PAE:
-                    title: "a) autorizzazione per la tutela paesaggistica di cui alla l.p. 1/2008"
-                    description: ""
-                PROV_PC-CUL:
-                    title: "b) autorizzazioni relative ai beni culturali di cui agli artt. 21 e 22 del d.lgs. 42/2004"
-                    description: ""
-                PROV_AR-VIA:
-                    title: "c) adempimenti di cui alla l.p. 28/1988 \"Disciplina della valutazione dell'impatto ambientale e ulteriori norme di tutela dell'ambiente\""
-                    description: ""
-                PROV_AR-VI:
-                    title: "d) valutazione di incidenza (V.I.) per interventi ricadenti all'interno di Siti di Interesse Comunitario (S.I.C.) o Zone di Protezione Speciale (Z.P.S.) ex art. 25 delle norme di attuazione del PUP"
-                    description: ""
-                PROV_AR-PGUAP:
-                    title: "e) provvedimenti di cui agli artt. 16 e 17 delle relative norme di attuazione del Piano Generale di Utilizzazione delle Acque Pubbliche (PGUAP) della Provincia autonoma di Trento"
-                    description: ""
-                PROV_AR-VINIDRO:
-                    title: "f) autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. 11/2007 e relativo regolamento di attuazione"
-                    description: ""
-                PROV_AR-ACQP:
-                    title: "g) autorizzazione/concessione P.A.T. - Servizio Bacini Montani ai fini della tutela delle acque pubbliche nel caso in cui gli interventi interessino fasce di rispetto regolate dalla l.p. 18/1976 \"Norme in materia di acque pubbliche, opere idauliche e relativi servizi provinciali\" anche ai sensi della l.p. 11/2007"
-                    description: ""
-                PROV_AR-ELETTR:
-                    title: "h) documentazione relativa all'avvenuta determinazione delle fasce di rispetto per gli elettrodotti e la verifica del rispetto dei limiti di esposizione ai relativi campi elettrici e magnetici"
-                    description: ""
-                PROV_AR-RADIO:
-                    title: "i) autorizzazione del Comitato istituito presso l'Agenzia provinciale per la protezione dell'ambiente per la realizzazione di impianti di telecomunicazione, ai sensi della l.p. 9/1997 \"Individuazione dei siti per la localizzazione di impianti di radiodiffusione\""
-                    description: ""
-                PROV_AR-INQ:
-                    title: "j) provvedimenti di cui al T.U.L.P. in materia di tutela dell'ambiente degli inquinamenti - D.P.G.P. n. 1-41/Leg. del 1987 e D.L. 209/1997 e 152/2006"
-                    description: ""
-                PROV_AR-SOIS:
-                    title: "k) parere P.A.T. - Servizio Opere Igientico-Sanitarie qualora previsto da specifiche normative di settore"
-                    description: ""
-                PROV_AR-APSS:
-                    title: "l) parere Azienda Provinciale per i Servizi Sanitari qualora previsto da specifiche normative di settore"
-                    description: ""
-                PROV_AR-ILLU:
-                    title: "m) autorizzazione del Comune per la realizzazione di impianti di illuminazione esterna, ai sensi del D.P.P. n. 2-34/Leg. del 2010 in materia di inquinamento luminoso"
-                    description: ""
-                PROV_FRT_FASC-VIA:
-                    title: "o.a) Fasce di rispetto e trasporti: viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
-                    description: ""
-                PROV_FRT_FASC-PC:
-                    title: "o.b) Fasce di rispetto e trasporti: passi carrai"
-                    description: ""
-                PROV_FRT_FASC-FER:
-                    title: "o.c) Fasce di rispetto e trasporti: interventi entro fasce di rispetto ferroviarie"
-                    description: ""
-                PROV_FRT_FASC-CIM:
-                    title: "o.d) Fasce di rispetto e trasporti: interventi entro fasce di rispetto cimiteriali"
-                    description: ""
-                PROV_FRT_FASC-ISO:
-                    title: "o.e) Fasce di rispetto e trasporti: interventi entro le fasce di rispetto di aree di isodanno"
-                    description: ""
-                PROV_FRT_FASC-LE:
-                    title: "o.f) Fasce di rispetto e trasporti: autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
-                    description: ""
-                PROV_FRT_FASC-DEP:
-                    title: "o.g) Fasce di rispetto e trasporti: autorizzazione per interventi entro fasce di rispetto di depuratori"
-                    description: ""
-                PROV_FRT_FASC-AER:
-                    title: "o.h) Fasce di rispetto e trasporti: avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
-                    description: ""
-                PROV_FRT_FASC-ALTRO:
-                    title: "o.i) Fasce di rispetto e trasporti: altro"
-                    description: ""
-                PROV_AGR_SA:
-                    title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 'Pianificazione urbanistica e governo del territorio'"
-                    description: ""
-                PROV_AGR_TUR:
-                    title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, 'Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori'"
-                    description: ""
-                PROV_AGR_ALB:
-                    title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
-                    description: ""
-                PROV_AGR_MANU:
-                    title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
-                    description: ""
-                PROV_PUP_INC:
-                    title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
-                    description: ""
-                PROV_PUP_TULPS:
-                    title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
-                    description: ""
-                PROV_PUP_GEO:
-                    title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
-                    description: ""
-                PROV_PUP_ALB:
-                    title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, 'Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica'"
-                    description: ""
-                PROV_PUP_RIFU:
-                    title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, 'Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate'"
-                    description: ""
-                PROV_PUP_ALTRO:
-                    title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
-                    description: ""
-                FRT_FASC-VIA:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
-                    description: ""
-                FRT_FASC-PC:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a passi carrai"
-                    description: ""
-                FRT_FASC-FER:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro fasce di rispetto ferroviarie"
-                    description: ""
-                FRT_FASC-CIM:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto cimiteriali"
-                    description: ""
-                FRT_FASC-ISO:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto di aree di isodanno"
-                    description: ""
-                FRT_FASC-LE:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
-                    description: ""
-                FRT_FASC-DEP:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi entro fasce di rispetto di depuratori"
-                    description: ""
-                FRT_FASC-AER:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
-                    description: ""
-                FRT_FASC-ALTRO:
-                    title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a altro"
-                    description: ""
-                AGR_SA:
-                    title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 \"Pianificazione urbanistica e governo del territorio\""
-                    description: ""
-                AGR_TUR:
-                    title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, \"Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori\""
-                    description: ""
-                AGR_ALB:
-                    title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
-                    description: ""
-                AGR_MANU:
-                    title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
-                    description: ""
-                PUP_INC:
-                    title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
-                    description: ""
-                PUP_TULPS:
-                    title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
-                    description: ""
-                PUP_GEO:
-                    title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
-                    description: ""
-                PUP_ALB:
-                    title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, \"Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica\""
-                    description: ""
-                PUP_RIFU:
-                    title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, \"Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate\""
-                    description: ""
-                PUP_ALTRO:
-                    title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
-                    description: ""
+  autolettura_acqua:
+    dati_intestatario:
+      label: 'Intestatario'
+      title: "Dati dell'intestatario del contratto"
+      guida_alla_compilazione: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
+      intestatario_codice_utente: "Codice utenza"
+      intestatario_nome: "Nome"
+      intestatario_cognome: "Cognome"
+      intestatario_indirizzo: "Indirizzo"
+      intestatario_cap: "CAP"
+      intestatario_citta: "Città"
+      intestatario_telefono: "Recapito telefonico per eventuali comunicazioni"
+      intestatario_email: "Recapito email per eventuali comunicazioni"
 
-    atto_nascita:
-        dati_atto:
-            title: 'Dati atto'
-            label: 'Dati atto'
-            guida_alla_compilazione: "Se altra persona diversa dal richiedente, indicare i dati completi della persona cui si riferisce l'atto"
-            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
-            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
-            cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+    dati_contatore:
+      label: "Contatore"
+      title: "Contatore"
+      guida_alla_compilazione: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
+      contatore_numero: "Numero (da leggere sulla ghiera d'ottone del contatore)"
+      contatore_uso: "Tipologia di utilizzo del contatore"
+      contatore_unita_immobiliari: "Numero di unità immobiliari (appartamenti, negozi, uffici, ...) serviti dal contatore"
 
-    certificato_morte:
-        dati_atto:
-            title: 'Dati identificativi deceduto'
-            label: 'Dati deceduto'
-            guida_alla_compilazione: "Indicare i dati completi del defunto"
-            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
-            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
-            data_morte_soggetto_certificato: "Data del decesso"
+    dati_lettura:
+      label: "Lettura"
+      title: "Dati della lettura"
+      guida_alla_compilazione: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
+      lettura_metri_cubi: "Lettura dei metri cubi"
+      lettura_data: "Data della rilevazione"
 
-    atto_morte:
-        dati_atto:
-            title: "Dati completi della persona cui si riferisce l'atto"
-            label: 'Dati deceduto'
-            guida_alla_compilazione: "Indicare i dati completi del defunto"
-            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
-            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
-            cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+    note:
+      label: "Altre comunicazioni"
+      title: "Altre comunicazioni"
+      guida_alla_compilazione: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
 
-    certificato_matrimonio:
-        dati_atto:
-            title: "Dati identificativi dello sposo o della sposa"
-            label: 'Dati identificativi dello sposo o della sposa'
-            guida_alla_compilazione: "Indicare i dati identificativi dello sposo o della sposa"
-            nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
-            cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
-            cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+  cambio_residenza:
 
-    iscrizione_registro_associazioni:
-      allegati:
-        label: Allegati
-        guida_alla_compilazione: Carica gli allegati richiesti. Il logo deve essere in formato jpeg, i documenti in formato PDF
+    dichiarazione_provenienza:
+      label: "Provenienza"
+      title: "Dichiarazione della provenienza"
+      guida_alla_compilazione: "Dichiarazione della provenienza: da un altro comune, dall'estero o dallo stesso comune"
+      comune: "Dichiarazione di cambiamento di abitazione nell’ambito dello stesso comune"
+      altro_comune: "Dichiarazione di residenza con provenienza da altro comune"
+      estero: "Dichiarazione di residenza con provenienza dall’estero"
+      aire: "Dichiarazione di residenza di cittadini italiani iscritti all’AIRE (Anagrafe degli italiani residenti all’estero) con provenienza dall’estero"
+      altro: "Dichiarazione di residenza per altro motivo"
+
+    dichiarazione_provenienza_dettaglio:
+      label: 'Provenienza (dettaglio)'
+      title: "Dettagli provenienza"
+      guida_alla_compilazione:
+        nessun_allegato: "Per il tipo di provenienza selezionato non sono necessarie altre informazioni"
+        altro_comune: "Indicare il comune di provenienza"
+        stato_estero: "Indicare lo Stato estero di provenienza"
+        aire: "Indicare lo Stato estero e il comune AIRE di provenienza"
+        altro_motivo: "Specificare il motivo"
+
+    dati_residenza:
+      label: "Residenza"
+      title: "Dati residenza"
+      guida_alla_compilazione: "Specifica il nuovo indirizzo di residenza"
+      provincia: "Provincia"
+      comune: "Comune"
+      indirizzo: "Via/Piazza"
+      numero_civico: "Numero civico"
+      scala: "Scala"
+      piano: "Piano"
+      interno: "Interno"
+
+    attualmente_residenti:
+      label: "Residenti"
+      title: "Persone già iscritte nella nuova abitazione"
+      guida_alla_compilazione: "Inserisci le eventuali persone già residenti nell'abitazione per la quale chiedi la residenza"
+
+    tipologia_occupazione:
+      label: "Tipologia"
+      title: "Tipologia di occupazione"
+      guida_alla_compilazione: "Dichiarazione riguardante la tipologia di occupazione della nuova residenza"
+      proprietario: "Proprietario dell'abitazione"
+      locazione: "Intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+      locazione_erp: "Intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+      comodato: "Comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+      usufruttuario: "Usufruttuario"
+      autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+
+    tipologia_occupazione_dettaglio:
+      label: "Tipologia (dettaglio)"
+      title: "Dettagli della tipologia di occupazione"
+      guida_alla_compilazione:
+        proprietario: "Specifica i valori catastali dell'abitazione di proprietà"
+        locazione: "Specifica i dettagli del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+        locazione_erp: "Allega il contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+        comodato: "Specifica i dettagli del contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+        usufruttuario: "Indicare dati utili a consentirne la verifica"
+        autocertificazione: "Allega l'autocertificazione del proprietario dell'appartamento"
+      proprietario:
+        catasto_sezione: "Sezione"
+        catasto_foglio: "Foglio"
+        catasto_particella: "Particella/Mappale"
+        catasto_subalterno: "Subalterno"
+      contratto:
+        agenzia: "Indirizzo agenzia entrate"
+        numero: "Numero contratto"
+        data: "Data di stipula del contratto"
+      verbale_consegna: "Scansione del contratto o del verbale di consegna dell'immobile"
+      usufruttuario_info: "Titolo costitutivo"
+      autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+
+    informazioni_accertamento:
+      label: "Accertamento"
+      title: "Informazioni per accertamento dei dati"
+      guida_alla_compilazione: "Segnalare eventuali giorni ed orari di preferenza per la verifica delle autorità giudiziarie"
+
+  contributo_pannolini:
+    dati_bambino:
+      label: 'Dati del bambino'
+      title: 'Dati del bambino'
+      guida_alla_compilazione: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
+      nome: 'Nome'
+      cognome: 'Cognome'
+      luogo_nascita: 'Luogo di nascita'
+      data_nascita: 'Data di nascita'
+
+    dati_acquisto:
+      label: "Dati dell'Acquisto"
+      title: "Dati dell'Acquisto"
+      guida_alla_compilazione: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello passaggio successivo'
+      tipo_pannolini: 'Tipo dei pannolini acquistati'
+      punto_vendita: 'Nome del punto vendita'
+      data_acquisto: 'Data di acquisto'
+      totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
+
+    dati_conto_corrente:
+      label: 'Dati Conto Corrente'
+      title: 'Dati Conto Corrente'
+      guida_alla_compilazione: 'Inserisci i dati del conto corrente'
+
+  iscrizione_asilo_nido:
+    seleziona_nido:
+      label: 'Struttura'
+      title: 'Selezione della struttura'
+      guida_alla_compilazione: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
+
+    accettazione_utilizzo:
+      label: 'Accettazione'
+      title: 'Termini di fruizione della struttura'
+      guida_alla_compilazione: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
+      accetto_utilizzo: 'Ho letto i termini di fruizione della struttura'
+
+    seleziona_orari:
+      label: 'Orari e periodo'
+      title: 'Selezione degli orari e del periodo di iscrizione'
+      guida_alla_compilazione: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
+      seleziona_orario: 'Orario prescelto'
+      periodo_iscrizione_da: 'Periodo iscrizione da'
+      periodo_iscrizione_a: 'Periodo iscrizione a'
+      error: "La data di fine iscrizione deve essere maggiore di quella d'inizio"
+
+    dati_bambino:
+      label: 'Dati del bambino'
+      title: 'Dati del bambino'
+      guida_alla_compilazione: 'Inserisci i dati del bambino che intendi iscrivere'
+      nome: 'Nome'
+      cognome: 'Cognome'
+      luogo_nascita: 'Luogo di nascita'
+      data_nascita: 'Data di nascita'
+
+    allega_attestazione_icef:
+      label: 'Attestazione ICEF'
+      title: 'Attestazione ICEF per i servizi alla prima infanzia'
+      guida_alla_compilazione: "Allega l'attestazione ICEF per i servizi alla prima infanzia (in mancanza dell’attestazione verranno applicate le tariffe massime. L’eventuale tariffa agevolata sarà applicata dal primo giorno del mese successivo a quello di presentazione dell’attestazione al Comune)"
+
+  occupazione_suolo_pubblico:
+    nomeIniziativa: 'Nome Manifestazione/Evento'
+    guida_alla_compilazione: 'Inserisci i campi richiesti. I campi marcati con un asterisco (*) sono obbligatori'
+    allegati:
+      label: 'Allegati'
+      guida_alla_compilazione: 'Carica gli allegati richiesti (in formato PDF)'
+    org_richiedente:
+      label: 'Organizzazione richiedente'
+      title: 'Organizzazione richiedente'
+      ruolo_utente: 'Il sottoscritto in qualità di'
+      ragione_sociale: 'Ragione sociale associazione'
+      indirizzo: 'Indirizzo'
+      civico: 'Numero civico'
+      cap: 'Cap'
+      comune: 'Comune'
+      provincia: 'Provincia'
+
+
+    occupazione:
+      nomeIniziativa: 'Nome Manifestazione/Evento'
+      label: 'Luogo occupazione'
+      title: 'Luogo occupazione e Nome Manifestazione/Evento'
+      indirizzo: 'Indirizzo'
+      civico: 'Numero civico'
+      lunghezza: 'Lunghezza in cm'
+      larghezza: 'Larghezza in cm'
+      metri_quadri: 'Metri quadrati'
+      motivazione: 'Motivazione'
+
+    tipologia_occupazione:
+      label: 'Tipologia occupazione'
+      title: 'Tipologia occupazione'
+      tipologia: 'Tipologia'
+
+    tempo_occupazione:
+      label: 'Tempo di occupazione'
+      title: 'Tempo di occupazione'
+      inizio_giorno: 'Giorno inizio occupazione'
+      inizio_ora: 'Ora inizio occupazione'
+      fine_giorno: 'Giorno fine occupazione'
+      fine_ora: 'Ora fine occupazione'
+      error: 'Selezionare un giorno di inizio precedente a quello di fine'
+    importo:
+      guida_alla_compilazione: "Inserisci l'importo corretto per la pratica.<br/>Trovi le istruzioni per il calcolo a questo indirizzo: <a href='http://www.comune.rovereto.tn.it/istruzioni-per-calcolo-importi'>Comune di Rovereto - Istruzioni per il calcolo degli importi</a>"
+
+  contributo_associazioni:
+    tipologia_attivita:
+      label: 'Tipologia attività'
+      title: 'Tipologia attività'
+      tipologia: 'Selezionare il tipo di attività'
+      commerciale: 'Svolge attività commerciale'
+      non_commerciale: 'Non svolge attività commerciale (art. 108 del Testo Unico delle Imposte sui redditi)'
+      guida_alla_compilazione: "Seleziona la tipologia di attività che l'organizzazione svolge"
+
+    contributo:
+      label: 'Uso del contributo'
+      title: 'Uso del contributo'
+      tipologia_contributo: 'Tipologia contributo'
+      beni_strumentali: 'Acquisto di beni strumentali'
+      fini_istituzionali_commerciali: 'Attività per il perseguimento di fini istituzionali a carattere commerciale'
+      fini_istituzionali_non_commerciali: 'Attività per il perseguimento di fini istituzionali non a carattere commerciale'
+      manifestazione_istituzionale_non_commerciale: 'Manifestazione rientrante nell’attività istituzionale non a carattere commerciale'
+      commerciale: 'Attività a carattere commerciale'
+      descrizione: 'Descrizione'
+      anno: 'Anno di attività'
+      guida_alla_compilazione: "Selezionare il tipo di contributo ed inserire descrizione ed anno dell'attività per cui si fa domanda"
+
+  scia:
+    error:
+      allegato_richiesto: "Allegare almeno un file nel campo %field%"
+
+    modulo_default:
+      label: 'Modulo Domanda'
+      title: 'Modulo principale della domanda'
+      guida_alla_compilazione: 'Allega il modulo della domanda correttamente compilato'
+
+    allegati_modulo_scia:
+      label: 'Allegati alla domanda'
+      title: 'Documentazione allegata alla domanda'
+      guida_alla_compilazione: 'Allega tutti i documenti elencati'
+      files:
+        DOM_DELEGA:
+          title: Delega
+          description: Procura/Delega a presentare la pratica
+        DOM_PRIVACY:
+          title: Privacy
+          description: Informativa sul trattamento dei dati personali
+        DOM_ISPAT:
+          title: Modelli ISPAT
+          description: Modelli statistici ISPAT
+        DOM_CI:
+          title: "Documenti d'identità"
+          description: "Copia fotostatica di valido documento d'identità degli aventi titolo alla presentazione S.C.I.A, del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+        DOM_CF:
+          title: "Codici fiscali o partite IVA"
+          description: "Fotocopia codice fiscale o partita IVA del richiedente e del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+        DOM_EDIFICI-STORICI:
+          title: ''
+          description: Documentazione fotografica con l'indicazione degli interventi previsti per la tutela e la valorizzazione degni edifici soggetti alla disciplina degli insediamenti storici o del patrimonio edilizio tradizionale montano.
+        DOM_OBBLIGHI_SICUREZZA:
+          title: ''
+          description: Obblighi in materia di sicurezza nei luoghi di lavoro di cui al d.lgs n. 81/2008
+        DOM_DOC_DIRITTI_SEGRETERIA:
+          title: 'Ricevuta attestante il pagamento dei diritti di segreteria'
+          description: ''
+        DOM_DOC_PAGAMENTO_CONTRIBUTO:
+          title: ''
+          description: Documentazione attestante il pagamento del contributo di costruzione
+        DOM_PROGETTO_OPERE:
+          title: ''
+          description: Progetto delle opere di urbanizzazione
+        DOM_CONDOMINIO:
+          title: ''
+          description: Atto di assenso del condominio e pertanto si allega il verbale di assemblea
+
+    soggetti:
+      label: 'Soggetti aventi titolo'
+      title: 'Elenco dei soggetti aventi titolo come richiesto nel modulo A della domanda S.C.I.A.'
+      guida_alla_compilazione: 'Allega il/i modulo/i A correttamente compilato/i'
+    allegati_tecnici:
+      label: 'Allegati tecnici  (A)'
+      title: 'Attestazione tipologia di intervento e allegati di Documentazione tecnica'
+      guida_alla_compilazione: "Documentazione tecnica di progetto <strong>essenziale ai fini dell'ammissibilità</strong> da produrre, in funzione della tipologia dell'intervento in progetto e in coerenza con il quadro sinottico parte integrante del presente allegato, in forma cartacea in <strong>duplice copia</strong> e su idoneo supporto informatico con possibilità di stampa e riproduzione in <strong>copia singola</strong>.<br/>Barrare gli elaborati oggetto di presentazione.<br/>Per le varianti va operato riferimento esclusivamente ai contenuti della variante stessa.<br/><strong>I punti contrassegnati con l'asterisco(<span style='color: red'>*</span>) sono obbligatori.</strong>"
+      tipo_intervento_label: 'Tipologia di intervento'
+      tipi_intervento:
+        default: "Standard"
+        manutenzione_straordinaria: Manutenzione Straordinaria
+        ristrutturazione_edilizia: Ristrutturazione Edilizia
+        restauro_e_risanamento_conservativo: Restauro e Risanamento Conservativo
+        ristrutturazione_urbanistica: Ristrutturazione Urbanistica
+        altro_tipo: Altro tipo
+      files:
+        TEC_ELABORATI_VINCOLI:
+          title: ''
+          description: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
+        TEC_DOC_FOTOGRAFICA:
+          title: ''
+          description:    Documentazione fotografica dello stato di fatto
+        TEC_RELAZIONE_TECNICA:
+          title: ''
+          description:    Relazione tecnica
+        TEC_PLANIMETRIE:
+          title: ''
+          description:    Planimetrie
+        TEC_SEZ_ALTIMETRICHE:
+          title: ''
+          description:    Sezioni altimetriche con raffronto
+        TEC_PIANTE:
+          title: ''
+          description:    Piante
+        TEC_SEZIONI:
+          title: ''
+          description:    Sezioni
+        TEC_PROSPETTI:
+          title: ''
+          description:    Prospetti
+        TEC_TECNICA_COSTR:
+          title: ''
+          description:    Documentazione tecnica necessaria alla determinazione del contributo di costruzione
+        TEC_SPAZI_PARCHEGGIO:
+          title: ''
+          description:    Spazi di parcheggio
+        TEC_BARRIERE_ARCHITETTONICHE:
+          title: ''
+          description:    Elaborati relativi al superamento delle barriere architettoniche
+        TEC_RELAZIONE_GEOLOGICA:
+          title: ''
+          description:    Perizia, studio o relazione geologica di fattibilità dell’intervento
+        TEC_STUDIO_COMPATIBILITA:
+          title: ''
+          description:    Studio di compatibilità
+        TEC_RELAZIONE_ENERGETICA:
+          title: ''
+          description:    Relazione energetica
+        TEC_RISULTATI_ANALISI:
+          title: ''
+          description:    Risultati delle analisi ambientali sulla qualità dei terreni
+        TEC_COMUNICAZIONI_MATERIA:
+          title: ''
+          description: 'Comunicazioni in materia di gestione delle terre e rocce da scavo'
+        TEC_PIANO_LAVORO:
+          title: ''
+          description:    Piano di lavoro di demolizione o rimozione dell'amianto
+        TEC_IMP-ELET:
+          title: ''
+          description:    Schema del progetto degli impianti tecnologici di produzione, trasformazione, trasporto, distribuzione, utilizzazione dell'energia elettrica
+        TEC_IMP-SCAR:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di protezione contro le scariche atmosferiche
+        TEC_IMP-RADIO:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici radiotelevisivi, antenne ed elettronici in genere
+        TEC_IMP-CLIMA:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di riscaldamento, di climatizzazione, di condizionamento e di refrigerazione di qualsiasi natura o specie, comprese le opere di evacuazione dei prodotti della combustione e delle condense, e di ventilazione ed aerazione dei locali
+        TEC_IMP-IDRIC:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici idrici e sanitari di qualsiasi natura o specie
+        TEC_IMP-GAS:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici per la distribuzione e l'utilizzazione di gas di qualsiasi tipo, comprese le opere di evacuazione dei prodotti della combustione e ventilazione ed aerazione dei locali
+        TEC_IMP-ELEV:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di sollevamento di persone o di cose per mezzo di ascensori, di montacarichi, di scale mobili e simili
+        TEC_IMP-INCEN:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di protezione incendio
+        TEC_RETI_SCARIC:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi scarichi acque nere e bianche
+        TEC_RETI_RIFIU:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi spazi di raccolta dei rifiuti solidi urbani
+        TEC_RETI_ACQ:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di acqua
+        TEC_RETI_ELET:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di energia elettrica
+        TEC_RETI_GAS:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di calore, gas, ecc.
+        TEC_RETI_ALTRO:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore di altri servizi
+        TEC_COLLEGAMENTO_FIBRA:
+          title: ''
+          description:    collegamenti in fibra ottica
+        TEC_DOTAZIONI_RICARICA:
+          title: ''
+          description:    dotazioni per la ricarica dei veicoli elettrici
+        TEC_RELAZIONE_ACUSTICHE:
+          title: ''
+          description:    relazione sulle caratteristiche acustiche
+        TEC_DOC_IMPATTO_ACUSTICO:
+          title: ''
+          description:    documentazione di impatto acustico
+        TEC_DOC_CLIMA_ACUSTICO:
+          title: ''
+          description:    documentazione di valutazione previsionale di clima acustico
+        OP_DOC_FOTOGRAFICA:
+          title: ''
+          description:    documentazione fotografica
+        OP_PLANIMETRIA:
+          title: ''
+          description:    elaborati progettuali a firma di un tecnico abilitato, che rappresenti lo stato di raffronto nel caso di interventi di manutenzione straordinaria che comportano la modifica dell'impianto distributivo interno; e relativa attestazione ai sensi dell'art. 15, comma 2, della l.p. n. 15/2015 in merito alla corrispondenza dei contenuti del progetto rispetto alle disposizioni vigenti e la corrispondenza dei relativi contenuti rispetto a studi o perizie allegate, quali parti integranti al progetto.
+        OP_PLANIMETRIA_CILA:
+          title: ''
+          description:    elaborati progettuali rappresentativi dell'intervento.
+        OP_ATTESTAZIONE:
+          title: ''
+          description:    attestazione di un tecnico abilitato che dimostri l’irrilevanza strutturale.
+        OP_ELABORATO_PROGETTUALE:
+          title: ''
+          description:    elaborato/i progettuale/i relativo/i agli impianti di cui al d.m. 37/2008.
+        OP_RELAZIONE_DITTA:
+          title: ''
+          description:    relazione della ditta/tecnico attestante i requisiti di prestazione energetica (nel caso in cui gli interventi ricadano nell'articolo 4, del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e ss.mm).
+        OP_RELAZIONE_ENERGETICA:
+          title: ''
+          description:    relazione energetica (allegati dm. 26 giugno 2009 schemi e modalità di riferimento per la compilazione della relazione tecnica di progetto ai fini dell’applicazione delle prescrizioni e dei requisiti minimi di prestazione energetica negli edifici) nel caso in cui gli interventi ricadano nell'articolo 4, commi 3, 4 o 5 del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e s.m.i
+        OP_RELAZIONE_TECNICA:
+          title: ''
+          description:    relazione tecnica descrittiva delle opere , della loro funzione temporanea e improrogabile, dei tempi previsti di utilizzazione e delle modalità di rimozione e rimessa in pristino dei luoghi ed elaborati cartografici relativi al manufatto o alle opere.
+        OP_CATASTO:
+          title: ''
+          description:    denuncia di variazione catastale comprensiva delle planimetrie e visure catastali o le planimetrie catastali firmate dal tecnico abilitato unitamente alla ricevuta di deposito della richiesta di accatastamento dell'immobile.
+        OP_NOTIFICA:
+          title: ''
+          description:    documentazione necessaria per la notifica, il cui contenuto sarà riprodotto su apposita tabella esposta in cantiere per tutta la durata dei lavori, in luogo visibile dall'esterno.
+        OP_ALTRO:
+          title: ''
+          description:    altra documentazione tecnica
+        DUL_NUM_CIVICA:
+          title: ''
+          description:    nota di assegnazione o aggiornamento di numerazione civica rilasciata dagli uffici comunali competenti
+        DUL_COPERTURE:
+          title: ''
+          description:    ai sensi dell'art. 91 ter della l.p. 22/91 e dell'art. 4 del d.p.p. 25 febbraio 2008, n.7-114/leg, la documentazione sulla prevenzione dei rischi di infortunio a seguito di cadute dall'alto nei lavori di manutenzione ordinarie delle coperture
+        DUL_CONF_IMPIANTI:
+          title: ''
+          description:    modello “deposito dichiarazioni di conformità degli impianti” - va allegata copia della ricevuta di avvenuto deposito delle dichiarazioni di conformità relative a tutti gli impianti installati e/o modificati, come previsto dal d.m. 37/2008
+        DUL_CERT_ENERGETICA:
+          title: ''
+          description:    attestato di prestazione certificazione energetica ai sensi dell'art. 6, comma 5 2, del d.p.p. 11-13/leg. del 13 luglio 2009 e della d.g.p. 163/2017 3110/2009 unitamente all'asseverazione del direttore lavori ai sensi dell'art. 8, comma2, del d.lgs. n. 192/2005
+        DUL_ASSEVERA:
+          title: ''
+          description:    asseverazione del direttore lavori ai sensi dell'art. 8, comma 2, del d. lgs. n. 192/2005, in merito alla “conformità delle opere realizzate rispetto al progetto ed alle sue eventuali varianti ed alla relazione tecnica di cui al comma 1 del medesimo articolo” (quando è soggetto diverso dal tecnico abilitato sottoscrittore del presente modello
+        DUL_CERT_STATICO:
+          title: ''
+          description:    copia del certificato di collaudo statico e di conformità alle norme antisismiche ove richiesto.
+        DUL_ANTINCENDIO:
+          title: ''
+          description:    copia della ricevuta dell'avvenuta presentazione della dichiarazione che costituisce ai soli fini antincendio, autorizzazione provvisoria all'esercizio dell'attività (ai sensi dell'art. 3, comma 5, del d.p.r. 37/1998) ovvero copia del certificato di prevenzione antincendi ove necessario (legge 966/1965).
+        DUL_CATASTO:
+          title: ''
+          description:    planimetrie e visure catastali oppure planimetrie catastali firmate dal tecnico abilitato e ricevuta di deposito della richiesta di accatastamento dell'immobile.
+        DUL_PLANIMETRIE:
+          title: ''
+          description:    planimetrie fine lavori parziale
+        DUL_TULPS:
+          title: ''
+          description:    autorizzazione ai sensi del tulps per locali destinati a esercizi pubblici.
+        AMB_PRECETTIVI:
+          title: ''
+          description:    indicazione dei contenuti precettivi della disciplina paesaggistica vigente nell'area
+        AMB_DESCRIZIONE:
+          title: ''
+          description:    descrizione dello stato attuale dell'area interessata dall'intervento
+        AMB_CONFORMITA:
+          title: ''
+          description:    attestazione di conformità del progetto alle specifiche prescrizioni d'uso dei beni paesaggisticia, se esistenti
+        AMB_COMPATIBILITA:
+          title: ''
+          description:    descrizione della compatibilità del progetto stesso con i valori paesaggistici che qualificano il contenuto di riferimento
+        AMB_MISURE:
+          title: ''
+          description: Indicazione di eventuali misure di inserimento paesaggistico se previste
+
+    vincoli:
+      label: Vincoli
+      title: Vincoli e relativi provvedimenti
+      guida_alla_compilazione: Vincoli e relativi provvedimenti
+      files:
+        VIN_TUTELA_PAESAGGISTICA:
+          title: ''
+          description:    autorizzazione per la tutela paesaggistica di cui alla l.p. n. 15/2015
+        VIN_BENI_CULTURALI:
+          title: ''
+          description:    autorizzazioni relative ai beni culturali di cui al d.lgs. n. 42/2004
+        VIN_IMPATTO_AMBIENTALE:
+          title: ''
+          description:    adempimenti in materia di valutazione di impatto ambientale
+        VIN_VALUTAZIONE_INCIDENZA:
+          title: ''
+          description:    valutazione di incidenza per interventi che interessano le zone speciali di conservazione o altre aree protette di cui alla l.p. 11/2007
+        VIN_AREE:
+          title: ''
+          description: agricole	autorizzazione per interventi nelle aree agricole del pup
+        VIN_UTILIZZO_ACQUE_PUBBLICHE:
+          title: ''
+          description:    autorizzazione al fine della compatibilità con riferimento al piano generale di utilizzazione delle acque pubbliche (pguap) della provincia autonoma di trento. sono asseverati gli elaborati nei casi di cui all'articolo 15, comma 3 della l.p. n. 15/2015
+        VIN_VINCOLO_IDROGEOLOGICO:
+          title: ''
+          description:    autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. n. 11/2007
+        VIN_TUTELA_ACQUE_PUBBLICHE:
+          title: ''
+          description:    autorizzazione/concessione di cui alla l.p. n. 18/1976 ai fini della tutela delle acque pubbliche
+        VIN_TUTELA_AMBIENTI_INQUINAMENTO:
+          title: ''
+          description:    provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti dagli inquinamenti
+        VIN_TULP:
+          title: ''
+          description:    provvedimenti di cui al tulp in materia di tutela dell'ambiente dagli inquinamenti
+        VIN_LIMITI_ELETTROMAGNETICI:
+          title: ''
+          description:    documentazione relativa all'avvenuta determinazione delle fasce di rispetto degli elettrodotti e alla verifica del rispetto dei limiti di esposizione ai relativi campi elettromagnetici
+        VIN_FASCE_RISPETTO_STRADALE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto stradale
+        VIN_FASCE_RISPETTO_FERROVIARIE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto ferroviarie
+        VIN_FASCE_RISPETTO_AEROPORTUALE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto aeroportuali (avvenuta trasmissione del progetto agli enti competenti al controllo, gestione e sicurezza della navigazione)
+        VIN_FASCE_RISPETTO_CIMITERIALE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto cimiteriale
+        VIN_FASCE_RISPETTO_DEPURATORE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto dei depuratori
+        VIN_FASCE_RISPETTO_INCIDENTE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di aree di danno da incidente
+        VIN_FASCE_RISPETTO_ALTRO:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di altro tipo
+        VIN_IMPIANTI:
+          title: ''
+          description:  telecomunicazioni	autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+        VIN_PREVENZIONE_INCENDI:
+          title: ''
+          description:    parere di prevenzione incendi per attività soggetti ai sensi del dpr 151/2001
+        VIN_TULPS_ESERCIZI_PUBBLICI:
+          title: ''
+          description:    autorizzazione ai sensi del tulps per locali destinati esercizi pubblici
+        VIN_VISTO_CORRISPONDENZA:
+          title: ''
+          description:    visto di corrispondenza ai sensi della l.p. n. 7/2002
+        VIN_IMPIANTI_ILLUMINAZIONE_ESTERNA:
+          title: ''
+          description:    autorizzazione per impianti di illuminazione esterna di cui al d.p.p. n. 2-34/2010
+        VIN_VERBALE_ASSEMBLEA:
+          title: ''
+          description:    si allega il verbale di assemblea
+        VIN_ASSENSO_COMPROPRIETARI:
+          title: ''
+          description:    atto di assenso dei comproprietari, che si allega
+        VIN_ALTRO:
+          title: ''
+          description:    ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari
+        VIN_ALTRO_AMBIENTI:
+          title: ''
+          description: Altri provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti per gli inquinamenti
+        VIN_IMPIANTI_TELECOMUNICAZIONI:
+          title: ''
+          description: Autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+        VIN_AREE_AGRICOLE:
+          title: ''
+          description: Autorizzazione per interventi nelle aree agricole del PUP
+
+    provvedimenti:
+      label: 'Provvedimenti'
+      title: 'Provvedimenti (elencati in Allegato C della domanda S.C.I.A.)'
+      guida_alla_compilazione: "Provvedimenti (elencati in Allegato C della domanda S.C.I.A.) da allegare se necessario"
+      files:
+        PROV_PC-PAE:
+          title: "a) autorizzazione per la tutela paesaggistica di cui alla l.p. 1/2008"
+          description: ""
+        PROV_PC-CUL:
+          title: "b) autorizzazioni relative ai beni culturali di cui agli artt. 21 e 22 del d.lgs. 42/2004"
+          description: ""
+        PROV_AR-VIA:
+          title: "c) adempimenti di cui alla l.p. 28/1988 \"Disciplina della valutazione dell'impatto ambientale e ulteriori norme di tutela dell'ambiente\""
+          description: ""
+        PROV_AR-VI:
+          title: "d) valutazione di incidenza (V.I.) per interventi ricadenti all'interno di Siti di Interesse Comunitario (S.I.C.) o Zone di Protezione Speciale (Z.P.S.) ex art. 25 delle norme di attuazione del PUP"
+          description: ""
+        PROV_AR-PGUAP:
+          title: "e) provvedimenti di cui agli artt. 16 e 17 delle relative norme di attuazione del Piano Generale di Utilizzazione delle Acque Pubbliche (PGUAP) della Provincia autonoma di Trento"
+          description: ""
+        PROV_AR-VINIDRO:
+          title: "f) autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. 11/2007 e relativo regolamento di attuazione"
+          description: ""
+        PROV_AR-ACQP:
+          title: "g) autorizzazione/concessione P.A.T. - Servizio Bacini Montani ai fini della tutela delle acque pubbliche nel caso in cui gli interventi interessino fasce di rispetto regolate dalla l.p. 18/1976 \"Norme in materia di acque pubbliche, opere idauliche e relativi servizi provinciali\" anche ai sensi della l.p. 11/2007"
+          description: ""
+        PROV_AR-ELETTR:
+          title: "h) documentazione relativa all'avvenuta determinazione delle fasce di rispetto per gli elettrodotti e la verifica del rispetto dei limiti di esposizione ai relativi campi elettrici e magnetici"
+          description: ""
+        PROV_AR-RADIO:
+          title: "i) autorizzazione del Comitato istituito presso l'Agenzia provinciale per la protezione dell'ambiente per la realizzazione di impianti di telecomunicazione, ai sensi della l.p. 9/1997 \"Individuazione dei siti per la localizzazione di impianti di radiodiffusione\""
+          description: ""
+        PROV_AR-INQ:
+          title: "j) provvedimenti di cui al T.U.L.P. in materia di tutela dell'ambiente degli inquinamenti - D.P.G.P. n. 1-41/Leg. del 1987 e D.L. 209/1997 e 152/2006"
+          description: ""
+        PROV_AR-SOIS:
+          title: "k) parere P.A.T. - Servizio Opere Igientico-Sanitarie qualora previsto da specifiche normative di settore"
+          description: ""
+        PROV_AR-APSS:
+          title: "l) parere Azienda Provinciale per i Servizi Sanitari qualora previsto da specifiche normative di settore"
+          description: ""
+        PROV_AR-ILLU:
+          title: "m) autorizzazione del Comune per la realizzazione di impianti di illuminazione esterna, ai sensi del D.P.P. n. 2-34/Leg. del 2010 in materia di inquinamento luminoso"
+          description: ""
+        PROV_FRT_FASC-VIA:
+          title: "o.a) Fasce di rispetto e trasporti: viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
+          description: ""
+        PROV_FRT_FASC-PC:
+          title: "o.b) Fasce di rispetto e trasporti: passi carrai"
+          description: ""
+        PROV_FRT_FASC-FER:
+          title: "o.c) Fasce di rispetto e trasporti: interventi entro fasce di rispetto ferroviarie"
+          description: ""
+        PROV_FRT_FASC-CIM:
+          title: "o.d) Fasce di rispetto e trasporti: interventi entro fasce di rispetto cimiteriali"
+          description: ""
+        PROV_FRT_FASC-ISO:
+          title: "o.e) Fasce di rispetto e trasporti: interventi entro le fasce di rispetto di aree di isodanno"
+          description: ""
+        PROV_FRT_FASC-LE:
+          title: "o.f) Fasce di rispetto e trasporti: autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
+          description: ""
+        PROV_FRT_FASC-DEP:
+          title: "o.g) Fasce di rispetto e trasporti: autorizzazione per interventi entro fasce di rispetto di depuratori"
+          description: ""
+        PROV_FRT_FASC-AER:
+          title: "o.h) Fasce di rispetto e trasporti: avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
+          description: ""
+        PROV_FRT_FASC-ALTRO:
+          title: "o.i) Fasce di rispetto e trasporti: altro"
+          description: ""
+        PROV_AGR_SA:
+          title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 'Pianificazione urbanistica e governo del territorio'"
+          description: ""
+        PROV_AGR_TUR:
+          title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, 'Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori'"
+          description: ""
+        PROV_AGR_ALB:
+          title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
+          description: ""
+        PROV_AGR_MANU:
+          title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
+          description: ""
+        PROV_PUP_INC:
+          title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
+          description: ""
+        PROV_PUP_TULPS:
+          title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
+          description: ""
+        PROV_PUP_GEO:
+          title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
+          description: ""
+        PROV_PUP_ALB:
+          title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, 'Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica'"
+          description: ""
+        PROV_PUP_RIFU:
+          title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, 'Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate'"
+          description: ""
+        PROV_PUP_ALTRO:
+          title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
+          description: ""
+        FRT_FASC-VIA:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
+          description: ""
+        FRT_FASC-PC:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a passi carrai"
+          description: ""
+        FRT_FASC-FER:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro fasce di rispetto ferroviarie"
+          description: ""
+        FRT_FASC-CIM:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto cimiteriali"
+          description: ""
+        FRT_FASC-ISO:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto di aree di isodanno"
+          description: ""
+        FRT_FASC-LE:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
+          description: ""
+        FRT_FASC-DEP:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi entro fasce di rispetto di depuratori"
+          description: ""
+        FRT_FASC-AER:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
+          description: ""
+        FRT_FASC-ALTRO:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a altro"
+          description: ""
+        AGR_SA:
+          title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 \"Pianificazione urbanistica e governo del territorio\""
+          description: ""
+        AGR_TUR:
+          title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, \"Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori\""
+          description: ""
+        AGR_ALB:
+          title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
+          description: ""
+        AGR_MANU:
+          title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
+          description: ""
+        PUP_INC:
+          title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
+          description: ""
+        PUP_TULPS:
+          title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
+          description: ""
+        PUP_GEO:
+          title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
+          description: ""
+        PUP_ALB:
+          title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, \"Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica\""
+          description: ""
+        PUP_RIFU:
+          title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, \"Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate\""
+          description: ""
+        PUP_ALTRO:
+          title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
+          description: ""
+
+  atto_nascita:
+    dati_atto:
+      title: 'Dati atto'
+      label: 'Dati atto'
+      guida_alla_compilazione: "Se altra persona diversa dal richiedente, indicare i dati completi della persona cui si riferisce l'atto"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+  certificato_morte:
+    dati_atto:
+      title: 'Dati identificativi deceduto'
+      label: 'Dati deceduto'
+      guida_alla_compilazione: "Indicare i dati completi del defunto"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      data_morte_soggetto_certificato: "Data del decesso"
+
+  atto_morte:
+    dati_atto:
+      title: "Dati completi della persona cui si riferisce l'atto"
+      label: 'Dati deceduto'
+      guida_alla_compilazione: "Indicare i dati completi del defunto"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+  certificato_matrimonio:
+    dati_atto:
+      title: "Dati identificativi dello sposo o della sposa"
+      label: 'Dati identificativi dello sposo o della sposa'
+      guida_alla_compilazione: "Indicare i dati identificativi dello sposo o della sposa"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+  iscrizione_registro_associazioni:
+    allegati:
+      label: Allegati
+      guida_alla_compilazione: Carica gli allegati richiesti. Il logo deve essere in formato jpeg, i documenti in formato PDF
 
 gateway:
-    bollo:
-        identifier: 'Identificatore'
-        data: 'Data emissione'
-        ora: 'Ora emissione'
+  bollo:
+    identifier: 'Identificatore'
+    data: 'Data emissione'
+    ora: 'Ora emissione'
+
+applicant:
+  data:
+    completename:
+      data:
+        name: Nome richiedente
+        surname: Cognome richiedente
+    Born:
+      data:
+        place_of_birth: Luogo di nascita richiedente
+        date_of_birth: Data di nascita richiedente
+    fiscal_code:
+      data:
+        fiscal_code: Codice fiscale richiedente
+    address:
+      data:
+        address: Indirizzo richiedente
+        house_number: Numero civico richiedente
+        municipality: Città richiedente
+        postal_code: Cap richiedente
+    email_address: Email richiedente
+applicant_nationality: Nazionalià richiedente
+relationship: Relazione  richiedente
+
+
+child:
+  data:
+    completename:
+      data:
+        name: Nome figlio
+        surname: Cognome figlio
+    Born:
+      data:
+        place_of_birth: Luogo di nascita figlio
+        date_of_birth: Data di nascita figlio
+    fiscal_code:
+      data:
+        fiscal_code: Codice fiscale figlio
+    address:
+      data:
+        address: Indirizzo figlio
+        house_number: Numero civico figlio
+        municipality: Città figlio
+        postal_code: Cap figlio
+    email_address: Email richiedente
+child_nationality: Nazionalià figlio
+
+parent:
+  data:
+    completename:
+      data:
+        name: Nome coniuge
+        surname: Cognome coniuge
+    Born:
+      data:
+        place_birth: Luogo di nascita coniuge
+        date_birth: Data di nascita coniuge
+    fiscalCode:
+      data:
+        fiscal_code: Codice fiscale coniuge
+    address:
+      data:
+        address: Indirizzo coniuge
+        house_number: Numero civico coniuge
+        municipality: Città coniuge
+        postal_code: Cap coniuge
+parent_nationality: Nazionalià coniuge
+
+tel_number:
+  0:
+    nome: 'Recapito telefonico'
+    telefono: 'Numero recapito telefonico'
+    tel_name: 'Recapito telefonico'
+    tel_number: 'Numero recapito telefonico'
+  1:
+    tel_name: 'Recapito telefonico'
+    tel_number: 'Numero recapito telefonico'
+  2:
+    tel_name: 'Recapito telefonico'
+    tel_number: 'Numero recapito telefonico'
+  3:
+    tel_name: 'Recapito telefonico'
+    tel_number: 'Numero recapito telefonico'
+
+nursery_priority_1: Asilo priorità 1
+nursery_priority_2: Asilo priorità 2
+nursery_priority_3: Asilo priorità 3
+nursery_priority_4: Asilo priorità 4
+nursery_priority_5: Asilo priorità 5
+nursery_priority_6: Asilo priorità 6
+nursery_priority_7: Asilo priorità 7
+nursery_priority_8: Asilo priorità 8
+nursery_priority_9: Asilo priorità 9
+nursery_priority_10: Asilo priorità 10
+
+applicant_changing_residence: Richiedente iscritto a comune Convenzionato
+parent_changing_residence: Coniuge iscritto a comune Convenzionato
+municipality: Comune convenzionato
+municipality2: Comune convenzionato
+
+  
+
+

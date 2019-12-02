@@ -1,0 +1,50 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block main_content %}
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-12 px-lg-4 py-lg-2">
+                <h1>Servizi</h1>
+            </div>
+
+            <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+                <div id="no-more-tables">
+                    <table class="table table-bordered table-striped table-condensed cf">
+                    <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Stato</th>
+                        <th>Azioni</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
+                            </td>
+                            <td>
+                                {{ statuses[item.status] }}
+                            </td>
+                            <td width="20%">
+                                <a class="btn btn-warning btn-sm" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">Modifica</a>
+                                <a class="btn btn-danger btn-sm" href="{{ path('admin_servizio_delete', { 'id': item.id }) }}">Elimina</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                <a class="btn btn-success btn-primary" href="{{ path('admin_service_new') }}">Crea nuovo servizio</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

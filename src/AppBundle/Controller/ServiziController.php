@@ -250,7 +250,7 @@ class ServiziController extends Controller
             throw new NotFoundHttpException("Servizio $slug not found");
         }
         $servizi = $serviziRepository->findAll();
-        $serviziArea = $serviziRepository->findBy(['area' => $servizio->getArea()]);
+        $serviziArea = $serviziRepository->findBy(['topics' => $servizio->getTopics()]);
 
         $handler = null;
         if ($servizio->getHandler() != null && !empty($servizio->getHandler()) && $servizio->getHandler() != 'default') {

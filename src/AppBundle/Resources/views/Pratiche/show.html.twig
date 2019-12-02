@@ -14,7 +14,7 @@
 
             <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
                 <div class="row">
-                    <div class="col-12 pb-5" style="border: 1px solid #ccc; background-color: #efefef; border-radius: 2px">
+                    <div class="col-12 pb-5" style="border: 1px solid #ccc; background-color: #efefef;">
                         {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
                     </div>
 
@@ -38,5 +38,5 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
-    <script src="{{ asset('bundles/app/js/chat.js') }}"></script>
+    {#<script src="{{ asset('bundles/app/js/chat.js') }}"></script>#}
 {% endblock %}

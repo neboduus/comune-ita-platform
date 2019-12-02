@@ -1,0 +1,67 @@
+{
+  "name": "Nome Servizio",
+  "slug": "slug-servizio",
+  "topics": [],
+  "description": "Lorem ipsum",
+  "howto": "...",
+  "who": "...",
+  "special_cases": "...",
+  "more_info": "...",
+  "coverage": [],
+  "flow": "identificatore_flow_pratica",
+  "flow_operator": "identifier_flow_operatore",
+  "url_modulo_principale": "",
+  "url_moduli_aggiuntivi": [],
+  "flow_steps": [
+    {
+      "identifier": "step_identifier",
+      "title": "title",
+      "description": "description",
+      "guide": "guide",
+      "type": "formio",
+      "parameters": {
+        "id": "formio_id"
+      }
+    },
+    {
+      "identifier": "step_identifier",
+      "title": "title",
+      "description": "description",
+      "guide": "guide",
+      "type": "external_validation",
+      "parameters": {
+        "url": "validation_url"
+      }
+    }
+  ],
+  "payment_required": true,
+  "payment_parameters": {
+    "total_amounts": "14,75",
+    "gateways": [
+      {
+        "type": "mypay",
+        "parameters": {
+          "dati_specifici_riscossione": "9/9999.9"
+        }
+      },
+      {
+        "type": "bollo",
+        "parameters": {
+          "items": [
+            {
+              "identifier": "presentazione_domanda",
+              "title": "Marca da bollo per la domanda",
+              "amount": "12,75"
+            },
+            {
+              "identifier": "risposta_domanda",
+              "title": "Marca da bollo per la risposta",
+              "amount": "2,00"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "status": 1
+}

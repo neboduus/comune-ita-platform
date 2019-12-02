@@ -26,3 +26,5 @@
 .idea/
 .env
 yarn-error.log
+.docker-sync/
+docker-compose.override.yml

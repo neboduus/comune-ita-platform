@@ -17,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -393,7 +394,19 @@ class PraticheController extends Controller
             'threads' => $thread,
         ];
     }
-    
+
+    /**
+     * @Route("/formio/validate", name="formio_validate")
+     *
+     */
+    public function formioValidateAction(Request $request)
+    {
+        // Todo: validazione base del form
+        $user = $this->getUser();
+        $response = array('status' => 'OK');
+        return JsonResponse::create($response, Response::HTTP_OK);
+    }
+
     /**
      * @param Servizio $servizio
      * @param CPSUser $user

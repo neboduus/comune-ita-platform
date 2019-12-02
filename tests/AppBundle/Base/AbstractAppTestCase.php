@@ -603,7 +603,7 @@ abstract class AbstractAppTestCase extends WebTestCase
     {
         //'Iscrizione asilo nido'
         $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], $slug, $fqcn, $flow);
-        $servizio->setTestoIstruzioni('<strong>Tutto</strong> quello che volevi sapere su ' . $slug . ' e non hai <em>mai</em> osato chiedere!');
+        $servizio->setHowto('<strong>Tutto</strong> quello che volevi sapere su ' . $slug . ' e non hai <em>mai</em> osato chiedere!');
 
         $this->em->persist($servizio);
         $this->em->flush();

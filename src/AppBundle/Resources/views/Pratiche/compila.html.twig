@@ -1,9 +1,13 @@
 {% extends '@App/Default/index.html.twig' %}
 
+{% set ente = instance_service.getCurrentInstance() %}
+
 {% block stylesheets %}
     {{ encore_entry_link_tags('compile') }}
-    {#<link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jquery-ui.min.css') }}"/>#}
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
 {% endblock %}
 
 {% block javascripts %}
@@ -13,10 +17,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
     <script src="//unpkg.com/element-ui/lib/index.js"></script>
     <script src="//unpkg.com/axios/dist/axios.min.js"></script>
-
-    {#<script src="{{ asset('bundles/app/js/jquery-ui.min.js') }}"></script>#}
-    {#<script src="{{ asset('bundles/app/js/datepicker-it.js') }}"></script>#}
     <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
+
     {#<script src="{{ asset('bundles/app/js/chat.js') }}"></script>#}
     {% if form.vars.helper.vueApp %}
         <script src="{{ asset('bundles/app/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
@@ -50,6 +52,89 @@
         }
       })
     </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/formiojs@3.27.3/dist/formio.full.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        if ($('#formio_render_form_id').length) {
+
+          // Nascondo input symfony, trovare modo di fare submit di formio da esterno
+          $('.craue_formflow_buttons').addClass('d-none');
+
+          Formio.icons = 'fontawesome';
+          //Formio.createForm(document.getElementById('formio'), 'https://examples.form.io/example')
+          Formio.createForm(document.getElementById('formio'), 'https://formserver.opencontent.it/form/' + $('#formio_render_form_id').val(), {
+            noAlerts: true,
+            language: 'it',
+            i18n: {
+              en: {},
+              sp: {},
+              it: {
+                complete: 'Invio Completato',
+                error: 'Per favore correggi i seguenti errori prima di inviare.',
+                month: 'Mese',
+                day: 'Giorno',
+                year: 'Anno',
+                january: 'Gennaio',
+                february: 'Febbraio',
+                march: 'Marzo',
+                april: 'Aprile',
+                may: 'Maggio',
+                june: 'Giugno',
+                july: 'Luglio',
+                august: 'Agosto',
+                september: 'Settembre',
+                october: 'Ottobre',
+                november: 'Novembre',
+                december: 'Dicembre',
+                next: 'Successivo',
+                previous: 'Precedente',
+                cancel: 'Annulla',
+                submit: 'Invia',
+              }
+            }
+          })
+          .then(function (form) {
+
+            // Recupero i dati della pratica se presenti
+            console.log($('#formio_render_dematerialized_forms').val());
+            if ($('#formio_render_dematerialized_forms').val() != '') {
+              form.submission = {
+                data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
+              };
+            }
+            form.nosubmit = true;
+            // Triggered when they click the submit button.
+            form.on('submit', function (submission) {
+
+              return fetch('{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/pratiche/formio/validate', {
+                body: JSON.stringify(submission),
+                headers: {
+                  'content-type': 'application/json'
+                },
+                method: 'POST',
+                mode: 'cors'
+              })
+              .then(response => {
+                form.emit('submitDone', submission)
+                if (response.ok) {
+                  let data = $('form[name="formio_render"]').serialize();
+                  //$('#formio_render_dematerialized_forms').val(data);
+                  $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
+                  //$('form[name="formio_render"]').submit();
+                  $('.craue_formflow_button_class_next').trigger('click');
+                }
+              })
+            });
+          });
+        }
+      });
+    </script>
+
     {#<script>
       $(document).ready(function () {
         function addComponenteForm($collectionHolder, $newLinkLi) {
@@ -165,10 +250,9 @@
 {% block main_content %}
     {% form_theme form ':form:ocsdc_form_style.html.twig' %}
 
-    <section id="intro" class="container px-4 my-4">
+    <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
         <div class="row">
             <div class="col-lg-12 px-lg-4 py-lg-2">
-
                 {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
                     <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
                     <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
@@ -257,39 +341,42 @@
 
                     <div id="vueApp">
                         {% if form.vars.helper.vueApp %}
-                        <{{ form.vars.helper.vueApp }}></{{ form.vars.helper.vueApp }}>
-                        {% endif %}
-                    </div>
-
-                    <div class="mt-5">
-                        {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
-                    </div>
-                    {{ form_end(form) }}
+                        <{{ form.vars.helper.vueApp }}>
+                    </{{ form.vars.helper.vueApp }}>
+                    {% endif %}
                 </div>
 
-            </div>
+                <div id="formio"></div>
 
-            <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
-
-                {% if form.vars.helper.guideText|length > 0 %}
-                    <div class="callout">
-                        <div class="callout-title">
-                            {{ 'pratica.guida_utente'|trans }}
-                        </div>
-                        {{ form.vars.helper.guideText|raw }}
-                    </div>
-                {% endif %}
-                <div id="compilationNotes" class="my-5">
-                    <h5>{{ 'pratica.appunti_compilazione.titolo'|trans }}</h5>
-                    <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave"
-                              placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
-                    <h6>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</h6>
+                <div class="mt-5">
+                    {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
                 </div>
-
-                {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
-                    {{ include('@App/Default/parts/chat.html.twig') }}
-                {% endif %}#}
+                {{ form_end(form) }}
             </div>
+
+        </div>
+
+        <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
+
+            {% if form.vars.helper.guideText|length > 0 %}
+                <div class="callout">
+                    <div class="callout-title">
+                        {{ 'pratica.guida_utente'|trans }}
+                    </div>
+                    {{ form.vars.helper.guideText|raw }}
+                </div>
+            {% endif %}
+            <div id="compilationNotes" class="my-5">
+                <h5>{{ 'pratica.appunti_compilazione.titolo'|trans }}</h5>
+                <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave"
+                          placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
+                <h6>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</h6>
+            </div>
+
+            {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
+                {{ include('@App/Default/parts/chat.html.twig') }}
+            {% endif %}#}
+        </div>
 
         </div>
     </section>
@@ -315,7 +402,7 @@
 {% endblock %}
 
 
-{%- block checkbox_widget -%}
+{#{%- block checkbox_widget -%}
     <input type="checkbox"
            data-group-cls="btn-group-lg" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-{%- endblock checkbox_widget -%}
+{%- endblock checkbox_widget -%}#}

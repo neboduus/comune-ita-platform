@@ -8,8 +8,9 @@
     "webpack-notifier": "^1.6.0"
   },
   "dependencies": {
-    "bootstrap-italia": "^1.3.4",
+    "bootstrap-italia": "^1.3.7",
     "datatables.net-bs4": "^1.10.19",
+    "formiojs": "3.27.3",
     "jsrender": "^1.0.3",
     "webpack-jquery-ui": "^2.0.1"
   }

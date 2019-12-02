@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 
 /**
  * Class APIController
@@ -22,7 +23,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  * @package AppBundle\Controller
  * @Route("/api/v1.0")
  */
-class APIController extends Controller
+class APIController extends AbstractFOSRestController
 {
     const CURRENT_API_VERSION = 'v1.0';
     const SCHEDA_INFORMATIVA_REMOTE_PARAMETER = 'remote';
@@ -114,25 +115,6 @@ class APIController extends Controller
         }
 
         return new Response($pratica->getUserCompilationNotes());
-    }
-
-
-    /**
-     * @Route("/services",name="api_services")
-     * @return JsonResponse
-     */
-    public function servicesAction()
-    {
-        $servizi = $this->getDoctrine()->getRepository('AppBundle:Servizio')->findAll();
-        $out = [];
-        foreach ($servizi as $servizio) {
-            $out[] = [
-                'name' => $servizio->getName(),
-                'slug' => $servizio->getSlug(),
-            ];
-        }
-
-        return new JsonResponse($out);
     }
 
     /**

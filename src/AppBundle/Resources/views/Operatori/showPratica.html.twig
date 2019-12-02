@@ -2,28 +2,34 @@
 
 {% block main_content %}
 
-<section id="intro" class="container px-4 my-4">
-    <div class="row">
-        <div class="col-lg-12 px-lg-4 py-lg-2">
-            <h1>{{ pratica.servizio.name }} - {{ pratica.richiedenteCognome }} {{ pratica.richiedenteNome }}</h1>
-        </div>
-        <div class="col-lg-8 px-lg-4 py-lg-2">
-            {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica, 'user': user}) }}
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-12 px-lg-4 py-lg-2">
+                <h1>{{ pratica.servizio.name }} - {{ pratica.richiedenteCognome }} {{ pratica.richiedenteNome }}</h1>
+            </div>
+            <div class="col-lg-8 px-lg-4 py-lg-2">
+                {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica, 'user': user}) }}
 
-            {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+                {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
 
-        </div>
-        <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 sidebar">
+            </div>
+            <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
 
-            {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
+                <div class="row">
+                    <div class="col-12 pb-5" style="border: 1px solid #ccc; background-color: #efefef;">
 
-            {% if pratica.statusName != 'STATUS_COMPLETE' and pratica.statusName != 'STATUS_CANCELLED' and pratica.statusName != 'STATUS_COMPLETE_WAITALLEGATIOPERATORE' and pratica.statusName != 'STATUS_CANCELLED_WAITALLEGATIOPERATORE' %}
-                {{ include('AppBundle:Operatori/parts:azioni_operatore.html.twig', {'pratica':pratica}) }}
-            {% endif %}
-            {#{{ include('@App/Default/parts/chat.html.twig') }}#}
-        </div>
-    </div>
-</section>
+                        {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
+                    </div>
+                    <div class="col-12 mt-5">
+                        {% if pratica.statusName != 'STATUS_COMPLETE' and pratica.statusName != 'STATUS_CANCELLED' and pratica.statusName != 'STATUS_COMPLETE_WAITALLEGATIOPERATORE' and pratica.statusName != 'STATUS_CANCELLED_WAITALLEGATIOPERATORE' %}
+                            <h4>Azioni</h4>
+                            {{ include('AppBundle:Operatori/parts:azioni_operatore.html.twig', {'pratica':pratica}) }}
+                        {% endif %}
+                    </div>
+                    {#{{ include('@App/Default/parts/chat.html.twig') }}#}
+                </div>
+            </div>
+    </section>
 
 {% endblock %}
 

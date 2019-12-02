@@ -64,6 +64,7 @@ class DatiRichiedenteType extends AbstractType
                     break;
                 case 'richiedente_data_nascita':
                     $type = DateType::class;
+                    $opts['disabled'] = $user->getDataNascita() == null ? false : true;
                     $opts['widget'] = 'single_text';
                     break;
                 default:

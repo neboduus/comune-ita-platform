@@ -145,3 +145,56 @@ datatables:
         columnFilter: null # One of "thead"; "tfoot"; "both"; null
     # Default translation domain to be used
     translation_domain: messages
+
+# FOSRestBundle Configuration
+fos_rest:
+    view:
+        view_response_listener:  true
+        #formats:
+        #    json: true
+        #templating_formats:
+        #    html: true
+    serializer:
+        serialize_null: true
+    exception:
+        enabled: true
+    format_listener:
+        rules:
+            - { path: ^/%prefix%/api, prefer_extension: true, fallback_format: json, priorities: ['json']}
+            - { path: ^/%prefix%, prefer_extension: true, fallback_format: html, priorities: ['html', '*/*'] }
+
+# Nelmio Api Doc Configuration
+nelmio_api_doc:
+    documentation:
+        info:
+            x-api-id: "sdc-api-1-0-0"
+            x-audience: "external-public"
+            title: "SDC Api Definition"
+            description: ""
+            version: "1.0.0"
+            contact:
+                name: "Opencontent S.c.a.r.l"
+                email: "support@opencontent.it"
+                url: "https://www.opencontent.it/"
+            license:
+                name: "GNU General Public License, version 2"
+                url: "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+        securityDefinitions:
+            Bearer:
+                type: apiKey
+                description: 'Authorization: Bearer {jwt}'
+                name: Authorization
+                in: header
+        security:
+          - Bearer: []
+    areas:
+        path_patterns: # an array of regexps
+            #- ^/%prefix%/api(?!/doc$)
+            - ^/%prefix%/api/services(?!/doc$)
+
+# Lexit jwt Configuration
+lexik_jwt_authentication:
+    secret_key: "%kernel.project_dir%/config/jwt/private.pem"
+    public_key: "%kernel.project_dir%/config/jwt/public.pem"
+    pass_phrase: 'stanzadelcittadino'
+    token_ttl: 3600

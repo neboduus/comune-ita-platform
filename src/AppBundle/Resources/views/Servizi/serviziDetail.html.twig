@@ -14,10 +14,10 @@
                 </p>
 
                 <p>
-                    {{ servizio.testoIstruzioni|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+                    {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
                 </p>
 
-                {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale %}
+                {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale is defined %}
                     <br/>
                     <div class="alert alert-info">
                         <a class="" href="{{ servizio.additionalData.urlModuloPrincipale }}"><b>Scarica il modulo da
@@ -60,13 +60,9 @@
                                 <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
                                    class="btn btn-success btn-lg service-access-button">
                                     {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
-                                        <span class="hidden-xs">{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
-                                        <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil"
-                                                                                                 aria-hidden="true"></i> {{ 'servizio.accedi_al_servizio'|trans({'%name%':null}) }}</span>
+                                        <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
                                     {% else %}
-                                        <span class="hidden-xs">{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                                        <span class="visible-xs hidden-sm hidden-md hidden-g"><i class="fa fa-pencil"
-                                                                                                 aria-hidden="true"></i> {{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                                        <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
                                     {% endif %}
                                 </a>
 
@@ -89,7 +85,6 @@
                 </div>
             </div>
 
-
             <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
                 <div class="row">
                     <div class="col-12 pb-5"
@@ -97,7 +92,7 @@
                         <div class="link-list-wrapper mt-5">
                             <ul class="link-list">
                                 <li>
-                                    <h3 id="heading-senza-link">{{ "servizio.servizi_area_title"|trans({'%area%': servizio.area.name}) }}</h3>
+                                    <h3 id="heading-senza-link">{% if servizio.topics %}{{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h3>
                                 </li>
 
                                 {% for s in servizi_area %}
@@ -111,6 +106,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 

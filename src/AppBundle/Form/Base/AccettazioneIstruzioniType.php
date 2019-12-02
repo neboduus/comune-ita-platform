@@ -21,7 +21,7 @@ class AccettazioneIstruzioniType extends AbstractType
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
         $helper->setDescriptionText(
-            $servizio->getTestoIstruzioni(). '' .$servizio->getCustomTextForStep('accettazione')
+            $servizio->getHowto()
             ,
            true,
            ['%comune%' => $pratica->getEnte()->getName()]
