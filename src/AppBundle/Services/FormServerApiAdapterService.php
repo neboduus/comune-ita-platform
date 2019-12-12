@@ -102,7 +102,7 @@ class FormServerApiAdapterService
     ];
   }
 
-  public static function getServiceLabels($formID)
+  public static function getServiceSchema($formID)
   {
     $client = new Client(['base_uri' => self::FORM_SERVER_URL]);
     $request = new Request(
@@ -117,7 +117,7 @@ class FormServerApiAdapterService
         $responseBody = json_decode($response->getBody(), true);
         return [
           'status' => 'success',
-          'labels' => $responseBody
+          'schema' => $responseBody
         ];
       }
 

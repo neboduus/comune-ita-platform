@@ -24,4 +24,10 @@ RUN yarn encore production
 # Necessario per evitare: Unable to create the PID file (/run/php/php7.3-fpm.pid).: No such file or directory
 # Da verificare
 RUN mkdir /run/php
+
+RUN chown www-data /docroot/var -R
+
+
 CMD [ "php-fpm7.3" , "-R", "-F" ]
+
+

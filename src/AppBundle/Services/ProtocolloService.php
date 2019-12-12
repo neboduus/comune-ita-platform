@@ -4,6 +4,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoInterface;
+use AppBundle\Entity\Integrazione;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
@@ -111,7 +112,12 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         foreach ($allegati as $allegato) {
             try {
                 $this->validateUploadFile($pratica, $allegato);
-                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+                if ($allegato->getType() == Integrazione::TYPE_DEFAULT) {
+                  $this->handler->sendIntegrazioneToProtocollo($pratica, $allegato);
+                } else {
+                  $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+                }
+
             } catch(AlreadyUploadException $e) {}
         }
 
