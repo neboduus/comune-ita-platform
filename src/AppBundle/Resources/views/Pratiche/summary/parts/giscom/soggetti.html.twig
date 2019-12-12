@@ -2,7 +2,7 @@
     <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.soggetti.label'|trans() }}</strong></div>
     <div class="col-xs-12 col-sm-9">
         {% if pratica.getRelatedCfs %}
-            <ul class="list-group">
+            <ul class="list-group mb-2">
                 {% for key, v in pratica.getRelatedCfs %}
                     <li class="list-group-item scia-file">
                         {{ v }}

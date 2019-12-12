@@ -3,101 +3,101 @@
 {% set ente = instance_service.getCurrentInstance() %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('compile') }}
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-    {{ encore_entry_script_tags('compile') }}
+  {{ parent() }}
+  {{ encore_entry_script_tags('compile') }}
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
-    <script src="//unpkg.com/element-ui/lib/index.js"></script>
-    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
+  <script src="//unpkg.com/element-ui/lib/index.js"></script>
+  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
 
-    {#<script src="{{ asset('bundles/app/js/chat.js') }}"></script>#}
-    {% if form.vars.helper.vueApp %}
-        <script src="{{ asset('bundles/app/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
-        <script>
-          let vueBundledData = {{ form.vars.helper.vueBundledData|raw }};
-          new Vue({
-            el: "#vueApp"
-          });
-        </script>
-    {% endif %}
+  {#<script src="{{ asset('bundles/app/js/chat.js') }}"></script>#}
+  {% if form.vars.helper.vueApp %}
+    <script src="{{ asset('bundles/app/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
     <script>
+      let vueBundledData = {{ form.vars.helper.vueBundledData|raw }};
       new Vue({
-        el: "#compilationNotes",
-        data: {
-          compilationNotes: null,
-          endpointUrl: '{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/api/v1.0/user/{{ form.vars.data.id }}/notes'
-        },
-        created: function () {
-          var self = this;
-          axios.get(this.endpointUrl)
+        el: "#vueApp"
+      });
+    </script>
+  {% endif %}
+  <script>
+    new Vue({
+      el: "#compilationNotes",
+      data: {
+        compilationNotes: null,
+        endpointUrl: '{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/api/v1.0/user/{{ form.vars.data.id }}/notes'
+      },
+      created: function () {
+        var self = this;
+        axios.get(this.endpointUrl)
           .then(function (res) {
             if (res.data) {
               self.compilationNotes = res.data;
             }
           })
-        },
-        methods: {
-          onSave: function () {
-            axios.post(this.endpointUrl, this.compilationNotes)
-          }
+      },
+      methods: {
+        onSave: function () {
+          axios.post(this.endpointUrl, this.compilationNotes)
         }
-      })
-    </script>
+      }
+    })
+  </script>
 
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/formiojs@3.27.3/dist/formio.full.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        if ($('#formio_render_form_id').length) {
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/formiojs@3.27.3/dist/formio.full.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      if ($('#formio_render_form_id').length) {
 
-          // Nascondo input symfony, trovare modo di fare submit di formio da esterno
-          $('.craue_formflow_buttons').addClass('d-none');
+        // Nascondo input symfony, trovare modo di fare submit di formio da esterno
+        $('.craue_formflow_buttons').addClass('d-none');
 
-          Formio.icons = 'fontawesome';
-          //Formio.createForm(document.getElementById('formio'), 'https://examples.form.io/example')
-          Formio.createForm(document.getElementById('formio'), 'https://formserver.opencontent.it/form/' + $('#formio_render_form_id').val(), {
-            noAlerts: true,
-            language: 'it',
-            i18n: {
-              en: {},
-              sp: {},
-              it: {
-                complete: 'Invio Completato',
-                error: 'Per favore correggi i seguenti errori prima di inviare.',
-                month: 'Mese',
-                day: 'Giorno',
-                year: 'Anno',
-                january: 'Gennaio',
-                february: 'Febbraio',
-                march: 'Marzo',
-                april: 'Aprile',
-                may: 'Maggio',
-                june: 'Giugno',
-                july: 'Luglio',
-                august: 'Agosto',
-                september: 'Settembre',
-                october: 'Ottobre',
-                november: 'Novembre',
-                december: 'Dicembre',
-                next: 'Successivo',
-                previous: 'Precedente',
-                cancel: 'Annulla',
-                submit: 'Invia',
-              }
+        Formio.icons = 'fontawesome';
+        //Formio.createForm(document.getElementById('formio'), 'https://examples.form.io/example')
+        Formio.createForm(document.getElementById('formio'), 'https://formserver.opencontent.it/form/' + $('#formio_render_form_id').val(), {
+          noAlerts: true,
+          language: 'it',
+          i18n: {
+            en: {},
+            sp: {},
+            it: {
+              complete: 'Invio Completato',
+              error: 'Per favore correggi i seguenti errori prima di inviare.',
+              month: 'Mese',
+              day: 'Giorno',
+              year: 'Anno',
+              january: 'Gennaio',
+              february: 'Febbraio',
+              march: 'Marzo',
+              april: 'Aprile',
+              may: 'Maggio',
+              june: 'Giugno',
+              july: 'Luglio',
+              august: 'Agosto',
+              september: 'Settembre',
+              october: 'Ottobre',
+              november: 'Novembre',
+              december: 'Dicembre',
+              next: 'Successivo',
+              previous: 'Precedente',
+              cancel: 'Annulla',
+              submit: 'Invia',
             }
-          })
+          }
+        })
           .then(function (form) {
 
             // Recupero i dati della pratica se presenti
@@ -119,285 +119,287 @@
                 method: 'POST',
                 mode: 'cors'
               })
-              .then(response => {
-                form.emit('submitDone', submission)
-                if (response.ok) {
-                  let data = $('form[name="formio_render"]').serialize();
-                  //$('#formio_render_dematerialized_forms').val(data);
-                  $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
-                  //$('form[name="formio_render"]').submit();
-                  $('.craue_formflow_button_class_next').trigger('click');
-                }
-              })
+                .then(response => {
+                  form.emit('submitDone', submission)
+                  if (response.ok) {
+                    let data = $('form[name="formio_render"]').serialize();
+                    //$('#formio_render_dematerialized_forms').val(data);
+                    $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
+                    //$('form[name="formio_render"]').submit();
+                    $('.craue_formflow_button_class_next').trigger('click');
+                  }
+                })
             });
           });
+      }
+    });
+  </script>
+
+  {#<script>
+    $(document).ready(function () {
+      function addComponenteForm($collectionHolder, $newLinkLi) {
+        var prototype = $collectionHolder.data('prototype');
+        var index = $collectionHolder.data('index');
+        var newForm = prototype.replace(/__name__/g, index);
+        $collectionHolder.data('index', index + 1);
+        var $newFormLi = $('<li></li>').append(newForm);
+        $newLinkLi.before($newFormLi);
+      }
+
+      function addDeleteLink($li) {
+        var $removeFormA = $('<a href="#" class="btn btn-xs btn-danger">{{ 'pratica.cancella_elemento'|trans() }}</a>');
+        $li.append($removeFormA);
+        $removeFormA.on('click', function (e) {
+          e.preventDefault();
+          $li.remove();
+        });
+      }
+
+      function setupAddAndRemoveLinks($collectionHolder, $newLinkLi) {
+        $collectionHolder.find('li').each(function () {
+          addDeleteLink($(this).find('div.well'));
+        });
+        $collectionHolder.append($newLinkLi);
+        $collectionHolder.data('index', $collectionHolder.find(':input').length);
+      }
+
+
+
+        {% if form.nucleo_familiare is defined %}
+      var $addComponenteNucleoFamiliare = $('<a href="#" class="btn btn-md btn-primary add_componente_nucleo_familiare">{{ 'pratica.aggiungi_componente_nucleo_familiare'|trans() }}</a>');
+      var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
+      var $collectionHolder = $('ul.nucleo_familiare');
+
+      $addComponenteNucleoFamiliare.on('click', function (e) {
+        e.preventDefault();
+        addComponenteForm($collectionHolder, $newLinkLi);
+      });
+      setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+
+        {% elseif form.delega_type is defined %}
+
+      var specDelegaLabel = $('#pratica_specifica_delega_delega_type_text_label');
+      var specDelegaInput = $('#pratica_specifica_delega_delega_type_text');
+
+      if ($('#pratica_specifica_delega_delega_type :checked').val() != 'delegato') {
+        specDelegaLabel.show();
+        specDelegaInput.show();
+      }
+
+      $('#pratica_specifica_delega_delega_type input').click(function () {
+        if ($(this).val() == 'delegato') {
+          specDelegaLabel.hide(500);
+          specDelegaInput.hide(500);
+        } else {
+          specDelegaLabel.show(500);
+          specDelegaInput.show(500);
         }
       });
-    </script>
 
-    {#<script>
-      $(document).ready(function () {
-        function addComponenteForm($collectionHolder, $newLinkLi) {
-          var prototype = $collectionHolder.data('prototype');
-          var index = $collectionHolder.data('index');
-          var newForm = prototype.replace(/__name__/g, index);
-          $collectionHolder.data('index', index + 1);
-          var $newFormLi = $('<li></li>').append(newForm);
-          $newLinkLi.before($newFormLi);
+        {% elseif form.tipologia_certificato_anagrafico is defined %}
+
+
+      var specDelegaLabel = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico_label');
+      var specDelegaInput = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico');
+
+      if ($('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico :checked').val() == 'internazionale') {
+        specDelegaLabel.show();
+        specDelegaInput.show();
+      }
+
+      $('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico input').click(function () {
+        if ($(this).val() != 'internazionale') {
+          specDelegaLabel.hide(500);
+          specDelegaInput.hide(500);
+        } else {
+          specDelegaLabel.show(500);
+          specDelegaInput.show(500);
         }
-
-        function addDeleteLink($li) {
-          var $removeFormA = $('<a href="#" class="btn btn-xs btn-danger">{{ 'pratica.cancella_elemento'|trans() }}</a>');
-          $li.append($removeFormA);
-          $removeFormA.on('click', function (e) {
-            e.preventDefault();
-            $li.remove();
-          });
-        }
-
-        function setupAddAndRemoveLinks($collectionHolder, $newLinkLi) {
-          $collectionHolder.find('li').each(function () {
-            addDeleteLink($(this).find('div.well'));
-          });
-          $collectionHolder.append($newLinkLi);
-          $collectionHolder.data('index', $collectionHolder.find(':input').length);
-        }
-
-
-
-          {% if form.nucleo_familiare is defined %}
-        var $addComponenteNucleoFamiliare = $('<a href="#" class="btn btn-md btn-primary add_componente_nucleo_familiare">{{ 'pratica.aggiungi_componente_nucleo_familiare'|trans() }}</a>');
-        var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
-        var $collectionHolder = $('ul.nucleo_familiare');
-
-        $addComponenteNucleoFamiliare.on('click', function (e) {
-          e.preventDefault();
-          addComponenteForm($collectionHolder, $newLinkLi);
-        });
-        setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-
-          {% elseif form.delega_type is defined %}
-
-        var specDelegaLabel = $('#pratica_specifica_delega_delega_type_text_label');
-        var specDelegaInput = $('#pratica_specifica_delega_delega_type_text');
-
-        if ($('#pratica_specifica_delega_delega_type :checked').val() != 'delegato') {
-          specDelegaLabel.show();
-          specDelegaInput.show();
-        }
-
-        $('#pratica_specifica_delega_delega_type input').click(function () {
-          if ($(this).val() == 'delegato') {
-            specDelegaLabel.hide(500);
-            specDelegaInput.hide(500);
-          } else {
-            specDelegaLabel.show(500);
-            specDelegaInput.show(500);
-          }
-        });
-
-          {% elseif form.tipologia_certificato_anagrafico is defined %}
-
-
-        var specDelegaLabel = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico_label');
-        var specDelegaInput = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico');
-
-        if ($('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico :checked').val() == 'internazionale') {
-          specDelegaLabel.show();
-          specDelegaInput.show();
-        }
-
-        $('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico input').click(function () {
-          if ($(this).val() != 'internazionale') {
-            specDelegaLabel.hide(500);
-            specDelegaInput.hide(500);
-          } else {
-            specDelegaLabel.show(500);
-            specDelegaInput.show(500);
-          }
-        });
-
-          {% elseif form.allegati is defined %}
-        var $addAllegato = $('<a href="#" class="btn btn-md btn-primary add_allegato">{{ 'pratica.aggiungi_allegato'|trans() }}</a>');
-        var $newLinkLi = $('<li></li>').append($addAllegato);
-        var $collectionHolder = $('ul.allegati');
-
-        $addAllegato.on('click', function (e) {
-          e.preventDefault();
-          addComponenteForm($collectionHolder, $newLinkLi);
-        });
-        setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-
-          {% elseif form.persone_residenti is defined %}
-
-        var $addPersonaResidente = $('<a href="#" class="btn btn-md btn-primary add_persona_residente">{{ 'cambio_residenza.aggiungi_persona_residente'|trans() }}</a>');
-        var $newLinkLi = $('<li></li>').append($addPersonaResidente);
-        var $collectionHolder = $('ul.persone_residenti');
-
-        $addPersonaResidente.on('click', function (e) {
-          e.preventDefault();
-          addComponenteForm($collectionHolder, $newLinkLi);
-        });
-        setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-
-          {% endif %}
-
-
       });
-    </script>#}
+
+        {% elseif form.allegati is defined %}
+      var $addAllegato = $('<a href="#" class="btn btn-md btn-primary add_allegato">{{ 'pratica.aggiungi_allegato'|trans() }}</a>');
+      var $newLinkLi = $('<li></li>').append($addAllegato);
+      var $collectionHolder = $('ul.allegati');
+
+      $addAllegato.on('click', function (e) {
+        e.preventDefault();
+        addComponenteForm($collectionHolder, $newLinkLi);
+      });
+      setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+
+        {% elseif form.persone_residenti is defined %}
+
+      var $addPersonaResidente = $('<a href="#" class="btn btn-md btn-primary add_persona_residente">{{ 'cambio_residenza.aggiungi_persona_residente'|trans() }}</a>');
+      var $newLinkLi = $('<li></li>').append($addPersonaResidente);
+      var $collectionHolder = $('ul.persone_residenti');
+
+      $addPersonaResidente.on('click', function (e) {
+        e.preventDefault();
+        addComponenteForm($collectionHolder, $newLinkLi);
+      });
+      setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
+
+        {% endif %}
+
+
+    });
+  </script>#}
 {% endblock %}
 
 {% block main_content %}
-    {% form_theme form ':form:ocsdc_form_style.html.twig' %}
+  {% form_theme form ':form:ocsdc_form_style.html.twig' %}
 
-    <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
-        <div class="row">
-            <div class="col-lg-12 px-lg-4 py-lg-2">
-                {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
-                    <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
-                    <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
-                    {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
-                        {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
-                        <div class="alert alert-warning">
-                            {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
-                            (
-                            <small>
-                                <a href="{{ path( download_allegato_path, {'allegato': pratica.getRichiestaDiIntegrazioneAttiva.id}) }}">{{ 'allegato.scarica_allegato_richiesta_integrazione'|trans }}</a>
-                            </small>
-                            )
-                        </div>
-                    {% endif %}
-                {% else %}
-                    <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
-                {% endif %}
+  <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
+          <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+          <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
+          {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
+            {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
+            <div class="alert alert-warning">
+              {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
+              (
+              <small>
+                <a
+                  href="{{ path( download_allegato_path, {'allegato': pratica.getRichiestaDiIntegrazioneAttiva.id}) }}">{{ 'allegato.scarica_allegato_richiesta_integrazione'|trans }}</a>
+              </small>
+              )
             </div>
-        </div>
-
-        <div class="row hidden-xs">
-            <div class="col-md-12 mt-4 mb-4">
-                {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12 px-lg-4">
-                <h4 class="mb-5">
-                    {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
-                    -
-                    {% if form.vars.helper.stepTitle|length > 0 %}
-                        {{ form.vars.helper.stepTitle }}
-                    {% else %}
-                        {{ flow.currentStepLabel()|trans }}
-                    {% endif %}
-                </h4>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-8 px-lg-4">
-                <div class="step-{{ flow.getCurrentStepNumber() }}">
-
-                    {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
-                    {{ form_errors(form) }}
-
-                    {% if form.vars.helper.descriptionText|length > 0 %}
-                        <blockquote>
-                            {{ form.vars.helper.descriptionText|raw }}
-                        </blockquote>
-                    {% endif %}
-                    {% if form.nucleo_familiare is defined %}
-                        <ul class="list-unstyled nucleo_familiare"
-                            data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
-                            {% for componente in form.nucleo_familiare %}
-                                <li>
-                                    <div class="well well-sm">{{ form_row(componente) }}</div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-
-                    {% if form.persone_residenti is defined %}
-                        <ul class="list-unstyled persone_residenti"
-                            data-prototype="{{ form_widget(form.persone_residenti.vars.prototype)|e('html_attr') }}">
-                            {% for persona in form.persone_residenti %}
-                                <li>
-                                    <div class="well well-sm">{{ form_row(persona) }}</div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-
-                    {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
-                        <blockquote>
-                            {{ 'steps.common.conferma.help_text_top'|trans }}
-                        </blockquote>
-                        {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
-                        <blockquote style="margin-top: 20px">
-                            {{ 'steps.common.conferma.help_text_bottom'|trans }}
-                        </blockquote>
-                    {% endif %}
-
-                    {{ form_rest(form) }}
-
-                    <div id="vueApp">
-                        {% if form.vars.helper.vueApp %}
-                        <{{ form.vars.helper.vueApp }}>
-                    </{{ form.vars.helper.vueApp }}>
-                    {% endif %}
-                </div>
-
-                <div id="formio"></div>
-
-                <div class="mt-5">
-                    {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
-                </div>
-                {{ form_end(form) }}
-            </div>
-
-        </div>
-
-        <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
-
-            {% if form.vars.helper.guideText|length > 0 %}
-                <div class="callout">
-                    <div class="callout-title">
-                        {{ 'pratica.guida_utente'|trans }}
-                    </div>
-                    {{ form.vars.helper.guideText|raw }}
-                </div>
-            {% endif %}
-            <div id="compilationNotes" class="my-5">
-                <h5>{{ 'pratica.appunti_compilazione.titolo'|trans }}</h5>
-                <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave"
-                          placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
-                <h6>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</h6>
-            </div>
-
-            {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
-                {{ include('@App/Default/parts/chat.html.twig') }}
-            {% endif %}#}
-        </div>
-
-        </div>
-    </section>
-
-    <div class="modal fade" id="confirm" tabindex="-1"
-         role="dialog"
-         aria-labelledby="confirmAutoAssignLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-dismiss="modal"
-                            class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
-                    <button type="button" data-dismiss="modal" class="btn btn-primary"
-                            id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
-                </div>
-            </div>
-        </div>
+          {% endif %}
+        {% else %}
+          <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+        {% endif %}
+      </div>
     </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4">
+        <h4 class="mb-5">
+          {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
+          -
+          {% if form.vars.helper.stepTitle|length > 0 %}
+            {{ form.vars.helper.stepTitle }}
+          {% else %}
+            {{ flow.currentStepLabel()|trans }}
+          {% endif %}
+        </h4>
+      </div>
+    </div>
+
+    <div class="row hidden-xs">
+      <div class="col-md-12 mt-4 mb-4">
+        {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="col-lg-8 px-lg-4">
+        {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
+        <div class="step-{{ flow.getCurrentStepNumber() }}">
+
+
+          {{ form_errors(form) }}
+
+          {% if form.vars.helper.descriptionText|length > 0 %}
+            {{ form.vars.helper.descriptionText|raw }}
+          {% endif %}
+          {% if form.nucleo_familiare is defined %}
+            <ul class="list-unstyled nucleo_familiare"
+                data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
+              {% for componente in form.nucleo_familiare %}
+                <li>
+                  <div class="well well-sm">{{ form_row(componente) }}</div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if form.persone_residenti is defined %}
+            <ul class="list-unstyled persone_residenti"
+                data-prototype="{{ form_widget(form.persone_residenti.vars.prototype)|e('html_attr') }}">
+              {% for persona in form.persone_residenti %}
+                <li>
+                  <div class="well well-sm">{{ form_row(persona) }}</div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+            <blockquote>
+              {{ 'steps.common.conferma.help_text_top'|trans }}
+            </blockquote>
+            {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            <blockquote style="margin-top: 20px">
+              {{ 'steps.common.conferma.help_text_bottom'|trans }}
+            </blockquote>
+          {% endif %}
+
+          {{ form_rest(form) }}
+
+          <div id="vueApp">
+            {% if form.vars.helper.vueApp %}
+            <{{ form.vars.helper.vueApp }}>
+          </{{ form.vars.helper.vueApp }}>
+          {% endif %}
+        </div>
+
+        <div id="formio"></div>
+
+        <div class="mt-5">
+          {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
+        </div>
+        {{ form_end(form) }}
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
+
+      {% if form.vars.helper.guideText|length > 0 %}
+        <div class="callout">
+          <div class="callout-title">
+            {{ 'pratica.guida_utente'|trans }}
+          </div>
+          {{ form.vars.helper.guideText|raw }}
+        </div>
+      {% endif %}
+      <div id="compilationNotes" class="my-5">
+        <h5>{{ 'pratica.appunti_compilazione.titolo'|trans }}</h5>
+        <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave"
+                  placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
+        <h6>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</h6>
+      </div>
+
+      {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
+          {{ include('@App/Default/parts/chat.html.twig') }}
+      {% endif %}#}
+    </div>
+
+    </div>
+  </section>
+
+  <div class="modal fade" id="confirm" tabindex="-1"
+       role="dialog"
+       aria-labelledby="confirmAutoAssignLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-dismiss="modal"
+                  class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
+          <button type="button" data-dismiss="modal" class="btn btn-primary"
+                  id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
 

@@ -3,8 +3,10 @@
 namespace AppBundle\Form\FormIO;
 
 use AppBundle\Entity\FormIO;
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -42,22 +44,7 @@ class FormIORenderType extends AbstractType
     /** @var FormIO $pratica */
     $pratica = $builder->getData();
 
-    $formID = false;
-    $flowsteps = $pratica->getServizio()->getFlowSteps();
-    $additionalData = $pratica->getServizio()->getAdditionalData();
-    if (!empty($flowsteps)) {
-      foreach ($flowsteps as $f) {
-        if ($f['type'] == 'formio' && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
-          break;
-        }
-      }
-    }
-    // Retrocompatibilità
-    if (!$formID) {
-      $formID = $additionalData['formio_id'];
-    }
-
+    $formID = $this->getFormIoId($pratica);
 
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
@@ -105,10 +92,17 @@ class FormIORenderType extends AbstractType
       $compiledData = json_decode($event->getData()['dematerialized_forms'], true);
     }
 
+    $schema = false;
+    $result = FormServerApiAdapterService::getServiceSchema($this->getFormIoId($pratica));
+    if ($result['status'] == 'success') {
+      $schema = $this->arrayFlat($result['schema']);
+    }
+
     $pratica->setDematerializedForms(
       array(
-        'data' => $compiledData,
-        'flattened' => $flattenedData
+        'data'      => $compiledData,
+        'flattened' => $flattenedData,
+        'schema'    => $schema
       )
     );
     $this->em->persist($pratica);
@@ -122,42 +116,6 @@ class FormIORenderType extends AbstractType
   private function setupHelperData(FormIO $pratica, TestiAccompagnatoriProcedura $helper)
   {
     return json_encode($pratica->getDematerializedForms());
-
-//        $skeleton = new MappedPraticaEdilizia($pratica->getDematerializedForms());
-//
-//        $allegati = array();
-//        $allegatiCorrenti = $skeleton->getVincoli()->toHash();
-//        $allegatiRichiesti = $this->getRequiredFields($skeleton);
-//
-//        foreach ($allegatiCorrenti as $key => $value) {
-//            if (is_array($integrazioneAllegati) && !in_array($key, $integrazioneAllegati)){
-//                unset($allegatiCorrenti[$key]);
-//                continue;
-//            }
-//            $allegati[$key]['title'] = $helper->translate('steps.scia.vincoli.files.' . $key . '.title');
-//            $allegati[$key]['description'] = $helper->translate('steps.scia.vincoli.files.' . $key . '.description');
-//            $allegati[$key]['type'] = Vincoli::TYPE;
-//            $allegati[$key]['identifier'] = $key;
-//            $allegati[$key]['checked'] = false;
-//            $allegati[$key]['files'] = [];
-//            if (!empty($value)) {
-//                $allegati[$key]['checked'] = true;
-//                $allegati[$key]['files'] = $value;
-//            }
-//        }
-//
-//        $idPratica = $pratica->getId();
-//
-//        $helper->setVueApp(Vincoli::TYPE);
-//        $helper->setVueBundledData(json_encode([
-//            'allegatiCorrenti' => $allegatiCorrenti,
-//            'allegati' => $allegati,
-//            'allegatiRichiesti' => array_fill_keys($allegatiRichiesti, true),
-//            'idPratica' => $idPratica,
-//            'prefix' => $helper->getPrefix()
-//        ]));
-//
-//        return $allegatiCorrenti;
   }
 
   /*private function getRequiredFields(MappedPraticaEdilizia $skeleton)
@@ -166,6 +124,28 @@ class FormIORenderType extends AbstractType
           $integrazioneAllegati :
           $skeleton->getVincoli()->getRequiredFields($skeleton->getTipoIntervento());
   }*/
+
+
+  private function getFormIoId(Pratica $pratica)
+  {
+    $formID = false;
+    $flowsteps = $pratica->getServizio()->getFlowSteps();
+    $additionalData = $pratica->getServizio()->getAdditionalData();
+    if (!empty($flowsteps)) {
+      foreach ($flowsteps as $f) {
+        if ($f['type'] == 'formio' && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
+          $formID = $f['parameters']['formio_id'];
+          break;
+        }
+      }
+    }
+    // Retrocompatibilità
+    if (!$formID) {
+      $formID = $additionalData['formio_id'];
+    }
+
+    return $formID;
+  }
 
   private function arrayFlat($array, $prefix = '')
   {

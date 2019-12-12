@@ -11,7 +11,7 @@ services:
     volumes:
       - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads"
       - "${CRON_LOGS_MOUNT}_cron:/docroot/var/logs"
-      - "${CACHE_MOUNT}_cron:/docroot/var/cache"
+      #- "${CACHE_MOUNT}_cron:/docroot/var/cache"
 
   ocsdc:
     build: .
@@ -21,7 +21,7 @@ services:
       - web:/docroot/web
       - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads"
       - "${LOGS_MOUNT}:/docroot/var/logs"
-      - "${CACHE_MOUNT}:/docroot/var/cache"
+      #- "${CACHE_MOUNT}:/docroot/var/cache"
       - "${SESSIONS_MOUNT}:/docroot/var/sessions"
       - ./compose_conf/fpm_pool:/etc/php/7.3/fpm/pool.d
       - ./compose_conf/php-fpm.conf:/etc/php/7.3/fpm/php-fpm.conf

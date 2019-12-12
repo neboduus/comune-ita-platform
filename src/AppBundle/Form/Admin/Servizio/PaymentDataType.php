@@ -21,7 +21,9 @@ class PaymentDataType extends AbstractType
   {
 
     $builder
-      ->add('payment_required', CheckboxType::class)
+      ->add('payment_required', CheckboxType::class, [
+        'required' => false
+      ])
       /*->add('payment_parameters', PaymentParametersType::class, [
         'label' => false,
         'data_class' => null

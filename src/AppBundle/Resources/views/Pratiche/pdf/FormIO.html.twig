@@ -18,7 +18,7 @@
                 {% for key, value in pratica.dematerializedForms.flattened %}
                     {% if key != 'submit' and key != 'update_info' and not value is empty %}
                         <p>
-                            <strong>{{ key|trans() }}</strong>: {{ value }}
+                            <strong>{% if pratica.dematerializedForms.schema[key] is defined  %}{{ pratica.dematerializedForms.schema[key] }}{% endif %}</strong>: {{ value }}
                         </p>
                     {% endif %}
                 {% endfor %}

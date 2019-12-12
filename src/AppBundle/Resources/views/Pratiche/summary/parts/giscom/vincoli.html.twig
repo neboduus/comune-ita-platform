@@ -1,27 +1,27 @@
 <div class="row">
-    <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.vincoli.label'|trans() }}</strong></div>
-    <div class="col-xs-12 col-sm-9">
-        {% set has_data = false %}
-        {% if pratica.dematerializedForms.vincoli is defined %}
-            {% for key, v in pratica.dematerializedForms.vincoli %}
-                {% if v|length > 0 %}
-                    {% set has_data = true %}
-                    <ul class="list-group">
-                        <li class="list-group-item">{{ ('steps.scia.vincoli.files.' ~ key ~ '.title')|trans() }}</li>
-                        {% for f in v %}
-                            {% if f.id|length>0 %}
-                                <li class="list-group-item scia-file">
-                                    <i class="fa fa-file" aria-hidden="true"></i> {{ f.name }}
-                                    <div class="pull-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+  <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.scia.vincoli.label'|trans() }}</strong></div>
+  <div class="col-xs-12 col-sm-9">
+    {% set has_data = false %}
+    {% if pratica.dematerializedForms.vincoli is defined %}
+      {% for key, v in pratica.dematerializedForms.vincoli %}
+        {% if v|length > 0 %}
+          {% set has_data = true %}
+          <ul class="list-group mb-2">
+            <li class="list-group-item">{{ ('steps.scia.vincoli.files.' ~ key ~ '.title')|trans() }}</li>
+            {% for f in v %}
+              {% if f.id|length>0 %}
+                <li class="list-group-item scia-file">
+                  {{ f.name }}<br />{% if allegati[f.id] is defined and allegati[f.id] %} <small>( {{ allegati[f.id] }} )</small>{% endif %}
+                  <div class="float-right">{{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}</div>
+                </li>
+              {% endif %}
             {% endfor %}
+          </ul>
         {% endif %}
-        {% if not has_data %}
-            <em>{{ 'pratica.non_specificato'|trans() }}</em>
-        {% endif %}
-    </div>
+      {% endfor %}
+    {% endif %}
+    {% if not has_data %}
+      <em>{{ 'pratica.non_specificato'|trans() }}</em>
+    {% endif %}
+  </div>
 </div>

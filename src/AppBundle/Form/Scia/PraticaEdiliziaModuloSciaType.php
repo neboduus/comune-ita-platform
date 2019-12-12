@@ -65,8 +65,9 @@ class PraticaEdiliziaModuloSciaType extends AbstractType
 
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
-        $helper->setGuideText('steps.scia.modulo_default.guida_alla_compilazione', true);
         $helper->setStepTitle('steps.scia.modulo_default.title', true);
+        $helper->setGuideText('steps.scia.modulo_default.guida_alla_compilazione', true);
+        $helper->setDescriptionText('steps.scia.modulo_default.description', true);
 
         $skeleton = new MappedPraticaEdilizia($pratica->getDematerializedForms());
         $allegati = $skeleton->getModuloDomanda()->hasContent() ? [$skeleton->getModuloDomanda()->toHash()] : [];

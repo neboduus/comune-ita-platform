@@ -251,6 +251,10 @@ class CPSUserProvider implements UserProviderInterface
         return $user->getNome() !== null
                && $user->getCognome() !== null
                && $user->getCodiceFiscale() !== null
+               && $user->getDataNascita() !== null
+               && $user->getDataNascita() !== ''
+               && $user->getLuogoNascita() !== null
+               && $user->getLuogoNascita() !== ''
                && $user->getIndirizzoResidenza() !== null
                && $user->getCapResidenza() !== null
                && $user->getCittaResidenza() !== null

@@ -170,25 +170,76 @@ $primary-b: 74;
   }
 }
 
-.formio_render {
-  ul.craue_formflow_steplist > li:first-child {
-    &:after {
-      content: '';
-      display: block;
-      height: 20px;
-      left: 50%;
-      position: absolute;
-      width: 20px;
-      border: 15px solid transparent;
-      border-bottom: 15px solid #ddd;
-      margin-top: 0.1rem;
-      margin-left: -1rem;
+.formio-form {
+  /*.form-check {
+    [type='checkbox'],
+    [type='radio'] {
+      position: relative;
+      left: 15px;
+      top: -2px;
+      opacity: 1;
+      cursor: pointer;
+    }
+    .form-check-label {
+      span {
+        margin-left: 0.8rem;
+      }
+    }
+  }*/
+
+  .form-check {
+    label {
+      input[type='checkbox'],
+      input[type='radio'] {
+        margin-left: 0px;
+        position: unset;
+        left: unset;
+        opacity: 1;
+      }
+
+      span {
+        margin-left: 0.8rem;
+      }
     }
   }
 
-  #formio {
-    /*padding: 8px;
-    background-color: #f2f2f2;*/
+  .formio-component-select {
+    label {
+      display: none;
+    }
+  }
+
+  .choices__list--single {
+    display: none;
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+  }
+}
+
+.formio_render {
+  ul.craue_formflow_steplist > li:first-child {
+  &:after {
+    content: '';
+    display: block;
+    height: 20px;
+    left: 50%;
+    position: absolute;
+    width: 20px;
+    border: 15px solid transparent;
+    border-bottom: 15px solid #ddd;
+    margin-top: 0.1rem;
+    margin-left: -1rem;
+  }
+}
+
+#formio {
+  /*padding: 8px;
+  background-color: #f2f2f2;*/
 
     .formio-component {
       /*background-color: #f2f2f2;*/
@@ -200,18 +251,9 @@ $primary-b: 74;
       }
     }
 
-    .form-check {
-      label {
-        input[type='checkbox'],
-        input[type='radio'] {
-          margin-left: 0px;
-          position: unset;
-          left: unset;
-        }
-
-        span {
-          margin-left: 15px;
-        }
+    .formio-choices {
+      .form-control {
+        box-shadow: none;
       }
     }
 

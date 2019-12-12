@@ -6,6 +6,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AuditLog;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 
@@ -397,6 +398,13 @@ class AdminController extends Controller
     $servizio->setPraticaFCQN('\AppBundle\Entity\FormIO');
     $servizio->setPraticaFlowServiceName('ocsdc.form.flow.formio');
     $servizio->setEnte($ente);
+
+    // Erogatore
+    $erogatore = new Erogatore();
+    $erogatore->setName('Erogatore di '.$servizio->getName().' per '.$ente->getName());
+    $erogatore->addEnte($ente);
+    $this->getDoctrine()->getManager()->persist($erogatore);
+    $servizio->activateForErogatore($erogatore);
 
     $this->getDoctrine()->getManager()->persist($servizio);
     $this->getDoctrine()->getManager()->flush();
