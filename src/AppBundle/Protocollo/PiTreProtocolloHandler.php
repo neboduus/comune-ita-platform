@@ -8,6 +8,10 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Protocollo\Exception\ResponseErrorException;
 use GuzzleHttp\Client;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 /**
  * @property $instance string
@@ -23,6 +27,11 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   {
     $this->client = $client;
     $this->instance = $instance;
+  }
+
+  public function getConfigParameters()
+  {
+    return PiTreProtocolloParameters::getEnteParametersKeys();
   }
 
   /**
@@ -98,7 +107,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
    *
-   *  @throws ResponseErrorException
+   * @throws ResponseErrorException
    */
   public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $integrazione)
   {

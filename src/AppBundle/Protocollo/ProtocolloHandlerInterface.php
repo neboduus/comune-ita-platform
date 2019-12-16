@@ -7,6 +7,9 @@ use AppBundle\Entity\Pratica;
 
 interface ProtocolloHandlerInterface
 {
+
+  public function getConfigParameters();
+
   /**
    * @param Pratica $pratica
    */

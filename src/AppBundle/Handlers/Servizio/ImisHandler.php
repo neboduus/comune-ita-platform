@@ -24,7 +24,7 @@ class ImisHandler extends AbstractServizioHandler
  * i parametri devono essere indicati in questo modo :
  * Anno del precompilato:2018
  * Codice fiscale del soggetto che si è autenticato alla stanza del cittadino : 16 caratteri con lettere  in maiuscolo
- * MD5 della stringa formata dal concatenamento di AAAA, cf e la seguente password : 55234512A$
+ * MD5 della stringa formata dal concatenamento di AAAA, cf e la password
  *
  */
 

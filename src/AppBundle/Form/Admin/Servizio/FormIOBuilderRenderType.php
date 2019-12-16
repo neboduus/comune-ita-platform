@@ -29,13 +29,19 @@ class FormIOBuilderRenderType extends AbstractType
   private $em;
 
   /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerService;
+
+  /**
    * ChooseAllegatoType constructor.
    *
    * @param EntityManager $entityManager
    */
-  public function __construct(EntityManager $entityManager)
+  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
   {
     $this->em = $entityManager;
+    $this->formServerService = $formServerService;
   }
 
   /**
@@ -84,7 +90,7 @@ class FormIOBuilderRenderType extends AbstractType
 
       $schema = \json_decode($event->getData()['form_schema'], true);
 
-      $response = FormServerApiAdapterService::editService($schema);
+      $response = $this->formServerService->editForm($schema);
       if ($response['status'] != 'success') {
         $event->getForm()->addError(
           new FormError($response['message'])

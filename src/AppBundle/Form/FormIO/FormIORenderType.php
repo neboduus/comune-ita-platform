@@ -25,13 +25,19 @@ class FormIORenderType extends AbstractType
   private $em;
 
   /**
-   * ChooseAllegatoType constructor.
-   *
-   * @param EntityManager $entityManager
+   * @var FormServerApiAdapterService
    */
-  public function __construct(EntityManager $entityManager)
+  private $formServerService;
+
+  /**
+   * FormIORenderType constructor.
+   * @param EntityManager $entityManager
+   * @param FormServerApiAdapterService $formServerService
+   */
+  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
   {
     $this->em = $entityManager;
+    $this->formServerService = $formServerService;
   }
 
   /**
@@ -86,14 +92,12 @@ class FormIORenderType extends AbstractType
     $pratica = $event->getForm()->getData();
     $compiledData = array();
     if (isset($event->getData()['dematerialized_forms'])) {
-
-      $flattenedData = array();
       $flattenedData = $this->arrayFlat(json_decode($event->getData()['dematerialized_forms'], true));
       $compiledData = json_decode($event->getData()['dematerialized_forms'], true);
     }
 
     $schema = false;
-    $result = FormServerApiAdapterService::getServiceSchema($this->getFormIoId($pratica));
+    $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
     if ($result['status'] == 'success') {
       $schema = $this->arrayFlat($result['schema']);
     }
@@ -118,14 +122,6 @@ class FormIORenderType extends AbstractType
     return json_encode($pratica->getDematerializedForms());
   }
 
-  /*private function getRequiredFields(MappedPraticaEdilizia $skeleton)
-  {
-      return is_array($integrazioneAllegati) ?
-          $integrazioneAllegati :
-          $skeleton->getVincoli()->getRequiredFields($skeleton->getTipoIntervento());
-  }*/
-
-
   private function getFormIoId(Pratica $pratica)
   {
     $formID = false;
@@ -141,7 +137,7 @@ class FormIORenderType extends AbstractType
     }
     // Retrocompatibilità
     if (!$formID) {
-      $formID = $additionalData['formio_id'];
+      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
     }
 
     return $formID;

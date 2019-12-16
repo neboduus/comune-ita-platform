@@ -1512,111 +1512,31 @@ steps:
       label: Allegati
       guida_alla_compilazione: Carica gli allegati richiesti. Il logo deve essere in formato jpeg, i documenti in formato PDF
 
+
+protocollo:
+  recipientIDArray: 'Destinatari documenti (recipientIDArray)'
+  recipientTypeIDArray: 'Tipologia di destinatari documenti (recipientTypeIDArray)'
+  codeNodeClassification: 'Ramo Titolario (codeNodeClassification)'
+  codeAdm: 'Codice amministrazione su PiTre (codeADM)'
+  trasmissionIDArray: 'Competenti (TransmissionIDArray)'
+  instance: 'Codice itstanza su PiTre Wrapper'
+  arrivo:tipo_documento: 'Tipo documento - Arrivo'
+  arrivo:tramite: 'Tramite - Arrivo'
+  arrivo:smistamento: 'Smistamento - Arrivo'
+  arrivo:classifica: 'Classifica - Arrivo'
+  arrivo:fascicolo: 'Fascicolo - Arrivo'
+  risposta:mittente_interno: 'Mittente interno - Risposta'
+  risposta:tipo_documento: 'Tipo documento - Risposta'
+  risposta:tramite: 'Tramite - Risposta'
+  risposta:smistamento: 'Smistamento - Risposta'
+  risposta:classifica: 'Classifica - Risposta'
+  risposta:fascicolo: 'Fascicolo - Risposta'
+
 gateway:
   bollo:
     identifier: 'Identificatore'
     data: 'Data emissione'
     ora: 'Ora emissione'
 
-applicant:
-  data:
-    completename:
-      data:
-        name: Nome richiedente
-        surname: Cognome richiedente
-    Born:
-      data:
-        place_of_birth: Luogo di nascita richiedente
-        date_of_birth: Data di nascita richiedente
-    fiscal_code:
-      data:
-        fiscal_code: Codice fiscale richiedente
-    address:
-      data:
-        address: Indirizzo richiedente
-        house_number: Numero civico richiedente
-        municipality: Città richiedente
-        postal_code: Cap richiedente
-    email_address: Email richiedente
-applicant_nationality: Nazionalià richiedente
-relationship: Relazione  richiedente
-
-
-child:
-  data:
-    completename:
-      data:
-        name: Nome figlio
-        surname: Cognome figlio
-    Born:
-      data:
-        place_of_birth: Luogo di nascita figlio
-        date_of_birth: Data di nascita figlio
-    fiscal_code:
-      data:
-        fiscal_code: Codice fiscale figlio
-    address:
-      data:
-        address: Indirizzo figlio
-        house_number: Numero civico figlio
-        municipality: Città figlio
-        postal_code: Cap figlio
-    email_address: Email richiedente
-child_nationality: Nazionalià figlio
-
-parent:
-  data:
-    completename:
-      data:
-        name: Nome coniuge
-        surname: Cognome coniuge
-    Born:
-      data:
-        place_birth: Luogo di nascita coniuge
-        date_birth: Data di nascita coniuge
-    fiscalCode:
-      data:
-        fiscal_code: Codice fiscale coniuge
-    address:
-      data:
-        address: Indirizzo coniuge
-        house_number: Numero civico coniuge
-        municipality: Città coniuge
-        postal_code: Cap coniuge
-parent_nationality: Nazionalià coniuge
-
-tel_number:
-  0:
-    nome: 'Recapito telefonico'
-    telefono: 'Numero recapito telefonico'
-    tel_name: 'Recapito telefonico'
-    tel_number: 'Numero recapito telefonico'
-  1:
-    tel_name: 'Recapito telefonico'
-    tel_number: 'Numero recapito telefonico'
-  2:
-    tel_name: 'Recapito telefonico'
-    tel_number: 'Numero recapito telefonico'
-  3:
-    tel_name: 'Recapito telefonico'
-    tel_number: 'Numero recapito telefonico'
-
-nursery_priority_1: Asilo priorità 1
-nursery_priority_2: Asilo priorità 2
-nursery_priority_3: Asilo priorità 3
-nursery_priority_4: Asilo priorità 4
-nursery_priority_5: Asilo priorità 5
-nursery_priority_6: Asilo priorità 6
-nursery_priority_7: Asilo priorità 7
-nursery_priority_8: Asilo priorità 8
-nursery_priority_9: Asilo priorità 9
-nursery_priority_10: Asilo priorità 10
-
-applicant_changing_residence: Richiedente iscritto a comune Convenzionato
-parent_changing_residence: Coniuge iscritto a comune Convenzionato
-municipality: Comune convenzionato
-municipality2: Comune convenzionato
-
-  
 
 
