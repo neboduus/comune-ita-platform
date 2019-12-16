@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -57,15 +58,14 @@ class ServiziController extends Controller
 
     /**
      * @Route("/miller/{topic}/{subtopic}", name="servizi_miller", defaults={"topic":false, "subtopic":false})
-     * @Template()
      * @param string $topic
      * @param string $subtopic
      * @param Request $request
-     * @return array
+     * @return Response|array
      */
     public function serviziMillerAction($topic, $subtopic, Request $request)
     {
-        $topics = $subTopics = $subSubTopics = $servizi = array();
+        /*$topics = $subTopics = $subSubTopics = $servizi = array();
         $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
         $categoriesRepo = $this->getDoctrine()->getRepository('AppBundle:Categoria');
         $area = $request->get('area', false);
@@ -75,12 +75,10 @@ class ServiziController extends Controller
             ['name' => 'ASC']
         );
 
-        /** @var Categoria $parent */
         if (!$area)
         {
             if ($topic)
             {
-                /** @var Categoria $temp */
                 $temp = $categoriesRepo->findOneBySlug($topic);
                 $parent = $categoriesRepo->findOneByTreeId($temp->getTreeParentId());
             }
@@ -149,6 +147,8 @@ class ServiziController extends Controller
             'servizi'          => $servizi,
             'user'             => $this->getUser()
         ];
+        */
+        return new Response(null, Response::HTTP_GONE);
     }
 
     /**
@@ -156,12 +156,12 @@ class ServiziController extends Controller
      * @param string $topic
      * @param string $subtopic
      * @param Request $request
-     * @return array
+     * @return Response|array
      */
     public function serviziMillerAjaxAction($topic, $subtopic, Request $request)
     {
 
-        if (!$request->isXMLHttpRequest()) {
+        /*if (!$request->isXMLHttpRequest()) {
             return $this->redirectToRoute(
                 'servizi_miller',
                 ['topic' => $topic, 'subtopic' => $subtopic]
@@ -173,7 +173,6 @@ class ServiziController extends Controller
         $subTopics = $subSubTopics = $servizi =  $params = array();
         $templateName =  '@App/Servizi/parts/miller/section.html.twig';
 
-        /** @var Categoria $topic */
         $topic = $categoriesRepo->findOneBySlug($topic);
         $parent = $categoriesRepo->findOneByTreeId($topic->getTreeParentId());
         $params['current_area']= $parent;
@@ -227,7 +226,8 @@ class ServiziController extends Controller
             ['html' => $template]
         );
         $response->setVary("X-Requested-With");
-        return $response;
+        return $response;*/
+      return new Response(null, Response::HTTP_GONE);
 
     }
 
