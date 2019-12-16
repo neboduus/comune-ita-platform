@@ -18,6 +18,7 @@
   <script src="//unpkg.com/element-ui/lib/index.js"></script>
   <script src="//unpkg.com/axios/dist/axios.min.js"></script>
   <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
 
   {#<script src="{{ asset('bundles/app/js/chat.js') }}"></script>#}
   {% if form.vars.helper.vueApp %}
@@ -67,36 +68,10 @@
 
         Formio.icons = 'fontawesome';
         //Formio.createForm(document.getElementById('formio'), 'https://examples.form.io/example')
-        Formio.createForm(document.getElementById('formio'), 'https://formserver.opencontent.it/form/' + $('#formio_render_form_id').val(), {
+        Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
           noAlerts: true,
           language: 'it',
-          i18n: {
-            en: {},
-            sp: {},
-            it: {
-              complete: 'Invio Completato',
-              error: 'Per favore correggi i seguenti errori prima di inviare.',
-              month: 'Mese',
-              day: 'Giorno',
-              year: 'Anno',
-              january: 'Gennaio',
-              february: 'Febbraio',
-              march: 'Marzo',
-              april: 'Aprile',
-              may: 'Maggio',
-              june: 'Giugno',
-              july: 'Luglio',
-              august: 'Agosto',
-              september: 'Settembre',
-              october: 'Ottobre',
-              november: 'Novembre',
-              december: 'Dicembre',
-              next: 'Successivo',
-              previous: 'Precedente',
-              cancel: 'Annulla',
-              submit: 'Invia',
-            }
-          }
+          i18n: formIoI18n
         })
           .then(function (form) {
 
@@ -348,7 +323,7 @@
           {% endif %}
         </div>
 
-        <div id="formio"></div>
+        <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
 
         <div class="mt-5">
           {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}

@@ -34,35 +34,6 @@
 {% endblock %}
 
 {% block javascripts %}
-
     {{ encore_entry_script_tags('app') }}
-
-
-    <!-- !Javascript - at the bottom for fast page loading -->
-    {#<script src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('bundles/app/js/jasny-bootstrap.min.js') }}"></script>
-    <script>
-        $(document).ready(function($) {
-
-            var $wrap = $(window),
-                    $header = $("#header"),
-                    headerHeight = $header.outerHeight(),
-                    headerTopHeight = $("#header-top").outerHeight(),
-                    headerInsideHeight = $("#header-inside").outerHeight();
-
-            $wrap.on('scroll', function(e) {
-                if ($wrap.scrollTop() > headerTopHeight + headerInsideHeight
-                        && $wrap.width() > 200
-                ) {
-                    $header.addClass("header-fixed");
-                } else {
-                    $header.removeClass("header-fixed");
-                }
-            });
-            $('.has_tooltip').tooltip();
-        });
-    </script>#}
-    {#{{ include('@App/Default/footer/devscripts.html.twig') }}#}
 {% endblock %}
 

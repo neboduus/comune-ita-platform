@@ -64,3 +64,6 @@ parameters:
     slack_logs_webhook_url: 'http://slack.com'
     PasswordLifeTime: 30
     InactiveUserLifeTime: 60
+
+    formserver_private_url: 'https://formserver.opencontent.it'
+    formserver_public_url: 'https://formserver.opencontent.it'

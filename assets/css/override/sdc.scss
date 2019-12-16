@@ -191,3 +191,19 @@ form[name="upload_allegato_operatore"] {
 .formio-template {
   cursor: pointer;
 }
+
+.gateway-form-type {
+  padding: 0.5rem;
+  background-color: #EFEFEF;
+  fieldset {
+    margin-bottom: 2rem;
+    legend {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+  }
+  label {
+    padding: 0;
+    width: auto !important;
+  }
+}

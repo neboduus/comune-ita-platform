@@ -17,7 +17,6 @@
 
 {% block main_content %}
 
-
   <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
@@ -99,9 +98,12 @@
               <p>Seleziona un template di partenza per la creazione del form</p>
             </div>
           </div>
-          <div class="card-wrapper card-teaser-wrapper col-lg-12" id="formio-templates-container"></div>
+          <div class="col-lg-12"><h5>Template vuoto</h5></div>
+          <div class="card-wrapper card-teaser-wrapper col-lg-12" id="formio-empty-templates-container"></div>
+          <div class="col-lg-12"><h5>Templates basati su servizi esistenti</h5></div>
+          <div class="card-wrapper card-teaser-wrapper col-lg-12" id="formio-templates-container" data-url="{{ path('admin_servizio_list') }}"></div>
         </div>
-        <div id="formio"></div>
+        <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
         <div id="builder"></div>
 
         <div class="mt-5">
@@ -134,12 +136,16 @@
 
   {% verbatim %}
   <script id="tpl-form" type="text/x-jsrender">
-    <div class="card card-teaser rounded shadow formio-template" data-id="{{:_id}}" id="{{:_id}}">
+    <div class="card card-teaser rounded shadow formio-template" data-id="{{:id}}" id="{{:id}}">
       <div class="card-body">
         <h5 class="card-title">{{:title}}</h5>
         <p class="card-text">{{:description}}</p>
       </div>
     </div>
+  </script>
+
+  <script id="tpl-empty" type="text/x-jsrender">
+    <div class="col-lg-12 alert alert-warning"><p>Nessun template disponibile</p></div>
   </script>
   {% endverbatim %}
 

@@ -36,7 +36,7 @@
                             </td>
                             <td width="20%">
                                 <a class="btn btn-warning btn-sm" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">Modifica</a>
-                                <a class="btn btn-danger btn-sm" href="{{ path('admin_servizio_delete', { 'id': item.id }) }}">Elimina</a>
+                                <a class="btn btn-danger btn-sm" onclick="return confirm('Sei sicuro di procedere? il servizio e il modulo collegato verrano eliminati definitivamente.');" href="{{ path('admin_servizio_delete', { 'id': item.id }) }}">Elimina</a>
                             </td>
                         </tr>
                     {% endfor %}

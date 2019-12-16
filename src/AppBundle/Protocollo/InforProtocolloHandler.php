@@ -74,6 +74,39 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $this->propertyMappingFactory = $pmf;
   }
 
+  public function getConfigParameters()
+  {
+    /*
+     "arrivo": {
+        "tipo_documento": "CW",
+        "tramite": "WEB",
+        "smistamento": "STATO CIVILE",
+        "classifica": "11.01",
+        "fascicolo": "2017/6"
+      },
+      "risposta": {
+        "mittente interno": "STANZA DEL CITTADINO",
+        "tipo_documento": "CW",
+        "tramite": "WEB",
+        "smistamento": "STATO CIVILE",
+        "classifica": "11.01",
+        "fascicolo": "2017/6"
+      }
+     */
+    return array(
+      'arrivo:tipo_documento',
+      'arrivo:tramite',
+      'arrivo:smistamento',
+      'arrivo:classifica',
+      'arrivo:fascicolo',
+      'risposta:mittente_interno',
+      'risposta:tipo_documento',
+      'risposta:tramite',
+      'risposta:smistamento',
+      'risposta:classifica',
+      'risposta:fascicolo',
+    );
+  }
 
   /**
    * @param Pratica $pratica

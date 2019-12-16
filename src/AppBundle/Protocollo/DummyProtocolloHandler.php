@@ -8,6 +8,10 @@ use AppBundle\Entity\Pratica;
 
 class DummyProtocolloHandler implements ProtocolloHandlerInterface
 {
+  public function getConfigParameters()
+  {
+    return false;
+  }
 
   /**
    * @param Pratica $pratica

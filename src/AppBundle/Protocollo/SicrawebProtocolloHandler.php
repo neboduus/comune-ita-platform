@@ -13,6 +13,7 @@ use GuzzleHttp\Client;
  */
 class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
 {
+
   /**
    * @var Client
    */
@@ -22,6 +23,11 @@ class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
   {
     $this->client = $client;
     $this->instance = $instance;
+  }
+
+  public function getConfigParameters()
+  {
+    return false;
   }
 
   /**

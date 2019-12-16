@@ -73,8 +73,6 @@ class PaymentGatewayType extends AbstractType
                 );
         }
 
-
-
         $builder->addEventSubscriber($this->container->get($gatewayClassHandler));
     }
 

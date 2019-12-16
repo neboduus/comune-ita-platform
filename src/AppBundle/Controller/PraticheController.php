@@ -280,6 +280,7 @@ class PraticheController extends Controller
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
+      'formserver_url' => $this->getParameter('formserver_public_url'),
       'user' => $user,
       'threads' => $thread,
     ];

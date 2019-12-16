@@ -14,6 +14,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -23,7 +24,8 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -68,15 +70,9 @@ class AdminController extends Controller
    */
   public function editEnteAction(Request $request)
   {
-
+    $entityManager = $this->getDoctrine()->getManager();
     $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
-    $form = $this->createFormBuilder($ente)
-      ->add('codice_meccanografico', TextType::class)
-      ->add('site_url', TextType::class)
-      ->add('codice_amministrativo', TextType::class)
-      ->add('meta', TextareaType::class, ['required' => false])
-      ->add('save', SubmitType::class, ['label' => 'Salva'])
-      ->getForm();
+    $form = $this->createForm('AppBundle\Form\Admin\Ente\EnteType', $ente);
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
       // $form->getData() holds the submitted values
@@ -85,7 +81,7 @@ class AdminController extends Controller
 
       // ... perform some action, such as saving the task to the database
       // for example, if Task is a Doctrine entity, save it!
-      $entityManager = $this->getDoctrine()->getManager();
+
       $entityManager->persist($ente);
       $entityManager->flush();
 
@@ -297,9 +293,9 @@ class AdminController extends Controller
   public function indexServizioAction()
   {
     $statuses = [
-      Servizio::STATUS_CANCELLED =>'Cancellato',
+      Servizio::STATUS_CANCELLED => 'Bozza',
       Servizio::STATUS_AVAILABLE => 'Pubblicato',
-      Servizio::STATUS_SUSPENDED =>'Sospeso'
+      Servizio::STATUS_SUSPENDED => 'Sospeso'
     ];
 
     $em = $this->getDoctrine()->getManager();
@@ -312,33 +308,28 @@ class AdminController extends Controller
     );
   }
 
-
   /**
-   * Displays a form to edit an existing operatoreUser entity.
-   * @Template()
-   * @Route("/servizio/{id}/edit-bck", name="admin_servizio_edit_bck")
-   * @Method({"GET", "POST"})
+   * Lists all operatoreUser entities.
+   * @Route("/servizio/list", name="admin_servizio_list")
+   * @Method("GET")
    */
-  /*public function editServizioAction(Request $request, Servizio $item)
+  public function listServizioAction()
   {
-    //$deleteForm = $this->createDeleteForm($item);
-    $editForm = $this->createForm('AppBundle\Form\ServizioFormType', $item);
-    $editForm->handleRequest($request);
 
-    if ($editForm->isSubmitted() && $editForm->isValid()) {
-      $this->getDoctrine()->getManager()->flush();
+    $em = $this->getDoctrine()->getManager();
+    $items = $em->getRepository('AppBundle:Servizio')->findBy(['praticaFCQN' => '\AppBundle\Entity\FormIO']);
 
-      return $this->redirectToRoute('admin_servizio_edit', array('id' => $item->getId()));
+    $data = [];
+    foreach ($items as $s) {
+      $data []= [
+        'id' => $s->getId(),
+        'title' => $s->getName(),
+        'description' => $s->getDescription()
+      ];
     }
 
-    return array(
-      'user' => $this->getUser(),
-      'item' => $item,
-      'edit_form' => $editForm->createView(),
-      //'delete_form' => $deleteForm->createView(),
-    );
-  }*/
-
+    return new JsonResponse($data);
+  }
 
   /**
    * @Route("/servizio/{servizio}/edit", name="admin_servizio_edit")
@@ -376,10 +367,11 @@ class AdminController extends Controller
     }
 
     return [
-      'form'     => $form->createView(),
+      'form' => $form->createView(),
       'servizio' => $flowService->getFormData(),
-      'flow'     => $flowService,
-      'user'     => $user
+      'flow' => $flowService,
+      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'user' => $user
     ];
   }
 
@@ -394,14 +386,15 @@ class AdminController extends Controller
     $servizio = new Servizio();
     $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
 
-    $servizio->setName('Nuovo Servizio' . time());
+    $servizio->setName('Nuovo Servizio ' . time());
     $servizio->setPraticaFCQN('\AppBundle\Entity\FormIO');
     $servizio->setPraticaFlowServiceName('ocsdc.form.flow.formio');
     $servizio->setEnte($ente);
+    $servizio->setStatus(Servizio::STATUS_CANCELLED);
 
     // Erogatore
     $erogatore = new Erogatore();
-    $erogatore->setName('Erogatore di '.$servizio->getName().' per '.$ente->getName());
+    $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
     $erogatore->addEnte($ente);
     $this->getDoctrine()->getManager()->persist($erogatore);
     $servizio->activateForErogatore($erogatore);
@@ -434,13 +427,17 @@ class AdminController extends Controller
 
         return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
       }
-    }
+    }/* else {
+      dump($form->getErrors());
+      exit;
+    }*/
 
     return $this->render('@App/Admin/editServizio.html.twig', [
-      'form'     => $form->createView(),
+      'form' => $form->createView(),
       'servizio' => $flowService->getFormData(),
-      'flow'     => $flowService,
-      'user'     => $user
+      'flow' => $flowService,
+      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'user' => $user
     ]);
 
   }
@@ -454,6 +451,10 @@ class AdminController extends Controller
   {
 
     try {
+      if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
+        $this->container->get('ocsdc.formserver')->deleteForm($servizio);
+      }
+
       $em = $this->getDoctrine()->getManager();
       $em->remove($servizio);
       $em->flush();
@@ -463,7 +464,6 @@ class AdminController extends Controller
       $this->addFlash('warning', 'Impossibile eliminare il servizio, ci sono delle pratiche collegate.');
       return $this->redirectToRoute('admin_servizio_index');
     }
-
 
 
   }
