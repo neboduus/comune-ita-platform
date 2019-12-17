@@ -1,5 +1,6 @@
-*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-rovereto --env=prod
-*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-tre-ville --env=prod
-*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-cavedine --env=prod
-*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-vallelaghi --env=prod
-*/1 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-ala --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-rovereto --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-tre-ville --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-cavedine --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-vallelaghi --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-ala --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i fondazione-mach --env=prod

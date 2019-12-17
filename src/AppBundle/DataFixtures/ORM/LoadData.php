@@ -177,10 +177,15 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
      */
     public function loadServizi(ObjectManager $manager)
     {
+
+        $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
+        if (!$ente instanceof Ente) {
+           return;
+        }
+
         $data = $this->getData('Servizi');
         $serviziRepo = $manager->getRepository('AppBundle:Servizio');
         $categoryRepo = $manager->getRepository('AppBundle:Categoria');
-        $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
         foreach ($data as $item) {
             $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
 
