@@ -55,20 +55,10 @@ services:
       PHP_FPM_GROUP: wodby
       PHP_APCU_ENABLED: 0
       PHP_OPCACHE_ENABLE: 0
+      FORMSERVER_PRIVATE_URL: http://formserver:8000
+      FORMSERVER_PUBLIC_URL: http://stanzadelcittadino.localtest.me
     volumes:
       - "uploads:/docroot/var/uploads"
-      - "app:/var/www/html"
-
-
-
-#  cron:
-#     container_name: "${PROJECT_NAME}_cron"
-#     depends_on:
-#       - php
-#     #network_mode: "host"
-#     volumes:
-#       - "${SHARED_UPLOADS_MOUNT}:/docroot/var/uploads:cached"
-
 
   apache:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:docker-demo
@@ -81,20 +71,10 @@ services:
       SERVER_NAME: $SERVER_NAME
       ENTITY_ID: $ENTITY_ID
       PROJECT_BASE_URL: $PROJECT_BASE_URL
-    volumes:
-      - "app:/var/www/html"
     ports:
       - "443:443"
     labels:
       traefik.frontend.rule: 'Host:stanzadelcittadino.localtest.me'
-
-#healthcheck:
-#  test: "test -S /var/run/shibboleth/shib.sock"
-#  interval: 30s      # the $interval between checks
-#  timeout: 1s       # the check must finish before timeout, or it will result in a failure
-#  retries: 1           # It takes retries consecutive failures of the health check for the container to be considered unhealthy. (default: 3)
-#  start_period: 10s    # first time check starts after the $start_period
-
 
   wkhtmltopdf:
     image: traumfewo/docker-wkhtmltopdf-aas
@@ -108,7 +88,6 @@ services:
     image: traefik:1.7
     restart: unless-stopped
     command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
-    #command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me --defaultentrypoints=http,https --entrypoints="Name:http Address::80" --entrypoints="Name:https Address::443 TLS" --acme --acme.email=sistemisti@opencontent.it --acme.storage=/certificates/acme.json --acme.entryPoint=https --acme.httpChallenge.entryPoint=http --acme.onhostrule=true --acme.acmelogging=true
     ports:
       - '80:80'
         # - '443:443'
@@ -133,29 +112,10 @@ services:
       DB_URL: mongodb://mongo:27017/formmanager
     depends_on:
       - mongo
-
-  mongodb-backup:
-    image: deenoize/mongodb-backup-s3
-    restart: unless-stopped
-    environment:
-      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID_BACKUP
-      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY_BACKUP
-      BUCKET: $BUCKET_BACKUP
-      BUCKET_REGION: eu-west-1
-      MONGODB_DBNAME: formmanager
-      TZ: EU/Rome
-      CRON_TZ: EU/Rome
-      #DISABLE_CRON: 'true'
-      #INIT_BACKUP: 'false'
-      #INIT_RESTORE: 'false'
-      MONGODB_HOST: 'mongo'
-      MONGODB_PORT: 27017
-      EXTRA_OPTS: '--forceTableScan'
-    depends_on:
-      - mongo
+    labels:
+      traefik.frontend.rule: 'Host:formserver.localtest.me'
 
 volumes:
   pgdata:
   uploads:
-  app:
   mongo:

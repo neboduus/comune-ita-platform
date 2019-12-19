@@ -1,3 +1,7 @@
+ARG php_image
+FROM ${php_image} as php
+
+
 FROM centos:7
 
 # add Shibboleth repo
@@ -26,10 +30,9 @@ COPY ./compose_conf/shibboleth/usr/local/bin/ /usr/local/bin/
 RUN chmod +x \
     /usr/local/bin/docker-bootstrap.sh
 
+COPY --from=php /var/www/html /var/www/html
+
 # run it
 EXPOSE 80 443
 CMD ["docker-bootstrap.sh"]
-
-
-
 
