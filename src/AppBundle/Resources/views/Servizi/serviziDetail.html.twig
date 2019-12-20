@@ -9,13 +9,51 @@
       </div>
       <div class="col-lg-8 px-lg-4 py-lg-2">
 
-        <p>
-          {{ servizio.description }}
-        </p>
+        {% if servizio.description|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Cos'è</h4>
+            {{ servizio.description|raw }}
+          </article>
+        {% endif %}
 
-        <p>
-          {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
-        </p>
+        {% if servizio.who|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>A chi si rivolge</h4>
+            {{ servizio.who|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.coverage %}
+          {% set coverage = servizio.coverage|split(',') %}
+          <article class="mb-3">
+            <h5>Copertura geografica</h5>
+            {% for c in coverage %}
+              <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary"><span
+                  class="chip-label">{{ c }}</span></div>
+            {% endfor %}
+          </article>
+        {% endif %}
+
+        {% if servizio.who|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Accedere al servizio</h4>
+            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.specialCases|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Casi particolari</h4>
+            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.moreInfo|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Maggiori informazioni</h4>
+            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
 
         {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale is defined %}
           <br/>

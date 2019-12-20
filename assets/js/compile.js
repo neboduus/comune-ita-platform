@@ -9,6 +9,20 @@ require('webpack-jquery-ui/datepicker');
 
 
 $(document).ready(function () {
+
+  if ($('#summary_flow_formIO_step').length) {
+    $('button.craue_formflow_button_class_next').on('click', function (e) {
+      var $form = $(this).closest('form');
+      e.preventDefault();
+      $('#confirm .modal-body').html('Proseguendo la pratica non sarà più modificabile e verrà inviata all\'Ente non appena sarà ultimato il pagamento');
+      $('#confirm').modal({backdrop: 'static', keyboard: false})
+        .one('click', '#ok', function () {
+          $form.trigger('submit'); // submit the form
+        });
+    });
+  }
+
+
   $('button.craue_formflow_button_last').on('click', function (e) {
     var $form = $(this).closest('form');
     e.preventDefault();

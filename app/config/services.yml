@@ -10,6 +10,9 @@ services:
   AppBundle\Controller\Rest\ServicesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\ApplicationsAPIController:
+    autowire: true
+
   GuzzleHttp\Client: '@guzzle.client.mypay'
 
   AppBundle\Form\Scia\PraticaEdiliziaVincoliType:
@@ -202,7 +205,7 @@ services:
 
   ocsdc.form.type.select_payment_gateway_type:
     class: AppBundle\Form\Base\SelectPaymentGatewayType
-    arguments: ["@doctrine.orm.entity_manager"]
+    autowire: true
     tags:
       - { name: form.type }
 

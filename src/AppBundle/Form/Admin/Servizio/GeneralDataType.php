@@ -26,30 +26,48 @@ class GeneralDataType extends AbstractType
     ];
 
     $builder->add(
-      "name",
-      TextType::class,
-      [
+      "name", TextType::class, [
         "label" => 'Nome del servizio',
         "required" => true,
-      ]
-    )
+      ])
       ->add('topics', EntityType::class, [
         'class' => 'AppBundle\Entity\Categoria',
         'choice_label' => 'name',
+        'label' => 'Categoria'
       ])
-      ->add('description')
-      ->add('howto')
-      ->add('who')
-      ->add('special_cases')
-      ->add('more_info')
-      /*->add('coverage', CollectionType::class, [
-        'entry_type' => TextType::class,
-        "entry_options" => ["label" => 'aaaa'],
-        'allow_add' => true,
-        'prototype' => true
-      ])*/
+      ->add('description', TextareaType::class, [
+        'label' => "Cos'è",
+        'required' => false
+      ])
+      ->add('who', TextareaType::class, [
+        'label' => 'A chi si rivolge',
+        'required' => false
+      ])
+      ->add('coverage', TextType::class, [
+        'label' => 'Copertura geografica - (se più di uno inserire i valori separati da virgola)',
+        'required' => false
+      ])
+      ->add('howto', TextareaType::class, [
+        'label' => 'Accedere al servizio',
+        'required' => false
+      ])
+      ->add('special_cases', TextareaType::class, [
+        'label' => 'Casi particolari',
+        'required' => false
+      ])
+      ->add('more_info', TextareaType::class, [
+        'label' => 'Maggiori informazioni',
+        'required' => false
+      ])
       ->add('sticky')
-      ->add('status', ChoiceType::class, ['choices' => $statuses]);
+      ->add('sticky', CheckboxType::class, [
+        'label' => 'In evidenza?',
+        'required' => false
+      ])
+      ->add('status', ChoiceType::class, [
+        'label' => 'Stato',
+        'choices' => $statuses
+      ]);
   }
 
   public function getBlockPrefix()

@@ -222,7 +222,7 @@ $primary-b: 74;
 }
 
 .formio_render {
-  ul.craue_formflow_steplist > li:first-child {
+  ul.craue_formflow_steplist > li:first-child.wizard {
   &:after {
     content: '';
     display: block;
@@ -248,6 +248,7 @@ $primary-b: 74;
     .form-group {
       label {
         position: relative;
+        white-space: normal;
       }
     }
 

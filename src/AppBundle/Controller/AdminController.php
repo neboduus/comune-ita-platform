@@ -356,6 +356,10 @@ class AdminController extends Controller
         $form = $flowService->createForm();
       } else {
 
+        // Retrocompatibilità --> salvo i parametri dei protocollo nell'ente
+        $ente = $servizio->getEnte();
+        $ente->setProtocolloParametersPerServizio($servizio->getProtocolloParameters(), $servizio);
+
         $this->getDoctrine()->getManager()->flush();
         $flowService->getDataManager()->drop($flowService);
         $flowService->reset();
@@ -420,6 +424,10 @@ class AdminController extends Controller
         $form = $flowService->createForm();
       } else {
 
+        // Retrocompatibilità --> salvo i parametri dei protocollo nell'ente
+        $ente = $servizio->getEnte();
+        $ente->setProtocolloParametersPerServizio($servizio->getProtocolloParameters(), $servizio);
+        $this->getDoctrine()->getManager()->flush();
         $flowService->getDataManager()->drop($flowService);
         $flowService->reset();
 
@@ -458,6 +466,8 @@ class AdminController extends Controller
       $em = $this->getDoctrine()->getManager();
       $em->remove($servizio);
       $em->flush();
+
+      $this->addFlash('feedback', 'Servizio eliminato correttamente');
 
       return $this->redirectToRoute('admin_servizio_index');
     } catch (ForeignKeyConstraintViolationException $exception) {

@@ -12,6 +12,7 @@
     "datatables.net-bs4": "^1.10.19",
     "formiojs": "3.27.3",
     "jsrender": "^1.0.3",
+    "summernote": "^0.8.12",
     "webpack-jquery-ui": "^2.0.1"
   }
 }

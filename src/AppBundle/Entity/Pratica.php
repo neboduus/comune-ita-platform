@@ -51,6 +51,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 {
     const STATUS_DRAFT = 1000;
+
+    const STATUS_PAYMENT_PENDING = 1500;
+    const STATUS_PAYMENT_OUTCOME_PENDING = 1510;
+    const STATUS_PAYMENT_SUCCESS = 1520;
+    const STATUS_PAYMENT_ERROR = 1530;
+
     const STATUS_SUBMITTED = 2000;
     const STATUS_REGISTERED = 3000;
     const STATUS_PENDING = 4000;

@@ -147,6 +147,10 @@ pratica:
       pratiche_list_intro: 'Allegato alle pratiche:'
     modulocompilato: ''
     stato_1000: 'Bozza'
+    stato_1500: 'In attesa di pagamento'
+    stato_1510: "In attesa dell'esito di pagamento"
+    stato_1520: "Pagamento avvenuto con successo"
+    stato_1520: "Pagamento rifiutato"
     stato_2000: 'Inviata'
     stato_3000: 'Protocollata'
     stato_4000: 'Presa in carico'
@@ -500,8 +504,8 @@ steps:
     inserisci_importo:
       label: "Inserisci l'importo"
     seleziona_gateway_pagament:
-      title: "Selezione del gateway di pagamento"
-      guida_alla_compilazione: "Seleziona dal menu a tendina il gateway di pagamento che intendi utilizzare"
+      title: "Selezione del metodo di pagamento"
+      guida_alla_compilazione: "Seleziona il metodo di pagamento che intendi utilizzare"
 
     seleziona_ente:
       label: "Ente"
@@ -1520,17 +1524,24 @@ protocollo:
   codeAdm: 'Codice amministrazione su PiTre (codeADM)'
   trasmissionIDArray: 'Competenti (TransmissionIDArray)'
   instance: 'Codice itstanza su PiTre Wrapper'
-  arrivo:tipo_documento: 'Tipo documento - Arrivo'
-  arrivo:tramite: 'Tramite - Arrivo'
-  arrivo:smistamento: 'Smistamento - Arrivo'
-  arrivo:classifica: 'Classifica - Arrivo'
-  arrivo:fascicolo: 'Fascicolo - Arrivo'
-  risposta:mittente_interno: 'Mittente interno - Risposta'
-  risposta:tipo_documento: 'Tipo documento - Risposta'
-  risposta:tramite: 'Tramite - Risposta'
-  risposta:smistamento: 'Smistamento - Risposta'
-  risposta:classifica: 'Classifica - Risposta'
-  risposta:fascicolo: 'Fascicolo - Risposta'
+  infor_username: 'Username'
+  infor_denominazione: 'Denominazione'
+  infor_email: 'Email'
+  infor_wsdl: 'Url wsdl'
+  infor_wsUrl: 'Url ws'
+  arrivo:
+    tipo_documento: 'Tipo documento'
+    tramite: 'Tramite'
+    smistamento: 'Smistamento'
+    classifica: 'Classifica'
+    fascicolo: 'Fascicolo'
+  risposta:
+    mittente_interno: 'Mittente interno'
+    tipo_documento: 'Tipo documento'
+    tramite: 'Tramite'
+    smistamento: 'Smistamento'
+    classifica: 'Classifica'
+    fascicolo: 'Fascicolo'
 
 gateway:
   bollo:

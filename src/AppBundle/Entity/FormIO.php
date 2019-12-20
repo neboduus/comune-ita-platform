@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -10,39 +11,44 @@ use Doctrine\ORM\Mapping as ORM;
 class FormIO extends Pratica implements DematerializedFormPratica
 {
 
-    /**
-     * @ORM\Column(type="json_array", options={"jsonb":true})
-     * @var $dematerializedForms array
-     */
-    protected $dematerializedForms;
+  /**
+   * @ORM\Column(type="json_array", options={"jsonb":true})
+   * @var $dematerializedForms array
+   */
+  protected $dematerializedForms;
 
-    /**
-     * SciaPraticaEdilizia constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->type = self::TYPE_FORMIO;
-        $this->dematerializedForms = [];
-    }
+  /**
+   * SciaPraticaEdilizia constructor.
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->type = self::TYPE_FORMIO;
+    $this->dematerializedForms = [];
+  }
 
-    /**
-     * @return array
-     */
-    public function getDematerializedForms()
-    {
-        return $this->dematerializedForms;
-    }
+  /**
+   * @return array
+   */
+  public function getDematerializedForms()
+  {
+    return $this->dematerializedForms;
+  }
 
-    /**
-     * @param [] $dematerializedForms
-     * @return $this
-     */
-    public function setDematerializedForms($dematerializedForms)
-    {
-        $this->dematerializedForms = $dematerializedForms;
+  /**
+   * @param [] $dematerializedForms
+   * @return $this
+   */
+  public function setDematerializedForms($dematerializedForms)
+  {
+    $this->dematerializedForms = $dematerializedForms;
 
-        return $this;
-    }
+    return $this;
+  }
+
+  public function getType(): string
+  {
+    return Pratica::TYPE_FORMIO;
+  }
 
 }

@@ -1,37 +1,36 @@
 <html>
 <head>
-    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
 </head>
 <body>
 
 {{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
 
-<div class="chiede center_title">
-    {{ 'pratica.pdf.chiede'|trans() }}
-</div>
 
 <table class="table">
-    <tbody>
-    <tr>
-        <td>
-            {% if pratica.dematerializedForms.flattened is defined %}
-                {% for key, value in pratica.dematerializedForms.flattened %}
-                    {% if key != 'submit' and key != 'update_info' and not value is empty %}
-                        <p>
-                            <strong>{% if pratica.dematerializedForms.schema[key] is defined  %}{{ pratica.dematerializedForms.schema[key] }}{% endif %}</strong>: {{ value }}
-                        </p>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        </td>
-    </tr>
-    </tbody>
+  <tbody>
+  {% if pratica.dematerializedForms.flattened is defined %}
+    {% for key, value in pratica.dematerializedForms.flattened %}
+      {% if key != 'submit' and key != 'update_info' and not value is empty %}
+        <tr>
+          <td>
+            <p>
+              <strong>{% if pratica.dematerializedForms.schema[key] is defined %}{{ pratica.dematerializedForms.schema[key] }}{% endif %}</strong>
+            </p>
+          </td>
+          <td>
+            {{ value }}
+          </td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  </tbody>
 </table>
 
+{{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
-
-{{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 
 {{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
 </body>

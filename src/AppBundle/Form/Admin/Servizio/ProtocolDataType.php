@@ -11,6 +11,7 @@ use AppBundle\Protocollo\PiTreProtocolloParameters;
 use AppBundle\Services\ProtocolloService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -46,18 +47,40 @@ class ProtocolDataType extends AbstractType
     $currentServiceParameters = $service->getProtocolloParameters();
 
     if ($configParameters) {
-      foreach ($configParameters as $param) {
-        $builder
-          ->add('parameters_needed', BlockQuoteType::class, [
-            'label' => 'Inserisci qui i parametri di configurazione del protocollo'
-          ])
-          ->add($param, TextType::class, [
-              'label' => 'protocollo.' . $param,
-              'data' => isset($currentServiceParameters[$param]) ? $currentServiceParameters[$param] : '',
-              'mapped' => false,
-              'required' => false
-            ]
-          );
+      $builder
+        ->add('parameters_needed', BlockQuoteType::class, [
+          'label' => 'Inserisci qui i parametri di configurazione del protocollo'
+        ]);
+      foreach ($configParameters as $key => $param) {
+        if (is_array($param)) {
+
+          $paramForm = $builder->create( $key,FormType::class, [
+            'mapped' => false,
+            'label_attr' => ['class' => 'pb-4'],
+          ]);
+
+          foreach ($param as $subparam) {
+            $paramForm
+              ->add($subparam, TextType::class, [
+                  'label' => 'protocollo.' . $key . '.' . $subparam,
+                  'data' => isset($currentServiceParameters[$key][$subparam]) ? $currentServiceParameters[$key][$subparam] : '',
+                  'mapped' => false,
+                  'required' => true
+                ]
+              );
+          }
+          $builder->add($paramForm);
+        } else {
+          $builder
+            ->add($param, TextType::class, [
+                'label' => 'protocollo.' . $param,
+                'data' => isset($currentServiceParameters[$param]) ? $currentServiceParameters[$param] : '',
+                'mapped' => false,
+                'required' => true
+              ]
+            );
+        }
+
       }
     } else {
       $builder
@@ -74,7 +97,7 @@ class ProtocolDataType extends AbstractType
     /** @var Servizio $service */
     $service = $event->getForm()->getData();
     $data = $event->getData();
-    $configParameters = $this->protocolloService->getHandler()->getConfigParameters();
+    /*$configParameters = $this->protocolloService->getHandler()->getConfigParameters();
     $parameters = [];
 
     if ($configParameters) {
@@ -86,9 +109,9 @@ class ProtocolDataType extends AbstractType
         }
         $parameters[$param] = $data[$param];
       }
-    }
+    }*/
 
-    $service->setProtocolloParameters($parameters);
+    $service->setProtocolloParameters($data);
     $this->em->persist($service);
   }
 

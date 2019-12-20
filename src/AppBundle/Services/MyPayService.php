@@ -12,307 +12,254 @@ use Symfony\Component\Routing\RouterInterface;
 
 class MyPayService
 {
-    /**
-     * @var Client
-     */
-    private $client;
+  /**
+   * @var Client
+   */
+  private $client;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+  /**
+   * @var RouterInterface
+   */
+  private $router;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
-    /**
-     * MyPayService constructor.
-     * @param Client $client
-     */
-    public function __construct(Client $client, RouterInterface $router, LoggerInterface $logger)
-    {
-        $this->client = $client;
-        $this->router = $router;
-        $this->logger = $logger;
+  /**
+   * MyPayService constructor.
+   * @param Client $client
+   * @param RouterInterface $router
+   * @param LoggerInterface $logger
+   */
+  public function __construct(Client $client, RouterInterface $router, LoggerInterface $logger)
+  {
+    $this->client = $client;
+    $this->router = $router;
+    $this->logger = $logger;
+  }
+
+  public function getSanitizedPaymentData(Pratica $pratica): array
+  {
+    $data = $pratica->getPaymentData();
+
+    if (!isset($data[MyPay::IMPORTO])) {
+      $data[MyPay::IMPORTO] = $this->calculateImporto($pratica);
+    }
+    return $data;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return array
+   * @throws \Exception
+   */
+  public function createPaymentRequestForPratica(Pratica $pratica): array
+  {
+    $data = $pratica->getPaymentData();
+    $requestBody = $this->createimportaDovutoRequestBody($pratica);
+    $body = $this->client->post('/importaDovuto', ['body' => json_encode($requestBody)])->getBody()->getContents();
+
+    $decoded = json_decode($body, true);
+
+    unset($requestBody['password']);
+    unset($requestBody['codIpaEnte']);
+
+    if ($decoded['status'] === 'KO') {
+      $this->logger->error('MyPay wrapper error response when creating a payment Request', ['request' => $requestBody, 'response' => $decoded]);
+      throw new \Exception("Unable to create a payment request.");
     }
 
-    public function getSanitizedPaymentData(Pratica $pratica) :array
-    {
-        $data = $pratica->getPaymentData();
-        if(!isset($data[MyPay::PAYMENT_ATTEMPTS])) {
-            $data[MyPay::PAYMENT_ATTEMPTS] = [];
-        }
-        if(!isset($data[MyPay::IMPORTO])) {
-            $data[MyPay::IMPORTO] = $this->calculateImporto($pratica);
-        }
-        if(!isset($data[MyPay::OVERALL_OUTCOME])) {
-            $data[MyPay::OVERALL_OUTCOME] = MyPay::ESITO_UNSET;
-        }
-        if(!isset($data[MyPay::LATEST_ATTEMPT_ID])) {
-            $data[MyPay::LATEST_ATTEMPT_ID] = null;
-        }
+    $data['request'] = $requestBody;
+    $data['response'] = $decoded['json'];
 
-        return $data;
+
+    $requestBody = $this->createVerificaAvvisoRequestBody($pratica, $data['response']['identificativoUnivocoVersamento']);
+    $body = $this->client->post('/verificaAvviso', ['body' => json_encode($requestBody)])->getBody()->getContents();
+    $decoded = json_decode($body, true);
+
+    if ($decoded['status'] === 'KO') {
+      $this->logger->error('MyPay wrapper error response when creating a payment Request', ['request' => $requestBody, 'response' => $decoded]);
+      throw new \Exception("Unable to create a payment request.");
     }
 
-    /**
-     * @param Pratica $pratica
-     * @return string
-     */
-    public function checkPaymentForPratica(Pratica $pratica): array
-    {
-        $data = $pratica->getPaymentData();
+    $data['response']['idSession'] = $decoded['json']['idSession'];
+    $data['response']['url'] = $decoded['json']['url'];
 
-        if($data[MyPay::OVERALL_OUTCOME] === MyPay::ESITO_ESEGUITO) {
-            return $data[MyPay::PAYMENT_ATTEMPTS][$data[MyPay::LATEST_ATTEMPT_ID]][MyPay::OUTCOME_RESPONSE];
-        }
+    $pratica->setPaymentData($data);
+    return $decoded;
+  }
 
-        $lastAttemptId = $this->getLastAttemptId($data);
+  /**
+   * @param Pratica $pratica
+   * @return mixed
+   */
+  public function getMyPayUrlForCurrentPayment(Pratica $pratica)
+  {
+    $data = $pratica->getPaymentData();
+    return $data['response']['url'];
+  }
 
-        if(!$lastAttemptId) {
-            return [];
-        }
+  /**
+   * @param Pratica $pratica
+   * @return string
+   */
+  public function renderCallbackUrlForPayment(Pratica $pratica): string
+  {
+    $currentPraticaResumeEditUrl = $this->router->generate('pratiche_payment_callback', [
+      'pratica' => $pratica->getId()
+    ], RouterInterface::ABSOLUTE_URL);
+    return $currentPraticaResumeEditUrl;
+  }
 
-        $requestBody = $this->createChiediPagatiRequestBody($pratica, $lastAttemptId);
+  /**
+   * @param Pratica $pratica
+   * @return string
+   */
+  public function renderUrlForPaymentOutcome(Pratica $pratica): string
+  {
+    $currentPraticaResumeEditUrl = $this->router->generate('applications_payment_api_post', [
+      'id' => $pratica->getId()
+    ], RouterInterface::ABSOLUTE_URL);
+    return $currentPraticaResumeEditUrl;
+  }
 
-        $body = $this->client->post('/chiediPagati',['body' => json_encode($requestBody)])->getBody()->getContents();
-        $decoded = json_decode($body, true);
+  /**
+   * @param Pratica $pratica
+   * @return array
+   */
+  private function createInviaDovutiRequestBody(Pratica $pratica)
+  {
+    $data = $pratica->getPaymentData();
+    $paymentParameters = $pratica->getServizio()->getPaymentParameters();
 
-        unset($requestBody['password']);
-        unset($requestBody['codIpaEnte']);
-
-        $data[MyPay::PAYMENT_ATTEMPTS][$lastAttemptId][MyPay::OUTCOME_REQUEST] = $requestBody;
-        $data[MyPay::PAYMENT_ATTEMPTS][$lastAttemptId][MyPay::OUTCOME_RESPONSE] = $decoded;
-        $data[MyPay::OVERALL_OUTCOME] = $this->checkLastPaymentOutcome($data);
-        $data[MyPay::LATEST_ATTEMPT_ID] = $lastAttemptId;
-        $pratica->setPaymentData($data);
-        return $decoded;
+    if (!array_key_exists(MyPay::IMPORTO, $data)) {
+      throw new \InvalidArgumentException('Missing ' . MyPay::IMPORTO . ' key');
     }
 
-    /**
-     * @param Pratica $pratica
-     * @return array
-     * @throws \Exception
-     */
-    public function createPaymentRequestForPratica(Pratica $pratica): array
-    {
-        $lastPending = $this->checkPendingPayment($pratica);
-        $data = $pratica->getPaymentData();
+    $order = array(
+      'identificativoUnivocoDovuto' => $this->calculateIUDFromPratica($pratica),
+      'causaleVersamento' => "Pratica: " . $pratica->getId(),
+      'datiSpecificiRiscossione' => $paymentParameters['gateways']['mypay']['parameters']['datiSpecificiRiscossione'],
+      'importoSingoloVersamento' => '1',
+      'identificativoTipoDovuto' => $paymentParameters['gateways']['mypay']['parameters']['identificativoTipoDovuto'],
+    );
 
-        if($data[MyPay::OVERALL_OUTCOME] === 0) {
-            return [];
-        }
+    $data = array(
+      'enteSILInviaRispostaPagamentoUrl' => $this->renderCallbackUrlForPayment($pratica), // Callback url
+      'tipoIdentificativoUnivoco' => 'F',
+      'codiceIdentificativoUnivoco' => $pratica->getRichiedenteCodiceFiscale(), // Codice fiscale
+      'anagraficaPagatore' => $pratica->getRichiedenteNome() . ' ' . $pratica->getRichiedenteCognome(), // Nome e Cognome
+      'indirizzoPagatore' => '',
+      'civicoPagatore' => '',
+      'capPagatore' => '',
+      'localitaPagatore' => '',
+      'provinciaPagatore' => 'TN',
+      'nazionePagatore' => 'IT',
+      'e-mailPagatore' => $pratica->getUser()->getEmail(),
+      'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
+      'password' => $paymentParameters['gateways']['mypay']['parameters']['password'],
+      'dovuti' => array($order)
+    );
 
-        if($lastPending) {
-            return $data[MyPay::PAYMENT_ATTEMPTS][$lastPending][MyPay::START_RESPONSE];
-        }
+    return $data;
+  }
 
-        $requestBody = $this->createInviaDovutiRequestBody($pratica);
 
-        $body = $this->client->post('/inviaDovuti',['body' => json_encode($requestBody)])->getBody()->getContents();
-        $decoded = json_decode($body, true);
+  /**
+   * @param Pratica $pratica
+   * @return array
+   */
+  private function createimportaDovutoRequestBody(Pratica $pratica)
+  {
+    $data = $pratica->getPaymentData();
+    $paymentParameters = $pratica->getServizio()->getPaymentParameters();
+    $paymentDayLifeTime = 5;
 
-        unset($requestBody['password']);
-        unset($requestBody['codIpaEnte']);
-
-        if($decoded['status'] === 'KO') {
-            $this->logger->error('MyPay wrapper error response when creating a payment Request', ['request' => $requestBody, 'response' => $decoded]);
-            throw new \Exception("Unable to create a payment request.");
-        }
-
-        $data[MyPay::PAYMENT_ATTEMPTS][$requestBody['identificativoUnivocoDovuto']][MyPay::START_REQUEST] = $requestBody;
-        $data[MyPay::PAYMENT_ATTEMPTS][$requestBody['identificativoUnivocoDovuto']][MyPay::START_RESPONSE] = $decoded;
-        $data[MyPay::PAYMENT_ATTEMPTS][$requestBody['identificativoUnivocoDovuto']][MyPay::OUTCOME_REQUEST] = null;
-        $data[MyPay::PAYMENT_ATTEMPTS][$requestBody['identificativoUnivocoDovuto']][MyPay::OUTCOME_RESPONSE] = null;
-        $data[MyPay::OVERALL_OUTCOME] = MyPay::ESITO_PENDING;
-
-        $pratica->setPaymentData($data);
-        return $decoded;
+    $amount = $this->calculateImporto($pratica);
+    if ( !$amount) {
+      throw new \InvalidArgumentException('Missing amount');
     }
 
-    /**
-     * @param Pratica $pratica
-     * @return mixed
-     */
-    public function getUrlForCurrentPayment(Pratica $pratica)
-    {
-        $lastAttemptId = $this->checkPendingPayment($pratica);
-        $data = $pratica->getPaymentData()[MyPay::PAYMENT_ATTEMPTS][$lastAttemptId];
-        return $data[MyPay::START_RESPONSE]['json']['url'];
+
+    $data = array(
+      'notifyUrl' => $this->renderUrlForPaymentOutcome($pratica),
+      'enteSILInviaRispostaPagamentoUrl' => $this->renderCallbackUrlForPayment($pratica), // Callback url
+      'tipoIdentificativoUnivoco' => 'F',
+      'codiceIdentificativoUnivoco' => $pratica->getRichiedenteCodiceFiscale(), // Codice fiscale
+      'anagraficaPagatore' => $pratica->getRichiedenteNome() . ' ' . $pratica->getRichiedenteCognome(), // Nome e Cognome
+      'indirizzoPagatore' => '',
+      'civicoPagatore' => '',
+      'capPagatore' => '',
+      'localitaPagatore' => '',
+      'provinciaPagatore' => 'TN',
+      'nazionePagatore' => 'IT',
+      'e-mailPagatore' => $pratica->getUser()->getEmail(),
+      'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
+      'password' => $paymentParameters['gateways']['mypay']['parameters']['password'],
+      'identificativoUnivocoDovuto' => $this->calculateIUDFromPratica($pratica),
+      'causaleVersamento' => "Pratica: " . $pratica->getId(),
+      'datiSpecificiRiscossione' => $paymentParameters['gateways']['mypay']['parameters']['datiSpecificiRiscossione'],
+      'importoSingoloVersamento' => $amount,
+      'identificativoTipoDovuto' => $paymentParameters['gateways']['mypay']['parameters']['identificativoTipoDovuto'],
+      'flagGeneraIuv' => true
+    );
+
+    if ( !empty($paymentDayLifeTime) && $paymentDayLifeTime > 0 ) {
+      $expireDate = time() + 60 * 60 * 24 * $paymentDayLifeTime;
+      $data['dataEsecuzionePagamento']= date('Y-m-d', $expireDate );
     }
 
-    /**
-     * @param Pratica $pratica
-     * @return string
-     */
-    public function renderResumeUrlForPaymentCheck(Pratica $pratica): string
-    {
-        $currentPraticaResumeEditUrl = $this->router->generate('pratiche_compila', [
-            'pratica' => $pratica->getId(),
-            'instance' => $pratica->getInstanceId(),
-            'step' => $pratica->getLastCompiledStep() + 1
-        ], RouterInterface::ABSOLUTE_URL);
-        return $currentPraticaResumeEditUrl;
+    return $data;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return array
+   */
+  private function createVerificaAvvisoRequestBody(Pratica $pratica, $iuv)
+  {
+    $paymentParameters = $pratica->getServizio()->getPaymentParameters();
+
+    $data = array(
+      'enteSILInviaRispostaPagamentoUrl' => $this->renderCallbackUrlForPayment($pratica), // Callback url
+      'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
+      'password' => $paymentParameters['gateways']['mypay']['parameters']['password'],
+      'identificativoUnivocoVersamento' => $iuv
+    );
+
+    return $data;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return string
+   */
+  private function calculateIUDFromPratica(Pratica $pratica)
+  {
+    return str_replace('-', '', $pratica->getId());
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return int
+   */
+  private function calculateImporto(Pratica $pratica): int
+  {
+
+    $data = $pratica->getDematerializedForms();
+
+    if (isset($data['flattened']['payment_amount']) && is_numeric(str_replace(',', '.', $data['flattened']['payment_amount']))) {
+      return str_replace(',', '.', $data['flattened']['payment_amount']);
     }
 
-    /**
-     * @param Pratica $pratica
-     * @return array
-     */
-    private function createInviaDovutiRequestBody(Pratica $pratica)
-    {
-        $data = $pratica->getPaymentData();
-
-        if(!array_key_exists(MyPay::IMPORTO, $data)) {
-            throw new \InvalidArgumentException('Missing '.MyPay::IMPORTO.' key');
-        }
-        if(!array_key_exists(MyPay::PAYMENT_ATTEMPTS, $data)) {
-            throw new \InvalidArgumentException('Missing '.MyPay::PAYMENT_ATTEMPTS.' key');
-        }
-
-        $currentPraticaResumeEditUrl = $this->renderResumeUrlForPaymentCheck($pratica);
-        $currentPraticaResumeEditUrl = str_replace('&', '&amp;', $currentPraticaResumeEditUrl);
-
-        return [
-            "enteSILInviaRispostaPagamentoUrl" => $currentPraticaResumeEditUrl,
-            "importoSingoloVersamento" => intval($data['importo'],10)/100,
-            "identificativoUnivocoDovuto" => $this->calculateIUDFromPratica($pratica),
-            "tipoIdentificativoUnivoco" => "F", //persona fisica
-            "codiceIdentificativoUnivoco" => $pratica->getRichiedenteCodiceFiscale() ?? 'LBRMRC73A04L781X',
-            "anagraficaPagatore" => $pratica->getRichiedenteNome().' '.$pratica->getRichiedenteCognome(),
-            "causaleVersamento" => "SDC - ".$pratica->getServizio()->getName(), //coming from the servizio class
-            "datiSpecificiRiscossione" => $pratica->getServizio()->getPaymentParameters()['datiSpecificiRiscossione'], //coming from the servizio class
-            "codIpaEnte" => $pratica->getServizio()->getPaymentParameters()['codIpaEnte'], //coming from config
-            "password" => $pratica->getServizio()->getPaymentParameters()['password'] //comiing from config
-        ];
+    if (isset($pratica->getServizio()->getPaymentParameters()['total_amounts'])
+        && is_numeric(str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']))) {
+      return str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']);
     }
 
-    /**
-     * @param Pratica $pratica
-     * @return array
-     */
-    private function createChiediPagatiRequestBody(Pratica $pratica, $lastAttemptId)
-    {
-        $lastAttempt = $pratica->getPaymentData()[MyPay::PAYMENT_ATTEMPTS][$lastAttemptId];
-
-        $idSession = $lastAttempt[MyPay::START_RESPONSE]['json']['idSession'];
-
-        return [
-            "codIpaEnte" => $pratica->getServizio()->getPaymentParameters()['codIpaEnte'],
-            "password" => $pratica->getServizio()->getPaymentParameters()['password'],
-            "idSession" => $idSession
-        ];
-    }
-
-    private function calculateIUDFromPratica(Pratica $pratica)
-    {
-        $data = $pratica->getPaymentData();
-
-        $i = 1;
-        while (true) {
-            $IUD = str_replace('-', '', $pratica->getID()) . str_pad($i,3,0, STR_PAD_LEFT);
-            if (!array_key_exists($IUD, $data[MyPay::PAYMENT_ATTEMPTS])) {
-                return $IUD;
-            }
-            $i++;
-        }
-    }
-
-    private function checkLastPaymentOutcome($data): int {
-        $lastAttemptId = $this->getLastAttemptId($data);
-        $lastAttempt = $data[MyPay::PAYMENT_ATTEMPTS][$lastAttemptId];
-
-        if(!isset($lastAttempt[MyPay::OUTCOME_RESPONSE]) || $lastAttempt[MyPay::OUTCOME_RESPONSE] === null) {
-            return MyPay::ESITO_PENDING;
-        }
-
-        if($lastAttempt[MyPay::OUTCOME_RESPONSE]['status'] === 'OK') {
-            /** No fault code, returning codiceEsitoPagamento  */
-            preg_match("/<codiceEsitoPagamento>(\d)<\/codiceEsitoPagamento>/",$lastAttempt[MyPay::OUTCOME_RESPONSE]['json']['pagati'], $matches);
-            if(count($matches) < 2) {
-                throw new \InvalidArgumentException('Tag codiceEsitoPagamento not found IUD: '.$lastAttemptId);
-            }
-            return $matches[1];
-        }
-
-
-        if($lastAttempt[MyPay::OUTCOME_RESPONSE]['status'] === 'KO') {
-            if (isset($lastAttempt[MyPay::OUTCOME_RESPONSE]['json']['faultCode'])) {
-                if(
-                    $lastAttempt[MyPay::OUTCOME_RESPONSE]['json']['faultCode'] === MyPay::PAA_PAGAMENTO_IN_CORSO ||
-                    $lastAttempt[MyPay::OUTCOME_RESPONSE]['json']['faultCode'] === MyPay::PAA_PAGAMENTO_NON_INIZIATO
-                ) {
-
-                    return MyPay::ESITO_PENDING;
-                }
-            }
-        }
-
-        return MyPay::ESITO_NON_ESEGUITO;
-    }
-
-    private function checkPendingPayment(Pratica $pratica) : ?string
-    {
-        $data = $pratica->getPaymentData();
-        $lastAttemptId = $this->getLastAttemptId($data);
-
-        if(!$lastAttemptId) {
-            return null;
-        }
-
-        $lastAttempt = $data[MyPay::PAYMENT_ATTEMPTS][$lastAttemptId];
-
-        if(!isset($lastAttempt[MyPay::OUTCOME_RESPONSE]) || $lastAttempt[MyPay::OUTCOME_RESPONSE] == null) {
-            /**
-             * Still haven't checked, it's surely pending
-             */
-            return $lastAttemptId;
-        }
-
-        /**
-         * We checked. Possible outcomes are
-         * status OK
-         *   -> payment is not pending and went well
-         * status KO
-         *   -> payment may be pending (the two specific error codes) <- we only care about this one in this context
-         *   -> payment may be completed unsuccesfully
-         */
-        if($lastAttempt[MyPay::OUTCOME_RESPONSE]['status'] === 'KO') {
-            if (isset($lastAttempt[MyPay::OUTCOME_RESPONSE]['json']['faultCode'])) {
-                if(
-                    $lastAttempt[MyPay::OUTCOME_RESPONSE]['json']['faultCode'] === MyPay::PAA_PAGAMENTO_IN_CORSO ||
-                    $lastAttempt[MyPay::OUTCOME_RESPONSE]['json']['faultCode'] === MyPay::PAA_PAGAMENTO_NON_INIZIATO
-                ) {
-
-                    return $lastAttemptId;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Pratica $pratica
-     * @return string|null
-     */
-    private function getLastAttemptId($data): ?string
-    {
-        ksort($data[MyPay::PAYMENT_ATTEMPTS]);
-        end($data[MyPay::PAYMENT_ATTEMPTS]);
-        $lastAttemptId = key($data[MyPay::PAYMENT_ATTEMPTS]);
-        return $lastAttemptId;
-    }
-
-    /**
-     * @param Pratica $pratica
-     * @return int
-     */
-    private function calculateImporto(Pratica $pratica): int
-    {
-        return $pratica->getServizio()->getPaymentParameters()['importo'] ?? 1;
-    }
+    return false;
+  }
 
 }

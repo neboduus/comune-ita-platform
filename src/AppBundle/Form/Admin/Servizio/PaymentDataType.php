@@ -49,20 +49,24 @@ class PaymentDataType extends AbstractType
 
     foreach ($selectedGateways as $s) {
       if ($s instanceof Gateway) {
-        $selectedGatewaysIentifiers []= $s->getIdentifier();
+        $selectedGatewaysIentifiers [] = $s->getIdentifier();
         $selectedGatewaysParameters[$s->getIdentifier()] = $s->getParameters();
       } else {
-        $selectedGatewaysIentifiers []= $s['identifier'];
-        $selectedGatewaysParameters [$s['identifier']]= $s['parameters'];
+        $selectedGatewaysIentifiers [] = $s['identifier'];
+        $selectedGatewaysParameters [$s['identifier']] = $s['parameters'];
       }
     }
 
+
+    $tenantGateways = $service->getEnte()->getGateways();
+
+    // Gateways abilitati nel tenant
     $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
-      'identifier' => $service->getEnte()->getGateways()
+      'identifier' => array_keys($tenantGateways)
     ]);
-    $tenantGateways = [];
+    $gatewaysChoice = [];
     foreach ($gateways as $g) {
-      $tenantGateways[$g->getName()]= $g->getIdentifier();
+      $gatewaysChoice[$g->getName()] = $g->getIdentifier();
     }
 
     $builder
@@ -78,7 +82,7 @@ class PaymentDataType extends AbstractType
       ])
       ->add('gateways', ChoiceType::class, [
         'data' => $selectedGatewaysIentifiers,
-        'choices' => $tenantGateways,
+        'choices' => $gatewaysChoice,
         'expanded' => true,
         'multiple' => true,
         'required' => false,
@@ -87,34 +91,30 @@ class PaymentDataType extends AbstractType
         //'disabled' => !$service->isPaymentRequired()
       ]);
 
-      foreach ($gateways as $g) {
-        $parameters = $g->getFcqn()::getPaymentParameters();
-        if (count($parameters) > 0) {
 
-          $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
-            'label'    => false,
-            'mapped'   => false,
-            'required' => false,
-            'attr' => ['class' => 'gateway-form-type d-none']
-          ]);
+    foreach ($gateways as $g) {
+      $parameters = $g->getFcqn()::getPaymentParameters();
 
-          $gatewaySubform->add($g->getIdentifier().'_label', BlockQuoteType::class, [
-            'label' => 'Parametri necessari per ' . $g->getName()
-          ]);
+      if (count($parameters) > 0) {
+        $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
+          'label' => false,
+          'mapped' => false,
+          'required' => false,
+          'attr' => ['class' => 'gateway-form-type d-none']
+        ]);
 
-          foreach ($parameters as $k => $v) {
-            $gatewaySubform->add($k, TextType::class, [
-                'label'    => $v,
-                'data'     => isset($selectedGatewaysParameters[$g->getIdentifier()][$k]) ? $selectedGatewaysParameters[$g->getIdentifier()][$k] : '',
-                'mapped'   => false,
-                'required' => false
-              ]
-            );
-          }
+        $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
+          'label' => 'Parametri necessari per ' . $g->getName()
+        ]);
 
-          $builder->add($gatewaySubform);
+        foreach ($parameters as $k => $v) {
+          $options = $this->setPaymentParameterOptions($g->getIdentifier(), $k, $v, $selectedGatewaysParameters, $tenantGateways);
+          $gatewaySubform->add($k, TextType::class, $options);
         }
+
+        $builder->add($gatewaySubform);
       }
+    }
 
     //$builder->addEventListener(FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
@@ -157,8 +157,7 @@ class PaymentDataType extends AbstractType
           } else {
             $gateway->setParameters(null);
           }
-
-          $gateways[] = $gateway;
+          $gateways[$g] = $gateway;
         }
       }
 
@@ -170,6 +169,45 @@ class PaymentDataType extends AbstractType
       $service->setPaymentParameters(null);
     }
     $this->em->persist($service);
+  }
+
+  /**
+   * @param $gatewayIdentifier
+   * @param $parameterIdentifier
+   * @param $parameterLabel
+   * @param $serviceParameters
+   * @param $tenantParameters
+   * @return array
+   */
+  private function setPaymentParameterOptions($gatewayIdentifier, $parameterIdentifier, $parameterLabel, $serviceParameters, $tenantParameters)
+  {
+    $value = '';
+    $compiled = false;
+
+    if (isset($tenantParameters[$gatewayIdentifier]['parameters'][$parameterIdentifier]) && !empty($tenantParameters[$gatewayIdentifier]['parameters'][$parameterIdentifier])) {
+
+      $value = $tenantParameters[$gatewayIdentifier]['parameters'][$parameterIdentifier];
+      $compiled = true;
+
+    } elseif (isset($serviceParameters[$gatewayIdentifier][$parameterIdentifier])  && !empty($serviceParameters[$gatewayIdentifier][$parameterIdentifier])) {
+
+      $value = $serviceParameters[$gatewayIdentifier][$parameterIdentifier];
+    }
+
+
+    $options = [
+      'label' => $parameterLabel,
+      'data' => $value,
+      'mapped' => false,
+      'required' => false
+    ];
+
+    if ($compiled) {
+      $options['label'] = false;
+      $options['attr'] = ['readonly' => 'readonly', 'class' => 'd-none'];
+    }
+
+    return $options;
   }
 
   public function getBlockPrefix()

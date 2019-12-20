@@ -545,11 +545,11 @@ class Servizio
     $paymentParameters = $this->paymentParameters;
     if (isset($this->paymentParameters['gateways']) && !empty($this->paymentParameters['gateways'])) {
       $gateways = array();
-      foreach ($this->paymentParameters['gateways'] as $g) {
+      foreach ($this->paymentParameters['gateways'] as $k => $g) {
         if (is_string($g) ) {
-          $gateways[] = json_decode($g, true);
+          $gateways[$k] = json_decode($g, true);
         } else {
-          $gateways[] = $g;
+          $gateways[$k] = $g;
         }
       }
       $paymentParameters['gateways'] = $gateways;
