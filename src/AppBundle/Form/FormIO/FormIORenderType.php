@@ -92,8 +92,9 @@ class FormIORenderType extends AbstractType
     $pratica = $event->getForm()->getData();
     $compiledData = array();
     if (isset($event->getData()['dematerialized_forms'])) {
-      $flattenedData = $this->arrayFlat(json_decode($event->getData()['dematerialized_forms'], true));
-      $compiledData = json_decode($event->getData()['dematerialized_forms'], true);
+      $data = json_decode($event->getData()['dematerialized_forms'], true);
+      $flattenedData = $this->arrayFlat($data);
+      $compiledData = $data;
     }
 
     $schema = false;
@@ -146,8 +147,10 @@ class FormIORenderType extends AbstractType
   private function arrayFlat($array, $prefix = '')
   {
     $result = array();
-
     foreach ($array as $key => $value) {
+      if ($key == 'metadata' || $key == 'state') {
+        continue;
+      }
       $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
 
       if (is_array($value)) {
@@ -156,7 +159,6 @@ class FormIORenderType extends AbstractType
         $result[$new_key] = $value;
       }
     }
-
     return $result;
   }
 }

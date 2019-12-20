@@ -1,28 +1,25 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block stylesheets %}
-    {{ parent() }}
+  {{ encore_entry_link_tags('instance-manager') }}
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
+  {{ encore_entry_script_tags('instance-manager') }}
+  {{ parent() }}
 {% endblock %}
 
 {% block main_content %}
-
-
-    <section id="intro" class="container px-4 my-4">
-        <div class="row">
-            <div class="col-12 px-lg-4 py-lg-2">
-                <h1>Modifica istanza {{ ente.name }}</h1>
-            </div>
-            <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
-                {{ form_start(form) }}
-                {{ form_widget(form) }}
-                {{ form_end(form) }}
-            </div>
-        </div>
-    </section>
-
-
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-12 px-lg-4 py-lg-2">
+        <h1>Modifica istanza {{ ente.name }}</h1>
+      </div>
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
 {% endblock %}

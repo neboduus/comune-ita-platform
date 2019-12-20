@@ -14,7 +14,6 @@ $(document).ready(function($) {
       //$('#the-tab li a').eq($(this).val()).tab('show');
       // If you do not care about the sorting, you can work with $(this).index().
       // $('#the-tab li a').eq($(this).index()).tab('show');
-      console.log($(this).val());
       //$('.nav-tabs li a').eq($(this).val()).tab('show');
       $('.nav-tabs li a[href="'+ $(this).val() +'"]').tab('show');
     });

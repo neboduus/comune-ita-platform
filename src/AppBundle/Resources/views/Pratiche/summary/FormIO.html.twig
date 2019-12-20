@@ -2,7 +2,15 @@
 
   {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
-  {% if pratica.statusName != 'STATUS_DRAFT' %}
+  {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' %}
+    <div class='text-center mt-5'><a href="{{ pratica.paymentData.response.url }}" class='btn btn-lg btn-primary'>Procedi con il pagamento sul sito di MyPay</a></div>
+    <p class='mt-5'>
+      Cliccando sul bottone qui sopra sarai reindirizzato verso l'infrastruttura di MyPay.<br />
+      A pagamento completato sarai riportato a questa pagina, la verifica dell'esito avviene in automatico.
+    </p>
+  {% elseif pratica.statusName == 'STATUS_PAYMENT_OUTCOME_PENDING' %}
+    <div class="alert alert-info">Siamo in attesa dell'esito del pagamento</div>
+  {% elseif pratica.status >= constant('STATUS_SUBMITTED', pratica) %}
     <div class="row">
       <div class="col-12">
         <h4>Documentazione inoltrata all'Ente</h4>
@@ -26,7 +34,7 @@
     </div>
   {% endif %}
 
-  {% if pratica.statusName != 'STATUS_DRAFT' %}
+  {% if pratica.status >= constant('STATUS_SUBMITTED', pratica) %}
     <div class="row">
       <div class="col-12">
         <h4 class="mt-3 mb-3">Informazioni presentate</h4>
@@ -35,11 +43,12 @@
       <div
         class="col-12 col-sm-9"> {{ pratica.creationTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.creationTime|date(ocsdc_default_time_format) }} </div>
     </div>
-    <div class="row">
-      <div class="col-12 col-sm-3"><strong>{{ 'pratica.dettaglio.stato'|trans }}</strong></div>
-      <div class="col-12 col-sm-9"> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</div>
-    </div>
   {% endif %}
+
+  <div class="row">
+    <div class="col-12 col-sm-3"><strong>{{ 'pratica.dettaglio.stato'|trans }}</strong></div>
+    <div class="col-12 col-sm-9"> {{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</div>
+  </div>
 
   {% if pratica.servizio != null %}
     <div class="row">

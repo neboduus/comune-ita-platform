@@ -75,8 +75,11 @@
         })
           .then(function (form) {
 
+            if (form.hasOwnProperty('wizard')) {
+              $('.craue_formflow_current_step.active').addClass('wizard');
+            }
+
             // Recupero i dati della pratica se presenti
-            console.log($('#formio_render_dematerialized_forms').val());
             if ($('#formio_render_dematerialized_forms').val() != '') {
               form.submission = {
                 data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
@@ -85,8 +88,7 @@
             form.nosubmit = true;
             // Triggered when they click the submit button.
             form.on('submit', function (submission) {
-
-              return fetch('{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/pratiche/formio/validate', {
+              /*return fetch('{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/pratiche/formio/validate', {
                 body: JSON.stringify(submission),
                 headers: {
                   'content-type': 'application/json'
@@ -104,6 +106,14 @@
                     $('.craue_formflow_button_class_next').trigger('click');
                   }
                 })
+              */
+
+              form.emit('submitDone', submission)
+                let data = $('form[name="formio_render"]').serialize();
+                //$('#formio_render_dematerialized_forms').val(data);
+                $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
+                //$('form[name="formio_render"]').submit();
+                $('.craue_formflow_button_class_next').trigger('click');
             });
           });
       }
@@ -269,9 +279,7 @@
       </div>
     </div>
 
-
-
-    <div class="row">
+    <div class="row mt-5">
       <div class="col-lg-8 px-lg-4">
         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
         <div class="step-{{ flow.getCurrentStepNumber() }}">
@@ -304,7 +312,13 @@
             </ul>
           {% endif %}
 
-          {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+          {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
+          {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
+            <blockquote>
+              Verifica i dati inseriti prima di passare al metodo di pagamento.
+            </blockquote>
+            {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+          {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <blockquote>
               {{ 'steps.common.conferma.help_text_top'|trans }}
             </blockquote>
@@ -325,9 +339,12 @@
 
         <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
 
-        <div class="mt-5">
-          {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
-        </div>
+        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
+          <div class="mt-5">
+            {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
+          </div>
+        {% endif %}
+
         {{ form_end(form) }}
       </div>
 

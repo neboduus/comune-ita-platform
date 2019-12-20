@@ -2,6 +2,7 @@ require("bootstrap-italia");
 require("../css/app.scss");
 require("jquery"); // Load jQuery as a module
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
+require("summernote");
 
 $(document).ready(function () {
 
@@ -37,6 +38,16 @@ $(document).ready(function () {
         $(this).addClass('card-bg-success');
         $("#formio_template_service_id").val($(this).data('id'));
       })
+    });
+  }
+
+  if ($("#general_data_flow_service_step").length) {
+    $('textarea').summernote({
+      toolbar: [
+        // [groupName, [list of button]]
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['para', ['ul', 'ol', 'paragraph']],
+      ]
     });
   }
 

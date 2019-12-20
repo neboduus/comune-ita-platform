@@ -19,6 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -201,13 +202,13 @@ class PraticheController extends Controller
    * @Template()
    * @param Pratica $pratica
    *
-   * @return array
+   * @return array|RedirectResponse
    */
   public function compilaAction(Request $request, Pratica $pratica)
   {
     $em = $this->getDoctrine()->getManager();
 
-    if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION && $pratica->getStatus() !== Pratica::STATUS_DRAFT) {
+    if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION && $pratica->getStatus() !== Pratica::STATUS_DRAFT && $pratica->getStatus() !== Pratica::STATUS_PAYMENT_PENDING) {
       return $this->redirectToRoute(
         'pratiche_show',
         ['pratica' => $pratica->getId()]
@@ -296,6 +297,7 @@ class PraticheController extends Controller
    */
   public function showAction(Request $request, Pratica $pratica)
   {
+
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
@@ -313,13 +315,36 @@ class PraticheController extends Controller
       if (count($attachments) > 0) {
 
         /** @var Allegato $a */
-        foreach ($attachments as $a){
+        foreach ($attachments as $a) {
           $allegati[$a->getId()] = $a->getNumeroProtocollo();
         }
       }
       $result['allegati'] = $allegati;
     }
     return $result;
+  }
+
+  /**
+   * @Route("/{pratica}/payment-callback", name="pratiche_payment_callback")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Pratica $pratica
+   *
+   * @return array|RedirectResponse
+   */
+  public function paymentCallbackAction(Request $request, Pratica $pratica)
+  {
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($pratica, $user);
+    $outcome = $request->get('esito');
+
+    if ($outcome == 'OK') {
+      $this->container->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_PAYMENT_OUTCOME_PENDING);
+    }
+
+    return $this->redirectToRoute('pratiche_show', [
+      'pratica' => $pratica
+    ]);
+
   }
 
   /**

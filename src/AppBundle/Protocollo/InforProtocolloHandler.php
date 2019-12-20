@@ -94,17 +94,26 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
       }
      */
     return array(
-      'arrivo:tipo_documento',
-      'arrivo:tramite',
-      'arrivo:smistamento',
-      'arrivo:classifica',
-      'arrivo:fascicolo',
-      'risposta:mittente_interno',
-      'risposta:tipo_documento',
-      'risposta:tramite',
-      'risposta:smistamento',
-      'risposta:classifica',
-      'risposta:fascicolo',
+      'infor_username',
+      'infor_denominazione',
+      'infor_email',
+      'infor_wsdl',
+      'infor_wsUrl',
+      'arrivo' => [
+        'tipo_documento',
+        'tramite',
+        'smistamento',
+        'classifica',
+        'fascicolo'
+      ],
+      'risposta' => [
+        'mittente_interno',
+        'tipo_documento',
+        'tramite',
+        'smistamento',
+        'classifica',
+        'fascicolo',
+      ]
     );
   }
 

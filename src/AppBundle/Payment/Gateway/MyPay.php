@@ -40,7 +40,7 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
    */
 
   const PAYMENT_ATTEMPTS = 'payment_attempts';
-  const IMPORTO = 'importo';
+  const IMPORTO = 'total_amounts';
   const OVERALL_OUTCOME = 'overall_outcome';
 
   const OUTCOME_REQUEST = 'outcome_request';
@@ -93,7 +93,10 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
   public static function getPaymentParameters()
   {
     return [
-      'category' => 'Specifica la categoria del servizio per il pagamento'
+      'codIpaEnte'                => 'Codice Ipa ente',
+      'password'                  => 'Password ente',
+      'datiSpecificiRiscossione'  => 'Dati specifici per la riscossione',
+      'identificativoTipoDovuto'  => 'Identificativo tipo dovuto'
     ];
   }
 
@@ -122,69 +125,37 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
 
-    /** @var Pratica $pratica */
-    $pratica->setPaymentData($this->myPayService->getSanitizedPaymentData($pratica));
-    /**
-     * What state are we in?
-     * Payment failed?
-     */
-    try {
-      $this->myPayService->checkPaymentForPratica($pratica);
-      $this->em->persist($pratica);
-      $this->em->flush();
-      $data = $pratica->getPaymentData();
-      switch ($data[MyPay::OVERALL_OUTCOME]) {
-        case MyPay::ESITO_PENDING:
-          $url = $this->myPayService->getUrlForCurrentPayment($pratica);
-          $stepUrl = $this->myPayService->renderResumeUrlForPaymentCheck($pratica);
 
-          $helper->setDescriptionText("Il pagamento ci risulta in corso.<br/><br/>Se hai già completato il pagamento ti preghiamo di aspettare qualche minuto e procedere al controllo dell'esito premendo il pulsante qui sotto (Servono alcuni minuti perché il pagamento venga registrato).<br/><a href='$stepUrl'><button type=\"button\" class=\"btn btn-info \" >Controlla l'esito</button></a><br/><br/>Se non hai ancora completato il pagamento e sei tornato qui per errore<br/><a href='$url'><button type='button' class='btn btn-info' >Torna al sistema di pagamento</button></a>");
-          break;
-        case MyPay::ESITO_ESEGUITO:
-          $helper->setDescriptionText("Grazie per aver effettuato il pagamento, puoi procedere");
-          break;
-        default:
-          $this->myPayService->createPaymentRequestForPratica($pratica);
-          $this->em->flush();
-          $url = $this->myPayService->getUrlForCurrentPayment($pratica);
-          $helper->setDescriptionText("<a href='$url'><button type='button' class='btn btn-info' >Procedi con il pagamento</button></a>.<br/>
-     Cliccando sul bottone qui sopra sarai reindirizzato verso l'infrastruttura di MyPay. A pagamento completato sarai riportato a questa pagina, dove potrai verificare l'esito del pagamento e completare la compilazione della pratica<br/>
-     Il pagamento ha dei tempi tecnici di qualche minuto per il completamento e la verifica.");
-          break;
+    $data = $pratica->getPaymentData();
+    try {
+      if (isset($data['response']) && $data['response']['esito'] == 'OK') {
+        $url = $this->myPayService->getMyPayUrlForCurrentPayment($pratica);
+        $helper->setDescriptionText("<div class='text-center mt-5'><a href='$url' class='btn btn-lg btn-primary'>Procedi con il pagamento sul sito di MyPay</a></div><p class='mt-5'>Cliccando sul bottone qui sopra sarai reindirizzato verso l'infrastruttura di MyPay.<br />A pagamento completato sarai riportato a questa pagina, la verifica dell'esito avviene in automatico.</p>");
+      } else {
+        $this->myPayService->createPaymentRequestForPratica($pratica);
+        $this->em->flush();
+        $url = $this->myPayService->getMyPayUrlForCurrentPayment($pratica);
+        $helper->setDescriptionText("<div class='text-center mt-5'><a href='$url' class='btn btn-lg btn-primary'>Procedi con il pagamento sul sito di MyPay</a></div><p class='mt-5'>Cliccando sul bottone qui sopra sarai reindirizzato verso l'infrastruttura di MyPay.<br />A pagamento completato sarai riportato a questa pagina, la verifica dell'esito avviene in automatico.</p>");
       }
 
     } catch (\Exception $e) {
-      $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId());
-      $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza<br/><a href='mailto:a@b.b?subject=Errore nel pagamento della pratica " . $pratica->getId() . "'>Invia una email per ricevere assistenza</a>");
+      $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId() . ' - ' . $e->getMessage());
+      $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza.");
+      //$helper->setDescriptionText($e->getMessage());
 
-      /**
-       * warn the user that we couldn't create the payment, ask him to contact support
-       */
     }
   }
 
   public function onPreSubmit(FormEvent $event)
   {
-    $form = $event->getForm();
+    /** @var Pratica $application */
+    $application = $event->getForm()->getData();
+    $data = $application->getPaymentData();
 
-    $form->getConfig()->getData();
-    $pratica = $form->getData();
-
-    /** @var Pratica $pratica */
-    $pratica->setPaymentData($this->myPayService->getSanitizedPaymentData($pratica));
-
-    $this->myPayService->checkPaymentForPratica($pratica);
-    $this->em->persist($pratica);
-    $this->em->flush();
-    $data = $pratica->getPaymentData();
-    switch ($data[MyPay::OVERALL_OUTCOME]) {
-      case MyPay::ESITO_PENDING:
-      case MyPay::ESITO_ESEGUITO:
-        break;
-      default:
-        $form->addError(new FormError('Pagamento necessario'));
-        break;
+    if (!isset($data['response']) || empty($data['response'])) {
+      $event->getForm()->addError(
+        new FormError('Devi scegliere almeno un metodo di pagamento')
+      );
     }
-
   }
 }

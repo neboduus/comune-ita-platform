@@ -429,7 +429,7 @@ class ServicesAPIController extends AbstractFOSRestController
       foreach ($data['payment_parameters']['gateways'] as $gateway) {
         $parameters = \json_encode($gateway['parameters']);
         $gateway['parameters'] = $parameters;
-        $sanitizedGateways []= $gateway;
+        $sanitizedGateways [$gateway['identifier']]= $gateway;
       }
       $data['payment_parameters']['gateways'] = $sanitizedGateways;
     }
