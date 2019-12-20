@@ -67,7 +67,7 @@ it:
 description:
   it:
     genericName: ' L’area personale del cittadino'
-    apiDocumentation: 'https://documenter.getpostman.com/view/7046499/S17wM5XS?version=latest'
+    apiDocumentation: 'https://stanzadelcittadino.it/comune-di-ala/api/doc'
     documentation: 'https://manuale-stanza-del-cittadino.readthedocs.io/it/latest/'
     shortDescription: >-
       Progettato con il Team Digitale utilizzando lo “starter KIT per il sito di
@@ -107,7 +107,7 @@ description:
       - >-
         Integrazione con alcuni dei sistemi di protocollazione più diffusi
         presso i comuni (tra cui, PiTre)
-      - Integrazione con Shibboleth (SAML 2.0)
+      - Creazione da backend di form complessi, a piu' step, con integrazione di API esterne
     screenshots:
       - images/sdc001.jpg
       - images/sdc002.jpg
