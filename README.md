@@ -9,6 +9,7 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 
 ## Funzionalità principali
 
+- Creazione dei moduli da backend, grazie all'integrazione con [Form.IO](https://www.form.io/) un potente sistema di creazione di form dinamiche opensource 
 - Interfaccia responsive (Bootstrap Italia), conforme alle [Linee Guida di design per i servizi web della PA](https://designers.italia.it/guide/)
 - Autenticazione con [SPID](https://www.spid.gov.it/)
 - Integrazione con [PagoPA](https://teamdigitale.governo.it/it/projects/pagamenti-digitali.htm) attraverso MyPAY
@@ -24,34 +25,18 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 ## Altri riferimenti
 
 * [Manuale d'uso](https://manuale-stanza-del-cittadino.readthedocs.io/)
-* [API](https://documenter.getpostman.com/view/7046499/S17wM5XS)
-* [Demo](https://devsdc.opencontent.it/comune-di-ala)
-
-## Screenshots
-
-### pagina principale
-
-![sdc2]
-
-### elenco dei servizi on-line
-
-![sdc3]
-
-### esempio di compilazione di una pratica
-![sdc4]
-
-### invio di una pratica
-![sdc5]
+* [API](https://stanzadelcittadino.it/comune-di-ala/api/doc)
+* [Demo](https://demosdc.opencontent.it/comune-di-ala)
 
 ## Struttura del progetto
 
-Il software è composto da una componente principale sviluppata con Symfony e da varie componenti accessorie, che sono 
+Il software è realizzato da una componente principale sviluppata con [Symfony](https://symfony.com/) e da varie componenti accessorie, che sono 
 facilmente sostituibili in caso di necessità:
 
 * symfony-app: costituisce l'interfaccia principale dell'applicativo, sia di front-end che di backend (utilizza postgresql come layer di persistenza) ed e' il software presente in questo repository
 * apache+shibboleth: il webserver apache distribuito nel presente repository contiene anche shibboleth per l'autenticazione mediante SPID, questo componente può essere sostituito facilmente da un altro sistema utilizzabile per l'autenticazione.
 * [wkhtmltopdf](https://hub.docker.com/r/traumfewo/docker-wkhtmltopdf-aas): questo microservizio è necessario per creazione di PDF, il formato con cui vengono creati e protocollati i documenti durante l'esecuzione delle pratiche del cittadino,
-* mypay-proxy e pitre-proxy: due proxy che espongono una semplice interfaccia ReST verso l'applicativo e inoltrano le chiamate ai servizi MyPAY e PiTRE mediante protocollo SOAP; questi due proxy sono in fase di rilascio.
+* mypay-proxy e pitre-proxy: due proxy che espongono una semplice interfaccia ReST verso l'applicativo e inoltrano le chiamate ai servizi MyPAY e PiTRE mediante protocollo SOAP; questi due proxy sono in fase di rilascio, ma già operativi in produzione.
 
 ## Requisiti
 
@@ -71,7 +56,46 @@ qualunque server Linux.
 I `Dockerfile` presenti nel repository principale e in quelli secondari possono essere utilizzati
 per dedurre quali sono i requisiti a livello di sistema operativo di ogni componente, per questo
 motivo non viene fornita documentazione in merito, ma in caso di necessità è possibile aprire una
-issue per richiedere chiarimenti.
+issue per richiedere chiarimenti. Si sconsiglia comunque il setup senza docker perché rende molto
+oneroso gli aggiornamenti.
+
+## Utilizzo
+
+Oltre al cittadino che accede mediante SPID, posso accedere all'applicativo
+
+- i professionisti che presentano pratiche all'Ente _per conto_ del cittadino (es: pratiche edilizie)
+- i gestori delle pratiche, che ricevono notifica delle pratiche da elaborare e possono accettarle
+  o rigettarle, allegando messagi o documenti
+- gli amministratori dell'Ente che possono impostare le informazioni generali dell'ente, configurare
+  i dati relativi al protocollo usato e al sistema di pagamento. Inoltre gli amministratori possono 
+  creare a pubblicare servizi, progettando i moduli online che i cittadini dovranno compilare.
+  gli amministratori hanno infine accesso anche ai log di sicurezza che consentono la verifica dei
+  login effettuati da tutti gli utenti e del loro IP di provenienza
+
+## Accesso alle API
+
+Per l'accesso alle API è necessario effettuare l'autenticazione come segue 
+
+1. si esegue una `POST` all'endpoint: `https://www.stanzadelcittadino.it/<ENTE>/api/auth` con body
+
+```json
+{
+  "username": "<nome_utente>",
+  "password": "<segreto>"
+}
+```
+
+2. si ottiene come risposta un token JWT che si inserisce nelle successive chiamate come header 
+   `Authorization: Bearer <TOKEN>`
+
+Ad esempio, mediante il client da linea di comando [httpie](https://httpie.org/)
+e l'utility [jq](https://stedolan.github.io/jq/):
+
+```bash
+$ export TOKEN=$(http post https://www.stanzadelcittadino.it/comune-di-ala/api/auth username=XXXXX password=XXXX | jq -raw-output .token)
+
+$ http get https://www.stanzadelcittadino.it/comune-di-ala/api/services "Authorization: Bearer $TOKEN"
+```
 
 ## Build system, CI e test automatici
 
@@ -84,8 +108,9 @@ Durante la build vengono inoltre effettuati:
 ## Deploy
 
 Dal repository stesso è possibile fare il deploy di un *ambiente demo* del servizio. Per farlo
-è sufficiente utilizzare il docker-compose.yml del progetto e configurare le variabili
-necesasarie mediante un file `.env` (viene fornito un file `env.dist` come riferimento.
+è sufficiente utilizzare questo [docker-compose.yml](https://gitlab.com/opencontent/stanzadelcittadino/blob/docker-demo/docker-compose.yml)
+del progetto e configurare le variabili
+necessarie mediante un file `.env` (viene fornito un file `env.dist` come riferimento.
 
 E' possibile prelevare il singolo file dal repository e avviare i servizi a partire dalle immagini
 docker rilasciate, mendiante il comando:
@@ -95,8 +120,15 @@ docker rilasciate, mendiante il comando:
 In alternativa e' possibile fare il deploy di un *ambiente di sviluppo*, facendo il
 clone del repository ed effettuando la build localmente al proprio computer:
 
+    git clone git@gitlab.com:opencontent/stanzadelcittadino.git
+    git checkout docker-demo
     docker-compose up --build -d
 
+Al termine della build e dell'inizializzazione del database sarà possibile visitare l'indirizzo:
+
+http://stanzadelcittadino.localtest.me
+
+e si dovrebbe vedere una pagina web del tutto simile a https://demosdc.opencontent.it/
 
 ## Project status 
 
@@ -110,12 +142,12 @@ al codice per il supporto di altri sistemi di protocollo o di pagamento, purché
 in modo modulare e configurabile, in modo da non pregiudicare la flessibilità del progetto.
 
 Altri limiti:
-- i servizi sono codificati a codice mediante classi PHP, stiamo gia' progettando
-  l'estensione del progetto con un sistema piu' generico, che consenta la creazione di servizi
-  da una interfaccia di backend
-- la gestione degli operatori e' poco flessibile e non esiste un backend per la loro creazione: 
-  al momento la loro gestione e' effettuata mediante la CLI di symfony: è in corso la 
-  sperimentazione di AWS Cognito per la gestione degli operatori.
+- la gestione degli operatori è molto limitata al momento e non consente grande flessibilità
+  o l'utilizzo di gruppi di operatori per la gestione delle pratiche
+- il security log è minimale e intellegibile solo da personale tecnico
+- le API coprono attualmente circa il 50% delle funzionalità dell'applicativo
+- il test OWASP condotto durante la build è effettuato sull'ambiente di sviluppo e non su un ambiente creato
+  appositamente con la versione corrente
 
 ## Copyright
 
@@ -133,10 +165,4 @@ Copyright (C) 2016-2019  Opencontent SCARL
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-[sdc1]: images/sdc001.jpeg "pagina principale dell'area personale"
-[sdc2]: images/sdc002.jpeg "elenco dei servizi"
-[sdc3]: images/sdc003.jpeg "esempio di pratica compilata online"
-[sdc4]: images/sdc004.jpeg "esempio di pratica inviata all'ente"
-[sdc5]: images/sdc005.jpeg "elenco delle pratiche sul backend dell'operatore"
 
