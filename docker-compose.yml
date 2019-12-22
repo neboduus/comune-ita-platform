@@ -45,7 +45,7 @@ services:
       - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
 
   formserver:
-    image: registry.gitlab.com/opencontent/formmanagerserver:1.0.3
+    image: registry.gitlab.com/opencontent/formmanagerserver:1.0.4
     restart: unless-stopped
     ports:
       - "8000:8000"
