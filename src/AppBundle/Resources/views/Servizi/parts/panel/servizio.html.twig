@@ -13,7 +13,7 @@
               {% endif %}
             </div>
             <h5 class="card-title">{{ servizio.name }}</h5>
-            <p class="card-text">{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit) ~ '...' : servizio.description  }}</p>
+            <p class="card-text">{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit)|striptags ~ '...' : servizio.description|striptags  }}</p>
             <a class="read-more" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
                 <span class="text">Leggi di più</span>
                 <svg class="icon">

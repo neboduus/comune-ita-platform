@@ -477,6 +477,12 @@ email:
         submitted.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
         registered.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della pratica."
         pending.after.integration: "le comunichiamo che l'integrazione alla sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
+        payment:
+          pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
+          success: "le comunichiamo che il pagamento per la sua domanda per il servizio <strong>%servizio%</strong> è avvenuto con successo"
+          error: "le comunichiamo che c'è stato un errore durante il pagamento per la sua domanda per il servizio <strong>%servizio%</strong>"
+          outcome:
+            pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento"
     operatore:
       status:
         submitted: "la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."

@@ -350,7 +350,7 @@ class Servizio
    *
    * @return $this
    */
-  public function setDescription(string $description)
+  public function setDescription($description)
   {
     $this->description = $description;
 

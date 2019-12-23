@@ -4,6 +4,7 @@
 namespace AppBundle\Services;
 
 
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Payment\Gateway\MyPay;
 use GuzzleHttp\Client;
@@ -134,15 +135,16 @@ class MyPayService
     $data = $pratica->getPaymentData();
     $paymentParameters = $pratica->getServizio()->getPaymentParameters();
 
-    if (!array_key_exists(MyPay::IMPORTO, $data)) {
-      throw new \InvalidArgumentException('Missing ' . MyPay::IMPORTO . ' key');
+    $amount = $this->calculateImporto($pratica);
+    if ( !$amount) {
+      throw new \InvalidArgumentException('Missing amount');
     }
 
     $order = array(
       'identificativoUnivocoDovuto' => $this->calculateIUDFromPratica($pratica),
       'causaleVersamento' => "Pratica: " . $pratica->getId(),
       'datiSpecificiRiscossione' => $paymentParameters['gateways']['mypay']['parameters']['datiSpecificiRiscossione'],
-      'importoSingoloVersamento' => '1',
+      'importoSingoloVersamento' => $amount,
       'identificativoTipoDovuto' => $paymentParameters['gateways']['mypay']['parameters']['identificativoTipoDovuto'],
     );
 
@@ -155,7 +157,7 @@ class MyPayService
       'civicoPagatore' => '',
       'capPagatore' => '',
       'localitaPagatore' => '',
-      'provinciaPagatore' => 'TN',
+      'provinciaPagatore' => "L'Aquila",
       'nazionePagatore' => 'IT',
       'e-mailPagatore' => $pratica->getUser()->getEmail(),
       'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
@@ -182,6 +184,9 @@ class MyPayService
       throw new \InvalidArgumentException('Missing amount');
     }
 
+    /** @var CPSUser $user */
+    $user = $pratica->getUser();
+
 
     $data = array(
       'notifyUrl' => $this->renderUrlForPaymentOutcome($pratica),
@@ -189,11 +194,11 @@ class MyPayService
       'tipoIdentificativoUnivoco' => 'F',
       'codiceIdentificativoUnivoco' => $pratica->getRichiedenteCodiceFiscale(), // Codice fiscale
       'anagraficaPagatore' => $pratica->getRichiedenteNome() . ' ' . $pratica->getRichiedenteCognome(), // Nome e Cognome
-      'indirizzoPagatore' => '',
+      'indirizzoPagatore' => $user->getIndirizzoResidenza(),
       'civicoPagatore' => '',
-      'capPagatore' => '',
-      'localitaPagatore' => '',
-      'provinciaPagatore' => 'TN',
+      'capPagatore' => $user->getCapResidenza(),
+      'localitaPagatore' => $user->getCittaResidenza(),
+      'provinciaPagatore' => $user->getProvinciaDomicilio() ? $user->getProvinciaDomicilio() : 'TN',
       'nazionePagatore' => 'IT',
       'e-mailPagatore' => $pratica->getUser()->getEmail(),
       'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
