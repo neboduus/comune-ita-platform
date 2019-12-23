@@ -3,6 +3,7 @@ require("../css/app.scss");
 require("jquery"); // Load jQuery as a module
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 require("summernote");
+require("summernote/dist/summernote-bs4.css")
 
 $(document).ready(function () {
 
@@ -44,9 +45,10 @@ $(document).ready(function () {
   if ($("#general_data_flow_service_step").length) {
     $('textarea').summernote({
       toolbar: [
-        // [groupName, [list of button]]
-        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['style', ['style']],
         ['para', ['ul', 'ol', 'paragraph']],
+        ['insert', ['link']],
+        ['view', ['codeview']],
       ]
     });
   }

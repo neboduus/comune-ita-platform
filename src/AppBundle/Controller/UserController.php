@@ -105,8 +105,9 @@ class UserController extends Controller
     }
 
     return [
-      'form' => $form->createView(),
-      'user' => $user,
+      'form'      => $form->createView(),
+      'provinces' => $this->getProvinces(),
+      'user'      => $user,
     ];
   }
 
@@ -260,6 +261,123 @@ class UserController extends Controller
     }
 
     return $enti;
+  }
+  
+  private function getProvinces()
+  {
+    $data  = [];
+    $data['AG'] = "Agrigento";
+    $data['AL'] = "Alessandria";
+    $data['AN'] = "Ancona";
+    $data['AO'] = "Aosta";
+    $data['AR'] = "Arezzo";
+    $data['AP'] = "Ascoli Piceno";
+    $data['AT'] = "Asti";
+    $data['AV'] = "Avellino";
+    $data['BA'] = "Bari";
+    $data['BT'] = "Barletta-Andria-Trani";
+    $data['BL'] = "Belluno";
+    $data['BN'] = "Benevento";
+    $data['BG'] = "Bergamo";
+    $data['BI'] = "Biella";
+    $data['BO'] = "Bologna";
+    $data['BZ'] = "Bolzano";
+    $data['BS'] = "Brescia";
+    $data['BR'] = "Brindisi";
+    $data['CA'] = "Cagliari";
+    $data['CL'] = "Caltanissetta";
+    $data['CB'] = "Campobasso";
+    $data['CI'] = "Carbonia-Iglesias";
+    $data['CE'] = "Caserta";
+    $data['CT'] = "Catania";
+    $data['CZ'] = "Catanzaro";
+    $data['CH'] = "Chieti";
+    $data['CO'] = "Como";
+    $data['CS'] = "Cosenza";
+    $data['CR'] = "Cremona";
+    $data['KR'] = "Crotone";
+    $data['CN'] = "Cuneo";
+    $data['EN'] = "Enna";
+    $data['FM'] = "Fermo";
+    $data['FE'] = "Ferrara";
+    $data['FI'] = "Firenze";
+    $data['FG'] = "Foggia";
+    $data['FC'] = "Forlì-Cesena";
+    $data['FR'] = "Frosinone";
+    $data['GE'] = "Genova";
+    $data['GO'] = "Gorizia";
+    $data['GR'] = "Grosseto";
+    $data['IM'] = "Imperia";
+    $data['IS'] = "Isernia";
+    $data['SP'] = "La Spezia";
+    $data['AQ'] = "L'Aquila";
+    $data['LT'] = "Latina";
+    $data['LE'] = "Lecce";
+    $data['LC'] = "Lecco";
+    $data['LI'] = "Livorno";
+    $data['LO'] = "Lodi";
+    $data['LU'] = "Lucca";
+    $data['MC'] = "Macerata";
+    $data['MN'] = "Mantova";
+    $data['MS'] = "Massa-Carrara";
+    $data['MT'] = "Matera";
+    $data['ME'] = "Messina";
+    $data['MI'] = "Milano";
+    $data['MO'] = "Modena";
+    $data['MB'] = "Monza e della Brianza";
+    $data['NA'] = "Napoli";
+    $data['NO'] = "Novara";
+    $data['NU'] = "Nuoro";
+    $data['OT'] = "Olbia-Tempio";
+    $data['OR'] = "Oristano";
+    $data['PD'] = "Padova";
+    $data['PA'] = "Palermo";
+    $data['PR'] = "Parma";
+    $data['PV'] = "Pavia";
+    $data['PG'] = "Perugia";
+    $data['PU'] = "Pesaro e Urbino";
+    $data['PE'] = "Pescara";
+    $data['PC'] = "Piacenza";
+    $data['PI'] = "Pisa";
+    $data['PT'] = "Pistoia";
+    $data['PN'] = "Pordenone";
+    $data['PZ'] = "Potenza";
+    $data['PO'] = "Prato";
+    $data['RG'] = "Ragusa";
+    $data['RA'] = "Ravenna";
+    $data['RC'] = "Reggio Calabria";
+    $data['RE'] = "Reggio Emilia";
+    $data['RI'] = "Rieti";
+    $data['RN'] = "Rimini";
+    $data['RM'] = "Roma";
+    $data['RO'] = "Rovigo";
+    $data['SA'] = "Salerno";
+    $data['VS'] = "Medio Campidano";
+    $data['SS'] = "Sassari";
+    $data['SV'] = "Savona";
+    $data['SI'] = "Siena";
+    $data['SR'] = "Siracusa";
+    $data['SO'] = "Sondrio";
+    $data['TA'] = "Taranto";
+    $data['TE'] = "Teramo";
+    $data['TR'] = "Terni";
+    $data['TO'] = "Torino";
+    $data['OG'] = "Ogliastra";
+    $data['TP'] = "Trapani";
+    $data['TN'] = "Trento";
+    $data['TV'] = "Treviso";
+    $data['TS'] = "Trieste";
+    $data['UD'] = "Udine";
+    $data['VA'] = "Varese";
+    $data['VE'] = "Venezia";
+    $data['VB'] = "Verbano-Cusio-Ossola";
+    $data['VC'] = "Vercelli";
+    $data['VR'] = "Verona";
+    $data['VV'] = "Vibo Valentia";
+    $data['VI'] = "Vicenza";
+    $data['VT'] = "Viterbo";
+
+    return $data;
   }
 
 }

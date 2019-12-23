@@ -140,9 +140,9 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
 
     } catch (\Exception $e) {
       $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId() . ' - ' . $e->getMessage());
+      $this->logger->error($e);
       $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza.");
       //$helper->setDescriptionText($e->getMessage());
-
     }
   }
 
