@@ -4,3 +4,6 @@
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-vallelaghi --env=prod
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-ala --env=prod
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i fondazione-mach --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-folgaria --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-lavarone --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-luserna --env=prod
