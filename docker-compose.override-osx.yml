@@ -1,11 +1,6 @@
 version: "3"
 
 services:
-  postgres:
-    volumes:
-      - /tmp/sdc/pgdata:/var/lib/postgresql/data/pgdata:delegated # I want to manage volumes manually.
-
-
   php:
     ## Read instructions at https://wodby.com/stacks/php/docs/local/xdebug/
     #      PHP_XDEBUG: 1
@@ -17,7 +12,7 @@ services:
     #      PHP_XDEBUG_REMOTE_HOST: 10.0.75.1 # Windows
     build:
       context: .
-      dockerfile: Dockerfile_override-osx
+      dockerfile: Dockerfile.dev
     volumes:
       - ./:/var/www/html:delegated
       - docker-sync:/var/www/html
@@ -27,6 +22,10 @@ services:
       #      - docker-sync:/var/www/html # Docker-sync
       ## For XHProf and Xdebug profiler traces
       #      - files:/mnt/files
+
+  apache:
+    volumes:
+      - ./web:/var/www/html/web:delegated
 
   pgweb:
     image: sosedoff/pgweb

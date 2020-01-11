@@ -1,6 +1,9 @@
-app/config/parameters.yml
-vendor/
-bower_components/
-node_modules/
-docker-sync/
-example/
+#app/config/parameters.yml
+./vendor/
+./bower_components/
+./node_modules/
+.docker-sync/
+.git/
+./example/
+./doc/
+./var/cache/*
