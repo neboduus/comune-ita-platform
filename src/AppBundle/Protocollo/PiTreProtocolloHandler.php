@@ -43,15 +43,17 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   {
     $parameters = $this->getParameters($pratica);
     $parameters->set('method', 'createDocumentAndAddInProject');
-    $queryString = http_build_query($parameters->all());
-    $response = $this->client->get('?' . $queryString);
+    //$queryString = http_build_query($parameters->all());
+    //$response = $this->client->get('?' . $queryString);
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
     if ($responseData->getStatus() == 'success') {
       $pratica->setIdDocumentoProtocollo($responseData->getIdDoc());
       $pratica->setNumeroProtocollo($responseData->getNProt());
       $pratica->setNumeroFascicolo($responseData->getIdProj());
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . $queryString);
+      throw new ResponseErrorException($responseData . ' on request ' . json_encode($parameters->all()));
     }
   }
 
@@ -68,8 +70,11 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     // trasmissionIDArray va valorizzato solo per il metodo createDocumentAndAddInProject
     $parameters->remove('trasmissionIDArray');
 
-    $queryString = http_build_query($parameters->all());
-    $response = $this->client->get('?' . $queryString);
+    //$queryString = http_build_query($parameters->all());
+    //$response = $this->client->get('?' . $queryString);
+
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
     if ($responseData->getStatus() == 'success') {
       $pratica->addNumeroDiProtocollo([
@@ -77,7 +82,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         'protocollo' => $responseData->getIdDoc(),
       ]);
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . $queryString);
+      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
   }
 
@@ -90,16 +95,18 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   {
     $parameters = $this->getRichiestaIntegrazioneParameters($pratica, $richiesta);
     $parameters->set('method', 'createDocumentAndAddInProject');
-    $queryString = http_build_query($parameters->all());
 
-    $response = $this->client->get('?' . $queryString);
+    //$queryString = http_build_query($parameters->all());
+    //$response = $this->client->get('?' . $queryString);
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
 
     if ($responseData->getStatus() == 'success') {
       $richiesta->setNumeroProtocollo($responseData->getNProt());
       $richiesta->setIdDocumentoProtocollo($responseData->getIdDoc());
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . $queryString);
+      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
   }
 
@@ -113,9 +120,11 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   {
     $parameters = $this->getIntegrazioneParameters($pratica, $integrazione);
     $parameters->set('method', 'createDocumentAndAddInProject');
-    $queryString = http_build_query($parameters->all());
 
-    $response = $this->client->get('?' . $queryString);
+    //$queryString = http_build_query($parameters->all());
+    //$response = $this->client->get('?' . $queryString);
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
 
     if ($responseData->getStatus() == 'success') {
@@ -128,7 +137,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       ]);
 
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . $queryString);
+      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
   }
 
@@ -142,14 +151,17 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     $risposta = $pratica->getRispostaOperatore();
     $parameters = $this->getRispostaParameters($pratica);
     $parameters->set('method', 'createDocumentAndAddInProject');
-    $queryString = http_build_query($parameters->all());
-    $response = $this->client->get('?' . $queryString);
+
+    //$queryString = http_build_query($parameters->all());
+    //$response = $this->client->get('?' . $queryString);
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
     if ($responseData->getStatus() == 'success') {
       $risposta->setNumeroProtocollo($responseData->getNProt());
       $risposta->setIdDocumentoProtocollo($responseData->getIdDoc());
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . $queryString);
+      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
   }
 
@@ -167,8 +179,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     // trasmissionIDArray va valorizzato solo in createDocumentAndAddInProject
     $parameters->remove('trasmissionIDArray');
 
-    $queryString = http_build_query($parameters->all());
-    $response = $this->client->get('?' . $queryString);
+    //$queryString = http_build_query($parameters->all());
+    //$response = $this->client->get('?' . $queryString);
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
     if ($responseData->getStatus() == 'success') {
       $risposta->addNumeroDiProtocollo([
@@ -176,7 +190,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         'protocollo' => $responseData->getIdDoc(),
       ]);
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . $queryString);
+      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
   }
 
@@ -197,7 +211,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 
     if ($allegato instanceof AllegatoInterface) {
       $parameters->setDocumentId($pratica->getIdDocumentoProtocollo());
-      $parameters->setFilePath($allegato->getFile()->getPathname());
+      //$parameters->setFilePath($allegato->getFile()->getPathname());
+      $path = $allegato->getFile()->getPathname();
+      $parameters->setFileName($allegato->getFile()->getFilename());
+      $fileContent = base64_encode(file_get_contents($path));
+      $parameters->setFile($fileContent);
+      $parameters->setChecksum(md5($fileContent));
+
       $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
     } else {
 
@@ -213,7 +233,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $parameters->setDocumentObj($object);
       $parameters->setDocumentDescription($moduloCompilato->getDescription());
 
-      $parameters->setFilePath($moduloCompilato->getFile()->getPathname());
+      //$parameters->setFilePath($moduloCompilato->getFile()->getPathname());
+      $path = $moduloCompilato->getFile()->getPathname();
+      $parameters->setFileName($moduloCompilato->getFile()->getFilename());
+      $fileContent = base64_encode(file_get_contents($path));
+      $parameters->setFile($fileContent);
+      $parameters->setChecksum(md5($fileContent));
+
       $parameters->setCreateProject(true);
       $parameters->setDocumentType("A");
 
@@ -243,7 +269,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 
     if ($allegato instanceof AllegatoInterface) {
       $parameters->setDocumentId($risposta->getIdDocumentoProtocollo());
-      $parameters->setFilePath($allegato->getFile()->getPathname());
+      //$parameters->setFilePath($allegato->getFile()->getPathname());
+      $path = $allegato->getFile()->getPathname();
+      $parameters->setFileName($allegato->getFile()->getFilename());
+      $fileContent = base64_encode(file_get_contents($path));
+      $parameters->setFile($fileContent);
+      $parameters->setChecksum(md5($fileContent));
+
       $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
     } else {
 
@@ -255,7 +287,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $parameters->setDocumentObj('Risposta ' . $object);
       $parameters->setDocumentDescription('Risposta ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
-      $parameters->setFilePath($risposta->getFile()->getPathname());
+      //$parameters->setFilePath($risposta->getFile()->getPathname());
+      $path = $risposta->getFile()->getPathname();
+      $parameters->setFileName($risposta->getFile()->getFilename());
+      $fileContent = base64_encode(file_get_contents($path));
+      $parameters->setFile($fileContent);
+      $parameters->setChecksum(md5($fileContent));
+
       $parameters->setIdProject($pratica->getNumeroFascicolo());
       $parameters->setCreateProject(false);
       $parameters->setDocumentType("P");
@@ -291,7 +329,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     $parameters->setDocumentObj('Richiesta integrazione ' . $object);
     $parameters->setDocumentDescription('Richiesta integrazione ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
-    $parameters->setFilePath($richiesta->getFile()->getPathname());
+    //$parameters->setFilePath($richiesta->getFile()->getPathname());
+    $path = $richiesta->getFile()->getPathname();
+    $parameters->setFileName($richiesta->getFile()->getFilename());
+    $fileContent = base64_encode(file_get_contents($path));
+    $parameters->setFile($fileContent);
+    $parameters->setChecksum(md5($fileContent));
+
     $parameters->setIdProject($pratica->getNumeroFascicolo());
     $parameters->setCreateProject(false);
     $parameters->setDocumentType("P");
@@ -326,7 +370,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     $parameters->setDocumentObj('Integrazione ' . $object);
     $parameters->setDocumentDescription('Integrazione ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
-    $parameters->setFilePath($integrazione->getFile()->getPathname());
+    //$parameters->setFilePath($integrazione->getFile()->getPathname());
+    $path = $integrazione->getFile()->getPathname();
+    $parameters->setFileName($integrazione->getFile()->getFilename());
+    $fileContent = base64_encode(file_get_contents($path));
+    $parameters->setFile($fileContent);
+    $parameters->setChecksum(md5($fileContent));
+
     $parameters->setIdProject($pratica->getNumeroFascicolo());
     $parameters->setCreateProject(false);
     $parameters->setDocumentType("A");
