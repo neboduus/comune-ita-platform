@@ -1,4 +1,4 @@
-#app/config/parameters.yml
+app/config/parameters.yml
 ./vendor/
 ./bower_components/
 ./node_modules/
