@@ -38,7 +38,7 @@ class ScheduledActionCommand extends ContainerAwareCommand
                     $scheduleActionService->markAsDone($action);
                     $actionsToFlush []= $action;
                 } catch (\Exception $e) {
-                    $this->getContainer()->get('logger')->error($e->getMessage());
+                    $this->getContainer()->get('logger')->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
                 } catch (\ErrorException $e) {
                     $this->getContainer()->get('logger')->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
                 }                            

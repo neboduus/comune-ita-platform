@@ -141,8 +141,8 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
                 }
 
             } else {
-                $this->logger->error("Error when sending pratica {$pratica->getId()} on Giscom Side ", $logContext);
-                throw new \Exception("Error when sending pratica {$pratica->getId()} on Giscom Side");
+                $this->logger->error("Error when sending pratica {$pratica->getId()} on Giscom Side, error code: {$status} ", $logContext);
+                throw new \Exception("Error when sending pratica {$pratica->getId()} on Giscom Side, error code: {$status} ");
             }
 
             return $response;
@@ -164,7 +164,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
                     /* NOOP: null or already  */
                 }
             }
-            $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side", $logContext);
+            $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side, error code: {$status} ", $logContext);
 
             // La pratica non va più rifiutata ma lasciata in Stato Pending, da Giscom manualmente rifiuteranno la pratica
             //$mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
