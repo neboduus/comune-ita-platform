@@ -8,6 +8,7 @@ parameters:
     database_password: '%env(DB_PASSWORD)%'
     mailer_transport: '%env(MAILER_TRANSPORT)%'
     mailer_host: '%env(MAILER_HOST)%'
+    mailer_port: '%env(MAILER_PORT)%'
     mailer_user: '%env(MAILER_USER)%'
     mailer_password: '%env(MAILER_PASSWORD)%'
     secret: '%env(SECRET)%'
@@ -54,8 +55,9 @@ parameters:
     env(DB_NAME): 'sdc_multi'
     env(DB_USER): 'sdc'
     env(DB_PASSWORD): 'sdc'
-    env(MAILER_TRANSPORT): 'sendmail'
+    env(MAILER_TRANSPORT): 'smtp'
     env(MAILER_HOST): '127.0.0.1'
+    env(MAILER_PORT): '25'
     env(MAILER_USER): null
     env(MAILER_PASSWORD): null
     env(SECRET): 'ThisTokenIsNotSoSecretChangeIt'

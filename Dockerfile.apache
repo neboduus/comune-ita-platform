@@ -1,7 +1,5 @@
 ARG php_image
-#FROM ${php_image} as php
-FROM registry.gitlab.com/opencontent/stanzadelcittadino/app:docker-demo as php
-
+FROM ${php_image} as php
 
 FROM centos:7
 

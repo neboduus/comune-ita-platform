@@ -11,25 +11,17 @@ services:
     #      PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
     #      PHP_XDEBUG_REMOTE_HOST: 10.254.254.254 # macOS
     #      PHP_XDEBUG_REMOTE_HOST: 10.0.75.1 # Windows
-    #build:
-    #  context: .
-    #volumes:
-    #  - ./src/AppBundle:/var/www/html/src/AppBundle:rw
     build:
       context: .
-      dockerfile: Dockerfile.dev
     volumes:
-      - ./:/var/www/html:delegated
-      - docker-sync:/var/www/html
+      - ./src/AppBundle:/var/www/html/src/AppBundle:rw
 
   apache:
-    build:
+    build: 
       context: .
       dockerfile: Dockerfile.apache
       args:
         php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
-    volumes:
-      - ./web:/var/www/html/web:delegated
 
   pgweb:
     image: sosedoff/pgweb
@@ -40,7 +32,3 @@ services:
     depends_on:
       - postgres
 
-volumes:
-  ## Docker-sync for macOS users
-  docker-sync:
-    external: true

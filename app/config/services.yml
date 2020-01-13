@@ -103,8 +103,10 @@ services:
       - "@vich_uploader.property_mapping_factory"
       - "@ocsdc.allegati.directory_namer"
       - "@knp_snappy.pdf"
+      - "%wkhtmltopdf_service%"
       - "@templating"
       - "%ocsdc_default_datetime_format%"
+
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
 

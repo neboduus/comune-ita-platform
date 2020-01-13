@@ -15,8 +15,9 @@ services:
       - pgdata:/var/lib/postgresql/data/pgdata
 
   php:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:docker-demo
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     environment:
+      PHP_FPM_CLEAR_ENV: 'no'
       ENV: DEMO
       SYMFONY_ENV: $SYMFONY_ENV
       PREFIX: $PREFIX
@@ -61,7 +62,7 @@ services:
       - "uploads:/docroot/var/uploads"
 
   apache:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:docker-demo
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:master
     depends_on:
       - php
     environment:
