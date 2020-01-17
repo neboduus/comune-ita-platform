@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\FormIO;
 
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\SciaPraticaEdilizia;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Form\FormError;
+use \DateTime;
 
 
 class FormIORenderType extends AbstractType
@@ -55,7 +57,7 @@ class FormIORenderType extends AbstractType
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
     $helper->setStepTitle('steps.scia.modulo_default.label', true);
-    $data = $this->setupHelperData($pratica, $helper);
+    $data = $this->setupHelperData($pratica);
     $builder
       ->add('form_id', HiddenType::class,
         [
@@ -105,9 +107,9 @@ class FormIORenderType extends AbstractType
 
     $pratica->setDematerializedForms(
       array(
-        'data'      => $compiledData,
+        'data' => $compiledData,
         'flattened' => $flattenedData,
-        'schema'    => $schema
+        'schema' => $schema
       )
     );
     $this->em->persist($pratica);
@@ -115,12 +117,58 @@ class FormIORenderType extends AbstractType
 
   /**
    * @param SciaPraticaEdilizia $pratica
-   * @param TestiAccompagnatoriProcedura $helper
    * @return array
    */
-  private function setupHelperData(FormIO $pratica, TestiAccompagnatoriProcedura $helper)
+  private function setupHelperData(FormIO $pratica)
   {
-    return json_encode($pratica->getDematerializedForms());
+    $data = $pratica->getDematerializedForms();
+
+    /** @var CPSUser $user */
+    $user = $pratica->getUser();
+
+
+    if (empty($data)) {
+      $cpsUserData = '{
+        "data": {
+          "applicant": {
+            "data": {
+              "completename": {
+                "data": {
+                  "name": "'.$user->getNome().'",
+                  "surname": "'.$user->getCognome().'"
+                },
+                "metadata": []
+              },
+              "Born": {
+                "data": {
+                  "natoAIl": "'.$user->getDataNascita()->format(DateTime::ISO8601).'",
+                  "place_of_birth": "'.$user->getLuogoNascita().'"
+                },
+                "metadata": []
+              },
+              "fiscal_code": {
+                "data": {
+                  "fiscal_code": "'.$user->getCodiceFiscale().'"
+                },
+                "metadata": []
+              },
+              "address": {
+                "data": {
+                  "address": "'.$user->getIndirizzoResidenza().'",
+                  "house_number": "",
+                  "municipality": "'.$user->getCittaResidenza().'",
+                  "postal_code": "'.$user->getCapResidenza().'"
+                },
+                "metadata": []
+              },
+              "email_address": "'.$user->getEmail().'"
+            },
+            "metadata": []
+          }
+        }}';
+      return $cpsUserData;
+    }
+    return json_encode($data);
   }
 
   private function getFormIoId(Pratica $pratica)
@@ -146,6 +194,9 @@ class FormIORenderType extends AbstractType
 
   private function arrayFlat($array, $prefix = '')
   {
+
+
+
     $result = array();
     foreach ($array as $key => $value) {
       if ($key == 'metadata' || $key == 'state') {

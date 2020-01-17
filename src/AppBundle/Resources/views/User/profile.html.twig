@@ -23,8 +23,6 @@
           </div>
         </div><!-- /.row -->
 
-        {% if (not user.dataNascita or not user.luogoNascita) %}
-        <h4 class="mt-3 mb-5">Informazioni nascita utente</h4>
         <div class="row">
           <div class="col-12 col-md-6">
             {{ form_row(form.data_nascita, {'required': true, 'label': 'user.profile.data_nascita'|trans()}) }}
@@ -33,7 +31,6 @@
             {{ form_row(form.luogo_nascita, {'required': true, 'label': 'user.profile.luogo_nascita'|trans()}) }}
           </div>
         </div><!-- /.row -->
-        {% endif %}
 
         <h4 class="mt-3 mb-5">Residenza</h4>
         <div class="row">

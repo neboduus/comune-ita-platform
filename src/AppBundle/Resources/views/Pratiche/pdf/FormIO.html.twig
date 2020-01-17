@@ -15,11 +15,15 @@
         <tr>
           <td>
             <p>
-              <strong>{% if pratica.dematerializedForms.schema[key] is defined %}{{ pratica.dematerializedForms.schema[key] }}{% endif %}</strong>
+              <strong>{% if pratica.dematerializedForms.schema[key ~ '.label'] is defined  %}{{ pratica.dematerializedForms.schema[key ~ '.label'] }}{% endif %}</strong>
             </p>
           </td>
           <td>
-            {{ value }}
+            {% if pratica.dematerializedForms.schema[key ~ '.type'] == 'datetime' %}
+              {{ value|date('d-m-Y H:i') }}
+            {% else %}
+              {{ value }}
+            {% endif %}
           </td>
         </tr>
       {% endif %}

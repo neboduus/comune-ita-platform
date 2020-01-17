@@ -187,6 +187,10 @@ class MyPayService
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
+    $provincia = $user->getProvinciaResidenza() ? $user->getProvinciaResidenza() : 'TN';
+    if ( strlen($provincia) > 2 ) {
+      $provincia = substr($provincia, 0, 2);
+    }
 
     $data = array(
       'notifyUrl' => $this->renderUrlForPaymentOutcome($pratica),
@@ -198,7 +202,7 @@ class MyPayService
       'civicoPagatore' => '',
       'capPagatore' => $user->getCapResidenza(),
       'localitaPagatore' => $user->getCittaResidenza(),
-      'provinciaPagatore' => $user->getProvinciaDomicilio() ? $user->getProvinciaDomicilio() : 'TN',
+      'provinciaPagatore' => $provincia,
       'nazionePagatore' => 'IT',
       'e-mailPagatore' => $pratica->getUser()->getEmail(),
       'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],

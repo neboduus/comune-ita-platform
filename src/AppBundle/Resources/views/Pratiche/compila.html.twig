@@ -58,7 +58,8 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/formiojs@3.27.3/dist/formio.full.min.js"></script>
+  {#<script src="https://unpkg.com/formiojs@3.29.6/dist/formio.full.min.js"></script>#}
+  <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
   <script>
     $(document).ready(function () {
       if ($('#formio_render_form_id').length) {
@@ -75,6 +76,20 @@
         })
           .then(function (form) {
 
+            // Disable applicant inputs
+            // todo: find beter way
+            form.formReady.then(() => {
+              var disableApplicant = function(){
+                if( $('.formio-component-applicant input').length == 11 ) {
+                  $('.formio-component-applicant input').attr('disabled', 'disabled')
+                }
+                else {
+                  setTimeout(disableApplicant, 1000); // check again in a second
+                }
+              };
+              disableApplicant();
+            });
+
             if (form.hasOwnProperty('wizard')) {
               $('.craue_formflow_current_step.active').addClass('wizard');
             }
@@ -85,6 +100,7 @@
                 data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
               };
             }
+
             form.nosubmit = true;
             // Triggered when they click the submit button.
             form.on('submit', function (submission) {
@@ -109,127 +125,17 @@
               */
 
               form.emit('submitDone', submission)
-                let data = $('form[name="formio_render"]').serialize();
-                //$('#formio_render_dematerialized_forms').val(data);
-                $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
-                //$('form[name="formio_render"]').submit();
-                $('.craue_formflow_button_class_next').trigger('click');
+              let data = $('form[name="formio_render"]').serialize();
+              //$('#formio_render_dematerialized_forms').val(data);
+              $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
+              //$('form[name="formio_render"]').submit();
+              $('.craue_formflow_button_class_next').trigger('click');
             });
           });
       }
     });
   </script>
 
-  {#<script>
-    $(document).ready(function () {
-      function addComponenteForm($collectionHolder, $newLinkLi) {
-        var prototype = $collectionHolder.data('prototype');
-        var index = $collectionHolder.data('index');
-        var newForm = prototype.replace(/__name__/g, index);
-        $collectionHolder.data('index', index + 1);
-        var $newFormLi = $('<li></li>').append(newForm);
-        $newLinkLi.before($newFormLi);
-      }
-
-      function addDeleteLink($li) {
-        var $removeFormA = $('<a href="#" class="btn btn-xs btn-danger">{{ 'pratica.cancella_elemento'|trans() }}</a>');
-        $li.append($removeFormA);
-        $removeFormA.on('click', function (e) {
-          e.preventDefault();
-          $li.remove();
-        });
-      }
-
-      function setupAddAndRemoveLinks($collectionHolder, $newLinkLi) {
-        $collectionHolder.find('li').each(function () {
-          addDeleteLink($(this).find('div.well'));
-        });
-        $collectionHolder.append($newLinkLi);
-        $collectionHolder.data('index', $collectionHolder.find(':input').length);
-      }
-
-
-
-        {% if form.nucleo_familiare is defined %}
-      var $addComponenteNucleoFamiliare = $('<a href="#" class="btn btn-md btn-primary add_componente_nucleo_familiare">{{ 'pratica.aggiungi_componente_nucleo_familiare'|trans() }}</a>');
-      var $newLinkLi = $('<li></li>').append($addComponenteNucleoFamiliare);
-      var $collectionHolder = $('ul.nucleo_familiare');
-
-      $addComponenteNucleoFamiliare.on('click', function (e) {
-        e.preventDefault();
-        addComponenteForm($collectionHolder, $newLinkLi);
-      });
-      setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-
-        {% elseif form.delega_type is defined %}
-
-      var specDelegaLabel = $('#pratica_specifica_delega_delega_type_text_label');
-      var specDelegaInput = $('#pratica_specifica_delega_delega_type_text');
-
-      if ($('#pratica_specifica_delega_delega_type :checked').val() != 'delegato') {
-        specDelegaLabel.show();
-        specDelegaInput.show();
-      }
-
-      $('#pratica_specifica_delega_delega_type input').click(function () {
-        if ($(this).val() == 'delegato') {
-          specDelegaLabel.hide(500);
-          specDelegaInput.hide(500);
-        } else {
-          specDelegaLabel.show(500);
-          specDelegaInput.show(500);
-        }
-      });
-
-        {% elseif form.tipologia_certificato_anagrafico is defined %}
-
-
-      var specDelegaLabel = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico_label');
-      var specDelegaInput = $('#pratica_certificato_anagrafico_stato_estero_certificato_anagrafico');
-
-      if ($('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico :checked').val() == 'internazionale') {
-        specDelegaLabel.show();
-        specDelegaInput.show();
-      }
-
-      $('#pratica_certificato_anagrafico_tipologia_certificato_anagrafico input').click(function () {
-        if ($(this).val() != 'internazionale') {
-          specDelegaLabel.hide(500);
-          specDelegaInput.hide(500);
-        } else {
-          specDelegaLabel.show(500);
-          specDelegaInput.show(500);
-        }
-      });
-
-        {% elseif form.allegati is defined %}
-      var $addAllegato = $('<a href="#" class="btn btn-md btn-primary add_allegato">{{ 'pratica.aggiungi_allegato'|trans() }}</a>');
-      var $newLinkLi = $('<li></li>').append($addAllegato);
-      var $collectionHolder = $('ul.allegati');
-
-      $addAllegato.on('click', function (e) {
-        e.preventDefault();
-        addComponenteForm($collectionHolder, $newLinkLi);
-      });
-      setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-
-        {% elseif form.persone_residenti is defined %}
-
-      var $addPersonaResidente = $('<a href="#" class="btn btn-md btn-primary add_persona_residente">{{ 'cambio_residenza.aggiungi_persona_residente'|trans() }}</a>');
-      var $newLinkLi = $('<li></li>').append($addPersonaResidente);
-      var $collectionHolder = $('ul.persone_residenti');
-
-      $addPersonaResidente.on('click', function (e) {
-        e.preventDefault();
-        addComponenteForm($collectionHolder, $newLinkLi);
-      });
-      setupAddAndRemoveLinks($collectionHolder, $newLinkLi);
-
-        {% endif %}
-
-
-    });
-  </script>#}
 {% endblock %}
 
 {% block main_content %}
@@ -279,7 +185,7 @@
       </div>
     </div>
 
-    <div class="row mt-5">
+    <div class="row mt-2">
       <div class="col-lg-8 px-lg-4">
         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
         <div class="step-{{ flow.getCurrentStepNumber() }}">

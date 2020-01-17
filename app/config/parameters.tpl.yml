@@ -44,7 +44,7 @@ parameters:
     PasswordLifeTime: '%env(PASSWORD_LIFE_TIME)%' #365
     InactiveUserLifeTime: '%env(INACTIVE_USER_LIFE_TIME)%' #545
     logs_formatter: 'monolog.formatter.line'
-    logs_path: '%kernel.logs_dir%/%kernel.environment%.log'
+    logs_path: '%env(LOGS_PATH)%'
     formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
     formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'
     #Default fallback if env not set
@@ -77,5 +77,6 @@ parameters:
     env(GISCOM_ADAPTER_PASSWORD): 'passw'
     env(PASSWORD_LIFE_TIME): '365'
     env(INACTIVE_USER_LIFE_TIME): '545'
+    env(LOGS_PATH): '%kernel.logs_dir%/%kernel.environment%.log'
     env(FORMSERVER_PRIVATE_URL): 'http//formserver'
     env(FORMSERVER_PUBLIC_URL): 'https://formserver.ship.opencontent.io'

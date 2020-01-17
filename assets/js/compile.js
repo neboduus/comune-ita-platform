@@ -10,7 +10,7 @@ require('webpack-jquery-ui/datepicker');
 
 $(document).ready(function () {
 
-  if ($('#summary_flow_formIO_step').length) {
+  if ($('#pratica_select_payment_gateway_payment_type').length) {
     $('button.craue_formflow_button_class_next').on('click', function (e) {
       var $form = $(this).closest('form');
       e.preventDefault();

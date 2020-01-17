@@ -258,6 +258,9 @@ class CPSUserProvider implements UserProviderInterface
                && $user->getIndirizzoResidenza() !== null
                && $user->getCapResidenza() !== null
                && $user->getCittaResidenza() !== null
+               && $user->getProvinciaResidenza() !== null
+               && $user->getProvinciaResidenza() !== ''
+               && in_array($user->getProvinciaResidenza(), CPSUser::getProvinces())
                && $user->getCellulare() !== null
                && $user->getEmail() !== null
                && !in_array($user->getEmail(), self::EMAIL_BLACKLIST);

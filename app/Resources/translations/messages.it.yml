@@ -377,7 +377,7 @@ user:
     data_nascita: 'Data di nascita'
     luogo_nascita: 'Luogo di nascita'
     contatti_per_sdc: 'Contatti per la Stanza del cittadino'
-    contatti_per_sdc_guida: 'Il sistema utilizzerà questi recapiti per inviarti notifiche e segnalazioni'
+    contatti_per_sdc_guida: 'Il sistema utilizzerà questi dati per precompilare le tue pratiche ed inviarti notifiche e segnalazioni.'
     cellulare: 'Numero di telefono cellulare (*)'
     indirizzo: 'Indirizzo'
     citta: 'Città'

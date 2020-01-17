@@ -356,7 +356,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     if ($documentPath && file_exists($documentPath)) {
       $documento = $richiesta->addChild('web:documento', null, 'web');
       $documento->addChild('web:titolo', $allegato->getDescription(), 'web');
-      $documento->addChild('web:nomeFile', $allegato->getOriginalFilename(), 'web');
+      $documento->addChild('web:nomeFile', $allegato->getFilename(), 'web');
       $documento->addChild('web:file', base64_encode(file_get_contents($documentPath)), 'web');
       return trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
     }

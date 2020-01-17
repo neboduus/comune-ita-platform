@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -65,6 +66,14 @@ class SelectPaymentGatewayType extends AbstractType
   {
     /** @var Pratica $pratica */
     $pratica = $event->getForm()->getData();
+    $data = $event->getData();
+
+    if (!isset($data['payment_type']) || empty($data)) {
+      $event->getForm()->addError(
+        new FormError('Devi scegliere almeno un metodo di pagamento')
+      );
+      return;
+    }
 
     if ($pratica->getType() == Pratica::TYPE_FORMIO && $pratica->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PAYMENT_PENDING);

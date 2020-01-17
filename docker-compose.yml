@@ -46,9 +46,8 @@ services:
       GISCOM_ADAPTER_URL: $GISCOM_ADAPTER_URL
       GISCOM_ADAPTER_USERNAME: $GISCOM_ADAPTER_USERNAME
       GISCOM_ADAPTER_PASSWORD: $GISCOM_ADAPTER_PASSWORD
+      LOGS_PATH: $LOGS_PATH
       MYPAY_ADAPTER_URL: $MYPAY_ADAPTER_URL
-      #FORMSERVER_PRIVATE_URL: $FORMSERVER_PRIVATE_URL
-      #FORMSERVER_PUBLIC_URL: $FORMSERVER_PUBLIC_URL
       AWS_ACCESS_KEY_ID_BACKUP: $AWS_ACCESS_KEY_ID_BACKUP
       AWS_SECRET_ACCESS_KEY_BACKUP: $AWS_SECRET_ACCESS_KEY_BACKUP
       BUCKET_BACKUP: $BUCKET_BACKUP
@@ -59,7 +58,7 @@ services:
       FORMSERVER_PRIVATE_URL: 'http://formserver:8000'
       FORMSERVER_PUBLIC_URL: 'http://formserver.localtest.me'
     volumes:
-      - "uploads:/docroot/var/uploads"
+      - "uploads:/var/www/html/var/uploads"
 
   apache:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:master
@@ -105,7 +104,7 @@ services:
       - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
 
   formserver:
-    image: registry.gitlab.com/opencontent/formmanagerserver:1.0.4
+    image: registry.gitlab.com/opencontent/formmanagerserver:1.0.5
     restart: unless-stopped
     ports:
       - "8000:8000"

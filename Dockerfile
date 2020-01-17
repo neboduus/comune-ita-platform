@@ -18,6 +18,8 @@ WORKDIR /var/www/html
 
 COPY --chown=wodby:wodby ./ .
 
+RUN mkdir var/uploads
+
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
 RUN composer install --no-scripts && \
@@ -30,6 +32,4 @@ RUN composer run-script post-docker-install-cmd
 RUN yarn install && \
     yarn encore production
 
-
 COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
-
