@@ -7,3 +7,4 @@
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-folgaria --env=prod
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-lavarone --env=prod
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-luserna --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-bugliano --env=prod

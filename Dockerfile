@@ -18,7 +18,7 @@ WORKDIR /var/www/html
 
 COPY --chown=wodby:wodby ./ .
 
-RUN mkdir var/uploads
+RUN ./compose_conf/php/init-uploads.sh
 
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
