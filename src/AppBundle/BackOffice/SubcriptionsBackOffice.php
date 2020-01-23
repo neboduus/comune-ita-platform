@@ -16,17 +16,17 @@ class SubcriptionsBackOffice implements BackOfficeInterface
   private $em;
 
   private $required_headers = array(
+    "code",
+    "email_address",
     "name",
     "surname",
-    "date_of_birth",
+    "natoAIl",
     "place_of_birth",
     "fiscal_code",
     "address",
     "house_number",
     "municipality",
-    "postal_code",
-    "email",
-    "code"
+    "postal_code"
   );
 
   private $required_fields = array(
@@ -66,19 +66,25 @@ class SubcriptionsBackOffice implements BackOfficeInterface
   public function execute($subscriptionData)
   {
 
-    if (json_encode(array_keys($subscriptionData)) != json_encode($this->getRequiredHeaders()) &&
-      json_encode(array_keys($subscriptionData)) != json_encode($this->getRequiredFields())) {
+    $fixedData= [];
+    foreach ($subscriptionData as $k => $v) {
+      $keys = explode('.', $k);
+      $key = end($keys);
+      $fixedData[$key] = $v;
+    }
+
+    if (json_encode(array_keys($fixedData)) != json_encode($this->getRequiredHeaders())) {
       return null;
     }
 
     $repo = $this->em->getRepository('AppBundle:Subscriber');
     $subscriber = $repo->findOneBy(
-      array('fiscal_code' => $subscriptionData['fiscal_code'])
+      array('fiscal_code' => $fixedData['fiscal_code'])
     );
 
     $repo = $this->em->getRepository('AppBundle:SubscriptionService');
     $subscriptionService = $repo->findOneBy(
-      array('code' => $subscriptionData['code'])
+      array('code' => $fixedData['code'])
     );
 
     // No such subscription service with given code
@@ -94,22 +100,22 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
     if (!$subscriber) {
       try {
-        $birthDate = new \DateTime($subscriptionData['date_of_birth']);
+        $birthDate = new \DateTime($fixedData['natoAIl']);
         if (!$birthDate instanceof DateTime) {
           $birthDate = new \DateTime();
         }
 
         $subscriber = new Subscriber();
-        $subscriber->setName($subscriptionData['name']);
-        $subscriber->setSurname($subscriptionData['surname']);
+        $subscriber->setName($fixedData['name']);
+        $subscriber->setSurname($fixedData['surname']);
         $subscriber->setDateOfBirth($birthDate);
-        $subscriber->setPlaceOfBirth($subscriptionData['place_of_birth']);
-        $subscriber->setFiscalCode($subscriptionData['fiscal_code']);
-        $subscriber->setAddress($subscriptionData['address']);
-        $subscriber->setHouseNumber($subscriptionData['house_number']);
-        $subscriber->setMunicipality($subscriptionData['municipality']);
-        $subscriber->setPostalCode($subscriptionData['postal_code']);
-        $subscriber->setEmail($subscriptionData['email']);
+        $subscriber->setPlaceOfBirth($fixedData['place_of_birth']);
+        $subscriber->setFiscalCode($fixedData['fiscal_code']);
+        $subscriber->setAddress($fixedData['address']);
+        $subscriber->setHouseNumber($fixedData['house_number']);
+        $subscriber->setMunicipality($fixedData['municipality']);
+        $subscriber->setPostalCode($fixedData['postal_code']);
+        $subscriber->setEmail($fixedData['email_address']);
 
         $this->em->persist($subscriber);
         $this->em->flush();
@@ -131,6 +137,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       $subscriptionService->addSubscription($subscription);
       $this->em->persist($subscriptionService);
       $this->em->persist($subscriptionService);
+
       return $subscription;
     } catch (\Exception $exception) {
       // todo: add logger
