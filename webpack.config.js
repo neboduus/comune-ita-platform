@@ -23,6 +23,7 @@ Encore
 .addEntry('user', './assets/js/user.js')
 .addEntry('service-manager', './assets/js/service-manager.js')
 .addEntry('instance-manager', './assets/js/instance-manager.js')
+  .addEntry('subscription-service-manager', './assets/js/subscription-service-manager.js')
 
 // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
 .splitEntryChunks()

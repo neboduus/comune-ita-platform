@@ -186,6 +186,13 @@ class Servizio
   private $paymentParameters;
 
   /**
+   * @var array
+   * @ORM\Column(type="json_array", nullable=true)
+   * @Serializer\Exclude()
+   */
+  private $integrations;
+
+  /**
    * @var string
    * @ORM\Column(type="string", nullable=true)
    * @Serializer\Exclude()
@@ -730,6 +737,25 @@ class Servizio
       return json_encode($flowStep);
     }, $flowSteps);
 
+  }
+
+  /**
+   * @return array
+   */
+  public function getIntegrations()
+  {
+    return $this->integrations;
+  }
+
+  /**
+   * @param array $integrations
+   * @return $this;
+   *
+   */
+  public function setIntegrations($integrations): Servizio
+  {
+    $this->integrations = $integrations;
+    return $this;
   }
 
 }

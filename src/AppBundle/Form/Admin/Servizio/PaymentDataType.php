@@ -40,6 +40,7 @@ class PaymentDataType extends AbstractType
   {
     /** @var Servizio $service */
     $service = $builder->getData();
+
     $paymentParameters = $service->getPaymentParameters();
 
     $selectedGateways = isset($paymentParameters['gateways']) ? $paymentParameters['gateways'] : [];

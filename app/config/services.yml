@@ -41,6 +41,12 @@ services:
   AppBundle\Validator\Constraints:
     autowire: true
 
+  AppBundle\BackOffice\SubcriptionsBackOffice:
+    autowire: true
+
+  AppBundle\Controller\SubscriptionsController:
+    autowire: true
+
   Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
 
   ocsdc.cps.userprovider:
@@ -143,6 +149,12 @@ services:
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 10 }
 
+  ocsdc.pratica_listeners.backoffice:
+    class: AppBundle\EventListener\BackOfficePraticaListener
+    arguments: ["@service_container", "@logger"]
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 20 }
+
   ocsdc.pratica_listeners.protocollo:
     class: AppBundle\EventListener\ProtocollaPraticaListener
     arguments: ["@ocsdc.protocollo","@logger"]
@@ -237,12 +249,22 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Admin\Servizio\IntegrationsDataType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\Admin\Servizio\ProtocolDataType:
     autowire: true
     tags:
       - { name: form.type }
 
   AppBundle\Form\Admin\Ente\EnteType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\SubscriptionServiceType:
     autowire: true
     tags:
       - { name: form.type }

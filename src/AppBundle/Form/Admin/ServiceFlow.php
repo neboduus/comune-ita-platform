@@ -7,6 +7,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType;
 use AppBundle\Form\Admin\Servizio\FormIOTemplateType;
 use AppBundle\Form\Admin\Servizio\GeneralDataType;
+use AppBundle\Form\Admin\Servizio\IntegrationsDataType;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Form\Admin\Servizio\ProtocolDataType;
 use AppBundle\Form\Base\SelezionaEnteType;
@@ -27,7 +28,8 @@ class ServiceFlow extends FormFlow
   const STEP_GENERAL_DATA = 2;
   const STEP_FORM_FIELDS = 3;
   const STEP_PAYMENT_DATA = 4;
-  const STEP_PROTOCOL_DATA = 5;
+  const STEP_INTEGRATIONS_DATA = 5;
+  const STEP_PROTOCOL_DATA = 6;
 
   /**
    * @var LoggerInterface
@@ -93,7 +95,22 @@ class ServiceFlow extends FormFlow
 
     $steps[self::STEP_PAYMENT_DATA] = array(
       'label' => 'Dati pagamento',
-      'form_type' => PaymentDataType::class
+      'form_type' => PaymentDataType::class,
+      'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
+        /** @var Servizio $service */
+        $service = $flow->getFormData();
+        return empty($service->getEnte()->getGateways());
+      }
+    );
+
+    $steps[self::STEP_INTEGRATIONS_DATA] = array(
+      'label' => 'Integrazioni',
+      'form_type' => IntegrationsDataType::class,
+      'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
+        /** @var Servizio $service */
+        $service = $flow->getFormData();
+        return !$service->getEnte()->isBackOfficeIntegrationEnabled();
+      }
     );
 
     $steps[self::STEP_PROTOCOL_DATA] = array(
