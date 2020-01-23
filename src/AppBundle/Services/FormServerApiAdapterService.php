@@ -299,4 +299,25 @@ class FormServerApiAdapterService
       'message' => $error
     ];
   }
+
+  public function getFormIdFromService(Servizio $service)
+  {
+    $formID = false;
+    $flowsteps = $service->getFlowSteps();
+    if (!empty($flowsteps)) {
+      foreach ($flowsteps as $f) {
+        if (isset($f['type']) && $f['type'] == 'formio' && isset($f['parameters']['formio_id']) && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
+          $formID = $f['parameters']['formio_id'];
+          break;
+        }
+      }
+    }
+    // Retrocompatibilità
+    if (!$formID) {
+      $additionalData = $service->getAdditionalData();
+      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
+    }
+
+    return $formID;
+  }
 }

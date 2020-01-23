@@ -121,6 +121,12 @@ class Ente
   private $gateways;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true)
+   */
+  private $backofficeIntegrationEnabled;
+
+  /**
    * Ente constructor.
    */
   public function __construct()
@@ -458,6 +464,22 @@ class Ente
   {
     $this->gateways = $gateways;
     return $this;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isBackOfficeIntegrationEnabled()
+  {
+    return $this->backofficeIntegrationEnabled;
+  }
+
+  /**
+   * @param bool $backOfficeIntegrationEnabled
+   */
+  public function setBackOfficeIntegrationEnabled(bool $backOfficeIntegrationEnabled)
+  {
+    $this->backofficeIntegrationEnabled = $backOfficeIntegrationEnabled;
   }
 
 }

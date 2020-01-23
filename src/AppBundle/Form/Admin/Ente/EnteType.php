@@ -11,6 +11,7 @@ use AppBundle\Model\Gateway;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -67,16 +68,22 @@ class EnteType extends AbstractType
       ->add('codice_meccanografico', TextType::class)
       ->add('site_url', TextType::class)
       ->add('codice_amministrativo', TextType::class)
-      ->add('meta', TextareaType::class, ['required' => false])
-      ->add('gateways', ChoiceType::class, [
-        'data' => $selectedGatewaysIentifiers,
-        'choices' => $gateways,
-        'mapped'  => false,
-        'expanded' => true,
-        'multiple' => true,
-        'required' => false,
-        'label' => 'Seleziona i metodi di pagamento disponibili per l\'ente',
-      ]);
+      ->add('meta', TextareaType::class, ['required' => false]);
+
+    $builder->add('backoffice_integration_enabled', CheckboxType::class, [
+      'label' => 'Abilita integrazione con i backoffice',
+      'required' => false
+    ]);
+
+    $builder->add('gateways', ChoiceType::class, [
+      'data' => $selectedGatewaysIentifiers,
+      'choices' => $gateways,
+      'mapped' => false,
+      'expanded' => true,
+      'multiple' => true,
+      'required' => false,
+      'label' => 'Seleziona i metodi di pagamento disponibili per l\'ente',
+    ]);
 
     foreach ($availableGateways as $g) {
       $parameters = $g->getFcqn()::getPaymentParameters();

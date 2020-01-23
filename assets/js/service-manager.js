@@ -132,4 +132,15 @@ $(document).ready(function () {
     })
   }
 
+  // Step Payment data
+  if ($("#integrations_data_flow_service_step").length) {
+    $('#integrations_data_trigger').change(function() {
+      if ($(this).val() == '0') {
+        $('#integrations_data_action').attr('disabled', 'disabled');
+      } else {
+        $('#integrations_data_action').removeAttr('disabled');
+      }
+    })
+  }
+
 });

@@ -1,0 +1,88 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  {{ encore_entry_script_tags('subscription-service-manager') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  {{ encore_entry_link_tags('subscription-service-manager') }}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>Modifica servizio a sottoscrizione</h1>
+      </div>
+
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(edit_form) }}
+        {{ form_errors(edit_form) }}
+
+        {{ form_start(edit_form) }}
+
+        {{ form_row(edit_form.name) }}
+        <div class="row">
+          <div class="col-6">
+            {{ form_row(edit_form.code) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(edit_form.tags) }}
+          </div>
+        </div>
+        {{ form_row(edit_form.description) }}
+        <div class="row">
+          <div class="col-6">
+            {{ form_row(edit_form.subscriptionBegin) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(edit_form.subscriptionEnd) }}
+          </div>
+        </div>
+        {{ form_row(edit_form.subscriptionAmount) }}
+        <div class="row">
+          <div class="col-6">
+            {{ form_row(edit_form.beginDate) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(edit_form.endDate) }}
+          </div>
+        </div>
+        {{ form_row(edit_form.subscribersLimit) }}
+        {{ form_row(edit_form.subscriptionMessage) }}
+        {{ form_row(edit_form.beginMessage) }}
+        {{ form_row(edit_form.endMessage) }}
+        {{ form_row(edit_form.status) }}
+
+        <div id="payments"
+             data-prototype="{{ form_widget(edit_form.subscriptionPayments.vars.prototype)|e }}"
+             data-widget-payment="{{ '<div></div>'|e }}"
+             data-widget-counter="{{ edit_form.subscriptionPayments|length }}">
+          {% for payment in edit_form.subscriptionPayments %}
+            <div>
+              {{ form_row(payment.date) }}
+              {{ form_row(payment.amount) }}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <input class="btn btn-warning mr-1" type="submit" value="Modifica"  style="float: left"/>
+            <button type="button"
+                    class="add-another-payment-widget btn btn-primary"
+                    data-list-selector="#payments">Aggiungi pagamento</button>
+          </div>
+          <div class="col-6 text-right">
+            <a class="btn btn-100 mr-1" href="{{ path('operatori_subscription-service_index') }}" style="float: left">Torna alla lista</a>
+          </div>
+        </div>
+        {{ form_end(edit_form) }}
+
+
+      </div>
+    </div>
+  </section>
+{% endblock %}
