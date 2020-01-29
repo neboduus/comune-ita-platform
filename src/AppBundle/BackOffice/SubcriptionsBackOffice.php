@@ -16,8 +16,6 @@ class SubcriptionsBackOffice implements BackOfficeInterface
   private $em;
 
   private $required_headers = array(
-    "code",
-    "email_address",
     "name",
     "surname",
     "natoAIl",
@@ -26,7 +24,9 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     "address",
     "house_number",
     "municipality",
-    "postal_code"
+    "postal_code",
+    "email_address",
+    "code",
   );
 
   private $required_fields = array(
@@ -73,8 +73,12 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       $fixedData[$key] = $v;
     }
 
-    if (json_encode(array_keys($fixedData)) != json_encode($this->getRequiredHeaders())) {
-      return null;
+    $requiredHeaders = $this->getRequiredHeaders();
+    sort($requiredHeaders);
+    ksort($fixedData);
+
+    if (json_encode(array_keys($fixedData)) != json_encode($requiredHeaders)) {
+      return ['error' => 'I campi richiesti non coincidono'];
     }
 
     $repo = $this->em->getRepository('AppBundle:Subscriber');
@@ -89,13 +93,11 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
     // No such subscription service with given code
     if (!$subscriptionService) {
-      // todo: add logger
-      return null;
+      return ['error' => 'Non esiste un servizio con codice ' . $fixedData['code']];
     }
     // limit of subscriptions reached
     if ($subscriptionService->getSubscribersLimit() && count($subscriptionService->getSubscriptions()) >= $subscriptionService->getSubscribersLimit()) {
-      // todo: add logger
-      return null;
+      return ['error' => 'Limite massimo di iscrizioni raggiunto. Utente ' . $fixedData['fiscal_code'] . ' non iscritto al corso ' . $fixedData['code']];
     }
 
     if (!$subscriber) {
@@ -120,8 +122,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
         $this->em->persist($subscriber);
         $this->em->flush();
       } catch (\Exception $exception) {
-        // todo: add logger
-        return null;
+        return ['error' => 'Si è verificato un errore durante il salvataggio dell utente ' . $subscriber->getFiscalCode()];
       }
     }
 
@@ -140,8 +141,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
       return $subscription;
     } catch (\Exception $exception) {
-      // todo: add logger
-      return null;
+      return ['error' => 'Si è verificato un errore durante il salvataggio dell iscrizione per l\'utente ' .  $subscriber->getFiscalCode()];
     }
   }
 }

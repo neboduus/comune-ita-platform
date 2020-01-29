@@ -26,7 +26,7 @@ $(document).ready(function () {
     // replace the "__name__" used in the id and name of the prototype
     // with a number that's unique to your emails
     // end name attribute looks like name="contact[emails][2]"
-    newWidget = newWidget.replace(/__name__/g, counter);
+    newWidget = newWidget.replace(/__name__/g, new Date().getTime());
     // Increase the counter
     counter++;
     // And store it, the length cannot be used if deleting widgets is allowed
@@ -35,5 +35,10 @@ $(document).ready(function () {
     // create a new list element and add it to the list
     var newElem = $(list.attr('data-widget-payment')).html(newWidget);
     newElem.appendTo(list);
+  });
+
+  $("#payments").on("click", "a.js-remove-payment", function (e) {
+    e.preventDefault();
+    $(this).closest('.js-payment-item').remove();
   });
 });

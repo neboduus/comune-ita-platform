@@ -35,11 +35,11 @@
             </tr>
             <tr>
               <th>Durata</th>
-              <td>dal {{ subscriptionService.beginDate|date('Y-m-d') }} al {{ subscriptionService.endDate|date('Y-m-d') }}</td>
+              <td>dal {{ subscriptionService.beginDate|date('d/m/Y') }} al {{ subscriptionService.endDate|date('d/m/Y') }}</td>
             </tr>
             <tr>
               <th>Apertura iscrizioni</th>
-              <td>dal {{ subscriptionService.subscriptionBegin|date('Y-m-d') }} al {{ subscriptionService.subscriptionEnd|date('Y-m-d') }}</td>
+              <td>dal {{ subscriptionService.subscriptionBegin|date('d/m/Y') }} al {{ subscriptionService.subscriptionEnd|date('d/m/Y') }}</td>
             </tr>
             <tr>
               <th>Quota di iscrizione</th>
@@ -60,7 +60,7 @@
             <tr>
               <th>Messaggio di iscrizione</th>
               <td>
-                {% if subscriptionService.subscriptionMessage %}{{ subscriptionService.subscriptionMessage | striptags}}
+                {% if subscriptionService.subscriptionMessage %}{{ subscriptionService.subscriptionMessage | striptags }}
                 {% else %} ---
                 {% endif %}
               </td>
@@ -76,7 +76,7 @@
             <tr>
               <th>Messaggio finale </th>
               <td>
-                {% if subscriptionService.endMessage %}{{ subscriptionService.endMessage | striptags }}
+                {% if subscriptionService.endMessage %}{{ subscriptionService.endMessage | striptags | raw | nl2br }}
                 {% else %} ---
                 {% endif %}
               </td>
@@ -84,12 +84,11 @@
             <tr>
               <th>Pagamenti</th>
               <td>
-
                 {% if subscriptionService.subscriptionPayments %}
                   <ul>
                     {% for payment in subscriptionService.subscriptionPayments %}
                       <li>
-                        <b>{{ subscriptionService.subscriptionEnd|date('Y-m-d') }}</b>: {{ payment.amount}}€
+                        <b>{{ payment.date|date('d/m/Y') }}</b>: {{ payment.amount}}€
                       </li>
                     {% endfor %}
                   </ul>
@@ -100,7 +99,6 @@
             </tbody>
           </table>
         </div>
-
         <div class="row">
           <div class="col-8">
             <a class="btn btn-100 btn-sm" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
@@ -109,14 +107,12 @@
           </div>
           <div class="col-4">
             {{ form_start(delete_form) }}
-            <a class="btn btn-danger btn-sm" onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');" href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">Elimina</a>
+            <a class="btn btn-danger btn-sm float-right" onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');" href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">Elimina</a>
             {{ form_end(delete_form) }}
           </div>
         </div>
-
       </div>
     </div>
   </section>
-
 {% endblock %}
 

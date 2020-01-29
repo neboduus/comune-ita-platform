@@ -93,6 +93,7 @@ class SubscriptionServiceType extends AbstractType
       ])
       ->add('status', ChoiceType::class, [
         'label' => 'Stato',
+        'required' => true,
         'choices' => $statuses
       ])
       ->add('subscriptionPayments', CollectionType::class, [
@@ -100,10 +101,12 @@ class SubscriptionServiceType extends AbstractType
         'entry_type' => SubscriptionPaymentType::class,
         'entry_options' => ['label' => false],
         'prototype' => true,
-        'allow_add' => true
+        'allow_add' => true,
+        'allow_delete' => true
       ])
       ->add('tags', TagsType::class, [
-        'label' => 'Tags'
+        'label' => 'Tags',
+        'required' => false
       ]);
   }
 
