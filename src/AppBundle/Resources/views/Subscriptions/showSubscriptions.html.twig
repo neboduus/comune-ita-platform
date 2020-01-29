@@ -147,13 +147,18 @@
         },
         "serverSide": true,
         initComplete: function () {
+          // Add data-title attribute
+          $('#subscriptions thead tr th').each(function(index,element){
+            index += 1;
+            $('tr td:nth-child('+index+')').attr('data-title', element.innerHTML);
+          });
+
           let inputForm = '<input type="file" id="file-input2" accept=".csv" class="upload"><label for="file-input2" style="float: right;"><svg class="icon icon-sm" aria-hidden="true"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-upload"></use></svg><span>Importa CSV</span></label>';
           $("div.dt-buttons").append(inputForm);
           $("#file-input2").on("change", function (e) {
             var fdata = new FormData();
 
             fdata.append("upload", this.files[0]);
-
             $.ajax({
               url: "{{ path('operatori_importa_csv_iscrizioni', { 'subscriptionService': subscriptionService.id }) }}",
               type: "post",
@@ -163,22 +168,24 @@
               success: function (response, status, jqxhr) {
                 location.reload();
               },
-              error: function (jqxhr, status, errorMessage) {
+              error: function (jqxhr) {
                 // todo: manage error
-                console.log(errorMessage);
-                /*let inputForm = `<div class="alert alert-danger alert-dismissible fade show" role="alert">${errorMessage}<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button></div>`;
-                $("#errors").append(inputForm);*/
+                let errors = jqxhr.responseJSON.errors || [];
+                errors.forEach(function (error) {
+                  let inputForm = `<div class="alert alert-danger alert-dismissible fade show" role="alert">${error.error}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                   </div>`;
+                  $("#errors").append(inputForm);
+                })
               }
             });
           });
-
         }
-      }).then(function (dt) {})
+      }).then(function (dt) {
+      })
     });
-
-
   </script>
 
 {% endblock %}
@@ -206,12 +213,12 @@
           <div id="subscriptions" style="margin: 10px"></div>
         </div>
       </div>
-
     </div>
     <div class="row">
-        <a class="btn btn-100 mr-1 btn-sm" href="{{ path('operatori_subscription-service_show', { 'subscriptionService': subscriptionService.id }) }}">Torna al servizio</a>
-        <a class="btn btn-100 btn-sm" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
+      <a class="btn btn-100 mr-1 btn-sm"
+         href="{{ path('operatori_subscription-service_show', { 'subscriptionService': subscriptionService.id }) }}">Torna
+        al servizio</a>
+      <a class="btn btn-100 btn-sm" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
     </div>
   </section>
-
 {% endblock %}

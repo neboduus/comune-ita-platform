@@ -3,8 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\SubscriptionService;
-use AppBundle\Model\SubscriptionPayment;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\MapColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,13 +22,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SubscriptionServicesController extends Controller
 {
+  use DataTablesTrait;
+
   /**
    * Lists all SubscriptionService entities.
    * @Template()
    * @Route("/operatori/subscription-service", name="operatori_subscription-service_index")
-   * @Method("GET")
    */
-  public function indexSubscriptionServiceAction()
+  public function indexSubscriptionServiceAction(Request $request)
   {
     $statuses = [
       SubscriptionService::STATUS_WAITING => 'Pending',
@@ -34,9 +39,40 @@ class SubscriptionServicesController extends Controller
     $em = $this->getDoctrine()->getManager();
     $items = $em->getRepository('AppBundle:SubscriptionService')->findAll();
 
+
+    $table = $this->createDataTable()
+      ->add('name', TextColumn::class, ['label' => 'Nome', 'propertyPath'=> 'Nome','render' => function ($value, $subscriptionService) {
+        return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscription-service_show', [
+          'subscriptionService' => $subscriptionService->getId()
+        ]), $subscriptionService->getName());
+      }])
+      ->add('code', TextColumn::class, ['label' => 'Codice', 'searchable' => true])
+      ->add('status', MapColumn::class, ['label' => 'Stato', 'searchable' => true, 'map' => $statuses])
+      ->add('subscriptions', TextColumn::class, ['label' => 'Iscrizioni', 'render' => function ($value, $subscriptionService) {
+        if ($subscriptionService->getSubscribersLimit()) return count($subscriptionService->getSubscriptions()) . ' di ' . $subscriptionService->getSubscribersLimit();
+        else return count($subscriptionService->getSubscriptions());
+      }])
+      ->add('beginDate', DateTimeColumn::class, ['label' => 'Data di inizio', 'format' => 'd/m/Y', 'searchable' => false])
+      ->add('endDate', DateTimeColumn::class, ['label' => 'Data di fine', 'format' => 'd/m/Y', 'searchable' => false])
+      ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $subscriptionService) {
+        return sprintf('<a class="btn btn-warning btn-sm" href="%s">Modifica</a>  <a class="btn btn-danger btn-sm" onclick="return confirm(\'Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.\');" href="%s">Elimina</a>',
+          $this->generateUrl('operatori_subscription-service_edit', ['subscriptionService' => $value]),
+          $this->generateUrl('operatori_subscription-service_delete', ['id' => $value])
+        );
+      }])
+      ->createAdapter(ORMAdapter::class, [
+        'entity' => SubscriptionService::class
+      ])
+      ->handleRequest($request);
+
+    if ($table->isCallback()) {
+      return $table->getResponse();
+    }
+
     return array(
       'items' => $items,
-      'statuses' => $statuses
+      'statuses' => $statuses,
+      'datatable' => $table
     );
   }
 

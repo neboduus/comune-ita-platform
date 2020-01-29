@@ -12,6 +12,7 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,6 @@ class SubscriptionsController extends Controller
       ->add('fiscal_code', TextColumn::class, ['label' => 'fiscal_code', 'field' => 'subscriber.fiscal_code', 'searchable' => true])
       ->add('email', TextColumn::class, ['label' => 'email', 'field' => 'subscriber.email', 'searchable' => true])
       ->add('created_at', DateTimeColumn::class, ['label' => 'created_at', 'format' => 'd/m/Y', 'searchable' => false])
-
       ->createAdapter(ORMAdapter::class, [
         'entity' => Subscription::class,
         'query' => function (QueryBuilder $builder) use ($subscriptionService) {
@@ -79,7 +79,7 @@ class SubscriptionsController extends Controller
    * @return mixed
    * @throws \Exception
    */
-  public function iscrizioniCsvUploadAction(Request $request)
+  public function iscrizioniCsvUploadAction(Request $request, SubscriptionService $subscriptionService)
   {
     $uploadedFile = $request->files->get('upload');
     if (empty($uploadedFile)) {
@@ -93,30 +93,54 @@ class SubscriptionsController extends Controller
     }
     $rows = $this->csv_to_array($uploadedFile->getPathname());
 
-    foreach ($rows as $row) {
-      $this->subscriptionsBackOffice->execute($row);
+    // create response object
+    $response = new stdClass();
+    $response->errors = [];
+
+    // If subscriptions limits exceedes available space skip import
+    if ($subscriptionService->getSubscribersLimit() && $subscriptionService->getSubscribersLimit() - $subscriptionService->getSubscriptions()->count() < count($rows)) {
+      $response->errors[] = ['error' => 'Il numero di iscrizioni è superiore al numero massimo consentito'];
+    } else {
+      foreach ($rows as $row) {
+        // No code provided: set default to current subscription service
+        if (!array_key_exists('code', $row)) {
+          $row['code'] = $subscriptionService->getCode();
+        }
+        if ($row['code'] == $subscriptionService->getCode()) {
+          $subscription = $this->subscriptionsBackOffice->execute($row);
+          if (!$subscription instanceof Subscription) {
+            // error
+            $response->errors[] = $subscription;
+          }
+        }
+      }
     }
-    return new Response("Subscriptions correctly imported", Response::HTTP_OK,
-      ['content-type' => 'text/plain']);
+
+    // Remove duplicates
+    $response->errors = array_map('unserialize', array_unique(array_map('serialize', $response->errors)));
+    if (count($response->errors) > 0) {
+      return new Response(json_encode($response), Response::HTTP_BAD_REQUEST, ['content-type' => 'application/json']);
+    } else {
+      return new Response("Subscriptions correctly imported", Response::HTTP_OK, ['content-type' => 'text/plain']);
+    }
   }
 
-  protected function csv_to_array($filename='', $delimiter=',', $enclosure = '"')
+  protected function csv_to_array($filename = '', $delimiter = ',', $enclosure = '"')
   {
-    if(!file_exists($filename) || !is_readable($filename))
+    if (!file_exists($filename) || !is_readable($filename))
       return FALSE;
     $header = NULL;
     $data = array();
-    if (($handle = fopen($filename, 'r')) !== FALSE)    {
-      while (($row = fgetcsv($handle, 0, $delimiter)) !== FALSE){
-        if(!$header) {
+    if (($handle = fopen($filename, 'r')) !== FALSE) {
+      while (($row = fgetcsv($handle, 0, $delimiter)) !== FALSE) {
+        if (!$header) {
           $temp = array();
           foreach ($row as $r) {
-            $temp []= $r;
+            $temp [] = $r;
           }
           $header = $temp;
-        }
-        else {
-          $data[] =  array_combine($header, $row);
+        } else {
+          $data[] = array_combine($header, $row);
         }
       }
       fclose($handle);

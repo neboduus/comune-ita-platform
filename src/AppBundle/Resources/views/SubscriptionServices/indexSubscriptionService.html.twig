@@ -8,6 +8,55 @@
 
 {% block javascripts %}
   {{ parent() }}
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+  <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+  <script>
+    $(function () {
+      $('#subscription_services_table').initDataTables({{ datatable_settings(datatable) }}, {
+        dom: 'fBrtip',
+        serverSide: false,
+        searching: true,
+        paging: true,
+        "language": {
+          "sEmptyTable": "Nessun dato presente nella tabella",
+          "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
+          "sInfoEmpty": "Vista da 0 a 0 di 0 elementi",
+          "sInfoFiltered": "(filtrati da _MAX_ elementi totali)",
+          "sInfoPostFix": "",
+          "sInfoThousands": ".",
+          "sLengthMenu": "Visualizza _MENU_ elementi",
+          "sLoadingRecords": "Caricamento...",
+          "sProcessing": '<div class="progress-spinner progress-spinner-double progress-spinner-active">\n' +
+            '        <div class="progress-spinner-inner"></div>\n' +
+            '        <div class="progress-spinner-inner"></div>\n' +
+            '        <span class="sr-only">Caricamento...</span>\n' +
+            '      </div>',
+          "sSearch": "Ricerca",
+          "sZeroRecords": "La ricerca non ha portato alcun risultato.",
+          "oPaginate": {
+            "sFirst": "Inizio",
+            "sPrevious": "Precedente",
+            "sNext": "Successivo",
+            "sLast": "Fine"
+          },
+          "oAria": {
+            "sSortAscending": ": attiva per ordinare la colonna in ordine crescente",
+            "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+          },
+        },
+        initComplete: function () {
+          $('#subscription_services_table thead tr th').each(function(index,element){
+            index += 1;
+            $('tr td:nth-child('+index+')').attr('data-title', element.innerHTML);
+          });
+        }
+      }).then(function (dt) {
+        $('.table_filter').on('change', function(){
+          dt.columns(2).search(this.value, false, false, false).draw();
+        });
+      })
+    });
+  </script>
 {% endblock %}
 
 {% block main_content %}
@@ -16,54 +65,20 @@
       <div class="col-lg-12 px-lg-4 py-lg-2">
         <h1>Servizi a sottoscrizione</h1>
       </div>
-
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         <div id="no-more-tables">
-          <table class="table table-bordered table-striped table-condensed cf">
-            <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Codice</th>
-              <th>Stato</th>
-              <th>Iscrizioni</th>
-              <th>Data di inizio</th>
-              <th>Data di fine</th>
-              <th>Azioni</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for item in items %}
-              <tr>
-                <td>
-                  <a href="{{ path('operatori_subscription-service_show', { 'subscriptionService': item.id }) }}">{{ item.name }}</a>
-                </td>
-                <td>
-                  {{ item.code }}
-                </td>
-                <td>
-                  {{ statuses[item.status] }}
-                </td>
-                <td>
-                  {% if item.subscribersLimit %}{{ item.subscriptions.count }} di {{ item.subscribersLimit }}
-                  {% else %} {{ item.subscriptions.count }}
-                  {% endif %}
-                </td>
-                <td>
-                  {{ item.beginDate |date('Y-m-d')}}
-                </td>
-                <td>
-                  {{ item.endDate|date('Y-m-d') }}
-                </td>
-                <td width="20%">
-                  <a class="btn btn-warning btn-sm" href="{{ path('operatori_subscription-service_edit', { 'subscriptionService': item.id }) }}">Modifica</a>
-                  <a class="btn btn-danger btn-sm" onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');" href="{{ path('operatori_subscription-service_delete', { 'id': item.id }) }}">Elimina</a>
-                </td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
+          <div class="bootstrap-select-wrapper col-3" style="float: left">
+            <select class="table_filter" id="filter" title="Filtra per stato">
+              <option value="">Tutti</option>
+              {% for status in statuses %}
+                <option value="{{ status }}">{{ status }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div id="subscription_services_table"></div>
         </div>
-        <a class="btn btn-success btn-primary" href="{{ path('operatori_subscription-service_new') }}">Crea nuovo servizio a sottoscrizione</a>
+        <a class="btn btn-success btn-primary" href="{{ path('operatori_subscription-service_new') }}">Crea nuovo
+          servizio a sottoscrizione</a>
       </div>
     </div>
   </section>

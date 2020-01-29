@@ -30,20 +30,21 @@ class SubscriptionService
 
   /**
    * @var string
-   *
+   * @Assert\NotBlank (message="Il campo nome è un parametro obbligatorio")
    * @ORM\Column(name="code", type="string", length=255, unique=true)
    */
   private $code;
 
   /**
    * @var string
-   *
+   * @Assert\NotBlank (message="Il campo codice è un parametro obbligatorio")
    * @ORM\Column(name="name", type="string", length=255)
    */
   private $name;
 
   /**
    * @var string
+   * @Assert\NotBlank (message="Il campo descrizione è un parametro obbligatorio")
    * @ORM\Column(name="description", type="text", nullable=true)
    */
   private $description;
@@ -51,6 +52,7 @@ class SubscriptionService
   /**
    * @var \DateTime
    *
+   * @Assert\NotBlank (message="Il campo data di inizio iscrizioni è un parametro obbligatorio")
    * @ORM\Column(name="subscription_begin", type="datetime")
    * @Assert\LessThanOrEqual(propertyPath="subscriptionEnd",  message="La data di inizio iscrizione deve essere minore o oguale alla data di fine iscrizione")
    * @Assert\LessThanOrEqual(propertyPath="beginDate", message="La data di inizio iscrizione deve essere minore o oguale alla data di inizio corso")
@@ -61,6 +63,7 @@ class SubscriptionService
   /**
    * @var \DateTime
    *
+   * @Assert\NotBlank (message="Il campo data di fine iscrizioni è un parametro obbligatorio")
    * @ORM\Column(name="subscription_end", type="datetime")
    */
   private $subscriptionEnd;
@@ -75,6 +78,7 @@ class SubscriptionService
   /**
    * @var \DateTime
    *
+   * @Assert\NotBlank (message="Il campo data di inizio è un parametro obbligatorio")
    * @Assert\LessThanOrEqual(propertyPath="endDate",  message="La data di inizio corso deve essere minore o oguale alla data di fine corso")
    * @ORM\Column(name="begin_date", type="datetime")
    */
@@ -83,6 +87,7 @@ class SubscriptionService
   /**
    * @var \DateTime
    *
+   * @Assert\NotBlank (message="Il campo data di inizio è un parametro obbligatorio")
    * @ORM\Column(name="end_date", type="datetime")
    */
   private $endDate;
@@ -117,7 +122,7 @@ class SubscriptionService
 
   /**
    * @ORM\Column(type="integer")
-   * @Assert\NotBlank(message="identifier")
+   * @Assert\NotBlank(message="Seleziona un'opzione. Lo stato è un parametro obbligatorio")
    * @Assert\NotNull()
    */
   private $status;
