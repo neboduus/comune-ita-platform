@@ -46,7 +46,9 @@ class SubscriptionsController extends Controller
       ->add('name', TextColumn::class, ['label' => 'name', 'field' => 'subscriber.name', 'searchable' => true])
       ->add('surname', TextColumn::class, ['label' => 'surname', 'field' => 'subscriber.surname', 'searchable' => true])
       ->add('fiscal_code', TextColumn::class, ['label' => 'fiscal_code', 'field' => 'subscriber.fiscal_code', 'searchable' => true])
-      ->add('email', TextColumn::class, ['label' => 'email', 'field' => 'subscriber.email', 'searchable' => true])
+      ->add('email', TextColumn::class, ['label' => 'email_address', 'field' => 'subscriber.email', 'render' => function ($value, $subscriptionService) {
+        return sprintf('<a href="mailto:%s"><div class="text-truncate">%s</div></a>',$value, $value );
+      }])
       ->add('created_at', DateTimeColumn::class, ['label' => 'created_at', 'format' => 'd/m/Y', 'searchable' => false])
       ->createAdapter(ORMAdapter::class, [
         'entity' => Subscription::class,

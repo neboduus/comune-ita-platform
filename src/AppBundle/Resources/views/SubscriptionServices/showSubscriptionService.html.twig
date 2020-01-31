@@ -18,9 +18,9 @@
         <p><i>{{ subscriptionService.description | striptags }}</i></p>
         <div>
           {%  for tag in subscriptionService.tags %}
-              <div class="chip chip-simple chip-lg">
-                <span class="chip-label">{{tag}}</span>
-              </div>
+            <div class="chip chip-simple chip-lg">
+              <span class="chip-label">{{tag}}</span>
+            </div>
           {% endfor %}
         </div>
       </div>
@@ -107,8 +107,10 @@
           </div>
           <div class="col-4">
             {{ form_start(delete_form) }}
-            <a class="btn btn-danger btn-sm float-right" onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');" href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">Elimina</a>
-            {{ form_end(delete_form) }}
+            <div>
+              <a class="btn btn-danger btn-sm float-right" onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');" href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">Elimina</a>
+              {{ form_end(delete_form) }}
+            </div>
           </div>
         </div>
       </div>
