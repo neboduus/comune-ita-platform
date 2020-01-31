@@ -49,15 +49,29 @@ class SubscriptionServicesController extends Controller
       ->add('code', TextColumn::class, ['label' => 'Codice', 'searchable' => true])
       ->add('status', MapColumn::class, ['label' => 'Stato', 'searchable' => true, 'map' => $statuses])
       ->add('subscriptions', TextColumn::class, ['label' => 'Iscrizioni', 'render' => function ($value, $subscriptionService) {
-        if ($subscriptionService->getSubscribersLimit()) return count($subscriptionService->getSubscriptions()) . ' di ' . $subscriptionService->getSubscribersLimit();
-        else return count($subscriptionService->getSubscriptions());
+        if ($subscriptionService->getSubscribersLimit()) {
+          return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscriptions',
+            ['subscriptionService' => $subscriptionService->getId()]),
+            count($subscriptionService->getSubscriptions()) . ' di ' . $subscriptionService->getSubscribersLimit());
+        } else {
+          return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscriptions',
+            ['subscriptionService' => $subscriptionService->getId()]),
+            count($subscriptionService->getSubscriptions()));
+        }
       }])
       ->add('beginDate', DateTimeColumn::class, ['label' => 'Data di inizio', 'format' => 'd/m/Y', 'searchable' => false])
       ->add('endDate', DateTimeColumn::class, ['label' => 'Data di fine', 'format' => 'd/m/Y', 'searchable' => false])
       ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $subscriptionService) {
-        return sprintf('<a class="btn btn-warning btn-sm" href="%s">Modifica</a>  <a class="btn btn-danger btn-sm" onclick="return confirm(\'Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.\');" href="%s">Elimina</a>',
+        return sprintf('
+        <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
+        <a class="btn btn-warning btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s">Modifica</a>
+        <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.\');"><svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg></a>
+        <a class="btn btn-danger btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.\');">Elimina</a>',
           $this->generateUrl('operatori_subscription-service_edit', ['subscriptionService' => $value]),
+          $this->generateUrl('operatori_subscription-service_edit', ['subscriptionService' => $value]),
+          $this->generateUrl('operatori_subscription-service_delete', ['id' => $value]),
           $this->generateUrl('operatori_subscription-service_delete', ['id' => $value])
+
         );
       }])
       ->createAdapter(ORMAdapter::class, [
