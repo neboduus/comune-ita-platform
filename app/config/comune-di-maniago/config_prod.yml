@@ -8,9 +8,9 @@ imports:
 
 
 parameters:
-    prefix: comune-di-bugliano
-    codice_meccanografico: c_cbug
-    database_name: sdc_bugliano
+    prefix: comune-di-maniago
+    codice_meccanografico: c_e889
+    database_name: sdc_maniago
 
 framework:
     router:
@@ -28,18 +28,21 @@ monolog:
             action_level: info
             level:        info
             handler:      nested
-            formatter: '%logs_formatter%'
+            formatter: "%logs_formatter%"
         nested:
             type:  stream
             path:  "%logs_path%"
             level: info
             action_level: debug
-            formatter: '%logs_formatter%'
+            formatter: "%logs_formatter%"
         console:
             type:  console
-            formatter: '%logs_formatter%'
         slack:
             type:           slackwebhook
             webhook_url:    '%slack_logs_webhook_url%'
             action_level:   error
             level:          error
+            formatter: "%logs_formatter%"
+
+services:
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"

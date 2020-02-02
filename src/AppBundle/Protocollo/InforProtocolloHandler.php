@@ -255,6 +255,13 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $this->logger->notice('Sending request to Infor', [$action, $request]);
 
     $ch_result = curl_exec($ch);
+    $status = curl_getinfo($ch);
+
+    if ($status['http_code'] == 403 || $status['http_code'] == 500 ) {
+      $message = 'Infor protocol error: ' . $status['http_code'] . 'Request: '  . $request;
+      throw new \Exception($message);
+    }
+
     $this->logger->notice('Got response from InforProtocol', [$ch_result]);
     return $this->response($ch_result, $action);
   }
