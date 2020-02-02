@@ -8,3 +8,9 @@
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-lavarone --env=prod
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-luserna --env=prod
 */3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-bugliano --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-maniago --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-borgo-lares --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-canal-san-bovo --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-imer --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-mezzano --env=prod
+*/3 * * * * /docroot/bin/console ocsdc:schedule:exec -i comune-di-mori --env=prod
