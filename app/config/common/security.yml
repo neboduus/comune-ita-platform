@@ -90,6 +90,9 @@ security:
         - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
         #- { path: ^/%prefix%/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/%prefix%/operatori/profile, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/%prefix%/operatori/profile/edit, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/%prefix%/operatori/profile/change-password, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori, role: ROLE_OPERATORE }
         - { path: ^/%prefix%/pratiche, role: ROLE_USER }
         - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }

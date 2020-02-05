@@ -25,10 +25,12 @@ class FormServerApiAdapterService
   protected $logger;
 
 
-  public function __construct($formServerUrl,  LoggerInterface $logger) {
+  public function __construct($formServerUrl, LoggerInterface $logger)
+  {
     $this->formServerUrl = $formServerUrl;
-    $this->logger        = $logger;
+    $this->logger = $logger;
   }
+
 
   /**
    * @param Servizio $servizio
@@ -37,15 +39,62 @@ class FormServerApiAdapterService
   public function createForm(Servizio $servizio)
   {
     $schema = [
-      'display'    => 'form',
-      'type'       => 'form',
-      'components' => [],
-      'tags'       => ['custom'],
-      'title'      => $servizio->getName(),
-      'name'       => $servizio->getSlug(),
-      'path'       => $servizio->getSlug(),
-      'description'=> $servizio->getName() . ' - ' . $servizio->getEnte()->getName()
-
+      'display' => 'wizard',
+      'type' => 'form',
+      'components' =>
+        array(
+            array(
+              'label' => 'Panel',
+              'title' => 'Richiedente',
+              'breadcrumbClickable' => true,
+              'buttonSettings' =>
+                array(
+                  'previous' => true,
+                  'cancel' => true,
+                  'next' => true,
+                ),
+              'collapsible' => false,
+              'mask' => false,
+              'tableView' => false,
+              'alwaysEnabled' => false,
+              'type' => 'panel',
+              'input' => false,
+              'components' =>
+                array(
+                    array(
+                      'label' => 'Avvertenza',
+                      'tag' => 'h6',
+                      'attrs' => array(array('attr' => '', 'value' => '',),),
+                      'content' => 'Benvenuto nella configurazione del tuo nuovo form!',
+                      'refreshOnChange' => false,
+                      'tableView' => false,
+                      'key' => 'avvertenza',
+                      'type' => 'htmlelement',
+                      'input' => false,
+                      'validate' => array('unique' => false, 'multiple' => false,),),
+                    array(
+                      'label' => 'HTML',
+                      'attrs' => array(array('attr' => '', 'value' => '',),),
+                      'content' => 'Come primo componente ti raccomandiamo di inserire il sottoform <strong>Anagrafica</strong>, necessario per la corretta implementazione dei form dinamici.',
+                      'refreshOnChange' => false,
+                      'tableView' => false,
+                      'key' => 'html',
+                      'type' => 'htmlelement',
+                      'input' => false,
+                      'validate' => array('unique' => false, 'multiple' => false,),
+                    ),
+                ),
+              'key' => 'panel',
+              'collapsed' => false,
+              'reorder' => false,
+              'validate' => array('unique' => false, 'multiple' => false,),
+            ),
+        ),
+      'tags' => ['custom'],
+      'title' => $servizio->getName(),
+      'name' => $servizio->getSlug(),
+      'path' => $servizio->getSlug(),
+      'description' => $servizio->getName() . ' - ' . $servizio->getEnte()->getName()
     ];
 
     $client = new Client(['base_uri' => $this->formServerUrl]);
@@ -110,7 +159,7 @@ class FormServerApiAdapterService
         'message' => 'Fail on retrive form'
       ];
     }
-    $form =$response['form'];
+    $form = $response['form'];
 
     $form['title'] = $service->getName();
     $form['name'] = $service->getSlug();
@@ -155,7 +204,7 @@ class FormServerApiAdapterService
     ];
   }
 
-  public function getForm( $formID )
+  public function getForm($formID)
   {
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(
@@ -188,7 +237,7 @@ class FormServerApiAdapterService
     ];
   }
 
-  public function deleteForm( Servizio $service )
+  public function deleteForm(Servizio $service)
   {
 
     $formID = false;
@@ -267,7 +316,7 @@ class FormServerApiAdapterService
     ];
   }
 
-  public  function getFormSchema($formID)
+  public function getFormSchema($formID)
   {
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(

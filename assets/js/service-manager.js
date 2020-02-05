@@ -59,9 +59,48 @@ $(document).ready(function () {
     Formio.icons = "fontawesome";
     Formio.builder(document.getElementById("builder"), $('#formio').data('formserver_url') + "/form/" + $("#formio_builder_render_form_id").val(), {
       builder: {
-        //premium: false
-      }
+        basic: false,
+        advanced: false,
+        data: false,
+        layout: false,
+        premium: false,
+        customBasic: {
+          title: 'Componenti',
+          default: true,
+          weight: 0,
+          components: {
+            textfield: true,
+            textarea: true,
+            checkbox: true,
+            select:true,
+            radio:true,
+            selectboxes: true,
+            email: true,
+            phoneNumber: true,
+            url: true,
+            datetime: true,
+            day: true,
+            time: true,
+            currency: true,
+            hidden: true,
+            form: true,
+          }
+        },
+        customLayout: {
+          title: 'Layout',
+          default: false,
+          weight: 0,
+          components: {
+            htmlelement: true,
+            columns: true
+          }
+        },
+      },
     }).then(function (builder) {
+
+      /*$("#formio_builder_render_type").on("change", function () {
+        console.log($(this).val());
+      });*/
 
       // Inserisco lo schema in un input hidden
       $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
@@ -90,7 +129,10 @@ $(document).ready(function () {
         $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
       });
     });
+
   }
+
+
 
   // Step Payment data
   if ($("#payment_data_flow_service_step").length) {
