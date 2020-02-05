@@ -39,6 +39,14 @@ i.mandatory::after {
   padding-bottom: 20px;
 }
 
+table {
+  td {
+    &.actions {
+      width: 20%;
+    }
+  }
+}
+
 @include media-breakpoint-down(md) {
   /* Force table to not be like tables anymore */
   #no-more-tables {
@@ -65,14 +73,17 @@ i.mandatory::after {
         /* Now like a table header */
         position: absolute;
         /* Top/left values mimic padding */
-        top: 6px;
-        left: 6px;
+        top: 18px;
+        left: 10px;
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
         text-align: left;
         font-weight: bold;
         content: attr(data-title);
+      }
+      &.actions {
+        width: unset;
       }
     }
   }

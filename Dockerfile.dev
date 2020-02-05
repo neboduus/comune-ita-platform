@@ -18,6 +18,8 @@ WORKDIR /var/www/html
 
 COPY --chown=wodby:wodby ./ .
 
+COPY --chown=wodby:wodby ./compose_conf/bin/*.sh /bin
+
 RUN ./compose_conf/php/init-uploads.sh
 
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
