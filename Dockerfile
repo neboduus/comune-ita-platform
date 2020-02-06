@@ -18,7 +18,8 @@ WORKDIR /var/www/html
 
 COPY --chown=wodby:wodby ./ .
 
-COPY --chown=wodby:wodby ./compose_conf/bin/*.sh /bin
+COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
+RUN chmod 755 ./bin/*.sh
 
 RUN ./compose_conf/php/init-uploads.sh
 
