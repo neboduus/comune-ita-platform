@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2019-09-03'
-softwareVersion: 1.3.0
+releaseDate: '2020-02-02'
+softwareVersion: 1.3.8
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -18,6 +18,16 @@ usedBy:
   - Comune di Vallelaghi (TN)
   - Comune di Cavedine (TN)
   - Comune di Ala (TN)
+  - Fondazione Mach (TN)
+  - Comune di Lavarone (TN)
+  - Comune di Folgaria (TN)
+  - Comune di Luserna (TN)
+  - Comune di Maniago (PN)
+  - Comune di Borgo Lares (TN)
+  - Comune di Canal San Bovo (TN)
+  - Comune di Imer (TN)
+  - Comune di Mezzano (TN)
+  - Comune di Mori (TN)
 categories:
   - communications
   - crm
@@ -25,7 +35,7 @@ categories:
 dependsOn:
   open:
     - name: PHP
-      versionMin: '7.2'
+      versionMin: '7.3'
     - name: PostgreSQL
       versionMin: '10'
     - name: Apache
@@ -108,6 +118,8 @@ description:
         Integrazione con alcuni dei sistemi di protocollazione più diffusi
         presso i comuni (tra cui, PiTre)
       - Creazione da backend di form complessi, a piu' step, con integrazione di API esterne
+      - >-
+        Integrazione completa con form.io per generazione dinamica dei moduli online
     screenshots:
       - images/sdc001.jpg
       - images/sdc002.jpg
