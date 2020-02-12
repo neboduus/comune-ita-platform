@@ -16,98 +16,53 @@
       </div>
 
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
-        {{ form_start(edit_form) }}
-        {{ form_errors(edit_form) }}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
 
-        {{ form_row(edit_form.name) }}
+        {{ form_row(form.name) }}
         <div class="row">
           <div class="col-6">
-            {{ form_row(edit_form.code) }}
+            {{ form_row(form.code) }}
           </div>
           <div class="col-6">
-            {{ form_row(edit_form.tags) }}
+            {{ form_row(form.tags) }}
           </div>
         </div>
-        {{ form_row(edit_form.description) }}
+        {{ form_row(form.description) }}
         <div class="row">
           <div class="col-6">
-            {{ form_row(edit_form.subscriptionBegin) }}
+            {{ form_row(form.subscriptionBegin) }}
           </div>
           <div class="col-6">
-            {{ form_row(edit_form.subscriptionEnd) }}
+            {{ form_row(form.subscriptionEnd) }}
           </div>
         </div>
-        {{ form_row(edit_form.subscriptionAmount) }}
+        {{ form_row(form.subscriptionAmount) }}
         <div class="row">
           <div class="col-6">
-            {{ form_row(edit_form.beginDate) }}
+            {{ form_row(form.beginDate) }}
           </div>
           <div class="col-6">
-            {{ form_row(edit_form.endDate) }}
+            {{ form_row(form.endDate) }}
           </div>
         </div>
-        {{ form_row(edit_form.subscribersLimit) }}
-        {{ form_row(edit_form.subscriptionMessage) }}
-        {{ form_row(edit_form.beginMessage) }}
-        {{ form_row(edit_form.endMessage) }}
-        {{ form_row(edit_form.status) }}
+        {{ form_row(form.subscribersLimit) }}
+        {{ form_row(form.subscriptionMessage) }}
+        {{ form_row(form.beginMessage) }}
+        {{ form_row(form.endMessage) }}
+        {{ form_row(form.status) }}
 
-        <div id="payments"
-             data-prototype='
-             <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
-               <div class="row">
-                 <div class="col-6">
-                   <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___date" class="required">Data del pagamento</label>
-                     <input type="date" id="appbundle_subscriptionservice_subscriptionPayments___name___date" name="appbundle_subscriptionservice[subscriptionPayments][__name__][date]" required="required" class="form-control" />
-                   </div>
-                 </div>
-                 <div class="col-6">
-                    <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___amount" class="required">Importo del pagamento</label>
-                     <div class="input-group">
-                       <input type="text" id="appbundle_subscriptionservice_subscriptionPayments___name___amount" name="appbundle_subscriptionservice[subscriptionPayments][__name__][amount]" required="required" class="form-control" />
-                       <div class="input-group-append">
-                         <span class="input-group-text"> €</span>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-             <a class="btn btn-danger btn-sm js-remove-payment float-right" href="#">Elimina pagamento</a>
-             <div class="clearfix mb-4"></div>'
-             data-widget-payment="{{ '<div class="js-payment-item"></div>'|e }}"
-             data-widget-counter="{{ edit_form.subscriptionPayments|length }}">
-          {% for payment in edit_form.subscriptionPayments %}
-            <div class="js-payment-item">
-              <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
-                <div class="row">
-                  <div class="col-6">
-                    {{ form_row(payment.date)}}
-                  </div>
-                  <div class="col-6">
-                    {{ form_row(payment.amount) }}
-                  </div>
-                </div>
-                <a class="btn btn-danger btn-sm js-remove-payment float-right" href="#">Elimina pagamento</a>
-                <div class="clearfix mb-4"></div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
+        {{ include('@App/SubscriptionServices/parts/subscriptionServicePayments.html.twig') }}
+
         <div class="row">
           <div class="col-6">
-            <input class="btn btn-warning mr-1" type="submit" value="Modifica"  style="float: left"/>
-            <button type="button"
-                    class="add-another-payment-widget btn btn-primary"
-                    data-list-selector="#payments">Aggiungi pagamento</button>
+            <input class="btn btn-warning mr-1" type="submit" value="Modifica" />
           </div>
           <div class="col-6 text-right">
-            <a class="btn btn-100 mr-1" href="{{ path('operatori_subscription-service_index') }}" style="float: left">Torna alla lista</a>
+            <a class="btn btn-100 mr-1" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
           </div>
         </div>
-        {{ form_end(edit_form) }}
+        {{ form_end(form) }}
       </div>
     </div>
   </section>

@@ -16,10 +16,10 @@ class SubscriptionPaymentType extends AbstractType
     $builder
       ->add('date', DateType::class, [
         'widget' => 'single_text',
-        'label' => 'Data del pagamento'
+        'label' => 'Data'
       ])
       ->add('amount', MoneyType::class, [
-        'label' => 'Importo del pagamento'
+        'label' => 'Importo'
       ]);
   }
 

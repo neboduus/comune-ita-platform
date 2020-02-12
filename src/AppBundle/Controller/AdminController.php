@@ -435,10 +435,7 @@ class AdminController extends Controller
 
         return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
       }
-    }/* else {
-      dump($form->getErrors());
-      exit;
-    }*/
+    }
 
     return $this->render('@App/Admin/editServizio.html.twig', [
       'form' => $form->createView(),

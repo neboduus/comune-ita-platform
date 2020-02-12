@@ -76,7 +76,7 @@
             <tr>
               <th>Messaggio finale </th>
               <td>
-                {% if subscriptionService.endMessage %}{{ subscriptionService.endMessage | striptags | raw | nl2br }}
+                {% if subscriptionService.endMessage %}{{ subscriptionService.endMessage | striptags }}
                 {% else %} ---
                 {% endif %}
               </td>

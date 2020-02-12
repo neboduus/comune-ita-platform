@@ -22,9 +22,9 @@
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
         {% if servizio.name == '' %}
-          <h1>{{ 'servizio.crea'|trans() }}</h1>
+          <h2>{{ 'servizio.crea'|trans() }}</h2>
         {% else %}
-          <h1>{{ 'servizio.modifica'|trans({'%name%':servizio.name}) }}</h1>
+          <h2>{{ 'servizio.modifica'|trans({'%name%':servizio.name}) }}</h2>
         {% endif %}
       </div>
     </div>

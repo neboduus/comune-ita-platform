@@ -8,6 +8,8 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Subscriber;
+use AppBundle\Model\SubscriberMessage;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -119,6 +121,23 @@ class MailerService
         return $sentAmount;
     }
 
+  /**
+   * @param SubscriberMessage $subscriberMessage
+   * @param $fromAddress
+   * @param OperatoreUser $operatore
+   * @return int
+   */
+    public function dispatchMailForSubscriber(SubscriberMessage $subscriberMessage, $fromAddress, OperatoreUser $operatore)
+    {
+        $sentAmount = 0;
+
+        if ($this->SubscriberHasValidContactEmail($subscriberMessage->getSubscriber())){
+            $message = $this->setupSubscriberMessage($subscriberMessage, $fromAddress, $operatore);
+            $sentAmount += $this->mailer->send($message);
+        }
+        return $sentAmount;
+    }
+
     /**
      * @param Pratica $pratica
      * @param $fromAddress
@@ -200,6 +219,45 @@ class MailerService
         return $message;
     }
 
+    private function setupSubscriberMessage(SubscriberMessage $subscriberMessage, $fromAddress, OperatoreUser $operatoreUser)
+    {
+      $toEmail = $subscriberMessage->getSubscriber()->getEmail();
+      $toName = $subscriberMessage->getFullName();
+
+      $ente = $operatoreUser->getEnte();
+      $fromName = $ente instanceof Ente ? $ente->getName() : null;
+
+      $emailMessage = \Swift_Message::newInstance()
+        ->setSubject($subscriberMessage->getSubject())
+        ->setFrom($fromAddress, $fromName)
+        ->setTo($toEmail, $toName)
+        ->setBcc($operatoreUser->getEmail(), $operatoreUser->getFullName())
+        ->setBody(
+          $this->templating->render(
+            'AppBundle:Emails/Subscriber:subscriber_message.html.twig',
+            array(
+              'message' => $subscriberMessage->getMessage(),
+            )
+          ),
+          'text/html'
+        )
+        ->addPart(
+          $this->templating->render(
+            'AppBundle:Emails/Subscriber:subscriber_message.txt.twig',
+            array(
+              'message' => $subscriberMessage->getMessage(),
+            )
+          ),
+          'text/plain'
+        );
+      if ($subscriberMessage->getAutoSend()) {
+        $emailMessage->setCc($operatoreUser->getEmail(), $operatoreUser->getFullName());
+      }
+
+
+      return $emailMessage;
+    }
+
     private function CPSUserHasAlreadyBeenWarned(Pratica $pratica)
     {
         return $pratica->getLatestCPSCommunicationTimestamp() >= $pratica->getLatestStatusChangeTimestamp();
@@ -217,4 +275,10 @@ class MailerService
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
+    private function SubscriberHasValidContactEmail(Subscriber $subscriber)
+    {
+        $email = $subscriber->getEmail();
+
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
 }

@@ -14,6 +14,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    environment:
+      ENV: DEV
     volumes:
       - ./app:/var/www/html/app:delegated
       - ./src:/var/www/html/src:delegated
@@ -26,7 +28,7 @@ services:
       args:
         php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     volumes:
-      - ./web:/var/www/html/web:delegated
+      - ./web:/var/www/html/web:cached
 
   pgweb:
     image: sosedoff/pgweb
