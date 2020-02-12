@@ -51,57 +51,12 @@
         {{ form_row(form.beginMessage) }}
         {{ form_row(form.endMessage) }}
         {{ form_row(form.status) }}
-        <div id="payments"
-             data-prototype='
-             <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
-               <div class="row">
-                 <div class="col-6">
-                   <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___date" class="required">Data del pagamento</label>
-                     <input type="date" id="appbundle_subscriptionservice_subscriptionPayments___name___date" name="appbundle_subscriptionservice[subscriptionPayments][__name__][date]" required="required" class="form-control" />
-                   </div>
-                 </div>
-                 <div class="col-6">
-                    <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___amount" class="required">Importo del pagamento</label>
-                     <div class="input-group">
-                       <input type="text" id="appbundle_subscriptionservice_subscriptionPayments___name___amount" name="appbundle_subscriptionservice[subscriptionPayments][__name__][amount]" required="required" class="form-control" />
-                       <div class="input-group-append">
-                         <span class="input-group-text"> €</span>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-             <a class="btn btn-danger btn-sm js-remove-payment float-right" href="#">Elimina pagamento</a>
-             <div class="clearfix mb-4"></div>'
-             data-widget-payment="{{ '<div class="js-payment-item"></div>'|e }}"
-             data-widget-counter="{{ form.subscriptionPayments|length }}">
-          {% for payment in form.subscriptionPayments %}
-            <div class="js-payment-item">
-              <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
-                <div class="row">
-                  <div class="col-6">
-                    {{ form_row(payment.date) }}
-                  </div>
-                  <div class="col-6">
-                    {{ form_row(payment.amount) }}
-                  </div>
-                </div>
-                <a class="btn btn-danger btn-sm js-remove-payment float-right" href="#">Elimina pagamento</a>
-                <div class="clearfix mb-4"></div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
+
+        {{ include('@App/SubscriptionServices/parts/subscriptionServicePayments.html.twig') }}
+
         <div class="row">
           <div class="col-6">
             <input class="btn btn-success" type="submit" value="Crea"/>
-            <button type="button"
-                    class="add-another-payment-widget btn btn-primary"
-                    data-list-selector="#payments">Aggiungi pagamento
-            </button>
           </div>
           <div class="col-6 text-right">
             <a class="btn btn-100" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>

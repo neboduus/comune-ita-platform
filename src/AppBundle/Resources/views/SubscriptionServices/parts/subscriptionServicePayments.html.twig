@@ -1,0 +1,76 @@
+<label style="font-weight: 600; padding: 0 0.5rem;">Pagamenti</label>
+<fieldset class="bg-light p-3 mb-3">
+  <div id="payments"
+       data-prototype='
+             <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
+               <div class="row">
+                 <div class="col-5">
+                   <div class="form-group">
+                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___date" class="required">Data</label>
+                     <input type="date" id="appbundle_subscriptionservice_subscriptionPayments___name___date" name="appbundle_subscriptionservice[subscriptionPayments][__name__][date]" required="required" class="form-control" />
+                   </div>
+                 </div>
+                 <div class="col-5">
+                    <div class="form-group">
+                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___amount" class="required">Importo</label>
+                     <div class="input-group">
+                       <input type="text" id="appbundle_subscriptionservice_subscriptionPayments___name___amount" name="appbundle_subscriptionservice[subscriptionPayments][__name__][amount]" required="required" class="form-control" />
+                       <div class="input-group-append">
+                         <span class="input-group-text"> €</span>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+                 <div class="col-2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>&nbsp;</label>
+                    <a class="btn btn-danger btn-xs js-remove-payment" href="#">
+                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+                      <span class="d-none d-md-block">Elimina pagamento</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+               </div>
+             </div>
+             <div class="clearfix mb-4"></div>'
+       data-widget-payment="{{ '<div class="js-payment-item"></div>'|e }}"
+       data-widget-counter="{{ form.subscriptionPayments|length }}">
+    {% if form.subscriptionPayments|length > 0 %}
+      {% for payment in form.subscriptionPayments %}
+        <div class="js-payment-item">
+          <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
+            <div class="row">
+              <div class="col-5">
+                {{ form_row(payment.date) }}
+              </div>
+              <div class="col-5">
+                {{ form_row(payment.amount) }}
+              </div>
+              <div class="col-2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>&nbsp;</label>
+                    <a class="btn btn-danger btn-xs js-remove-payment" href="#">
+                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+                      <span class="d-none d-md-block">Elimina pagamento</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix mb-4"></div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info" id="no-payments">Non sono presenti pagamenti</div>
+    {% endif %}
+  </div>
+  <button type="button"
+          class="add-another-payment-widget btn btn-xs btn-primary"
+          data-list-selector="#payments">Aggiungi pagamento
+  </button>
+</fieldset>
+

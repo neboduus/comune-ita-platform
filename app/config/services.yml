@@ -43,9 +43,19 @@ services:
 
   AppBundle\BackOffice\SubcriptionsBackOffice:
     autowire: true
+    tags: ['app.backoffice']
+
+  ocsdc.backoffices:
+    class: AppBundle\Services\BackOfficeCollection
+    arguments:
+      - !tagged app.backoffice
 
   AppBundle\Controller\SubscriptionsController:
     autowire: true
+
+  AppBundle\Controller\SubscriberController:
+    autowire: true,
+    arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@logger"]
 
   Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
 

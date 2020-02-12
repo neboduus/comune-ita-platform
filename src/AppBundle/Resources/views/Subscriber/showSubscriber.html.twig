@@ -1,0 +1,262 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ encore_entry_script_tags('subscription-service-manager') }}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
+
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_link_tags('subscription-service-manager') }}
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+  <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+
+  <script>
+    $(function () {
+      $('#payments_table').initDataTables({{ datatable_settings(datatable) }}, {
+        dom: 'fBrtip',
+        searching: true,
+        orderable: true,
+        paging: true,
+        pagingType: 'simple_numbers',
+        "language": {
+          "sEmptyTable": "Nessun dato presente nella tabella",
+          "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
+          "sInfoEmpty": "Vista da 0 a 0 di 0 elementi",
+          "sInfoFiltered": "(filtrati da _MAX_ elementi totali)",
+          "sInfoPostFix": "",
+          "sInfoThousands": ".",
+          "sLengthMenu": "Visualizza _MENU_ elementi",
+          "sLoadingRecords": "Caricamento...",
+          "sProcessing": '<div class="progress-spinner progress-spinner-double progress-spinner-active">\n' +
+            '        <div class="progress-spinner-inner"></div>\n' +
+            '        <div class="progress-spinner-inner"></div>\n' +
+            '        <span class="sr-only">Caricamento...</span>\n' +
+            '      </div>',
+          "sSearch": "Ricerca",
+          "sZeroRecords": "La ricerca non ha portato alcun risultato.",
+          "oPaginate": {
+            "sFirst": "Inizio",
+            "sPrevious": "Precedente",
+            "sNext": "Successivo",
+            "sLast": "Fine"
+          },
+          "oAria": {
+            "sSortAscending": ": attiva per ordinare la colonna in ordine crescente",
+            "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+          }
+        },
+        "serverSide": true,
+        initComplete: function () {
+          // Add data-title attribute
+          $('#payments_table thead tr th').each(function (index, element) {
+            index += 1;
+            $('tr td:nth-child(' + index + ')').attr('data-title', element.innerHTML);
+          });
+
+          // Use bootstrap buttons for pagination
+          $('a.paginate_button').addClass('btn');
+          // Add margin bottom to datatables info
+          $('#dt_info').css('margin-bottom', '0.85em')
+        }
+      }).then(function (dt) {})
+    });
+  </script>
+{% endblock %}
+
+{% block main_content %}
+
+  <section id="intro" class=" container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>{{ subscriber.name }} {{ subscriber.surname }}</h1>
+      </div>
+    </div>
+    <ul class="nav nav-tabs nav-tabs-icon-text">
+      <li class="nav-item"><a id="user-tab" data-toggle="tab" class="nav-link active" href="#user">
+          <svg class="icon icon-primary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+          </svg>
+          <span class="d-none d-md-block">Scheda personale</span></a></li>
+      <li class="nav-item"><a id="payments-tab" data-toggle="tab" class="nav-link" href="#payments">
+          <svg class="icon icon-primary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
+          </svg>
+          <span class="d-none d-md-block">Pagamenti</span></a></li>
+      <!--li class="nav-item"><a id="subscriptions-tab" data-toggle="tab" class="nav-link" href="#subscriptions-detail">
+          <svg class="icon icon-primary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+          </svg>
+          Iscrizioni</a></li-->
+      <li class="nav-item"><a id="message-tab" data-toggle="tab" class="nav-link" href="#message">
+          <svg class="icon icon-primary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
+          </svg>
+          <span class="d-none d-md-block">Messaggi</span></a></li>
+    </ul>
+    <div class="tab-content" id="TabContent">
+      <!-- Anagrafica -->
+      <div class="tab-pane p-1 fade show active" id="user" role="tabpanel" aria-labelledby="user-tab">
+        <div class="my-4">
+          <h3>Anagrafica</h3>
+        </div>
+        <div>
+          <div class="row">
+            <span class="col-4"><b>Nome e Cognome</b></span><span
+              class="col-8">{{ subscriber.name }} {{ subscriber.surname }}</span>
+          </div>
+          <div class="row">
+            <span class="col-4"><b>Data di nascita</b></span><span
+              class="col-8">{{ subscriber.dateOfBirth | date('d/m/Y') }}</span>
+          </div>
+          <div class="row">
+            <span class="col-4"><b>Luogo di nascita</b></span><span
+              class="col-8">{{ subscriber.placeOfBirth }}</span>
+          </div>
+          <div class="row">
+            <span class="col-4"><b>Residenza</b></span><span
+              class="col-8">{{ subscriber.address }}, {{ subscriber.houseNumber }}</br> {{ subscriber.postalCode }} - {{ subscriber.municipality }}</span>
+          </div>
+          <div class="row">
+            <span class="col-4"><b>Codice fiscale</b></span><span
+              class="col-8">{{ subscriber.fiscalCode }}</span>
+          </div>
+          <div class="row">
+            <span class="col-4"><b>Indirizzo e-mail</b></span><span
+              class="col-8">{{ subscriber.email }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- Pagamenti -->
+      <div class="tab-pane p-1 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+        <div class="my-4">
+          <h3>Pagamenti</h3>
+        </div>
+        <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+          <div id="no-more-tables">
+            <div id="payments_table"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Schede iscrizioni -->
+      <!--div class="tab-pane p-1 fade" id="subscriptions-detail" role="tabpanel" aria-labelledby="subscriptions-tab">
+        <div class="container my-5">
+          <div class="row">
+            <div class="card-wrapper card-teaser-wrapper card-teaser-wrapper-equal col-12">
+              {% for subscription in subscriber.subscriptions %}
+                <div class="card card-bg card-big rounded shadow mt-4">
+                  <div class="flag-icon invisible"></div>
+                  <div class="etichetta">
+                    {% for tag in subscription.subscriptionService.tags %}
+                      <div class="chip chip-simple"><span class="chip-label">{{ tag }}</span></div>
+                    {% endfor %}
+                  </div>
+                  <div class="card-body px-4">
+                    <h5 class="card-title">
+                      {% if subscription.subscriptionService.status == 0 %}
+                        <svg class="icon icon-warning">
+                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
+                        </svg>
+                      {% elseif subscription.subscriptionService.status == 1 %}
+                        <svg class="icon icon-success">
+                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                        </svg>
+                      {% elseif subscription.subscriptionService.status == 2 %}
+                        <svg class="icon icon-danger">
+                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-circle"></use>
+                        </svg>
+                      {% endif %}
+                      {{ subscription.subscriptionService.name }}</h5>
+                    <p class="card-text">{{ subscription.subscriptionService.description | striptags }}</p>
+                    <div id="collapseDiv1-{{ subscription.id }}" class="collapse-div collapse-left-icon" role="tablist">
+                      <div class="collapse-header" id="subscription_amount-{{ subscription.id }}">
+                        <button data-toggle="collapse" data-target="#subscription_amount-collapse-{{ subscription.id }}"
+                                aria-expanded="false"
+                                aria-controls="subscription_amount-collapse-{{ subscription.id }}">
+                          Pagamento iscrizione
+                        </button>
+                      </div>
+                      <div id="subscription_amount-collapse-{{ subscription.id }}" class="collapse" role="tabpanel"
+                           aria-labelledby="subscription_amount-{{ subscription.id }}">
+                        <div class="collapse-body">
+                          {% if subscription.subscriptionService.subscriptionAmount %}
+                            <div class="alert alert-danger" role="alert">
+                              Pagamento non pervenuto
+                            </div>
+                          {% else %}
+                            <div class="alert alert-success" role="alert">
+                              Il servizio non prevede pagamenti all'iscrizione
+                            </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="collapse-header" id="heading2-lft">
+                        <button data-toggle="collapse" data-target="#collapse2-lft" aria-expanded="false"
+                                aria-controls="collapse2-lft"> Altri pagamenti
+                        </button>
+                      </div>
+                      <div id="collapse2-lft" class="collapse" role="tabpanel" aria-labelledby="heading2-lft">
+                        <div class="collapse-body">
+                          {% if not subscription.subscriptionService.subscriptionPayments %}
+                            <div class="alert alert-success" role="alert">
+                              Il servizio non prevede pagamenti ulteriori
+                            </div>
+                          {% else %}
+                            <div class="it-timeline-wrapper mt-5">
+                              <div class="row">
+                                {% for payment in subscription.subscriptionService.subscriptionPayments %}
+                                  <div class="col-12">
+                                    <div class="timeline-element">
+                                      <div class="it-pin-wrapper">
+                                        <div class="pin-icon">
+                                          <svg class="icon icon-success">
+                                            <use
+                                              xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                                          </svg>
+                                        </div>
+                                        <div class="pin-text">
+                                          <span>{{ payment.amount | number_format(2) }}€ {{ payment.date | date('d/m/Y') }}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                {% endfor %}
+                              </div>
+                            </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="it-card-footer float-right">
+                      <a class="btn btn-danger btn-sm float-right" onclick="return confirm('Sei sicuro di procedere? la sottoscrizione verrà eliminata definitivamente.');" href="{{ path('operatori_subscription_delete', { 'id': subscription.id }) }}">Elimina</a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div-->
+      <!-- Messaggi -->
+      <div class="tab-pane p-1 fade" id="message" role="tabpanel" aria-labelledby="message-tab">
+        <div class="my-4">
+          <h3>Messaggi</h3>
+        </div>
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.subject) }}
+        {{ form_row(form.message) }}
+        {{ form_row(form.autoSend) }}
+        <div class="row">
+          <input class="btn btn-primary mr-1" type="submit" value="Invia"/>
+        </div>
+        {{ form_end(form) }}
+
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

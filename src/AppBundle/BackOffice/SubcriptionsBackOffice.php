@@ -13,6 +13,8 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 {
   const NAME = 'Iscrizione ai corsi';
 
+  const PATH = 'operatori_subscription-service_index';
+
   private $em;
 
   private $required_headers = array(
@@ -51,6 +53,11 @@ class SubcriptionsBackOffice implements BackOfficeInterface
   public function getName()
   {
     return self::NAME;
+  }
+
+  public function getPath()
+  {
+    return self::PATH;
   }
 
   public function getRequiredFields()

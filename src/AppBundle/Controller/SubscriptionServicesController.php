@@ -71,7 +71,6 @@ class SubscriptionServicesController extends Controller
           $this->generateUrl('operatori_subscription-service_edit', ['subscriptionService' => $value]),
           $this->generateUrl('operatori_subscription-service_delete', ['id' => $value]),
           $this->generateUrl('operatori_subscription-service_delete', ['id' => $value])
-
         );
       }])
       ->createAdapter(ORMAdapter::class, [
@@ -178,7 +177,7 @@ class SubscriptionServicesController extends Controller
     }
 
     return [
-      'edit_form' => $form->createView(),
+      'form' => $form->createView(),
     ];
   }
 
