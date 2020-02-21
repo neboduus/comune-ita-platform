@@ -24,6 +24,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class SubscriptionsController
+ * @package AppBundle\Controller
+ * @Route("/operatori/subscriptions")
  */
 class SubscriptionsController extends Controller
 {
@@ -38,7 +40,7 @@ class SubscriptionsController extends Controller
   /**
    * Lists all subscriptions entities.
    * @Template()
-   * @Route("/operatori/subscriptions/{subscriptionService}", name="operatori_subscriptions")
+   * @Route("/{subscriptionService}", name="operatori_subscriptions")
    */
   public function showSubscriptionsAction(Request $request, SubscriptionService $subscriptionService)
   {
@@ -89,7 +91,7 @@ class SubscriptionsController extends Controller
 
   /**
    * @param Request $request
-   * @Route("/operatori/subscriptions/{subscriptionService}/upload",name="operatori_importa_csv_iscrizioni")
+   * @Route("/{subscriptionService}/upload",name="operatori_importa_csv_iscrizioni")
    * @Method("POST")
    * @return mixed
    * @throws \Exception

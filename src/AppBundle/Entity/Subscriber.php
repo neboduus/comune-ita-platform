@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
 
 
 /**
@@ -18,61 +20,74 @@ class Subscriber
     /**
      * @ORM\Column(type="guid")
      * @ORM\Id
+     * @SWG\Property(description="Subscriber's uuid")
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @SWG\Property(description="Subscriber's name")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @SWG\Property(description="Subscriber's surname")
      */
     private $surname;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Subscription", mappedBy="subscriber")
+     * @Serializer\Exclude()
+     * @SWG\Property(description="Subscriber's subscriptions")
      */
     private $subscriptions;
 
     /**
      * @ORM\Column(type="date")
+     * @SWG\Property(description="Subscriber's date of birth")
      */
     private $date_of_birth;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @SWG\Property(description="Subscriber's place of birth")
      */
     private $place_of_birth;
 
     /**
      * @ORM\Column(type="string", length=16)
+     * @SWG\Property(description="Subscriber's fiscal code")
      */
     private $fiscal_code;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @SWG\Property(description="Subscriber's address")
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @SWG\Property(description="Subscriber's house number")
      */
     private $house_number;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @SWG\Property(description="Subscriber's municipality")
      */
     private $municipality;
 
     /**
      * @ORM\Column(type="string", length=5)
+     * @SWG\Property(description="Subscriber's postal code")
      */
     private $postal_code;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @SWG\Property(description="Subscriber's email")
      */
     private $email;
 

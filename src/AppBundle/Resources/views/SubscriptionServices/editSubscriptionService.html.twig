@@ -31,25 +31,25 @@
         {{ form_row(form.description) }}
         <div class="row">
           <div class="col-6">
-            {{ form_row(form.subscriptionBegin) }}
+            {{ form_row(form.subscription_begin) }}
           </div>
           <div class="col-6">
-            {{ form_row(form.subscriptionEnd) }}
+            {{ form_row(form.subscription_end) }}
           </div>
         </div>
-        {{ form_row(form.subscriptionAmount) }}
+        {{ form_row(form.subscription_amount) }}
         <div class="row">
           <div class="col-6">
-            {{ form_row(form.beginDate) }}
+            {{ form_row(form.begin_date) }}
           </div>
           <div class="col-6">
-            {{ form_row(form.endDate) }}
+            {{ form_row(form.end_date) }}
           </div>
         </div>
-        {{ form_row(form.subscribersLimit) }}
-        {{ form_row(form.subscriptionMessage) }}
-        {{ form_row(form.beginMessage) }}
-        {{ form_row(form.endMessage) }}
+        {{ form_row(form.subscribers_limit) }}
+        {{ form_row(form.subscription_message) }}
+        {{ form_row(form.begin_message) }}
+        {{ form_row(form.end_message) }}
         {{ form_row(form.status) }}
 
         {{ include('@App/SubscriptionServices/parts/subscriptionServicePayments.html.twig') }}

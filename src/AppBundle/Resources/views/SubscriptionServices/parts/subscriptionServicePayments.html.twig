@@ -2,19 +2,19 @@
 <fieldset class="bg-light p-3 mb-3">
   <div id="payments"
        data-prototype='
-             <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
+             <div id="appbundle_subscriptionservice_subscription_payments___name__">
                <div class="row">
                  <div class="col-5">
                    <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___date" class="required">Data</label>
-                     <input type="date" id="appbundle_subscriptionservice_subscriptionPayments___name___date" name="appbundle_subscriptionservice[subscriptionPayments][__name__][date]" required="required" class="form-control" />
+                     <label for="appbundle_subscriptionservice_subscription_payments___name___date" class="required">Data</label>
+                     <input type="date" id="appbundle_subscriptionservice_subscription_payments___name___date" name="appbundle_subscriptionservice[subscription_payments][__name__][date]" required="required" class="form-control" />
                    </div>
                  </div>
                  <div class="col-5">
                     <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscriptionPayments___name___amount" class="required">Importo</label>
+                     <label for="appbundle_subscriptionservice_subscription_payments___name___amount" class="required">Importo</label>
                      <div class="input-group">
-                       <input type="text" id="appbundle_subscriptionservice_subscriptionPayments___name___amount" name="appbundle_subscriptionservice[subscriptionPayments][__name__][amount]" required="required" class="form-control" />
+                       <input type="text" id="appbundle_subscriptionservice_subscription_payments___name___amount" name="appbundle_subscriptionservice[subscription_payments][__name__][amount]" required="required" class="form-control" />
                        <div class="input-group-append">
                          <span class="input-group-text"> €</span>
                        </div>
@@ -36,11 +36,11 @@
              </div>
              <div class="clearfix mb-4"></div>'
        data-widget-payment="{{ '<div class="js-payment-item"></div>'|e }}"
-       data-widget-counter="{{ form.subscriptionPayments|length }}">
-    {% if form.subscriptionPayments|length > 0 %}
-      {% for payment in form.subscriptionPayments %}
+       data-widget-counter="{{ form.subscription_payments|length }}">
+    {% if form.subscription_payments|length > 0 %}
+      {% for payment in form.subscription_payments %}
         <div class="js-payment-item">
-          <div id="appbundle_subscriptionservice_subscriptionPayments___name__">
+          <div id="appbundle_subscriptionservice_subscription_payments___name__">
             <div class="row">
               <div class="col-5">
                 {{ form_row(payment.date) }}
