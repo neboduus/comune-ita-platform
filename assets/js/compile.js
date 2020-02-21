@@ -1,11 +1,57 @@
 require('bootstrap-italia');
-require('../css/app.scss');
+/*require('../css/app.scss');
 
 require('webpack-jquery-ui');
 require('webpack-jquery-ui/css');
-require('webpack-jquery-ui/datepicker');
+require('webpack-jquery-ui/datepicker');*/
 
+/*require('bootstrap');
+require('bootstrap-select');
+require('svgxuse');
+require('bootstrap-italia/src/js/plugins/polyfills/array.from');
+require('bootstrap-italia/src/js/plugins/circular-loader/CircularLoader-v1.3');
+require('bootstrap-italia/src/js/plugins/password-strength-meter/password-strength-meter');
+//require('bootstrap-italia/src/js/plugins/datepicker/locales/it');
+//require('bootstrap-italia/src/js/plugins/datepicker/datepicker');
+require('bootstrap-italia/src/js/plugins/i-sticky/i-sticky');
+require('bootstrap-italia/src/js/plugins/sticky-header');
+require('bootstrap-italia/src/js/plugins/sticky-wrapper');
+require('bootstrap-italia/src/js/plugins/ie');
+require('bootstrap-italia/src/js/plugins/fonts-loader');
+require('bootstrap-italia/src/js/plugins/autocomplete');
+require('bootstrap-italia/src/js/plugins/back-to-top');
+require('bootstrap-italia/src/js/plugins/componente-base');
+require('bootstrap-italia/src/js/plugins/cookiebar');
+require('bootstrap-italia/src/js/plugins/dropdown');
+require('bootstrap-italia/src/js/plugins/forms');
+require('bootstrap-italia/src/js/plugins/track-focus');
+require('bootstrap-italia/src/js/plugins/forward');
+require('bootstrap-italia/src/js/plugins/navbar');
+require('bootstrap-italia/src/js/plugins/navscroll');
+require('bootstrap-italia/src/js/plugins/history-back');
+require('bootstrap-italia/src/js/plugins/notifications');
+require('bootstrap-italia/src/js/plugins/upload');
+require('bootstrap-italia/src/js/plugins/progress-donut');
+require('bootstrap-italia/src/js/plugins/list');
+require('bootstrap-italia/src/js/plugins/imgresponsive');
+require('bootstrap-italia/src/js/plugins/timepicker');
+require('bootstrap-italia/src/js/plugins/input-number');
+//require('bootstrap-italia/src/js/plugins/carousel');
+require('bootstrap-italia/src/js/plugins/transfer');
+require('bootstrap-italia/src/js/plugins/select');
+//require('bootstrap-italia/src/js/plugins/custom-select');
+require('bootstrap-italia/src/js/plugins/rating');
+require('bootstrap-italia/src/js/plugins/dimmer');*/
 
+require("../css/app.scss");
+require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
+require("summernote");
+require("summernote/dist/summernote-bs4.css");
+
+import Calendar from './Calendar';
+import 'formiojs'
+
+Formio.registerComponent('calendar', Calendar);
 
 
 $(document).ready(function () {
@@ -33,8 +79,8 @@ $(document).ready(function () {
   });
 
 
-  $.datepicker.setDefaults($.datepicker.regional['it']);
-// Datepicker
+  /*$.datepicker.setDefaults($.datepicker.regional['it']);
+  // Datepicker
   $(".datepicker").datepicker({
     dateFormat: "dd-mm-yy",
     changeMonth: true,
@@ -42,7 +88,7 @@ $(document).ready(function () {
     yearRange: "-50:+10"
   });
 
-// Range datepicker
+  // Range datepicker
   if ($(".datepicker-range-from").length && $(".datepicker-range-to").length) {
     var dateFormat = "dd-mm-yy",
       from = $(".datepicker-range-from")
@@ -74,6 +120,5 @@ $(document).ready(function () {
       }
       return date;
     }
-  }
-
+  }*/
 });
