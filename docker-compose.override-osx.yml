@@ -17,9 +17,12 @@ services:
     environment:
       ENV: DEV
     volumes:
-      - ./app:/var/www/html/app:delegated
-      - ./src:/var/www/html/src:delegated
-      - docker-sync:/var/www/html
+      - ./app:/var/www/html/app:rw,cached
+      - ./src:/var/www/html/src:rw,cached
+      - ./assets:/var/www/html/assets:rw,cached
+      #- docker-sync:/var/www/html
+      # rw,cached
+      - ./web:/var/www/html/web:rw,cached
 
   apache:
     build:
@@ -28,7 +31,7 @@ services:
       args:
         php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     volumes:
-      - ./web:/var/www/html/web:cached
+      - ./web:/var/www/html/web:ro
 
   pgweb:
     image: sosedoff/pgweb
@@ -39,7 +42,7 @@ services:
     depends_on:
       - postgres
 
-volumes:
+  #volumes:
   ## Docker-sync for macOS users
-  docker-sync:
-    external: true
+  #docker-sync:
+  #  external: true

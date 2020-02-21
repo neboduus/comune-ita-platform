@@ -22,7 +22,7 @@ var formIoI18n = {
     next: 'Successivo',
     previous: 'Precedente',
     cancel: 'Annulla',
-    Submit: 'Invia',
+    submit: 'Invia',
     "Add Another": "Aggiungi"
   }
 };
