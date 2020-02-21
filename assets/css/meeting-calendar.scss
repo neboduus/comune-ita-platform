@@ -61,20 +61,19 @@
   }
 }
 
-.ui-datepicker {
+.slot-calendar .ui-datepicker {
   width: unset;
   td {
     span {
-      text-align: center;
+      text-align: center !important;
       color: #555;
       font-weight: 600;
-      padding: 8px;
+      padding: 8px !important;
       border-radius: 50%;
     }
 
     a {
       text-align: center;
-      color: #555;
       font-weight: 600;
       padding: 8px;
       border-radius: 50%;
@@ -88,6 +87,14 @@
     top: 12px;
     border: 1px solid transparent;
     border-radius: 50%;
+    cursor: pointer;
+    &:hover {
+      background-color: $secondary;
+      color: #fff;
+    }
+    &:before {
+      content: "<";
+    }
   }
 
   .ui-datepicker-next {
@@ -97,6 +104,14 @@
     top: 12px;
     border: 1px solid transparent;
     border-radius: 50%;
+    cursor: pointer;
+    &:hover {
+      background-color: $secondary;
+      color: #fff;
+    }
+    &:before {
+      content: ">";
+    }
   }
 }
 

@@ -43,10 +43,12 @@ require('bootstrap-italia/src/js/plugins/select');
 require('bootstrap-italia/src/js/plugins/rating');
 require('bootstrap-italia/src/js/plugins/dimmer');
 
-require("../css/app.scss");
+
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 require("summernote");
 require("summernote/dist/summernote-bs4.css");
+require("../css/app.scss");
+
 
 import Calendar from './Calendar';
 import 'formiojs'

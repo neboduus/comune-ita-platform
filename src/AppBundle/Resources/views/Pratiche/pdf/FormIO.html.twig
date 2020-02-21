@@ -19,7 +19,7 @@
             </p>
           </td>
           <td>
-            {% if pratica.dematerializedForms.schema[key ~ '.type'] == 'datetime' %}
+            {% if pratica.dematerializedForms.schema[key ~ '.type'] is defined and pratica.dematerializedForms.schema[key ~ '.type'] == 'datetime' %}
               {{ value|date('d-m-Y H:i') }}
             {% else %}
               {{ value }}

@@ -1,4 +1,4 @@
-require('webpack-jquery-ui');
+require('webpack-jquery-ui/datepicker');
 import Base from 'formiojs/components/_classes/component/Component';
 //import editForm from 'formiojs/components/textfield/TextField.form'
 import editForm from './Calendar/Calendar.form'
@@ -68,7 +68,7 @@ export default class FormioCalendar extends Base {
     this.selected = Array.prototype.slice.call(this.refs[`${this.component.key}-selected`], 0);*/
 
     let self = this,
-        array = ["2020-02-18","2020-02-25","2020-02-29"],
+        array = ["2020-02-18","2020-02-25","2020-02-29","2020-03-01","2020-03-05","2020-03-09","2020-03-19","2020-03-21","2020-03-22","2020-03-29"],
         html = '';
 
     this.container = $('#calendar-container-' + this.id);
@@ -155,7 +155,7 @@ export default class FormioCalendar extends Base {
               cssClass = cssClass + ' active';
             }
 
-            html = html.concat('<div class="col-6"><button data-slot="' + element.key +'" class="btn btn-ora '+  cssClass +'">'+ element.key +'</button></div>');
+            html = html.concat('<div class="col-6"><button type="button" data-slot="' + element.key +'" class="btn btn-ora '+  cssClass +'">'+ element.key +'</button></div>');
 
           });
           self.container.find('#slot-picker').html('<div class="col-12"><h6>Orari disponibili per il giorno ' + self.date + '</h6></div>' + html);
