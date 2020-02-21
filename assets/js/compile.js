@@ -1,11 +1,11 @@
-require('bootstrap-italia');
-/*require('../css/app.scss');
+/*require('bootstrap-italia');
+require('../css/app.scss');
 
 require('webpack-jquery-ui');
 require('webpack-jquery-ui/css');
 require('webpack-jquery-ui/datepicker');*/
 
-/*require('bootstrap');
+require('bootstrap');
 require('bootstrap-select');
 require('svgxuse');
 require('bootstrap-italia/src/js/plugins/polyfills/array.from');
@@ -41,7 +41,7 @@ require('bootstrap-italia/src/js/plugins/transfer');
 require('bootstrap-italia/src/js/plugins/select');
 //require('bootstrap-italia/src/js/plugins/custom-select');
 require('bootstrap-italia/src/js/plugins/rating');
-require('bootstrap-italia/src/js/plugins/dimmer');*/
+require('bootstrap-italia/src/js/plugins/dimmer');
 
 require("../css/app.scss");
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
