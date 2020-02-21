@@ -51,43 +51,43 @@ class SubscriptionServiceType extends AbstractType
         'required' => true,
         'label' => 'Descrizione'
       ])
-      ->add('subscriptionBegin', DateType::class, [
+      ->add('subscription_begin', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
         'label' => 'Data di inizio iscrizioni'
       ])
-      ->add('subscriptionEnd', DateType::class, [
+      ->add('subscription_end', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
         'label' => 'Data di fine iscrizioni'
       ])
-      ->add('subscriptionAmount', MoneyType::class, [
+      ->add('subscription_amount', MoneyType::class, [
         'required' => false,
         'label' => 'Quota di iscrizione'
       ])
-      ->add('beginDate', DateType::class, [
+      ->add('begin_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
         'label' => 'Data di inizio'
       ])
-      ->add('endDate', DateType::class, [
+      ->add('end_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
         'label' => 'Data di fine'
       ])
-      ->add('subscribersLimit', NumberType::class, [
+      ->add('subscribers_limit', NumberType::class, [
         'required' => false,
         'label' => 'Limite di iscritti'
       ])
-      ->add('subscriptionMessage', TextareaType::class, [
+      ->add('subscription_message', TextareaType::class, [
         'required' => false,
         'label' => 'Messaggio di iscrizione'
       ])
-      ->add('beginMessage', TextareaType::class, [
+      ->add('begin_message', TextareaType::class, [
         'required' => false,
         'label' => 'Messaggio di inizio'
       ])
-      ->add('endMessage', TextareaType::class, [
+      ->add('end_message', TextareaType::class, [
         'required' => false,
         'label' => 'Messaggio di fine'
       ])
@@ -96,7 +96,7 @@ class SubscriptionServiceType extends AbstractType
         'required' => true,
         'choices' => $statuses
       ])
-      ->add('subscriptionPayments', CollectionType::class, [
+      ->add('subscription_payments', CollectionType::class, [
         'label' => false,
         'entry_type' => SubscriptionPaymentType::class,
         'entry_options' => ['label' => false],
@@ -117,7 +117,8 @@ class SubscriptionServiceType extends AbstractType
   function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => SubscriptionService::class
+      'data_class' => SubscriptionService::class,
+      'csrf_protection' => false
     ));
   }
 

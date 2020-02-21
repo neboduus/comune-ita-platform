@@ -25,8 +25,9 @@ RUN ./compose_conf/php/init-uploads.sh
 
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
-RUN composer install --no-scripts && \
-    bin/console cache:warmup
+RUN composer install --no-scripts
+
+#RUN bin/console cache:warmup
 
 # lo script richiede che il file dei parametri sia già al suo posto
 RUN composer run-script post-docker-install-cmd

@@ -4,8 +4,10 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Swagger\Annotations as SWG;
 
 /**
  * @ORM\Entity
@@ -22,23 +24,28 @@ class Subscription
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
+   * @SWG\Property(description="Subscription's uuid")
    */
   protected $id;
 
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Subscriber", inversedBy="subscriptions")
    * @ORM\JoinColumn(nullable=false)
+   * @SWG\Property(description="Subscription's subscriber")
    */
   private $subscriber;
 
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SubscriptionService", inversedBy="subscriptions")
+   * @Serializer\Exclude()
    * @ORM\JoinColumn(nullable=false)
+   * @SWG\Property(description="Subscription's Subscription Service")
    */
   private $subscription_service;
 
   /**
    * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
+   * @SWG\Property(description="Subscription's creation date")
    */
   private $created_at;
 

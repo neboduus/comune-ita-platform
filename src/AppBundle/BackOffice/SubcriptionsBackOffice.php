@@ -84,7 +84,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     sort($requiredHeaders);
     ksort($fixedData);
 
-    if (json_encode(array_keys($fixedData)) != json_encode($requiredHeaders)) {
+    if (array_values(array_intersect(array_keys($fixedData), $requiredHeaders)) != array_values($requiredHeaders)) {
       return ['error' => 'I campi richiesti non coincidono'];
     }
 

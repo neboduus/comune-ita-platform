@@ -27,6 +27,7 @@ class SubscriptionPaymentType extends AbstractType
   {
     $resolver->setDefaults([
       'data_class' => SubscriptionPayment::class,
+      'csrf_protection' => false
     ]);
   }
 }

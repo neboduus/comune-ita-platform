@@ -190,7 +190,6 @@ class SubscriptionServicesController extends Controller
   public function showSubscriptionServiceAction(Request $request, SubscriptionService $subscriptionService)
   {
     $deleteForm = $this->createDeleteForm($subscriptionService);
-
     return array(
       'subscriptionService' => $subscriptionService,
       'delete_form' => $deleteForm->createView(),
