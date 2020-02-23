@@ -62,7 +62,7 @@ class InstanceKernel extends Kernel
 
   public function registerContainerConfiguration(LoaderInterface $loader)
   {
-    $loader->load($this->getRootDir() . '/config/' . $this->getIdentifier() . '/config_' . $this->getEnvironment() . '.yml');
+    $loader->load($this->getRootDir() . '/config/tenants/' . $this->getIdentifier() . '/config_' . $this->getEnvironment() . '.yml');
   }
 
   /**
