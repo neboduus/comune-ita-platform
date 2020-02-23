@@ -5,3 +5,6 @@ User-agent: *
 Disallow:/*/pratiche
 Disallow:/*/profile
 Disallow:/*/user
+Disallow:/*/operatori
+Disallow:/*/admin
+

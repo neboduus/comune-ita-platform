@@ -25,7 +25,7 @@ elseif ($request->server->has('REQUEST_URI'))
     $identifier = $pathArray[1];
 }
 
-if ( !empty($identifier) && file_exists( __DIR__.'/../app/config/' .$identifier ) )
+if ( !empty($identifier) && file_exists( __DIR__.'/../app/config/tenants/' .$identifier ) )
 {
     $kernel = new InstanceKernel('prod', false);
     $kernel->setIdentifier($identifier);
