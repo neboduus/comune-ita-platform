@@ -97,8 +97,6 @@ $(document).ready(function () {
   // Step Form Fields
   if ($("#formio_builder_render_form_id").length) {
 
-    console.log('1234');
-
     Formio.icons = "fontawesome";
     Formio.builder(document.getElementById("builder"), $('#formio').data('formserver_url') + "/form/" + $("#formio_builder_render_form_id").val(), {
       builder: {
@@ -115,6 +113,7 @@ $(document).ready(function () {
             textfield: true,
             textarea: true,
             checkbox: true,
+            number: true,
             select:true,
             radio:true,
             selectboxes: true,
@@ -142,7 +141,6 @@ $(document).ready(function () {
       },
     }).then(function (builder) {
 
-
       // Inserisco lo schema in un input hidden
       $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
 
@@ -169,6 +167,7 @@ $(document).ready(function () {
       builder.on("removeComponent", function () {
         $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
       });
+
     });
 
   }

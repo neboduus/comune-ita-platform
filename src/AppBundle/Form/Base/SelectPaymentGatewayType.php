@@ -43,11 +43,17 @@ class SelectPaymentGatewayType extends AbstractType
     $helper->setGuideText('steps.common.seleziona_gateway_pagament.guida_alla_compilazione', true);
     $helper->setStepTitle('steps.common.seleziona_gateway_pagament.title', true);
 
+    /** @var Pratica $pratica */
     $pratica = $builder->getData();
-    $entityRepository = $this->em->getRepository('AppBundle:PaymentGateway');
+    $tenantGateways = $pratica->getServizio()->getEnte()->getGateways();
+    // Gateways abilitati nel tenant
+    $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
+      'identifier' => array_keys($tenantGateways)
+    ]);
+    /*$entityRepository = $this->em->getRepository('AppBundle:PaymentGateway');
     $gateways = $entityRepository->findBy([
       'enabled' => 1
-    ]);
+    ]);*/
 
     $builder->add('payment_type', EntityType::class, [
       'class' => 'AppBundle\Entity\PaymentGateway',

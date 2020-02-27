@@ -45,7 +45,7 @@ terms:
 
 servizio:
   crea: 'Crea nuovo servizio'
-  modifica: 'Modifica servizio - %name%'
+  modifica: 'Modifica %name%'
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Il servizio è stato sospeso'
@@ -180,7 +180,7 @@ pratica:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
     descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
   appunti_compilazione:
-    titolo: 'Aggiungi una descrizione ala pratica'
+    titolo: 'Aggiungi una descrizione alla pratica'
     sottotitolo: 'Questa descrizione può essere vista solo da te e ti servirà per riconoscere la pratica più agevolmente'
     placeholder: 'Inserisci una descrizione breve'
   noteDiCompilazione: 'Note di compilazione'

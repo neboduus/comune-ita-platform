@@ -186,15 +186,12 @@ class PaymentDataType extends AbstractType
     $compiled = false;
 
     if (isset($tenantParameters[$gatewayIdentifier]['parameters'][$parameterIdentifier]) && !empty($tenantParameters[$gatewayIdentifier]['parameters'][$parameterIdentifier])) {
-
       $value = $tenantParameters[$gatewayIdentifier]['parameters'][$parameterIdentifier];
       $compiled = true;
 
     } elseif (isset($serviceParameters[$gatewayIdentifier][$parameterIdentifier])  && !empty($serviceParameters[$gatewayIdentifier][$parameterIdentifier])) {
-
       $value = $serviceParameters[$gatewayIdentifier][$parameterIdentifier];
     }
-
 
     $options = [
       'label' => $parameterLabel,
@@ -205,9 +202,8 @@ class PaymentDataType extends AbstractType
 
     if ($compiled) {
       $options['label'] = false;
-      $options['attr'] = ['readonly' => 'readonly', 'class' => 'd-none'];
+      $options['attr'] = ['readonly' => 'readonly'];
     }
-
     return $options;
   }
 

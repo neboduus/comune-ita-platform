@@ -1,13 +1,5 @@
 {% extends '@App/Default/index.html.twig' %}
 
-{% block stylesheets %}
-    {{ parent() }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-{% endblock %}
-
 {% block main_content %}
     <section id="intro" class="container px-4 my-4">
         <div class="row">
@@ -31,23 +23,23 @@
                     <tbody>
                     {% for operatoreUser in operatoreUsers %}
                         <tr>
-                            <td>
+                            <td data-title="Nome">
                                 <a href="{{ path('admin_operatore_show', { 'id': operatoreUser.id }) }}">{{ operatoreUser.nome }} {{ operatoreUser.getCognome }}</a>
                             </td>
-                            <td>{{ operatoreUser.username }}</td>
-                            <td>{{ operatoreUser.email }}</td>
-                            <td>{{ operatoreUser.enabled }}</td>
-                            <td>{% if operatoreUser.lastChangePassword %}{{ operatoreUser.lastChangePassword|date('Y-m-d H:i:s') }}{% endif %}</td>
-                            <td>
-                                <a class="btn btn-primary btn-sm" href="{{ path('admin_operatore_show', { 'id': operatoreUser.id }) }}">Visualizza</a>
-                                <a class="btn btn-warning btn-sm" href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">Modifica</a>
+                            <td data-title="Username">{{ operatoreUser.username }}</td>
+                            <td data-title="Email">{{ operatoreUser.email }}</td>
+                            <td data-title="Stato">{{ operatoreUser.enabled }}</td>
+                            <td data-title="Ultima modifica password">{% if operatoreUser.lastChangePassword %}{{ operatoreUser.lastChangePassword|date('Y-m-d H:i:s') }}{% else %} --- {% endif %}</td>
+                            <td data-title="Azioni" class="actions">
+                              <a class="btn btn-secondary btn-xs" href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">Modifica</a>
+                              <a class="btn btn-danger btn-xs" onclick="return confirm('Sei sicuro di procedere? L\'operatore verrà eliminato definitivamente.');" href="{{ path('admin_operatore_delete', { 'id': operatoreUser.id }) }}">Elimina</a>
                             </td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
                 </div>
-                <a class="btn btn-success btn-primary" href="{{ path('admin_operatore_new') }}">Crea nuovo operatore</a>
+                <a class="btn btn-primary" href="{{ path('admin_operatore_new') }}">Crea nuovo operatore</a>
             </div>
         </div>
     </section>
