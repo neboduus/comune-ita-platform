@@ -17,6 +17,8 @@ services:
       - ./src/AppBundle:/var/www/html/src/AppBundle:rw
 
   apache:
+    depends_on:
+      - php
     build: 
       context: .
       dockerfile: Dockerfile.apache
