@@ -217,7 +217,7 @@ class PraticaEdiliziaAllegatiTecniciType extends AbstractType
         if ($pratica->haUnaRichiestaDiIntegrazioneAttiva()) {
             $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva()->getPayload();
             if (isset( $integrationRequest['elencoAllegatiTecnici'] )) {
-                $elencoAllegatiTecnici = (new MappedPraticaEdilizia())->getElencoAllegatiTecnici()->getProperties();
+                $elencoAllegatiTecnici = (new MappedPraticaEdilizia($pratica->getDematerializedForms()))->getElencoAllegatiTecnici()->getProperties();
                 $integrazioneAllegati = array_intersect(
                     $elencoAllegatiTecnici,
                     (array)$integrationRequest['elencoAllegatiTecnici']
