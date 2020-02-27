@@ -282,6 +282,11 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\OperatoreUserType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
   ocsdc.form.type.payment_gateway_type: '@AppBundle\Form\Base\PaymentGatewayType'
 
   ocsdc.form.flow.pratica:
