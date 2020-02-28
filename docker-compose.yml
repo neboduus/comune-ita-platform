@@ -11,7 +11,7 @@ services:
       DB_PASSWORD: $DB_PASSWORD
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./compose_conf/postgres:/docker-entrypoint-initdb.d 
+      - ./compose_conf/postgres:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data/pgdata
 
   php:
@@ -22,7 +22,7 @@ services:
       SYMFONY_ENV: $SYMFONY_ENV
       PREFIX: $PREFIX
       DB_DRIVER: $DB_DRIVER
-      DB_HOST: $DB_HOST 
+      DB_HOST: $DB_HOST
       DB_PORT: $DB_PORT
       DB_NAME: $DB_NAME
       DB_USER: $DB_USER

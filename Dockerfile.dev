@@ -1,4 +1,5 @@
-FROM wodby/php:7.3-dev-macos-4.12.12
+# prepare the vendor dir for symfony
+FROM wodby/php:7.3-dev-macos-4.12.12 as builder
 
 USER root
 
