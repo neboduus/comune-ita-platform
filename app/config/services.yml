@@ -14,6 +14,12 @@ services:
   AppBundle\Controller\Rest\ApplicationsAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\CalendarsAPIController:
+    autowire: true
+
+  AppBundle\Controller\Rest\MeetingsAPIController:
+    autowire: true
+    
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
 
@@ -31,6 +37,11 @@ services:
 
   AppBundle\Form\OccupazioneSuoloPubblico\ImportoChecker:
     autowire: true
+
+  AppBundle\Form\MeetingType:
+    autowire: true
+    tags:
+       - { name: form.type }
 
   AppBundle\Services\MyPayService:
     autowire: true
