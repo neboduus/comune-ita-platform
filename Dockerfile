@@ -1,3 +1,17 @@
+# prepare assets for symfony
+FROM node:10.15.0 as assets
+
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app
+
+COPY package.json package.json yarn.lock yarn.lock webpack.config.js ./
+
+RUN yarn install
+
+COPY assets ./assets
+RUN yarn encore production
+RUN ls -l web
+
 # prepare the vendor dir for symfony
 FROM wodby/php:7.3 as builder
 
@@ -26,6 +40,7 @@ ENV PHP_FPM_GROUP=wodby
 WORKDIR /var/www/html
 
 COPY --chown=wodby:wodby ./ .
+COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
 
 COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
 RUN chmod 755 ./bin/*.sh
