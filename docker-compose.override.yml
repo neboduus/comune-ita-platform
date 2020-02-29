@@ -19,7 +19,7 @@ services:
   apache:
     depends_on:
       - php
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.apache
       args:

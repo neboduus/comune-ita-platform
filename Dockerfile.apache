@@ -1,19 +1,6 @@
 ARG php_image
 FROM ${php_image} as php
 
-FROM node:10.15.0 as assets
-
-RUN mkdir -p /home/node/app
-WORKDIR /home/node/app
-
-COPY package.json package.json yarn.lock yarn.lock webpack.config.js ./
-
-RUN yarn install
-
-COPY assets ./assets
-RUN yarn encore production
-RUN ls -l web 
-
 FROM centos:7
 
 # add Shibboleth repo
@@ -43,7 +30,6 @@ RUN chmod +x \
     /usr/local/bin/docker-bootstrap.sh
 
 COPY --from=php /var/www/html/web /var/www/html/web
-COPY --from=assets /home/node/app/web/* /var/www/html/web/
 
 # run it
 EXPOSE 80 443
