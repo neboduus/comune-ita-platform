@@ -30,6 +30,13 @@ class Servizio
   const STATUS_SUSPENDED = 2;
 
 
+  const ACCESS_LEVEL_ANONYMOUS = 0;
+  const ACCESS_LEVEL_SOCIAL = 1000;
+  const ACCESS_LEVEL_SPID_L1 = 2000;
+  const ACCESS_LEVEL_SPID_L2 = 3000;
+  const ACCESS_LEVEL_CIE = 4000;
+
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
@@ -217,6 +224,12 @@ class Servizio
   private $status;
 
   /**
+   * @ORM\Column(type="integer", nullable=true)
+   * @SWG\Property(description="Accepts values: 0 - Anonymous, 1000 - Social, 2000 - Spid level 1, 3000 - Spid level 2, 4000 - Cie")
+   */
+  private $accessLevel;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -230,6 +243,7 @@ class Servizio
     $this->flowSteps = new ArrayCollection();
     //$this->paymentParameters = new ArrayCollection();
     $this->status = self::STATUS_AVAILABLE;
+    $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
   }
 
   /**
@@ -755,6 +769,24 @@ class Servizio
   public function setIntegrations($integrations): Servizio
   {
     $this->integrations = $integrations;
+    return $this;
+  }
+
+  /**
+   * @return int
+   */
+  public function getAccessLevel()
+  {
+    return $this->accessLevel;
+  }
+
+  /**
+   * @param int $accessLevel
+   * @return $this;
+   */
+  public function setAccessLevel(int $accessLevel)
+  {
+    $this->accessLevel = $accessLevel;
     return $this;
   }
 

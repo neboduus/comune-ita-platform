@@ -99,7 +99,7 @@ services:
     image: mongo
     restart: unless-stopped
     volumes:
-      - 'mongo:/data/formmanager'
+      - 'mongo:/data'
       - './compose_conf/mongo/dump/:/dump/'
       - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
 

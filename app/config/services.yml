@@ -19,8 +19,11 @@ services:
 
   AppBundle\Controller\Rest\MeetingsAPIController:
     autowire: true
-    
+
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
+    autowire: true
+
+  AppBundle\Controller\PraticheAnonimeController:
     autowire: true
 
   GuzzleHttp\Client: '@guzzle.client.mypay'
@@ -294,6 +297,11 @@ services:
       - { name: form.type }
 
   AppBundle\Form\OperatoreUserType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\FormIO\FormIOAnonymousRenderType:
     autowire: true
     tags:
       - { name: form.type }

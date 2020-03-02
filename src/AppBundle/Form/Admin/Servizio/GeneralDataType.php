@@ -25,6 +25,14 @@ class GeneralDataType extends AbstractType
       'Sospeso'    => Servizio::STATUS_SUSPENDED
     ];
 
+    $accessLevels = [
+      'Anonimo'        => Servizio::ACCESS_LEVEL_ANONYMOUS,
+      'Social'         => Servizio::ACCESS_LEVEL_SOCIAL,
+      'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
+      'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
+      'Cie'            => Servizio::ACCESS_LEVEL_CIE,
+    ];
+
     $builder->add(
       "name", TextType::class, [
         "label" => 'Nome del servizio',
@@ -67,6 +75,10 @@ class GeneralDataType extends AbstractType
       ->add('status', ChoiceType::class, [
         'label' => 'Stato',
         'choices' => $statuses
+      ])
+      ->add('access_level', ChoiceType::class, [
+        'label' => 'Livello di accesso al servizio',
+        'choices' => $accessLevels
       ]);
   }
 
