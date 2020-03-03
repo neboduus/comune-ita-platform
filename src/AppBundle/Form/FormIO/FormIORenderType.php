@@ -58,6 +58,7 @@ class FormIORenderType extends AbstractType
     $helper = $options["helper"];
     $helper->setStepTitle('steps.scia.modulo_default.label', true);
     $data = $this->setupHelperData($pratica);
+
     $builder
       ->add('form_id', HiddenType::class,
         [
@@ -66,9 +67,16 @@ class FormIORenderType extends AbstractType
           'required' => false,
         ]
       )
+      ->add('applicant_fields_count', HiddenType::class,
+        [
+          'attr' => ['value' => $data['fields_count']],
+          'mapped' => false,
+          'required' => false,
+        ]
+      )
       ->add('dematerialized_forms', HiddenType::class,
         [
-          'attr' => ['value' => $data],
+          'attr' => ['value' => \json_encode($data['user_data'])],
           'mapped' => false,
           'required' => false,
         ]
@@ -121,75 +129,84 @@ class FormIORenderType extends AbstractType
    */
   private function setupHelperData(FormIO $pratica)
   {
-    $data = $pratica->getDematerializedForms();
-
+    //$data = $pratica->getDematerializedForms();
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
-    if (empty($data)) {
-      $applicant = [];
-      $cpsUserData = [];
+    $fieldsCount = 0;
+    $applicant = [];
+    $cpsUserData = [];
 
-      $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
-      if ($result['status'] == 'success') {
-        $schema = $this->arrayFlat($result['schema']);
-        foreach ($schema as $k => $v) {
-          $kParts = explode('.', $k);
-          if ($kParts[0] == 'applicant') {
-            array_pop($kParts);
-            $key = implode('.', $kParts);
-            if (!in_array($key, $applicant)) {
-              $applicant[]= $key;
-            }
+    $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
+    if ($result['status'] == 'success') {
+      $schema = $this->arrayFlat($result['schema']);
+      foreach ($schema as $k => $v) {
+        $kParts = explode('.', $k);
+        if ($kParts[0] == 'applicant') {
+          array_pop($kParts);
+          $key = implode('.', $kParts);
+          if (!in_array($key, $applicant)) {
+            $applicant[] = $key;
           }
         }
       }
+    }
 
-      if (!empty($applicant)) {
-        if (in_array('applicant.data.completename.data.name', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['completename']['data']['name'] = $user->getNome();
-        }
+    if (!empty($applicant)) {
+      if (in_array('applicant.data.completename.data.name', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['completename']['data']['name'] = $user->getNome();
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.completename.data.surname', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['completename']['data']['surname'] = $user->getCognome();
-        }
+      if (in_array('applicant.data.completename.data.surname', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['completename']['data']['surname'] = $user->getCognome();
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.Born.data.natoAIl', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['Born']['data']['natoAIl'] = $user->getDataNascita()->format(DateTime::ISO8601);
-        }
+      if (in_array('applicant.data.Born.data.natoAIl', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['Born']['data']['natoAIl'] = $user->getDataNascita()->format(DateTime::ISO8601);
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.Born.data.place_of_birth', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['Born']['data']['place_of_birth'] = $user->getLuogoNascita();
-        }
+      if (in_array('applicant.data.Born.data.place_of_birth', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['Born']['data']['place_of_birth'] = $user->getLuogoNascita();
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.fiscal_code.data.fiscal_code', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['fiscal_code']['data']['fiscal_code'] = $user->getCodiceFiscale();
-        }
+      if (in_array('applicant.data.fiscal_code.data.fiscal_code', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['fiscal_code']['data']['fiscal_code'] = $user->getCodiceFiscale();
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.address.data.address', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['address'] = $user->getIndirizzoResidenza();
-        }
+      if (in_array('applicant.data.address.data.address', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['address']['data']['address'] = $user->getIndirizzoResidenza();
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.address.data.house_number', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['house_number'] = '';
-        }
+      if (in_array('applicant.data.address.data.house_number', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['address']['data']['house_number'] = '';
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.address.data.municipality', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['municipality'] = $user->getCittaResidenza();
-        }
+      if (in_array('applicant.data.address.data.municipality', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['address']['data']['municipality'] = $user->getCittaResidenza();
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.address.data.postal_code', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['postal_code'] = $user->getCapResidenza();
-        }
+      if (in_array('applicant.data.address.data.postal_code', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['address']['data']['postal_code'] = $user->getCapResidenza();
+        $fieldsCount++;
+      }
 
-        if (in_array('applicant.data.email_address', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['email_address'] = $user->getEmail();
-        }
-
-        return json_encode($cpsUserData);
+      if (in_array('applicant.data.email_address', $applicant)) {
+        $cpsUserData['data']['applicant']['data']['email_address'] = $user->getEmail();
+        $fieldsCount++;
       }
     }
-    return json_encode($data);
+    return array(
+        'fields_count' => $fieldsCount,
+        'user_data'    => $cpsUserData
+    );
   }
 
   /**
