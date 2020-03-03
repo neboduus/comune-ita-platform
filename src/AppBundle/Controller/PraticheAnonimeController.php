@@ -104,6 +104,11 @@ class PraticheAnonimeController extends Controller
    */
   public function newAction(Request $request, Servizio $servizio)
   {
+    if ($servizio->getAccessLevel() > 0 || $servizio->getAccessLevel() === null) {
+      $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' è disponibile solo per gli utenti loggati.');
+      return $this->redirectToRoute('servizi_list');
+    }
+
     $pratica = $this->createNewPratica($servizio);
 
     $instanceService = $this->container->get('ocsdc.instance_service');
