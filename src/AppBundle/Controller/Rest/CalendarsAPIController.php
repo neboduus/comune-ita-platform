@@ -99,7 +99,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive Calendar's availabilities",
+   *     description="Retreive Calendar's available days",
    * )
    *
    * @SWG\Response(

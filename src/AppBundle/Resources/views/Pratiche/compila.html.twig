@@ -76,10 +76,10 @@
           .then(function (form) {
 
             // Disable applicant inputs
-            // todo: find beter way
+            var fieldsCount = $('#formio_render_applicant_fields_count').val();
             form.formReady.then(() => {
               var disableApplicant = function(){
-                if( $('.formio-component-applicant input').length == 11 ) {
+                if( $('.formio-component-applicant input').length == fieldsCount ) {
                   $('.formio-component-applicant input').attr('disabled', 'disabled')
                 }
                 else {
