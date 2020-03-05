@@ -34,9 +34,8 @@ services:
       - ./app:/var/www/html/app:rw,cached
       - ./src:/var/www/html/src:rw,cached
       - ./assets:/var/www/html/assets:rw,cached
-      #- docker-sync:/var/www/html
-      # rw,cached
       - ./web:/var/www/html/web:rw,cached
+      - ./var/uploads:/var/www/html/var/uploads:rw,cached
 
   apache:
     build:
@@ -55,6 +54,29 @@ services:
       - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=disable
     depends_on:
       - postgres
+
+  gotemberg:
+    image: thecodingmachine/gotenberg:6
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      #start_period: 5s
+    environment:
+      LOG_LEVEL: INFO
+      # DEFAULT_LISTEN_PORT: 3000
+      # DISABLE_GOOGLE_CHROME: 0
+      # DEFAULT_GOOGLE_CHROME_RPCC_BUFFER_SIZE: "1048576" #1Mb, max 100Mb
+      DISABLE_UNOCONV: 1
+      #DEFAULT_WAIT_TIMEOUT: 5
+      #MAXIMUM_WAIT_TIMEOUT: 30
+      #DEFAULT_WEBHOOK_URL_TIMEOUT: "2.5"
+      #MAXIMUM_WEBHOOK_URL_TIMEOUT: "2.5"
+      #MAXIMUM_WAIT_DELAY: "2.5"
 
   #volumes:
   ## Docker-sync for macOS users

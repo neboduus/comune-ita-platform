@@ -129,83 +129,89 @@ class FormIORenderType extends AbstractType
    */
   private function setupHelperData(FormIO $pratica)
   {
-    //$data = $pratica->getDematerializedForms();
-    /** @var CPSUser $user */
-    $user = $pratica->getUser();
+    $data = $pratica->getDematerializedForms();
+    if (empty($data)) {
+      /** @var CPSUser $user */
+      $user = $pratica->getUser();
 
-    $fieldsCount = 0;
-    $applicant = [];
-    $cpsUserData = [];
+      $fieldsCount = 0;
+      $applicant = [];
+      $cpsUserData = [];
 
-    $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
-    if ($result['status'] == 'success') {
-      $schema = $this->arrayFlat($result['schema']);
-      foreach ($schema as $k => $v) {
-        $kParts = explode('.', $k);
-        if ($kParts[0] == 'applicant') {
-          array_pop($kParts);
-          $key = implode('.', $kParts);
-          if (!in_array($key, $applicant)) {
-            $applicant[] = $key;
+      $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
+      if ($result['status'] == 'success') {
+        $schema = $this->arrayFlat($result['schema']);
+        foreach ($schema as $k => $v) {
+          $kParts = explode('.', $k);
+          if ($kParts[0] == 'applicant') {
+            array_pop($kParts);
+            $key = implode('.', $kParts);
+            if (!in_array($key, $applicant)) {
+              $applicant[] = $key;
+            }
           }
         }
       }
-    }
 
-    if (!empty($applicant)) {
-      if (in_array('applicant.data.completename.data.name', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['completename']['data']['name'] = $user->getNome();
-        $fieldsCount++;
-      }
+      if (!empty($applicant)) {
+        if (in_array('applicant.data.completename.data.name', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['completename']['data']['name'] = $user->getNome();
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.completename.data.surname', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['completename']['data']['surname'] = $user->getCognome();
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.completename.data.surname', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['completename']['data']['surname'] = $user->getCognome();
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.Born.data.natoAIl', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['Born']['data']['natoAIl'] = $user->getDataNascita()->format(DateTime::ISO8601);
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.Born.data.natoAIl', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['Born']['data']['natoAIl'] = $user->getDataNascita()->format(DateTime::ISO8601);
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.Born.data.place_of_birth', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['Born']['data']['place_of_birth'] = $user->getLuogoNascita();
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.Born.data.place_of_birth', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['Born']['data']['place_of_birth'] = $user->getLuogoNascita();
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.fiscal_code.data.fiscal_code', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['fiscal_code']['data']['fiscal_code'] = $user->getCodiceFiscale();
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.fiscal_code.data.fiscal_code', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['fiscal_code']['data']['fiscal_code'] = $user->getCodiceFiscale();
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.address.data.address', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['address']['data']['address'] = $user->getIndirizzoResidenza();
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.address.data.address', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['address'] = $user->getIndirizzoResidenza();
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.address.data.house_number', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['address']['data']['house_number'] = '';
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.address.data.house_number', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['house_number'] = '';
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.address.data.municipality', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['address']['data']['municipality'] = $user->getCittaResidenza();
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.address.data.municipality', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['municipality'] = $user->getCittaResidenza();
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.address.data.postal_code', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['address']['data']['postal_code'] = $user->getCapResidenza();
-        $fieldsCount++;
-      }
+        if (in_array('applicant.data.address.data.postal_code', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['postal_code'] = $user->getCapResidenza();
+          $fieldsCount++;
+        }
 
-      if (in_array('applicant.data.email_address', $applicant)) {
-        $cpsUserData['data']['applicant']['data']['email_address'] = $user->getEmail();
-        $fieldsCount++;
+        if (in_array('applicant.data.email_address', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['email_address'] = $user->getEmail();
+          $fieldsCount++;
+        }
       }
+      return array(
+        'fields_count' => $fieldsCount,
+        'user_data' => $cpsUserData
+      );
     }
     return array(
-        'fields_count' => $fieldsCount,
-        'user_data'    => $cpsUserData
+      'fields_count' => 11,
+      'user_data' => $data
     );
   }
 

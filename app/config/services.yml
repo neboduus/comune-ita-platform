@@ -139,6 +139,7 @@ services:
       - "%wkhtmltopdf_service%"
       - "@templating"
       - "%ocsdc_default_datetime_format%"
+      - "@router"
 
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"

@@ -12,7 +12,6 @@
   {{ encore_entry_script_tags('compile') }}
   <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
   <script>
     $(document).ready(function () {
       if ($('#formio_render_form_id').length) {
@@ -106,7 +105,7 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-8 px-lg-4">
+      <div class="col-lg-4 px-lg-4 order-lg-2">
         <div class="callout">
           <div class="callout-title">
             Info
@@ -117,12 +116,9 @@
             <span>Accedi</span>
           </a>
         </div>
-
       </div>
-    </div>
 
-    <div class="row mt-4">
-      <div class="col-lg-8 px-lg-4">
+      <div class="col-lg-8 px-lg-4 order-lg-1 mt-4">
         {#{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }#}
         {{ form_start(form) }}
         {{ form_errors(form) }}

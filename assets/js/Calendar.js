@@ -154,10 +154,11 @@ export default class FormioCalendar extends Base {
         calendarID = this.component.calendarId,
         html = '',
         location = window.location,
-        explodedPath = location.pathname.split("/");
+        explodedPath = location.pathname.split("/"),
+        parsedDate = moment(self.date, 'DD-MM-YYYY');
 
     this.container.find('#slot-picker').html(html);
-    $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities/' + self.date,
+    $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities/' + parsedDate.format('YYYY-MM-DD'),
       {
         dataType: 'json', // type of response data
         success: function (data, status, xhr) {   // success callback function

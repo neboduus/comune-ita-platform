@@ -63,6 +63,7 @@
 
 .slot-calendar .ui-datepicker {
   width: unset;
+
   td {
     span {
       text-align: center !important;
@@ -88,10 +89,12 @@
     border: 1px solid transparent;
     border-radius: 50%;
     cursor: pointer;
+
     &:hover {
       background-color: $secondary;
       color: #fff;
     }
+
     &:before {
       content: "<";
     }
@@ -105,10 +108,12 @@
     border: 1px solid transparent;
     border-radius: 50%;
     cursor: pointer;
+
     &:hover {
       background-color: $secondary;
       color: #fff;
     }
+
     &:before {
       content: ">";
     }
@@ -221,26 +226,6 @@
   }
 }
 
-html {
-  .ui-button.ui-state-disabled {
-    &:hover {
-      border: 0;
-      background: transparent;
-      font-weight: 600;
-      color: #555;
-      border: 1px solid transparent;
-    }
-
-    &:active {
-      border: 0;
-      background: transparent;
-      font-weight: 600;
-      color: #555;
-      border: 1px solid transparent;
-    }
-  }
-}
-
 .ui-state-active {
   background-color: $primary;
   -webkit-box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
@@ -291,7 +276,7 @@ a.ui-button {
 
   td.ui-state-disabled {
     opacity: 0.6;
-    background-color: #f2f2f2;
+    background-color: #ddd;
   }
 
   td.ui-datepicker-other-month {
@@ -317,78 +302,66 @@ a.ui-button {
 }
 
 @media(max-width: 767px) {
-.ui-datepicker {
-  width: 100%;
-  margin-bottom: 40px;
-}
-
-.slot-calendar {
   .ui-datepicker {
-    table {
-      font-size: 1em;
-    }
+    width: 100%;
+    margin-bottom: 40px;
+  }
 
-    th {
-      text-align: left;
-      padding-left: 0;
+  .slot-calendar {
+    .ui-datepicker {
+      table {
+        font-size: 1em;
+      }
 
-      span {
-        text-align: center;
-        width: 40px;
-        display: block;
+      th {
+        text-align: left;
+        padding-left: 0;
+
+        span {
+          text-align: center;
+          width: 40px;
+          display: block;
+        }
       }
     }
   }
-}
 
-.ui-state-default {
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ui-widget-content {
   .ui-state-default {
     height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-}
 
-.ui-widget-header {
-  .ui-state-default {
+  .ui-widget-content {
+    .ui-state-default {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .ui-widget-header {
+    .ui-state-default {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .ui-button {
     height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
 }
 
-.ui-button {
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-html {
-  .ui-button.ui-state-disabled {
-    &:hover {
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    &:active {
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+@include media-breakpoint-up(md) {
+  #slot-picker {
+    margin-left: 1rem;
   }
-}
-
 }

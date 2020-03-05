@@ -13,7 +13,7 @@
     <p>
         {{ 'contributo_associazioni.pdf.richiesta'|trans() }}
     </p>
- 
+
     <p><strong>{{ 'steps.common.org_richiedente.title'|trans }}</strong></p>
     <table class="table">
         <tr>
@@ -62,7 +62,7 @@
         </tr>
     </table>
 
-    <p><strong>{{ 'steps.contributo_associazioni.tipologia_attivita.title'|trans }}</strong></p>    
+    <p><strong>{{ 'steps.contributo_associazioni.tipologia_attivita.title'|trans }}</strong></p>
     <table class="table">
         <tr>
             <th>{{ 'steps.contributo_associazioni.tipologia_attivita.tipologia'|trans }}</th>
@@ -87,7 +87,7 @@
         </tr>
     </table>
 
-    <p><strong>{{ 'steps.common.dati_conto_corrente.title'|trans }}</strong></p>    
+    <p><strong>{{ 'steps.common.dati_conto_corrente.title'|trans }}</strong></p>
     <table class="table">
         <tr>
             <th>{{ 'steps.common.dati_conto_corrente.iban'|trans }}</th>
@@ -98,12 +98,13 @@
             <td>{{ pratica.intestatarioConto }}</td>
         </tr>
     </table>
-    
+
 </div>
 
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 {{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 {{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
+{{ include('AppBundle:Pratiche/pdf/parts:footer.html.twig') }}
 </body>
 </html>
