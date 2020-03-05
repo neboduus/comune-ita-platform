@@ -33,7 +33,7 @@ class OpeningHour
 
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar")
-   * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false)
+   * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
    * @SWG\Property(description="Opening Hour's calendar id", type="guid")
    * @Serializer\Exclude()
@@ -462,7 +462,6 @@ class OpeningHour
           'end_time' => $_end->format('H:i'),
         ];
       }
-
     }
     return $intervals;
   }
@@ -473,13 +472,19 @@ class OpeningHour
    * @return array
    * @throws \Exception
    */
-  function explodeDays()
+
+  function explodeDays($all = false)
   {
     $array = array();
 
-    $start = max(new DateTime(), $this->startDate);
-    $rollingInterval = new DateInterval('P' . $this->getCalendar()->getRollingDays() . 'D');
-    $end = min((new DateTime())->add($rollingInterval), $this->endDate);
+    if ($all) {
+      $start = $this->startDate;
+      $end = $this->endDate;
+    } else {
+      $start = max(new DateTime(), $this->startDate);
+      $rollingInterval = new DateInterval('P' . $this->getCalendar()->getRollingDays() . 'D');
+      $end = min((new DateTime())->add($rollingInterval), $this->endDate);
+    }
     // Variable that store the date interval of period 1 day
     $interval = new DateInterval('P1D');
 
@@ -493,5 +498,37 @@ class OpeningHour
       }
     }
     return $array;
+  }
+
+
+  public function getInterval()
+  {
+    $dates = [];
+    $startHour = $this->getBeginHour()->format('H');
+    $startMinutes = $this->getBeginHour()->format('i');
+    $startSeconds = $this->getBeginHour()->format('s');
+
+    $endHour = $this->getEndHour()->format('H');
+    $endMinutes = $this->getEndHour()->format('i');
+    $endSeconds = $this->getEndHour()->format('s');
+
+    foreach ($this->explodeDays(false) as $date) {
+      $add = true;
+      foreach ($this->getCalendar()->getClosingPeriods() as $closingPeriod) {
+        if (new DateTime($date) >= $closingPeriod->getFromTime() && new DateTime($date) <= $closingPeriod->getToTime()) {
+          $add = false;
+        }
+      }
+      if ($add) {
+        $dates[] = [
+          'title'=> 'Apertura',
+          'start' => (new DateTime ($date))->setTime($startHour, $startMinutes, $startSeconds)->format('c'),
+          'end' => (new DateTime ($date))->setTime($endHour, $endMinutes, $endSeconds)->format('c'),
+          'rendering' => 'background',
+          'color' => 'var(--blue)'
+        ];
+      }
+    }
+    return $dates;
   }
 }

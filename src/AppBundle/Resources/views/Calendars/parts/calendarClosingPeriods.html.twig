@@ -1,0 +1,72 @@
+<label style="font-weight: 600; padding: 0 0.5rem;">Giorni di chiusura</label>
+<fieldset class="bg-light p-3 mb-3">
+  <div id="closing_periods"
+       data-prototype='
+             <div id="appbundle_calendar_closing_periods___name__">
+               <div class="row">
+                 <div class="col-5">
+                   <div class="form-group">
+                     <label for="appbundle_calendar_closing_periods___name___from_time" class="required">Da</label>
+                     <input type="date" id="appbundle_calendar_closing_periods___name___from_time" name="appbundle_calendar[closing_periods][__name__][from_time]" required="required" class="form-control" />
+                   </div>
+                 </div>
+                 <div class="col-5">
+                   <div class="form-group">
+                     <label for="appbundle_calendar_closing_periods___name___to_time" class="required">A</label>
+                     <input type="date" id="appbundle_calendar_closing_periods___name___to_time" name="appbundle_calendar[closing_periods][__name__][to_time]" required="required" class="form-control" />
+                   </div>
+                 </div>
+                 <div class="col-2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>&nbsp;</label>
+                    <a class="btn btn-danger btn-xs js-remove-closing_period" href="#">
+                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+                      <span class="d-none d-md-block">Elimina Chiusura</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+               </div>
+             </div>
+             <div class="clearfix mb-4"></div>'
+       data-widget-closing_period="{{ '<div class="js-closing_period-item"></div>'|e }}"
+       data-widget-counter="{{ form.closing_periods|length }}">
+    {% if form.closing_periods|length > 0 %}
+      {% for closing_period in form.closing_periods %}
+        <div class="js-closing_period-item">
+          <div id="appbundle_calendar_closing_periods___name__">
+            <div class="row">
+              <div class="col-5">
+                {{ form_row(closing_period.from_time) }}
+              </div>
+              <div class="col-5">
+                {{ form_row(closing_period.to_time) }}
+              </div>
+              <div class="col-2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>&nbsp;</label>
+                    <a class="btn btn-danger btn-xs js-remove-closing_period" href="#">
+                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+                      <span class="d-none d-md-block">Elimina chiusura</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix mb-4"></div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info" id="no-closing_periods">Non sono presenti periodi di chiusura</div>
+    {% endif %}
+  </div>
+  <button type="button"
+          class="add-another-closing_period-widget btn btn-xs btn-primary"
+          class="add-another-closing_period-widget btn btn-xs btn-primary"
+          data-list-selector="#closing_periods">Aggiungi periodo di chiusura
+  </button>
+</fieldset>
+

@@ -1,0 +1,160 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.flash.min.js"></script>
+<script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+<script>
+  var oldExportAction = function (self, e, dt, button, config) {
+    if (button[0].className.indexOf('buttons-excel') >= 0) {
+      if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+        $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+      } else {
+        $.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+      }
+    } else if (button[0].className.indexOf('buttons-csv') >= 0) {
+      if ($.fn.dataTable.ext.buttons.csvHtml5.available(dt, config)) {
+        $.fn.dataTable.ext.buttons.csvHtml5.action.call(self, e, dt, button, config);
+      } else {
+        $.fn.dataTable.ext.buttons.csvFlash.action.call(self, e, dt, button, config);
+      }
+    } else if (button[0].className.indexOf('buttons-print') >= 0) {
+      $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+    } else if ((button[0].className.indexOf('buttons-pdf') >= 0)) {
+      if ($.fn.dataTable.ext.buttons.pdfHtml5.available(dt, config)) {
+        $.fn.dataTable.ext.buttons.pdfHtml5.action.call(self, e, dt, button, config);
+      } else {
+        $.fn.dataTable.ext.buttons.pdfFlash.action.call(self, e, dt, button, config);
+      }
+    }
+  };
+
+  var newExportAction = function (e, dt, button, config) {
+    var self = this;
+    var oldStart = dt.settings()[0]._iDisplayStart;
+
+    dt.one('preXhr', function (e, s, data) {
+      // Just this once, load all data from the server...
+      data.start = 0;
+      data.length = 2147483647;
+
+      dt.one('preDraw', function (e, settings) {
+        // Call the original action function
+        oldExportAction(self, e, dt, button, config);
+
+        dt.one('preXhr', function (e, s, data) {
+          // DataTables thinks the first item displayed is index 0, but we're not drawing that.
+          // Set the property to what it was before exporting.
+          settings._iDisplayStart = oldStart;
+          data.start = oldStart;
+        });
+
+        // Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+        setTimeout(dt.ajax.reload, 0);
+
+        // Prevent rendering of the full data to the DOM
+        return false;
+      });
+    });
+
+    // Requery the server with the new one-time export settings
+    dt.ajax.reload();
+  };
+
+  $(function () {
+    $('#meetings_table').initDataTables({{ datatable_settings(datatable) }}, {
+      dom: 'fBrtip',
+      serverSide: false,
+      searching: true,
+      paging: true,
+      pagingType: 'simple_numbers',
+      buttons: [
+        {
+          extend: 'excel',
+          text: '<i class="fas fa-file-excel"></i><span class="d-none d-xl-inline-block">&nbsp Esporta Excel</span>',
+          title: 'Iscrizioni',
+          action: newExportAction,
+          className: 'btn btn-sm btn-primary'
+        },
+        {
+          extend: 'csv',
+          text: '<i class="fas fa-file-csv"></i><span class="d-none d-xl-inline-block">&nbsp Esporta CSV</span>',
+          title: 'Iscrizioni',
+          action: newExportAction,
+          className: 'btn btn-sm btn-primary'
+        },
+        {
+          extend: 'pdf',
+          text: '<i class="fas fa-file-pdf"></i><span class="d-none d-xl-inline-block">&nbsp Esporta PDF</span>',
+          title: 'Iscrizioni',
+          pageSize: 'LEGAL',
+          action: newExportAction,
+          className: 'btn btn-sm btn-primary'
+        },
+        {
+          extend: 'print',
+          text: '<i class="fas fa-print"></i><span class="d-none d-xl-inline-block">&nbsp Stampa</span>',
+          title: 'Iscrizioni',
+          action: newExportAction,
+          className: 'btn btn-sm btn-primary'
+        }
+      ],
+      "language": {
+        "sEmptyTable": "Nessun dato presente nella tabella",
+        "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
+        "sInfoEmpty": "Vista da 0 a 0 di 0 elementi",
+        "sInfoFiltered": "(filtrati da _MAX_ elementi totali)",
+        "sInfoPostFix": "",
+        "sInfoThousands": ".",
+        "sLengthMenu": "Visualizza _MENU_ elementi",
+        "sLoadingRecords": "Caricamento...",
+        "sProcessing": '<div class="progress-spinner progress-spinner-double progress-spinner-active">\n' +
+          '        <div class="progress-spinner-inner"></div>\n' +
+          '        <div class="progress-spinner-inner"></div>\n' +
+          '        <span class="sr-only">Caricamento...</span>\n' +
+          '      </div>',
+        "sSearch": "Ricerca",
+        "sZeroRecords": "La ricerca non ha portato alcun risultato.",
+        "oPaginate": {
+          "sFirst": "Inizio",
+          "sPrevious": "Precedente",
+          "sNext": "Successivo",
+          "sLast": "Fine"
+        },
+        "oAria": {
+          "sSortAscending": ": attiva per ordinare la colonna in ordine crescente",
+          "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+        },
+      },
+      initComplete: function () {
+        $('#meetings_table thead tr th').each(function (index, element) {
+          index += 1;
+          $('tr td:nth-child(' + index + ')').attr('data-title', element.innerHTML);
+        });
+
+        // Use bootstrap buttons for pagination
+        $('a.paginate_button').addClass('btn');
+        // Add margin bottom to datatables info
+        $('#dt_info').css('margin-bottom', '0.85em')
+      }
+    }).then(function (dt) {
+    })
+  });
+</script>
+
+  <div class="py-4">
+    <div class="col">
+      <div id="no-more-tables">
+        <div id="meetings_table"></div>
+      </div>
+    </div>
+  </div>

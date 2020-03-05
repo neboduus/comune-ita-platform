@@ -1,0 +1,71 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="modalNew">
+  <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button id="modalClose" class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <svg class="icon">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-title mx-4">
+        <input id="modalNewName" type="text" placeholder="Nome e cognome">
+      </div>
+      <div class="modal-body">
+        <div id="modalId" class="d-none"></div>
+        <div class="d-none" id="modalNewStatus"></div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use>
+            </svg>
+          </div>
+          <div class="col-4">
+            <input id="modalNewDate" type="date">
+          </div>
+          <div class="col-1"></div>
+          <div class="col-3">
+            <input type="text" id="modalNewSlot" list="slots" class="custom-select custom-select-sm" onclick="this.value = ''">
+            <datalist id="slots"></datalist>
+          </div>
+        </div>
+        <br>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <input type="text" id="modalNewDescription" placeholder="Oggetto... (creato dall'ufficio)">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <input type="text" id="modalNewPhone">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <input type="email" id="modalNewEmail">
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer my-3">
+        <div id="modalNewError" class="text-danger"></div>
+        <button class="btn btn-primary btn-sm" type="button" onclick="createMeeting()">Crea</button>
+      </div>
+    </div>
+  </div>
+</div>
