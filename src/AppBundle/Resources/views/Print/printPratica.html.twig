@@ -1,0 +1,188 @@
+{% extends '@App/Default/printable.html.twig' %}
+
+{% set ente = instance_service.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+  <style>
+
+    header,
+    footer,
+    .menu-wrapper,
+    .input-group-text,
+    .formio-component-submit,
+    .pagination {
+      display: none !important;
+    }
+
+    .logo {
+      max-height: 100px;
+    }
+
+    .ente {
+      display: inline-block;
+    }
+
+    .formio_render #formio nav {
+      background: #fff;
+    }
+
+    .form-group {
+      padding-bottom: 0.2rem !important;
+      margin-bottom: 0.2rem !important;
+    }
+
+    .form-control:disabled, .form-control[readonly] {
+      background-color: #fff;
+      opacity: 1;
+    }
+
+    .card.card-body.bg-light {
+      padding: 0.375rem 0.5rem;
+    }
+
+    .page-break-before {
+      page-break-before: always !important;
+      page-break-inside: avoid !important;
+    }
+
+    .page-break-after {
+      break-after: page !important;
+      page-break-inside: avoid !important;
+    }
+
+    .formio-component-panel {
+      break-after: page !important;
+      page-break-inside: avoid !important;
+    }
+
+    .card.border {
+      border: none !important;
+    }
+
+    .card-header {
+      font-weight: bold;
+      background-color: #f2f2f2;
+    }
+
+    #footer {
+      background-color: #f2f2f2;
+      bottom: 0;
+      box-sizing: border-box;
+      height: 60px;
+      text-align: center;
+      position: fixed;
+      left: 0;
+      right: 0;
+      font-size: 12px;
+      border-top: 2px solid #3478bd;
+      padding-top: 10px;
+    }
+  </style>
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+{% block footer_scripts %}
+  <script>
+    if ($('#formio_render_form_id').length) {
+
+      Formio.icons = 'fontawesome';
+      Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/printable/' + $('#formio_render_form_id').val(), {
+        noAlerts: true,
+        language: 'it',
+        i18n: formIoI18n,
+        readOnly: true,
+        //renderMode: 'html'
+      })
+        .then(function (form) {
+          // Recupero i dati della pratica se presenti
+          if ($('#formio_render_dematerialized_forms').val() != '') {
+            form.submission = {
+              data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
+            };
+          }
+        });
+    }
+  </script>
+
+{% endblock %}
+
+{% block main_content %}
+
+  <main class="container-fluid" style="padding: 40px">
+    <div class="row">
+      <div class="col-12 text-center">
+        {% if ente %}
+          <img class="logo" src="{{ asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') }}" alt="{{ ente.name }}"/>
+          <h2 class="ente">{{ ente.name }}</h2>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <div class="col-8">
+        <h3>{{ pratica.servizio.name }}</h3>
+      </div>
+      <div class="col-4">
+        {% if pratica.numeroProtocollo %}
+          <div class="callout danger">
+            <div class="callout-title">Numero protocollo</div>
+            <p class="text-danger">{{ pratica.numeroProtocollo }}</p>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-lg-12">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_rest(form) }}
+        <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+
+    {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig') }}
+
+    <div class="row page-break-before"></div>
+    <div class="row" style="padding-top: 40px">
+      <div class="col-12">
+        <p>{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
+      </div>
+      <div class="col-md-3">
+        <p><strong>x509certificate_issuerdn</strong></p>
+      </div>
+      <div class="col-md-9">
+        <p class="text-break"><small>{{ user.x509certificateIssuerdn }}</small></p>
+      </div>
+
+      <div class="col-md-3">
+        <p><strong>x509certificate_subjectdn</strong></p>
+      </div>
+      <div class="col-md-9">
+        <p class="text-break"><small>{{ user.x509certificateSubjectdn }}</small></p>
+      </div>
+
+      <div class="col-md-3">
+        <p><strong>x509certificate_base64</strong></p>
+      </div>
+      <div class="col-md-9">
+        <p class="text-break"><small>{{ user.x509certificateBase64 }}</small></p>
+      </div>
+      </div>
+    </div>
+
+  </main>
+  <div id="footer">
+    <p>
+      {{ 'pratica.pdf.riferimento_sdc'|trans }} {{ url('pratiche_show', {'pratica': pratica.id}) }}
+    </p>
+  </div>
+
+{% endblock %}

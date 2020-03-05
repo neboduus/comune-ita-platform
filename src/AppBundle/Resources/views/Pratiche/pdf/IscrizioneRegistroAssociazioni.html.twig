@@ -19,7 +19,7 @@
     <p>
         {{ 'iscrizione_registro_associazioni.pdf.richiesta'|trans({'%associazione%': pratica.nomeAssociazione})|raw }}
     </p>
- 
+
     <p><strong>{{ 'steps.common.org_richiedente.title'|trans }}</strong></p>
     <table class="table">
         <tr>
@@ -82,5 +82,6 @@
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 {{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 {{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
+{{ include('AppBundle:Pratiche/pdf/parts:footer.html.twig') }}
 </body>
 </html>

@@ -90,7 +90,7 @@ pratica:
   pagamento: 'Pagamento'
   non_specificato: 'Non specificato'
   pdf:
-    dati_autenticazione: '<strong><small>Dati generati automaticamente dalla Stanza del Cittadino</small><br>Informazioni tecniche</strong>'
+    dati_autenticazione: '<strong>Informazioni tecniche</strong> <small>(Dati generati automaticamente dalla Stanza del Cittadino</small>)'
     spett_le: 'Spett.le'
     oggetto: 'Oggetto:'
     il_sottoscritto: 'Il/La sottoscritto/a'
