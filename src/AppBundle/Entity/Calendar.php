@@ -72,7 +72,10 @@ class Calendar
    * @var bool
    *
    * @ORM\Column(name="is_moderated", type="boolean")
+<<<<<<< HEAD
+=======
    * @Assert\NotBlank(message="questo campo è obbligatorio (isModerated)")
+>>>>>>> 83cb9e3b07b6dad2b686f6ef5a6f9042deda1360
    * @SWG\Property(description="Calendar's moderation mode", type="boolean")
    */
   private $isModerated;

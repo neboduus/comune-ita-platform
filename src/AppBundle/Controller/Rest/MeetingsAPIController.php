@@ -325,7 +325,8 @@ class MeetingsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => $e->getMessage()
       ];
       $this->get('logger')->error(
         $e->getMessage(),

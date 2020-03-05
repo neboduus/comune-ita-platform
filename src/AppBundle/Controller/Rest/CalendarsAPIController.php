@@ -99,7 +99,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive Calendar's available days",
+   *     description="Retreive Calendar's availabilities",
    * )
    *
    * @SWG\Response(
@@ -209,6 +209,8 @@ class CalendarsAPIController extends AbstractFOSRestController
         ->where('meeting.calendar = :calendar')
         ->andWhere('meeting.fromTime >= :startDate')
         ->andWhere('meeting.toTime < :endDate')
+        ->andWhere ('meeting.status != :status')
+        ->setParameter('status', 2)
         ->setParameter('calendar', $calendar)
         ->setParameter('startDate', (new DateTime($date))->setTime(0, 0, 0))
         ->setParameter('endDate', (new DateTime($date))->setTime(23, 59, 59))
@@ -223,7 +225,7 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       // Retrieve calendar slots by input date
       foreach ($openingHours as $openingHour) {
-        if ($openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
+        if (in_array($date, $openingHour->explodeDays()) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
           $slots = array_merge($slots, $openingHour->explodeMeetings($inputDate));
         }
       }
@@ -310,7 +312,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        //'description' => $e->getMessage()
+        'description' => $e->getMessage()
       ];
       $this->get('logger')->error(
         $e->getMessage(),
@@ -725,6 +727,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @return View
    * @throws \Exception
    */
+
   public function postOpeningHourAction($calendar_id, Request $request)
   {
     $calendar = $this->em->getRepository('AppBundle:Calendar')->find($calendar_id);
@@ -753,7 +756,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        //'description' => $e->getMessage()
+        'description' => $e->getMessage()
       ];
       $this->get('logger')->error(
         $e->getMessage(),

@@ -39,7 +39,7 @@ class Meeting
 
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar")
-   * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false)
+   * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
    * @SWG\Property(description="Meeting's calendar id", type="guid")
    * @Serializer\Exclude()
@@ -528,7 +528,6 @@ class Meeting
         $user->setPassword('change_me');
         $em->persist($user);
         $em->flush();
-        $this->user = $user;
       } else if ($this->fiscalCode && !$this->user) {
         $user = $em->getRepository('AppBundle:CPSUser')->findOneBy(['codiceFiscale'=>$this->fiscalCode]);
         if (!$user) {
@@ -542,6 +541,8 @@ class Meeting
           $user->setPassword('change_me');
           $em->persist($user);
           $em->flush();
+          $this->user = $user;
+        } else {
           $this->user = $user;
         }
       }
@@ -570,10 +571,12 @@ function checkQueue(LifecycleEventArgs $args): void
     ->andWhere('openingHour.beginHour <= :fromTime')
     ->andWhere('openingHour.endHour >= :toTime')
     ->andWhere('meeting.id != :id')
+    ->andWhere('meeting.status != :refused')
     ->setParameter('calendar', $this->calendar)
     ->setParameter('fromTime', $this->fromTime)
     ->setParameter('toTime', $this->toTime)
     ->setParameter('id', $this->id)
+    ->setParameter('refused', Meeting::STATUS_REFUSED)
     ->groupBy('meeting.fromTime', 'meeting.toTime', 'openingHour.meetingQueue')
     ->getQuery()->getResult();
 
@@ -594,15 +597,29 @@ function checkSlot(LifecycleEventArgs $args): void
 {
   // Retrieve all meetings in the same time slot
   $em = $args->getEntityManager();
+  foreach ($this->getCalendar()->getClosingPeriods() as $closingPeriod) {
+    if ($this->toTime >= $closingPeriod->getFromTime() && $this->fromTime <= $closingPeriod->getToTime())
+      throw new ORMException("Invalid slot interval: closing period");
+  }
+
   $openingHours = $em->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $this->calendar]);
+  // Check if given date and given slot is correct
+  $isValidDate = false;
+  $isValidSlot = false;
   foreach ($openingHours as $openingHour) {
-    $slots = $openingHour->explodeMeetings($this->fromTime);
-    $slotKey = $this->fromTime->format('H:i') . '-' . $this->toTime->format('H:i') . '-' . $openingHour->getMeetingQueue();
-    if (array_key_exists($slotKey, $slots)) {
-      return;
+    $dates = $openingHour->explodeDays();
+    $meetingDate = $this->fromTime->format('Y-m-d');
+    if(in_array($meetingDate, $dates)) {
+      $isValidDate = true;
+      $slots = $openingHour->explodeMeetings($this->fromTime);
+      $slotKey = $this->fromTime->format('H:i') . '-' . $this->toTime->format('H:i') . '-' . $openingHour->getMeetingQueue();
+      if (array_key_exists($slotKey, $slots)) $isValidSlot = true;
     }
   }
-  throw new ORMException("Invalid slot intervals");
+  if (!$isValidDate)
+    throw new ORMException("Invalid date: No opening hour for given slot");
+  if (!$isValidSlot)
+    throw new ORMException("Invalid slot intervals");
 }
 
 /**
