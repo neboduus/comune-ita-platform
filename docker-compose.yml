@@ -76,14 +76,6 @@ services:
     labels:
       traefik.frontend.rule: 'Host:stanzadelcittadino.localtest.me'
 
-  wkhtmltopdf:
-    image: traumfewo/docker-wkhtmltopdf-aas
-    environment:
-      USER: pdf
-      PASS: pdf
-    labels:
-      - 'traefik.port=5555'
-
   traefik:
     image: traefik:1.7
     restart: unless-stopped

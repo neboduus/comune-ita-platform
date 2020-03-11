@@ -11,6 +11,7 @@ export default class FormioCalendar extends Base {
     this.slot = false;
     this.container = false;
     this.calendar = null;
+    this.loaderTpl = '<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span></div>';
   }
 
   static schema() {
@@ -91,8 +92,12 @@ export default class FormioCalendar extends Base {
       $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities',
         {
           dataType: 'json', // type of response data
+          beforeSend: function(){
+            self.container.find('.date-picker').append(self.loaderTpl);
+          },
           success: function (data, status, xhr) {   // success callback function
 
+            $('#loader').remove();
             self.calendar = self.container.find('.date-picker').datepicker({
               minDate: new Date(),
               firstDay: 1,
@@ -131,7 +136,7 @@ export default class FormioCalendar extends Base {
    * @returns {String}
    */
   getValue() {
-    return this.date + ' - ' + this.slot;
+    return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId +')';
   }
 
   /**
@@ -144,7 +149,7 @@ export default class FormioCalendar extends Base {
     if (!value) {
       return;
     }
-    let explodedValue = value.split(" - ");
+    let explodedValue = value.replace(")", "").replace(' (', " @ ").replace(/\//g, "-").split(" @ ");
     this.date = explodedValue[0];
     this.slot = explodedValue[1];
   }
@@ -161,7 +166,11 @@ export default class FormioCalendar extends Base {
     $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities/' + parsedDate.format('YYYY-MM-DD'),
       {
         dataType: 'json', // type of response data
+        beforeSend: function(){
+          self.container.find('#slot-picker').append('<div class="col-12">' + self.loaderTpl + '</div>');
+        },
         success: function (data, status, xhr) {   // success callback function
+          $('#loader').remove();
           $(data).each(function( index, element ) {
             var cssClass = 'available';
             if (!element.availability) {

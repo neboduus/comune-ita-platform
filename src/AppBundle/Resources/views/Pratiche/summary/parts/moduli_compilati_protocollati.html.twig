@@ -1,4 +1,9 @@
-
-<a href="{{ path('pratiche_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-block btn-success">
+{% if pratica.servizio.accessLevel > 0 or servizio.accessLevel is null %}
+  <a href="{{ path('pratiche_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-block btn-success">
     <i class="fa fa-download"></i> {{ 'operatori.scarica_richiesta_protocollata'|trans }}
-</a>
+  </a>
+{% else %}
+  <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-block btn-success">
+    <i class="fa fa-download"></i> {{ 'operatori.scarica_richiesta_protocollata'|trans }}
+  </a>
+{% endif %}

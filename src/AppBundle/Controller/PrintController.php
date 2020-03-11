@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
+use AppBundle\Logging\LogConstants;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -50,24 +52,6 @@ class PrintController extends Controller
 
   }
 
-
-  /**
-   * @Route("/{pratica}/test", name="print_pratiche_test")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
-   * @param Pratica $pratica
-   *
-   * @return array
-   */
-  public function printPraticaTestAction(Request $request, Pratica $pratica)
-  {
-
-    $pdfBuilfer = $this->container->get('ocsdc.modulo_pdf_builder');
-    $pdfBuilfer->createForPratica($pratica);
-    echo 'Generated';
-    exit;
-
-  }
-
   /**
    * @Route("/{pratica}/show", name="print_pratiche_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
@@ -100,25 +84,77 @@ class PrintController extends Controller
   }
 
   /**
-   * @Route("/{pratica}/pdf", name="pratiche_anonime_show_pdf")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
-   * @param Pratica $pratica
+   * @Route("/service/{service}", name="print_service")
+   * @ParamConverter("service", class="AppBundle:Servizio")
+   * @Template()
+   * @param Servizio $service
    *
-   * @return BinaryFileResponse
+   * @return array
    */
-  public function showPdfAction(Request $request, Pratica $pratica)
+  public function printServiceAction(Request $request, Servizio $service)
   {
-    $user = $pratica->getUser();
-    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
 
+    $pratica = $this->createApplication($service);
 
-    return new BinaryFileResponse(
-      $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
-      200,
-      [
-        'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
-      ]
-    );
+    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
+
+    return [
+      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'form' => $form->createView(),
+      'pratica' => $pratica
+    ];
+
   }
+
+  /**
+   * @Route("/service/{service}/pdf", name="print_service_pdf")
+   * @ParamConverter("service", class="AppBundle:Servizio")
+   * @param Servizio $service
+   *
+   * @return Response
+   */
+  public function printServicePdfAction(Request $request, Servizio $service)
+  {
+
+    $fileContent = $this->container->get('ocsdc.modulo_pdf_builder')->generateServicePdfUsingGotemberg($service);
+
+    // Provide a name for your file with extension
+    $filename = time() . '.pdf';
+
+    // Return a response with a specific content
+    $response = new Response($fileContent);
+
+    // Create the disposition of the file
+    $disposition = $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $filename
+    );
+
+    // Set the content disposition
+    $response->headers->set('Content-Disposition', $disposition);
+
+    // Dispatch request
+    return $response;
+
+  }
+
+  /**
+   * @param Servizio $service
+   * @return mixed
+   */
+  private function createApplication(Servizio $service)
+  {
+    $praticaClassName = $service->getPraticaFCQN();
+    $pratica = new $praticaClassName();
+    if (!$pratica instanceof Pratica) {
+      throw new \RuntimeException("Wrong Pratica FCQN for servizio {$service->getName()}");
+    }
+    $pratica
+      ->setServizio($service)
+      ->setStatus(Pratica::STATUS_DRAFT);
+
+    return $pratica;
+  }
+
+
 }

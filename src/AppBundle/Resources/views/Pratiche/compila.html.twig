@@ -67,7 +67,6 @@
         $('.craue_formflow_buttons').addClass('d-none');
 
         Formio.icons = 'fontawesome';
-        //Formio.createForm(document.getElementById('formio'), 'https://examples.form.io/example')
         Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
           noAlerts: true,
           language: 'it',
@@ -75,14 +74,14 @@
         })
           .then(function (form) {
 
-            // Disable applicant inputs
-            var fieldsCount = $('#formio_render_applicant_fields_count').val();
+            let delay = 3;
             form.formReady.then(() => {
-              var disableApplicant = function(){
-                if( $('.formio-component-applicant input').length == fieldsCount ) {
+              const disableApplicant = function(){
+                if( delay === 0 ) {
                   $('.formio-component-applicant input').attr('disabled', 'disabled')
                 }
                 else {
+                  delay--;
                   setTimeout(disableApplicant, 1000); // check again in a second
                 }
               };
@@ -242,7 +241,7 @@
           {% endif %}
         </div>
 
-        <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
+        <div id="formio"class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
 
         {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
           <div class="mt-5">

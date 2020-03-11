@@ -8,9 +8,8 @@
             </div>
 
             <div class="col-lg-8 px-lg-4 py-lg-2">
-                {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+                {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
             </div>
-
 
             <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
                 <div class="row">

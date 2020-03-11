@@ -20,31 +20,12 @@
         $('#submit').addClass('d-none');
 
         Formio.icons = 'fontawesome';
-        //Formio.createForm(document.getElementById('formio'), 'https://examples.form.io/example')
         Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
           noAlerts: true,
           language: 'it',
           i18n: formIoI18n
         })
           .then(function (form) {
-
-            // Disable applicant inputs
-            // todo: find beter way
-            form.formReady.then(() => {
-              var disableApplicant = function () {
-                if ($('.formio-component-applicant input').length == 11) {
-                  $('.formio-component-applicant input').each(function(){
-                    console.log(this);
-                    if ($(this).val()) {
-                      $(this).attr('disabled', 'disabled')
-                    }
-                  });
-                } else {
-                  setTimeout(disableApplicant, 1000); // check again in a second
-                }
-              };
-              disableApplicant();
-            });
 
             if (form.hasOwnProperty('wizard')) {
               $('.craue_formflow_current_step.active').addClass('wizard');
@@ -60,31 +41,9 @@
             form.nosubmit = true;
             // Triggered when they click the submit button.
             form.on('submit', function (submission) {
-              /*return fetch('{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/pratiche/formio/validate', {
-                body: JSON.stringify(submission),
-                headers: {
-                  'content-type': 'application/json'
-                },
-                method: 'POST',
-                mode: 'cors'
-              })
-                .then(response => {
-                  form.emit('submitDone', submission)
-                  if (response.ok) {
-                    let data = $('form[name="formio_render"]').serialize();
-                    //$('#formio_render_dematerialized_forms').val(data);
-                    $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
-                    //$('form[name="formio_render"]').submit();
-                    $('.craue_formflow_button_class_next').trigger('click');
-                  }
-                })
-              */
-
               form.emit('submitDone', submission)
               let data = $('form[name="formio_render"]').serialize();
-              //$('#formio_render_dematerialized_forms').val(data);
               $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
-              //$('form[name="formio_render"]').submit();
               $('#submit').trigger('click');
             });
           });
@@ -119,11 +78,10 @@
       </div>
 
       <div class="col-lg-8 px-lg-4 order-lg-1 mt-4">
-        {#{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }#}
         {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_rest(form) }}
-        <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
+        <div id="formio" class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
         <input id="submit" class="btn btn-primary d-none" type="submit" value="Invia"/>
         {{ form_end(form) }}
       </div>
