@@ -11,6 +11,7 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\RispostaOperatoreDTO;
+use AppBundle\Entity\Servizio;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Snappy\GeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -421,32 +422,22 @@ class ModuloPdfBuilderService
     }
   }
 
-  private function generatePdfFromHtml($data)
-  {
-    // todo: parametrizzare
-    $url = 'pdf:pdf@' . $this->wkhtmltopdfService . ':5555';
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    $content = curl_exec($ch);
-    if (curl_errno($ch)) {
-      throw new \Exception(curl_error($ch));
-    }
-
-    $info = curl_getinfo($ch);
-
-    if ($info['http_code'] != 200) {
-      throw new \Exception("Si è verificato un errore nella creazione del pdf");
-    }
-    return $content;
-  }
-
   public function generatePdfUsingGotemberg( Pratica $pratica )
   {
     $url = $this->router->generate('print_pratiche', ['pratica' => $pratica], UrlGeneratorInterface::ABSOLUTE_URL);
+    $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
+    $request = new URLRequest($url);
+    $request->setPaperSize(GotembergRequest::A4);
+    $request->setMargins(GotembergRequest::NO_MARGINS);
+    $response =  $client->post($request);
+    $fileStream = $response->getBody();
+    return $fileStream->getContents();
+
+  }
+
+  public function generateServicePdfUsingGotemberg( Servizio $service )
+  {
+    $url = $this->router->generate('print_service', ['service' => $service->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);

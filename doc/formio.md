@@ -4,6 +4,9 @@ Linee guida da seguire per il corretto funzionamento delle form create tramite f
 
 ## Componenti
 
+### Wizard
+* [`MUST`] Verificare nelle impostazioni delle pagine che non sia spuntato il campo Collapsible
+
 ### Select popolato via API
 
 * [`SHOULD`] Quando si inserisce un componente di tipo **select** è buona norma popolare i campi `Data Path` (se presente)

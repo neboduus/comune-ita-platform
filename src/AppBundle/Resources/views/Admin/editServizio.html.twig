@@ -31,9 +31,9 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-lg-12 px-lg-4">
-        <h4 class="mb-5">
+    <div class="row mb-4 mt-3">
+      <div class="col-lg-9 px-lg-4">
+        <h4>
           {{ flow.getCurrentStepNumber() }} / {{ flow.stepCount }}
            -
           {% if form.vars.helper.stepTitle|length > 0 %}
@@ -42,6 +42,11 @@
             {{ flow.currentStepLabel()|trans }}
           {% endif %}
         </h4>
+      </div>
+      <div id="preview" class="col-lg-3 px-lg-4 d-none">
+        <a href="#" data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}" data-print="{{ path('print_service_pdf', {'service':servizio.id}) }}" class="btn btn-xs btn-outline-primary float-right">
+          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-print"></use></svg> Stampa anteprima
+        </a>
       </div>
     </div>
 

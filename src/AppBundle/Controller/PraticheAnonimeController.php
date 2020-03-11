@@ -169,10 +169,8 @@ class PraticheAnonimeController extends Controller
    */
   public function showAction(Request $request, Pratica $pratica)
   {
-    $user = $pratica->getUser();
     $result = [
-      'pratica' => $pratica,
-      'user' => $user
+      'pratica' => $pratica
     ];
     return $result;
   }

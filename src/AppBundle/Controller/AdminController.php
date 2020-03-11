@@ -27,6 +27,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -302,7 +303,7 @@ class AdminController extends Controller
 
     $data = [];
     foreach ($items as $s) {
-      $data []= [
+      $data [] = [
         'id' => $s->getId(),
         'title' => $s->getName(),
         'description' => $s->getDescription()
@@ -453,6 +454,26 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_index');
     }
 
+  }
+
+  /**
+   * @Route("/servizio/{servizio}/schema", name="admin_servizio_schema_edit")
+   * @ParamConverter("servizio", class="AppBundle:Servizio")
+   */
+  public function formioValidateAction(Request $request, Servizio $servizio)
+  {
+
+    $schema = $request->get('schema');
+    if (!empty($schema)) {
+
+      try {
+        $this->container->get('ocsdc.formserver')->editForm($schema);
+        $response = array('status' => 'OK');
+        return JsonResponse::create($response, Response::HTTP_OK);
+      } catch (\Exception $exception) {
+        return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+      }
+    }
   }
 
 }

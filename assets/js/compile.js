@@ -51,9 +51,11 @@ require("../css/app.scss");
 
 
 import Calendar from './Calendar';
+import PageBreak from './PageBreak';
 import 'formiojs'
 
 Formio.registerComponent('calendar', Calendar);
+Formio.registerComponent('pagebreak', PageBreak);
 
 
 $(document).ready(function () {

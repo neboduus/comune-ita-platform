@@ -365,3 +365,19 @@ a.ui-button {
     margin-left: 1rem;
   }
 }
+
+.formio-front {
+  .pagebreak-container {
+    display: none;
+  }
+}
+
+.pagebreak-container {
+  margin: .1em;
+  .pagebreak-component {
+    border: 2px dashed #ddd;
+    color: #aaa;
+    padding: .5em 0;
+  }
+}
+
