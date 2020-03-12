@@ -70,8 +70,11 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     return $this->required_headers;
   }
 
-  public function execute($subscriptionData)
+  public function execute($pratica)
   {
+    $data = $pratica->getDematerializedForms();
+    unset($data['flattened']['submit']);
+    $subscriptionData = $data['flattened'];
 
     $fixedData= [];
     foreach ($subscriptionData as $k => $v) {

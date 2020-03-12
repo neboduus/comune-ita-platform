@@ -56,7 +56,8 @@ class IntegrationsDataType extends AbstractType
     ];
 
     $backOffices = [
-      'Aggiungi iscrizione' => "AppBundle\BackOffice\SubcriptionsBackOffice"
+      'Aggiungi iscrizione' => "AppBundle\BackOffice\SubcriptionsBackOffice",
+      'Prenota appuntamento' => "AppBundle\BackOffice\CalendarsBackOffice"
     ];
 
     /** @var Servizio $service */

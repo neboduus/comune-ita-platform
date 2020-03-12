@@ -62,6 +62,10 @@ services:
     autowire: true
     tags: ['app.backoffice']
 
+  AppBundle\BackOffice\CalendarsBackOffice:
+    autowire: true
+    tags: ['app.backoffice']
+
   ocsdc.backoffices:
     class: AppBundle\Services\BackOfficeCollection
     arguments:

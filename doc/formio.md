@@ -28,3 +28,13 @@ Per agganciare un servizio form.io al backoffice dei servizi a sottoscrizione la
 
 * Subform `applicant`: dati anagrafici del richiedente
 * Campo `code`: codice del servizio a sottoscrizione
+
+### Prenotazione appuntamenti
+
+Per aggangiare un servizio form.io al backoffice della prenotazione appuntamenti la form dovrà contenere almeno i seguenti campi:
+
+*  Subform `applicant`: dati anagrafici del richiedente: Non sono richiesti tutti i campi presenti nel componente/subform
+`anagrafica`, ma è sufficiente utilizzare la subform `anagrafica-lite` (`name`, `surname`, `email_address`, `phone_number` e `fiscal_code`)
+* Campo `calendar`: il calendario per la scelta del giorno e dello slot disponibile. La compilazione di questo campo restituirà una stringa del tipo
+`d/m/Y @ H:i-H:i (calendarId)`
+* Campo `user_message`: il messaggio descrittivo dell'utente che prenota l'appuntamento

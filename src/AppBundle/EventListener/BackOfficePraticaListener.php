@@ -34,12 +34,10 @@ class BackOfficePraticaListener
     $integrations = $service->getIntegrations();
 
     if (!empty($integrations) && array_key_exists($event->getNewStateIdentifier(), $integrations) && $pratica instanceof DematerializedFormPratica) {
-      $data = $pratica->getDematerializedForms();
-      unset($data['flattened']['submit']);
 
       /** @var BackOfficeInterface $backOfficeHandler */
       $backOfficeHandler = $this->container->get($integrations[$event->getNewStateIdentifier()]);
-      $backOfficeHandler->execute($data['flattened']);
+      $backOfficeHandler->execute($pratica);
     }
   }
 }
