@@ -122,6 +122,50 @@ class MailerService
     }
 
   /**
+   * Sends generic email
+   *
+   * @param $fromAddress
+   * @param $fromName
+   * @param CPSUser $user
+   * @param $message
+   * @param $subject
+   *
+   * @return int
+   * @throws \Twig\Error\Error
+   */
+  public function dispatchMail($fromAddress, $fromName,CPSUser $user, $message, $subject)
+  {
+    $sentAmount = 0;
+
+    if ($this->isValidEmail($user->getEmail())){
+      $emailMessage = \Swift_Message::newInstance()
+        ->setSubject($subject)
+        ->setFrom($fromAddress, $fromName)
+        ->setTo($user->getEmail(), $user->getNome())
+        ->setBody(
+          $this->templating->render(
+            'AppBundle:Emails/Subscriber:subscriber_message.html.twig',
+            array(
+              'message' => $message,
+            )
+          ),
+          'text/html'
+        )
+        ->addPart(
+          $this->templating->render(
+            'AppBundle:Emails/Subscriber:subscriber_message.txt.twig',
+            array(
+              'message' => $message,
+            )
+          ),
+          'text/plain'
+        );
+      $sentAmount += $this->mailer->send($emailMessage);
+    }
+    return $sentAmount;
+  }
+
+  /**
    * @param SubscriberMessage $subscriberMessage
    * @param $fromAddress
    * @param OperatoreUser $operatore
@@ -281,4 +325,9 @@ class MailerService
 
         return filter_var($email, FILTER_VALIDATE_EMAIL);
     }
+
+    public function isValidEmail($email) {
+      return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
 }

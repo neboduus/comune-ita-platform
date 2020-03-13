@@ -1,7 +1,7 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block stylesheets %}
-  {{ parent() }}
+  {{ encore_entry_link_tags('fullcalendar-manager') }}
 
   <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css"/>
@@ -14,78 +14,11 @@
   <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css"/>
   <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css"/>
-
-  <style type='text/css'>
-    .my-legend .legend-title {
-      text-align: left;
-      margin-bottom: 5px;
-      font-weight: bold;
-      font-size: 90%;
-    }
-
-    .my-legend .legend-scale ul {
-      margin: 0;
-      margin-bottom: 5px;
-      padding: 0;
-      float: left;
-      list-style: none;
-    }
-
-    .my-legend .legend-scale ul li {
-      font-size: 80%;
-      list-style: none;
-      margin-left: 0;
-      line-height: 18px;
-      margin-bottom: 2px;
-    }
-
-    .my-legend ul.legend-labels li span {
-      display: block;
-      float: left;
-      height: 16px;
-      width: 30px;
-      margin-right: 5px;
-      margin-left: 0;
-      border-radius: 5px;
-    }
-
-    .my-legend .legend-source {
-      font-size: 70%;
-      color: #999;
-      clear: both;
-    }
-
-    .my-legend a {
-      color: #777;
-    }
-
-    @media only screen and (max-width: 600px) {
-      .fc-toolbar.fc-header-toolbar {
-        display: block;
-      }
-
-      .fc-timeGridWeek-button {
-        display: none;
-      }
-
-      .fc-dayGridMonth-button {
-        display: none;
-      }
-    }
-
-    .fc td.fc-today {
-      background-image: none;
-    }
-
-  </style>
 {% endblock %}
 
 {% block javascripts %}
-  {{ parent() }}
 
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-          integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-          crossorigin="anonymous"></script>
+  {{ encore_entry_script_tags('fullcalendar-manager') }}
 
   <script type="text/javascript"
           src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
@@ -102,284 +35,91 @@
   <script type="text/javascript"
           src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js"></script>
   <script type="text/javascript" src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+<script>
+  /**
+   * Edits meeting by API request
+   * @param btnId: button id to retrieve data
+   * @param changeStatus: new status
+   */
+  function editEvent(btnId, changeStatus) {
+    let status;
+    if (changeStatus) status = changeStatus;
+    else status = $('#modalStatus').html();
 
-  <script>
-    $(function () {
-      $("#edit_alert").hide();
-      $("#modalApprove").hide();
-      $("#modalRefuse").hide();
-      $("#modalMissed").hide();
-      $("#modalComplete").hide();
-      $("#modalSlot").click(function () {
-        $("#edit_alert").show();
-      });
+    let date = $('#modalDate').val();
+    let slot = $('#modalSlot').val().split(' - ');
+    let start = slot[0];
+    let end = slot[1];
+    let id = $('#modalId').html();
 
-      var calendarEl = document.getElementById('fullcalendar');
-
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        events: {{ events | json_encode | raw }},
-        plugins: ['bootstrap', 'dayGrid', 'timeGrid', 'list', 'interaction'],
-        themeSystem: 'bootstrap',
-        locale: 'it',
-        timeZone: 'Europe/Rome',
-        nowIndicator: true,
-        allDaySlot: false,
-        defaultView: $(window).width() < 765 ? 'timeGridDay' : 'dayGridMonth',
-        header: {
-          left: 'prev,today,next',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay, listWeek'
-        },
-        slotDuration: calculateSlot(),
-        contentHeight: 600,
-        minTime: '08:00:00',
-        maxTime: '19:00:00',
-        dateClick: function (info) {
-
-          if (info.view.type === 'timeGridWeek' || info.view.type === 'timeGridDay') {
-            let start = new Date(info.date);
-            let end = new Date(new Date(info.date).getTime() + {{ minDuration }}* 60000);
-            $('#modalNewSlot').val(start.toISOString().slice(11, 16) + ' - ' + end.toISOString().slice(11, 16));
-          }
-
-        },
-        eventRender: function (info) {
-          if (info.event.extendedProps.status === 0) {
-            var dotEl = info.el.getElementsByClassName('fc-event-dot')[0];
-            if (dotEl) {
-              dotEl.style.backgroundColor = 'var(--primary)';
-            }
-          }
-          var textEl = info.el.getElementsByClassName('fc-list-item-title')[0];
-          if (textEl) {
-            textEl.append(`: ${info.event.extendedProps.description}`);
-          }
-        },
-        editable: true,
-        eventDurationEditable: false,
-        eventDrop: function (info) {
-          compileModal(info)
-        },
-        eventClick: function (info) {
-          if (info.event.id) compileModal(info);
-          else if (info.event.title === 'Apertura') newModal(info)
-        }
-      });
-
-      calendar.render();
+    let data = {
+      status: status,
+      from_time: new Date(`${date}:${start} UTC`).toISOString(),
+      to_time: new Date(`${date}:${end} UTC`).toISOString(),
+      email: $('#modalEmail').val(),
+      phone_number: $('#modalPhone').val(),
+      user_message: $('#modalDescription').val()
+    };
+    let url = $(`#${btnId}`).attr('data-url');
+    url = url.replace("meeting_id", id);
+    $.ajax({
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      url: url,
+      type: 'PATCH',
+      data: JSON.stringify(data),
+      success: function (response, textStatus, jqXhr) {
+        location.reload();
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $('#modalError').html('Si è verificato un errore durante la modifica dell\'appuntamento');
+      },
     });
+  }
 
-    function calculateSlot() {
-      let minDuration = {{ minDuration }};
-      if (minDuration <= 60) {
-        return `00:${minDuration}:00`
-      } else return "01:00:00";
-    }
+  /**
+   * Creates a meeting by API request
+   * @param btnId: button id to retrieve data
+   * @param calendar: calendar id
+   */
+  function createMeeting(btnId, calendar) {
+    let date = $('#modalNewDate').val();
+    let slot = $('#modalNewSlot').val().split(' - ');
+    let start = slot[0];
+    let end = slot[1]
 
-    function compileModal(info) {
-      $("#edit_alert").hide();
-      $("#modalApprove").hide();
-      $("#modalRefuse").hide();
-      $("#modalMissed").hide();
-      $("#modalComplete").hide();
-      $("#modalReschedule").hide();
+    let data = {
+      status: 1,
+      from_time: new Date(`${date}:${start} UTC`).toISOString(),
+      to_time: new Date(`${date}:${end} UTC`).toISOString(),
+      user_message: $('#modalNewDescription').val(),
+      email: $('#modalNewEmail').val(),
+      name: $('#modalNewName').val(),
+      phone_number: $('#modalNewPhone').val(),
+      calendar: calendar
+    };
 
-      let date = new Date(info.event.start).toISOString().slice(0, 10);
-      let start = new Date(info.event.start).toISOString().slice(11, 16);
-      let end = new Date(info.event.end).toISOString().slice(11, 16);
+    let url = $(`#${btnId}`).attr('data-url');
+    $.ajax({
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      url: url,
+      type: 'POST',
+      data: JSON.stringify(data),
+      success: function (response, textStatus, jqXhr) {
+        location.reload();
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $('#modalNewError').html('Si è verificato un errore durante la creazione dell\'appuntamento');
+      },
+    });
+  }
+</script>
 
-      // Populate datalist
-      getSlots(date);
-
-      // Populate modal
-      $('#modalDate').val(date);
-      $('#modalSlot').val(`${start} - ${end}`);
-      $('#modalId').html(info.event.id);
-      $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name}`);
-      $('#modalDescription').html(info.event.extendedProps.description);
-      $('#modalPhone').html(info.event.extendedProps.phoneNumber || 'Non specificato');
-      if (info.event.extendedProps.email) {
-        $('#modalEmail').html(`<a  href="mailto:${info.event.extendedProps.email}">${info.event.extendedProps.email}</a>`);
-      } else {
-        $('#modalEmail').html('Non specificato');
-      }
-      $('#modalStatus').html(info.event.extendedProps.status);
-
-      if (info.event.extendedProps.rescheduled === 1){
-        $('#modalRescheduleText').html(`Quest'appuntamento è stato spostato 1 volta`);
-        $("#modalReschedule").show();
-      }
-      else if (info.event.extendedProps.rescheduled !== 0){
-        $('#modalRescheduleText').html(`Quest'appuntamento è stato spostato ${info.event.extendedProps.rescheduled} volte`);
-        $("#modalReschedule").show();
-      }
-      switch ($('#modalStatus').html()) {
-        case '0': //Attesa
-          $('#modalApprove').show();
-          $('#modalRefuse').show();
-          break;
-        case '1': //approvato
-          $('#modalComplete').show();
-          $('#modalMissed').show();
-          break;
-        case '2': //Rifiutato
-          $('#modalApprove').show();
-          $('#modalRefuse').show();
-          break;
-        case '3': //assente
-          $('#modalComplete').show();
-          $('#modalMissed').show();
-          break;
-        case '4': // Concluso
-          $('#modalComplete').show();
-          $('#modalMissed').show();
-          break;
-      }
-
-      $('#modalError').html('');
-      $('#modalCenter').modal('show');
-      $('#modalClose').click(info.revert)
-    }
-
-    function newModal(info) {
-      let date = new Date(info.event.start).toISOString().slice(0, 10);
-      // Populate datalist
-      getSlots(date);
-
-      $('#modalNewDate').val(date);
-      $('#modalNewStatus').html(1);
-      $('#modalNew').modal('show');
-
-    }
-
-    function editEvent(changeStatus) {
-      let status;
-      if (changeStatus) status = changeStatus;
-      else status = $('#modalStatus').html();
-
-      let date = $('#modalDate').val();
-      let slot = $('#modalSlot').val().split(' - ');
-      let start = slot[0];
-      let end = slot[1];
-      let id = $('#modalId').html();
-
-      let data = {
-        status: status,
-        from_time: new Date(`${date}:${start} UTC`).toISOString(),
-        to_time: new Date(`${date}:${end} UTC`).toISOString(),
-      };
-      let url = '{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}';
-      url = url.replace("meeting_id", id);
-      $.ajax({
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        url: url,
-        type: 'PATCH',
-        data: JSON.stringify(data),
-        success: function (response, textStatus, jqXhr) {
-          //fixme
-          location.reload();
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          //fixme:  translate
-          //$('#modalNewError').html(jqXHR.responseJSON.description);
-          $('#modalError').html('Si è verificato un errore durante la modifica dell\'appuntamento');
-        },
-      });
-    }
-
-    function createMeeting() {
-      let date = $('#modalNewDate').val();
-      let slot = $('#modalNewSlot').val().split(' - ');
-      let start = slot[0];
-      let end = slot[1]
-      let name = $('#modalNewName').val();
-      let description = $('#modalNewDescription').val();
-      let email = $('#modalNewEmail').val();
-      let phone = $('#modalNewPhone').val();
-
-      let data = {
-        status: 0,
-        from_time: new Date(`${date}:${start} UTC`).toISOString(),
-        to_time: new Date(`${date}:${end} UTC`).toISOString(),
-        user_message: description,
-        email: email,
-        name: name,
-        phone_number: phone,
-        calendar: '{{ calendar.id }}'
-      };
-
-      let url = '{{ path("meetings_api_post") }}';
-      $.ajax({
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        url: url,
-        type: 'POST',
-        data: JSON.stringify(data),
-        success: function (response, textStatus, jqXhr) {
-          // fixme
-          location.reload();
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          //fixme:  translate
-          //$('#modalNewError').html(jqXHR.responseJSON.description);
-          $('#modalNewError').html('Si è verificato un errore durante la creazione dell\'appuntamento');
-        },
-      });
-    }
-
-    function getSlots(date) {
-      let id = '{{ calendar.id }}';
-
-      let url = '{{ path("calendar-day-availabilities_api_get", {'id': 'calendar_id', 'date': 'date'}) }}';
-      url = url.replace("calendar_id", id).replace("date", date);
-
-      $.ajax({
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        url: url,
-        type: 'GET',
-        success: function (response, textStatus, jqXhr) {
-          $('#slots').empty();
-          for (let i = 0; i < response.length; i++) {
-            let value = response[i]['start_time'] + ' - ' + response[i]['end_time'];
-            let available = response[i]['availability'];
-            if (!available)
-              $("#slots").append("<option value='" + value + "'disabled>" + value + "</option>");
-            else {
-              $("#slots").append("<option value='" + value + "'>" + value + "</option>");
-            }
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          $('#modalError').html('Impossibile recuperare le disponibilità per la data selezionata');
-        },
-      });
-    }
-
-    function getStatus(status) {
-      switch (status) {
-        case 0:
-          return 'In attesa di conferma';
-        case 1:
-          return 'Confermato';
-        case 2:
-          return 'Rifiutato';
-        case 3:
-          return 'Assente';
-        case 4:
-          return 'Concluso';
-        default:
-          return 'Errore';
-      }
-    }
-  </script>
 {% endblock %}
 
 {% block main_content %}
@@ -391,7 +131,12 @@
         </h1>
       </div>
     </div>
-
+    <div id="hidden" class="hidden"
+         data-url='{{ path("calendar-day-availabilities_api_get", {'id': 'calendar_id', 'date': 'date'}) }}'
+         data-calendar='{{ calendar.id }}'
+         data-events='{{ events | json_encode | raw }}'
+         data-duration='{{ minDuration }}'
+    ></div>
     <div class="nav-tabs-hidescroll mt-4 mt-md-5">
       <ul class="nav nav-tabs auto no-border no-background" id="tab" role="tablist">
         <li class="nav-item">

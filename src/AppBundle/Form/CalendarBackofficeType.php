@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\OpeningHour;
 use AppBundle\Entity\OperatoreUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +13,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use AppBundle\Form\DateTimeIntervalType;
 
 class CalendarBackofficeType extends AbstractType
 {
@@ -38,7 +36,7 @@ class CalendarBackofficeType extends AbstractType
       ])
       ->add('is_moderated', CheckboxType::class, [
         'required'=>false,
-        'label' => 'Richiede moderazione?'
+        'label' => 'Richiede moderazione?',
       ])
       ->add('owner', EntityType::class, [
         'class' => 'AppBundle\Entity\OperatoreUser',

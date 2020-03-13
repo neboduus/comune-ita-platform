@@ -19,6 +19,7 @@ services:
 
   AppBundle\Controller\Rest\MeetingsAPIController:
     autowire: true
+    arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@translator"]
 
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
@@ -65,7 +66,7 @@ services:
 
   AppBundle\BackOffice\CalendarsBackOffice:
     autowire: true
-    arguments: ["@translator"]
+    arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@translator"]
     tags: ['app.backoffice']
 
   ocsdc.backoffices:

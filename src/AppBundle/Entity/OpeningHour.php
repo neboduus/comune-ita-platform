@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\ORMException;
@@ -440,22 +441,30 @@ class OpeningHour
    */
   public function explodeMeetings(DateTime $date)
   {
+    $closures = $this->getCalendar()->getClosingPeriods();
     $intervals = [];
     if ($this->startDate > $date || $this->endDate < $date)
       return $intervals;
 
     $meetingInterval = new DateInterval('PT' . $this->meetingMinutes . 'M');
 
-
-    $begin = (new DateTime())->setTime($this->beginHour->format('H'), $this->beginHour->format('i'));
-    $end = (new DateTime())->setTime($this->endHour->format('H'), $this->endHour->format('i'));
+    $dateString = $date->format('Y-m-d');
+    $begin = (new DateTime($dateString))->setTime($this->beginHour->format('H'), $this->beginHour->format('i'));
+    $end = (new DateTime($dateString))->setTime($this->endHour->format('H'), $this->endHour->format('i'));
 
     $periods = new DatePeriod($begin, $meetingInterval, $end);
     foreach ($periods as $period) {
+      $shoudAdd = true;
+      // Check if period falls on closure
+      foreach ($closures as $closure) {
+        if ($period >= $closure->getFromTime() && $period < $closure->getToTime())
+          $shoudAdd = false;
+      }
+
       $_begin = $period;
       $_end = clone $_begin;
       $_end = $_end->add($meetingInterval);
-      if ($_end <= $end) {
+      if ($_end <= $end && $shoudAdd) {
         $intervals[$_begin->format('H:i') . '-' . $_end->format('H:i') . '-' . $this->getMeetingQueue()] = [
           'date' => $date->format('Y-m-d'),
           'start_time' => $_begin->format('H:i'),
@@ -473,14 +482,19 @@ class OpeningHour
    * @throws \Exception
    */
 
-  function explodeDays($all = false)
+  function explodeDays($all = false, $from=NULL, $to=NULL)
   {
+    $closures = $this->getCalendar()->getClosingPeriods();
     $array = array();
 
     if ($all) {
       $start = $this->startDate;
       $end = $this->endDate;
-    } else {
+    } else if ($from && $to) {
+      $start = new DateTime($from);
+      $end = new DateTime($to);
+    }
+    else {
       $start = max(new DateTime(), $this->startDate);
       $rollingInterval = new DateInterval('P' . $this->getCalendar()->getRollingDays() . 'D');
       $end = min((new DateTime())->add($rollingInterval), $this->endDate);
@@ -493,7 +507,32 @@ class OpeningHour
 
     // Use loop to store date into array
     foreach ($period as $date) {
-      if (in_array($date->format('N'), $this->daysOfWeek)) {
+      $date = $date->setTimeZone(new DateTimeZone('Europe/Rome'));
+      $shouldAdd = false;
+      foreach ($closures as $closure) {
+        $closureStartDay = $closure->getFromTime()->format('Y-m-d');
+        $closureEndDay = $closure->getToTime()->format('Y-m-d');
+        $day = $date->format('Y-m-d');
+        if ($day < $closureStartDay || $day > $closureEndDay) {
+          // External
+          $shouldAdd = true;
+        } else if ($day == $closureStartDay) {
+          /* Closure start date equals current date
+           Check if opening begin hour is before closure hour */
+          $dayOpening = DateTime::createFromFormat('Y-m-d:H:i', $day.':'.$this->getBeginHour()->format('H:i'));
+          if ($dayOpening < $closure->getFromTime()) {
+            $shouldAdd = true;
+          }
+        } else if ($day == $closureEndDay) {
+          /* Closure end date equals current date
+          Check if opening begin hour is after closure hour*/
+          $dayClosure = DateTime::createFromFormat('Y-m-d:H:i', $day.':'.$this->getEndHour()->format('H:i'));
+          if ($closure->getToTime() < $dayClosure) {
+            $shouldAdd = true;
+          }
+        }
+      }
+      if ($shouldAdd && in_array($date->format('N'), $this->daysOfWeek)) {
         $array[] = $date->format('Y-m-d');
       }
     }
@@ -503,32 +542,20 @@ class OpeningHour
 
   public function getInterval()
   {
-    $dates = [];
-    $startHour = $this->getBeginHour()->format('H');
-    $startMinutes = $this->getBeginHour()->format('i');
-    $startSeconds = $this->getBeginHour()->format('s');
-
-    $endHour = $this->getEndHour()->format('H');
-    $endMinutes = $this->getEndHour()->format('i');
-    $endSeconds = $this->getEndHour()->format('s');
-
+    $slots = [];
     foreach ($this->explodeDays(false) as $date) {
-      $add = true;
-      foreach ($this->getCalendar()->getClosingPeriods() as $closingPeriod) {
-        if (new DateTime($date) >= $closingPeriod->getFromTime() && new DateTime($date) <= $closingPeriod->getToTime()) {
-          $add = false;
-        }
-      }
-      if ($add) {
-        $dates[] = [
+      foreach ($this->explodeMeetings(new DateTime($date)) as $slot) {
+        $start = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'].':'.$slot['start_time'])->format('c');
+        $end = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'].':'.$slot['end_time'])->format('c');
+        $slots[] = [
           'title'=> 'Apertura',
-          'start' => (new DateTime ($date))->setTime($startHour, $startMinutes, $startSeconds)->format('c'),
-          'end' => (new DateTime ($date))->setTime($endHour, $endMinutes, $endSeconds)->format('c'),
+          'start' => $start,
+          'end' => $end,
           'rendering' => 'background',
           'color' => 'var(--blue)'
         ];
       }
     }
-    return $dates;
+    return $slots;
   }
 }

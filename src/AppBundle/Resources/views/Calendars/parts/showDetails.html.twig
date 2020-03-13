@@ -13,23 +13,29 @@
               </div>
               <div class="card-text">
                 <p>
-                  Dal {{ openingHour.startDate | date('d M Y') }}
+                  Dal {{ openingHour.startDate | date('d/m/Y') }}
                   al {{ openingHour.endDate | date('d/m/Y') }}
                 </p>
                 <p>Ogni {% for weekDay in openingHour.daysOfWeek %}
-                    {% if weekDay == 1 %} Lunedì,
-                    {% elseif weekDay == 2 %} Martedì,
-                    {% elseif weekDay == 3 %} Mercoledì,
-                    {% elseif weekDay == 4 %} Giovedì,
-                    {% elseif weekDay == 5 %} Venerdì,
-                    {% elseif weekDay == 6 %} Sabato,
-                    {% elseif weekDay == 7 %} Domenica,
+                    {# Punctuation and separators#}
+                    {% if loop.last and not loop.first %} e
+                    {% elseif not loop.first and not loop.last %},
+                    {% endif %}
+                    {# Week days translation #}
+                    {% if weekDay == 1 %} Lunedì
+                    {% elseif weekDay == 2 %} Martedì
+                    {% elseif weekDay == 3 %} Mercoledì
+                    {% elseif weekDay == 4 %} Giovedì
+                    {% elseif weekDay == 5 %} Venerdì
+                    {% elseif weekDay == 6 %} Sabato
+                    {% elseif weekDay == 7 %} Domenica
                     {% endif %}
                   {% endfor %}
                 </p>
-                <p>Dalle ore {{ openingHour.beginHour | date('H:i') }} alle
-                  ore {{ openingHour.endHour | date('H:i') }}</p>
-
+                <p>
+                  Dalle ore {{ openingHour.beginHour | date('H:i') }} alle
+                  ore {{ openingHour.endHour | date('H:i') }}
+                </p>
                 <br>
                 <p>Ogni incontro ha una durata di {{ openingHour.meetingMinutes }} minuti</p>
                 {% if openingHour.meetingQueue == 1 %}

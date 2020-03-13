@@ -25,14 +25,15 @@
           </div>
           <div class="col-1"></div>
           <div class="col-3">
-            <input type="text" id="modalSlot" list="slots" class="custom-select custom-select-sm" onclick="this.value = ''">
+            <input type="text" id="modalSlot" list="slots" class="custom-select custom-select-sm"
+                   onclick="this.value = ''">
             <datalist id="slots"></datalist>
           </div>
         </div>
         <div class="row mt-3">
           <div class="col-1"></div>
-          <div class="col-10" id="edit_alert"><small>Attenzione: la modifica della data comporterà l'invio di una notifica al
-              cittadino</small></div>
+          <div class="col-10" id="edit_alert"><small><b>Attenzione</b>: la modifica della data comporterà l'invio di una
+              notifica al cittadino e la conferma automatica dell'appuntamento</small></div>
         </div>
         <br>
         <div class="row mt-3">
@@ -41,7 +42,9 @@
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
             </svg>
           </div>
-          <div id="modalDescription" class="col-10"></div>
+          <div class="col-10">
+            <textarea style="border: none" id="modalDescription"></textarea>
+          </div>
         </div>
         <div class="row mt-3">
           <div class="col-1">
@@ -49,7 +52,8 @@
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
             </svg>
           </div>
-          <div id="modalPhone" class="col-10">
+          <div class="col-6">
+            <input type="tel" id="modalPhone" class="col-10">
           </div>
         </div>
         <div class="row mt-3">
@@ -58,7 +62,8 @@
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
             </svg>
           </div>
-          <div id="modalEmail" class="col-10">
+          <div class="col-6">
+            <input type="email" id="modalEmail" class="col-10">
           </div>
         </div>
         <div id="modalReschedule" class="row mt-3">
@@ -75,24 +80,33 @@
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-tool"></use>
             </svg>
           </div>
-          <button id="modalApprove" class="btn btn-success btn-sm mr-3" type="button" onclick="editEvent(1)">
-            Conferma
-          </button>
-          <button id="modalRefuse" class="btn btn-danger btn-sm mr-3" type="button" onclick="editEvent(2)">
-            Rifiuta
-          </button>
-          <button id="modalComplete" class="btn btn-secondary btn-sm mr-3" type="button" onclick="editEvent(4)">
-            Completa
-          </button>
-          <button id="modalMissed" class="btn btn-danger btn-sm mr-3" type="button" onclick="editEvent(3)">
-            Assente
-          </button>
+          <div class="col-10">
+            <button id="modalApprove" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
+                    class="btn btn-success btn-sm mr-3" type="button" onclick="editEvent(this.id, 1)">
+              Conferma
+            </button>
+            <button id="modalRefuse" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
+                    class="btn btn-danger btn-sm mr-3" type="button" onclick="editEvent(this.id,2)">
+              Rifiuta
+            </button>
+            <button id="modalComplete" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
+                    class="btn btn-secondary btn-sm mr-3" type="button" onclick="editEvent(this.id,4)">
+              Completa
+            </button>
+            <button id="modalMissed" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
+                    class="btn btn-danger btn-sm mr-3" type="button" onclick="editEvent(this.id,3)">
+              Assente
+            </button>
+            <p class="mt-4"><small><b>Attenzione</b>: la modifica dello stato comporterà l'invio di una notifica al
+                cittadino</small></p>
+          </div>
         </div>
       </div>
 
       <div class="modal-footer my-3">
         <div id="modalError" class="text-danger"></div>
-        <button class="btn btn-primary btn-sm" type="button" onclick="editEvent()">Salva</button>
+        <button id="modalSave" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
+                class="btn btn-primary btn-sm" type="button" onclick="editEvent(this.id)">Salva</button>
       </div>
     </div>
   </div>
