@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\FormIO;
 
-use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\SciaPraticaEdilizia;
@@ -14,9 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Form\FormError;
-use \DateTime;
+
 
 
 class FormIOAnonymousRenderType extends AbstractType
@@ -56,7 +53,12 @@ class FormIOAnonymousRenderType extends AbstractType
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
     $helper->setStepTitle('steps.scia.modulo_default.label', true);
-    //$data = $this->setupHelperData($pratica);
+
+    $data = '';
+    if ($pratica->getDematerializedForms()) {
+      $data = \json_encode($pratica->getDematerializedForms());
+    };
+
     $builder
       ->add('form_id', HiddenType::class,
         [
@@ -67,13 +69,12 @@ class FormIOAnonymousRenderType extends AbstractType
       )
       ->add('dematerialized_forms', HiddenType::class,
         [
-          //'attr' => ['value' => $data],
+          'attr' => ['value' => $data],
           'mapped' => false,
           'required' => false,
         ]
       );
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
-    //$builder->addEventListener(FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
   }
 
 
@@ -110,8 +111,12 @@ class FormIOAnonymousRenderType extends AbstractType
         'schema' => $schema
       )
     );
-    //$this->em->persist($pratica);
   }
+
+  /**
+   * @param SciaPraticaEdilizia $pratica
+   * @return false|string
+   */
 
 
   private function getFormIoId(Pratica $pratica)

@@ -29,6 +29,7 @@ class AppKernel extends Kernel
       new FOS\RestBundle\FOSRestBundle(),
       new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
       new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
+      new EWZ\Bundle\RecaptchaBundle\EWZRecaptchaBundle(),
       new AppBundle\AppBundle(),
     ];
 

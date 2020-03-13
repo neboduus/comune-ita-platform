@@ -7,4 +7,4 @@ services:
   craue.form.flow.data_manager_default:
     class: AppBundle\Form\DataManager
     public: false
-    arguments: [ "@craue.form.flow.storage", "@security.token_storage" ]
+    arguments: [ "@craue.form.flow.storage", "@security.token_storage", "@session" ]

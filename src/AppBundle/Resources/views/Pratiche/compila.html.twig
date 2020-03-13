@@ -78,7 +78,11 @@
             form.formReady.then(() => {
               const disableApplicant = function(){
                 if( delay === 0 ) {
-                  $('.formio-component-applicant input').attr('disabled', 'disabled')
+                  $('.formio-component-applicant input').each(function(k){
+                    if ($(this).val()) {
+                      $(this).attr('disabled', 'disabled');
+                    }
+                  });
                 }
                 else {
                   delay--;
