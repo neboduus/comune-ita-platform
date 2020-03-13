@@ -6,6 +6,7 @@ namespace AppBundle\BackOffice;
 
 use AppBundle\Entity\Meeting;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class CalendarsBackOffice implements BackOfficeInterface
 {
@@ -15,16 +16,24 @@ class CalendarsBackOffice implements BackOfficeInterface
 
   private $em;
 
-  private $required_fields = array(
-    "applicant.data.completename.data.name",
-    "applicant.data.completename.data.surname",
-    "user_message",
-    "calendar"
-  );
+  /**
+   * @var TranslatorInterface $translator
+   */
+  private $translator;
 
-  public function __construct(EntityManager $em)
+  private $required_fields = [
+    'applicant_meeting' => array(
+      "applicant.data.completename.data.name",
+      "applicant.data.completename.data.surname",
+      "user_message",
+      "calendar"
+    )
+  ];
+
+  public function __construct(TranslatorInterface $translator, EntityManager $em)
   {
     $this->em = $em;
+    $this->translator = $translator;
   }
 
   public function getName()
@@ -42,31 +51,38 @@ class CalendarsBackOffice implements BackOfficeInterface
     return $this->required_fields;
   }
 
-  public function execute($pratica)
+  public function execute($data)
   {
-    $data = $pratica->getDematerializedForms();
-    unset($data['flattened']['submit']);
-    $meetingData = $data['flattened'];
-
-    $requiredFields = $this->getRequiredFields();
-    sort($requiredFields);
+    $meetingData = $data->getDematerializedForms();
+    unset($meetingData['flattened']['submit']);
+    $meetingData = $meetingData['flattened'];
     ksort($meetingData);
+    $requiredFields = $this->getRequiredFields();
 
-    // Check required field
-    if (array_values(array_intersect(array_keys($meetingData), $requiredFields)) != array_values($requiredFields)) {
-      return ['error' => 'I campi richiesti non coincidono'];
+    // Check among all possible integrations which one to use
+    $integrationType = null;
+    foreach ($requiredFields as $type => $fields) {
+      sort($fields);
+      if(! $integrationType && array_values(array_intersect(array_keys($meetingData), array_values($fields))) == array_values($fields)) {
+        // Integration type found: no previous integration found
+        $integrationType=$type;
+      }
     }
+    if (!$integrationType) {
+      return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
+    }
+
     // Check contacts. At least one among tel, cell, email is required
     if (!$meetingData['applicant.data.email_address'] &&
       !$meetingData['applicant.data.phone_number']) {
-      return ['error' => "E' necessario fornire almeno un recapito"];
+      return ['error' => $this->translator->trans('backoffice.integration.calendars.missing_contacts')];
     }
     preg_match_all("/\(([^\)]*)\)/", $meetingData['calendar'], $matches);
 
     $repo = $this->em->getRepository('AppBundle:Calendar');
     $calendar = $repo->findOneBy(['id' => $matches[1]]);
     if (!$calendar) {
-      return ['error' => 'Id del calendario mancante o non corretto'];
+      return ['error' => $this->translator->trans('backoffice.integration.calendars.calendar_error', ['calendar_id' => $matches[1]])];
     }
     // Get start-end datetime
     $tmp = explode('@', $meetingData['calendar']);
@@ -83,10 +99,10 @@ class CalendarsBackOffice implements BackOfficeInterface
       $meeting = new Meeting();
       $meeting->setCalendar($calendar);
       $meeting->setEmail($meetingData['applicant.data.email_address']);
-      $meeting->setName($pratica->getUser()->getFullName());
+      $meeting->setName($data->getUser()->getFullName());
       $meeting->setPhoneNumber($meetingData['applicant.data.phone_number']);
-      $meeting->setFiscalCode($pratica->getUser()->getCodiceFiscale());
-      $meeting->setUser($pratica->getUser());
+      $meeting->setFiscalCode($data->getUser()->getCodiceFiscale());
+      $meeting->setUser($data->getUser());
       $meeting->setUserMessage($meetingData['user_message']);
       $meeting->setFromTime($start);
       $meeting->setToTime($end);
@@ -96,7 +112,23 @@ class CalendarsBackOffice implements BackOfficeInterface
 
       return $meeting;
     } catch (\Exception $exception) {
-      return ['error' => 'Si è verificato un errore durante il salvataggio della prenotazione'];
+      return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
     }
+  }
+
+  public function checkRequiredFields($schema)
+  {
+    $errors = [];
+    foreach ($this->getRequiredFields() as $key => $requiredFields) {
+      foreach ($requiredFields as $field) {
+        if (!array_key_exists($field . '.label', $schema)) {
+          $errors[$key][] = $this->translator->trans('backoffice.integration.missing_field', ['field' => $field]);
+        }
+      }
+      if (!array_key_exists($key, $errors)) {
+        return null;
+      }
+    }
+    return $errors;
   }
 }

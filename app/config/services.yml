@@ -60,10 +60,12 @@ services:
 
   AppBundle\BackOffice\SubcriptionsBackOffice:
     autowire: true
+    arguments: ["@translator"]
     tags: ['app.backoffice']
 
   AppBundle\BackOffice\CalendarsBackOffice:
     autowire: true
+    arguments: ["@translator"]
     tags: ['app.backoffice']
 
   ocsdc.backoffices:
@@ -283,6 +285,7 @@ services:
 
   AppBundle\Form\Admin\Servizio\IntegrationsDataType:
     autowire: true
+    arguments: ["@translator"]
     tags:
       - { name: form.type }
 

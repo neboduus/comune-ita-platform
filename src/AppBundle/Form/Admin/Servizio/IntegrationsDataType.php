@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 class IntegrationsDataType extends AbstractType
@@ -36,23 +37,29 @@ class IntegrationsDataType extends AbstractType
    */
   private $formServerService;
 
-  public function __construct(Container $container, EntityManager $entityManager, FormServerApiAdapterService $formServerService)
+  /**
+   * @var TranslatorInterface $translator
+   */
+  private $translator;
+
+  public function __construct(TranslatorInterface $translator, Container $container, EntityManager $entityManager, FormServerApiAdapterService $formServerService)
   {
     $this->container = $container;
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
+    $this->translator = $translator;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $statuses = [
       'Nessuna integrazione prevista' => 0,
-      'Pratica pagata'                => Pratica::STATUS_PAYMENT_SUCCESS,
-      'Pratica inviata'               => Pratica::STATUS_SUBMITTED,
-      'Pratica protocollata'          => Pratica::STATUS_REGISTERED,
-      'Pratica presa in carico'       => Pratica::STATUS_PENDING,
-      'Pratica accettata'             => Pratica::STATUS_COMPLETE,
-      'Pratica rifiutata'             => Pratica::STATUS_CANCELLED
+      'Pratica pagata' => Pratica::STATUS_PAYMENT_SUCCESS,
+      'Pratica inviata' => Pratica::STATUS_SUBMITTED,
+      'Pratica protocollata' => Pratica::STATUS_REGISTERED,
+      'Pratica presa in carico' => Pratica::STATUS_PENDING,
+      'Pratica accettata' => Pratica::STATUS_COMPLETE,
+      'Pratica rifiutata' => Pratica::STATUS_CANCELLED
     ];
 
     $backOffices = [
@@ -71,10 +78,10 @@ class IntegrationsDataType extends AbstractType
 
     $builder
       ->add('trigger', ChoiceType::class, [
-        'data'    => $selectedIntegration,
-        'label'   => 'Punto di attivazione',
+        'data' => $selectedIntegration,
+        'label' => 'Punto di attivazione',
         'choices' => $statuses,
-        'mapped'  => false
+        'mapped' => false
       ])
       ->add('action', ChoiceType::class, [
         'label' => 'Azione da eseguire',
@@ -105,14 +112,21 @@ class IntegrationsDataType extends AbstractType
 
       $flatSchema = $this->arrayFlat($formSchema['schema']);
 
-      foreach ($backOfficeHandler->getRequiredFields() as $field) {
-        if (!array_key_exists($field . '.label', $flatSchema)) {
-          $event->getForm()->addError(
-            new FormError('Il campo "' . $field . '" deve essere presente nel form per poter attivare questa integrazione.')
-          );
+      $errors = $backOfficeHandler->checkRequiredFields($flatSchema);
+      if ($errors) {
+        foreach ($errors as $type => $integrationType) {
+          foreach ($integrationType as $key=>$error) {
+            $event->getForm()->addError(
+              new FormError($error)
+            );
+          }
+          if (array_key_last($errors) != $type)
+            $event->getForm()->addError(
+              new FormError($this->translator->trans('backoffice.integration.or')),
+              );
         }
       }
-    }else {
+    } else {
       $service->setIntegrations(null);
       $this->em->persist($service);
     }
@@ -120,7 +134,6 @@ class IntegrationsDataType extends AbstractType
 
   private function arrayFlat($array, $prefix = '')
   {
-
 
 
     $result = array();

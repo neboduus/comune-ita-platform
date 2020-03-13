@@ -1555,4 +1555,17 @@ gateway:
     data: 'Data emissione'
     ora: 'Ora emissione'
 
-
+backoffice:
+  integration:
+    missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
+    or: 'Oppure'
+    fields_error: 'I campi richiesti non coincidono'
+    calendars:
+      missing_contacts: "E' necessario fornire almeno un recapito"
+      calendar_error: 'Non esiste un calendario con id calendar_id'
+      save_meeting_error: 'Si è verificato un errore durante il salvataggio della prenotazione'
+    subscriptions:
+      subscription_service_error: 'Non esiste un servizio con codice code'
+      limit_error: 'Limite massimo di iscrizioni raggiunto. Utente user non iscritto al corso code'
+      save_subscriber_error: 'Si è verificato un errore durante il salvataggio dell utente user'
+      save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"

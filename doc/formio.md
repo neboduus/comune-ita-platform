@@ -29,6 +29,11 @@ Per agganciare un servizio form.io al backoffice dei servizi a sottoscrizione la
 * Subform `applicant`: dati anagrafici del richiedente
 * Campo `code`: codice del servizio a sottoscrizione
 
+Oppure nel caso di iscrizione per conto di altri:
+
+* Subform `subscriber`: dati anagrafici del richiedente
+* Campo `code`: codice del servizio a sottoscrizione
+
 ### Prenotazione appuntamenti
 
 Per aggangiare un servizio form.io al backoffice della prenotazione appuntamenti la form dovrà contenere almeno i seguenti campi:
