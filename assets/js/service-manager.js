@@ -109,7 +109,7 @@ $(document).ready(function () {
           dataType: 'json', // type of response data
           method: 'POST',
           data: {
-            schema: JSON.parse($("#formio_builder_render_form_schema").val())
+            schema: '"' + $("#formio_builder_render_form_schema").val() + '"'
           },
           success: function (data, status, xhr) {   // success callback function
             window.location.href = printUrl;
@@ -197,17 +197,13 @@ $(document).ready(function () {
 
   }
 
-
-
   // Step Payment data
   if ($("#payment_data_flow_service_step").length) {
-
 
     if (!$('#payment_data_payment_required').prop('checked')) {
       $('#payment_data_total_amounts').attr('disabled', 'disabled');
       $('#payment_data_gateways').find('input[type="checkbox"]').attr('disabled', 'disabled');
     }
-
 
     $('#payment_data_payment_required').change(function() {
       if(this.checked) {

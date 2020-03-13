@@ -9,7 +9,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: en
+    locale: it
 
 framework:
     default_locale: it
@@ -201,3 +201,10 @@ lexik_jwt_authentication:
     public_key: "%kernel.project_dir%/config/jwt/public.pem"
     pass_phrase: 'stanzadelcittadino'
     token_ttl: 3600
+
+# Recaptcha configuration
+ewz_recaptcha:
+  public_key:  '%env(RECAPTCHA_KEY)%'
+  private_key: '%env(RECAPTCHA_SECRET)%'
+  # Not needed as "%kernel.default_locale%" is the default value for the locale key
+  locale_key:  %kernel.default_locale%

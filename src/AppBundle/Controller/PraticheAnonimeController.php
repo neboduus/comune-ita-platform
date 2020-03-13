@@ -97,10 +97,9 @@ class PraticheAnonimeController extends Controller
    * @Route("/{servizio}/new", name="pratiche_anonime_new")
    * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    * @Template()
-   * @param Request $request
-   * @param Servizio $servizio
+   * @param Pratica $pratica
    *
-   * @return RedirectResponse|Response|array
+   * @return array|RedirectResponse
    */
   public function newAction(Request $request, Servizio $servizio)
   {
@@ -114,48 +113,62 @@ class PraticheAnonimeController extends Controller
     $instanceService = $this->container->get('ocsdc.instance_service');
     $pratica->setEnte($instanceService->getCurrentInstance());
     $this->infereErogatoreFromEnteAndServizio($pratica);
+    $flow = $this->get('ocsdc.form.flow.formioanonymous');
 
-    $form = $this->createForm('AppBundle\Form\FormIO\FormIOAnonymousRenderType', $pratica);
-    $form->handleRequest($request);
+    $flow->setInstanceKey($this->get('session')->getId());
+    $flow->bind($pratica);
+    if ($pratica->getInstanceId() == null) {
+      $pratica->setInstanceId($flow->getInstanceId());
+    }
+    $form = $flow->createForm();
 
-    if ($form->isSubmitted() && $form->isValid()) {
-
+    if ($flow->isValid($form)) {
       $em = $this->getDoctrine()->getManager();
+      $currentStep = $flow->getCurrentStepNumber();
+      $flow->saveCurrentStepData($form);
+      $pratica->setLastCompiledStep($currentStep);
 
-      $user = $this->checkUser($pratica->getDematerializedForms());
-      $pratica->setUser($user);
-      $em->persist($pratica);
-      $em->flush();
+      if ($flow->nextStep()) {
+        $form = $flow->createForm();
+      } else {
 
-      if ($pratica instanceof DematerializedFormAllegatiContainer) {
-        $this->dematerializer->attachAllegati($pratica);
+        $user = $this->checkUser($pratica->getDematerializedForms());
+        $pratica->setUser($user);
+        $em->persist($pratica);
+        $em->flush();
+
+        if ($pratica instanceof DematerializedFormAllegatiContainer) {
+          $this->dematerializer->attachAllegati($pratica);
+        }
+
+        if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
+          $pratica->setSubmissionTime(time());
+          $moduloCompilato = $this->pdfBuilder->createForPratica($pratica);
+          $pratica->addModuloCompilato($moduloCompilato);
+          $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+        }
+
+        $this->get('logger')->info(
+          LogConstants::PRATICA_UPDATED,
+          ['id' => $pratica->getId(), 'pratica' => $pratica]
+        );
+
+        $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
+        $flow->getDataManager()->drop($flow);
+        $flow->reset();
+
+        return $this->redirectToRoute(
+          'pratiche_anonime_show',
+          ['pratica' => $pratica->getId()]
+        );
       }
-
-      if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
-        $pratica->setSubmissionTime(time());
-        $moduloCompilato = $this->pdfBuilder->createForPratica($pratica);
-        $pratica->addModuloCompilato($moduloCompilato);
-        $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
-      }
-
-      $this->get('logger')->info(
-        LogConstants::PRATICA_UPDATED,
-        ['id' => $pratica->getId(), 'pratica' => $pratica]
-      );
-
-      $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
-
-      return $this->redirectToRoute(
-        'pratiche_anonime_show',
-        ['pratica' => $pratica->getId()]
-      );
-
     }
 
     return [
       'form' => $form->createView(),
-      'pratica' => $pratica,
-      'formserver_url' => $this->getParameter('formserver_public_url')
+      'pratica' => $flow->getFormData(),
+      'flow' => $flow,
+      'formserver_url' => $this->getParameter('formserver_public_url'),
     ];
   }
 

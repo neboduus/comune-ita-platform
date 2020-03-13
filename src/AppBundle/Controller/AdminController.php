@@ -463,8 +463,9 @@ class AdminController extends Controller
   public function formioValidateAction(Request $request, Servizio $servizio)
   {
 
-    $schema = $request->get('schema');
-    if (!empty($schema)) {
+    $data = $request->get('schema');
+    if (!empty($data)) {
+      $schema = \json_decode($data, true);
 
       try {
         $this->container->get('ocsdc.formserver')->editForm($schema);
