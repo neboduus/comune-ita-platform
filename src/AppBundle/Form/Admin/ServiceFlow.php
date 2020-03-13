@@ -109,7 +109,7 @@ class ServiceFlow extends FormFlow
       'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
         /** @var Servizio $service */
         $service = $flow->getFormData();
-        return !$service->getEnte()->isBackOfficeIntegrationEnabled();
+        return empty($service->getEnte()->getBackofficeEnabledIntegrations());
       }
     );
 

@@ -4,9 +4,11 @@
 namespace AppBundle\Form\Admin\Servizio;
 
 
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Entity\Servizio;
+use AppBundle\Services\BackOfficeCollection;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
@@ -42,12 +44,18 @@ class IntegrationsDataType extends AbstractType
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, Container $container, EntityManager $entityManager, FormServerApiAdapterService $formServerService)
+  /**
+   * @var BackOfficeCollection
+   */
+  private $backOfficeCollection;
+
+  public function __construct(TranslatorInterface $translator, Container $container, EntityManager $entityManager, FormServerApiAdapterService $formServerService, BackOfficeCollection $backOffices)
   {
     $this->container = $container;
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
     $this->translator = $translator;
+    $this->backOfficeCollection = $backOffices;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -61,14 +69,20 @@ class IntegrationsDataType extends AbstractType
       'Pratica accettata' => Pratica::STATUS_COMPLETE,
       'Pratica rifiutata' => Pratica::STATUS_CANCELLED
     ];
-
-    $backOffices = [
-      'Aggiungi iscrizione' => "AppBundle\BackOffice\SubcriptionsBackOffice",
-      'Prenota appuntamento' => "AppBundle\BackOffice\CalendarsBackOffice"
-    ];
-
+    
     /** @var Servizio $service */
     $service = $builder->getData();
+    /** @var Ente $ente */
+    $ente = $service->getEnte();
+
+    $backOffices = [];
+    /** @var BackOfficeInterface $b */
+    foreach ( $this->backOfficeCollection->getBackOffices() as $b ) {
+      if (in_array($b->getPath(), $ente->getBackofficeEnabledIntegrations())) {
+        $backOffices[$b->getName()] = get_class($b);
+      }
+    }
+
     $integrations = $service->getIntegrations();
 
     $selectedIntegration = 0;
