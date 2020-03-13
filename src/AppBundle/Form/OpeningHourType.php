@@ -33,6 +33,7 @@ class OpeningHourType extends AbstractType
         'label' => 'Data di fine'
       ])
       ->add('days_of_week', ChoiceType::class, [
+        'label' => 'Giorni della settimana',
         'required' => false,
         'choices'=> $weekdays,
         'multiple' => true,

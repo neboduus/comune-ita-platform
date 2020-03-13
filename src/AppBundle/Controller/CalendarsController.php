@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
+use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
@@ -36,17 +37,23 @@ class CalendarsController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
     $data = [];
+    /** @var User $user */
+    $user = $this->getUser();
 
     $builder = $em->createQueryBuilder();
-    $query = $builder
+    $builder
       ->select('calendar', 'moderators')
       ->from(Calendar::class, 'calendar')
-      ->leftJoin('calendar.moderators', 'moderators')
-      ->where('calendar.owner = :owner')
-      ->Orwhere('moderators.id = :operatore')
-      ->setParameter('owner', $this->getUser())
-      ->setParameter('operatore', $this->getUser())
-      ->getQuery();
+      ->leftJoin('calendar.moderators', 'moderators');
+
+    if ( in_array(User::ROLE_OPERATORE, $user->getRoles()) ) {
+      $builder
+        ->where('calendar.owner = :owner')
+        ->Orwhere('moderators.id = :operatore')
+        ->setParameter('owner', $user)
+        ->setParameter('operatore', $user);
+    }
+    $query = $builder->getQuery();
 
     foreach ($query->getResult() as $calendarEntry) {
       $data[] = array(
@@ -97,7 +104,7 @@ class CalendarsController extends Controller
   /**
    * Creates a new Calendar entity.
    * @Template()
-   * @Route("/operatori/calendar/new", name="operatori_calendar_new")
+   * @Route("/operatori/calendars/new", name="operatori_calendar_new")
    * @Method({"GET", "POST"})
    * @param Request $request the request
    * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
@@ -145,7 +152,7 @@ class CalendarsController extends Controller
    */
   public function deleteCalendarAction(Request $request, Calendar $calendar)
   {
-    if ($calendar->getOwner() != $this->getUser() && $calendar->getIsModerated() && !$calendar->getModerators()->contains($this->getUser())) {
+    if ($calendar->getOwner() != $this->getUser() && !$calendar->getModerators()->contains($this->getUser())) {
       $this->addFlash('error', 'Non possiedi i permessi per eliminare questo calendario');
       return $this->redirectToRoute('operatori_calendars_index');
     }
@@ -190,7 +197,9 @@ class CalendarsController extends Controller
    */
   public function editCalendarAction(Request $request, Calendar $calendar)
   {
-    if ($calendar->getOwner() != $this->getUser() && $calendar->getIsModerated() && !$calendar->getModerators()->contains($this->getUser())) {
+    /** @var User $user */
+    $user = $this->getUser();
+    if (!in_array(User::ROLE_ADMIN, $user->getRoles()) && $calendar->getOwner() != $user && !$calendar->getModerators()->contains($user) ) {
       $this->addFlash('error', 'Non possiedi i permessi per modificare questo calendario');
       return $this->redirectToRoute('operatori_calendars_index');
     }
