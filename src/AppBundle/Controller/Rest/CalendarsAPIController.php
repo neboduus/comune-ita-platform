@@ -117,10 +117,8 @@ class CalendarsAPIController extends AbstractFOSRestController
     $startDate = $request->query->get('from_time');
     $endDate = $request->query->get('to_time');
     try {
-      $OpeningHourRepository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
-      $openingHours = $OpeningHourRepository->findBy(['calendar' => $id]);
-      $CalendarRepository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
-      $calendar = $CalendarRepository->findOneBy(['id' => $id]);
+      $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
+      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($calendar === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
@@ -130,7 +128,7 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       foreach ($openingHours as $openingHour) {
         if ($startDate && $endDate) {
-          $availabilities = array_merge($availabilities, $openingHour->explodeDays());
+          $availabilities = array_merge($availabilities, $openingHour->explodeDays(false, $startDate, $endDate));
         } else {
           // default: compute availabilities on rolling days
           $minDate = min($openingHour->getEndDate(), (new \DateTime())->add(new DateInterval('P30D')));
@@ -183,16 +181,12 @@ class CalendarsAPIController extends AbstractFOSRestController
   public function getCalendarAvailabilitiesByDateAction($id, $date, Request $request)
   {
     try {
-      $OpeningHourRepository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
-      $openingHours = $OpeningHourRepository->findBy(['calendar' => $id]);
-      $CalendarRepository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
-      $MeetingRepository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
-      $calendar = $CalendarRepository->findOneBy(['id' => $id]);
+      $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
+      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($openingHours === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      //
       try {
         $inputDate = new DateTime($date);
       } catch (\Exception $e)
@@ -225,7 +219,7 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       // Retrieve calendar slots by input date
       foreach ($openingHours as $openingHour) {
-        if (in_array($date, $openingHour->explodeDays()) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
+        if (in_array($inputDate->format('Y-m-d'), $openingHour->explodeDays()) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
           $slots = array_merge($slots, $openingHour->explodeMeetings($inputDate));
         }
       }

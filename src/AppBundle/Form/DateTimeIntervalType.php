@@ -3,7 +3,7 @@
 namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,16 +12,15 @@ class DateTimeIntervalType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
       $builder
-        ->add('from_time', DateType::class, [
-
+        ->add('from_time', DateTimeType::class, [
           'widget' => 'single_text',
           'required' => true,
-          'label' => 'Data di inizio'
+          'label' => 'Data di inizio',
         ])
-        ->add('to_time', DateType::class, [
+        ->add('to_time', DateTimeType::class, [
           'widget' => 'single_text',
           'required' => true,
-          'label' => 'Data di fine'
+          'label' => 'Data di fine',
         ]);
     }
 

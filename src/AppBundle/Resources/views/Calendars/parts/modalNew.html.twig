@@ -64,7 +64,7 @@
       </div>
       <div class="modal-footer my-3">
         <div id="modalNewError" class="text-danger"></div>
-        <button class="btn btn-primary btn-sm" type="button" onclick="createMeeting()">Crea</button>
+        <button id="modalCreate" class="btn btn-primary btn-sm" data-url='{{ path("meetings_api_post") }}' type="button" onclick="createMeeting(this.id, '{{ calendar.id }}')">Crea</button>
       </div>
     </div>
   </div>

@@ -25,6 +25,7 @@ Encore
   .addEntry('instance-manager', './assets/js/instance-manager.js')
   .addEntry('subscription-service-manager', './assets/js/subscription-service-manager.js')
   .addEntry('calendar-manager', './assets/js/calendar-manager.js')
+  .addEntry('fullcalendar-manager', './assets/js/fullcalendar-manager.js')
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()

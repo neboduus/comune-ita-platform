@@ -5,6 +5,8 @@ namespace AppBundle\BackOffice;
 
 
 use AppBundle\Entity\Meeting;
+use AppBundle\Services\InstanceService;
+use AppBundle\Services\MailerService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -15,6 +17,15 @@ class CalendarsBackOffice implements BackOfficeInterface
   const PATH = 'operatori_calendars_index';
 
   private $em;
+
+  private $is;
+
+  /**
+   * @var MailerService
+   */
+  private $mailer;
+
+  private $defaultSender;
 
   /**
    * @var TranslatorInterface $translator
@@ -30,10 +41,13 @@ class CalendarsBackOffice implements BackOfficeInterface
     )
   ];
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em)
+  public function __construct(MailerService $mailer, $defaultSender,  TranslatorInterface $translator, EntityManager $em, InstanceService $is)
   {
-    $this->em = $em;
+    $this->mailer = $mailer;
+    $this->defaultSender = $defaultSender;
     $this->translator = $translator;
+    $this->em = $em;
+    $this->is = $is;
   }
 
   public function getName()
@@ -109,6 +123,31 @@ class CalendarsBackOffice implements BackOfficeInterface
 
       $this->em->persist($meeting);
       $this->em->flush($meeting);
+
+      $date = $meeting->getFromTime()->format('d/m/Y');
+      $hour = $meeting->getFromTime()->format('H:i');
+      $location = $meeting->getCalendar()->getLocation();
+      $contact = $meeting->getCalendar()->getContactEmail();
+      $ente = $meeting->getCalendar()->getOwner()->getEnte()->getName();
+
+      if ($meeting->getCalendar()->getIsModerated() && $meeting->getStatus() == Meeting::STATUS_PENDING) {
+        $message = $this->translator->trans('meetings.email.new_meeting.pending');
+      } else {
+        $message = $this->translator->trans('meetings.email.new_meeting.approved',
+          ['hour' => $hour, 'date' => $date, 'location' => $location]);
+      }
+
+      $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
+      $message = $message . $mailInfo;
+
+      if ($meeting->getUser()->getEmail()) {
+        $this->mailer->dispatchMail(
+          $this->defaultSender,
+          $meeting->getCalendar()->getOwner()->getEnte()->getName(),
+          $meeting->getUser(),
+          $message,
+          $this->translator->trans('meetings.email.new_meeting.subject'));
+      }
 
       return $meeting;
     } catch (\Exception $exception) {

@@ -528,6 +528,7 @@ class Meeting
         $user->setPassword('change_me');
         $em->persist($user);
         $em->flush();
+        $this->user = $user;
       } else if ($this->fiscalCode && !$this->user) {
         $user = $em->getRepository('AppBundle:CPSUser')->findOneBy(['codiceFiscale'=>$this->fiscalCode]);
         if (!$user) {
