@@ -121,10 +121,10 @@ class Ente
   private $gateways;
 
   /**
-   * @var bool
-   * @ORM\Column(type="boolean", nullable=true)
+   * @var array
+   * @ORM\Column(type="json", nullable=true)
    */
-  private $backofficeIntegrationEnabled;
+  private $backofficeEnabledIntegrations;
 
   /**
    * Ente constructor.
@@ -136,7 +136,7 @@ class Ente
     $this->protocolloParameters = new ArrayCollection();
     $this->operatori = new ArrayCollection();
     $this->gateways = [];
-
+    $this->backofficeEnabledIntegrations = new ArrayCollection();
   }
 
   /**
@@ -467,19 +467,21 @@ class Ente
   }
 
   /**
-   * @return bool
+   * @return array
    */
-  public function isBackOfficeIntegrationEnabled()
+  public function getBackofficeEnabledIntegrations()
   {
-    return $this->backofficeIntegrationEnabled;
+    return $this->backofficeEnabledIntegrations;
   }
 
   /**
-   * @param bool $backOfficeIntegrationEnabled
+   * @param array $backofficeEnabledIntegrations
+   * @return $this
    */
-  public function setBackOfficeIntegrationEnabled(bool $backOfficeIntegrationEnabled)
+  public function setBackofficeEnabledIntegrations(array $backofficeEnabledIntegrations)
   {
-    $this->backofficeIntegrationEnabled = $backOfficeIntegrationEnabled;
+    $this->backofficeEnabledIntegrations = $backofficeEnabledIntegrations;
+    return $this;
   }
 
 }

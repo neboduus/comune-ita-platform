@@ -4,10 +4,12 @@
 namespace AppBundle\Form\Admin\Ente;
 
 
+use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Model\Gateway;
+use AppBundle\Services\BackOfficeCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
@@ -31,9 +33,15 @@ class EnteType extends AbstractType
    */
   private $em;
 
-  public function __construct(EntityManager $entityManager)
+  /**
+   * @var BackOfficeCollection
+   */
+  private $backOfficeCollection;
+
+  public function __construct(EntityManager $entityManager, BackOfficeCollection $backOffices)
   {
     $this->em = $entityManager;
+    $this->backOfficeCollection = $backOffices;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -63,6 +71,16 @@ class EnteType extends AbstractType
       }
     }
 
+    /*$backOffices = [
+      'Aggiungi iscrizione' => "AppBundle\BackOffice\SubcriptionsBackOffice",
+      'Prenota appuntamento' => "AppBundle\BackOffice\CalendarsBackOffice"
+    ];*/
+
+    $backOfficesData = [];
+    /** @var BackOfficeInterface $b */
+    foreach ($this->backOfficeCollection->getBackOffices() as $b) {
+      $backOfficesData[$b->getName()] = $b->getPath();
+    }
 
     $builder
       ->add('codice_meccanografico', TextType::class)
@@ -70,10 +88,20 @@ class EnteType extends AbstractType
       ->add('codice_amministrativo', TextType::class)
       ->add('meta', TextareaType::class, ['required' => false]);
 
-    $builder->add('backoffice_integration_enabled', CheckboxType::class, [
+    /*$builder->add('backoffice_integration_enabled', CheckboxType::class, [
       'label' => 'Abilita integrazione con i backoffice',
       'required' => false
-    ]);
+    ]);*/
+
+    if ( !empty($backOfficesData)) {
+      $builder->add('backoffice_enabled_integrations', ChoiceType::class, [
+        'choices' => $backOfficesData,
+        'expanded' => true,
+        'multiple' => true,
+        'required' => false,
+        'label' => 'Abilita integrazione con i backoffice',
+      ]);
+    }
 
     $builder->add('gateways', ChoiceType::class, [
       'data' => $selectedGatewaysIentifiers,
