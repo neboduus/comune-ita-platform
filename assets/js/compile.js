@@ -64,11 +64,15 @@ $(document).ready(function () {
     $('button.craue_formflow_button_class_next').on('click', function (e) {
       var $form = $(this).closest('form');
       e.preventDefault();
-      $('#confirm .modal-body').html('Proseguendo la pratica non sarà più modificabile e verrà inviata all\'Ente non appena sarà ultimato il pagamento');
-      $('#confirm').modal({backdrop: 'static', keyboard: false})
-        .one('click', '#ok', function () {
-          $form.trigger('submit'); // submit the form
-        });
+      if ( $("input[name='pratica_select_payment_gateway[payment_type]']:checked").data('identifier') == 'mypay' ) {
+        $('#confirm .modal-body').html('Proseguendo la pratica non sarà più modificabile e verrà inviata all\'Ente non appena sarà ultimato il pagamento');
+        $('#confirm').modal({backdrop: 'static', keyboard: false})
+          .one('click', '#ok', function () {
+            $form.trigger('submit'); // submit the form
+          });
+      } else {
+        $form.trigger('submit'); // submit the form
+      }
     });
   }
 

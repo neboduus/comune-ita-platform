@@ -62,7 +62,10 @@ class SelectPaymentGatewayType extends AbstractType
       'expanded' => true,
       'multiple' => false,
       'required' => true,
-      'label' => 'Seleziona il metodo di pagamento'
+      'label' => 'Seleziona il metodo di pagamento',
+      'choice_attr' => function($choice, $key, $value) {
+        return ['data-identifier' => $choice->getIdentifier()];
+      }
     ]);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
