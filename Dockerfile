@@ -49,7 +49,7 @@ COPY compose_conf/bin/*.sh /bin/
 COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
 COPY --chown=wodby:wodby ./ .
 
-RUN ./compose_conf/php/init-uploads.sh
+RUN mkdir var/uploads
 
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
@@ -57,3 +57,5 @@ RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 RUN composer run-script post-docker-install-cmd
 
 RUN bin/console cache:warmup
+
+VOLUME /var/www/html/var/uploads
