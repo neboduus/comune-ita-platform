@@ -39,11 +39,15 @@ ENV PHP_FPM_GROUP=wodby
 
 WORKDIR /var/www/html
 
-COPY --chown=wodby:wodby ./ .
-COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
+COPY --from=hashicorp/consul-template:alpine /bin/consul-template /bin/consul-template
+COPY --from=consul:1.6 /bin/consul /bin/consul
 
-COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
-RUN chmod 755 ./bin/*.sh
+COPY compose_conf/bin/init-consul-watch.sh /docker-entrypoint-init.d/
+COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
+COPY compose_conf/bin/*.sh /bin/
+
+COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
+COPY --chown=wodby:wodby ./ .
 
 RUN ./compose_conf/php/init-uploads.sh
 
@@ -51,7 +55,5 @@ RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
 # lo script richiede che il file dei parametri sia già al suo posto
 RUN composer run-script post-docker-install-cmd
-
-COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
 
 RUN bin/console cache:warmup

@@ -3,12 +3,12 @@ version: "3"
 services:
 
   postgres:
-    image: wodby/postgres:$POSTGRES_TAG
+    image: wodby/postgres:${POSTGRES_TAG:-10-1.6.0}
     stop_grace_period: 30s
     environment:
-      POSTGRES_PASSWORD: $DB_ROOT_PASSWORD
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-sdc}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./compose_conf/postgres:/docker-entrypoint-initdb.d
@@ -17,48 +17,53 @@ services:
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     environment:
+      DOCKER_BUILDKIT: 1
       PHP_FPM_CLEAR_ENV: 'no'
-      ENV: DEMO
-      SYMFONY_ENV: $SYMFONY_ENV
-      PREFIX: $PREFIX
-      DB_DRIVER: $DB_DRIVER
-      DB_HOST: $DB_HOST
-      DB_PORT: $DB_PORT
-      DB_NAME: $DB_NAME
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      MAILER_TRANSPORT: $MAILER_TRANSPORT
-      MAILER_HOST: $MAILER_HOST
-      MAILER_USER: $MAILER_USER
-      MAILER_PASSWORD: $MAILER_PASSWORD
-      SECRET: $SECRET
-      DEFAULT_FROM_EMAIL_ADDRESS: $DEFAULT_FROM_EMAIL_ADDRESS
-      WKHTMLBINARY: $WKHTMLBINARY
-      WKHTMLTOPDF_SERVICE: $WKHTMLTOPDF_SERVICE
-      EZ_PASSWORD: $EZ_PASSWORD
-      PITRE_ADAPTER_URL: $PITRE_ADAPTER_URL
-      HEADER_TOP_TITLE: $HEADER_TOP_TITLE
-      HEADER_TOP_LINK: $HEADER_TOP_LINK
-      FOOTER_CREDITS: $FOOTER_CREDITS
-      OCSDC_SCHEME: $OCSDC_SCHEME
-      OCSDC_HOST: $OCSDC_HOST
-      GISCOM_PASSWORD: $GISCOM_PASSWORD
-      GISCOM_ADAPTER_URL: $GISCOM_ADAPTER_URL
-      GISCOM_ADAPTER_USERNAME: $GISCOM_ADAPTER_USERNAME
-      GISCOM_ADAPTER_PASSWORD: $GISCOM_ADAPTER_PASSWORD
-      LOGS_PATH: $LOGS_PATH
-      MYPAY_ADAPTER_URL: $MYPAY_ADAPTER_URL
-      AWS_ACCESS_KEY_ID_BACKUP: $AWS_ACCESS_KEY_ID_BACKUP
-      AWS_SECRET_ACCESS_KEY_BACKUP: $AWS_SECRET_ACCESS_KEY_BACKUP
-      BUCKET_BACKUP: $BUCKET_BACKUP
+      ENV: DEV 
+      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      PREFIX: ${PREFIX:-''}
+      DB_DRIVER: ${DB_DRIVER:-pdo_pgsql}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-sdc_multi}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      MAILER_TRANSPORT: ${MAILER_TRANSPORT:-sendmail}
+      MAILER_HOST: ${MAILER_HOST:-127.0.0.1}
+      MAILER_USER: ${MAILER_USER:-null}
+      MAILER_PASSWORD: ${MAILER_PASSWORD:-null}
+      SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
+      DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-sdc@opencontent.it}
+      #WKHTMLBINARY: $WKHTMLBINARY
+      #WKHTMLTOPDF_SERVICE: $WKHTMLTOPDF_SERVICE
+      EZ_PASSWORD: ${EZ_PASSWORD:-ez}
+      PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://localhost:8080}
+      HEADER_TOP_TITLE: ${HEADER_TOP_TITLE:-Opencontent}
+      HEADER_TOP_LINK: ${HEADER_TOP_LINK:-https://www.opencontent.it}
+      FOOTER_CREDITS: ${FOOTER_CREDITS:-La stanza del cittadino è un software opensource pubblicato in riuso su Developers Italia}
+      OCSDC_SCHEME: ${OCSDC_SCHEME:-https}
+      OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
+      GISCOM_PASSWORD: ${GISCOM_PASSWORD:-''}
+      GISCOM_ADAPTER_URL: ${GISCOM_ADAPTER_URL:-https://www.giscom.cloud/WebAPI/}
+      GISCOM_ADAPTER_USERNAME: ${GISCOM_ADAPTER_USERNAME:-''}
+      GISCOM_ADAPTER_PASSWORD: ${GISCOM_ADAPTER_PASSWORD:-''}
+      LOGS_PATH: ${LOGS_PATH:-php://stderr}
+      MYPAY_ADAPTER_URL: ${MYPAY_ADAPTER_URL:-http://localhost:3000}
+      #AWS_ACCESS_KEY_ID_BACKUP: $AWS_ACCESS_KEY_ID_BACKUP
+      #AWS_SECRET_ACCESS_KEY_BACKUP: $AWS_SECRET_ACCESS_KEY_BACKUP
+      #BUCKET_BACKUP: $BUCKET_BACKUP
       PHP_FPM_USER: wodby
       PHP_FPM_GROUP: wodby
       PHP_APCU_ENABLED: 0
       PHP_OPCACHE_ENABLE: 0
       FORMSERVER_PRIVATE_URL: 'http://formserver:8000'
       FORMSERVER_PUBLIC_URL: 'http://formserver.localtest.me'
-      RECAPTCHA_KEY: $RECAPTCHA_KEY
-      RECAPTCHA_SECRET: $RECAPTCHA_SECRET
+      RECAPTCHA_KEY: ${RECAPTCHA_KEY:-recaptcha key}
+      RECAPTCHA_SECRET: ${RECAPTCHA_SECRET:-recaptcha secret}
+      CONSUL_HTTP_ADDR: 'consul:8500' 
+      CONSUL_PREFIX: 'sdc/stanzadelcittadino.it/tenants'
+      TENANTS_CONFIG_PATH: '/tmp/tenants'
+      CLEANUP_TENANTS_PATH: 'true'
     volumes:
       - "uploads:/var/www/html/var/uploads"
 
@@ -67,12 +72,13 @@ services:
     depends_on:
       - php
     environment:
+      DOCKER_BUILDKIT: 1
       WEB_DOCUMENT_ROOT: /var/www/html/web
       WEB_PHP_SOCKET: php:9000
-      ORGANIZATION: $ORGANIZATION
-      SERVER_NAME: $SERVER_NAME
-      ENTITY_ID: $ENTITY_ID
-      PROJECT_BASE_URL: $PROJECT_BASE_URL
+      ORGANIZATION: ${ORGANIZATION:-Opencontent SCARL}
+      SERVER_NAME: ${SERVER_NAME:-stanzadelcittadino.localtest.me}
+      ENTITY_ID: ${ENTITY_ID:-https://devsdc.opencontent.it}
+      PROJECT_BASE_URL: ${PROJECT_BASE_URL:-https://devsdc.opencontent.it}
     ports:
       - "443:443"
     labels:
@@ -109,7 +115,38 @@ services:
     labels:
       traefik.frontend.rule: 'Host:formserver.localtest.me'
 
+  consul:
+    image: consul:1.6
+    restart: unless-stopped
+    environment:
+      CONSUL_ALLOW_PRIVILEGED_PORTS: 1
+      #CONSUL_CLIENT_INTERFACE: eth0
+      CONSUL_BIND_INTERFACE: eth0
+    command:
+      'agent -server -datacenter=standalone -ui -client=0.0.0.0 -dns-port=53 -recursor=1.1.1.1 -bootstrap-expect 1'
+    ports:
+      - "8400:8400"
+      #- "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
+    labels:
+      traefik.frontend.rule: 'Host:consul.localtest.me'
+      traefik.port: 8500 
+    volumes:
+      - consul:/consul/data
+
+  pgweb:
+    image: sosedoff/pgweb
+    labels:
+      - 'traefik.port=8081'
+    environment:
+      - DATABASE_URL=postgres://${DB_USER:-sdc}:${DB_PASSWORD:-sdc}@postgres:5432/${DB_NAME:-sdc_multi}?sslmode=disable
+    depends_on:
+      - postgres
+
+
 volumes:
   pgdata:
   uploads:
   mongo:
+  consul:
