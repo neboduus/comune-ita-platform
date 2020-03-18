@@ -89,16 +89,22 @@
                                                                aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}
               </div>
             {% else %}
-              <div class="text-center">
-
-                <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
-                   class="btn btn-success btn-lg service-access-button">
-                  {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
+              <div>
+                {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
+                  <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
+                     class="btn btn-success btn-lg service-access-button">
+                    {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
+                      <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
+                    {% else %}
+                      <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                    {% endif %}
+                  </a>
+                {% else %}
+                  <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
+                     class="btn btn-success btn-lg service-access-button">
                     <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
-                  {% else %}
-                    <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                  {% endif %}
-                </a>
+                  </a>
+                {% endif %}
 
                 {% if servizio.enti|length > 1 %}
                   <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}

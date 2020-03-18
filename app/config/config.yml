@@ -9,7 +9,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: en
+    locale: it
 
 framework:
     default_locale: it
@@ -98,6 +98,7 @@ swiftmailer:
     port:      "%mailer_port%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
+    encryption: "%mailer_encription%"
     spool:     { type: memory }
 
 # LoginGate Configuration
@@ -192,7 +193,7 @@ nelmio_api_doc:
     areas:
         path_patterns: # an array of regexps
             #- ^/%prefix%/api(?!/doc$)
-            - ^/%prefix%/api/services|applications|subscription-services(?!/doc$)
+            - ^/%prefix%/api/services|applications|subscription-services|calendars|meetings(?!/doc$)
 
 # Lexit jwt Configuration
 lexik_jwt_authentication:
@@ -200,3 +201,10 @@ lexik_jwt_authentication:
     public_key: "%kernel.project_dir%/config/jwt/public.pem"
     pass_phrase: 'stanzadelcittadino'
     token_ttl: 3600
+
+# Recaptcha configuration
+ewz_recaptcha:
+  public_key:  '%env(RECAPTCHA_KEY)%'
+  private_key: '%env(RECAPTCHA_SECRET)%'
+  # Not needed as "%kernel.default_locale%" is the default value for the locale key
+  locale_key:  %kernel.default_locale%

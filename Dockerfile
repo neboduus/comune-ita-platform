@@ -1,14 +1,37 @@
-FROM wodby/php:7.3
+# prepare assets for symfony
+FROM node:10.15.0 as assets
+
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app
+
+COPY package.json package.json yarn.lock yarn.lock webpack.config.js ./
+
+RUN yarn install
+
+COPY assets ./assets
+RUN yarn encore production
+RUN ls -l web
+
+# prepare the vendor dir for symfony
+FROM wodby/php:7.3 as builder
 
 USER root
 
-# Installo node e yarn per webpack encore
-RUN apk add --no-cache --update nodejs npm yarn
+WORKDIR /var/www/html
 
-USER wodby
-
-# configurazione di composer
 RUN composer global require hirak/prestissimo
+
+COPY ./composer.json ./composer.lock ./
+
+# app dir is required for classmaps entry in composer.json
+COPY app ./app
+
+RUN composer install --no-scripts --prefer-dist
+
+# prepare the final image
+FROM wodby/php:7.3
+
+COPY --from=builder /var/www/html/vendor /var/www/html/vendor
 
 #ARG SYMFONY_ENV=prod
 ENV PHP_FPM_USER=wodby
@@ -16,24 +39,23 @@ ENV PHP_FPM_GROUP=wodby
 
 WORKDIR /var/www/html
 
+COPY --from=hashicorp/consul-template:alpine /bin/consul-template /bin/consul-template
+COPY --from=consul:1.6 /bin/consul /bin/consul
+
+COPY compose_conf/bin/init-consul-watch.sh /docker-entrypoint-init.d/
+COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
+COPY compose_conf/bin/*.sh /bin/
+
+COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
 COPY --chown=wodby:wodby ./ .
 
-COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
-RUN chmod 755 ./bin/*.sh
-
-RUN ./compose_conf/php/init-uploads.sh
+RUN mkdir var/uploads
 
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
-
-RUN composer install --no-scripts
-
-#RUN bin/console cache:warmup
 
 # lo script richiede che il file dei parametri sia già al suo posto
 RUN composer run-script post-docker-install-cmd
 
-# Compilo css e js
-RUN yarn install && \
-    yarn encore production
+RUN bin/console cache:warmup
 
-COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
+VOLUME /var/www/html/var/uploads

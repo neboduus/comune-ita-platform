@@ -11,6 +11,7 @@ export default class FormioCalendar extends Base {
     this.slot = false;
     this.container = false;
     this.calendar = null;
+    this.loaderTpl = '<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span></div>';
   }
 
   static schema() {
@@ -68,8 +69,10 @@ export default class FormioCalendar extends Base {
     this.selected = Array.prototype.slice.call(this.refs[`${this.component.key}-selected`], 0);*/
 
     let self = this,
-        array = ["2020-02-18","2020-02-25","2020-02-29","2020-03-01","2020-03-05","2020-03-09","2020-03-19","2020-03-21","2020-03-22","2020-03-29"],
-        html = '';
+        calendarID = this.component.calendarId,
+        location = window.location,
+        html = '',
+        explodedPath = location.pathname.split("/");
 
     this.container = $('#calendar-container-' + this.id);
 
@@ -85,19 +88,43 @@ export default class FormioCalendar extends Base {
     };
     $.datepicker.setDefaults($.datepicker.regional['it']);
 
-    this.calendar = this.container.find('.date-picker').datepicker({
-      minDate: new Date(),
-      firstDay: 1,
-      dateFormat: 'dd-mm-yy',
-      onSelect: function(dateText) {
-        self.date = dateText;
-        self.getDaySlots();
-      },
-      beforeShowDay: function(date){
-        var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-        return [ array.indexOf(string) !=  -1 ]
-      }
-    });
+    if (calendarID !== '' && calendarID != null) {
+      $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities',
+        {
+          dataType: 'json', // type of response data
+          beforeSend: function(){
+            self.container.find('.date-picker').append(self.loaderTpl);
+          },
+          success: function (data, status, xhr) {   // success callback function
+
+            $('#loader').remove();
+            self.calendar = self.container.find('.date-picker').datepicker({
+              minDate: new Date(),
+              firstDay: 1,
+              dateFormat: 'dd-mm-yy',
+              onSelect: function(dateText) {
+                self.date = dateText;
+                self.getDaySlots();
+              },
+              beforeShowDay: function(date){
+                var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+                return [ data.indexOf(string) !=  -1 ]
+              }
+            });
+
+            if (self.date) {
+              let parsedDate = moment(self.date, 'DD-MM-YYYY');
+              self.calendar.datepicker("setDate", parsedDate.toDate());
+              self.getDaySlots();
+            }
+
+          },
+          error: function (jqXhr, textStatus, errorMessage) { // error callback
+            alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
+            console.log(errorMessage);
+          }
+        });
+    }
 
     // Allow basic component functionality to attach like field logic and tooltips.
     return super.attach(element);
@@ -106,13 +133,10 @@ export default class FormioCalendar extends Base {
   /**
    * Get the value of the component from the dom elements.
    *
-   * @returns {Array}
+   * @returns {String}
    */
   getValue() {
-    return {
-      "date": this.date,
-      "slot": this.slot,
-    };
+    return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId +')';
   }
 
   /**
@@ -122,43 +146,46 @@ export default class FormioCalendar extends Base {
    * @returns {boolean}
    */
   setValue(value) {
-    console.log('setValue');
-    console.log(value);
     if (!value) {
       return;
     }
-    this.date = value.date;
-    this.slot = value.slot;
-    if (this.date) {
-      let parsedDate = moment(this.date, 'DD-MM-YYYY');
-      console.log(parsedDate);
-      this.calendar.datepicker("setDate", parsedDate.toDate());
-      this.getDaySlots();
-    }
+    let explodedValue = value.replace(")", "").replace(' (', " @ ").replace(/\//g, "-").split(" @ ");
+    this.date = explodedValue[0];
+    this.slot = explodedValue[1];
   }
 
   getDaySlots(){
     let self = this,
-        html = '';
+        calendarID = this.component.calendarId,
+        html = '',
+        location = window.location,
+        explodedPath = location.pathname.split("/"),
+        parsedDate = moment(self.date, 'DD-MM-YYYY');
+
     this.container.find('#slot-picker').html(html);
-    $.ajax('https://json-server.ship.opencontent.io/meetings',
+    $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities/' + parsedDate.format('YYYY-MM-DD'),
       {
         dataType: 'json', // type of response data
+        beforeSend: function(){
+          self.container.find('#slot-picker').append('<div class="col-12">' + self.loaderTpl + '</div>');
+        },
         success: function (data, status, xhr) {   // success callback function
+          $('#loader').remove();
           $(data).each(function( index, element ) {
             var cssClass = 'available';
-            if (!element.available) {
+            if (!element.availability) {
               cssClass = 'disabled';
             }
 
-            if (element.key == self.slot) {
+            let key = element.start_time + '-' + element.end_time;
+            if (key == self.slot) {
               cssClass = cssClass + ' active';
             }
 
-            html = html.concat('<div class="col-6"><button type="button" data-slot="' + element.key +'" class="btn btn-ora '+  cssClass +'">'+ element.key +'</button></div>');
+            html = html.concat('<div class="col-6"><button type="button" data-slot="' + key +'" class="btn btn-ora '+  cssClass +'">'+ key +'</button></div>');
 
           });
-          self.container.find('#slot-picker').html('<div class="col-12"><h6>Orari disponibili per il giorno ' + self.date + '</h6></div>' + html);
+          self.container.find('#slot-picker').html('<div class="col-12"><h6>Orari disponibili il ' + self.date + '</h6></div>' + html);
 
           $('.btn-ora.available').on('click', function (e) {
             e.preventDefault();
@@ -169,7 +196,8 @@ export default class FormioCalendar extends Base {
           })
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
-          alert(errorMessage);
+          alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
+          console.log(errorMessage);
         }
       });
   }

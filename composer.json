@@ -57,7 +57,9 @@
         "omines/datatables-bundle": "^0.3.1",
         "friendsofsymfony/rest-bundle": "^2.5",
         "nelmio/api-doc-bundle": "^3.4",
-        "lexik/jwt-authentication-bundle": "^2.6"
+        "lexik/jwt-authentication-bundle": "^2.6",
+        "thecodingmachine/gotenberg-php-client": "^6.2",
+        "excelwebzone/recaptcha-bundle": "^1.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

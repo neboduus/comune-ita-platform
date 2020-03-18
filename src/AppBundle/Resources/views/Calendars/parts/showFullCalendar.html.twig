@@ -1,0 +1,35 @@
+<div class="row">
+  <div class="col">
+    <a class="p-2 float-right" data-toggle="collapse" href="#legend" role="button" aria-expanded="false"
+       aria-controls="legend">
+      <svg class="icon">
+        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use>
+      </svg>
+    </a>
+    <div class="collapse" id="legend">
+      <div class='my-legend shadow p-4 float-right'>
+        <div class='legend-title'>Legenda stato evento</div>
+        <div class='legend-scale'>
+          <ul class='legend-labels'>
+            <li><span style='background:var(--primary);'></span>Confermato / Non richiede moderazione</li>
+            <li><span style='background:var(--white);border: 1px solid var(--primary);'></span>In attesa di conferma
+            </li>
+            <li><span style='background:var(--danger);'></span>Assente</li>
+            <li><span style='background:var(--secondary);'></span>Svolto</li>
+            <li><span style='background:var(--200);'></span>Chiusura</li>
+            <li><span style='background:#0073e670;'></span>Disponibilità</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="py-4">
+  <div class="row">
+    <div class="col mt-4">
+      <div id='fullcalendar'></div>
+      {{ include('AppBundle:Calendars/parts:modalEdit.html.twig') }}
+      {{ include('AppBundle:Calendars/parts:modalNew.html.twig') }}
+    </div>
+  </div>
+</div>

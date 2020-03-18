@@ -31,17 +31,22 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-lg-12 px-lg-4">
-        <h4 class="mb-5">
-          {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
-          -
+    <div class="row mb-4 mt-3">
+      <div class="col-lg-9 px-lg-4">
+        <h4>
+          {{ flow.getCurrentStepNumber() }} / {{ flow.stepCount }}
+           -
           {% if form.vars.helper.stepTitle|length > 0 %}
             {{ form.vars.helper.stepTitle }}
           {% else %}
             {{ flow.currentStepLabel()|trans }}
           {% endif %}
         </h4>
+      </div>
+      <div id="preview" class="col-lg-3 px-lg-4 d-none">
+        <a href="#" data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}" data-print="{{ path('print_service_pdf', {'service':servizio.id}) }}" class="btn btn-xs btn-outline-primary float-right">
+          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-print"></use></svg> Stampa anteprima
+        </a>
       </div>
     </div>
 
@@ -57,28 +62,6 @@
               {{ form.vars.helper.descriptionText|raw }}
             </blockquote>
           {% endif %}
-
-          {#<ul id="email-fields-list"
-              data-prototype="{{ form_widget(form.coverage.vars.prototype)|e }}"
-              data-widget-tags="{{ '<li></li>'|e }}"
-              data-widget-counter="{{ form.coverage|length }}">
-              {% for coverageField in form.coverage %}
-                  <li>
-                      {{ form_errors(coverageField) }}
-                      {{ form_widget(coverageField) }}
-                  </li>
-              {% endfor %}
-          </ul>#}
-
-          {#% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
-              <blockquote>
-                  {{ 'steps.common.conferma.help_text_top'|trans }}
-              </blockquote>
-              {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
-              <blockquote style="margin-top: 20px">
-                  {{ 'steps.common.conferma.help_text_bottom'|trans }}
-              </blockquote>
-          {% endif %#}
 
           {{ form_rest(form) }}
 

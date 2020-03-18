@@ -45,7 +45,7 @@ terms:
 
 servizio:
   crea: 'Crea nuovo servizio'
-  modifica: 'Modifica servizio - %name%'
+  modifica: 'Modifica %name%'
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Il servizio è stato sospeso'
@@ -90,7 +90,7 @@ pratica:
   pagamento: 'Pagamento'
   non_specificato: 'Non specificato'
   pdf:
-    dati_autenticazione: '<strong><small>Dati generati automaticamente dalla Stanza del Cittadino</small><br>Informazioni tecniche</strong>'
+    dati_autenticazione: '<strong>Informazioni tecniche</strong> <small>(Dati generati automaticamente dalla Stanza del Cittadino</small>)'
     spett_le: 'Spett.le'
     oggetto: 'Oggetto:'
     il_sottoscritto: 'Il/La sottoscritto/a'
@@ -180,7 +180,7 @@ pratica:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
     descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
   appunti_compilazione:
-    titolo: 'Aggiungi una descrizione ala pratica'
+    titolo: 'Aggiungi una descrizione alla pratica'
     sottotitolo: 'Questa descrizione può essere vista solo da te e ti servirà per riconoscere la pratica più agevolmente'
     placeholder: 'Inserisci una descrizione breve'
   noteDiCompilazione: 'Note di compilazione'
@@ -1555,4 +1555,47 @@ gateway:
     data: 'Data emissione'
     ora: 'Ora emissione'
 
+meetings:
+  email:
+    new_meeting:
+      pending: '<p>La informiamo che la sua richiesta è stata presa in carico.</p><p>Riceverà un email di conferma nonappena la sua richiesta verrà confermata.</p>'
+      approved: '<p>La informiamo che la sua richiesta è stata confermata.</p><p>La invitiamo a presentarsi alle ore hour del giorno date presso location</p>'
+      subject: 'Richiesta prenotazione appuntamento'
+    edit_meeting:
+      refused: '<p>Siamo spiacenti di informarla che non è stato possibile accogliere la Sua richiesta di appuntamento per il giorno date</p><br>
+              <p>Per maggiori informazioni può contattarci all indirizzo <a href="email_address">email_address</a></p>'
+      rescheduled: '<p>La informiamo che l appuntamento del giorno old_date è stato spostato alle ore hour del giorno new_date presso location</p><br>
+                     <p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
+                     mediante il link presente in questo messaggio oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
+      rescheduled_and_approved: '<p>Purtroppo non è stato possibile confermare il suo appuntamento nella data e orario richiesti, sarà possibile riceverla
+                                alle ore hour del giorno date presso location</p><br>
+                                <p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
+                                mediante il link presente in questo messaggio oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
+      approved: '<p>La informiamo che la sua richiesta è stata confermata.</p>
+                <p>La invitiamo a presentarsi alle ore hour del giorno date presso location</p>
+                <p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
+                mediante il link presente in questo messaggio oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
+      subject: 'Aggiornamenti richiesta appuntamento'
+    delete_meeting:
+      delete: 'La informiamo che il suo appuntamento è stato cancellato'
+      subject: 'Cancellazione appuntamento'
+    info: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
+                 nel caso tu non abbia fatto nessuna richiesta di questo tipo ti preghiamo di ignorare questo messaggio o segnalarlo
+                 all indirizzo <a href="mailto:email_address">email_address</a></i></p>'
+    success: 'Una notifica è stata inviata al cittadino con successo'
+
+backoffice:
+  integration:
+    missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
+    or: 'Oppure'
+    fields_error: 'I campi richiesti non coincidono'
+    calendars:
+      missing_contacts: "E' necessario fornire almeno un recapito"
+      calendar_error: 'Non esiste un calendario con id calendar_id'
+      save_meeting_error: 'Si è verificato un errore durante il salvataggio della prenotazione'
+    subscriptions:
+      subscription_service_error: 'Non esiste un servizio con codice code'
+      limit_error: 'Limite massimo di iscrizioni raggiunto. Utente user non iscritto al corso code'
+      save_subscriber_error: 'Si è verificato un errore durante il salvataggio dell utente user'
+      save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
 

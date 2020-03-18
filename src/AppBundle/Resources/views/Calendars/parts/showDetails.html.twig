@@ -1,0 +1,68 @@
+<div class="py-4">
+  <div class="row">
+    <div class="col">
+      <div class="card-wrapper card-teaser-wrapper card-teaser-wrapper-equal ">
+        {% for openingHour in calendar.openingHours %}
+          <div class="card card-teaser no-after rounded shadow">
+            <div class="card-body pb-5">
+              <div class="category-top">
+                <svg class="icon icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+                </svg>
+                <span class="category">Orario di apertura</span>
+              </div>
+              <div class="card-text">
+                <p>
+                  Dal {{ openingHour.startDate | date('d/m/Y') }}
+                  al {{ openingHour.endDate | date('d/m/Y') }}
+                </p>
+                <p>Ogni {% for weekDay in openingHour.daysOfWeek %}
+                    {# Punctuation and separators#}
+                    {% if loop.last and not loop.first %} e
+                    {% elseif not loop.first and not loop.last %},
+                    {% endif %}
+                    {# Week days translation #}
+                    {% if weekDay == 1 %} Lunedì
+                    {% elseif weekDay == 2 %} Martedì
+                    {% elseif weekDay == 3 %} Mercoledì
+                    {% elseif weekDay == 4 %} Giovedì
+                    {% elseif weekDay == 5 %} Venerdì
+                    {% elseif weekDay == 6 %} Sabato
+                    {% elseif weekDay == 7 %} Domenica
+                    {% endif %}
+                  {% endfor %}
+                </p>
+                <p>
+                  Dalle ore {{ openingHour.beginHour | date('H:i') }} alle
+                  ore {{ openingHour.endHour | date('H:i') }}
+                </p>
+                <br>
+                <p>Ogni incontro ha una durata di {{ openingHour.meetingMinutes }} minuti</p>
+                {% if openingHour.meetingQueue == 1 %}
+                  <p>E' inoltre possibile ricevere una persona alla volta</p>
+                {% else %}
+                  <p>E' inoltre possibile ricevere fino ad un massimo di {{ openingHour.meetingQueue }}
+                    persone contemporaneamente</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="card card-teaser shadow p-4 my-5 rounded col-sm-6">
+        <svg class="icon icon-sm">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pa"></use>
+        </svg>
+        <div class="card-body">
+          <h5 class="card-title">
+            Luogo di incontro
+          </h5>
+          <div class="card-text">
+            <p>{{ calendar.location | raw }}</p>
+            <p>Contatto: <a href="mailto:asili@comune.it">{{ calendar.contactEmail }}</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

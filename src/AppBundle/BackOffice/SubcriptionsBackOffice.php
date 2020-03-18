@@ -4,10 +4,11 @@
 namespace AppBundle\BackOffice;
 
 
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMException;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SubcriptionsBackOffice implements BackOfficeInterface
 {
@@ -16,6 +17,11 @@ class SubcriptionsBackOffice implements BackOfficeInterface
   const PATH = 'operatori_subscription-service_index';
 
   private $em;
+
+  /**
+   * @var TranslatorInterface $translator
+   */
+  private $translator;
 
   private $required_headers = array(
     "name",
@@ -31,22 +37,38 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     "code",
   );
 
-  private $required_fields = array(
-    "applicant.data.completename.data.name",
-    "applicant.data.completename.data.surname",
-    "applicant.data.Born.data.natoAIl",
-    "applicant.data.Born.data.place_of_birth",
-    "applicant.data.fiscal_code.data.fiscal_code",
-    "applicant.data.address.data.address",
-    "applicant.data.address.data.house_number",
-    "applicant.data.address.data.municipality",
-    "applicant.data.address.data.postal_code",
-    "applicant.data.email_address",
-    "code"
-  );
+  private $required_fields = [
+    'subscriber_subscription' => array(
+      "subscriber.data.completename.data.name",
+      "subscriber.data.completename.data.surname",
+      "subscriber.data.Born.data.natoAIl",
+      "subscriber.data.Born.data.place_of_birth",
+      "subscriber.data.fiscal_code.data.fiscal_code",
+      "subscriber.data.address.data.address",
+      "subscriber.data.address.data.house_number",
+      "subscriber.data.address.data.municipality",
+      "subscriber.data.address.data.postal_code",
+      "subscriber.data.email_address",
+      "code"
+    ),
+    'applicant_subscription' => array(
+      "applicant.data.completename.data.name",
+      "applicant.data.completename.data.surname",
+      "applicant.data.Born.data.natoAIl",
+      "applicant.data.Born.data.place_of_birth",
+      "applicant.data.fiscal_code.data.fiscal_code",
+      "applicant.data.address.data.address",
+      "applicant.data.address.data.house_number",
+      "applicant.data.address.data.municipality",
+      "applicant.data.address.data.postal_code",
+      "applicant.data.email_address",
+      "code"
+    )
+  ];
 
-  public function __construct(EntityManager $em)
+  public function __construct(TranslatorInterface $translator, EntityManager $em)
   {
+    $this->translator = $translator;
     $this->em = $em;
   }
 
@@ -70,22 +92,61 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     return $this->required_headers;
   }
 
-  public function execute($subscriptionData)
+  public function checkRequiredFields($schema)
   {
-
-    $fixedData= [];
-    foreach ($subscriptionData as $k => $v) {
-      $keys = explode('.', $k);
-      $key = end($keys);
-      $fixedData[$key] = $v;
+    $errors = [];
+    foreach ($this->getRequiredFields() as $key => $requiredFields) {
+      foreach ($requiredFields as $field) {
+        if (!array_key_exists($field . '.label', $schema)) {
+          $errors[$key][] = $this->translator->trans('backoffice.integration.missing_field', ['field' => $field]);
+        }
+      }
+      if (!array_key_exists($key, $errors)) {
+        return null;
+      }
     }
+   return $errors;
+  }
 
+  public function execute($data)
+  {
     $requiredHeaders = $this->getRequiredHeaders();
+    $requiredFields = $this->getRequiredFields();
     sort($requiredHeaders);
-    ksort($fixedData);
+    if($data instanceof Pratica) {
+      // Pratica: extract form data
+      $data = $data->getDematerializedForms();
+      unset($data['flattened']['submit']);
+      $subscriptionData = $data['flattened'];
+      ksort($subscriptionData);
 
-    if (array_values(array_intersect(array_keys($fixedData), $requiredHeaders)) != array_values($requiredHeaders)) {
-      return ['error' => 'I campi richiesti non coincidono'];
+      // Check among all possible integrations which one to use
+      $integrationType = null;
+      foreach ($requiredFields as $type => $fields) {
+        sort($fields);
+        if(! $integrationType && array_values(array_intersect(array_keys($subscriptionData), array_values($fields))) == array_values($fields)) {
+          // Integration type found: no previous integration found
+          $integrationType=$type;
+        }
+      }
+      if ($integrationType) {
+        // Integration found: build data
+        $fixedData = [];
+        foreach ($requiredFields[$integrationType] as $field) {
+          $keys = explode('.', $field);
+          $key = end($keys);
+          $fixedData[$key] = $subscriptionData[$field];
+        }
+      } else {
+        return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
+      }
+    } else {
+      // CSV Import
+      ksort($data);
+      if (array_values(array_intersect(array_keys($data), $requiredHeaders)) != array_values($requiredHeaders)) {
+        return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
+      }
+      $fixedData= $data;
     }
 
     $repo = $this->em->getRepository('AppBundle:Subscriber');
@@ -100,11 +161,12 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
     // No such subscription service with given code
     if (!$subscriptionService) {
-      return ['error' => 'Non esiste un servizio con codice ' . $fixedData['code']];
+      return ['error' => $this->translator->trans('backoffice.integration.subscriptions.subscription_service_error', ['code'=>$fixedData['code']])];
     }
     // limit of subscriptions reached
     if ($subscriptionService->getSubscribersLimit() && count($subscriptionService->getSubscriptions()) >= $subscriptionService->getSubscribersLimit()) {
-      return ['error' => 'Limite massimo di iscrizioni raggiunto. Utente ' . $fixedData['fiscal_code'] . ' non iscritto al corso ' . $fixedData['code']];
+      return ['error' => $this->translator->trans('backoffice.integration.subscriptions.limit_error',
+        ['user' => $fixedData['fiscal_code'], 'code'=> $fixedData['code']])];
     }
 
     if (!$subscriber) {
@@ -129,7 +191,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
         $this->em->persist($subscriber);
         $this->em->flush();
       } catch (\Exception $exception) {
-        return ['error' => 'Si è verificato un errore durante il salvataggio dell utente ' . $subscriber->getFiscalCode()];
+        return ['error' => $this->translator->trans('backoffice.integration.subscriptions.save_subscriber_error',  ['user' => $subscriber->getFiscalCode()])];
       }
     }
 
@@ -148,7 +210,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
       return $subscription;
     } catch (\Exception $exception) {
-      return ['error' => 'Si è verificato un errore durante il salvataggio dell iscrizione per l\'utente ' .  $subscriber->getFiscalCode()];
+      return ['error' => $this->translator->trans('backoffice.integration.subscriptions.save_subscription_error', ['user' => $subscriber->getFiscalCode()])];
     }
   }
 }

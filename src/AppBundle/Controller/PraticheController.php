@@ -233,7 +233,7 @@ class PraticheController extends Controller
       $pratica->setInstanceId($praticaFlowService->getInstanceId());
     }
     $resumeURI = $praticaFlowService->getResumeUrl($request);
-    $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
     $form = $praticaFlowService->createForm();
     if ($praticaFlowService->isValid($form)) {
@@ -254,7 +254,7 @@ class PraticheController extends Controller
         $form = $praticaFlowService->createForm();
 
         $resumeURI = $praticaFlowService->getResumeUrl($request);
-        $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+        //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
       } else {
 
@@ -283,7 +283,7 @@ class PraticheController extends Controller
       'flow' => $praticaFlowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'user' => $user,
-      'threads' => $thread,
+      //'threads' => $thread,
     ];
   }
 
@@ -301,12 +301,12 @@ class PraticheController extends Controller
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
-    $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
     $result = [
       'pratica' => $pratica,
       'user' => $user,
-      'threads' => $thread,
+      //'threads' => $thread,
     ];
 
     if ($pratica instanceof GiscomPratica) {
@@ -410,7 +410,7 @@ class PraticheController extends Controller
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
-    $thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
@@ -428,7 +428,7 @@ class PraticheController extends Controller
       'pratica' => $pratica,
       'allegati' => $allegati,
       'user' => $user,
-      'threads' => $thread,
+      //'threads' => $thread,
     ];
   }
 

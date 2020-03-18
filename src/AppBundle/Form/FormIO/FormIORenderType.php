@@ -58,6 +58,7 @@ class FormIORenderType extends AbstractType
     $helper = $options["helper"];
     $helper->setStepTitle('steps.scia.modulo_default.label', true);
     $data = $this->setupHelperData($pratica);
+
     $builder
       ->add('form_id', HiddenType::class,
         [
@@ -117,60 +118,83 @@ class FormIORenderType extends AbstractType
 
   /**
    * @param SciaPraticaEdilizia $pratica
-   * @return array
+   * @return false|string
    */
   private function setupHelperData(FormIO $pratica)
   {
     $data = $pratica->getDematerializedForms();
 
-    /** @var CPSUser $user */
-    $user = $pratica->getUser();
-
-
     if (empty($data)) {
-      $cpsUserData = '{
-        "data": {
-          "applicant": {
-            "data": {
-              "completename": {
-                "data": {
-                  "name": "'.$user->getNome().'",
-                  "surname": "'.$user->getCognome().'"
-                },
-                "metadata": []
-              },
-              "Born": {
-                "data": {
-                  "natoAIl": "'.$user->getDataNascita()->format(DateTime::ISO8601).'",
-                  "place_of_birth": "'.$user->getLuogoNascita().'"
-                },
-                "metadata": []
-              },
-              "fiscal_code": {
-                "data": {
-                  "fiscal_code": "'.$user->getCodiceFiscale().'"
-                },
-                "metadata": []
-              },
-              "address": {
-                "data": {
-                  "address": "'.$user->getIndirizzoResidenza().'",
-                  "house_number": "",
-                  "municipality": "'.$user->getCittaResidenza().'",
-                  "postal_code": "'.$user->getCapResidenza().'"
-                },
-                "metadata": []
-              },
-              "email_address": "'.$user->getEmail().'"
-            },
-            "metadata": []
+      /** @var CPSUser $user */
+      $user = $pratica->getUser();
+      $cpsUserData = [];
+      $applicant = [];
+
+      $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
+      if ($result['status'] == 'success') {
+        $schema = $this->arrayFlat($result['schema']);
+        foreach ($schema as $k => $v) {
+          $kParts = explode('.', $k);
+          if ($kParts[0] == 'applicant') {
+            array_pop($kParts);
+            $key = implode('.', $kParts);
+            if (!in_array($key, $applicant)) {
+              $applicant[] = $key;
+            }
           }
-        }}';
-      return $cpsUserData;
+        }
+      }
+
+      if (!empty($applicant) && $user instanceof CPSUser) {
+        if (in_array('applicant.data.completename.data.name', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['completename']['data']['name'] = $user->getNome();
+        }
+
+        if (in_array('applicant.data.completename.data.surname', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['completename']['data']['surname'] = $user->getCognome();
+        }
+
+        if (in_array('applicant.data.Born.data.natoAIl', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['Born']['data']['natoAIl'] = $user->getDataNascita()->format(DateTime::ISO8601);
+        }
+
+        if (in_array('applicant.data.Born.data.place_of_birth', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['Born']['data']['place_of_birth'] = $user->getLuogoNascita();
+        }
+
+        if (in_array('applicant.data.fiscal_code.data.fiscal_code', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['fiscal_code']['data']['fiscal_code'] = $user->getCodiceFiscale();
+        }
+
+        if (in_array('applicant.data.address.data.address', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['address'] = $user->getIndirizzoResidenza();
+        }
+
+        if (in_array('applicant.data.address.data.house_number', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['house_number'] = '';
+        }
+
+        if (in_array('applicant.data.address.data.municipality', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['municipality'] = $user->getCittaResidenza();
+        }
+
+        if (in_array('applicant.data.address.data.postal_code', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['address']['data']['postal_code'] = $user->getCapResidenza();
+        }
+
+        if (in_array('applicant.data.email_address', $applicant)) {
+          $cpsUserData['data']['applicant']['data']['email_address'] = $user->getEmail();
+        }
+      }
+      return \json_encode($cpsUserData);
     }
-    return json_encode($data);
+    return \json_encode($data);
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return bool|mixed
+   */
   private function getFormIoId(Pratica $pratica)
   {
     $formID = false;
@@ -192,11 +216,13 @@ class FormIORenderType extends AbstractType
     return $formID;
   }
 
+  /**
+   * @param $array
+   * @param string $prefix
+   * @return array
+   */
   private function arrayFlat($array, $prefix = '')
   {
-
-
-
     $result = array();
     foreach ($array as $key => $value) {
       if ($key == 'metadata' || $key == 'state') {

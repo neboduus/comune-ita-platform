@@ -14,7 +14,17 @@ services:
   AppBundle\Controller\Rest\ApplicationsAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\CalendarsAPIController:
+    autowire: true
+
+  AppBundle\Controller\Rest\MeetingsAPIController:
+    autowire: true
+    arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@translator"]
+
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
+    autowire: true
+
+  AppBundle\Controller\PraticheAnonimeController:
     autowire: true
 
   GuzzleHttp\Client: '@guzzle.client.mypay'
@@ -32,6 +42,11 @@ services:
   AppBundle\Form\OccupazioneSuoloPubblico\ImportoChecker:
     autowire: true
 
+  AppBundle\Form\MeetingType:
+    autowire: true
+    tags:
+       - { name: form.type }
+
   AppBundle\Services\MyPayService:
     autowire: true
 
@@ -46,6 +61,12 @@ services:
 
   AppBundle\BackOffice\SubcriptionsBackOffice:
     autowire: true
+    arguments: ["@translator"]
+    tags: ['app.backoffice']
+
+  AppBundle\BackOffice\CalendarsBackOffice:
+    autowire: true
+    arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@translator"]
     tags: ['app.backoffice']
 
   ocsdc.backoffices:
@@ -125,6 +146,7 @@ services:
       - "%wkhtmltopdf_service%"
       - "@templating"
       - "%ocsdc_default_datetime_format%"
+      - "@router"
 
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
@@ -264,6 +286,7 @@ services:
 
   AppBundle\Form\Admin\Servizio\IntegrationsDataType:
     autowire: true
+    arguments: ["@translator"]
     tags:
       - { name: form.type }
 
@@ -278,6 +301,16 @@ services:
       - { name: form.type }
 
   AppBundle\Form\SubscriptionServiceType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\OperatoreUserType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\FormIO\FormIOAnonymousRenderType:
     autowire: true
     tags:
       - { name: form.type }
@@ -375,6 +408,10 @@ services:
   ocsdc.form.flow.formio:
     class: AppBundle\Form\FormIO\FormIOFlow
     parent: ocsdc.form.flow.pratica
+
+  ocsdc.form.flow.formioanonymous:
+    class: AppBundle\Form\FormIO\FormIOAnonymousFlow
+    autoconfigure: true
 
   # Inzio operatore
 

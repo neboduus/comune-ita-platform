@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = _default;
 
-var _NestedComponent = _interopRequireDefault(require("formiojs/components/_classes/nested/NestedComponent.form"));
+var _Component = _interopRequireDefault(require("formiojs/components/_classes/component/Component.form"));
 
 var _CalendarEdit = _interopRequireDefault(require("./Calendar.edit.display"));
 
@@ -18,8 +18,11 @@ function _default() {
     extend[_key] = arguments[_key];
   }
 
-  return _NestedComponent.default.apply(void 0, [[{
+  return _Component.default.apply(void 0, [[{
     key: 'display',
     components: _CalendarEdit.default
+  }, {
+    key: 'validation',
+    components: {}
   }]].concat(extend));
 }

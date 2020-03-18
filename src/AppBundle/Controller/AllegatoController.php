@@ -86,8 +86,7 @@ class AllegatoController extends Controller
     $targetFile = $dirname . '/' . $pratica->getId() . time();
     exec("openssl smime -verify -inform DER -in {$uploadedFile->getRealPath()} -noverify > {$targetFile} 2>&1");
 
-
-    if (mime_content_type($targetFile) != 'application/pdf') {
+    if (!in_array(mime_content_type($targetFile), array('application/pdf', 'application/octet-stream' ))) {
       unlink($targetFile);
       return new JsonResponse('Sono permessi solo file pdf firmati', Response::HTTP_BAD_REQUEST);
     }
@@ -312,9 +311,9 @@ class AllegatoController extends Controller
       /** @var Query $query */
       $query = $this->getDoctrine()
         ->getManager()
-        ->createQuery("SELECT allegato 
-                FROM AppBundle\Entity\Allegato allegato 
-                WHERE (allegato INSTANCE OF AppBundle\Entity\Allegato OR allegato INSTANCE OF AppBundle\Entity\AllegatoScia) 
+        ->createQuery("SELECT allegato
+                FROM AppBundle\Entity\Allegato allegato
+                WHERE (allegato INSTANCE OF AppBundle\Entity\Allegato OR allegato INSTANCE OF AppBundle\Entity\AllegatoScia)
                 AND (allegato NOT INSTANCE OF AppBundle\Entity\ModuloCompilato )
                 AND allegato.owner = :user
                 ORDER BY allegato.filename ASC")

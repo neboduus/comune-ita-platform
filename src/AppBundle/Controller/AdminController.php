@@ -27,6 +27,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -143,7 +144,7 @@ class AdminController extends Controller
 
       $mailer = $this->get('fos_user.mailer');
       $mailer->sendResettingEmailMessage($operatoreUser);
-
+      $this->addFlash('feedback', 'Operatore creato con successo');
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
@@ -162,12 +163,9 @@ class AdminController extends Controller
    */
   public function showOperatoreAction(OperatoreUser $operatoreUser)
   {
-    $deleteForm = $this->createDeleteForm($operatoreUser);
-
     return array(
       'user' => $this->getUser(),
-      'operatoreUser' => $operatoreUser,
-      'delete_form' => $deleteForm->createView(),
+      'operatoreUser' => $operatoreUser
     );
   }
 
@@ -179,7 +177,6 @@ class AdminController extends Controller
    */
   public function editOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
-    $deleteForm = $this->createDeleteForm($operatoreUser);
     $editForm = $this->createForm('AppBundle\Form\OperatoreUserType', $operatoreUser);
     $editForm->handleRequest($request);
 
@@ -192,8 +189,7 @@ class AdminController extends Controller
     return array(
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
-      'edit_form' => $editForm->createView(),
-      'delete_form' => $deleteForm->createView(),
+      'edit_form' => $editForm->createView()
     );
   }
 
@@ -222,36 +218,22 @@ class AdminController extends Controller
   /**
    * Deletes a operatoreUser entity.
    * @Template()
-   * @Route("/operatore/{id}", name="admin_operatore_delete")
-   * @Method("DELETE")
+   * @Route("/operatore/{id}/delete", name="admin_operatore_delete")
+   * @Method({"GET", "POST", "DELETE"})
    */
-  public function deleteAction(Request $request, OperatoreUser $operatoreUser)
+  public function deleteOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
-    $form = $this->createDeleteForm($operatoreUser);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
+    try {
       $em = $this->getDoctrine()->getManager();
       $em->remove($operatoreUser);
       $em->flush();
+      $this->addFlash('feedback', 'Operatore eliminato correttamente');
+      return $this->redirectToRoute('admin_operatore_index');
+
+    } catch (ForeignKeyConstraintViolationException $exception) {
+      $this->addFlash('warning', 'Impossibile eliminare l\'operatore, ci sono delle pratiche collegate.');
+      return $this->redirectToRoute('admin_servizio_index');
     }
-
-    return $this->redirectToRoute('admin_operatore_index');
-  }
-
-  /**
-   * Creates a form to delete a operatoreUser entity.
-   *
-   * @param OperatoreUser $operatoreUser The operatoreUser entity
-   *
-   * @return \Symfony\Component\Form\Form The form
-   */
-  private function createDeleteForm(OperatoreUser $operatoreUser)
-  {
-    return $this->createFormBuilder()
-      ->setAction($this->generateUrl('admin_operatore_delete', array('id' => $operatoreUser->getId())))
-      ->setMethod('DELETE')
-      ->getForm();
   }
 
 
@@ -299,7 +281,7 @@ class AdminController extends Controller
     ];
 
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('AppBundle:Servizio')->findAll();
+    $items = $em->getRepository('AppBundle:Servizio')->findBy([], ['name' => 'ASC']);
 
     return array(
       'user' => $this->getUser(),
@@ -317,11 +299,11 @@ class AdminController extends Controller
   {
 
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('AppBundle:Servizio')->findBy(['praticaFCQN' => '\AppBundle\Entity\FormIO']);
+    $items = $em->getRepository('AppBundle:Servizio')->findBy(['praticaFCQN' => '\AppBundle\Entity\FormIO'], ['name' => 'ASC']);
 
     $data = [];
     foreach ($items as $s) {
-      $data []= [
+      $data [] = [
         'id' => $s->getId(),
         'title' => $s->getName(),
         'description' => $s->getDescription()
@@ -472,7 +454,27 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_index');
     }
 
+  }
 
+  /**
+   * @Route("/servizio/{servizio}/schema", name="admin_servizio_schema_edit")
+   * @ParamConverter("servizio", class="AppBundle:Servizio")
+   */
+  public function formioValidateAction(Request $request, Servizio $servizio)
+  {
+
+    $data = $request->get('schema');
+    if (!empty($data)) {
+      $schema = \json_decode($data, true);
+
+      try {
+        $this->container->get('ocsdc.formserver')->editForm($schema);
+        $response = array('status' => 'OK');
+        return JsonResponse::create($response, Response::HTTP_OK);
+      } catch (\Exception $exception) {
+        return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+      }
+    }
   }
 
 }

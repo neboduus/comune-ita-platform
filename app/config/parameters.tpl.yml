@@ -11,6 +11,7 @@ parameters:
     mailer_port: '%env(MAILER_PORT)%'
     mailer_user: '%env(MAILER_USER)%'
     mailer_password: '%env(MAILER_PASSWORD)%'
+    mailer_encription: 'tls'
     secret: '%env(SECRET)%'
     default_from_email_address: '%env(DEFAULT_FROM_EMAIL_ADDRESS)%'
     wkhtmlbinary: '%env(WKHTMLBINARY)%'

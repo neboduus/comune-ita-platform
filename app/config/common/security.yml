@@ -96,8 +96,9 @@ security:
         - { path: ^/%prefix%/operatori/subscriptions, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori/subscription-service, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori/subscriber, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/%prefix%/operatori/calendars, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori, role: ROLE_OPERATORE }
-        - { path: ^/%prefix%/pratiche, role: ROLE_USER }
+        #- { path: ^/%prefix%/pratiche, role: ROLE_USER }
         - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
         - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
         - { path: ^/%prefix%/admin, role: ROLE_ADMIN }

@@ -23,6 +23,7 @@ var formIoI18n = {
     previous: 'Precedente',
     cancel: 'Annulla',
     submit: 'Invia',
+    invalid_email: "Indirizzo email non valido",
     "Add Another": "Aggiungi"
   }
 };

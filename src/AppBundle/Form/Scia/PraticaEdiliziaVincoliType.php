@@ -182,7 +182,7 @@ class PraticaEdiliziaVincoliType extends AbstractType
         if ($pratica->haUnaRichiestaDiIntegrazioneAttiva()) {
             $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva()->getPayload();
             if (isset( $integrationRequest['vincoli'] )) {
-                $vincoli = (new MappedPraticaEdilizia())->getVincoli()->getProperties();
+                $vincoli = (new MappedPraticaEdilizia($pratica->getDematerializedForms()))->getVincoli()->getProperties();
                 $integrazioneAllegati = array_intersect(
                     $vincoli,
                     (array)$integrationRequest['vincoli']

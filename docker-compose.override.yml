@@ -17,18 +17,11 @@ services:
       - ./src/AppBundle:/var/www/html/src/AppBundle:rw
 
   apache:
-    build: 
+    depends_on:
+      - php
+    build:
       context: .
       dockerfile: Dockerfile.apache
       args:
         php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
-
-  pgweb:
-    image: sosedoff/pgweb
-    labels:
-      - 'traefik.port=8081'
-    environment:
-      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=disable
-    depends_on:
-      - postgres
 

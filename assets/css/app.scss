@@ -7,14 +7,13 @@ $primary-s: 72;
 $primary-b: 74;
 
 @import "base";
-// import libreria
-//@import "~bootstrap-italia/src/scss/bootstrap-italia";
 @import "header";
 @import "navigation";
 @import "progressbar";
 @import "override/forms";
 @import "override/sdc";
-@import "meeting-calendar";
+@import "formio-components";
+@import "calendars";
 
 
 .iter-timeline-wrapper {

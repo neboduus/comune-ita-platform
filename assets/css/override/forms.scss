@@ -19,6 +19,8 @@
 }
 
 .form-group {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
   label {
     position: relative;
     white-space: normal;
@@ -47,11 +49,10 @@
   }
 
   #formio {
-    /*padding: 8px;
-    background-color: #f2f2f2;*/
 
-    .formio-component {
-      /*background-color: #f2f2f2;*/
+    .form-group {
+      padding-bottom: .3rem;
+      margin-bottom: .3rem;
     }
 
     .formio-choices {
@@ -83,8 +84,72 @@
               }
             }
           }
+          &:last-child {
+            &.active {
+              span {
+                &:after {
+                  display: none;
+                }
+              }
+            }
+          }
         }
       }
     }
+
+    .btn-wizard-nav-submit,
+    .btn-wizard-nav-previous,
+    .btn-wizard-nav-cancel,
+    .btn-wizard-nav-next {
+      margin-top: 20px;
+    }
   }
 }
+
+.choices{
+  .selection {
+    box-shadow: none;
+    border-bottom: 1px solid #5c6f82;
+  }
+  &.is-open {
+    &:after {
+      margin-top: -18px !important;
+    }
+  }
+  &:after {
+    margin-top: -13px !important;
+  }
+}
+
+/*input[type='date'],
+input[type='datetime-local'],
+input[type='email'],
+input[type='number'],
+input[type='password'],
+input[type='search'],
+input[type='tel'],
+input[type='text'],
+input[type='time'],
+input[type='url'],
+textarea {
+  border: none;
+  background-color: #f2f2f2;
+  border-radius: 4px 0 0 4px;
+}*/
+
+textarea {
+  background-color: #f6f6f6 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 380px) {
+  .btn-wizard-nav-submit,
+  .btn-wizard-nav-previous,
+  .btn-wizard-nav-cancel,
+  .btn-wizard-nav-next {
+    padding: 10px 20px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+}
+

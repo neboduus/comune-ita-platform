@@ -42,9 +42,11 @@ require("summernote");
 require("summernote/dist/summernote-bs4.css")
 
 import Calendar from './Calendar';
+import PageBreak from './PageBreak';
 import 'formiojs'
 
 Formio.registerComponent('calendar', Calendar);
+Formio.registerComponent('pagebreak', PageBreak);
 
 $(document).ready(function () {
 
@@ -97,7 +99,26 @@ $(document).ready(function () {
   // Step Form Fields
   if ($("#formio_builder_render_form_id").length) {
 
-    console.log('1234');
+    let preview = $('#preview');
+    preview.removeClass('d-none');
+    preview.find('a').click(function (e) {
+      let printUrl = $(this).data('print');
+      e.preventDefault();
+      $.ajax($(this).data('schema'),
+        {
+          dataType: 'json', // type of response data
+          method: 'POST',
+          data: {
+            schema: '"' + $("#formio_builder_render_form_schema").val() + '"'
+          },
+          success: function (data, status, xhr) {   // success callback function
+            window.location.href = printUrl;
+          },
+          error: function (jqXhr, textStatus, errorMessage) { // error callback
+            console.log(errorMessage);
+          }
+        });
+    });
 
     Formio.icons = "fontawesome";
     Formio.builder(document.getElementById("builder"), $('#formio').data('formserver_url') + "/form/" + $("#formio_builder_render_form_id").val(), {
@@ -107,6 +128,7 @@ $(document).ready(function () {
         data: false,
         layout: false,
         premium: false,
+        resource:false,
         customBasic: {
           title: 'Componenti',
           default: true,
@@ -115,6 +137,7 @@ $(document).ready(function () {
             textfield: true,
             textarea: true,
             checkbox: true,
+            number: true,
             select:true,
             radio:true,
             selectboxes: true,
@@ -136,12 +159,12 @@ $(document).ready(function () {
           weight: 0,
           components: {
             htmlelement: true,
-            columns: true
+            columns: true,
+            pagebreak: true
           }
         },
       },
     }).then(function (builder) {
-
 
       // Inserisco lo schema in un input hidden
       $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
@@ -169,21 +192,18 @@ $(document).ready(function () {
       builder.on("removeComponent", function () {
         $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
       });
+
     });
 
   }
 
-
-
   // Step Payment data
   if ($("#payment_data_flow_service_step").length) {
-
 
     if (!$('#payment_data_payment_required').prop('checked')) {
       $('#payment_data_total_amounts').attr('disabled', 'disabled');
       $('#payment_data_gateways').find('input[type="checkbox"]').attr('disabled', 'disabled');
     }
-
 
     $('#payment_data_payment_required').change(function() {
       if(this.checked) {
