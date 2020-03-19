@@ -158,7 +158,7 @@
     <div id="hidden" class="hidden"
          data-url='{{ path("calendar-day-availabilities_api_get", {'id': 'calendar_id', 'date': 'date'}) }}'
          data-calendar='{{ calendar.id }}'
-         data-events='{{ events | json_encode | raw }}'
+         data-events='{{ events | json_encode }}'
          data-duration='{{ minDuration }}'
     ></div>
     <div class="nav-tabs-hidescroll mt-4 mt-md-5">
