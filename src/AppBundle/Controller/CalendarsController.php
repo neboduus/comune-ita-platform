@@ -18,7 +18,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -46,7 +49,7 @@ class CalendarsController extends Controller
       ->from(Calendar::class, 'calendar')
       ->leftJoin('calendar.moderators', 'moderators');
 
-    if ( in_array(User::ROLE_OPERATORE, $user->getRoles()) ) {
+    if (in_array(User::ROLE_OPERATORE, $user->getRoles())) {
       $builder
         ->where('calendar.owner = :owner')
         ->Orwhere('moderators.id = :operatore')
@@ -59,8 +62,8 @@ class CalendarsController extends Controller
       $data[] = array(
         'title' => $calendarEntry->getTitle(),
         'id' => $calendarEntry->getId(),
-        'owner'=>$calendarEntry->getOwner()->getUsername(),
-        'isModerated'=>$calendarEntry->getIsModerated(),
+        'owner' => $calendarEntry->getOwner()->getUsername(),
+        'isModerated' => $calendarEntry->getIsModerated(),
       );
     }
 
@@ -107,7 +110,7 @@ class CalendarsController extends Controller
    * @Route("/operatori/calendars/new", name="operatori_calendar_new")
    * @Method({"GET", "POST"})
    * @param Request $request the request
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return array|RedirectResponse
    * @throws \Exception
    */
   public function newCalendarAction(Request $request)
@@ -148,7 +151,7 @@ class CalendarsController extends Controller
    * @Method("GET")
    * @param Request $request the request
    * @param Calendar $calendar The calendar entity
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   * @return RedirectResponse
    */
   public function deleteCalendarAction(Request $request, Calendar $calendar)
   {
@@ -193,13 +196,13 @@ class CalendarsController extends Controller
    * @param Request $request the request
    * @param Calendar $calendar The Calendar entity
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return array|RedirectResponse
    */
   public function editCalendarAction(Request $request, Calendar $calendar)
   {
     /** @var User $user */
     $user = $this->getUser();
-    if (!in_array(User::ROLE_ADMIN, $user->getRoles()) && $calendar->getOwner() != $user && !$calendar->getModerators()->contains($user) ) {
+    if (!in_array(User::ROLE_ADMIN, $user->getRoles()) && $calendar->getOwner() != $user && !$calendar->getModerators()->contains($user)) {
       $this->addFlash('error', 'Non possiedi i permessi per modificare questo calendario');
       return $this->redirectToRoute('operatori_calendars_index');
     }
@@ -269,6 +272,7 @@ class CalendarsController extends Controller
       Meeting::STATUS_REFUSED => 'Rifiutato',
       Meeting::STATUS_MISSED => 'Assente',
       Meeting::STATUS_DONE => 'Concluso',
+      Meeting::STATUS_CANCELLED => 'Annullato',
     ];
 
     $table = $this->createDataTable()
@@ -315,9 +319,11 @@ class CalendarsController extends Controller
       ->select('meeting')
       ->from('AppBundle:Meeting', 'meeting')
       ->where('meeting.calendar = :calendar')
-      ->andWhere('meeting.status != :status')
+      ->andWhere('meeting.status != :refused')
+      ->andWhere('meeting.status != :cancelled')
       ->setParameter('calendar', $calendar)
-      ->setParameter('status', 2)
+      ->setParameter('refused', Meeting::STATUS_REFUSED)
+      ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
       ->getQuery()->getResult();
 
     $events = [];
@@ -352,6 +358,11 @@ class CalendarsController extends Controller
           case 4: // STATUS_DONE
             $color = 'var(--secondary)';
             $borderColor = 'var(--secondary)';
+            $textColor = 'var(--white)';
+            break;
+          case 5: // STATUS_CANCELLED
+            $color = 'var(--warning)';
+            $borderColor = 'var(--warning)';
             $textColor = 'var(--white)';
             break;
           default:
@@ -411,6 +422,49 @@ class CalendarsController extends Controller
     );
   }
 
+  /**
+   * Cancels meeting
+   * @Route("meetings/{meetingHash}/cancel", name="cancel_meeting")
+   * @Template()
+   * @param Request $request the request
+   * @param String $meetingHash The Meeting hash
+   *
+   * @return array|RedirectResponse
+   * @throws \Exception
+   */
+  public function cancelMeetingAction(Request $request, $meetingHash)
+  {
+    $em = $this->getDoctrine()->getManager();
+    $meeting = $em->getRepository('AppBundle:Meeting')->findOneBy(['cancelLink' => $meetingHash]);
+    if (!$meeting)
+      return new Response(null, Response::HTTP_NOT_FOUND);
+
+    $limitDate = clone $meeting->getFromTime();
+    $limitDate = $limitDate->sub(new \DateInterval('P' . $meeting->getCalendar()->getAllowCancelDays() . 'D'));
+    $canCancel = new \DateTime() <= $limitDate;
+
+    $form = $this->createFormBuilder()->add('save', SubmitType::class, [
+      'label' => 'Annulla appuntamento',
+      'attr' => ['class' => 'btn btn-danger']
+    ])->getForm();
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      try {
+        $meeting->setStatus(Meeting::STATUS_CANCELLED);
+        $em->persist($meeting);
+        $em->flush();
+      } catch (\Exception $exception) {
+        $this->addFlash('error', 'Si è verificato un errore durante l\'annullamento dell\'appuntamento');
+      }
+    }
+    return array(
+      'form' => $form->createView(),
+      'canCancel' => $canCancel,
+      'meeting' => $meeting
+    );
+
+  }
 
   function getStatusAsString(int $status)
   {
@@ -429,6 +483,9 @@ class CalendarsController extends Controller
         break;
       case 4:
         return 'Concluso';
+        break;
+      case 5:
+        return 'Annullato';
         break;
       default:
         return 'Errore';

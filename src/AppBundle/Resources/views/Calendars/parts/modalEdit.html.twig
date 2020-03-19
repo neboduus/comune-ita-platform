@@ -97,6 +97,10 @@
                     class="btn btn-danger btn-sm mr-3" type="button" onclick="editEvent(this.id,3)">
               Assente
             </button>
+            <button id="modalCancel" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
+                    class="btn btn-warning btn-sm mr-3" type="button" onclick="editEvent(this.id,5)">
+              Annulla
+            </button>
             <p class="mt-4"><small><b>Attenzione</b>: la modifica dello stato comporterà l'invio di una notifica al
                 cittadino</small></p>
           </div>

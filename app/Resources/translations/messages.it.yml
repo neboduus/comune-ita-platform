@@ -1564,21 +1564,17 @@ meetings:
     edit_meeting:
       refused: '<p>Siamo spiacenti di informarla che non è stato possibile accogliere la Sua richiesta di appuntamento per il giorno date</p><br>
               <p>Per maggiori informazioni può contattarci all indirizzo <a href="email_address">email_address</a></p>'
-      rescheduled: '<p>La informiamo che l appuntamento del giorno old_date è stato spostato alle ore hour del giorno new_date presso location</p><br>
-                     <p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
-                     mediante il link presente in questo messaggio oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
+      rescheduled: '<p>La informiamo che l appuntamento del giorno old_date è stato spostato alle ore hour del giorno new_date presso location</p><br>'
       rescheduled_and_approved: '<p>Purtroppo non è stato possibile confermare il suo appuntamento nella data e orario richiesti, sarà possibile riceverla
-                                alle ore hour del giorno date presso location</p><br>
-                                <p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
-                                mediante il link presente in questo messaggio oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
+                                alle ore hour del giorno date presso location</p>'
       approved: '<p>La informiamo che la sua richiesta è stata confermata.</p>
-                <p>La invitiamo a presentarsi alle ore hour del giorno date presso location</p>
-                <p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
-                mediante il link presente in questo messaggio oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
+                <p>La invitiamo a presentarsi alle ore hour del giorno date presso location</p>'
       subject: 'Aggiornamenti richiesta appuntamento'
     delete_meeting:
       delete: 'La informiamo che il suo appuntamento è stato cancellato'
       subject: 'Cancellazione appuntamento'
+    cancel: '<br><p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
+            mediante <a href="cancel_link">questo link</a> oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
     info: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
                  nel caso tu non abbia fatto nessuna richiesta di questo tipo ti preghiamo di ignorare questo messaggio o segnalarlo
                  all indirizzo <a href="mailto:email_address">email_address</a></i></p>'

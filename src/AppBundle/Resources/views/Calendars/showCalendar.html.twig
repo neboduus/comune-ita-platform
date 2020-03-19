@@ -14,6 +14,30 @@
   <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css"/>
   <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css"/>
+  <style>
+
+    @media only screen and (max-width: 600px) {
+      .fc-toolbar.fc-header-toolbar {
+        display: block;
+      }
+
+      .fc-timeGridWeek-button {
+        display: none;
+      }
+
+      .fc-dayGridMonth-button {
+        display: none;
+      }
+    }
+
+    .fc td.fc-today {
+      background-image: none;
+    }
+
+    input[type=date], input[type=datetime-local], input[type=email], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], textarea {
+      font-weight: 100;
+    }
+  </style>
 {% endblock %}
 
 {% block javascripts %}

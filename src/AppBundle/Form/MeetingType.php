@@ -30,7 +30,7 @@ class MeetingType extends AbstractType
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $statuses = ['Pending' => 0, 'Approved' => 1, 'Refused' => 2, 'Missed' => 3, 'Done' => 4];
+    $statuses = ['Pending' => 0, 'Approved' => 1, 'Refused' => 2, 'Missed' => 3, 'Done' => 4, 'Cancelled' => 5];
     $builder
       ->add('calendar', EntityType::class, [
         'class' => Calendar::class,

@@ -1,0 +1,76 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>Annulla appuntamento</h1>
+      </div>
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        <div class="card-text">
+          <div class="row">
+            <div class="col-3"><b>Nome</b></div>
+            <div class="col-6">{{ meeting.name}}</div>
+          </div>
+          <div class="row">
+            <div class="col-3"><b>Data</b></div>
+            <div class="col-6">{{ meeting.fromTime | date('d/m/Y') }}</div>
+          </div>
+          <div class="row">
+            <div class="col-3"><b>Ora</b></div>
+            <div class="col-6">{{ meeting.fromTime | date('H:i') }}</div>
+          </div>
+          <div class="row">
+            <div class="col-3"><b>Dettaglio</b></div>
+            <div class="col-6">{{ meeting.userMessage }}</div>
+          </div>
+          <div class="row">
+            <div class="col-3"><b>Email</b></div>
+            <div class="col-6">{% if meeting.email %}{{ meeting.email }}{% else %}---{% endif %}</div>
+          </div>
+          <div class="row">
+            <div class="col-3"><b>Recapito telefonico</b></div>
+            <div class="col-6">{% if meeting.phoneNumber %}{{ meeting.phoneNumber }}{% else %}---{% endif %}</div>
+          </div>
+          <div class="row">
+            <div class="col-3"><b>Stato</b></div>
+            <div class="col-6">
+              {% if meeting.status == 0 %}
+                In attesa di conferma
+              {% elseif meeting.status == 1 %}
+                Confermato
+              {% elseif meeting.status == 2 %}
+                Rifiutato
+              {% elseif meeting.status == 3 %}
+                Assente
+              {% elseif meeting.status == 4 %}
+                Completato
+              {% elseif meeting.status == 5 %}
+                Annullato
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="mt-5">
+        {% if canCancel and meeting.status != 5%}
+            {{ form_start(form) }}
+            {{ form_widget(form.save) }}
+            {{ form_end(form) }}
+        {% elseif not canCancel %}
+          <div class="alert alert-warning" role="alert">
+            <p>Siamo spiacenti, ma non è piu possibile annullare questo appuntamento</p>
+          </div>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

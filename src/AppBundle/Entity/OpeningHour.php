@@ -509,6 +509,9 @@ class OpeningHour
     foreach ($period as $date) {
       $date = $date->setTimeZone(new DateTimeZone('Europe/Rome'));
       $shouldAdd = false;
+      if (!$closures) {
+        $shouldAdd = true;
+      }
       foreach ($closures as $closure) {
         $closureStartDay = $closure->getFromTime()->format('Y-m-d');
         $closureEndDay = $closure->getToTime()->format('Y-m-d');

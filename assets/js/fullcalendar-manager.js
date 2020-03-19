@@ -84,6 +84,7 @@ function compileModal(info) {
   $("#modalApprove").hide();
   $("#modalRefuse").hide();
   $("#modalMissed").hide();
+  $("#modalCancel").hide();
   $("#modalComplete").hide();
   $("#modalReschedule").hide();
 
@@ -120,6 +121,7 @@ function compileModal(info) {
     case '1': //approvato
       $('#modalComplete').show();
       $('#modalMissed').show();
+      $('#modalCancel').show();
       break;
     case '2': //Rifiutato
       $('#modalApprove').show();
@@ -209,6 +211,8 @@ function getStatus(status) {
       return 'Assente';
     case 4:
       return 'Concluso';
+    case 5:
+      return 'Annullato';
     default:
       return 'Errore';
   }
