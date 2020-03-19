@@ -6,11 +6,10 @@
 # contenente il prefisso specifico di quel tenant
 
 config_tmpl=app/config/templates/config_prod.yml.tmpl
-templates_path=/tmp/templates
-tmp_config_path=/tmp/config
+tmp_config_path=/tmp/tenants
 final_config_path=${TENANTS_CONFIG_PATH:?'La variable TENANTS_CONFIG_PATH deve essere valorizzata'}
 
-for dir in $templates_path $tmp_config_path $final_config_path; do
+for dir in $tmp_config_path $final_config_path; do
         [[ ! -d $dir ]] && mkdir -p $dir
 done
 
@@ -18,7 +17,6 @@ consul_prefix=$CONSUL_PREFIX
 # prendo la lista dei tenants configurati sotto il prefisso
 # nota bene lo '/' alla fine del prefisso, senza di quello non restituisce
 # il sottoalbero. Viene restituita una cosa tipo:
-# prefix/
 # prefix/item1/
 # prefix/item2/
 # prefix/item3/
@@ -41,9 +39,9 @@ fi
 # quello definitivo
 for tenant in $tenants; do
         echo "==> Configuring tenant ${tenant}..."
-        dst=${templates_path}/config_prod_${tenant}.yml.tmpl
-        sed "s#___TENANT_TREE___#${consul_prefix}/${tenant}#" ${config_tmpl} > $dst
-        template_param="-template ${dst}:$tmp_config_path/${tenant}/config_prod.yml"
+	template_param="-template ${config_tmpl}:$tmp_config_path/${tenant}/config_prod.yml" 
+	TENANT_TREE=${consul_prefix}/${tenant} \
+	TENANT=${tenant} \
         consul-template -once $consul_template_logs $template_param 2>&1
 done
 

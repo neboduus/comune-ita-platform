@@ -1,25 +1,51 @@
-{{ $tenant_tree := "___TENANT_TREE___" }}
+{{ $tenant := env "TENANT" }}
+{{ $tenant_tree := env "TENANT_TREE" }}
+{{ $env := ( or ( env "ENV") "prod" ) }}
 
 imports:
-    - { resource: ../parameters.yml }
-    - { resource: ../common/security.yml }
-    - { resource: ../common/monolog.yml }
-    - { resource: ../services.yml }
-    - { resource: ../bundles/ }
-    - { resource: "@AppBundle/Resources/config/services.yml" }
-    - { resource: ../config.yml }
+  - { resource: ../../parameters.yml }
+  - { resource: ../../common/security.yml }
+{{- if eq $env "DEV" }}
+  - { resource: ../../common/monolog_dev.yml }
+{{- else }}
+  - { resource: ../../common/monolog.yml }
+{{ end }}
+  - { resource: ../../services.yml }
+  - { resource: ../../bundles/ }
+  - { resource: "@AppBundle/Resources/config/services.yml" }
+  - { resource: ../../config.yml }
 
 
-{{ tree (printf "%s/config/content" $tenant_tree) | explode | toYAML }}
+#parameters:
+#  prefix: xxxxx
+#  codice_meccanografico: xxxxx
+#  database_name: xxxxx
 
+{{ safeTree (printf "%s/config/content" $tenant_tree) | explode | toYAML }}
+
+{{ if eq $env "DEV" }}
 framework:
-    router:
-        resource: "%kernel.root_dir%/config/common/routing.yml"
-        strict_requirements: true
+  router:
+    resource: "%kernel.root_dir%/config/common/routing_dev.yml"
+    strict_requirements: true
+  profiler: { only_exceptions: false }
+
+web_profiler:
+  toolbar: true
+  intercept_redirects: false
+
+swiftmailer:
+  delivery_address: {{ keyOrDefault (printf "%s/config/email" $tenant_tree) "$tenant@opencontent.it" }} 
+{{ else }}
+framework:
+  router:
+    resource: "%kernel.root_dir%/config/common/routing.yml"
+    strict_requirements: true
+{{ end }}
 
 twig:
-    globals:
-        endpoint_prefix: '%prefix%'
+  globals:
+    endpoint_prefix: '%prefix%'
 
 services:
     ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.{{ keyOrDefault (printf "%s/config/protocollo" $tenant_tree) "dummy" }}"

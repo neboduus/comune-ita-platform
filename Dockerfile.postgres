@@ -1,0 +1,6 @@
+FROM wodby/postgres:10-1.6.0
+
+COPY --from=consul:1.6 /bin/consul /bin/consul
+
+COPY ./compose_conf/postgres/* /docker-entrypoint-initdb.d 
+

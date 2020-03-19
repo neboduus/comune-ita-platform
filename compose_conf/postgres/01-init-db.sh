@@ -1,10 +1,37 @@
 #!/bin/bash
-set -e
+[[ -n $DEBUG ]] && set -x
 
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-        CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';
+consul_prefix=${CONSUL_PREFIX:?"Missing env var CONSUL_PREFIX"}
 
-        CREATE DATABASE sdc_multi;
+pg_query() {
+  cmd=$1
+  psql -v ON_ERROR_STOP=1 \
+        --username "$POSTGRES_USER" \
+        --dbname "$POSTGRES_DB" \
+        --command "$cmd"
+}
+
+pg_query "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+pg_query "CREATE DATABASE sdc_multi;"
+pg_query "GRANT ALL PRIVILEGES ON DATABASE sdc_multi TO $DB_USER;"
+
+if [[ -n $CONSUL_PREFIX ]]; then
+
+        tenants=$(consul kv get -keys ${consul_prefix}/ | sed "s#${consul_prefix}/##" | sed 's#/$##')
+        for tenant in $tenants; do
+                db_name=$(echo $tenant | sed 's/-//g')
+                echo "==> Configuring tenant ${tenant}..."
+                pg_query "CREATE DATABASE ${db_name};"
+		pg_query "GRANT ALL PRIVILEGES ON DATABASE ${db_name} TO $DB_USER;"
+        done
+
+else
+
+  psql -v ON_ERROR_STOP=1 \
+        --username "$POSTGRES_USER" \
+        --dbname "$POSTGRES_DB" <<-EOSQL
+
+	CREATE DATABASE sdc_multi;
         GRANT ALL PRIVILEGES ON DATABASE sdc_multi TO $DB_USER;
 
         CREATE DATABASE sdc_rovereto;
@@ -54,4 +81,9 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 
         CREATE DATABASE sdc_mori;
         GRANT ALL PRIVILEGES ON DATABASE sdc_mori TO $DB_USER;
+        
+	CREATE DATABASE sdc_borgolares;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_mori TO $DB_USER;
 EOSQL
+
+fi

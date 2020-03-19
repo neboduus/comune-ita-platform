@@ -24,6 +24,7 @@ RUN composer global require hirak/prestissimo
 COPY ./composer.json ./composer.lock ./
 
 # app dir is required for classmaps entry in composer.json
+# this forces the composer install command to skip cache
 COPY app ./app
 
 RUN composer install --no-scripts --prefer-dist

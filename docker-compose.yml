@@ -3,24 +3,24 @@ version: "3"
 services:
 
   postgres:
-    image: wodby/postgres:${POSTGRES_TAG:-10-1.6.0}
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/postgres:master
     stop_grace_period: 30s
     environment:
       POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-sdc}
       DB_USER: ${DB_USER:-sdc}
       DB_PASSWORD: ${DB_PASSWORD:-sdc}
       PGDATA: /var/lib/postgresql/data/pgdata
+      CONSUL_HTTP_ADDR: 'consul:8500' 
+      CONSUL_PREFIX: 'sdc/stanzadelcittadino.it/tenants'
     volumes:
-      - ./compose_conf/postgres:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data/pgdata
 
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     environment:
-      DOCKER_BUILDKIT: 1
       PHP_FPM_CLEAR_ENV: 'no'
       ENV: DEV 
-      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      SYMFONY_ENV: prod
       PREFIX: ${PREFIX:-''}
       DB_DRIVER: ${DB_DRIVER:-pdo_pgsql}
       DB_HOST: ${DB_HOST:-postgres}
@@ -49,9 +49,6 @@ services:
       GISCOM_ADAPTER_PASSWORD: ${GISCOM_ADAPTER_PASSWORD:-''}
       LOGS_PATH: ${LOGS_PATH:-php://stderr}
       MYPAY_ADAPTER_URL: ${MYPAY_ADAPTER_URL:-http://localhost:3000}
-      #AWS_ACCESS_KEY_ID_BACKUP: $AWS_ACCESS_KEY_ID_BACKUP
-      #AWS_SECRET_ACCESS_KEY_BACKUP: $AWS_SECRET_ACCESS_KEY_BACKUP
-      #BUCKET_BACKUP: $BUCKET_BACKUP
       PHP_FPM_USER: wodby
       PHP_FPM_GROUP: wodby
       PHP_APCU_ENABLED: 0
@@ -62,7 +59,7 @@ services:
       RECAPTCHA_SECRET: ${RECAPTCHA_SECRET:-recaptcha secret}
       CONSUL_HTTP_ADDR: 'consul:8500' 
       CONSUL_PREFIX: 'sdc/stanzadelcittadino.it/tenants'
-      TENANTS_CONFIG_PATH: '/tmp/tenants'
+      TENANTS_CONFIG_PATH: '/var/www/html/app/config/tenants'
       CLEANUP_TENANTS_PATH: 'true'
     volumes:
       - "uploads:/var/www/html/var/uploads"
