@@ -43,9 +43,8 @@ WORKDIR /var/www/html
 COPY --from=hashicorp/consul-template:alpine /bin/consul-template /bin/consul-template
 COPY --from=consul:1.6 /bin/consul /bin/consul
 
-COPY compose_conf/bin/init-consul-watch.sh /docker-entrypoint-init.d/
-COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
-COPY compose_conf/bin/*.sh /bin/
+COPY compose_conf/php/init.d/*.sh /docker-entrypoint-init.d/
+COPY compose_conf/php/bin/* /bin/
 
 COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
 COPY --chown=wodby:wodby ./ .
