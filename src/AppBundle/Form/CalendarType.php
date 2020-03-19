@@ -34,6 +34,10 @@ class CalendarType extends AbstractType
         'required' => true,
         'label' => 'Numero di giorni entro il quale è possibile prenotare'
       ])
+      ->add('allow_cancel_days', NumberType::class, [
+        'required' => true,
+        'label' => 'Numero minimo di giorni entro il quale è cancellare l\'appuntamento'
+      ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => true,
         'label' => 'Richiede moderazione?'

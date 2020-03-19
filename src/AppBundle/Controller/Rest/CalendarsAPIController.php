@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Calendar;
+use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
 use AppBundle\Services\InstanceService;
 use DateInterval;
@@ -203,8 +204,10 @@ class CalendarsAPIController extends AbstractFOSRestController
         ->where('meeting.calendar = :calendar')
         ->andWhere('meeting.fromTime >= :startDate')
         ->andWhere('meeting.toTime < :endDate')
-        ->andWhere ('meeting.status != :status')
-        ->setParameter('status', 2)
+        ->andWhere ('meeting.status != :refused')
+        ->andWhere ('meeting.status != :cancelled')
+        ->setParameter('refused', Meeting::STATUS_REFUSED)
+        ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
         ->setParameter('calendar', $calendar)
         ->setParameter('startDate', (new DateTime($date))->setTime(0, 0, 0))
         ->setParameter('endDate', (new DateTime($date))->setTime(23, 59, 59))

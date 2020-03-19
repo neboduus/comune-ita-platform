@@ -69,6 +69,14 @@ class Calendar
   private $rollingDays;
 
   /**
+   * @var int
+   *
+   * @ORM\Column(name="allow_cancel_days", type="integer")
+   * @SWG\Property(description="Calendar's minimum days to allow cancel", type="integer")
+   */
+  private $allowCancelDays;
+
+  /**
    * @var bool
    *
    * @ORM\Column(name="is_moderated", type="boolean")
@@ -250,6 +258,30 @@ class Calendar
   public function getRollingDays()
   {
     return $this->rollingDays;
+  }
+
+  /**
+   * Set allowCancelDays.
+   *
+   * @param int $allowCancelDays
+   *
+   * @return Calendar
+   */
+  public function setAllowCancelDays($allowCancelDays)
+  {
+    $this->allowCancelDays = $allowCancelDays;
+
+    return $this;
+  }
+
+  /**
+   * Get allowCancelDays.
+   *
+   * @return int
+   */
+  public function getAllowCancelDays()
+  {
+    return $this->allowCancelDays;
   }
 
   /**

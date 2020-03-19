@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -180,7 +181,12 @@ class MeetingsAPIController extends AbstractFOSRestController
           ['hour' => $hour, 'date' => $date, 'location' => $location]);
       }
 
+      $cancelUrl = $this->generateUrl('cancel_meeting', ['meetingHash' => $meeting->getCancelLink()], UrlGeneratorInterface::ABSOLUTE_URL);
+      $mailCancel =  $this->translator->trans('meetings.email.cancel', ['cancel_link'=> $cancelUrl, 'email_address' => $contact]);
       $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
+
+      if ($meeting->getStatus() != Meeting::STATUS_REFUSED)
+        $message = $message . $mailCancel;
       $message = $message . $mailInfo;
 
       if ($meeting->getUser()->getEmail()) {
@@ -327,8 +333,12 @@ class MeetingsAPIController extends AbstractFOSRestController
           'hour' => $hour, 'date' => $date, 'location' => $location, 'email_address' => $contact
         ]);
       }
+      $cancelUrl = $this->generateUrl('cancel_meeting', ['meetingHash' => $meeting->getCancelLink()], UrlGeneratorInterface::ABSOLUTE_URL);
+      $mailCancel =  $this->translator->trans('meetings.email.cancel', ['cancel_link'=> $cancelUrl, 'email_address' => $contact]);
       $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
 
+      if ($meeting->getStatus() != Meeting::STATUS_REFUSED)
+        $message = $message . $mailCancel;
       $message = $message . $mailInfo;
 
       if ($notify && $meeting->getUser()->getEmail()) {
@@ -461,24 +471,28 @@ class MeetingsAPIController extends AbstractFOSRestController
         // Approved meeting has been rescheduled
         $notify = true;
         $message = $this->translator->trans('meetings.email.edit_meeting.rescheduled', [
-          'old_date' => $oldDate, 'hour' => $hour, 'new_date' => $date, 'location' => $location, 'email_address' => $contact
+          'old_date' => $oldDate, 'hour' => $hour, 'new_date' => $date, 'location' => $location
         ]);
       } else if ($statusChanged && $dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
         // Auto approved meeting due to date change
         $notify = true;
         $message = $this->translator->trans('meetings.email.edit_meeting.rescheduled_and_approved', [
-          'hour' => $hour, 'date' => $date, 'location' => $location, 'email_address' => $contact
+          'hour' => $hour, 'date' => $date, 'location' => $location
         ]);
       } else if ($statusChanged && !$dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
         // Approved meeting with no date change
         $notify = true;
         $message = $this->translator->trans('meetings.email.edit_meeting.approved', [
-          'hour' => $hour, 'date' => $date, 'location' => $location, 'email_address' => $contact
+          'hour' => $hour, 'date' => $date, 'location' => $location,
         ]);
       }
 
+      $cancelUrl = $this->generateUrl('cancel_meeting', ['meetingHash' => $meeting->getCancelLink()], UrlGeneratorInterface::ABSOLUTE_URL);
+      $mailCancel =  $this->translator->trans('meetings.email.cancel', ['cancel_link'=> $cancelUrl, 'email_address' => $contact]);
       $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
 
+      if ($meeting->getStatus() != Meeting::STATUS_REFUSED)
+        $message = $message . $mailCancel;
       $message = $message . $mailInfo;
 
       if ($notify && $meeting->getUser()->getEmail()) {

@@ -29,6 +29,7 @@ class Meeting
   const STATUS_REFUSED = 2;
   const STATUS_MISSED = 3;
   const STATUS_DONE = 4;
+  const STATUS_CANCELLED = 5;
 
   /**
    * @ORM\Column(type="guid")
@@ -127,6 +128,14 @@ class Meeting
    */
   private $rescheduled;
 
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="cancel_link", type="string", length=255, nullable=true)
+   * @SWG\Property(description="Meeting's cancel link", type="string")
+   * @Serializer\Exclude()
+   */
+  private $cancelLink;
 
   /**
    * @ORM\Column(type="datetime")
@@ -148,6 +157,7 @@ class Meeting
   {
     if (!$this->id) {
       $this->id = Uuid::uuid4();
+      $this->cancelLink = hash('sha256', $this->id . (new DateTime())->format('c'));
     }
   }
 
@@ -452,6 +462,30 @@ class Meeting
   }
 
   /**
+   * Set cancelLink.
+   *
+   * @param string $cancelLink
+   *
+   * @return Meeting
+   */
+  public function setCancelLink($cancelLink)
+  {
+    $this->cancelLink = $cancelLink;
+
+    return $this;
+  }
+
+  /**
+   * Get cancelLink.
+   *
+   * @return string|null
+   */
+  public function getCancelLink()
+  {
+    return $this->cancelLink;
+  }
+
+  /**
    * Get createdAt.
    *
    * @return \DateTime
@@ -573,11 +607,13 @@ function checkQueue(LifecycleEventArgs $args): void
     ->andWhere('openingHour.endHour >= :toTime')
     ->andWhere('meeting.id != :id')
     ->andWhere('meeting.status != :refused')
+    ->andWhere('meeting.status != :cancelled')
     ->setParameter('calendar', $this->calendar)
     ->setParameter('fromTime', $this->fromTime)
     ->setParameter('toTime', $this->toTime)
     ->setParameter('id', $this->id)
     ->setParameter('refused', Meeting::STATUS_REFUSED)
+    ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
     ->groupBy('meeting.fromTime', 'meeting.toTime', 'openingHour.meetingQueue')
     ->getQuery()->getResult();
 
