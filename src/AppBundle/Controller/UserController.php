@@ -40,31 +40,11 @@ class UserController extends Controller
     $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $pratiche = $praticheRepo->findBy(
       ['user' => $user],
-      ['creationTime' => 'ASC'],
+      ['creationTime' => 'DESC'],
       3
     );
 
-    $messagesAdapterService = $this->get('ocsdc.messages_adapter');
-    $userThreads = (array)$messagesAdapterService->getDecoratedThreadsForUser($user);
     $threads = [];
-    foreach ($userThreads as $thread) {
-
-      $form = $this->createForm(
-        MessageType::class,
-        ['thread_id' => $thread->threadId, 'sender_id' => $user->getId()],
-        [
-          'action' => $this->get('router')->generate('messages_controller_enqueue_for_user', ['threadId' => $thread->threadId]),
-          'method' => 'PUT',
-        ]
-      );
-
-      $threads[] = [
-        'threadId' => $thread->threadId,
-        'title' => $thread->title,
-        'messages' => $messagesAdapterService->getDecoratedMessagesForThread($thread->threadId, $user),
-        'form' => $form->createView()
-      ];
-    }
 
     return array(
       'user' => $user,
