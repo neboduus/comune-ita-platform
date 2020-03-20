@@ -1,4 +1,4 @@
-# This repository adheres to the publiccode.yml standard by including this 
+# This repository adheres to the publiccode.yml standard by including this
 # metadata file that makes public software easily discoverable.
 # More info at https://github.com/italia/publiccode.yml
 
@@ -6,15 +6,14 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-02-02'
-softwareVersion: 1.3.8
+releaseDate: '2020-03-20'
+softwareVersion: 1.4.0
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
   - web
 usedBy:
   - Comune di Rovereto (TN)
-  - Comune di Tre Ville (TN)
   - Comune di Vallelaghi (TN)
   - Comune di Cavedine (TN)
   - Comune di Ala (TN)
@@ -28,6 +27,9 @@ usedBy:
   - Comune di Imer (TN)
   - Comune di Mezzano (TN)
   - Comune di Mori (TN)
+  - Comune di Castello Tesino (TN)
+  - Comune di Ledro (TN)
+  - Comune di Moena (TN)
 categories:
   - communications
   - crm
@@ -49,7 +51,7 @@ maintenance:
   type: community
   contacts:
     - name: Gabriele Francescotto
-      phone: +39 0461 917437 
+      phone: +39 0461 917437
       affiliation: Opencontent SCARL
       email: gabriele.francescotto@opencontent.it
 legal:
@@ -106,7 +108,7 @@ description:
         Gestione completa dell’iter: invio, presa in carico, risposta al cittadino,
         richiesta integrazioni
       - >-
-        Controllo della validità di firme digitali e formati dei file, per la 
+        Controllo della validità di firme digitali e formati dei file, per la
         conservazione sostitutiva
       - >-
         Generazione automatica delle ricevuta di invio dell’istanza, in formato
