@@ -39,9 +39,19 @@ fi
 # quello definitivo
 for tenant in $tenants; do
         echo "==> Configuring tenant ${tenant}..."
-	template_param="-template ${config_tmpl}:$tmp_config_path/${tenant}/config_prod.yml" 
+
+        current_env=$ENV
+        if [[ $ENV != 'DEV' ]]; then
+                tenant_env=$(consul kv get -keys ${consul_prefix}/${tenant}/config/env)
+                if [[ $tenant_env == "dev" ]];
+                        current_env=DEV
+                fi
+        fi
+
+	template_param="-template ${config_tmpl}:$tmp_config_path/${tenant}/config_prod.yml"
 	TENANT_TREE=${consul_prefix}/${tenant} \
 	TENANT=${tenant} \
+        ENV=$current_env \
         consul-template -once $consul_template_logs $template_param 2>&1
 done
 
