@@ -230,6 +230,13 @@ class Servizio
   private $accessLevel;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true, options={"default":"1"})
+   * @SWG\Property(description="If selected the application will be registered in tenants protocol")
+   */
+  private $protocolRequired;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -237,13 +244,14 @@ class Servizio
     if (!$this->id) {
       $this->id = Uuid::uuid4();
     }
-    $this->schedeInformative = new ArrayCollection();
+
     $this->enti = new ArrayCollection();
     $this->erogatori = new ArrayCollection();
     $this->flowSteps = new ArrayCollection();
     //$this->paymentParameters = new ArrayCollection();
     $this->status = self::STATUS_AVAILABLE;
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
+    $this->setProtocolRequired(true);
   }
 
   /**
@@ -789,5 +797,22 @@ class Servizio
     $this->accessLevel = $accessLevel;
     return $this;
   }
+
+  /**
+   * @return bool
+   */
+  public function isProtocolRequired(): bool
+  {
+    return $this->protocolRequired;
+  }
+
+  /**
+   * @param bool $protocolRequired
+   */
+  public function setProtocolRequired(bool $protocolRequired)
+  {
+    $this->protocolRequired = $protocolRequired;
+  }
+
 
 }

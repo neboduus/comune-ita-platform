@@ -137,16 +137,7 @@ class PraticheAnonimeController extends Controller
         $em->persist($pratica);
         $em->flush();
 
-        if ($pratica instanceof DematerializedFormAllegatiContainer) {
-          $this->dematerializer->attachAllegati($pratica);
-        }
-
-        if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
-          $pratica->setSubmissionTime(time());
-          $moduloCompilato = $this->pdfBuilder->createForPratica($pratica);
-          $pratica->addModuloCompilato($moduloCompilato);
-          $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
-        }
+        $flow->onFlowCompleted($pratica);
 
         $this->get('logger')->info(
           LogConstants::PRATICA_UPDATED,

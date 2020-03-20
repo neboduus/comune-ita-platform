@@ -15,7 +15,7 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 use AppBundle\Form\Base\SelectPaymentGatewayType;
 use AppBundle\Form\Base\PaymentGatewayType;
 
-class FormIOAnonymousFlow extends FormFlow
+class FormIOAnonymousFlow extends PraticaFlow
 {
   const STEP_MODULO_FORMIO = 1;
 

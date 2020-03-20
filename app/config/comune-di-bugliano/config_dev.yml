@@ -13,4 +13,4 @@ web_profiler:
     intercept_redirects: false
 
 services:
-  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pitre"
+  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"

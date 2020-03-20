@@ -99,26 +99,47 @@ $(document).ready(function () {
   // Step Form Fields
   if ($("#formio_builder_render_form_id").length) {
 
-    let preview = $('#preview');
-    preview.removeClass('d-none');
-    preview.find('a').click(function (e) {
-      let printUrl = $(this).data('print');
-      e.preventDefault();
-      $.ajax($(this).data('schema'),
+    const saveForm = function( saveUrl, targetUrl, type){
+      console.log(saveUrl);
+      let schema = $("#formio_builder_render_form_schema").val();
+      console.log(schema);
+      $.ajax( saveUrl,
         {
           dataType: 'json', // type of response data
           method: 'POST',
           data: {
-            schema: '"' + $("#formio_builder_render_form_schema").val() + '"'
+            schema: '"' + schema + '"'
           },
           success: function (data, status, xhr) {   // success callback function
-            window.location.href = printUrl;
+            if (data.status === 'success') {
+              if (type === 'print') {
+                window.location.href = targetUrl;
+              } else {
+                window.open( targetUrl, '_blank');
+              }
+            } else {
+              console.log(data);
+              alert('Si è verificato un errore durante il salvataggio.')
+            }
           },
           error: function (jqXhr, textStatus, errorMessage) { // error callback
             console.log(errorMessage);
+            alert('Si è verificato un errore durante il salvataggio.')
           }
         });
+    };
+
+    let preview = $('#preview');
+    preview.removeClass('d-none');
+    preview.find('a').click(function (e) {
+      e.preventDefault();
+      saveForm($(this).data('schema'), $(this).data('target'), $(this).data('type'));
     });
+
+    const storeSchema = function( schema ) {
+      //console.log(schema);
+      $("#formio_builder_render_form_schema").val(schema);
+    };
 
     Formio.icons = "fontawesome";
     Formio.builder(document.getElementById("builder"), $('#formio').data('formserver_url') + "/form/" + $("#formio_builder_render_form_id").val(), {
@@ -167,30 +188,31 @@ $(document).ready(function () {
     }).then(function (builder) {
 
       // Inserisco lo schema in un input hidden
-      $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
+      //$("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
+      storeSchema(JSON.stringify(builder.schema));
 
       builder.on("updateComponent", function () {
-        $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
+        storeSchema(JSON.stringify(builder.schema));
       });
 
       // Inserisco lo schema in un input hidden sulla modifica di un componente
       builder.on("editComponent", function () {
-        $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
+        storeSchema(JSON.stringify(builder.schema));
       });
 
       // Inserisco lo schema in un input hidden sul salvataggio di un componente
       builder.on("saveComponent", function () {
-        $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
+        storeSchema(JSON.stringify(builder.schema));
       });
 
       // Inserisco lo schema in un input hidden su aggiunta di un componente
       builder.on("addComponent", function () {
-        $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
+        storeSchema(JSON.stringify(builder.schema));
       });
 
       // Inserisco lo schema in un input hidden su rimozione di un componente
       builder.on("removeComponent", function () {
-        $("#formio_builder_render_form_schema").val(JSON.stringify(builder.schema))
+        storeSchema(JSON.stringify(builder.schema));
       });
 
     });

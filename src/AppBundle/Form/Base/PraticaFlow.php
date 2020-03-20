@@ -143,13 +143,10 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
             $moduloCompilato = $this->pdfBuilder->createForPratica($pratica);
             $pratica->addModuloCompilato($moduloCompilato);
-
             $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
 
         }elseif ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
-
             $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
-
         }
     }
 

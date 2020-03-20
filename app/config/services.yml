@@ -192,7 +192,7 @@ services:
 
   ocsdc.pratica_listeners.protocollo:
     class: AppBundle\EventListener\ProtocollaPraticaListener
-    arguments: ["@ocsdc.protocollo","@logger"]
+    arguments: ["@ocsdc.protocollo", "@ocsdc.pratica_status_service","@logger"]
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 100 }
 
