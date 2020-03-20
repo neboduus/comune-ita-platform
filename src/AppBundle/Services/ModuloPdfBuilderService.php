@@ -429,6 +429,7 @@ class ModuloPdfBuilderService
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
     $request->setMargins(GotembergRequest::NO_MARGINS);
+    $request->setWaitDelay(5);
     $response =  $client->post($request);
     $fileStream = $response->getBody();
     return $fileStream->getContents();
@@ -442,6 +443,7 @@ class ModuloPdfBuilderService
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
     $request->setMargins(GotembergRequest::NO_MARGINS);
+    $request->setWaitDelay(5);
     $response =  $client->post($request);
     $fileStream = $response->getBody();
     return $fileStream->getContents();

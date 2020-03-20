@@ -71,7 +71,7 @@ class Calendar
   /**
    * @var int
    *
-   * @ORM\Column(name="allow_cancel_days", type="integer")
+   * @ORM\Column(name="allow_cancel_days", type="integer", nullable=true)
    * @SWG\Property(description="Calendar's minimum days to allow cancel", type="integer")
    */
   private $allowCancelDays;

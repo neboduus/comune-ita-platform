@@ -15,7 +15,7 @@ final class Version20200315101942 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE calendar ADD allow_cancel_days INT NOT NULL');
+        $this->addSql('ALTER TABLE calendar ADD allow_cancel_days INT');
         $this->addSql('ALTER TABLE meeting ADD cancel_link VARCHAR(255) DEFAULT NULL');
     }
 
