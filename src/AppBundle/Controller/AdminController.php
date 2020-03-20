@@ -468,8 +468,7 @@ class AdminController extends Controller
       $schema = \json_decode($data, true);
 
       try {
-        $this->container->get('ocsdc.formserver')->editForm($schema);
-        $response = array('status' => 'OK');
+        $response = $this->container->get('ocsdc.formserver')->editForm($schema);
         return JsonResponse::create($response, Response::HTTP_OK);
       } catch (\Exception $exception) {
         return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

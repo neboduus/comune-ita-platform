@@ -103,7 +103,6 @@ class PrintController extends Controller
       'form' => $form->createView(),
       'pratica' => $pratica
     ];
-
   }
 
   /**
@@ -136,6 +135,28 @@ class PrintController extends Controller
     // Dispatch request
     return $response;
 
+  }
+
+  /**
+   * @Route("/service/{service}/preview", name="preview_service")
+   * @ParamConverter("service", class="AppBundle:Servizio")
+   * @Template()
+   * @param Servizio $service
+   *
+   * @return array
+   */
+  public function previewServiceAction(Request $request, Servizio $service)
+  {
+
+    $pratica = $this->createApplication($service);
+
+    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
+
+    return [
+      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'form' => $form->createView(),
+      'pratica' => $pratica
+    ];
   }
 
   /**

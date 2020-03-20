@@ -76,10 +76,14 @@
                                                         <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
                                                         <td data-title="{{ 'pratica.noteDiCompilazione'|trans }}">{{ pratica.userCompilationNotes }}</td>
                                                         <td data-title="{{ 'pratica.protocollo'|trans }}">
-                                                            {% if pratica.numeroProtocollo %}
-                                                                {{ pratica.numeroProtocollo }}
-                                                            {% elseif pratica.statusName != 'STATUS_DRAFT' %}
-                                                                <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+                                                            {%  if pratica.servizio.isProtocolRequired %}
+                                                                {% if pratica.numeroProtocollo %}
+                                                                  {{ pratica.numeroProtocollo }}
+                                                                {% elseif pratica.statusName != 'STATUS_DRAFT' %}
+                                                                  <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+                                                                {% endif %}
+                                                            {% else %}
+                                                              <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
                                                             {% endif %}
                                                         </td>
                                                         <td style="white-space: nowrap"

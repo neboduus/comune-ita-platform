@@ -75,6 +75,7 @@ pratica:
   empty: 'Non sono presenti pratiche a tuo nome.'
   protocollo: 'Protocollo pratica'
   in_attesa_protocollo: 'In attesa di protocollazione'
+  protocollo_non_richiesto: 'Servizio senza protocollazione'
   richiedente: 'Richiedente'
   servizio: 'Servizio'
   categoria: 'Categoria'

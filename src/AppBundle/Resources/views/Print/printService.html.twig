@@ -64,10 +64,12 @@
         </div>
       </div>
       <div class="col-4">
-        <div class="callout danger">
-          <div class="callout-title">Numero protocollo</div>
-          <p class="text-danger">X321-GG/MM/AAAA-0000001/A</p>
-        </div>
+        {% if pratica.servizio.isProtocolRequired %}
+          <div class="callout danger">
+            <div class="callout-title">Numero protocollo</div>
+            <p class="text-danger">X321-GG/MM/AAAA-0000001/A</p>
+          </div>
+        {% endif %}
       </div>
       <div class="col-lg-12">
         {{ form_start(form) }}

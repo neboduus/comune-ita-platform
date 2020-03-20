@@ -32,7 +32,7 @@
     </div>
 
     <div class="row mb-4 mt-3">
-      <div class="col-lg-9 px-lg-4">
+      <div class="col-lg-8 px-lg-4">
         <h4>
           {{ flow.getCurrentStepNumber() }} / {{ flow.stepCount }}
            -
@@ -43,9 +43,12 @@
           {% endif %}
         </h4>
       </div>
-      <div id="preview" class="col-lg-3 px-lg-4 d-none">
-        <a href="#" data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}" data-print="{{ path('print_service_pdf', {'service':servizio.id}) }}" class="btn btn-xs btn-outline-primary float-right">
-          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-print"></use></svg> Stampa anteprima
+      <div id="preview" class="col-lg-4 px-lg-4 d-none">
+        <a href="#"  data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}" data-type="preview" data-target="{{ path('preview_service', {'service':servizio.id}) }}" class="btn btn-xs btn-outline-primary float-right preview">
+          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use></svg> Anteprima
+        </a>
+        <a href="#" data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}" data-type="print" data-target="{{ path('print_service_pdf', {'service':servizio.id}) }}" class="btn btn-xs btn-outline-primary float-right mr-2 print">
+          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-print"></use></svg> Stampa
         </a>
       </div>
     </div>

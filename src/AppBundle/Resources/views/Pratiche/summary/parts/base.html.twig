@@ -1,25 +1,7 @@
 {% if pratica.statusName != 'STATUS_DRAFT' %}
-<div class="row">
-    <div class="col-12">
-        <h4>Documentazione inoltrata all'Ente</h4>
-    </div>
-    <div class="col-12 col-sm-3"><strong>{{ 'pratica.protocollo'|trans }}</strong></div>
-    <div class="col-12 col-sm-9">
-        {% if pratica.numeroProtocollo %}
-            {{ pratica.numeroProtocollo }}
-        {% else %}
-            <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
-        {% endif %}
-    </div>
-    <div class="col-12">
-        {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
-    </div>
-    {% if pratica.numeroProtocollo %}
-        <div class="col-12">
-            {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
-        </div>
-    {% endif %}
-</div>
+
+  {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
+
 {% endif %}
 
 {% if pratica.statusName != 'STATUS_DRAFT' %}
