@@ -20,7 +20,7 @@ Vue.component('scia_edilizia_allegati_tecnici', {
         <div id="loop_tipi_allegato" >
             <template v-for="(allegato, i) in allegati">
                 <div v-if="tipoIntervento" class="row-upload">
-                    
+
                     <div>
                         <strong>{{allegato.title}} <i class="mandatory" v-if="tipoIntervento && allegatiRichiesti[tipoIntervento][i]"></i></strong>
                         <p class="description" v-html="allegato.description"></p>
@@ -39,7 +39,7 @@ Vue.component('scia_edilizia_allegati_tecnici', {
                           <div slot="tip" class="el-upload__tip">Sono permessi solo file di tipo p7m</div>
                         </el-upload>
                     </div>
-                    
+
                 </div>
             </template>
         </div>
@@ -91,7 +91,7 @@ Vue.component('scia_edilizia_allegati_tecnici', {
       this.updateFormValue()
     },
     onBeforeUpload(file) {
-      const isP7m = (file.type === 'application/pkcs7-mime' || file.type === '');
+      const isP7m = (file.type === 'application/pkcs7-mime' || file.type === 'application/pkcs7' || file.type === '');
       if (!isP7m) {
         this.$message.error('Attenzione: Sono permessi solo file di tipo p7m!!!');
       }

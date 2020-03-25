@@ -571,6 +571,7 @@ services:
     class: AppBundle\Services\GiscomAPIMapperService
     arguments:
       - '@doctrine.orm.entity_manager'
+      - '@router'
 
   ocsdc.status_mapper.giscom:
     class: AppBundle\Mapper\Giscom\GiscomStatusMapper

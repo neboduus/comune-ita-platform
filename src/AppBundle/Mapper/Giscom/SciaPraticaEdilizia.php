@@ -370,15 +370,15 @@ class SciaPraticaEdilizia implements HashableInterface
   /**
    * @return string
    */
-  public function getNumeroDiFascicolo(): string
+  public function getNumeroDiFascicolo(): ?string
   {
     return $this->numeroDiFascicolo;
   }
 
   /**
-   * @param string $numeroDiFascicolo
+   * @param $numeroDiFascicolo
    */
-  public function setNumeroDiFascicolo(string $numeroDiFascicolo)
+  public function setNumeroDiFascicolo( $numeroDiFascicolo )
   {
     $this->numeroDiFascicolo = $numeroDiFascicolo;
   }
@@ -386,15 +386,15 @@ class SciaPraticaEdilizia implements HashableInterface
   /**
    * @return string
    */
-  public function getProtocolloPrincipale(): string
+  public function getProtocolloPrincipale(): ?string
   {
     return $this->protocolloPrincipale;
   }
 
   /**
-   * @param string $protocolloPrincipale
+   * @param $protocolloPrincipale
    */
-  public function setProtocolloPrincipale(string $protocolloPrincipale)
+  public function setProtocolloPrincipale( $protocolloPrincipale )
   {
     $this->protocolloPrincipale = $protocolloPrincipale;
   }
