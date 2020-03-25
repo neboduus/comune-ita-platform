@@ -8,6 +8,7 @@ use AppBundle\Entity\OpeningHour;
 use AppBundle\Services\InstanceService;
 use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -233,7 +234,12 @@ class CalendarsAPIController extends AbstractFOSRestController
         if (array_key_exists($key, $meetings)) {
           $slots[$key] = $slots[$key] + ['availability' => false];
         } else {
-          $slots[$key] = $slots[$key] + ['availability' => true];
+          $now = (new DateTime('now', new DateTimeZone('Europe/Rome')))->format('Y-m-d:H:i');
+          $start = (\DateTime::createFromFormat('Y-m-d:H:i', $day['date'] . ':' . $day['start_time']))->format('Y-m-d:H:i');
+          if ($start <= $now)
+            $slots[$key] = $slots[$key] + ['availability' => false];
+          else
+            $slots[$key] = $slots[$key] + ['availability' => true];
         }
       }
 
