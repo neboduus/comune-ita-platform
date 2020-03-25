@@ -12,6 +12,7 @@ use AppBundle\Mapper\Giscom\File;
 use AppBundle\Mapper\Giscom\FileCollection;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GiscomAPIMapperService
 {
@@ -21,13 +22,19 @@ class GiscomAPIMapperService
   private $em;
 
   /**
+   * @var UrlGeneratorInterface
+   */
+  private $router;
+
+  /**
    * @var \Doctrine\Common\Persistence\ObjectRepository
    */
   private $repository;
 
-  public function __construct(EntityManagerInterface $em)
+  public function __construct(EntityManagerInterface $em, UrlGeneratorInterface $router)
   {
     $this->em = $em;
+    $this->router = $router;
     $this->repository = $this->em->getRepository(Allegato::class);
   }
 
@@ -127,7 +134,10 @@ class GiscomAPIMapperService
 
       // Recupero il contenuto del file
       if ($realFile instanceof Allegato && $realFile->getFile() instanceof \Symfony\Component\HttpFoundation\File\File) {
-        $file->setContent(base64_encode(file_get_contents($realFile->getFile()->getPathname())));
+
+        // Set endpoint url to recover file content
+        //$file->setContent(base64_encode(file_get_contents($realFile->getFile()->getPathname())));
+        $file->setContent($this->router->generate('giscom_api_attachment', ['attachment' => $file->getId()], UrlGeneratorInterface::ABSOLUTE_URL));
       }
     }
   }
@@ -160,7 +170,9 @@ class GiscomAPIMapperService
       $modulo->setType($m->getType());
       // Il numero di protocollo del modulo compilato coincide con quello della pratica
       $modulo->setProtocollo($pratica->getNumeroProtocollo());
-      $modulo->setContent(base64_encode(file_get_contents($m->getFile()->getPathname())));
+      // Set endpoint url to recover file content
+      //$modulo->setContent(base64_encode(file_get_contents($m->getFile()->getPathname())));
+      $modulo->setContent($this->router->generate('giscom_api_attachment', ['attachment' => $m->getId()], UrlGeneratorInterface::ABSOLUTE_URL));
       return $modulo;
     }
     return null;

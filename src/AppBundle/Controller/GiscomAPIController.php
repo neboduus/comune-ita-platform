@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
@@ -23,6 +24,7 @@ use Ramsey\Uuid\Uuid;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\VarDumper\VarDumper;
 
@@ -67,7 +69,7 @@ class GiscomAPIController extends Controller
 
     /**
      * @Route("/giscom/", name="giscom_api_ping")
-     * @Method({"GET"})     
+     * @Method({"GET"})
      * @return Response
      */
     public function indexAction(Request $request)
@@ -83,16 +85,37 @@ class GiscomAPIController extends Controller
      */
     public function viePraticaAction(Request $request, Pratica $pratica)
     {
-        $content = $request->getContent();
-        $em = $this->getDoctrine()->getManager();
-        $mapper = new GiscomAPIMapperService($em);
-
+        $mapper = $this->container->get('ocsdc.giscom_api.mapper');
         $giscomPratica = $mapper->map($pratica);
 
         return new JsonResponse([
             'pratica' => $giscomPratica,
         ]);
 
+    }
+
+    /**
+     * @Route("/giscom/pratica/attachment/{attachment}", name="giscom_api_attachment")
+     * @Method({"GET"})
+     * @Security("has_role('ROLE_GISCOM')")
+     * @return Response
+     */
+    public function attachmentAction(Request $request, Allegato $attachment)
+    {
+      $fileContent = file_get_contents($attachment->getFile()->getPathname());
+      // Provide a name for your file with extension
+      $filename = $attachment->getOriginalFilename();
+      // Return a response with a specific content
+      $response = new Response($fileContent);
+      // Create the disposition of the file
+      $disposition = $response->headers->makeDisposition(
+        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+        $filename
+      );
+      // Set the content disposition
+      $response->headers->set('Content-Disposition', $disposition);
+      // Dispatch request
+      return $response;
     }
 
     /**

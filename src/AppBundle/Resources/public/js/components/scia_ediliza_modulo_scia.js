@@ -60,7 +60,7 @@ Vue.component('scia_ediliza_modulo_scia', {
         return false;
       }
 
-      const isP7m = (file.type === 'application/pkcs7-mime' || file.type === '');
+      const isP7m = (file.type === 'application/pkcs7-mime' || file.type === 'application/pkcs7' || file.type === '');
       if (!isP7m) {
         this.$message.error('Attenzione: Sono permessi solo file di tipo p7m!!!');
       }
