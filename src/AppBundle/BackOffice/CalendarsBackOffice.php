@@ -140,7 +140,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
       $message = $message . $mailInfo;
 
-      if ($meeting->getUser()->getEmail()) {
+      if ($meetingData['applicant.data.email_address']) {
         $this->mailer->dispatchMail(
           $this->defaultSender,
           $meeting->getCalendar()->getOwner()->getEnte()->getName(),

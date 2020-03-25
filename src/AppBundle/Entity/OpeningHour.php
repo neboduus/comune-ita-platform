@@ -544,15 +544,20 @@ class OpeningHour
     $slots = [];
     foreach ($this->explodeDays(false) as $date) {
       foreach ($this->explodeMeetings(new DateTime($date)) as $slot) {
-        $start = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time'])->format('c');
-        $end = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['end_time'])->format('c');
-        $slots[] = [
-          'title' => 'Apertura',
-          'start' => $start,
-          'end' => $end,
-          'rendering' => 'background',
-          'color' => 'var(--blue)'
-        ];
+        $now = (new DateTime('now', new DateTimeZone('Europe/Rome')))->format('Y-m-d:H:i');
+        $startTime = (\DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time']))->format('Y-m-d:H:i');
+
+        if ($startTime > $now) {
+          $start = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time'])->format('c');
+          $end = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['end_time'])->format('c');
+          $slots[] = [
+            'title' => 'Apertura',
+            'start' => $start,
+            'end' => $end,
+            'rendering' => 'background',
+            'color' => 'var(--blue)'
+          ];
+        }
       }
     }
     return $slots;

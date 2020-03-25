@@ -553,27 +553,47 @@ class Meeting
       if (!$this->fiscalCode && !$this->user) {
         $user = new CPSUser();
         $user->setEmail($this->email);
-        $user->setNome($this->name ? $this->name : 'anonimo');
-        $user->setCognome('anonimo');
+        $user->setNome($this->name ? $this->name : '');
+        $user->setCognome('');
         $user->setCpsTelefono($this->phoneNumber);
-        $cf = Uuid::uuid4();
-        $user->setCodiceFiscale($cf);
-        $user->setUsername($cf);
-        $user->setPassword('change_me');
+        $user->setCodiceFiscale($this->fiscalCode);
+        $user->setUsername($user->getId());
+
+        $user->addRole('ROLE_USER')
+          ->addRole('ROLE_CPS_USER')
+          ->setEnabled(true)
+          ->setPassword('');
+
         $em->persist($user);
         $em->flush();
         $this->user = $user;
       } else if ($this->fiscalCode && !$this->user) {
-        $user = $em->getRepository('AppBundle:CPSUser')->findOneBy(['codiceFiscale'=>$this->fiscalCode]);
+        $result = $em->createQueryBuilder()
+          ->select('user.id')
+          ->from('AppBundle:User', 'user')
+          ->where('upper(user.username) = upper(:username)')
+          ->setParameter('username', $this->fiscalCode)
+          ->getQuery()->getResult();
+        if ( !empty($result)) {
+          $repository = $em->getRepository('AppBundle:CPSUser');
+          $user =  $repository->find($result[0]['id']);
+        } else {
+          $user = null;
+        }
         if (!$user) {
           $user = new CPSUser();
           $user->setEmail($this->email);
-          $user->setNome($this->name ? $this->name : 'anonimo');
-          $user->setCognome('anonimo');
+          $user->setNome($this->name ? $this->name : '');
+          $user->setCognome('');
           $user->setCpsTelefono($this->phoneNumber);
           $user->setCodiceFiscale($this->fiscalCode);
           $user->setUsername($this->fiscalCode);
-          $user->setPassword('change_me');
+
+          $user->addRole('ROLE_USER')
+            ->addRole('ROLE_CPS_USER')
+            ->setEnabled(true)
+            ->setPassword('');
+
           $em->persist($user);
           $em->flush();
           $this->user = $user;

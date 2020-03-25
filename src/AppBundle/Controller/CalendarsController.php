@@ -429,7 +429,7 @@ class CalendarsController extends Controller
    * @param Request $request the request
    * @param String $meetingHash The Meeting hash
    *
-   * @return array|RedirectResponse
+   * @return array|RedirectResponse|Response
    * @throws \Exception
    */
   public function cancelMeetingAction(Request $request, $meetingHash)

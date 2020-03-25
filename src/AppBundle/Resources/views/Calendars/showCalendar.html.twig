@@ -78,8 +78,8 @@
 
     let data = {
       status: status,
-      from_time: new Date(`${date}:${start} UTC`).toISOString(),
-      to_time: new Date(`${date}:${end} UTC`).toISOString(),
+      from_time: new Date(`${date}T${start}Z`).toISOString(),
+      to_time: new Date(`${date}T${end}Z`).toISOString(),
       email: $('#modalEmail').val(),
       phone_number: $('#modalPhone').val(),
       user_message: $('#modalDescription').val()
@@ -112,13 +112,14 @@
     let date = $('#modalNewDate').val();
     let slot = $('#modalNewSlot').val().split(' - ');
     let start = slot[0];
-    let end = slot[1]
+    let end = slot[1];
 
     let data = {
       status: 1,
-      from_time: new Date(`${date}:${start} UTC`).toISOString(),
-      to_time: new Date(`${date}:${end} UTC`).toISOString(),
+      from_time: new Date(`${date}T${start}Z`).toISOString(),
+      to_time: new Date(`${date}T${end}Z`).toISOString(),
       user_message: $('#modalNewDescription').val(),
+      fiscal_code: $('#modalNewFiscalCode').val(),
       email: $('#modalNewEmail').val(),
       name: $('#modalNewName').val(),
       phone_number: $('#modalNewPhone').val(),
