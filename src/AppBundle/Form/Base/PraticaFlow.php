@@ -84,15 +84,6 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
         $pratica = $this->getFormData();
         $options["helper"] = new TestiAccompagnatoriProcedura($this->translator, $this->prefix);
 
-        $this->logger->info(
-            LogConstants::PRATICA_COMPILING_STEP,
-            [
-                'step' => $step,
-                'pratica' => $pratica->getId(),
-                'user' => $pratica->getUser()->getId(),
-            ]
-        );
-
         return $options;
     }
 

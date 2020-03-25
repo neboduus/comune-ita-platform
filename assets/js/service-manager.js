@@ -108,7 +108,7 @@ $(document).ready(function () {
           dataType: 'json', // type of response data
           method: 'POST',
           data: {
-            schema: '"' + schema + '"'
+            schema: schema
           },
           success: function (data, status, xhr) {   // success callback function
             if (data.status === 'success') {
