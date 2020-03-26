@@ -19,22 +19,22 @@ else
     wait-for-it $CONSUL_HTTP_ADDR -t 60
 
     tenant='comune-di-bugliano'
-    test consul kv get ${CONSUL_PREFIX}/${tenant}/config/env || \
+    consul kv get ${CONSUL_PREFIX}/${tenant}/config/env || \
       consul kv put ${CONSUL_PREFIX}/${tenant}/config/env dev
     
-    test consul kv get ${CONSUL_PREFIX}/${tenant}/config/protocollo || \
+    consul kv get ${CONSUL_PREFIX}/${tenant}/config/protocollo || \
       consul kv put ${CONSUL_PREFIX}/${tenant}/config/protocollo dummy 
     
-    test consul kv get ${CONSUL_PREFIX}/${tenant}/config/email || \
+    consul kv get ${CONSUL_PREFIX}/${tenant}/config/email || \
       consul kv put ${CONSUL_PREFIX}/${tenant}/config/email ${tenant}@stanzadelcittadino.localtest.me
     
-    test consul kv get ${CONSUL_PREFIX}/${tenant}/config/content/parameters/database_name || \
+    consul kv get ${CONSUL_PREFIX}/${tenant}/config/content/parameters/database_name || \
       consul kv put ${CONSUL_PREFIX}/${tenant}/config/content/parameters/database_name sdc_bugliano
     
-    test consul kv get ${CONSUL_PREFIX}/${tenant}/config/content/parameters/codice_meccanografico || \
+    consul kv get ${CONSUL_PREFIX}/${tenant}/config/content/parameters/codice_meccanografico || \
       consul kv put ${CONSUL_PREFIX}/${tenant}/config/content/parameters/codice_meccanografico c_bug
     
-    test consul kv get ${CONSUL_PREFIX}/${tenant}/config/content/parameters/prefix || \
+    consul kv get ${CONSUL_PREFIX}/${tenant}/config/content/parameters/prefix || \
       consul kv put ${CONSUL_PREFIX}/${tenant}/config/content/parameters/prefix ${tenant}
     
   fi
