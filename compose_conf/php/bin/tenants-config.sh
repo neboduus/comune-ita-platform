@@ -43,7 +43,7 @@ for tenant in $tenants; do
         current_env=$ENV
         if [[ $ENV != 'DEV' ]]; then
                 tenant_env=$(consul kv get -keys ${consul_prefix}/${tenant}/config/env)
-                if [[ $tenant_env == "dev" ]];
+                if [[ $tenant_env == "dev" ]]; then
                         current_env=DEV
                 fi
         fi
