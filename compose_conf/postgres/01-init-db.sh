@@ -11,9 +11,9 @@ pg_query() {
         --command "$cmd"
 }
 
-pg_query "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+#pg_query "CREATE USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD';"
 pg_query "CREATE DATABASE sdc_multi;"
-pg_query "GRANT ALL PRIVILEGES ON DATABASE sdc_multi TO $DB_USER;"
+pg_query "GRANT ALL PRIVILEGES ON DATABASE sdc_multi TO $POSTGRES_USER;"
 
 if [[ -n $CONSUL_PREFIX ]]; then
 
@@ -25,7 +25,7 @@ if [[ -n $CONSUL_PREFIX ]]; then
 
                 echo "==> Configuring tenant ${tenant}..."
                 pg_query "CREATE DATABASE ${db_name};"
-		pg_query "GRANT ALL PRIVILEGES ON DATABASE ${db_name} TO $DB_USER;"
+		pg_query "GRANT ALL PRIVILEGES ON DATABASE ${db_name} TO $POSTGRES_USER;"
         done
 
 else
@@ -35,58 +35,58 @@ else
         --dbname "$POSTGRES_DB" <<-EOSQL
 
 	CREATE DATABASE sdc_multi;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_multi TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_multi TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_rovereto;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_rovereto TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_rovereto TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_treville;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_treville TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_treville TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_vallelaghi;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_vallelaghi TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_vallelaghi TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_cavedine;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_cavedine TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_cavedine TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_ala;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_ala TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_ala TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_fem;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_fem TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_fem TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_folgaria;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_folgaria TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_folgaria TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_luserna;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_luserna TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_luserna TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_lavarone;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_lavarone TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_lavarone TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_bugliano;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_bugliano TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_bugliano TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_borgolares;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_borgolares TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_borgolares TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_canalsanbovo;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_canalsanbovo TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_canalsanbovo TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_imer;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_imer TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_imer TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_maniago;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_maniago TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_maniago TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_mezzano;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_mezzano TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_mezzano TO $POSTGRES_USER;
 
         CREATE DATABASE sdc_mori;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_mori TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_mori TO $POSTGRES_USER;
         
 	CREATE DATABASE sdc_borgolares;
-        GRANT ALL PRIVILEGES ON DATABASE sdc_borgolares TO $DB_USER;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_borgolares TO $POSTGRES_USER;
 EOSQL
 
 fi
