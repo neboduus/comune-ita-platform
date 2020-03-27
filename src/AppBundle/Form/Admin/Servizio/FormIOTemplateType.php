@@ -6,6 +6,7 @@ use AppBundle\Entity\FormIO;
 use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
@@ -55,7 +56,7 @@ class FormIOTemplateType extends AbstractType
     $builder
       ->add('service_id', HiddenType::class,
         [
-          'attr' => ['value' => $this->getFormIoId($servizio)],
+          'attr' => ['value' => $servizio->getFormIoId()],
           'mapped' => false,
           'required' => false,
         ])
@@ -69,12 +70,6 @@ class FormIOTemplateType extends AbstractType
     //$builder->addEventListener(FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
   }
 
-
-  public function getBlockPrefix()
-  {
-    return 'formio_template';
-  }
-
   public function onPreSubmit(FormEvent $event)
   {
     /** @var Servizio $servizio */
@@ -82,7 +77,7 @@ class FormIOTemplateType extends AbstractType
 
     if (isset($event->getData()['service_id']) && !empty($event->getData()['service_id'])) {
 
-      if (!$this->getFormIoId($servizio)) {
+      if ( empty($servizio->getFormIoId()) ) {
         $serviceID = $event->getData()['service_id'];
 
         $response = false;
@@ -95,16 +90,29 @@ class FormIOTemplateType extends AbstractType
             $response = $this->formServerService->cloneForm($servizio, $serviceToClone);
           }
         }
+
         if ($response['status'] == 'success') {
+
           $formId = $response['form_id'];
+          $flowStep = new FlowStep();
+          $flowStep
+            ->setIdentifier($formId)
+            ->setType('formio')
+            ->addParameter('formio_id', $formId);
+
+          $servizio->setFlowSteps([$flowStep]);
+
+          // Backup
           $additionalData = $servizio->getAdditionalData();
           $additionalData['formio_id'] = $formId;
           $servizio->setAdditionalData($additionalData);
+
         } else {
           $event->getForm()->addError(
             new FormError($response['message'])
           );
         }
+
       }
     } else {
         $event->getForm()->addError(
@@ -132,23 +140,8 @@ class FormIOTemplateType extends AbstractType
 
   }
 
-  private function getFormIoId(Servizio $service)
+  public function getBlockPrefix()
   {
-    $formID = false;
-    $flowsteps = $service->getFlowSteps();
-    $additionalData = $service->getAdditionalData();
-    if (!empty($flowsteps)) {
-      foreach ($flowsteps as $f) {
-        if (isset($f['type']) && $f['type'] == 'formio' && isset($f['parameters']['formio_id']) && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
-          break;
-        }
-      }
-    }
-    // Retrocompatibilità
-    if (!$formID) {
-      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
-    }
-    return $formID;
+    return 'formio_template';
   }
 }

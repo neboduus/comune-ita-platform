@@ -673,7 +673,7 @@ class Servizio
   /**
    * @param string|null $who
    */
-  public function setWho(string $who)
+  public function setWho( $who )
   {
     $this->who = $who;
   }
@@ -689,7 +689,7 @@ class Servizio
   /**
    * @param string $specialCases
    */
-  public function setSpecialCases(string $specialCases)
+  public function setSpecialCases( $specialCases )
   {
     $this->specialCases = $specialCases;
   }
@@ -705,7 +705,7 @@ class Servizio
   /**
    * @param string $moreInfo
    */
-  public function setMoreInfo(string $moreInfo)
+  public function setMoreInfo( $moreInfo )
   {
     $this->moreInfo = $moreInfo;
   }
@@ -759,6 +759,30 @@ class Servizio
       return json_encode($flowStep);
     }, $flowSteps);
 
+  }
+
+  /**
+   * @return string
+   */
+  public function getFormIoId()
+  {
+    $formID = '';
+    $flowsteps = $this->getFlowSteps();
+    if (!empty($flowsteps)) {
+      foreach ($flowsteps as $f) {
+        if ($f['type'] == 'formio' && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
+          $formID = $f['parameters']['formio_id'];
+          break;
+        }
+      }
+    }
+    // Retrocompatibilità
+    if (!$formID) {
+      $additionalData = $this->getAdditionalData();
+      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
+    }
+
+    return $formID;
   }
 
   /**

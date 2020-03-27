@@ -78,7 +78,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
   /**
    * Retreive a Service
-   * @Rest\Get("/{id}", name="service1_api_get")
+   * @Rest\Get("/{id}", name="service_api_get")
    *
    * @SWG\Response(
    *     response=200,
@@ -107,6 +107,47 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view(Service::fromEntity($result), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+    }
+  }
+
+  /**
+   * Retreive form Service schema
+   * @Rest\Get("/{id}/form", name="form_service_api_get")
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retreive service Form schma"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Form schema not found"
+   * )
+   * @SWG\Tag(name="services")
+   *
+   * @param $id
+   * @return \FOS\RestBundle\View\View
+   */
+  public function getFormServiceAction($id)
+  {
+    try {
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      /** @var Servizio $service */
+      $service = $repository->find($id);
+      if ($service === null) {
+        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      }
+
+      $formServerService = $this->container->get('ocsdc.formserver');
+      $response = $formServerService->getForm($service->getFormIoId());
+
+      if ($response['status'] == 'success') {
+        return $this->view($response['form'], Response::HTTP_OK);
+      } else {
+        return $this->view("Form not found", Response::HTTP_NOT_FOUND);
+      }
+    } catch (\Exception $e) {
+      return $this->view("Service not found", Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -167,27 +208,17 @@ class ServicesAPIController extends AbstractFOSRestController
 
     $em = $this->getDoctrine()->getManager();
 
+    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    if ($category instanceof Categoria) {
+      $serviceDto->setTopics($category);
+    }
+
     $service = $serviceDto->toEntity();
     $service->setPraticaFCQN('\AppBundle\Entity\FormIO');
     $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
 
     // Imposto l'ente in base all'istanza
     $service->setEnte($this->container->get('ocsdc.instance_service')->getCurrentInstance());
-
-    // Imposto la categoria
-    /*$repository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
-    $result = $repository->find($serviceDto->getTopics());
-    if ($result === null) {
-      $data = [
-        'type' => 'validation_error',
-        'title' => 'There was a validation error',
-        'errors' => array(
-          'topic not present'
-        )
-      ];
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-    $service->setTopics($result);*/
 
     try {
       $em->persist($service);
@@ -276,8 +307,12 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $service = $serviceDto->toEntity($service);
     $em = $this->getDoctrine()->getManager();
+    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    if ($category instanceof Categoria) {
+      $serviceDto->setTopics($category);
+    }
+    $service = $serviceDto->toEntity($service);
 
     try {
       $em->persist($service);
@@ -346,7 +381,7 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   public function patchServiceAction($id, Request $request)
   {
-
+    $em = $this->getDoctrine()->getManager();
     $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $service = $repository->find($id);
 
@@ -367,10 +402,13 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
+    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    if ($category instanceof Categoria) {
+      $serviceDto->setTopics($category);
+    }
     $service = $serviceDto->toEntity($service);
 
     try {
-      $em = $this->getDoctrine()->getManager();
       $em->persist($service);
       $em->flush();
     } catch (\Exception $e) {
@@ -421,10 +459,25 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   private function processForm(Request $request, FormInterface $form)
   {
-    $data = json_decode($request->getContent(), true);
+    $data = $this->normalizeData(json_decode($request->getContent(), true));
+    $clearMissing = $request->getMethod() != 'PATCH';
+    $form->submit($data, $clearMissing);
+  }
+
+  public function normalizeData($data)
+  {
+    // Todo: find better way
+    if (isset($data['flow_steps']) && count($data['flow_steps']) > 0) {
+      $temp = [];
+      foreach ($data['flow_steps'] as $f) {
+        $f['parameters'] = \json_encode($f['parameters']);
+        $temp[]= $f;
+      }
+      $data['flow_steps'] = $temp;
+    }
 
     // Todo: find better way
-    if ( count($data['payment_parameters']['gateways']) > 0 ) {
+    if ( isset($data['payment_parameters']['gateways']) && count($data['payment_parameters']['gateways']) > 0 ) {
       $sanitizedGateways = [];
       foreach ($data['payment_parameters']['gateways'] as $gateway) {
         $parameters = \json_encode($gateway['parameters']);
@@ -434,14 +487,12 @@ class ServicesAPIController extends AbstractFOSRestController
       $data['payment_parameters']['gateways'] = $sanitizedGateways;
     }
 
-
     // Todo: find better way
-    if (count($data['protocollo_parameters']) > 0) {
+    if (isset($data['protocollo_parameters'])) {
       $data['protocollo_parameters'] = \json_encode($data['protocollo_parameters']);
     }
 
-    $clearMissing = $request->getMethod() != 'PATCH';
-    $form->submit($data, $clearMissing);
+    return $data;
   }
 
   /**
@@ -450,9 +501,6 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   private function getErrorsFromForm(FormInterface $form)
   {
-
-    dump((string) $form->getErrors(true, false));die;
-
     $errors = array();
     foreach ($form->getErrors() as $error) {
       $errors[] = $error->getMessage();
@@ -460,9 +508,6 @@ class ServicesAPIController extends AbstractFOSRestController
     foreach ($form->all() as $childForm) {
       if ($childForm instanceof FormInterface) {
         if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          echo '<pre>';
-          print_r($childErrors);
-
           $errors[] = $childErrors;
         }
       }

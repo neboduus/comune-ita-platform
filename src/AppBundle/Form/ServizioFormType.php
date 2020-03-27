@@ -2,6 +2,11 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\AppBundle;
+use AppBundle\Entity\Categoria;
+use AppBundle\Entity\Servizio;
+use AppBundle\Services\FormServerApiAdapterService;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -27,16 +32,23 @@ class ServizioFormType extends AbstractType
         'class' => 'AppBundle\Entity\Ente',
         'choice_label' => 'name',
       ])
-      ->add('topics', EntityType::class, [
+      /*->add('topics', EntityType::class, [
         'class' => 'AppBundle\Entity\Categoria',
         'choice_label' => 'name',
-      ])
+      ])*/
+      ->add('topics')
       ->add('description')
       ->add('howto')
       ->add('who')
       ->add('special_cases')
       ->add('more_info')
-      ->add('coverage')
+      ->add('coverage', CollectionType::class, [
+        'entry_type' => TextType::class,
+        "allow_add" => true,
+        "allow_delete" => true,
+        'prototype' => true,
+        "label" => false
+      ])
       ->add('response_type')
       ->add('flow_steps', CollectionType::class, [
         'entry_type' => FlowStepType::class,
@@ -51,17 +63,7 @@ class ServizioFormType extends AbstractType
         'data_class' => null
       ])
       ->add('sticky')
-      ->add('status')
-      ->addEventListener(FormEvents::SUBMIT,
-        function (FormEvent $event) {
-          // get the form
-          $form = $event->getForm();
-          $data = $form->getData();
-
-          /*dump($data);
-          exit;*/
-
-        });
+      ->add('status');
   }
 
   /**

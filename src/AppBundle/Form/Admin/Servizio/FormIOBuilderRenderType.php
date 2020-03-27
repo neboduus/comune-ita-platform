@@ -53,9 +53,7 @@ class FormIOBuilderRenderType extends AbstractType
 
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
-    $additionalData = $servizio->getAdditionalData();
-
-    $formId = isset($additionalData['formio_id']) && !empty($additionalData['formio_id']) ? $additionalData['formio_id'] : '';
+    $formId = $servizio->getFormIoId();
     $builder
       ->add('form_id', HiddenType::class,
         [
@@ -74,22 +72,13 @@ class FormIOBuilderRenderType extends AbstractType
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
-
-  public function getBlockPrefix()
-  {
-    return 'formio_builder_render';
-  }
-
-
   public function onPreSubmit(FormEvent $event)
   {
     /** @var Servizio $servizio */
     $servizio = $event->getForm()->getData();
 
     if (isset($event->getData()['form_schema']) && !empty($event->getData()['form_schema'])) {
-
       $schema = \json_decode($event->getData()['form_schema'], true);
-
       $response = $this->formServerService->editForm($schema);
       if ($response['status'] != 'success') {
         $event->getForm()->addError(
@@ -100,4 +89,10 @@ class FormIOBuilderRenderType extends AbstractType
 
     $this->em->persist($servizio);
   }
+
+  public function getBlockPrefix()
+  {
+    return 'formio_builder_render';
+  }
+
 }

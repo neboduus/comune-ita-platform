@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Model\FlowStep;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,7 +21,8 @@ class FlowStepType extends AbstractType
       ->add('title')
       ->add('description')
       ->add('guide')
-      ->add('type');
+      ->add('type')
+      ->add('parameters', TextareaType::class, []);
     }
 
   /**

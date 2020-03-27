@@ -1,6 +1,4 @@
-require('bootstrap-italia');
-//require('datatables.net-bs4');
-require('../css/app.scss');
+import './core'
 
 $(document).ready(function($) {
   if (location.hostname !== 'stanzadelcittadino.it') {

@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 
 
 use AppBundle\Entity\Servizio;
+use AppBundle\Model\FlowStep;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\GuzzleException;
@@ -43,52 +44,52 @@ class FormServerApiAdapterService
       'type' => 'form',
       'components' =>
         array(
-            array(
-              'label' => 'Panel',
-              'title' => 'Richiedente',
-              'breadcrumbClickable' => true,
-              'buttonSettings' =>
+          array(
+            'label' => 'Panel',
+            'title' => 'Richiedente',
+            'breadcrumbClickable' => true,
+            'buttonSettings' =>
+              array(
+                'previous' => true,
+                'cancel' => true,
+                'next' => true,
+              ),
+            'collapsible' => false,
+            'mask' => false,
+            'tableView' => false,
+            'alwaysEnabled' => false,
+            'type' => 'panel',
+            'input' => false,
+            'components' =>
+              array(
                 array(
-                  'previous' => true,
-                  'cancel' => true,
-                  'next' => true,
-                ),
-              'collapsible' => false,
-              'mask' => false,
-              'tableView' => false,
-              'alwaysEnabled' => false,
-              'type' => 'panel',
-              'input' => false,
-              'components' =>
+                  'label' => 'Avvertenza',
+                  'tag' => 'h6',
+                  'attrs' => array(array('attr' => '', 'value' => '',),),
+                  'content' => 'Benvenuto nella configurazione del tuo nuovo form!',
+                  'refreshOnChange' => false,
+                  'tableView' => false,
+                  'key' => 'avvertenza',
+                  'type' => 'htmlelement',
+                  'input' => false,
+                  'validate' => array('unique' => false, 'multiple' => false,),),
                 array(
-                    array(
-                      'label' => 'Avvertenza',
-                      'tag' => 'h6',
-                      'attrs' => array(array('attr' => '', 'value' => '',),),
-                      'content' => 'Benvenuto nella configurazione del tuo nuovo form!',
-                      'refreshOnChange' => false,
-                      'tableView' => false,
-                      'key' => 'avvertenza',
-                      'type' => 'htmlelement',
-                      'input' => false,
-                      'validate' => array('unique' => false, 'multiple' => false,),),
-                    array(
-                      'label' => 'HTML',
-                      'attrs' => array(array('attr' => '', 'value' => '',),),
-                      'content' => 'Come primo componente ti raccomandiamo di inserire il sottoform <strong>Anagrafica</strong>, necessario per la corretta implementazione dei form dinamici.',
-                      'refreshOnChange' => false,
-                      'tableView' => false,
-                      'key' => 'html',
-                      'type' => 'htmlelement',
-                      'input' => false,
-                      'validate' => array('unique' => false, 'multiple' => false,),
-                    ),
+                  'label' => 'HTML',
+                  'attrs' => array(array('attr' => '', 'value' => '',),),
+                  'content' => 'Come primo componente ti raccomandiamo di inserire il sottoform <strong>Anagrafica</strong>, necessario per la corretta implementazione dei form dinamici.',
+                  'refreshOnChange' => false,
+                  'tableView' => false,
+                  'key' => 'html',
+                  'type' => 'htmlelement',
+                  'input' => false,
+                  'validate' => array('unique' => false, 'multiple' => false,),
                 ),
-              'key' => 'panel',
-              'collapsed' => false,
-              'reorder' => false,
-              'validate' => array('unique' => false, 'multiple' => false,),
-            ),
+              ),
+            'key' => 'panel',
+            'collapsed' => false,
+            'reorder' => false,
+            'validate' => array('unique' => false, 'multiple' => false,),
+          ),
         ),
       'tags' => ['custom'],
       'title' => $servizio->getName(),
@@ -133,25 +134,80 @@ class FormServerApiAdapterService
     ];
   }
 
+  /**
+   * @param $schema
+   * @return array
+   * @throws GuzzleException
+   */
+  public function createFormFromSchema($schema)
+  {
+    $client = new Client(['base_uri' => $this->formServerUrl]);
+    $request = new Request(
+      'POST',
+      $client->getConfig('base_uri') . '/form',
+      ['Content-Type' => 'application/json'],
+      json_encode($schema)
+    );
+
+    $response = $client->send($request);
+    if ($response->getStatusCode() == 201) {
+      $responseBody = json_decode($response->getBody(), true);
+
+      return [
+        'status' => 'success',
+        'form_id' => $responseBody['_id']
+      ];
+    }
+    throw new \Exception("Error creating form from schema");
+  }
+
+  /**
+   * @param $remoteUrl
+   * @return array|mixed
+   */
+  public function cloneFormFromRemote(Servizio $service, $remoteUrl)
+  {
+    $error = self::STANDARD_ERROR;
+    try {
+      $client = new Client();
+      $request = new \GuzzleHttp\Psr7\Request(
+        'GET',
+        $remoteUrl,
+        ['Content-Type' => 'application/json']
+      );
+      $response = $client->send($request);
+      if ($response->getStatusCode() == 200) {
+        $schema = json_decode($response->getBody(), true);
+        $schema['title'] = $service->getName();
+        $schema['name'] = $service->getSlug();
+        $schema['path'] = $service->getSlug();
+        $schema['description'] = $service->getName();
+        unset($schema['_id'], $schema['modified'], $schema['created'], $schema['__v']);
+        $response = $this->createFormFromSchema($schema);
+        if ($response['status'] == 'success') {
+          return [
+            'status' => 'success',
+            'form_id' => $response['form_id']
+          ];
+        }
+      }
+    } catch (GuzzleException $e) {
+      $error = $e->getMessage();
+      $this->logger->error($e->getMessage());
+    } catch (\Exception $e) {
+      $error = $e->getMessage();
+      $this->logger->error($e->getMessage());
+    }
+    return [
+      'status' => 'error',
+      'message' => $error
+    ];
+  }
+
   public function cloneForm(Servizio $service, Servizio $serviceToClone)
   {
 
-    $formID = false;
-    $flowsteps = $serviceToClone->getFlowSteps();
-    if (!empty($flowsteps)) {
-      foreach ($flowsteps as $f) {
-        if ($f['type'] == 'formio' && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
-          break;
-        }
-      }
-    }
-    // Retrocompatibilità
-    if (!$formID) {
-      $additionalData = $serviceToClone->getAdditionalData();
-      $formID = $additionalData['formio_id'];
-    }
-
+    $formID = $service->getFormIoId();
     $response = self::getForm($formID);
     if ($response['status'] != 'success') {
       return [
@@ -215,6 +271,7 @@ class FormServerApiAdapterService
 
     try {
       $response = $client->send($request);
+
       if ($response->getStatusCode() == 200) {
         $responseBody = json_decode($response->getBody(), true);
         return [
