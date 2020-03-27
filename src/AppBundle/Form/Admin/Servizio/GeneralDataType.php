@@ -33,6 +33,9 @@ class GeneralDataType extends AbstractType
       'Cie'            => Servizio::ACCESS_LEVEL_CIE,
     ];
 
+    /** @var Servizio $servizio */
+    $servizio = $builder->getData();
+
     $builder->add(
       "name", TextType::class, [
         "label" => 'Nome del servizio',
@@ -53,6 +56,7 @@ class GeneralDataType extends AbstractType
       ])
       ->add('coverage', TextType::class, [
         'label' => 'Copertura geografica - (se più di uno inserire i valori separati da virgola)',
+        'data' => is_array($servizio->getCoverage()) ? implode(',', $servizio->getCoverage()) : $servizio->getCoverage(),
         'required' => false
       ])
       ->add('howto', TextareaType::class, [

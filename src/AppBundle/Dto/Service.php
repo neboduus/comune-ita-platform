@@ -51,7 +51,7 @@ class Service
   /**
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="Services's topic (uuid)")
+   * @SWG\Property(description="Services's topic (slug)")
    */
   private $topics;
 
@@ -342,7 +342,7 @@ class Service
   {
     $this->response_type = $response_type;
   }
-  
+
 
   /**
    * @return FlowStep[]
@@ -455,7 +455,7 @@ class Service
     $dto->slug = $servizio->getSlug();
     $dto->tenant = $servizio->getEnteId();
 
-    $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
+    $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getSlug() : null;
     $dto->description = $servizio->getDescription() ?? '';
     $dto->howto = $servizio->getHowto();
     $dto->who = $servizio->getWho() ?? '';
@@ -496,6 +496,15 @@ class Service
     $entity->setSpecialCases($this->specialCases ?? '');
     $entity->setMoreInfo($this->moreInfo ?? '');
     $entity->setCoverage($this->coverage);
+
+    if (count($this->flowSteps) > 0) {
+      $temp = [];
+      foreach ($this->flowSteps as $f) {
+        $f->setParameters(\json_decode($f->getParameters(), true));
+        $temp[]= $f;
+      }
+      $this->flowSteps = $temp;
+    }
     $entity->setFlowSteps($this->flowSteps);
     $entity->setProtocolloParameters($this->protocolloParameters);
     $entity->setPaymentRequired($this->paymentRequired);

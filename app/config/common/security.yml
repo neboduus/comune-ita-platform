@@ -46,6 +46,7 @@ security:
 
         api:
             pattern:   /%prefix%/api/(services|applications)
+            methods: [POST, PUT, PATCH, DELETE]
             stateless: true
             guard:
                 authenticators:
