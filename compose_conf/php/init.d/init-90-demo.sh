@@ -1,17 +1,11 @@
 #!/bin/bash
 
-
 if [[ $ENV == 'DEMO' ]]; then
-  echo "==> ENV=DEMO, loading doctrine fixtures to create a default environment"
-  wait-for-it postgres:5432 -t 60 -- php bin/console --no-interaction doctrine:fixtures:load
-  for instance in $(./bin/tenants); do
-    php bin/console --no-interaction --instance ${instance} doctrine:fixtures:load
-  done
 
   if [[ -n ${CONSUL_PREFIX} ]]; then
     echo "==> ENV=DEMO, loading consul configuration for bugliano and vallelaghi"
 	
-    wait-for-it $CONSUL_HTTP_ADDR -t 60
+    wait-for-it ${CONSUL_HTTP_ADDR:-'consul:8500'} --timeout=0 --strict
 
     for tenant in comune-di-bugliano comune-di-vallelaghi; do
       db_name=$(echo $tenant | sed 's/-//g')
@@ -23,4 +17,15 @@ if [[ $ENV == 'DEMO' ]]; then
       consul kv put ${CONSUL_PREFIX}/${tenant}/config/content/parameters/prefix ${tenant}
     done
   fi
+
+  DB_HOST=${DB_HOST:-postgres}
+  DB_PORT=${DB_PORT:-5432}
+
+  echo "==> ENV=DEMO, loading doctrine fixtures to create a default environment"
+  wait-for-it ${DB_HOST}:${DB_PORT} --timeout=0 --strict -- php bin/console --no-interaction doctrine:fixtures:load
+  
+  for instance in $(./bin/tenants); do
+    wait-for-it ${DB_HOST}:${DB_PORT} --timeout=0 --strict -- php bin/console --no-interaction --instance ${instance} doctrine:fixtures:load
+  done
+
 fi
