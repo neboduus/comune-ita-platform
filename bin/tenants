@@ -10,7 +10,7 @@ fi
 readonly tenants=$(ls -1d app/config/*/ | egrep -v '(bundles|common)' | cut -d'/' -f 3)
 
 for tenant in $tenants; do
-  if [[ -f app/config/${tenant}/config_${env}.yml ]]; then
+  if [[ -f app/config/tenants/${tenant}/config_${env}.yml ]]; then
      echo $tenant
   fi
 done
