@@ -132,7 +132,8 @@ $(document).ready(function () {
             currency: true,
             hidden: true,
             form: true,
-            calendar: true
+            calendar: true,
+            file: true
           }
         },
         customLayout: {

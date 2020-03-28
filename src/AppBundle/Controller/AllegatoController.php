@@ -69,6 +69,75 @@ class AllegatoController extends Controller
   }
 
   /**
+   * @param Request $request
+   * @Route("/pratiche/allegati",name="allegati_upload")
+   * @return mixed
+   */
+  public function uploadAllegatoAction(Request $request)
+  {
+    $em = $this->getDoctrine()->getManager();
+
+    switch ($request->getMethod()) {
+
+      case 'GET':
+        $fileName = str_replace('/', '', $request->get('form'));
+        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        if ($file instanceof Allegato) {
+          return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $file]);
+        } else {
+          return new Response('', Response::HTTP_NOT_FOUND);
+        }
+        break;
+
+      case 'POST':
+        $uploadedFile = $request->files->get('file');
+        $allegato = new Allegato();
+        $allegato->setFile($uploadedFile);
+        $description = $request->get('description') ?? 'Allegato senza descrizione';
+        $allegato->setDescription($description);
+        $allegato->setOriginalFilename($request->get('name'));
+        $allegato->setOwner($this->getUser());
+        $em->persist($allegato);
+        $em->flush();
+
+        $data = [
+          'id' => $allegato->getId()
+        ];
+        return new JsonResponse($data);
+        break;
+
+      case 'DELETE':
+        $fileName = str_replace('/', '', $request->get('form'));
+        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        if ($file instanceof Allegato) {
+
+          if ($file->getOwner() != $this->getUser()) {
+            return new Response('', Response::HTTP_FORBIDDEN);
+          }
+
+          $applications = $file->getPratiche();
+          /** @var Pratica $item */
+          foreach ($applications as $item) {
+            $item->removeAllegato($file);
+            $em->persist($item);
+          }
+          $em->remove($file);
+          $em->flush();;
+
+          return new Response('', Response::HTTP_OK);
+
+        } else {
+          return new Response('', Response::HTTP_NOT_FOUND);
+        }
+        break;
+
+      default:
+        return new Response('', Response::HTTP_OK);
+        break;
+    }
+  }
+
+  /**
    * TODO: TestMe
    * @param Request $request
    * @Route("/pratiche/allegati/upload/scia/{id}",name="allegati_scia_create_cpsuser")

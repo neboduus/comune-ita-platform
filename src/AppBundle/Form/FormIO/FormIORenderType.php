@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\FormIO;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
@@ -14,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Form\FormError;
 use \DateTime;
@@ -30,6 +32,11 @@ class FormIORenderType extends AbstractType
    * @var FormServerApiAdapterService
    */
   private $formServerService;
+
+  /**
+   * @var
+   */
+  private $schema = false;
 
   /**
    * FormIORenderType constructor.
@@ -51,12 +58,17 @@ class FormIORenderType extends AbstractType
 
     /** @var FormIO $pratica */
     $pratica = $builder->getData();
+    $formID = $pratica->getServizio()->getFormIoId();
 
-    $formID = $this->getFormIoId($pratica);
+    $result = $this->formServerService->getFormSchema($pratica->getServizio()->getFormIoId());
+    if ($result['status'] == 'success') {
+      $this->schema = $result['schema'];
+    }
 
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
     $helper->setStepTitle('steps.scia.modulo_default.label', true);
+
     $data = $this->setupHelperData($pratica);
 
     $builder
@@ -75,7 +87,6 @@ class FormIORenderType extends AbstractType
         ]
       );
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
-    //$builder->addEventListener(FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
   }
 
 
@@ -87,32 +98,37 @@ class FormIORenderType extends AbstractType
   public function onPreSubmit(FormEvent $event)
   {
 
-    $options = $event->getForm()->getConfig()->getOptions();
-    /** @var TestiAccompagnatoriProcedura $helper */
-    $helper = $options["helper"];
-
     /** @var SciaPraticaEdilizia $pratica */
     $pratica = $event->getForm()->getData();
-    $compiledData = array();
+    $compiledData = $flattenedData = array();
     if (isset($event->getData()['dematerialized_forms'])) {
       $data = json_decode($event->getData()['dematerialized_forms'], true);
       $flattenedData = $this->arrayFlat($data);
       $compiledData = $data;
     }
 
-    $schema = false;
-    $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
-    if ($result['status'] == 'success') {
-      $schema = $this->arrayFlat($result['schema']);
-    }
-
     $pratica->setDematerializedForms(
       array(
         'data' => $compiledData,
         'flattened' => $flattenedData,
-        'schema' => $schema
+        'schema' => $this->arrayFlat($this->schema, true)
       )
     );
+
+    // Associo gli allegati alla pratica
+    foreach ($flattenedData as $key => $value) {
+      if ( isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
+        foreach ($value as $file) {
+          $id = $file['data']['id'];
+          $attachment = $this->em->getRepository('AppBundle:Allegato')->find($id);
+          if ($attachment instanceof Allegato) {
+            $attachments[]= $id;
+            $pratica->addAllegato($attachment);
+          }
+        }
+      }
+    }
+
     $this->em->persist($pratica);
   }
 
@@ -130,9 +146,10 @@ class FormIORenderType extends AbstractType
       $cpsUserData = [];
       $applicant = [];
 
-      $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
+      $result = $this->formServerService->getFormSchema($pratica->getServizio()->getFormIoId());
       if ($result['status'] == 'success') {
-        $schema = $this->arrayFlat($result['schema']);
+
+        $schema = $this->arrayFlat($this->schema, true);
         foreach ($schema as $k => $v) {
           $kParts = explode('.', $k);
           if ($kParts[0] == 'applicant') {
@@ -192,46 +209,27 @@ class FormIORenderType extends AbstractType
   }
 
   /**
-   * @param Pratica $pratica
-   * @return bool|mixed
-   */
-  private function getFormIoId(Pratica $pratica)
-  {
-    $formID = false;
-    $flowsteps = $pratica->getServizio()->getFlowSteps();
-    $additionalData = $pratica->getServizio()->getAdditionalData();
-    if (!empty($flowsteps)) {
-      foreach ($flowsteps as $f) {
-        if ($f['type'] == 'formio' && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
-          break;
-        }
-      }
-    }
-    // Retrocompatibilità
-    if (!$formID) {
-      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
-    }
-
-    return $formID;
-  }
-
-  /**
    * @param $array
    * @param string $prefix
    * @return array
    */
-  private function arrayFlat($array, $prefix = '')
+  private function arrayFlat($array, $isSchema = false, $prefix = '')
   {
     $result = array();
     foreach ($array as $key => $value) {
-      if ($key == 'metadata' || $key == 'state') {
+
+      if ($key === 'metadata' || $key === 'state') {
         continue;
+      }
+
+      $isFile = false;
+      if (!$isSchema && isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
+        $isFile = true;
       }
       $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
 
-      if (is_array($value)) {
-        $result = array_merge($result, $this->arrayFlat($value, $new_key));
+      if (is_array($value) && !$isFile) {
+        $result = array_merge($result, $this->arrayFlat($value, $isSchema, $new_key));
       } else {
         $result[$new_key] = $value;
       }

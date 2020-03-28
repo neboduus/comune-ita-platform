@@ -20,6 +20,13 @@ al checkbox **Save as reference** presente nel tab **Form**
 * [`MUST`] Non inserire componenti di tipo **Nested Form** all'interno di elementi di layout per il corretto popolamento
 automatico dei campi
 
+### Uploade dei file
+Il componente per l'upload del file è utilizzabile cone le seguenti impostazioni:
+*  Storage va impostato a `Url`
+*  Va specificata un url così composto `https://{host}/{instance}/pratiche/allegati`
+   Es.`http://stanzadelcittadino.it/comune-di-bugliano/pratiche/allegati`
+
+
 ## Integrazioni
 
 ### Servizi a sottoscrizione

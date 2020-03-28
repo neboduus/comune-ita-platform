@@ -793,12 +793,10 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
      */
     public function removeAllegato(Allegato $allegato)
     {
-        //TODO: testare e sentire con Nardelli come gestire i nueri di protocollo per gli allegati
         if ($this->allegati->contains($allegato)) {
             $this->allegati->removeElement($allegato);
             $allegato->removePratica($this);
         }
-
         return $this;
     }
 
