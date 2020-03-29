@@ -29,7 +29,7 @@ if ($debug) {
 
 if ( !empty($instance))
 {
-    if (!file_exists( __DIR__.'/../app/config/' .$instance )){
+    if (!file_exists( __DIR__.'/../app/config/tenants/' .$instance )){
         throw new Exception("Instance $instance not found");
     }
     $kernel = new InstanceKernel($env, $debug);
