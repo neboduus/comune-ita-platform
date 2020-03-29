@@ -1,2 +1,5 @@
 #!/bin/bash
-consul watch -type keyprefix -prefix 'sdc/stanzadelcittadino.it/tenants' /bin/tenants-db.sh
+
+keyprefix=${CONSUL_PREFIX:-'sdc/stanzadelcittadino.it/tenants'}
+
+consul watch -type keyprefix -prefix "$keyprefix" /bin/tenants-db.sh
