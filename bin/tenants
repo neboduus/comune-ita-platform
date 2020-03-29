@@ -1,4 +1,5 @@
 #!/bin/bash
+[[ -n $DEBUG ]] && set -x
 
 readonly env=${SYMFONY_ENV:-prod}
 
@@ -7,6 +8,7 @@ if [[ -n ${CONSUL_PREFIX} ]]; then
 
   wait-for-it ${CONSUL_HTTP_ADDR:-'consul:8500'} --timeout=0 --strict
 
+  consul_prefix=$CONSUL_PREFIX
   tenants=$(consul kv get -keys ${consul_prefix}/ | sed "s#${consul_prefix}/##" | sed 's#/$##')
   for tenant in $tenants; do
     echo $tenant

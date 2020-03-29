@@ -15,6 +15,20 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
 
+  pgmanager:
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/postgres:master
+    environment:
+      PGHOST: postgres
+      PGUSER: sdc
+      PGPASSWORD: sdc
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      CONSUL_HTTP_ADDR: 'consul:8500' 
+      CONSUL_PREFIX: 'sdc/stanzadelcittadino.it/tenants'
+    #entrypoint: sleep 300
+    entrypoint: "/bin/watch.sh"
+    #entrypoint: "consul watch -type keyprefix -prefix 'sdc/stanzadelcittadino.it/tenants' /bin/tenants-db.sh"
+
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     environment:
@@ -140,7 +154,6 @@ services:
       - DATABASE_URL=postgres://${DB_USER:-sdc}:${DB_PASSWORD:-sdc}@postgres:5432/${DB_NAME:-sdc_multi}?sslmode=disable
     depends_on:
       - postgres
-
 
 volumes:
   pgdata:

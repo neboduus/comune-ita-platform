@@ -2,5 +2,10 @@ FROM wodby/postgres:10-1.6.0
 
 COPY --from=consul:1.6 /bin/consul /bin/consul
 
-COPY ./compose_conf/postgres/* /docker-entrypoint-initdb.d 
+RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O- > /bin/wait-for-it && \
+    chmod +x /bin/wait-for-it
+
+COPY ./compose_conf/postgres/init-db.sh /docker-entrypoint-initdb.d/
+COPY ./compose_conf/postgres/tenants-db.sh /bin/
+COPY ./compose_conf/postgres/watch.sh /bin/
 

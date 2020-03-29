@@ -13,7 +13,7 @@ if [[ $ENV == 'dev' ]]; then
 
     echo "At least the tenant 'bugliano' must be configured in consul"
 
-    wait-for-it ${CONSUL_HTTP_ADDR:'consul:8500'} --timeout=0 --strict
+    wait-for-it ${CONSUL_HTTP_ADDR:-'consul:8500'} --timeout=0 --strict
 
     tenant='comune-di-bugliano'
     consul kv get ${CONSUL_PREFIX}/${tenant}/config/env || \
