@@ -9,6 +9,7 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
+use AppBundle\Entity\User;
 use AppBundle\Model\SubscriberMessage;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
@@ -126,36 +127,39 @@ class MailerService
    *
    * @param $fromAddress
    * @param $fromName
-   * @param CPSUser $user
+   * @param User $user
    * @param $message
    * @param $subject
    *
+   * @param $ente
    * @return int
    * @throws \Twig\Error\Error
    */
-  public function dispatchMail($fromAddress, $fromName,CPSUser $user, $message, $subject)
+  public function dispatchMail($fromAddress, $fromName, $toAddress, $toName, $message, $subject, Ente $ente)
   {
     $sentAmount = 0;
 
-    if ($this->isValidEmail($user->getEmail())){
+    if ($this->isValidEmail($toAddress)){
       $emailMessage = \Swift_Message::newInstance()
         ->setSubject($subject)
         ->setFrom($fromAddress, $fromName)
-        ->setTo($user->getEmail(), $user->getNome())
+        ->setTo($toAddress, $toName)
         ->setBody(
           $this->templating->render(
-            'AppBundle:Emails/Subscriber:subscriber_message.html.twig',
+            'AppBundle:Emails/General:message.html.twig',
             array(
               'message' => $message,
+              'ente'=>$ente
             )
           ),
           'text/html'
         )
         ->addPart(
           $this->templating->render(
-            'AppBundle:Emails/Subscriber:subscriber_message.txt.twig',
+            'AppBundle:Emails/General:message.txt.twig',
             array(
               'message' => $message,
+              'ente' => $ente
             )
           ),
           'text/plain'

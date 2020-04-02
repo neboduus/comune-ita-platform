@@ -6,6 +6,7 @@ use AppBundle\Entity\OperatoreUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -21,6 +22,11 @@ class CalendarType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+    $minimumSchedulingNotices = [
+      'Un ora prima'=>1, 'Due ore prima'=>2, 'Quattro ore prima'=>4, 'Otto ore prima'=>8,
+      'Un giorno prima'=>24, 'Due giorni prima'=>48, 'Tre giorni prima'=>72, 'Una settimana prima'=>168
+    ];
+
     $builder
       ->add('title', TextType::class, [
         'required' => true,
@@ -32,7 +38,12 @@ class CalendarType extends AbstractType
       ])
       ->add('rolling_days', NumberType::class, [
         'required' => true,
-        'label' => 'Numero di giorni entro il quale è possibile prenotare'
+        'label' => 'Massino numero di giorni entro il quale è possibile prenotare'
+      ])
+      ->add('minimum_scheduling_notice', ChoiceType::class, [
+        'required' => true,
+        'choices' => $minimumSchedulingNotices,
+        'label' => 'Minumo numero di ore entro il quale è possibile prenotare',
       ])
       ->add('allow_cancel_days', NumberType::class, [
         'required' => true,

@@ -4,6 +4,14 @@ parameters:
 #    parameter_name: value
 
 services:
+  meeting.eventlistener:
+    class: AppBundle\EventListener\MeetingLifeCycleListener
+    tags:
+      - { name: doctrine.event_listener, event: postPersist, connection: default }
+      - { name: doctrine.event_listener, event: preUpdate, connection: default }
+      - { name: doctrine.event_listener, event: postRemove, connection: default }
+    arguments:
+      ['@ocsdc.mailer', '%default_from_email_address%', '@translator', '@router']
 
   AppBundle\Controller\APIController:
     autowire: true
@@ -19,7 +27,7 @@ services:
 
   AppBundle\Controller\Rest\MeetingsAPIController:
     autowire: true
-    arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@translator"]
+    arguments: ["@translator"]
 
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
@@ -47,6 +55,12 @@ services:
     tags:
        - { name: form.type }
 
+  AppBundle\Form\OpeningHourType:
+    autowire: true
+    arguments: ["@translator"]
+    tags:
+      - { name: form.type }
+
   AppBundle\Services\MyPayService:
     autowire: true
 
@@ -66,7 +80,7 @@ services:
 
   AppBundle\BackOffice\CalendarsBackOffice:
     autowire: true
-    arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@translator"]
+    arguments: ["@translator"]
     tags: ['app.backoffice']
 
   ocsdc.backoffices:
@@ -80,6 +94,10 @@ services:
   AppBundle\Controller\SubscriberController:
     autowire: true,
     arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@logger"]
+
+  AppBundle\Controller\CalendarsController:
+    autowire: true
+    arguments: ["@translator"]
 
   Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
 

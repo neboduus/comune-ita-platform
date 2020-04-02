@@ -52,8 +52,8 @@ $(document).ready(function () {
     editable: true,
     eventDurationEditable: false,
     eventDrop: function (info) {
-        compileModal(info);
-        $("#edit_alert").show();
+      compileModal(info);
+      $("#edit_alert").show();
     },
     eventClick: function (info) {
       if (info.event.id) compileModal(info);
@@ -90,26 +90,27 @@ function compileModal(info) {
 
   let date = new Date(info.event.start).toISOString().slice(0, 10);
   let start = new Date(info.event.start).toISOString().slice(11, 16);
-  let end = new Date(info.event.end).toISOString().slice(11, 16);
-
-  // Populate datalist
-  getSlots(date);
 
   // Populate modal
+
+  // Populate datalist
+  getSlots(date, start, function (slot) {
+    $('#modalSlot').val(slot);
+  });
+
   $('#modalDate').val(date);
-  $('#modalSlot').val(`${start} - ${end}`);
   $('#modalId').html(info.event.id);
   $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name || 'Nome non fornito'}`);
   $('#modalDescription').val(info.event.extendedProps.description);
+  $('#modalVideoconferenceLink').val(info.event.extendedProps.videoconferenceLink);
   $('#modalPhone').val(info.event.extendedProps.phoneNumber);
   $('#modalEmail').val(info.event.extendedProps.email);
   $('#modalStatus').html(info.event.extendedProps.status);
 
-  if (info.event.extendedProps.rescheduled === 1){
+  if (info.event.extendedProps.rescheduled === 1) {
     $('#modalRescheduleText').html(`Quest'appuntamento è stato spostato 1 volta`);
     $("#modalReschedule").show();
-  }
-  else if (info.event.extendedProps.rescheduled !== 0){
+  } else if (info.event.extendedProps.rescheduled !== 0) {
     $('#modalRescheduleText').html(`Quest'appuntamento è stato spostato ${info.event.extendedProps.rescheduled} volte`);
     $("#modalReschedule").show();
   }
@@ -147,12 +148,13 @@ function compileModal(info) {
  * @param info: event
  */
 function newModal(info) {
-  let start = new Date(info.event.start);
-  let end = new Date(info.event.end);
-  $('#modalNewSlot').val(start.toISOString().slice(11, 16) + ' - ' + end.toISOString().slice(11, 16));
   let date = new Date(info.event.start).toISOString().slice(0, 10);
+  let start = new Date(info.event.start).toISOString().slice(11, 16);
+
   // Populate datalist
-  getSlots(date);
+  getSlots(date,start, function (slot) {
+    $('#modalNewSlot').val(slot);
+  });
 
   $('#modalNewDate').val(date);
   $('#modalNewStatus').html(1);
@@ -163,12 +165,16 @@ function newModal(info) {
 /**
  * Retrieves slots for selected date
  * @param date
+ * @param start
+ * @param callback
  */
-function getSlots(date) {
+function getSlots(date, start, callback) {
   let calendar = $('#hidden').attr('data-calendar');
+  let slot;
 
   let url = $('#hidden').attr('data-url');
   url = url.replace("calendar_id", calendar).replace("date", date);
+  url = url + '?all=true';
 
   $.ajax({
     headers: {
@@ -182,16 +188,18 @@ function getSlots(date) {
       for (let i = 0; i < response.length; i++) {
         let value = response[i]['start_time'] + ' - ' + response[i]['end_time'];
         let available = response[i]['availability'];
+        // If start is defined get right slot
+        if (start && start === response[i]['start_time']) slot = value;
         if (!available)
           $("#slots").append("<option value='" + value + "'disabled>" + value + "</option>");
-        else {
+        else
           $("#slots").append("<option value='" + value + "'>" + value + "</option>");
-        }
       }
+      callback(slot);
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $('#modalError').html('Impossibile recuperare le disponibilità per la data selezionata');
-    },
+    }
   });
 }
 

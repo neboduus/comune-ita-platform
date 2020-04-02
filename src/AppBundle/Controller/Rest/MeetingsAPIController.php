@@ -4,7 +4,6 @@ namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Meeting;
 use AppBundle\Services\InstanceService;
-use AppBundle\Services\MailerService;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -17,7 +16,6 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -32,21 +30,12 @@ class MeetingsAPIController extends AbstractFOSRestController
   const CURRENT_API_VERSION = '1.0';
 
   /**
-   * @var MailerService
-   */
-  private $mailer;
-
-  private $defaultSender;
-
-  /**
    * @var TranslatorInterface $translator
    */
   private $translator;
 
-  public function __construct(MailerService $mailer, $defaultSender, TranslatorInterface $translator, EntityManager $em, InstanceService $is)
+  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is)
   {
-    $this->mailer = $mailer;
-    $this->defaultSender = $defaultSender;
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
@@ -168,36 +157,8 @@ class MeetingsAPIController extends AbstractFOSRestController
       $em->persist($meeting);
       $em->flush();
 
-      $date = $meeting->getFromTime()->format('d/m/Y');
-      $hour = $meeting->getFromTime()->format('H:i');
-      $location = $meeting->getCalendar()->getLocation();
-      $contact = $meeting->getCalendar()->getContactEmail();
-      $ente = $meeting->getCalendar()->getOwner()->getEnte()->getName();
-
-      if ($meeting->getCalendar()->getIsModerated() && $meeting->getStatus() == Meeting::STATUS_PENDING) {
-        $message = $this->translator->trans('meetings.email.new_meeting.pending');
-      } else {
-        $message = $this->translator->trans('meetings.email.new_meeting.approved',
-          ['hour' => $hour, 'date' => $date, 'location' => $location]);
-      }
-
-      $cancelUrl = $this->generateUrl('cancel_meeting', ['meetingHash' => $meeting->getCancelLink()], UrlGeneratorInterface::ABSOLUTE_URL);
-      $mailCancel =  $this->translator->trans('meetings.email.cancel', ['cancel_link'=> $cancelUrl, 'email_address' => $contact]);
-      $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
-
-      if ($meeting->getStatus() != Meeting::STATUS_REFUSED)
-        $message = $message . $mailCancel;
-      $message = $message . $mailInfo;
-
-      if ($meeting->getUser()->getEmail()) {
-        $this->mailer->dispatchMail(
-          $this->defaultSender,
-          $meeting->getCalendar()->getOwner()->getEnte()->getName(),
-          $meeting->getUser(),
-          $message,
-          $this->translator->trans('meetings.email.new_meeting.subject'));
-      }
-      $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+      if ($meeting->getUser()->getEmail())
+        $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
@@ -281,75 +242,19 @@ class MeetingsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $statusChanged = $oldMeeting->getStatus() != $meeting->getStatus();
       $dateChanged = $oldMeeting->getFromTime() != $meeting->getFromTime();
-      $notify = false;
 
       $em = $this->getDoctrine()->getManager();
       // Auto approve meeting when changing date
       if ($dateChanged && $oldMeeting->getStatus() == Meeting::STATUS_PENDING) {
         $meeting->setStatus(Meeting::STATUS_APPROVED);
-        $statusChanged = true;
       }
 
       $em->persist($meeting);
       $em->flush();
 
-      $oldDate = $oldMeeting->getFromTime()->format('d/m/Y');
-      $date = $meeting->getFromTime()->format('d/m/Y');
-      $hour = $meeting->getFromTime()->format('H:i');
-      $location = $meeting->getCalendar()->getLocation();
-      $contact = $meeting->getCalendar()->getContactEmail();
-      $ente = $meeting->getCalendar()->getOwner()->getEnte()->getName();
-      $message = '';
-      /*
-       * invio email se:
-       * l'app.to è stato rifiutato (lo stato è cambiato, non mi interessa la data)
-       * Lo stato è approvato (non cambiato) ed è stata cambiata la data
-       * Lo stato è cambiato in approvato e ho un cambio di data
-       * L'app.to è stato approvato
-       */
-
-      if ($statusChanged && $meeting->getStatus() == Meeting::STATUS_REFUSED) {
-        // Meeting has been refused. Date change does not matter
-        $notify = true;
-        $message = $this->translator->trans('meetings.email.edit_meeting.refused', ['date' => $oldDate, 'email_address' => $contact]);
-      } else if (!$statusChanged && $dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
-        // Approved meeting has been rescheduled
-        $notify = true;
-        $message = $this->translator->trans('meetings.email.edit_meeting.rescheduled', [
-          'old_date' => $oldDate, 'hour' => $hour, 'new_date' => $date, 'location' => $location, 'email_address' => $contact
-        ]);
-      } else if ($statusChanged && $dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
-        // Auto approved meeting due to date change
-        $notify = true;
-        $message = $this->translator->trans('meetings.email.edit_meeting.rescheduled_and_approved', [
-          'hour' => $hour, 'date' => $date, 'location' => $location, 'email_address' => $contact
-        ]);
-      } else if ($statusChanged && !$dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
-        // Approved meeting with no date change
-        $notify = true;
-        $meeting = $this->translator->trans('meetings.email.edit_meeting.approved', [
-          'hour' => $hour, 'date' => $date, 'location' => $location, 'email_address' => $contact
-        ]);
-      }
-      $cancelUrl = $this->generateUrl('cancel_meeting', ['meetingHash' => $meeting->getCancelLink()], UrlGeneratorInterface::ABSOLUTE_URL);
-      $mailCancel =  $this->translator->trans('meetings.email.cancel', ['cancel_link'=> $cancelUrl, 'email_address' => $contact]);
-      $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
-
-      if ($meeting->getStatus() != Meeting::STATUS_REFUSED)
-        $message = $message . $mailCancel;
-      $message = $message . $mailInfo;
-
-      if ($notify && $meeting->getUser()->getEmail()) {
-        $this->mailer->dispatchMail(
-          $this->defaultSender,
-          $meeting->getCalendar()->getOwner()->getEnte()->getName(),
-          $meeting->getUser(),
-          $message,
-          $this->translator->trans('meetings.email.edit_meeting.subject'));
-      }
-      $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+      if ($meeting->getUser()->getEmail())
+        $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
     } catch (\Exception $e) {
 
       $data = [
@@ -434,76 +339,19 @@ class MeetingsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $statusChanged = $oldMeeting->getStatus() != $meeting->getStatus();
       $dateChanged = $oldMeeting->getFromTime() != $meeting->getFromTime();
-      $notify = false;
 
       $em = $this->getDoctrine()->getManager();
       // Auto approve meeting when changing date
       if ($dateChanged && $oldMeeting->getStatus() == Meeting::STATUS_PENDING) {
         $meeting->setStatus(Meeting::STATUS_APPROVED);
-        $statusChanged = true;
       }
 
       $em->persist($meeting);
       $em->flush();
 
-      $oldDate = $oldMeeting->getFromTime()->format('d/m/Y');
-      $date = $meeting->getFromTime()->format('d/m/Y');
-      $hour = $meeting->getFromTime()->format('H:i');
-      $location = $meeting->getCalendar()->getLocation();
-      $contact = $meeting->getCalendar()->getContactEmail();
-      $ente = $meeting->getCalendar()->getOwner()->getEnte()->getName();
-      $message = '';
-      /*
-       * invio email se:
-       * l'app.to è stato rifiutato (lo stato è cambiato, non mi interessa la data)
-       * Lo stato è approvato (non cambiato) ed è stata cambiata la data
-       * Lo stato è cambiato in approvato e ho un cambio di data
-       * L'app.to è stato approvato
-       */
-
-      if ($statusChanged && $meeting->getStatus() == Meeting::STATUS_REFUSED) {
-        // Meeting has been refused. Date change does not matter
-        $notify = true;
-        $message = $this->translator->trans('meetings.email.edit_meeting.refused', ['date' => $oldDate, 'email_address' => $contact]);
-      } else if (!$statusChanged && $dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
-        // Approved meeting has been rescheduled
-        $notify = true;
-        $message = $this->translator->trans('meetings.email.edit_meeting.rescheduled', [
-          'old_date' => $oldDate, 'hour' => $hour, 'new_date' => $date, 'location' => $location
-        ]);
-      } else if ($statusChanged && $dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
-        // Auto approved meeting due to date change
-        $notify = true;
-        $message = $this->translator->trans('meetings.email.edit_meeting.rescheduled_and_approved', [
-          'hour' => $hour, 'date' => $date, 'location' => $location
-        ]);
-      } else if ($statusChanged && !$dateChanged && $meeting->getStatus() == Meeting::STATUS_APPROVED) {
-        // Approved meeting with no date change
-        $notify = true;
-        $message = $this->translator->trans('meetings.email.edit_meeting.approved', [
-          'hour' => $hour, 'date' => $date, 'location' => $location,
-        ]);
-      }
-
-      $cancelUrl = $this->generateUrl('cancel_meeting', ['meetingHash' => $meeting->getCancelLink()], UrlGeneratorInterface::ABSOLUTE_URL);
-      $mailCancel =  $this->translator->trans('meetings.email.cancel', ['cancel_link'=> $cancelUrl, 'email_address' => $contact]);
-      $mailInfo = $this->translator->trans('meetings.email.info', ['ente' => $ente, 'email_address' => $contact]);
-
-      if ($meeting->getStatus() != Meeting::STATUS_REFUSED)
-        $message = $message . $mailCancel;
-      $message = $message . $mailInfo;
-
-      if ($notify && $meeting->getUser()->getEmail()) {
-        $this->mailer->dispatchMail(
-          $this->defaultSender,
-          $meeting->getCalendar()->getOwner()->getEnte()->getName(),
-          $meeting->getUser(),
-          $message,
-          $this->translator->trans('meetings.email.edit_meeting.subject'));
-      }
-      $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+      if ($meeting->getUser()->getEmail())
+        $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
 
     } catch (\Exception $e) {
       $data = [
@@ -547,16 +395,6 @@ class MeetingsAPIController extends AbstractFOSRestController
         $em->remove($meeting);
         $em->flush();
 
-        $message = $this->translator->trans('meetings.email.delete_meeting.delete');
-
-        if ($meeting->getUser()->getEmail()) {
-          $this->mailer->dispatchMail(
-            $this->defaultSender,
-            $meeting->getCalendar()->getOwner()->getEnte()->getName(),
-            $meeting->getUser(),
-            $message,
-            $this->translator->trans('meetings.email.delete_meeting.subject'));
-        }
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
 
       } catch (\Exception $e) {
