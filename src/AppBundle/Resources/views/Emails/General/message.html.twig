@@ -1,4 +1,3 @@
-{% set ente = instance_service.getCurrentInstance() %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -82,10 +81,37 @@
   <![endif]-->
 </head>
 <body style="background: #ccc;" bgcolor="#ccc">
+<table align='center' border='0' cellpadding='0' cellspacing='0'>
+  <tr>
+    <td style="background-color: #F0F0F0 !important; color: #30373d; text-align: left; border-top: 5px solid #e74e26; border-bottom: 1px solid #ccc; padding: 20px;">
+      {% if ente != null %}
+        <h2>{{ ente.nameForEmail }}</h2>
+      {% else %}
+        <h2>{{ 'title'|trans }}</h2>
+      {% endif %}
+    </td>
+  </tr>
+</table>
 
 {% block email_content %}
-  <div class="container">{{ message | raw }}</div>
+  <table align='center' bgcolor='#fff' border='0' cellpadding='0' cellspacing='0' id='backgroundTable' style='background: #fff;'>
+    <tr>
+      <td style="padding: 20px">
+        {{ message | raw}}
+      </td>
+    </tr>
+  </table>
 {% endblock %}
+
+<table align='center' border='0' cellpadding='0' cellspacing='0'>
+  <tr>
+    <td>
+      {% if ente %}
+        <p style="color: #30373d;background: #F0F0F0; padding: 20px; font-size: 13px; border-top: 1px solid #e74e26;">{{ 'credits'|trans({'%ente_name%': ente.name}) }}</p>
+      {% endif %}
+    </td>
+  </tr>
+</table>
 
 </body>
 </html>

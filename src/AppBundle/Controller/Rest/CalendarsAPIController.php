@@ -133,7 +133,6 @@ class CalendarsAPIController extends AbstractFOSRestController
           $availabilities = array_merge($availabilities, $openingHour->explodeDays(false, $startDate, $endDate));
         } else {
           // default: compute availabilities on rolling days
-          $minDate = min($openingHour->getEndDate(), (new \DateTime())->add(new DateInterval('P30D')));
           $availabilities = array_merge($availabilities, $openingHour->explodeDays());
         }
       }
@@ -182,6 +181,8 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarAvailabilitiesByDateAction($id, $date, Request $request)
   {
+    $allAvailabilities = strtolower($request->get('all') == 'true') ? true : false;
+
     try {
       $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
       $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
@@ -223,7 +224,7 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       // Retrieve calendar slots by input date
       foreach ($openingHours as $openingHour) {
-        if (in_array($inputDate->format('Y-m-d'), $openingHour->explodeDays()) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
+        if (in_array($inputDate->format('Y-m-d'), $openingHour->explodeDays($allAvailabilities)) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
           $slots = array_merge($slots, $openingHour->explodeMeetings($inputDate));
         }
       }
@@ -234,7 +235,12 @@ class CalendarsAPIController extends AbstractFOSRestController
         if (array_key_exists($key, $meetings)) {
           $slots[$key] = $slots[$key] + ['availability' => false];
         } else {
-          $now = (new DateTime('now', new DateTimeZone('Europe/Rome')))->format('Y-m-d:H:i');
+          if ($allAvailabilities) {
+            $noticeInterval = new DateInterval('PT0H');
+          } else {
+            $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
+          }
+          $now = (new DateTime('now', new DateTimeZone('Europe/Rome')))->add($noticeInterval)->format('Y-m-d:H:i');
           $start = (\DateTime::createFromFormat('Y-m-d:H:i', $day['date'] . ':' . $day['start_time']))->format('Y-m-d:H:i');
           if ($start <= $now)
             $slots[$key] = $slots[$key] + ['availability' => false];

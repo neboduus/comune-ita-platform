@@ -50,8 +50,13 @@
               <div class="col-6">
                 <div class="form-group"><label for="appbundle_calendar_opening_hours___name___meeting_queue" class="required active" style="transition: none;">Numero di meeting paralleli</label><input type="text" id="appbundle_calendar_opening_hours___name___meeting_queue" name="appbundle_calendar[opening_hours][__name__][meeting_queue]" required="required" class="form-control"></div>
               </div>
+            </div>
+            <div class="row">
               <div class="col-6">
                 <div class="form-group"><label for="appbundle_calendar_opening_hours___name___meeting_minutes" class="required active" style="transition: none;">Numero di minuti del meeting</label><input type="text" id="appbundle_calendar_opening_hours___name___meeting_minutes" name="appbundle_calendar[opening_hours][__name__][meeting_minutes]" required="required" class="form-control"></div>
+              </div>
+              <div class="col-6">
+                <div class="form-group"><label for="appbundle_calendar_opening_hours___name___interval_minutes" class="required active" style="transition: none;">Numero di minuti tra i meeting</label><input type="text" id="appbundle_calendar_opening_hours___name___interval_minutes" name="appbundle_calendar[opening_hours][__name__][interval_minutes]" required="required" class="form-control"></div>
               </div>
             </div>
             <div class="form-row float-right">
@@ -85,8 +90,13 @@
               <div class="col-6">
                 {{ form_row(opening_hour.meeting_queue) }}
               </div>
+            </div>
+            <div class="row">
               <div class="col-6">
                 {{ form_row(opening_hour.meeting_minutes) }}
+              </div>
+              <div class="col-6">
+                {{ form_row(opening_hour.interval_minutes) }}
               </div>
             </div>
             <div class="form-row float-right">

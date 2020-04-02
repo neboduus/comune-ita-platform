@@ -71,6 +71,14 @@ class Calendar
   /**
    * @var int
    *
+   * @ORM\Column(name="minimum_scheduling_notice", type="integer")
+   * @SWG\Property(description="Calendar's minimum scheduling notice", type="integer")
+   */
+  private $minimumSchedulingNotice;
+
+  /**
+   * @var int
+   *
    * @ORM\Column(name="allow_cancel_days", type="integer", nullable=true)
    * @SWG\Property(description="Calendar's minimum days to allow cancel", type="integer")
    */
@@ -258,6 +266,30 @@ class Calendar
   public function getRollingDays()
   {
     return $this->rollingDays;
+  }
+
+  /**
+   * Set minimumSchedulingNotice.
+   *
+   * @param int $minimumSchedulingNotice
+   *
+   * @return Calendar
+   */
+  public function setMinimumSchedulingNotice($minimumSchedulingNotice)
+  {
+    $this->minimumSchedulingNotice = $minimumSchedulingNotice;
+
+    return $this;
+  }
+
+  /**
+   * Get minimumSchedulingNotice.
+   *
+   * @return int
+   */
+  public function getMinimumSchedulingNotice()
+  {
+    return $this->minimumSchedulingNotice;
   }
 
   /**

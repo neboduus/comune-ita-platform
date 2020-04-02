@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
+use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
@@ -18,11 +20,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class CalendarsController
@@ -30,6 +34,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class CalendarsController extends Controller
 {
   use DataTablesTrait;
+
+  private $em;
+
+  private $is;
+
+  /**
+   * @var TranslatorInterface $translator
+   */
+  private $translator;
+
+  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is)
+  {
+    $this->translator = $translator;
+    $this->em = $em;
+    $this->is = $is;
+  }
 
   /**
    * Lists all Calendars
@@ -244,7 +264,7 @@ class CalendarsController extends Controller
         $this->addFlash('feedback', 'Calendario modificato correttamente');
         return $this->redirectToRoute('operatori_calendars_index');
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore duranet il salvataggio');
+        $this->addFlash('error', 'Si è verificato un errore durante il salvataggio: ' . $exception->getMessage());
       }
     }
 
@@ -380,6 +400,7 @@ class CalendarsController extends Controller
         'description' => $meeting->getUserMessage(),
         'email' => $meeting->getEmail(),
         'phoneNumber' => $meeting->getPhoneNumber(),
+        'videoconferenceLink' => $meeting->getVideoconferenceLink(),
         'borderColor' => $borderColor,
         'color' => $color,
         'textColor' => $textColor,
@@ -403,7 +424,7 @@ class CalendarsController extends Controller
     $minDuration = PHP_INT_MAX;
     foreach ($calendar->getOpeningHours() as $openingHour) {
       $events = array_merge($events, $openingHour->getInterval());
-      $minDuration = min($minDuration, $openingHour->getMeetingMinutes());
+      $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 
     // Check permissions if calendar is moderated
@@ -454,8 +475,10 @@ class CalendarsController extends Controller
         $meeting->setStatus(Meeting::STATUS_CANCELLED);
         $em->persist($meeting);
         $em->flush();
+
+        $this->addFlash('feedback', $this->translator->trans('meetings.email.cancel_success'));
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore durante l\'annullamento dell\'appuntamento');
+        $this->addFlash('error', 'Si è verificato un errore durante l\'annullamento dell\'appuntamento' . $exception->getMessage());
       }
     }
     return array(
@@ -464,6 +487,76 @@ class CalendarsController extends Controller
       'meeting' => $meeting
     );
 
+  }
+
+  /**
+   * Approves meeting
+   * @Route("operatori/meetings/{id}/approve", name="operatori_approve_meeting")
+   * @Template()
+   * @param Request $request the request
+   * @param Meeting $id The Meeting entity
+   *
+   * @return array|RedirectResponse|Response
+   * @throws \Exception
+   */
+  public function editMeetingAction(Request $request, $id)
+  {
+    $em = $this->getDoctrine()->getManager();
+    $meeting = $em->getRepository('AppBundle:Meeting')->find($id);
+    if (!$meeting)
+      return new Response(null, Response::HTTP_NOT_FOUND);
+
+    if ($meeting->getStatus() != Meeting::STATUS_PENDING) {
+      return array(
+        'form' => null,
+        'meeting' => $meeting
+      );
+    }
+
+    if (!$meeting->getEmail())
+      $this->addFlash('warning', $this->translator->trans('meetings.no_email_warning'));
+
+
+    $form = $this->container->get('form.factory')
+      ->createNamedBuilder(null, FormType::class, null, array('csrf_protection' => false))
+      ->add('approve', SubmitType::class, [
+      'label' => 'Conferma',
+      'attr' => ['class' => 'btn btn-sm btn-success']
+    ])
+      ->add('refuse', SubmitType::class, [
+        'label' => 'Rifiuta',
+        'attr' => ['class' => 'btn btn-sm btn-danger']
+      ])
+      ->add('cancel', SubmitType::class, [
+        'label' => 'Annulla',
+        'attr' => ['class' => 'btn btn-sm btn-warning']
+      ])
+      ->getForm();
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $status = $form->getClickedButton()->getName();
+      switch ($status) {
+        case 'approve': {$meeting->setStatus(Meeting::STATUS_APPROVED);
+        break;}
+        case 'refuse': {$meeting->setStatus(Meeting::STATUS_REFUSED);
+          break;}
+        case 'cancel': {$meeting->setStatus(Meeting::STATUS_CANCELLED);
+          break;}
+      }
+      try {
+        $em->persist($meeting);
+        $em->flush();
+
+        $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+      } catch (\Exception $exception) {
+        $this->addFlash('error', 'Si è verificato un errore durante la modifica dell\'appuntamento'. $exception->getMessage());
+      }
+    }
+    return array(
+      'form' => $form->createView(),
+      'meeting' => $meeting
+    );
   }
 
   function getStatusAsString(int $status)

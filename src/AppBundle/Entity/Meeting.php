@@ -39,13 +39,21 @@ class Meeting
   private $id;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar")
-   * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-   * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
-   * @SWG\Property(description="Meeting's calendar id", type="guid")
+ * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar")
+ * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+ * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
+ * @SWG\Property(description="Meeting's calendar id", type="guid")
+ * @Serializer\Exclude()
+ */
+  private $calendar;
+
+  /**
+   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OpeningHour", inversedBy="meetings")
+   * @ORM\JoinColumn(name="opening_hour_id", referencedColumnName="id", nullable=false)
+   * @SWG\Property(description="Meeting's opening hour id", type="guid")
    * @Serializer\Exclude()
    */
-  private $calendar;
+  private $openingHour;
 
   /**
    * @var string
@@ -113,6 +121,15 @@ class Meeting
    * @SWG\Property(description="Meeting's User Message", type="text")
    */
   private $userMessage;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="videoconference_link", type="string", nullable=true)
+   * @Assert\Url(message="url non valido (videoconferenceLink)")
+   * @SWG\Property(description="Meeting's videoconference link", type="string")
+   */
+  private $videoconferenceLink;
 
   /**
    * @ORM\Column(type="integer")
@@ -206,6 +223,29 @@ class Meeting
   public function getCalendarId(): string
   {
     return $this->calendar->getId();
+  }
+
+  /**
+   * Get OpeningHour
+   *
+   * @return OpeningHour
+   */
+  public function getOpeningHour(): ?OpeningHour
+  {
+    return $this->openingHour;
+  }
+
+  /**
+   * Set OpeningHour
+   *
+   * @param OpeningHour $openingHour
+   * @return $this
+   */
+  public function setOpeningHour(?OpeningHour $openingHour): self
+  {
+    $this->openingHour = $openingHour;
+
+    return $this;
   }
 
   /**
@@ -438,6 +478,30 @@ class Meeting
   }
 
   /**
+   * Set videoconferenceLink.
+   *
+   * @param string $videoconferenceLink
+   *
+   * @return Meeting
+   */
+  public function setvideoconferenceLink($videoconferenceLink)
+  {
+    $this->videoconferenceLink = $videoconferenceLink;
+
+    return $this;
+  }
+
+  /**
+   * Get videoconferenceLink.
+   *
+   * @return string
+   */
+  public function getvideoconferenceLink()
+  {
+    return $this->videoconferenceLink;
+  }
+
+  /**
    * Set rescheduled.
    *
    * @param integer $rescheduled
@@ -664,13 +728,18 @@ function checkSlot(LifecycleEventArgs $args): void
   $isValidDate = false;
   $isValidSlot = false;
   foreach ($openingHours as $openingHour) {
-    $dates = $openingHour->explodeDays();
+    $dates = $openingHour->explodeDays(true);
     $meetingDate = $this->fromTime->format('Y-m-d');
     if(in_array($meetingDate, $dates)) {
       $isValidDate = true;
       $slots = $openingHour->explodeMeetings($this->fromTime);
-      $slotKey = $this->fromTime->format('H:i') . '-' . $this->toTime->format('H:i') . '-' . $openingHour->getMeetingQueue();
-      if (array_key_exists($slotKey, $slots)) $isValidSlot = true;
+      $meetingEnd = clone $this->toTime;
+      //$meetingEnd->modify('+ '.$openingHour->getIntervalMinutes().' minutes');
+      $slotKey = $this->fromTime->format('H:i') . '-' . $meetingEnd->format('H:i') . '-' . $openingHour->getMeetingQueue();
+      if (array_key_exists($slotKey, $slots)){
+        $isValidSlot = true;
+        $this->openingHour = $openingHour;
+      }
     }
   }
   if (!$isValidDate)
@@ -685,12 +754,12 @@ function checkSlot(LifecycleEventArgs $args): void
  * @ORM\PreUpdate
  * @param PreUpdateEventArgs $event
  */
-public
-function preUpdate(PreUpdateEventArgs $event)
-{
-  if ($event->hasChangedField('fromTime') && $event->hasChangedField('toTime')) {
-    $this->setRescheduled($this->rescheduled + 1);
+  public
+  function preUpdate(PreUpdateEventArgs $event)
+  {
+    if ($event->hasChangedField('fromTime') && $event->hasChangedField('toTime')) {
+      $this->setRescheduled($this->rescheduled + 1);
+    }
   }
-}
 }
 

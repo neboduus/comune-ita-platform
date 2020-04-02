@@ -6,7 +6,10 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use DateTimeZone;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\ORMException;
 use Ramsey\Uuid\Uuid;
@@ -99,6 +102,19 @@ class OpeningHour
   /**
    * @var int
    *
+   * @ORM\Column(name="interval_minutes", type="integer",options={"default" : 0}, nullable=false)
+   * @SWG\Property(description="Opening Hour's interval minutes between meetings", type="integer")
+   */
+  private $intervalMinutes;
+
+  /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Meeting", mappedBy="openingHour")
+   */
+  private $meetings;
+
+  /**
+   * @var int
+   *
    * @ORM\Column(name="meeting_queue", type="integer", options={"default" : 1})
    * @SWG\Property(description="Opening Hour's meeting queue", type="integer")
    */
@@ -125,6 +141,7 @@ class OpeningHour
     if (!$this->id) {
       $this->id = Uuid::uuid4();
     }
+    $this->meetings = new ArrayCollection();
     $this->setMeetingQueue(1);
     $this->setMeetingMinutes(30);
   }
@@ -307,6 +324,30 @@ class OpeningHour
   }
 
   /**
+   * Set intervalMinutes.
+   *
+   * @param int $intervalMinutes
+   *
+   * @return OpeningHour
+   */
+  public function setIntervalMinutes($intervalMinutes)
+  {
+    $this->intervalMinutes = $intervalMinutes;
+
+    return $this;
+  }
+
+  /**
+   * Get intervalMinutes.
+   *
+   * @return int
+   */
+  public function getIntervalMinutes()
+  {
+    return $this->intervalMinutes;
+  }
+
+  /**
    * Set meetingQueue.
    *
    * @param int $meetingQueue
@@ -328,6 +369,51 @@ class OpeningHour
   public function getMeetingQueue()
   {
     return $this->meetingQueue;
+  }
+
+  /**
+   * Get Opening Hour Meetings
+   *
+   * @return Collection|Meeting[]
+   */
+  public function getMeetings(): Collection
+  {
+    return $this->meetings;
+  }
+
+  /**
+   * Adds a meeting
+   *
+   * @param Meeting $meeting
+   * @return $this
+   */
+  public function addMeetings(Meeting $meeting): self
+  {
+    if (!$this->meetings->contains($meeting)) {
+      $this->meetings[] = $meeting;
+      $meeting->setOpeningHour($this);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Removes a Meeting
+   *
+   * @param Meeting $meeting
+   * @return $this
+   */
+  public function removeMeetings(Meeting $meeting): self
+  {
+    if ($this->meetings->contains($meeting)) {
+      $this->meetings->removeElement($meeting);
+      // set the owning side to null (unless already changed)
+      if ($meeting->getOpeningHour() === $this) {
+        $meeting->setOpeningHour(null);
+      }
+    }
+
+    return $this;
   }
 
   /**
@@ -445,8 +531,7 @@ class OpeningHour
     $intervals = [];
     if ($this->startDate > $date || $this->endDate < $date)
       return $intervals;
-
-    $meetingInterval = new DateInterval('PT' . $this->meetingMinutes . 'M');
+    $meetingInterval = new DateInterval('PT' . ($this->meetingMinutes + $this->intervalMinutes) . 'M');
     $dateString = $date->format('Y-m-d');
     $begin = (new DateTime($dateString))->setTime($this->beginHour->format('H'), $this->beginHour->format('i'));
     $end = (new DateTime($dateString))->setTime($this->endHour->format('H'), $this->endHour->format('i'));
@@ -464,7 +549,7 @@ class OpeningHour
       $_end = clone $_begin;
       $_end = $_end->add($meetingInterval);
       if ($_end <= $end && $shoudAdd) {
-        $intervals[$_begin->format('H:i') . '-' . $_end->format('H:i') . '-' . $this->getMeetingQueue()] = [
+        $intervals[$_begin->format('H:i') . '-' . $_end->modify('- ' . $this->getIntervalMinutes() . ' minutes')->format('H:i') . '-' . $this->getMeetingQueue()] = [
           'date' => $date->format('Y-m-d'),
           'start_time' => $_begin->format('H:i'),
           'end_time' => $_end->format('H:i'),
@@ -487,13 +572,14 @@ class OpeningHour
     $array = array();
 
     if ($all) {
-      $start = $this->startDate;
+      $start = max((new DateTime('now', new DateTimeZone('Europe/Rome'))), $this->startDate);
       $end = $this->endDate;
-    } else if ($from && $to) {
+    } else if ($from) {
       $start = new DateTime($from);
       $end = new DateTime($to);
     } else {
-      $start = max(new DateTime(), $this->startDate);
+      $noticeInterval = new DateInterval('PT' . $this->getCalendar()->getMinimumSchedulingNotice() . 'H');
+      $start = max((new DateTime('now', new DateTimeZone('Europe/Rome')))->add($noticeInterval), $this->startDate);
       $rollingInterval = new DateInterval('P' . $this->getCalendar()->getRollingDays() . 'D');
       $end = min((new DateTime())->add($rollingInterval), $this->endDate);
     }
@@ -542,7 +628,7 @@ class OpeningHour
   public function getInterval()
   {
     $slots = [];
-    foreach ($this->explodeDays(false) as $date) {
+    foreach ($this->explodeDays(true) as $date) {
       foreach ($this->explodeMeetings(new DateTime($date)) as $slot) {
         $now = (new DateTime('now', new DateTimeZone('Europe/Rome')))->format('Y-m-d:H:i');
         $startTime = (\DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time']))->format('Y-m-d:H:i');

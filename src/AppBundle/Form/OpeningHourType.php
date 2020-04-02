@@ -2,18 +2,40 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Calendar;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use AppBundle\Entity\Meeting;
+use AppBundle\Entity\OpeningHour;
+use DateTime;
+use DateTimeZone;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class OpeningHourType extends AbstractType
 {
+  /**
+   * @var TranslatorInterface $translator
+   */
+  private $translator;
+  /**
+   * @var EntityManager
+   */
+  private $em;
+
+  public function __construct(TranslatorInterface $translator, EntityManager $entityManager)
+  {
+    $this->translator = $translator;
+    $this->em = $entityManager;
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -49,14 +71,49 @@ class OpeningHourType extends AbstractType
         'required' => true,
         'label' => 'Orario di chiusura'
       ])
-      ->add('meeting_minutes', NumberType::class, [
+      ->add('meeting_minutes', IntegerType::class, [
         'required' => true,
         'label' => 'Numero di minuti del meeting',
       ])
-      ->add('meeting_queue', NumberType::class, [
+      ->add('interval_minutes', IntegerType::class, [
+        'required' => true,
+        'label' => 'Numero di minuti tra i meeting',
+      ])
+      ->add('meeting_queue', IntegerType::class, [
         'required' => true,
         'label' => 'Numero di meeting paralleli',
-      ]);
+      ])->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+  }
+
+  public function onPreSubmit(FormEvent $event) {
+    /**
+     * @var OpeningHour $openingHour
+     */
+    $openingHour = $event->getForm()->getData();
+
+    $data = $event->getData();
+    if ($openingHour) {
+      $intervalChanged = $openingHour->getIntervalMinutes() != $data['interval_minutes'];
+      $durationChanged = $openingHour->getMeetingMinutes() != $data['meeting_minutes'];
+      if ($durationChanged || $intervalChanged) {
+        $canChange = true;
+        $availableOn = new DateTime('now', new DateTimeZone('Europe/Rome'));
+        foreach ($openingHour->getMeetings() as $meeting) {
+          if ($meeting->getFromTime() >= $availableOn &&
+            !in_array($meeting->getStatus(), [Meeting::STATUS_REFUSED, Meeting::STATUS_CANCELLED])) {
+            $availableOn = $meeting->getToTime();
+            $canChange = false;
+          }
+        }
+        if (!$canChange) {
+          $event->getForm()->addError(
+            new FormError($this->translator->trans('calendars.opening_hours.cannot_change',
+              ['next_availability'=> $availableOn->modify('+1days')->format('d/m/Y')]))
+          );
+        }
+      }
+    }
+
   }
 
   /**

@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -76,6 +77,10 @@ class MeetingType extends AbstractType
       ->add('user_message', TextareaType::class, [
         'required' => false,
         'label' => 'Messaggio'
+      ])
+      ->add('videoconference_link', UrlType::class, [
+        'required' => false,
+        'label' => 'Link videoconferenza'
       ]);
   }
 
