@@ -29,8 +29,8 @@ class FormIORenderType extends AbstractType
   private $em;
 
   /**
-   * @var FormServerApiAdapterService
-   */
+ * @var FormServerApiAdapterService
+ */
   private $formServerService;
 
   /**
@@ -223,7 +223,8 @@ class FormIORenderType extends AbstractType
       }
 
       $isFile = false;
-      if (!$isSchema && isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
+      if ( !$isSchema && isset($this->schema[$key]['type']) &&
+         ( $this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report') )  {
         $isFile = true;
       }
       $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;

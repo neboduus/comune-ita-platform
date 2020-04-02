@@ -120,13 +120,14 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
   public function onPreSetData(FormEvent $event)
   {
     $form = $event->getForm();
+    /** @var Pratica $pratica */
     $pratica = $event->getData();
     $options = $event->getForm()->getConfig()->getOptions();
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
-
-
     $data = $pratica->getPaymentData();
+
+
     try {
       if (isset($data['response']) && $data['response']['esito'] == 'OK') {
         $url = $this->myPayService->getMyPayUrlForCurrentPayment($pratica);
@@ -139,10 +140,11 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
       }
 
     } catch (\Exception $e) {
+
       $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId() . ' - ' . $e->getMessage());
       $this->logger->error($e);
       $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza.");
-      //$helper->setDescriptionText($e->getMessage());
+
     }
   }
 

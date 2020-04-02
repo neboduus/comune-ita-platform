@@ -3,7 +3,7 @@
 {% set ente = instance_service.getCurrentInstance() %}
 
 {% block stylesheets %}
-  {{ encore_entry_link_tags('service-manager') }}
+  {{ parent() }}
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel='stylesheet' href='https://unpkg.com/formiojs@latest/dist/formio.full.min.css'>
 {% endblock %}

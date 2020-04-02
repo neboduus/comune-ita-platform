@@ -23,7 +23,7 @@ export default class FormioCalendar extends Base {
   static builderInfo = {
     title: 'Calendar',
     group: 'basic',
-    icon: 'fa fa-calendar',
+    icon: 'calendar',
     weight: 70,
     schema: FormioCalendar.schema()
   }

@@ -8,7 +8,9 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Form\PaymentParametersType;
 use AppBundle\Model\Gateway;
+use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
+use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -26,20 +28,38 @@ use Symfony\Component\Form\FormEvents;
 class PaymentDataType extends AbstractType
 {
 
+  const PAYMENT_AMOUNT = 'payment_amount';
+  const PAYMENT_FINANCIAL_REPORT = 'payment_financial_report';
+
   /**
    * @var EntityManager
    */
   private $em;
 
-  public function __construct(EntityManager $entityManager)
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerService;
+
+  /**
+   * @var
+   */
+  private $fields = [];
+
+  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
   {
     $this->em = $entityManager;
+    $this->formServerService = $formServerService;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     /** @var Servizio $service */
     $service = $builder->getData();
+    $result = $this->formServerService->getForm($service->getFormIoId());
+    if ($result['status'] == 'success') {
+      $this->arrayFlat($result['form']['components']);
+    }
 
     $paymentParameters = $service->getPaymentParameters();
 
@@ -58,7 +78,6 @@ class PaymentDataType extends AbstractType
       }
     }
 
-
     $tenantGateways = $service->getEnte()->getGateways();
 
     // Gateways abilitati nel tenant
@@ -70,16 +89,28 @@ class PaymentDataType extends AbstractType
       $gatewaysChoice[$g->getName()] = $g->getIdentifier();
     }
 
+    $paymentRequired = $service->isPaymentRequired() || isset($this->fields[PaymentDataType::PAYMENT_AMOUNT]);
+    $paymentAmount = 0;
+    $fromForm = false;
+    if (isset($this->fields[PaymentDataType::PAYMENT_AMOUNT]) && $this->fields[PaymentDataType::PAYMENT_AMOUNT]) {
+      $paymentAmount = str_replace(',', '.', $this->fields[PaymentDataType::PAYMENT_AMOUNT]);
+      $fromForm = true;
+    } elseif (isset($paymentParameters['total_amounts']) && $paymentParameters['total_amounts']) {
+      $paymentAmount = str_replace(',', '.', $paymentParameters['total_amounts']);
+    }
+
+
     $builder
       ->add('payment_required', CheckboxType::class, [
-        'required' => false
+        'required' => false,
+        'data' => $paymentRequired
       ])
       ->add('total_amounts', MoneyType::class, [
         'mapped' => false,
         'required' => false,
-        'data' => (isset($paymentParameters['total_amounts']) && $paymentParameters['total_amounts']) ? str_replace(',', '.', $paymentParameters['total_amounts']) : 0,
-        'label' => 'Costo',
-        //'disabled' => !$service->isPaymentRequired()
+        'data' => $paymentAmount,
+        'label' => 'Importo' . ($fromForm? ' (Ereditato dal form)' : ''),
+        'attr' => ($fromForm ? ['readonly' => 'readonly'] : [])
       ])
       ->add('gateways', ChoiceType::class, [
         'data' => $selectedGatewaysIentifiers,
@@ -89,7 +120,6 @@ class PaymentDataType extends AbstractType
         'required' => false,
         'label' => 'Seleziona i metodi di pagamento che saranno disponbili per il servizio',
         'mapped' => false,
-        //'disabled' => !$service->isPaymentRequired()
       ]);
 
 
@@ -117,7 +147,6 @@ class PaymentDataType extends AbstractType
       }
     }
 
-    //$builder->addEventListener(FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
 
   }
@@ -205,6 +234,26 @@ class PaymentDataType extends AbstractType
       $options['attr'] = ['readonly' => 'readonly'];
     }
     return $options;
+  }
+
+  /**
+   * @param $array
+   * @param string $prefix
+   * @return array
+   */
+  private function arrayFlat($array)
+  {
+    $result = array();
+    foreach ($array as $key => $value) {
+
+      if (!is_array($value)) {
+        if ($value === PaymentDataType::PAYMENT_AMOUNT || $value === PaymentDataType::PAYMENT_FINANCIAL_REPORT) {
+          $this->fields[$value] = isset($array['defaultValue']) ? $array['defaultValue'] :[];
+        }
+      } else {
+        $this->arrayFlat($value);
+      }
+    }
   }
 
   public function getBlockPrefix()

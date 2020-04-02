@@ -1,4 +1,5 @@
 import './core'
+require("../css/app.scss");
 
 $(document).ready(function($) {
   if (location.hostname !== 'stanzadelcittadino.it') {

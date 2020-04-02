@@ -4,10 +4,13 @@ require("summernote");
 
 import Calendar from './Calendar';
 import PageBreak from './PageBreak';
+import FinancialReport from "./FinancialReport";
 import 'formiojs'
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('pagebreak', PageBreak);
+Formio.registerComponent('financial_report', FinancialReport);
+
 
 $(document).ready(function () {
 
@@ -133,7 +136,8 @@ $(document).ready(function () {
             hidden: true,
             form: true,
             calendar: true,
-            file: true
+            file: true,
+            financial_report: true
           }
         },
         customLayout: {

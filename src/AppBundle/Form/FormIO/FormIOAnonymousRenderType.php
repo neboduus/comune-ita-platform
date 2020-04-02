@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormEvents;
 
 
 
-class FormIOAnonymousRenderType extends AbstractType
+class spoFormIOAnonymousRenderType extends AbstractType
 {
   /**
    * @var EntityManager

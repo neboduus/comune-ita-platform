@@ -47,7 +47,7 @@
 
   {% if pratica.dematerializedForms.flattened is defined %}
     {% for key, value in pratica.dematerializedForms.flattened %}
-      {% if key != 'submit' and key != 'update_info' and not value is empty %}
+      {% if key != 'payment_financial_report' and key != 'submit' and key != 'update_info' and not value is empty %}
         <div class="row">
           <div class="col-sm-3">
             <strong>{% if pratica.dematerializedForms.schema[key ~ '.label'] is defined %}{{ pratica.dematerializedForms.schema[key ~ '.label'] }}{% endif %}</strong>

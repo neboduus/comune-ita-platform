@@ -10,6 +10,7 @@ use AppBundle\Payment\Gateway\MyPay;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\RouterInterface;
+use AppBundle\Form\Admin\Servizio\PaymentDataType;
 
 class MyPayService
 {
@@ -41,14 +42,31 @@ class MyPayService
     $this->logger = $logger;
   }
 
-  public function getSanitizedPaymentData(Pratica $pratica): array
+  /**
+   * @param Pratica $pratica
+   * @return bool|array
+   */
+  public function getSanitizedPaymentData(Pratica $pratica)
   {
-    $data = $pratica->getPaymentData();
+    $data = $pratica->getDematerializedForms();
 
-    if (!isset($data[MyPay::IMPORTO])) {
-      $data[MyPay::IMPORTO] = $this->calculateImporto($pratica);
+    if (isset($data['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && is_numeric(str_replace(',', '.', $data['flattened'][PaymentDataType::PAYMENT_AMOUNT]))) {
+      $paymentData[PaymentDataType::PAYMENT_AMOUNT] = str_replace(',', '.', $data['flattened'][PaymentDataType::PAYMENT_AMOUNT]);
+
+      if (isset($data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {
+        $paymentData[PaymentDataType::PAYMENT_FINANCIAL_REPORT] = $data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT];
+      }
+      return $paymentData;
     }
-    return $data;
+
+    // Fallback su configurazione dal backend
+    if (isset($pratica->getServizio()->getPaymentParameters()['total_amounts'])
+      && is_numeric(str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']))) {
+      $paymentData[PaymentDataType::PAYMENT_AMOUNT] = str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']);
+      return $paymentData;
+    }
+
+    return false;
   }
 
   /**
@@ -108,10 +126,9 @@ class MyPayService
    */
   public function renderCallbackUrlForPayment(Pratica $pratica): string
   {
-    $currentPraticaResumeEditUrl = $this->router->generate('pratiche_payment_callback', [
+    return $this->router->generate('pratiche_payment_callback', [
       'pratica' => $pratica->getId()
-    ], RouterInterface::ABSOLUTE_URL);
-    return $currentPraticaResumeEditUrl;
+    ], RouterInterface::ABSOLUTE_URL);;
   }
 
   /**
@@ -120,52 +137,9 @@ class MyPayService
    */
   public function renderUrlForPaymentOutcome(Pratica $pratica): string
   {
-    $currentPraticaResumeEditUrl = $this->router->generate('applications_payment_api_post', [
+    return $this->router->generate('applications_payment_api_post', [
       'id' => $pratica->getId()
     ], RouterInterface::ABSOLUTE_URL);
-    return $currentPraticaResumeEditUrl;
-  }
-
-  /**
-   * @param Pratica $pratica
-   * @return array
-   */
-  private function createInviaDovutiRequestBody(Pratica $pratica)
-  {
-    $data = $pratica->getPaymentData();
-    $paymentParameters = $pratica->getServizio()->getPaymentParameters();
-
-    $amount = $this->calculateImporto($pratica);
-    if ( !$amount) {
-      throw new \InvalidArgumentException('Missing amount');
-    }
-
-    $order = array(
-      'identificativoUnivocoDovuto' => $this->calculateIUDFromPratica($pratica),
-      'causaleVersamento' => "Pratica: " . $pratica->getId(),
-      'datiSpecificiRiscossione' => $paymentParameters['gateways']['mypay']['parameters']['datiSpecificiRiscossione'],
-      'importoSingoloVersamento' => $amount,
-      'identificativoTipoDovuto' => $paymentParameters['gateways']['mypay']['parameters']['identificativoTipoDovuto'],
-    );
-
-    $data = array(
-      'enteSILInviaRispostaPagamentoUrl' => $this->renderCallbackUrlForPayment($pratica), // Callback url
-      'tipoIdentificativoUnivoco' => 'F',
-      'codiceIdentificativoUnivoco' => $pratica->getRichiedenteCodiceFiscale(), // Codice fiscale
-      'anagraficaPagatore' => $pratica->getRichiedenteNome() . ' ' . $pratica->getRichiedenteCognome(), // Nome e Cognome
-      'indirizzoPagatore' => '',
-      'civicoPagatore' => '',
-      'capPagatore' => '',
-      'localitaPagatore' => '',
-      'provinciaPagatore' => "L'Aquila",
-      'nazionePagatore' => 'IT',
-      'e-mailPagatore' => $pratica->getUser()->getEmail(),
-      'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
-      'password' => $paymentParameters['gateways']['mypay']['parameters']['password'],
-      'dovuti' => array($order)
-    );
-
-    return $data;
   }
 
 
@@ -179,8 +153,8 @@ class MyPayService
     $paymentParameters = $pratica->getServizio()->getPaymentParameters();
     $paymentDayLifeTime = 5;
 
-    $amount = $this->calculateImporto($pratica);
-    if ( !$amount) {
+    $amount = $data[PaymentDataType::PAYMENT_AMOUNT];
+    if (!$amount) {
       throw new \InvalidArgumentException('Missing amount');
     }
 
@@ -188,11 +162,11 @@ class MyPayService
     $user = $pratica->getUser();
 
     $provincia = $user->getProvinciaResidenza() ? $user->getProvinciaResidenza() : 'TN';
-    if ( strlen($provincia) > 2 ) {
+    if (strlen($provincia) > 2) {
       $provincia = substr($provincia, 0, 2);
     }
 
-    $data = array(
+    $request = array(
       'notifyUrl' => $this->renderUrlForPaymentOutcome($pratica),
       'enteSILInviaRispostaPagamentoUrl' => $this->renderCallbackUrlForPayment($pratica), // Callback url
       'tipoIdentificativoUnivoco' => 'F',
@@ -215,12 +189,26 @@ class MyPayService
       'flagGeneraIuv' => true
     );
 
-    if ( !empty($paymentDayLifeTime) && $paymentDayLifeTime > 0 ) {
-      $expireDate = time() + 60 * 60 * 24 * $paymentDayLifeTime;
-      $data['dataEsecuzionePagamento']= date('Y-m-d', $expireDate );
+    if (isset($data[PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {
+      dump($data[PaymentDataType::PAYMENT_FINANCIAL_REPORT]);
+      foreach ( $data[PaymentDataType::PAYMENT_FINANCIAL_REPORT] as $v ) {
+        $temp =[];
+        $temp['codCapitolo'] = $v['codCapitolo'];
+        $temp['codUfficio'] = $v['codUfficio'];
+        $temp['accertamento']['importo'] = $v['importo'];
+        if (isset($v['codAccertamento'])) {
+          $temp['accertamento']['codAccertamento'] = $v['codAccertamento'];
+        }
+        $request['bilancio'][]= $temp;
+      }
     }
 
-    return $data;
+    if (!empty($paymentDayLifeTime) && $paymentDayLifeTime > 0) {
+      $expireDate = time() + 60 * 60 * 24 * $paymentDayLifeTime;
+      $request['dataEsecuzionePagamento'] = date('Y-m-d', $expireDate);
+    }
+
+    return $request;
   }
 
   /**
@@ -248,27 +236,6 @@ class MyPayService
   private function calculateIUDFromPratica(Pratica $pratica)
   {
     return str_replace('-', '', $pratica->getId());
-  }
-
-  /**
-   * @param Pratica $pratica
-   * @return int
-   */
-  private function calculateImporto(Pratica $pratica): int
-  {
-
-    $data = $pratica->getDematerializedForms();
-
-    if (isset($data['flattened']['payment_amount']) && is_numeric(str_replace(',', '.', $data['flattened']['payment_amount']))) {
-      return str_replace(',', '.', $data['flattened']['payment_amount']);
-    }
-
-    if (isset($pratica->getServizio()->getPaymentParameters()['total_amounts'])
-        && is_numeric(str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']))) {
-      return str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']);
-    }
-
-    return false;
   }
 
 }

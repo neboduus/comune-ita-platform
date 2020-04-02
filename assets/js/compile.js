@@ -52,10 +52,12 @@ require("../css/app.scss");
 
 import Calendar from './Calendar';
 import PageBreak from './PageBreak';
+import FinancialReport from "./FinancialReport";
 import 'formiojs'
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('pagebreak', PageBreak);
+Formio.registerComponent('financial_report', FinancialReport);
 
 
 $(document).ready(function () {

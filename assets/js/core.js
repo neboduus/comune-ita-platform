@@ -1,4 +1,3 @@
-require("../css/app.scss");
 require('jquery');
 require("summernote/dist/summernote-bs4.css")
 require('bootstrap');
