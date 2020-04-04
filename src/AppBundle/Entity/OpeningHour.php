@@ -102,7 +102,7 @@ class OpeningHour
   /**
    * @var int
    *
-   * @ORM\Column(name="interval_minutes", type="integer",options={"default" : 0}, nullable=false)
+   * @ORM\Column(name="interval_minutes", type="integer",options={"default" : 0}, nullable=true)
    * @SWG\Property(description="Opening Hour's interval minutes between meetings", type="integer")
    */
   private $intervalMinutes;

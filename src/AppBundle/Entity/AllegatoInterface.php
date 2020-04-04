@@ -69,7 +69,7 @@ interface AllegatoInterface
     /**
      * @return CPSUser
      */
-    public function getOwner() : CPSUser;
+    public function getOwner() : ?CPSUser;
 
     /**
      * @param $owner

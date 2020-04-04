@@ -71,7 +71,7 @@ class Calendar
   /**
    * @var int
    *
-   * @ORM\Column(name="minimum_scheduling_notice", type="integer")
+   * @ORM\Column(name="minimum_scheduling_notice", type="integer", nullable=true)
    * @SWG\Property(description="Calendar's minimum scheduling notice", type="integer")
    */
   private $minimumSchedulingNotice;

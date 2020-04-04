@@ -49,7 +49,7 @@ class Meeting
 
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OpeningHour", inversedBy="meetings")
-   * @ORM\JoinColumn(name="opening_hour_id", referencedColumnName="id", nullable=false)
+   * @ORM\JoinColumn(name="opening_hour_id", referencedColumnName="id", nullable=true)
    * @SWG\Property(description="Meeting's opening hour id", type="guid")
    * @Serializer\Exclude()
    */
