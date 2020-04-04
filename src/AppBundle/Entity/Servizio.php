@@ -781,7 +781,6 @@ class Servizio
       $additionalData = $this->getAdditionalData();
       $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
     }
-
     return $formID;
   }
 

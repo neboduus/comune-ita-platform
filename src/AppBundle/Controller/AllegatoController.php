@@ -9,6 +9,7 @@ use AppBundle\Entity\AllegatoScia;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Integrazione;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\User;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Logging\LogConstants;
@@ -70,7 +71,7 @@ class AllegatoController extends Controller
 
   /**
    * @param Request $request
-   * @Route("/pratiche/allegati",name="allegati_upload")
+   * @Route("/allegati",name="allegati_upload")
    * @return mixed
    */
   public function uploadAllegatoAction(Request $request)
@@ -96,7 +97,10 @@ class AllegatoController extends Controller
         $description = $request->get('description') ?? 'Allegato senza descrizione';
         $allegato->setDescription($description);
         $allegato->setOriginalFilename($request->get('name'));
-        $allegato->setOwner($this->getUser());
+        $user  = $this->getUser();
+        if ($user instanceof User) {
+          $allegato->setOwner($user);
+        }
         $em->persist($allegato);
         $em->flush();
 
@@ -111,7 +115,7 @@ class AllegatoController extends Controller
         $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
-          if ($file->getOwner() != $this->getUser()) {
+          if ($file->getOwner() != $this->getUser() && $file->getOwner() != null) {
             return new Response('', Response::HTTP_FORBIDDEN);
           }
 

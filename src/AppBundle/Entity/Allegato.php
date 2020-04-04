@@ -234,7 +234,7 @@ class Allegato implements AllegatoInterface
     /**
      * @return CPSUser
      */
-    public function getOwner(): CPSUser
+    public function getOwner(): ?CPSUser
     {
         return $this->owner;
     }

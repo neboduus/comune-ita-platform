@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\FormIO;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\SciaPraticaEdilizia;
@@ -16,7 +17,7 @@ use Symfony\Component\Form\FormEvents;
 
 
 
-class spoFormIOAnonymousRenderType extends AbstractType
+class FormIOAnonymousRenderType extends AbstractType
 {
   /**
    * @var EntityManager
@@ -27,6 +28,11 @@ class spoFormIOAnonymousRenderType extends AbstractType
    * @var FormServerApiAdapterService
    */
   private $formServerService;
+
+  /**
+   * @var
+   */
+  private $schema = false;
 
   /**
    * FormIORenderType constructor.
@@ -45,10 +51,14 @@ class spoFormIOAnonymousRenderType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-
     /** @var FormIO $pratica */
     $pratica = $builder->getData();
-    $formID = $this->getFormIoId($pratica);
+    $formID = $pratica->getServizio()->getFormIoId();
+
+    $result = $this->formServerService->getFormSchema($pratica->getServizio()->getFormIoId());
+    if ($result['status'] == 'success') {
+      $this->schema = $result['schema'];
+    }
 
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
@@ -85,32 +95,37 @@ class spoFormIOAnonymousRenderType extends AbstractType
 
   public function onPreSubmit(FormEvent $event)
   {
-    $options = $event->getForm()->getConfig()->getOptions();
-    /** @var TestiAccompagnatoriProcedura $helper */
-    $helper = $options["helper"];
 
-    /** @var SciaPraticaEdilizia $pratica */
+    /** @var Pratica $pratica */
     $pratica = $event->getForm()->getData();
-    $compiledData = array();
+    $compiledData = $flattenedData = array();
     if (isset($event->getData()['dematerialized_forms'])) {
       $data = json_decode($event->getData()['dematerialized_forms'], true);
       $flattenedData = $this->arrayFlat($data);
       $compiledData = $data;
     }
 
-    $schema = false;
-    $result = $this->formServerService->getFormSchema($this->getFormIoId($pratica));
-    if ($result['status'] == 'success') {
-      $schema = $this->arrayFlat($result['schema']);
-    }
-
     $pratica->setDematerializedForms(
       array(
         'data' => $compiledData,
         'flattened' => $flattenedData,
-        'schema' => $schema
+        'schema' => $this->arrayFlat($this->schema, true)
       )
     );
+
+    // Associo gli allegati alla pratica
+    foreach ($flattenedData as $key => $value) {
+      if ( isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
+        foreach ($value as $file) {
+          $id = $file['data']['id'];
+          $attachment = $this->em->getRepository('AppBundle:Allegato')->find($id);
+          if ($attachment instanceof Allegato) {
+            $attachments[]= $id;
+            $pratica->addAllegato($attachment);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -118,38 +133,29 @@ class spoFormIOAnonymousRenderType extends AbstractType
    * @return false|string
    */
 
-
-  private function getFormIoId(Pratica $pratica)
-  {
-    $formID = false;
-    $flowsteps = $pratica->getServizio()->getFlowSteps();
-    $additionalData = $pratica->getServizio()->getAdditionalData();
-    if (!empty($flowsteps)) {
-      foreach ($flowsteps as $f) {
-        if ($f['type'] == 'formio' && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
-          break;
-        }
-      }
-    }
-    // Retrocompatibilità
-    if (!$formID) {
-      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
-    }
-    return $formID;
-  }
-
-  private function arrayFlat($array, $prefix = '')
+  /**
+   * @param $array
+   * @param string $prefix
+   * @return array
+   */
+  private function arrayFlat($array, $isSchema = false, $prefix = '')
   {
     $result = array();
     foreach ($array as $key => $value) {
-      if ($key == 'metadata' || $key == 'state') {
+
+      if ($key === 'metadata' || $key === 'state') {
         continue;
+      }
+
+      $isFile = false;
+      if ( !$isSchema && isset($this->schema[$key]['type']) &&
+        ( $this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report') )  {
+        $isFile = true;
       }
       $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
 
-      if (is_array($value)) {
-        $result = array_merge($result, $this->arrayFlat($value, $new_key));
+      if (is_array($value) && !$isFile) {
+        $result = array_merge($result, $this->arrayFlat($value, $isSchema, $new_key));
       } else {
         $result[$new_key] = $value;
       }

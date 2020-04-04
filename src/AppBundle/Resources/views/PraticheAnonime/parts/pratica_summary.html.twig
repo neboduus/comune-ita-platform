@@ -19,7 +19,7 @@
     </div>
   {% endif %}
 
-  {% if pratica.dematerializedForms.flattened is defined %}
+  {#{% if pratica.dematerializedForms.flattened is defined %}
     {% for key, value in pratica.dematerializedForms.flattened %}
       {% if key != 'submit' and key != 'update_info' and not value is empty %}
         <div class="row">
@@ -34,6 +34,41 @@
         </div>
       {% endif %}
     {% endfor %}
+  {% endif %}#}
+
+
+  {% if pratica.dematerializedForms.flattened is defined %}
+    {% for key, value in pratica.dematerializedForms.flattened %}
+      {% if key != 'payment_financial_report' and key != 'submit' and key != 'update_info' and not value is empty %}
+        <div class="row">
+          <div class="col-sm-3">
+            <strong>{% if pratica.dematerializedForms.schema[key ~ '.label'] is defined %}{{ pratica.dematerializedForms.schema[key ~ '.label'] }}{% endif %}</strong>
+          </div>
+          <div class="col-sm-9">
+            {% if pratica.dematerializedForms.schema[key ~ '.type'] is defined and pratica.dematerializedForms.schema[key ~ '.type'] == 'datetime' %}
+              {{ value|date('d-m-Y H:i') }}
+            {% elseif pratica.dematerializedForms.schema[key ~ '.type'] is defined and pratica.dematerializedForms.schema[key ~ '.type'] == 'file' %}
+              <div class="it-list-wrapper">
+                <ul class="it-list">
+                  {% for file in value %}
+                    <li>
+                        <svg class="icon">
+                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                        </svg>
+                        <span class="text">{{ file.originalName }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% else %}
+              {{ value }}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
   {% endif %}
+
+
 
 </div>

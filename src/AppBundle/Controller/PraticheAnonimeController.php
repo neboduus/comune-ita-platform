@@ -115,6 +115,10 @@ class PraticheAnonimeController extends Controller
     $this->infereErogatoreFromEnteAndServizio($pratica);
     $flow = $this->get('ocsdc.form.flow.formioanonymous');
 
+    if (!$this->get('session')->isStarted()) {
+      $this->get('session')->start();
+    }
+
     $flow->setInstanceKey($this->get('session')->getId());
     $flow->bind($pratica);
     if ($pratica->getInstanceId() == null) {
@@ -135,8 +139,16 @@ class PraticheAnonimeController extends Controller
         $user = $this->checkUser($pratica->getDematerializedForms());
         $pratica->setUser($user);
         $em->persist($pratica);
-        $em->flush();
 
+        $attachments = $pratica->getAllegati();
+        if (!empty($attachments)) {
+          /** @var Allegato $a */
+          foreach ($attachments as $a) {
+            $a->setOwner($user);
+            $em->persist($pratica);
+          }
+        }
+        $em->flush();
         $flow->onFlowCompleted($pratica);
 
         $this->get('logger')->info(
@@ -279,8 +291,6 @@ class PraticheAnonimeController extends Controller
       ->setPassword('');
 
     $em->persist($user);
-    $em->flush();
-
     return $user;
   }
 
