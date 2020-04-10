@@ -12,7 +12,7 @@
     "copy-webpack-plugin": "5.0.4",
     "datatables.net-bs4": "1.10.20",
     "file-loader": "4.2.0",
-    "formiojs": "4.8.1",
+    "formiojs": "4.9.18",
     "jquery": "3.4.1",
     "jsrender": "1.0.5",
     "moment": "2.24.0",
