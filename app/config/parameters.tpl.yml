@@ -48,6 +48,15 @@ parameters:
     logs_path: '%env(LOGS_PATH)%'
     formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
     formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'
+    allowed_extensions:
+      - doc: application/msword
+      - docx: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      - odt: application/vnd.oasis.opendocument.text
+      - pdf: application/pdf
+      - txt: text/plain
+      - jpeg: image/jpeg
+      - jpg: image/jpeg
+      - png: image/png
     #Default fallback if env not set
     env(PREFIX): ''
     env(DB_DRIVER): 'pdo_pgsql'

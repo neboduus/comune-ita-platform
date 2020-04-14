@@ -69,3 +69,13 @@ parameters:
 
     formserver_private_url: 'https://formserver.opencontent.it'
     formserver_public_url: 'https://formserver.opencontent.it'
+
+    allowed_extensions:
+      - doc: application/msword
+      - docx: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      - odt: application/vnd.oasis.opendocument.text
+      - pdf: application/pdf
+      - txt: text/plain
+      - jpeg: image/jpeg
+      - jpg: image/jpeg
+      - png: image/png

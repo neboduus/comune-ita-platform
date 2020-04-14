@@ -32,6 +32,13 @@ services:
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\FoldersAPIController:
+    arguments: ['@translator', '@doctrine.orm.entity_manager','@ocsdc.instance_service']
+
+  AppBundle\Controller\Rest\DocumentsAPIController:
+    arguments:
+      ["@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service']
+
   AppBundle\Controller\PraticheAnonimeController:
     autowire: true
 
@@ -53,11 +60,16 @@ services:
   AppBundle\Form\MeetingType:
     autowire: true
     tags:
-       - { name: form.type }
+      - { name: form.type }
 
   AppBundle\Form\OpeningHourType:
     autowire: true
     arguments: ["@translator"]
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\DocumentAPIType:
+    arguments: ["%kernel.root_dir%", '%allowed_extensions%']
     tags:
       - { name: form.type }
 
