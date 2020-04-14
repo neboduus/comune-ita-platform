@@ -51,6 +51,12 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
+        api_secure:
+            pattern:   /%prefix%/api/(folders|documents)
+            stateless: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
         operatori:
             anonymous: ~
