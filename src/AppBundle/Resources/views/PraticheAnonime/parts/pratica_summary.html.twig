@@ -1,3 +1,26 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+<script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
+
+<script type='text/javascript'>
+  document.onreadystatechange = function() {
+    Formio.createForm(document.getElementById('formio_summary_anonimo'), $('#formio_summary_anonimo').data('formserver_url') + '/printable/' + $('#formio_summary_anonimo').data('form_id') , {
+      readOnly: true,
+      noAlerts: true,
+      language: 'it',
+      i18n: formIoI18n,
+    }).then(function (form) {
+      form.submission = {
+        data: $('#formio_summary_anonimo').data('submission')
+      };
+    });
+  };
+</script>
+
 <div id="pratica-summary">
 
   <div class="row">
@@ -19,56 +42,19 @@
     </div>
   {% endif %}
 
-  {#{% if pratica.dematerializedForms.flattened is defined %}
-    {% for key, value in pratica.dematerializedForms.flattened %}
-      {% if key != 'submit' and key != 'update_info' and not value is empty %}
-        <div class="row">
-          <div class="col-sm-3"><strong>{% if pratica.dematerializedForms.schema[key ~ '.label'] is defined  %}{{ pratica.dematerializedForms.schema[key ~ '.label'] }}{% endif %}</strong></div>
-          <div class="col-sm-9">
-            {% if pratica.dematerializedForms.schema[key ~ '.type'] is defined and pratica.dematerializedForms.schema[key ~ '.type'] == 'datetime' %}
-              {{ value|date('d-m-Y H:i') }}
-            {% else %}
-              {{ value }}
-            {% endif %}
-          </div>
-        </div>
-      {% endif %}
-    {% endfor %}
-  {% endif %}#}
-
-
-  {% if pratica.dematerializedForms.flattened is defined %}
-    {% for key, value in pratica.dematerializedForms.flattened %}
-      {% if key != 'payment_financial_report' and key != 'submit' and key != 'update_info' and not value is empty %}
-        <div class="row">
-          <div class="col-sm-3">
-            <strong>{% if pratica.dematerializedForms.schema[key ~ '.label'] is defined %}{{ pratica.dematerializedForms.schema[key ~ '.label'] }}{% endif %}</strong>
-          </div>
-          <div class="col-sm-9">
-            {% if pratica.dematerializedForms.schema[key ~ '.type'] is defined and pratica.dematerializedForms.schema[key ~ '.type'] == 'datetime' %}
-              {{ value|date('d-m-Y H:i') }}
-            {% elseif pratica.dematerializedForms.schema[key ~ '.type'] is defined and pratica.dematerializedForms.schema[key ~ '.type'] == 'file' %}
-              <div class="it-list-wrapper">
-                <ul class="it-list">
-                  {% for file in value %}
-                    <li>
-                        <svg class="icon">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-                        </svg>
-                        <span class="text">{{ file.originalName }}</span>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            {% else %}
-              {{ value }}
-            {% endif %}
-          </div>
-        </div>
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-
-
+{% if pratica.dematerializedForms.data is defined %}
+  <div class="row">
+    <div class="col-sm-12">
+      <strong>Compilazione</strong>
+    </div>
+    <div class="col-sm-12 p-3">
+      <div id="formio_summary_anonimo" class="formio-front formio-summary"
+           data-formserver_url="{{ formserver_url }}"
+           data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+           data-submission="{{ pratica.dematerializedForms.data | json_encode}}">
+      </div>
+    </div>
+  </div>
+{% endif %}
 
 </div>
