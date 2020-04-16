@@ -27,6 +27,7 @@ class GeneralDataType extends AbstractType
 
     $accessLevels = [
       'Anonimo'        => Servizio::ACCESS_LEVEL_ANONYMOUS,
+      'Anonimo con possibilità di Login'        => Servizio::ACCESS_LEVEL_ANONYMOUS_WITH_LOGIN,
       'Social'         => Servizio::ACCESS_LEVEL_SOCIAL,
       'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
       'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
@@ -69,6 +70,18 @@ class GeneralDataType extends AbstractType
       ])
       ->add('more_info', TextareaType::class, [
         'label' => 'Maggiori informazioni',
+        'required' => false
+      ])
+      ->add('compilation_info', TextareaType::class, [
+        'label' => 'Maggiori informazioni visualizzate durante la fase di compilazione',
+        'required' => false
+      ])
+      ->add('completed_info', TextareaType::class, [
+        'label' => 'Maggiori informazioni visualizzate al termine della fase di compilazione',
+        'required' => false
+      ])
+      ->add('email_message', TextareaType::class, [
+        'label' => 'Messaggio inviato al cittadino via email',
         'required' => false
       ])
       ->add('sticky', CheckboxType::class, [

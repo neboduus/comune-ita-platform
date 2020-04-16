@@ -90,7 +90,7 @@
               </div>
             {% else %}
               <div>
-                {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
+                {% if servizio.accessLevel not in [0, 5000] or servizio.accessLevel is null %}
                   <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
                      class="btn btn-success btn-lg service-access-button">
                     {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}

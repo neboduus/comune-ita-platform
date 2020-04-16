@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -429,6 +430,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
 
     private $tipiDelega;
+
+    /**
+    * @ORM\Column(type="text", nullable=true)
+    * @var string
+    */
+    private $hash;
 
     /**
      * Pratica constructor.
@@ -1746,4 +1753,22 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         return \json_decode($this->getPaymentData());
     }
 
+    /**
+     * @return string
+     */
+    public function getHash()
+    {
+      return $this->hash;
+    }
+
+  /**
+   * @param string $hash
+   * @return $this
+   * @throws \Exception
+   */
+    public function setHash()
+    {
+      $this->hash = hash('sha256', $this->id) . '-'. (new DateTime())->getTimestamp();
+      return $this;
+    }
 }

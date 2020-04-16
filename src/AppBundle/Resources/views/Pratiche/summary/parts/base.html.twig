@@ -1,7 +1,5 @@
 {% if pratica.statusName != 'STATUS_DRAFT' %}
-
   {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
-
 {% endif %}
 
 {% if pratica.statusName != 'STATUS_DRAFT' %}

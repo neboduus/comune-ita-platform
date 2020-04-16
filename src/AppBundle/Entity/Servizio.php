@@ -35,6 +35,7 @@ class Servizio
   const ACCESS_LEVEL_SPID_L1 = 2000;
   const ACCESS_LEVEL_SPID_L2 = 3000;
   const ACCESS_LEVEL_CIE = 4000;
+  const ACCESS_LEVEL_ANONYMOUS_WITH_LOGIN = 5000;
 
 
   /**
@@ -131,6 +132,27 @@ class Servizio
    * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
    */
   private $coverage;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Other info shown during compile phase, accepts html tags")
+   */
+  private $compilationInfo;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Other info shown once completed, accepts html tags")
+   */
+  private $completedInfo;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Message to be sent in the email, accepts html tags")
+   */
+  private $emailMessage;
 
   /**
    * @var string
@@ -724,6 +746,55 @@ class Servizio
   public function setCoverage($coverage)
   {
     $this->coverage = $coverage;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCompilationInfo()
+  {
+    return $this->compilationInfo;
+  }
+
+  /**
+   * @param string $compilationInfo
+   */
+  public function setCompilationInfo( $compilationInfo )
+  {
+    $this->compilationInfo = $compilationInfo;
+  }
+
+
+  /**
+ * @return string
+ */
+  public function getCompletedInfo()
+  {
+    return $this->completedInfo;
+  }
+
+  /**
+   * @param string $completedInfo
+   */
+  public function setCompletedInfo( $completedInfo )
+  {
+    $this->completedInfo = $completedInfo;
+  }
+
+  /**
+   * @return string
+   */
+  public function getEmailMessage()
+  {
+    return $this->emailMessage;
+  }
+
+  /**
+   * @param string $emailMessage
+   */
+  public function setEmailMessage( $emailMessage )
+  {
+    $this->emailMessage = $emailMessage;
   }
 
   /**

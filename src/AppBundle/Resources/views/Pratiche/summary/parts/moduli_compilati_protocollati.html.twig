@@ -1,9 +1,9 @@
-{% if pratica.servizio.accessLevel > 0 or pratica.servizio.accessLevel is null %}
+{% if pratica.servizio.accessLevel not in [0, 5000] or pratica.servizio.accessLevel is null %}
   <a href="{{ path('pratiche_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-block btn-success">
     <i class="fa fa-download"></i> {{ 'operatori.scarica_richiesta_protocollata'|trans }}
   </a>
 {% else %}
-  <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-block btn-success">
+  <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.hash}) }}" class="btn btn-block btn-success">
     <i class="fa fa-download"></i> {{ 'operatori.scarica_richiesta_protocollata'|trans }}
   </a>
 {% endif %}

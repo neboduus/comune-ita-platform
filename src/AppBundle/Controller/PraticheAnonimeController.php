@@ -103,12 +103,13 @@ class PraticheAnonimeController extends Controller
    */
   public function newAction(Request $request, Servizio $servizio)
   {
-    if ($servizio->getAccessLevel() > 0 || $servizio->getAccessLevel() === null) {
+    if (!in_array($servizio->getAccessLevel(), [Servizio::ACCESS_LEVEL_ANONYMOUS, Servizio::ACCESS_LEVEL_ANONYMOUS_WITH_LOGIN])  || $servizio->getAccessLevel() === null) {
       $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' è disponibile solo per gli utenti loggati.');
       return $this->redirectToRoute('servizi_list');
     }
 
     $pratica = $this->createNewPratica($servizio);
+    $pratica->setHash();
 
     $instanceService = $this->container->get('ocsdc.instance_service');
     $pratica->setEnte($instanceService->getCurrentInstance());
@@ -176,20 +177,49 @@ class PraticheAnonimeController extends Controller
   }
 
   /**
-   * @Route("/{pratica}", name="pratiche_anonime_show")
+   * @Route("/tmp/{pratica}", name="pratiche_anonime_show2")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
    * @return array
    */
-  public function showAction(Request $request, Pratica $pratica)
+  public function showAction2(Request $request, Pratica $pratica)
   {
     $result = [
       'pratica' => $pratica,
       'formserver_url' => $this->getParameter('formserver_public_url'),
     ];
     return $result;
+  }
+
+  /**
+   * @Route("/{praticaHash}", name="pratiche_anonime_show")
+   * @Template()
+   * @param string $praticaHash
+   *
+   * @return array|Response
+   */
+  public function showAction(Request $request, $praticaHash)
+  {
+    dump($praticaHash);
+    $pratica = $this->getDoctrine()->getRepository('AppBundle:Pratica')->findOneBy(['hash'=>$praticaHash]);
+    if ($pratica) {
+      $timestamp = explode('-', $praticaHash);
+      $timestamp = end($timestamp);
+      $date = (new \DateTime())->setTimestamp($timestamp)->modify('+3days');
+      if ($date <= new \DateTime()) {
+        $this->addFlash('warning', 'Non è più possibile accedere alla pratica richiesta');
+        return [];
+      }
+      $result = [
+        'pratica' => $pratica,
+        'formserver_url' => $this->getParameter('formserver_public_url'),
+      ];
+      return $result;
+    } else {
+      return new Response(null, Response::HTTP_NOT_FOUND);
+    }
   }
 
   /**

@@ -91,6 +91,7 @@
 
     <div class="row mt-2">
       <div class="col-lg-4 px-lg-4 order-lg-2">
+        {% if pratica.servizio.accessLevel == 5000 %}
         <div class="callout">
           <div class="callout-title">
             Info
@@ -103,6 +104,15 @@
             <span>Accedi</span>
           </a>
         </div>
+        {%  endif %}
+        {% if pratica.servizio.compilationInfo is defined %}
+        <div class="callout">
+          <div class="callout-title">
+            Info
+          </div>
+          <p>{{ pratica.servizio.compilationInfo|raw }}</p>
+        </div>
+        {%  endif %}
       </div>
 
       <div class="col-lg-8 px-lg-4 order-lg-1">

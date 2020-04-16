@@ -1,4 +1,12 @@
 {%  set fcqn_parts = pratica.servizio.praticaFCQN | split('\\') %}
 {% set class_name = fcqn_parts|last %}
 
+{% if pratica.statusName != 'STATUS_DRAFT' %}
+  <div class="col-12">
+    <div class="alert alert-info" role="alert">
+      {{ pratica.servizio.compilationInfo|raw }}
+    </div>
+  </div>
+{% endif %}
+
 {{ include('AppBundle:Pratiche/summary:' ~ class_name ~ '.html.twig', {'pratica':pratica, 'user': user}) }}

@@ -260,6 +260,15 @@
 
     <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
 
+      {% if pratica.servizio.compilationInfo is defined %}
+        <div class="callout">
+          <div class="callout-title">
+            Info
+          </div>
+          <p>{{ pratica.servizio.compilationInfo|raw }}</p>
+        </div>
+      {%  endif %}
+
       {% if form.vars.helper.guideText|length > 0 %}
         <div class="callout">
           <div class="callout-title">

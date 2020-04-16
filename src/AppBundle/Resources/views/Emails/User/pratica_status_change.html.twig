@@ -9,6 +9,11 @@
                     {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
                 </p>
                 <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
+
+              {% if pratica.status ==  constant('STATUS_SUBMITTED', pratica) %}
+                <p>{{ pratica.servizio.emailMessage | striptags }}</p>
+              {% endif %}
+
                 <p>
                     {{ 'email.pratica.thanks'|trans() }}
                 </p>
