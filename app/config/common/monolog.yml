@@ -12,9 +12,9 @@ monolog:
       action_level: debug
     console:
       type:  console
-    slack:
-      type:           slackwebhook
-      webhook_url:    '%slack_logs_webhook_url%'
-      action_level:   error
-      level:          error
-      formatter: '%logs_formatter%'
+    #slack:
+    #  type:           slackwebhook
+    #  webhook_url:    '%slack_logs_webhook_url%'
+    #  action_level:   error
+    #  level:          error
+    #  formatter: '%logs_formatter%'
