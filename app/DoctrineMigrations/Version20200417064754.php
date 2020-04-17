@@ -21,7 +21,7 @@ final class Version20200417064754 extends AbstractMigration
         $this->addSql('ALTER TABLE document ADD validity_end TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
         $this->addSql('ALTER TABLE document ADD expire_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
         $this->addSql('ALTER TABLE document ADD due_date TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
-        $this->addSql('ALTER TABLE document ADD downloads_counter INT NOT NULL');
+        $this->addSql('ALTER TABLE document ADD downloads_counter INT');
         $this->addSql('ALTER TABLE document DROP lastreadat');
         $this->addSql('ALTER TABLE document DROP validitybegin');
         $this->addSql('ALTER TABLE document DROP validityend');
