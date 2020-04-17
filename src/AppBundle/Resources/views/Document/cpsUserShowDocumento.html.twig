@@ -13,7 +13,7 @@
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
         <h1>
-          <a class="text-decoration-none" href="{{ path('documenti_list_cpsuser', {'folderSlug': document.folder.slug}) }}">
+          <a class="text-decoration-none" href="{{ path('documenti_list_cpsuser', {'folderId': document.folder.id}) }}">
             <svg class="icon icon-xl icon-primary">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
             </svg>
@@ -41,7 +41,7 @@
               </td>
               <td>
                 <div class="col-2 float-right">
-                    <a id="downloadDocument" href="{{ path('document_download_cpsuser', {'folderSlug':document.folder.slug, 'documentId': document.id}) }}" download>
+                    <a id="downloadDocument" href="{{ path('document_download_cpsuser', {'folderId':document.folder.id, 'documentId': document.id}) }}" download>
                       <svg class="icon icon-primary">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
                       </svg>

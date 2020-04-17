@@ -47,19 +47,9 @@ class Folder
    * @var string
    *
    * @ORM\Column(name="description", type="text", nullable=true)
-   * @Assert\NotBlank(message="Questo campo è obbligatorio (description)")
    * @SWG\Property(description="Folder's description", type="text")
    */
   private $description;
-
-  /**
-   * @var string
-   *
-   * @Gedmo\Slug(fields={"title"})
-   * @ORM\Column(name="slug", type="string", length=100)
-   * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from folder's title")
-   */
-  private $slug;
 
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
@@ -179,26 +169,6 @@ class Folder
   public function getDescription()
   {
     return $this->description;
-  }
-
-  /**
-   * Get slug
-   *
-   * @return string
-   */
-  public function getSlug()
-  {
-    return $this->slug;
-  }
-
-  /**
-   * Set slug
-   *
-   * @param string $slug
-   */
-  public function setSlug(string $slug)
-  {
-    $this->slug = $slug;
   }
 
   /**

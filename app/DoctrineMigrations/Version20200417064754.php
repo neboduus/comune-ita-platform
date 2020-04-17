@@ -15,7 +15,7 @@ final class Version20200417064754 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE folder ADD slug VARCHAR(100) NOT NULL');
+        $this->addSql('ALTER TABLE folder ADD slug VARCHAR(100)');
         $this->addSql('ALTER TABLE document ADD last_read_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
         $this->addSql('ALTER TABLE document ADD validity_begin TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
         $this->addSql('ALTER TABLE document ADD validity_end TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
