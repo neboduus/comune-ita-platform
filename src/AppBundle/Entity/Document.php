@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -40,7 +41,7 @@ class Document
   private $owner;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Folder")
+   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Folder", inversedBy="documents")
    * @ORM\JoinColumn(name="folder_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (folder)")
    * @SWG\Property(description="Document's folder id", type="string")
@@ -143,7 +144,7 @@ class Document
   /**
    * @var string
    *
-   * @ORM\Column(name="readersAllowed", type="json", nullable=true)
+   * @ORM\Column(name="readers_allowed", type="json", nullable=true)
    * SWG\Property(description="Document's allowed readers (list of fiscal codes of users that are allowed to read the document)", type="array", @SWG\Items(type="string"))
    */
   private $readersAllowed;
@@ -151,16 +152,24 @@ class Document
   /**
    * @var \DateTime|null
    *
-   * @ORM\Column(name="lastReadAt", type="datetime", nullable=true)
+   * @ORM\Column(name="last_read_at", type="datetime", nullable=true)
    * @SWG\Property(description="Document's last read date")
    * @Serializer\SkipWhenEmpty()
    */
   private $lastReadAt;
 
   /**
+   * @var integer
+   *
+   * @ORM\Column(name="downloads_counter", type="integer")
+   * @SWG\Property(description="Document's downloads counter")
+   */
+  private $downloadsCounter;
+
+  /**
    * @var \DateTime|null
    *
-   * @ORM\Column(name="validityBegin", type="datetime", nullable=true)
+   * @ORM\Column(name="validity_begin", type="datetime", nullable=true)
    * @SWG\Property(description="Document's validity begin date, after this date the document will have legal value")
    */
   private $validityBegin;
@@ -168,7 +177,7 @@ class Document
   /**
    * @var \DateTime|null
    *
-   * @ORM\Column(name="validityEnd", type="datetime", nullable=true)
+   * @ORM\Column(name="validity_end", type="datetime", nullable=true)
    * @SWG\Property(description="Document's validity end date, after this date the document will have no legal value")
    */
   private $validityEnd;
@@ -176,7 +185,7 @@ class Document
   /**
    * @var \DateTime|null
    *
-   * @ORM\Column(name="expireAt", type="datetime", nullable=true)
+   * @ORM\Column(name="expire_at", type="datetime", nullable=true)
    * @SWG\Property(description="Document's expire date, after this date the document will not be available anymore")
    */
   private $expireAt;
@@ -184,7 +193,7 @@ class Document
   /**
    * @var \DateTime|null
    *
-   * @ORM\Column(name="dueDate", type="datetime", nullable=true)
+   * @ORM\Column(name="due_date", type="datetime", nullable=true)
    * @SWG\Property(description="Document's due date")
    */
   private $dueDate;
@@ -204,7 +213,7 @@ class Document
   /**
    * * @var \DateTime
    *
-   * @ORM\Column(type="datetime")
+   * @ORM\Column(name="created_at", type="datetime")
    * @SWG\Property(description="Document's creation date")
    */
   private $createdAt;
@@ -212,7 +221,7 @@ class Document
   /**
    * @var \DateTime
    *
-   * @ORM\Column(type="datetime")
+   * @ORM\Column(name="updated_at", type="datetime")
    * @SWG\Property(description="Document's last modified date")
    */
   private $updatedAt;
@@ -225,6 +234,8 @@ class Document
   {
     if (!$this->id) {
       $this->id = Uuid::uuid4();
+      $this->version = 1;
+      $this->downloadsCounter = 0;
       $this->correlatedServices = new ArrayCollection();
       $this->topics = new ArrayCollection();
     }
@@ -643,6 +654,30 @@ class Document
   }
 
   /**
+   * Set downloadsCounter.
+   *
+   * @param int $downloadsCounter
+   *
+   * @return Document
+   */
+  public function setDownloadsCounter($downloadsCounter)
+  {
+    $this->downloadsCounter = $downloadsCounter;
+
+    return $this;
+  }
+
+  /**
+   * Get downloadsCounter.
+   *
+   * @return int
+   */
+  public function getDownloadsCounter()
+  {
+    return $this->downloadsCounter;
+  }
+
+  /**
    * Set validityBegin.
    *
    * @param \DateTime $validityBegin
@@ -831,9 +866,20 @@ class Document
     $this->setUpdatedAt($dateTimeNow);
 
     if ($this->getCreatedAt() === null) {
-      $this->setVersion(1);
       $this->setCreatedAt($dateTimeNow);
-    } else {
+    }
+  }
+
+  /**
+   * Increment version
+   *
+   * @ORM\PreUpdate
+   * @param PreUpdateEventArgs $event
+   */
+  public
+  function preUpdate(PreUpdateEventArgs $event)
+  {
+    if (!$event->hasChangedField('downloadsCounter')) {
       $this->setVersion($this->version + 1);
     }
   }

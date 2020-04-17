@@ -32,6 +32,7 @@ nav:
   pratiche: 'Le mie pratiche'
   profilo: 'Il mio profilo'
   allegati: 'I miei allegati'
+  documenti: 'I miei documenti'
   informativa_privacy: 'Informativa per il trattamento dati personali'
   operatori:
     panello_controllo: "Pannello di controllo"
@@ -186,6 +187,20 @@ pratica:
     placeholder: 'Inserisci una descrizione breve'
   noteDiCompilazione: 'Note di compilazione'
 
+documenti:
+  i_miei_documenti: "I miei documenti"
+  no_documenti: "Non sono presenti documenti"
+  documento:
+    nome: "Nome documento"
+    data_creazione: "Data di creazione"
+    valido: "Valido fino a"
+    data_scadenza: "Data di scadenza"
+    servizi_correlati: "Servizi correlati"
+  cartella:
+    nome: "Nome cartella"
+    data_creazione: "Data di creazione"
+    servizi_correlati: "Servizi correlati"
+    no_documenti: "Non sono presenti documenti in questa cartella"
 
 iscrizione_asilo_nido:
   dettaglio:
@@ -364,6 +379,8 @@ user:
     servizi_primo_piano: 'Servizi in primo piano'
     ultime_pratiche: "Pratiche recenti"
     vedi_tutte: "(vedi tutte)"
+    nuovi_documenti: "Nuovi documenti!"
+    nuovi_documenti_messaggio: "Sono stati pubblicati nuovi documenti!"
 
   profile:
     title: 'Profilo utente'

@@ -27,7 +27,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         cps:
-            pattern: ^/%prefix%/(pratiche|terms_accept|user)/
+            pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti)/
             guard:
                 provider: cps
                 authenticators:

@@ -20,6 +20,26 @@
             </div>
         </div>
     </section>
+    <section>
+        {% if documents is not empty %}
+            <div class="container px-4 pb-4">
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">{{ 'user.dashboard.nuovi_documenti'|trans }}</h4>
+                    <p> {{ 'user.dashboard.nuovi_documenti_messaggio'|trans }}</p>
+                    <ul class="list-group list-group-flush">
+                    {% for document in documents %}
+                        <li class="list-group-item px-0" style="border: none">
+                            <svg class="icon">
+                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                            </svg>
+                            <a href="{{ path('documenti_list_cpsuser', {'folderSlug': document.folder.slug}) }}">{{ document.title }}</a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </section>
     <section id="in-evidenza">
         <div class="bg-100 py-5">
             <div class="container px-4">

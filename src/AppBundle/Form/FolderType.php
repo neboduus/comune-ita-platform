@@ -11,38 +11,43 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FolderType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-      $builder->add('title', TextType::class, [
+  public function buildForm(FormBuilderInterface $builder, array $options)
+  {
+    $builder
+      ->add('title', TextType::class, [
         'label' => 'titolo',
         'required' => true
       ])
-        ->add('description', TextareaType::class, [
-          'label' => 'descrizione',
-          'required' => false
-        ])
-        ->add('owner', EntityType::class, [
-          'class' => 'AppBundle\Entity\CPSUser',
-          'label' => 'proprietario',
-          'required' => true
-        ])
-        ->add('correlated_services', EntityType::class, [
-          'class' => 'AppBundle\Entity\Servizio',
-          'label' => 'Servizi correlati',
-          'multiple' => true,
-        ]);
-    }
+      ->add('description', TextareaType::class, [
+        'label' => 'descrizione',
+        'required' => false
+      ])
+      ->add('slug', TextType::class, [
+        'label' => 'slug',
+        'required' => false
+      ])
+      ->add('owner', EntityType::class, [
+        'class' => 'AppBundle\Entity\CPSUser',
+        'label' => 'proprietario',
+        'required' => true
+      ])
+      ->add('correlated_services', EntityType::class, [
+        'class' => 'AppBundle\Entity\Servizio',
+        'label' => 'Servizi correlati',
+        'multiple' => true,
+      ]);
+  }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-      $resolver->setDefaults(array(
-        'data_class' => 'AppBundle\Entity\Folder',
-        'csrf_protection' => false
-      ));
-    }
+  public function configureOptions(OptionsResolver $resolver)
+  {
+    $resolver->setDefaults(array(
+      'data_class' => 'AppBundle\Entity\Folder',
+      'csrf_protection' => false
+    ));
+  }
 
-    public function getBlockPrefix()
-    {
-        return 'app_bundle_folder';
-    }
+  public function getBlockPrefix()
+  {
+    return 'app_bundle_folder';
+  }
 }

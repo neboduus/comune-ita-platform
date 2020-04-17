@@ -125,6 +125,9 @@ class DocumentAPIType extends AbstractType
     if (!$document->getFolder()) {
       return $event->getForm()->addError(new FormError('Cartella non valida'));
     }
+    if ($document->getOwner() != $document->getFolder()->getOwner()) {
+      return $event->getForm()->addError(new FormError('L\'utente fornito non è il proprietario della cartella'));
+    }
 
     if (!in_array($document->getMimeType(), $this->allowedExtensions)) {
       return $event->getForm()->addError(
@@ -137,6 +140,7 @@ class DocumentAPIType extends AbstractType
       return $event->getForm()->addError(
         new FormError('E\'obbligatorio specificare l\'estensione del file le campo original_filename')
       );
+
     } else if (!array_key_exists(end($extension), $this->allowedExtensions)) {
       return $event->getForm()->addError(new FormError('Estensione non valida'));
     }
@@ -172,6 +176,8 @@ class DocumentAPIType extends AbstractType
             new FormError($e->getMessage())
           );
         }
+      } else {
+        $fileName = $document->getAddress();
       }
     }
 
