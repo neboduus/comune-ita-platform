@@ -105,6 +105,11 @@
                   {{ 'nav.allegati'|trans }}
                 </a>
               </li>
+              <li class="nav-item {% if 'documenti' in app.request.pathInfo %} active {% endif %}">
+                <a class="nav-link " href="{{ path('folders_list_cpsuser') }}">
+                  {{ 'nav.documenti'|trans }}
+                </a>
+              </li>
             </ul>
           </div>
         </div>

@@ -12,6 +12,7 @@ use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
 use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Folder
@@ -52,6 +53,15 @@ class Folder
   private $description;
 
   /**
+   * @var string
+   *
+   * @Gedmo\Slug(fields={"title"})
+   * @ORM\Column(name="slug", type="string", length=100)
+   * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from folder's title")
+   */
+  private $slug;
+
+  /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
    * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
@@ -59,6 +69,13 @@ class Folder
    * @Serializer\Exclude()
    */
   private $owner;
+
+  /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Document", mappedBy="folder")
+   * @Serializer\Exclude()
+   * @SWG\Property(description="Folder's documents")
+   */
+  private $documents;
 
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Ente")
@@ -82,13 +99,13 @@ class Folder
   private $correlatedServices;
 
   /**
-   * @ORM\Column(type="datetime")
+   * @ORM\Column(name="created_at", type="datetime")
    * @SWG\Property(description="Folder's creation date")
    */
   private $createdAt;
 
   /**
-   * @ORM\Column(type="datetime")
+   * @ORM\Column(name="updated_at", type="datetime")
    * @SWG\Property(description="Folder's last modified date")
    */
   private $updatedAt;
@@ -102,6 +119,7 @@ class Folder
     if (!$this->id) {
       $this->id = Uuid::uuid4();
       $this->correlatedServices = new ArrayCollection();
+      $this->documents = new ArrayCollection();
     }
   }
 
@@ -161,6 +179,26 @@ class Folder
   public function getDescription()
   {
     return $this->description;
+  }
+
+  /**
+   * Get slug
+   *
+   * @return string
+   */
+  public function getSlug()
+  {
+    return $this->slug;
+  }
+
+  /**
+   * Set slug
+   *
+   * @param string $slug
+   */
+  public function setSlug(string $slug)
+  {
+    $this->slug = $slug;
   }
 
   /**
@@ -264,6 +302,14 @@ class Folder
       $correlatedServices[] = $service->getId();
     }
     return $correlatedServices;
+  }
+
+  /**
+   * @return Collection|Document[]
+   */
+  public function getDocuments(): Collection
+  {
+    return $this->documents;
   }
 
   /**

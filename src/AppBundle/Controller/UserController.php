@@ -46,11 +46,24 @@ class UserController extends Controller
 
     $threads = [];
 
+    $documents = [];
+    $documentRepo = $this->getDoctrine()->getRepository('AppBundle:Document');
+
+    $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
+    $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
+    $stmt->execute();
+    $documentsIds = $stmt->fetchAll();
+
+    foreach ($documentsIds as $id) {
+      $documents[] = $documentRepo->find($id);
+    }
+
     return array(
       'user' => $user,
       'servizi' => $servizi,
       'pratiche' => $pratiche,
       'threads' => $threads,
+      'documents' => $documents
     );
   }
 
