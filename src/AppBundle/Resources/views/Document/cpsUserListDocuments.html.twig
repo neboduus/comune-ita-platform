@@ -78,7 +78,7 @@
                         <td class="d-none d-none d-lg-table-cell">
                           <div class="float-right">
                             <a id="downloadDocument"
-                               href="{{ path('document_download_cpsuser', {'folderSlug':folder.slug, 'documentId': document.id}) }}"
+                               href="{{ path('document_download_cpsuser', {'folderId':folder.id, 'documentId': document.id}) }}"
                                download>
                               <svg class="icon icon-primary">
                                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
@@ -88,7 +88,7 @@
                         </td>
                         <td>
                           <div class="float-right">
-                            <a href="{{ path('documento_show_cpsuser', {'folderSlug': folder.slug, 'documentId': document.id}) }}">
+                            <a href="{{ path('documento_show_cpsuser', {'folderId': folder.id, 'documentId': document.id}) }}">
                               <svg class="icon icon-lg icon-primary">
                                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
                               </svg>

@@ -161,7 +161,7 @@ class Document
   /**
    * @var integer
    *
-   * @ORM\Column(name="downloads_counter", type="integer")
+   * @ORM\Column(name="downloads_counter", type="integer", nullable=true)
    * @SWG\Property(description="Document's downloads counter")
    */
   private $downloadsCounter;

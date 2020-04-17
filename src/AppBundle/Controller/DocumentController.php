@@ -64,16 +64,16 @@ class DocumentController extends Controller
   }
 
   /**
-   * @Route("/{folderSlug}", name="documenti_list_cpsuser")
+   * @Route("/{folderId}", name="documenti_list_cpsuser")
    * @Template()
    * @param Request $request
-   * @param string $folderSlug
+   * @param string $folderId
    * @return array|Response
    */
-  public function cpsUserListDocumentsAction(Request $request, $folderSlug)
+  public function cpsUserListDocumentsAction(Request $request, $folderId)
   {
     $user = $this->getUser();
-    $folder = $this->em->getRepository('AppBundle:Folder')->findOneBy(['slug'=>$folderSlug]);
+    $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
     if (!$folder) {
       return  new Response(null, Response::HTTP_NOT_FOUND);
     }
@@ -105,17 +105,17 @@ class DocumentController extends Controller
   }
 
   /**
-   * @Route("/{folderSlug}/{documentId}", name="documento_show_cpsuser")
+   * @Route("/{folderId}/{documentId}", name="documento_show_cpsuser")
    * @Template()
    * @param Request $request
-   * @param string $folderSlug
+   * @param string $folderId
    * @param string $documentId
    * @return array|Response
    */
-  public function cpsUserShowDocumentoAction(Request $request, $folderSlug, $documentId)
+  public function cpsUserShowDocumentoAction(Request $request, $folderId, $documentId)
   {
     $user = $this->getUser();
-    $folder = $this->em->getRepository('AppBundle:Folder')->findOneBy(['slug'=>$folderSlug]);
+    $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
     $document = $this->em->getRepository('AppBundle:Document')->find($documentId);
 
     if (!$folder || !$document) {
@@ -134,17 +134,17 @@ class DocumentController extends Controller
 
   /**
    * Download a document
-   * @Route("/{folderSlug}/{documentId}/download", name="document_download_cpsuser")
+   * @Route("/{folderId}/{documentId}/download", name="document_download_cpsuser")
    * @param Request $request
-   * @param string $folderSlug
+   * @param string $folderId
    * @param string $documentId
    * @return Response
    * @throws \Exception
    */
-  public function downloadDocumentAction(Request $request, $folderSlug,  $documentId)
+  public function downloadDocumentAction(Request $request, $folderId,  $documentId)
   {
     $user = $this->getUser();
-    $folder = $this->em->getRepository('AppBundle:Folder')->findOneBy(['slug'=>$folderSlug]);
+    $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
     $document = $this->em->getRepository('AppBundle:Document')->find($documentId);
 
     if ($folder->getOwner() != $user->getCodiceFiscale() && !in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {

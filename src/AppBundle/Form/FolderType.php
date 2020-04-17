@@ -22,10 +22,6 @@ class FolderType extends AbstractType
         'label' => 'descrizione',
         'required' => false
       ])
-      ->add('slug', TextType::class, [
-        'label' => 'slug',
-        'required' => false
-      ])
       ->add('owner', EntityType::class, [
         'class' => 'AppBundle\Entity\CPSUser',
         'label' => 'proprietario',
