@@ -52,7 +52,7 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
         api_secure:
-            pattern:   /%prefix%/api/(folders|documents)
+            pattern:   /%prefix%/api/(folders|documents|users)
             stateless: true
             guard:
                 authenticators:
