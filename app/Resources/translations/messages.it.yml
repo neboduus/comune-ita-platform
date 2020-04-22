@@ -131,6 +131,7 @@ pratica:
     richiedente.telefono: 'Telefono'
     richiedente.email: 'Email'
     nucleo_familiare: 'Nucleo familiare'
+    compilazione: 'Compilazione'
     esito:
       accettata: 'La richiesta è stata <strong>accettata</strong>'
       rifiutata: 'La richiesta è stata <strong>rifiutata</strong>'
