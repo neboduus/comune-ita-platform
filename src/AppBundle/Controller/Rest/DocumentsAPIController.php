@@ -54,6 +54,39 @@ class DocumentsAPIController extends AbstractFOSRestController
    * List all Documents
    * @Rest\Get("", name="documents_api_list")
    *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="cf",
+   *     in="query",
+   *     type="string",
+   *     description="Fiscal code of the document's owner"
+   * )
+   * @SWG\Parameter(
+   *     name="title",
+   *     in="query",
+   *     type="string",
+   *     description="Document's title"
+   * )
+   * @SWG\Parameter(
+   *     name="folder-title",
+   *     in="query",
+   *     type="string",
+   *     description="Document's folder title"
+   * )
+   * @SWG\Parameter(
+   *     name="folder",
+   *     in="query",
+   *     type="string",
+   *     description="Document's folder id"
+   * )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of documents",
@@ -63,11 +96,43 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     )
    * )
    * @SWG\Tag(name="documents")
+   * @param Request $request
    * @return View
    */
-  public function getDocumentsAction()
+  public function getDocumentsAction(Request $request)
   {
-    $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findAll();
+    $cf = $request->query->get('cf');
+    $title = $request->query->get('title');
+    $folderTitle = $request->query->get('folder-title');
+    $folder = $request->query->get('folder');
+
+    $qb = $this->em->createQueryBuilder()
+      ->select('document')
+      ->from('AppBundle:Document', 'document')
+      ->leftJoin('document.folder', 'folder')
+      ->leftJoin('document.owner', 'owner');
+
+    if (isset($cf)) {
+      $qb->andWhere('lower(owner.codiceFiscale) = :cf')
+        ->setParameter('cf', strtolower($cf));
+    }
+
+    if (isset($title)) {
+      $qb->andWhere('lower(document.title) = :title')
+        ->setParameter('title', strtolower($title));
+    }
+
+    if (isset($folderTitle)) {
+      $qb->andWhere('lower(folder.title) = :folder-title')
+        ->setParameter('folder-title', strtolower($folderTitle));
+    }
+    if (isset($folder)) {
+      $qb->andWhere('folder.id = :folder')
+        ->setParameter('folder', $folder);
+    }
+    $documents = $qb
+      ->getQuery()
+      ->getResult();
 
     return $this->view($documents, Response::HTTP_OK);
   }
@@ -164,7 +229,7 @@ class DocumentsAPIController extends AbstractFOSRestController
 
     if ($user instanceof AdminUser || $user instanceof OperatoreUser) {
       $document->setRecipientType(Document::RECIPIENT_TENANT);
-    } else if ($user instanceof CPSUser){
+    } else if ($user instanceof CPSUser) {
       $document->setRecipientType(Document::RECIPIENT_USER);
     }
 
@@ -448,7 +513,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $extension = end($extension);
 
     $fileName = '../var/uploads/documents/users/' .
-      $document->getOwnerId(). DIRECTORY_SEPARATOR .  $document->getFolderId() .
+      $document->getOwnerId() . DIRECTORY_SEPARATOR . $document->getFolderId() .
       DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
 
     if (!file_exists($fileName) && $document->getAddress()) {
@@ -457,13 +522,12 @@ class DocumentsAPIController extends AbstractFOSRestController
 
     try {
       $fileContent = file_get_contents($fileName);
-    }
-    catch (\Exception $exception) {
+    } catch (\Exception $exception) {
       return $this->view("File non trovato", Response::HTTP_BAD_REQUEST);
     }
 
     // Provide a name for your file with extension
-    $filename =  $document->getOriginalFilename();
+    $filename = $document->getOriginalFilename();
     // Return a response with a specific content
     $response = new Response($fileContent);
     // Create the disposition of the file

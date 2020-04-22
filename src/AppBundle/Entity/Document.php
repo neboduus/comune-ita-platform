@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
@@ -16,7 +17,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Document
  *
- * @ORM\Table(name="document")
+ * @ORM\Table(name="document", uniqueConstraints={
+ *        @UniqueConstraint(name="title_unique_for_folder",
+ *            columns={"owner_id", "title", "folder_id"})
+ *    }))
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
@@ -170,6 +174,10 @@ class Document
    * @var \DateTime|null
    *
    * @ORM\Column(name="validity_begin", type="datetime", nullable=true)
+   * @Assert\Expression(
+   *     "this.getValidityEnd() or (value == null and this.getValidityEnd() == null)",
+   *     message="If validity begin is defined, validity end should be not null"
+   * )
    * @SWG\Property(description="Document's validity begin date, after this date the document will have legal value")
    */
   private $validityBegin;
@@ -178,6 +186,11 @@ class Document
    * @var \DateTime|null
    *
    * @ORM\Column(name="validity_end", type="datetime", nullable=true)
+   * @Assert\Expression(
+   *     "this.getValidityBegin() or (value == null and this.getValidityBegin() == null)",
+   *     message="If validity end is defined, validity begin should be not null"
+   * )
+   * @Assert\LessThanOrEqual(propertyPath="expireAt", message="validityEnd must be lower than expire Date")
    * @SWG\Property(description="Document's validity end date, after this date the document will have no legal value")
    */
   private $validityEnd;
@@ -186,6 +199,8 @@ class Document
    * @var \DateTime|null
    *
    * @ORM\Column(name="expire_at", type="datetime", nullable=true)
+   * @Assert\LessThanOrEqual("+10 years", message="Maximum availability interval is 10 years")
+   * @Assert\GreaterThan("today", message="Expire date must be greater than current day")
    * @SWG\Property(description="Document's expire date, after this date the document will not be available anymore")
    */
   private $expireAt;
@@ -867,6 +882,10 @@ class Document
 
     if ($this->getCreatedAt() === null) {
       $this->setCreatedAt($dateTimeNow);
+    }
+    if ($this->getExpireAt() === null) {
+
+      $this->setExpireAt((new DateTime('now'))->modify('+5 years'));
     }
   }
 

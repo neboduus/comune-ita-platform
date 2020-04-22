@@ -44,8 +44,63 @@ class UsersAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a User by fiscal code
-   * @Rest\Get("/{fiscalCode}", name="user_api_get")
+   * List all Users
+   * @Rest\Get("", name="users_api_list")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="cf",
+   *     in="query",
+   *     type="string",
+   *     description="Fiscal code of the user"
+   * )
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retrieve list of users",
+   *     @SWG\Schema(
+   *         type="array",
+   *         @SWG\Items(ref=@Model(type=User::class))
+   *     )
+   * )
+   * @SWG\Tag(name="users")
+   * @param Request $request
+   * @return View
+   */
+  public function getUsersAction(Request $request)
+  {
+    $result = [];
+    $cf = $request->query->get('cf');
+
+    $qb = $this->em->createQueryBuilder()
+      ->select('user')
+      ->from('AppBundle:CPSUser', 'user');
+
+    if (isset($cf)) {
+      $qb->andWhere('lower(user.codiceFiscale) = :cf')
+        ->setParameter('cf', strtolower($cf));
+    }
+
+    $users = $qb
+      ->getQuery()
+      ->getResult();
+
+    foreach ($users as $u) {
+      $result []= User::fromEntity($u);
+    }
+    return $this->view($result, Response::HTTP_OK);
+  }
+
+  /**
+   * Retreive a User by id
+   * @Rest\Get("/{id}", name="user_api_get")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -67,26 +122,21 @@ class UsersAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="users")
    *
-   * @param $fiscalCode
+   * @param Request $request
+   * @param string $id
    * @return View
    */
-  public function getUserAction($fiscalCode)
+  public function getUserAction(Request $request, $id)
   {
     try {
-      $result = $this->em->createQueryBuilder()
-        ->select('user.id')
-        ->from('AppBundle:CPSUser', 'user')
-        ->where('upper(user.username) = upper(:username)')
-        ->setParameter('username', $fiscalCode)
-        ->getQuery()->getResult();
+      $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
+      $result = $repository->find($id);
 
-      if ( !empty($result)) {
-        $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
-        $user =  $repository->find($result[0]['id']);
-        return $this->view(User::fromEntity($user), Response::HTTP_OK);
-      } else {
+      if ($result === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
+
+      return $this->view(User::fromEntity($result), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
