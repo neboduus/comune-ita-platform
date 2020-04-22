@@ -59,6 +59,7 @@
         "nelmio/api-doc-bundle": "3.4.0",
         "lexik/jwt-authentication-bundle": "2.6.4",
         "thecodingmachine/gotenberg-php-client": "6.2.0",
+        "php-http/guzzle6-adapter": "2.0.1",
         "excelwebzone/recaptcha-bundle": "1.5.17",
         "ext-fileinfo": "^7.3"
     },

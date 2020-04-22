@@ -186,7 +186,8 @@ class PraticheAnonimeController extends Controller
   public function showAction(Request $request, Pratica $pratica)
   {
     $result = [
-      'pratica' => $pratica
+      'pratica' => $pratica,
+      'formserver_url' => $this->getParameter('formserver_public_url')
     ];
     return $result;
   }

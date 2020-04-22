@@ -306,6 +306,7 @@ class PraticheController extends Controller
     $result = [
       'pratica' => $pratica,
       'user' => $user,
+      'formserver_url' => $this->getParameter('formserver_public_url'),
       //'threads' => $thread,
     ];
 
