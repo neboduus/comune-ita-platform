@@ -125,7 +125,7 @@ class UsersAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
-   * @SWG\Tag(name="services")
+   * @SWG\Tag(name="users")
    *
    * @param Request $request
    * @return View
