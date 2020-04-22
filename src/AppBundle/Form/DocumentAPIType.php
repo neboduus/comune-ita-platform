@@ -121,6 +121,11 @@ class DocumentAPIType extends AbstractType
     /** @var Document $document */
     $document = $event->getForm()->getData();
 
+    $ASCII_fileName = mb_convert_encoding($document->getOriginalFilename(), "ASCII", "auto");
+    if ($ASCII_fileName != $document->getOriginalFilename()) {
+      return $event->getForm()->addError(new FormError('Original filename non è una stringa ASCII valida'));
+    }
+
     // Check folder
     if (!$document->getFolder()) {
       return $event->getForm()->addError(new FormError('Cartella non valida'));
@@ -166,7 +171,8 @@ class DocumentAPIType extends AbstractType
         );
       }
     } else {
-      if ($form->get("store")->getData()) {
+      $store = $form->get("store")->getData();
+      if ($store) {
         $fileName = $directory . DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
         $content = file_get_contents($document->getAddress());
         try {

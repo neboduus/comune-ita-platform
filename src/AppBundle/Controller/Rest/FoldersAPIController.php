@@ -54,6 +54,18 @@ class FoldersAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
+   * * @SWG\Parameter(
+   *     name="cf",
+   *     in="query",
+   *     type="string",
+   *     description="Fiscal code of the folder's owner"
+   * )
+   * * @SWG\Parameter(
+   *     name="title",
+   *     in="query",
+   *     type="string",
+   *     description="Folder's title"
+   * )
    *
    * @SWG\Response(
    *     response=200,
@@ -69,7 +81,27 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function getFoldersAction(Request $request)
   {
-    $folders = $this->getDoctrine()->getRepository('AppBundle:Folder')->findAll();
+    $cf = $request->query->get('cf');
+    $title = $request->query->get('title');
+
+    $qb = $this->em->createQueryBuilder()
+      ->select('folder')
+      ->from('AppBundle:Folder', 'folder')
+      ->leftJoin('folder.owner', 'owner');
+
+    if (isset($cf)) {
+      $qb->andWhere('lower(owner.codiceFiscale) = :cf')
+        ->setParameter('cf', strtolower($cf));
+    }
+
+    if (isset($title)) {
+      $qb->andWhere('lower(folder.title) = :title')
+        ->setParameter('title', strtolower($title));
+    }
+
+    $folders = $qb
+      ->getQuery()
+      ->getResult();
 
     return $this->view($folders, Response::HTTP_OK);
   }
