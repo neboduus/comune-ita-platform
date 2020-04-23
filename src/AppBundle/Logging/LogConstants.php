@@ -53,4 +53,6 @@ class LogConstants
     const PROTOCOLLO_UPLOADOPERATORE_ERROR = "Error {error_number} uploading allegati operatore of pratica {pratica} to protocollo";
     const RICHIESTA_INTEGRAZIONE_FROM_GISCOM = "Richiesta integrazione from Giscom";
 
+    const DOCUMENT_UPDATE_ERROR = "An error occurred while updating document";
+
 }

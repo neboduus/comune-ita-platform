@@ -4,10 +4,12 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,20 +23,20 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DocumentController extends Controller
 {
-
-  /**
-   * @var InstanceService
-   */
-  private $is;
   /**
    * @var EntityManager
    */
   private $em;
 
-  public function __construct(EntityManager $em, InstanceService $is)
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+  public function __construct(EntityManager $em, LoggerInterface $logger)
   {
     $this->em = $em;
-    $this->is = $is;
+    $this->logger = $logger;
   }
 
   /**
@@ -154,16 +156,16 @@ class DocumentController extends Controller
     $extension = explode('.', $document->getOriginalFilename());
     $extension = end($extension);
 
-    $fileName = '../var/uploads/documents/users/' .
+    $filePath = '../var/uploads/documents/users/' .
       $document->getOwnerId() . DIRECTORY_SEPARATOR . $document->getFolderId() .
       DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
 
-    if (!file_exists($fileName) && $document->getAddress()) {
-      $fileName = $document->getAddress();
+    if (!file_exists($filePath) && $document->getAddress()) {
+      $filePath = $document->getAddress();
     }
 
     try {
-      $fileContent = file_get_contents($fileName);
+      $fileContent = file_get_contents($filePath);
     } catch (\Exception $exception) {
       return new Response(null, Response::HTTP_NOT_FOUND);
     }
@@ -179,17 +181,20 @@ class DocumentController extends Controller
     );
     // Set the content disposition
     $response->headers->set('Content-Disposition', $disposition);
+    // Set the content type
+    $response->headers->set('Content-Type', $document->getMimeType());
 
     try {
       $document->setLastReadAt( new \DateTime());
       $document->setDownloadsCounter($document->getDownloadsCounter() + 1);
       $this->em->persist($document);
       $this->em->flush();
-      // Dispatch request
-      return $response;
+
     } catch (ORMException $e) {
-      // fixme
-      return new Response('Si è verificato un errore', Response::HTTP_INTERNAL_SERVER_ERROR);
+      $this->logger->notice(
+        LogConstants::DOCUMENT_UPDATE_ERROR, ['document' => $document]
+      );
     }
+    return $response;
   }
 }
