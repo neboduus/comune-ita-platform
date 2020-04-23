@@ -104,7 +104,7 @@ services:
       - !tagged app.backoffice
 
   AppBundle\Controller\DocumentController:
-    autowire: true
+    arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
 
   AppBundle\Controller\SubscriptionsController:
     autowire: true
