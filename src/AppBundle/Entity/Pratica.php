@@ -431,6 +431,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     private $tipiDelega;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $hash;
+
+    /**
      * Pratica constructor.
      */
     public function __construct()
@@ -1744,6 +1750,24 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     public function getPaymentDataArray()
     {
         return \json_decode($this->getPaymentData());
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash()
+    {
+      return $this->hash;
+    }
+
+    /**
+     * @param string $hash
+     * @return $this
+     */
+    public function setHash(string $hash)
+    {
+      $this->hash = $hash;
+      return $this;
     }
 
 }

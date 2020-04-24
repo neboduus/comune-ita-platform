@@ -48,6 +48,7 @@ parameters:
     logs_path: '%env(LOGS_PATH)%'
     formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
     formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'
+    hash_validity: '%env(HASH_VALIDITY)%'
     allowed_extensions:
       - doc: application/msword
       - docx: application/vnd.openxmlformats-officedocument.wordprocessingml.document
@@ -90,3 +91,4 @@ parameters:
     env(LOGS_PATH): '%kernel.logs_dir%/%kernel.environment%.log'
     env(FORMSERVER_PRIVATE_URL): 'http//formserver'
     env(FORMSERVER_PUBLIC_URL): 'https://formserver.ship.opencontent.io'
+    env(HASH_VALIDITY): '1'
