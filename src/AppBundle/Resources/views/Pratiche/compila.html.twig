@@ -70,7 +70,10 @@
         Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
           noAlerts: true,
           language: 'it',
-          i18n: formIoI18n
+          i18n: formIoI18n,
+          buttonSettings: {
+            showCancel: false
+          }
         })
           .then(function (form) {
 
@@ -102,6 +105,10 @@
                 data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
               };
             }
+
+            form.on('nextPage', function () {
+              document.getElementById("formio").scrollIntoView();
+            });
 
             form.nosubmit = true;
             // Triggered when they click the submit button.

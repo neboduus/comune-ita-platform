@@ -30,7 +30,7 @@ class PrintController extends Controller
 {
 
   /**
-   * @Route("/{pratica}", name="print_pratiche")
+   * @Route("/pratica/{pratica}", name="print_pratiche")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica

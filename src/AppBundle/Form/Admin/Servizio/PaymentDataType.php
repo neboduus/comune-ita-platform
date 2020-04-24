@@ -99,7 +99,6 @@ class PaymentDataType extends AbstractType
       $paymentAmount = str_replace(',', '.', $paymentParameters['total_amounts']);
     }
 
-
     $builder
       ->add('payment_required', CheckboxType::class, [
         'required' => false,
@@ -125,7 +124,6 @@ class PaymentDataType extends AbstractType
 
     foreach ($gateways as $g) {
       $parameters = $g->getFcqn()::getPaymentParameters();
-
       if (count($parameters) > 0) {
         $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
           'label' => false,
@@ -230,7 +228,6 @@ class PaymentDataType extends AbstractType
     ];
 
     if ($compiled) {
-      $options['label'] = false;
       $options['attr'] = ['readonly' => 'readonly'];
     }
     return $options;

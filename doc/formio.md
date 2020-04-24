@@ -2,6 +2,10 @@
 
 Linee guida da seguire per il corretto funzionamento delle form create tramite form.io
 
+## Pagamenti
+Per poter inserire un pagamneto in un form va inserito un campo di tipo text e rispettare le seguenti regole:
+* [`MUST`] Il name del campo deve essere `payment_amount`
+
 ## Componenti
 
 ### Wizard
@@ -26,6 +30,17 @@ Il componente per l'upload del file è utilizzabile cone le seguenti impostazion
 *  Va specificata un url così composto `https://{host}/{instance}/pratiche/allegati`
    Es.`http://stanzadelcittadino.it/comune-di-bugliano/pratiche/allegati`
 
+### Bilancio
+Il componente bilancio serve per poter dividere l'ammontare dei pagamenti in sottovoci.
+Per ogni riga di bilancio possone essere specificati:
+* Codice del capitolo [`MUST`]
+* Codide dell'ufficio [`MUST`]
+* Codice di accertamento
+* Importo [`MUST`]
+
+Il componete di bilancio è completamente trasparente all'utente finale, deve essere quin impostato come `hidden` e deve rispettare le seguneti regole:
+* [`MUST`] Il name del campo deve essere `payment_financial_report`
+* [`MUST`] La somma degli importi della componente di bilancio deve essere uguale al `payment_amount` specificato
 
 ## Integrazioni
 

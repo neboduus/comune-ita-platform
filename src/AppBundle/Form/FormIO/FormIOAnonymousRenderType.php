@@ -87,7 +87,6 @@ class FormIOAnonymousRenderType extends AbstractType
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
-
   public function getBlockPrefix()
   {
     return 'formio_render';
