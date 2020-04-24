@@ -16,6 +16,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\DematerializedFormAllegatiAttacherService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
+use DateTime;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -69,6 +70,7 @@ class PraticheAnonimeController extends Controller
 
   protected $handleFileUploads = false;
 
+  protected $hashValidity;
 
   const ENTE_SLUG_QUERY_PARAMETER = 'ente';
 
@@ -77,13 +79,18 @@ class PraticheAnonimeController extends Controller
    *
    * @param LoggerInterface $logger
    * @param TranslatorInterface $translator
+   * @param PraticaStatusService $statusService
+   * @param ModuloPdfBuilderService $pdfBuilder
+   * @param DematerializedFormAllegatiAttacherService $dematerializer
+   * @param $hashValidity
    */
   public function __construct(
     LoggerInterface $logger,
     TranslatorInterface $translator,
     PraticaStatusService $statusService,
     ModuloPdfBuilderService $pdfBuilder,
-    DematerializedFormAllegatiAttacherService $dematerializer
+    DematerializedFormAllegatiAttacherService $dematerializer,
+    $hashValidity
   )
   {
     $this->logger = $logger;
@@ -91,6 +98,7 @@ class PraticheAnonimeController extends Controller
     $this->statusService = $statusService;
     $this->pdfBuilder = $pdfBuilder;
     $this->dematerializer = $dematerializer;
+    $this->hashValidity = $hashValidity;
   }
 
   /**
@@ -162,7 +170,10 @@ class PraticheAnonimeController extends Controller
 
         return $this->redirectToRoute(
           'pratiche_anonime_show',
-          ['pratica' => $pratica->getId()]
+          [
+            'pratica' => $pratica->getId(),
+            'hash' => $pratica->getHash()
+          ]
         );
       }
     }
@@ -179,17 +190,29 @@ class PraticheAnonimeController extends Controller
    * @Route("/{pratica}", name="pratiche_anonime_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
+   * @param Request $request
    * @param Pratica $pratica
    *
-   * @return array
+   * @return Pratica[]|Response
    */
   public function showAction(Request $request, Pratica $pratica)
   {
-    $result = [
-      'pratica' => $pratica,
-      'formserver_url' => $this->getParameter('formserver_public_url')
-    ];
-    return $result;
+    $hash = $request->query->get('hash');
+
+    if ($hash && $hash == $pratica->getHash()) {
+      $timestamp = explode('-', $hash);
+      $timestamp = end($timestamp);
+      $maxVisibilityDate = (new DateTime())->setTimestamp($timestamp)->modify('+ ' . $this->hashValidity. ' days');
+
+      if ($maxVisibilityDate >= new DateTime('now')) {
+        $result = [
+          'pratica' => $pratica
+        ];
+        return $result;
+      }
+    }
+
+    return new Response(null, Response::HTTP_FORBIDDEN);
   }
 
   /**
@@ -243,7 +266,8 @@ class PraticheAnonimeController extends Controller
       ->setServizio($servizio)
       //->setType($servizio->getSlug())
       //->setUser($user)
-      ->setStatus(Pratica::STATUS_DRAFT);
+      ->setStatus(Pratica::STATUS_DRAFT)
+      ->setHash(hash('sha256', $pratica->getId()) . '-'. (new DateTime())->getTimestamp());
 
     $this->get('logger')->info(
       LogConstants::PRATICA_CREATED,

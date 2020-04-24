@@ -43,7 +43,13 @@ services:
       ["@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service']
 
   AppBundle\Controller\PraticheAnonimeController:
-    autowire: true
+    arguments:
+      - '@logger'
+      - "@translator"
+      - "@ocsdc.pratica_status_service"
+      - "@ocsdc.modulo_pdf_builder"
+      - "@ocsdc.allegati.dematerialized_attacher"
+      - '%hash_validity%'
 
   GuzzleHttp\Client: '@guzzle.client.mypay'
 

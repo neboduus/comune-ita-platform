@@ -79,3 +79,5 @@ parameters:
       - jpeg: image/jpeg
       - jpg: image/jpeg
       - png: image/png
+
+    hash_validity: 1
