@@ -28,7 +28,10 @@
         Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
           noAlerts: true,
           language: 'it',
-          i18n: formIoI18n
+          i18n: formIoI18n,
+          buttonSettings: {
+            showCancel: false
+          }
         })
           .then(function (form) {
             if (form.hasOwnProperty('wizard')) {
@@ -41,6 +44,10 @@
                 data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
               };
             }
+
+            form.on('nextPage', function () {
+              document.getElementById("formio").scrollIntoView();
+            });
 
             form.nosubmit = true;
             // Triggered when they click the submit button.
@@ -122,7 +129,7 @@
             </blockquote>
             {{ include('AppBundle:PraticheAnonime/parts:pratica_summary.html.twig', {'pratica':form.vars.data}) }}
             <blockquote style="margin-top: 20px">
-              {{ 'steps.common.conferma.help_text_bottom'|trans }}
+              Per inviare la richiesta fai cllck su "Non sono un robot" e successivamente sul pulsante "Invia".
             </blockquote>
           {% endif %}
 

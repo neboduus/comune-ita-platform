@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -118,17 +119,16 @@ class PraticheAnonimeController extends Controller
 
     $pratica = $this->createNewPratica($servizio);
 
-    $instanceService = $this->container->get('ocsdc.instance_service');
-    $pratica->setEnte($instanceService->getCurrentInstance());
-    $this->infereErogatoreFromEnteAndServizio($pratica);
-    $flow = $this->get('ocsdc.form.flow.formioanonymous');
-
+    // La sessione deve essere creata prima del flow, altrimenti lo crea con id vuoto
     if (!$this->get('session')->isStarted()) {
       $this->get('session')->start();
     }
 
+    $flow = $this->get('ocsdc.form.flow.formioanonymous');
     $flow->setInstanceKey($this->get('session')->getId());
     $flow->bind($pratica);
+
+
     if ($pratica->getInstanceId() == null) {
       $pratica->setInstanceId($flow->getInstanceId());
     }
@@ -194,6 +194,7 @@ class PraticheAnonimeController extends Controller
    * @param Pratica $pratica
    *
    * @return Pratica[]|Response
+   * @throws \Exception
    */
   public function showAction(Request $request, Pratica $pratica)
   {
@@ -202,7 +203,7 @@ class PraticheAnonimeController extends Controller
     if ($hash && $hash == $pratica->getHash()) {
       $timestamp = explode('-', $hash);
       $timestamp = end($timestamp);
-      $maxVisibilityDate = (new DateTime())->setTimestamp($timestamp)->modify('+ ' . $this->hashValidity. ' days');
+      $maxVisibilityDate = (new DateTime())->setTimestamp($timestamp)->modify('+ ' . $this->hashValidity . ' days');
 
       if ($maxVisibilityDate >= new DateTime('now')) {
         $result = [
@@ -220,22 +221,33 @@ class PraticheAnonimeController extends Controller
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Pratica $pratica
    *
-   * @return BinaryFileResponse
+   * @return BinaryFileResponse|Response
+   * @throws \Exception
    */
   public function showPdfAction(Request $request, Pratica $pratica)
   {
-    $user = $pratica->getUser();
-    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+    $hash = $request->query->get('hash');
 
+    if ($hash && $hash == $pratica->getHash()) {
+      $timestamp = explode('-', $hash);
+      $timestamp = end($timestamp);
+      $maxVisibilityDate = (new DateTime())->setTimestamp($timestamp)->modify('+ ' . $this->hashValidity . ' days');
 
-    return new BinaryFileResponse(
-      $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
-      200,
-      [
-        'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
-      ]
-    );
+      if ($maxVisibilityDate >= new DateTime('now')) {
+        $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+
+        return new BinaryFileResponse(
+          $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
+          200,
+          [
+            'Content-type' => 'application/octet-stream',
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
+          ]
+        );
+      }
+    }
+
+    return new Response(null, Response::HTTP_FORBIDDEN);
   }
 
   /**
@@ -254,6 +266,7 @@ class PraticheAnonimeController extends Controller
    * @param Servizio $servizio
    *
    * @return Pratica
+   * @throws \Exception
    */
   private function createNewPratica(Servizio $servizio)
   {
@@ -267,7 +280,11 @@ class PraticheAnonimeController extends Controller
       //->setType($servizio->getSlug())
       //->setUser($user)
       ->setStatus(Pratica::STATUS_DRAFT)
-      ->setHash(hash('sha256', $pratica->getId()) . '-'. (new DateTime())->getTimestamp());
+      ->setHash(hash('sha256', $pratica->getId()) . '-' . (new DateTime())->getTimestamp());
+
+    $instanceService = $this->container->get('ocsdc.instance_service');
+    $pratica->setEnte($instanceService->getCurrentInstance());
+    $this->infereErogatoreFromEnteAndServizio($pratica);
 
     $this->get('logger')->info(
       LogConstants::PRATICA_CREATED,
@@ -277,38 +294,43 @@ class PraticheAnonimeController extends Controller
     return $pratica;
   }
 
+  /**
+   * @param array $data
+   * @return CPSUser
+   * @throws \Exception
+   */
   private function checkUser(array $data): CPSUser
   {
     $em = $this->getDoctrine()->getManager();
-    $cf = $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] ? $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] : false;
+    $cf = isset($data['flattened']['applicant.data.fiscal_code.data.fiscal_code']) ? $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] : false;
 
-    if ( $cf ) {
-      $result = $em->createQueryBuilder()
-        ->select('user.id')
-        ->from('AppBundle:User', 'user')
-        ->where('upper(user.username) = upper(:username)')
-        ->setParameter('username', $cf)
-        ->getQuery()->getResult();
+    // Check md5 sessione
+    $result = $em->createQueryBuilder()
+      ->select('user.id')
+      ->from('AppBundle:User', 'user')
+      ->where('upper(user.username) = upper(:username)')
+      ->setParameter('username', md5($this->get('session')->getId()))
+      ->getQuery()->getResult();
 
-      if ( !empty($result)) {
-        $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
-        $user =  $repository->find($result[0]['id']);
-        return $user;
-      }
+    if (!empty($result)) {
+      $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
+      $user = $repository->find($result[0]['id']);
+      return $user;
     }
 
     $user = new CPSUser();
     $user
-      ->setUsername($cf ? $cf : $user->getId() )
-      ->setCodiceFiscale( $cf ? $cf : '' )
-      ->setEmail( $data['flattened']['applicant.data.email_address'] ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN )
-      ->setNome($data['flattened']['applicant.data.completename.data.name'] ? $data['flattened']['applicant.data.completename.data.name'] : '' )
-      ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ? $data['flattened']['applicant.data.completename.data.surname'] : '' )
-      ->setDataNascita(isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl']) ? new \DateTime($data['flattened']['applicant.data.Born.data.natoAIl']) : null )
-      ->setLuogoNascita( isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : '' )
-      ->setSdcIndirizzoResidenza( isset($data['flattened']['applicant.data.Born.data.address']) && !empty($data['flattened']['applicant.data.Born.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : '' )
-      ->setSdcCittaResidenza( isset($data['flattened']['applicant.data.Born.data.municipality']) && !empty($data['flattened']['applicant.data.Born.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : '' )
-      ->setSdcCapResidenza( isset($data['flattened']['applicant.data.Born.data.postal_code']) && !empty($data['flattened']['applicant.data.Born.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : '' );
+      ->setUsername(md5($this->get('session')->getId()))
+      ->setCodiceFiscale($cf . '-' . md5($this->get('session')->getId()) . '-' . time())
+      ->setEmail(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
+      ->setEmailContatto(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
+      ->setNome(isset($data['flattened']['applicant.data.completename.data.name']) ? $data['flattened']['applicant.data.completename.data.name'] : '')
+      ->setCognome(isset($data['flattened']['applicant.data.completename.data.surname']) ? $data['flattened']['applicant.data.completename.data.surname'] : '')
+      ->setDataNascita(isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl']) ? new \DateTime($data['flattened']['applicant.data.Born.data.natoAIl']) : null)
+      ->setLuogoNascita(isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : '')
+      ->setSdcIndirizzoResidenza(isset($data['flattened']['applicant.data.address.data.address']) && !empty($data['flattened']['applicant.data.address.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : '')
+      ->setSdcCittaResidenza(isset($data['flattened']['applicant.data.address.data.municipality']) && !empty($data['flattened']['applicant.data.address.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : '')
+      ->setSdcCapResidenza(isset($data['flattened']['applicant.data.address.data.postal_code']) && !empty($data['flattened']['applicant.data.address.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : '');
 
     $user->addRole('ROLE_USER')
       ->addRole('ROLE_CPS_USER')

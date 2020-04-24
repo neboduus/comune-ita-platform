@@ -5,8 +5,8 @@
       input[type='checkbox'],
       input[type='radio'] {
         margin-left: 0px;
-        position: unset;
-        left: unset;
+        position: static;
+        left: 0;
         opacity: 1;
         cursor: pointer;
       }
@@ -15,6 +15,18 @@
         margin-left: 0.8rem;
       }
     }
+  }
+
+  input, select, textarea , .formio-choices .form-control{
+    background: #fafafa;
+  }
+
+  .formio-summary .form-group {
+    padding-bottom: 0;
+  }
+
+  input.form-control::placeholder {
+    color: #ccc;
   }
 }
 
@@ -121,21 +133,6 @@
   }
 }
 
-/*input[type='date'],
-input[type='datetime-local'],
-input[type='email'],
-input[type='number'],
-input[type='password'],
-input[type='search'],
-input[type='tel'],
-input[type='text'],
-input[type='time'],
-input[type='url'],
-textarea {
-  border: none;
-  background-color: #f2f2f2;
-  border-radius: 4px 0 0 4px;
-}*/
 
 textarea {
   background-color: #f6f6f6 !important;

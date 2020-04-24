@@ -46,19 +46,20 @@
   {% endif %}
 
   {% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
-  <div class="row">
-    <div class="col-sm-12">
-      <strong>{{ 'pratica.dettaglio.compilazione'|trans }}</strong>
-    </div>
-    <div class="col-sm-12 p-3">
-      <div id="formio_summary" class="formio-front formio-summary"
-           data-formserver_url="{{ formserver_url }}"
-           data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
-           data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
+    <div class="row">
+      <div class="col-sm-12">
+        <strong>{{ 'pratica.dettaglio.compilazione'|trans }}</strong>
+      </div>
+      <div class="col-sm-12 p-3">
+        <div id="formio_summary" class="formio-front formio-summary"
+             data-formserver_url="{{ formserver_url }}"
+             data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+             data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
+        </div>
       </div>
     </div>
-  </div>
   {% endif %}
+
   {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 </div>
 

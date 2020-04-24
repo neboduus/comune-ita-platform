@@ -189,6 +189,7 @@ services:
       - "@templating"
       - "%ocsdc_default_datetime_format%"
       - "@router"
+      - "%ez_password%"
 
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"

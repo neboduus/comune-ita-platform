@@ -33,6 +33,9 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 class ModuloPdfBuilderService
 {
+
+  const PRINTABLE_USERNAME = 'ez';
+
   /**
    * @var Filesystem
    */
@@ -78,6 +81,11 @@ class ModuloPdfBuilderService
    */
   private $dateTimeFormat;
 
+  /**
+   * @var WkhtmltopdfService
+   */
+  private $printablePassword;
+
   private $router;
 
   public function __construct(
@@ -90,7 +98,8 @@ class ModuloPdfBuilderService
     string $wkhtmltopdfService,
     EngineInterface $templating,
     $dateTimeFormat,
-    UrlGeneratorInterface $router
+    UrlGeneratorInterface $router,
+    string $printablePassword
   )
   {
     $this->filesystem = $filesystem;
@@ -103,6 +112,7 @@ class ModuloPdfBuilderService
     $this->templating = $templating;
     $this->dateTimeFormat = $dateTimeFormat;
     $this->router = $router;
+    $this->printablePassword = $printablePassword;
   }
 
   /**
@@ -424,12 +434,14 @@ class ModuloPdfBuilderService
 
   public function generatePdfUsingGotemberg( Pratica $pratica )
   {
+
     $url = $this->router->generate('print_pratiche', ['pratica' => $pratica], UrlGeneratorInterface::ABSOLUTE_URL);
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
     $request->setMargins(GotembergRequest::NO_MARGINS);
     $request->setWaitDelay(5);
+    $request->addRemoteURLHTTPHeader('Authorization', 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword])));
     $response =  $client->post($request);
     $fileStream = $response->getBody();
     return $fileStream->getContents();

@@ -104,7 +104,7 @@ class GiscomAPIController extends Controller
     {
       $fileContent = file_get_contents($attachment->getFile()->getPathname());
       // Provide a name for your file with extension
-      $filename = $attachment->getOriginalFilename();
+      $filename = mb_convert_encoding($attachment->getOriginalFilename(), "ASCII", "auto");
       // Return a response with a specific content
       $response = new Response($fileContent);
       // Create the disposition of the file

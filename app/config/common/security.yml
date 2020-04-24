@@ -78,6 +78,11 @@ security:
             http_basic:
                provider: in_memory
 
+        print:
+          pattern: ^/%prefix%/print/pratica/.*
+          http_basic:
+            provider: in_memory
+
         user_api:
             pattern: ^/%prefix%/api/v\d+\.\d+/user/.*
             guard:

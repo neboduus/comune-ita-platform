@@ -45,7 +45,7 @@ export default class FinancialReport extends Base {
     });
 
     // Calling super.render will wrap it html as a component.
-    return super.render(`<div class="row"><div class="col-12">${this.component.label}${content}</div></div>`);
+    return super.render(`<div class="row"><div class="col-12"><label>${this.component.label}${content}</label></div></div>`);
   }
 
   /**

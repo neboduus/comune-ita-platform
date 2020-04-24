@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
@@ -11,22 +12,30 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
  */
 class DirectoryNamerService implements DirectoryNamerInterface
 {
-    /**
-     * @param object          $object
-     * @param PropertyMapping $mapping
-     * @return string
-     */
-    public function directoryName($object, PropertyMapping $mapping):string
-    {
-        if ($object instanceof Allegato) {
-          $owner = $object->getOwner();
-          if ($owner instanceof User) {
-            return $object->getOwner()->getId();
-          } else {
-            return date('Y/m-d/Hi');
-          }
-        }
 
-        return 'misc';
+  private $charsPerDir = 2;
+  private $dirs = 3;
+
+  /**
+   * @param object $object
+   * @param PropertyMapping $mapping
+   * @return string
+   */
+  public function directoryName($object, PropertyMapping $mapping): string
+  {
+    if ($object instanceof Allegato) {
+      $owner = $object->getOwner();
+      if ($owner instanceof User) {
+        return $object->getOwner()->getId();
+      } else {
+        $fileName = $mapping->getFileName($object);
+        $parts = [];
+        for ($i = 0, $start = 0; $i < $this->dirs; $i++, $start += $this->charsPerDir) {
+          $parts[] = \substr($fileName, $start, $this->charsPerDir);
+        }
+        return \implode('/', $parts);
+      }
     }
+    return 'misc';
+  }
 }

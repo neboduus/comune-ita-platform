@@ -37,7 +37,10 @@ class FormIOAnonymousFlow extends PraticaFlow
     // Step conferma
     $steps[] = array(
       'label'     => 'steps.common.conferma.label',
-      'form_type' => RecaptchaType::class
+      'form_type' => RecaptchaType::class,
+      'form_options' => [
+        'validation_groups' => 'recaptcha'
+      ]
     );
 
     return $steps;
