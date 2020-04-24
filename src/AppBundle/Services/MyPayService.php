@@ -190,7 +190,6 @@ class MyPayService
     );
 
     if (isset($data[PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {
-      dump($data[PaymentDataType::PAYMENT_FINANCIAL_REPORT]);
       foreach ( $data[PaymentDataType::PAYMENT_FINANCIAL_REPORT] as $v ) {
         $temp =[];
         $temp['codCapitolo'] = $v['codCapitolo'];

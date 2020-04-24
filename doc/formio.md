@@ -38,7 +38,7 @@ Per ogni riga di bilancio possone essere specificati:
 * Codice di accertamento
 * Importo [`MUST`]
 
-Il componete di bilancio è completamente trasparente all'utente finale, deve essere quin impostato come `hidden` e deve rispettare le seguneti regole:
+Il componete di bilancio è completamente trasparente all'utente finale, deve essere quindi impostato come `hidden` e deve rispettare le seguneti regole:
 * [`MUST`] Il name del campo deve essere `payment_financial_report`
 * [`MUST`] La somma degli importi della componente di bilancio deve essere uguale al `payment_amount` specificato
 
