@@ -63,4 +63,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 
         CREATE DATABASE sdc_moena;
         GRANT ALL PRIVILEGES ON DATABASE sdc_moena TO $DB_USER;
+
+        CREATE DATABASE sdc_provinciatrento;
+        GRANT ALL PRIVILEGES ON DATABASE sdc_provinciatrento TO $DB_USER;
 EOSQL
