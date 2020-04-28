@@ -41,6 +41,12 @@ i.mandatory::after {
 
 table {
   td {
+    &[data-title="Nome"] {
+      /* Attribute has this exact value */
+      word-wrap: break-word;
+      overflow: hidden;
+      max-width: 400px;
+    }
     &.actions {
       width: 26%;
     }
@@ -66,6 +72,11 @@ table {
       padding-left: 50%;
       white-space: normal;
       text-align: left;
+      &[data-title="Nome"] {
+        /* Attribute has this exact value */
+        word-wrap: break-word;
+        overflow: hidden;
+      }
       &:before {
         /* Now like a table header */
         position: absolute;
