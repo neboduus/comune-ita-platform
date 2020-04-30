@@ -29,9 +29,11 @@
         {{ form_row(form.rolling_days) }}
         {{ form_row(form.minimum_scheduling_notice) }}
         {{ form_row(form.allow_cancel_days) }}
+
+        {{ include('AppBundle:Calendars/parts:calendarExternalCalendars.html.twig') }}
         {{ include('AppBundle:Calendars/parts:calendarClosingPeriods.html.twig') }}
         {{ include('AppBundle:Calendars/parts:calendarOpeningHours.html.twig') }}
-        
+
         <div class="row">
           <div class="col-6">
             <input class="btn btn-warning mr-1" type="submit" value="Modifica" />

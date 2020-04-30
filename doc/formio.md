@@ -65,3 +65,5 @@ Per aggangiare un servizio form.io al backoffice della prenotazione appuntamenti
 * Campo `calendar`: il calendario per la scelta del giorno e dello slot disponibile. La compilazione di questo campo restituirà una stringa del tipo
 `d/m/Y @ H:i-H:i (calendarId)`
 * Campo `user_message`: il messaggio descrittivo dell'utente che prenota l'appuntamento
+
+Si consiglia di utilizzare il form `Anagrafica-lite` a tale scopo.
