@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Model\ExternalCalendar;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -119,6 +120,12 @@ class Calendar
   private $location;
 
   /**
+   * @ORM\Column(name="external_calendars", type="json_array", nullable=true)
+   * @SWG\Property(description="Calendar's external calendars", type="array", @SWG\Items(ref=@Model(type=ExternalCalendar::class)))
+   */
+  private $externalCalendars;
+
+  /**
    * @var DateTimeInterval[]
    *
    * @ORM\Column(name="closing_periods", type="json_array", nullable=true)
@@ -149,6 +156,7 @@ class Calendar
       $this->moderators = new ArrayCollection();
       $this->openingHours = new ArrayCollection();
       $this->closingPeriods = new ArrayCollection();
+      $this->externalCalendars = new ArrayCollection();
     }
   }
 
@@ -450,6 +458,37 @@ class Calendar
       $closingPeriods[] = $tmp;
     }
     return $closingPeriods;
+  }
+
+  /**
+   * Set externalCalendars.
+   *
+   * @param string $externalCalendars
+   *
+   * @return Calendar
+   */
+  public function setExternalCalendars($externalCalendars)
+  {
+    $this->externalCalendars = $externalCalendars;
+
+    return $this;
+  }
+
+  /**
+   * Get externalCalendars.
+   *
+   * return ExternalCalendar[]
+   */
+  public function getExternalCalendars()
+  {
+    $externalCalendars = [];
+    foreach ($this->externalCalendars as $externalCalendar) {
+      $tmp = new ExternalCalendar();
+      $tmp->setName($externalCalendar['name']);
+      $tmp->setUrl($externalCalendar['url']);
+      $externalCalendars[] = $tmp;
+    }
+    return $externalCalendars;
   }
 
   /**

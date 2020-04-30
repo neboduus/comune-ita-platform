@@ -6,9 +6,11 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
 use AppBundle\Services\InstanceService;
+use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use ICal\ICal;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -278,6 +280,7 @@ class CalendarsController extends Controller
    * Finds and displays a Calendar entity.
    * @Template()
    * @Route("/operatori/calendars/{calendar}", name="operatori_calendar_show")
+   * @throws \Exception
    */
   public function showCalendarAction(Request $request, Calendar $calendar)
   {
@@ -419,6 +422,35 @@ class CalendarsController extends Controller
         'color' => 'var(--200)'
       ];
     }
+
+    $externalCalendars = [];
+    $externalEvents = [];
+
+    foreach ($calendar->getExternalCalendars() as $externalCalendar) {
+      $externalCalendars[$externalCalendar->getName()] = new ICal('ICal.ics', array(
+        'defaultSpan'                 => 2,     // Default value
+        'defaultTimeZone'             => 'UTC',
+        'defaultWeekStart'            => 'MO',  // Default value
+        'disableCharacterReplacement' => false, // Default value
+        'filterDaysAfter'             => null,  // Default value
+        'filterDaysBefore'            => null,  // Default value
+        'skipRecurrence'              => false, // Default value
+      ));
+      $externalCalendars[$externalCalendar->getName()]->initUrl($externalCalendar->getUrl(), $username = null, $password = null, $userAgent = null);
+      foreach ($externalCalendars[$externalCalendar->getName()]->events() as $event) {
+        $externalEvents[] = [
+          'start' => (new DateTime($event->dtstart))->setTimezone(new \DateTimeZone('Europe/Rome'))->format('c'),
+          'end'=>(new DateTime($event->dtend))->format('c'),
+          'title'=>$externalCalendar->getName(),
+          'uid' =>$event->uid,
+          'borderColor' => 'var(--100)',
+          'color' => 'var(--100)',
+          'textColor' => 'var(--dark)',
+        ];
+      }
+    }
+
+    $events = array_merge($events, $externalEvents);
 
     // compute min slot dimension
     $minDuration = PHP_INT_MAX;
