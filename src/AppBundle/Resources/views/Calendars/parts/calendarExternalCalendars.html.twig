@@ -1,0 +1,72 @@
+<label style="font-weight: 600; padding: 0 0.5rem;">Calendari esterni</label>
+<fieldset class="bg-light p-3 mb-3">
+  <div id="external_calendars"
+       data-prototype='
+             <div id="appbundle_calendar_external_calendars___name__">
+               <div class="row">
+                 <div class="col-3">
+                   <div class="form-group">
+                     <label for="appbundle_calendar_external_calendars___name___name" class="required">Nome</label>
+                     <input type="text" id="appbundle_calendar_external_calendars___name___name" name="appbundle_calendar[external_calendars][__name__][name]" required="required" class="form-control" />
+                   </div>
+                 </div>
+                 <div class="col-7">
+                   <div class="form-group">
+                     <label for="appbundle_calendar_external_calendars___name___url" class="required">Url</label>
+                     <input type="textl" id="appbundle_calendar_external_calendars___name___url" name="appbundle_calendar[external_calendars][__name__][url]" required="required" class="form-control" />
+                   </div>
+                 </div>
+                 <div class="col-2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>&nbsp;</label>
+                    <a class="btn btn-danger btn-xs js-remove-external_calendar" href="#">
+                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+                      <span class="d-none d-md-block">Elimina Chiusura</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+               </div>
+             </div>
+             <div class="clearfix mb-4"></div>'
+       data-widget-external_calendar="{{ '<div class="js-external_calendar-item"></div>'|e }}"
+       data-widget-counter="{{ form.external_calendars|length }}">
+    {% if form.external_calendars|length > 0 %}
+      {% for external_calendar in form.external_calendars %}
+        <div class="js-external_calendar-item">
+          <div id="appbundle_calendar_external_calendars___name__">
+            <div class="row">
+              <div class="col-3">
+                {{ form_row(external_calendar.name) }}
+              </div>
+              <div class="col-7">
+                {{ form_row(external_calendar.url) }}
+              </div>
+              <div class="col-2">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>&nbsp;</label>
+                    <a class="btn btn-danger btn-xs js-remove-external_calendar" href="#">
+                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+                      <span class="d-none d-md-block">Elimina calendario esterno</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix mb-4"></div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info" id="no-external_calendars">Non sono presenti calendari esterni</div>
+    {% endif %}
+  </div>
+  <button type="button"
+          class="add-another-external_calendar-widget btn btn-xs btn-primary"
+          class="add-another-external_calendar-widget btn btn-xs btn-primary"
+          data-list-selector="#external_calendars">Aggiungi calendario esterno
+  </button>
+</fieldset>
+

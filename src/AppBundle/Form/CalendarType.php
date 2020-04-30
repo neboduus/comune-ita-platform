@@ -23,8 +23,8 @@ class CalendarType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $minimumSchedulingNotices = [
-      'Un ora prima'=>1, 'Due ore prima'=>2, 'Quattro ore prima'=>4, 'Otto ore prima'=>8,
-      'Un giorno prima'=>24, 'Due giorni prima'=>48, 'Tre giorni prima'=>72, 'Una settimana prima'=>168
+      'Un ora prima' => 1, 'Due ore prima' => 2, 'Quattro ore prima' => 4, 'Otto ore prima' => 8,
+      'Un giorno prima' => 24, 'Due giorni prima' => 48, 'Tre giorni prima' => 72, 'Una settimana prima' => 168
     ];
 
     $builder
@@ -68,11 +68,17 @@ class CalendarType extends AbstractType
         'required' => false,
         'label' => 'Periodi di chiusura',
         'entry_type' => DateTimeIntervalType::class,
-        'allow_add'=> true
+        'allow_add' => true
       ])
       ->add('location', TextareaType::class, [
         'required' => true,
         'label' => 'Luogo dell\'appuntamento'
+      ])
+      ->add('external_calendars', CollectionType::class, [
+        'required' => false,
+        'label' => 'Calendari esterni',
+        'entry_type' => ExternalCalendarType::class,
+        'allow_add' => true
       ]);
   }
 

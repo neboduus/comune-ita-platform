@@ -12,7 +12,6 @@ $(document).ready(function () {
   $("#modalSlot").click(function () {
     $("#edit_alert").show();
   });
-
   // Fullcalendar initialization
   var calendarEl = document.getElementById('fullcalendar');
 
@@ -52,8 +51,12 @@ $(document).ready(function () {
     editable: true,
     eventDurationEditable: false,
     eventDrop: function (info) {
-      compileModal(info);
-      $("#edit_alert").show();
+      if (!info.event.extendedProps.uid) {
+        compileModal(info);
+        $("#edit_alert").show();
+      } else {
+        info.revert();
+      }
     },
     eventClick: function (info) {
       if (info.event.id) compileModal(info);
