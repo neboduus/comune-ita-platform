@@ -32,6 +32,10 @@ class CalendarBackofficeType extends AbstractType
         'required' => true,
         'label' => 'Titolo del calendario'
       ])
+      ->add('id', TextType::class, [
+        'label' => 'Identificativo calendario (Calendar ID)',
+        'disabled'=>true,
+      ])
       ->add('contact_email', EmailType::class, [
         'required' => false,
         'label' => 'Email di contatto'

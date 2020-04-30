@@ -19,13 +19,15 @@
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         {{ form_start(form) }}
         {{ form_errors(form) }}
-
         {{ form_row(form.title) }}
+        <div class="d-none">{{ form_row(form.id) }}</div>
         {{ form_row(form.location) }}
         {{ form_row(form.contact_email) }}
         {{ form_row(form.owner) }}
         {{ form_row(form.is_moderated) }}
-        {{ form_row(form.moderators) }}
+        <div id="moderators" {% if not calendar.isModerated %} style="display: none" {% endif %}>
+          {{ form_row(form.moderators) }}
+        </div>
         {{ form_row(form.rolling_days) }}
         {{ form_row(form.minimum_scheduling_notice) }}
         {{ form_row(form.allow_cancel_days) }}
