@@ -6,6 +6,12 @@ require("summernote/dist/summernote-bs4.css");
 
 $(document).ready(function () {
 
+  var moderated = $('#appbundle_calendar_is_moderated');
+
+  moderated.change( function(){
+    $('#moderators').toggle();
+  });
+
   $('textarea').summernote({
     toolbar: [
       ['style', ['style']],
@@ -116,4 +122,18 @@ $(document).ready(function () {
       $('#no-external_calendars').append('<div class="alert alert-info" id="no-external_calendars">Non sono presenti calendari esterni</div>');
     }
   });
+
+  $('.clone').click(function (e) {
+    e.preventDefault()
+    let button = $(this)
+    let temp = $("<input>")
+    $("body").append(temp)
+    temp.val($('#appbundle_calendar_id').val()).select()
+    document.execCommand("copy")
+    button.find('span').text('ID Copiato')
+    temp.remove();
+    setTimeout(function () {
+      button.find('span').text('Copia ID')
+    }, 2000);
+  })
 });
