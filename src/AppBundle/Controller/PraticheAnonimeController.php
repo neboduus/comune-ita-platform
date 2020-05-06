@@ -112,6 +112,12 @@ class PraticheAnonimeController extends Controller
    */
   public function newAction(Request $request, Servizio $servizio)
   {
+
+    if ( $servizio->getStatus() != Servizio::STATUS_AVAILABLE ) {
+      $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' non è disponibile.');
+      return $this->redirectToRoute('servizi_list');
+    }
+
     if ($servizio->getAccessLevel() > 0 || $servizio->getAccessLevel() === null) {
       $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' è disponibile solo per gli utenti loggati.');
       return $this->redirectToRoute('servizi_list');

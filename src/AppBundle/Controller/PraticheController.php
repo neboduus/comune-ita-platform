@@ -86,6 +86,12 @@ class PraticheController extends Controller
    */
   public function newAction(Request $request, Servizio $servizio)
   {
+
+    if ( $servizio->getStatus() != Servizio::STATUS_AVAILABLE ) {
+      $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' non è disponibile.');
+      return $this->redirectToRoute('servizi_list');
+    }
+
     $user = $this->getUser();
     if ($servizio->getHandler() == null || empty($servizio->getHandler()) || $servizio->getHandler() == 'default') {
 
@@ -207,7 +213,6 @@ class PraticheController extends Controller
   public function compilaAction(Request $request, Pratica $pratica)
   {
     $em = $this->getDoctrine()->getManager();
-
     if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION && $pratica->getStatus() !== Pratica::STATUS_DRAFT && $pratica->getStatus() !== Pratica::STATUS_PAYMENT_PENDING) {
       return $this->redirectToRoute(
         'pratiche_show',
