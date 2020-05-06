@@ -12,6 +12,12 @@ use Ramsey\Uuid\Uuid;
  */
 class ScheduledAction
 {
+    const STATUS_PENDING = 1;
+
+    const STATUS_DONE = 3;
+
+    const STATUS_INVALID = 4;
+
     /**
      * Hook timestampable behavior
      * updates createdAt, updatedAt fields
@@ -45,13 +51,28 @@ class ScheduledAction
      */
     private $params;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $hostname;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"default":"1"})
+     */
+    private $status;
+
     public function __construct()
     {
         if ( !$this->id) {
             $this->id = Uuid::uuid4();
         }
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
+        $this->createdAt = new \DateTime('now', new \DateTimeZone(date_default_timezone_get()));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone(date_default_timezone_get()));
+        $this->status = self::STATUS_PENDING;
     }
 
     /**
@@ -112,6 +133,48 @@ class ScheduledAction
         $this->service = $service;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHostname(): string
+    {
+      return $this->hostname;
+    }
+
+    /**
+     * @param string $hostname
+     */
+    public function setHostname(string $hostname): void
+    {
+      $this->hostname = $hostname;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus(): int
+    {
+      return $this->status;
+    }
+
+    /**
+     * @param int $status
+     */
+    public function setStatus(int $status): void
+    {
+      $this->status = $status;
+    }
+
+    public function setDone()
+    {
+      $this->status = self::STATUS_DONE;
+    }
+
+    public function setInvalid()
+    {
+      $this->status = self::STATUS_INVALID;
     }
 
 }
