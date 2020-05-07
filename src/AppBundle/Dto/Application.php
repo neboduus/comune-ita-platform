@@ -491,9 +491,9 @@ class Application
     $dto->subject = $pratica->getOggetto();
 
     $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+
     $dto->compiledModules = self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl);
     //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());
-
     $dto->creationTime = $pratica->getCreationTime();
     $dto->submissionTime = $pratica->getSubmissionTime();
     $dto->protocolFolderNumber = $pratica->getNumeroFascicolo();
@@ -514,6 +514,9 @@ class Application
 
   public static function decorateDematerializedForms( $data, $attachmentEndpointUrl = '')
   {
+    if (!isset($data['flattened'])) {
+      return $data;
+    }
     $decoratedData = $data['flattened'];
     foreach ($decoratedData as $k => $v) {
 
