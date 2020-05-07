@@ -1,0 +1,73 @@
+parameters:
+    
+    mailer_transport:  '%env(MAILER_TRANSPORT)%'
+    mailer_host:       '%env(MAILER_HOST)%'
+    mailer_user:       '%env(MAILER_USER)%'
+    mailer_password:   '%env(MAILER_PASSWORD)%'
+    mailer_port:       '%env(MAILER_PORT)%'
+    mailer_encription: 'tls'
+    default_from_email_address: '%env(DEFAULT_FROM_EMAIL_ADDRESS)%'
+    
+    logs_formatter: 'monolog.formatter.line'
+    logs_path: '%env(LOGS_PATH)%'
+    
+    # knp_snappy
+    wkhtmltopdf_service: '%env(WKHTMLTOPDF_SERVICE)%'
+    
+    # La password usata da gpa per pushare gli status changes
+    giscom_password: '%env(GISCOM_PASSWORD)%'
+    giscom_adapter_url: '%env(GISCOM_ADAPTER_URL)%'
+    giscom_adapter_username: '%env(GISCOM_ADAPTER_USERNAME)%'
+    giscom_adapter_password: '%env(GISCOM_ADAPTER_PASSWORD)%'
+    
+    # La password usata da comunweb per pushare le schede informative
+    ez_password: '%env(EZ_PASSWORD)%'
+
+    pitre_adapter_url: '%env(PITRE_ADAPTER_URL)%'
+    mypay_adapter_url: '%env(MYPAY_ADAPTER_URL)%'
+    
+    messages_enabled: false
+    messages_backend_url: http://localhost:3000/
+
+    ocsdc_scheme: '%env(OCSDC_SCHEME)%'
+    ocsdc_host: '%env(OCSDC_HOST)%'
+    
+    ocsdc_iter_duration_start_status: 3
+    ocsdc_iter_duration_end_statuses: [10,100]
+    
+    ocsdc_default_date_format: "d-m-Y"
+    ocsdc_default_datetime_format: "d-m-Y H:i"
+    ocsdc_slim_datetime_format: "d/m/y H:i"
+    ocsdc_default_moment_datetime_format: "DD-MM-YYYY HH:mm"
+    ocsdc_default_time_format: "H:i"
+    
+    generate_p7m_thumbnail: true
+    gsbinary: 'gs'
+    
+    slack_logs_webhook_url: 'http://slack.com'
+
+    password_life_time: '%env(int:PASSWORD_LIFE_TIME)%'
+    inactive_user_life_time: '%env(int:INACTIVE_USER_LIFE_TIME)%'
+
+    formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
+    formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'
+
+    allowed_extensions:
+        -
+            doc: application/msword
+        -
+            docx: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        -
+            odt: application/vnd.oasis.opendocument.text
+        -
+            pdf: application/pdf
+        -
+            txt: text/plain
+        -
+            jpeg: image/jpeg
+        -
+            jpg: image/jpeg
+        -
+            png: image/png
+
+    hash_validity: '%env(HASH_VALIDITY)%'

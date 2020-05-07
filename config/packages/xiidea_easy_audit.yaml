@@ -1,0 +1,11 @@
+# Read the documentation: http://xiidea.github.io/EasyAuditBundle/
+xiidea_easy_audit:
+    audit_log_class: App\Entity\AuditLog
+    default_logger: false
+    user_property: username
+    events:
+        - security.interactive_login
+        - security.authentication.failure
+    logger_channel:
+        xiidea.easy_audit.logger.service: ["info", "debug"]
+        file.logger: ["!info", "!debug"]

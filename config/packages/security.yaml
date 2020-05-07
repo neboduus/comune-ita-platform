@@ -1,0 +1,154 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+    encoders:
+        App\Entity\User: bcrypt
+        App\Entity\AdminUser: bcrypt
+        App\Entity\OperatoreUser: bcrypt
+
+    providers:
+        chain_provider:
+            chain:
+                providers: [in_memory, app_user_provider, cps_user_provider]
+        
+        in_memory:
+            memory:
+                users:
+                    ez:
+                        password: '%ez_password%'
+                        roles: 'ROLE_EZ'
+                    giscom:
+                        password: '%giscom_password%'
+                        roles: 'ROLE_GISCOM'
+        
+        cps_user_provider:
+            id: App\Services\CPSUserProvider
+        
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+    
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        
+        cps:
+            pattern: ^/(.*)/(pratiche|terms_accept|user|documenti)/
+            guard:
+                provider: cps_user_provider
+                authenticators:
+                    - App\Security\CPSAuthenticator
+        
+        api_login:
+            pattern:  ^/(.*)/api/auth
+            stateless: true
+            anonymous: true
+            provider: chain_provider
+            json_login:
+                check_path: /(.*)/api/auth
+                require_previous_session: false
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        
+        api:
+            pattern:   /(.*)/api/(services|applications)
+            methods: [POST, PUT, PATCH, DELETE]
+            stateless: true
+            guard:
+                provider: chain_provider
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+        api_secure:
+            pattern:   /(.*)/api/(folders|documents|users)
+            stateless: true
+            guard:
+                provider: chain_provider
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+        
+        operatori:
+            anonymous: ~
+            pattern: ^/(.*)/operatori
+            form_login:
+                provider: app_user_provider
+                csrf_token_generator: security.csrf.token_manager
+                login_path: operatori_login
+                check_path: operatori_login
+            logout:
+                path:   operatori_logout
+                target: home
+            guard:
+                provider: app_user_provider
+                authenticators:
+                    - App\Security\OperatoreAuthenticator
+
+        admin:
+            anonymous: ~
+            pattern: ^/(.*)/admin
+            form_login:
+                provider: app_user_provider
+                csrf_token_generator: security.csrf.token_manager
+                login_path: admin_login
+                check_path: admin_login
+            logout:
+                path:   admin_logout
+                target: home
+            guard:
+                provider: app_user_provider
+                authenticators:
+                    - App\Security\AdminAuthenticator
+        
+        giscom_api:
+            pattern: ^/(.*)/api/v\d+\.\d+/giscom/pratica/.*/.*
+            http_basic:
+                provider: in_memory
+        
+        ez_api:
+            pattern: ^/(.*)/api/v\d+\.\d+/schedaInformativa/.*
+            http_basic:
+                provider: in_memory
+        
+        print:
+            pattern: ^/(.*)/print/pratica/.*
+            http_basic:
+                provider: in_memory
+        
+        user_api:
+            pattern: ^/(.*)/api/v\d+\.\d+/user/.*
+            guard:
+                provider: cps_user_provider
+                authenticators:
+                    - App\Security\CPSAuthenticator
+        
+        main:
+            anonymous: ~
+    
+    role_hierarchy:
+        ROLE_ADMIN:           ROLE_USER
+        ROLE_OPERATORE_ADMIN: ROLE_OPERATORE
+        ROLE_OPERATORE:       ROLE_USER
+    
+    access_control:
+        - { path: ^/(.*)/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(.*)/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(.*)/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        
+        #- { path: ^/(.*)/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(.*)/operatori/profile, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/(.*)/operatori/profile/edit, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/(.*)/operatori/subscriptions, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/(.*)/operatori/subscription-service, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/(.*)/operatori/subscriber, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/(.*)/operatori/calendars, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        - { path: ^/(.*)/operatori, role: ROLE_OPERATORE }
+        
+        - { path: ^/(.*)/password/reset$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/(.*)/password, role: [ROLE_OPERATORE, ROLE_ADMIN] }
+        
+        #- { path: ^/(.*)/pratiche, role: ROLE_USER }
+        
+        - { path: ^/(.*)/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
+        - { path: ^/(.*)/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
+        - { path: ^/(.*)/admin, role: ROLE_ADMIN }

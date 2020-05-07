@@ -1,0 +1,149 @@
+{% extends 'Default/index.html.twig' %}
+{% block main_content %}
+
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-12 px-lg-4 py-lg-2">
+                <h1>{{ servizio.name }}</h1>
+            </div>
+            <div class="col-lg-8 px-lg-4 py-lg-2">
+
+                {% if servizio.description|striptags|trim != '' %}
+                    <article class="mb-3">
+                        <h4>Cos'è</h4>
+                        {{ servizio.description|raw }}
+                    </article>
+                {% endif %}
+
+                {% if servizio.who|striptags|trim != '' %}
+                    <article class="mb-3">
+                        <h4>A chi si rivolge</h4>
+                        {{ servizio.who|raw }}
+                    </article>
+                {% endif %}
+
+                {% if servizio.coverage %}
+                    {% set coverage = servizio.coverage|split(',') %}
+                    <article class="mb-3">
+                        <h5>Copertura geografica</h5>
+                        {% for c in coverage %}
+                            <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary"><span
+                                        class="chip-label">{{ c }}</span></div>
+                        {% endfor %}
+                    </article>
+                {% endif %}
+
+                {% if servizio.who|striptags|trim != '' %}
+                    <article class="mb-3">
+                        <h4>Accedere al servizio</h4>
+                        {{ servizio.howto|replace({'%comune%': app.instanceService.getCurrentInstance().name})|raw }}
+                    </article>
+                {% endif %}
+
+                {% if servizio.specialCases|striptags|trim != '' %}
+                    <article class="mb-3">
+                        <h4>Casi particolari</h4>
+                        {{ servizio.specialCases|replace({'%comune%': app.instanceService.getCurrentInstance().name})|raw }}
+                    </article>
+                {% endif %}
+
+                {% if servizio.moreInfo|striptags|trim != '' %}
+                    <article class="mb-3">
+                        <h4>Maggiori informazioni</h4>
+                        {{ servizio.moreInfo|replace({'%comune%': app.instanceService.getCurrentInstance().name})|raw }}
+                    </article>
+                {% endif %}
+
+                {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale is defined %}
+                    <br/>
+                    <div class="alert alert-info">
+                        <p>
+                            {#<a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Scarica il modulo da
+                                compilare</b></a><br/>#}
+                            <a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Questo è il modulo
+                                    principale del servizio</b></a> e andrà compilato e caricato quando il sistema lo
+                            chiederà.
+                        </p>
+                    </div>
+                {% endif %}
+
+                {% if servizio.isPaymentRequired %}
+                    <br/>
+                    <div class="alert alert-info">
+                        <p>
+                            Prima dell'invio del modulo online <b>sarà necessario completare il pagamento nella modalità
+                                indicata</b>
+                        </p>
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {#todo: usare constant()#}
+                        {% if servizio.status == 0 %}
+                            <div class="alert alert-danger" role="alert"><i class="fa fa-times"
+                                                                            aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}
+                            </div>
+                        {% elseif servizio.status == 2 %}
+                            <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle"
+                                                                             aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}
+                            </div>
+                        {% else %}
+                            <div>
+                                {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
+                                    <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
+                                       class="btn btn-success btn-lg service-access-button">
+                                        <span>{{ handler.callToActionText|trans({'%name%': servizio.name}) }}</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
+                                       class="btn btn-success btn-lg service-access-button">
+                                        <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
+                                    </a>
+                                {% endif %}
+
+                                {% if servizio.enti|length > 1 %}
+                                    <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
+                                            :</strong>
+                                        <ul class="list-unstyled">
+                                            {% for ente in servizio.enti %}
+                                                <li><a href="{{ ente.siteUrl }}">
+                                                        <small>{{ ente.name }}</small>
+                                                    </a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
+                <div class="row">
+                    <div class="col-12 pb-5"
+                         style="border: 1px solid #ccc; background-color: #efefef; border-radius: 2px">
+                        <div class="link-list-wrapper mt-5">
+                            <ul class="link-list">
+                                <li>
+                                    <h3 id="heading-senza-link">{% if servizio.topics %}{{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h3>
+                                </li>
+
+                                {% for s in servizi_area %}
+                                    <li>
+                                        <a class="list-item {% if s.id == servizio.id %} active{% endif %}"
+                                           href="{{ path('servizi_show', {'slug': s.slug}) }}">{{ s.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}

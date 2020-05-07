@@ -1,0 +1,170 @@
+{% extends 'Default/index.html.twig' %}
+{% block main_content %}
+
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-12 px-lg-4 py-lg-2">
+                <h1>{{ 'user.dashboard.title'|trans }}</h1>
+                <div class="row">
+                    {#<div class="{% if threads %}col-md-8{% else %}col-md-12{% endif %}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ include('User/parts/avvisi_notizie.html.twig') }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ include('User/parts/scadenze.html.twig') }}
+                            </div>
+                        </div>
+                    </div>#}
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        {% if documents is not empty %}
+            <div class="container px-4 pb-4">
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">{{ 'user.dashboard.nuovi_documenti'|trans }}</h4>
+                    <p> {{ 'user.dashboard.nuovi_documenti_messaggio'|trans }}</p>
+                    <ul class="list-group list-group-flush">
+                    {% for document in documents %}
+                        <li class="list-group-item px-0" style="border: none">
+                            <svg class="icon">
+                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                            </svg>
+                            <a href="{{ path('documenti_list_cpsuser', {'folderId': document.folder.id}) }}">{{ document.title }}</a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+    <section id="in-evidenza">
+        <div class="bg-100 py-5">
+            <div class="container px-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-primary no-border-radius">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">{{ 'user.dashboard.servizi_primo_piano'|trans }}</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    {% for servizio in servizi %}
+                                        <div class="col-12 col-sm-6 col-lg-4">
+                                            {{ include('Servizi/parts/panel/servizio.html.twig') }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a href="{{ path('servizi_list') }}"
+                                           class="small">{{ 'nav.servizi'|trans() }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="py-5">
+            <div class="container px-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>{{ 'user.dashboard.ultime_pratiche'|trans }} {% if pratiche|length > 0 %}<a
+                                href="{{ path('pratiche') }}"
+                                class="small">{{ 'user.dashboard.vedi_tutte'|trans }}</a>{% endif %}</h3>
+                        {% if pratiche|length > 0 %}
+                            <div id="no-more-tables">
+                                <table class="table table-bordered table-striped table-condensed cf">
+                                    <thead class="cf">
+                                    <tr>
+                                        <td>{{ 'pratica.servizio'|trans }}</td>
+                                        <td>{{ 'pratica.protocollo'|trans }}</td>
+                                        <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
+                                        <td>{{ 'pratica.stato'|trans }}</td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for pratica in pratiche %}
+                                        <tr class="pratica"
+                                            data-pratica="{{ pratica.id }}"
+                                            data-user="{{ pratica.user.id }}"
+                                            data-status="{{ pratica.status }}">
+                                            <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
+                                            <td data-title="{{ 'pratica.protocollo'|trans }}">
+                                              {%  if pratica.servizio.isProtocolRequired %}
+                                                {% if pratica.numeroProtocollo %}
+                                                  {{ pratica.numeroProtocollo }}
+                                                {% elseif pratica.statusName != 'STATUS_DRAFT' %}
+                                                  <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+                                                {% endif %}
+                                              {% else %}
+                                                <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
+                                              {% endif %}
+                                            </td>
+                                            <td data-title="{{ 'pratica.data_di_compilazione'|trans }}">{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
+                                            <td data-title="{{ 'pratica.stato'|trans }}">{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
+                                            <td data-title="">
+                                                <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
+                                                   class="btn btn-primary btn-xs">{{ 'user.dashboard.vai_al_dettaglio'|trans }}</a>
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info" role="alert"><i class="fa fa-info"
+                                                                          aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if threads %}
+                <div class="col-md-4">
+                    {{ include('Default/parts/chat.html.twig') }}
+                </div>
+            {% endif %}
+        </div>
+        </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('user') }}
+    {#<script src="{{ asset('stanzadelcittadino/js/jsrender.min.js') }}"></script>
+    <script>
+      $(document).ready(function () {
+        var news = $('#news');
+        var deadlines = $('#deadlines');
+        news.html($.templates("#tpl-news-spinner").render({}));
+        $.get("{{ path('user_latest_news') }}", function (data) {
+          if (data.length > 0) {
+            news.parent().css({'max-height': '300px', 'overflow-y': 'scroll', 'overflow-x': 'hidden'});
+            news.html($.templates("#tpl-news").render(data));
+          } else {
+            news.parent().removeAttr('style');
+            news.html($.templates("#tpl-news-empty").render({}));
+          }
+        });
+        deadlines.html($.templates("#tpl-deadlines-spinner").render({}));
+        $.get("{{ path('user_latest_deadlines') }}", function (data) {
+          if (data.length > 0)
+            deadlines.html($.templates("#tpl-deadlines").render(data));
+          else
+            deadlines.html($.templates("#tpl-deadlines-empty").render({}));
+        });
+      });
+    </script>
+    <script src="{{ asset('stanzadelcittadino/js/chat.js') }}"></script>#}
+{% endblock %}

@@ -10,47 +10,50 @@ RUN yarn install
 
 COPY assets ./assets
 RUN yarn encore production
-RUN ls -l web
+RUN ls -l public
 
-# prepare the vendor dir for symfony
-FROM wodby/php:7.3-dev-macos-4.12.12 as builder
+FROM composer:1.8.4 as composer
 
-USER root
+RUN rm -rf /var/www && mkdir /var/www
+WORKDIR /var/www
 
-WORKDIR /var/www/html
+COPY composer.* /var/www/
 
-RUN composer global require hirak/prestissimo
+ARG APP_ENV=prod
 
-COPY ./composer.json ./composer.lock ./
+RUN set -xe \
+    && if [ "$APP_ENV" = "prod" ]; then export ARGS="--no-dev"; fi \
+    && composer install --prefer-dist --no-scripts --no-progress --no-suggest --no-interaction $ARGS
 
-# app dir is required for classmaps entry in composer.json
-COPY app ./app
+COPY . /var/www
 
-RUN composer install --no-scripts --prefer-dist --no-suggest
+RUN composer dump-autoload --classmap-authoritative
 
-# prepare the final image
 FROM wodby/php:7.3-dev-macos-4.12.12
 
-COPY --from=builder /var/www/html/vendor /var/www/html/vendor
-
-#ARG SYMFONY_ENV=prod
 ENV PHP_FPM_USER=wodby
 ENV PHP_FPM_GROUP=wodby
 
 WORKDIR /var/www/html
 
-COPY --chown=wodby:wodby ./ .
-COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
+ARG APP_ENV=prod
+ARG APP_DEBUG=0
+
+ENV APP_ENV $APP_ENV
+ENV APP_DEBUG $APP_DEBUG
+
+COPY --chown=wodby:wodby --from=composer /var/www/vendor /var/www/html/vendor
+COPY --from=builder /var/www/html/vendor /var/www/html/vendor
+COPY --chown=wodby:wodby --from=assets /home/node/app/public /var/www/html/public
 
 COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
 RUN chmod 755 ./bin/*.sh
 
-RUN ./compose_conf/php/init-uploads.sh
+#RUN php -d memory_limit=256M bin/console cache:clear
+#RUN bin/console assets:install
 
-RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
+#COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
 
-# lo script richiede che il file dei parametri sia già al suo posto
-RUN composer run-script post-docker-install-cmd
+#RUN bin/console cache:warmup
 
-COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
-
+USER wodby

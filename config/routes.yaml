@@ -1,0 +1,10 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+
+rest:
+    resource: '../src/Controller/Rest/'
+    type: annotation
+    prefix: "/api"
+    options:
+        tenant: required

@@ -1,0 +1,317 @@
+{% extends 'Default/index.html.twig' %}
+
+{% set ente = app.instanceService.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
+  <script src="//unpkg.com/element-ui/lib/index.js"></script>
+  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="{{ asset('stanzadelcittadino/js/jsrender.min.js') }}"></script>
+  <script src="{{ asset('stanzadelcittadino/js/formio-i18n.js') }}"></script>
+
+  {#<script src="{{ asset('stanzadelcittadino/js/chat.js') }}"></script>#}
+  {% if form.vars.helper.vueApp %}
+    <script src="{{ asset('stanzadelcittadino/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
+    <script>
+      let vueBundledData = {{ form.vars.helper.vueBundledData|raw }};
+      new Vue({
+        el: "#vueApp"
+      });
+    </script>
+  {% endif %}
+  <script>
+    new Vue({
+      el: "#compilationNotes",
+      data: {
+        compilationNotes: null,
+        endpointUrl: '{% if app.hasEndpointPrefix is defined %}/{{ app.getEndpointPrefix }}{% endif %}/api/v1.0/user/{{ form.vars.data.id }}/notes'
+      },
+      created: function () {
+        var self = this;
+        axios.get(this.endpointUrl)
+          .then(function (res) {
+            if (res.data) {
+              self.compilationNotes = res.data;
+            }
+          })
+      },
+      methods: {
+        onSave: function () {
+          axios.post(this.endpointUrl, this.compilationNotes)
+        }
+      }
+    })
+  </script>
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+          crossorigin="anonymous"></script>
+  {#<script src="https://unpkg.com/formiojs@3.29.6/dist/formio.full.min.js"></script>#}
+  <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      if ($('#formio_render_form_id').length) {
+
+        // Nascondo input symfony, trovare modo di fare submit di formio da esterno
+        $('.craue_formflow_buttons').addClass('d-none');
+
+        Formio.icons = 'fontawesome';
+        Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
+          noAlerts: true,
+          language: 'it',
+          i18n: formIoI18n,
+          buttonSettings: {
+            showCancel: false
+          }
+        })
+          .then(function (form) {
+
+            let delay = 3;
+            form.formReady.then(() => {
+              const disableApplicant = function(){
+                if( delay === 0 ) {
+                  $('.formio-component-applicant input').each(function(k){
+                    if ($(this).val()) {
+                      $(this).attr('disabled', 'disabled');
+                    }
+                  });
+                }
+                else {
+                  delay--;
+                  setTimeout(disableApplicant, 1000); // check again in a second
+                }
+              };
+              disableApplicant();
+            });
+
+            if (form.hasOwnProperty('wizard')) {
+              $('.craue_formflow_current_step.active').addClass('wizard');
+            }
+
+            // Recupero i dati della pratica se presenti
+            if ($('#formio_render_dematerialized_forms').val() != '') {
+              form.submission = {
+                data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
+              };
+            }
+
+            form.on('nextPage', function () {
+              document.getElementById("formio").scrollIntoView();
+            });
+
+            form.nosubmit = true;
+            // Triggered when they click the submit button.
+            form.on('submit', function (submission) {
+              /*return fetch('{% if app.hasEndpointPrefix is defined %}/{{ app.getEndpointPrefix }}{% endif %}/pratiche/formio/validate', {
+                body: JSON.stringify(submission),
+                headers: {
+                  'content-type': 'application/json'
+                },
+                method: 'POST',
+                mode: 'cors'
+              })
+                .then(response => {
+                  form.emit('submitDone', submission)
+                  if (response.ok) {
+                    let data = $('form[name="formio_render"]').serialize();
+                    //$('#formio_render_dematerialized_forms').val(data);
+                    $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
+                    //$('form[name="formio_render"]').submit();
+                    $('.craue_formflow_button_class_next').trigger('click');
+                  }
+                })
+              */
+
+              form.emit('submitDone', submission)
+              let data = $('form[name="formio_render"]').serialize();
+              //$('#formio_render_dematerialized_forms').val(data);
+              $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
+              //$('form[name="formio_render"]').submit();
+              $('.craue_formflow_button_class_next').trigger('click');
+            });
+          });
+      }
+    });
+  </script>
+
+{% endblock %}
+
+{% block main_content %}
+  {% form_theme form 'form/ocsdc_form_style.html.twig' %}
+
+  <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
+          <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+          <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
+          {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
+            {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
+            <div class="alert alert-warning">
+              {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
+              (
+              <small>
+                <a
+                  href="{{ path( download_allegato_path, {'allegato': pratica.getRichiestaDiIntegrazioneAttiva.id}) }}">{{ 'allegato.scarica_allegato_richiesta_integrazione'|trans }}</a>
+              </small>
+              )
+            </div>
+          {% endif %}
+        {% else %}
+          <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4">
+        <h4 class="mb-5">
+          {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
+          -
+          {% if form.vars.helper.stepTitle|length > 0 %}
+            {{ form.vars.helper.stepTitle }}
+          {% else %}
+            {{ flow.currentStepLabel()|trans }}
+          {% endif %}
+        </h4>
+      </div>
+    </div>
+
+    <div class="row hidden-xs">
+      <div class="col-md-12 mt-4 mb-4">
+        {% include '@CraueFormFlow/FormFlow/stepList.html.twig' %}
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-lg-8 px-lg-4">
+        {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
+        <div class="step-{{ flow.getCurrentStepNumber() }}">
+
+
+          {{ form_errors(form) }}
+
+          {% if form.vars.helper.descriptionText|length > 0 %}
+            {{ form.vars.helper.descriptionText|raw }}
+          {% endif %}
+          {% if form.nucleo_familiare is defined %}
+            <ul class="list-unstyled nucleo_familiare"
+                data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
+              {% for componente in form.nucleo_familiare %}
+                <li>
+                  <div class="well well-sm">{{ form_row(componente) }}</div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if form.persone_residenti is defined %}
+            <ul class="list-unstyled persone_residenti"
+                data-prototype="{{ form_widget(form.persone_residenti.vars.prototype)|e('html_attr') }}">
+              {% for persona in form.persone_residenti %}
+                <li>
+                  <div class="well well-sm">{{ form_row(persona) }}</div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
+          {% if currentStep.formType == "App\\Form\\Base\\SummaryType" %}
+            <blockquote>
+              Verifica i dati inseriti prima di passare al metodo di pagamento.
+            </blockquote>
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+          {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+            <blockquote>
+              {{ 'steps.common.conferma.help_text_top'|trans }}
+            </blockquote>
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            <blockquote style="margin-top: 20px">
+              {{ 'steps.common.conferma.help_text_bottom'|trans }}
+            </blockquote>
+          {% endif %}
+
+          {{ form_rest(form) }}
+
+          <div id="vueApp">
+            {% if form.vars.helper.vueApp %}
+            <{{ form.vars.helper.vueApp }}>
+          </{{ form.vars.helper.vueApp }}>
+          {% endif %}
+        </div>
+
+        <div id="formio"class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
+
+        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
+          <div class="mt-5">
+            {% include 'form/buttons.html.twig' %}
+          </div>
+        {% endif %}
+
+        {{ form_end(form) }}
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
+
+      {% if form.vars.helper.guideText|length > 0 %}
+        <div class="callout">
+          <div class="callout-title">
+            {{ 'pratica.guida_utente'|trans }}
+          </div>
+          {{ form.vars.helper.guideText|raw }}
+        </div>
+      {% endif %}
+      <div id="compilationNotes" class="my-5">
+        <h5>{{ 'pratica.appunti_compilazione.titolo'|trans }}</h5>
+        <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave"
+                  placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
+        <h6>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</h6>
+      </div>
+
+      {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
+          {{ include('Default/parts/chat.html.twig') }}
+      {% endif %}#}
+    </div>
+
+    </div>
+  </section>
+
+  <div class="modal fade" id="confirm" tabindex="-1"
+       role="dialog"
+       aria-labelledby="confirmAutoAssignLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-dismiss="modal"
+                  class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
+          <button type="button" data-dismiss="modal" class="btn btn-primary"
+                  id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+
+{#{%- block checkbox_widget -%}
+    <input type="checkbox"
+           data-group-cls="btn-group-lg" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{%- endblock checkbox_widget -%}#}

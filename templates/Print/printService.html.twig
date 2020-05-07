@@ -1,0 +1,120 @@
+{% extends 'Default/printable.html.twig' %}
+
+{% set ente = app.instanceService.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+  {{ include('Print/parts/style.html.twig') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+  <script src="{{ asset('stanzadelcittadino/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+{% endblock %}
+
+{% block footer_scripts %}
+  <script>
+    if ($('#formio_render_form_id').length) {
+
+      Formio.icons = 'fontawesome';
+      Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/printable/' + $('#formio_render_form_id').val(), {
+        noAlerts: true,
+        language: 'it',
+        i18n: formIoI18n,
+        readOnly: true,
+        //renderMode: 'html'
+      })
+        .then(function (form) {
+          // Recupero i dati della pratica se presenti
+          if ($('#formio_render_dematerialized_forms').val() != '') {
+            form.submission = {
+              data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
+            };
+          }
+        });
+    }
+  </script>
+
+{% endblock %}
+
+{% block main_content %}
+
+  <main class="container-fluid" style="padding: 40px">
+    <div class="row">
+      <div class="col-12 text-center">
+        {% if ente %}
+          <img class="logo" src="{{ asset('stanzadelcittadino/images/logo-' ~ ente.slug ~ '.png') }}" alt="{{ ente.name }}"/>
+          <h2 class="ente">{{ ente.name }}</h2>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <div class="col-8">
+        <h3>{{ pratica.servizio.name }}</h3>
+        <div class="row mt-4 mb-4">
+          <div class="col-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
+          <div class="col-8">
+            gg-mm-aaaa alle oo:mm
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        {% if pratica.servizio.isProtocolRequired %}
+          <div class="callout danger">
+            <div class="callout-title">Numero protocollo</div>
+            <p class="text-danger">X321-GG/MM/AAAA-0000001/A</p>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-lg-12">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_rest(form) }}
+        <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+
+    <div class="row page-break-before"></div>
+    {{ include('Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
+
+    <div class="row" style="padding-top: 40px">
+      <div class="col-12">
+        <p>{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
+      </div>
+      <div class="col-md-3">
+        <p><strong>x509certificate_issuerdn</strong></p>
+      </div>
+      <div class="col-md-9">
+        <p class="text-break"><small>x509certificate_issuerdn</small></p>
+      </div>
+
+      <div class="col-md-3">
+        <p><strong>x509certificate_subjectdn</strong></p>
+      </div>
+      <div class="col-md-9">
+        <p class="text-break"><small>x509certificate_subjectdn</small></p>
+      </div>
+
+      <div class="col-md-3">
+        <p><strong>x509certificate_base64</strong></p>
+      </div>
+      <div class="col-md-9">
+        <p class="text-break"><small>x509certificate_base64</small></p>
+      </div>
+    </div>
+    </div>
+
+  </main>
+  <div id="footer">
+    <p>
+      {{ 'pratica.pdf.riferimento_sdc'|trans }} {{ url('pratiche_show', {'pratica': pratica.id}) }}
+    </p>
+  </div>
+
+{% endblock %}

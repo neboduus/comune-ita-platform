@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-12">
+    <h4>Documentazione inoltrata all'Ente</h4>
+  </div>
+
+  {% if pratica.servizio.isProtocolRequired %}
+    <div class="col-12 col-sm-3"><strong>{{ 'pratica.protocollo'|trans }}</strong></div>
+    <div class="col-12 col-sm-9">
+      {% if pratica.numeroProtocollo %}
+        {{ pratica.numeroProtocollo }}
+      {% else %}
+        <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="col-12">
+    {{ include('Pratiche/summary/parts/moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
+  </div>
+
+  {% if pratica.numeroProtocollo %}
+    <div class="col-12">
+      {{ include('Pratiche/summary/parts/moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
+    </div>
+  {% endif %}
+</div>

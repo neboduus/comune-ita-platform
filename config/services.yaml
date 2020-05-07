@@ -1,0 +1,610 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: 'it'
+    
+    allowed_commands:
+        - doctrine:database:create
+        - doctrine:database:drop
+        - doctrine:schema:update
+        - doctrine:schema:create
+        - doctrine:schema:drop
+        - doctrine:fixtures:load
+        - doctrine:migrations:diff
+        - doctrine:migrations:execute
+        - doctrine:migrations:generate
+        - doctrine:migrations:migrate
+        - doctrine:migrations:version
+        - doctrine:migrations:status
+        - doctrine:mapping:info
+        - ocsdc:abilita-operatore-per-servizio
+        - ocsdc:carica-servizi
+        - ocsdc:configura-protocollo
+        - ocsdc:configura-protocollo-infor
+        - ocsdc:configure-instance
+        - ocsdc:crea-admin
+        - ocsdc:crea-operatore
+        - ocsdc:crea-servizio
+        - ocsdc:giscom:send-pratica
+        - ocsdc:hotfix-erogatore
+        - ocsdc:hotfix-nomente
+        - ocsdc:scheduled_action:execute
+        - ocsdc:user-secure:execute
+    
+    tenant_db:
+        prefix: 'sdc_'
+        host: '%env(TENANT_DATABASE_DEFAULT_HOST)%'
+        port: '%env(TENANT_DATABASE_DEFAULT_PORT)%'
+        user: '%env(TENANT_DATABASE_DEFAULT_USER)%'
+        password: '%env(TENANT_DATABASE_DEFAULT_PASSWORD)%'
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+    
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+    
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    
+    
+    ## redis
+
+    Redis:
+        class: Redis
+        calls:
+            -
+                method: connect
+                arguments:
+                    - '%env(REDIS_HOST)%'
+                    - '%env(int:REDIS_PORT)%'
+    
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+        arguments:
+            - '@Redis'
+    
+    ## mulitenancy
+    
+    multitenancy.tenant_matcher:
+        class: App\Multitenancy\TenantMatcher
+        arguments:
+            - '@multitenancy.tenant_repository'
+            - '@router'
+    
+    multitenancy.tenant_repository:
+        class: App\Multitenancy\Repository\TenantRepository
+        factory: ['@doctrine.orm.main_entity_manager', 'getRepository']
+        arguments:
+            - App\Multitenancy\Entity\Main\Tenant
+    
+    multitenancy.tenant_listener.request:
+        class: App\Multitenancy\Listener\Request\TenantListener
+        arguments:
+            - '@request_stack'
+            - '@doctrine.dbal.tenant_connection'
+            - '@multitenancy.tenant_matcher'
+            - '@router'
+            - '@ocsdc.instance_service'
+        tags:
+            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 1000 }
+        
+    multitenancy.tenant_listener.controller:
+        class: App\Multitenancy\Listener\Controller\ControllerListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -10 }
+    
+    multitenancy.tenant_listener.command:
+        class: App\Multitenancy\Listener\Command\CommandListener
+        arguments:
+            - '@doctrine.dbal.tenant_connection'
+            - '@multitenancy.tenant_matcher'
+            - '@ocsdc.instance_service'
+            - '%allowed_commands%'
+        tags:
+            - { name: kernel.event_listener, event: console.command, method: onConsoleCommand, priority: 255 }
+    
+    multitenancy.tenant_listener.command.database:
+        class: App\Multitenancy\Listener\Command\DatabaseListener
+        tags:
+            - { name: kernel.event_listener, event: console.command, method: onConsoleCommand, priority: 254 }
+    
+    multitenancy.tenant_listener.command.fixtures:
+        class: App\Multitenancy\Listener\Command\FixturesListener
+        tags:
+            - { name: kernel.event_listener, event: console.command, method: onConsoleCommand, priority: 254 }
+    
+    multitenancy.tenant_listener.exception:
+        class: App\Multitenancy\Listener\Exception\TenantNotFoundExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
+    App\DataCollector\TenantDataCollector:
+        tags:
+            - { name: 'data_collector', id: 'app.tenant_collector', template: 'data_collector/tenant.html.twig' }
+    
+    ## stanzadelcittadino
+    
+    App\Controller\Rest\DocumentsAPIController:
+        arguments:
+            $rootDir: "%kernel.root_dir%"
+    
+    App\Controller\PraticheAnonimeController:
+        arguments:
+            $hashValidity: '%hash_validity%'
+    
+    App\Controller\SubscriberController:
+        arguments:
+            $defaultSender: "%default_from_email_address%"
+    
+    GuzzleHttp\Client: '@eight_points_guzzle.client.mypay'
+    
+    App\Form\DocumentAPIType:
+        arguments:
+            $rootDir: "%kernel.root_dir%"
+            $allowedExtensions: '%allowed_extensions%'
+    
+    App\Services\DirectoryNamerService:
+        public: true
+    
+    Vich\UploaderBundle\Naming\DirectoryNamerInterface: '@App\Services\DirectoryNamerService'
+    
+    
+    Gedmo\Sluggable\SluggableListener:
+        tags:
+            - { name: doctrine.event_subscriber, connection: tenant }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+    
+    Monolog\Processor\PsrLogMessageProcessor:
+        tags:
+            - { name: monolog.processor }
+    
+    App\Form\Extension\HelpDataTypeExtension:
+        tags:
+            - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
+    
+    App\Validator\Constraints\ValidMimeTypeValidator:
+        tags:
+            - { name: validator.constraint_validator }
+    
+    App\Services\ModuloPdfBuilderService:
+        arguments:
+            $wkhtmltopdfService: "%wkhtmltopdf_service%"
+            $dateTimeFormat: "%ocsdc_default_datetime_format%"
+            $printablePassword: "%ez_password%"
+    
+    ocsdc.protocollo.client: "@eight_points_guzzle.client.protocollo_cct"
+    
+    App\Protocollo\DummyProtocolloHandler:
+        tags:
+            - { name: app.protocollo.handler, alias: "dummy" }
+    
+    App\Protocollo\PiTreProtocolloHandler:
+        tags:
+            - { name: app.protocollo.handler, alias: "pitre" }
+    
+    App\Protocollo\InforProtocolloHandler:
+        tags:
+            - { name: app.protocollo.handler, alias: "infor" }
+    
+    App\Protocollo\SicrawebProtocolloHandler:
+        tags:
+            - { name: app.protocollo.handler, alias: "sicraweb" }
+    
+    App\Services\ProtocolloServiceInterface: '@App\Services\DelayedProtocolloService'
+
+    App\Services\DelayedProtocolloService:
+        tags:
+            - { name: 'app.schedule_action_handler', alias: 'ocsdc.protocollo' }
+
+    App\EventListener\MeetingLifeCycleListener:
+        tags:
+            - { name: doctrine.event_listener, event: postPersist, connection: tenant }
+            - { name: doctrine.event_listener, event: preUpdate, connection: tenant }
+            - { name: doctrine.event_listener, event: postRemove, connection: tenant }
+        arguments:
+            $defaultSender: '%default_from_email_address%'
+    
+    App\EventListener\TermsAcceptListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, priority: -10 }
+
+    App\EventListener\CompleteProfileListener:
+        arguments:
+            $passwordLifeTime: "%password_life_time%"
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, priority: -100 }
+
+    App\EventListener\SendMailPraticaListener:
+        arguments:
+            $defaultSender: "%default_from_email_address%"
+        tags:
+            - { name: kernel.event_listener, method: onStatusChange, priority: 10 }
+    
+    App\EventListener\BackOfficePraticaListener:
+        tags:
+            - { name: kernel.event_listener, method: onStatusChange, priority: 20 }
+    
+    App\EventListener\ProtocollaPraticaListener:
+        tags:
+            - { name: kernel.event_listener, method: onStatusChange, priority: 100 }
+
+    App\EventListener\GiscomSendPraticaListener:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    App\EventListener\ProtocolloSuccessSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+#    App\EventListener\UserSecuritySubscriber:
+#        tags:
+#            - { name: kernel.event_subscriber }
+
+#    ocsdc.cps.userprovider: '@App\Services\CPSUserProvider'
+    
+    ocsdc.form.flow.storage_key_generator:
+        class: App\Form\UserSessionStorageKeyGenerator
+
+    App\Form\Base\PraticaFlow:
+        autowire: false
+        autoconfigure: false
+        class: App\Form\Base\PraticaFlow
+        parent: craue.form.flow
+        arguments:
+            - "@logger"
+            - "@translator"
+            - '@App\Services\PraticaStatusService'
+            - '@App\Services\ModuloPdfBuilderService'
+            - '@App\Services\DematerializedFormAllegatiAttacherService'
+            - '@ocsdc.instance_service'
+    
+    App\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow:
+        class: App\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.asilonido }
+    
+    App\Form\AutoletturaAcqua\AutoletturaAcquaFlow:
+        class: App\Form\AutoletturaAcqua\AutoletturaAcquaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.autoletturaacqua }
+    
+    App\Form\IscrizioneRegistroAssociazioni\IscrizioneRegistroAssociazioniFlow:
+        class: App\Form\IscrizioneRegistroAssociazioni\IscrizioneRegistroAssociazioniFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.iscrizioneregistroassociazioni }
+    
+    App\Form\ContributoPannolini\ContributoPannoliniFlow:
+        class: App\Form\ContributoPannolini\ContributoPannoliniFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.contributopannolini }
+    
+    App\Form\CambioResidenza\CambioResidenzaFlow:
+        class: App\Form\CambioResidenza\CambioResidenzaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.cambioresidenza }
+    
+    App\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow:
+        class: App\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow
+        parent: App\Form\Base\PraticaFlow
+        arguments: ["@logger","@translator"]
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.allacciamentoacquedotto }
+    
+    App\Form\CertificatoNascita\CertificatoNascitaFlow:
+        class: App\Form\CertificatoNascita\CertificatoNascitaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.certificatonascita }
+    
+    App\Form\EstrattoNascita\EstrattoNascitaFlow:
+        class: App\Form\EstrattoNascita\EstrattoNascitaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.estrattonascita }
+    
+    App\Form\AttoNascita\AttoNascitaFlow:
+        class: App\Form\AttoNascita\AttoNascitaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.attonascita }
+    
+    App\Form\CertificatoMorte\CertificatoMorteFlow:
+        class: App\Form\CertificatoMorte\CertificatoMorteFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.certificatomorte }
+    
+    App\Form\EstrattoMorte\EstrattoMorteFlow:
+        class: App\Form\EstrattoMorte\EstrattoMorteFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.estrattomorte }
+    
+    App\Form\AttoMorte\AttoMorteFlow:
+        class: App\Form\AttoMorte\AttoMorteFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.attomorte }
+    
+    App\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow:
+        class: App\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.certificatomatrimonio }
+    
+    App\Form\EstrattoMatrimonio\EstrattoMatrimonioFlow:
+        class: App\Form\EstrattoMatrimonio\EstrattoMatrimonioFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.estrattomatrimonio }
+    
+    App\Form\AttoMatrimonio\AttoMatrimonioFlow:
+        class: App\Form\AttoMatrimonio\AttoMatrimonioFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.attomatrimonio }
+    
+#    App\Form\CertificatoAnagrafico\CertificatoAnagraficoFlow:
+#        class: App\Form\CertificatoAnagrafico\CertificatoAnagraficoFlow
+#        parent: App\Form\Base\PraticaFlow
+#        autowire: false
+#        autoconfigure: false
+#        tags:
+#            - { name: app.pratica.flow, alias: ocsdc.form.flow.nullaostamatrimonio }
+    
+    App\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow:
+        class: App\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.attestazioneanagrafica }
+    
+    App\Form\ListeElettorali\ListeElettoraliFlow:
+        class: App\Form\ListeElettorali\ListeElettoraliFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.listeelettorali }
+    
+    App\Form\StatoFamiglia\StatoFamigliaFlow:
+        class: App\Form\StatoFamiglia\StatoFamigliaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.statofamiglia }
+    
+    App\Form\FormIO\FormIOFlow:
+        class: App\Form\FormIO\FormIOFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.formio }
+    
+    App\Form\FormIO\FormIOAnonymousFlow:
+        class: App\Form\FormIO\FormIOAnonymousFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.formioanonymous }
+    
+    App\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow:
+        class: App\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.occupazionesuolopubblico }
+    
+    App\Form\Scia\SciaPraticaEdiliziaFlow:
+        class: App\Form\Scia\SciaPraticaEdiliziaFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.scia_pratica_edilizia }
+    
+    App\Form\ContributoAssociazioni\ContributoAssociazioniFlow:
+        class: App\Form\ContributoAssociazioni\ContributoAssociazioniFlow
+        parent: App\Form\Base\PraticaFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.contributoassociazioni }
+    
+    App\Form\Operatore\Base\PraticaOperatoreFlow:
+        class: App\Form\Operatore\Base\PraticaOperatoreFlow
+        parent: craue.form.flow
+        arguments: ["@logger","@translator"]
+        autowire: false
+        autoconfigure: false
+    
+    App\Form\Operatore\Standard\StandardOperatoreFlow:
+        class: App\Form\Operatore\Standard\StandardOperatoreFlow
+        parent: App\Form\Operatore\Base\PraticaOperatoreFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.operatore.standardoperatore }
+    
+    App\Form\Operatore\Standard\StandardAllegatoNoFirmaFlow:
+        class: App\Form\Operatore\Standard\StandardAllegatoNoFirmaFlow
+        parent: App\Form\Operatore\Base\PraticaOperatoreFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.operatore.standardallegatonofirma }
+    
+    App\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow:
+        class: App\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow
+        parent: App\Form\Operatore\Base\PraticaOperatoreFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.certificatonascitaoperatore }
+    
+    App\Form\Operatore\AttestazioneAnagrafica\AttestazioneAnagraficaOperatoreFlow:
+        class: App\Form\Operatore\AttestazioneAnagrafica\AttestazioneAnagraficaOperatoreFlow
+        parent: App\Form\Operatore\Base\PraticaOperatoreFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.operatore.attestazioneanagraficaoperatore }
+    
+    App\Form\Operatore\ListeElettorali\ListeElettoraliOperatoreFlow:
+        class: App\Form\Operatore\ListeElettorali\ListeElettoraliOperatoreFlow
+        parent: App\Form\Operatore\Base\PraticaOperatoreFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.operatore.listeelettoralioperatore }
+    
+    App\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow:
+        class: App\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow
+        parent: App\Form\Operatore\Base\PraticaOperatoreFlow
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: app.pratica.flow, alias: ocsdc.form.flow.operatore.statofamigliaoperatore }
+
+    App\Form\Admin\ServiceFlow:
+        class: App\Form\Admin\ServiceFlow
+        parent: craue.form.flow
+        arguments: ["@logger","@translator"]
+        autowire: false
+        autoconfigure: false
+    
+    App\Services\ComunwebContentProviderService:
+        arguments:
+            $client: "@eight_points_guzzle.client.comunweb"
+    
+    ocsdc.messages.client: "@eight_points_guzzle.client.messages"
+    
+    App\Services\MessagesAdapterService:
+        arguments:
+            $client: "@ocsdc.messages.client"
+            $messagesEnabled: "%messages_enabled%"
+    
+    App\Twig\IterCalculatorExtension:
+        arguments:
+            $durationStartStatus: '%ocsdc_iter_duration_start_status%'
+            $durationEndStatuses: '%ocsdc_iter_duration_end_statuses%'
+        tags:
+            - { name: twig.extension }
+    
+    ocsdc.instance_service: '@App\Services\InstanceService'
+    
+    ocsdc.backoffices: '@App\Services\BackOfficeCollection'
+    
+    App\Services\P7MThumbnailerService:
+        arguments:
+            $gsBinaryPath: '%gsbinary%'
+    
+    App\Validator\Constraints\AtLeastOneAttachmentConstraintValidator:
+        tags:
+            - { name: 'validator.constraint_validator' }
+    
+    App\Services\GiscomAPIAdapterService:
+        arguments:
+            - '@eight_points_guzzle.client.giscom'
+            - '@doctrine.orm.entity_manager'
+            - '@logger'
+            - '@App\Services\GiscomAPIMapperService'
+            - '@App\Services\PraticaStatusService'
+            - '@App\Mapper\Giscom\GiscomStatusMapper'
+        autowire: false
+        autoconfigure: false
+    
+    App\Services\DelayedGiscomAPIAdapterService:
+        arguments:
+            - '@App\Services\GiscomAPIAdapterService'
+            - '@doctrine.orm.entity_manager'
+            - '@logger'
+            - '@App\Services\ScheduleActionService'
+        autowire: false
+        autoconfigure: false
+        tags:
+            - { name: 'app.schedule_action_handler', alias: 'ocsdc.giscom_api.adapter' }
+    
+    App\Services\GiscomAPIAdapterServiceInterface: '@App\Services\DelayedGiscomAPIAdapterService'
+    
+    App\Services\FormServerApiAdapterService:
+        arguments:
+            $formServerUrl: "%formserver_private_url%"
+    
+    App\Handlers\Servizio\DefaultHandler:
+        tags:
+            - { name: app.servizio.handler, alias: default }
+    
+    App\Handlers\Servizio\ImisHandler:
+        arguments: ["@security.token_storage", "@logger"]
+        tags:
+            - { name: app.servizio.handler, alias: ocsdc.handlers.servizio.imis }
+            
+    App\Command\ScheduledActionCommand:
+        $host: "%ocsdc_host%"
+        $scheme: "%ocsdc_scheme%"
+        
+    App\Command\SecureUserCommand:
+        $host: "%ocsdc_host%"
+        $scheme: "%ocsdc_scheme%"
+        $passwordLifeTime: "%password_life_time%"
+        $inactiveUserLifeTime: "%inactive_user_life_time%"
+
+    security.access.denied_handler: '@App\Security\AccessDeniedHandler'

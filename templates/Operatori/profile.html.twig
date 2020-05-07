@@ -1,0 +1,29 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block main_content %}
+
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1 class="text-center title mb-5">Profilo utente</h1>
+                <div class="fos_user_user_show">
+                    <dl class="row">
+                        <dt class="col-sm-3">{{ 'profile.show.username'|trans }}</dt>
+                        <dd class="col-sm-9">{{ user.username }}</dd>
+                        <dt class="col-sm-3">{{ 'profile.show.email'|trans }}</dt>
+                        <dd class="col-sm-9">{{ user.email }}</dd>
+                    </dl>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <a class="btn btn-warning" href="{{ path('operatori_user_profile_edit') }}">Modifica profilo</a>
+                    </div>
+                    <div class="col">
+                        <a class="btn btn-info" href="{{ path('operatori_change_password') }}">Cambia password</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

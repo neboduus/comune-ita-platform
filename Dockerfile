@@ -4,54 +4,62 @@ FROM node:10.15.0 as assets
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 
-COPY package.json package.json yarn.lock yarn.lock webpack.config.js ./
+COPY package.json yarn.lock webpack.config.js ./
 
 RUN yarn install
 
 COPY assets ./assets
 RUN yarn encore production
-RUN ls -l web
+RUN ls -l public
 
-# prepare the vendor dir for symfony
-FROM wodby/php:7.3 as builder
 
-USER root
+# install dependencies
+FROM composer:1.8.4 as composer
 
-WORKDIR /var/www/html
+RUN rm -rf /var/www && mkdir /var/www
+WORKDIR /var/www
 
-RUN composer global require hirak/prestissimo
+COPY composer.* /var/www/
+COPY symfony.lock /var/www/
 
-COPY ./composer.json ./composer.lock ./
+ARG APP_ENV=prod
 
-# app dir is required for classmaps entry in composer.json
-COPY app ./app
+RUN set -xe \
+    #&& if [ "$APP_ENV" = "prod" ]; then export ARGS="--no-dev"; fi \
+    && composer install --prefer-dist --no-scripts --no-progress --no-suggest --no-interaction $ARGS
 
-RUN composer install --no-scripts --prefer-dist
+COPY . /var/www
 
-# prepare the final image
+RUN composer dump-autoload --classmap-authoritative
+
+
+# build
 FROM wodby/php:7.3
 
-COPY --from=builder /var/www/html/vendor /var/www/html/vendor
-
-#ARG SYMFONY_ENV=prod
 ENV PHP_FPM_USER=wodby
 ENV PHP_FPM_GROUP=wodby
 
 WORKDIR /var/www/html
 
-COPY --chown=wodby:wodby ./ .
-COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
+ARG APP_ENV=prod
+ARG APP_DEBUG=0
+
+ENV APP_ENV $APP_ENV
+ENV APP_DEBUG $APP_DEBUG
+
+COPY --chown=wodby:wodby ./.env /var/www/html/.env
+COPY --chown=wodby:wodby ./assets /var/www/html/assets
+COPY --chown=wodby:wodby ./bin /var/www/html/bin
+COPY --chown=wodby:wodby ./config /var/www/html/config
+COPY --chown=wodby:wodby ./src /var/www/html/src
+COPY --chown=wodby:wodby ./templates /var/www/html/templates
+COPY --chown=wodby:wodby ./translations /var/www/html/translations
+#COPY --chown=wodby:wodby ./var /var/www/html/var
+COPY --chown=wodby:wodby ./public/* /var/www/html/public/
+COPY --chown=wodby:wodby --from=composer /var/www/vendor /var/www/html/vendor
+COPY --chown=wodby:wodby --from=assets /home/node/app/public /var/www/html/public
 
 COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
 RUN chmod 755 ./bin/*.sh
 
-RUN ./compose_conf/php/init-uploads.sh
-
-RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
-
-# lo script richiede che il file dei parametri sia già al suo posto
-RUN composer run-script post-docker-install-cmd
-
 COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
-
-RUN bin/console cache:warmup

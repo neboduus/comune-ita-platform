@@ -1,0 +1,18 @@
+<a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="{{ path('operatori_calendar_edit', {'calendar' => value}) }}">
+    <svg class="icon icon-sm icon-warning">
+        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+    </svg>
+</a>
+<a class="btn btn-warning btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="{{ path('operatori_calendar_edit', {'calendar' => value}) }}">
+    Modifica
+</a>
+<a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="{{ path('operatori_calendar_delete', {'calendar' => value}) }}"
+   onclick="return confirm('Sei sicuro di procedere? il calendario verrà eliminato definitivamente.');">
+    <svg class="icon icon-sm icon-danger">
+        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+    </svg>
+</a>
+<a class="btn btn-danger btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="{{ path('operatori_calendar_delete', {'calendar' => value}) }}"
+   onclick="return confirm('Sei sicuro di procedere? il calendario verrà eliminato definitivamente.');">
+    Elimina
+</a>

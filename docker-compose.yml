@@ -1,135 +1,141 @@
 version: "3"
 
 services:
+    
+    postgres:
+        image: wodby/postgres:$POSTGRES_TAG
+        stop_grace_period: 30s
+        environment:
+            POSTGRES_PASSWORD: $DB_ROOT_PASSWORD
+            TENANT_DATABASE_DEFAULT_USER: $TENANT_DATABASE_DEFAULT_USER
+            TENANT_DATABASE_DEFAULT_PASSWORD: $TENANT_DATABASE_DEFAULT_PASSWORD
+            PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+            - ./compose_conf/postgres:/docker-entrypoint-initdb.d
+            - pgdata:/var/lib/postgresql/data/pgdata
+    
+    php:
+        image: registry.gitlab.com/opencontent/stanzadelcittadino/app:version-2
+        depends_on:
+            - postgres
+        environment:
+            DATABASE_URL: ${DATABASE_URL}?serverVersion=${DATABASE_VERSION}
+            DATABASE_VERSION: $DATABASE_VERSION
+            TENANT_DATABASE_VERSION: $TENANT_DATABASE_VERSION
+            PHP_FPM_CLEAR_ENV: 'no'
+            ENV: DEV
+            APP_ENV: $APP_ENV
+            APP_DEBUG: $APP_DEBUG
+            APP_SECRET: $APP_SECRET
+            MAILER_TRANSPORT: $MAILER_TRANSPORT
+            MAILER_HOST: $MAILER_HOST
+            MAILER_USER: $MAILER_USER
+            MAILER_PASSWORD: $MAILER_PASSWORD
+            DEFAULT_FROM_EMAIL_ADDRESS: $DEFAULT_FROM_EMAIL_ADDRESS
+            WKHTMLTOPDF_PATH: $WKHTMLBINARY
+            WKHTMLTOPDF_SERVICE: $WKHTMLTOPDF_SERVICE
+            EZ_PASSWORD: $EZ_PASSWORD
+            PITRE_ADAPTER_URL: $PITRE_ADAPTER_URL
+            OCSDC_SCHEME: $OCSDC_SCHEME
+            OCSDC_HOST: $OCSDC_HOST
+            GISCOM_PASSWORD: $GISCOM_PASSWORD
+            GISCOM_ADAPTER_URL: $GISCOM_ADAPTER_URL
+            GISCOM_ADAPTER_USERNAME: $GISCOM_ADAPTER_USERNAME
+            GISCOM_ADAPTER_PASSWORD: $GISCOM_ADAPTER_PASSWORD
+            LOGS_PATH: $LOGS_PATH
+            MYPAY_ADAPTER_URL: $MYPAY_ADAPTER_URL
+            PHP_FPM_USER: wodby
+            PHP_FPM_GROUP: wodby
+            PHP_APCU_ENABLED: 0
+            PHP_OPCACHE_ENABLE: 0
+            FORMSERVER_PRIVATE_URL: http://formserver:8000
+            FORMSERVER_PUBLIC_URL: http://formserver.localtest.me
+            RECAPTCHA_KEY: $RECAPTCHA_KEY
+            RECAPTCHA_SECRET: $RECAPTCHA_SECRET
+            #PHP_SESSION_SAVE_HANDLER: redis
+            #PHP_SESSION_SAVE_PATH: "tcp://redis:6379"
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+    
+    apache:
+        image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:version-2
+        depends_on:
+            - php
+        environment:
+            WEB_DOCUMENT_ROOT: /var/www/html/public
+            WEB_PHP_SOCKET: php:9000
+            ORGANIZATION: $ORGANIZATION
+            SERVER_NAME: $SERVER_NAME
+            ENTITY_ID: $ENTITY_ID
+            PROJECT_BASE_URL: $PROJECT_BASE_URL
+        ports:
+            - "443:443"
+        labels:
+            traefik.frontend.rule: 'Host:stanzadelcittadino.localtest.me'
 
-  postgres:
-    image: wodby/postgres:$POSTGRES_TAG
-    stop_grace_period: 30s
-    environment:
-      POSTGRES_PASSWORD: $DB_ROOT_PASSWORD
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-      - ./compose_conf/postgres:/docker-entrypoint-initdb.d
-      - pgdata:/var/lib/postgresql/data/pgdata
+    traefik:
+        image: traefik:1.7
+        restart: unless-stopped
+        command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
+        ports:
+            - '80:80'
+            # - '443:443'
+            - '8080:8080' # Dashboard
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
 
-  php:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
-    environment:
-      PHP_FPM_CLEAR_ENV: 'no'
-      ENV: DEMO
-      SYMFONY_ENV: $SYMFONY_ENV
-      PREFIX: $PREFIX
-      DB_DRIVER: $DB_DRIVER
-      DB_HOST: $DB_HOST
-      DB_PORT: $DB_PORT
-      DB_NAME: $DB_NAME
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      MAILER_TRANSPORT: $MAILER_TRANSPORT
-      MAILER_HOST: $MAILER_HOST
-      MAILER_USER: $MAILER_USER
-      MAILER_PASSWORD: $MAILER_PASSWORD
-      SECRET: $SECRET
-      DEFAULT_FROM_EMAIL_ADDRESS: $DEFAULT_FROM_EMAIL_ADDRESS
-      WKHTMLBINARY: $WKHTMLBINARY
-      WKHTMLTOPDF_SERVICE: $WKHTMLTOPDF_SERVICE
-      EZ_PASSWORD: $EZ_PASSWORD
-      PITRE_ADAPTER_URL: $PITRE_ADAPTER_URL
-      HEADER_TOP_TITLE: $HEADER_TOP_TITLE
-      HEADER_TOP_LINK: $HEADER_TOP_LINK
-      FOOTER_CREDITS: $FOOTER_CREDITS
-      OCSDC_SCHEME: $OCSDC_SCHEME
-      OCSDC_HOST: $OCSDC_HOST
-      GISCOM_PASSWORD: $GISCOM_PASSWORD
-      GISCOM_ADAPTER_URL: $GISCOM_ADAPTER_URL
-      GISCOM_ADAPTER_USERNAME: $GISCOM_ADAPTER_USERNAME
-      GISCOM_ADAPTER_PASSWORD: $GISCOM_ADAPTER_PASSWORD
-      LOGS_PATH: $LOGS_PATH
-      MYPAY_ADAPTER_URL: $MYPAY_ADAPTER_URL
-      PHP_FPM_USER: wodby
-      PHP_FPM_GROUP: wodby
-      PHP_APCU_ENABLED: 0
-      PHP_OPCACHE_ENABLE: 0
-      FORMSERVER_PRIVATE_URL: $FORMSERVER_PRIVATE_URL
-      FORMSERVER_PUBLIC_URL: $FORMSERVER_PUBLIC_URL
-      RECAPTCHA_KEY: $RECAPTCHA_KEY
-      RECAPTCHA_SECRET: $RECAPTCHA_SECRET
-    volumes:
-      - "uploads:/var/www/html/var/uploads"
+    mongo:
+        image: mongo
+        restart: unless-stopped
+        volumes:
+            - 'mongo:/data'
+            - './compose_conf/mongo/dump/:/dump/'
+            - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
 
-  apache:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:master
-    depends_on:
-      - php
-    environment:
-      WEB_DOCUMENT_ROOT: /var/www/html/web
-      WEB_PHP_SOCKET: php:9000
-      ORGANIZATION: $ORGANIZATION
-      SERVER_NAME: $SERVER_NAME
-      ENTITY_ID: $ENTITY_ID
-      PROJECT_BASE_URL: $PROJECT_BASE_URL
-    ports:
-      - "443:443"
-    labels:
-      traefik.frontend.rule: 'Host:stanzadelcittadino.localtest.me'
+    formserver:
+        image: registry.gitlab.com/opencontent/formmanagerserver:1.0.7
+        restart: unless-stopped
+        ports:
+            - "8000:8000"
+        environment:
+            DB_URL: mongodb://mongo:27017/formmanager
+        depends_on:
+            - mongo
+        labels:
+            traefik.frontend.rule: 'Host:formserver.localtest.me'
 
-  traefik:
-    image: traefik:1.7
-    restart: unless-stopped
-    command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
-    ports:
-      - '80:80'
-        # - '443:443'
-      - '8080:8080' # Dashboard
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    gotemberg:
+        image: thecodingmachine/gotenberg:6
+        restart: unless-stopped
+        ports:
+            - '3000:3000'
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
+            interval: 1m30s
+            timeout: 10s
+            retries: 3
+            #start_period: 5s
+        environment:
+            LOG_LEVEL: INFO
+            # DEFAULT_LISTEN_PORT: 3000
+            # DISABLE_GOOGLE_CHROME: 0
+            # DEFAULT_GOOGLE_CHROME_RPCC_BUFFER_SIZE: "1048576" #1Mb, max 100Mb
+            DISABLE_UNOCONV: 1
+            #DEFAULT_WAIT_TIMEOUT: 5
+            #MAXIMUM_WAIT_TIMEOUT: 30
+            #DEFAULT_WEBHOOK_URL_TIMEOUT: "2.5"
+            #MAXIMUM_WEBHOOK_URL_TIMEOUT: "2.5"
+            MAXIMUM_WAIT_DELAY: "30"
 
-  mongo:
-    image: mongo
-    restart: unless-stopped
-    volumes:
-      - 'mongo:/data'
-      - './compose_conf/mongo/dump/:/dump/'
-      - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
-
-  formserver:
-    image: registry.gitlab.com/opencontent/formmanagerserver:1.0.7
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      DB_URL: mongodb://mongo:27017/formmanager
-    depends_on:
-      - mongo
-    labels:
-      traefik.frontend.rule: 'Host:formserver.localtest.me'
-
-  gotemberg:
-    image: thecodingmachine/gotenberg:6
-    restart: unless-stopped
-    ports:
-      - '3000:3000'
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-      #start_period: 5s
-    environment:
-      LOG_LEVEL: INFO
-      # DEFAULT_LISTEN_PORT: 3000
-      # DISABLE_GOOGLE_CHROME: 0
-      # DEFAULT_GOOGLE_CHROME_RPCC_BUFFER_SIZE: "1048576" #1Mb, max 100Mb
-      DISABLE_UNOCONV: 1
-      #DEFAULT_WAIT_TIMEOUT: 5
-      #MAXIMUM_WAIT_TIMEOUT: 30
-      #DEFAULT_WEBHOOK_URL_TIMEOUT: "2.5"
-      #MAXIMUM_WEBHOOK_URL_TIMEOUT: "2.5"
-      MAXIMUM_WAIT_DELAY: "30"
+    redis:
+        image: redis:latest
+        volumes:
+            - redisdata:/data
+        ports:
+            - 6379:6379
 
 volumes:
-  pgdata:
-  uploads:
-  mongo:
+    pgdata:
+    uploads:
+    mongo:
+    redisdata:

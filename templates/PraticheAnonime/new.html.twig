@@ -1,0 +1,169 @@
+{% extends 'Default/index.html.twig' %}
+
+{% set ente = app.instanceService.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+
+  <script src="{{ asset('stanzadelcittadino/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      if ($('#formio_render_form_id').length) {
+
+        // Nascondo input symfony, trovare modo di fare submit di formio da esterno
+        $('.craue_formflow_buttons').addClass('d-none');
+
+        Formio.icons = 'fontawesome';
+        Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
+          noAlerts: true,
+          language: 'it',
+          i18n: formIoI18n,
+          buttonSettings: {
+            showCancel: false
+          }
+        })
+          .then(function (form) {
+            if (form.hasOwnProperty('wizard')) {
+              $('.craue_formflow_current_step.active').addClass('wizard');
+            }
+
+            // Recupero i dati della pratica se presenti
+            if ($('#formio_render_dematerialized_forms').val() != '') {
+              form.submission = {
+                data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
+              };
+            }
+
+            form.on('nextPage', function () {
+              document.getElementById("formio").scrollIntoView();
+            });
+
+            form.nosubmit = true;
+            // Triggered when they click the submit button.
+            form.on('submit', function (submission) {
+              form.emit('submitDone', submission)
+              let data = $('form[name="formio_render"]').serialize();
+              //$('#formio_render_dematerialized_forms').val(data);
+              $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
+              //$('form[name="formio_render"]').submit();
+              $('.craue_formflow_button_class_next').trigger('click');
+            });
+          });
+      }
+    });
+  </script>
+
+{% endblock %}
+
+{% block main_content %}
+  {% form_theme form 'form/ocsdc_form_style.html.twig' %}
+
+  <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h2>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4">
+        <h4 class="mb-5">
+          {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
+          -
+          {% if form.vars.helper.stepTitle|length > 0 %}
+            {{ form.vars.helper.stepTitle }}
+          {% else %}
+            {{ flow.currentStepLabel()|trans }}
+          {% endif %}
+        </h4>
+      </div>
+    </div>
+
+    <div class="row hidden-xs">
+      <div class="col-md-12 mt-4 mb-4">
+        {% include '@CraueFormFlowBundle/FormFlow/stepList.html.twig' %}
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-lg-4 px-lg-4 order-lg-2">
+        <div class="callout">
+          <div class="callout-title">
+            Info
+          </div>
+          <p>Stai compilando la pratica come anonimo, <a
+              href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}">accedi</a> al sistema per la
+            compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.</p>
+          <a href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
+             class="btn btn-xs btn-primary service-access-button">
+            <span>Accedi</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-8 px-lg-4 order-lg-1">
+        {{ form_start(form) }}
+        <div class="step-{{ flow.getCurrentStepNumber() }}">
+
+          {{ form_errors(form) }}
+
+          {% if form.vars.helper.descriptionText|length > 0 %}
+            {{ form.vars.helper.descriptionText|raw }}
+          {% endif %}
+
+          {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
+          {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+            <blockquote>
+              {{ 'steps.common.conferma.help_text_top'|trans }}
+            </blockquote>
+            {{ include('PraticheAnonime/parts/pratica_summary.html.twig', {'pratica':form.vars.data}) }}
+            <blockquote style="margin-top: 20px">
+              Per inviare la richiesta fai cllck su "Non sono un robot" e successivamente sul pulsante "Invia".
+            </blockquote>
+          {% endif %}
+
+          {{ form_rest(form) }}
+
+        </div>
+
+        <div id="formio" class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
+        <div class="mt-5">
+          {% include 'form/buttons.html.twig' %}
+        </div>
+        {{ form_end(form) }}
+      </div>
+
+    </div>
+  </section>
+
+  <div class="modal fade" id="confirm" tabindex="-1"
+       role="dialog"
+       aria-labelledby="confirmAutoAssignLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-dismiss="modal"
+                  class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
+          <button type="button" data-dismiss="modal" class="btn btn-primary"
+                  id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+

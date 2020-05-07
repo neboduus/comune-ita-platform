@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Stanza del Cittadino{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Titillium+Web&display=swap');
+        a,a:focus,a:hover {color: #fff;}
+        html,body {height: 100%;background-color: #06c;font-family: "Titillium Web",Geneva,Tahoma,sans-serif;}
+        body {display: -ms-flexbox;display: flex;color: #fff;}
+        .cover-container {max-width: 42em;}
+        .cover {padding: 0 1.5rem;}
+        .cover .btn-lg {padding: .75rem 1.25rem;font-weight: 700;}
+        .mastfoot {color: rgba(255, 255, 255, .5);}
+    </style>
+</head>
+
+<body class="text-center">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+
+    <main role="main" class="inner cover pt-5">
+        <h1 class="cover-heading">Stanza del Cittadino</h1>
+        <p class="lead">Servizi on-line orientati al cittadino</p>
+        {% if tenants %}
+            <div class="list-group">
+                {% for tenant in tenants %}
+                    <a class="list-group-item list-group-item-action"
+                       href="{% if tenant.host %}://{% endif %}{{ tenant.host }}/{{ tenant.pathInfoPrefix }}">{{ tenant.name }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </main>
+
+    <footer class="mastfoot mt-auto">
+        <div class="inner">
+            <p>Powered by <a href="https://www.opencontent.it/stanzadelcittadino">OpenContent</a></p>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

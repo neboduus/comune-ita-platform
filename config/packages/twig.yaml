@@ -1,0 +1,28 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    paths:
+        '%kernel.project_dir%/vendor/craue/formflow-bundle/Resources/views': CraueFormFlowBundle
+    debug: "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    exception_controller: null
+    form_themes:
+        - 'bootstrap_4_layout.html.twig'
+    globals:
+        ocsdc_iter_duration_start_status: "%ocsdc_iter_duration_start_status%"
+        ocsdc_iter_duration_end_statuses: "%ocsdc_iter_duration_end_statuses%"
+        ocsdc_default_date_format: "%ocsdc_default_date_format%"
+        ocsdc_default_datetime_format: "%ocsdc_default_datetime_format%"
+        ocsdc_slim_datetime_format: "%ocsdc_slim_datetime_format%"
+        ocsdc_default_moment_datetime_format: "%ocsdc_default_moment_datetime_format%"
+        ocsdc_default_time_format: "%ocsdc_default_time_format%"
+        
+services:
+    twig.app_variable:
+        class: App\Twig\AppVariable
+        calls:
+            - [setEnvironment, ['%kernel.environment%']]
+            - [setDebug, ['%kernel.debug%']]
+            - [setTokenStorage, ['@security.token_storage']]
+            - [setRequestStack, ['@request_stack']]
+            - [setInstanceService, ['@ocsdc.instance_service']]
+            - [setBackoffices, ['@ocsdc.backoffices']]

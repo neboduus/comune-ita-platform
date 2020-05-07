@@ -1,0 +1,19 @@
+api_auth:
+    path: "/api/auth"
+    methods:  [POST]
+    options:
+        tenant: required
+        
+app.swagger_ui:
+    path: "/api/doc"
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+    options:
+        tenant: required
+
+app.swagger:
+    path: "/api/doc.json"
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger }
+    options:
+        tenant: required

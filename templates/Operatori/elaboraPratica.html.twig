@@ -1,0 +1,68 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block main_content %}
+
+  {% form_theme form 'form/ocsdc_form_style.html.twig' %}
+
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>Pratica - {{ pratica.servizio.name }} {{ pratica.user.nome }} {{ pratica.user.cognome }}</h1>
+      </div>
+
+      <div class="col-md-12 mt-4 mb-4">
+        {% include '@CraueFormFlowBundle/FormFlow/stepList.html.twig' %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+
+        <h4>{{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
+          - {{ flow.currentStepLabel()|trans }}</h4>
+        <div>
+          {{ form.vars.helper.descriptionText|raw }}
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+        {{ form_start(form, {'action': path('operatori_elabora_pratica', {'pratica': pratica.id }) } ) }}
+        {{ form_errors(form) }}
+        {{ form_rest(form) }}
+        {% include 'form/buttons.html.twig' %}
+        {{ form_end(form) }}
+      </div>
+      {% if form.vars.helper.guideText|length > 0 %}
+        <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 sidebar">
+          <h5><i class="fa fa-info" aria-hidden="true"></i> Info</h5>
+          <div class="alert alert-info" role="alert">
+            {{ form.vars.helper.guideText|raw }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+  </section>
+
+  <div class="modal fade" id="confirm" tabindex="-1"
+       role="dialog"
+       aria-labelledby="confirmAutoAssignLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p>Una volta elaborata la pratica non sarà più possibile effettuare modifiche, vuoi procedere?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" data-dismiss="modal"
+                  class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
+          <button type="button" data-dismiss="modal" class="btn btn-primary"
+                  id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

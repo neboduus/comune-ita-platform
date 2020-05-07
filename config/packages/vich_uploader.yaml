@@ -1,0 +1,12 @@
+vich_uploader:
+    db_driver: orm
+    mappings:
+        allegato:
+            uri_prefix:         /pratiche/allegati
+            upload_destination: '%kernel.root_dir%/../var/uploads/pratiche/allegati'
+            directory_namer:    App\Services\DirectoryNamerService
+            namer:              Vich\UploaderBundle\Naming\UniqidNamer
+            inject_on_load:     true
+            delete_on_update:   true
+            delete_on_remove:   true
+

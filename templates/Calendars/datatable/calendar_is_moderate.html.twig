@@ -1,0 +1,15 @@
+{% if is_moderated %}
+    <span class="badge badge-outline-primary">
+        <svg class="icon icon-sm icon-primary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-locked"></use>
+        </svg>
+        Richiede moderazione
+    </span>
+{% else %}
+    <span class="badge badge-outline-secondary">
+        <svg class="icon icon-sm icon-secondary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+        </svg>
+        Non richiede moderazione
+    </span>
+{% endif %}
