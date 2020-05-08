@@ -29,11 +29,13 @@ class ScheduledActionCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
     $hostname = gethostname();
+    $logger = $this->getContainer()->get('logger');
 
     $context = $this->getContainer()->get('router')->getContext();
     $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
     $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
-    $this->getContainer()->get('logger')->info('Starting a scheduled action');
+
+    $logger->info('Starting a scheduled action with options: ' . \json_encode($input->getOptions()));
 
     /** @var ScheduleActionService $scheduleActionService */
     $scheduleActionService = $this->getContainer()->get('ocsdc.schedule_action_service');
@@ -51,36 +53,36 @@ class ScheduledActionCommand extends ContainerAwareCommand
     }
 
     if (!$forceHostname) {
-      $output->writeln("Reserve $count actions for host $hostname");
+      $logger->info("Try to reserve $count actions for host $hostname");
       $scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes);
     } else {
       $hostname = $forceHostname;
-      $output->writeln("Force execution for host $hostname");
+      $logger->info("Force execution for host $hostname");
     }
 
     $actions = $scheduleActionService->getPendingActions($hostname);
     $count = count($actions);
-    $output->writeln("Execute $count actions for host $hostname");
+    $logger->info("Execute $count actions for host $hostname");
 
     foreach ($actions as $action) {
       try {
         $service = $this->getContainer()->get($action->getService());
         if ($service instanceof ScheduledActionHandlerInterface) {
-          $output->writeln('Execute ' . $action->getType() . ' with params ' . $action->getParams());
+          $logger->info('Execute ' . $action->getType() . ' with params ' . $action->getParams());
           try {
             $service->executeScheduledAction($action);
             $scheduleActionService->markAsDone($action);
           } catch (\Exception $e) {
-            $this->getContainer()->get('logger')->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
+            $logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
           } catch (\ErrorException $e) {
-            $this->getContainer()->get('logger')->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
+            $logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
           }
         } else {
-          $this->getContainer()->get('logger')->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
+          $logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
           $scheduleActionService->markAsInvalid($action);
         }
       } catch (ServiceNotFoundException $e) {
-        $this->getContainer()->get('logger')->error($e->getMessage());
+        $logger->error($e->getMessage());
         $scheduleActionService->markAsInvalid($action);
       }
     }
@@ -93,7 +95,7 @@ class ScheduledActionCommand extends ContainerAwareCommand
       } else {
         $message .= 'reserved by host ' . $count['hostname'];
       }
-      $output->writeln($message);
+      $logger->info($message);
     }
   }
 }
