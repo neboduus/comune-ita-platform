@@ -20,6 +20,7 @@
 /web/js
 /web/build
 /web/bootstrap-italia
+/web/VERSION
 /bower_components
 /node_modules
 /coverage

@@ -20,7 +20,7 @@ build_php:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $PHP_IMAGE_NAME:latest || true
-    - docker pull $PHP_IMAGE_TMP 2> /dev/null || docker build --pull --cache-from $PHP_IMAGE_NAME:latest -t $PHP_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 .
+    - docker pull $PHP_IMAGE_TMP 2> /dev/null || docker build --pull --cache-from $PHP_IMAGE_NAME:latest -t $PHP_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME --build-arg CI_COMMIT_TAG=$CI_COMMIT_TAG --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA .
     - docker push $PHP_IMAGE_TMP
   only:
     - branches

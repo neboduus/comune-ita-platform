@@ -572,6 +572,10 @@ services:
     class: AppBundle\Services\InstanceService
     arguments: ["@doctrine", "%prefix%"]
 
+  ocsdc.version_service:
+    class: AppBundle\Services\VersionService
+    autowire: true
+
   ocsdc.form.flow.occupazionesuolopubblico:
     class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
     parent: ocsdc.form.flow.pratica
