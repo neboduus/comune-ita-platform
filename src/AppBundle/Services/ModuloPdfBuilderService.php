@@ -4,6 +4,7 @@ namespace AppBundle\Services;
 
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\RichiestaIntegrazioneRequestInterface;
@@ -11,9 +12,10 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\RispostaOperatoreDTO;
+use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
+use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Snappy\GeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
@@ -31,9 +33,10 @@ use Vich\UploaderBundle\Mapping\PropertyMapping;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
-class ModuloPdfBuilderService
+class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 {
 
+  const SCHEDULED_CREATE_FOR_PRATICA = 'createForPratica';
   const PRINTABLE_USERNAME = 'ez';
 
   /**
@@ -62,11 +65,6 @@ class ModuloPdfBuilderService
   private $directoryNamer;
 
   /**
-   * @var GeneratorInterface
-   */
-  private $generator;
-
-  /**
    * @var WkhtmltopdfService
    */
   private $wkhtmltopdfService;
@@ -82,11 +80,24 @@ class ModuloPdfBuilderService
   private $dateTimeFormat;
 
   /**
-   * @var WkhtmltopdfService
+   * @var UrlGeneratorInterface
+   */
+  private $router;
+
+  /**
+   * @var string
    */
   private $printablePassword;
 
-  private $router;
+  /**
+   * @var PraticaStatusService
+   */
+  private $statusService;
+
+  /**
+   * @var ScheduleActionService
+   */
+  private $scheduleActionService;
 
   public function __construct(
     Filesystem $filesystem,
@@ -94,12 +105,13 @@ class ModuloPdfBuilderService
     TranslatorInterface $translator,
     PropertyMappingFactory $propertyMappingFactory,
     DirectoryNamerInterface $directoryNamer,
-    GeneratorInterface $generator,
     string $wkhtmltopdfService,
     EngineInterface $templating,
     $dateTimeFormat,
     UrlGeneratorInterface $router,
-    string $printablePassword
+    string $printablePassword,
+    PraticaStatusService $statusService,
+    ScheduleActionService $scheduleActionService
   )
   {
     $this->filesystem = $filesystem;
@@ -107,18 +119,20 @@ class ModuloPdfBuilderService
     $this->translator = $translator;
     $this->propertyMappingFactory = $propertyMappingFactory;
     $this->directoryNamer = $directoryNamer;
-    $this->generator = $generator;
     $this->wkhtmltopdfService = $wkhtmltopdfService;
     $this->templating = $templating;
     $this->dateTimeFormat = $dateTimeFormat;
     $this->router = $router;
     $this->printablePassword = $printablePassword;
+    $this->statusService = $statusService;
+    $this->scheduleActionService = $scheduleActionService;
   }
 
   /**
    * @param Pratica $pratica
    *
    * @return RispostaOperatore
+   * @throws \Exception
    */
   public function createUnsignedResponseForPratica(Pratica $pratica)
   {
@@ -145,6 +159,7 @@ class ModuloPdfBuilderService
    * @param Pratica $pratica
    *
    * @return RispostaOperatore
+   * @throws \Exception
    */
   public function createSignedResponseForPratica(Pratica $pratica)
   {
@@ -171,6 +186,7 @@ class ModuloPdfBuilderService
    * @param Pratica $pratica
    *
    * @return ModuloCompilato
+   * @throws \Exception
    */
   public function createForPratica(Pratica $pratica)
   {
@@ -197,6 +213,7 @@ class ModuloPdfBuilderService
    * @param Pratica $pratica
    *
    * @return ModuloCompilato
+   * @throws \Exception
    */
   public function showForPratica(Pratica $pratica)
   {
@@ -227,6 +244,7 @@ class ModuloPdfBuilderService
    * @param RichiestaIntegrazioneDTO $integrationRequest
    *
    * @return RichiestaIntegrazione
+   * @throws \Exception
    */
   public function creaModuloProtocollabilePerRichiestaIntegrazione(
     Pratica $pratica,
@@ -269,10 +287,7 @@ class ModuloPdfBuilderService
    * @return RispostaOperatore|null
    * @throws \Exception
    */
-  public function creaRispostaOperatore(
-    Pratica $pratica,
-    RispostaOperatoreDTO $rispostaOperatore
-  )
+  public function creaRispostaOperatore(Pratica $pratica, RispostaOperatoreDTO $rispostaOperatore)
   {
     $response = new RispostaOperatore();
     $payload = $rispostaOperatore->getPayload();
@@ -301,10 +316,12 @@ class ModuloPdfBuilderService
     return $response;
   }
 
-  private function renderForPraticaIntegrationRequest(
-    Pratica $pratica,
-    RichiestaIntegrazioneDTO $integrationRequest
-  )
+  /**
+   * @param Pratica $pratica
+   * @param RichiestaIntegrazioneDTO $integrationRequest
+   * @return string
+   */
+  private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest)
   {
     $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
@@ -337,6 +354,7 @@ class ModuloPdfBuilderService
    * @param Pratica $pratica
    *
    * @return string
+   * @throws \ReflectionException
    */
   private function renderForPratica(Pratica $pratica)
   {
@@ -353,6 +371,7 @@ class ModuloPdfBuilderService
    * @param Pratica $pratica
    *
    * @return string
+   * @throws \ReflectionException
    */
   private function renderForResponse(Pratica $pratica)
   {
@@ -379,6 +398,7 @@ class ModuloPdfBuilderService
   /**
    * @param Pratica $pratica
    * @param $allegato
+   * @throws \ReflectionException
    */
   private function createAllegatoInstance(Pratica $pratica, Allegato $allegato)
   {
@@ -432,6 +452,12 @@ class ModuloPdfBuilderService
     }
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return string
+   * @throws ClientException
+   * @throws RequestException
+   */
   public function generatePdfUsingGotemberg( Pratica $pratica )
   {
 
@@ -448,6 +474,12 @@ class ModuloPdfBuilderService
 
   }
 
+  /**
+   * @param Servizio $service
+   * @return string
+   * @throws ClientException
+   * @throws RequestException
+   */
   public function generateServicePdfUsingGotemberg( Servizio $service )
   {
     $url = $this->router->generate('print_service', ['service' => $service->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -460,5 +492,36 @@ class ModuloPdfBuilderService
     $fileStream = $response->getBody();
     return $fileStream->getContents();
 
+  }
+
+  /**
+   * @param Pratica|GiscomPratica $pratica
+   * @throws \AppBundle\ScheduledAction\Exception\AlreadyScheduledException
+   */
+  public function createForPraticaAsync(Pratica $pratica)
+  {
+    $params = serialize(['pratica' => $pratica->getId(),]);
+
+    $this->scheduleActionService->appendAction(
+      'ocsdc.modulo_pdf_builder',
+      self::SCHEDULED_CREATE_FOR_PRATICA,
+      $params
+    );
+  }
+
+  /**
+   * @param ScheduledAction $action
+   * @throws \Exception
+   */
+  public function executeScheduledAction(ScheduledAction $action)
+  {
+    $params = unserialize($action->getParams());
+    if ($action->getType() == self::SCHEDULED_CREATE_FOR_PRATICA) {
+      /** @var Pratica $pratica */
+      $pratica = $this->em->getRepository('AppBundle:Pratica')->find($params['pratica']);
+      $pdf = $this->createForPratica($pratica);
+      $pratica->addModuloCompilato($pdf);
+      $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+    }
   }
 }

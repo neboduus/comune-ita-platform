@@ -45,7 +45,8 @@ class PraticaStatusService
 
     $this->validChangeStatusList = [
 
-      [Pratica::STATUS_DRAFT => Pratica::STATUS_SUBMITTED],
+      [Pratica::STATUS_DRAFT => Pratica::STATUS_PRE_SUBMIT],
+      [Pratica::STATUS_PRE_SUBMIT => Pratica::STATUS_SUBMITTED],
       [Pratica::STATUS_DRAFT => Pratica::STATUS_PAYMENT_PENDING],
 
       [Pratica::STATUS_PAYMENT_PENDING => Pratica::STATUS_PAYMENT_OUTCOME_PENDING],
