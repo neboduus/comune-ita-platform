@@ -310,12 +310,13 @@ class GiscomAPIController extends Controller
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * @Route("/giscom/pratica/{pratica}/richiestaIntegrazioni", name="giscom_api_pratica_richiesta_integrazioni")
-     * @Method({"POST"})
-     * @Security("has_role('ROLE_GISCOM')")
-     * @return Response
-     */
+  /**
+   * @Route("/giscom/pratica/{pratica}/richiestaIntegrazioni", name="giscom_api_pratica_richiesta_integrazioni")
+   * @Method({"POST"})
+   * @Security("has_role('ROLE_GISCOM')")
+   * @return Response
+   * @throws \Exception
+   */
     public function createIntegrationRequestAction(Request $request, SciaPraticaEdilizia $pratica)
     {
         $payload = json_decode($request->getContent(), true);

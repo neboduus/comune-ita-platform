@@ -57,6 +57,8 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     const STATUS_PAYMENT_SUCCESS = 1520;
     const STATUS_PAYMENT_ERROR = 1530;
 
+    const STATUS_PRE_SUBMIT = 1900;
+
     const STATUS_SUBMITTED = 2000;
     const STATUS_REGISTERED = 3000;
     const STATUS_PENDING = 4000;

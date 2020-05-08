@@ -184,12 +184,13 @@ services:
       - "@translator"
       - "@vich_uploader.property_mapping_factory"
       - "@ocsdc.allegati.directory_namer"
-      - "@knp_snappy.pdf"
       - "%wkhtmltopdf_service%"
       - "@templating"
       - "%ocsdc_default_datetime_format%"
       - "@router"
       - "%ez_password%"
+      - '@ocsdc.pratica_status_service'
+      - "@ocsdc.schedule_action_service"
 
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
@@ -221,17 +222,23 @@ services:
 
   ocsdc.protocollo: "@ocsdc.protocollo_delayed"
 
+  ocsdc.pratica_listeners.createpdf:
+    class: AppBundle\EventListener\CreatePdfPraticaListener
+    arguments: ["@ocsdc.modulo_pdf_builder", "@logger"]
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 10 }
+
   ocsdc.pratica_listeners.sendmail:
     class: AppBundle\EventListener\SendMailPraticaListener
     arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@logger"]
     tags:
-      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 10 }
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 20 }
 
   ocsdc.pratica_listeners.backoffice:
     class: AppBundle\EventListener\BackOfficePraticaListener
     arguments: ["@service_container", "@logger"]
     tags:
-      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 20 }
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 30 }
 
   ocsdc.pratica_listeners.protocollo:
     class: AppBundle\EventListener\ProtocollaPraticaListener
