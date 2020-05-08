@@ -14,10 +14,10 @@
         $("body").append(temp)
         temp.val(button.data('url')).select()
         document.execCommand("copy")
-        button.find('span').text('Url copiato')
+        button.find('span').text('URL copiato')
         temp.remove();
         setTimeout(function () {
-          button.find('span').text('Copia url')
+          button.find('span').text('Copia URL')
         }, 2000);
 
       })
@@ -47,28 +47,28 @@
             {% for item in items %}
               <tr>
                 <td data-title="Nome">
-                  <a href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
+                  <a class="text-nowrap" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
                 </td>
                 <td><a class="btn btn-secondary btn-xs clone" href="#"
                        data-url="{{ absolute_url(path('service_api_get', { 'id': item.id })) }}"
                        data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right"
                        data-html="true" title="Url servizio"
-                       data-content="Copia l'url ed incollala nel form clona servizio da url.">
+                       data-content="Copia l'URL ed incollala nel form clona servizio da url.">
                     <svg class="icon icon-sm icon-white">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-copy"></use>
                     </svg>
-                    <span>Copia url</span></a>
+                    <span>Copia URL</span></a>
                 </td>
                 <td data-title="Stato">
                   {{ statuses[item.status] }}
                 </td>
                 <td data-title="Azioni" class="actions">
-                  <a class="btn btn-warning btn-xs" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
+                  <a class="btn btn-warning btn-xs mb-1" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
                     <svg class="icon icon-sm icon-white">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
                     </svg>
                     Modifica</a>
-                  <a class="btn btn-danger btn-xs"
+                  <a class="btn btn-danger btn-xs mb-1"
                      onclick="return confirm('Sei sicuro di procedere? Il servizio e il modulo collegato verrano eliminati definitivamente.');"
                      href="{{ path('admin_servizio_delete', { 'id': item.id }) }}">
                     <svg class="icon icon-sm icon-white">
