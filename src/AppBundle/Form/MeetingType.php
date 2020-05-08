@@ -3,6 +3,8 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Calendar;
+use AppBundle\Entity\Meeting;
+use AppBundle\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +16,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 class MeetingType extends AbstractType
@@ -24,9 +30,21 @@ class MeetingType extends AbstractType
    */
   private $em;
 
-  public function __construct(EntityManager $entityManager)
+  /**
+   * @var MeetingService
+   */
+  private $meetingService;
+
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  public function __construct(EntityManager $entityManager, MeetingService $meetingService, TranslatorInterface $translator)
   {
     $this->em = $entityManager;
+    $this->meetingService = $meetingService;
+    $this->translator = $translator;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -81,7 +99,19 @@ class MeetingType extends AbstractType
       ->add('videoconference_link', UrlType::class, [
         'required' => false,
         'label' => 'Link videoconferenza'
-      ]);
+      ])
+      ->addEventListener(FormEvents::SUBMIT, array($this, 'onSubmit'));
+  }
+
+  public function onSubmit(FormEvent $event)
+  {
+    /** @var Meeting $meeting */
+    $meeting = $event->getForm()->getData();
+
+    if (!$this->meetingService->isSlotAvailable($meeting))
+      $event->getForm()->addError(new FormError($this->translator->trans('meetings.error.slot_unavailable')));
+    if (!$this->meetingService->isSlotValid($meeting))
+      $event->getForm()->addError(new FormError($this->translator->trans('meetings.error.slot_invalid')));
   }
 
   public function configureOptions(OptionsResolver $resolver)

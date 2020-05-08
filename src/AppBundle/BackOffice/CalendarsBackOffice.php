@@ -107,7 +107,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       $meeting->setEmail($meetingData['applicant.data.email_address']);
       $meeting->setName($data->getUser()->getFullName());
       $meeting->setPhoneNumber($meetingData['applicant.data.phone_number']);
-      $meeting->setFiscalCode($data->getUser()->getCodiceFiscale());
+      $meeting->setFiscalCode($meetingData['applicant.data.fiscal_code.data.fiscal_code']);
       $meeting->setUser($data->getUser());
       $meeting->setUserMessage($meetingData['user_message']);
       $meeting->setFromTime($start);

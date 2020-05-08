@@ -6,6 +6,7 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\MeetingService;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
@@ -33,10 +34,16 @@ class CalendarsAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  public function __construct(EntityManager $em, InstanceService $is)
+  /**
+   * @var MeetingService
+   */
+  private $meetingService;
+
+  public function __construct(EntityManager $em, InstanceService $is, MeetingService $meetingService)
   {
     $this->em = $em;
     $this->is = $is;
+    $this->meetingService = $meetingService;
   }
 
 
@@ -119,6 +126,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $startDate = $request->query->get('from_time');
     $endDate = $request->query->get('to_time');
     try {
+      /** @var OpeningHour[] $openingHours */
       $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
       $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($calendar === null) {
@@ -130,10 +138,10 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       foreach ($openingHours as $openingHour) {
         if ($startDate && $endDate) {
-          $availabilities = array_merge($availabilities, $openingHour->explodeDays(false, $startDate, $endDate));
+          $availabilities = array_merge($availabilities, $this->meetingService->explodeDays($openingHour, false, $startDate, $endDate));
         } else {
           // default: compute availabilities on rolling days
-          $availabilities = array_merge($availabilities, $openingHour->explodeDays());
+          $availabilities = array_merge($availabilities, $this->meetingService->explodeDays($openingHour));
         }
       }
       // sort and remove duplicates
@@ -144,8 +152,6 @@ class CalendarsAPIController extends AbstractFOSRestController
         $fromTime = $closingPeriod->getFromTime();
         $toTime = $closingPeriod->getToTime();
         foreach ($availabilities as $availability) {
-          // availability falls inside closing period
-          // todo: check calendar opening hours
           if ($availability >= $fromTime && $availability <= $toTime) {
             $key = array_search($availability, $availabilities);
             unset($availabilities[$key]);
@@ -184,6 +190,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $allAvailabilities = strtolower($request->get('all') == 'true') ? true : false;
 
     try {
+      /** @var OpeningHour[] $openingHours */
       $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
       $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($openingHours === null) {
@@ -224,8 +231,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       // Retrieve calendar slots by input date
       foreach ($openingHours as $openingHour) {
-        if (in_array($inputDate->format('Y-m-d'), $openingHour->explodeDays($allAvailabilities)) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
-          $slots = array_merge($slots, $openingHour->explodeMeetings($inputDate));
+        if (in_array($inputDate->format('Y-m-d'), $this->meetingService->explodeDays($openingHour, $allAvailabilities)) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
+          $slots = array_merge($slots, $this->meetingService->explodeMeetings($openingHour, $inputDate));
         }
       }
       ksort($slots);
@@ -509,6 +516,14 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Delete a Calendar
    * @Rest\Delete("/{id}", name="calendars_api_delete")
    *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
@@ -578,14 +593,10 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive the Opening Hours of a Calendar",
-   * )
-   *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
+   *     @SWG\Schema(
+   *         type="array",
+   *         @SWG\Items(ref=@Model(type=OpeningHour::class))
+   *     )
    * )
    *
    * @SWG\Response(
@@ -618,15 +629,10 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive an Opening Hour of a Calendar",
-   *      @Model(type=OpeningHour::class)
-   * )
-   *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
+   *     @SWG\Schema(
+   *         type="array",
+   *         @SWG\Items(ref=@Model(type=OpeningHour::class))
+   *     )
    * )
    *
    * @SWG\Response(

@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\OperatoreUser;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,14 +19,32 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CalendarType extends AbstractType
 {
   /**
+   * @var EntityManager
+   */
+  private $em;
+
+  public function __construct(EntityManager $entityManager)
+  {
+    $this->em = $entityManager;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $minimumSchedulingNotices = [
-      'Un ora prima' => 1, 'Due ore prima' => 2, 'Quattro ore prima' => 4, 'Otto ore prima' => 8,
-      'Un giorno prima' => 24, 'Due giorni prima' => 48, 'Tre giorni prima' => 72, 'Una settimana prima' => 168
+      'Un\'ora prima'=>1, 'Due ore prima'=>2, 'Quattro ore prima'=>4, 'Otto ore prima'=>8,
+      'Un giorno prima'=>24, 'Due giorni prima'=>48, 'Tre giorni prima'=>72, 'Una settimana prima'=>168
     ];
+
+    $owners = $this->em
+      ->createQuery(
+        "SELECT user
+             FROM AppBundle\Entity\User user
+             WHERE (user INSTANCE OF AppBundle\Entity\OperatoreUser OR user INSTANCE OF AppBundle\Entity\AdminUser)"
+      )->getResult();
+    $owners = array_values($owners);
 
     $builder
       ->add('title', TextType::class, [
@@ -53,9 +72,11 @@ class CalendarType extends AbstractType
         'required' => true,
         'label' => 'Richiede moderazione?'
       ])
-      ->add('owner', EntityType::class, [
-        'class' => 'AppBundle\Entity\User',
+      ->add('owner', ChoiceType::class, [
+        'choices' => $owners,
         'required' => true,
+        'choice_label' => 'username',
+        'choice_value' => 'id',
         'label' => 'Proprietario'
       ])
       ->add('moderators', EntityType::class, [

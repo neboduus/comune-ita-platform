@@ -4,14 +4,24 @@ parameters:
 #    parameter_name: value
 
 services:
-  meeting.eventlistener:
+  ocsdc.meeting_service:
+    class: AppBundle\Services\MeetingService
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@ocsdc.instance_service'
+      - '@ocsdc.mailer'
+      - '%default_from_email_address%'
+      - '@translator'
+      - '@router'
+
+  ocsdc.meeting_eventlistener:
     class: AppBundle\EventListener\MeetingLifeCycleListener
     tags:
       - { name: doctrine.event_listener, event: postPersist, connection: default }
       - { name: doctrine.event_listener, event: preUpdate, connection: default }
       - { name: doctrine.event_listener, event: postRemove, connection: default }
     arguments:
-      ['@ocsdc.mailer', '%default_from_email_address%', '@translator', '@router']
+      ['@ocsdc.meeting_service']
 
   AppBundle\Controller\APIController:
     autowire: true
@@ -26,7 +36,7 @@ services:
     autowire: true
 
   AppBundle\Controller\Rest\CalendarsAPIController:
-    autowire: true
+    arguments: ["@doctrine.orm.entity_manager", '@ocsdc.instance_service', '@ocsdc.meeting_service']
 
   AppBundle\Controller\Rest\MeetingsAPIController:
     autowire: true
@@ -66,14 +76,26 @@ services:
   AppBundle\Form\OccupazioneSuoloPubblico\ImportoChecker:
     autowire: true
 
-  AppBundle\Form\MeetingType:
+  AppBundle\Form\CalendarBackofficeType:
     autowire: true
     tags:
       - { name: form.type }
 
-  AppBundle\Form\OpeningHourType:
+  AppBundle\Form\CalendarType:
     autowire: true
-    arguments: ["@translator"]
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\MeetingType:
+    arguments: ["@doctrine.orm.entity_manager", '@ocsdc.meeting_service', '@translator']
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\OpeningHourType:
+    arguments:
+    - "@translator"
+    - "@doctrine.orm.entity_manager"
+    - "@ocsdc.meeting_service"
     tags:
       - { name: form.type }
 
@@ -120,8 +142,11 @@ services:
     arguments: ["@ocsdc.mailer", "%default_from_email_address%", "@logger"]
 
   AppBundle\Controller\CalendarsController:
-    autowire: true
-    arguments: ["@translator"]
+    arguments:
+    - "@translator"
+    - '@doctrine.orm.entity_manager'
+    - '@ocsdc.instance_service'
+    - '@ocsdc.meeting_service'
 
   Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
 

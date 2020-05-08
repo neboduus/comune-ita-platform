@@ -76,6 +76,9 @@
     let end = slot[1];
     let id = $('#modalId').html();
 
+    if (!start || !end)
+        return $('#modalError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+
     let data = {
       status: status,
       from_time: new Date(`${date}T${start}Z`).toISOString(),
@@ -86,11 +89,13 @@
       videoconference_link: $('#modalVideoconferenceLink').val(),
     };
     let url = $(`#${btnId}`).attr('data-url');
+    let token = $('#hidden').attr('data-token');
     url = url.replace("meeting_id", id);
     $.ajax({
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
       },
       url: url,
       type: 'PATCH',
@@ -99,7 +104,16 @@
         location.reload();
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        $('#modalError').html('Si è verificato un errore durante la modifica dell\'appuntamento');
+          let errorMessage = ''
+          if ( jqXHR.responseJSON.errors) {
+              jqXHR.responseJSON.errors.forEach(function (error) {
+                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
+              })
+          } else {
+              // Errore generico
+              errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante il salvataggio dell\'appuntamento</li>`
+          }
+        $('#modalError').html(errorMessage);
       },
     });
   }
@@ -115,6 +129,9 @@
     let start = slot[0];
     let end = slot[1];
 
+      if (!start || !end)
+          return $('#modalNewError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+
     let data = {
       status: 1,
       from_time: new Date(`${date}T${start}Z`).toISOString(),
@@ -129,10 +146,12 @@
     };
 
     let url = $(`#${btnId}`).attr('data-url');
+    let token = $('#hidden').attr('data-token');
     $.ajax({
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
       },
       url: url,
       type: 'POST',
@@ -141,7 +160,16 @@
         location.reload();
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        $('#modalNewError').html('Si è verificato un errore durante la creazione dell\'appuntamento');
+          let errorMessage = ''
+          if ( jqXHR.responseJSON.errors) {
+              jqXHR.responseJSON.errors.forEach(function (error) {
+                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
+              })
+          } else {
+              // Errore generico
+              errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante il salvataggio dell\'appuntamento</li>`
+          }
+          $('#modalNewError').html(errorMessage);
       },
     });
   }
@@ -163,6 +191,7 @@
          data-calendar='{{ calendar.id }}'
          data-events='{{ events | json_encode }}'
          data-duration='{{ minDuration }}'
+         data-token='{{ token }}'
     ></div>
     <div class="nav-tabs-hidescroll mt-4 mt-md-5">
       <ul class="nav nav-tabs auto no-border no-background" id="tab" role="tablist">
@@ -218,7 +247,7 @@
           Stampa
         </a>
         <a class="btn btn-warning btn-sm"
-           href="{{ path('operatori_calendar_edit', { 'calendar': calendar.id }) }}">Modifca</a>
+           href="{{ path('operatori_calendar_edit', { 'calendar': calendar.id }) }}">Modifica</a>
       </div>
       <div class="col-4">
         {{ form_start(delete_form) }}

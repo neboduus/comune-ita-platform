@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller\Rest;
 
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
+use AppBundle\Entity\User;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -28,6 +30,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 class MeetingsAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
+
+  private $em;
+
+  private $is;
 
   /**
    * @var TranslatorInterface $translator
@@ -58,7 +64,27 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function getMeetingsAction()
   {
-    $meetings = $this->getDoctrine()->getRepository('AppBundle:Meeting')->findAll();
+    /** @var User $user */
+    $user = $this->getUser();
+
+    $builder = $this->em->createQueryBuilder();
+    $builder
+      ->select('meeting.id')
+      ->from(Meeting::class, 'meeting')
+      ->leftJoin('meeting.calendar', 'calendar')
+      ->leftJoin('calendar.owner', 'owner')
+      ->leftJoin('calendar.moderators', 'moderators')
+      ->where('calendar.owner = :owner')
+      ->Orwhere('moderators.id = :operatore')
+      ->setParameter('operatore', $user)
+      ->setParameter('owner', $user);
+
+    $results = $builder->getQuery()->getResult();
+    $meetings = array();
+
+    foreach ($results as $result) {
+      $meetings[] = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result);
+    }
 
     return $this->view($meetings, Response::HTTP_OK);
   }
@@ -85,13 +111,30 @@ class MeetingsAPIController extends AbstractFOSRestController
   public function getMeetingAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
-      $result = $repository->find($id);
-      if ($result === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
-      }
+      /** @var User $user */
+      $user = $this->getUser();
 
-      return $this->view($result, Response::HTTP_OK);
+      $builder = $this->em->createQueryBuilder();
+      $builder
+        ->select('meeting.id')
+        ->from(Meeting::class, 'meeting')
+        ->leftJoin('meeting.calendar', 'calendar')
+        ->leftJoin('calendar.owner', 'owner')
+        ->leftJoin('calendar.moderators', 'moderators')
+        ->where('calendar.owner = :owner')
+        ->Orwhere('moderators.id = :operatore')
+        ->andWhere('meeting.id = :meeting_id')
+        ->setParameter('meeting_id', $id)
+        ->setParameter('operatore', $user)
+        ->setParameter('owner', $user);
+
+      $result = $builder->getQuery()->getOneOrNullResult();
+
+      if ($result) {
+        $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result['id']);
+        return $this->view($meeting, Response::HTTP_OK);
+      }
+      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
@@ -154,6 +197,59 @@ class MeetingsAPIController extends AbstractFOSRestController
     $em = $this->getDoctrine()->getManager();
 
     try {
+      if (!$meeting->getFiscalCode() && !$meeting->getUser()) {
+        // codice fiscale non fornito
+        $user = new CPSUser();
+        $user->setEmail($meeting->getEmail() ? $meeting->getEmail() : '');
+        $user->setEmailContatto($meeting->getEmail() ? $meeting->getEmail() : '');
+        $user->setNome($meeting->getName() ? $meeting->getName() : '');
+        $user->setCognome('');
+        $user->setCodiceFiscale($user->getId() . '-' . time());
+        $user->setUsername($user->getId());
+
+        $user->addRole('ROLE_USER')
+          ->addRole('ROLE_CPS_USER')
+          ->setEnabled(true)
+          ->setPassword('');
+
+        $em->persist($user);
+        $meeting->setUser($user);
+      } else if ($meeting->getFiscalCode() && !$meeting->getUser()) {
+        $result = $em->createQueryBuilder()
+          ->select('user.id')
+          ->from('AppBundle:User', 'user')
+          ->where('upper(user.username) = upper(:username)')
+          ->setParameter('username', $meeting->getFiscalCode())
+          ->getQuery()->getResult();
+        if ( !empty($result)) {
+          $repository = $em->getRepository('AppBundle:CPSUser');
+          /**
+           * @var CPSUser $user
+           */
+          $user =  $repository->find($result[0]['id']);
+        } else {
+          $user = null;
+        }
+        if (!$user) {
+          $user = new CPSUser();
+          $user->setEmail($meeting->getEmail() ? $meeting->getEmail() : '');
+          $user->setEmailContatto($meeting->getEmail() ? $meeting->getEmail() : '');
+          $user->setNome($meeting->getName() ? $meeting->getName() : '');
+          $user->setCognome('');
+          $user->setCodiceFiscale($meeting->getFiscalCode());
+          $user->setUsername($meeting->getFiscalCode());
+
+          $user->addRole('ROLE_USER')
+            ->addRole('ROLE_CPS_USER')
+            ->setEnabled(true)
+            ->setPassword('');
+
+          $em->persist($user);
+          $meeting->setUser($user);
+        } else {
+          $meeting->setUser($user);
+        }
+      }
       $em->persist($meeting);
       $em->flush();
 
@@ -372,6 +468,14 @@ class MeetingsAPIController extends AbstractFOSRestController
   /**
    * Delete a Meeting
    * @Rest\Delete("/{id}", name="meetings_api_delete")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
    *
    * @SWG\Response(
    *     response=204,

@@ -34,7 +34,7 @@ class Meeting
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Meeting's uuid", type="guid")
+   * @SWG\Property(description="Meeting's uuid", type="string")
    */
   private $id;
 
@@ -42,7 +42,7 @@ class Meeting
  * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar")
  * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
  * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
- * @SWG\Property(description="Meeting's calendar id", type="guid")
+ * @SWG\Property(description="Meeting's calendar id", type="string")
  * @Serializer\Exclude()
  */
   private $calendar;
@@ -50,7 +50,7 @@ class Meeting
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OpeningHour", inversedBy="meetings")
    * @ORM\JoinColumn(name="opening_hour_id", referencedColumnName="id", nullable=true)
-   * @SWG\Property(description="Meeting's opening hour id", type="guid")
+   * @SWG\Property(description="Meeting's opening hour id", type="string")
    * @Serializer\Exclude()
    */
   private $openingHour;
@@ -59,14 +59,14 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="email", type="string", length=255, nullable=true)
-   * @SWG\Property(description="Meeting's user email", type="email")
+   * @SWG\Property(description="Meeting's user email", type="string")
    */
   private $email;
 
   /**
    * @var string
    *
-   * @ORM\Column(name="phone_number", type="string", length=10, nullable=true)
+   * @ORM\Column(name="phone_number", type="string", nullable=true)
    * @SWG\Property(description="Meeting's user phone number", type="string")
    */
   private $phoneNumber;
@@ -90,7 +90,7 @@ class Meeting
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
    * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
-   * @SWG\Property(description="Meeting's user id", type="guid")
+   * @SWG\Property(description="Meeting's user id", type="string")
    * @Serializer\Exclude()
    */
   private $user;
@@ -100,7 +100,7 @@ class Meeting
    *
    * @ORM\Column(name="from_time", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (from Time)")
-   * @SWG\Property(description="Meeting's from Time", type="dateTime")
+   * @SWG\Property(description="Meeting's from Time")
    */
   private $fromTime;
 
@@ -109,7 +109,7 @@ class Meeting
    *
    * @ORM\Column(name="to_time", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (to Time)")
-   * @SWG\Property(description="Meeting's to Time", type="dateTime")
+   * @SWG\Property(description="Meeting's to Time")
    */
   private $toTime;
 
@@ -118,7 +118,7 @@ class Meeting
    *
    * @ORM\Column(name="user_message", type="text")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (userMessage)")
-   * @SWG\Property(description="Meeting's User Message", type="text")
+   * @SWG\Property(description="Meeting's User Message", type="string")
    */
   private $userMessage;
 
@@ -156,13 +156,13 @@ class Meeting
 
   /**
    * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Meeting's creation date", type="dateTime")
+   * @SWG\Property(description="Meeting's creation date")
    */
   private $createdAt;
 
   /**
    * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Meeting's last modified date", type="dateTime")
+   * @SWG\Property(description="Meeting's last modified date")
    */
   private $updatedAt;
 
@@ -374,7 +374,7 @@ class Meeting
    * @Serializer\SerializedName("user")
    * @Serializer\Exclude(if="!object.getUser()")
    */
-  public function getUserId(): string
+  public function getUserId(): ?string
   {
     if ($this->user)
       return $this->user->getId();
@@ -613,139 +613,7 @@ class Meeting
     if ($this->getCreatedAt() === null) {
       $this->setRescheduled(0);
       $this->setCreatedAt($dateTimeNow);
-      $em = $args->getEntityManager();
-      if (!$this->fiscalCode && !$this->user) {
-        $user = new CPSUser();
-        $user->setEmail($this->email);
-        $user->setNome($this->name ? $this->name : '');
-        $user->setCognome('');
-        $user->setCpsTelefono($this->phoneNumber);
-        $user->setCodiceFiscale($this->fiscalCode);
-        $user->setUsername($user->getId());
-
-        $user->addRole('ROLE_USER')
-          ->addRole('ROLE_CPS_USER')
-          ->setEnabled(true)
-          ->setPassword('');
-
-        $em->persist($user);
-        $em->flush();
-        $this->user = $user;
-      } else if ($this->fiscalCode && !$this->user) {
-        $result = $em->createQueryBuilder()
-          ->select('user.id')
-          ->from('AppBundle:User', 'user')
-          ->where('upper(user.username) = upper(:username)')
-          ->setParameter('username', $this->fiscalCode)
-          ->getQuery()->getResult();
-        if ( !empty($result)) {
-          $repository = $em->getRepository('AppBundle:CPSUser');
-          $user =  $repository->find($result[0]['id']);
-        } else {
-          $user = null;
-        }
-        if (!$user) {
-          $user = new CPSUser();
-          $user->setEmail($this->email);
-          $user->setNome($this->name ? $this->name : '');
-          $user->setCognome('');
-          $user->setCpsTelefono($this->phoneNumber);
-          $user->setCodiceFiscale($this->fiscalCode);
-          $user->setUsername($this->fiscalCode);
-
-          $user->addRole('ROLE_USER')
-            ->addRole('ROLE_CPS_USER')
-            ->setEnabled(true)
-            ->setPassword('');
-
-          $em->persist($user);
-          $em->flush();
-          $this->user = $user;
-        } else {
-          $this->user = $user;
-        }
-      }
   }
-}
-
-/**
- * @ORM\PrePersist
- * @ORM\PreUpdate
- * @param LifecycleEventArgs $args
- * @throws ORMException
- */
-public
-function checkQueue(LifecycleEventArgs $args): void
-{
-  // Retrieve all meetings in the same time slot
-  $em = $args->getEntityManager();
-  $meetings = $em->createQueryBuilder()
-    ->select('openingHour.meetingQueue', 'count(meeting.fromTime) as meetingCount')
-    ->from('AppBundle:Meeting', 'meeting')
-    ->leftJoin('meeting.calendar', 'calendar')
-    ->leftJoin('calendar.openingHours', 'openingHour')
-    ->where('meeting.calendar = :calendar')
-    ->andWhere('meeting.fromTime = :fromTime')
-    ->andWhere('meeting.toTime = :toTime')
-    ->andWhere('openingHour.beginHour <= :fromTime')
-    ->andWhere('openingHour.endHour >= :toTime')
-    ->andWhere('meeting.id != :id')
-    ->andWhere('meeting.status != :refused')
-    ->andWhere('meeting.status != :cancelled')
-    ->setParameter('calendar', $this->calendar)
-    ->setParameter('fromTime', $this->fromTime)
-    ->setParameter('toTime', $this->toTime)
-    ->setParameter('id', $this->id)
-    ->setParameter('refused', Meeting::STATUS_REFUSED)
-    ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
-    ->groupBy('meeting.fromTime', 'meeting.toTime', 'openingHour.meetingQueue')
-    ->getQuery()->getResult();
-
-  if (!empty($meetings) && $meetings[0]['meetingCount'] >= $meetings[0]['meetingQueue']) {
-    throw new ORMException("Meeting cap reached for given slot");
-  }
-}
-
-  /**
-   * @ORM\PrePersist
-   * @ORM\PreUpdate
-   * @param LifecycleEventArgs $args
-   * @throws ORMException
-   * @throws \Exception
-   */
-public
-function checkSlot(LifecycleEventArgs $args): void
-{
-  // Retrieve all meetings in the same time slot
-  $em = $args->getEntityManager();
-  foreach ($this->getCalendar()->getClosingPeriods() as $closingPeriod) {
-    if ($this->toTime >= $closingPeriod->getFromTime() && $this->fromTime <= $closingPeriod->getToTime())
-      throw new ORMException("Invalid slot interval: closing period");
-  }
-
-  $openingHours = $em->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $this->calendar]);
-  // Check if given date and given slot is correct
-  $isValidDate = false;
-  $isValidSlot = false;
-  foreach ($openingHours as $openingHour) {
-    $dates = $openingHour->explodeDays(true);
-    $meetingDate = $this->fromTime->format('Y-m-d');
-    if(in_array($meetingDate, $dates)) {
-      $isValidDate = true;
-      $slots = $openingHour->explodeMeetings($this->fromTime);
-      $meetingEnd = clone $this->toTime;
-      //$meetingEnd->modify('+ '.$openingHour->getIntervalMinutes().' minutes');
-      $slotKey = $this->fromTime->format('H:i') . '-' . $meetingEnd->format('H:i') . '-' . $openingHour->getMeetingQueue();
-      if (array_key_exists($slotKey, $slots)){
-        $isValidSlot = true;
-        $this->openingHour = $openingHour;
-      }
-    }
-  }
-  if (!$isValidDate)
-    throw new ORMException("Invalid date: No opening hour for given slot");
-  if (!$isValidSlot)
-    throw new ORMException("Invalid slot intervals");
 }
 
 /**
