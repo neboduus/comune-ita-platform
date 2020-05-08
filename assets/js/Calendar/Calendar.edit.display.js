@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+const location = window.location
+const explodedPath = location.pathname.split("/");
+
 var _default = [{
   key: 'labelPosition',
   ignore: true
@@ -29,12 +33,20 @@ var _default = [{
   key: 'disabled',
   ignore: true
 }, {
-  type: 'textfield',
-  label: 'Calendar ID',
+  type: 'select',
+  label: 'Nome Calendario',
   key: 'calendarId',
   input: true,
   weight: 1,
-  placeholder: 'Calendar ID',
-  tooltip: 'Enter the ID of the selected calendar.'
+  placeholder: 'Nome Calendario',
+  tooltip: 'Inserisci il nome del calendario',
+  dataSrc: 'url',
+  defaultValue: '',
+  data: {
+    url: location.origin + '/' + explodedPath[1] + '/api/calendars'
+  },
+  valueProperty: 'id',
+  template: '<span>{{ item.title }}</span>',
+  selectValues: 'Results'
 }];
 exports.default = _default;

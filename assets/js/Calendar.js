@@ -50,9 +50,9 @@ export default class FormioCalendar extends Base {
         }
       }
     });
-
     // Calling super.render will wrap it html as a component.
-    return super.render(`<div id="calendar-container-${this.id}" class="slot-calendar"><div class="row"><div class="col-12 col-md-6"><h6>${this.component.label}</h6><div  class="date-picker"></div></div><div class="col-12 col-md-6"><div class="row" id="slot-picker"></div></div></div></div>${content}`);
+    return super.render(`<div id="calendar-container-${this.id}" class="slot-calendar"><div class="row"><div class="col-12 col-md-6"><h6>${this.component.label}</h6>
+<div  class="date-picker"></div></div><div class="col-12 col-md-6"><div class="row" id="slot-picker"></div></div></div></div>${content}`);
   }
 
   /**
