@@ -5,6 +5,8 @@ require("jquery"); // Load jQuery as a module
 $(document).ready(function () {
   // Hide all buttons
   $("#edit_alert").hide();
+  $("#no_slots_edit_alert").hide();
+  $("#no_slots_new_alert").hide();
   $("#modalApprove").hide();
   $("#modalRefuse").hide();
   $("#modalMissed").hide();
@@ -12,6 +14,36 @@ $(document).ready(function () {
   $("#modalSlot").click(function () {
     $("#edit_alert").show();
   });
+
+  // Calculate slots when date changes
+  // Edit modal
+  $("#modalDate").change(function () {
+    console.log('changes');
+    $("#modalSlot").val('');
+    $("#edit_alert").show();
+    getSlots(this.value, null, function(slot) {
+      if (slot) {
+        $("#no_slots_edit_alert").hide();
+        $("#modalSlot").val(slot)
+      } else {
+        $("#no_slots_edit_alert").show();
+      }
+    })
+  });
+
+  // new modal
+  $("#modalNewDate").change(function () {
+    $("#modalNewSlot").val('');
+    getSlots(this.value, null, function(slot) {
+      if (slot) {
+        $("#no_slots_new_alert").hide();
+        $("#modalNewSlot").val(slot)
+      } else {
+        $("#no_slots_new_alert").show();
+      }
+    })
+  });
+
   // Fullcalendar initialization
   var calendarEl = document.getElementById('fullcalendar');
 
@@ -84,6 +116,7 @@ function calculateSlot() {
  */
 function compileModal(info) {
   $("#edit_alert").hide();
+  $("#no_slots_edit_alert").hide();
   $("#modalApprove").hide();
   $("#modalRefuse").hide();
   $("#modalMissed").hide();
@@ -97,8 +130,13 @@ function compileModal(info) {
   // Populate modal
 
   // Populate datalist
-  getSlots(date, start, function (slot) {
-    $('#modalSlot').val(slot);
+  getSlots(date,  start, function (slot) {
+    if (slot) {
+      $("#no_slots_edit_alert").hide();
+      $("#modalSlot").val(slot)
+    } else {
+      $("#no_slots_edit_alert").show();
+    }
   });
 
   $('#modalDate').val(date);
@@ -193,6 +231,7 @@ function getSlots(date, start, callback) {
         let available = response[i]['availability'];
         // If start is defined get right slot
         if (start && start === response[i]['start_time']) slot = value;
+        else if (!slot && !start && available) slot = value;
         if (!available)
           $("#slots").append("<option value='" + value + "'disabled>" + value + "</option>");
         else

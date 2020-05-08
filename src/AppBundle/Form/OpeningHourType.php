@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
+use AppBundle\Services\MeetingService;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManager;
@@ -25,15 +26,22 @@ class OpeningHourType extends AbstractType
    * @var TranslatorInterface $translator
    */
   private $translator;
+
   /**
    * @var EntityManager
    */
   private $em;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $entityManager)
+  /**
+   * @var MeetingService
+   */
+  private $meetingService;
+
+  public function __construct(TranslatorInterface $translator, EntityManager $entityManager, MeetingService $meetingService)
   {
     $this->translator = $translator;
     $this->em = $entityManager;
+    $this->meetingService = $meetingService;
   }
 
   /**
@@ -73,11 +81,11 @@ class OpeningHourType extends AbstractType
       ])
       ->add('meeting_minutes', IntegerType::class, [
         'required' => true,
-        'label' => 'Numero di minuti del meeting',
+        'label' => 'Durata del meeting',
       ])
       ->add('interval_minutes', IntegerType::class, [
         'required' => true,
-        'label' => 'Numero di minuti tra i meeting',
+        'label' => 'Intervallo tra i meeting',
       ])
       ->add('meeting_queue', IntegerType::class, [
         'required' => true,
@@ -93,6 +101,12 @@ class OpeningHourType extends AbstractType
 
     $data = $event->getData();
     if ($openingHour) {
+      // Check if opening Hour overlaps
+      if ($this->meetingService->isOverlapped($openingHour)) {
+        $event->getForm()->addError(new FormError($this->translator->trans('calendars.opening_hours.error.overlap')));
+      }
+
+      // Check if duration can be changed, i.e there are no scheduled meetings (past meetings are excluded)
       $intervalChanged = $openingHour->getIntervalMinutes() != $data['interval_minutes'];
       $durationChanged = $openingHour->getMeetingMinutes() != $data['meeting_minutes'];
       if ($durationChanged || $intervalChanged) {
@@ -107,7 +121,7 @@ class OpeningHourType extends AbstractType
         }
         if (!$canChange) {
           $event->getForm()->addError(
-            new FormError($this->translator->trans('calendars.opening_hours.cannot_change',
+            new FormError($this->translator->trans('calendars.opening_hours.error.cannot_change',
               ['next_availability'=> $availableOn->modify('+1days')->format('d/m/Y')]))
           );
         }

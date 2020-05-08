@@ -99,7 +99,7 @@ export default class FormioCalendar extends Base {
 
             $('#loader').remove();
             self.calendar = self.container.find('.date-picker').datepicker({
-              minDate: new Date(),
+              minDate: new Date(data.sort()[0]),
               firstDay: 1,
               dateFormat: 'dd-mm-yy',
               onSelect: function(dateText) {

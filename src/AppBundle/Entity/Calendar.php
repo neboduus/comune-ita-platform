@@ -27,7 +27,7 @@ class Calendar
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Calendar's uuid", type="guid")
+   * @SWG\Property(description="Calendar's uuid", type="string")
    */
   private $id;
 
@@ -35,7 +35,7 @@ class Calendar
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
    * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
-   * @SWG\Property(description="Calendar's owner id", type="guid")
+   * @SWG\Property(description="Calendar's owner id", type="string")
    * @Serializer\Exclude()
    */
   private $owner;
@@ -54,7 +54,7 @@ class Calendar
    *
    * @ORM\Column(name="contact_email", type="string", length=255, nullable=true)
    * @Assert\Email(message="Email non valida")
-   * @SWG\Property(description="Calendar's contact email", type="email")
+   * @SWG\Property(description="Calendar's contact email", type="string")
    */
   private $contactEmail;
 
@@ -100,13 +100,14 @@ class Calendar
    *      joinColumns={@ORM\JoinColumn(name="calendar_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="operator_id", referencedColumnName="id")}
    *      )
-   * @SWG\Property(description="Calendar's moderators", type="array<guid>")
+   * @SWG\Property(description="Calendar's moderators", type="array", @SWG\Items(type="string"))
    * @Serializer\Exclude()
    */
   private $moderators;
 
   /**
    * @ORM\OneToMany(targetEntity="AppBundle\Entity\OpeningHour", mappedBy="calendar")
+   * @Serializer\Exclude()
    */
   private $openingHours;
 
@@ -120,7 +121,7 @@ class Calendar
   private $location;
 
   /**
-   * @ORM\Column(name="external_calendars", type="json_array", nullable=true)
+   * @ORM\Column(name="external_calendars", type="json", nullable=true)
    * @SWG\Property(description="Calendar's external calendars", type="array", @SWG\Items(ref=@Model(type=ExternalCalendar::class)))
    */
   private $externalCalendars;
@@ -128,20 +129,20 @@ class Calendar
   /**
    * @var DateTimeInterval[]
    *
-   * @ORM\Column(name="closing_periods", type="json_array", nullable=true)
+   * @ORM\Column(name="closing_periods", type="json", nullable=true)
    * @SWG\Property(description="Calendar's closing periods", type="array", @SWG\Items(ref=@Model(type=DateTimeInterval::class)))
    */
   private $closingPeriods;
 
   /**
    * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Calendar's creation date", type="dateTime")
+   * @SWG\Property(description="Calendar's creation date")
    */
   private $createdAt;
 
   /**
    * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Calendar's last modified date", type="dateTime")
+   * @SWG\Property(description="Calendar's last modified date")
    */
   private $updatedAt;
 
@@ -157,6 +158,8 @@ class Calendar
       $this->openingHours = new ArrayCollection();
       $this->closingPeriods = new ArrayCollection();
       $this->externalCalendars = new ArrayCollection();
+      $this->allowCancelDays = 3;
+      $this->rollingDays = 30;
     }
   }
 
@@ -370,7 +373,8 @@ class Calendar
 
   /**
    * @Serializer\VirtualProperty(name="moderators")
-   * @Serializer\Type("array<string>")
+   * @Serializer\Type("array")
+   * @SWG\Items(type="string")
    * @Serializer\SerializedName("moderators")
    *
    */
@@ -430,9 +434,23 @@ class Calendar
   }
 
   /**
+   * @Serializer\VirtualProperty(name="opening_hours")
+   * @Serializer\Type("array<string>")
+   * @Serializer\SerializedName("opening_hours")
+   */
+  public function getOpeningHourIds(): array
+  {
+    $ids = [];
+    foreach ($this->openingHours as $openingHour) {
+      $ids[] = $openingHour->getId();
+    }
+    return $ids;
+  }
+
+  /**
    * Set closingPeriods.
    *
-   * @param string $closingPeriods
+   * @param array $closingPeriods
    *
    * @return Calendar
    */

@@ -6,6 +6,7 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\MeetingService;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManager;
@@ -18,6 +19,7 @@ use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\DataTable;
+use phpDocumentor\Reflection\Types\This;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -46,11 +48,17 @@ class CalendarsController extends Controller
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is)
+  /**
+   * @var MeetingService
+   */
+  private $meetingService;
+
+  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
+    $this->meetingService = $meetingService;
   }
 
   /**
@@ -455,7 +463,7 @@ class CalendarsController extends Controller
     // compute min slot dimension
     $minDuration = PHP_INT_MAX;
     foreach ($calendar->getOpeningHours() as $openingHour) {
-      $events = array_merge($events, $openingHour->getInterval());
+      $events = array_merge($events, $this->meetingService->getInterval($openingHour));
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 
@@ -464,6 +472,8 @@ class CalendarsController extends Controller
       $canEdit = true;
     else $canEdit = false;
 
+    $jwt = $this->get('lexik_jwt_authentication.jwt_manager')->create($this->getUser());
+
     return array(
       'calendar' => $calendar,
       'canEdit' => $canEdit,
@@ -471,7 +481,8 @@ class CalendarsController extends Controller
       'events' => array_values($events),
       'statuses' => $statuses,
       'minDuration' => $minDuration,
-      'datatable' => $table
+      'datatable' => $table,
+      'token' => $jwt
     );
   }
 
@@ -552,9 +563,9 @@ class CalendarsController extends Controller
     $form = $this->container->get('form.factory')
       ->createNamedBuilder(null, FormType::class, null, array('csrf_protection' => false))
       ->add('approve', SubmitType::class, [
-      'label' => 'Conferma',
-      'attr' => ['class' => 'btn btn-sm btn-success']
-    ])
+        'label' => 'Conferma',
+        'attr' => ['class' => 'btn btn-sm btn-success']
+      ])
       ->add('refuse', SubmitType::class, [
         'label' => 'Rifiuta',
         'attr' => ['class' => 'btn btn-sm btn-danger']

@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\OperatoreUser;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -19,14 +20,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CalendarBackofficeType extends AbstractType
 {
   /**
+   * @var EntityManager
+   */
+  private $em;
+
+  public function __construct(EntityManager $entityManager)
+  {
+    $this->em = $entityManager;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $minimumSchedulingNotices = [
-      'Un ora prima'=>1, 'Due ore prima'=>2, 'Quattro ore prima'=>4, 'Otto ore prima'=>8,
+      'Un\'ora prima'=>1, 'Due ore prima'=>2, 'Quattro ore prima'=>4, 'Otto ore prima'=>8,
       'Un giorno prima'=>24, 'Due giorni prima'=>48, 'Tre giorni prima'=>72, 'Una settimana prima'=>168
     ];
+
+    $owners = $this->em
+      ->createQuery(
+        "SELECT user
+             FROM AppBundle\Entity\User user
+             WHERE (user INSTANCE OF AppBundle\Entity\OperatoreUser OR user INSTANCE OF AppBundle\Entity\AdminUser)"
+      )->getResult();
+    $owners = array_values($owners);
+
     $builder
       ->add('title', TextType::class, [
         'required' => true,
@@ -42,24 +62,26 @@ class CalendarBackofficeType extends AbstractType
       ])
       ->add('rolling_days', NumberType::class, [
         'required' => true,
-        'label' => 'Numero di giorni oltre il quale è possibile prenotare'
+        'label'=>false
       ])
       ->add('minimum_scheduling_notice', ChoiceType::class, [
         'required' => true,
         'choices' => $minimumSchedulingNotices,
-        'label' => 'Numero di ore entro il quale è possibile prenotare',
+        'label' => 'Preavviso minimo per una prenotazione',
       ])
       ->add('allow_cancel_days', NumberType::class, [
         'required' => true,
-        'label' => 'Numero minimo di giorni entro il quale è cancellare l\'appuntamento'
+        'label'=>false,
       ])
       ->add('is_moderated', CheckboxType::class, [
         'required'=>false,
         'label' => 'Richiede moderazione?',
       ])
-      ->add('owner', EntityType::class, [
-        'class' => 'AppBundle\Entity\OperatoreUser',
+      ->add('owner', ChoiceType::class, [
+        'choices' => $owners,
         'required' => true,
+        'choice_label' => 'username',
+        'choice_value' => 'id',
         'label' => 'Proprietario'
       ])
       ->add('moderators', EntityType::class, [

@@ -36,16 +36,34 @@
         {{ form_row(form.contact_email) }}
         {{ form_row(form.owner) }}
         {{ form_row(form.is_moderated) }}
+<<<<<<< HEAD
         <div id="moderators" {% if not calendar.isModerated %} style="display: none" {% endif %}>
           {{ form_row(form.moderators) }}
         </div>
-        {{ form_row(form.rolling_days) }}
-        {{ form_row(form.minimum_scheduling_notice) }}
-        {{ form_row(form.allow_cancel_days) }}
 
         {{ include('AppBundle:Calendars/parts:calendarExternalCalendars.html.twig') }}
-        {{ include('AppBundle:Calendars/parts:calendarClosingPeriods.html.twig') }}
         {{ include('AppBundle:Calendars/parts:calendarOpeningHours.html.twig') }}
+        {{ include('AppBundle:Calendars/parts:calendarClosingPeriods.html.twig') }}
+
+        <div class="form-group m-0 p-0">
+          <label for="appbundle_calendar_rolling_days">{{ 'calendars.rolling_days.label' | trans() }}</label>
+        </div>
+        <div class="row">
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.rolling_days.text_before' | trans() }}</p></div>
+          <div class="col-2" >{{ form_row(form.rolling_days, {'attr': {'class': 'text-center'}}) }}</div>
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.rolling_days.text_after' | trans() }}</p></div>
+        </div>
+
+        <div class="form-group m-0 p-0">
+          <label for="appbundle_calendar_rolling_days">{{ 'calendars.allow_cancel_days.label' | trans() }}</label>
+        </div>
+        <div class="row">
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.allow_cancel_days.text_before' | trans() }}</p></div>
+          <div class="col-2" >{{ form_row(form.allow_cancel_days, {'attr': {'class': 'text-center'}}) }}</div>
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.allow_cancel_days.text_after' | trans() }}</p></div>
+        </div>
+
+        {{ form_row(form.minimum_scheduling_notice) }}
 
         <div class="row">
           <div class="col-6">
@@ -55,6 +73,7 @@
             <a class="btn btn-100 mr-1" href="{{ path('operatori_calendars_index') }}">Torna alla lista</a>
           </div>
         </div>
+
         {{ form_end(form) }}
       </div>
     </div>

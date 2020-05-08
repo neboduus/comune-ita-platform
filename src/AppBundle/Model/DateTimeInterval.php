@@ -11,14 +11,14 @@ class DateTimeInterval implements \JsonSerializable
   /**
    * @var \DateTime
    *
-   * @SWG\Property(description="Datetime interval's start date", type="dateTime")
+   * @SWG\Property(description="Datetime interval's start date")
    */
   private $fromTime;
 
   /**
    * @var \DateTime
    *
-   * @SWG\Property(description="Datetime interval's end date", type="dateTime")
+   * @SWG\Property(description="Datetime interval's end date")
    */
   private $toTime;
 
