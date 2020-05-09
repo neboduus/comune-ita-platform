@@ -20,7 +20,8 @@ doctrine:
         entity_managers:
             
             main:
-                naming_strategy: doctrine.orm.naming_strategy.underscore
+                #naming_strategy: doctrine.orm.naming_strategy.underscore
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
                 auto_mapping: false # disabled so we can assign entities to our own connections
                 connection: main
                 mappings:
@@ -32,7 +33,8 @@ doctrine:
                         alias: Main
 
             default:
-                naming_strategy: doctrine.orm.naming_strategy.underscore
+                #naming_strategy: doctrine.orm.naming_strategy.underscore
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
                 auto_mapping: true # disabled so we can assign entities to our own connections
                 connection: tenant
                 mappings:

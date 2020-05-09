@@ -33,25 +33,25 @@
                             <li class="nav-item">
                                 <a class="nav-link {% if pratiche_mie|length > 0 or ( pratiche_libere|length == 0 and pratiche_concluse|length == 0 ) %} active{% endif %}" href="#da_gestire" aria-controls="mie" role="tab" data-toggle="tab">
                                     {{ 'operatori.pratiche_mie'|trans }}
-                                    <span class="badge badge-info text-white ml-1">{{ pratiche_mie|length }}</span>
+                                    <span class="badge badge-pill badge-info text-white ml-1">{{ pratiche_mie|length }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {% if pratiche_mie|length == 0 and pratiche_libere|length > 0 %} active{% endif %}" href="#da_assegnare" aria-controls="mie" role="tab" data-toggle="tab">
                                     {{ 'operatori.pratiche_libere'|trans }}
-                                    <span class="badge badge-info text-white ml-1">{{ pratiche_libere|length }}</span>
+                                    <span class="badge badge-pill badge-info text-white ml-1">{{ pratiche_libere|length }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {% if pratiche_mie|length == 0 and pratiche_libere|length == 0 and pratiche_concluse|length > 0 %} active{% endif %}" href="#concluse" aria-controls="concluse" role="tab" data-toggle="tab">
                                     {{ 'operatori.pratiche_concluse'|trans }}
-                                    <span class="badge badge-info text-white ml-1">{{ pratiche_concluse|length }}</span>
+                                    <span class="badge badge-pill badge-info text-white ml-1">{{ pratiche_concluse|length }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#ente" aria-controls="ente" role="tab" data-toggle="tab">
                                     {{ 'operatori.pratiche_ente'|trans }}
-                                    <span class="badge badge-info text-white ml-1">{{ pratiche_ente|length }}</span>
+                                    <span class="badge badge-pill badge-info text-white ml-1">{{ pratiche_ente|length }}</span>
                                 </a>
                             </li>
 

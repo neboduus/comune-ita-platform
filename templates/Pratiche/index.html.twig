@@ -41,7 +41,7 @@
                                         <a class="nav-link {% if key == active_key %}active{% endif %}"
                                            href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">
                                             {{ ('user.dashboard.pratiche_' ~ key)|trans }} <span
-                                                    class="badge badge-info text-white ml-1">{{ value|length }}</span>
+                                                    class="badge badge-pill badge-info text-white ml-1">{{ value|length }}</span>
                                         </a>
                                     </li>
                                 {% endfor %}
