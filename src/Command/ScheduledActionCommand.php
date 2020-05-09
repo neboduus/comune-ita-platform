@@ -74,7 +74,9 @@ class ScheduledActionCommand extends BaseCommand
         $context->setHost($this->host);
         $context->setScheme($this->scheme);
 
-        $this->logger->info('Starting a scheduled action');
+        $isVerbose = $input->getOption('verbose');
+
+        $this->logger->info('Starting a scheduled action with options: ' . \json_encode($input->getOptions()));
 
         $count = (int)$input->getOption('count');
         if (!$count) {
@@ -89,22 +91,36 @@ class ScheduledActionCommand extends BaseCommand
         }
 
         if (!$forceHostname) {
-            $output->writeln("Reserve $count actions for host $hostname");
+            if ($isVerbose) {
+                $output->writeln("Reserve $count actions for host $hostname");
+            }
+            $this->logger->info("Try to reserve $count actions for host $hostname");
             $this->scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes);
         } else {
             $hostname = $forceHostname;
-            $output->writeln("Force execution for host $hostname");
+            if ($isVerbose) {
+                $output->writeln("Force execution for host $hostname");
+            }
+            $this->logger->info("Force execution for host $hostname");
+
         }
 
         $actions = $this->scheduleActionService->getPendingActions($hostname);
         $count = count($actions);
-        $output->writeln("Execute $count actions for host $hostname");
+        if ($isVerbose) {
+            $output->writeln("Execute $count actions for host $hostname");
+        }
+        $this->logger->info("Execute $count actions for host $hostname");
+
 
         foreach ($actions as $action) {
             try {
                 $service = $this->schedulableActionRegistry->getByName($action->getService());
                 if ($service instanceof ScheduledActionHandlerInterface) {
-                    $output->writeln('Execute ' . $action->getType() . ' with params ' . $action->getParams());
+                    if ($isVerbose) {
+                        $output->writeln('Execute ' . $action->getType() . ' with params ' . $action->getParams());
+                    }
+                    $this->logger->info('Execute ' . $action->getType() . ' with params ' . $action->getParams());
                     try {
                         $service->executeScheduledAction($action);
                         $this->scheduleActionService->markAsDone($action);
@@ -131,7 +147,11 @@ class ScheduledActionCommand extends BaseCommand
             } else {
                 $message .= 'reserved by host ' . $count['hostname'];
             }
-            $output->writeln($message);
+            if ($isVerbose) {
+                $output->writeln($message);
+            }
+            $this->logger->info($message);
+
         }
 
         return 0;
