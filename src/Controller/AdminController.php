@@ -348,6 +348,7 @@ class AdminController extends TenantAwareController
 
                 if (!$form->isValid()) {
                     $this->addFlash('error', 'Si è verificato un problema in fase di importazione.');
+
                     return $this->redirectToRoute('admin_servizio_index');
                 }
 

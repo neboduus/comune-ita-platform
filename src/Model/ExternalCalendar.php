@@ -18,6 +18,16 @@ class ExternalCalendar implements \JsonSerializable
     private $url;
 
     /**
+     * Get name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Set name.
      *
      * @param string $name
@@ -32,13 +42,13 @@ class ExternalCalendar implements \JsonSerializable
     }
 
     /**
-     * Get name.
+     * Get url.
      *
      * @return string
      */
-    public function getName()
+    public function getUrl()
     {
-        return $this->name;
+        return $this->url;
     }
 
     /**
@@ -53,16 +63,6 @@ class ExternalCalendar implements \JsonSerializable
         $this->url = $url;
 
         return $this;
-    }
-
-    /**
-     * Get url.
-     *
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
     }
 
     public function jsonSerialize()

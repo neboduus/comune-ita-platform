@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\AppBundle;
 use App\Entity\Categoria;
 use App\Entity\Servizio;
 use App\Services\FormServerApiAdapterService;

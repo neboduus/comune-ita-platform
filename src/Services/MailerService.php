@@ -9,7 +9,6 @@ use App\Entity\Pratica;
 use App\Entity\Subscriber;
 use App\Model\SubscriberMessage;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
