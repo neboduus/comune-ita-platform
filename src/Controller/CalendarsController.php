@@ -6,6 +6,7 @@ use App\Entity\Calendar;
 use App\Entity\Meeting;
 use App\Entity\OpeningHour;
 use App\Entity\User;
+use App\Multitenancy\Annotations\MustHaveTenant;
 use App\Multitenancy\TenantAwareController;
 use App\Services\InstanceService;
 use DateTime;
@@ -27,11 +28,10 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use App\Multitenancy\Annotations\MustHaveTenant;
+use Twig\Environment;
 
 /**
  * @todo correggere le closure render
@@ -63,9 +63,10 @@ class CalendarsController extends TenantAwareController
      * Lists all Calendars
      * @Route("/operatori/calendars", name="operatori_calendars_index")
      * @param Request $request
+     * @param Environment $twig
      * @return JsonResponse|Response
      */
-    public function indexCalendars(Request $request)
+    public function indexCalendars(Request $request, Environment $twig)
     {
         $data = [];
         /** @var User $user */
@@ -97,22 +98,22 @@ class CalendarsController extends TenantAwareController
         }
 
         $table = $this->dataTableFactory->create()
-            ->add('title', TextColumn::class, ['label' => 'Titolo', 'propertyPath' => 'Titolo', 'render' => function ($value, $calendar) {
-                return $this->render('Calendars/datatable/calendar_title.html.twig', [
+            ->add('title', TextColumn::class, ['label' => 'Titolo', 'propertyPath' => 'Titolo', 'render' => function ($value, $calendar) use ($twig) {
+                return $twig->render('Calendars/datatable/calendar_title.html.twig', [
                     'value' => $value,
                     'calendar' => $calendar,
                 ]);
             }])
             ->add('owner', TextColumn::class, ['label' => 'Proprietario', 'searchable' => true])
-            ->add('isModerated', TextColumn::class, ['label' => 'Moderazione', 'render' => function ($value, $calendar) {
-                return $this->render('Calendars/datatable/calendar_is_moderated.html.twig', [
+            ->add('isModerated', TextColumn::class, ['label' => 'Moderazione', 'render' => function ($value, $calendar) use ($twig) {
+                return $twig->render('Calendars/datatable/calendar_is_moderated.html.twig', [
                     'is_moderated' => $value,
                     'calendar' => $calendar,
                 ]);
             }])
-            ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $calendar) {
-                return $this->render('Calendars/datatable/calendar_action.html.twig', [
-                    'value' => $value,
+            ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $calendar) use ($twig) {
+                return $twig->render('Calendars/datatable/calendar_action.html.twig', [
+                    'id' => $value,
                     'calendar' => $calendar,
                 ]);
             }])
@@ -192,19 +193,6 @@ class CalendarsController extends TenantAwareController
             $this->addFlash('warning', 'Impossibile eliminare il calendario');
             return $this->redirectToRoute('operatori_calendars_index');
         }
-    }
-
-    /**
-     * Creates a form to delete a Calendar entity.
-     * @param Calendar $calendar
-     * @return \Symfony\Component\Form\FormInterface
-     */
-    private function createDeleteForm(Calendar $calendar)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('operatori_calendar_delete', array('id' => $calendar->getId())))
-            ->setMethod('DELETE')
-            ->getForm();
     }
 
     /**
@@ -480,6 +468,45 @@ class CalendarsController extends TenantAwareController
         ]);
     }
 
+    private function getStatusAsString(int $status)
+    {
+        switch ($status) {
+            case 0:
+                return 'In attesa di conferma';
+                break;
+            case 1:
+                return 'Approvato';
+                break;
+            case 2:
+                return 'Rifiutato';
+                break;
+            case 3:
+                return 'Assente';
+                break;
+            case 4:
+                return 'Concluso';
+                break;
+            case 5:
+                return 'Annullato';
+                break;
+            default:
+                return 'Errore';
+        }
+    }
+
+    /**
+     * Creates a form to delete a Calendar entity.
+     * @param Calendar $calendar
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    private function createDeleteForm(Calendar $calendar)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('operatori_calendar_delete', array('id' => $calendar->getId())))
+            ->setMethod('DELETE')
+            ->getForm();
+    }
+
     /**
      * Cancels meeting
      * @Route("meetings/{meetingHash}/cancel", name="cancel_meeting")
@@ -606,31 +633,5 @@ class CalendarsController extends TenantAwareController
             'form' => $form->createView(),
             'meeting' => $meeting
         ]);
-    }
-
-    private function getStatusAsString(int $status)
-    {
-        switch ($status) {
-            case 0:
-                return 'In attesa di conferma';
-                break;
-            case 1:
-                return 'Approvato';
-                break;
-            case 2:
-                return 'Rifiutato';
-                break;
-            case 3:
-                return 'Assente';
-                break;
-            case 4:
-                return 'Concluso';
-                break;
-            case 5:
-                return 'Annullato';
-                break;
-            default:
-                return 'Errore';
-        }
     }
 }
