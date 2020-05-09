@@ -185,9 +185,11 @@ services:
     
     App\Services\ModuloPdfBuilderService:
         arguments:
-            $wkhtmltopdfService: "%wkhtmltopdf_service%"
+            $wkhtmltopdfServiceUrl: "%wkhtmltopdf_service_url%"
             $dateTimeFormat: "%ocsdc_default_datetime_format%"
             $printablePassword: "%ez_password%"
+        tags:
+            - { name: 'app.schedule_action_handler', alias: 'ocsdc.modulo_pdf_builder' }
     
     ocsdc.protocollo.client: "@eight_points_guzzle.client.protocollo_cct"
     
@@ -242,6 +244,10 @@ services:
             - { name: kernel.event_listener, method: onStatusChange, priority: 20 }
     
     App\EventListener\ProtocollaPraticaListener:
+        tags:
+            - { name: kernel.event_listener, method: onStatusChange, priority: 100 }
+
+    App\EventListener\CreatePdfPraticaListener:
         tags:
             - { name: kernel.event_listener, method: onStatusChange, priority: 100 }
 

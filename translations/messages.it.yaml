@@ -154,6 +154,7 @@ pratica:
         stato_1510: "In attesa dell'esito di pagamento"
         stato_1520: "Pagamento avvenuto con successo"
         stato_1530: "Pagamento rifiutato"
+        stato_1900: "In attesa di generazione del pdf"
         stato_2000: 'Inviata'
         stato_3000: 'Protocollata'
         stato_4000: 'Presa in carico'

@@ -31,6 +31,7 @@ class MailerService
     private $templating;
 
     private $blacklistedStates = [
+        Pratica::STATUS_PRE_SUBMIT,
         Pratica::STATUS_REQUEST_INTEGRATION,
         Pratica::STATUS_PROCESSING,
         Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION,

@@ -55,9 +55,12 @@ class PaymentDataType extends AbstractType
     {
         /** @var Servizio $service */
         $service = $builder->getData();
-        $result = $this->formServerService->getForm($service->getFormIoId());
-        if ($result['status'] == 'success') {
-            $this->arrayFlat($result['form']['components']);
+        $formIoId = $service->getFormIoId();
+        if ($formIoId) {
+            $result = $this->formServerService->getForm($formIoId);
+            if ($result['status'] == 'success') {
+                $this->arrayFlat($result['form']['components']);
+            }
         }
 
         $paymentParameters = $service->getPaymentParameters();

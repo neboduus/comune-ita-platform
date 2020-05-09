@@ -13,8 +13,8 @@ use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 {
@@ -69,7 +69,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
         ModuloPdfBuilderService $pdfBuilder,
         DematerializedFormAllegatiAttacherService $dematerializer,
         InstanceService $instanceService
-    ) {
+    )
+    {
         $this->logger = $logger;
         $this->translator = $translator;
         $this->statusService = $statusService;
@@ -119,31 +120,10 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
         }
     }
 
-    public function getResumeUrl(Request $request)
-    {
-        return $request->getUri()
-            . '?instance=' . $this->getInstanceId()
-            . '&step=' . $this->getCurrentStepNumber();
-    }
-
-    public function onFlowCompleted(Pratica $pratica)
-    {
-        if ($pratica instanceof DematerializedFormAllegatiContainer) {
-            $this->dematerializer->attachAllegati($pratica);
-        }
-
-        if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
-            $pratica->setSubmissionTime(time());
-
-            $moduloCompilato = $this->pdfBuilder->createForPratica($pratica);
-            $pratica->addModuloCompilato($moduloCompilato);
-            $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
-        } elseif ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
-            $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
-        }
-    }
-
-
+    /**
+     * @param ComponenteNucleoFamiliare $componente
+     * @param Pratica $pratica
+     */
     /**
      * @param ComponenteNucleoFamiliare $componente
      * @param Pratica $pratica
@@ -156,6 +136,33 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
         $cloneComponente->setCodiceFiscale($componente->getCodiceFiscale());
         $cloneComponente->setRapportoParentela($componente->getRapportoParentela());
         $pratica->addComponenteNucleoFamiliare($cloneComponente);
+    }
+
+    public function getResumeUrl(Request $request)
+    {
+        return $request->getUri()
+            . '?instance=' . $this->getInstanceId()
+            . '&step=' . $this->getCurrentStepNumber();
+    }
+
+    /**
+     * @param Pratica $pratica
+     * @throws \ReflectionException
+     * @throws \Exception
+     */
+    public function onFlowCompleted(Pratica $pratica)
+    {
+        if ($pratica instanceof DematerializedFormAllegatiContainer) {
+            $this->dematerializer->attachAllegati($pratica);
+        }
+
+        if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
+            $pratica->setSubmissionTime(time());
+            $this->statusService->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMIT);
+
+        } elseif ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+            $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
+        }
     }
 
     /**

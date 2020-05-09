@@ -11,8 +11,8 @@ parameters:
     logs_formatter: 'monolog.formatter.line'
     logs_path: '%env(LOGS_PATH)%'
     
-    # knp_snappy
-    wkhtmltopdf_service: '%env(WKHTMLTOPDF_SERVICE)%'
+    # gotemborg
+    wkhtmltopdf_service_url: '%env(WKHTMLTOPDF_SERVICE_URL)%'
     
     # La password usata da gpa per pushare gli status changes
     giscom_password: '%env(GISCOM_PASSWORD)%'

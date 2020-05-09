@@ -73,6 +73,7 @@ class PraticaRepository extends EntityRepository
                 'user' => $user,
                 'status' => [
                     Pratica::STATUS_SUBMITTED,
+                    Pratica::STATUS_PRE_SUBMIT,
                     Pratica::STATUS_REGISTERED,
                     Pratica::STATUS_PENDING,
                     Pratica::STATUS_PENDING_AFTER_INTEGRATION,

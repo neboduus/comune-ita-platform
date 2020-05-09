@@ -377,9 +377,7 @@ class ApplicationsAPIController extends TenantAwareFOSRestController
 
                 // Invio la pratica
                 $application->setSubmissionTime(time());
-                $moduloCompilato = $this->pdfBuilder->createForPratica($application);
-                $application->addModuloCompilato($moduloCompilato);
-                $this->statusService->setNewStatus($application, Pratica::STATUS_SUBMITTED);
+                $this->statusService->setNewStatus($application, Pratica::STATUS_PRE_SUBMIT);
             } else {
                 $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_ERROR);
             }
