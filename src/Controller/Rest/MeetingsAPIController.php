@@ -2,22 +2,23 @@
 
 namespace App\Controller\Rest;
 
+use App\Entity\CPSUser;
 use App\Entity\Meeting;
+use App\Entity\User;
+use App\Multitenancy\Annotations\MustHaveTenant;
 use App\Multitenancy\TenantAwareFOSRestController;
 use App\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use App\Multitenancy\Annotations\MustHaveTenant;
 
 /**
  * Class MeetingsAPIController
@@ -36,13 +37,16 @@ class MeetingsAPIController extends TenantAwareFOSRestController
      */
     private $translator;
 
+    private $em;
+
+    private $is;
+
     public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is)
     {
         $this->translator = $translator;
         $this->em = $em;
         $this->is = $is;
     }
-
 
     /**
      * List all Meetings
@@ -60,7 +64,27 @@ class MeetingsAPIController extends TenantAwareFOSRestController
      */
     public function getMeetings()
     {
-        $meetings = $this->getDoctrine()->getRepository('App:Meeting')->findAll();
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $builder = $this->em->createQueryBuilder();
+        $builder
+            ->select('meeting.id')
+            ->from(Meeting::class, 'meeting')
+            ->leftJoin('meeting.calendar', 'calendar')
+            ->leftJoin('calendar.owner', 'owner')
+            ->leftJoin('calendar.moderators', 'moderators')
+            ->where('calendar.owner = :owner')
+            ->Orwhere('moderators.id = :operatore')
+            ->setParameter('operatore', $user)
+            ->setParameter('owner', $user);
+
+        $results = $builder->getQuery()->getResult();
+        $meetings = array();
+
+        foreach ($results as $result) {
+            $meetings[] = $this->getDoctrine()->getRepository('App:Meeting')->find($result);
+        }
 
         return $this->view($meetings, Response::HTTP_OK);
     }
@@ -87,13 +111,32 @@ class MeetingsAPIController extends TenantAwareFOSRestController
     public function getMeeting($id)
     {
         try {
-            $repository = $this->getDoctrine()->getRepository('App:Meeting');
-            $result = $repository->find($id);
-            if ($result === null) {
-                return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+            /** @var User $user */
+            $user = $this->getUser();
+
+            $builder = $this->em->createQueryBuilder();
+            $builder
+                ->select('meeting.id')
+                ->from(Meeting::class, 'meeting')
+                ->leftJoin('meeting.calendar', 'calendar')
+                ->leftJoin('calendar.owner', 'owner')
+                ->leftJoin('calendar.moderators', 'moderators')
+                ->where('calendar.owner = :owner')
+                ->Orwhere('moderators.id = :operatore')
+                ->andWhere('meeting.id = :meeting_id')
+                ->setParameter('meeting_id', $id)
+                ->setParameter('operatore', $user)
+                ->setParameter('owner', $user);
+
+            $result = $builder->getQuery()->getOneOrNullResult();
+
+            if ($result) {
+                $meeting = $this->getDoctrine()->getRepository('App:Meeting')->find($result['id']);
+                return $this->view($meeting, Response::HTTP_OK);
             }
 
-            return $this->view($result, Response::HTTP_OK);
+            return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+
         } catch (\Exception $e) {
             return $this->view("Object not found", Response::HTTP_NOT_FOUND);
         }
@@ -153,14 +196,15 @@ class MeetingsAPIController extends TenantAwareFOSRestController
             ];
             return $this->view($data, Response::HTTP_BAD_REQUEST);
         }
-        $em = $this->getDoctrine()->getManager();
 
         try {
-            $em->persist($meeting);
-            $em->flush();
-
-            if ($meeting->getUser()->getEmail()) {
-                $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+            if ($user = $this->getUserFromMeeting($meeting)){
+                $meeting->setUser($user);
+                $this->em->persist($meeting);
+                $this->em->flush();
+                if ($meeting->getUser()->getEmail()) {
+                    $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+                }
             }
         } catch (\Exception $e) {
             $data = [
@@ -176,6 +220,100 @@ class MeetingsAPIController extends TenantAwareFOSRestController
         }
 
         return $this->view($meeting, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @param Meeting $meeting
+     * @return CPSUser|null
+     * @throws \Doctrine\ORM\ORMException
+     */
+    private function getUserFromMeeting(Meeting $meeting)
+    {
+        $user = null;
+
+        if (!$meeting->getFiscalCode() && !$meeting->getUser()) {
+            // codice fiscale non fornito
+            $user = new CPSUser();
+            $user->setEmail($meeting->getEmail() ? $meeting->getEmail() : '');
+            $user->setEmailContatto($meeting->getEmail() ? $meeting->getEmail() : '');
+            $user->setNome($meeting->getName() ? $meeting->getName() : '');
+            $user->setCognome('');
+            $user->setCodiceFiscale($user->getId() . '-' . time());
+            $user->setUsername($user->getId());
+
+            $user->addRole('ROLE_USER')
+                ->addRole('ROLE_CPS_USER')
+                ->setEnabled(true)
+                ->setPassword('');
+
+            $this->em->persist($user);
+
+
+        } else if ($meeting->getFiscalCode() && !$meeting->getUser()) {
+
+            $result = $this->em->createQueryBuilder()
+                ->select('user.id')
+                ->from('App:User', 'user')
+                ->where('upper(user.username) = upper(:username)')
+                ->setParameter('username', $meeting->getFiscalCode())
+                ->getQuery()->getResult();
+
+            if ( !empty($result)) {
+                $repository = $this->em->getRepository('App:CPSUser');
+                /** @var CPSUser $user */
+                $user =  $repository->find($result[0]['id']);
+            }
+
+            if (!$user) {
+                $user = new CPSUser();
+                $user->setEmail($meeting->getEmail() ? $meeting->getEmail() : '');
+                $user->setEmailContatto($meeting->getEmail() ? $meeting->getEmail() : '');
+                $user->setNome($meeting->getName() ? $meeting->getName() : '');
+                $user->setCognome('');
+                $user->setCodiceFiscale($meeting->getFiscalCode());
+                $user->setUsername($meeting->getFiscalCode());
+
+                $user->addRole('ROLE_USER')
+                    ->addRole('ROLE_CPS_USER')
+                    ->setEnabled(true)
+                    ->setPassword('');
+                $this->em->persist($user);
+            }
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param Request $request
+     * @param FormInterface $form
+     */
+    private function processForm(Request $request, FormInterface $form)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $clearMissing = $request->getMethod() != 'PATCH';
+        $form->submit($data, $clearMissing);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @return array
+     */
+    private function getErrorsFromForm(FormInterface $form)
+    {
+        $errors = array();
+        foreach ($form->getErrors() as $error) {
+            $errors[] = $error->getMessage();
+        }
+        foreach ($form->all() as $childForm) {
+            if ($childForm instanceof FormInterface) {
+                if ($childErrors = $this->getErrorsFromForm($childForm)) {
+                    $errors[] = $childErrors;
+                }
+            }
+        }
+        return $errors;
     }
 
     /**
@@ -247,14 +385,13 @@ class MeetingsAPIController extends TenantAwareFOSRestController
         try {
             $dateChanged = $oldMeeting->getFromTime() != $meeting->getFromTime();
 
-            $em = $this->getDoctrine()->getManager();
             // Auto approve meeting when changing date
             if ($dateChanged && $oldMeeting->getStatus() == Meeting::STATUS_PENDING) {
                 $meeting->setStatus(Meeting::STATUS_APPROVED);
             }
 
-            $em->persist($meeting);
-            $em->flush();
+            $this->em->persist($meeting);
+            $this->em->flush();
 
             if ($meeting->getUser()->getEmail()) {
                 $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
@@ -343,14 +480,13 @@ class MeetingsAPIController extends TenantAwareFOSRestController
         try {
             $dateChanged = $oldMeeting->getFromTime() != $meeting->getFromTime();
 
-            $em = $this->getDoctrine()->getManager();
             // Auto approve meeting when changing date
             if ($dateChanged && $oldMeeting->getStatus() == Meeting::STATUS_PENDING) {
                 $meeting->setStatus(Meeting::STATUS_APPROVED);
             }
 
-            $em->persist($meeting);
-            $em->flush();
+            $this->em->persist($meeting);
+            $this->em->flush();
 
             if ($meeting->getUser()->getEmail()) {
                 $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
@@ -374,7 +510,13 @@ class MeetingsAPIController extends TenantAwareFOSRestController
     /**
      * Delete a Meeting
      * @Rest\Delete("/{id}", name="meetings_api_delete", methods={"DELETE"})
-     *
+     * @SWG\Parameter(
+     *     name="Authorization",
+     *     in="header",
+     *     description="The authentication Bearer",
+     *     required=true,
+     *     type="string"
+     * )
      * @SWG\Response(
      *     response=204,
      *     description="The resource was deleted successfully."
@@ -391,10 +533,9 @@ class MeetingsAPIController extends TenantAwareFOSRestController
             // debated point: should we 404 on an unknown nickname?
             // or should we just return a nice 204 in all cases?
             // we're doing the latter
-            $em = $this->getDoctrine()->getManager();
             try {
-                $em->remove($meeting);
-                $em->flush();
+                $this->em->remove($meeting);
+                $this->em->flush();
 
                 $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
             } catch (\Exception $e) {
@@ -402,37 +543,5 @@ class MeetingsAPIController extends TenantAwareFOSRestController
             }
         }
         return $this->view(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @param Request $request
-     * @param FormInterface $form
-     */
-    private function processForm(Request $request, FormInterface $form)
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $clearMissing = $request->getMethod() != 'PATCH';
-        $form->submit($data, $clearMissing);
-    }
-
-    /**
-     * @param FormInterface $form
-     * @return array
-     */
-    private function getErrorsFromForm(FormInterface $form)
-    {
-        $errors = array();
-        foreach ($form->getErrors() as $error) {
-            $errors[] = $error->getMessage();
-        }
-        foreach ($form->all() as $childForm) {
-            if ($childForm instanceof FormInterface) {
-                if ($childErrors = $this->getErrorsFromForm($childForm)) {
-                    $errors[] = $childErrors;
-                }
-            }
-        }
-        return $errors;
     }
 }

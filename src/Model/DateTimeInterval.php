@@ -10,16 +10,26 @@ class DateTimeInterval implements \JsonSerializable
     /**
      * @var \DateTime
      *
-     * @SWG\Property(description="Datetime interval's start date", type="dateTime")
+     * @SWG\Property(description="Datetime interval's start date")
      */
     private $fromTime;
 
     /**
      * @var \DateTime
      *
-     * @SWG\Property(description="Datetime interval's end date", type="dateTime")
+     * @SWG\Property(description="Datetime interval's end date")
      */
     private $toTime;
+
+    /**
+     * Get fromTime.
+     *
+     * @return \DateTime
+     */
+    public function getFromTime()
+    {
+        return $this->fromTime;
+    }
 
     /**
      * Set fromTime.
@@ -36,13 +46,13 @@ class DateTimeInterval implements \JsonSerializable
     }
 
     /**
-     * Get fromTime.
+     * Get toTime.
      *
      * @return \DateTime
      */
-    public function getFromTime()
+    public function getToTime()
     {
-        return $this->fromTime;
+        return $this->toTime;
     }
 
     /**
@@ -57,16 +67,6 @@ class DateTimeInterval implements \JsonSerializable
         $this->toTime = $toTime;
 
         return $this;
-    }
-
-    /**
-     * Get toTime.
-     *
-     * @return \DateTime
-     */
-    public function getToTime()
-    {
-        return $this->toTime;
     }
 
     public function jsonSerialize()

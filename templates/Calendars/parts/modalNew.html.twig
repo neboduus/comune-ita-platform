@@ -1,90 +1,99 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="modalNew">
-  <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button id="modalClose" class="close" type="button" data-dismiss="modal" aria-label="Close">
-          <svg class="icon">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-title mx-4">
-        <input id="modalNewName" type="text" placeholder="Nome e cognome">
-      </div>
-      <div class="modal-body">
-        <div id="modalId" class="d-none"></div>
-        <div class="d-none" id="modalNewStatus"></div>
-        <div class="row mt-3">
-          <div class="col-1">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use>
-            </svg>
-          </div>
-          <div class="col-4">
-            <input id="modalNewDate" type="date">
-          </div>
-          <div class="col-1"></div>
-          <div class="col-3">
-            <input type="text" id="modalNewSlot" list="slots" class="custom-select custom-select-sm" onclick="this.value = ''">
-            <datalist id="slots"></datalist>
-          </div>
+    <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="modalClose" class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <svg class="icon">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-title mx-4">
+                <input id="modalNewName" type="text" placeholder="Nome e cognome">
+            </div>
+            <div class="modal-body">
+                <div id="modalId" class="d-none"></div>
+                <div class="d-none" id="modalNewStatus"></div>
+                <div class="row mt-3">
+                    <div class="col-1">
+                        <svg class="icon">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use>
+                        </svg>
+                    </div>
+                    <div class="col-4">
+                        <input id="modalNewDate" type="date">
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-3">
+                        <input type="text" id="modalNewSlot" list="slots" class="custom-select custom-select-sm" onclick="this.value = ''" placeholder="Seleziona orario">
+                        <datalist id="slots"></datalist>
+                    </div>
+                </div>
+                <div id="no_slots_new_alert" class="row mt-3">
+                    <div class="col-1"></div>
+                    <div class="col-10">
+                        <small class="text-danger">Non ci sono orari disponibili alla data selezionata</small>
+                    </div>
+                </div>
+                <br>
+                <div class="row mt-3">
+                    <div class="col-1">
+                        <svg class="icon">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
+                        </svg>
+                    </div>
+                    <div class="col-10">
+                        <textarea style="border: none" id="modalNewDescription"
+                                  placeholder="Oggetto... (creato dall'ufficio)"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-1">
+                        <svg class="icon">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-link"></use>
+                        </svg>
+                    </div>
+                    <div class="col-10">
+                        <input type="url" id="modalNewVideoconferenceLink" placeholder="Link videoconferenza">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-1">
+                        <svg class="icon">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+                        </svg>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" id="modalNewFiscalCode" class="col-10" placeholder="Codice fiscale">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-1">
+                        <svg class="icon">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
+                        </svg>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" id="modalNewPhone" class="col-10" placeholder="Recapito telefonico">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-1">
+                        <svg class="icon">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
+                        </svg>
+                    </div>
+                    <div class="col-6">
+                        <input type="email" id="modalNewEmail" class="col-10" placeholder="Indirizzo Email">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer my-3 d-flex justify-content-between" >
+                <ul id="modalNewError" class="text-danger list-unstyled"></ul>
+                <button id="modalCreate" class="btn btn-primary btn-sm" data-url='{{ path("meetings_api_post") }}'
+                        type="button" onclick="createMeeting(this.id, '{{ calendar.id }}')">Crea
+                </button>
+            </div>
         </div>
-        <br>
-        <div class="row mt-3">
-          <div class="col-1">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
-            </svg>
-          </div>
-          <div class="col-10">
-            <textarea style="border: none" id="modalNewDescription" placeholder="Oggetto... (creato dall'ufficio)"></textarea>
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-1">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-link"></use>
-            </svg>
-          </div>
-          <div class="col-10">
-            <input type="url" id="modalNewVideoconferenceLink" placeholder="Link videoconferenza">
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-1">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
-            </svg>
-          </div>
-          <div class="col-6">
-            <input type="text" id="modalNewFiscalCode" class="col-10" placeholder="Codice fiscale">
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-1">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
-            </svg>
-          </div>
-          <div class="col-6">
-            <input type="text" id="modalNewPhone" class="col-10" placeholder="Recapito telefonico">
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-1">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
-            </svg>
-          </div>
-          <div class="col-6">
-            <input type="email" id="modalNewEmail" class="col-10" placeholder="Indirizzo Email">
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer my-3">
-        <div id="modalNewError" class="text-danger"></div>
-        <button id="modalCreate" class="btn btn-primary btn-sm" data-url='{{ path("meetings_api_post") }}' type="button" onclick="createMeeting(this.id, '{{ calendar.id }}')">Crea</button>
-      </div>
     </div>
-  </div>
 </div>

@@ -8,6 +8,7 @@ use App\Entity\OpeningHour;
 use App\Multitenancy\Annotations\MustHaveTenant;
 use App\Multitenancy\TenantAwareFOSRestController;
 use App\Services\InstanceService;
+use App\Services\MeetingService;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
@@ -24,8 +25,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class CalendarsAPIController
- * @property EntityManager em
- * @property InstanceService is
  * @package App\Controller
  * @Route("/calendars")
  * @MustHaveTenant()
@@ -34,10 +33,17 @@ class CalendarsAPIController extends TenantAwareFOSRestController
 {
     const CURRENT_API_VERSION = '1.0';
 
-    public function __construct(EntityManagerInterface $em, InstanceService $is)
+    private $em;
+
+    private $is;
+
+    private $meetingService;
+
+    public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService)
     {
         $this->em = $em;
         $this->is = $is;
+        $this->meetingService = $meetingService;
     }
 
     /**
@@ -132,10 +138,10 @@ class CalendarsAPIController extends TenantAwareFOSRestController
 
             foreach ($openingHours as $openingHour) {
                 if ($startDate && $endDate) {
-                    $availabilities = array_merge($availabilities, $openingHour->explodeDays(false, $startDate, $endDate));
+                    $availabilities = array_merge($availabilities, $this->meetingService->explodeDays($openingHour, false, $startDate, $endDate));
                 } else {
                     // default: compute availabilities on rolling days
-                    $availabilities = array_merge($availabilities, $openingHour->explodeDays());
+                    $availabilities = array_merge($availabilities, $this->meetingService->explodeDays($openingHour));
                 }
             }
             // sort and remove duplicates
@@ -146,8 +152,6 @@ class CalendarsAPIController extends TenantAwareFOSRestController
                 $fromTime = $closingPeriod->getFromTime();
                 $toTime = $closingPeriod->getToTime();
                 foreach ($availabilities as $availability) {
-                    // availability falls inside closing period
-                    // todo: check calendar opening hours
                     if ($availability >= $fromTime && $availability <= $toTime) {
                         $key = array_search($availability, $availabilities);
                         unset($availabilities[$key]);
@@ -222,16 +226,16 @@ class CalendarsAPIController extends TenantAwareFOSRestController
             // Set meetings key (Format: start_time-end_time-count)
             $meetings = [];
 
+            /** @var DateTime[]|array $meeting */
             foreach ($_meetings as $meeting) {
-                if ($meeting['start_time'] instanceof DateTime && $meeting['end_time'] instanceof DateTime) {
-                    $meetings[$meeting['start_time']->format('H:i') . '-' . $meeting['end_time']->format('H:i') . '-' . $meeting['count']] = $meeting;
-                }
+                $meetings[$meeting['start_time']->format('H:i') . '-' . $meeting['end_time']->format('H:i') . '-' . $meeting['count']] = $meeting;
             }
 
             // Retrieve calendar slots by input date
             foreach ($openingHours as $openingHour) {
-                if (in_array($inputDate->format('Y-m-d'), $openingHour->explodeDays($allAvailabilities)) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
-                    $slots = array_merge($slots, $openingHour->explodeMeetings($inputDate));
+                if (in_array($inputDate->format('Y-m-d'), $this->meetingService->explodeDays($openingHour, $allAvailabilities))
+                    && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
+                    $slots = array_merge($slots, $this->meetingService->explodeMeetings($openingHour, $inputDate));
                 }
             }
             ksort($slots);
@@ -543,6 +547,13 @@ class CalendarsAPIController extends TenantAwareFOSRestController
     /**
      * Delete a Calendar
      * @Rest\Delete("/{id}", name="calendars_api_delete", methods={"DELETE"})
+     * @SWG\Parameter(
+     *     name="Authorization",
+     *     in="header",
+     *     description="The authentication Bearer",
+     *     required=true,
+     *     type="string"
+     * )
      *
      * @SWG\Response(
      *     response=204,
@@ -578,14 +589,10 @@ class CalendarsAPIController extends TenantAwareFOSRestController
      * @SWG\Response(
      *     response=200,
      *     description="Retreive the Opening Hours of a Calendar",
-     * )
-     *
-     * @SWG\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="The authentication Bearer",
-     *     required=true,
-     *     type="string"
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=OpeningHour::class))
+     *     )
      * )
      *
      * @SWG\Response(
@@ -618,15 +625,10 @@ class CalendarsAPIController extends TenantAwareFOSRestController
      * @SWG\Response(
      *     response=200,
      *     description="Retreive an Opening Hour of a Calendar",
-     *      @Model(type=OpeningHour::class)
-     * )
-     *
-     * @SWG\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="The authentication Bearer",
-     *     required=true,
-     *     type="string"
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=OpeningHour::class))
+     *     )
      * )
      *
      * @SWG\Response(

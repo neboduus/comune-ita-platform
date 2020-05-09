@@ -8,11 +8,9 @@ use App\Dto\Service;
 use App\Multitenancy\TenantAwareFOSRestController;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormInterface;
@@ -22,8 +20,6 @@ use App\Multitenancy\Annotations\MustHaveTenant;
 
 /**
  * Class ServicesAPIController
- * @property EntityManager em
- * @property InstanceService is
  * @package App\Controller
  * @Route("/services")
  * @MustHaveTenant()
@@ -33,6 +29,10 @@ class ServicesAPIController extends TenantAwareFOSRestController
     const CURRENT_API_VERSION = '1.0';
 
     private $formserver;
+
+    private $em;
+
+    private $is;
 
     public function __construct(EntityManagerInterface $em, InstanceService $is, FormServerApiAdapterService $formserver)
     {

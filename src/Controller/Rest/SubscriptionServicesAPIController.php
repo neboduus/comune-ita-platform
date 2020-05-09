@@ -23,8 +23,6 @@ use App\Multitenancy\Annotations\MustHaveTenant;
 
 /**
  * Class SubscriptionsAPIController
- * @property EntityManager em
- * @property InstanceService is
  * @package App\Controller
  * @Route("/subscription-services")
  * @MustHaveTenant()
@@ -32,6 +30,10 @@ use App\Multitenancy\Annotations\MustHaveTenant;
 class SubscriptionServicesAPIController extends TenantAwareFOSRestController
 {
     const CURRENT_API_VERSION = '1.0';
+
+    private $em;
+
+    private $is;
 
     public function __construct(EntityManagerInterface $em, InstanceService $is)
     {

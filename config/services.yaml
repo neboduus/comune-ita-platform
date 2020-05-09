@@ -215,13 +215,15 @@ services:
         tags:
             - { name: 'app.schedule_action_handler', alias: 'ocsdc.protocollo' }
 
+    App\Services\MeetingService:
+        arguments:
+            $defaultSender: '%default_from_email_address%'
+    
     App\EventListener\MeetingLifeCycleListener:
         tags:
             - { name: doctrine.event_listener, event: postPersist, connection: tenant }
             - { name: doctrine.event_listener, event: preUpdate, connection: tenant }
             - { name: doctrine.event_listener, event: postRemove, connection: tenant }
-        arguments:
-            $defaultSender: '%default_from_email_address%'
     
     App\EventListener\TermsAcceptListener:
         tags:

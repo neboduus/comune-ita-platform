@@ -14,7 +14,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 class Service
 {
-
     /**
      * @Serializer\Type("string")
      * @SWG\Property(description="Service's uuid")
@@ -52,7 +51,6 @@ class Service
      * @SWG\Property(description="Services's topic (slug)")
      */
     private $topics;
-
 
     /**
      * @var string

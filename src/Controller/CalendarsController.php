@@ -9,11 +9,13 @@ use App\Entity\User;
 use App\Multitenancy\Annotations\MustHaveTenant;
 use App\Multitenancy\TenantAwareController;
 use App\Services\InstanceService;
+use App\Services\MeetingService;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use ICal\ICal;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -51,7 +53,12 @@ class CalendarsController extends TenantAwareController
 
     private $dataTableFactory;
 
-    public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, DataTableFactory $dataTableFactory)
+    public function __construct(
+        TranslatorInterface $translator,
+        EntityManagerInterface $em,
+        InstanceService $is,
+        DataTableFactory $dataTableFactory
+    )
     {
         $this->translator = $translator;
         $this->em = $em;
@@ -265,10 +272,12 @@ class CalendarsController extends TenantAwareController
      * @Route("/operatori/calendars/{calendar}", name="operatori_calendar_show")
      * @param Request $request
      * @param Calendar $calendar
+     * @param MeetingService $meetingService
+     * @param JWTTokenManagerInterface $JWTTokenManager
      * @return RedirectResponse|Response
      * @throws \Exception
      */
-    public function showCalendar(Request $request, Calendar $calendar)
+    public function showCalendar(Request $request, Calendar $calendar, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
     {
         if ($calendar->getOwner() != $this->getUser() && $calendar->getIsModerated() && !$calendar->getModerators()->contains($this->getUser())) {
             $this->addFlash('error', 'Non possiedi i permessi per visualizzare questo calendario');
@@ -418,7 +427,7 @@ class CalendarsController extends TenantAwareController
         $externalEvents = [];
 
         foreach ($calendar->getExternalCalendars() as $externalCalendar) {
-            $externalCalendars[$externalCalendar->getName()] = new ICal('ICal.ics', array(
+            $externalCalendars[$externalCalendar->getName()] = new ICal(false, array(
                 'defaultSpan' => 2,     // Default value
                 'defaultTimeZone' => 'UTC',
                 'defaultWeekStart' => 'MO',  // Default value
@@ -446,7 +455,7 @@ class CalendarsController extends TenantAwareController
         // compute min slot dimension
         $minDuration = PHP_INT_MAX;
         foreach ($calendar->getOpeningHours() as $openingHour) {
-            $events = array_merge($events, $openingHour->getInterval());
+            $events = array_merge($events, $meetingService->getInterval($openingHour));
             $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
         }
 
@@ -457,6 +466,8 @@ class CalendarsController extends TenantAwareController
             $canEdit = false;
         }
 
+        $jwt = $JWTTokenManager->create($this->getUser());
+
         return $this->render('Calendars/showCalendar.html.twig', [
             'calendar' => $calendar,
             'canEdit' => $canEdit,
@@ -464,7 +475,8 @@ class CalendarsController extends TenantAwareController
             'events' => array_values($events),
             'statuses' => $statuses,
             'minDuration' => $minDuration,
-            'datatable' => $table
+            'datatable' => $table,
+            'token' => $jwt,
         ]);
     }
 

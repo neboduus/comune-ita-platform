@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Meeting;
 use App\Entity\OpeningHour;
+use App\Services\MeetingService;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManager;
@@ -26,15 +27,23 @@ class OpeningHourType extends AbstractType
      * @var TranslatorInterface $translator
      */
     private $translator;
+
     /**
      * @var EntityManager
      */
     private $em;
 
-    public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager)
+    /**
+     * @var MeetingService
+     */
+    private $meetingService;
+
+
+    public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, MeetingService $meetingService)
     {
         $this->translator = $translator;
         $this->em = $entityManager;
+        $this->meetingService = $meetingService;
     }
 
     /**
@@ -42,50 +51,54 @@ class OpeningHourType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $weekdays = ['Lunedì'=>1, 'Martedì'=>2, 'Mercoledì'=>3, 'Giovedì'=>4, 'Venerdì'=>5, 'Sabato'=>6, 'Domenica'=>7];
+        $weekdays = ['Lunedì' => 1, 'Martedì' => 2, 'Mercoledì' => 3, 'Giovedì' => 4, 'Venerdì' => 5, 'Sabato' => 6, 'Domenica' => 7];
 
         $builder
-      ->add('start_date', DateType::class, [
-        'widget' => 'single_text',
-        'required' => true,
-        'label' => 'Data di inizio'
-      ])
-      ->add('end_date', DateType::class, [
-        'widget' => 'single_text',
-        'required' => true,
-        'label' => 'Data di fine'
-      ])
-      ->add('days_of_week', ChoiceType::class, [
-        'label' => 'Giorni della settimana',
-        'required' => false,
-        'choices'=> $weekdays,
-        'multiple' => true,
-        'expanded' => true,
-      ])
-      ->add('begin_hour', TimeType::class, [
-        'widget' => 'single_text',
-        'required' => true,
-        'label' => 'Orario di apertura'
-      ])
-      ->add('end_hour', TimeType::class, [
-        'widget' => 'single_text',
-        'required' => true,
-        'label' => 'Orario di chiusura'
-      ])
-      ->add('meeting_minutes', IntegerType::class, [
-        'required' => true,
-        'label' => 'Numero di minuti del meeting',
-      ])
-      ->add('interval_minutes', IntegerType::class, [
-        'required' => true,
-        'label' => 'Numero di minuti tra i meeting',
-      ])
-      ->add('meeting_queue', IntegerType::class, [
-        'required' => true,
-        'label' => 'Numero di meeting paralleli',
-      ])->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+            ->add('start_date', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+                'label' => 'Data di inizio'
+            ])
+            ->add('end_date', DateType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+                'label' => 'Data di fine'
+            ])
+            ->add('days_of_week', ChoiceType::class, [
+                'label' => 'Giorni della settimana',
+                'required' => false,
+                'choices' => $weekdays,
+                'multiple' => true,
+                'expanded' => true,
+            ])
+            ->add('begin_hour', TimeType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+                'label' => 'Orario di apertura'
+            ])
+            ->add('end_hour', TimeType::class, [
+                'widget' => 'single_text',
+                'required' => true,
+                'label' => 'Orario di chiusura'
+            ])
+            ->add('meeting_minutes', IntegerType::class, [
+                'required' => true,
+                'label' => 'Durata del meeting',
+            ])
+            ->add('interval_minutes', IntegerType::class, [
+                'required' => true,
+                'label' => 'Intervallo tra i meeting',
+            ])
+            ->add('meeting_queue', IntegerType::class, [
+                'required' => true,
+                'label' => 'Numero di meeting paralleli',
+            ])->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
+    /**
+     * @param FormEvent $event
+     * @throws \Exception
+     */
     public function onPreSubmit(FormEvent $event)
     {
         /**
@@ -95,6 +108,12 @@ class OpeningHourType extends AbstractType
 
         $data = $event->getData();
         if ($openingHour) {
+            // Check if opening Hour overlaps
+            if ($this->meetingService->isOverlapped($openingHour)) {
+                $event->getForm()->addError(new FormError($this->translator->trans('calendars.opening_hours.error.overlap')));
+            }
+
+            // Check if duration can be changed, i.e there are no scheduled meetings (past meetings are excluded)
             $intervalChanged = $openingHour->getIntervalMinutes() != $data['interval_minutes'];
             $durationChanged = $openingHour->getMeetingMinutes() != $data['meeting_minutes'];
             if ($durationChanged || $intervalChanged) {
@@ -102,7 +121,7 @@ class OpeningHourType extends AbstractType
                 $availableOn = new DateTime('now', new DateTimeZone('Europe/Rome'));
                 foreach ($openingHour->getMeetings() as $meeting) {
                     if ($meeting->getFromTime() >= $availableOn &&
-            !in_array($meeting->getStatus(), [Meeting::STATUS_REFUSED, Meeting::STATUS_CANCELLED])) {
+                        !in_array($meeting->getStatus(), [Meeting::STATUS_REFUSED, Meeting::STATUS_CANCELLED])) {
                         $availableOn = $meeting->getToTime();
                         $canChange = false;
                     }
@@ -110,8 +129,8 @@ class OpeningHourType extends AbstractType
                 if (!$canChange) {
                     $event->getForm()->addError(
                         new FormError($this->translator->trans(
-                            'calendars.opening_hours.cannot_change',
-                            ['next_availability'=> $availableOn->modify('+1days')->format('d/m/Y')]
+                            'calendars.opening_hours.error.cannot_change',
+                            ['next_availability' => $availableOn->modify('+1days')->format('d/m/Y')]
                         ))
                     );
                 }
@@ -125,9 +144,9 @@ class OpeningHourType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-      'data_class' => 'App\Entity\OpeningHour',
-      'csrf_protection' => false
-    ));
+            'data_class' => 'App\Entity\OpeningHour',
+            'csrf_protection' => false
+        ));
     }
 
     /**

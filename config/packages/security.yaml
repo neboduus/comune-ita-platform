@@ -53,15 +53,16 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         
         api:
-            pattern:   /(.*)/api/(services|applications)
+            pattern:   /(.*)/api/(services|applications|calendars)
             methods: [POST, PUT, PATCH, DELETE]
             stateless: true
             guard:
                 provider: chain_provider
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
+        
         api_secure:
-            pattern:   /(.*)/api/(folders|documents|users)
+            pattern:   /(.*)/api/(folders|documents|users|meetings)
             stateless: true
             guard:
                 provider: chain_provider

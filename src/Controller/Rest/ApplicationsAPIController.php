@@ -5,9 +5,10 @@ namespace App\Controller\Rest;
 use App\Dto\Application;
 use App\Entity\Pratica;
 use App\Entity\Servizio;
-use App\Model\PaymentOutcome;
-use App\Model\MetaPagedList;
 use App\Model\LinksPagedList;
+use App\Model\MetaPagedList;
+use App\Model\PaymentOutcome;
+use App\Multitenancy\Annotations\MustHaveTenant;
 use App\Multitenancy\TenantAwareFOSRestController;
 use App\Repository\PraticaRepository;
 use App\Services\InstanceService;
@@ -17,69 +18,68 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerBuilder;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Container;
+use Swagger\Annotations as SWG;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Form\FormInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-use JMS\Serializer\SerializerBuilder;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use App\Multitenancy\Annotations\MustHaveTenant;
 
 /**
  * Class ServicesAPIController
- * @property EntityManager em
- * @property InstanceService is
  * @package App\Controller
  * @Route("/applications")
  * @MustHaveTenant()
  */
 class ApplicationsAPIController extends TenantAwareFOSRestController
 {
-    /**
-     * @var Container
-     */
-    protected $container;
+    private $em;
+
+    private $is;
 
     /**
-     * @var PraticaStatusService
+     * @var KernelInterface
      */
-    private $statusService;
-
+    protected $kernel;
     /**
      * @var ModuloPdfBuilderService
      */
     protected $pdfBuilder;
-
     /**
      * @var UrlGeneratorInterface
      */
     protected $router;
-
     /**
      * @var string
      */
     protected $baseUrl = '';
+    /**
+     * @var PraticaStatusService
+     */
+    private $statusService;
 
     public function __construct(
         EntityManagerInterface $em,
         InstanceService $is,
         PraticaStatusService $statusService,
         ModuloPdfBuilderService $pdfBuilder,
-        UrlGeneratorInterface $router
-    ) {
+        UrlGeneratorInterface $router,
+        KernelInterface $kernel
+    )
+    {
         $this->em = $em;
         $this->is = $is;
         $this->statusService = $statusService;
         $this->pdfBuilder = $pdfBuilder;
         $this->router = $router;
         $this->baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $this->kernel = $kernel;
     }
 
     /**
@@ -177,8 +177,7 @@ class ApplicationsAPIController extends TenantAwareFOSRestController
         $result ['data'] = [];
 
         if ($offset != 0) {
-            $result['links']['prev'] = $this->generateUrl('applications_api_list', ['offset' => $offset - $limit, 'limit' => $limit], UrlGeneratorInterface::ABSOLUTE_URL);
-            ;
+            $result['links']['prev'] = $this->generateUrl('applications_api_list', ['offset' => $offset - $limit, 'limit' => $limit], UrlGeneratorInterface::ABSOLUTE_URL);;
         }
 
         if ($offset + $limit < $count) {
@@ -269,7 +268,7 @@ class ApplicationsAPIController extends TenantAwareFOSRestController
             $fileContent = file_get_contents($file->getPathname());
         } else {
             $path = $result->getCreatedAt()->format('Y/m-d/Hi');
-            $fileContent = file_get_contents($this->container->getParameter('kernel.project_dir') . '/var/uploads/pratiche/allegati/' . $path . DIRECTORY_SEPARATOR . $file->getFilename());
+            $fileContent = file_get_contents($this->kernel->getProjectDir() . '/var/uploads/pratiche/allegati/' . $path . DIRECTORY_SEPARATOR . $file->getFilename());
         }
         $filename = $result->getFilename();
         $response = new Response($fileContent);

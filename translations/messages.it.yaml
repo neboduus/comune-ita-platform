@@ -1578,10 +1578,25 @@ gateway:
         ora: 'Ora emissione'
 
 calendars:
+    new: "Crea nuovo calendario"
+    rolling_days:
+        label: "Disponibilità per le prenotazioni"
+        text_before: "E' possibile prenotare in anticipo fino a"
+        text_after: "giorni a partire da oggi"
+    allow_cancel_days:
+        label: "Preavviso minimo per una prenotazione"
+        text_before: "E' possibile disdire fino a "
+        text_after: "giorni prima dell'appuntamento"
     opening_hours:
-        cannot_change: 'Non è possibile modificare la durata o l intervallo tra i meeting fintanto che
+        error:
+            overlap: "Orario di apertura sovrapposto"
+            cannot_change: 'Non è possibile modificare la durata o l intervallo tra i meeting fintanto che
                      esistono dei meeting gia fissati. Le consigliamo di creare un orario di apertura a partire dalla prima data disponibile (next_availability)'
+
 meetings:
+    error:
+        slot_unavailable: "L'intervallo selezionato non è disponibile"
+        slot_invalid: "L'intervallo selezionato non è valido"
     no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
     email:
         operatori:
