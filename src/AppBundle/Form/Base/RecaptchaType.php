@@ -26,7 +26,7 @@ class RecaptchaType extends AbstractType
     $builder
       ->add('recaptcha', EWZRecaptchaType::class,
         [
-          'label' => 'Controllo antispam',
+          'label' => false,
           'mapped' => false,
           'constraints' => [$constraint]
         ]);

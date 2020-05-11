@@ -98,18 +98,27 @@
 
     <div class="row mt-2">
       <div class="col-lg-4 px-lg-4 order-lg-2">
-        <div class="callout">
-          <div class="callout-title">
-            Info
+
+        {# Info compilazione specificate nel servizio #}
+        {{ include('AppBundle:Pratiche/parts:compilation_info.html.twig') }}
+
+        {% if pratica.servizio.loginSuggested %}
+          <div class="callout">
+            <div class="callout-title">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+              </svg>
+              Accedi
+            </div>
+            <div class="body">
+              <p>{{ 'operatori.suggerimento_login'|trans({'link': path('pratiche_new', {'servizio': pratica.servizio.slug}) }) | raw }}</p>
+              <a href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
+                 class="btn btn-xs btn-primary service-access-button">
+                <span>{{ 'operatori.login' | trans }}</span>
+              </a>
+            </div>
           </div>
-          <p>Stai compilando la pratica come anonimo, <a
-              href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}">accedi</a> al sistema per la
-            compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.</p>
-          <a href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
-             class="btn btn-xs btn-primary service-access-button">
-            <span>Accedi</span>
-          </a>
-        </div>
+        {% endif %}
       </div>
 
       <div class="col-lg-8 px-lg-4 order-lg-1">
@@ -124,13 +133,9 @@
 
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
           {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
-            <blockquote>
-              {{ 'steps.common.conferma.help_text_top'|trans }}
-            </blockquote>
+            <p>{{ 'steps.common.conferma.help_text_top'|trans }}</p>
             {{ include('AppBundle:PraticheAnonime/parts:pratica_summary.html.twig', {'pratica':form.vars.data}) }}
-            <blockquote style="margin-top: 20px">
-              Per inviare la richiesta fai cllck su "Non sono un robot" e successivamente sul pulsante "Invia".
-            </blockquote>
+            <p class="py-3">{{ 'operatori.recaptcha'| trans }}</p>
           {% endif %}
 
           {{ form_rest(form) }}
@@ -147,23 +152,8 @@
     </div>
   </section>
 
-  <div class="modal fade" id="confirm" tabindex="-1"
-       role="dialog"
-       aria-labelledby="confirmAutoAssignLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
-        </div>
-        <div class="modal-footer">
-          <button type="button" data-dismiss="modal"
-                  class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
-          <button type="button" data-dismiss="modal" class="btn btn-primary"
-                  id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  {# Modal di conferma #}
+  {{ include('AppBundle:Pratiche/parts:confirm_modal.html.twig') }}
 
 {% endblock %}
 

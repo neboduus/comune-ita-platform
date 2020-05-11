@@ -21,8 +21,8 @@
     background: #fafafa;
   }
 
-  .formio-summary .form-group {
-    padding-bottom: 0;
+  .form-control:disabled, .form-control[readonly]{
+    background-color: #e6e9f2;
   }
 
   input.form-control::placeholder {
@@ -42,6 +42,10 @@
       font-size: inherit;
     }
   }
+}
+
+.formio-summary .form-group {
+  padding-bottom: 0;
 }
 
 .formio_render {
@@ -150,3 +154,8 @@ textarea {
   }
 }
 
+#pratica-summary {
+  .row {
+    border-bottom: none !important;
+  }
+}

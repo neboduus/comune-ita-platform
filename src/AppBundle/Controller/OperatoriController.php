@@ -154,7 +154,7 @@ class OperatoriController extends Controller
       throw new BadRequestHttpException("Pratica {$pratica->getId()} already assigned to {$pratica->getOperatore()->getFullName()}");
     }
 
-    if ($pratica->getNumeroProtocollo() === null) {
+    if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
       throw new BadRequestHttpException("Pratica {$pratica->getId()} does not have yet a protocol number");
     }
 
@@ -207,6 +207,7 @@ class OperatoriController extends Controller
       'pratica' => $pratica,
       'user' => $this->getUser(),
       'threads' => $threads,
+      'formserver_url' => $this->getParameter('formserver_public_url')
     ];
   }
 

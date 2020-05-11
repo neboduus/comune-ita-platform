@@ -83,7 +83,17 @@
                                                 data-user="{{ pratica.user.id }}"
                                                 data-status="{{ pratica.status }}">
 
-                                                <td>{{ pratica.numeroProtocollo }}</td>
+                                                <td>
+                                                    {% if pratica.servizio.isProtocolRequired %}
+                                                        {% if pratica.numeroProtocollo %}
+                                                            {{ pratica.numeroProtocollo }}
+                                                        {% else %}
+                                                            <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
+                                                    {% endif %}
+                                                </td>
                                                 <td>{{ pratica.user.fullName }}</td>
                                                 <td>{{ pratica.servizio.name }}</td>
                                                 <td>{% if pratica.servizio.topics %}{{ pratica.servizio.topics.name }}{% endif %}</td>
@@ -125,8 +135,16 @@
                                                 data-user="{{ pratica.user.id }}"
                                                 data-status="{{ pratica.status }}">
 
-                                                <td>{% if pratica.numeroProtocollo %}{{ pratica.numeroProtocollo }}{% else %}
-                                                        <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>{% endif %}
+                                                <td>
+                                                    {% if pratica.servizio.isProtocolRequired %}
+                                                        {% if pratica.numeroProtocollo %}
+                                                            {{ pratica.numeroProtocollo }}
+                                                        {% else %}
+                                                            <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
+                                                    {% endif %}
                                                 </td>
                                                 <td>{{ pratica.user.fullName }}</td>
                                                 <td>{{ pratica.servizio.name }}</td>
@@ -135,7 +153,7 @@
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-xs"
                                                             data-toggle="modal"
-                                                            {% if not(pratica.numeroProtocollo) %}
+                                                            {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
                                                                 disabled="disabled"
                                                                 title="{{ 'pratica.in_attesa_protocollo'|trans }}"
                                                             {% endif %}

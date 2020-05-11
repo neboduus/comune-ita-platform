@@ -270,7 +270,7 @@ class PraticheController extends Controller
           ['id' => $pratica->getId(), 'pratica' => $pratica]
         );
 
-        $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
+        // $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
 
         $praticaFlowService->getDataManager()->drop($praticaFlowService);
         $praticaFlowService->reset();

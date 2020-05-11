@@ -42,6 +42,11 @@ class ServizioFormType extends AbstractType
       ->add('who')
       ->add('special_cases')
       ->add('more_info')
+      ->add('compilation_info')
+      ->add('final_indications', TextareaType::class, [
+        "label" => false,
+        'empty_data' => 'La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.',
+      ])
       ->add('coverage', CollectionType::class, [
         'entry_type' => TextType::class,
         "allow_add" => true,
@@ -63,7 +68,8 @@ class ServizioFormType extends AbstractType
         'data_class' => null
       ])
       ->add('sticky')
-      ->add('status');
+      ->add('status')
+      ->add('login_suggested');
   }
 
   /**

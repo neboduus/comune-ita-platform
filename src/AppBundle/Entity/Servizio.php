@@ -126,6 +126,20 @@ class Servizio
   private $moreInfo;
 
   /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Information shown to the citizen during the compilation of the service, accepts html tags")
+   */
+  private $compilationInfo;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Indications shown to the citizen at the end of the compilation of the service, accepts html tags")
+   */
+  private $finalIndications;
+
+  /**
    * @var string[]
    * @ORM\Column(type="array", nullable=true)
    * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
@@ -231,6 +245,13 @@ class Servizio
 
   /**
    * @var bool
+   * @ORM\Column(name="login_suggested", type="boolean", nullable=true)
+   * @SWG\Property(description="Enable or disable the suggestion to log in to auto-complete some fields")
+   */
+  private $loginSuggested;
+
+  /**
+   * @var bool
    * @ORM\Column(type="boolean", nullable=true, options={"default":"1"})
    * @SWG\Property(description="If selected the application will be registered in tenants protocol")
    */
@@ -251,7 +272,9 @@ class Servizio
     //$this->paymentParameters = new ArrayCollection();
     $this->status = self::STATUS_AVAILABLE;
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
+    $this->setLoginSuggested(false);
     $this->setProtocolRequired(true);
+    $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
   }
 
   /**
@@ -713,6 +736,39 @@ class Servizio
   /**
    * @return string
    */
+  public function getCompilationInfo()
+  {
+    return $this->compilationInfo;
+  }
+
+  /**
+   * @param string $compilationInfo
+   */
+  public function setCompilationInfo( $compilationInfo )
+  {
+    $this->compilationInfo = $compilationInfo;
+  }
+
+
+  /**
+   * @return string
+   */
+  public function getFinalIndications()
+  {
+    return $this->finalIndications;
+  }
+
+  /**
+   * @param string $finalIndications
+   */
+  public function setFinalIndications($finalIndications )
+  {
+    $this->finalIndications = $finalIndications;
+  }
+
+  /**
+   * @return string
+   */
   public function getCoverage()
   {
     return $this->coverage;
@@ -820,6 +876,25 @@ class Servizio
     $this->accessLevel = $accessLevel;
     return $this;
   }
+
+  /**
+   * @return bool
+   */
+  public function isLoginSuggested()
+  {
+    return $this->loginSuggested;
+  }
+
+  /**
+   * @param bool $loginSuggested
+   * @return $this
+   */
+  public function setLoginSuggested( $loginSuggested )
+  {
+    $this->loginSuggested = $loginSuggested;
+    return $this;
+  }
+
 
   /**
    * @return bool

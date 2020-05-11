@@ -92,6 +92,20 @@ class Service
   private $moreInfo;
 
   /**
+   * @var string
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Information shown to the citizen during the compilation of the service, accepts html tags")
+   */
+  private $compilationInfo;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Indications shown to the citizen at the end of the compilation of the service, accepts html tags")
+   */
+  private $finalIndications;
+
+  /**
    * @var string[]
    * @Serializer\Type("array<string>")
    * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
@@ -150,6 +164,12 @@ class Service
    * @SWG\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended")
    */
   private $status;
+
+  /**
+   * @var bool
+   * @SWG\Property(description="Enable or disable the suggestion to log in to auto-complete some fields")
+   */
+  private $loginSuggested;
 
   /**
    * @return mixed
@@ -312,6 +332,38 @@ class Service
   }
 
   /**
+   * @return string
+   */
+  public function getCompilationInfo()
+  {
+    return $this->compilationInfo;
+  }
+
+  /**
+   * @param string $compilationInfo
+   */
+  public function setCompilationInfo($compilationInfo)
+  {
+    $this->compilationInfo = $compilationInfo;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFinalIndications()
+  {
+    return $this->finalIndications;
+  }
+
+  /**
+   * @param string $finalIndications
+   */
+  public function setFinalIndications($finalIndications)
+  {
+    $this->finalIndications = $finalIndications;
+  }
+
+  /**
    * @return string[]
    */
   public function getCoverage()
@@ -444,6 +496,24 @@ class Service
   }
 
   /**
+   * @return bool
+   */
+  public function isLoginSuggested()
+  {
+    return $this->loginSuggested;
+  }
+
+  /**
+   * @param bool $loginSuggested
+   * @return $this
+   */
+  public function setLoginSuggested( $loginSuggested )
+  {
+    $this->loginSuggested = $loginSuggested;
+    return $this;
+  }
+
+  /**
    * @param Servizio $servizio
    * @return Service
    */
@@ -461,6 +531,8 @@ class Service
     $dto->who = $servizio->getWho() ?? '';
     $dto->specialCases = $servizio->getSpecialCases() ?? '';
     $dto->moreInfo = $servizio->getMoreInfo() ?? '';
+    $dto->compilationInfo = $servizio->getCompilationInfo() ?? '';
+    $dto->finalIndications = $servizio->getFinalIndications() ?? '';
     $dto->coverage = $servizio->getCoverage();
     $dto->flowSteps = $servizio->getFlowSteps();
     $dto->protocolloParameters = $servizio->getProtocolloParameters();
@@ -468,6 +540,7 @@ class Service
     $dto->paymentParameters = $servizio->getPaymentParameters();
     $dto->sticky = $servizio->isSticky();
     $dto->status = $servizio->getStatus();
+    $dto->loginSuggested = $servizio->isLoginSuggested() || false;
 
     return $dto;
   }
@@ -495,6 +568,8 @@ class Service
     $entity->setWho($this->who ?? '');
     $entity->setSpecialCases($this->specialCases ?? '');
     $entity->setMoreInfo($this->moreInfo ?? '');
+    $entity->setCompilationInfo($this->compilationInfo ?? '');
+    $entity->setFinalIndications($this->finalIndications ?? '');
     $entity->setCoverage($this->coverage);
 
     if (count($this->flowSteps) > 0) {
@@ -511,6 +586,7 @@ class Service
     $entity->setPaymentParameters($this->paymentParameters);
     $entity->setSticky($this->sticky);
     $entity->setStatus($this->status);
+    $entity->setLoginSuggested($this->loginSuggested);
 
     return $entity;
   }

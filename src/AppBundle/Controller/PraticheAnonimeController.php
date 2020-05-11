@@ -170,7 +170,7 @@ class PraticheAnonimeController extends Controller
           ['id' => $pratica->getId(), 'pratica' => $pratica]
         );
 
-        $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
+        // $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
         $flow->getDataManager()->drop($flow);
         $flow->reset();
 
@@ -213,7 +213,8 @@ class PraticheAnonimeController extends Controller
 
       if ($maxVisibilityDate >= new DateTime('now')) {
         $result = [
-          'pratica' => $pratica
+          'pratica' => $pratica,
+          'formserver_url' => $this->getParameter('formserver_public_url'),
         ];
         return $result;
       }

@@ -8,6 +8,12 @@
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+
+  <style>
+    .callout .body p {
+      font-family: "Titillium Web", Geneva, Tahoma, sans-serif !important;
+    }
+  </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -205,42 +211,14 @@
           {% if form.vars.helper.descriptionText|length > 0 %}
             {{ form.vars.helper.descriptionText|raw }}
           {% endif %}
-          {% if form.nucleo_familiare is defined %}
-            <ul class="list-unstyled nucleo_familiare"
-                data-prototype="{{ form_widget(form.nucleo_familiare.vars.prototype)|e('html_attr') }}">
-              {% for componente in form.nucleo_familiare %}
-                <li>
-                  <div class="well well-sm">{{ form_row(componente) }}</div>
-                </li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-
-          {% if form.persone_residenti is defined %}
-            <ul class="list-unstyled persone_residenti"
-                data-prototype="{{ form_widget(form.persone_residenti.vars.prototype)|e('html_attr') }}">
-              {% for persona in form.persone_residenti %}
-                <li>
-                  <div class="well well-sm">{{ form_row(persona) }}</div>
-                </li>
-              {% endfor %}
-            </ul>
-          {% endif %}
 
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
           {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
-            <blockquote>
-              Verifica i dati inseriti prima di passare al metodo di pagamento.
-            </blockquote>
+            <p>Verifica i dati inseriti prima di passare al metodo di pagamento</p>
             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
-            <blockquote>
-              {{ 'steps.common.conferma.help_text_top'|trans }}
-            </blockquote>
+            <p>{{ 'steps.common.conferma.help_text_top'|trans }}</p>
             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
-            <blockquote style="margin-top: 20px">
-              {{ 'steps.common.conferma.help_text_bottom'|trans }}
-            </blockquote>
           {% endif %}
 
           {{ form_rest(form) }}
@@ -265,22 +243,26 @@
 
     </div>
 
-    <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
+    <div class="col-lg-4 pt-5 pt-lg-2">
 
       {% if form.vars.helper.guideText|length > 0 %}
         <div class="callout">
           <div class="callout-title">
+            <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
             {{ 'pratica.guida_utente'|trans }}
           </div>
-          {{ form.vars.helper.guideText|raw }}
+          <div class="body">
+            <p>{{ form.vars.helper.guideText|raw }}</p>
+          </div>
         </div>
       {% endif %}
-      <div id="compilationNotes" class="my-5">
-        <h5>{{ 'pratica.appunti_compilazione.titolo'|trans }}</h5>
-        <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave"
-                  placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
-        <h6>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</h6>
-      </div>
+
+      {# Info compilazione specificate nel servizio #}
+      {{ include('AppBundle:Pratiche/parts:compilation_info.html.twig') }}
+
+      {# Note compilazione per utente #}
+      {{ include('AppBundle:Pratiche/parts:user_compilation_notes.html.twig') }}
+
 
       {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
           {{ include('@App/Default/parts/chat.html.twig') }}
@@ -290,23 +272,8 @@
     </div>
   </section>
 
-  <div class="modal fade" id="confirm" tabindex="-1"
-       role="dialog"
-       aria-labelledby="confirmAutoAssignLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
-        </div>
-        <div class="modal-footer">
-          <button type="button" data-dismiss="modal"
-                  class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
-          <button type="button" data-dismiss="modal" class="btn btn-primary"
-                  id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  {# Modal di conferma #}
+  {{ include('AppBundle:Pratiche/parts:confirm_modal.html.twig') }}
 
 {% endblock %}
 

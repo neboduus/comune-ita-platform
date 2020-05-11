@@ -12,7 +12,27 @@ Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
 
+$(window).on('load', function () {
+  let loginCheckbox = $('#general_data_login_suggested');
+  if ($('#general_data_access_level').val() === '0') {
+    loginCheckbox.closest('div').show();
+  } else {
+    loginCheckbox.closest('div').hide();
+  }
+});
+
 $(document).ready(function () {
+
+  // Show/Hide login checkbox
+  $('#general_data_access_level').change(function () {
+    let loginCheckbox = $('#general_data_login_suggested');
+    if (this.value === '0') {
+      loginCheckbox.closest('div').show();
+    } else {
+      loginCheckbox.prop('checked', false);
+      loginCheckbox.closest('div').hide();
+    }
+  })
 
   // Step Template form
   if ($("#formio_template_service_id").length) {
