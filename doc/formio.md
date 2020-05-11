@@ -27,8 +27,8 @@ automatico dei campi
 ### Uploade dei file
 Il componente per l'upload del file è utilizzabile cone le seguenti impostazioni:
 *  Storage va impostato a `Url`
-*  Va specificata un url così composto `https://{host}/{instance}/pratiche/allegati`
-   Es.`http://stanzadelcittadino.it/comune-di-bugliano/pratiche/allegati`
+*  Va specificata un url così composto `https://{host}/{instance}/allegati`
+   Es.`http://stanzadelcittadino.it/comune-di-bugliano/allegati`
 
 ### Bilancio
 Il componente bilancio serve per poter dividere l'ammontare dei pagamenti in sottovoci.
@@ -41,6 +41,29 @@ Per ogni riga di bilancio possone essere specificati:
 Il componete di bilancio è completamente trasparente all'utente finale, deve essere quindi impostato come `hidden` e deve rispettare le seguneti regole:
 * [`MUST`] Il name del campo deve essere `payment_financial_report`
 * [`MUST`] La somma degli importi della componente di bilancio deve essere uguale al `payment_amount` specificato
+
+Nel caso di componeti di bilancio complesse dipendenti da altri campi del form va inserito il valore delle compomenti di
+ bilancio dinamicamente tramite funzione js.
+
+Nel `Calculated value` del campo Bilancio va inserita una funzione come l'esempio sottostante, tale funzione viene attivata al cambiamento (redraw)
+del campo collegato (tipologia).
+
+Es.
+```
+if (data.tipologia === 'value') {
+ 	value = [
+ 		{codAccertamento: "", codCapitolo: "cap1", codUfficio: "uff1", importo: "2"},
+ 		{codAccertamento: "", codCapitolo: "cap2", codUfficio: "uff2", importo: "8"}
+ 	];
+ } else {
+ 	value = [
+ 		{codAccertamento: "", codCapitolo: "cap1", codUfficio: "uff1", importo: "5"},
+ 		{codAccertamento: "", codCapitolo: "cap2", codUfficio: "uff2", importo: "5"}
+ 	];
+ }
+```
+I
+
 
 ## Integrazioni
 

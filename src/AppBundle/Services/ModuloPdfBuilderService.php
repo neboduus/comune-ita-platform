@@ -354,6 +354,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return string
+   * @throws ClientException
+   * @throws RequestException
    * @throws \ReflectionException
    */
   private function renderForPratica(Pratica $pratica)
@@ -519,6 +521,9 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     if ($action->getType() == self::SCHEDULED_CREATE_FOR_PRATICA) {
       /** @var Pratica $pratica */
       $pratica = $this->em->getRepository('AppBundle:Pratica')->find($params['pratica']);
+      if (!$pratica instanceof Pratica) {
+        throw new \Exception('Not found application with id: ' . $params['pratica']);
+      }
       $pdf = $this->createForPratica($pratica);
       $pratica->addModuloCompilato($pdf);
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);

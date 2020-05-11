@@ -490,7 +490,12 @@ class Application
     $dto->service = $pratica->getServizio()->getSlug();
     $dto->subject = $pratica->getOggetto();
 
-    $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+
+    if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
+      $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+    } else {
+      $dto->data = [];
+    }
 
     $dto->compiledModules = self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl);
     //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());

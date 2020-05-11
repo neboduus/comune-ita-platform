@@ -130,10 +130,10 @@ class PraticheAnonimeController extends Controller
       $this->get('session')->start();
     }
 
-    $flow = $this->get('ocsdc.form.flow.formioanonymous');
+    /** @var PraticaFlow $flow */
+    $flow = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
     $flow->setInstanceKey($this->get('session')->getId());
     $flow->bind($pratica);
-
 
     if ($pratica->getInstanceId() == null) {
       $pratica->setInstanceId($flow->getInstanceId());
@@ -241,8 +241,25 @@ class PraticheAnonimeController extends Controller
       $maxVisibilityDate = (new DateTime())->setTimestamp($timestamp)->modify('+ ' . $this->hashValidity . ' days');
 
       if ($maxVisibilityDate >= new DateTime('now')) {
-        $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
 
+        $compiledModules = $pratica->getModuliCompilati();
+        if (empty($compiledModules)) {
+          return new Response('', Response::HTTP_NOT_FOUND);
+        }
+        $attachment = $compiledModules[0];
+        $fileContent = file_get_contents($attachment->getFile()->getPathname());
+        $filename = $pratica->getId() . '.pdf';
+        $response = new Response($fileContent);
+        $disposition = $response->headers->makeDisposition(
+          ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+          $filename
+        );
+        // Set the content disposition
+        $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-Type', 'application/pdf');
+        // Dispatch request
+        return $response;
+        /*$allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
         return new BinaryFileResponse(
           $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
           200,
@@ -250,7 +267,7 @@ class PraticheAnonimeController extends Controller
             'Content-type' => 'application/octet-stream',
             'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
           ]
-        );
+        );*/
       }
     }
 

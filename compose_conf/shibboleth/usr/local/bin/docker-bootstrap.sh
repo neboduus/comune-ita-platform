@@ -5,8 +5,9 @@
 
 export LD_LIBRARY_PATH=/opt/shibboleth/lib64:${LD_LIBRARY_PATH}
 
-_SERVER_NAME=${SERVER_NAME:-"sdc.local"}
-_PROJECT_URL=${PROJECT_BASE_URL:-"sdc.local"}
+_SERVER_NAME=${SERVER_NAME:-"stanzadelcittadino.localtest.me"}
+_ENTITY_ID=${ENTITY_ID:-"stanzadelcittadino.localtest.me"}
+_PROJECT_URL=${PROJECT_BASE_URL:-"stanzadelcittadino.localtest.me"}
 _ORGANIZATION=${ORGANIZATION:-"A Company Making Everything (A.C.M.E)"}
 
 
@@ -57,6 +58,7 @@ popd
 #
 pushd /opt/shibboleth-sp/metadata
 sed \
+    -e "s|%ENTITY_ID%|${_ENTITY_ID}|g" \
     -e "s|%PROJECT_URL%|${_PROJECT_URL}|g" \
     metadata.tpl > metadata.xml
 popd

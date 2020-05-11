@@ -8,7 +8,7 @@
     {% endif %}
   </a>
 {% else %}
-  <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-block btn-primary">
+  <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.id, 'hash': pratica.hash}) }}" class="btn btn-block btn-primary">
     <i class="fa fa-download"></i>
     {% if pratica.servizio.isProtocolRequired %}
       {{ 'operatori.scarica_richiesta_protocollata'|trans }}

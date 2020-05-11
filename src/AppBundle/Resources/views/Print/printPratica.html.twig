@@ -56,7 +56,7 @@
     <div class="row mt-5">
       <div class="col-8">
         <h3>{{ pratica.servizio.name }}</h3>
-        {% if pratica.status >= constant('STATUS_SUBMITTED', pratica) %}
+        {% if pratica.status >= constant('STATUS_PRE_SUBMIT', pratica) %}
           <div class="row mt-4 mb-4">
             <div class="col-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
             <div class="col-8">
@@ -70,6 +70,11 @@
           <div class="callout danger">
             <div class="callout-title">Numero protocollo</div>
             <p class="text-danger">{{ pratica.numeroProtocollo }}</p>
+          </div>
+        {% elseif not pratica.servizio.isProtocolRequired %}
+          <div class="callout danger">
+            <div class="callout-title">Numero richiesta</div>
+            <p class="text-danger">{{ pratica.id }}</p>
           </div>
         {% endif %}
       </div>

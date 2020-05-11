@@ -6,7 +6,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
-use AppBundle\Entity\SciaPraticaEdilizia;
+use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
@@ -15,8 +15,6 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\All;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Form\FormError;
 use \DateTime;
 
@@ -89,7 +87,6 @@ class FormIORenderType extends AbstractType
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
-
   public function getBlockPrefix()
   {
     return 'formio_render';
@@ -98,13 +95,20 @@ class FormIORenderType extends AbstractType
   public function onPreSubmit(FormEvent $event)
   {
 
-    /** @var SciaPraticaEdilizia $pratica */
+    /** @var Pratica $pratica */
     $pratica = $event->getForm()->getData();
     $compiledData = $flattenedData = array();
+
     if (isset($event->getData()['dematerialized_forms'])) {
       $data = json_decode($event->getData()['dematerialized_forms'], true);
       $flattenedData = $this->arrayFlat($data);
       $compiledData = $data;
+    }
+
+    if ($pratica->getServizio()->isPaymentRequired() && !$this->isPaymentValid($data)) {
+      $event->getForm()->addError(
+        new FormError('Si è veridicato un problema con i dati del pagamneto, impossibile inviare la pratica.')
+      );
     }
 
     $pratica->setDematerializedForms(
@@ -129,18 +133,22 @@ class FormIORenderType extends AbstractType
       }
     }
 
-    $this->em->persist($pratica);
+    // Persist solo non è prataica anonima
+    if ($pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS) {
+      $this->em->persist($pratica);
+    }
   }
 
   /**
-   * @param SciaPraticaEdilizia $pratica
+   * @param FormIO $pratica
    * @return false|string
    */
   private function setupHelperData(FormIO $pratica)
   {
     $data = $pratica->getDematerializedForms();
 
-    if (empty($data)) {
+    // Precompilo i campi dell'applicant solo se non è pratica anonima
+    if (empty($data) && $pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS) {
       /** @var CPSUser $user */
       $user = $pratica->getUser();
       $cpsUserData = [];
@@ -209,7 +217,7 @@ class FormIORenderType extends AbstractType
   }
 
   /**
-   * @param $array
+   * @param array
    * @param string $prefix
    * @return array
    */
@@ -236,5 +244,28 @@ class FormIORenderType extends AbstractType
       }
     }
     return $result;
+  }
+
+  /**
+   * @param $data
+   * @return bool
+   */
+  private function isPaymentValid($data)
+  {
+    if (!isset($data['payment_amount'])) {
+      return false;
+    }
+
+    if (isset($data['payment_financial_report'])) {
+      $financialReport = 0;
+      foreach ($data['payment_financial_report'] as $f) {
+        $financialReport += $f['importo'];
+      }
+
+      if ($data['payment_amount'] != $financialReport) {
+        return false;
+      }
+    }
+    return true;
   }
 }
