@@ -198,14 +198,21 @@ documenti:
   documento:
     nome: "Nome documento"
     data_creazione: "Data di creazione"
-    valido: "Valido fino a"
+    validità: "Validità"
+    disponibilità: "Disponibilità"
+    disponibile_fino_a: "Il documento sarà disponibile online fino al <b>%expire_at%</b>"
+    valido_da_a: "Il documento è <b>valido</b> dal <b>%validity_begin%</b> al <b>%validity_end%</b>"
+    scaduto: "il documento è <b>scaduto</b> il <b>%validity_end%</b>"
+    rinnova: ", è possibile rinnovarlo accedendo ai servizi di seguito elencati"
     data_scadenza: "Data di scadenza"
     servizi_correlati: "Servizi correlati"
+    no_servizi_correlati: "Non ci sono servizi correlati a questo documento"
   cartella:
     nome: "Nome cartella"
     data_creazione: "Data di creazione"
     servizi_correlati: "Servizi correlati"
     no_documenti: "Non sono presenti documenti in questa cartella"
+    no_servizi_correlati: "Non ci sono servizi correlati a questa cartella"
 
 iscrizione_asilo_nido:
   dettaglio:
