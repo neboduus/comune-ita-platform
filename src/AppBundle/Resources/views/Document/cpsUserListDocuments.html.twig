@@ -30,19 +30,6 @@
           <p>{{ 'documenti.cartella.no_documenti' | trans }}</p>
         {% else %}
           <table id="documents_table" class="table border-bottom">
-            <th class="d-none d-none d-lg-table-cell"></th>
-            <th class="d-none d-none d-lg-table-cell">
-              <div class="px-2 py-2 font-weight-light">{{ 'documenti.documento.nome' | trans }}</div>
-            </th>
-            <th class="d-none d-none d-lg-table-cell">
-              <div class="px-2 py-2 font-weight-light">{{ 'documenti.documento.data_creazione' | trans }}</div>
-            </th>
-            <th class="d-none d-none d-lg-table-cell">
-              <div class="px-2 py-2 font-weight-light">{{ 'documenti.documento.valido' | trans }}</div>
-            </th>
-            <th class="d-none d-none d-lg-table-cell"></th>
-            <th class="d-none d-none d-lg-table-cell"></th>
-            <th class="d-none d-none d-lg-table-cell"></th>
             {% for document in documents %}
               <tr>
                 <td class="align-middle">
@@ -57,24 +44,12 @@
                   {% endif %}
                 </td>
                 <td class="align-middle">
-                  <a class="text-decoration-none text-black" href="{{ path('documento_show_cpsuser', {'folderId': folder.id, 'documentId': document.id}) }}">{{ document.title }}</a>
+                  <a class="text-decoration-none text-black {% if document.downloadsCounter == 0 %}font-weight-bold{% endif %}" href="{{ path('documento_show_cpsuser', {'folderId': folder.id, 'documentId': document.id}) }}">
+                      {{ document.title }}
+                  </a>
                 </td>
                 <td class="d-none d-none d-lg-table-cell">
-                  <div class="px-2 py-2">
-                    {{ document.createdAt | date('d/m/Y') }}
-                  </div>
-                </td>
-                <td class="d-none d-none d-lg-table-cell">
-                  <div class="px-2 py-2">
-                    {% if document.expireAt %}
-                      {{ document.expireAt | date('d/m/Y') }}
-                    {% else %}
-                      ---
-                    {% endif %}
-                  </div>
-                </td>
-                <td class="d-none d-none d-lg-table-cell">
-                  {% if document.expireAt and document.expireAt | date('c') < "now" | date_modify("+7 day")| date('c') %}
+                  {% if document.expireAt | date('c') < "now" | date_modify("+7 day")| date('c') %}
                     <svg class="icon icon-danger icon-lg">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
                     </svg>
@@ -113,10 +88,15 @@
           <tr>
             <td class="align-middle"><strong>{{ 'documenti.cartella.servizi_correlati' | trans }}</strong></td>
             <td>
-              {% for service in folder.correlatedServices %}
-                <div><a href="{{ path('servizi_show', {'slug': service.slug}) }}">{{ service.name }}
-                </div>
-              {% endfor %}
+              {% if  folder.correlatedServices|length == 0%}
+                <i>{{ 'documenti.cartella.no_servizi_correlati' | trans }}</i>
+              {% else %}
+                {% for service in folder.correlatedServices %}
+                  <div>
+                    <a href="{{ path('servizi_show', {'slug': service.slug}) }}">{{ service.name }}
+                  </div>
+                {% endfor %}
+              {% endif %}
             </td>
           </tr>
         </table>

@@ -36,8 +36,8 @@
         {{ form_row(form.contact_email) }}
         {{ form_row(form.owner) }}
         {{ form_row(form.is_moderated) }}
-<<<<<<< HEAD
-        <div id="moderators" {% if not calendar.isModerated %} style="display: none" {% endif %}>
+
+        <div  class="hidden" id="moderators" {% if not calendar.isModerated %}{% endif %}>
           {{ form_row(form.moderators) }}
         </div>
 

@@ -18,14 +18,6 @@
           <p>{{ 'documenti.no_documenti' | trans }}</p>
         {% else %}
           <table id="folders_table" class="table border-bottom">
-            <th class="d-none d-lg-table-cell"></th>
-            <th class="d-none d-lg-table-cell">
-              <div class="px-2 py-2 font-weight-light">{{ 'documenti.cartella.nome' | trans }}</div>
-            </th>
-            <th class="d-none d-none d-lg-table-cell">
-              <div class="px-2 py-2 font-weight-light">{{ 'documenti.cartella.data_creazione' | trans }}</div>
-            </th>
-            <th class="d-none d-none d-lg-table-cell"></th>
             {% for folder in folders %}
               <tr>
                 <td class="align-middle">
@@ -42,11 +34,6 @@
                 <td class="align-middle">
                   <a class="text-decoration-none text-black" href="{{ path('documenti_list_cpsuser', {'folderId': folder.id}) }}">{{ folder.title }}</a>
 
-                </td>
-                <td class="d-none d-none d-lg-table-cell">
-                  <div class="px-2 py-2">
-                    {{ folder.createdAt | date('d/m/Y') }}
-                  </div>
                 </td>
                 <td class="align-middle">
                   <div class="float-right">
