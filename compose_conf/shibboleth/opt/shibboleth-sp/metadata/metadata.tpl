@@ -2,7 +2,7 @@
 This is example metadata only. Do *NOT* supply it as is without review,
 and do *NOT* provide it in real time to your partners.
  -->
-<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="_4b2c246044fb6c46b958b249abd8e34979d71bc4" entityID="https://%PROJECT_URL%">
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="_4b2c246044fb6c46b958b249abd8e34979d71bc4" entityID="https://%ENTITY_ID%">
 
     <md:Extensions xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport">
         <alg:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/>

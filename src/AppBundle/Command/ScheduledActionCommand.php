@@ -31,6 +31,8 @@ class ScheduledActionCommand extends ContainerAwareCommand
     $hostname = gethostname();
     $logger = $this->getContainer()->get('logger');
 
+    $output->writeln("Start Execute ScheduledActionCommand" . print_r($input->getOptions()));
+
     $context = $this->getContainer()->get('router')->getContext();
     $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
     $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));

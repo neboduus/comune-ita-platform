@@ -63,13 +63,7 @@ class Bollo extends AbstractPaymentData implements EventSubscriberInterface
         'mapped' => false,
         'label' => 'Inserisci data emissione bollo',
         'widget' => 'single_text',
-        'format' => 'dd-MM-yyyy',
-        'data' => new \DateTime($day),
-        'attr' => [
-          'class' => 'form-control input-inline datepicker',
-          'data-provide' => 'datepicker',
-          'data-date-format' => 'dd-mm-yyyy'
-        ]
+        'data' => new \DateTime($day)
       ])
       ->add('bollo_ora_emissione', TimeType::class, [
         'input' => 'datetime',

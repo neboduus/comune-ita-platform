@@ -11,7 +11,11 @@ class VersionService
     {
         if ($this->version == null)
         {
-          $this->version = file_get_contents('../web/VERSION');
+          if (is_file('../web/VERSION')) {
+            $this->version = file_get_contents('../web/VERSION');
+          } else {
+            $this->version = 'Unknown';
+          }
         }
         return $this->version;
     }

@@ -385,11 +385,6 @@ services:
     tags:
       - { name: form.type }
 
-  AppBundle\Form\FormIO\FormIOAnonymousRenderType:
-    autowire: true
-    tags:
-      - { name: form.type }
-
   ocsdc.form.type.payment_gateway_type: '@AppBundle\Form\Base\PaymentGatewayType'
 
   ocsdc.form.flow.pratica:
@@ -482,10 +477,6 @@ services:
 
   ocsdc.form.flow.formio:
     class: AppBundle\Form\FormIO\FormIOFlow
-    parent: ocsdc.form.flow.pratica
-
-  ocsdc.form.flow.formioanonymous:
-    class: AppBundle\Form\FormIO\FormIOAnonymousFlow
     parent: ocsdc.form.flow.pratica
 
   # Inzio operatore

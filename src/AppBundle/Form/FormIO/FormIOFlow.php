@@ -3,9 +3,11 @@
 namespace AppBundle\Form\FormIO;
 
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
 use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
+use AppBundle\Form\Base\RecaptchaType;
 use AppBundle\Form\Base\SelezionaEnteType;
 use AppBundle\Form\Base\SummaryType;
 use AppBundle\Form\Scia\PraticaEdiliziaVincoliType;
@@ -23,7 +25,7 @@ class FormIOFlow extends PraticaFlow
 
   protected function loadStepsConfig()
   {
-
+    /** @var Pratica $pratica */
     $pratica = $this->getFormData();
 
     $steps = array(
@@ -70,9 +72,20 @@ class FormIOFlow extends PraticaFlow
       );
     } else {
       // Step conferma
-      $steps[] = array(
-        'label' => 'steps.common.conferma.label'
-      );
+      if ( $pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS) {
+        $steps[] = array(
+          'label' => 'steps.common.conferma.label'
+        );
+      } else {
+        $steps[] = array(
+          'label'     => 'steps.common.conferma.label',
+          'form_type' => RecaptchaType::class,
+          'form_options' => [
+            'validation_groups' => 'recaptcha'
+          ]
+        );
+      }
+
     }
 
     return $steps;

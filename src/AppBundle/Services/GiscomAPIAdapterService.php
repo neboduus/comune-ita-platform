@@ -164,21 +164,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
                     /* NOOP: null or already  */
                 }
             }
-            $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side, error code: {$status} ", $logContext);
-
-            // La pratica non va più rifiutata ma lasciata in Stato Pending, da Giscom manualmente rifiuteranno la pratica
-            //$mappedStatus = $this->giscomStatusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RIFIUTATA);
-            //$mappedStatus = Pratica::STATUS_CANCELLED;
-            /*$statusChange = null;
-            $statusChange['evento'] = $mappedStatus;
-            $statusChange['operatore'] = 'Giscom';
-            $statusChange['responsabile'] = 'Giscom';
-            $statusChange['struttura'] = 'Giscom';
-            $statusChange['timestamp'] = time();
-            $statusChange['message'] = isset($logContext['remote_error_response']['Message']) ? $logContext['remote_error_response']['Message'] : null;
-            $statusChange = new StatusChange($statusChange);
-
-            $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);*/
+            $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side, message: {$e->getMessage()} ", $logContext);
 
             return $response;
         }

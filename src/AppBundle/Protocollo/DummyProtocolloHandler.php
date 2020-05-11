@@ -19,9 +19,9 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
    */
   public function sendPraticaToProtocollo(Pratica $pratica)
   {
-    $pratica->setIdDocumentoProtocollo('pdp-' . $pratica->getId());
-    $pratica->setNumeroProtocollo('pnp-' . $pratica->getId());
-    $pratica->setNumeroFascicolo('pnf-' . $pratica->getId());
+    $pratica->setIdDocumentoProtocollo($pratica->getId());
+    $pratica->setNumeroProtocollo($pratica->getId());
+    $pratica->setNumeroFascicolo($pratica->getId());
   }
 
   /**
