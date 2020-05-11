@@ -1,4 +1,27 @@
 {% extends '@App/Default/index.html.twig' %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags('compile') }}
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('compile') }}
+
+    <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function() {
+            setInterval(function() {
+                window.location.reload();
+            }, 60000);
+        });
+    </script>
+
+{% endblock %}
 
 {% block main_content %}
 
@@ -29,12 +52,8 @@
                     {#{{ include('@App/Default/parts/chat.html.twig') }}#}
                 </div>
             </div>
+        </div>
     </section>
 
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    {#<script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
-    <script src="{{ asset('bundles/app/js/chat.js') }}"></script>#}
-{% endblock %}

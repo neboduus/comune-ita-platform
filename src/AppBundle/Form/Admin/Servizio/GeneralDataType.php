@@ -20,17 +20,17 @@ class GeneralDataType extends AbstractType
   {
 
     $statuses = [
-      'Bozza'      => Servizio::STATUS_CANCELLED,
+      'Bozza' => Servizio::STATUS_CANCELLED,
       'Pubblicato' => Servizio::STATUS_AVAILABLE,
-      'Sospeso'    => Servizio::STATUS_SUSPENDED
+      'Sospeso' => Servizio::STATUS_SUSPENDED
     ];
 
     $accessLevels = [
-      'Anonimo'        => Servizio::ACCESS_LEVEL_ANONYMOUS,
-      'Social'         => Servizio::ACCESS_LEVEL_SOCIAL,
+      'Anonimo' => Servizio::ACCESS_LEVEL_ANONYMOUS,
+      'Social' => Servizio::ACCESS_LEVEL_SOCIAL,
       'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
       'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
-      'Cie'            => Servizio::ACCESS_LEVEL_CIE,
+      'Cie' => Servizio::ACCESS_LEVEL_CIE,
     ];
 
     /** @var Servizio $servizio */
@@ -38,9 +38,9 @@ class GeneralDataType extends AbstractType
 
     $builder->add(
       "name", TextType::class, [
-        "label" => 'Nome del servizio',
-        "required" => true,
-      ])
+      "label" => 'Nome del servizio',
+      "required" => true,
+    ])
       ->add('topics', EntityType::class, [
         'class' => 'AppBundle\Entity\Categoria',
         'choice_label' => 'name',
@@ -71,6 +71,15 @@ class GeneralDataType extends AbstractType
         'label' => 'Maggiori informazioni',
         'required' => false
       ])
+      ->add('compilation_info', TextareaType::class, [
+        'label' => 'Informazioni visualizzate durante la compilazione del servizio',
+        'required' => false
+      ])
+      ->add('final_indications', TextareaType::class, [
+        'label' => 'Indicazioni mostrate al termine della compilazione del servizio',
+        'required' => false,
+        'empty_data' => 'La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.',
+      ])
       ->add('sticky', CheckboxType::class, [
         'label' => 'In evidenza?',
         'required' => false
@@ -86,6 +95,10 @@ class GeneralDataType extends AbstractType
       ->add('access_level', ChoiceType::class, [
         'label' => 'Livello di accesso al servizio',
         'choices' => $accessLevels
+      ])
+      ->add('login_suggested', CheckboxType::class, [
+        'label' => 'Suggerisci il Login per l\'autocompletamento?',
+        'required' => false
       ]);
   }
 

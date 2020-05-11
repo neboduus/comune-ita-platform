@@ -1,26 +1,78 @@
 <div class="row">
-  <div class="col-12">
-    <h4>Documentazione inoltrata all'Ente</h4>
-  </div>
 
-  {% if pratica.servizio.isProtocolRequired %}
-    <div class="col-12 col-sm-3"><strong>{{ 'pratica.protocollo'|trans }}</strong></div>
-    <div class="col-12 col-sm-9">
-      {% if pratica.numeroProtocollo %}
-        {{ pratica.numeroProtocollo }}
-      {% else %}
-        <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
-      {% endif %}
+  {# Protocollo / Ricevuta e data di presentazione della pratica #}
+  <div class="col-12">
+    {% if pratica.servizio.isProtocolRequired %}
+      <div class="row">
+        <div class="col-sm-4"><strong>{{ 'pratica.protocollo'|trans }}</strong></div>
+        <div class="col-sm-8 d-inline-flex">
+          {% if pratica.numeroProtocollo %}
+            {{ pratica.numeroProtocollo }}
+          {% else %}
+            <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="row">
+        <div class="col-sm-4"><strong>{{ 'pratica.numero'|trans }}</strong></div>
+        <div class="col-sm-8 d-inline-flex">
+          <em>{{ pratica.id }}</em>
+        </div>
+      </div>
+    {% endif %}
+    <div class="row" style="background-color: #fff">
+      <div class="col-sm-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
+      <div class="col-sm-8">
+        {{ pratica.creationTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.creationTime|date(ocsdc_default_time_format) }}
+      </div>
     </div>
-  {% endif %}
-
-  <div class="col-12">
-    {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
   </div>
 
-  {% if pratica.numeroProtocollo %}
-    <div class="col-12">
+  {# Bottone per download modulo compilato (solo operatore) #}
+  {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
+
+  {% if pratica.numeroProtocollo or (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length > 0) %}
+    <div class="col-12 my-2">
       {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
     </div>
+  {% else %}
+
+    {# In attesa di generazione del pdf #}
+    {% if pratica.status == 1900 %}
+      {% if pratica.servizio.isProtocolRequired %}
+        <a href="#" class="btn btn-block btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_compilato'|trans }}</a>
+        {{ 'operatori.attesa_modulo_compilato_info'|trans|raw }}
+      {% else %}
+        <a href="#" class="btn btn-block btn-secondary my-2 disabled">
+          <i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_ricevuta'|trans }}
+        </a>
+        <p class="my-2">
+          {{ 'operatori.attesa_ricevuta_info'|trans|raw }}
+          {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
+            <br>{{ 'operatori.controlla_ricevuta_loggato'|trans|raw }}
+          {% else %}
+            <br>{{ 'operatori.controlla_ricevuta_anonimo'|trans|raw }}
+          {% endif %}
+        </p>
+      {% endif %}
+    {# Pratica inviata #}
+    {% elseif pratica.status == 2000  %}
+
+      {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
+        <a href="#" class="btn btn-block btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_protocollato'|trans }}</a>
+        <p class="my-2">
+          {{ 'operatori.attesa_protocollo_info'|trans|raw }}
+          {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
+            <br>{{ 'operatori.controlla_richiesta_protocollata_loggato'|trans|raw }}
+          {% else %}
+            <br>{{ 'operatori.controlla_richiesta_protocollata_anonimo'|trans|raw }}
+          {% endif %}
+        </p>
+      {% endif %}
+
+    {% endif %}
+
   {% endif %}
+
 </div>

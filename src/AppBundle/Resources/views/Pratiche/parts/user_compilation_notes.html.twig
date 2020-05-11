@@ -1,0 +1,11 @@
+<div id="compilationNotes" class="callout my-5">
+  <div class="callout-title">
+    <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use></svg>
+    {{ 'pratica.appunti_compilazione.titolo'|trans }}
+  </div>
+  <div class="body">
+    <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave" placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
+    <p class="mt-4">{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</p>
+  </div>
+
+</div>

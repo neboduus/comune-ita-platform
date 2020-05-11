@@ -97,8 +97,6 @@ services:
   formserver:
     image: registry.gitlab.com/opencontent/formmanagerserver:1.0.7
     restart: unless-stopped
-    ports:
-      - "8000:8000"
     environment:
       DB_URL: mongodb://mongo:27017/formmanager
     depends_on:
