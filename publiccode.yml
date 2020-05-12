@@ -6,30 +6,64 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-03-20'
-softwareVersion: 1.4.0
+releaseDate: '2020-05-12'
+softwareVersion: 1.5.0
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
   - web
 usedBy:
-  - Comune di Rovereto (TN)
-  - Comune di Vallelaghi (TN)
-  - Comune di Cavedine (TN)
   - Comune di Ala (TN)
-  - Fondazione Mach (TN)
-  - Comune di Lavarone (TN)
+  - Comune di Aldeno (TN)
+  - Comune di Aamblar Don (TN)
+  - Comune di Andalo (TN)
+  - Comune di Avio (TN)
+  - Comune di Bieno (TN)
+  - Comune di Bleggio Superiore (TN)
+  - Comune di Bocenago (TN)
+  - Comune di Bondone (TN)
+  - Comune di Borgo Lares (TN)
+  - Comune di Caderzone (TN)
+  - Comune di Campodenno (TN)
+  - Comune di Canal San Bovo (TN)
+  - Comune di Castel Condino (TN)
+  - Comune di Cavedine (TN)
+  - Comune di Cimone (TN)
+  - Comune di Comano Terme (TN)
+  - Comune di Fiavè (TN)
   - Comune di Folgaria (TN)
+  - Comune di Garniga Terme (TN)
+  - Comune di Imer (TN)
+  - Comune di Lavarone (TN)
+  - Comune di Ledro (TN)
   - Comune di Luserna (TN)
   - Comune di Maniago (PN)
-  - Comune di Borgo Lares (TN)
-  - Comune di Canal San Bovo (TN)
-  - Comune di Imer (TN)
+  - Comune di Mazzin (TN)
   - Comune di Mezzano (TN)
-  - Comune di Mori (TN)
-  - Comune di Castello Tesino (TN)
-  - Comune di Ledro (TN)
   - Comune di Moena (TN)
+  - Comune di Mori (TN)
+  - Comune di Novella (TN)
+  - Comune di Pelugo (TN)
+  - Comune di Pieve Tesino (TN)
+  - Comune di Porte di Rendena (TN)
+  - Comune di Predaia (TN)
+  - Comune di Rovereto (TN)
+  - Comune di Ruffrè Mendola (TN)
+  - Comune di Sarnonico (TN)
+  - Comune di Spiazzo (TN)
+  - Comune di Spormione (TN)
+  - Comune di Stenico (TN)
+  - Comune di Storo (TN)
+  - Comune di Strembo (TN)
+  - Comune di Telve (TN)
+  - Comune di Telve di Sopra (TN)
+  - Comune di Terre D'Adige (TN)
+  - Comune di Tre Ville (TN)
+  - Comune di Vallelaghi (TN)
+  - Comune di Villa Lagarina (TN)
+  - Fondazione Mach (TN)
+  - Provincia autonoma di Trento (TN)
+roadmap: https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/ROADMAP.md
 categories:
   - communications
   - crm
