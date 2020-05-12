@@ -45,7 +45,7 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
         api:
-            pattern:   /%prefix%/api/(services|calendars)
+            pattern:   /%prefix%/api/(services|calendars|status)
             methods: [POST, PUT, PATCH, DELETE]
             stateless: true
             guard:
