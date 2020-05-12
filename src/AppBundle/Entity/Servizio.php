@@ -28,6 +28,7 @@ class Servizio
   const STATUS_CANCELLED = 0;
   const STATUS_AVAILABLE = 1;
   const STATUS_SUSPENDED = 2;
+  const STATUS_PRIVATE = 3;
 
 
   const ACCESS_LEVEL_ANONYMOUS = 0;
