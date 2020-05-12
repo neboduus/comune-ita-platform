@@ -87,7 +87,7 @@ class PraticheController extends Controller
   public function newAction(Request $request, Servizio $servizio)
   {
 
-    if ( $servizio->getStatus() != Servizio::STATUS_AVAILABLE ) {
+    if ( !in_array($servizio->getStatus(), [Servizio::STATUS_AVAILABLE, Servizio::STATUS_PRIVATE]) ) {
       $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' non è disponibile.');
       return $this->redirectToRoute('servizi_list');
     }
