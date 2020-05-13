@@ -4,19 +4,24 @@ namespace AppBundle\Form\FormIO;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\FormIO\Schema;
+use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Services\FormServerApiAdapterService;
+use AppBundle\Validator\Constraints\ServerSideFormIOConstraint;
 use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormError;
-use \DateTime;
 
 
 class FormIORenderType extends AbstractType
@@ -37,14 +42,42 @@ class FormIORenderType extends AbstractType
   private $schema = false;
 
   /**
+   * @var SchemaFactoryInterface
+   */
+  private $schemaFactory;
+
+  private $logger;
+
+  private static $applicantUserMap = [
+    'applicant.completename.name' => 'getNome',
+    'applicant.completename.surname' => 'getCognome',
+    'applicant.Born.natoAIl' => 'getDataNascita',
+    'applicant.Born.place_of_birth' => 'getLuogoNascita',
+    'applicant.fiscal_code.fiscal_code' => 'getCodiceFiscale',
+    'applicant.address.address' => 'getIndirizzoResidenza',
+    'applicant.address.house_number' => '',
+    'applicant.address.municipality' => 'getCittaResidenza',
+    'applicant.address.postal_code' => 'getCapResidenza',
+    'applicant.email_address' => 'getEmail',
+    'applicant.email_repeat' => 'getEmail',
+  ];
+
+  /**
    * FormIORenderType constructor.
    * @param EntityManager $entityManager
    * @param FormServerApiAdapterService $formServerService
    */
-  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
+  public function __construct(
+    EntityManager $entityManager,
+    FormServerApiAdapterService $formServerService,
+    SchemaFactoryInterface $schemaFactory,
+    LoggerInterface $logger
+  )
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
+    $this->schemaFactory = $schemaFactory;
+    $this->logger = $logger;
   }
 
   /**
@@ -53,7 +86,6 @@ class FormIORenderType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-
     /** @var FormIO $pratica */
     $pratica = $builder->getData();
     $formID = $pratica->getServizio()->getFormIoId();
@@ -70,21 +102,33 @@ class FormIORenderType extends AbstractType
     $data = $this->setupHelperData($pratica);
 
     $builder
-      ->add('form_id', HiddenType::class,
+      ->add(
+        'form_id',
+        HiddenType::class,
         [
           'attr' => ['value' => $formID],
           'mapped' => false,
           'required' => false,
         ]
       )
-      ->add('dematerialized_forms', HiddenType::class,
+      ->add(
+        'dematerialized_forms',
+        HiddenType::class,
         [
           'attr' => ['value' => $data],
           'mapped' => false,
           'required' => false,
+//          'constraints' => [
+//            new ServerSideFormIOConstraint(
+//              [
+//                'formIOId' => $formID,
+//                'validateFields' => array_keys(self::$applicantUserMap),
+//              ]
+//            ),
+//          ],
         ]
-      );
-    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+      )
+      ->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
   public function getBlockPrefix()
@@ -94,8 +138,7 @@ class FormIORenderType extends AbstractType
 
   public function onPreSubmit(FormEvent $event)
   {
-
-    /** @var Pratica $pratica */
+    /** @var Pratica|DematerializedFormPratica $pratica */
     $pratica = $event->getForm()->getData();
     $compiledData = $flattenedData = array();
 
@@ -147,73 +190,45 @@ class FormIORenderType extends AbstractType
   {
     $data = $pratica->getDematerializedForms();
 
-    // Precompilo i campi dell'applicant solo se non è pratica anonima
-    if (empty($data) && $pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS) {
-      /** @var CPSUser $user */
-      $user = $pratica->getUser();
-      $cpsUserData = [];
-      $applicant = [];
+    /** @var CPSUser $user */
+    $user = $pratica->getUser();
 
-      $result = $this->formServerService->getFormSchema($pratica->getServizio()->getFormIoId());
-      if ($result['status'] == 'success') {
+    // Precompilo i campi dell'applicant solo se user è un CPSUser
+    if (empty($data) && $user instanceof CPSUser) {
+      $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
+      $cpsUserData = ['data' => $this->getMappedFormDataWithUserData($schema, $user)];
 
-        $schema = $this->arrayFlat($this->schema, true);
-        foreach ($schema as $k => $v) {
-          $kParts = explode('.', $k);
-          if ($kParts[0] == 'applicant') {
-            array_pop($kParts);
-            $key = implode('.', $kParts);
-            if (!in_array($key, $applicant)) {
-              $applicant[] = $key;
-            }
-          }
-        }
-      }
-
-      if (!empty($applicant) && $user instanceof CPSUser) {
-        if (in_array('applicant.data.completename.data.name', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['completename']['data']['name'] = $user->getNome();
-        }
-
-        if (in_array('applicant.data.completename.data.surname', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['completename']['data']['surname'] = $user->getCognome();
-        }
-
-        if (in_array('applicant.data.Born.data.natoAIl', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['Born']['data']['natoAIl'] = $user->getDataNascita()->format(DateTime::ISO8601);
-        }
-
-        if (in_array('applicant.data.Born.data.place_of_birth', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['Born']['data']['place_of_birth'] = $user->getLuogoNascita();
-        }
-
-        if (in_array('applicant.data.fiscal_code.data.fiscal_code', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['fiscal_code']['data']['fiscal_code'] = $user->getCodiceFiscale();
-        }
-
-        if (in_array('applicant.data.address.data.address', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['address'] = $user->getIndirizzoResidenza();
-        }
-
-        if (in_array('applicant.data.address.data.house_number', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['house_number'] = '';
-        }
-
-        if (in_array('applicant.data.address.data.municipality', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['municipality'] = $user->getCittaResidenza();
-        }
-
-        if (in_array('applicant.data.address.data.postal_code', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['address']['data']['postal_code'] = $user->getCapResidenza();
-        }
-
-        if (in_array('applicant.data.email_address', $applicant)) {
-          $cpsUserData['data']['applicant']['data']['email_address'] = $user->getEmail();
-        }
-      }
       return \json_encode($cpsUserData);
     }
     return \json_encode($data);
+  }
+
+  private function getMappedFormDataWithUserData(Schema $schema, CPSUser $user)
+  {
+    $data = $schema->getDataBuilder();
+    if ($schema->hasComponents()) {
+      foreach (self::$applicantUserMap as $schemaFlatName => $userMethod) {
+        try {
+          if ($schema->hasComponent($schemaFlatName) && method_exists($user, $userMethod)) {
+            $component = $schema->getComponent($schemaFlatName);
+            $value = $user->{$userMethod}();
+            // se il campo è datatime popola con iso8601 altrimenti testo
+            if ($value instanceof \DateTime) {
+              if ($component['form_type'] == DateTimeType::class) {
+                $value = $value->format(\DateTime::ISO8601);
+              } else {
+                $value = $value->format('d/m/Y');
+              }
+            }
+            $data->set($schemaFlatName, $value);
+          }
+        } catch (\InvalidArgumentException $e) {
+          $this->logger->error($e->getMessage());
+        }
+      }
+    }
+
+    return $data->toArray();
   }
 
   /**

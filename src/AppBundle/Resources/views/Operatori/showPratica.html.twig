@@ -1,30 +1,46 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags('compile') }}
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('compile') }}
+  {{ encore_entry_script_tags('compile') }}
 
-    <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+          crossorigin="anonymous"></script>
 
-    <script>
-        $(document).ready(function() {
-            setInterval(function() {
-                window.location.reload();
-            }, 60000);
-        });
-    </script>
+  <script>
+      /* $(document).ready(function () {
+           setInterval(function () {
+               window.location.reload();
+           }, 60000);
+       });
 
+       */
+  </script>
+
+  <script type='text/javascript'>
+      window.onload = function () {
+          Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
+              readOnly: true,
+              noAlerts: true,
+              language: 'it',
+              i18n: formIoI18n
+          }).then(function (form) {
+              form.submission = {
+                  data: $('#formio_summary').data('submission')
+              };
+          });
+      };
+  </script>
 {% endblock %}
 
-{% block main_content %}
 
+{% block main_content %}
+  {#
     <section id="intro" class="container px-4 my-4">
         <div class="row">
             <div class="col-lg-12 px-lg-4 py-lg-2">
@@ -49,11 +65,201 @@
                             {{ include('AppBundle:Operatori/parts:azioni_operatore.html.twig', {'pratica':pratica}) }}
                         {% endif %}
                     </div>
-                    {#{{ include('@App/Default/parts/chat.html.twig') }}#}
+
                 </div>
             </div>
         </div>
-    </section>
+    </section>#}
 
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>Gestione pratica</h1>
+      </div>
+      <div class="col-lg-6 px-lg-4 py-lg-2">
+        <h3>{{ user_full_name }}</h3>
+      </div>
+      <div class="col-lg-6 px-lg-4 py-lg-2">
+        <h3>{{ pratica.submissionTime | date('d/m/Y') }} ore  {{ pratica.submissionTime | date('H:i:s') }}</h3>
+      </div>
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+        <div class="row my-5">
+          <div class="col-6 d-flex justify-content-center">
+            <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}" class="btn btn-secondary">
+              <svg class="icon icon-light">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+              </svg>
+              Rigetta
+            </a>
+          </div>
+          <div class="col-6 d-flex justify-content-center">
+            <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}" class="btn btn-primary">
+              Approva
+              <svg class="icon icon-light">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <nav>
+          <div class="nav nav-tabs auto" id="pratica-details" role="tablist">
+            <a class="nav-item nav-link active" id="modulo-tab" data-toggle="tab" href="#modulo" role="tab"
+               aria-controls="modulo" aria-selected="true">Modulo</a>
+            <a class="nav-item nav-link {% if pratica.allegati.count == 0 %} disabled {% endif %}" id="allegati-tab"
+               data-toggle="tab" href="#allegati" role="tab"
+               aria-controls="allegati" aria-selected="false">Allegati <span
+                      class="badge badge-light ml-1">{{ pratica.allegati.count }}</span></a>
+            <a class="nav-item nav-link" id="note-interne-tab" data-toggle="tab" href="#note-interne" role="tab"
+               aria-controls="note-interne" aria-selected="false">Note interne <span
+                      class="badge badge-light ml-1">{{ pratica.commenti.count }}</span></a>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div class="tab-pane py-4 fade show active" id="modulo" role="tabpanel" aria-labelledby="modulo-tab">
+            {% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
+              <div id="formio_summary" class="formio-front formio-summary"
+                   data-formserver_url="{{ formserver_url }}"
+                   data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+                   data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
+              </div>
+            {% endif %}
+          </div>
+          <div class="tab-pane py-4 fade" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
+            {% for allegato in pratica.allegati %}
+              <div class="row align-items-center text-center my-3">
+                <div class="col-2">
+                  {% if allegato.file.extension == 'pdf' %}
+                    <i class="fa fa-2x fa-file-pdf-o"></i>
+                  {% else %}
+                    <img class="not-found img-fluid"
+                         src="{{ path('allegati_download_operatore', {'allegato': allegato}) }}">
+                  {% endif %}
+                </div>
+                <div class="col-6 text-truncate">
+                  {{ allegato.originalFilename }}
+                </div>
+                <div class="col-2">
+                  {% set bytes = allegato.file.size %}
+                  {% set kiloBytes = (bytes / 1024)|round(1) %}
+                  {% set megaBytes = (kiloBytes / 1024)|round(1) %}
+                  {% if kiloBytes <= 1000 %}
+                    {{ kiloBytes | number_format(0) }} Kb
+                  {% else %}
+                    {{ megaBytes |number_format(1) }} Mb
+                  {% endif %}
+                </div>
+                <div class="col-2">
+                  <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
+                    <svg class="icon icon-primary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="tab-pane py-4 fade" id="note-interne" role="tabpanel" aria-labelledby="note-interne-tab">
+            <div class="m-3">
+              {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
+        <div class="row pl-3 my-5 d-flex justify-content-between">
+          <div class="col-auto ">
+            <a class="btn btn-outline-secondary"
+               href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
+              <svg class="icon icon-sm">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+              </svg>
+              Scarica
+            </a>
+          </div>
+          <div class="col-auto">
+            <a class="btn btn-outline-secondary" href="{{ path('pratiche_show_pdf', {'pratica': pratica.id}) }}">
+              <svg class="icon icon-sm">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
+              </svg>
+              Scrivi al cittadino
+            </a>
+          </div>
+        </div>
+        <div class="row my-4 pl-4">
+          <div class="col-12 pb-5">
+            <h6>Numero pratica:</h6>
+            {{ pratica.id }}
+          </div>
+          <div class="col-12 pb-5">
+            <h6>Pratica correlata</h6>
+            <div class="link-list-wrapper multiline">
+              <ul class="link-list">
+                {% if  relatedPratica %}
+                  <li>
+                    <a href="{{ path('operatori_show_pratica', {'pratica': relatedPratica }) }}">
+                      <span>{{ relatedPratica.servizio.name }}</span>
+                      <svg class="icon icon-primary icon-right">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
+                      </svg>
+                      <p>{{ relatedPratica.statusName | trans }}</p>
+                    </a>
+                  </li>
+                {% else %}
+                  <li>
+                    <span class="small font-italic">Non c'è una pratica correlata</span>
+                  </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-12 pb-5">
+            <h6>Iter della pratica</h6>
+            <div class="point-list-wrapper my-4">
+              {% for timestamp, changes in pratica.storicoStati %}
+                <div class="point-list">
+                  <div class="point-list-aside point-list-primary">
+                  </div>
+                  <div class="point-list-content">
+                    <div class="card card-teaser rounded p-2">
+                      <div class="card-body">
+                        <b class="">
+                          {% for change in changes[0] %}
+                            {% if change is not null and change is not iterable %}
+                              {{ ('pratica.dettaglio.stato_'~change)| trans }}
+                            {% endif %}
+                          {% endfor %}
+                        </b>
+                        <br>
+                        il {{ timestamp|date('d/m/Y') }} alle {{ timestamp|date('H:i') }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="col-12 pb-5">
+            <h6>Altre pratiche</h6>
+            <div class="link-list-wrapper multiline">
+              <ul class="link-list">
+                {% for altra_pratica  in others %}
+                  <li><a href="{{ path('operatori_show_pratica', {'pratica': altra_pratica }) }}">
+                      <span>{{ altra_pratica.servizio.name }}</span>
+                      <svg class="icon icon-primary icon-right">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
+                      </svg>
+                      <p>{{ altra_pratica.statusName | trans }}</p>
+                    </a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}
 

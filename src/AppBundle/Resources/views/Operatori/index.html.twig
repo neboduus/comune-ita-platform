@@ -1,270 +1,383 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    {#<link rel="stylesheet" type="text/css" href="{{ asset('bundles/app/css/jquery.dataTables.min.css') }}"/>#}
+  {{ parent() }}
+  <link rel="stylesheet" type="text/css"
+        href="{{ asset('bundles/app/css/jquery-ui.min.css') }}"/>
+  <style>.ui-tooltip {font-size: .8em;}</style>
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-    {#<script src="{{ asset('bundles/app/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('bundles/app/js/moment.js') }}"></script>
-    <script src="{{ asset('bundles/app/js/datatable-moment.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            $.fn.dataTable.moment('{{ ocsdc_default_moment_datetime_format }}');
-            $('table').DataTable();
+
+  <script src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/jquery-ui.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/moment.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
+  <script>
+    $.views.helpers({
+      'formatId': function (id) {
+        return id.split('-')[4];
+      },
+      'formatDate': function (date, format) {
+        return moment.unix(date).format(format);
+      },
+      'formatStatus': function (state) {
+        var name = '?';
+        var selector = $('#filter-stato option[value="'+state+'"]');
+        if (selector.length > 0){
+          return selector.text();
+        }
+        return name;
+      },
+      'formatService': function (service) {
+        var name = '?';
+        var selector = $('#filter-servizio option[data-slug="'+service+'"]');
+        if (selector.length > 0){
+          return selector.text();
+        }
+        return name;
+      },
+      'assignUrl': function (id) {
+        return $('#results-data').data('assign').replace('X', id);
+      },
+      'showUrl': function (id) {
+        return $('#results-data').data('show').replace('X', id);
+      }
+    });
+    $.fn.animateHighlight = function (highlightColor, duration) {
+      var highlightBg = highlightColor || "#00cf86";
+      var animateMs = duration || 2000;
+      var originalBg = this.css("background-color");
+      if (!originalBg || originalBg === highlightBg)
+        originalBg = "#FFFFFF"; // default to white
+      jQuery(this)
+        .css("backgroundColor", highlightBg)
+        .animate({ backgroundColor: originalBg }, animateMs, null, function () {
+          jQuery(this).css("backgroundColor", originalBg);
         });
-    </script>#}
+    };
+    $(document).ready(function () {
+      var resultsContainer = $('#results-data');
+      var spinnerTemplate = $.templates("#tpl-spinner");
+      var emptyTemplate = $.templates("#tpl-empty");
+      var resultsTemplate = $.templates("#tpl-result");
+      var limitPagination = 20;
+      var filtersContainer = $('#filters');
+      var filterServizio = $('#filter-servizio');
+      var filterStato = $('#filter-stato');
+      var filterWorkflow = $('#filter-workflow');
+      var filterQueryBy = $('#filter-query-by');
+      var filterQuery = $('#filter-query');
+
+      var buildParams = function(){
+        var params = {
+          'servizio': filterServizio.val(),
+          'stato': filterStato.val(),
+          'workflow': filterWorkflow.val(),
+          'query_field': filterQueryBy.val(),
+          'query': filterQuery.val(),
+        };
+        if (typeof (Storage) !== "undefined") {
+          localStorage.setItem('pratiche_filters', JSON.stringify(params));
+        }
+        return params;
+      };
+
+      filtersContainer.find('.filter-select').on('change', function () {
+        loadContents();
+      });
+      filterQuery.on('keydown', function(e) {
+        if (e.keyCode === 13) {
+          loadContents();
+        }
+      });
+
+      var loadContents = function() {
+        resultsContainer.html(spinnerTemplate.render({}));
+        var params = buildParams();
+        params.limit = limitPagination;
+        params.offset = 0;
+        $.get(resultsContainer.data('source'), params, function (response) {
+          loadResponse(response);
+        });
+      };
+
+      var loadUrl = function(url) {
+        if (url.length) {
+          resultsContainer.html(spinnerTemplate.render({}));
+          $.get(url, function (response) {
+            loadResponse(response);
+          });
+        }
+      };
+
+      var loadResponse = function(response){
+        if (response.meta.count === 0) {
+          resultsContainer.html(emptyTemplate.render({}));
+        } else {
+          response.currentPage = response.meta.count > 0 ?
+            (response.meta.parameter.offset > 0 ? Math.ceil(response.meta.parameter.offset/response.meta.parameter.limit)+1 : 1)
+            : 0;
+          response.pageCount = response.meta.count > 0 ? Math.ceil(response.meta.count/response.meta.parameter.limit) : 0;
+          var result = $(resultsTemplate.render(response));
+          resultsContainer.html(result);
+          resultsContainer.find('a.page').on('click', function (e) {
+            loadUrl($(this).data('url'));
+            e.preventDefault();
+          });
+          resultsContainer.find('.copy').click(function (e) {
+            e.preventDefault();
+            var button = $(this);
+            var temp = $("<input>");
+            $("body").append(temp);
+            temp.val(button.data('copy')).select();
+            document.execCommand("copy");
+            temp.remove();
+            button.animateHighlight();
+          });
+          resultsContainer.find('[data-toggle="tooltip"]').tooltip()
+          if (response.meta.schema) {
+            resultsContainer.find('input[data-togglekey]').on('change', function () {
+              if ($(this).is(':checked')) {
+                resultsContainer.find('[data-key="' + $(this).data('togglekey') + '"]').css('display', 'table-cell');
+                if (typeof (Storage) !== "undefined") localStorage.setItem(response.meta.parameter.servizio + $(this).data('togglekey'), 1);
+              } else {
+                resultsContainer.find('[data-key="' + $(this).data('togglekey') + '"]').css('display', 'none');
+                if (typeof (Storage) !== "undefined") localStorage.removeItem(response.meta.parameter.servizio + $(this).data('togglekey'));
+              }
+            });
+            if (typeof (Storage) !== "undefined") {
+              $.each(response.meta.schema, function () {
+                if (localStorage.getItem(response.meta.parameter.servizio + this.name)) {
+                  resultsContainer.find('input[data-togglekey="' + this.name + '"]').trigger('click');
+                }
+              });
+            }
+          }
+        }
+      };
+      if (typeof (Storage) !== "undefined") {
+        if (localStorage.getItem('pratiche_filters')){
+          var params = JSON.parse(localStorage.getItem('pratiche_filters'));
+          filterServizio.val(params.servizio);
+          filterStato.val(params.stato);
+          filterWorkflow.val(params.workflow);
+          filterQueryBy.val(params.query_field);
+          filterQuery.val(params.query);
+        }
+      }
+      loadContents();
+    });
+  </script>
+  {{ parent() }}
 {% endblock %}
 
 {% block main_content %}
 
-
-    <section id="intro" class="container px-4 my-4">
-        <div class="row">
-            <div class="col-lg-12 px-lg-4 py-lg-2">
-
-                {#<h1>{{ title|trans() }}</h1>#}
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul class="nav nav-tabs auto">
-                            <li class="nav-item">
-                                <a class="nav-link {% if pratiche_mie|length > 0 or ( pratiche_libere|length == 0 and pratiche_concluse|length == 0 ) %} active{% endif %}" href="#da_gestire" aria-controls="mie" role="tab" data-toggle="tab">
-                                    {{ 'operatori.pratiche_mie'|trans }}
-                                    <span class="badge badge-info ml-1">{{ pratiche_mie|length }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if pratiche_mie|length == 0 and pratiche_libere|length > 0 %} active{% endif %}" href="#da_assegnare" aria-controls="mie" role="tab" data-toggle="tab">
-                                    {{ 'operatori.pratiche_libere'|trans }}
-                                    <span class="badge badge-info ml-1">{{ pratiche_libere|length }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {% if pratiche_mie|length == 0 and pratiche_libere|length == 0 and pratiche_concluse|length > 0 %} active{% endif %}" href="#concluse" aria-controls="concluse" role="tab" data-toggle="tab">
-                                    {{ 'operatori.pratiche_concluse'|trans }}
-                                    <span class="badge badge-info ml-1">{{ pratiche_concluse|length }}</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#ente" aria-controls="ente" role="tab" data-toggle="tab">
-                                    {{ 'operatori.pratiche_ente'|trans }}
-                                    <span class="badge badge-info ml-1">{{ pratiche_ente|length }}</span>
-                                </a>
-                            </li>
-
-                        </ul>
-
-                        <div class="tab-content mt-4">
-
-                            <div role="tabpanel"
-                                 class="tab-pane {% if pratiche_mie|length > 0 or ( pratiche_libere|length == 0 and pratiche_concluse|length == 0 ) %}active{% endif %} list mie"
-                                 id="da_gestire">
-                                {#<h3>{{ 'operatori.pratiche_mie'|trans }}</h3>#}
-                                {% if pratiche_mie|length > 0 %}
-                                    <table class="table table-striped" style="width: 100%">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ 'pratica.protocollo'|trans }}</th>
-                                            <th>{{ 'pratica.richiedente'|trans }}</th>
-                                            <th>{{ 'pratica.servizio'|trans }}</th>
-                                            <th>{{ 'pratica.categoria'|trans }}</th>
-                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
-                                            <th>{{ 'pratica.stato'|trans }}</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for pratica in pratiche_mie %}
-                                            <tr class="pratica"
-                                                data-pratica="{{ pratica.id }}"
-                                                data-user="{{ pratica.user.id }}"
-                                                data-status="{{ pratica.status }}">
-
-                                                <td>
-                                                    {% if pratica.servizio.isProtocolRequired %}
-                                                        {% if pratica.numeroProtocollo %}
-                                                            {{ pratica.numeroProtocollo }}
-                                                        {% else %}
-                                                            <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
-                                                        {% endif %}
-                                                    {% else %}
-                                                        <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ pratica.user.fullName }}</td>
-                                                <td>{{ pratica.servizio.name }}</td>
-                                                <td>{% if pratica.servizio.topics %}{{ pratica.servizio.topics.name }}{% endif %}</td>
-                                                <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
-                                                <td>{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
-                                                <td>
-                                                    <a href="{{ path('operatori_show_pratica', {'pratica': pratica}) }}"
-                                                       class="btn btn-primary btn-xs">{{ 'operatori.vai_al_dettaglio'|trans }}</a>
-                                                </td>
-
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                {% endif %}
-                            </div>
-
-
-                            <div role="tabpanel"
-                                 class="tab-pane {% if pratiche_mie|length == 0 and pratiche_libere|length > 0 %}active{% endif %} list libere"
-                                 id="da_assegnare">
-                                {#<h3>{{ 'operatori.pratiche_libere'|trans }}</h3>#}
-                                {% if pratiche_libere|length > 0 %}
-                                    <table class="table table-striped" style="width: 100%">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ 'pratica.protocollo'|trans }}</th>
-                                            <th>{{ 'pratica.richiedente'|trans }}</th>
-                                            <th>{{ 'pratica.categoria'|trans }}</th>
-                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
-                                            <th>{{ 'pratica.stato'|trans }}</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for pratica in pratiche_libere %}
-                                            <tr class="pratica"
-                                                data-pratica="{{ pratica.id }}"
-                                                data-user="{{ pratica.user.id }}"
-                                                data-status="{{ pratica.status }}">
-
-                                                <td>
-                                                    {% if pratica.servizio.isProtocolRequired %}
-                                                        {% if pratica.numeroProtocollo %}
-                                                            {{ pratica.numeroProtocollo }}
-                                                        {% else %}
-                                                            <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
-                                                        {% endif %}
-                                                    {% else %}
-                                                        <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ pratica.user.fullName }}</td>
-                                                <td>{{ pratica.servizio.name }}</td>
-                                                <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
-                                                <td>{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
-                                                <td>
-                                                    <button type="button" class="btn btn-primary btn-xs"
-                                                            data-toggle="modal"
-                                                            {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
-                                                                disabled="disabled"
-                                                                title="{{ 'pratica.in_attesa_protocollo'|trans }}"
-                                                            {% endif %}
-                                                            data-target="#confirmAutoAssign{{ pratica.id }}">
-                                                        {{ 'operatori.prendi_in_carico_pratica'|trans }}
-                                                    </button>
-
-                                                    <div class="modal fade" id="confirmAutoAssign{{ pratica.id }}"
-                                                         tabindex="-1"
-                                                         role="dialog"
-                                                         aria-labelledby="confirmAutoAssignLabel">
-                                                        <div class="modal-dialog" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-body">
-                                                                    {{ 'operatori.sicuro_di_prendere_in_carico_la_pratica'|trans({'%name%': pratica.servizio.name}) }}
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <a type="button" class="btn btn-default"
-                                                                       data-dismiss="modal">{{ 'operatori.no'|trans }}</a>
-                                                                    <a href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}"
-                                                                       class="btn btn-primary">{{ 'operatori.si'|trans }}</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-
-                                {% endif %}
-                            </div>
-
-                            <div role="tabpanel"
-                                 class="tab-pane {% if pratiche_mie|length == 0 and pratiche_libere|length == 0 and pratiche_concluse|length > 0 %}active{% endif %} list concluse"
-                                 id="concluse">
-                                {#<h3>{{ 'operatori.pratiche_concluse'|trans }}</h3>#}
-                                {% if pratiche_concluse|length > 0 %}
-                                    <table class="table table-striped" style="width: 100%">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ 'pratica.protocollo'|trans }}</th>
-                                            <th>{{ 'pratica.richiedente'|trans }}</th>
-                                            <th>{{ 'pratica.categoria'|trans }}</th>
-                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
-                                            <th>{{ 'pratica.stato'|trans }}</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for pratica in pratiche_concluse %}
-                                            <tr class="pratica"
-                                                data-pratica="{{ pratica.id }}"
-                                                data-user="{{ pratica.user.id }}"
-                                                data-status="{{ pratica.status }}">
-
-                                                <td>{{ pratica.numeroProtocollo }}</td>
-                                                <td>{{ pratica.user.fullName }}</td>
-                                                <td>{{ pratica.servizio.name }}</td>
-                                                <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
-                                                <td>{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
-                                                <td>
-                                                    <a href="{{ path('operatori_show_pratica', {'pratica': pratica}) }}"
-                                                       class="btn btn-primary btn-xs">{{ 'operatori.vai_al_dettaglio'|trans }}</a>
-                                                </td>
-
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                {% endif %}
-                            </div>
-
-                            <div role="tabpanel" class="tab-pane list ente" id="ente">
-                                {#<h3>{{ 'operatori.pratiche_ente'|trans }}</h3>#}
-                                {% if pratiche_ente|length > 0 %}
-                                    <table class="table table-striped" style="width: 100%">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ 'pratica.protocollo'|trans }}</th>
-                                            <th>{{ 'pratica.richiedente'|trans }}</th>
-                                            <th>{{ 'pratica.categoria'|trans }}</th>
-                                            <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
-                                            <th>{{ 'pratica.stato'|trans }}</th>
-                                            <th>{{ 'pratica.operatore'|trans }}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for pratica in pratiche_ente %}
-                                            <tr class="pratica">
-
-                                                <td>{{ pratica.numeroProtocollo }}</td>
-                                                <td>{{ pratica.user.fullName }}</td>
-                                                <td>{{ pratica.servizio.name }}</td>
-                                                <td>{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
-                                                <td>{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
-                                                <td>{% if pratica.operatore is not null %}{{ pratica.operatore.fullName }}{% endif %}</td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                {% endif %}
-                            </div>
-                        </div>
+{% verbatim %}
+<script id="tpl-spinner" type="text/x-jsrender">
+  <div class="text-center p-5"><em>Attendere il caricamento dei dati...</em></div>
+</script>
+<script id="tpl-empty" type="text/x-jsrender">
+  <div class="text-center p-5"><em>Nessuna pratica trovata</em></div>
+</script>
+<script id="tpl-result" type="text/x-jsrender">
+{{if meta.schema}}
+<button type="button" class="btn btn-secondary btn-xs text-nowrap" data-toggle="modal" data-target="#tableOptions">Opzioni tabella</button>
+<div class="modal fade" id="tableOptions" tabindex="-1" role="dialog" aria-labelledby="confirmAutoAssignLabel">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-body">
+          {{for meta.schema}}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" data-togglekey="{{:name}}" id="{{:name}}">
+                <label class="form-check-label" for="{{:name}}">
+                  {{:label}}
+                </label>
+            </div>
+          {{/for}}
+          </div>
+          <div class="modal-footer">
+              <a type="button" class="btn btn-default" data-dismiss="modal">Chiudi</a>
+          </div>
+      </div>
+  </div>
+</div>
+{{/if}}
+<div class="table-responsive">
+<table class="table table-striped table-condensed" style="width: 100%;font-size:.87em">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Richiedente</th>
+      <th>Codice fiscale</th>
+      <th>Data</th>
+      {{if !meta.parameter.stato}}
+      <th>Stato</th>
+      {{/if}}
+      {{if meta.parameter.servizio}}
+        {{if meta.schema}}
+          {{for meta.schema}}
+          <th data-key="{{:name}}" style="display:none">{{:label}}</th>
+          {{/for}}
+        {{/if}}
+      {{else}}
+        <th>Servizio</th>
+      {{/if}}
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {{for data ~metadata=meta}}
+    <tr>
+      <td class="text-nowrap">
+        <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
+          <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
+        </button>
+        {{if protocol_number}}
+          <button type="button" data-toggle="tooltip" title="Clicca per copiare il numero di protocollo" class="btn btn-default btn-xs copy p-0" data-copy="{{:protocol_number}}">
+            <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
+          </button>
+        {{else is_protocollo_required}}
+          <button type="button" disabled="disabled" data-toggle="tooltip" title="Numero di protocollo in assegnazione" class="btn btn-default text-muted btn-xs p-0">
+            <svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
+          </button>
+        {{/if}}
+        {{if is_payment_required}}
+          <span data-toggle="tooltip" title="Il servizio prevede un pagamento">
+            <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use></svg>
+          </span>
+        {{/if}}
+      </td>
+      <td>{{:user_name}}</td>
+      <td>{{:codice_fiscale}}</td>
+      <td class="text-nowrap">{{:~formatDate(creation_time,'DD/MM/YYYY HH:mm')}}</td>
+      {{if !~metadata.parameter.stato}}
+      <td class="text-nowrap">{{:~formatStatus(status)}}</td>
+      {{/if}}
+      {{if ~metadata.parameter.servizio}}
+        {{if ~metadata.schema}}
+          {{props data}}
+          <td data-key="{{>key}}" style="display:none">
+            {{>prop}}
+          </td>
+          {{/props}}
+        {{/if}}
+      {{else}}
+        <td>{{:~formatService(service)}}</td>
+      {{/if}}
+      <td>
+        {{if can_autoassign}}
+        <button type="button" class="btn btn-primary btn-xs text-nowrap"
+                data-toggle="modal"
+                {{if is_protocol_required and !protocol_number}}
+                    disabled="disabled"
+                    title="{% endverbatim %}{{ 'pratica.in_attesa_protocollo'|trans }}{% verbatim %}"
+                {{/if}}
+                data-target="#confirmAutoAssign-{{:id}}">
+            {% endverbatim %}{{ 'operatori.prendi_in_carico_pratica'|trans }}{% verbatim %}
+        </button>
+        <div class="modal fade" id="confirmAutoAssign-{{:id}}"
+             tabindex="-1"
+             role="dialog"
+             aria-labelledby="confirmAutoAssignLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">Confermi la presa in carico della pratica?</div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-default" data-dismiss="modal">No, annulla l'operazione</a>
+                        <a href="{{:~assignUrl(id)}}" class="btn btn-primary">Sì, sono sicuro</a>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+        {{else can_read}}
+        <a href="{{:~showUrl(id)}}" class="btn btn-secondary btn-xs text-nowrap">{% endverbatim %}{{ 'operatori.vai_al_dettaglio'|trans }}{% verbatim %}</a>
+        {{/if}}
+      </td>
+    </tr>
+  {{/for}}
+  </tbody>
+</table>
+</div>
+{{if links.next || links.prev}}
+<div class="text-center">
+      <a class="btn {{if !links.prev}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.prev}}"{{if !links.prev}} style="cursor:not-allowed"{{/if}}>
+          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use></svg>
+          Precedente
+      </a>
+      <span>{{:meta.count}} risultati - Pagina {{:currentPage}} di {{:pageCount}}</span>
+      <a class="btn {{if !links.next}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.next}}"{{if !links.next}} style="cursor:not-allowed"{{/if}}>
+          Successivo
+          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use></svg>
+      </a>
+</div>
+{{/if}}
+</script>
+{% endverbatim %}
+
+  <section class="p-3 m-5 shadow bordered">
+    <div class="row my-4 px-lg-4 py-lg-2" id="filters">
+      {% if servizi|length %}
+        <div class="col-lg-3">
+            <div class="bootstrap-select-wrapper">
+            <label for="filter-servizio">Filtra per servizio</label>
+            <select id="filter-servizio" class="form-control filter-select">
+              <option value="">Tutti</option>
+              {% for servizio in servizi %}
+                <option data-slug="{{ servizio.slug }}" value="{{ servizio.id }}">{{ servizio.name }}</option>
+              {% endfor %}
+            </select>
+            </div>
+        </div>
+      {% endif %}
+      {% if stati|length %}
+        <div class="col-lg-2">
+            <div class="bootstrap-select-wrapper">
+            <label for="filter-stato">Filtra per stato</label>
+            <select id="filter-stato" class="form-control filter-select">
+              <option value="">Tutti</option>
+              {% for stato in stati %}
+                <option value="{{ stato.id }}">{{ stato.name|trans }}</option>
+              {% endfor %}
+            </select>
+            </div>
+        </div>
+      {% endif %}
+      <div class="col-lg-3">
+          <div class="bootstrap-select-wrapper">
+          <label for="filter-workflow">Filtra per lavorazione</label>
+          <select id="filter-workflow" class="form-control filter-select">
+            <option value="">Tutte</option>
+            <option value="owned">In carico a {{ user.fullName }}</option>
+            <option value="unassigned">Da assegnare</option>
+          </select>
+          </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="bootstrap-select-wrapper">
+        <label for="filter-stato">Cerca per</label>
+          <div class="input-group">
+            <select class="form-control" id="filter-query-by" name="query-by" style="max-width: 200px;">
+              <option value="2">Nome utente</option>
+              <option value="1">Codice fiscale</option>
+              <option value="3">ID Pratica</option>
+            </select>
+            <div class="input-group-append">
+              <input type="text" class="form-control" name="query" id="filter-query" placeholder="Testo da cercare">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2" id="results-data"
+           data-show="{{ path('operatori_show_pratica', {'pratica': 'X'}) }}"
+           data-assign="{{ path('operatori_autoassing_pratica', {'pratica': 'X'}) }}"
+           data-source="{{ path('operatori_index_json') }}"></div>
+    </div>
+  </section>
 
 
 {% endblock %}

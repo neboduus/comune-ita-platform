@@ -514,7 +514,7 @@ email:
         submitted: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
         registered: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della pratica."
         cancelled: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata rifiutata.'
-        complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata evasa.'
+        complete: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata approvata.'
         complete.waitallegatioperatore: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi file allegati.'
         pending: "le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         draft: ''

@@ -12,10 +12,11 @@
                 <p>
                     {{ 'email.pratica.thanks'|trans() }}
                 </p>
-                {% if pratica.rispostaOperatore %}
-                    <p>{{ 'email.pratica.link_download'|trans()}} <a href="{{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}">{{ 'email.detail_link'|trans }}</a></p>
-                {% else %}
-                    <p>{{ 'email.pratica.link'|trans()}} <a href="{{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}">{{ 'email.detail_link'|trans }}</a></p>
+                {% if pratica.getEsito() and not pratica.getEsito() is null %}
+                    <p>
+                      Per l'invio delle ricevute puoi cliccare sul seguente link:<br />
+                      <a href="https://devsdc.opencontent.it/provincia-autonoma-di-trento/servizi/invio-ricevute-bonus-bicicletta">https://devsdc.opencontent.it/provincia-autonoma-di-trento/servizi/invio-ricevute-bonus-bicicletta</a>
+                    </p>
                 {% endif %}
             </td>
         </tr>

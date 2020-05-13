@@ -664,3 +664,29 @@ services:
   ocsdc.handlers.servizio.imis:
     class: AppBundle\Handlers\Servizio\ImisHandler
     arguments: ["@security.token_storage", "@logger"]
+
+  http.client:
+    class: Symfony\Component\HttpClient\CurlHttpClient
+
+  # FormIO validator
+  formio.factory:
+    class: AppBundle\FormIO\SchemaFactory
+    arguments: ['@ocsdc.formserver', '@http.client', '@session']
+
+  formio.validator:
+    class: AppBundle\FormIO\Validator
+    arguments: ['@form.factory', '@formio.factory']
+
+  AppBundle\FormIO\SchemaFactoryInterface: '@formio.factory'
+
+  AppBundle\FormIO\FormIOType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  formio.constraint_validator:
+    class: AppBundle\Validator\Constraints\ServerSideFormIOConstraintValidator
+    public: true
+    arguments: ['@formio.validator']
+    tags:
+      - { name: validator.constraint_validator, alias: 'formio.constraint_validator' }
