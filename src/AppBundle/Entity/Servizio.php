@@ -259,6 +259,13 @@ class Servizio
   private $protocolRequired;
 
   /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Email text")
+   */
+  private $emailText;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -913,5 +920,20 @@ class Servizio
     $this->protocolRequired = $protocolRequired;
   }
 
+  /**
+   * @return string
+   */
+  public function getEmailText(): ?string
+  {
+    return $this->emailText;
+  }
+
+  /**
+   * @param string $emailText
+   */
+  public function setEmailText(string $emailText)
+  {
+    $this->emailText = $emailText;
+  }
 
 }

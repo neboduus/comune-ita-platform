@@ -59,10 +59,10 @@ class ProtocollaPraticaListener
 
         } else {
 
-          if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
+          /*if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
             $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING);
             return;
-          }
+          }*/
 
           if ($event->getNewStateIdentifier() == Pratica::STATUS_REQUEST_INTEGRATION) {
             $this->statusService->setNewStatus($pratica, Pratica::STATUS_DRAFT_FOR_INTEGRATION);
