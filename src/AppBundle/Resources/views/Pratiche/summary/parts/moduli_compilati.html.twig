@@ -1,6 +1,6 @@
-{% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
-<div class="col-12">
-  {% if is_granted('ROLE_OPERATORE') %}
+{% if is_granted('ROLE_OPERATORE') %}
+  {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
+  <div class="col-12">
     {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo and pratica.moduliCompilati|length > 0 %}
       <ul class="list-unstyled">
         {% for allegato in pratica.moduliCompilati %}
@@ -17,5 +17,5 @@
         {% endfor %}
       </ul>
     {% endif %}
-  {% endif %}
-</div>
+  </div>
+{% endif %}
