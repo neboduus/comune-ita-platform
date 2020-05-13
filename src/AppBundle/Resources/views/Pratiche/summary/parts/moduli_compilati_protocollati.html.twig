@@ -1,4 +1,4 @@
-{% if pratica.servizio.accessLevel > 0 or pratica.servizio.accessLevel is null %}
+{%  if user is defined and not user is null %}
   <a href="{{ path('pratiche_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-block btn-primary">
     <i class="fa fa-download"></i>
     {% if pratica.servizio.isProtocolRequired %}
