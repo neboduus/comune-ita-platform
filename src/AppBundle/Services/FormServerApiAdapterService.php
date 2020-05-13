@@ -3,16 +3,13 @@
 
 namespace AppBundle\Services;
 
-
 use AppBundle\Entity\Servizio;
-use AppBundle\Model\FlowStep;
+use AppBundle\FormIO\FormIOSchemaProviderInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\FormError;
 
-class FormServerApiAdapterService
+class FormServerApiAdapterService implements FormIOSchemaProviderInterface
 {
   //const FORM_SERVER_URL = 'https://formserver.opencontent.it/';
 
@@ -25,6 +22,7 @@ class FormServerApiAdapterService
    */
   protected $logger;
 
+  private static $cache = [];
 
   public function __construct($formServerUrl, LoggerInterface $logger)
   {
@@ -32,6 +30,13 @@ class FormServerApiAdapterService
     $this->logger = $logger;
   }
 
+  /**
+   * @return string
+   */
+  public function getFormServerUrl()
+  {
+    return $this->formServerUrl;
+  }
 
   /**
    * @param Servizio $servizio
@@ -72,7 +77,8 @@ class FormServerApiAdapterService
                   'key' => 'avvertenza',
                   'type' => 'htmlelement',
                   'input' => false,
-                  'validate' => array('unique' => false, 'multiple' => false,),),
+                  'validate' => array('unique' => false, 'multiple' => false,),
+                ),
                 array(
                   'label' => 'HTML',
                   'attrs' => array(array('attr' => '', 'value' => '',),),
@@ -95,13 +101,13 @@ class FormServerApiAdapterService
       'title' => $servizio->getName(),
       'name' => $servizio->getSlug(),
       'path' => $servizio->getSlug(),
-      'description' => $servizio->getName() . ' - ' . $servizio->getEnte()->getName()
+      'description' => $servizio->getName().' - '.$servizio->getEnte()->getName(),
     ];
 
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(
       'POST',
-      $client->getConfig('base_uri') . '/form',
+      $client->getConfig('base_uri').'/form',
       ['Content-Type' => 'application/json'],
       json_encode($schema)
     );
@@ -114,63 +120,34 @@ class FormServerApiAdapterService
 
         return [
           'status' => 'success',
-          'form_id' => $responseBody['_id']
+          'form_id' => $responseBody['_id'],
         ];
       }
 
       $error = self::STANDARD_ERROR;
 
-    } catch (GuzzleException $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
       $error = $e->getMessage();
       $this->logger->error($e->getMessage());
     }
 
     return [
       'status' => 'error',
-      'message' => $error
+      'message' => $error,
     ];
   }
 
   /**
-   * @param $schema
-   * @return array
-   * @throws GuzzleException
-   */
-  public function createFormFromSchema($schema)
-  {
-    $client = new Client(['base_uri' => $this->formServerUrl]);
-    $request = new Request(
-      'POST',
-      $client->getConfig('base_uri') . '/form',
-      ['Content-Type' => 'application/json'],
-      json_encode($schema)
-    );
-
-    $response = $client->send($request);
-    if ($response->getStatusCode() == 201) {
-      $responseBody = json_decode($response->getBody(), true);
-
-      return [
-        'status' => 'success',
-        'form_id' => $responseBody['_id']
-      ];
-    }
-    throw new \Exception("Error creating form from schema");
-  }
-
-  /**
+   * @param Servizio $service
    * @param $remoteUrl
-   * @return array|mixed
+   * @return array
    */
   public function cloneFormFromRemote(Servizio $service, $remoteUrl)
   {
     $error = self::STANDARD_ERROR;
     try {
       $client = new Client();
-      $request = new \GuzzleHttp\Psr7\Request(
+      $request = new Request(
         'GET',
         $remoteUrl,
         ['Content-Type' => 'application/json']
@@ -187,32 +164,61 @@ class FormServerApiAdapterService
         if ($response['status'] == 'success') {
           return [
             'status' => 'success',
-            'form_id' => $response['form_id']
+            'form_id' => $response['form_id'],
           ];
         }
       }
-    } catch (GuzzleException $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
       $error = $e->getMessage();
       $this->logger->error($e->getMessage());
     }
+
     return [
       'status' => 'error',
-      'message' => $error
+      'message' => $error,
     ];
   }
 
+  /**
+   * @param $schema
+   * @return array
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
+  public function createFormFromSchema($schema)
+  {
+    $client = new Client(['base_uri' => $this->formServerUrl]);
+    $request = new Request(
+      'POST',
+      $client->getConfig('base_uri').'/form',
+      ['Content-Type' => 'application/json'],
+      json_encode($schema)
+    );
+
+    $response = $client->send($request);
+    if ($response->getStatusCode() == 201) {
+      $responseBody = json_decode($response->getBody(), true);
+
+      return [
+        'status' => 'success',
+        'form_id' => $responseBody['_id'],
+      ];
+    }
+    throw new \RuntimeException("Error creating form from schema");
+  }
+
+  /**
+   * @param Servizio $service
+   * @param Servizio $serviceToClone
+   * @return array
+   */
   public function cloneForm(Servizio $service, Servizio $serviceToClone)
   {
-
     $formID = $service->getFormIoId();
     $response = self::getForm($formID);
     if ($response['status'] != 'success') {
       return [
         'status' => 'error',
-        'message' => 'Fail on retrive form'
+        'message' => 'Fail on retrive form',
       ];
     }
     $form = $response['form'];
@@ -227,71 +233,71 @@ class FormServerApiAdapterService
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(
       'POST',
-      $client->getConfig('base_uri') . '/form',
+      $client->getConfig('base_uri').'/form',
       ['Content-Type' => 'application/json'],
       json_encode($form)
     );
 
     try {
-
       $response = $client->send($request);
       if ($response->getStatusCode() == 201) {
         $responseBody = json_decode($response->getBody(), true);
 
         return [
           'status' => 'success',
-          'form_id' => $responseBody['_id']
+          'form_id' => $responseBody['_id'],
         ];
       }
 
       $error = self::STANDARD_ERROR;
 
-    } catch (GuzzleException $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
       $error = $e->getMessage();
       $this->logger->error($e->getMessage());
     }
 
     return [
       'status' => 'error',
-      'message' => $error
+      'message' => $error,
     ];
   }
 
   public function getForm($formID)
   {
-    $client = new Client(['base_uri' => $this->formServerUrl]);
-    $request = new Request(
-      'GET',
-      $client->getConfig('base_uri') . '/form/' . $formID,
-      ['Content-Type' => 'application/json']
-    );
+    if (!isset(self::$cache[$this->formServerUrl.$formID])) {
+      $client = new Client(['base_uri' => $this->formServerUrl]);
+      $request = new Request(
+        'GET',
+        $client->getConfig('base_uri').'/form/'.$formID,
+        ['Content-Type' => 'application/json']
+      );
 
-    try {
-      $response = $client->send($request);
+      try {
+        $response = $client->send($request);
 
-      if ($response->getStatusCode() == 200) {
-        $responseBody = json_decode($response->getBody(), true);
+        if ($response->getStatusCode() == 200) {
+          $responseBody = json_decode($response->getBody(), true);
+
+          self::$cache[$this->formServerUrl.$formID] = [
+            'status' => 'success',
+            'form' => $responseBody
+          ];
+        }else {
+          throw new \Exception("Unexpected status response");
+        }
+
+      } catch (\Throwable $e) {
+        $error = $e->getMessage();
+        $this->logger->error($e->getMessage());
+
         return [
-          'status' => 'success',
-          'form' => $responseBody
+          'status' => 'error',
+          'message' => $error
         ];
       }
-
-    } catch (GuzzleException $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    } catch (\Exception $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
     }
 
-    return [
-      'status' => 'error',
-      'message' => $error
-    ];
+    return self::$cache[$this->formServerUrl.$formID];
   }
 
   public function deleteForm(Servizio $service)
@@ -317,7 +323,7 @@ class FormServerApiAdapterService
       $client = new Client(['base_uri' => $this->formServerUrl]);
       $request = new Request(
         'DELETE',
-        $client->getConfig('base_uri') . '/form/' . $formID,
+        $client->getConfig('base_uri').'/form/'.$formID,
         ['Content-Type' => 'application/json']
       );
 
@@ -326,9 +332,7 @@ class FormServerApiAdapterService
         if ($response->getStatusCode() == 200) {
           return true;
         }
-      } catch (GuzzleException $e) {
-        $this->logger->error($e->getMessage());
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
         $this->logger->error($e->getMessage());
       }
     }
@@ -346,7 +350,7 @@ class FormServerApiAdapterService
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(
       'PUT',
-      $client->getConfig('base_uri') . '/' . $schema['path'],
+      $client->getConfig('base_uri').'/'.$schema['path'],
       ['Content-Type' => 'application/json'],
       json_encode($schema)
     );
@@ -355,22 +359,21 @@ class FormServerApiAdapterService
       $response = $client->send($request);
       if ($response->getStatusCode() == 200) {
         return [
-          'status' => 'success'
+          'status' => 'success',
         ];
       }
 
-    } catch (GuzzleException $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    } catch (\Exception $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    }
+      throw new \Exception("Unexpected status response");
 
-    return [
-      'status' => 'error',
-      'message' => $error
-    ];
+    } catch (\Throwable $e) {
+      $error = $e->getMessage();
+      $this->logger->error($e->getMessage());
+
+      return [
+        'status' => 'error',
+        'message' => $error,
+      ];
+    }
   }
 
   public function getFormSchema($formID)
@@ -378,7 +381,7 @@ class FormServerApiAdapterService
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(
       'GET',
-      $client->getConfig('base_uri') . '/form/' . $formID . '/schema',
+      $client->getConfig('base_uri').'/form/'.$formID.'/schema',
       ['Content-Type' => 'application/json']
     );
 
@@ -386,24 +389,24 @@ class FormServerApiAdapterService
       $response = $client->send($request);
       if ($response->getStatusCode() == 200) {
         $responseBody = json_decode($response->getBody(), true);
+
         return [
           'status' => 'success',
-          'schema' => $responseBody
+          'schema' => $responseBody,
         ];
       }
 
-    } catch (GuzzleException $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    } catch (\Exception $e) {
-      $error = $e->getMessage();
-      $this->logger->error($e->getMessage());
-    }
+      throw new \Exception("Unexpected status response");
 
-    return [
-      'status' => 'error',
-      'message' => $error
-    ];
+    } catch (\Throwable $e) {
+      $error = $e->getMessage();
+      $this->logger->error($e->getMessage());
+
+      return [
+        'status' => 'error',
+        'message' => $error,
+      ];
+    }
   }
 
   public function getFormIdFromService(Servizio $service)

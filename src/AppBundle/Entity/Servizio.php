@@ -48,7 +48,7 @@ class Servizio
   /**
    * @var string
    *
-   * @ORM\Column(type="string", length=100, unique=true)
+   * @ORM\Column(type="string", length=255, unique=true)
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
    * @SWG\Property(description="Service's name")
@@ -59,7 +59,7 @@ class Servizio
    * @var string
    *
    * @Gedmo\Slug(fields={"name"})
-   * @ORM\Column(type="string", length=100)
+   * @ORM\Column(type="string", length=255)
    * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
    */
   private $slug;

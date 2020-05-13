@@ -570,7 +570,7 @@ class Service
     $entity->setMoreInfo($this->moreInfo ?? '');
     $entity->setCompilationInfo($this->compilationInfo ?? '');
     $entity->setFinalIndications($this->finalIndications ?? '');
-    $entity->setCoverage($this->coverage);
+    $entity->setCoverage(implode(',', (array)$this->coverage)); //@TODO
 
     if (count($this->flowSteps) > 0) {
       $temp = [];

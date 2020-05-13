@@ -3,11 +3,14 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Dto\Application;
 use AppBundle\Entity\Allegato;
-use AppBundle\Entity\Ente;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\FormIO;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
-
+use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\Logging\LogConstants;
@@ -20,11 +23,11 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 /**
  * Class OperatoriController
@@ -32,6 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class OperatoriController extends Controller
 {
+
   /**
    * @Route("/",name="operatori_index")
    * @Template()
@@ -39,23 +43,123 @@ class OperatoriController extends Controller
    */
   public function indexAction()
   {
-    $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-    $user = $this->getUser();
-    /** @var Ente $ente */
-    $ente = $user->getEnte();
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
 
-    $praticheMie = $praticheRepo->findPraticheAssignedToOperatore($user);
-    $praticheLibere = $praticheRepo->findPraticheUnAssignedByEnte($ente);
-    $praticheConcluse = $praticheRepo->findPraticheCompletedByOperatore($user);
-    $praticheEnte = $praticheRepo->findPraticheByEnte($ente);
+    $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy(
+      [
+        'id' => $praticaRepository->getServizioIdList(Pratica::STATUS_SUBMITTED),
+      ]
+    );
+
+    $stati = [];
+    foreach ($praticaRepository->getStateList(Pratica::STATUS_SUBMITTED) as $state) {
+      $state['name'] = $this->get('translator')->trans($state['name']);
+      $stati[] = $state;
+    }
 
     return array(
-      'pratiche_mie' => $praticheMie,
-      'pratiche_libere' => $praticheLibere,
-      'pratiche_concluse' => $praticheConcluse,
-      'pratiche_ente' => $praticheEnte,
+      'servizi' => $servizi,
+      'stati' => $stati,
       'user' => $this->getUser(),
     );
+  }
+
+  /**
+   * @todo megiare questa logica in ApplicationsAPIController
+   * @Route("/pratiche",name="operatori_index_json")
+   */
+  public function indexJsonAction(Request $request)
+  {
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
+    $limit = intval($request->get('limit', 10));
+    $offset = intval($request->get('offset', 0));
+
+    $servizioId = $request->get('servizio', false);
+    $parameters = [
+      'servizio' => $servizioId,
+      'stato' => $request->get('stato', false),
+      'workflow' => $request->get('workflow', false),
+      'query_field' => $request->get('query_field', false),
+      'query' => $request->get('query', false),
+    ];
+
+    try {
+      $count = $praticaRepository->countPraticheByOperatore($user, $parameters);
+      /** @var Pratica[] $data */
+      $data = $praticaRepository->findPraticheByOperatore($user, $parameters, $limit, $offset);
+    }catch (\Throwable $e){
+      $count = 0;
+      $data = [];
+      $result['meta']['error'] = true; //$e->getMessage();
+    }
+
+    $schema = null;
+    $result = [];
+    $result['meta']['schema'] = false;
+    if ($servizioId && $count > 0){
+      $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
+      if ($servizio instanceof Servizio){
+        $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+        if ($schema->hasComponents()) {
+          $result['meta']['schema'] = $schema->getComponents();
+        }
+      }
+    }
+
+    $result['meta']['count'] = $count;
+    $currentParameters = $parameters;
+    $currentParameters['offset'] = $offset;
+    $currentParameters['limit'] = $limit;
+    $result['meta']['parameter'] = $currentParameters;
+    $result['links']['self'] = $this->generateUrl('operatori_index_json', $currentParameters);
+    $result['links']['prev'] = null;
+    $result['links']['next'] = null;
+    if ($offset != 0) {
+      $prevParameters = $parameters;
+      $prevParameters['offset'] = $offset - $limit;
+      $prevParameters['limit'] = $limit;
+      $result['links']['prev'] = $this->generateUrl('operatori_index_json', $prevParameters);
+    }
+    if ($offset + $limit < $count) {
+      $nextParameters = $parameters;
+      $nextParameters['offset'] = $offset + $limit;
+      $nextParameters['limit'] = $limit;
+      $result['links']['next'] = $this->generateUrl('operatori_index_json', $nextParameters);
+    }
+
+    $serializer = $this->container->get('jms_serializer');
+    foreach ($data as $s) {
+      $application = Application::fromEntity($s);
+      $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
+      $applicationArray['can_autoassign'] = $s->getOperatore() == null;
+      $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
+      $applicationArray['is_payment_required'] = $s->getServizio()->isPaymentRequired();
+      $applicantUser = $s->getUser();
+      $codiceFiscale = $applicantUser instanceof CPSUser ? $applicantUser->getCodiceFiscale() : '';
+      $codiceFiscaleParts = explode('-', $codiceFiscale);
+      $applicationArray['codice_fiscale'] = array_shift($codiceFiscaleParts);
+
+      try{
+        $this->checkUserCanAccessPratica($user, $s);
+        $applicationArray['can_read'] = true;
+      }catch (UnauthorizedHttpException $e){
+        $applicationArray['can_read'] = false;
+      }
+
+      if (isset($schema) && $schema->hasComponents() && $s instanceof FormIO){
+        $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray($s->getDematerializedForms()['data'])->toFullFilledFlatArray();
+      }
+
+      $result['data'][] = $applicationArray;
+    }
+
+    $request->setRequestFormat('json');
+    return new JsonResponse(json_encode($result), 200, [], true);
   }
 
   /**
@@ -182,18 +286,31 @@ class OperatoriController extends Controller
   {
     $this->checkUserCanAccessPratica($this->getUser(), $pratica);
 
+    if ($pratica->getType() == 'form_io') {
+      $relatedPratica = key_exists('related_applications', $pratica->getDematerializedForms()['data']) ? $pratica->getDematerializedForms()['data']['related_applications'] : null;
+      if ($relatedPratica)
+        $relatedPratica = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($relatedPratica);
+    } else {
+      $relatedPratica = null;
+    }
+
+    /** @var CPSUser $user */
+    $user = $pratica->getUser();
+    $others = $this->getDoctrine()->getRepository('AppBundle:Pratica')->findBy(['user'=>$user]);
     $form = $this->setupCommentForm()->handleRequest($request);
 
     if ($form->isSubmitted()) {
+
       $commento = $form->getData();
       $pratica->addCommento($commento);
       $this->getDoctrine()->getManager()->flush();
+
 
       $this->get('logger')->info(
         LogConstants::PRATICA_COMMENTED,
         [
           'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
+          'user' => $pratica->getUser()->getId()
         ]
       );
 
@@ -202,11 +319,27 @@ class OperatoriController extends Controller
 
     $threads = $this->createThreadElementsForOperatoreAndPratica($this->getUser(), $pratica);
 
+    $userFullname = $user->getFullName();
+    if ($pratica->getType() == Pratica::TYPE_FORMIO) {
+      /** @var AppBundle\FormIO\Schema $schema */
+      $schema = $this->container->get('formio.factory')->createFromFormId($pratica->getServizio()->getFormIoId());
+      $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
+      if ( isset( $data['applicant.fiscal_code.fiscal_code'] ) ) {
+        $userFullname .= ' ( ' . $data['applicant.fiscal_code.fiscal_code'] . ' )';
+      }
+
+    } else {
+      $userFullname .= ' ( ' . $pratica->getUser()->getCodiceFiscale() . ' )';
+    }
+
     return [
+      'others' => $others,
+      'relatedPratica' => $relatedPratica,
       'form' => $form->createView(),
       'pratica' => $pratica,
       'user' => $this->getUser(),
       'threads' => $threads,
+      'user_full_name' => $userFullname,
       'formserver_url' => $this->getParameter('formserver_public_url')
     ];
   }

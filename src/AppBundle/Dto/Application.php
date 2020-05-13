@@ -38,6 +38,13 @@ class Application
 
   /**
    * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's user name")
+   */
+  private $userName;
+
+
+  /**
+   * @Serializer\Type("string")
    * @SWG\Property(description="Applications's service (slug)")
    */
   private $service;
@@ -486,6 +493,7 @@ class Application
     $dto = new self();
     $dto->id = $pratica->getId();
     $dto->user = $pratica->getUser()->getId();
+    $dto->userName = $pratica->getUser()->getFullName();
     $dto->tenant = $pratica->getEnte()->getId();
     $dto->service = $pratica->getServizio()->getSlug();
     $dto->subject = $pratica->getOggetto();
