@@ -40,14 +40,12 @@ class Validator
     if (!empty($validateFields)){
       $fieldsData = [];
       foreach ($validateFields as $field){
-        if (isset($data[$field])){
-          $fieldsData[$field] = $data[$field];
+        $component = $schema->getComponent($field);
+        if (isset($component['form_name']) && isset($data[$component['form_name']])){
+          $fieldsData[$component['form_name']] = $data[$component['form_name']];
         }
       }
-      $data = $fieldsData;
-      if (count($data) == count($validateFields)) {
-        $form->submit($data);
-      }
+      $form->submit($fieldsData);
     }else{
       $form->submit($data);
     }
@@ -110,4 +108,3 @@ class Validator
     return $result;
   }
 }
-

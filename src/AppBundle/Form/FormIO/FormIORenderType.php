@@ -16,12 +16,14 @@ use AppBundle\Validator\Constraints\ServerSideFormIOConstraint;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\NotEqualTo;
 
 
 class FormIORenderType extends AbstractType
@@ -32,8 +34,8 @@ class FormIORenderType extends AbstractType
   private $em;
 
   /**
- * @var FormServerApiAdapterService
- */
+   * @var FormServerApiAdapterService
+   */
   private $formServerService;
 
   /**
@@ -101,6 +103,17 @@ class FormIORenderType extends AbstractType
 
     $data = $this->setupHelperData($pratica);
 
+    $notEmptyConstraint = new NotEqualTo([
+      'value' => '[]',
+      'groups' => ['flow_formIO_step1', 'Default']
+    ]);
+    $notEmptyConstraint->message = "Il form non sembra essere compilato correttamente";
+
+    $serverSideCheckConstraint = new ServerSideFormIOConstraint([
+      'formIOId' => $formID,
+      'validateFields' => array_keys(self::$applicantUserMap),
+    ]);
+
     $builder
       ->add(
         'form_id',
@@ -118,14 +131,10 @@ class FormIORenderType extends AbstractType
           'attr' => ['value' => $data],
           'mapped' => false,
           'required' => false,
-//          'constraints' => [
-//            new ServerSideFormIOConstraint(
-//              [
-//                'formIOId' => $formID,
-//                'validateFields' => array_keys(self::$applicantUserMap),
-//              ]
-//            ),
-//          ],
+          'constraints' => [
+            $notEmptyConstraint,
+            //$serverSideCheckConstraint, //@todo
+          ],
         ]
       )
       ->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
@@ -176,8 +185,7 @@ class FormIORenderType extends AbstractType
       }
     }
 
-    // Persist solo non è prataica anonima
-    if ($pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS) {
+    if ($pratica->getUser() instanceof CPSUser) {
       $this->em->persist($pratica);
     }
   }
@@ -220,6 +228,13 @@ class FormIORenderType extends AbstractType
                 $value = $value->format('d/m/Y');
               }
             }
+            if ($component['form_type'] == ChoiceType::class
+              && isset($component['form_options']['choices'])
+              && !empty($component['form_options']['choices'])) {
+              if (!in_array($value, $component['form_options']['choices'])){
+                $value = null;
+              }
+            }
             $data->set($schemaFlatName, $value);
           }
         } catch (\InvalidArgumentException $e) {
@@ -247,7 +262,7 @@ class FormIORenderType extends AbstractType
 
       $isFile = false;
       if ( !$isSchema && isset($this->schema[$key]['type']) &&
-         ( $this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report') )  {
+        ( $this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report') )  {
         $isFile = true;
       }
       $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
