@@ -53,6 +53,8 @@ DirectoryIndex app.php
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
 
+    # Skip rewrite for Shibboleth handlerUrl
+    RewriteCond %{REQUEST_URI} !^/Shibboleth.sso/
     # Rewrite all other queries to the front controller.
     #RewriteRule ^ %{ENV:BASE}/app_dev.php [L]
     RewriteRule ^ %{ENV:BASE}/app.php [L]
