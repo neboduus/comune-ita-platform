@@ -135,7 +135,7 @@ publiccode:
 
 dummy_protocol:
     stage: test
-    allow_failure: false
+    allow_failure: true
     script:
       - echo "Looking for configuration files containing protocollo.handlers.dummy:"
       - find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \;
