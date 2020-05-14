@@ -81,6 +81,10 @@ class GeneralDataType extends AbstractType
         'required' => false,
         'empty_data' => 'La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.',
       ])
+      ->add('email_text', TextareaType::class, [
+        'label' => 'Testo email mostrato in caso di pratica accettata',
+        'required' => false
+      ])
       ->add('sticky', CheckboxType::class, [
         'label' => 'In evidenza?',
         'required' => false

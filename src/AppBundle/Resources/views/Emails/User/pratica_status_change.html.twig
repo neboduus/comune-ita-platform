@@ -2,23 +2,30 @@
 
 
 {% block email_content %}
-    <table align='center' bgcolor='#fff' border='0' cellpadding='0' cellspacing='0' id='backgroundTable' style='background: #fff;'>
-        <tr>
-            <td style="padding: 20px">
-                <p>
-                    {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
-                </p>
-                <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
-                <p>
-                    {{ 'email.pratica.thanks'|trans() }}
-                </p>
-                {% if pratica.getEsito() and not pratica.getEsito() is null %}
-                    <p>
-                      Per l'invio delle ricevute puoi cliccare sul seguente link:<br />
-                      <a href="https://devsdc.opencontent.it/provincia-autonoma-di-trento/servizi/invio-ricevute-bonus-bicicletta">https://devsdc.opencontent.it/provincia-autonoma-di-trento/servizi/invio-ricevute-bonus-bicicletta</a>
-                    </p>
-                {% endif %}
-            </td>
-        </tr>
-    </table>
+  <table align='center' bgcolor='#fff' border='0' cellpadding='0' cellspacing='0' id='backgroundTable'
+         style='background: #fff;'>
+    <tr>
+      <td style="padding: 20px">
+        <p>
+          {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
+        </p>
+        <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
+        {% if pratica.getEsito() and not pratica.getEsito() is null %}
+          {% if not pratica.getMotivazioneEsito() is empty %}
+            <p>
+              Con la seguente motivazione:<br>
+              {{ pratica.getMotivazioneEsito() }}
+            </p>
+          {% endif %}
+
+          {% if not pratica.servizio.getEmailText()  is empty %}
+            {{ pratica.servizio.getEmailText()|raw }}
+          {% endif %}
+        {% endif %}
+        <p>
+          {{ 'email.pratica.thanks'|trans() }}
+        </p>
+      </td>
+    </tr>
+  </table>
 {% endblock %}
