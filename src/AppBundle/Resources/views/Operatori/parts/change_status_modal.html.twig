@@ -1,0 +1,45 @@
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="p-4">
+        <div class="row">
+          <div class="col-lg-12 px-lg-4 py-lg-2">
+            <h1 id="modalTitle"></h1>
+          </div>
+        </div>
+        <div class="mx-4">
+          <p>Verrà inviata una comunicazione email all’indirizzo dell’utente <a href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
+          {% if pratica.servizio.emailText %}
+            <div id="email_text">
+              <p>Nella comunicazione sarà inoltre inserito il seguente testo:</p>
+              <p>{{ pratica.servizio.emailText | striptags }}</p>
+            </div>
+          {% endif %}
+        </div>
+        <div class="row">
+          <div class="col-lg-12 px-lg-4 py-lg-2">
+            {{ form_start(modalForm) }}
+            <div class="d-none">
+              {{ form_row(modalForm.esito) }}
+            </div>
+            {{ form_rest(modalForm) }}
+            <div class="row justify-content-between">
+              <div class="col-auto align-self-center">
+                <strong>
+                  <svg class="icon icon-sm">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
+                  </svg>
+                  Una volta elaborata la pratica non sarà più possibile effettuare modifiche
+                </strong>
+              </div>
+              <div class="col-auto">
+                <button type="submit" class="btn btn-primary float-right">Invia</button>
+              </div>
+            </div>
+            {{ form_end(modalForm) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

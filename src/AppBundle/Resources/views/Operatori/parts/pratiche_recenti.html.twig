@@ -1,0 +1,30 @@
+<div class="link-list-wrapper multiline">
+  <ul class="link-list">
+    {% if pratiche_recenti|length > 0 %}
+      {% for pratica_recente  in pratiche_recenti %}
+        <li>
+          <a href="{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}">
+                        <span>
+                           <svg class="icon icon-sm icon-light">
+                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                           </svg>
+                          {{ pratica_recente.servizio.name }}
+                        </span>
+            <svg class="icon icon-primary icon-right">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
+            </svg>
+            <p>
+              Inviata il {{ pratica_recente.submissionTime | date('d/m/Y') }} alle
+              ore {{ pratica_recente.submissionTime | date('H:i:s') }}
+              <br>{{ pratica_recente.statusName | trans }}
+            </p>
+          </a>
+        </li>
+      {% endfor %}
+    {% else %}
+      <li>
+        <span class="small font-italic">Non ci sono altre pratiche recenti</span>
+      </li>
+    {% endif %}
+  </ul>
+</div>
