@@ -690,3 +690,6 @@ services:
     arguments: ['@formio.validator']
     tags:
       - { name: validator.constraint_validator, alias: 'formio.constraint_validator' }
+
+  log_resolver.applicant_browser:
+    class: AppBundle\Logging\ApplicantBrowserEventResolver

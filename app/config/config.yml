@@ -122,6 +122,9 @@ xiidea_easy_audit:
         - security.authentication.failure
         - fos_user.change_password.edit.completed
         - fos_user.resetting.reset.completed
+        - ocsdc.pratica.on_status_change
+    custom_resolvers:
+        ocsdc.pratica.on_status_change: log_resolver.applicant_browser
     logger_channel:
         xiidea.easy_audit.logger.service: ["info", "debug"]
         file.logger: ["!info", "!debug"]
@@ -144,7 +147,7 @@ datatables:
     # Default parameters to be passed to the template
     template_parameters:
         # Default class attribute to apply to the root table elements
-        className: 'table table-bordered'
+        className: 'table table-condensed'
         # If and where to enable the DataTables Filter module
         columnFilter: null # One of "thead"; "tfoot"; "both"; null
     # Default translation domain to be used
