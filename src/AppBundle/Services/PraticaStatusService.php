@@ -125,7 +125,7 @@ class PraticaStatusService
 
         $this->dispatcher->dispatch(
           PraticaEvents::ON_STATUS_CHANGE,
-          new PraticaOnChangeStatusEvent($pratica, $afterStatus)
+          new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus)
         );
 
         $this->entityManager->commit();

@@ -73,6 +73,8 @@ class SchemaFactory implements SchemaFactoryInterface
       $adapterResult = $this->provider->getForm($formIOId);
       if ($adapterResult['status'] == 'success') {
         self::$cacheRemoteForms[$formIOId] = $adapterResult['form'];
+      }else{
+        return false;
       }
     }
 

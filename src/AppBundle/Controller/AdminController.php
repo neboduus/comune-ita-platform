@@ -248,8 +248,9 @@ class AdminController extends Controller
   {
     $table = $this->createDataTable()
       ->add('type', TextColumn::class, ['label' => 'Evento'])
-      ->add('eventTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'd-m-Y H:i'])
+      ->add('eventTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'd-m-Y H:i', 'searchable' => false])
       ->add('user', TextColumn::class, ['label' => 'Utente'])
+      ->add('description', TextColumn::class, ['label' => 'Descrizione'])
       ->add('ip', TextColumn::class, ['label' => 'Ip'])
       ->createAdapter(ORMAdapter::class, [
         'entity' => AuditLog::class,
