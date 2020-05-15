@@ -1,7 +1,5 @@
-<pre style="word-wrap: break-word; white-space: pre-wrap;">
 # HELP applications A summary of the application count.
 # TYPE applications summary
 {% for metric in metrics %}
 applications{tenant="{{ metric.ente }}",service="{{ metric.servizio }}",status="{{ ('pratica.dettaglio.stato_'~metric.status)| trans }}"} {{ metric.count }}
 {% endfor %}
-</pre>

@@ -34,6 +34,9 @@ framework:
     fragments:       ~
     http_method_override: true
     assets: ~
+    request:
+      formats:
+        text: ['text/plain']
 
 # Fos User Configuration
 fos_user:
