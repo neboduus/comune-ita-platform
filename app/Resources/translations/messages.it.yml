@@ -49,7 +49,7 @@ servizio:
   modifica: 'Modifica %name%'
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
-  sospeso: 'Il servizio è stato sospeso'
+  sospeso: 'Al momento il servizio non è attivo'
   accedi_al_servizio: 'Accedi al servizio %name%'
   attivo_per: "Servizio attivo per:"
   servizi_area_title: '%area%'
@@ -440,7 +440,7 @@ operatori:
   allegati: 'Allegati'
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
-  suggerimento_login: 'Stai compilando la pratica come anonimo, <a href="link">accedi</a> al sistema per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
+  suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
   login: "Accedi"
   scarica: 'Scarica'
   info: "Info"
