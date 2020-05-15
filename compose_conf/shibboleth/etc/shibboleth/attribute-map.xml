@@ -1,5 +1,8 @@
 <Attributes xmlns="urn:mace:shibboleth:2.0:attribute-map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+    <Attribute name="spidCode" id="pat_attribute_spidcode" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+        <AttributeDecoder xsi:type="StringAttributeDecoder"/>
+    </Attribute>
     <Attribute name="CodiceFiscale" id="pat_attribute_codicefiscale" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
         <AttributeDecoder xsi:type="StringAttributeDecoder"/>
     </Attribute>
@@ -66,7 +69,7 @@
     <Attribute name="telefono" id="pat_attribute_telefono" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
         <AttributeDecoder xsi:type="StringAttributeDecoder"/>
     </Attribute>
-    <Attribute name="tiolo" id="pat_attribute_titolo" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+    <Attribute name="titolo" id="pat_attribute_titolo" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
         <AttributeDecoder xsi:type="StringAttributeDecoder"/>
     </Attribute>
     <Attribute name="x509certificate_issuerdn" id="pat_attribute_x509certificate_issuerdn" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
