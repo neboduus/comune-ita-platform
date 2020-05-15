@@ -23,7 +23,7 @@ require('bootstrap-italia/src/js/plugins/back-to-top');
 require('bootstrap-italia/src/js/plugins/componente-base');
 require('bootstrap-italia/src/js/plugins/cookiebar');
 require('bootstrap-italia/src/js/plugins/dropdown');
-require('bootstrap-italia/src/js/plugins/forms');
+//require('bootstrap-italia/src/js/plugins/forms');
 require('bootstrap-italia/src/js/plugins/track-focus');
 require('bootstrap-italia/src/js/plugins/forward');
 require('bootstrap-italia/src/js/plugins/navbar');
