@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Services\CPSUserProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -78,6 +79,33 @@ class CPSUser extends User
    */
   private $x509certificate_base64;
 
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="spid_code", type="text", nullable=true)
+   */
+  private $spidCode;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="shib_session_id", type="text", nullable=true)
+   */
+  private $shibSessionId;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="shib_session_index", type="text", nullable=true)
+   */
+  private $shibSessionIndex;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="shib_auth_instant", type="text", nullable=true)
+   */
+  private $shibAuthenticationIstant;
 
   /**
    * @var string
@@ -450,6 +478,73 @@ class CPSUser extends User
     $this->x509certificate_base64 = $x509certificate_base64;
 
     return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSpidCode()
+  {
+    return $this->spidCode;
+  }
+
+  /**
+   * @param string $spidCode
+   * @return CPSUser
+   */
+  public function setSpidCode(string $spidCode): CPSUser
+  {
+    $this->spidCode = $spidCode;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getShibSessionId()
+  {
+    return $this->shibSessionId;
+  }
+
+  /**
+   * @param string $shibSessionId
+   */
+  public function setShibSessionId(string $shibSessionId): void
+  {
+    $this->shibSessionId = $shibSessionId;
+  }
+
+  /**
+   * @return string
+   */
+  public function getShibSessionIndex()
+  {
+    return $this->shibSessionIndex;
+  }
+
+  /**
+   * @param string $shibSessionIndex
+   */
+  public function setShibSessionIndex(string $shibSessionIndex): void
+  {
+    $this->shibSessionIndex = $shibSessionIndex;
+  }
+
+  /**
+   * @return string
+   */
+  public function getShibAuthenticationIstant()
+  {
+    return $this->shibAuthenticationIstant;
+  }
+
+  /**
+   * @param string $shibAuthenticationIstant
+   */
+  public function setShibAuthenticationIstant(string $shibAuthenticationIstant): void
+  {
+    $this->shibAuthenticationIstant = $shibAuthenticationIstant;
   }
 
   /**
@@ -1136,6 +1231,23 @@ class CPSUser extends User
     if ($this->acceptedTerms instanceof Collection) {
       $this->acceptedTerms = json_encode($this->getAcceptedterms()->toArray());
     }
+  }
+
+  /**
+   * @see CPSUserProvider::updateSecurityFields()
+   * @return array
+   */
+  public function getSecurityFields()
+  {
+    return [
+      'x509certificate_issuerdn' => $this->getX509certificateIssuerdn(),
+      'x509certificate_subjectdn' => $this->getX509certificateSubjectdn(),
+      'x509certificate_base64' => $this->getX509certificateBase64(),
+      'spidCode' => $this->getSpidCode(),
+      'shibSessionId' =>$this->getShibSessionId(),
+      'shibSessionIndex' => $this->getShibSessionIndex(),
+      'shibAuthenticationIstant' => $this->getShibAuthenticationIstant(),
+    ];
   }
 
   public static function getProvinces()

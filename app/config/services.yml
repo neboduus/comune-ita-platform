@@ -156,6 +156,7 @@ services:
 
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator
+    arguments: ["%shibbolet_server_varnames%"]
 
   ocsdc.cps.terms_acceptance_listener:
     class: AppBundle\EventListener\TermsAcceptListener

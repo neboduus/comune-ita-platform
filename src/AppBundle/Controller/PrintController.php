@@ -58,9 +58,7 @@ class PrintController extends Controller
         $temp['hash'] = hash_file('md5', $a->getFile()->getPathname());
 
         $preparedAttachments[]=$temp;
-
       }
-
     }
 
     return [

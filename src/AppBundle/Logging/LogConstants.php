@@ -14,6 +14,7 @@ class LogConstants
 
   const CPS_USER_CREATED = "A new {type} user has been created";
   const CPS_USER_CREATED_WITH_BOGUS_DATA = "User data has partially bogus data";
+  const CPS_USER_UPDATE_SECURITY_FIELDS = "User security fields has been updated";
 
   const PRATICA_CREATED = "A new {type} pratica has been created";
   const PRATICA_UPDATED = "A new {id} pratica has been updated";
