@@ -558,9 +558,21 @@ class OperatoriController extends Controller
       $pratica->addRispostaOperatore($signedResponse);
     }
 
+    $protocolloIsRequired = $pratica->getServizio()->isProtocolRequired();
 
     if ($pratica->getEsito()) {
-      $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);
+
+      if ($protocolloIsRequired) {
+        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+          $pratica,
+          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE
+        );
+      }else{
+        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+          $pratica,
+          Pratica::STATUS_COMPLETE
+        );
+      }
 
       $this->get('logger')->info(
         LogConstants::PRATICA_APPROVED,
@@ -570,7 +582,17 @@ class OperatoriController extends Controller
         ]
       );
     } else {
-      $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE);
+      if ($protocolloIsRequired) {
+        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+          $pratica,
+          Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE
+        );
+      }else{
+        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+          $pratica,
+          Pratica::STATUS_CANCELLED
+        );
+      }
 
       $this->get('logger')->info(
         LogConstants::PRATICA_CANCELLED,
