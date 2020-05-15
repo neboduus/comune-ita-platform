@@ -347,6 +347,19 @@ class PraticaRepository extends EntityRepository
     }
   }
 
+  public function getMetrics()
+  {
+    $sql = "SELECT ente.slug as ente, servizio.slug as servizio, pratica.status, count(*) from pratica 
+              INNER JOIN ente ON (ente.id = pratica.ente_id) 
+              INNER JOIN servizio ON (servizio.id = pratica.servizio_id) 
+              GROUP BY ente, servizio, pratica.status 
+              ORDER BY servizio ASC, pratica.status DESC ;";
+
+    $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+  }
+
   private function getClassConstants()
   {
     if (null === $this->classConstants) {

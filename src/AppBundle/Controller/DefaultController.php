@@ -3,8 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
+use Doctrine\DBAL\FetchMode;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,119 +26,154 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DefaultController extends Controller
 {
-    /**
-     * @Template()
-     * @return array()
-     */
-    public function commonAction()
-    {
-        return array('enti' => $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll());
-    }
+  /**
+   * @Template()
+   * @return array()
+   */
+  public function commonAction()
+  {
+    return array('enti' => $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll());
+  }
+
+  /**
+   * @Route("/", name="home")
+   *
+   * @return Response
+   */
+  public function indexAction()
+  {
+    return $this->forward('AppBundle:Servizi:servizi');
+  }
+
+  /**
+   * @Route("/privacy", name="privacy")
+   * @Template()
+   */
+  public function privacyAction()
+  {
+  }
+
+  /**
+   * @Route("/terms_accept/", name="terms_accept")
+   * @Template()
+   * @param Request $request
+   *
+   * @return array
+   */
+  public function termsAcceptAction(Request $request)
+  {
+    $logger = $this->get('logger');
+
+    $repo = $this->getDoctrine()->getRepository('AppBundle:TerminiUtilizzo');
 
     /**
-     * @Route("/", name="home")
-     *
-     * @return Response
+     * FIXME: gestire termini multipli
+     * Il sistema è pronto per iniziare a gestire una accettazione di termini condizionale
+     * con alcuni obbligatori e altri opzionali, tutti versionati. Al momento marchiamo tutti come accettati
      */
-    public function indexAction()
-    {
-        return $this->forward('AppBundle:Servizi:servizi');
+
+    $terms = $repo->findAll();
+
+    $form = $this->setupTermsAcceptanceForm($terms)->handleRequest($request);
+
+    $user = $this->getUser();
+
+    if ($form->isSubmitted()) {
+      $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'home';
+      $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
+      $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
+
+      return $this->markTermsAcceptedForUser(
+        $user,
+        $logger,
+        $redirectRoute,
+        $redirectRouteParams,
+        $redirectRouteQuery,
+        $terms
+      );
+    } else {
+      $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
     }
 
-    /**
-     * @Route("/privacy", name="privacy")
-     * @Template()
-     */
-    public function privacyAction()
-    {
+    return [
+      'form' => $form->createView(),
+      'terms' => $terms,
+      'user' => $user,
+    ];
+  }
+
+  /**
+   * @param TerminiUtilizzo[] $terms
+   * @return FormInterface
+   */
+  private function setupTermsAcceptanceForm($terms): FormInterface
+  {
+    $translator = $this->get('translator');
+    $data = array();
+    $formBuilder = $this->createFormBuilder($data);
+    foreach ($terms as $term) {
+      $formBuilder->add(
+        (string)$term->getId(),
+        CheckboxType::class,
+        array(
+          'label' => $translator->trans('terms_do_il_consenso'),
+          'required' => true,
+        )
+      );
+    }
+    $formBuilder->add('save', SubmitType::class, array('label' => $translator->trans('salva')));
+    $form = $formBuilder->getForm();
+
+    return $form;
+  }
+
+  /**
+   * @param CPSUser $user
+   * @param LoggerInterface $logger
+   * @param string $redirectRoute
+   * @param array $redirectRouteParams
+   * @param array $terms
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   */
+  private function markTermsAcceptedForUser(
+    $user,
+    $logger,
+    $redirectRoute = null,
+    $redirectRouteParams = array(),
+    $redirectRouteQuery = array(),
+    $terms
+  ): RedirectResponse {
+    $manager = $this->getDoctrine()->getManager();
+    foreach ($terms as $term) {
+      $user->addTermsAcceptance($term);
+    }
+    $logger->info(LogConstants::USER_HAS_ACCEPTED_TERMS, ['userid' => $user->getId()]);
+    $manager->persist($user);
+    try {
+      $manager->flush();
+    } catch (\Exception $e) {
+      $logger->error($e->getMessage());
     }
 
-    /**
-     * @Route("/terms_accept/", name="terms_accept")
-     * @Template()
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function termsAcceptAction(Request $request)
-    {
-        $logger = $this->get('logger');
+    return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
+  }
 
-        $repo = $this->getDoctrine()->getRepository('AppBundle:TerminiUtilizzo');
+  /**
+   * @Route("/metrics", name="terms_accept")
+   * @Template()
+   *
+   * @return Response
+   */
+  public function metricsAction()
+  {
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    $metrics = $praticaRepository->getMetrics();
 
-        /**
-         * FIXME: gestire termini multipli
-         * Il sistema è pronto per iniziare a gestire una accettazione di termini condizionale
-         * con alcuni obbligatori e altri opzionali, tutti versionati. Al momento marchiamo tutti come accettati
-         */
-
-        $terms = $repo->findAll();
-
-        $form = $this->setupTermsAcceptanceForm($terms)->handleRequest($request);
-
-        $user = $this->getUser();
-
-        if ($form->isSubmitted()) {
-            $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'home';
-            $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
-            $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
-
-            return $this->markTermsAcceptedForUser($user, $logger, $redirectRoute, $redirectRouteParams, $redirectRouteQuery, $terms);
-        }else{
-            $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
-        }
-
-        return [
-            'form' => $form->createView(),
-            'terms' => $terms,
-            'user' => $user
-        ];
-    }
-
-    /**
-     * @param CPSUser $user
-     * @param LoggerInterface $logger
-     * @param string $redirectRoute
-     * @param array $redirectRouteParams
-     * @param array $terms
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    private function markTermsAcceptedForUser($user, $logger, $redirectRoute = null, $redirectRouteParams = array(), $redirectRouteQuery = array(), $terms):RedirectResponse
-    {
-        $manager = $this->getDoctrine()->getManager();
-        foreach ($terms as $term) {
-            $user->addTermsAcceptance($term);
-        }
-        $logger->info(LogConstants::USER_HAS_ACCEPTED_TERMS, ['userid' => $user->getId()]);
-        $manager->persist($user);
-        try {
-            $manager->flush();
-        } catch (\Exception $e) {
-            $logger->error($e->getMessage());
-        }
-
-        return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
-    }
-
-    /**
-     * @param TerminiUtilizzo[] $terms
-     * @return FormInterface
-     */
-    private function setupTermsAcceptanceForm($terms):FormInterface
-    {
-        $translator = $this->get('translator');
-        $data = array();
-        $formBuilder = $this->createFormBuilder($data);
-        foreach ($terms as $term) {
-            $formBuilder->add((string) $term->getId(), CheckboxType::class, array(
-                'label' => $translator->trans('terms_do_il_consenso'),
-                'required' => true,
-            ));
-        }
-        $formBuilder->add('save', SubmitType::class, array('label' => $translator->trans('salva')));
-        $form = $formBuilder->getForm();
-
-        return $form;
-    }
-
+    $response = new Response();
+    $response->headers->set('Content-type', 'text/html; charset=UTF-8');
+    return $this->render( '@App/Default/metrics.html.twig', [
+      'metrics' => $metrics,
+    ]);
+  }
 }
