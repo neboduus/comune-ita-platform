@@ -17,6 +17,13 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
     mailer_port:       ~
+    mailer_encription: tls
+    pec_mailer_transport:
+    pec_mailer_host:
+    pec_mailer_port:
+    pec_mailer_user:
+    pec_mailer_password:
+    pec_delivery_address:
     default_from_email_address: sdc@opencontent.it
 
     logs_formatter: 'monolog.formatter.line'

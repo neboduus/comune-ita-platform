@@ -14,7 +14,6 @@ class RichiestaIntegrazione extends Allegato
 {
     const STATUS_PENDING = 1000;
     const STATUS_DONE = 2000;
-
     const TYPE_DEFAULT = 'richiesta_integrazione';
 
     /**
@@ -132,5 +131,13 @@ class RichiestaIntegrazione extends Allegato
     public function markAsDone()
     {
         return $this->setStatus(self::STATUS_DONE);
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+      return self::TYPE_DEFAULT;
     }
 }

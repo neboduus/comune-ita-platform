@@ -226,6 +226,20 @@ services:
     class: AppBundle\Protocollo\DummyProtocolloHandler
     public: false
 
+  ocsdc.protocollo.handlers.pec:
+    class: AppBundle\Protocollo\PecProtocolloHandler
+    public: false
+    arguments:
+      - "%pec_mailer_host%"
+      - "%pec_mailer_port%"
+      - "%pec_mailer_user%"
+      - "%pec_mailer_password%"
+      - "%pec_delivery_address%"
+      - "@translator"
+      - "@templating"
+      - "@logger"
+
+
   ocsdc.protocollo.handlers.pitre:
     class: AppBundle\Protocollo\PiTreProtocolloHandler
     arguments: ["@ocsdc.protocollo.client", "%prefix%"]

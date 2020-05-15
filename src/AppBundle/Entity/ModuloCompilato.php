@@ -30,7 +30,7 @@ class ModuloCompilato extends Allegato
   public function __construct()
   {
     parent::__construct();
-    $this->type = 'modulo_compilato';
+    $this->type = self::TYPE_DEFAULT;
     $this->pratiche2 = new ArrayCollection();
   }
 
@@ -68,6 +68,9 @@ class ModuloCompilato extends Allegato
     return $this;
   }
 
+  /**
+   * @return string
+   */
   public function getType(): string
   {
     return self::TYPE_DEFAULT;

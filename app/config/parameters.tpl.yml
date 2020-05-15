@@ -12,6 +12,12 @@ parameters:
     mailer_user: '%env(MAILER_USER)%'
     mailer_password: '%env(MAILER_PASSWORD)%'
     mailer_encription: 'tls'
+    pec_mailer_transport: '%env(PEC_MAILER_TRANSPORT)%'
+    pec_mailer_host: '%env(PEC_MAILER_HOST)%'
+    pec_mailer_port: '%env(PEC_MAILER_PORT)%'
+    pec_mailer_user: '%env(PEC_MAILER_USER)%'
+    pec_mailer_password: '%env(PEC_MAILER_PASSWORD)%'
+    pec_delivery_address: '%env(PEC_DELIVERY_ADDRESS)%'
     secret: '%env(SECRET)%'
     default_from_email_address: '%env(DEFAULT_FROM_EMAIL_ADDRESS)%'
     wkhtmlbinary: '%env(WKHTMLBINARY)%'
@@ -71,6 +77,12 @@ parameters:
     env(MAILER_PORT): '25'
     env(MAILER_USER): null
     env(MAILER_PASSWORD): null
+    env(PEC_MAILER_TRANSPORT): 'smtp'
+    env(PEC_MAILER_HOST): 'smpt.pec.host'
+    env(PEC_MAILER_PORT): '465'
+    env(PEC_MAILER_USER): null
+    env(PEC_MAILER_PASSWORD): null
+    env(PEC_DELIVERY_ADDRESS): 'stanzadelcittadino@dominio.estensione'
     env(SECRET): 'ThisTokenIsNotSoSecretChangeIt'
     env(DEFAULT_FROM_EMAIL_ADDRESS): 'sdc@opencontent.it'
     env(WKHTMLBINARY): 'wkhtmltopdf'

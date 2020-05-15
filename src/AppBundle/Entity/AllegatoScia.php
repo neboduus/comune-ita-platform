@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Class AllegatoScia
  */
+
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -16,12 +17,19 @@ use Doctrine\ORM\Mapping as ORM;
 class AllegatoScia extends Allegato
 {
 
-    /**
-     * ModuloCompilato constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->type = 'allegato_scia';
-    }
+  const TYPE_DEFAULT = 'allegato_scia';
+
+  /**
+   * AllegatoScia constructor.
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->type = self::TYPE_DEFAULT;
+  }
+
+  public function getType(): string
+  {
+    return self::TYPE_DEFAULT;
+  }
 }
