@@ -159,7 +159,7 @@ class DefaultController extends Controller
   }
 
   /**
-   * @Route("/metrics", name="terms_accept")
+   * @Route("/metrics", name="sdc_metrics")
    * @Template()
    *
    * @return Response
