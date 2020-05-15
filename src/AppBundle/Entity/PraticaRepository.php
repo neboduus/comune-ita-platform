@@ -372,4 +372,19 @@ class PraticaRepository extends EntityRepository
 
     return $this->classConstants;
   }
+
+  public function findRecentlySubmittedPraticheByUser(Pratica $pratica, CPSUser $user, $limit)
+  {
+    $qb = $this->createQueryBuilder('p');
+    $qb->where('p.status >= '.Pratica::STATUS_SUBMITTED)
+      ->andWhere('p.user = :user')
+      ->andWhere('p.id != :pratica')
+      ->setParameter('user', $user)
+      ->setParameter('pratica', $pratica)
+      ->orderBy('p.submissionTime', 'DESC')
+      ->setMaxResults($limit);
+
+
+    return $qb->getQuery()->getResult();
+  }
 }

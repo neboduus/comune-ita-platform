@@ -432,18 +432,28 @@ operatori:
   pratiche_concluse: 'Pratiche concluse'
   pratiche_ente: "Tutte le pratiche dell'ente"
   torna_alle_pratiche: "Torna all'elenco pratiche"
+  gestione_pratica: "Gestione pratica"
   allega: 'Allega'
   approva: 'Approva'
   rifiuta: 'Rifiuta'
+  rigetta: 'Rigetta'
   elabora: 'Elabora'
+  scrivi_al_cittadino: "Scrivi al cittadino"
   richiedi_intergrazioni: 'Richiedi intergrazioni'
+  modulo: 'Modulo'
   allegati: 'Allegati'
+  note_interne: 'Note interne'
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
   suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
   login: "Accedi"
   scarica: 'Scarica'
   info: "Info"
+  iter_completato: "La richiesta è stata <strong>%statusName%</strong> il %data% alle ore %ore%"
+  pratica_correlata: "Pratica correlata"
+  no_pratica_correlata: "Non c'è una pratica correlata"
+  ultime_pratiche: "Ultime pratiche inviate"
+  inviata_il_alle: "Inviata il %data% alle ore %ore%"
   recaptcha: 'Per inviare la richiesta fai cllck su "Non sono un robot" e successivamente sul pulsante "Invia".'
   scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
   attesa_ricevuta: 'In attesa di generazione della ricevuta'

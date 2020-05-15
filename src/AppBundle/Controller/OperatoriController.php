@@ -13,18 +13,25 @@ use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
+use AppBundle\Form\Operatore\Standard\StandardOperatoreFlow;
+use AppBundle\FormIO\Schema;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -286,27 +293,18 @@ class OperatoriController extends Controller
    * @Route("/{pratica}/detail",name="operatori_show_pratica")
    * @Template()
    *
-   * @return array
+   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
    */
   public function showPraticaAction(Pratica $pratica, Request $request)
   {
     $this->checkUserCanAccessPratica($this->getUser(), $pratica);
 
-    if ($pratica->getType() == 'form_io') {
-      $relatedPratica = key_exists('related_applications', $pratica->getDematerializedForms()['data']) ? $pratica->getDematerializedForms()['data']['related_applications'] : null;
-      if ($relatedPratica)
-        $relatedPratica = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($relatedPratica);
-    } else {
-      $relatedPratica = null;
-    }
-
     /** @var CPSUser $user */
     $user = $pratica->getUser();
-    $others = $this->getDoctrine()->getRepository('AppBundle:Pratica')->findBy(['user'=>$user]);
+
     $form = $this->setupCommentForm()->handleRequest($request);
 
     if ($form->isSubmitted()) {
-
       $commento = $form->getData();
       $pratica->addCommento($commento);
       $this->getDoctrine()->getManager()->flush();
@@ -323,30 +321,43 @@ class OperatoriController extends Controller
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
-    $threads = $this->createThreadElementsForOperatoreAndPratica($this->getUser(), $pratica);
+    $modalForm = $this->createForm('AppBundle\Form\Operatore\Base\ApprovaORigettaType')->handleRequest($request);
+    if ($modalForm->isSubmitted()) {
+      $pratica->setEsito($modalForm->getData()['esito']);
+      $pratica->setMotivazioneEsito($modalForm->getData()['motivazioneEsito']);
 
-    $userFullname = $user->getFullName();
+      $this->completePraticaFlow($pratica, false);
+      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+    }
+
+    $threads = $this->createThreadElementsForOperatoreAndPratica($this->getUser(), $pratica);
+    $praticheRecenti = $this->getDoctrine()->getRepository('AppBundle:Pratica')->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
+
+    $praticaCorrelata = null;
     if ($pratica->getType() == Pratica::TYPE_FORMIO) {
-      /** @var AppBundle\FormIO\Schema $schema */
+      /** @var Schema $schema */
       $schema = $this->container->get('formio.factory')->createFromFormId($pratica->getServizio()->getFormIoId());
       $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
       if ( isset( $data['applicant.fiscal_code.fiscal_code'] ) ) {
-        $userFullname .= ' ( ' . $data['applicant.fiscal_code.fiscal_code'] . ' )';
+        $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
       }
-
+      if ( isset( $data['related_applications'] ) ) {
+        $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($data['related_applications'] );
+      }
     } else {
-      $userFullname .= ' ( ' . $pratica->getUser()->getCodiceFiscale() . ' )';
+      $fiscalCode = $pratica->getUser()->getCodiceFiscale() ;
     }
 
     return [
-      'others' => $others,
-      'relatedPratica' => $relatedPratica,
+      'pratiche_recenti' => $praticheRecenti,
+      'pratica_correlata' => $praticaCorrelata,
       'form' => $form->createView(),
+      'modalForm' => $modalForm->createView(),
       'pratica' => $pratica,
       'user' => $this->getUser(),
       'threads' => $threads,
-      'user_full_name' => $userFullname,
-      'formserver_url' => $this->getParameter('formserver_public_url')
+      'fiscal_code' => $fiscalCode,
+      'formserver_url' => $this->getParameter('formserver_public_url'),
     ];
   }
 
@@ -490,6 +501,7 @@ class OperatoriController extends Controller
         ['label' => $this->get('translator')->trans('operatori.profile.salva_modifiche')]
       );
     $form = $formBuilder->getForm();
+
     return $form;
   }
 
@@ -516,7 +528,7 @@ class OperatoriController extends Controller
       ->add('save', SubmitType::class, [
         'label' => $translator->trans('operatori.aggiungi_commento'),
         'attr' => [
-          'class' => 'btn btn-info',
+          'class' => 'btn btn-primary',
         ],
       ]);
     $form = $formBuilder->getForm();

@@ -1,0 +1,70 @@
+<nav>
+  <div class="nav nav-tabs auto" id="pratica-details" role="tablist">
+    <a class="nav-item nav-link active" id="modulo-tab" data-toggle="tab" href="#modulo" role="tab"
+       aria-controls="modulo" aria-selected="true">
+      {{ 'operatori.modulo' | trans }}
+    </a>
+    <a class="nav-item nav-link {% if pratica.allegati.count == 0 %} disabled {% endif %}" id="allegati-tab"
+       data-toggle="tab" href="#allegati" role="tab"
+       aria-controls="allegati" aria-selected="false">
+      {{ 'operatori.allegati' | trans }}
+      <span class="badge badge-light ml-1">{{ pratica.allegati.count }}</span>
+    </a>
+    <a class="nav-item nav-link" id="note-interne-tab" data-toggle="tab" href="#note-interne" role="tab"
+       aria-controls="note-interne" aria-selected="false">
+      {{ 'operatori.note_interne' | trans }}
+      <span class="badge badge-light ml-1">{{ pratica.commenti.count }}</span>
+    </a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane py-4 fade show active" id="modulo" role="tabpanel" aria-labelledby="modulo-tab">
+    {% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
+      <div id="formio_summary" class="formio-front formio-summary"
+           data-formserver_url="{{ formserver_url }}"
+           data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+           data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
+      </div>
+    {% else %}
+      {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+    {% endif %}
+  </div>
+  <div class="tab-pane py-4 fade" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
+    {% for allegato in pratica.allegati %}
+      <div class="row align-items-center text-center my-3">
+        <div class="col-2">
+          {% if allegato.file.extension == 'pdf' %}
+            <i class="fa fa-2x fa-file-pdf-o"></i>
+          {% else %}
+            <img class="not-found img-fluid" src="{{ path('allegati_download_operatore', {'allegato': allegato}) }}">
+          {% endif %}
+        </div>
+        <div class="col-6 text-truncate">
+          {{ allegato.originalFilename }}
+        </div>
+        <div class="col-2">
+          {% set bytes = allegato.file.size %}
+          {% set kiloBytes = (bytes / 1024)|round(1) %}
+          {% set megaBytes = (kiloBytes / 1024)|round(1) %}
+          {% if kiloBytes <= 1000 %}
+            {{ kiloBytes | number_format(0) }} Kb
+          {% else %}
+            {{ megaBytes |number_format(1) }} Mb
+          {% endif %}
+        </div>
+        <div class="col-2">
+          <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
+            <svg class="icon icon-primary">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+            </svg>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="tab-pane py-4 fade" id="note-interne" role="tabpanel" aria-labelledby="note-interne-tab">
+    <div class="m-3">
+      {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+    </div>
+  </div>
+</div>
