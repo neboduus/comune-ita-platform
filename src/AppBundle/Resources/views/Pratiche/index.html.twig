@@ -41,7 +41,7 @@
                                         <a class="nav-link {% if key == active_key %}active{% endif %}"
                                            href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">
                                             {{ ('user.dashboard.pratiche_' ~ key)|trans }} <span
-                                                    class="badge badge-info ml-1">{{ value|length }}</span>
+                                                    class="badge badge-pill badge-light ml-1">{{ value|length }}</span>
                                         </a>
                                     </li>
                                 {% endfor %}
@@ -56,13 +56,13 @@
                                     {#<h3>{{ ('user.dashboard.pratiche_' ~ key)|trans }}</h3>#}
                                     {% if value|length > 0 %}
                                         <div id="no-more-tables">
-                                            <table class="table table-bordered table-striped table-condensed cf">
+                                            <table class="table table-striped table-condensed cf">
                                                 <thead class="cf">
                                                 <tr>
                                                     <th>{{ 'pratica.servizio'|trans }}</th>
                                                     <th>{{ 'pratica.noteDiCompilazione'|trans }}</th>
                                                     <th>{{ 'pratica.protocollo'|trans }}</th>
-                                                    <th>{{ 'pratica.data_di_compilazione'|trans }}</th>
+                                                    <th class="text-nowrap">{{ 'pratica.data_di_compilazione'|trans }}</th>
                                                     <th>Azioni</th>
                                                 </tr>
                                                 </thead>
@@ -75,10 +75,10 @@
 
                                                         <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
                                                         <td data-title="{{ 'pratica.noteDiCompilazione'|trans }}">{{ pratica.userCompilationNotes }}</td>
-                                                        <td data-title="{{ 'pratica.protocollo'|trans }}">
+                                                        <td class="text-nowrap" data-title="{{ 'pratica.protocollo'|trans }}">
                                                             {%  if pratica.servizio.isProtocolRequired %}
                                                                 {% if pratica.numeroProtocollo %}
-                                                                  {{ pratica.numeroProtocollo }}
+                                                                  <code>{{ pratica.numeroProtocollo }}</code>
                                                                 {% elseif pratica.statusName != 'STATUS_DRAFT' %}
                                                                   <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
                                                                 {% endif %}
@@ -86,9 +86,11 @@
                                                               <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
                                                             {% endif %}
                                                         </td>
-                                                        <td style="white-space: nowrap"
-                                                            data-title="{{ 'pratica.data_di_compilazione'|trans }}">{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
-                                                        <td data-title="Azioni">
+                                                        <td class="text-nowrap"
+                                                            data-title="{{ 'pratica.data_di_compilazione'|trans }}">
+                                                            {{ pratica.creationTime|date(ocsdc_default_datetime_format) }}
+                                                        </td>
+                                                        <td data-title="Azioni" class="text-nowrap">
                                                             <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"
                                                                class="btn btn-primary btn-xs"><i class="fa fa-eye"
                                                                                                  aria-hidden="true"></i> {{ 'user.dashboard.vai_al_dettaglio'|trans }}

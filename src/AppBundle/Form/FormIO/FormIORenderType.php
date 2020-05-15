@@ -231,11 +231,14 @@ class FormIORenderType extends AbstractType
             if ($component['form_type'] == ChoiceType::class
               && isset($component['form_options']['choices'])
               && !empty($component['form_options']['choices'])) {
+              $value = strtoupper($value);
               if (!in_array($value, $component['form_options']['choices'])){
                 $value = null;
               }
             }
-            $data->set($schemaFlatName, $value);
+            if ($value) {
+              $data->set($schemaFlatName, $value);
+            }
           }
         } catch (\InvalidArgumentException $e) {
           $this->logger->error($e->getMessage());

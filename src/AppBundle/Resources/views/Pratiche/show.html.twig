@@ -15,7 +15,6 @@
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
 
-
 {% endblock %}
 
 {% block main_content %}
@@ -27,9 +26,9 @@
       </div>
 
       <div class="col-lg-8 px-lg-4 py-lg-2">
-        {% if pratica.servizio.finalIndications %}
+        {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
           <div class="alert alert-info">
-            <p>{{ pratica.servizio.finalIndications | raw }}</p>
+            {{ pratica.servizio.finalIndications | raw }}
           </div>
         {% endif %}
         {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
@@ -38,18 +37,20 @@
 
       <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
         <div class="row">
-          <div class="col-12 pb-5" style="border: 1px solid #ccc; background-color: #efefef;">
+          <div class="col-12 pb-5">
             {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
           </div>
 
           <div class="col-12 mt-5">
             {% if (pratica.statusName == 'STATUS_DRAFT' or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and user.id == pratica.user.id %}
               <h4>Azioni</h4>
-              <a class="btn btn-success btn-lg btn-block" style="margin-bottom: 30px" data-action="edit_draft"
-                 href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                <i class="fa fa-arrow-circle-o-right"></i>
-                {{ 'pratica.vai_alla_pratica'|trans }}
-              </a>
+              <p>
+                <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"
+                   href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+                  <i class="fa fa-arrow-circle-o-right"></i>
+                  {{ 'pratica.vai_alla_pratica'|trans }}
+                </a>
+              </p>
             {% endif %}
           </div>
         </div>

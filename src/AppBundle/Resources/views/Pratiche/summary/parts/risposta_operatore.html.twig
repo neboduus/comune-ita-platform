@@ -1,18 +1,16 @@
 {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'risposta_download_operatore' %}
 {% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
-    {% if pratica.rispostaOperatore %}
-        <div class="row">
-            <div class="col-xs-12 col-sm-12">
-                <a class="btn btn-block btn-info"
-                   href="{{ path(download_allegato_path, {'allegato': pratica.rispostaOperatore.id}) }}">
-                    {{ 'operatori.scarica_risposta_firmata'|trans }}</a>
-            </div>
-            <div class="col-xs-12 col-sm-3">
-                <strong>Protocollo risposta</strong></div>
-            <div class="col-xs-12 col-sm-9">
-                {{ pratica.rispostaOperatore.numeroProtocollo }}
-            </div>
-        </div>
-
-    {% endif %}
+  {% if pratica.rispostaOperatore %}
+    <div class="row">
+      <div class="col-8">
+        Protocollo risposta:<br/>
+        <code>{{ pratica.rispostaOperatore.numeroProtocollo }}</code>
+      </div>
+      <div class="col-4">
+        <a class="btn btn-md btn-info"
+           href="{{ path(download_allegato_path, {'allegato': pratica.rispostaOperatore.id}) }}">
+          {{ 'operatori.scarica_risposta_firmata'|trans }}</a>
+      </div>
+    </div>
+  {% endif %}
 {% endif %}

@@ -74,10 +74,10 @@ pratica:
   passo_uno_di_tanti: 'Passo %current% di %total%'
   riprendi_pratica: "Riprendi compilazione"
   empty: 'Non sono presenti pratiche a tuo nome.'
-  protocollo: 'Protocollo pratica'
+  protocollo: 'Protocollo'
   numero: 'Numero richiesta'
   in_attesa_protocollo: 'In attesa di protocollazione'
-  protocollo_non_richiesto: 'Servizio senza protocollazione'
+  protocollo_non_richiesto: '(non necessario)'
   richiedente: 'Richiedente'
   servizio: 'Servizio'
   categoria: 'Categoria'
@@ -155,8 +155,8 @@ pratica:
     stato_1510: "In attesa dell'esito di pagamento"
     stato_1520: "Pagamento avvenuto con successo"
     stato_1530: "Pagamento rifiutato"
-    stato_1900: "In attesa di generazione del pdf"
-    stato_2000: 'Inviata'
+    stato_1900: "Inviata"
+    stato_2000: 'Acquisita'
     stato_3000: 'Protocollata'
     stato_4000: 'Presa in carico'
     stato_5000: 'In elaborazione'
@@ -188,7 +188,17 @@ pratica:
     titolo: 'Aggiungi note'
     sottotitolo: 'Questa descrizione può essere vista solo da te e ti servirà per riconoscere la pratica più agevolmente'
     placeholder: 'Inserisci una descrizione breve'
-  noteDiCompilazione: 'Note di compilazione'
+  noteDiCompilazione: 'Note'
+
+STATUS_CANCELLED: 'Rifiutata'
+STATUS_DRAFT: 'Bozza'
+STATUS_PRE_SUBMIT: 'Inviata'
+STATUS_SUBMITTED: 'Acquisita'
+STATUS_COMPLETE: 'Accettata'
+STATUS_REGISTERED: 'Protocollata'
+STATUS_PENDING: 'In carico'
+STATUS_COMPLETE_WAITALLEGATIOPERATORE: 'Accettata (in attesa di protocollazione del documento di esito)'
+STATUS_CANCELLED_WAITALLEGATIOPERATORE: 'Rifiutata (in attesa di protocollazione del documento di esito)'
 
 documenti:
   i_miei_documenti: "I miei documenti"
@@ -365,15 +375,6 @@ certificato_anagrafico:
 errori:
   allegato:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
-
-STATUS_CANCELLED: 'Rifiutata'
-STATUS_DRAFT: 'Bozza'
-STATUS_SUBMITTED: 'Inviata'
-STATUS_COMPLETE: 'Accettata'
-STATUS_REGISTERED: 'Protocollata'
-STATUS_PENDING: 'In carico'
-STATUS_COMPLETE_WAITALLEGATIOPERATORE: 'Accettata (in attesa di protocollazione del documento di esito)'
-STATUS_CANCELLED_WAITALLEGATIOPERATORE: 'Rifiutata (in attesa di protocollazione del documento di esito)'
 
 user:
   dashboard:

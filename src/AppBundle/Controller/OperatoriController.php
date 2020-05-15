@@ -48,12 +48,12 @@ class OperatoriController extends Controller
 
     $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy(
       [
-        'id' => $praticaRepository->getServizioIdList(Pratica::STATUS_SUBMITTED),
+        'id' => $praticaRepository->getServizioIdList(PraticaRepository::OPERATORI_LOWER_STATE),
       ]
     );
 
     $stati = [];
-    foreach ($praticaRepository->getStateList(Pratica::STATUS_SUBMITTED) as $state) {
+    foreach ($praticaRepository->getStateList(PraticaRepository::OPERATORI_LOWER_STATE) as $state) {
       $state['name'] = $this->get('translator')->trans($state['name']);
       $stati[] = $state;
     }
@@ -136,7 +136,8 @@ class OperatoriController extends Controller
     foreach ($data as $s) {
       $application = Application::fromEntity($s);
       $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
-      $applicationArray['can_autoassign'] = $s->getOperatore() == null;
+      $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
+      $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
       $applicationArray['is_payment_required'] = $s->getServizio()->isPaymentRequired();
       $applicantUser = $s->getUser();
@@ -152,7 +153,12 @@ class OperatoriController extends Controller
       }
 
       if (isset($schema) && $schema->hasComponents() && $s instanceof FormIO){
-        $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray($s->getDematerializedForms()['data'])->toFullFilledFlatArray();
+        $dematerialized = $s->getDematerializedForms();
+        if (isset($dematerialized['data'])){
+          $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray($dematerialized['data'])->toFullFilledFlatArray();
+        }else{
+          $applicationArray['data'] = array_fill_keys($schema->getComponentsColumns('name'), '');
+        }
       }
 
       $result['data'][] = $applicationArray;

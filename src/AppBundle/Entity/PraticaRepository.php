@@ -14,6 +14,8 @@ use Doctrine\ORM\EntityRepository;
  */
 class PraticaRepository extends EntityRepository
 {
+  const OPERATORI_LOWER_STATE = Pratica::STATUS_PRE_SUBMIT;
+
   private $classConstants;
 
   public function findRelatedPraticaForUser(CPSUser $user)
@@ -53,6 +55,7 @@ class PraticaRepository extends EntityRepository
       [
         'user' => $user,
         'status' => [
+          Pratica::STATUS_PRE_SUBMIT,
           Pratica::STATUS_SUBMITTED,
           Pratica::STATUS_REGISTERED,
           Pratica::STATUS_PENDING,
@@ -202,7 +205,7 @@ class PraticaRepository extends EntityRepository
   public function findPraticheByOperatore(OperatoreUser $user, $filters, $limit, $offset)
   {
     return $this->getPraticheByOperatoreQueryBuilder($filters, $user)
-      ->orderBy('pratica.creationTime', 'desc')
+      ->orderBy('pratica.submissionTime', 'desc')
       ->setFirstResult($offset)
       ->setMaxResults($limit)
       ->getQuery()->execute();
@@ -230,7 +233,7 @@ class PraticaRepository extends EntityRepository
         ->setParameter('stato', $filters['stato']);
     }else{
       $qb->andWhere('pratica.status >= :stato')
-        ->setParameter('stato', Pratica::STATUS_SUBMITTED);
+        ->setParameter('stato', self::OPERATORI_LOWER_STATE);
     }
 
     if ($filters['query_field'] && !empty($filters['query'])) {

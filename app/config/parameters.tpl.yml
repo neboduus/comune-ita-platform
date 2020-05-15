@@ -27,8 +27,8 @@ parameters:
         - 10
         - 100
     ocsdc_default_date_format: 'd-m-Y'
-    ocsdc_default_datetime_format: 'd-m-Y H:i'
-    ocsdc_default_time_format: 'H:i'
+    ocsdc_default_datetime_format: 'd-m-Y H:i:s'
+    ocsdc_default_time_format: 'H:i:s'
     ocsdc_scheme: '%env(OCSDC_SCHEME)%'
     ocsdc_host: '%env(OCSDC_HOST)%'
     giscom_password: '%env(GISCOM_PASSWORD)%'
@@ -38,7 +38,7 @@ parameters:
     generate_p7m_thumbnail: true
     gsbinary: gs
     messages_enabled: false
-    ocsdc_default_moment_datetime_format: 'DD-MM-YYYY HH:mm'
+    ocsdc_default_moment_datetime_format: 'DD-MM-YYYY HH:mm:ss'
     mypay_adapter_url: '%env(MYPAY_ADAPTER_URL)%'
     slack_logs_webhook_url: 'http://slack.com'
     ocsdc_slim_datetime_format: 'd/m/y H:i'
