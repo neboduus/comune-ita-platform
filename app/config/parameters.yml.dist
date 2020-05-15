@@ -88,3 +88,35 @@ parameters:
       - png: image/png
 
     hash_validity: 1
+
+    shibbolet_server_varnames:
+      codiceFiscale: "shibb_pat_attribute_codicefiscale"
+      capDomicilio: "shibb_pat_attribute_capdomicilio"
+      capResidenza: "shibb_pat_attribute_capresidenza"
+      cellulare: "shibb_pat_attribute_cellulare"
+      cittaDomicilio: "shibb_pat_attribute_cittadomicilio"
+      cittaResidenza: "shibb_pat_attribute_cittaresidenza"
+      cognome: "shibb_pat_attribute_cognome"
+      dataNascita: "shibb_pat_attribute_datanascita"
+      emailAddress: "shibb_pat_attribute_emailaddress"
+      emailAddressPersonale: "shibb_pat_attribute_emailaddresspersonale"
+      indirizzoDomicilio: "shibb_pat_attribute_indirizzodomicilio"
+      indirizzoResidenza: "shibb_pat_attribute_indirizzoresidenza"
+      luogoNascita: "shibb_pat_attribute_luogonascita"
+      nome: "shibb_pat_attribute_nome"
+      provinciaDomicilio: "shibb_pat_attribute_provinciadomicilio"
+      provinciaNascita: "shibb_pat_attribute_provincianascita"
+      provinciaResidenza: "shibb_pat_attribute_provinciaresidenza"
+      sesso: "shibb_pat_attribute_sesso"
+      statoDomicilio: "shibb_pat_attribute_statodomicilio"
+      statoNascita: "shibb_pat_attribute_statonascita"
+      statoResidenza: "shibb_pat_attribute_statoresidenza"
+      telefono: "shibb_pat_attribute_telefono"
+      titolo: "shibb_pat_attribute_titolo"
+      x509certificate_issuerdn: "shibb_pat_attribute_x509certificate_issuerdn"
+      x509certificate_subjectdn: "shibb_pat_attribute_x509certificate_subjectdn"
+      x509certificate_base64: "shibb_pat_attribute_x509certificate_base64"
+      spidCode: 'shibb_pat_attribute_spid_code'
+      shibSessionId: 'shibb_Shib-Session-ID'
+      shibSessionIndex: 'shibb_Shib-Session-Index
+      shibAuthenticationIstant: 'shibb_Shib-Authentication-Instant''

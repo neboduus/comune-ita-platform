@@ -164,14 +164,14 @@ class DefaultController extends Controller
    *
    * @return Response
    */
-  public function metricsAction()
+  public function metricsAction(Request $request)
   {
     /** @var PraticaRepository $praticaRepository */
     $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
     $metrics = $praticaRepository->getMetrics();
 
+    $request->setRequestFormat('text');
     $response = new Response();
-    $response->headers->set('Content-type', 'text/html; charset=UTF-8');
     return $this->render( '@App/Default/metrics.html.twig', [
       'metrics' => $metrics,
     ]);

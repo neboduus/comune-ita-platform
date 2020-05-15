@@ -122,32 +122,20 @@
 
     {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
 
-    {% if user is defined  and (user.x509certificateIssuerdn or user.x509certificateSubjectdn or user.x509certificateBase64) %}
+    {# @var user \AppBundle\Entity\CPSUser #}
+    {% if user is defined  and user.getSecurityFields %}
       <div class="row" style="padding-top: 40px">
         <div class="col-12">
           <p>{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
         </div>
+        {% for key, value in user.getSecurityFields %}
         <div class="col-md-3">
-          <p><strong>x509certificate_issuerdn</strong></p>
+          <p><strong>{{ key }}</strong></p>
         </div>
         <div class="col-md-9">
-          <p class="text-break"><small>{{ user.x509certificateIssuerdn }}</small></p>
+          <p class="text-break"><small>{{ value }}</small></p>
         </div>
-
-        <div class="col-md-3">
-          <p><strong>x509certificate_subjectdn</strong></p>
-        </div>
-        <div class="col-md-9">
-          <p class="text-break"><small>{{ user.x509certificateSubjectdn }}</small></p>
-        </div>
-
-        <div class="col-md-3">
-          <p><strong>x509certificate_base64</strong></p>
-        </div>
-        <div class="col-md-9">
-          <p class="text-break"><small>{{ user.x509certificateBase64 }}</small></p>
-        </div>
-        </div>
+        {% endfor %}
       </div>
     {% endif %}
 
