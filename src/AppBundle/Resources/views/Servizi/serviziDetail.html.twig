@@ -24,7 +24,14 @@
         {% endif %}
 
         {% if servizio.coverage %}
-          {% set coverage = servizio.coverage|split(',') %}
+          {% if servizio.coverage is not iterable %}
+            {% set coverage = servizio.coverage|split(',') %}
+          {% elseif servizio.coverage[0] is defined %}
+            {% set coverage = servizio.coverage[0]|split(',') %}
+          {% else %}
+            {% set coverage = null %}
+          {% endif %}
+          {% if coverage %}
           <article class="mb-3">
             <h5>Copertura geografica</h5>
             {% for c in coverage %}
@@ -32,6 +39,7 @@
                   class="chip-label">{{ c }}</span></div>
             {% endfor %}
           </article>
+          {% endif %}
         {% endif %}
 
         {% if servizio.who|striptags|trim != '' %}
@@ -81,29 +89,33 @@
           <div class="col-md-12">
             {#todo: usare constant()#}
             {% if servizio.status == 0 %}
-              <div class="alert alert-danger" role="alert"><i class="fa fa-times"
-                                                              aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}
+              <div class="alert alert-danger" role="alert">
+                <i class="fa fa-times" aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}
               </div>
             {% elseif servizio.status == 2 %}
-              <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle"
-                                                               aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}
+              <div class="alert alert-warning" role="alert">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}
               </div>
             {% else %}
               <div>
                 {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
-                  <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
-                     class="btn btn-success btn-lg service-access-button">
-                    {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
-                      <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
-                    {% else %}
-                      <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                    {% endif %}
-                  </a>
+                  <p class="text-center">
+                    <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
+                       class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
+                      {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
+                        <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': ''}) }}</span>
+                      {% else %}
+                        <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                      {% endif %}
+                    </a>
+                  </p>
                 {% else %}
-                  <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
-                     class="btn btn-success btn-lg service-access-button">
-                    <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': servizio.name}) }}</span>
-                  </a>
+                  <p class="text-center">
+                    <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
+                       class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
+                      <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': ''}) }}</span>
+                    </a>
+                  </p>
                 {% endif %}
 
                 {% if servizio.enti|length > 1 %}
@@ -111,9 +123,11 @@
                       :</strong>
                     <ul class="list-unstyled">
                       {% for ente in servizio.enti %}
-                        <li><a href="{{ ente.siteUrl }}">
+                        <li>
+                          <a href="{{ ente.siteUrl }}">
                             <small>{{ ente.name }}</small>
-                          </a></li>
+                          </a>
+                        </li>
                       {% endfor %}
                     </ul>
                   </div>
@@ -125,29 +139,28 @@
         </div>
       </div>
 
-      <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2">
-        <div class="row">
-          <div class="col-12 pb-5"
-               style="border: 1px solid #ccc; background-color: #efefef; border-radius: 2px">
-            <div class="link-list-wrapper mt-5">
-              <ul class="link-list">
-                <li>
-                  <h3
-                    id="heading-senza-link">{% if servizio.topics %}{{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h3>
-                </li>
-
-                {% for s in servizi_area %}
-                  <li>
-                    <a class="list-item {% if s.id == servizio.id %} active{% endif %}"
-                       href="{{ path('servizi_show', {'slug': s.slug}) }}">{{ s.name }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
+      {% if servizi_area|length > 0 and servizio.topics %}
+      <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
+        <div class="border-left border-light pl-5 pb-4">
+        <h6>{% if servizio.topics %}Altri servizi disponibili in {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h6>
+        <div class="link-list-wrapper">
+          <ul class="link-list">
+            {% for s in servizi_area %}
+              <li>
+                <a class="list-item icon-left pr-0{% if s.id == servizio.id %} active{% endif %}"
+                   href="{{ path('servizi_show', {'slug': s.slug}) }}">
+                  <svg class="icon icon-primary">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
+                  </svg>
+                  <span style="line-height: 1.7">{{ s.name }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
         </div>
       </div>
-
+      {% endif %}
     </div>
   </section>
 

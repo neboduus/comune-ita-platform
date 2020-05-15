@@ -22,7 +22,7 @@ class GeneralDataType extends AbstractType
     $statuses = [
       'Bozza' => Servizio::STATUS_CANCELLED,
       'Pubblicato' => Servizio::STATUS_AVAILABLE,
-      'Sospeso' => Servizio::STATUS_SUSPENDED,
+      'Non attivo' => Servizio::STATUS_SUSPENDED,
       'Privato' => Servizio::STATUS_PRIVATE
     ];
 

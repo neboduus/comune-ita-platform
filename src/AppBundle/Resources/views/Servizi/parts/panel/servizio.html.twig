@@ -5,7 +5,7 @@
 {% endif %}
 
 <article class="card-wrapper card-space">
-    <div class="card card-bg card-big rounded shadow">
+    <div class="card card-bg rounded shadow">
         <div class="card-body">
             <div class="category-top">
               {% if servizio.topics %}
@@ -14,7 +14,7 @@
             </div>
             <h5 class="card-title">{{ servizio.name }}</h5>
             <p class="card-text">{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit)|striptags ~ '...' : servizio.description|striptags  }}</p>
-            <a class="read-more" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
+            <a class="read-more stretched-link text-decoration-none" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
                 <span class="text">Leggi di più</span>
                 <svg class="icon">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-right"></use>
