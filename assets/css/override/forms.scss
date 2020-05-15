@@ -16,18 +16,27 @@
       }
     }
   }
+}
 
-  input, select, textarea , .formio-choices .form-control{
-    background: #fafafa;
-  }
+input[type='text'],
+input[type='number'],
+input[type='password'],
+input[type='checkbox'],
+input[type='radio'],
+input[type='email'],
+input[type='date'],
+select,
+textarea,
+.bootstrap-select {
+  background: #fafafa;
+}
 
-  .form-control:disabled, .form-control[readonly]{
-    background-color: #e6e9f2;
-  }
+.form-control:disabled, .form-control[readonly]{
+  background-color: #e6e9f2;
+}
 
-  input.form-control::placeholder {
-    color: #ccc;
-  }
+input.form-control::placeholder {
+  color: #ccc;
 }
 
 .form-group {

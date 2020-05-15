@@ -397,7 +397,7 @@ user:
 
   profile:
     title: 'Profilo utente'
-    info_da_sdc: 'Informazioni utente'
+    info_da_sdc: 'Informazioni da sistema di autenticazione'
     dati_da_cps_guida: 'Queste informazioni sono state ricavate dalla carta provinciale dei servizi con cui ti sei autenticato e non possono essere modificate in questa applicazione'
     nome: 'Nome'
     cognome: 'Cognome'
@@ -407,7 +407,7 @@ user:
     email: 'Indirizzo email (*)'
     data_nascita: 'Data di nascita'
     luogo_nascita: 'Luogo di nascita'
-    contatti_per_sdc: 'Contatti per la Stanza del cittadino'
+    contatti_per_sdc: 'Contatti'
     contatti_per_sdc_guida: 'Il sistema utilizzerà questi dati per precompilare le tue pratiche ed inviarti notifiche e segnalazioni.'
     cellulare: 'Numero di telefono cellulare (*)'
     indirizzo: 'Indirizzo'
