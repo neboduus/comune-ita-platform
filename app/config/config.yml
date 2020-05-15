@@ -102,6 +102,7 @@ swiftmailer:
     encryption: "%mailer_encription%"
     spool:     { type: memory }
 
+
 # LoginGate Configuration
 login_gate:
     storages: ['orm'] # Attempts storages. Available storages: ['orm', 'session', 'mongodb']

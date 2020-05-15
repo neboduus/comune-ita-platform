@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Logging\LogConstants;
@@ -40,14 +41,34 @@ class PrintController extends Controller
   public function printPraticaAction(Request $request, Pratica $pratica)
   {
     $user = $pratica->getUser();
-
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
+
+    $attachments = $pratica->getAllegati();
+    $preparedAttachments = [];
+    if ( $attachments->count() > 0) {
+      /** @var Allegato $a */
+      foreach ($attachments as $a) {
+        $temp = [];
+        $temp['id'] = $a->getId();
+        $temp['local_name'] = $a->getFilename();
+
+        $originalFilenameParts = explode('-',  $a->getOriginalFilename());
+        $userFilename = implode('-', array_slice($originalFilenameParts, 0, -5)) . '.' . $a->getFile()->getExtension();
+        $temp['original_filename'] = $userFilename;
+        $temp['hash'] = hash_file('md5', $a->getFile()->getPathname());
+
+        $preparedAttachments[]=$temp;
+
+      }
+
+    }
 
     return [
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'form' => $form->createView(),
       'pratica' => $pratica,
-      'user' => $user
+      'user' => $user,
+      'attachments' => $preparedAttachments
     ];
 
   }

@@ -33,7 +33,7 @@ class Integrazione extends Allegato
   public function __construct()
   {
     parent::__construct();
-    $this->type = 'integrazione';
+    $this->type = self::TYPE_DEFAULT;
     $this->numeriProtocollo = new ArrayCollection();
   }
 

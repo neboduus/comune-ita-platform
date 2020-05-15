@@ -30,7 +30,7 @@ class AllegatoOperatore extends Allegato
     public function __construct()
     {
         parent::__construct();
-        $this->type = 'allegato_operatore';
+        $this->type = self::TYPE_DEFAULT;
         $this->pratiche3 = new ArrayCollection();
     }
 
@@ -64,6 +64,14 @@ class AllegatoOperatore extends Allegato
             $this->pratiche3->removeElement($pratica);
         }
         return $this;
+    }
+
+    /**
+   * @return string
+   */
+    public function getType(): string
+    {
+      return self::TYPE_DEFAULT;
     }
 
 }

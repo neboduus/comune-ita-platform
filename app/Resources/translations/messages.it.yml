@@ -538,6 +538,7 @@ email:
         complete.waitallegatioperatore: "la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi file allegati."
         pending: "hai preso in carico la domanda dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
         draft: ''
+
 messaggi:
   messaggio: 'Messaggio'
   invia: 'Invia'
@@ -1594,6 +1595,12 @@ protocollo:
     smistamento: 'Smistamento'
     classifica: 'Classifica'
     fascicolo: 'Fascicolo'
+  pec:
+    email:
+      abstract:
+        send_applcation: 'Acquisita nuova pratica per il servizio: %name%'
+        send_integration: 'Acquisita integrazione per la pratica: %name%'
+        send_result: 'Acquisita risposta per la pratica: %name%'
 
 gateway:
   bollo:

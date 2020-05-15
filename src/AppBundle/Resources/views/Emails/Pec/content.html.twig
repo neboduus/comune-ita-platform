@@ -1,0 +1,34 @@
+{% extends 'AppBundle:Emails:base.html.twig' %}
+
+{% block email_content %}
+  <table align='center' bgcolor='#fff' border='0' cellpadding='0' cellspacing='0' id='backgroundTable'
+         style='background: #fff;'>
+    <tr>
+      <td style="padding: 20px">
+        {% if type == 'send_applcation' %}
+          <p>{{ 'protocollo.pec.email.abstract.send_applcation'|trans({'%name%' : pratica.servizio.name})|striptags }}</p>
+        {% elseif type == 'send_integration' %}
+          <p>{{ 'protocollo.pec.email.abstract.send_integration'|trans({'%name%' : pratica.id})|striptags }}</p>
+        {% else %}
+          <p>{{ 'protocollo.pec.email.abstract.send_result'|trans({'%name%' : pratica.id})|striptags }}</p>
+        {% endif %}
+
+        <table width="100%" border='0' cellpadding='10' cellspacing='10' style="width: 100% !important;">
+          <tr>
+            <td><strong>Id pratica:</strong></td>
+            <td>{{ pratica.id }}</td>
+          </tr>
+          <tr>
+            <td><strong>Data di presentazione:</strong></td>
+            <td>{{ pratica.submissionTime|date(ocsdc_default_datetime_format) }}</td>
+          </tr>
+          <tr>
+            <td><strong>Presentante:</strong></td>
+            <td>{{ pratica.user.getFullName }}</td>
+          </tr>
+        </table>
+        </p>
+      </td>
+    </tr>
+  </table>
+{% endblock %}

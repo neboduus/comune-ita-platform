@@ -1,0 +1,10 @@
+{% if type == 'send_applcation' %}
+{{ 'protocollo.pec.email.abstract.send_applcation'|trans({'%name%' : pratica.servizio.name})|striptags }}
+{% elseif type == 'send_integration' %}
+{{ 'protocollo.pec.email.abstract.send_integration'|trans({'%name%' : pratica.id})|striptags }}
+{% else %}
+{{ 'protocollo.pec.email.abstract.send_result'|trans({'%name%' : pratica.id})|striptags }}
+{% endif %}
+Id pratica: {{ pratica.id }}</td>
+Data di presentazione: {{ pratica.submissionTime|date(ocsdc_default_date_format) }}
+Presentante: {{ pratica.user.getFullName }}

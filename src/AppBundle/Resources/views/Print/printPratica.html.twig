@@ -66,15 +66,14 @@
         {% endif %}
       </div>
       <div class="col-4">
+        <div class="callout">
+          <div class="callout-title">Numero richiesta</div>
+          <p class="text-sans-serif">{{ pratica.id }}</p>
+        </div>
         {% if pratica.numeroProtocollo %}
           <div class="callout danger">
             <div class="callout-title">Numero protocollo</div>
-            <p class="text-danger">{{ pratica.numeroProtocollo }}</p>
-          </div>
-        {% elseif not pratica.servizio.isProtocolRequired %}
-          <div class="callout danger">
-            <div class="callout-title">Numero richiesta</div>
-            <p class="text-danger">{{ pratica.id }}</p>
+            <p class="text-danger text-break text-sans-serif">{{ pratica.numeroProtocollo }}</p>
           </div>
         {% endif %}
       </div>
@@ -88,6 +87,39 @@
     </div>
 
     <div class="row page-break-before"></div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class=" card-header bg-default"> {{ 'pratica.dettaglio.allegati'|trans }}</div>
+      </div>
+    </div>
+
+    {% if attachments|length > 0 %}
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <p><strong>Nome del file</strong></p>
+          </div>
+          <div class="col-6">
+            <p><strong>Hash del file (md5)</strong></p>
+          </div>
+          {% for a in attachments %}
+            <div class="col-6">
+              <p>{{ a.original_filename }}</p>
+            </div>
+            <div class="col-6">
+              <p>{{ a.hash }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="card-body">
+        <p><em>{{ 'pratica.nessun_allegato'|trans }}</em></p>
+      </div>
+    {% endif %}
+
+
     {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
 
     {% if user is defined  and (user.x509certificateIssuerdn or user.x509certificateSubjectdn or user.x509certificateBase64) %}

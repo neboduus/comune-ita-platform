@@ -25,7 +25,9 @@ class DirectoryNamerService implements DirectoryNamerInterface
   {
     if ($object instanceof Allegato) {
       $owner = $object->getOwner();
-      if ($owner instanceof User && ($object->getType() == 'modulo_compilato' || $object->getType() == 'allegato_scia')) {
+      if ($owner instanceof User && ($object->getType() == 'modulo_compilato' ||
+          $object->getType() == 'allegato_operatore' || $object->getType() == 'risposta_operatore' ||
+          $object->getType() == 'allegato_scia' || $object->getType() == 'richiesta_integrazione' || $object->getType() == 'integrazione')) {
         return $object->getOwner()->getId();
       } else {
         $fileName = $mapping->getFileName($object);

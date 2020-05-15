@@ -38,10 +38,13 @@ class MailerService
      */
     private $doctrine;
 
-    /**
-     * MailerService constructor.
-     * @param \Swift_Mailer $mailer
-     */
+  /**
+   * MailerService constructor.
+   * @param \Swift_Mailer $mailer
+   * @param TranslatorInterface $translator
+   * @param TwigEngine $templating
+   * @param RegistryInterface $doctrine
+   */
     public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine)
     {
         $this->mailer = $mailer;
