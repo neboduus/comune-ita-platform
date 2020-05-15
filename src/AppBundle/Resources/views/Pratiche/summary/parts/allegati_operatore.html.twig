@@ -1,28 +1,29 @@
-{%  if user is defined and not user is null %}
+{% if user is defined and not user is null %}
   {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
-  {% if pratica.statusName == 'STATUS_COMPLETE' %}
+  {% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
     <div class="row last">
       <div class="col-xs-12 col-sm-12">
-        {% if pratica.esito %}
-          <p>{{ 'pratica.dettaglio.esito.accettata'|trans|raw }}</p>
-        {% else %}
-          <p>{{ 'pratica.dettaglio.esito.rifiutata'|trans|raw }}</p>
-        {% endif %}
+        <div class="alert alert-{% if pratica.esito %}success{% else %}danger{% endif %}">
+          {% if pratica.esito %}
+            <h5>{{ 'pratica.dettaglio.esito.accettata'|trans|raw }}</h5>
+          {% else %}
+            <h5>{{ 'pratica.dettaglio.esito.rifiutata'|trans|raw }}</h5>
+          {% endif %}
 
-        {% if pratica.motivazioneEsito %}
-          <p>{{ pratica.motivazioneEsito }}</p>
-        {% endif %}
-
-        {% if pratica.allegatiOperatore|length > 0 %}
-          <div id="no-more-tables">
-            <h5>{{ 'pratica.dettaglio.modulocompilato'|trans }}</h5>
-            {% for allegato in pratica.allegatiOperatore %}
-              <span>{{ allegato.description }}</span>
-              <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-success btn-block btn-lg">{{ 'operatori.scarica'|trans }}</a>
-            {% endfor %}
-          </div>
-        {% endif %}
+          {% if pratica.motivazioneEsito %}
+            <p class="m-0">{{ pratica.motivazioneEsito }}</p>
+          {% endif %}
+        </div>
       </div>
+      {% if pratica.allegatiOperatore|length > 0 %}
+        {% for allegato in pratica.allegatiOperatore %}
+          <div class="col-8">{{ allegato.description }}</div>
+          <div class="col-4">
+            <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}"
+               class="btn btn-success btn-md">{{ 'operatori.scarica'|trans }}</a>
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
   {% endif %}
   {{ include('AppBundle:Pratiche/summary/parts:risposta_operatore.html.twig', {'pratica':pratica, 'user': user}) }}

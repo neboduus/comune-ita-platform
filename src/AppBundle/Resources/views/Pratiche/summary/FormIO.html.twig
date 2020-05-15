@@ -15,20 +15,12 @@
     {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}
 
-
   {% if (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length == 0) or ( pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) %}
-    {% if pratica.dematerializedForms.data is defined and formserver_url is defined and pratica.status == 1000 %}
-      <div class="row">
-        <div class="col-sm-12">
-          <strong>{{ 'pratica.dettaglio.compilazione'|trans }}</strong>
-        </div>
-        <div class="col-sm-12 p-3">
-          <div id="formio_summary" class="formio-front formio-summary"
-               data-formserver_url="{{ formserver_url }}"
-               data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
-               data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
-          </div>
-        </div>
+    {% if formserver_url is defined and pratica.status == 1000 %}
+      <div id="formio_summary" class="formio-front formio-summary"
+           data-formserver_url="{{ formserver_url }}"
+           data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+           data-submission="{% if pratica.dematerializedForms.data is defined %}{{ pratica.dematerializedForms.data | json_encode }}{% else %}[]{% endif %}">
       </div>
       <script type='text/javascript'>
         window.onload = function () {

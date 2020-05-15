@@ -8,6 +8,7 @@ use AppBundle\Entity\DematerializedFormAllegatiContainer;
 use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use AppBundle\Form\Base\MessageType;
@@ -43,7 +44,9 @@ class PraticheController extends Controller
    */
   public function indexAction()
   {
+    /** @var CPSUser $user */
     $user = $this->getUser();
+    /** @var PraticaRepository $repo */
     $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $pratiche = $repo->findBy(
       array('user' => $user),

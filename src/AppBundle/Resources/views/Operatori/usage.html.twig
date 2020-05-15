@@ -1,31 +1,26 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block stylesheets %}
-    {{ parent() }}
+  {{ parent() }}
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
+  {{ parent() }}
 {% endblock %}
 
 {% block main_content %}
 
-    <section id="intro" class="container px-4 my-4">
-        <div class="row">
-            <div class="col-lg-6 px-lg-4 py-lg-2">
-                <h3>{{ 'operatori.usage.service_title'|trans }}</h3>
-                <p><span class="badge">{{ servizi }}</span></p>
-            </div>
-            <div class="col-lg-6 px-lg-4 py-lg-2">
-                <h3>{{ 'operatori.usage.pratiche_title'|trans }}</h3>
-                {% for year, count in pratiche %}
-                    <p>
-                        <strong>{{ year }}:</strong> <span class="badge">{{ count }}</span>
-                    </p>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-
+  <section id="intro" class="container px-4 my-4">
+    <table class="table">
+      <tr>
+        <th>{{ 'operatori.usage.service_title'|trans }}</th>
+        <td>{{ servizi }}</td>
+      </tr>
+      {% for year, count in pratiche %}
+        <th>{{ 'operatori.usage.pratiche_title'|trans }} {{ year }}</th>
+        <td>{{ count }}</td>
+      {% endfor %}
+    </table>
+  </section>
 
 {% endblock %}

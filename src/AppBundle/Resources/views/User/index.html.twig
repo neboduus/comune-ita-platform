@@ -80,14 +80,14 @@
                                 class="small">{{ 'user.dashboard.vedi_tutte'|trans }}</a>{% endif %}</h3>
                         {% if pratiche|length > 0 %}
                             <div id="no-more-tables">
-                                <table class="table table-bordered table-striped table-condensed cf">
+                                <table class="table table-striped table-condensed cf">
                                     <thead class="cf">
                                     <tr>
-                                        <td>{{ 'pratica.servizio'|trans }}</td>
-                                        <td>{{ 'pratica.protocollo'|trans }}</td>
-                                        <td>{{ 'pratica.data_di_compilazione'|trans }}</td>
-                                        <td>{{ 'pratica.stato'|trans }}</td>
-                                        <td></td>
+                                        <th>{{ 'pratica.servizio'|trans }}</th>
+                                        <th>{{ 'pratica.protocollo'|trans }}</th>
+                                        <th class="text-nowrap">{{ 'pratica.data_di_compilazione'|trans }}</th>
+                                        <th>{{ 'pratica.stato'|trans }}</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -97,10 +97,10 @@
                                             data-user="{{ pratica.user.id }}"
                                             data-status="{{ pratica.status }}">
                                             <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
-                                            <td data-title="{{ 'pratica.protocollo'|trans }}">
+                                            <td class="text-nowrap" data-title="{{ 'pratica.protocollo'|trans }}">
                                               {%  if pratica.servizio.isProtocolRequired %}
                                                 {% if pratica.numeroProtocollo %}
-                                                  {{ pratica.numeroProtocollo }}
+                                                  <code>{{ pratica.numeroProtocollo }}</code>
                                                 {% elseif pratica.statusName != 'STATUS_DRAFT' %}
                                                   <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
                                                 {% endif %}
@@ -108,7 +108,7 @@
                                                 <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
                                               {% endif %}
                                             </td>
-                                            <td data-title="{{ 'pratica.data_di_compilazione'|trans }}">{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
+                                            <td class="text-nowrap" data-title="{{ 'pratica.data_di_compilazione'|trans }}">{{ pratica.creationTime|date(ocsdc_default_datetime_format) }}</td>
                                             <td data-title="{{ 'pratica.stato'|trans }}">{{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}</td>
                                             <td data-title="">
                                                 <a href="{{ path('pratiche_show', {'pratica': pratica}) }}"

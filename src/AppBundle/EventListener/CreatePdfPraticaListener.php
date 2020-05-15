@@ -6,6 +6,7 @@ use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\Pratica;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
+use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\Services\ModuloPdfBuilderService;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Psr\Log\LoggerInterface;
@@ -34,7 +35,11 @@ class CreatePdfPraticaListener
     $pratica = $event->getPratica();
 
     if ( $event->getNewStateIdentifier() == Pratica::STATUS_PRE_SUBMIT ) {
-      $this->pdfBuilder->createForPraticaAsync($pratica);
+      try {
+        $this->pdfBuilder->createForPraticaAsync($pratica);
+      }catch (AlreadyScheduledException $e){
+        $this->logger->error('Pdf generation for is already scheduled', ['pratica' => $pratica->getId()]);
+      }
     }
   }
 }

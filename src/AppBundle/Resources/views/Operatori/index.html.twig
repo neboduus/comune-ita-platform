@@ -4,7 +4,11 @@
   {{ parent() }}
   <link rel="stylesheet" type="text/css"
         href="{{ asset('bundles/app/css/jquery-ui.min.css') }}"/>
-  <style>.ui-tooltip {font-size: .8em;}</style>
+  <style>
+    .ui-tooltip {font-size: .8em;}
+    .filter-query .bootstrap-select{flex-grow: 2}
+    .filter-query .input-group-append{flex-grow: 1}
+  </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -211,7 +215,7 @@
       <th></th>
       <th>Richiedente</th>
       <th>Codice fiscale</th>
-      <th>Data</th>
+      <th>Data di inserimento</th>
       {{if !meta.parameter.stato}}
       <th>Stato</th>
       {{/if}}
@@ -251,9 +255,9 @@
       </td>
       <td>{{:user_name}}</td>
       <td>{{:codice_fiscale}}</td>
-      <td class="text-nowrap">{{:~formatDate(creation_time,'DD/MM/YYYY HH:mm')}}</td>
+      <td class="text-nowrap">{{:~formatDate(submission_time,"{% endverbatim %}{{ocsdc_default_moment_datetime_format}}{% verbatim %}")}}</td>
       {{if !~metadata.parameter.stato}}
-      <td class="text-nowrap">{{:~formatStatus(status)}}</td>
+      <td>{{:~formatStatus(status)}}</td>
       {{/if}}
       {{if ~metadata.parameter.servizio}}
         {{if ~metadata.schema}}
@@ -320,8 +324,8 @@
     <div class="row my-4 px-lg-4 py-lg-2" id="filters">
       {% if servizi|length %}
         <div class="col-lg-3">
-            <div class="bootstrap-select-wrapper">
-            <label for="filter-servizio">Filtra per servizio</label>
+          <div class="bootstrap-select-wrapper filter-servizio">
+          <label for="filter-servizio">Filtra per servizio</label>
             <select id="filter-servizio" class="form-control filter-select">
               <option value="">Tutti</option>
               {% for servizio in servizi %}
@@ -333,8 +337,8 @@
       {% endif %}
       {% if stati|length %}
         <div class="col-lg-2">
-            <div class="bootstrap-select-wrapper">
-            <label for="filter-stato">Filtra per stato</label>
+          <div class="bootstrap-select-wrapper filter-stato">
+          <label for="filter-stato">Filtra per stato</label>
             <select id="filter-stato" class="form-control filter-select">
               <option value="">Tutti</option>
               {% for stato in stati %}
@@ -345,8 +349,8 @@
         </div>
       {% endif %}
       <div class="col-lg-3">
-          <div class="bootstrap-select-wrapper">
-          <label for="filter-workflow">Filtra per lavorazione</label>
+        <div class="bootstrap-select-wrapper filter-workflow">
+        <label for="filter-workflow">Filtra per lavorazione</label>
           <select id="filter-workflow" class="form-control filter-select">
             <option value="">Tutte</option>
             <option value="owned">In carico a {{ user.fullName }}</option>
@@ -355,8 +359,8 @@
           </div>
       </div>
       <div class="col-lg-4">
-        <div class="bootstrap-select-wrapper">
-        <label for="filter-stato">Cerca per</label>
+        <div class="bootstrap-select-wrapper filter-query">
+          <label for="filter-query-by">Cerca per</label>
           <div class="input-group">
             <select class="form-control" id="filter-query-by" name="query-by" style="max-width: 200px;">
               <option value="2">Nome utente</option>

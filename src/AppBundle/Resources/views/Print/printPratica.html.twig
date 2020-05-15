@@ -60,7 +60,7 @@
           <div class="row mt-4 mb-4">
             <div class="col-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
             <div class="col-8">
-              {{ pratica.creationTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.creationTime|date(ocsdc_default_time_format) }}
+              {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}
             </div>
           </div>
         {% endif %}

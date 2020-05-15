@@ -12,12 +12,12 @@
                   {{ 'nav.operatori.panello_controllo'|trans }}
                 </a>
               </li>
-              <li class="nav-item {% if 'parametri-protocollo' in app.request.pathInfo %} active {% endif %}">
+              {#<li class="nav-item {% if 'parametri-protocollo' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link"
                    href="{{ path('operatori_impostazioni_protocollo_list') }}">
                   {{ 'nav.operatori.protocollo'|trans }}
                 </a>
-              </li>
+              </li>#}
               <li class="nav-item {% if 'usage' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link" href="{{ path('operatori_usage') }}">
                   {{ 'nav.operatori.usage'|trans }}

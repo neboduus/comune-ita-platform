@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row last">
 
   {# Protocollo / Ricevuta e data di presentazione della pratica #}
   <div class="col-12">
@@ -7,7 +7,7 @@
         <div class="col-sm-4"><strong>{{ 'pratica.protocollo'|trans }}</strong></div>
         <div class="col-sm-8 d-inline-flex">
           {% if pratica.numeroProtocollo %}
-            {{ pratica.numeroProtocollo }}
+            <code>{{ pratica.numeroProtocollo }}</code>
           {% else %}
             <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
           {% endif %}
@@ -17,14 +17,14 @@
       <div class="row">
         <div class="col-sm-4"><strong>{{ 'pratica.numero'|trans }}</strong></div>
         <div class="col-sm-8 d-inline-flex">
-          <em>{{ pratica.id }}</em>
+          <code>{{ pratica.id }}</code>
         </div>
       </div>
     {% endif %}
     <div class="row" style="background-color: #fff">
       <div class="col-sm-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
       <div class="col-sm-8">
-        {{ pratica.creationTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.creationTime|date(ocsdc_default_time_format) }}
+        {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}
       </div>
     </div>
   </div>
@@ -37,16 +37,22 @@
       {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
     </div>
   {% else %}
-
+  <div class="col-12 my-2">
     {# In attesa di generazione del pdf #}
     {% if pratica.status == 1900 %}
       {% if pratica.servizio.isProtocolRequired %}
-        <a href="#" class="btn btn-block btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_compilato'|trans }}</a>
-        {{ 'operatori.attesa_modulo_compilato_info'|trans|raw }}
+        <p class="text-center m-0">
+          <a href="#" class="btn btn-lg btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_compilato'|trans }}</a>
+        </p>
+        <p class="text-center m-0">
+          {{ 'operatori.attesa_modulo_compilato_info'|trans|raw }}
+        </p>
       {% else %}
-        <a href="#" class="btn btn-block btn-secondary my-2 disabled">
-          <i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_ricevuta'|trans }}
-        </a>
+        <p class="text-center m-0">
+          <a href="#" class="btn btn-lg btn-secondary my-2 disabled">
+            <i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_ricevuta'|trans }}
+          </a>
+        </p>
         <p class="my-2">
           {{ 'operatori.attesa_ricevuta_info'|trans|raw }}
           {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
@@ -60,7 +66,9 @@
     {% elseif pratica.status == 2000  %}
 
       {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
-        <a href="#" class="btn btn-block btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_protocollato'|trans }}</a>
+        <p class="text-center m-0">
+          <a href="#" class="btn btn-lg btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_protocollato'|trans }}</a>
+        </p>
         <p class="my-2">
           {{ 'operatori.attesa_protocollo_info'|trans|raw }}
           {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
@@ -72,7 +80,7 @@
       {% endif %}
 
     {% endif %}
-
+  </div>
   {% endif %}
 
 </div>
