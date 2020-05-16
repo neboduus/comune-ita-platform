@@ -204,7 +204,7 @@ class MailerService
         $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
         $message = \Swift_Message::newInstance()
-            ->setSubject($this->translator->trans('pratica.email.status_change.subject'))
+            ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
             ->setFrom($fromAddress, $fromName)
             ->setTo($toEmail, $toName)
             ->setBody(
@@ -245,7 +245,7 @@ class MailerService
         $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
         $message = \Swift_Message::newInstance()
-            ->setSubject($this->translator->trans('pratica.email.status_change.subject'))
+            ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
             ->setFrom($fromAddress, $fromName)
             ->setTo($toEmail, $toName)
             ->setBody(
