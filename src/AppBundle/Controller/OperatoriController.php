@@ -334,6 +334,7 @@ class OperatoriController extends Controller
     $praticheRecenti = $this->getDoctrine()->getRepository('AppBundle:Pratica')->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
 
     $praticaCorrelata = null;
+    $fiscalCode = '';
     if ($pratica->getType() == Pratica::TYPE_FORMIO) {
       /** @var Schema $schema */
       $schema = $this->container->get('formio.factory')->createFromFormId($pratica->getServizio()->getFormIoId());

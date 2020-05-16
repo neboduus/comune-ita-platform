@@ -8,16 +8,16 @@
         <p>
           {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
         </p>
-        <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
-        {% if pratica.getEsito() and not pratica.getEsito() is null %}
-          {% if not pratica.getMotivazioneEsito() is empty %}
-            <p>
-              Con la seguente motivazione:<br>
-              {{ pratica.getMotivazioneEsito() }}
-            </p>
-          {% endif %}
+        <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
+
+        {% if not pratica.getMotivazioneEsito() is empty and not pratica.getEsito() is null %}
+          <p>
+            Con la seguente motivazione:<br>
+            {{ pratica.getMotivazioneEsito() }}
+          </p>
         {% endif %}
-        {% if not pratica.servizio.getEmailText()  is empty %}
+
+        {% if not pratica.servizio.getEmailText()  is empty and pratica.getEsito() and not pratica.getEsito() is null %}
           {{ pratica.servizio.getEmailText()|raw }}
         {% endif %}
         <p>
