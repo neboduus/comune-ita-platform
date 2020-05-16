@@ -64,7 +64,7 @@ pratica:
   guida_utente: 'Guida'
   email:
     status_change:
-      subject: 'La pratica è stata aggiornata'
+      subject: 'La richiesta n. %id% è stata aggiornata'
   iter: 'Iter della pratica'
   tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
@@ -522,30 +522,30 @@ email:
     link_download_txt: 'Per ulteriori dettagli visiti il seguente link: '
     user:
       status:
-        submitted: "le comunichiamo che la sua pratica per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi, il numero di richiesta è <strong>%pratica_id%</strong>."
-        registered: "le comunichiamo che la sua pratica per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della pratica."
-        cancelled: 'le comunichiamo che la sua pratica per il servizio <strong>%servizio%</strong> è stata rifiutata.'
-        complete: 'le comunichiamo che la sua pratica per il servizio <strong>%servizio%</strong> è stata approvata.'
-        complete.waitallegatioperatore: 'le comunichiamo che la sua domanda per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi file allegati.'
-        pending: "le comunichiamo che la sua pratica per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
+        submitted: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>."
+        registered: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta."
+        cancelled: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata.'
+        complete: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata.'
+        complete.waitallegatioperatore: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi documenti allegati.'
+        pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         draft: ''
-        draft.for.integration: "Le comunichiamo che è stata effettuata una richiesta di integrazione ai dati della sua domanda per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
-        submitted.after.integration: "le comunichiamo che l'integrazione alla sua pratica per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
-        registered.after.integration: "le comunichiamo che l'integrazione alla sua pratica per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della pratica."
-        pending.after.integration: "le comunichiamo che l'integrazione alla sua pratica per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
+        draft.for.integration: "le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
+        submitted.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+        registered.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della richiesta."
+        pending.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         payment:
-          pending: "le comunichiamo che la sua pratica per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
-          success: "le comunichiamo che il pagamento per la sua pratica per il servizio <strong>%servizio%</strong> è avvenuto con successo"
-          error: "le comunichiamo che c'è stato un errore durante il pagamento per la sua pratica per il servizio <strong>%servizio%</strong>"
+          pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
+          success: "le comunichiamo che il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong> è avvenuto con successo"
+          error: "le comunichiamo che c'è stato un errore durante il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong>"
           outcome:
-            pending: "le comunichiamo che la sua pratica per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento"
+            pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento"
     operatore:
       status:
-        submitted: "la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
-        registered: "la pratica dell'utente <strong>%user_pratica%</strong> dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata. Il numero di protocollo è <strong>%protocollo%</strong>."
+        submitted: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+        registered: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata. Il numero di protocollo è <strong>%protocollo%</strong>."
         cancelled: "hai rifiutato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
         complete: "hai accettato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
-        complete.waitallegatioperatore: "la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi file allegati."
+        complete.waitallegatioperatore: "la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi documenti allegati."
         pending: "hai preso in carico la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
         draft: ''
 
