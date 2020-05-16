@@ -18,6 +18,11 @@
   }
 }
 
+label.required:after {
+  content: " *";
+  color: $danger;
+}
+
 input[type='text'],
 input[type='number'],
 input[type='password'],
