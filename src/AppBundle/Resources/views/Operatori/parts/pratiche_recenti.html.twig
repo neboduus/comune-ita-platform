@@ -4,10 +4,10 @@
       {% for pratica_recente  in pratiche_recenti %}
         <li>
           <a
-            {% if pratica_recente.operatore  != user %}
-              class="list-item disabled" href="#"
-            {% else %}
+            {% if pratica_recente.servizio.id in user.serviziAbilitati %}
               class="list-item" href="{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}"
+            {% else %}
+              class="list-item disabled" href="#"
             {% endif %}>
             <span>
               <svg class="icon icon-sm icon-light">

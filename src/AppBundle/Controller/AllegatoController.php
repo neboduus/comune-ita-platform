@@ -286,7 +286,8 @@ class AllegatoController extends Controller
     $becauseOfPratiche = [];
 
     foreach ($allegato->getPratiche() as $pratica) {
-      if ($pratica->getOperatore() === $user) {
+      $isOperatoreEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
+      if ($pratica->getOperatore() === $user || $isOperatoreEnabled) {
         $becauseOfPratiche[] = $pratica->getId();
         $isOperatoreAmongstTheAllowedOnes = true;
       }
