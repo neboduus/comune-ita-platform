@@ -15,6 +15,16 @@
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
 
+  {% if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo ) %}
+  <script>
+    $(document).ready(function() {
+      setInterval(function() {
+        window.location.reload();
+      }, 60000);
+    });
+  </script>
+  {% endif %}
+
 {% endblock %}
 
 {% block main_content %}
