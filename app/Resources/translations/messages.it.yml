@@ -35,7 +35,7 @@ nav:
   documenti: 'I miei documenti'
   informativa_privacy: 'Informativa per il trattamento dati personali'
   operatori:
-    panello_controllo: "Pannello di controllo"
+    panello_controllo: "Elenco pratiche"
     lista_operatori: 'Gestisci operatori comune'
     accesso_operatori: 'Accesso operatori'
     protocollo: 'Configurazione di Protocollo'

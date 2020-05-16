@@ -33,10 +33,10 @@
     {% for allegato in pratica.allegati %}
       <div class="row align-items-center text-center my-3">
         <div class="col-2">
-          {% if allegato.file.extension == 'pdf' %}
+          {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
             <i class="fa fa-2x fa-file-pdf-o"></i>
           {% else %}
-            <img class="not-found img-fluid" src="{{ path('allegati_download_operatore', {'allegato': allegato}) }}">
+            <i class="fa fa-2x fa-file-o"></i>
           {% endif %}
         </div>
         <div class="col-6 text-truncate">

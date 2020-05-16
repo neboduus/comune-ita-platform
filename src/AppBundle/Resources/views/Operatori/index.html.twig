@@ -66,6 +66,7 @@
       var emptyTemplate = $.templates("#tpl-empty");
       var resultsTemplate = $.templates("#tpl-result");
       var limitPagination = 20;
+      var reset = $('#reset');
       var filtersContainer = $('#filters');
       var filterServizio = $('#filter-servizio');
       var filterStato = $('#filter-stato');
@@ -87,6 +88,35 @@
         return params;
       };
 
+      var isEmpty = function(object) {
+        return object.servizio === ''
+          && object.stato === ''
+          && object.workflow === ''
+          && object.stato === '';
+      };
+
+      reset.on('click', function (e) {
+        if (typeof (Storage) !== "undefined"){
+          localStorage.setItem('pratiche_filters', JSON.stringify({
+            'servizio': '',
+            'stato': '',
+            'workflow': '',
+            'query_field': '1',
+            'query': '',
+          }));
+        }
+        window.location.reload();
+        e.preventDefault();
+      });
+      
+      var showReset = function(){
+        reset.parent().show();
+      };
+
+      var hideReset = function(){
+        reset.parent().hide();
+      };
+
       filtersContainer.find('.filter-select').on('change', function () {
         loadContents();
       });
@@ -99,6 +129,11 @@
       var loadContents = function() {
         resultsContainer.html(spinnerTemplate.render({}));
         var params = buildParams();
+        if (isEmpty(params)){
+          hideReset();
+        }else{
+          showReset();
+        }
         params.limit = limitPagination;
         params.offset = 0;
         $.get(resultsContainer.data('source'), params, function (response) {
@@ -168,6 +203,7 @@
           filterWorkflow.val(params.workflow);
           filterQueryBy.val(params.query_field);
           filterQuery.val(params.query);
+          showReset();
         }
       }
       loadContents();
@@ -228,6 +264,7 @@
       {{else}}
         <th>Servizio</th>
       {{/if}}
+      <th>Operatore</th>
       <th></th>
     </tr>
   </thead>
@@ -243,7 +280,7 @@
             <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
           </button>
         {{else is_protocollo_required}}
-          <button type="button" disabled="disabled" data-toggle="tooltip" title="Numero di protocollo in assegnazione" class="btn btn-default text-muted btn-xs p-0">
+          <button type="button" data-toggle="tooltip" title="Numero di protocollo in assegnazione" class="btn btn-default text-muted btn-xs p-0">
             <svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
           </button>
         {{/if}}
@@ -270,6 +307,7 @@
       {{else}}
         <td>{{:~formatService(service)}}</td>
       {{/if}}
+      <td>{{if operator_name}}{{:operator_name}}{{/if}}</td>
       <td>
         {{if can_autoassign}}
         <button type="button" class="btn btn-primary btn-xs text-nowrap"
@@ -321,9 +359,9 @@
 {% endverbatim %}
 
   <section class="p-3 m-5 shadow bordered">
-    <div class="row my-4 px-lg-4 py-lg-2" id="filters">
+    <div class="row my-4 px-lg-4 py-lg-2 justify-content-ld-center" id="filters">
       {% if servizi|length %}
-        <div class="col-lg-3">
+        <div class="col mb-4">
           <div class="bootstrap-select-wrapper filter-servizio">
           <label for="filter-servizio">Filtra per servizio</label>
             <select id="filter-servizio" class="form-control filter-select">
@@ -336,7 +374,7 @@
         </div>
       {% endif %}
       {% if stati|length %}
-        <div class="col-lg-2">
+        <div class="col mb-4">
           <div class="bootstrap-select-wrapper filter-stato">
           <label for="filter-stato">Filtra per stato</label>
             <select id="filter-stato" class="form-control filter-select">
@@ -348,7 +386,7 @@
             </div>
         </div>
       {% endif %}
-      <div class="col-lg-3">
+      <div class="col mb-4">
         <div class="bootstrap-select-wrapper filter-workflow">
         <label for="filter-workflow">Filtra per lavorazione</label>
           <select id="filter-workflow" class="form-control filter-select">
@@ -358,7 +396,7 @@
           </select>
           </div>
       </div>
-      <div class="col-lg-4">
+      <div class="col col-lg-4 mb-4">
         <div class="bootstrap-select-wrapper filter-query">
           <label for="filter-query-by">Cerca per</label>
           <div class="input-group">
@@ -372,6 +410,13 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="col col-lg-1 mb-4 px-0 text-right mt-1" style="max-width: 40px; display: none">
+        <a id="reset" class="btn btn-danger btn-md btn-icon p-2" href="#">
+          <svg class="icon icon-white">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
+          </svg>
+        </a>
       </div>
     </div>
 

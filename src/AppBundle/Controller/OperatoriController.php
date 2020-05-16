@@ -50,17 +50,20 @@ class OperatoriController extends Controller
    */
   public function indexAction()
   {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
     /** @var PraticaRepository $praticaRepository */
     $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
 
     $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy(
       [
-        'id' => $praticaRepository->getServizioIdList(PraticaRepository::OPERATORI_LOWER_STATE),
+        'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
       ]
     );
 
     $stati = [];
-    foreach ($praticaRepository->getStateList(PraticaRepository::OPERATORI_LOWER_STATE) as $state) {
+    foreach ($praticaRepository->getStateListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE) as $state) {
       $state['name'] = $this->get('translator')->trans($state['name']);
       $stati[] = $state;
     }
@@ -151,6 +154,7 @@ class OperatoriController extends Controller
       $codiceFiscale = $applicantUser instanceof CPSUser ? $applicantUser->getCodiceFiscale() : '';
       $codiceFiscaleParts = explode('-', $codiceFiscale);
       $applicationArray['codice_fiscale'] = array_shift($codiceFiscaleParts);
+      $applicationArray['operator_name'] = $s->getOperatore() ? $s->getOperatore()->getFullName() : null;
 
       try{
         $this->checkUserCanAccessPratica($user, $s);
