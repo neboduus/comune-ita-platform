@@ -324,7 +324,9 @@ class OperatoriController extends Controller
     $modalForm = $this->createForm('AppBundle\Form\Operatore\Base\ApprovaORigettaType')->handleRequest($request);
     if ($modalForm->isSubmitted()) {
       $pratica->setEsito($modalForm->getData()['esito']);
-      $pratica->setMotivazioneEsito($modalForm->getData()['motivazioneEsito']);
+      if (isset($modalForm->getData()['motivazioneEsito'])) {
+        $pratica->setMotivazioneEsito($modalForm->getData()['motivazioneEsito']);
+      }
 
       $this->completePraticaFlow($pratica, false);
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
@@ -544,7 +546,9 @@ class OperatoriController extends Controller
   private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
   {
     $operatore = $pratica->getOperatore();
-    if (!$operatore instanceof OperatoreUser || $operatore->getId() !== $user->getId()) {
+    $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
+    // if (!$operatore instanceof OperatoreUser || $operatore->getId() !== $user->getId()) {
+    if (!$operatore instanceof OperatoreUser || !$isEnabled) {
       throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
     }
   }

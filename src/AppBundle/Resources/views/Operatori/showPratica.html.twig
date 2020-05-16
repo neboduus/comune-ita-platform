@@ -93,10 +93,10 @@
               <ul class="link-list">
                 {% if  pratica_correlata %}
                   <li>
-                    <a {% if pratica_correlata.operatore != user %}
-                      class="list-item disabled" href="#"
-                    {% else %}
+                    <a {% if pratica_correlata.servizio.id in user.serviziAbilitati %}
                       class="list-item" href="{{ path('operatori_show_pratica', {'pratica': pratica_correlata }) }}"
+                    {% else %}
+                      class="list-item disabled" href="#"
                     {% endif %}>
                       <span>
                         <svg class="icon icon-sm icon-light">
