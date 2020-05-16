@@ -89,6 +89,8 @@ parameters:
 
     hash_validity: 1
 
+    token_ttl: 3600
+
     shibbolet_server_varnames:
       codiceFiscale: "shibb_pat_attribute_codicefiscale"
       capDomicilio: "shibb_pat_attribute_capdomicilio"
