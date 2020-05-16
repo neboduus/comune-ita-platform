@@ -61,7 +61,12 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
     $serverProps = $request->server->all();
     $data = [];
     foreach ($userDataKeys as $shibbKey => $ourKey) {
-      $data[$ourKey] = isset($serverProps[$shibbKey]) ? $serverProps[$shibbKey] : null;
+      $shibbKeys = explode('|', $shibbKey);
+      foreach ($shibbKeys as $sKey){
+        if (isset($serverProps[$sKey])){
+          $data[$ourKey] = $serverProps[$sKey];
+        }
+      }
     }
 
     return $data;
