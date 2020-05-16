@@ -200,7 +200,7 @@ class UserController extends Controller
         'label' => false,
         'data' => $compiledProvinciaDomicilio,
         'choices' => CPSUser::getProvinces(),
-        'required' => true
+        'required' => false
       ])
       ->add('sdc_stato_domicilio', TextType::class,
         ['label' => false, 'data' => $compiledStatoDomicilio, 'required' => false]
