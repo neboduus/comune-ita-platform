@@ -74,7 +74,7 @@
             </a>
           </div>
           <div class="col-auto">
-            <a class="btn btn-outline-secondary" href="{{ path('pratiche_show_pdf', {'pratica': pratica.id}) }}">
+            <a class="btn btn-outline-secondary" href="mailto:{{ pratica.user.emailContatto }}">
               <svg class="icon icon-sm">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
               </svg>
@@ -93,7 +93,11 @@
               <ul class="link-list">
                 {% if  pratica_correlata %}
                   <li>
-                    <a href="{{ path('operatori_show_pratica', {'pratica': pratica_correlata }) }}">
+                    <a {% if pratica_correlata.operatore != user %}
+                      class="list-item disabled" href="#"
+                    {% else %}
+                      class="list-item" href="{{ path('operatori_show_pratica', {'pratica': pratica_correlata }) }}"
+                    {% endif %}>
                       <span>
                         <svg class="icon icon-sm icon-light">
                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>

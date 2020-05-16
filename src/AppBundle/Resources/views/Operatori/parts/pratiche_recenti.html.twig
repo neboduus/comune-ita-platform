@@ -3,13 +3,18 @@
     {% if pratiche_recenti|length > 0 %}
       {% for pratica_recente  in pratiche_recenti %}
         <li>
-          <a href="{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}">
-                        <span>
-                           <svg class="icon icon-sm icon-light">
-                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-                           </svg>
-                          {{ pratica_recente.servizio.name }}
-                        </span>
+          <a
+            {% if pratica_recente.operatore  != user %}
+              class="list-item disabled" href="#"
+            {% else %}
+              class="list-item" href="{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}"
+            {% endif %}>
+            <span>
+              <svg class="icon icon-sm icon-light">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+              </svg>
+              {{ pratica_recente.servizio.name }}
+            </span>
             <svg class="icon icon-primary icon-right">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
             </svg>
