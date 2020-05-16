@@ -26,13 +26,25 @@
             <th>Email</th>
             <td>{{ operatoreUser.email }}</td>
           </tr>
+          <tr>
+            <th>Abilitato ai servizi</th>
+            <td>
+              <ul class="list-unstyled">
+                {% for servizio in servizi_abilitati %}
+                  <li>{{ servizio.name }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
           </tbody>
         </table>
       </div>
 
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         <a class="btn btn-primary" href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">Modifica</a>
-        <a class="btn btn-danger" onclick="return confirm('Sei sicuro di procedere? L\'operatore verrà eliminato definitivamente.');" href="{{ path('admin_operatore_delete', { 'id': operatoreUser.id }) }}">Elimina</a>
+        <a class="btn btn-danger"
+           onclick="return confirm('Sei sicuro di procedere? L\'operatore verrà eliminato definitivamente.');"
+           href="{{ path('admin_operatore_delete', { 'id': operatoreUser.id }) }}">Elimina</a>
         <a class="btn btn-default btn-100" href="{{ path('admin_operatore_index') }}">Torna alla lista</a>
       </div>
 

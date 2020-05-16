@@ -164,9 +164,18 @@ class AdminController extends Controller
    */
   public function showOperatoreAction(OperatoreUser $operatoreUser)
   {
+    if ($operatoreUser->getServiziAbilitati()->count() > 0) {
+      $serviziAbilitati = $this->getDoctrine()
+        ->getRepository(Servizio::class)
+        ->findBy(['id' => $operatoreUser->getServiziAbilitati()->toArray()]);
+    }else{
+      $serviziAbilitati = [];
+    }
+
     return array(
       'user' => $this->getUser(),
-      'operatoreUser' => $operatoreUser
+      'operatoreUser' => $operatoreUser,
+      'servizi_abilitati' => $serviziAbilitati
     );
   }
 

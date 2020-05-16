@@ -204,6 +204,11 @@ class PraticaRepository extends EntityRepository
 
   public function findPraticheByOperatore(OperatoreUser $user, $filters, $limit, $offset)
   {
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return [];
+    }
+
     return $this->getPraticheByOperatoreQueryBuilder($filters, $user)
       ->orderBy('pratica.submissionTime', 'desc')
       ->setFirstResult($offset)
@@ -216,16 +221,21 @@ class PraticaRepository extends EntityRepository
    * @param $user
    * @return \Doctrine\ORM\QueryBuilder
    */
-  private function getPraticheByOperatoreQueryBuilder($filters, $user)
+  private function getPraticheByOperatoreQueryBuilder($filters, OperatoreUser $user)
   {
     $qb = $this->createQueryBuilder('pratica');
 
     $qb->andWhere('pratica.erogatore IN (:erogatore)')
       ->setParameter('erogatore', $user->getEnte()->getErogatori()->toArray());
 
-    if (!empty($filters['servizio'])) {
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+
+    if (!empty($filters['servizio']) && in_array($filters['servizio'], $serviziAbilitati)) {
       $qb->andWhere('pratica.servizio = :servizio')
         ->setParameter('servizio', $filters['servizio']);
+    }else{
+      $qb->andWhere('pratica.servizio IN (:servizio)')
+        ->setParameter('servizio', $serviziAbilitati);
     }
 
     if (!empty($filters['stato'])) {
@@ -289,7 +299,10 @@ class PraticaRepository extends EntityRepository
 
   public function countPraticheByOperatore(OperatoreUser $user, $filters)
   {
-    //dump($this->getPraticheByOperatoreQueryBuilder($filters, $user)->select('count(pratica.id)')->getQuery()->getParameters());die();
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return 0;
+    }
     return $this->getPraticheByOperatoreQueryBuilder($filters, $user)->select('count(pratica.id)')
       ->getQuery()->getSingleScalarResult();
   }
@@ -297,15 +310,22 @@ class PraticaRepository extends EntityRepository
   /**
    * @return array
    */
-  public function getServizioIdList($minStatus = null)
+  public function getServizioIdListByOperatore(OperatoreUser $user, $minStatus = null)
   {
-    $status = 0;
-    if ($minStatus){
-      $status = 'where status >= ' . (int)$minStatus;
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return [];
     }
+    $servizio = 'where servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\')';
+
+    $status = '';
+    if ($minStatus){
+      $status = 'and status >= ' . (int)$minStatus;
+    }
+
     try {
       $stmt = $this->getEntityManager()->getConnection()->prepare(
-        "select distinct(servizio_id) from pratica $status order by servizio_id asc"
+        "select distinct(servizio_id) from pratica $servizio $status order by servizio_id asc"
       );
       $stmt->execute();
 
@@ -319,15 +339,22 @@ class PraticaRepository extends EntityRepository
   /**
    * @return array
    */
-  public function getStateList($minStatus = null)
+  public function getStateListByOperatore(OperatoreUser $user, $minStatus = null)
   {
-    $status = 0;
-    if ($minStatus){
-      $status = 'where status >= ' . (int)$minStatus;
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return [];
     }
+    $servizio = 'where servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\')';
+
+    $status = '';
+    if ($minStatus){
+      $status = 'and status >= ' . (int)$minStatus;
+    }
+
     try {
       $stmt = $this->getEntityManager()->getConnection()->prepare(
-        "select distinct(status) from pratica $status order by status asc"
+        "select distinct(status) from pratica $servizio $status order by status asc"
       );
       $stmt->execute();
 
