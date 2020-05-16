@@ -91,6 +91,11 @@ parameters:
 
     token_ttl: 3600
 
+    login_callout_texts:
+      title: 'Usi SPID o CPS?'
+      text: 'Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo'
+      button: 'Entra con SPID/CPS'
+
     shibbolet_server_varnames:
       codiceFiscale: "shibb_pat_attribute_codicefiscale"
       capDomicilio: "shibb_pat_attribute_capdomicilio"

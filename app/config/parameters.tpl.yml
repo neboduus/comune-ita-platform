@@ -65,6 +65,10 @@ parameters:
       - jpg: image/jpeg
       - png: image/png
     token_ttl: '%env(TOKEN_TTL)%'
+    login_callout_texts:
+      title: '%env(BOX_LOGIN_TITLE)%'
+      text: '%env(BOX_LOGIN_TEXT)%'
+      button: '%env(BOX_LOGIN_BUTTON)%'
     shibbolet_server_varnames:
       codiceFiscale: '%env(SHIB_CODICEFISCALE)%'
       capDomicilio: '%env(SHIB_CAPDOMICILIO)%'
@@ -167,3 +171,6 @@ parameters:
     env(SHIB_SESSION_ID): 'shibb_Shib-Session-ID'
     env(SHIB_SESSION_INDEX): 'shibb_Shib-Session-Index'
     env(SHIB_AUTHENTICATION_INSTANT): 'shibb_Shib-Authentication-Instant'
+    env(BOX_LOGIN_TITLE): 'Usi SPID o CPS?'
+    env(BOX_LOGIN_TEXT): 'Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo'
+    env(BOX_LOGIN_BUTTON): 'Entra con SPID/CPS'
