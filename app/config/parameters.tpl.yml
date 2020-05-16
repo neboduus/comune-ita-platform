@@ -64,7 +64,7 @@ parameters:
       - jpeg: image/jpeg
       - jpg: image/jpeg
       - png: image/png
-
+    token_ttl: '%env(TOKEN_TTL)%'
     shibbolet_server_varnames:
       codiceFiscale: '%env(SHIB_CODICEFISCALE)%'
       capDomicilio: '%env(SHIB_CAPDOMICILIO)%'
@@ -96,7 +96,6 @@ parameters:
       shibSessionId: '%env(SHIB_SESSION_ID)%'
       shibSessionIndex: '%env(SHIB_SESSION_INDEX)%'
       shibAuthenticationIstant: '%env(SHIB_AUTHENTICATION_INSTANT)%'
-
     #Default fallback if env not set
     env(PREFIX): ''
     env(DB_DRIVER): 'pdo_pgsql'
@@ -137,7 +136,7 @@ parameters:
     env(FORMSERVER_PRIVATE_URL): 'http//formserver'
     env(FORMSERVER_PUBLIC_URL): 'https://formserver.ship.opencontent.io'
     env(HASH_VALIDITY): '1'
-
+    env(TOKEN_TTL): '3600'
     env(SHIB_CODICEFISCALE): 'shibb_pat_attribute_codicefiscale'
     env(SHIB_CAPDOMICILIO): 'shibb_pat_attribute_capdomicilio'
     env(SHIB_CAPRESIDENZA): 'shibb_pat_attribute_capresidenza'
