@@ -66,6 +66,8 @@ twig:
         ocsdc_slim_datetime_format: "%ocsdc_slim_datetime_format%"
         ocsdc_default_moment_datetime_format: "%ocsdc_default_moment_datetime_format%"
         ocsdc_default_time_format: "%ocsdc_default_time_format%"
+        ocsdc_scheme: "%ocsdc_scheme%"
+        ocsdc_host: "%ocsdc_host%"
         instance_service: "@ocsdc.instance_service"
         version_service: "@ocsdc.version_service"
         backoffices: "@ocsdc.backoffices"

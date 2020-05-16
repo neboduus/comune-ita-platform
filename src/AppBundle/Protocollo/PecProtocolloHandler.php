@@ -29,10 +29,10 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   /** @var string */
   private $port;
 
-  /** @var string */
+  /** @var */
   private $user;
 
-  /** @var string */
+  /** @var */
   private $password;
 
   /** @var string */
@@ -69,7 +69,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @param TemplatingExtension $templating
    * @param LoggerInterface $logger
    */
-  public function __construct(string $host, string $port, string $user, string $password, string $sender, TranslatorInterface $translator, TwigEngine $templating, LoggerInterface $logger)
+  public function __construct(string $host, string $port, $user, $password, string $sender, TranslatorInterface $translator, TwigEngine $templating, LoggerInterface $logger)
   {
     $this->host = $host;
     $this->port = $port;
@@ -215,6 +215,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
         ),
         'text/plain'
       );
+
     return $message;
   }
 
