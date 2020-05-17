@@ -39,6 +39,22 @@
               form.submission = {
                   data: $('#formio_summary').data('submission')
               };
+
+              let delay = 3;
+              form.formReady.then(() => {
+                const disableFileLink = function(){
+                  if( delay === 0 ) {
+                    $('.formio-component-upload a').each(function(){
+                      $(this).parent().html($(this).html());
+                    });
+                  }
+                  else {
+                    delay--;
+                    setTimeout(disableFileLink, 500);
+                  }
+                };
+                disableFileLink();
+              });
           });
       };
   </script>

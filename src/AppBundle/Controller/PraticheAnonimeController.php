@@ -113,7 +113,7 @@ class PraticheAnonimeController extends Controller
   public function newAction(Request $request, Servizio $servizio)
   {
 
-    if ( !in_array($servizio->getStatus(), [Servizio::STATUS_AVAILABLE, Servizio::STATUS_PRIVATE]) ) {
+    if (!in_array($servizio->getStatus(), [Servizio::STATUS_AVAILABLE, Servizio::STATUS_PRIVATE])) {
       $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' non è disponibile.');
       return $this->redirectToRoute('servizi_list');
     }
@@ -159,6 +159,7 @@ class PraticheAnonimeController extends Controller
           /** @var Allegato $a */
           foreach ($attachments as $a) {
             $a->setOwner($user);
+            $a->setHash($pratica->getHash());
             $em->persist($pratica);
           }
         }
@@ -204,20 +205,12 @@ class PraticheAnonimeController extends Controller
    */
   public function showAction(Request $request, Pratica $pratica)
   {
-    $hash = $request->query->get('hash');
-
-    if ($hash && $hash == $pratica->getHash()) {
-      $timestamp = explode('-', $hash);
-      $timestamp = end($timestamp);
-      $maxVisibilityDate = (new DateTime())->setTimestamp($timestamp)->modify('+ ' . $this->hashValidity . ' days');
-
-      if ($maxVisibilityDate >= new DateTime('now')) {
-        $result = [
-          'pratica' => $pratica,
-          'formserver_url' => $this->getParameter('formserver_public_url'),
-        ];
-        return $result;
-      }
+    if ($pratica->isValidHash($this->getHash($request), $this->hashValidity)){
+      $result = [
+        'pratica' => $pratica,
+        'formserver_url' => $this->getParameter('formserver_public_url'),
+      ];
+      return $result;
     }
 
     return new Response(null, Response::HTTP_FORBIDDEN);
@@ -233,42 +226,25 @@ class PraticheAnonimeController extends Controller
    */
   public function showPdfAction(Request $request, Pratica $pratica)
   {
-    $hash = $request->query->get('hash');
-
-    if ($hash && $hash == $pratica->getHash()) {
-      $timestamp = explode('-', $hash);
-      $timestamp = end($timestamp);
-      $maxVisibilityDate = (new DateTime())->setTimestamp($timestamp)->modify('+ ' . $this->hashValidity . ' days');
-
-      if ($maxVisibilityDate >= new DateTime('now')) {
-
-        $compiledModules = $pratica->getModuliCompilati();
-        if (empty($compiledModules)) {
-          return new Response('', Response::HTTP_NOT_FOUND);
-        }
-        $attachment = $compiledModules[0];
-        $fileContent = file_get_contents($attachment->getFile()->getPathname());
-        $filename = $pratica->getId() . '.pdf';
-        $response = new Response($fileContent);
-        $disposition = $response->headers->makeDisposition(
-          ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-          $filename
-        );
-        // Set the content disposition
-        $response->headers->set('Content-Disposition', $disposition);
-        $response->headers->set('Content-Type', 'application/pdf');
-        // Dispatch request
-        return $response;
-        /*$allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
-        return new BinaryFileResponse(
-          $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
-          200,
-          [
-            'Content-type' => 'application/octet-stream',
-            'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
-          ]
-        );*/
+    if ($pratica->isValidHash($this->getHash($request), $this->hashValidity)){
+      $compiledModules = $pratica->getModuliCompilati();
+      if (empty($compiledModules)) {
+        return new Response('', Response::HTTP_NOT_FOUND);
       }
+      $attachment = $compiledModules[0];
+      $fileContent = file_get_contents($attachment->getFile()->getPathname());
+      $filename = $pratica->getId() . '.pdf';
+      $response = new Response($fileContent);
+      $disposition = $response->headers->makeDisposition(
+        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+        $filename
+      );
+
+      // Set the content disposition
+      $response->headers->set('Content-Disposition', $disposition);
+      $response->headers->set('Content-Type', 'application/pdf');
+
+      return $response;
     }
 
     return new Response(null, Response::HTTP_FORBIDDEN);
@@ -343,8 +319,8 @@ class PraticheAnonimeController extends Controller
     }
 
     $birthDay = null;
-    if ( isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl']) ) {
-      $birthDay =  \DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
+    if (isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl'])) {
+      $birthDay = \DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
     }
 
 
@@ -390,4 +366,19 @@ class PraticheAnonimeController extends Controller
     //FIXME: testme
     throw new \Error('Missing erogatore for service ');
   }
+
+  private function getHash(Request $request)
+  {
+    $session = $this->get('session');
+    if (!$session->isStarted()){
+      $session->start();
+    }
+    $hash = $request->query->get('hash');
+    if ($hash){
+      $session->set(Pratica::HASH_SESSION_KEY, $hash);
+    }
+
+    return $hash;
+  }
+
 }
