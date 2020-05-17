@@ -25,5 +25,9 @@
     "webpack-jquery-ui": "2.0.1",
     "webpack-notifier": "1.8.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "axios": "^0.19.2",
+    "highcharts": "^8.1.0",
+    "lodash": "^4.17.15"
+  }
 }

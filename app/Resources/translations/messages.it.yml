@@ -39,7 +39,7 @@ nav:
     lista_operatori: 'Gestisci operatori comune'
     accesso_operatori: 'Accesso operatori'
     protocollo: 'Configurazione di Protocollo'
-    usage: 'Metriche di utilizzo'
+    usage: 'Statistiche'
 
 terms:
   title: 'Accettazione termini di utilizzo'
