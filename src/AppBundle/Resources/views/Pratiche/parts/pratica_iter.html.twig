@@ -10,6 +10,7 @@
   <div class="iter-timeline-wrapper pt-4{% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %} done{% endif %}">
     <div class="row pt-0">
       {% for timestamp, changes in pratica.storicoStati %}
+      {% for change in changes %}
         <div class="col-12">
           <div class="timeline-element">
             <div class="it-pin-wrapper it-evidence">
@@ -24,20 +25,17 @@
               <div class="card no-after" style="background: #efefef">
                 <div class="card-body">
                   <div class="category-top">
-                    {% for change in changes[0] %}
-                      {% if change is not null and change is not iterable %}
-                        <a class="text-decoration-none" href="#">{{ ('pratica.dettaglio.stato_'~change)| trans }} </a>
-                      {% endif %}
-                    {% endfor %}
+                      <a class="text-decoration-none" href="#">{{ ('pratica.dettaglio.stato_'~change[0])| trans }} </a>
                   </div>
-                  {% if changes[0][1] is defined and changes[0][1]['message'] is defined  and changes[0][1]['message'] is not null %}
-                    <p class="card-text"><em>Motivo: {{ changes[0][1]['message'] }}</em></p>
+                  {% if change[1] is defined and change[1]['message'] is defined  and change[1]['message'] is not null %}
+                    <p class="card-text"><em>Motivo: {{ change[1]['message'] }}</em></p>
                   {% endif %}
                 </div>
               </div>
             </div>
           </div>
         </div>
+      {% endfor %}
       {% endfor %}
     </div>
   </div>
