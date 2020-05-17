@@ -75,14 +75,12 @@ class MailerService
             return $sentAmount;
         }
 
-        if ($pratica->getStatus() != Pratica::STATUS_SUBMITTED) {
-          if ($this->CPSUserHasValidContactEmail($pratica->getUser()) &&
-            ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))
-          ) {
-            $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
-            $sentAmount += $this->mailer->send($CPSUsermessage);
-            $pratica->setLatestCPSCommunicationTimestamp(time());
-          }
+        if ($this->CPSUserHasValidContactEmail($pratica->getUser()) &&
+          ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))
+        ) {
+          $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
+          $sentAmount += $this->mailer->send($CPSUsermessage);
+          $pratica->setLatestCPSCommunicationTimestamp(time());
         }
 
         /**
@@ -230,6 +228,15 @@ class MailerService
                 ),
                 'text/plain'
             );
+        // Send attachment to user if status is submitted
+        if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
+            if ($pratica->getModuliCompilati()->count() > 0 ) {
+              $moduloCompilato = $pratica->getModuliCompilati()->first();
+              if (is_file($moduloCompilato->getFile()->getPathname())) {
+                $message->attach(\Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname()));
+              }
+            }
+        }
         return $message;
     }
 

@@ -523,8 +523,8 @@ email:
     link_download_txt: 'Per ulteriori dettagli visiti il seguente link: '
     user:
       status:
-        pre.submit: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."
-        submitted: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."
+        pre.submit: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."
+        submitted: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta. In allegato il modulo da lei compilato."
         registered: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta."
         cancelled: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>'
         complete: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata, il numero di richiesta è <strong>%pratica_id%</strong>'
