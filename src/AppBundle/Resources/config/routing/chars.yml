@@ -1,0 +1,5 @@
+# AppBundle/Resources/config/routing/person.yml
+person_list_neighborhoods:
+  path:     /get-neighborhoods-from-city
+  defaults: { _controller: "AppBundle:Operatori:listNeighborhoodsOfCity" }
+  methods:  GET

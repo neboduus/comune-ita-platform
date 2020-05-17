@@ -17,6 +17,7 @@ use AppBundle\Form\Operatore\Standard\StandardOperatoreFlow;
 use AppBundle\FormIO\Schema;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
+use Doctrine\DBAL\FetchMode;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -189,10 +190,11 @@ class OperatoriController extends Controller
     $repo = $this->getDoctrine()->getRepository(Pratica::class);
     $pratiche = $repo->findSubmittedPraticheByEnte($this->get('ocsdc.instance_service')->getCurrentInstance());
 
+    //TODO ho commentato questa parte perchè si spaccava
     $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $servizi = $serviziRepository->findBy(
       [
-        'status' => [1]
+        'status' => Servizio::STATUS_AVAILABLE
       ]
     );
 
@@ -207,10 +209,12 @@ class OperatoriController extends Controller
       return $acc;
     }, []);
 
+    $statusServices = $this->populateSelectStatusServicesPratiche();
     return array(
-      'servizi' => count($servizi),
+      'servizi' => $servizi,
       'pratiche' => $count,
-      'user' => $this->getUser()
+      'user' => $this->getUser(),
+      'statusServices' => $statusServices
     );
   }
 
@@ -651,5 +655,204 @@ class OperatoriController extends Controller
 
     return $threads;
   }
+
+
+  private function populateSelectStatusServicesPratiche()
+  {
+
+    $em = $this->getDoctrine()->getManager();
+
+    //Servizi, pratiche  delle select di filtraggio
+    $serviziPratiche = $em->createQueryBuilder()
+      ->select('s.name', 's.slug')
+      ->from('AppBundle:Pratica', 'p')
+      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
+      ->distinct()
+      ->getQuery()
+      ->getResult();
+
+
+    $statusPratiche = $em->createQueryBuilder()
+      ->select('p.status')
+      ->from('AppBundle:Pratica', 'p')
+      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
+      ->distinct()
+      ->getQuery()
+      ->getResult();
+
+
+    $status = [];
+    \asort($statusPratiche);
+    foreach ($statusPratiche as $valore) {
+      $status[] = array(
+        "status" => $valore['status'],
+        "name" => $this->getStatusAsString($valore['status']));
+    }
+
+    return array(
+      'statiPratiche' => $status,
+      'serviziPratiche' => $serviziPratiche,
+    );
+  }
+
+
+  /**
+   * @Route("/usage/metriche", name="metriche")
+   * @Method("GET")
+   */
+  public function metricheAction(Request $request )
+  {
+
+
+    $status = $request->get('status');
+    $services = $request->get('services');
+    $time = $request->get('time');
+
+    if ($time <= 180) {
+      $timeSlot = "minute";
+      $timeDiff = "- " . $time . " minutes";
+    } elseif ($time <= 1440 ) {
+      $timeSlot = "hour";
+      $timeDiff = "- " . ($time / 60) . " hours";
+    } else {
+      $timeSlot = "day";
+      $timeDiff = "- " . ($time / 60 / 24) . " days";
+    }
+
+    $timeZone = date_default_timezone_get();
+
+    $calculateInterval = date('Y-m-d H:i:s', strtotime($timeDiff));
+
+    $where = " WHERE TO_TIMESTAMP(p.creation_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'";
+
+    if($services && $services != 'all'){
+      $where .= " AND s.slug =" ."'".$services."'";
+    }
+
+    if($status && $status != 'all'){
+      $where .= " AND p.status =" ."'".$status."'";
+    }
+
+    $sql = "SELECT COUNT(p.id), date_trunc('". $timeSlot ."', TO_TIMESTAMP(p.creation_time) AT TIME ZONE '".$timeZone."') AS tslot, s.name
+            FROM pratica AS p LEFT JOIN servizio AS s ON p.servizio_id = s.id" .
+            $where .
+            " GROUP BY s.name, tslot ORDER BY tslot ASC";
+
+    $em = $this->getDoctrine()->getManager();
+    $stmt = $em->getConnection()->prepare($sql);
+    //$stmt->bindValue(1, $calculateInterval);
+    $stmt->execute();
+    $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+
+    $categories = $series = $data = array();
+
+    foreach ($result as $r) {
+      if (!in_array($r['tslot'], $categories)) {
+        $categories []= $r['tslot'];
+      }
+      $series[$r['name']][$r['tslot']] = $r['count'];
+    }
+
+    foreach ($series as $k => $v) {
+      $temp = [];
+      $temp['name'] = $k;
+      foreach ($categories as $c) {
+        if (isset($v[$c])) {
+          $temp['data'][] = $v[$c];
+        } else {
+          $temp['data'][] = 0;
+        }
+      }
+      $data['series'][]=$temp;
+    }
+
+    $data['categories'] = $categories;
+    $data['query'] = $sql;
+    return new Response(json_encode($data), 200);
+
+
+    /*
+    $calculateInterval = date('Y-m-d H:i:s', strtotime($time));
+    $sql = "WITH list_dates as (SELECT count(*) n_pratiche, s.name,  date_trunc('day', TO_TIMESTAMP(p.creation_time)::date) as days
+            FROM pratica as p
+            INNER JOIN servizio as s ON s.id = p.servizio_id
+            WHERE TO_TIMESTAMP(p.creation_time) >= '". $calculateInterval ."'" . $filterServices . $filterStatus . "
+            group by s.name, days) select name, array_agg(n_pratiche),array_agg(days) as d from list_dates group by name";
+
+    $stmt = $em->getConnection()->prepare($sql);
+    //$stmt->bindValue(1, $calculateInterval);
+    $stmt->execute();
+    $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+    $series= [];
+    $categories= [];
+    $data= [];
+    if(count($result) > 0){
+      foreach ($result as $item){
+        array_push($series, array(
+          'name' => $item['name'],
+          'data' =>  array_map('intval', explode(',', substr($item['array_agg'], 1, -1))
+          ))
+        );
+        array_push($categories,$item['d']);
+      }
+
+      $b = [];
+      foreach ($categories as $key => $value) {
+        array_push($b, strlen($value));
+      }
+      $maxKey = max(array_keys($b));
+
+
+      $data = array(
+        'query'  => $sql,
+        'date'  => $calculateInterval,
+        'series' => $series,
+        'categories' => explode(',',substr(str_replace('"','',$categories[$maxKey]), 1, -1))
+      );
+    }*/
+
+
+  }
+
+
+
+  public function getStatusAsString(int $status)
+  {
+    switch ($status) {
+      case Pratica::STATUS_DRAFT:
+        return 'Bozza';
+        break;
+      case Pratica::STATUS_PAYMENT_PENDING:
+        return 'Pagamento in attesa';
+        break;
+      case Pratica::STATUS_PRE_SUBMIT:
+        return 'Inviata';
+        break;
+      case Pratica::STATUS_SUBMITTED:
+        return 'Acquisita';
+        break;
+      case Pratica::STATUS_REGISTERED:
+        return 'Protocollata';
+        break;
+      case Pratica::STATUS_PENDING:
+        return 'Presa in carico';
+        break;
+      case Pratica::STATUS_PROCESSING:
+        return 'Processata';
+        break;
+      case Pratica::STATUS_REQUEST_INTEGRATION:
+        return 'Richiesta di integrazione';
+        break;
+      case Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE:
+        return 'Completata in attesa di protocollazione';
+        break;
+      case Pratica::STATUS_COMPLETE:
+        return 'Completata';
+        break;
+      default:
+        return 'Errore';
+    }
+  }
+
 
 }
