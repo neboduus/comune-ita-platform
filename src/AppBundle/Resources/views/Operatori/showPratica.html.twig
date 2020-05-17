@@ -44,7 +44,7 @@
               form.formReady.then(() => {
                 const disableFileLink = function(){
                   if( delay === 0 ) {
-                    $('.formio-component-upload a').each(function(){
+                    $('.formio-component-file a').each(function(){
                       $(this).parent().html($(this).html());
                     });
                   }
@@ -79,16 +79,24 @@
         {% if pratica.operatore %}
         {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
         {% else %}
-        <div class="row mb-5">
-            <div class="col-12 d-flex justify-content-center">
-              <a class="btn btn-primary" href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
-                <svg class="icon icon-light" href="#">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
-                </svg>
-                {{ 'operatori.prendi_in_carico_pratica' | trans }}
-              </a>
+          {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
+            <div class="row mb-5">
+              <div class="col-12 d-flex justify-content-center">
+                {{ 'operatori.attesa_modulo_protocollato'|trans }}
+              </div>
             </div>
-        </div>
+          {% else %}
+            <div class="row mb-5">
+                <div class="col-12 d-flex justify-content-center">
+                  <a class="btn btn-primary" href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
+                    <svg class="icon icon-light" href="#">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                    </svg>
+                    {{ 'operatori.prendi_in_carico_pratica' | trans }}
+                  </a>
+                </div>
+            </div>
+          {% endif %
         {% endif %}
         {{ include('@App/Operatori/parts/pratica_summary.html.twig') }}
       </div>
