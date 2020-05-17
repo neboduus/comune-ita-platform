@@ -34,5 +34,8 @@ var formIoI18n = {
     "Size": "Dimensione",
     "Field Set": "Elementi",
     "Type to search": "Digita per cercare",
+    "File is too big; it must be at most {{ size }}": "La dimensione del file selezionato supera la dimensione massima consentita di {{ size }}.",
+    "File is too small; it must be at least {{ size }}": "La dimensione del file selezionato è inferiore alla dimensione minima consentita di {{ size }}.",
+    "File is the wrong type; it must be {{ pattern }}": "Il formato del file selezionato non è corretto: deve essere {{ pattern }}"
   }
 };
