@@ -78,13 +78,22 @@ class AllegatoController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
 
+    $session = $this->get('session');
+    if (!$session->isStarted()){
+      $session->start();
+    }
+
     switch ($request->getMethod()) {
 
       case 'GET':
         $fileName = str_replace('/', '', $request->get('form'));
         $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
-          return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $file]);
+          if ($file->getHash() == hash('sha256', $session->getId())){
+            return $this->createBinaryResponseForAllegato($file);
+          }else{
+            return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $file]);
+          }
         } else {
           return new Response('', Response::HTTP_NOT_FOUND);
         }
@@ -101,6 +110,7 @@ class AllegatoController extends Controller
         if ($user instanceof User) {
           $allegato->setOwner($user);
         }
+        $allegato->setHash(hash('sha256', $session->getId()));
         $em->persist($allegato);
         $em->flush();
 
@@ -115,7 +125,7 @@ class AllegatoController extends Controller
         $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
-          if ($file->getOwner() != $this->getUser() && $file->getOwner() != null) {
+          if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $session->getId())) {
             return new Response('', Response::HTTP_FORBIDDEN);
           }
 
@@ -218,14 +228,23 @@ class AllegatoController extends Controller
    */
   public function cpsUserAllegatoDownloadAction(Request $request, Allegato $allegato)
   {
-    $thumbnail = $request->get('thumb') ?? false;
     $logger = $this->get('logger');
     $user = $this->getUser();
-    if ($allegato->getOwner() === $user) {
+    $canDownload = $allegato->getOwner() === $user;
+
+    $session = $this->get('session');
+    if (!$canDownload && $session->isStarted() && $session->has(Pratica::HASH_SESSION_KEY)){
+      $pratica = $allegato->getPratiche()->first();
+      if ($pratica instanceof Pratica) {
+        $canDownload = $pratica->isValidHash($session->get(Pratica::HASH_SESSION_KEY), $this->getParameter('hash_validity'));
+      }
+    }
+
+    if ($canDownload) {
       $logger->info(
         LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
         [
-          'user' => $user->getId() . ' (' . $user->getNome() . ' ' . $user->getCognome() . ')',
+          'user' => $user ? $user->getId() : $allegato->getHash(),
           'originalFileName' => $allegato->getOriginalFilename(),
           'allegato' => $allegato->getId(),
         ]
