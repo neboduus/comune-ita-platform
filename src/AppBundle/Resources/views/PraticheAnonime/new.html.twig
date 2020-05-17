@@ -99,9 +99,6 @@
     <div class="row mt-2">
       <div class="col-lg-4 px-lg-4 order-lg-2">
 
-        {# Info compilazione specificate nel servizio #}
-        {{ include('AppBundle:Pratiche/parts:compilation_info.html.twig') }}
-
         {% if pratica.servizio.loginSuggested %}
           <div class="callout">
             <div class="callout-title">
@@ -122,6 +119,9 @@
             </div>
           </div>
         {% endif %}
+
+        {# Info compilazione specificate nel servizio #}
+        {{ include('AppBundle:Pratiche/parts:compilation_info.html.twig') }}
       </div>
 
       <div class="col-lg-8 px-lg-4 order-lg-1">
