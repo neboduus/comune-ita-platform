@@ -1,7 +1,8 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        xmlns="http://www.w3.org/1999/html">
   <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
 {% endblock %}
 
@@ -103,6 +104,7 @@
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
         <div class="row pl-3 mb-5 d-flex justify-content-between">
           <div class="col-auto ">
+            {% if pratica.moduliCompilati|length >0 %}
             <a class="btn btn-outline-secondary"
                href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
               <svg class="icon icon-sm">
@@ -110,6 +112,14 @@
               </svg>
               {{ 'operatori.scarica' | trans }}
             </a>
+              {% else %}
+                <button class="btn btn-outline-secondary" disabled>
+                  <svg class="icon icon-sm">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                  </svg>
+                  {{ 'operatori.scarica' | trans }}
+                </button>
+            {% endif %}
           </div>
           <div class="col-auto">
             <a class="btn btn-outline-secondary" href="mailto:{{ pratica.user.emailContatto }}">

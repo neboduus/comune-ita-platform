@@ -349,7 +349,11 @@ class OperatoriController extends Controller
         $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
       }
       if ( isset( $data['related_applications'] ) ) {
-        $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($data['related_applications'] );
+        try {
+          $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find(trim($data['related_applications']));
+        } catch (\Exception $exception) {
+          $praticaCorrelata = null;
+        }
       }
     } else {
       $fiscalCode = $pratica->getUser()->getCodiceFiscale() ;
