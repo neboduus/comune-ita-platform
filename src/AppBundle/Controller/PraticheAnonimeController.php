@@ -328,30 +328,17 @@ class PraticheAnonimeController extends Controller
     $em = $this->getDoctrine()->getManager();
     $cf = isset($data['flattened']['applicant.data.fiscal_code.data.fiscal_code']) ? $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] : false;
 
-    // Check md5 sessione
-    $result = $em->createQueryBuilder()
-      ->select('user.id')
-      ->from('AppBundle:User', 'user')
-      ->where('upper(user.username) = upper(:username)')
-      ->setParameter('username', md5($this->get('session')->getId()))
-      ->getQuery()->getResult();
-
-    if (!empty($result)) {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
-      $user = $repository->find($result[0]['id']);
-      return $user;
-    }
-
     $birthDay = null;
     if ( isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl']) ) {
       $birthDay =  \DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
     }
 
+    $sessionString = md5($this->get('session')->getId()) . '-' . time();
 
     $user = new CPSUser();
     $user
-      ->setUsername(md5($this->get('session')->getId()))
-      ->setCodiceFiscale($cf . '-' . md5($this->get('session')->getId()) . '-' . time())
+      ->setUsername($sessionString)
+      ->setCodiceFiscale($cf . '-' . $sessionString)
       ->setEmail(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
       ->setEmailContatto(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
       ->setNome(isset($data['flattened']['applicant.data.completename.data.name']) ? $data['flattened']['applicant.data.completename.data.name'] : '')
