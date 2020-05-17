@@ -2,6 +2,12 @@
 
   {# Protocollo / Ricevuta e data di presentazione della pratica #}
   <div class="col-12">
+    <div class="row">
+      <div class="col-sm-4"><strong>{{ 'pratica.numero'|trans }}</strong></div>
+      <div class="col-sm-8 d-inline-flex">
+        <code>{{ pratica.id }}</code>
+      </div>
+    </div>
     {% if pratica.servizio.isProtocolRequired %}
       <div class="row">
         <div class="col-sm-4"><strong>{{ 'pratica.protocollo'|trans }}</strong></div>
@@ -11,13 +17,6 @@
           {% else %}
             <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
           {% endif %}
-        </div>
-      </div>
-    {% else %}
-      <div class="row">
-        <div class="col-sm-4"><strong>{{ 'pratica.numero'|trans }}</strong></div>
-        <div class="col-sm-8 d-inline-flex">
-          <code>{{ pratica.id }}</code>
         </div>
       </div>
     {% endif %}
