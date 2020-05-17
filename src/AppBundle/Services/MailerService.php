@@ -54,7 +54,6 @@ class MailerService
     }
 
     private $blacklistedStates = [
-        Pratica::STATUS_PRE_SUBMIT,
         Pratica::STATUS_REQUEST_INTEGRATION,
         Pratica::STATUS_PROCESSING,
         Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION,
@@ -76,12 +75,14 @@ class MailerService
             return $sentAmount;
         }
 
-        if ($this->CPSUserHasValidContactEmail($pratica->getUser()) &&
+        if ($pratica->getStatus() != Pratica::STATUS_SUBMITTED) {
+          if ($this->CPSUserHasValidContactEmail($pratica->getUser()) &&
             ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))
-        ) {
+          ) {
             $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
             $sentAmount += $this->mailer->send($CPSUsermessage);
             $pratica->setLatestCPSCommunicationTimestamp(time());
+          }
         }
 
         /**
@@ -90,7 +91,7 @@ class MailerService
          *  - inviare email ad operatori recuperati
          */
 
-        if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED)
+        if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED || $pratica->getStatus() == Pratica::STATUS_REGISTERED)
         {
 
             $sql = "SELECT id from utente where servizi_abilitati like '%".$pratica->getServizio()->getId()."%'";
@@ -115,12 +116,14 @@ class MailerService
             }
         }
 
-        if ($pratica->getOperatore() != null &&
+        if ($pratica->getStatus() != Pratica::STATUS_PRE_SUBMIT) {
+          if ($pratica->getOperatore() != null &&
             ($resend || !$this->operatoreUserHasAlreadyBeenWarned($pratica))
-        ) {
+          ) {
             $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
             $sentAmount += $this->mailer->send($operatoreUserMessage);
             $pratica->setLatestOperatoreCommunicationTimestamp(time());
+          }
         }
 
         return $sentAmount;

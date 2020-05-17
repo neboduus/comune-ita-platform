@@ -4,3 +4,9 @@
   {{ 'email.pratica.link_txt'|trans }}
   {{ absolute_url(path('operatori_show_pratica', {'pratica': pratica}))  }}
 {% endif %}
+{% if pratica.id %}
+  {{ 'pratica.numero' | trans }}: {{ pratica.id }}
+{% endif %}
+{% if pratica.submissionTime %}
+  {{ 'pratica.data_di_presentazione' | trans }}: {{ pratica.submissionTime | date('d/m/Y - H:i:s') }}
+{% endif %}
