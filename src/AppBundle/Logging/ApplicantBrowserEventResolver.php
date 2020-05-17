@@ -13,7 +13,7 @@ class ApplicantBrowserEventResolver implements EventResolverInterface
   public function getEventLogInfo(Event $event, $eventName)
   {
     if ($event instanceof PraticaOnChangeStatusEvent){
-      if ($event->getOldStateIdentifier() == Pratica::STATUS_DRAFT){
+      if ($event->getNewStateIdentifier() == Pratica::STATUS_PRE_SUBMIT){
         return array(
           'description' => '[' . $event->getPratica()->getId() . '] ' . Request::createFromGlobals()->headers->get('User-Agent'),
           'type' => 'applicant.browser',
