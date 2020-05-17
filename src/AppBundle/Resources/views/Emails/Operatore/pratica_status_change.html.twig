@@ -9,8 +9,9 @@
                     {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
                 </p>
                 <p>{{ ('email.pratica.operatore.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%user_pratica%': pratica.user.fullName, '%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
-
+                {% if (pratica.servizio.isProtocolRequired and pratica.status >= 3000) or (not pratica.servizio.isProtocolRequired and pratica.status > 1900) %}
                 <p>{{ 'email.pratica.link'|trans()}} <a href="{{ absolute_url(path('operatori_show_pratica', {'pratica': pratica}))  }}">{{ 'email.detail_link'|trans }}</a></p>
+                {% endif %}
             </td>
         </tr>
     </table>
