@@ -187,10 +187,8 @@ class OperatoriController extends Controller
    */
   public function usageAction()
   {
-    $repo = $this->getDoctrine()->getRepository(Pratica::class);
-    $pratiche = $repo->findSubmittedPraticheByEnte($this->get('ocsdc.instance_service')->getCurrentInstance());
-
-    //TODO ho commentato questa parte perchè si spaccava
+    //$repo = $this->getDoctrine()->getRepository(Pratica::class);
+    //$pratiche = $repo->findSubmittedPraticheByEnte($this->get('ocsdc.instance_service')->getCurrentInstance());
     $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $servizi = $serviziRepository->findBy(
       [
@@ -198,21 +196,19 @@ class OperatoriController extends Controller
       ]
     );
 
-    $count = array_reduce($pratiche, function ($acc, $el) {
-      $year = (new \DateTime())->setTimestamp($el->getSubmissionTime())->format('Y');
-      try {
-        $acc[$year]++;
-      } catch (\Exception $e) {
-        $acc[$year] = 1;
-      }
+    $timeZone = date_default_timezone_get();
+    $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.creation_time) AT TIME ZONE '". $timeZone. "') AS tslot
+            FROM pratica AS p GROUP BY tslot ORDER BY tslot ASC";
 
-      return $acc;
-    }, []);
+    $em = $this->getDoctrine()->getManager();
+    $stmt = $em->getConnection()->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
 
     $statusServices = $this->populateSelectStatusServicesPratiche();
     return array(
       'servizi' => $servizi,
-      'pratiche' => $count,
+      'pratiche' => $result,
       'user' => $this->getUser(),
       'statusServices' => $statusServices
     );
