@@ -60,7 +60,20 @@
     </div>
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
+        {% if pratica.operatore %}
         {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
+        {% else %}
+        <div class="row mb-5">
+            <div class="col-12 d-flex justify-content-center">
+              <a class="btn btn-primary" href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
+                <svg class="icon icon-light" href="#">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                </svg>
+                {{ 'operatori.prendi_in_carico_pratica' | trans }}
+              </a>
+            </div>
+        </div>
+        {% endif %}
         {{ include('@App/Operatori/parts/pratica_summary.html.twig') }}
       </div>
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
