@@ -83,6 +83,7 @@ pratica:
   categoria: 'Categoria'
   data_di_compilazione: 'Data di compilazione'
   data_di_creazione: 'Data di creazione'
+  data_di_presentazione: 'Data di presentazione'
   stato: 'Stato'
   operatore: 'Operatore'
   nessun_allegato: 'Non sono presenti allegati.'
@@ -522,6 +523,7 @@ email:
     link_download_txt: 'Per ulteriori dettagli visiti il seguente link: '
     user:
       status:
+        pre.submit: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."
         submitted: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."
         registered: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta."
         cancelled: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>'

@@ -14,5 +14,15 @@
                 {% endif %}
             </td>
         </tr>
+        <tr>
+            <td style="padding: 20px">
+                {% if pratica.id %}
+                    <p><b>{{ 'pratica.numero' | trans }}</b>: {{ pratica.id }}</p>
+                {% endif %}
+                {% if pratica.submissionTime %}
+                    <p><b>{{ 'pratica.data_di_presentazione' | trans }}</b>: {{ pratica.submissionTime | date('d/m/Y - H:i:s') }}</p>
+                {% endif %}
+            </td>
+        </tr>
     </table>
 {% endblock %}
