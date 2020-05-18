@@ -66,12 +66,12 @@
         {% endif %}
       </div>
       <div class="col-4">
-        <div class="callout">
+        <div class="callout{% if pratica.numeroProtocollo %} p-3 mt-1 mb-4{% endif %}">
           <div class="callout-title">Numero richiesta</div>
           <p class="text-sans-serif">{{ pratica.id }}</p>
         </div>
         {% if pratica.numeroProtocollo %}
-          <div class="callout danger">
+          <div class="callout danger p-3 mt-1 mb-4">
             <div class="callout-title">Numero protocollo</div>
             <p class="text-danger text-break text-sans-serif">{{ pratica.numeroProtocollo }}</p>
           </div>

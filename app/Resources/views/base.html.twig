@@ -66,17 +66,24 @@
     //call plugin function after DOM ready
     addLoadEvent(function () {
       outdatedBrowser({
-        bgColor: '#f25648',
+        bgColor: '#3478bd',
         color: '#ffffff',
         lowerThan: 'object-fit',
         languagePath: ''
       })
     });
   </script>
-  <div id="outdated">
-    <h6>Il tuo browser è obsoleto!</h6>
-    <p>Aggiorna il tuo browser per compilare il form correttamente. <a id="btnUpdateBrowser" href="https://bestvpn.org/outdatedbrowser/">Aggiorna </a></p>
-    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+  <div id="outdated" style="height: 100%;opacity: 0.95;background-color: #3478bd">
+    <div style="position: absolute;width: 100%;top: 30%;">
+      <h6>Il tuo browser è obsoleto!</h6>
+      <p style="font-size: 25px;line-height: 1;text-transform: none;margin-top: 25px">
+        Aggiorna il tuo browser per poter accedere al servizio e compilare correttamente il form
+      </p>
+      <a id="btnUpdateBrowser" style="font-size: 25px" href="https://bestvpn.org/outdatedbrowser/">Aggiorna </a>
+      <p style="font-size: 25px;line-height: 1;text-transform: none;margin-top: 25px">
+        Si raccomanda l'utilizzo di Firefox o Chrome
+      </p>
+    </div>
   </div>
 {% block javascripts %}{% endblock %}
 </body>

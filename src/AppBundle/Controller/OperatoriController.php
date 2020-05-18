@@ -197,8 +197,8 @@ class OperatoriController extends Controller
     );
 
     $timeZone = date_default_timezone_get();
-    $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.creation_time) AT TIME ZONE '". $timeZone. "') AS tslot
-            FROM pratica AS p GROUP BY tslot ORDER BY tslot ASC";
+    $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '". $timeZone. "') AS tslot
+            FROM pratica AS p WHERE p.status > 1000 GROUP BY tslot ORDER BY tslot ASC";
 
     $em = $this->getDoctrine()->getManager();
     $stmt = $em->getConnection()->prepare($sql);
@@ -349,7 +349,11 @@ class OperatoriController extends Controller
         $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
       }
       if ( isset( $data['related_applications'] ) ) {
-        $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($data['related_applications'] );
+        try {
+          $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find(trim($data['related_applications']));
+        } catch (\Exception $exception) {
+          $praticaCorrelata = null;
+        }
       }
     } else {
       $fiscalCode = $pratica->getUser()->getCodiceFiscale() ;
@@ -667,19 +671,15 @@ class OperatoriController extends Controller
       ->getQuery()
       ->getResult();
 
-
-    $statusPratiche = $em->createQueryBuilder()
-      ->select('p.status')
-      ->from('AppBundle:Pratica', 'p')
-      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
-      ->distinct()
-      ->getQuery()
-      ->getResult();
-
+    $sql = "SELECT DISTINCT(status) as status
+            FROM pratica WHERE status > 1000 ORDER BY status ASC";
+    $em = $this->getDoctrine()->getManager();
+    $stmt = $em->getConnection()->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
 
     $status = [];
-    \asort($statusPratiche);
-    foreach ($statusPratiche as $valore) {
+    foreach ($result as $valore) {
       $status[] = array(
         "status" => $valore['status'],
         "name" => $this->getStatusAsString($valore['status']));
@@ -719,7 +719,7 @@ class OperatoriController extends Controller
 
     $calculateInterval = date('Y-m-d H:i:s', strtotime($timeDiff));
 
-    $where = " WHERE TO_TIMESTAMP(p.creation_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'";
+    $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'";
 
     if($services && $services != 'all'){
       $where .= " AND s.slug =" ."'".$services."'";
@@ -729,7 +729,7 @@ class OperatoriController extends Controller
       $where .= " AND p.status =" ."'".$status."'";
     }
 
-    $sql = "SELECT COUNT(p.id), date_trunc('". $timeSlot ."', TO_TIMESTAMP(p.creation_time) AT TIME ZONE '".$timeZone."') AS tslot, s.name
+    $sql = "SELECT COUNT(p.id), date_trunc('". $timeSlot ."', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."') AS tslot, s.name
             FROM pratica AS p LEFT JOIN servizio AS s ON p.servizio_id = s.id" .
             $where .
             " GROUP BY s.name, tslot ORDER BY tslot ASC";

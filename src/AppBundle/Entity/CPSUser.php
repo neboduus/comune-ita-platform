@@ -1239,9 +1239,15 @@ class CPSUser extends User
    */
   public function getSecurityFields()
   {
-    $timeZone = new \DateTimeZone(date_default_timezone_get());
-    $shibAuthenticationIstant = new \DateTime($this->getShibAuthenticationIstant());
-    $shibAuthenticationIstant->setTimezone($timeZone);
+    $shibIstant = '';
+    if (!empty($this->getShibAuthenticationIstant())) {
+      try {
+        $timeZone = new \DateTimeZone(date_default_timezone_get());
+        $shibAuthenticationIstant = new \DateTime($this->getShibAuthenticationIstant());
+        $shibAuthenticationIstant->setTimezone($timeZone);
+        $shibIstant = $shibAuthenticationIstant->format(\DateTime::W3C);
+      } catch (\Exception $e) {}
+    }
 
     return [
       'x509certificate_issuerdn' => $this->getX509certificateIssuerdn(),
@@ -1250,7 +1256,7 @@ class CPSUser extends User
       'spidCode' => $this->getSpidCode(),
       'shibSessionId' =>$this->getShibSessionId(),
       'shibSessionIndex' => $this->getShibSessionIndex(),
-      'shibAuthenticationIstant' => $shibAuthenticationIstant->format(\DateTime::W3C)
+      'shibAuthenticationIstant' => $shibIstant
     ];
   }
 
