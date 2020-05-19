@@ -97,6 +97,8 @@ class OperatoriController extends Controller
       'workflow' => $request->get('workflow', false),
       'query_field' => $request->get('query_field', false),
       'query' => $request->get('query', false),
+      'sort' => $request->get('sort', 'submissionTime'),
+      'order' => $request->get('order', 'asc'),
     ];
 
     try {
@@ -271,24 +273,30 @@ class OperatoriController extends Controller
    */
   public function autoAssignPraticaAction(Pratica $pratica)
   {
-    if ($pratica->getOperatore() !== null) {
-      throw new BadRequestHttpException("Pratica {$pratica->getId()} already assigned to {$pratica->getOperatore()->getFullName()}");
+    try {
+      if ($pratica->getOperatore() !== null) {
+        throw new BadRequestHttpException(
+          "La pratica è già assegnata a {$pratica->getOperatore()->getFullName()}"
+        );
+      }
+
+      if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
+        throw new BadRequestHttpException("La pratica non ha ancora un numero di protocollo");
+      }
+
+      $pratica->setOperatore($this->getUser());
+      $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_PENDING);
+
+      $this->get('logger')->info(
+        LogConstants::PRATICA_ASSIGNED,
+        [
+          'pratica' => $pratica->getId(),
+          'user' => $pratica->getUser()->getId(),
+        ]
+      );
+    }catch (\Exception $e){
+      $this->addFlash('error', $e->getMessage());
     }
-
-    if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
-      throw new BadRequestHttpException("Pratica {$pratica->getId()} does not have yet a protocol number");
-    }
-
-    $pratica->setOperatore($this->getUser());
-    $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_PENDING);
-
-    $this->get('logger')->info(
-      LogConstants::PRATICA_ASSIGNED,
-      [
-        'pratica' => $pratica->getId(),
-        'user' => $pratica->getUser()->getId(),
-      ]
-    );
 
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
   }

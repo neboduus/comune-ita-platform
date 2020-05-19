@@ -8,6 +8,7 @@
     .ui-tooltip {font-size: .8em;}
     .filter-query .bootstrap-select{flex-grow: 2}
     .filter-query .input-group-append{flex-grow: 1}
+    tr[data-href] {cursor: pointer;}
   </style>
 {% endblock %}
 
@@ -73,6 +74,8 @@
       var filterWorkflow = $('#filter-workflow');
       var filterQueryBy = $('#filter-query-by');
       var filterQuery = $('#filter-query');
+      var sort = 'submissionTime';
+      var order = 'asc';
 
       var buildParams = function(){
         var params = {
@@ -81,6 +84,8 @@
           'workflow': filterWorkflow.val(),
           'query_field': filterQueryBy.val(),
           'query': filterQuery.val(),
+          'sort': sort,
+          'order': order
         };
         if (typeof (Storage) !== "undefined") {
           localStorage.setItem('pratiche_filters', JSON.stringify(params));
@@ -164,6 +169,12 @@
             loadUrl($(this).data('url'));
             e.preventDefault();
           });
+          resultsContainer.find('a[data-sort]').on('click', function (e) {
+            sort = $(this).data('sort');
+            order = $(this).data('order');
+            loadContents();
+            e.preventDefault();
+          });
           resultsContainer.find('.copy').click(function (e) {
             e.preventDefault();
             var button = $(this);
@@ -174,7 +185,12 @@
             temp.remove();
             button.animateHighlight();
           });
-          resultsContainer.find('[data-toggle="tooltip"]').tooltip()
+          resultsContainer.find('tr[data-href]').on('click', function (e) {
+            if(e.target.tagName === 'TD') {
+              window.location = $(this).data('href');
+            }
+          });
+          resultsContainer.find('[data-toggle="tooltip"]').tooltip();
           if (response.meta.schema) {
             resultsContainer.find('input[data-togglekey]').on('change', function () {
               if ($(this).is(':checked')) {
@@ -203,6 +219,8 @@
           filterWorkflow.val(params.workflow);
           filterQueryBy.val(params.query_field);
           filterQuery.val(params.query);
+          sort = params.sort;
+          order = params.order;
           showReset();
         }
       }
@@ -245,16 +263,23 @@
 </div>
 {{/if}}
 <div class="table-responsive">
-<table class="table table-striped table-condensed" style="width: 100%;font-size:.87em">
+<table class="table table-striped table-condensed table-hover" style="width: 100%;font-size:.87em">
   <thead>
     <tr>
       <th></th>
       <th>Richiedente</th>
       <th>Codice fiscale</th>
-      <th>Data di inserimento</th>
+      <th>
+        <div class="d-flex">
+          <div class="text-nowrap mr-1">Data di inserimento </div>
+          <a href="#" data-sort="submissionTime" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
+          <a href="#" data-sort="submissionTime" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
+        </div>
+      </th>
       {{if !meta.parameter.stato}}
       <th>Stato</th>
       {{/if}}
+      <th>Operatore</th>
       {{if meta.parameter.servizio}}
         {{if meta.schema}}
           {{for meta.schema}}
@@ -264,14 +289,17 @@
       {{else}}
         <th>Servizio</th>
       {{/if}}
-      <th>Operatore</th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
   {{for data ~metadata=meta}}
-    <tr>
+    <tr data-href="{{:~showUrl(id)}}">
       <td class="text-nowrap">
+        {{if can_read}}
+          <a href="{{:~showUrl(id)}}" class="text-nowrap mr-1" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.vai_al_dettaglio'|trans }}{% verbatim %}">
+            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use></svg>
+          </a>
+        {{/if}}
         <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
           <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
         </button>
@@ -296,6 +324,7 @@
       {{if !~metadata.parameter.stato}}
       <td>{{:~formatStatus(status)}}</td>
       {{/if}}
+      <td>{{if operator_name}}{{:operator_name}}{{/if}}</td>
       {{if ~metadata.parameter.servizio}}
         {{if ~metadata.schema}}
           {{props data}}
@@ -307,36 +336,6 @@
       {{else}}
         <td>{{:~formatService(service)}}</td>
       {{/if}}
-      <td>{{if operator_name}}{{:operator_name}}{{/if}}</td>
-      <td>
-        {{if can_autoassign}}
-        <button type="button" class="btn btn-primary btn-xs text-nowrap"
-                data-toggle="modal"
-                {{if is_protocol_required and !protocol_number}}
-                    disabled="disabled"
-                    title="{% endverbatim %}{{ 'pratica.in_attesa_protocollo'|trans }}{% verbatim %}"
-                {{/if}}
-                data-target="#confirmAutoAssign-{{:id}}">
-            {% endverbatim %}{{ 'operatori.prendi_in_carico_pratica'|trans }}{% verbatim %}
-        </button>
-        <div class="modal fade" id="confirmAutoAssign-{{:id}}"
-             tabindex="-1"
-             role="dialog"
-             aria-labelledby="confirmAutoAssignLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-body">Confermi la presa in carico della pratica?</div>
-                    <div class="modal-footer">
-                        <a type="button" class="btn btn-default" data-dismiss="modal">No, annulla l'operazione</a>
-                        <a href="{{:~assignUrl(id)}}" class="btn btn-primary">Sì, sono sicuro</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{else can_read}}
-        <a href="{{:~showUrl(id)}}" class="btn btn-secondary btn-xs text-nowrap">{% endverbatim %}{{ 'operatori.vai_al_dettaglio'|trans }}{% verbatim %}</a>
-        {{/if}}
-      </td>
     </tr>
   {{/for}}
   </tbody>
@@ -412,7 +411,7 @@
         </div>
       </div>
       <div class="col col-lg-1 mb-4 px-0 text-right mt-1" style="max-width: 40px; display: none">
-        <a id="reset" class="btn btn-danger btn-md btn-icon p-2" href="#">
+        <a id="reset" class="btn btn-secondary btn-md btn-icon p-2" href="#">
           <svg class="icon icon-white">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
           </svg>

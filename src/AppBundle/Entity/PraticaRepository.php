@@ -209,9 +209,14 @@ class PraticaRepository extends EntityRepository
       return [];
     }
 
-    return $this->getPraticheByOperatoreQueryBuilder($filters, $user)
-      ->orderBy('pratica.submissionTime', 'desc')
-      ->setFirstResult($offset)
+    $qb = $this->getPraticheByOperatoreQueryBuilder($filters, $user);
+    if (isset($filters['sort']) && isset($filters['order'])) {
+      $qb->orderBy('pratica.'.$filters['sort'], strtolower($filters['order']));
+    }else {
+      $qb->orderBy('pratica.submissionTime', 'desc');
+    }
+
+    return $qb->setFirstResult($offset)
       ->setMaxResults($limit)
       ->getQuery()->execute();
   }

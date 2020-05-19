@@ -41,7 +41,7 @@
   </div>
 {% else %}
   <div class=" alert alert-info mb-5">
-    <p>
+    <p class="m-0">
       {{ 'operatori.iter_completato' | trans({
         '%statusName%': pratica.statusName | trans,
         '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),

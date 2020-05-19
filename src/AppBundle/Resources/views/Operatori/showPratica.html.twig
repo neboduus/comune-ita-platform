@@ -71,7 +71,7 @@
         </div>
         <div class="my-2">
           <h3 class="d-inline">{{ pratica.user.fullName }}</h3>
-          <h4 class="d-inline">{{ fiscal_code }}</h4>
+          <h4 class="d-inline pl-3">{{ fiscal_code }}</h4>
         </div>
       </div>
     </div>
@@ -104,7 +104,7 @@
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
         <div class="row pl-3 mb-5 d-flex justify-content-between">
           <div class="col-auto ">
-            {% if pratica.moduliCompilati|length >0 %}
+            {% if pratica.moduliCompilati|length > 0 %}
             <a class="btn btn-outline-secondary"
                href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
               <svg class="icon icon-sm">
@@ -131,14 +131,26 @@
           </div>
         </div>
         <div class="row my-4 pl-4">
-          <div class="col-12 pb-5">
+          <div class="col-12 pb-3">
             <h6>{{ 'pratica.numero' | trans }}:</h6>
-            <code>{{ pratica.id }}</code>
+            <code class="text-nowrap">{{ pratica.id }}</code>
           </div>
-          <div class="col-12 pb-5">
+          {% if  pratica.numeroProtocollo %}
+          <div class="col-12 pb-3">
+            <h6>{{ 'pratica.protocollo' | trans }}:</h6>
+            <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
+          </div>
+          {% endif %}
+          {% if  pratica.operatore %}
+            <div class="col-12 pb-3">
+              <h6>{{ 'pratica.operatore' | trans }}:</h6>
+              <p class="m-0">{{ pratica.operatore.fullName }}</p>
+            </div>
+          {% endif %}
+          <div class="col-12 pb-3">
             <h6>{{ 'operatori.pratica_correlata' | trans }}</h6>
             <div class="link-list-wrapper multiline">
-              <ul class="link-list">
+              <ul class="link-list m-0">
                 {% if  pratica_correlata %}
                   <li>
                     <a {% if pratica_correlata.servizio.id in user.serviziAbilitati %}
@@ -173,14 +185,16 @@
               </ul>
             </div>
           </div>
-          <div class="col-12 pb-5">
+          <div class="col-12 pb-3">
             <h6>{{ 'pratica.iter' | trans }}</h6>
             {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
           </div>
-          <div class="col-12 pb-5">
+          {% if pratiche_recenti|length > 0 %}
+          <div class="col-12 pb-3">
             <h6>{{ 'operatori.ultime_pratiche' | trans }}</h6>
             {{ include('@App/Operatori/parts/pratiche_recenti.html.twig') }}
           </div>
+          {% endif %}
         </div>
       </div>
     </div>
