@@ -447,7 +447,7 @@ class CalendarsController extends Controller
       $externalCalendars[$externalCalendar->getName()]->initUrl($externalCalendar->getUrl(), $username = null, $password = null, $userAgent = null);
       foreach ($externalCalendars[$externalCalendar->getName()]->events() as $event) {
         $externalEvents[] = [
-          'start' => (new DateTime($event->dtstart))->setTimezone(new \DateTimeZone('Europe/Rome'))->format('c'),
+          'start' => (new DateTime($event->dtstart))->format('c'),
           'end'=>(new DateTime($event->dtend))->format('c'),
           'title'=>$externalCalendar->getName(),
           'uid' =>$event->uid,

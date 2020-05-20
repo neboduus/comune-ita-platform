@@ -247,7 +247,7 @@ class CalendarsAPIController extends AbstractFOSRestController
           } else {
             $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
           }
-          $now = (new DateTime('now', new DateTimeZone('Europe/Rome')))->add($noticeInterval)->format('Y-m-d:H:i');
+          $now = (new DateTime())->add($noticeInterval)->format('Y-m-d:H:i');
           $start = (\DateTime::createFromFormat('Y-m-d:H:i', $day['date'] . ':' . $day['start_time']))->format('Y-m-d:H:i');
           if ($start <= $now)
             $slots[$key] = $slots[$key] + ['availability' => false];

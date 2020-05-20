@@ -77,7 +77,7 @@ services:
     autowire: true
 
   AppBundle\Form\CalendarBackofficeType:
-    autowire: true
+    arguments: ["@doctrine.orm.default_entity_manager", "@translator"]
     tags:
       - { name: form.type }
 
