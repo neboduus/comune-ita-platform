@@ -363,22 +363,26 @@ class OperatoriController extends Controller
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
     $praticaCorrelata = null;
-    $fiscalCode = '';
+    $fiscalCode = null;
     if ($pratica->getType() == Pratica::TYPE_FORMIO) {
       /** @var Schema $schema */
       $schema = $this->container->get('formio.factory')->createFromFormId($pratica->getServizio()->getFormIoId());
-      $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
-      if ( isset( $data['applicant.fiscal_code.fiscal_code'] ) ) {
-        $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
-      }
-      if ( isset( $data['related_applications'] ) ) {
-        try {
-          $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find(trim($data['related_applications']));
-        } catch (\Exception $exception) {
-          $praticaCorrelata = null;
+      if (!empty($pratica->getDematerializedForms()['data'])) {
+        $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
+        if (isset($data['applicant.fiscal_code.fiscal_code'])) {
+          $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
+        }
+        if (isset($data['related_applications'])) {
+          try {
+            $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find(
+              trim($data['related_applications'])
+            );
+          } catch (\Exception $exception) {}
         }
       }
-    } else {
+    }
+
+    if (!$fiscalCode){
       $fiscalCode = $applicant->getCodiceFiscale() ;
     }
 
