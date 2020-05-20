@@ -195,7 +195,7 @@ class MeetingService
       $end = new DateTime($to);
     } else {
       $noticeInterval = new DateInterval('PT' . $openingHour->getCalendar()->getMinimumSchedulingNotice() . 'H');
-      $start = max((new DateTime('now', new DateTimeZone('Europe/Rome')))->add($noticeInterval), $openingHour->getStartDate());
+      $start = max((new DateTime())->add($noticeInterval), $openingHour->getStartDate());
       $rollingInterval = new DateInterval('P' . $openingHour->getCalendar()->getRollingDays() . 'D');
       $end = min((new DateTime())->add($rollingInterval), $openingHour->getEndDate());
     }
@@ -207,7 +207,6 @@ class MeetingService
 
     // Use loop to store date into array
     foreach ($period as $date) {
-      $date = $date->setTimeZone(new DateTimeZone('Europe/Rome'));
       $shouldAdd = false;
       if (!$closures) $shouldAdd = true;
       foreach ($closures as $closure) {
@@ -245,7 +244,7 @@ class MeetingService
     $slots = [];
     foreach ($this->explodeDays($openingHour, true) as $date) {
       foreach ($this->explodeMeetings($openingHour, new DateTime($date)) as $slot) {
-        $now = (new DateTime('now', new DateTimeZone('Europe/Rome')))->format('Y-m-d:H:i');
+        $now = (new DateTime())->format('Y-m-d:H:i');
         $startTime = (\DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time']))->format('Y-m-d:H:i');
 
         if ($startTime > $now) {
@@ -262,41 +261,6 @@ class MeetingService
       }
     }
     return $slots;
-  }
-
-  /**
-   * Checks if opening hour overlaps
-   *
-   * @param OpeningHour $openingHour
-   * @return bool
-   */
-  public function isOverlapped(OpeningHour $openingHour)
-  {
-    /**
-     * @var OpeningHour[] $openingHours
-     */
-    $openingHours = $this->entityManager->createQueryBuilder()
-      ->select('openingHour')
-      ->from('AppBundle:OpeningHour', 'openingHour')
-      ->where('openingHour.calendar = :calendar')
-      ->andWhere('openingHour.id != :id')
-      ->andWhere('openingHour.startDate <= :endDate')
-      ->andWhere('openingHour.endDate >= :startDate')
-      ->setParameter('id', $openingHour->getId())
-      ->setParameter('calendar', $openingHour->getCalendar())
-      ->setParameter('startDate', $openingHour->getStartDate())
-      ->setParameter('endDate', $openingHour->getEndDate())
-      ->getQuery()->getResult();
-
-    if (!empty($openingHours)) {
-      foreach ($openingHours as $openingHour) {
-        if ($openingHour->getBeginHour() <= $openingHour->getEndHour() && $openingHour->getBeginHour() <= $openingHour->getEndHour()) {
-          return true;
-          //throw new ORMException("Different opening hours of the same calendar can't overlap");
-        }
-      }
-    }
-    return false;
   }
 
   /**
