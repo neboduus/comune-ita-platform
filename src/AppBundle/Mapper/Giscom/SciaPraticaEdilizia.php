@@ -31,6 +31,11 @@ class SciaPraticaEdilizia implements HashableInterface
   protected $tipo = 'SCIA';
 
   /**
+   * @var int
+   */
+  protected $stato;
+
+  /**
    * @var string
    */
   protected $cfPresentante;
@@ -135,6 +140,26 @@ class SciaPraticaEdilizia implements HashableInterface
   public function getTipo()
   {
     return $this->tipo;
+  }
+
+  /**
+   * @return int stato
+   */
+  public function getStato()
+  {
+    return $this->stato;
+  }
+
+  /**
+   * @param string $ Uuid
+   *
+   * @return $this
+   */
+  public function setStato($stato)
+  {
+    $this->stato = $stato;
+
+    return $this;
   }
 
   /**
