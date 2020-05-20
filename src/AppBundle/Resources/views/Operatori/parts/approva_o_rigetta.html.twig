@@ -48,5 +48,8 @@
         '%ore%': pratica.latestStatusChangeTimestamp | date('H:i:s')})
        | raw}}
     </p>
+    {% if pratica.motivazioneEsito %}
+      <p class="mt-2 mb-0 p-2 bg-light">{{ pratica.motivazioneEsito }}</p>
+    {% endif %}
   </div>
 {% endif %}

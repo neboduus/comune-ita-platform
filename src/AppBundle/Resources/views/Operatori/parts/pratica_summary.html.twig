@@ -30,6 +30,7 @@
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
+    {# @var allegato \AppBundle\Entity\Allegato #}
     {% for allegato in pratica.allegati %}
       <div class="row align-items-center text-center my-3">
         <div class="col-2">
@@ -43,14 +44,7 @@
           {{ allegato.originalFilename }}
         </div>
         <div class="col-2">
-          {% set bytes = allegato.file.size %}
-          {% set kiloBytes = (bytes / 1024)|round(1) %}
-          {% set megaBytes = (kiloBytes / 1024)|round(1) %}
-          {% if kiloBytes <= 1000 %}
-            {{ kiloBytes | number_format(0) }} Kb
-          {% else %}
-            {{ megaBytes |number_format(1) }} Mb
-          {% endif %}
+          {{ allegato.getHumanReadableFileSize }}
         </div>
         <div class="col-2">
           <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
