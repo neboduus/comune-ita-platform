@@ -263,6 +263,7 @@ class GiscomAPIController extends Controller
                 $this->integrationService->createRispostaOperatore($pratica, $rispostaOperatore);
 
 
+
                 /*$file = (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) ? $payload['FileRichiesta'] : false;
                 if ($file) {
                     $rispostaOperatore = new RispostaOperatoreDTO($payload, null, null);
@@ -278,6 +279,7 @@ class GiscomAPIController extends Controller
         }
 
         $this->logger->info(LogConstants::PRATICA_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $statusChange]);
+        $this->container->get('ocsdc.giscom_api.adapter_direct')->askRelatedCFsForPraticaToGiscom($pratica);
 
         return new Response(null, Response::HTTP_NO_CONTENT);
     }

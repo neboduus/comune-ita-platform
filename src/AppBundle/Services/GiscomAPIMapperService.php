@@ -48,6 +48,7 @@ class GiscomAPIMapperService
   {
     $mappedPratica = new MappedPraticaEdilizia($pratica->getDematerializedForms());
     $mappedPratica->setId($pratica->getId());
+    $mappedPratica->setStato($pratica->getStatus());
     $mappedPratica->setCfPresentante($pratica->getUser()->getCodiceFiscale());
 
     $mappedPratica->setModuloCompilato($this->prepareModuloCompilato($pratica));

@@ -54,22 +54,33 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     public function protocollaPratica(Pratica $pratica)
     {
         $this->validatePratica($pratica);
-
         $this->handler->sendPraticaToProtocollo($pratica);
 
+        // Faccio il persist per salvare il protocollo in modo da evitare protocollazioni miltiple in caso di errore negli allegati.
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
+
         $allegati = $pratica->getAllegati();
+        /** @var Allegato $allegato */
         foreach ($allegati as $allegato) {
             try {
                 $this->validateUploadFile($pratica, $allegato);
                 $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
-            }catch(AlreadyUploadException $e){}
+            }catch(AlreadyUploadException $e){
+              $this->logger->error("Errore di protocollazione allegato: " . $allegato->getId() . " in pratica: " . $pratica->getId() );
+              // Todo: rischedulare upload allegati?
+            }
         }
 
+        /** @var Allegato $allegato */
         foreach ($pratica->getModuliCompilati() as $allegato) {
             try {
                 $this->validateUploadFile($pratica, $allegato);
                 $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
-            }catch(AlreadyUploadException $e){}
+            } catch(AlreadyUploadException $e){
+              $this->logger->error("Errore di protocollazione allegato: " . $allegato->getId() . " in pratica: " . $pratica->getId() );
+              // Todo: rischedulare upload allegati?
+            }
         }
 
         $this->entityManager->persist($pratica);
@@ -140,9 +151,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     public function protocollaRisposta(Pratica $pratica)
     {
         $this->validateRisposta($pratica);
-
         $this->handler->sendRispostaToProtocollo($pratica);
-
         $this->logger->notice('Sending risposta operatore as allegato : id '.$pratica->getRispostaOperatore()->getId());
 
         try {
