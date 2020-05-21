@@ -1,35 +1,27 @@
-<div class="link-list-wrapper multiline">
-  <ul class="link-list">
-    {% if pratiche_recenti|length > 0 %}
-      {% for pratica_recente  in pratiche_recenti %}
-        <li>
-          <a
-            {% if pratica_recente.servizio.id in user.serviziAbilitati %}
-              class="list-item" href="{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}"
-            {% else %}
-              class="list-item disabled" href="#"
-            {% endif %}>
-            <span>
-              <svg class="icon icon-sm icon-light">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-              </svg>
-              {{ pratica_recente.servizio.name }}
+<div class="it-list-wrapper">
+  <ul class="it-list">
+    {% for pratica_recente  in pratiche_recenti %}
+      <li>
+        <a style="box-shadow: 0 0 0 0 rgba(0,0,0,0) !important"
+          href="{% if pratica_recente.servizio.id in user.serviziAbilitati %}{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}{% else %}#{% endif %}">
+          <div class="it-rounded-icon ml-0">
+            <svg class="icon icon-sm">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+            </svg>
+          </div>
+          <div class="it-right-zone ml-0">
+            <span class="text">
+              {{ pratica_recente.servizio.name }} <span class="badge badge-light ml-1">{{ pratica_recente.statusName | trans }}</span>
+              <em>
+                del {{ pratica_recente.submissionTime | date('d/m/Y H:i:s') }}
+              </em>
             </span>
-            <svg class="icon icon-primary icon-right">
+            <svg class="icon" style="min-width: 24px">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
             </svg>
-            <p>
-              Inviata il {{ pratica_recente.submissionTime | date('d/m/Y') }} alle
-              ore {{ pratica_recente.submissionTime | date('H:i:s') }}
-              <br>{{ pratica_recente.statusName | trans }}
-            </p>
-          </a>
-        </li>
-      {% endfor %}
-    {% else %}
-      <li>
-        <span class="small font-italic">Non ci sono altre pratiche recenti</span>
+          </div>
+        </a>
       </li>
-    {% endif %}
+    {% endfor %}
   </ul>
 </div>

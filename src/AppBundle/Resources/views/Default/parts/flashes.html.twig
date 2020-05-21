@@ -11,9 +11,9 @@
           {% set class = 'success' %}
         {% endif %}
         <div class="alert alert-{{ class }} flash-message">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          <a href="#" class="close text-decoration-none" data-dismiss="alert" aria-label="close">&times;</a>
           {% for f in v %}
-            <p>{{ f }}</p>
+            <p class="m-0">{{ f }}</p>
           {% endfor %}
         </div>
       {% endfor %}

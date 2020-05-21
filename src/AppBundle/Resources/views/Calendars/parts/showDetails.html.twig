@@ -22,14 +22,7 @@
                     {% elseif not loop.first and not loop.last %},
                     {% endif %}
                     {# Week days translation #}
-                    {% if weekDay == 1 %} Lunedì
-                    {% elseif weekDay == 2 %} Martedì
-                    {% elseif weekDay == 3 %} Mercoledì
-                    {% elseif weekDay == 4 %} Giovedì
-                    {% elseif weekDay == 5 %} Venerdì
-                    {% elseif weekDay == 6 %} Sabato
-                    {% elseif weekDay == 7 %} Domenica
-                    {% endif %}
+                    {{ ('calendars.opening_hours.weeks.week_day_' ~ weekDay) | trans }}
                   {% endfor %}
                 </p>
                 <p>

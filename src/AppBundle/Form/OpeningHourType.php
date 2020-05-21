@@ -6,7 +6,6 @@ use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
 use AppBundle\Services\MeetingService;
 use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -49,7 +48,7 @@ class OpeningHourType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $weekdays = ['Lunedì'=>1, 'Martedì'=>2, 'Mercoledì'=>3, 'Giovedì'=>4, 'Venerdì'=>5, 'Sabato'=>6, 'Domenica'=>7];
+    $weekdays = ['Lunedì' => 1, 'Martedì' => 2, 'Mercoledì' => 3, 'Giovedì' => 4, 'Venerdì' => 5, 'Sabato' => 6, 'Domenica' => 7];
 
     $builder
       ->add('start_date', DateType::class, [
@@ -65,7 +64,7 @@ class OpeningHourType extends AbstractType
       ->add('days_of_week', ChoiceType::class, [
         'label' => 'Giorni della settimana',
         'required' => false,
-        'choices'=> $weekdays,
+        'choices' => $weekdays,
         'multiple' => true,
         'expanded' => true,
       ])
@@ -90,7 +89,8 @@ class OpeningHourType extends AbstractType
       ->add('meeting_queue', IntegerType::class, [
         'required' => true,
         'label' => 'Numero di meeting paralleli',
-      ])->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+      ])
+      ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
   }
 
   public function onPreSubmit(FormEvent $event) {
@@ -98,20 +98,15 @@ class OpeningHourType extends AbstractType
      * @var OpeningHour $openingHour
      */
     $openingHour = $event->getForm()->getData();
-
     $data = $event->getData();
-    if ($openingHour) {
-      // Check if opening Hour overlaps
-      if ($this->meetingService->isOverlapped($openingHour)) {
-        $event->getForm()->addError(new FormError($this->translator->trans('calendars.opening_hours.error.overlap')));
-      }
 
+    if ($openingHour) {
       // Check if duration can be changed, i.e there are no scheduled meetings (past meetings are excluded)
       $intervalChanged = $openingHour->getIntervalMinutes() != $data['interval_minutes'];
       $durationChanged = $openingHour->getMeetingMinutes() != $data['meeting_minutes'];
       if ($durationChanged || $intervalChanged) {
         $canChange = true;
-        $availableOn = new DateTime('now', new DateTimeZone('Europe/Rome'));
+        $availableOn = new DateTime();
         foreach ($openingHour->getMeetings() as $meeting) {
           if ($meeting->getFromTime() >= $availableOn &&
             !in_array($meeting->getStatus(), [Meeting::STATUS_REFUSED, Meeting::STATUS_CANCELLED])) {
@@ -127,7 +122,6 @@ class OpeningHourType extends AbstractType
         }
       }
     }
-
   }
 
   /**

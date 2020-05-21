@@ -81,8 +81,8 @@
 
     let data = {
       status: status,
-      from_time: new Date(`${date}T${start}Z`).toISOString(),
-      to_time: new Date(`${date}T${end}Z`).toISOString(),
+      from_time: new Date(`${date}T${start}`).toISOString(),
+      to_time: new Date(`${date}T${end}`).toISOString(),
       email: $('#modalEmail').val(),
       phone_number: $('#modalPhone').val(),
       user_message: $('#modalDescription').val(),
@@ -134,8 +134,8 @@
 
     let data = {
       status: 1,
-      from_time: new Date(`${date}T${start}Z`).toISOString(),
-      to_time: new Date(`${date}T${end}Z`).toISOString(),
+      from_time: new Date(`${date}T${start}`).toISOString(),
+      to_time: new Date(`${date}T${end}`).toISOString(),
       user_message: $('#modalNewDescription').val(),
       fiscal_code: $('#modalNewFiscalCode').val(),
       videoconference_link: $('#modalNewVideoconferenceLink').val(),
