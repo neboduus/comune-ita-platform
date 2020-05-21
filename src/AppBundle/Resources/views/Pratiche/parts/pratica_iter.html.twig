@@ -1,42 +1,41 @@
 {% set duration = pratica|iter_duration(app.request.locale) %}
 
-<h4>{{ 'pratica.iter'|trans }}
-  {% if duration != '' %}<i class="fa fa-clock-o has_tooltip" data-toggle="tooltip"
-                            data-placement="top"
-                            title="{{ 'pratica.tooltip_durata_iter'|trans }} {{ pratica|iter_duration }}"></i>{% endif %}
-</h4>
-
-<div class="p-2 border pt-5" style="background: #efefef">
-  <div class="iter-timeline-wrapper pt-4{% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %} done{% endif %}">
-    <div class="row pt-0">
-      {% for timestamp, changes in pratica.storicoStati %}
-      {% for change in changes %}
-        <div class="col-12">
-          <div class="timeline-element">
-            <div class="it-pin-wrapper it-evidence">
-              <div class="pin-icon">
-                <svg class="icon">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
-                </svg>
-              </div>
-              <div class="pin-text"><span class="p-1">{{ timestamp|date(ocsdc_default_datetime_format) }}</span></div>
-            </div>
-            <div class="card-wrapper">
-              <div class="card no-after" style="background: #efefef">
-                <div class="card-body">
-                  <div class="category-top">
-                      <a class="text-decoration-none" href="#">{{ ('pratica.dettaglio.stato_'~change[0])| trans }} </a>
+<div class="p-2 border pt-5 callout" style="background: #efefef">
+  <div class="callout-title border rounded py-1 px-2" >
+    {{ 'pratica.iter'|trans }}
+  </div>
+  <div class="body">
+    <div class="iter-timeline-wrapper pt-4{% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %} done{% endif %}">
+      <div class="row pt-0">
+        {% for timestamp, changes in pratica.storicoStati %}
+          {% for change in changes %}
+            <div class="col-12">
+              <div class="timeline-element">
+                <div class="it-pin-wrapper it-evidence">
+                  <div class="pin-icon">
+                    <svg class="icon">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+                    </svg>
                   </div>
-                  {% if change[1] is defined and change[1]['message'] is defined  and change[1]['message'] is not null %}
-                    <p class="card-text"><em>Motivo: {{ change[1]['message'] }}</em></p>
-                  {% endif %}
+                  <div class="pin-text"><span class="p-1">{{ timestamp|date(ocsdc_default_datetime_format) }}</span></div>
+                </div>
+                <div class="card-wrapper">
+                  <div class="card no-after" style="background: #efefef">
+                    <div class="card-body">
+                      <div class="category-top">
+                        <a class="text-decoration-none" href="#">{{ ('pratica.dettaglio.stato_'~change[0])| trans }} </a>
+                      </div>
+                      {% if change[1] is defined and change[1]['message'] is defined  and change[1]['message'] is not null %}
+                        <p class="card-text"><em>Motivo: {{ change[1]['message'] }}</em></p>
+                      {% endif %}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      {% endfor %}
-      {% endfor %}
+          {% endfor %}
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>

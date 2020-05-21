@@ -190,6 +190,7 @@ pratica:
     sottotitolo: 'Questa descrizione può essere vista solo da te e ti servirà per riconoscere la pratica più agevolmente'
     placeholder: 'Inserisci una descrizione breve'
   noteDiCompilazione: 'Note'
+  le_tue_note: 'Le tue note'
 
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
