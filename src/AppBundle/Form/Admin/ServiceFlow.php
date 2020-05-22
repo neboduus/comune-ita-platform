@@ -4,6 +4,7 @@ namespace AppBundle\Form\Admin;
 
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Form\Admin\Servizio\FeedbackMessagesDataType;
 use AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType;
 use AppBundle\Form\Admin\Servizio\FormIOTemplateType;
 use AppBundle\Form\Admin\Servizio\GeneralDataType;
@@ -26,10 +27,11 @@ class ServiceFlow extends FormFlow
 
   const STEP_FORM_TEMPLATE = 1;
   const STEP_GENERAL_DATA = 2;
-  const STEP_FORM_FIELDS = 3;
-  const STEP_PAYMENT_DATA = 4;
-  const STEP_INTEGRATIONS_DATA = 5;
-  const STEP_PROTOCOL_DATA = 6;
+  const STEP_FEEDBACK_MESSAGES_DATA = 3;
+  const STEP_FORM_FIELDS = 4;
+  const STEP_PAYMENT_DATA = 5;
+  const STEP_INTEGRATIONS_DATA = 6;
+  const STEP_PROTOCOL_DATA = 7;
 
   /**
    * @var LoggerInterface
@@ -82,6 +84,11 @@ class ServiceFlow extends FormFlow
     $steps[self::STEP_GENERAL_DATA] = array(
       'label' => 'Dati generali',
       'form_type' => GeneralDataType::class
+    );
+
+    $steps[self::STEP_FEEDBACK_MESSAGES_DATA] = array(
+      'label' => 'Messaggi',
+      'form_type' => FeedbackMessagesDataType::class
     );
 
     // Mostro lo step per la configurazione di formio solo se necessario

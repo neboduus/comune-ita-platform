@@ -374,6 +374,11 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Admin\Servizio\FeedbackMessagesDataType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\Admin\Servizio\IntegrationsDataType:
     autowire: true
     arguments: ["@translator"]

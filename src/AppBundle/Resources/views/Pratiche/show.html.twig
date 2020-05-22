@@ -47,10 +47,22 @@
 
       <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
         <div class="row">
-          <div class="col-12 pb-5">
+          <div class="col-12">
             {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
           </div>
-
+          {% if pratica.userCompilationNotes %}
+            <div class="col-12">
+              <div id="compilationNotes" class="callout my-5">
+                <div class="callout-title py-1 px-2">
+                  <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use></svg>
+                  {{ 'pratica.le_tue_note'|trans }}
+                </div>
+                <div class="body">
+                  <p>{{ pratica.userCompilationNotes}}</p>
+                </div>
+              </div>
+            </div>
+          {% endif %}
           <div class="col-12 mt-5">
             {% if (pratica.statusName == 'STATUS_DRAFT' or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and user.id == pratica.user.id %}
               <h4>Azioni</h4>

@@ -164,7 +164,7 @@ pratica:
     stato_6000: 'Elaborata (in attesa di protocollazione del documento di esito)'
     stato_7000: 'Iter completato'
     stato_8000: 'Rifiutata (in attesa di protocollazione del documento di esito)'
-    stato_9000: 'Cancellata'
+    stato_9000: 'Rifiutata'
 
     stato_4100: 'Richiesta integrazioni (in attesa di protocollazione)'
     stato_4200: 'In attesa di integrazioni'
@@ -190,6 +190,7 @@ pratica:
     sottotitolo: 'Questa descrizione può essere vista solo da te e ti servirà per riconoscere la pratica più agevolmente'
     placeholder: 'Inserisci una descrizione breve'
   noteDiCompilazione: 'Note'
+  le_tue_note: 'Le tue note'
 
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
@@ -561,6 +562,18 @@ email:
         pending: "hai preso in carico la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
         draft: ''
 
+messages:
+  pratica:
+    status:
+      1900: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta.<br />La ringraziamo per aver utilizzato la stanza del cittadino."
+      2000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta. In allegato il modulo da lei compilato.<br /><strong>Attenzione:</strong> questa è la ricevuta di presentazione della richiesta, NON è l'esito della domanda; le trasmetteremo un messaggio di accettazione o di rifiuto in una comunicazione e-mail successiva.<br />La ringraziamo per aver utilizzato la stanza del cittadino."
+      3000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta.<br />La ringraziamo per aver utilizzato la stanza del cittadino."
+      4000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore.<br />La ringraziamo per aver utilizzato la stanza del cittadino.'
+      5000: ''
+      6000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi documenti allegati.<br />La ringraziamo per aver utilizzato la stanza del cittadino.'
+      7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata.%motivazione%<br />Il numero di richiesta è <strong>%pratica_id%</strong><br />La ringraziamo per aver utilizzato la stanza del cittadino.Con la seguente motivazione:<br> %motivazione%"
+      8000: ''
+      9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata.%motivazione%<br />Il numero di richiesta è <strong>%pratica_id%</strong><br />La ringraziamo per aver utilizzato la stanza del cittadino."
 messaggi:
   messaggio: 'Messaggio'
   invia: 'Invia'
