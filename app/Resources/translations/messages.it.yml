@@ -570,10 +570,11 @@ messages:
       3000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta.<br />La ringraziamo per aver utilizzato la stanza del cittadino."
       4000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore.<br />La ringraziamo per aver utilizzato la stanza del cittadino.'
       5000: ''
-      6000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi documenti allegati.<br />La ringraziamo per aver utilizzato la stanza del cittadino.'
-      7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata.%motivazione%<br />Il numero di richiesta è <strong>%pratica_id%</strong><br />La ringraziamo per aver utilizzato la stanza del cittadino.Con la seguente motivazione:<br> %motivazione%"
+      6000: ''
+      7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con la seguente motivazione:<br /> %motivazione%<br />La ringraziamo per aver utilizzato la stanza del cittadino."
       8000: ''
-      9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata.%motivazione%<br />Il numero di richiesta è <strong>%pratica_id%</strong><br />La ringraziamo per aver utilizzato la stanza del cittadino."
+      9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con la seguente motivazione:<br /> %motivazione%<br />La ringraziamo per aver utilizzato la stanza del cittadino."
+    no_reason: '<i>Nessuna motivazione specificata</i>'
 messaggi:
   messaggio: 'Messaggio'
   invia: 'Invia'
