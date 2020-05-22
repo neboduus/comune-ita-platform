@@ -473,7 +473,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @return User
+   * @return User|CPSUser
    */
   public function getUser()
   {

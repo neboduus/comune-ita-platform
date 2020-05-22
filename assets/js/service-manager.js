@@ -69,7 +69,7 @@ $(document).ready(function () {
     });
   }
 
-  if ($("#general_data_flow_service_step").length) {
+  if ($("#general_data_flow_service_step").length /*|| $("#feedback_messages_data_flow_service_step").length*/) {
     $('textarea').summernote({
       toolbar: [
         ['style', ['style']],
@@ -77,6 +77,28 @@ $(document).ready(function () {
         ['insert', ['link']],
         ['view', ['codeview']],
       ]
+    });
+  }
+
+  if ( $("#feedback_messages_data_flow_service_step").length ) {
+    $('textarea').summernote({
+      toolbar: [
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['insert', ['link']],
+        ['view', ['codeview']],
+      ],
+      hint: {
+        mentions: ['%pratica_id%', '%servizio%', '%protocollo%', '%motivazione%', '%user_name%'],
+        match: /\B%(\w*)$/,
+        search: function (keyword, callback) {
+          callback($.grep(this.mentions, function (item) {
+            return item.indexOf(keyword) == 0;
+          }));
+        },
+        content: function (item) {
+          return item;
+        }
+      }
     });
   }
 
