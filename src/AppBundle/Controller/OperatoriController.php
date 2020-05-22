@@ -728,7 +728,8 @@ class OperatoriController extends Controller
     foreach ($result as $valore) {
       $status[] = array(
         "status" => $valore['status'],
-        "name" => $this->getStatusAsString($valore['status']));
+        "name" => $this->get('translator')->trans('stato_'.$valore['status'])
+      );
     }
 
     return array(
@@ -857,49 +858,5 @@ class OperatoriController extends Controller
         'categories' => explode(',',substr(str_replace('"','',$categories[$maxKey]), 1, -1))
       );
     }*/
-
-
   }
-
-
-
-  public function getStatusAsString(int $status)
-  {
-    switch ($status) {
-      case Pratica::STATUS_DRAFT:
-        return 'Bozza';
-        break;
-      case Pratica::STATUS_PAYMENT_PENDING:
-        return 'Pagamento in attesa';
-        break;
-      case Pratica::STATUS_PRE_SUBMIT:
-        return 'Inviata';
-        break;
-      case Pratica::STATUS_SUBMITTED:
-        return 'Acquisita';
-        break;
-      case Pratica::STATUS_REGISTERED:
-        return 'Protocollata';
-        break;
-      case Pratica::STATUS_PENDING:
-        return 'Presa in carico';
-        break;
-      case Pratica::STATUS_PROCESSING:
-        return 'Processata';
-        break;
-      case Pratica::STATUS_REQUEST_INTEGRATION:
-        return 'Richiesta di integrazione';
-        break;
-      case Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE:
-        return 'Completata in attesa di protocollazione';
-        break;
-      case Pratica::STATUS_COMPLETE:
-        return 'Completata';
-        break;
-      default:
-        return 'Errore';
-    }
-  }
-
-
 }
