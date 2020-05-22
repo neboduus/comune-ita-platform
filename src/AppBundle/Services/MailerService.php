@@ -173,7 +173,7 @@ class MailerService
       '%pratica_id%' => $pratica->getId(),
       '%servizio%' => $pratica->getServizio()->getName(),
       '%protocollo%' => $pratica->getNumeroProtocollo(),
-      '%motivazione%' => $pratica->getMotivazioneEsito(),
+      '%motivazione%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
       '%user_name%' => $pratica->getUser()->getFullName(),
     ];
 
