@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Model\FeedbackMessage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Model\PaymentParameters;
@@ -260,10 +261,19 @@ class Servizio
 
   /**
    * @var string
+   * @deprecated
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Email text")
    */
   private $emailText;
+
+  /**
+   * @var FeedbackMessage[]
+   * @ORM\Column(type="json", nullable=true)
+   * @SWG\Property(description="Service feedback messages")
+   */
+  private $feedbackMessages;
+
 
   /**
    * Servizio constructor.
@@ -277,6 +287,7 @@ class Servizio
     $this->enti = new ArrayCollection();
     $this->erogatori = new ArrayCollection();
     $this->flowSteps = new ArrayCollection();
+    $this->feedbackMessages = new ArrayCollection();
     //$this->paymentParameters = new ArrayCollection();
     $this->status = self::STATUS_AVAILABLE;
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
@@ -934,6 +945,27 @@ class Servizio
   public function setEmailText(string $emailText)
   {
     $this->emailText = $emailText;
+  }
+
+  /**
+   * @return FeedbackMessage[]
+   */
+  public function getFeedbackMessages(): ?array
+  {
+    return $this->feedbackMessages;
+  }
+
+  /**
+   * @param FeedbackMessage[] $feedbackMessages
+   */
+  public function setFeedbackMessages(array $feedbackMessages)
+  {
+    $messages = [];
+    /** @var FeedbackMessage $feedbackMessage */
+    foreach ($feedbackMessages as $feedbackMessage) {
+      $messages [$feedbackMessage->getTrigger()] = $feedbackMessage;
+    }
+    $this->feedbackMessages = $messages;
   }
 
 }
