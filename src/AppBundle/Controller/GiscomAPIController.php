@@ -279,7 +279,13 @@ class GiscomAPIController extends Controller
         }
 
         $this->logger->info(LogConstants::PRATICA_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $statusChange]);
-        $this->container->get('ocsdc.giscom_api.adapter_direct')->askRelatedCFsForPraticaToGiscom($pratica);
+
+        try {
+          $this->container->get('ocsdc.giscom_api.adapter_direct')->askRelatedCFsForPraticaToGiscom($pratica);
+        } catch (\Exception $e) {
+          $this->logger->error(LogConstants::PRATICA_UPDATED_STATUS_FROM_GISCOM, ['Ask related cfs' => $e->getMessage()]);
+        }
+
 
         return new Response(null, Response::HTTP_NO_CONTENT);
     }

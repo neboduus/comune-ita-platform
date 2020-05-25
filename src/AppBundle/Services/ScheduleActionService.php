@@ -49,6 +49,7 @@ class ScheduleActionService
             'service' => $service,
             'type' => $type,
             'params' => $params,
+            'status' => ScheduledAction::STATUS_PENDING
         ])
         ) {
             throw new AlreadyScheduledException();
