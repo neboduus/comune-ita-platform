@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-05-12'
-softwareVersion: 1.5.0
+releaseDate: '2020-05-26'
+softwareVersion: 1.5.1
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -17,6 +17,7 @@ usedBy:
   - Comune di Aldeno (TN)
   - Comune di Aamblar Don (TN)
   - Comune di Andalo (TN)
+  - Comune di Arco (TN)
   - Comune di Avio (TN)
   - Comune di Bieno (TN)
   - Comune di Bleggio Superiore (TN)
@@ -44,9 +45,11 @@ usedBy:
   - Comune di Mori (TN)
   - Comune di Novella (TN)
   - Comune di Pelugo (TN)
+  - Comune di Pergine (TN)
   - Comune di Pieve Tesino (TN)
   - Comune di Porte di Rendena (TN)
   - Comune di Predaia (TN)
+  - Comune di Riva del Garda (TN)
   - Comune di Rovereto (TN)
   - Comune di Ruffrè Mendola (TN)
   - Comune di Sarnonico (TN)
@@ -59,6 +62,7 @@ usedBy:
   - Comune di Telve di Sopra (TN)
   - Comune di Terre D'Adige (TN)
   - Comune di Tre Ville (TN)
+  - Comune di Trento (TN)
   - Comune di Vallelaghi (TN)
   - Comune di Villa Lagarina (TN)
   - Fondazione Mach (TN)
