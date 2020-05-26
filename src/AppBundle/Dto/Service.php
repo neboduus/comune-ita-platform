@@ -535,9 +535,9 @@ class Service
     $dto->finalIndications = $servizio->getFinalIndications() ?? '';
     $dto->coverage = $servizio->getCoverage();
     $dto->flowSteps = $servizio->getFlowSteps();
-    $dto->protocolloParameters = $servizio->getProtocolloParameters();
+    $dto->protocolloParameters = null;
     $dto->paymentRequired = $servizio->isPaymentRequired();
-    $dto->paymentParameters = $servizio->getPaymentParameters();
+    $dto->paymentParameters = [];
     $dto->sticky = $servizio->isSticky();
     $dto->status = $servizio->getStatus();
     $dto->loginSuggested = $servizio->isLoginSuggested() || false;
