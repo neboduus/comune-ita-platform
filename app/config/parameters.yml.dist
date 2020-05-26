@@ -123,7 +123,7 @@ parameters:
       x509certificate_issuerdn: "shibb_pat_attribute_x509certificate_issuerdn"
       x509certificate_subjectdn: "shibb_pat_attribute_x509certificate_subjectdn"
       x509certificate_base64: "shibb_pat_attribute_x509certificate_base64"
-      spidCode: 'shibb_pat_attribute_spid_code'
-      shibSessionId: 'shibb_Shib-Session-ID'
-      shibSessionIndex: 'shibb_Shib-Session-Index
-      shibAuthenticationIstant: 'shibb_Shib-Authentication-Instant''
+      spidCode: "shibb_pat_attribute_spid_code"
+      shibSessionId: "shibb_Shib-Session-ID"
+      shibSessionIndex: "shibb_Shib-Session-Index"
+      shibAuthenticationIstant: "shibb_Shib-Authentication-Instant"
