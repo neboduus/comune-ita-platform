@@ -1,4 +1,4 @@
-require('webpack-jquery-ui/datepicker');
+import "jquery-ui/ui/widgets/datepicker"
 import Base from 'formiojs/components/_classes/component/Component';
 //import editForm from 'formiojs/components/textfield/TextField.form'
 import editForm from './Calendar/Calendar.form'
@@ -84,8 +84,11 @@ export default class FormioCalendar extends Base {
       dayNames: ['Domenica','Luned&#236','Marted&#236','Mercoled&#236','Gioved&#236','Venerd&#236','Sabato'], // set days names
       dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'], // set short day names
       dayNamesMin: ['Do','Lu','Ma','Me','Gio','Ve','Sa'], // set more short days names
+      nextText: '',
+      prevText: ''
       //dateFormat: 'dd-mm.-yy' // set format date
     };
+
     $.datepicker.setDefaults($.datepicker.regional['it']);
 
     if (calendarID !== '' && calendarID != null) {
