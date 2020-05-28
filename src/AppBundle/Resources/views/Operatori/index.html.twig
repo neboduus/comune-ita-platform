@@ -47,6 +47,16 @@
       },
       'showUrl': function (id) {
         return $('#results-data').data('show').replace('X', id);
+      },
+      'checkTypeData': function (value) {
+        if(typeof value === 'string' ){
+          return value;
+        }else if(Array.isArray(value)){
+          if (value.some(e => e.hasOwnProperty('data'))) {
+            return 'N° file: '+ value.length;
+          }
+          return value;
+        }
       }
     });
     $.fn.animateHighlight = function (highlightColor, duration) {
@@ -329,7 +339,7 @@
         {{if ~metadata.schema}}
           {{props data}}
           <td data-key="{{>key}}" style="display:none">
-            {{>prop}}
+           {{:~checkTypeData(prop)}}
           </td>
           {{/props}}
         {{/if}}
