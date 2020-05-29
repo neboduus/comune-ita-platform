@@ -66,14 +66,15 @@
       var spinnerTemplate = $.templates("#tpl-spinner");
       var emptyTemplate = $.templates("#tpl-empty");
       var resultsTemplate = $.templates("#tpl-result");
-      var limitPagination = 20;
+      var limitPagination = 99999; // init state
       var reset = $('#reset');
-      var filtersContainer = $('#filters');
+      var filtersContainer = $('#filters, #filter-paginator');
       var filterServizio = $('#filter-servizio');
       var filterStato = $('#filter-stato');
       var filterWorkflow = $('#filter-workflow');
       var filterQueryBy = $('#filter-query-by');
       var filterQuery = $('#filter-query');
+      var filterPratiche = $('#filter-pratiche');
       var sort = 'submissionTime';
       var order = 'asc';
 
@@ -85,7 +86,9 @@
           'query_field': filterQueryBy.val(),
           'query': filterQuery.val(),
           'sort': sort,
-          'order': order
+          'order': order,
+          'paginator': filterPratiche.val()
+
         };
         if (typeof (Storage) !== "undefined") {
           localStorage.setItem('pratiche_filters', JSON.stringify(params));
@@ -97,7 +100,8 @@
         return object.servizio === ''
           && object.stato === ''
           && object.workflow === ''
-          && object.stato === '';
+          && object.stato === ''
+          && object.paginator === '';
       };
 
       reset.on('click', function (e) {
@@ -108,12 +112,13 @@
             'workflow': '',
             'query_field': '1',
             'query': '',
+            'paginator': limitPagination
           }));
         }
         window.location.reload();
         e.preventDefault();
       });
-      
+
       var showReset = function(){
         reset.parent().show();
       };
@@ -132,6 +137,7 @@
       });
 
       var loadContents = function() {
+
         resultsContainer.html(spinnerTemplate.render({}));
         var params = buildParams();
         if (isEmpty(params)){
@@ -139,7 +145,7 @@
         }else{
           showReset();
         }
-        params.limit = limitPagination;
+        params.limit = filterPratiche.val();
         params.offset = 0;
         $.get(resultsContainer.data('source'), params, function (response) {
           loadResponse(response);
@@ -219,6 +225,7 @@
           filterWorkflow.val(params.workflow);
           filterQueryBy.val(params.query_field);
           filterQuery.val(params.query);
+          filterPratiche.val(params.paginator);
           sort = params.sort;
           order = params.order;
           showReset();
@@ -262,7 +269,7 @@
   </div>
 </div>
 {{/if}}
-<div class="table-responsive">
+<div class="table-responsive mt-5">
 <table class="table table-striped table-condensed table-hover" style="width: 100%;font-size:.87em">
   <thead>
     <tr>
@@ -418,7 +425,20 @@
         </a>
       </div>
     </div>
-
+  <div class="col-md-3 col-4 col-lg-2 position-absolute mb-4" style="right: 60px;z-index: 1"  id="filter-paginator">
+    <div class="bootstrap-select-wrapper mr-3">
+      <label for="filter-pratiche">Risultati per pagina</label>
+      <select id="filter-pratiche" class="form-control filter-select">
+        <option value="99999">Tutti</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+  </div>
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2" id="results-data"
            data-show="{{ path('operatori_show_pratica', {'pratica': 'X'}) }}"
