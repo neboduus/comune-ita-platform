@@ -150,6 +150,12 @@ class UserController extends Controller
     $compiledProvinciaDomicilio = $user->getProvinciaDomicilio();
     $compiledStatoDomicilio = $user->getStatoDomicilio();
 
+    //Se la email contiene il valore fake, forziamo l'utente a riscrivere una mail corretta resettando il campo
+    $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
+    if (preg_match($regex, $compiledEmailData)) {
+      $compiledEmailData = '';
+    }
+
     $formBuilder = $this->createFormBuilder(null, ['attr' => ['id' => 'edit_user_profile']])
       ->add('email_contatto', EmailType::class,
         ['label' => false, 'data' => $compiledEmailData, 'required' => false]
