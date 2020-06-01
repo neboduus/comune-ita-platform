@@ -16,6 +16,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CPSUser extends User
 {
+  const IDP_NONE = "anonymous";
+  const IDP_SPID = "spid";
+  const IDP_CPS_OR_CNS = "cps/cns";
+
   /**
    * @var string
    *
@@ -1258,6 +1262,19 @@ class CPSUser extends User
       'shibSessionIndex' => $this->getShibSessionIndex(),
       'shibAuthenticationIstant' => $shibIstant
     ];
+  }
+
+  /**
+   * Checks whether user is verified by an identity provider
+   * @return int|null
+   */
+  public function getIdp() {
+    if ($this->getSpidCode())
+      return CPSUser::IDP_SPID;
+    else if ($this->getShibSessionId() && $this->getShibSessionId()() && $this->getShibAuthenticationIstant())
+      return CPSUser::IDP_CPS_OR_CNS;
+    else
+      return CPSUser::IDP_NONE;
   }
 
   public static function getProvinces()

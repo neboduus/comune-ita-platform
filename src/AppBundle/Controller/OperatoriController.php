@@ -154,6 +154,7 @@ class OperatoriController extends Controller
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
       $applicationArray['is_payment_required'] = $s->getServizio()->isPaymentRequired();
+      $applicationArray['idp'] = $s->getUser()->getIdp();
       $applicantUser = $s->getUser();
       $codiceFiscale = $applicantUser instanceof CPSUser ? $applicantUser->getCodiceFiscale() : '';
       $codiceFiscaleParts = explode('-', $codiceFiscale);
