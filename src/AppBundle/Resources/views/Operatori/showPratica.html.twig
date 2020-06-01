@@ -71,7 +71,14 @@
         </div>
         <div class="my-2">
           <h3 class="d-inline">{{ pratica.user.fullName }}</h3>
-          <h4 class="d-inline pl-3">{{ fiscal_code }}</h4>
+          <h4 class="d-inline pl-3">
+            {{ fiscal_code }}
+            {% if pratica.user.idp != "anonymous" %}
+              <span data-toggle="tooltip" title="Identità del cittadino verificata">
+                <svg class="icon icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+              </span>
+            {% endif %}
+          </h4>
         </div>
       </div>
     </div>

@@ -284,6 +284,7 @@
   <thead>
     <tr>
       <th></th>
+      <th>Login</th>
       <th>Richiedente</th>
       <th>Codice fiscale</th>
       <th>
@@ -334,9 +335,35 @@
             <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use></svg>
           </span>
         {{/if}}
+       </td>
+       <td>
+        {{if idp == "spid" }}
+          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+            <img class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/spid.svg') }}"{% verbatim %}>
+          </span>
+        {{/if}}
+        {{if idp == "cps/cns" }}
+          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+            <img class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/cns.png') }}"{% verbatim %}>
+          </span>
+        {{/if}}
       </td>
-      <td>{{:user_name}}</td>
-      <td>{{:codice_fiscale}}</td>
+      <td>
+        {{:user_name}}
+        {{if idp != "anonymous"}}
+          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+            <svg class="icon icon-xs icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+          </span>
+        {{/if}}
+      </td>
+      <td>
+        {{:codice_fiscale}}
+        {{if idp != "anonymous"}}
+          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+            <svg class="icon icon-xs icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+          </span>
+        {{/if}}
+      </td>
       <td class="text-nowrap">{{:~formatDate(submission_time,"{% endverbatim %}{{ocsdc_default_moment_datetime_format}}{% verbatim %}")}}</td>
       {{if !~metadata.parameter.stato}}
       <td>{{:~formatStatus(status)}}</td>
