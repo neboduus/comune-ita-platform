@@ -1,5 +1,5 @@
 
-.slot-calendar {
+.slot-calendar, .sdc-datepicker, #ui-datepicker-div {
 
   .ui-widget {
     font-family: "Titillium Web", Geneva, Tahoma, sans-serif;
@@ -53,14 +53,14 @@
   }
 }
 
-.slot-calendar{
+.slot-calendar, .sdc-datepicker, #ui-datepicker-div{
   width: unset;
 
   .ui-datepicker-prev {
     font-size: .8em;
     text-align: center;
     position: absolute;
-    top: 12px;
+    top: 8px;
     border: 1px solid transparent;
     border-radius: 50%;
     cursor: pointer;
@@ -80,7 +80,7 @@
     font-size: .8em;
     text-align: center;
     position: absolute;
-    top: 12px;
+    top: 8px;
     border: 1px solid transparent;
     border-radius: 50%;
     cursor: pointer;
@@ -104,13 +104,6 @@
   .ui-datepicker .ui-datepicker-header {
     padding: .2em 0;
     position: relative;
-  }
-
-  .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
-    height: 1.8em;
-    position: absolute;
-    top: 2px;
-    width: 1.8em;
   }
 
   .ui-datepicker .ui-datepicker-prev-hover, .ui-datepicker .ui-datepicker-next-hover { top: 1px; }
@@ -182,6 +175,42 @@
     transition: .3s;
   }
 
+  .ui-widget-header {
+    .ui-state-default {
+      border: 0;
+      background: transparent;
+      font-weight: 600;
+      color: #555;
+      border: 1px solid transparent;
+    }
+
+    .ui-state-active {
+      background-color: $primary;
+      -webkit-box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
+      -moz-box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
+      color: #fff !important;
+    }
+
+    .ui-state-hover {
+      color: #555;
+      font-weight: 600;
+      border: 1px solid $primary;
+      border-radius: 50%;
+    }
+
+    .ui-state-focus {
+      color: #555;
+      font-weight: 600;
+      border: 1px solid $primary;
+      border-radius: 50%;
+    }
+
+    .ui-icon {
+      background: 0;
+    }
+  }
+
 }
 
 .ui-state-default {
@@ -227,41 +256,7 @@
   }
 }
 
-.ui-widget-header {
-  .ui-state-default {
-    border: 0;
-    background: transparent;
-    font-weight: 600;
-    color: #555;
-    border: 1px solid transparent;
-  }
 
-  .ui-state-active {
-    background-color: $primary;
-    -webkit-box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: 5px 5px 20px 0 rgba(0, 0, 0, 0.1);
-    color: #fff !important;
-  }
-
-  .ui-state-hover {
-    color: #555;
-    font-weight: 600;
-    border: 1px solid $primary;
-    border-radius: 50%;
-  }
-
-  .ui-state-focus {
-    color: #555;
-    font-weight: 600;
-    border: 1px solid $primary;
-    border-radius: 50%;
-  }
-
-  .ui-icon {
-    background: 0;
-  }
-}
 
 .ui-button {
   border: 0;
@@ -448,3 +443,14 @@ a.ui-button {
   }
 }
 
+#ui-datepicker-div{
+  //reset ui calendar
+  @import "~jquery-ui/themes/base/all.css";
+
+  width: 320px;
+  td a {
+    text-align: center;
+  }
+
+
+}
