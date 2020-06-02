@@ -9,6 +9,7 @@ use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
 use Doctrine\DBAL\FetchMode;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -53,6 +54,24 @@ class DefaultController extends Controller
    */
   public function privacyAction()
   {
+  }
+
+  /**
+   * @Route("/login", name="login")
+   * @Template()
+   */
+  public function loginAction()
+  {
+    //return new Response('aaaa', Response::HTTP_OK);
+  }
+
+  /**
+   * @Route("/logout", name="logout")
+   * @throws Exception
+   */
+  public function logout()
+  {
+    throw new Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
   }
 
   /**
