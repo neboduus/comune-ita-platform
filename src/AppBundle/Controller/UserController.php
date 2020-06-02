@@ -160,6 +160,11 @@ class UserController extends Controller
       $compiledEmailData = '';
     }
 
+    $birthDay = '';
+    if ( $user->getDataNascita() instanceof DateTime) {
+      $birthDay = $user->getDataNascita()->format('d-m-Y');
+    }
+
     $formBuilder = $this->createFormBuilder(null, ['attr' => ['id' => 'edit_user_profile']])
       ->add('email_contatto', EmailType::class,
         ['label' => false, 'data' => $compiledEmailData, 'required' => false]
@@ -168,7 +173,7 @@ class UserController extends Controller
         ['label' => false, 'data' => $compiledCellulareData, 'required' => false]
       )
       ->add('data_nascita', TextType::class,
-        ['label' => false, 'data' => $user->getDataNascita()->format('d-m-Y'), 'required' => true, 'attr' => ['class' => 'sdc-datepicker']]
+        ['label' => false, 'data' => $birthDay, 'required' => true, 'attr' => ['class' => 'sdc-datepicker']]
       )
       ->add('luogo_nascita', TextType::class,
         ['label' => false, 'data' => $user->getLuogoNascita(), 'required' => true]
