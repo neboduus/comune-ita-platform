@@ -1269,9 +1269,9 @@ class CPSUser extends User
    * @return int|null
    */
   public function getIdp() {
-    if ($this->getSpidCode())
+    if ( $this->getSpidCode() )
       return CPSUser::IDP_SPID;
-    else if ($this->getShibSessionId() && $this->getShibSessionId()() && $this->getShibAuthenticationIstant())
+    else if ($this->getShibSessionId() && $this->getShibAuthenticationIstant())
       return CPSUser::IDP_CPS_OR_CNS;
     else
       return CPSUser::IDP_NONE;
