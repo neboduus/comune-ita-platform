@@ -76,7 +76,7 @@
       var spinnerTemplate = $.templates("#tpl-spinner");
       var emptyTemplate = $.templates("#tpl-empty");
       var resultsTemplate = $.templates("#tpl-result");
-      var limitPagination = 99999; // init state
+      var defaultLimit = 10;
       var reset = $('#reset');
       var filtersContainer = $('#filters, #filter-paginator');
       var filterServizio = $('#filter-servizio');
@@ -97,9 +97,9 @@
           'query': filterQuery.val(),
           'sort': sort,
           'order': order,
-          'paginator': filterPratiche.val()
-
+          'limit': filterPratiche.val() != null ? filterPratiche.val() : defaultLimit
         };
+
         if (typeof (Storage) !== "undefined") {
           localStorage.setItem('pratiche_filters', JSON.stringify(params));
         }
@@ -110,8 +110,7 @@
         return object.servizio === ''
           && object.stato === ''
           && object.workflow === ''
-          && object.stato === ''
-          && object.paginator === '';
+          && object.query === '';
       };
 
       reset.on('click', function (e) {
@@ -122,7 +121,7 @@
             'workflow': '',
             'query_field': '1',
             'query': '',
-            'paginator': limitPagination
+            'limit': defaultLimit
           }));
         }
         window.location.reload();
@@ -155,7 +154,6 @@
         }else{
           showReset();
         }
-        params.limit = filterPratiche.val();
         params.offset = 0;
         $.get(resultsContainer.data('source'), params, function (response) {
           loadResponse(response);
@@ -227,6 +225,7 @@
           }
         }
       };
+
       if (typeof (Storage) !== "undefined") {
         if (localStorage.getItem('pratiche_filters')){
           var params = JSON.parse(localStorage.getItem('pratiche_filters'));
@@ -235,7 +234,7 @@
           filterWorkflow.val(params.workflow);
           filterQueryBy.val(params.query_field);
           filterQuery.val(params.query);
-          filterPratiche.val(params.paginator);
+          filterPratiche.val(params.limit == null || params.limit == undefined ? defaultLimit : params.limit);
           sort = params.sort;
           order = params.order;
           showReset();
@@ -466,11 +465,8 @@
     <div class="bootstrap-select-wrapper mr-3">
       <label for="filter-pratiche">Risultati per pagina</label>
       <select id="filter-pratiche" class="form-control filter-select">
-        <option value="99999">Tutti</option>
-        <option value="5">5</option>
         <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
+        <option value="25">25</option>
         <option value="50">50</option>
         <option value="100">100</option>
       </select>
