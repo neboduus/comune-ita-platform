@@ -202,7 +202,7 @@ class OperatoriController extends Controller
 
     $timeZone = date_default_timezone_get();
     $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '". $timeZone. "') AS tslot
-            FROM pratica AS p WHERE p.status > 1000 GROUP BY tslot ORDER BY tslot ASC";
+            FROM pratica AS p WHERE p.status > 1000 and p.submission_time IS NOT NULL GROUP BY tslot ORDER BY tslot ASC";
 
     /** @var EntityManager $em */
     $em = $this->getDoctrine()->getManager();
@@ -729,7 +729,7 @@ class OperatoriController extends Controller
     foreach ($result as $valore) {
       $status[] = array(
         "status" => $valore['status'],
-        "name" => $this->get('translator')->trans('stato_'.$valore['status'])
+        "name" => $this->get('translator')->trans('pratica.dettaglio.stato_'.$valore['status'])
       );
     }
 
@@ -766,7 +766,7 @@ class OperatoriController extends Controller
 
     $calculateInterval = date('Y-m-d H:i:s', strtotime($timeDiff));
 
-    $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'";
+    $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'" . "and p.submission_time IS NOT NULL";
 
     if($services && $services != 'all'){
       $where .= " AND s.slug =" ."'".$services."'";
