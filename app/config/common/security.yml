@@ -30,12 +30,14 @@ security:
         open_login:
             #pattern: ^/%prefix%/login
             pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
+            provider: cps
+            json_login:
+                check_path: login
             logout:
                 path: logout #name of the route
                 target: /
                 delete_cookies: ['PHPSESSID', 'token', 'refresh_token']
             guard:
-                provider: cps
                 authenticators:
                   - ocsdc.openlogin.authenticator
 
@@ -124,7 +126,7 @@ security:
         - { path: ^/%prefix%/operatori/subscriber, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori/calendars, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori, role: ROLE_OPERATORE }
-        #- { path: ^/%prefix%/pratiche, role: ROLE_USER }
+        - { path: ^/%prefix%/pratiche, role: ROLE_USER }
         - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
         - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
         - { path: ^/%prefix%/admin, role: ROLE_ADMIN }

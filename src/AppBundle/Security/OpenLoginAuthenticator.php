@@ -25,8 +25,9 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class OpenLoginAuthenticator extends AbstractGuardAuthenticator
 {
-
   use TargetPathTrait;
+
+  const KEY_PARAMETER_NAME = 'codiceFiscale';
 
   /**
    * @var UrlGeneratorInterface
@@ -46,29 +47,36 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
     $this->shibboletServerVarnames = $shibboletServerVarnames;
   }
 
-
   public function supports(Request $request)
   {
-    if ($request->getSession()->has(Security::LAST_USERNAME)) {
+
+    // Se l'utente è già autenticato faccio passare
+    /*if ($request->getSession()->has(Security::LAST_USERNAME)) {
+      dump($request->getSession()->get(Security::LAST_USERNAME));
+      exit;
       return false;
-    }
+    }*/
+
     // TODO: Check if there are parameters in env variables or Request header
-    return !empty($this->createUserDataFromRequest($request, $this->shibboletServerVarnames)) || $request->query->has('codiceFiscale');
+    return ( $this->checkShibbolethUserData($request) || $request->query->has( self::KEY_PARAMETER_NAME ) );
   }
 
   public function getCredentials(Request $request)
   {
-    $userDataKeys = array_flip($this->shibboletServerVarnames);
-    $credentials = $this->createUserDataFromRequest($request, $userDataKeys);
+    $credentials = $this->createUserDataFromRequest($request);
 
-    if ($credentials["codiceFiscale"] === null) {
+    if ($credentials[self::KEY_PARAMETER_NAME] === null) {
       return null;
     }
 
-    $request->getSession()->set(
+    $session = $request->getSession();
+    $session->set(
       Security::LAST_USERNAME,
-      $credentials["codiceFiscale"]
+      $credentials[self::KEY_PARAMETER_NAME]
     );
+
+    $session->set('user_data', $credentials);
+
     return $credentials;
   }
 
@@ -114,9 +122,9 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
 
   public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
   {
-    /*if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+    if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
       return new RedirectResponse($targetPath);
-    }*/
+    }
 
     return new RedirectResponse($this->urlGenerator->generate('user_dashboard'));
   }
@@ -134,18 +142,44 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
    * @param $userDataKeys
    * @return array
    */
-  private function createUserDataFromRequest(Request $request, $userDataKeys)
+  private function createUserDataFromRequest(Request $request)
   {
+    // Shibd
+    $userDataKeys = array_flip($this->shibboletServerVarnames);
     $serverProps = $request->server->all();
     $data = [];
     foreach ($userDataKeys as $shibbKey => $ourKey) {
       $data[$ourKey] = isset($serverProps[$shibbKey]) ? $serverProps[$shibbKey] : null;
     }
 
-    if (empty($data)) {
-      $data = ['codiceFiscale' => $request->query->get('codiceFiscale')];
+    // Adesso è get poi sarà headers
+    if ( $data[self::KEY_PARAMETER_NAME] == null) {
+      $data[self::KEY_PARAMETER_NAME] = $request->query->get(self::KEY_PARAMETER_NAME);
     }
+
+    // Fallback on session
+    if ( $data[self::KEY_PARAMETER_NAME] == null) {
+      $data = $request->getSession()->get('user_data');
+    }
+
     return $data;
   }
 
+  /**
+   * @param Request $request
+   * @return bool
+   *
+   * Check if at least one shibboleth parameter is present
+   */
+  private function checkShibbolethUserData(Request $request)
+  {
+    $userDataKeys = array_flip($this->shibboletServerVarnames);
+    $serverProps = $request->server->all();
+    foreach ($userDataKeys as $shibbKey => $ourKey) {
+      if (isset($serverProps[$shibbKey])) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
