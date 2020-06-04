@@ -28,6 +28,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -466,6 +467,31 @@ class OperatoriController extends Controller
       'flow' => $praticaFlowService,
       'user' => $user,
     ];
+  }
+
+  /**
+   * @Route("/{pratica}/pdf", name="operatori_pratiche_show_pdf")
+   * @param Pratica $pratica
+   *
+   * @return BinaryFileResponse
+   */
+  public function showPdfAction(Request $request, Pratica $pratica)
+  {
+    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+
+    $fileName = $allegato->getOriginalFilename();
+    if (substr($fileName, -3) != $allegato->getFile()->getExtension() ) {
+      $fileName .= '.' . $allegato->getFile()->getExtension();
+    }
+
+    return new BinaryFileResponse(
+      $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
+      200,
+      [
+        'Content-type' => 'application/octet-stream',
+        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
+      ]
+    );
   }
 
 

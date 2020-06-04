@@ -370,13 +370,17 @@ class PraticheController extends Controller
     $this->checkUserCanAccessPratica($pratica, $user);
     $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
 
+    $fileName = $allegato->getOriginalFilename();
+    if (substr($fileName, -3) != $allegato->getFile()->getExtension() ) {
+      $fileName .= '.' . $allegato->getFile()->getExtension();
+    }
 
     return new BinaryFileResponse(
       $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
       200,
       [
         'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
+        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
       ]
     );
   }

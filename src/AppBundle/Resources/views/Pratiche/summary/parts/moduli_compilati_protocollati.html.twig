@@ -1,6 +1,7 @@
 <p class="text-center m-2">
 {%  if user is defined and not user is null %}
-  <a href="{{ path('pratiche_show_pdf', {'pratica': pratica.id}) }}" class="btn btn-lg btn-primary">
+  {% set download_allegato_path = user.id == pratica.user.id ? 'pratiche_show_pdf' : 'operatori_pratiche_show_pdf' %}
+  <a href="{{ path(download_allegato_path, {'pratica': pratica.id}) }}" class="btn btn-lg btn-primary">
     <i class="fa fa-download"></i>
     {% if pratica.servizio.isProtocolRequired %}
       {{ 'operatori.scarica_richiesta_protocollata'|trans }}
