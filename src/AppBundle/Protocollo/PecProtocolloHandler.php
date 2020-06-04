@@ -7,6 +7,7 @@ namespace AppBundle\Protocollo;
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
+use AppBundle\Services\MailerService;
 use Hoa\Event\Exception;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;

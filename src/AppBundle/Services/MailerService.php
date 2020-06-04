@@ -19,6 +19,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class MailerService
 {
+  const SES_CONFIGURATION_SET = 'SesDeliveryLogsToSNS';
+
   /**
    * @var \Swift_Mailer $mailer
    */
@@ -204,6 +206,8 @@ class MailerService
       }
     }
 
+    $this->addCustomHeadersToMessage($message);
+
     return $message;
   }
 
@@ -253,6 +257,9 @@ class MailerService
         }
       }
     }
+
+    $this->addCustomHeadersToMessage($message);
+
     return $message;
   }
 
@@ -293,6 +300,8 @@ class MailerService
         ),
         'text/plain'
       );
+
+    $this->addCustomHeadersToMessage($message);
 
     return $message;
   }
@@ -344,6 +353,7 @@ class MailerService
           ),
           'text/plain'
         );
+      $this->addCustomHeadersToMessage($emailMessage);
       $sentAmount += $this->mailer->send($emailMessage);
     }
 
@@ -421,8 +431,16 @@ class MailerService
       $emailMessage->setCc($operatoreUser->getEmail(), $operatoreUser->getFullName());
     }
 
+    $this->addCustomHeadersToMessage($emailMessage);
 
     return $emailMessage;
+  }
+
+  private function addCustomHeadersToMessage(\Swift_Message $message)
+  {
+    $message
+      ->getHeaders()
+      ->addTextHeader('X-SES-CONFIGURATION-SET', self::SES_CONFIGURATION_SET);
   }
 
 }
