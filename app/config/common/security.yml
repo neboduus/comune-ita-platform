@@ -84,10 +84,12 @@ security:
             logout:
               path:   logout
               target: /%prefix%/
+
         giscom_api:
             pattern: ^/%prefix%/api/v\d+\.\d+/giscom/pratica/.*/.*
             http_basic:
                provider: in_memory
+
         ez_api:
             pattern: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*
             http_basic:

@@ -49,16 +49,8 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
 
   public function supports(Request $request)
   {
-
-    // Se l'utente è già autenticato faccio passare
-    /*if ($request->getSession()->has(Security::LAST_USERNAME)) {
-      dump($request->getSession()->get(Security::LAST_USERNAME));
-      exit;
-      return false;
-    }*/
-
-    // TODO: Check if there are parameters in env variables or Request header
-    return ( $this->checkShibbolethUserData($request) || $request->query->has( self::KEY_PARAMETER_NAME ) );
+    // Prosegue se
+    return  $request->attributes->get('_route') === 'login' && ( $this->checkShibbolethUserData($request) || $request->query->has( self::KEY_PARAMETER_NAME ) );
   }
 
   public function getCredentials(Request $request)
@@ -97,6 +89,11 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
     );
   }
 
+  /**
+   * @param Request $request
+   * @param AuthenticationException|null $authException
+   * @return JsonResponse|Response
+   */
   public function start(Request $request, AuthenticationException $authException = null)
   {
     $data = ['message' => 'Authentication Required'];
