@@ -1,0 +1,3 @@
+Contact: security@opencontent.it
+Preferred-Languages: it, en
+Policy: https://www.opencontent.it/security
