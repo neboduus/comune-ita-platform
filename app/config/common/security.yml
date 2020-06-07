@@ -28,14 +28,13 @@ security:
             security: false
 
         open_login:
+            anonymous: true
             #pattern: ^/%prefix%/login
-            pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
+            #pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
             provider: cps
-            json_login:
-                check_path: login
             logout:
                 path: logout #name of the route
-                target: /
+                target: /%prefix%/
                 delete_cookies: ['PHPSESSID', 'token', 'refresh_token']
             guard:
                 authenticators:
@@ -66,6 +65,7 @@ security:
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
+
         api_secure:
             pattern:   /%prefix%/api/(folders|documents|users|meetings|applications)
             stateless: true
@@ -115,11 +115,15 @@ security:
         ROLE_OPERATORE:       ROLE_USER
 
     access_control:
+        - { path: ^/%prefix%/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/%prefix%/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+        - { path: ^/%prefix%/(pratiche|terms_accept|user|documenti)/, role: ROLE_USER }
         #- { path: ^/%prefix%/login, role: [ROLE_USER] }
         #- { path: ^/%prefix%/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
         - { path: ^/%prefix%/operatori/profile, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori/profile/edit, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori/profile/change-password, role: [ROLE_OPERATORE, ROLE_ADMIN] }
@@ -128,7 +132,6 @@ security:
         - { path: ^/%prefix%/operatori/subscriber, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori/calendars, role: [ROLE_OPERATORE, ROLE_ADMIN] }
         - { path: ^/%prefix%/operatori, role: ROLE_OPERATORE }
-        - { path: ^/%prefix%/pratiche, role: ROLE_USER }
         - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
         - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
         - { path: ^/%prefix%/admin, role: ROLE_ADMIN }

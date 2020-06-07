@@ -49,8 +49,9 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
 
   public function supports(Request $request)
   {
-    // Prosegue se
-    return  $request->attributes->get('_route') === 'login' && ( $this->checkShibbolethUserData($request) || $request->query->has( self::KEY_PARAMETER_NAME ) );
+    // Prosegue se...
+    return  $request->attributes->get('_route') === 'login' &&
+      ( $this->checkShibbolethUserData($request) || $request->query->has( self::KEY_PARAMETER_NAME ) );
   }
 
   public function getCredentials(Request $request)
@@ -60,14 +61,6 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
     if ($credentials[self::KEY_PARAMETER_NAME] === null) {
       return null;
     }
-
-    $session = $request->getSession();
-    $session->set(
-      Security::LAST_USERNAME,
-      $credentials[self::KEY_PARAMETER_NAME]
-    );
-
-    $session->set('user_data', $credentials);
 
     return $credentials;
   }
@@ -90,33 +83,43 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
   }
 
   /**
+   * @param $credentials
+   * @param UserInterface $user
+   * @return bool
+   */
+  public function checkCredentials($credentials, UserInterface $user)
+  {
+    return true;
+  }
+
+  /**
    * @param Request $request
    * @param AuthenticationException|null $authException
    * @return JsonResponse|Response
    */
   public function start(Request $request, AuthenticationException $authException = null)
   {
-    $data = ['message' => 'Authentication Required'];
-    return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
+    $url = $this->getLoginUrl();
+    return new RedirectResponse($url);
   }
 
-  public function checkCredentials($credentials, UserInterface $user)
-  {
-    // TODO: Implement checkCredentials() method.
-    //dump('checkCredentials');
-    //exit;
-
-    return true;
-
-  }
-
+  /**
+   * @param Request $request
+   * @param AuthenticationException $exception
+   * @return RedirectResponse|Response|null
+   */
   public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
   {
-    // TODO: Implement onAuthenticationFailure() method.
-    dump('onAuthenticationFailure');
-    exit;
+    $url = $this->getLoginUrl();
+    return new RedirectResponse($url);
   }
 
+  /**
+   * @param Request $request
+   * @param TokenInterface $token
+   * @param string $providerKey
+   * @return RedirectResponse|Response|null
+   */
   public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
   {
     if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
@@ -132,6 +135,15 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
   public function supportsRememberMe()
   {
     //return false;
+  }
+
+
+  /**
+   * Return correct login route
+   */
+  private function getLoginUrl()
+  {
+    return $this->urlGenerator->generate('login');
   }
 
   /**
