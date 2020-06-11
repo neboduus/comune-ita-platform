@@ -175,7 +175,7 @@ class Application
   /**
    * @param mixed $id
    */
-  public function setId($id): void
+  public function setId($id)
   {
     $this->id = $id;
   }
@@ -191,7 +191,7 @@ class Application
   /**
    * @param mixed $user
    */
-  public function setUser($user): void
+  public function setUser($user)
   {
     $this->user = $user;
   }
@@ -207,7 +207,7 @@ class Application
   /**
    * @param mixed $service
    */
-  public function setService($service): void
+  public function setService($service)
   {
     $this->service = $service;
   }
@@ -223,7 +223,7 @@ class Application
   /**
    * @param mixed $tenant
    */
-  public function setTenant($tenant): void
+  public function setTenant($tenant)
   {
     $this->tenant = $tenant;
   }
@@ -239,7 +239,7 @@ class Application
   /**
    * @param mixed $subject
    */
-  public function setSubject($subject): void
+  public function setSubject($subject)
   {
     $this->subject = $subject;
   }
@@ -255,7 +255,7 @@ class Application
   /**
    * @param array $data
    */
-  public function setData(array $data): void
+  public function setData(array $data)
   {
     $this->data = $data;
   }
@@ -271,7 +271,7 @@ class Application
   /**
    * @param ModuloCompilato[] $compiledModules
    */
-  public function setCompiledModules(array $compiledModules): void
+  public function setCompiledModules(array $compiledModules)
   {
     $this->compiledModules = $compiledModules;
   }
@@ -287,7 +287,7 @@ class Application
   /**
    * @param Allegato[] $attachments
    */
-  public function setAttachments(array $attachments): void
+  public function setAttachments(array $attachments)
   {
     $this->attachments = $attachments;
   }
@@ -303,7 +303,7 @@ class Application
   /**
    * @param DateTime $creationTime
    */
-  public function setCreationTime(DateTime $creationTime): void
+  public function setCreationTime(DateTime $creationTime)
   {
     $this->creationTime = $creationTime;
   }
@@ -319,7 +319,7 @@ class Application
   /**
    * @param DateTime $submissionTime
    */
-  public function setSubmissionTime(DateTime $submissionTime): void
+  public function setSubmissionTime(DateTime $submissionTime)
   {
     $this->submissionTime = $submissionTime;
   }
@@ -335,7 +335,7 @@ class Application
   /**
    * @param mixed $protocolFolderNumber
    */
-  public function setProtocolFolderNumber($protocolFolderNumber): void
+  public function setProtocolFolderNumber($protocolFolderNumber)
   {
     $this->protocolFolderNumber = $protocolFolderNumber;
   }
@@ -351,7 +351,7 @@ class Application
   /**
    * @param mixed $protocolNumber
    */
-  public function setProtocolNumber($protocolNumber): void
+  public function setProtocolNumber($protocolNumber)
   {
     $this->protocolNumber = $protocolNumber;
   }
@@ -367,7 +367,7 @@ class Application
   /**
    * @param mixed $protocolDcoumentId
    */
-  public function setProtocolDcoumentId($protocolDcoumentId): void
+  public function setProtocolDcoumentId($protocolDcoumentId)
   {
     $this->protocolDcoumentId = $protocolDcoumentId;
   }
@@ -383,7 +383,7 @@ class Application
   /**
    * @param String[] $protocolNumbers
    */
-  public function setProtocolNumbers(array $protocolNumbers): void
+  public function setProtocolNumbers(array $protocolNumbers)
   {
     $this->protocolNumbers = $protocolNumbers;
   }
@@ -399,7 +399,7 @@ class Application
   /**
    * @param bool $outcome
    */
-  public function setOutcome(bool $outcome): void
+  public function setOutcome(bool $outcome)
   {
     $this->outcome = $outcome;
   }
@@ -415,7 +415,7 @@ class Application
   /**
    * @param mixed $outcomeMotivation
    */
-  public function setOutcomeMotivation($outcomeMotivation): void
+  public function setOutcomeMotivation($outcomeMotivation)
   {
     $this->outcomeMotivation = $outcomeMotivation;
   }
@@ -431,7 +431,7 @@ class Application
   /**
    * @param Allegato $outcomeFile
    */
-  public function setOutcomeFile(Allegato $outcomeFile): void
+  public function setOutcomeFile(Allegato $outcomeFile)
   {
     $this->outcomeFile = $outcomeFile;
   }
@@ -447,7 +447,7 @@ class Application
   /**
    * @param mixed $paymentType
    */
-  public function setPaymentType($paymentType): void
+  public function setPaymentType($paymentType)
   {
     $this->paymentType = $paymentType;
   }
@@ -463,7 +463,7 @@ class Application
   /**
    * @param array $paymentData
    */
-  public function setPaymentData(array $paymentData): void
+  public function setPaymentData(array $paymentData)
   {
     $this->paymentData = $paymentData;
   }
@@ -479,7 +479,7 @@ class Application
   /**
    * @param mixed $status
    */
-  public function setStatus($status): void
+  public function setStatus($status)
   {
     $this->status = $status;
   }
@@ -519,7 +519,7 @@ class Application
     //$dto->outcomeFile = $pratica->getRispostaOperatore();
 
     $dto->paymentType = $pratica->getPaymentType();
-    $dto->paymentData = $pratica->getPaymentData();
+    $dto->paymentData = self::preparePaymentData($pratica->getPaymentData());
     $dto->status = $pratica->getStatus();
 
     return $dto;
@@ -614,5 +614,16 @@ class Application
       $entity = new Pratica();
     }
     return $entity;
+  }
+
+  /**
+   * @param $data
+   * @return mixed
+   */
+  public static function preparePaymentData( $data ) {
+    if (is_string($data)) {
+      return \json_decode($data, true);
+    }
+    return $data;
   }
 }

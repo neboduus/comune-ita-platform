@@ -196,5 +196,4 @@ class PaymentGateway
     public function __toString() {
       return $this->getName();
     }
-
 }
