@@ -284,6 +284,7 @@
     <tr>
       <th></th>
       <th>Login</th>
+      <th>Pagamenti</th>
       <th>Richiedente</th>
       <th>Codice fiscale</th>
       <th>
@@ -318,21 +319,16 @@
           </a>
         {{/if}}
         <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
-          <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
+          <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
         </button>
         {{if protocol_number}}
           <button type="button" data-toggle="tooltip" title="Clicca per copiare il numero di protocollo" class="btn btn-default btn-xs copy p-0" data-copy="{{:protocol_number}}">
-            <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
+            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
           </button>
         {{else is_protocollo_required}}
           <button type="button" data-toggle="tooltip" title="Numero di protocollo in assegnazione" class="btn btn-default text-muted btn-xs p-0">
-            <svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
+            <svg class="icon icon-sm icon-200"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
           </button>
-        {{/if}}
-        {{if is_payment_required}}
-          <span data-toggle="tooltip" title="Il servizio prevede un pagamento">
-            <svg class="icon icon-sm icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use></svg>
-          </span>
         {{/if}}
        </td>
        <td>
@@ -344,6 +340,20 @@
         {{if idp == "cps/cns" }}
           <span data-toggle="tooltip" title="Identità del cittadino verificata">
             <img class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/cns.png') }}"{% verbatim %}>
+          </span>
+        {{/if}}
+      </td>
+      <td>
+        {{if is_payment_required}}
+            {{if payment_complete}}
+             <span data-toggle="tooltip" title="Pagamento eseguito">
+                <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+            </span>
+            {{else}}
+             <span data-toggle="tooltip" title="In attesa dell'esito del pagamento">
+                <svg class="icon icon-sm icon-200"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use></svg>
+            </span>
+            {{/if}}
           </span>
         {{/if}}
       </td>
@@ -363,7 +373,11 @@
           </span>
         {{/if}}
       </td>
-      <td class="text-nowrap">{{:~formatDate(submission_time,"{% endverbatim %}{{ocsdc_default_moment_datetime_format}}{% verbatim %}")}}</td>
+      <td class="text-nowrap">
+        {{if submission_time}}
+          {{:~formatDate(submission_time,"{% endverbatim %}{{ocsdc_default_moment_datetime_format}}{% verbatim %}")}}
+        {{/if}}
+      </td>
       {{if !~metadata.parameter.stato}}
       <td>{{:~formatStatus(status)}}</td>
       {{/if}}

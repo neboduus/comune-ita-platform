@@ -159,7 +159,7 @@ class FormIORenderType extends AbstractType
 
     if ($pratica->getServizio()->isPaymentRequired() && !$this->isPaymentValid($data)) {
       $event->getForm()->addError(
-        new FormError('Si è veridicato un problema con i dati del pagamneto, impossibile inviare la pratica.')
+        new FormError('Si è verificato un problema con i dati del pagamento, impossibile inviare la pratica.')
       );
     }
 
