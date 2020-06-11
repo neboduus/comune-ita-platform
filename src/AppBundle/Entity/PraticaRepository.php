@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class PraticaRepository extends EntityRepository
 {
-  const OPERATORI_LOWER_STATE = Pratica::STATUS_PRE_SUBMIT;
+  const OPERATORI_LOWER_STATE = Pratica::STATUS_PAYMENT_PENDING;
 
   private $classConstants;
 
