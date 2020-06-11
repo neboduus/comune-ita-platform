@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\TerminiUtilizzo;
@@ -14,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -175,5 +177,30 @@ class DefaultController extends Controller
     return $this->render( '@App/Default/metrics.html.twig', [
       'metrics' => $metrics,
     ]);
+  }
+
+  /**
+   * @Route("/prometheus.json", name="prometheus")
+   */
+  public function prometheusAction(Request $request)
+  {
+    $result = [];
+    $hostname = $request->getHost();
+    $env = null;
+
+    $scheme = $request->isSecure() ? 'https' : 'http';
+
+    /** @var Ente[] $enti */
+    $enti = $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll();
+    foreach ($enti as $ente){
+      $result[] = ["targets" => [$hostname], "labels" => [
+        "job" => $hostname,
+        "env" => $env,
+        "__scheme__" => $scheme,
+        "__metrics_path__" =>  "/".$ente->getSlug()."/metrics"
+      ]];
+    }
+    $request->setRequestFormat('json');
+    return new JsonResponse(json_encode($result), 200, [], true);
   }
 }
