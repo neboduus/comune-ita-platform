@@ -12,6 +12,7 @@ use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\User;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\SubscriberMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
@@ -40,6 +41,12 @@ class MailerService
    * @var RegistryInterface
    */
   private $doctrine;
+
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
   private $blacklistedStates = [
     Pratica::STATUS_REQUEST_INTEGRATION,
     Pratica::STATUS_PROCESSING,
@@ -55,25 +62,23 @@ class MailerService
    * @param TranslatorInterface $translator
    * @param TwigEngine $templating
    * @param RegistryInterface $doctrine
+   * @param LoggerInterface $logger
    */
-  public function __construct(
-    \Swift_Mailer $mailer,
-    TranslatorInterface $translator,
-    TwigEngine $templating,
-    RegistryInterface $doctrine
-  ) {
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger)
+  {
     $this->mailer = $mailer;
     $this->translator = $translator;
     $this->templating = $templating;
     $this->doctrine = $doctrine;
+    $this->logger = $logger;
   }
 
   /**
    * @param Pratica $pratica
    * @param $fromAddress
    * @param bool $resend
-   *
    * @return int
+   * @throws \Twig\Error\Error
    */
   public function dispatchMailForPratica(Pratica $pratica, $fromAddress, $resend = false)
   {
@@ -82,15 +87,13 @@ class MailerService
       return $sentAmount;
     }
 
-    if ($this->CPSUserHasValidContactEmail($pratica->getUser()) &&
-      ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))
-    ) {
+    if ($this->CPSUserHasValidContactEmail($pratica->getUser()) && ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))) {
       try {
         $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
-        $sentAmount += $this->mailer->send($CPSUsermessage);
+        $sentAmount += $this->send($CPSUsermessage);
         $pratica->setLatestCPSCommunicationTimestamp(time());
-      }catch (\Exception $e){
-          //@todo log
+      } catch (\Exception $e){
+        $this->logger->error('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
     }
 
@@ -116,25 +119,50 @@ class MailerService
       $operatori = $repo->findById($ids);
       if ($operatori != null && !empty($operatori)) {
         foreach ($operatori as $operatore) {
-          $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $operatore);
-          $sentAmount += $this->mailer->send($operatoreUserMessage);
+          try {
+            $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $operatore);
+            $sentAmount += $this->send($operatoreUserMessage);
+          } catch (\Exception $e){
+            $this->logger->error('Error in dispatchMailForPratica (All operators): Email: ' . $operatore->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+          }
         }
       }
     }
 
     if ($pratica->getStatus() != Pratica::STATUS_PRE_SUBMIT) {
-      if ($pratica->getOperatore() != null &&
-        ($resend || !$this->operatoreUserHasAlreadyBeenWarned($pratica))
-      ) {
-        $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
-        $sentAmount += $this->mailer->send($operatoreUserMessage);
-        $pratica->setLatestOperatoreCommunicationTimestamp(time());
+      if ($pratica->getOperatore() != null && ($resend || !$this->operatoreUserHasAlreadyBeenWarned($pratica))) {
+        try {
+          $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
+          $sentAmount += $this->send($operatoreUserMessage);
+          $pratica->setLatestOperatoreCommunicationTimestamp(time());
+        } catch (\Exception $e){
+          $this->logger->error('Error in dispatchMailForPratica (Assigned operator): Email: ' . $pratica->getOperatore()->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        }
       }
     }
 
     return $sentAmount;
   }
 
+  /**
+   * @param $message
+   * @return int
+   * @throws \Exception
+   */
+  private function send($message)
+  {
+    $failed = [];
+    $count = $this->mailer->send($message, $failed);
+    if (count($failed) > 0){
+      throw new \Exception(implode(',', $failed));
+    }
+    return $count;
+  }
+
+  /**
+   * @param CPSUser $user
+   * @return mixed
+   */
   private function CPSUserHasValidContactEmail(CPSUser $user)
   {
     $email = $user->getEmailContatto();
@@ -142,6 +170,10 @@ class MailerService
     return filter_var($email, FILTER_VALIDATE_EMAIL);
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return bool
+   */
   private function CPSUserHasAlreadyBeenWarned(Pratica $pratica)
   {
     return $pratica->getLatestCPSCommunicationTimestamp() >= $pratica->getLatestStatusChangeTimestamp();
@@ -150,7 +182,8 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return mixed
+   * @return \Swift_Message
+   * @throws \Twig\Error\Error
    */
   private function setupCPSUserMessage(Pratica $pratica, $fromAddress)
   {
@@ -214,7 +247,8 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return mixed
+   * @return \Swift_Message
+   * @throws \Twig\Error\Error
    */
   private function setupCPSUserMessageFallback(Pratica $pratica, $fromAddress)
   {
@@ -264,6 +298,13 @@ class MailerService
   }
 
 
+  /**
+   * @param Pratica $pratica
+   * @param $fromAddress
+   * @param OperatoreUser|null $operatore
+   * @return \Swift_Message
+   * @throws \Twig\Error\Error
+   */
   private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress, OperatoreUser $operatore = null)
   {
     if ($operatore == null) {
@@ -306,61 +347,72 @@ class MailerService
     return $message;
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return bool
+   */
   private function operatoreUserHasAlreadyBeenWarned(Pratica $pratica)
   {
     return $pratica->getLatestOperatoreCommunicationTimestamp() >= $pratica->getLatestStatusChangeTimestamp();
   }
 
   /**
-   * Sends generic email
-   *
    * @param $fromAddress
    * @param $fromName
-   * @param User $user
+   * @param $toAddress
+   * @param $toName
    * @param $message
    * @param $subject
-   *
-   * @param $ente
+   * @param Ente $ente
    * @return int
-   * @throws \Twig\Error\Error
    */
   public function dispatchMail($fromAddress, $fromName, $toAddress, $toName, $message, $subject, Ente $ente)
   {
     $sentAmount = 0;
 
     if ($this->isValidEmail($toAddress)) {
-      $emailMessage = \Swift_Message::newInstance()
-        ->setSubject($subject)
-        ->setFrom($fromAddress, $fromName)
-        ->setTo($toAddress, $toName)
-        ->setBody(
-          $this->templating->render(
-            'AppBundle:Emails/General:message.html.twig',
-            array(
-              'message' => $message,
-              'ente' => $ente,
-            )
-          ),
-          'text/html'
-        )
-        ->addPart(
-          $this->templating->render(
-            'AppBundle:Emails/General:message.txt.twig',
-            array(
-              'message' => $message,
-              'ente' => $ente,
-            )
-          ),
-          'text/plain'
-        );
-      $this->addCustomHeadersToMessage($emailMessage);
-      $sentAmount += $this->mailer->send($emailMessage);
+      try {
+        $emailMessage = \Swift_Message::newInstance()
+          ->setSubject($subject)
+          ->setFrom($fromAddress, $fromName)
+          ->setTo($toAddress, $toName)
+          ->setBody(
+            $this->templating->render(
+              'AppBundle:Emails/General:message.html.twig',
+              array(
+                'message' => $message,
+                'ente' => $ente,
+              )
+            ),
+            'text/html'
+          )
+          ->addPart(
+            $this->templating->render(
+              'AppBundle:Emails/General:message.txt.twig',
+              array(
+                'message' => $message,
+                'ente' => $ente,
+              )
+            ),
+            'text/plain'
+          );
+        $this->addCustomHeadersToMessage($emailMessage);
+        $sentAmount += $this->send($emailMessage);
+      } catch (\Exception $e){
+        $this->logger->error('Error in dispatchMail: Email: ' . $toAddress . ' - ' . $e->getMessage());
+      }
+    } else {
+      $this->logger->info('Email: ' . $toAddress . ' is not valid.');
     }
 
     return $sentAmount;
   }
 
-  public function isValidEmail($email)
+  /**
+   * @param $email
+   * @return mixed
+   */
+  private function isValidEmail($email)
   {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
   }
@@ -371,21 +423,26 @@ class MailerService
    * @param OperatoreUser $operatore
    * @return int
    */
-  public function dispatchMailForSubscriber(
-    SubscriberMessage $subscriberMessage,
-    $fromAddress,
-    OperatoreUser $operatore
-  ) {
+  public function dispatchMailForSubscriber(SubscriberMessage $subscriberMessage, $fromAddress, OperatoreUser $operatore)
+  {
     $sentAmount = 0;
 
     if ($this->SubscriberHasValidContactEmail($subscriberMessage->getSubscriber())) {
-      $message = $this->setupSubscriberMessage($subscriberMessage, $fromAddress, $operatore);
-      $sentAmount += $this->mailer->send($message);
+      try {
+        $message = $this->setupSubscriberMessage($subscriberMessage, $fromAddress, $operatore);
+        $sentAmount += $this->send($message);
+      } catch (\Exception $e){
+        $this->logger->error('Error in dispatchMailForSubscriber: Email: ' . $subscriberMessage->getSubscriber()->getEmail() . ' - ' . $e->getMessage());
+      }
     }
 
     return $sentAmount;
   }
 
+  /**
+   * @param Subscriber $subscriber
+   * @return mixed
+   */
   private function SubscriberHasValidContactEmail(Subscriber $subscriber)
   {
     $email = $subscriber->getEmail();
@@ -393,11 +450,15 @@ class MailerService
     return filter_var($email, FILTER_VALIDATE_EMAIL);
   }
 
-  private function setupSubscriberMessage(
-    SubscriberMessage $subscriberMessage,
-    $fromAddress,
-    OperatoreUser $operatoreUser
-  ) {
+  /**
+   * @param SubscriberMessage $subscriberMessage
+   * @param $fromAddress
+   * @param OperatoreUser $operatoreUser
+   * @return \Swift_Message
+   * @throws \Twig\Error\Error
+   */
+  private function setupSubscriberMessage(SubscriberMessage $subscriberMessage, $fromAddress, OperatoreUser $operatoreUser)
+  {
     $toEmail = $subscriberMessage->getSubscriber()->getEmail();
     $toName = $subscriberMessage->getFullName();
 
@@ -436,6 +497,9 @@ class MailerService
     return $emailMessage;
   }
 
+  /**
+   * @param \Swift_Message $message
+   */
   private function addCustomHeadersToMessage(\Swift_Message $message)
   {
     $message

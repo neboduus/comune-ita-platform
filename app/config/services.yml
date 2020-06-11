@@ -199,7 +199,7 @@ services:
 
   ocsdc.mailer:
     class: AppBundle\Services\MailerService
-    arguments: ["@mailer", "@translator", "@templating", "@doctrine"]
+    arguments: ["@mailer", "@translator", "@templating", "@doctrine", '@logger']
 
 
   ocsdc.modulo_pdf_builder:
