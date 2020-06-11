@@ -2,7 +2,7 @@
 
   {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
-  {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' %}
+  {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and pratica.paymentData.response is defined %}
     <div class='text-center mt-5'><a href="{{ pratica.paymentData.response.url }}" class='btn btn-lg btn-primary'>Procedi
         con il pagamento sul sito di MyPay</a></div>
     <p class='mt-5'>
