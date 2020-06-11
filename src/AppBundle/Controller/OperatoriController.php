@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-
 use AppBundle\Dto\Application;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
@@ -101,6 +100,7 @@ class OperatoriController extends Controller
       'query' => $request->get('query', false),
       'sort' => $request->get('sort', 'submissionTime'),
       'order' => $request->get('order', 'asc'),
+      'with_children' => (bool)$request->get('with_children', false),
     ];
 
     try {
@@ -365,7 +365,6 @@ class OperatoriController extends Controller
     $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
-    $praticaCorrelata = null;
     $fiscalCode = null;
     if ($pratica->getType() == Pratica::TYPE_FORMIO) {
       /** @var Schema $schema */
@@ -374,13 +373,6 @@ class OperatoriController extends Controller
         $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
         if (isset($data['applicant.fiscal_code.fiscal_code'])) {
           $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
-        }
-        if (isset($data['related_applications'])) {
-          try {
-            $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find(
-              trim($data['related_applications'])
-            );
-          } catch (\Exception $exception) {}
         }
       }
     }
@@ -391,7 +383,6 @@ class OperatoriController extends Controller
 
     return [
       'pratiche_recenti' => $praticheRecenti,
-      'pratica_correlata' => $praticaCorrelata,
       'form' => $form->createView(),
       'modalForm' => $modalForm->createView(),
       'pratica' => $pratica,

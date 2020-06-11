@@ -72,19 +72,21 @@
         });
     };
     $(document).ready(function () {
+      var localStoragePrefix = '{{ instance_service.currentInstance }}-';
       var resultsContainer = $('#results-data');
       var spinnerTemplate = $.templates("#tpl-spinner");
       var emptyTemplate = $.templates("#tpl-empty");
       var resultsTemplate = $.templates("#tpl-result");
       var defaultLimit = 10;
       var reset = $('#reset');
-      var filtersContainer = $('#filters, #filter-paginator');
+      var filtersContainer = $('#filters');
       var filterServizio = $('#filter-servizio');
       var filterStato = $('#filter-stato');
       var filterWorkflow = $('#filter-workflow');
       var filterQueryBy = $('#filter-query-by');
       var filterQuery = $('#filter-query');
       var filterPratiche = $('#filter-pratiche');
+      var filterWithChildren = $('#filter-with_children');
       var sort = 'submissionTime';
       var order = 'asc';
 
@@ -97,11 +99,12 @@
           'query': filterQuery.val(),
           'sort': sort,
           'order': order,
-          'limit': filterPratiche.val() != null ? filterPratiche.val() : defaultLimit
+          'limit': filterPratiche.val() != null ? filterPratiche.val() : defaultLimit,
+          'with_children': filterWithChildren.is(':checked') ? 1 : 0
         };
 
         if (typeof (Storage) !== "undefined") {
-          localStorage.setItem('pratiche_filters', JSON.stringify(params));
+          localStorage.setItem(localStoragePrefix+'pratiche_filters', JSON.stringify(params));
         }
         return params;
       };
@@ -110,18 +113,20 @@
         return object.servizio === ''
           && object.stato === ''
           && object.workflow === ''
-          && object.query === '';
+          && object.query === ''
+          && object.with_children !== 1;
       };
 
       reset.on('click', function (e) {
         if (typeof (Storage) !== "undefined"){
-          localStorage.setItem('pratiche_filters', JSON.stringify({
+          localStorage.setItem(localStoragePrefix+'pratiche_filters', JSON.stringify({
             'servizio': '',
             'stato': '',
             'workflow': '',
             'query_field': '1',
             'query': '',
-            'limit': defaultLimit
+            'limit': defaultLimit,
+            'with_children': 0
           }));
         }
         window.location.reload();
@@ -139,6 +144,9 @@
       filtersContainer.find('.filter-select').on('change', function () {
         loadContents();
       });
+      filterWithChildren.on('change', function () {
+        loadContents();
+      })
       filterQuery.on('keydown', function(e) {
         if (e.keyCode === 13) {
           loadContents();
@@ -146,7 +154,6 @@
       });
 
       var loadContents = function() {
-
         resultsContainer.html(spinnerTemplate.render({}));
         var params = buildParams();
         if (isEmpty(params)){
@@ -209,15 +216,15 @@
             resultsContainer.find('input[data-togglekey]').on('change', function () {
               if ($(this).is(':checked')) {
                 resultsContainer.find('[data-key="' + $(this).data('togglekey') + '"]').css('display', 'table-cell');
-                if (typeof (Storage) !== "undefined") localStorage.setItem(response.meta.parameter.servizio + $(this).data('togglekey'), 1);
+                if (typeof (Storage) !== "undefined") localStorage.setItem(localStoragePrefix+response.meta.parameter.servizio + $(this).data('togglekey'), 1);
               } else {
                 resultsContainer.find('[data-key="' + $(this).data('togglekey') + '"]').css('display', 'none');
-                if (typeof (Storage) !== "undefined") localStorage.removeItem(response.meta.parameter.servizio + $(this).data('togglekey'));
+                if (typeof (Storage) !== "undefined") localStorage.removeItem(localStoragePrefix+response.meta.parameter.servizio + $(this).data('togglekey'));
               }
             });
             if (typeof (Storage) !== "undefined") {
               $.each(response.meta.schema, function () {
-                if (localStorage.getItem(response.meta.parameter.servizio + this.name)) {
+                if (localStorage.getItem(localStoragePrefix+response.meta.parameter.servizio + this.name)) {
                   resultsContainer.find('input[data-togglekey="' + this.name + '"]').trigger('click');
                 }
               });
@@ -227,16 +234,21 @@
       };
 
       if (typeof (Storage) !== "undefined") {
-        if (localStorage.getItem('pratiche_filters')){
-          var params = JSON.parse(localStorage.getItem('pratiche_filters'));
+        if (localStorage.getItem(localStoragePrefix+'pratiche_filters')){
+          var params = JSON.parse(localStorage.getItem(localStoragePrefix+'pratiche_filters'));
           filterServizio.val(params.servizio);
           filterStato.val(params.stato);
           filterWorkflow.val(params.workflow);
           filterQueryBy.val(params.query_field);
           filterQuery.val(params.query);
-          filterPratiche.val(params.limit == null || params.limit == undefined ? defaultLimit : params.limit);
+          filterPratiche.val(params.limit == null || params.limit === undefined ? defaultLimit : params.limit);
           sort = params.sort;
           order = params.order;
+          if (params.with_children === 1){
+            filterWithChildren.prop('checked', true);
+          }else{
+            filterWithChildren.prop('checked', false);
+          }
           showReset();
         }
       }
@@ -257,7 +269,6 @@
 </script>
 <script id="tpl-result" type="text/x-jsrender">
 {{if meta.schema}}
-<button type="button" class="btn btn-secondary btn-xs text-nowrap" data-toggle="modal" data-target="#tableOptions">Opzioni tabella</button>
 <div class="modal fade" id="tableOptions" tabindex="-1" role="dialog" aria-labelledby="confirmAutoAssignLabel">
   <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -278,11 +289,15 @@
   </div>
 </div>
 {{/if}}
-<div class="table-responsive mt-5">
+<div class="table-responsive mt-3">
 <table class="table table-striped table-condensed table-hover" style="width: 100%;font-size:.87em">
   <thead>
     <tr>
-      <th></th>
+      <th>
+        {{if meta.schema}}
+          <button type="button" class="btn btn-secondary btn-xs text-nowrap py-1 px-2" data-toggle="modal" data-target="#tableOptions">Opzioni tabella</button>
+        {{/if}}
+      </th>
       <th>Login</th>
       <th>Pagamenti</th>
       <th>Richiedente</th>
@@ -315,7 +330,7 @@
       <td class="text-nowrap">
         {{if can_read}}
           <a class="text-decoration-none" href="{{:~showUrl(id)}}" class="text-nowrap mr-1" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.vai_al_dettaglio'|trans }}{% verbatim %}">
-            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use></svg>
+            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.with_children}}s{{/if}}"></use></svg>
           </a>
         {{/if}}
         <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
@@ -414,80 +429,94 @@
 </script>
 {% endverbatim %}
 
-  <section class="p-3 m-5 shadow bordered">
-    <div class="row my-4 px-lg-4 py-lg-2 justify-content-ld-center" id="filters">
-      {% if servizi|length %}
-        <div class="col mb-4">
-          <div class="bootstrap-select-wrapper filter-servizio">
-          <label for="filter-servizio">Filtra per servizio</label>
-            <select id="filter-servizio" class="form-control filter-select">
-              <option value="">Tutti</option>
-              {% for servizio in servizi %}
-                <option data-slug="{{ servizio.slug }}" value="{{ servizio.id }}">{{ servizio.name }}</option>
-              {% endfor %}
-            </select>
-            </div>
-        </div>
-      {% endif %}
-      {% if stati|length %}
-        <div class="col mb-4">
-          <div class="bootstrap-select-wrapper filter-stato">
-          <label for="filter-stato">Filtra per stato</label>
-            <select id="filter-stato" class="form-control filter-select">
-              <option value="">Tutti</option>
-              {% for stato in stati %}
-                <option value="{{ stato.id }}">{{ stato.name|trans }}</option>
-              {% endfor %}
-            </select>
-            </div>
-        </div>
-      {% endif %}
-      <div class="col mb-4">
-        <div class="bootstrap-select-wrapper filter-workflow">
-        <label for="filter-workflow">Filtra per lavorazione</label>
-          <select id="filter-workflow" class="form-control filter-select">
-            <option value="">Tutte</option>
-            <option value="owned">In carico a {{ user.fullName }}</option>
-            <option value="unassigned">Da assegnare</option>
-          </select>
-          </div>
-      </div>
-      <div class="col col-lg-4 mb-4">
-        <div class="bootstrap-select-wrapper filter-query">
-          <label for="filter-query-by">Cerca per</label>
-          <div class="input-group">
-            <select class="form-control" id="filter-query-by" name="query-by" style="max-width: 200px;">
-              <option value="2">Nome utente</option>
-              <option value="1">Codice fiscale</option>
-              <option value="3">ID Pratica</option>
-            </select>
-            <div class="input-group-append">
-              <input type="text" class="form-control" name="query" id="filter-query" placeholder="Testo da cercare">
+  <section class="p-3 pt-5">
+    <div id="filters">
+      <div class="row">
+        {% if servizi|length %}
+          <div class="col-12 col-sm-6 col-lg-4 mb-5">
+            <div class="bootstrap-select-wrapper filter-servizio">
+              <label for="filter-servizio">Filtra per servizio</label>
+              <select id="filter-servizio" class="form-control filter-select">
+                <option value="">Tutti</option>
+                {% for servizio in servizi %}
+                  <option data-slug="{{ servizio.slug }}" value="{{ servizio.id }}">{{ servizio.name }}</option>
+                {% endfor %}
+              </select>
             </div>
           </div>
+        {% endif %}
+        {% if stati|length %}
+          <div class="col-12 col-sm-6 col-lg-4 mb-5">
+            <div class="bootstrap-select-wrapper filter-stato">
+              <label for="filter-stato">Filtra per stato</label>
+              <select id="filter-stato" class="form-control filter-select">
+                <option value="">Tutti</option>
+                {% for stato in stati %}
+                  <option value="{{ stato.id }}">{{ stato.name|trans }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        {% endif %}
+        <div class="col-12 col-sm-6 col-lg-4 mb-5">
+          <div class="bootstrap-select-wrapper filter-workflow">
+            <label for="filter-workflow">Filtra per lavorazione</label>
+            <select id="filter-workflow" class="form-control filter-select">
+              <option value="">Tutte</option>
+              <option value="owned">In carico a {{ user.fullName }}</option>
+              <option value="unassigned">Da assegnare</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 mb-5 mb-md-0">
+          <div class="bootstrap-select-wrapper filter-query">
+            <label for="filter-query-by">Cerca per</label>
+            <div class="input-group">
+              <select class="form-control" id="filter-query-by" name="query-by">
+                <option value="2">Nome utente</option>
+                <option value="1">Codice fiscale</option>
+                <option value="3">ID Pratica</option>
+              </select>
+              <div class="input-group-append">
+                <input type="text" class="form-control" name="query" id="filter-query" placeholder="Testo da cercare">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 mb-5 mb-md-0">
+          <div class="bootstrap-select-wrapper">
+            <label for="filter-pratiche">Risultati per pagina</label>
+            <select id="filter-pratiche" class="form-control filter-select">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-lg-2">
+          <div class="form-check">
+            <div class="toggles">
+              <label for="filter-with_children">
+                Solo fascicoli
+                <input type="checkbox" id="filter-with_children" checked>
+                <span class="lever" style="position: relative;z-index: 10;"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-lg-2">
+          <a id="reset" class="btn btn-secondary btn-md btn-icon p-2 mt-1" href="#">
+            <svg class="icon icon-white">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
+            </svg>
+            <span>Annulla ricerca</span>
+          </a>
         </div>
       </div>
-      <div class="col col-lg-1 mb-4 px-0 text-right mt-1" style="max-width: 40px; display: none">
-        <a id="reset" class="btn btn-secondary btn-md btn-icon p-2" href="#">
-          <svg class="icon icon-white">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
-          </svg>
-        </a>
-      </div>
     </div>
-  <div class="col-md-3 col-4 col-lg-2 position-absolute mb-4" style="right: 60px;z-index: 1"  id="filter-paginator">
-    <div class="bootstrap-select-wrapper mr-3">
-      <label for="filter-pratiche">Risultati per pagina</label>
-      <select id="filter-pratiche" class="form-control filter-select">
-        <option value="10">10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-      </select>
-    </div>
-  </div>
     <div class="row">
-      <div class="col-lg-12 px-lg-4 py-lg-2" id="results-data"
+      <div class="col-lg-12" id="results-data"
            data-show="{{ path('operatori_show_pratica', {'pratica': 'X'}) }}"
            data-assign="{{ path('operatori_autoassing_pratica', {'pratica': 'X'}) }}"
            data-source="{{ path('operatori_index_json') }}"></div>
