@@ -27,19 +27,6 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        open_login:
-            anonymous: true
-            #pattern: ^/%prefix%/login
-            #pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
-            provider: cps
-            logout:
-                path: logout #name of the route
-                target: /%prefix%/
-                delete_cookies: ['PHPSESSID', 'token', 'refresh_token']
-            guard:
-                authenticators:
-                  - ocsdc.openlogin.authenticator
-
         #cps:
         #    pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti)/
         #    guard:
@@ -106,6 +93,20 @@ security:
                 provider: cps
                 authenticators:
                     - ocsdc.cps.token_authenticator
+
+        open_login:
+            anonymous: true
+            #pattern: ^/%prefix%/login
+            #pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
+            provider: cps
+            logout:
+                path: logout #name of the route
+                target: /%prefix%/
+                delete_cookies: ['PHPSESSID', 'token', 'refresh_token']
+            guard:
+                authenticators:
+                    - ocsdc.openlogin.authenticator
+
         main:
             anonymous: ~
 

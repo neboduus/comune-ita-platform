@@ -131,5 +131,6 @@ parameters:
       shibSessionId: "shibb_Shib-Session-ID"
       shibSessionIndex: "shibb_Shib-Session-Index"
       shibAuthenticationIstant: "shibb_Shib-Authentication-Instant"
-
     sentry_dsn: ''
+    login:
+      path: 'login' #name of the route

@@ -104,6 +104,8 @@ parameters:
       shibSessionIndex: '%env(SHIB_SESSION_INDEX)%'
       shibAuthenticationIstant: '%env(SHIB_AUTHENTICATION_INSTANT)%'
     sentry_dsn: '%env(SENTRY_DSN)%'
+    login:
+      path: '%env(LOGIN_PATH)%' #name of the route
     #Default fallback if env not set
     env(PREFIX): ''
     env(DB_DRIVER): 'pdo_pgsql'
@@ -182,3 +184,4 @@ parameters:
     env(BOX_LOGIN_TEXT): "Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
     env(BOX_LOGIN_BUTTON): 'Entra con SPID/CPS'
     env(SENTRY_DSN): ''
+    env(LOGIN_PATH): 'login' #name of the route
