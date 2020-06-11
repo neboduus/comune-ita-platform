@@ -463,6 +463,7 @@ operatori:
   info: "Info"
   iter_completato: "La richiesta è stata <strong>%statusName%</strong> il %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
+  fascicolo: "Fascicolo"
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"
   inviata_il_alle: "Inviata il %data% alle ore %ore%"

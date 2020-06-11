@@ -439,6 +439,17 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $hash;
 
   /**
+   * @ORM\OneToMany(targetEntity="Pratica", mappedBy="parent")
+   */
+  private $children;
+
+  /**
+   * @ORM\ManyToOne(targetEntity="Pratica", inversedBy="children")
+   * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+   */
+  private $parent;
+
+  /**
    * Pratica constructor.
    */
   public function __construct()
@@ -458,7 +469,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->storicoStati = new ArrayCollection();
     $this->lastCompiledStep = 0;
     $this->richiesteIntegrazione = new ArrayCollection();
-
+    $this->children = new ArrayCollection();
   }
 
   public function __clone()
@@ -1782,4 +1793,73 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
     return false;
   }
+
+  /**
+   * @return mixed
+   */
+  public function getParent()
+  {
+    return $this->parent;
+  }
+
+  /**
+   * @param Pratica $parent
+   * @return Pratica
+   */
+  public function setParent($parent)
+  {
+    $this->parent = $parent;
+
+    return $this;
+  }
+
+  /**
+   * @return Pratica
+   */
+  public function getRootParent()
+  {
+    if (!$this->getParent()){
+      return $this;
+    }else{
+      $hasParent = true;
+      $parent = $this;
+      while ($hasParent){
+        if ($parent->getParent()){
+          $parent = $parent->getParent();
+        }else{
+          $hasParent = false;
+        }
+      }
+      return $parent;
+    }
+  }
+
+  public function getTreeIdList()
+  {
+    $list = new \ArrayObject();
+    $root = $this->getRootParent();
+    $list[] = $root->getId();
+    foreach ($root->getChildren() as $child){
+      $this->appendSubTreeIdList($child, $list);
+    }
+
+    return $list->getArrayCopy();
+  }
+
+  private function appendSubTreeIdList(Pratica $root, $list)
+  {
+    $list[] = $root->getId();
+    foreach ($root->getChildren() as $child){
+      $this->appendSubTreeIdList($child, $list);
+    }
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getChildren()
+  {
+    return $this->children;
+  }
+
 }

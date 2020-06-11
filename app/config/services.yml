@@ -417,6 +417,8 @@ services:
       - "@ocsdc.modulo_pdf_builder"
       - "@ocsdc.allegati.dematerialized_attacher"
       - "%prefix%"
+      - "@formio.factory"
+      - "@doctrine.orm.entity_manager"
 
   ocsdc.form.flow.asilonido:
     class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow

@@ -299,6 +299,10 @@ class PraticaRepository extends EntityRepository
         break;
     }
 
+    if ($filters['with_children']){
+      $qb->andWhere('SIZE(pratica.children) > 0');
+    }
+
     return $qb;
   }
 
@@ -384,10 +388,10 @@ class PraticaRepository extends EntityRepository
 
   public function getMetrics()
   {
-    $sql = "SELECT ente.slug as ente, servizio.slug as servizio, pratica.status, count(*) from pratica 
-              INNER JOIN ente ON (ente.id = pratica.ente_id) 
-              INNER JOIN servizio ON (servizio.id = pratica.servizio_id) 
-              GROUP BY ente, servizio, pratica.status 
+    $sql = "SELECT ente.slug as ente, servizio.slug as servizio, pratica.status, count(*) from pratica
+              INNER JOIN ente ON (ente.id = pratica.ente_id)
+              INNER JOIN servizio ON (servizio.id = pratica.servizio_id)
+              GROUP BY ente, servizio, pratica.status
               ORDER BY servizio ASC, pratica.status DESC ;";
 
     $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
@@ -410,13 +414,13 @@ class PraticaRepository extends EntityRepository
     $qb = $this->createQueryBuilder('p');
     $qb->where('p.status >= '.Pratica::STATUS_SUBMITTED)
       ->andWhere('p.user = :user')
-      ->andWhere('p.id != :pratica')
       ->setParameter('user', $user)
-      ->setParameter('pratica', $pratica)
+      ->andWhere('p.id NOT IN (:tree)')
+      ->setParameter('tree', $pratica->getTreeIdList())
       ->orderBy('p.submissionTime', 'DESC')
       ->setMaxResults($limit);
 
-
     return $qb->getQuery()->getResult();
   }
+
 }

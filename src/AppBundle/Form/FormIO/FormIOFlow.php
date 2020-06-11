@@ -14,7 +14,6 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 class FormIOFlow extends PraticaFlow
 {
-
   const STEP_SELEZIONA_ENTE = 1;
 
   const STEP_MODULO_FORMIO = 2;
@@ -22,6 +21,24 @@ class FormIOFlow extends PraticaFlow
   protected $allowDynamicStepNavigation = true;
 
   protected $revalidatePreviousSteps = true;
+
+  public function onFlowCompleted(Pratica $pratica)
+  {
+    if ($pratica->getType() == Pratica::TYPE_FORMIO) {
+      $schema = $this->formIOFactory->createFromFormId($pratica->getServizio()->getFormIoId());
+      if (!empty($pratica->getDematerializedForms()['data'])) {
+        $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
+        if (isset($data['related_applications'])) {
+          $parentId = trim($data['related_applications']);
+          $parent = $this->em->getRepository('AppBundle:Pratica')->find($parentId);
+          if ($parent instanceof Pratica) {
+            $pratica->setParent($parent);
+          }
+        }
+      }
+    }
+    parent::onFlowCompleted($pratica);
+  }
 
   protected function loadStepsConfig()
   {
