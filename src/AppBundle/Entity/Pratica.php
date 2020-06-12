@@ -439,7 +439,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $hash;
 
   /**
-   * @ORM\OneToMany(targetEntity="Pratica", mappedBy="parent")
+   * @ORM\OneToMany(targetEntity="Pratica", mappedBy="parent", fetch="EXTRA_LAZY")
    */
   private $children;
 

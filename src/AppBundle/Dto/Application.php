@@ -486,9 +486,11 @@ class Application
 
   /**
    * @param Pratica $pratica
+   * @param string $attachmentEndpointUrl
+   * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
    * @return Application
    */
-  public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '')
+  public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '', $loadFileCollection = true)
   {
     $dto = new self();
     $dto->id = $pratica->getId();
@@ -505,7 +507,7 @@ class Application
       $dto->data = [];
     }
 
-    $dto->compiledModules = self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl);
+    $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl) : [];
     //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());
     $dto->creationTime = $pratica->getCreationTime();
     $dto->submissionTime = $pratica->getSubmissionTime();
