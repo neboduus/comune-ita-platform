@@ -5,11 +5,11 @@
         <a class="list-item large medium left-icon icon-left pr-0"
            href="{% if pratica_recente.servizio.id in user.serviziAbilitati %}{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}{% else %}#{% endif %}">
           <span style="line-height: 1.5">{{ pratica_recente.servizio.name }}</span>
-          <svg class="icon icon-primary icon-left mt-2">
+          <svg class="icon icon-primary icon-left mt-2 pr-1">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
           </svg>
           <p class="m-0">
-            <span class="badge badge-light text-decoration-none mr-1">{{ pratica_recente.statusName | trans }}</span>del {{ pratica_recente.submissionTime | date('d/m/Y H:i:s') }}
+            acquisita il {{ pratica_recente.submissionTime | date('d/m/Y H:i:s') }} <span class="badge badge-light text-decoration-none">{{ pratica_recente.statusName | trans }}</span>
           </p>
         </a>
       </li>

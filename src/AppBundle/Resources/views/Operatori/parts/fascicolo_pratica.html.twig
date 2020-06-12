@@ -1,12 +1,12 @@
-<a class="list-item large medium left-icon icon-left pr-0"
+<a class="list-item large medium left-icon icon-left pr-0{% if pratica.id == reference.id %} pb-2 bg-100{% endif %}"
    href="{% if pratica.servizio.id in user.serviziAbilitati %}{{ path('operatori_show_pratica', {'pratica': pratica }) }}{% else %}#{% endif %}">
 
-  <span {% if pratica.id == reference.id %}class="text-secondary"{% endif %} style="line-height: 1.5">{{ pratica.servizio.name }}</span>
-  <svg class="icon icon-{% if pratica.id == reference.id %}secondary{% else %}primary{% endif %} icon-left mt-2">
-    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+  <span style="line-height: 1.5">{{ pratica.servizio.name }}</span>
+  <svg class="icon icon-primary icon-left mt-2 pr-1">
+    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{% if pratica.id == reference.id %}arrow-right{% else %}file{% endif %}"></use>
   </svg>
-  <p class="m-0{% if pratica.id == reference.id %} text-secondary{% endif %}">
-    <span class="badge badge-{% if pratica.id == reference.id %}secondary text-white{% else %}light{% endif %} text-decoration-none mr-1">{{ pratica.statusName | trans }}</span>del {{ pratica.submissionTime | date('d/m/Y H:i:s') }}
+  <p class="m-0">
+    acquisita il {{ pratica.submissionTime | date('d/m/Y H:i:s') }} <span class="badge badge-light text-decoration-none">{{ pratica.statusName | trans }}</span>
   </p>
 </a>
 {% if pratica.children.count > 0 %}

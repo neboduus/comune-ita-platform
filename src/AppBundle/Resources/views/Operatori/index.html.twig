@@ -86,7 +86,7 @@
       var filterQueryBy = $('#filter-query-by');
       var filterQuery = $('#filter-query');
       var filterPratiche = $('#filter-pratiche');
-      var filterWithChildren = $('#filter-with_children');
+      var filterCollate = $('#filter-collate');
       var sort = 'submissionTime';
       var order = 'asc';
 
@@ -100,7 +100,7 @@
           'sort': sort,
           'order': order,
           'limit': filterPratiche.val() != null ? filterPratiche.val() : defaultLimit,
-          'with_children': filterWithChildren.is(':checked') ? 1 : 0
+          'collate': filterCollate.is(':checked') ? 1 : 0
         };
 
         if (typeof (Storage) !== "undefined") {
@@ -114,7 +114,7 @@
           && object.stato === ''
           && object.workflow === ''
           && object.query === ''
-          && object.with_children !== 1;
+          && object.collate !== 1;
       };
 
       reset.on('click', function (e) {
@@ -126,7 +126,7 @@
             'query_field': '1',
             'query': '',
             'limit': defaultLimit,
-            'with_children': 0
+            'collate': 0
           }));
         }
         window.location.reload();
@@ -144,7 +144,7 @@
       filtersContainer.find('.filter-select').on('change', function () {
         loadContents();
       });
-      filterWithChildren.on('change', function () {
+      filterCollate.on('change', function () {
         loadContents();
       })
       filterQuery.on('keydown', function(e) {
@@ -244,10 +244,10 @@
           filterPratiche.val(params.limit == null || params.limit === undefined ? defaultLimit : params.limit);
           sort = params.sort;
           order = params.order;
-          if (params.with_children === 1){
-            filterWithChildren.prop('checked', true);
+          if (params.collate === 1){
+            filterCollate.prop('checked', true);
           }else{
-            filterWithChildren.prop('checked', false);
+            filterCollate.prop('checked', false);
           }
           showReset();
         }
@@ -330,7 +330,7 @@
       <td class="text-nowrap">
         {{if can_read}}
           <a class="text-decoration-none" href="{{:~showUrl(id)}}" class="text-nowrap mr-1" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.vai_al_dettaglio'|trans }}{% verbatim %}">
-            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.with_children}}s{{/if}}"></use></svg>
+            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.collate && children_count > 0}}s{{/if}}"></use></svg>
           </a>
         {{/if}}
         <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
@@ -497,9 +497,9 @@
         <div class="col-6 col-sm-6 col-lg-2">
           <div class="form-check">
             <div class="toggles">
-              <label for="filter-with_children">
-                Solo fascicoli
-                <input type="checkbox" id="filter-with_children" checked>
+              <label for="filter-collate">
+                Fascicola
+                <input type="checkbox" id="filter-collate" checked>
                 <span class="lever" style="position: relative;z-index: 10;"></span>
               </label>
             </div>

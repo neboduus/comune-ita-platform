@@ -100,7 +100,7 @@ class OperatoriController extends Controller
       'query' => $request->get('query', false),
       'sort' => $request->get('sort', 'submissionTime'),
       'order' => $request->get('order', 'asc'),
-      'with_children' => (bool)$request->get('with_children', false),
+      'collate' => (bool)$request->get('collate', false),
     ];
 
     try {
@@ -149,7 +149,8 @@ class OperatoriController extends Controller
 
     $serializer = $this->container->get('jms_serializer');
     foreach ($data as $s) {
-      $application = Application::fromEntity($s);
+      //load Application Dto without file collection to reduce the number of db queries
+      $application = Application::fromEntity($s, '', false);
       $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
       $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
@@ -162,6 +163,8 @@ class OperatoriController extends Controller
       $codiceFiscaleParts = explode('-', $codiceFiscale);
       $applicationArray['codice_fiscale'] = array_shift($codiceFiscaleParts);
       $applicationArray['operator_name'] = $s->getOperatore() ? $s->getOperatore()->getFullName() : null;
+      //@todo check perfomance: children count add one additional db query each result
+      $applicationArray['children_count'] = $parameters['collate'] ? $s->getChildren()->count() : null;
 
       try{
         $this->checkUserCanAccessPratica($user, $s);
@@ -375,10 +378,8 @@ class OperatoriController extends Controller
           $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
         }
       }
-    }
-
-    if (!$fiscalCode){
-      $fiscalCode = $applicant->getCodiceFiscale() ;
+    } else {
+      $fiscalCode = $applicant->getCodiceFiscale();
     }
 
     return [

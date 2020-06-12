@@ -299,8 +299,8 @@ class PraticaRepository extends EntityRepository
         break;
     }
 
-    if ($filters['with_children']){
-      $qb->andWhere('SIZE(pratica.children) > 0');
+    if ($filters['collate']){
+      $qb->andWhere('pratica.parent IS NULL');
     }
 
     return $qb;
