@@ -140,7 +140,8 @@ class CalendarBackofficeType extends AbstractType
      */
     $calendar = $event->getForm()->getData();
 
-    $openingHours = $event->getData()['opening_hours'];
+
+    $openingHours = isset($event->getData()['opening_hours']) ? $event->getData()['opening_hours'] : [];
 
     // Check if opening hours overlaps
     foreach ($openingHours as $index1 => $openingHour1) {
