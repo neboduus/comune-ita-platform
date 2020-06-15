@@ -206,7 +206,6 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       // update number of subscriptions
       $subscriptionService->addSubscription($subscription);
       $this->em->persist($subscriptionService);
-      $this->em->persist($subscriptionService);
 
       return $subscription;
     } catch (\Exception $exception) {
