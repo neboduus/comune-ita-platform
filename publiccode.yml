@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-06-05'
-softwareVersion: 1.5.4
+releaseDate: '2020-06-15'
+softwareVersion: 1.5.5
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -65,6 +65,8 @@ usedBy:
   - Comune di Trento (TN)
   - Comune di Vallelaghi (TN)
   - Comune di Villa Lagarina (TN)
+  - Comune di Spormaggiore (TN)
+  - Comune di Baselga di Pinè (TN)
   - Fondazione Mach (TN)
   - Provincia autonoma di Trento (TN)
 roadmap: https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/ROADMAP.md
