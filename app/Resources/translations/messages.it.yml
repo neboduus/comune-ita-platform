@@ -59,7 +59,12 @@ servizio:
   area_tematica: 'Area tematica'
   imis:
     download_pdf_imis: 'Esegui il download del pdf %name%'
-
+  statutes:
+    pubblicato: 'Pubblicato'
+    privato: 'Privato'
+    bozza: 'Bozza'
+    sospeso: 'Sospeso'
+    
 pratica:
   guida_utente: 'Guida'
   email:
