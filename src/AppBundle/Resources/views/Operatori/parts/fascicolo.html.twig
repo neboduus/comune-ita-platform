@@ -1,0 +1,6 @@
+<div class="link-list-wrapper multiline">
+  <ul class="link-list">
+    {% set parent = pratica.getRootParent %}
+    <li>{{ include('@App/Operatori/parts/fascicolo_pratica.html.twig', {'pratica': parent, 'reference': pratica}) }}</li>
+  </ul>
+</div>

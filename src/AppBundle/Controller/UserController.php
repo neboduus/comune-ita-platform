@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Logging\LogConstants;
+use DateTime;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -107,10 +108,13 @@ class UserController extends Controller
   private function storeSdcUserData(CPSUser $user, array $data, LoggerInterface $logger)
   {
     $manager = $this->getDoctrine()->getManager();
+
+    $convertStinginDateTimeObject = new DateTime($data['data_nascita']);
+
     $user
       ->setEmailContatto($data['email_contatto'])
       ->setCellulareContatto($data['cellulare_contatto'])
-      ->setDataNascita($data['data_nascita'])
+      ->setDataNascita($convertStinginDateTimeObject)
       ->setLuogoNascita($data['luogo_nascita'])
       ->setSdcIndirizzoResidenza($data['sdc_indirizzo_residenza'])
       ->setSdcCapResidenza($data['sdc_cap_residenza'])
@@ -150,6 +154,17 @@ class UserController extends Controller
     $compiledProvinciaDomicilio = $user->getProvinciaDomicilio();
     $compiledStatoDomicilio = $user->getStatoDomicilio();
 
+    //Se la email contiene il valore fake, forziamo l'utente a riscrivere una mail corretta resettando il campo
+    $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
+    if (preg_match($regex, $compiledEmailData)) {
+      $compiledEmailData = '';
+    }
+
+    $birthDay = '';
+    if ( $user->getDataNascita() instanceof DateTime) {
+      $birthDay = $user->getDataNascita()->format('d-m-Y');
+    }
+
     $formBuilder = $this->createFormBuilder(null, ['attr' => ['id' => 'edit_user_profile']])
       ->add('email_contatto', EmailType::class,
         ['label' => false, 'data' => $compiledEmailData, 'required' => false]
@@ -157,8 +172,8 @@ class UserController extends Controller
       ->add('cellulare_contatto', TextType::class,
         ['label' => false, 'data' => $compiledCellulareData, 'required' => false]
       )
-      ->add('data_nascita', DateType::class,
-        ['widget' => 'single_text', 'label' => false, 'data' => $user->getDataNascita(), 'required' => true]
+      ->add('data_nascita', TextType::class,
+        ['label' => false, 'data' => $birthDay, 'required' => true, 'attr' => ['class' => 'sdc-datepicker']]
       )
       ->add('luogo_nascita', TextType::class,
         ['label' => false, 'data' => $user->getLuogoNascita(), 'required' => true]

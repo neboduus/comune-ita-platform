@@ -2,9 +2,11 @@
 
 namespace AppBundle\Form\Base;
 
+use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\Payment\Gateway\MyPay;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,6 +20,7 @@ use AppBundle\Services\PraticaStatusService;
 
 class SelectPaymentGatewayType extends AbstractType
 {
+  private $gatewaysMap;
 
   /**
    * @var EntityManager
@@ -46,14 +49,21 @@ class SelectPaymentGatewayType extends AbstractType
     /** @var Pratica $pratica */
     $pratica = $builder->getData();
     $tenantGateways = $pratica->getServizio()->getEnte()->getGateways();
-    // Gateways abilitati nel tenant
+    $availableGateways = array_keys($tenantGateways);
+
+    $paymnetParameters = $pratica->getServizio()->getPaymentParameters();
+    if ($paymnetParameters && !empty($paymnetParameters['gateways'])) {
+      $availableGateways = array_keys($paymnetParameters['gateways']);
+    }
+
+    // Gateways abilitati
     $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
-      'identifier' => array_keys($tenantGateways)
+      'identifier' => $availableGateways
     ]);
-    /*$entityRepository = $this->em->getRepository('AppBundle:PaymentGateway');
-    $gateways = $entityRepository->findBy([
-      'enabled' => 1
-    ]);*/
+    /** @var PaymentGateway $g */
+    foreach ($gateways as $g) {
+      $this->gatewaysMap[$g->getId()] = $g->getIdentifier();
+    }
 
     $builder->add('payment_type', EntityType::class, [
       'class' => 'AppBundle\Entity\PaymentGateway',
@@ -84,7 +94,7 @@ class SelectPaymentGatewayType extends AbstractType
       return;
     }
 
-    if ($pratica->getType() == Pratica::TYPE_FORMIO && $pratica->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
+    if ($this->gatewaysMap[$data['payment_type']] == 'mypay' && $pratica->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PAYMENT_PENDING);
     }
     $this->em->persist($pratica);

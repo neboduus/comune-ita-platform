@@ -5,9 +5,11 @@ namespace AppBundle\Dto;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ModuloCompilato;
+use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Mapper\Giscom\File;
 use AppBundle\Mapper\Giscom\FileCollection;
+use AppBundle\Payment\PaymentDataInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
@@ -71,31 +73,42 @@ class Application
 
   /**
    * @var ModuloCompilato[]
-   * @SWG\Property(property="compiled_modules")
+   * @SWG\Property(property="compiled_modules", description="Compiled module file")
    * @Serializer\Type("array")
    */
   private $compiledModules;
 
   /**
    * @var Allegato[]
-   * @SWG\Property(property="attachments", type="string")
+   * @SWG\Property(property="attachments", description="Attachments list")
    * @Serializer\Type("string")
    */
   private $attachments;
 
 
   /**
-   * @var DateTime
-   * @SWG\Property(description="Datetime interval's end date", type="dateTime")
+   * @Serializer\Type("int")
+   * @SWG\Property(description="Creation time", type="int")
    */
   private $creationTime;
 
+  /**
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Creation date time", type="dateTime")
+   */
+  private $createdAt;
 
   /**
-   * @var DateTime
-   * @SWG\Property(description="Datetime interval's end date", type="dateTime")
+   * @Serializer\Type("int")
+   * @SWG\Property(description="Submission time", type="int")
    */
   private $submissionTime;
+
+  /**
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Submission date time", type="dateTime")
+   */
+  private $submittedAt;
 
   /**
    * @Serializer\Type("string")
@@ -105,19 +118,19 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol number (uuid)")
+   * @SWG\Property(description="Applications's protocol number")
    */
   private $protocolNumber;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol number (uuid)")
+   * @SWG\Property(description="Applications's protocol document number")
    */
   private $protocolDcoumentId;
 
   /**
    * @var String[]
-   * @SWG\Property(property="protocol_numbers", type="string")
+   * @SWG\Property(property="protocol_numbers", type="string", description="Protocol numbers related to application")
    * @Serializer\Type("string")
    */
   private $protocolNumbers;
@@ -131,37 +144,41 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol number (uuid)")
+   * @SWG\Property(description="Outocome motivation")
    */
   private $outcomeMotivation;
 
   /**
    * @var Allegato
-   * @SWG\Property(property="outcome_file", type="string")
+   * @SWG\Property(property="outcome_file", type="string", description="Outocome file")
    * @Serializer\Type("string")
    */
   private $outcomeFile;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol number (uuid)")
+   * @SWG\Property(description="Pyment gateway used")
    */
   private $paymentType;
 
   /**
    * @var array
-   * @SWG\Property(property="payment_data", description="List of payment gateways available for the service and related parameters")
+   * @SWG\Property(property="payment_data", description="Payment data")
    * @Serializer\Type("array")
    */
   private $paymentData;
 
   /**
-   * @Assert\NotBlank(message="This field is mandatory: name")
-   * @Assert\NotNull(message="This field is mandatory: name")
-   * @Serializer\Type("integer")
-   * @SWG\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended")
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications status")
    */
   private $status;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications status name")
+   */
+  private $statusName;
 
 
   /**
@@ -175,7 +192,7 @@ class Application
   /**
    * @param mixed $id
    */
-  public function setId($id): void
+  public function setId($id)
   {
     $this->id = $id;
   }
@@ -191,7 +208,7 @@ class Application
   /**
    * @param mixed $user
    */
-  public function setUser($user): void
+  public function setUser($user)
   {
     $this->user = $user;
   }
@@ -207,7 +224,7 @@ class Application
   /**
    * @param mixed $service
    */
-  public function setService($service): void
+  public function setService($service)
   {
     $this->service = $service;
   }
@@ -223,7 +240,7 @@ class Application
   /**
    * @param mixed $tenant
    */
-  public function setTenant($tenant): void
+  public function setTenant($tenant)
   {
     $this->tenant = $tenant;
   }
@@ -239,7 +256,7 @@ class Application
   /**
    * @param mixed $subject
    */
-  public function setSubject($subject): void
+  public function setSubject($subject)
   {
     $this->subject = $subject;
   }
@@ -255,7 +272,7 @@ class Application
   /**
    * @param array $data
    */
-  public function setData(array $data): void
+  public function setData(array $data)
   {
     $this->data = $data;
   }
@@ -271,7 +288,7 @@ class Application
   /**
    * @param ModuloCompilato[] $compiledModules
    */
-  public function setCompiledModules(array $compiledModules): void
+  public function setCompiledModules(array $compiledModules)
   {
     $this->compiledModules = $compiledModules;
   }
@@ -287,23 +304,23 @@ class Application
   /**
    * @param Allegato[] $attachments
    */
-  public function setAttachments(array $attachments): void
+  public function setAttachments(array $attachments)
   {
     $this->attachments = $attachments;
   }
 
   /**
-   * @return DateTime
+   * @return int
    */
-  public function getCreationTime(): DateTime
+  public function getCreationTime()
   {
     return $this->creationTime;
   }
 
   /**
-   * @param DateTime $creationTime
+   * @param int $creationTime
    */
-  public function setCreationTime(DateTime $creationTime): void
+  public function setCreationTime($creationTime)
   {
     $this->creationTime = $creationTime;
   }
@@ -311,17 +328,49 @@ class Application
   /**
    * @return DateTime
    */
-  public function getSubmissionTime(): DateTime
+  public function getCreatedAt()
+  {
+    return $this->createdAt;
+  }
+
+  /**
+   * @param DateTime $createdAt
+   */
+  public function setCreatedAt(DateTime $createdAt)
+  {
+    $this->createdAt = $createdAt;
+  }
+
+  /**
+   * @return int
+   */
+  public function getSubmissionTime()
   {
     return $this->submissionTime;
   }
 
   /**
-   * @param DateTime $submissionTime
+   * @param int $submissionTime
    */
-  public function setSubmissionTime(DateTime $submissionTime): void
+  public function setSubmissionTime($submissionTime)
   {
     $this->submissionTime = $submissionTime;
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getSubmittedAt(): DateTime
+  {
+    return $this->submittedAt;
+  }
+
+  /**
+   * @param DateTime $submittedAt
+   */
+  public function setSubmittedAt(DateTime $submittedAt)
+  {
+    $this->submittedAt = $submittedAt;
   }
 
   /**
@@ -335,7 +384,7 @@ class Application
   /**
    * @param mixed $protocolFolderNumber
    */
-  public function setProtocolFolderNumber($protocolFolderNumber): void
+  public function setProtocolFolderNumber($protocolFolderNumber)
   {
     $this->protocolFolderNumber = $protocolFolderNumber;
   }
@@ -351,7 +400,7 @@ class Application
   /**
    * @param mixed $protocolNumber
    */
-  public function setProtocolNumber($protocolNumber): void
+  public function setProtocolNumber($protocolNumber)
   {
     $this->protocolNumber = $protocolNumber;
   }
@@ -367,7 +416,7 @@ class Application
   /**
    * @param mixed $protocolDcoumentId
    */
-  public function setProtocolDcoumentId($protocolDcoumentId): void
+  public function setProtocolDcoumentId($protocolDcoumentId)
   {
     $this->protocolDcoumentId = $protocolDcoumentId;
   }
@@ -383,7 +432,7 @@ class Application
   /**
    * @param String[] $protocolNumbers
    */
-  public function setProtocolNumbers(array $protocolNumbers): void
+  public function setProtocolNumbers(array $protocolNumbers)
   {
     $this->protocolNumbers = $protocolNumbers;
   }
@@ -399,7 +448,7 @@ class Application
   /**
    * @param bool $outcome
    */
-  public function setOutcome(bool $outcome): void
+  public function setOutcome(bool $outcome)
   {
     $this->outcome = $outcome;
   }
@@ -415,7 +464,7 @@ class Application
   /**
    * @param mixed $outcomeMotivation
    */
-  public function setOutcomeMotivation($outcomeMotivation): void
+  public function setOutcomeMotivation($outcomeMotivation)
   {
     $this->outcomeMotivation = $outcomeMotivation;
   }
@@ -431,7 +480,7 @@ class Application
   /**
    * @param Allegato $outcomeFile
    */
-  public function setOutcomeFile(Allegato $outcomeFile): void
+  public function setOutcomeFile(Allegato $outcomeFile)
   {
     $this->outcomeFile = $outcomeFile;
   }
@@ -447,7 +496,7 @@ class Application
   /**
    * @param mixed $paymentType
    */
-  public function setPaymentType($paymentType): void
+  public function setPaymentType($paymentType)
   {
     $this->paymentType = $paymentType;
   }
@@ -463,7 +512,7 @@ class Application
   /**
    * @param array $paymentData
    */
-  public function setPaymentData(array $paymentData): void
+  public function setPaymentData(array $paymentData)
   {
     $this->paymentData = $paymentData;
   }
@@ -479,16 +528,35 @@ class Application
   /**
    * @param mixed $status
    */
-  public function setStatus($status): void
+  public function setStatus($status)
   {
     $this->status = $status;
   }
 
   /**
+   * @return mixed
+   */
+  public function getStatusName()
+  {
+    return $this->statusName;
+  }
+
+  /**
+   * @param mixed $statusName
+   */
+  public function setStatusName($statusName)
+  {
+    $this->statusName = $statusName;
+  }
+
+
+  /**
    * @param Pratica $pratica
+   * @param string $attachmentEndpointUrl
+   * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
    * @return Application
    */
-  public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '')
+  public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '', $loadFileCollection = true)
   {
     $dto = new self();
     $dto->id = $pratica->getId();
@@ -505,10 +573,28 @@ class Application
       $dto->data = [];
     }
 
-    $dto->compiledModules = self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl);
+    $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl) : [];
     //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());
+
     $dto->creationTime = $pratica->getCreationTime();
+    try {
+      $date = new \DateTime();
+      $dto->createdAt = $date->setTimestamp($pratica->getCreationTime());
+    } catch (\Exception $e) {
+      $dto->createdAt = $pratica->getCreationTime();
+    }
+
     $dto->submissionTime = $pratica->getSubmissionTime();
+    if ($pratica->getSubmissionTime()) {
+      try {
+        $date = new \DateTime();
+        $dto->submittedAt = $date->setTimestamp($pratica->getSubmissionTime());
+      } catch (\Exception $e) {
+        $dto->submittedAt = $pratica->getSubmissionTime();
+      }
+    }
+
+
     $dto->protocolFolderNumber = $pratica->getNumeroFascicolo();
     $dto->protocolNumber = $pratica->getNumeroProtocollo();
     $dto->protocolDcoumentId = $pratica->getIdDocumentoProtocollo();
@@ -519,8 +605,9 @@ class Application
     //$dto->outcomeFile = $pratica->getRispostaOperatore();
 
     $dto->paymentType = $pratica->getPaymentType();
-    $dto->paymentData = $pratica->getPaymentData();
+    $dto->paymentData = self::preparePaymentData($pratica);
     $dto->status = $pratica->getStatus();
+    $dto->statusName = strtolower($pratica->getStatusName());
 
     return $dto;
   }
@@ -614,5 +701,23 @@ class Application
       $entity = new Pratica();
     }
     return $entity;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return mixed
+   */
+  public static function preparePaymentData( $pratica ) {
+    if (!empty($pratica->getPaymentData())) {
+      $gateway = $pratica->getPaymentType();
+      /** @var PaymentDataInterface $gatewayClassHandler */
+      $gatewayClassHandler = $gateway->getFcqn();
+
+
+      $paymetdata = $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
+
+      return $paymetdata;
+    }
+    return [];
   }
 }

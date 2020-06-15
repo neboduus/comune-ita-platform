@@ -6,6 +6,7 @@ namespace AppBundle\Payment\Gateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\AbstractPaymentData;
+use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\MyPayService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -115,6 +116,60 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
       FormEvents::PRE_SET_DATA => 'onPreSetData',
       FormEvents::PRE_SUBMIT => 'onPreSubmit'
     );
+  }
+
+  /**
+   * @param $data
+   * @return mixed|void
+   */
+  public static function getSimplifiedData($data)
+  {
+    $result = [];
+    $result['status'] = PaymentDataInterface::STATUS_PAYMENT_PENDING;
+    if (isset($data['payment_amount'])) {
+      $result['payment_amount'] = number_format( floatval($data['payment_amount']), 2, '.', '' );
+    }
+
+    if (isset($data['payment_financial_report'])) {
+      $financialReport = $data['payment_financial_report'];
+      foreach ($financialReport as $k => $v) {
+        $financialReport[$k]['importo'] = number_format( floatval($v['importo']), 2, '.', '' );
+      }
+      $result['payment_financial_report'] = $financialReport;
+    }
+
+    // Request
+    if (isset($data['request'])) {
+      $result['status'] = PaymentDataInterface::STATUS_PAYMENT_PROCESSING;
+      $paymentDate = $data['request']['dataEsecuzionePagamento'];
+      try {
+        $date = new \DateTime($data['request']['dataEsecuzionePagamento']);
+        $paymentDate = $date->format(\DateTime::W3C);
+      } catch (\Exception $e) {
+        // Do nothing
+      }
+
+      $result['iud'] = $data['request']['identificativoUnivocoDovuto'];
+      $result['reason'] = $data['request']['causaleVersamento'];
+      $result['paid_at'] = $paymentDate;
+    }
+
+    // Response
+    if (isset($data['response'])) {
+      $result['iuv'] = $data['response']['identificativoUnivocoVersamento'];
+    }
+
+    // Result
+    if (isset($data['outcome'])) {
+      if ($data['outcome']['status'] == 'OK') {
+        $result['status'] = PaymentDataInterface::STATUS_PAYMENT_PAID;
+      } else {
+        $result['status'] = PaymentDataInterface::STATUS_PAYMENT_FAILED;
+      }
+      $result['mypay_status_code'] = $data['outcome']['status_code'];
+      $result['mypay_status_message'] = $data['outcome']['status_message'];
+    }
+    return $result;
   }
 
   public function onPreSetData(FormEvent $event)

@@ -6,6 +6,7 @@ namespace AppBundle\Payment\Gateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\AbstractPaymentData;
+use AppBundle\Payment\PaymentDataInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -38,6 +39,27 @@ class Bollo extends AbstractPaymentData implements EventSubscriberInterface
       FormEvents::PRE_SET_DATA => 'onPreSetData',
       FormEvents::PRE_SUBMIT => 'onPreSubmit'
     );
+  }
+
+  /**
+   * @param $data
+   * @return mixed|void
+   */
+  public static function getSimplifiedData($data)
+  {
+    $bolloPaymentData = self::fromData($data);
+
+    $emissionHour = $bolloPaymentData->getFieldValue('bollo_ora_emissione');
+    foreach ($emissionHour as $k => $v) {
+      $emissionHour[$k] = str_pad($v, 2, '0', STR_PAD_LEFT);
+    }
+
+    return [
+      'status' => PaymentDataInterface::STATUS_PAYMENT_PAID,
+      'bollo_identifier' => $bolloPaymentData->getFieldValue('bollo_identifier'),
+      'bollo_emission_date' => $bolloPaymentData->getFieldValue('bollo_data_emissione'),
+      'bollo_emission_hour' => implode(':', $emissionHour)
+    ];
   }
 
 

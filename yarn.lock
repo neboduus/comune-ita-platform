@@ -4896,6 +4896,11 @@ isstream@~0.1.2:
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
+jquery-datepicker@^1.12.3:
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/jquery-datepicker/-/jquery-datepicker-1.12.3.tgz#c08c9a25e8936298786b341672fab54b92d13003"
+  integrity sha512-dj140t4syBKTLOvqnDJ/x03u9HcoatvX99t5IY/0IfEtxDtJAxB2VBCAZehbtHJg9Sb7YdC6/2BnGFk1pr/SgA==
+
 jquery-ui@^1.12.1:
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.12.1.tgz#bcb4045c8dd0539c134bc1488cdd3e768a7a9e51"

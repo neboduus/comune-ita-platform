@@ -1,27 +1,19 @@
-<div class="it-list-wrapper">
-  <ul class="it-list">
+<div class="link-list-wrapper multiline">
+  <ul class="link-list">
     {% for pratica_recente  in pratiche_recenti %}
       <li>
-        <a style="box-shadow: 0 0 0 0 rgba(0,0,0,0) !important"
-          href="{% if pratica_recente.servizio.id in user.serviziAbilitati %}{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}{% else %}#{% endif %}">
-          <div class="it-rounded-icon ml-0">
-            <svg class="icon icon-sm">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-            </svg>
-          </div>
-          <div class="it-right-zone ml-0">
-            <span class="text">
-              {{ pratica_recente.servizio.name }} <span class="badge badge-light ml-1">{{ pratica_recente.statusName | trans }}</span>
-              <em>
-                del {{ pratica_recente.submissionTime | date('d/m/Y H:i:s') }}
-              </em>
-            </span>
-            <svg class="icon" style="min-width: 24px">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
-            </svg>
-          </div>
+        <a class="list-item large medium left-icon icon-left pr-0"
+           href="{% if pratica_recente.servizio.id in user.serviziAbilitati %}{{ path('operatori_show_pratica', {'pratica': pratica_recente }) }}{% else %}#{% endif %}">
+          <span style="line-height: 1.5">{{ pratica_recente.servizio.name }}</span>
+          <svg class="icon icon-primary icon-left mt-2 pr-1">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+          </svg>
+          <p class="m-0">
+            acquisita il {{ pratica_recente.submissionTime | date('d/m/Y H:i:s') }} <span class="badge badge-light text-decoration-none">{{ pratica_recente.statusName | trans }}</span>
+          </p>
         </a>
       </li>
+    {% if not loop.last %}<li><span class="divider"></span>{% endif %}
     {% endfor %}
   </ul>
 </div>

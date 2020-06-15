@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-
 use AppBundle\Dto\Application;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
@@ -28,6 +27,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -100,6 +100,7 @@ class OperatoriController extends Controller
       'query' => $request->get('query', false),
       'sort' => $request->get('sort', 'submissionTime'),
       'order' => $request->get('order', 'asc'),
+      'collate' => (bool)$request->get('collate', false),
     ];
 
     try {
@@ -148,17 +149,22 @@ class OperatoriController extends Controller
 
     $serializer = $this->container->get('jms_serializer');
     foreach ($data as $s) {
-      $application = Application::fromEntity($s);
+      //load Application Dto without file collection to reduce the number of db queries
+      $application = Application::fromEntity($s, '', false);
       $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
       $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
       $applicationArray['is_payment_required'] = $s->getServizio()->isPaymentRequired();
+      $applicationArray['payment_complete'] = $s->getStatus() == Pratica::STATUS_PAYMENT_ERROR || $s->getStatus() <= Pratica::STATUS_PAYMENT_OUTCOME_PENDING ? false : true;
+      $applicationArray['idp'] = $s->getUser()->getIdp();
       $applicantUser = $s->getUser();
       $codiceFiscale = $applicantUser instanceof CPSUser ? $applicantUser->getCodiceFiscale() : '';
       $codiceFiscaleParts = explode('-', $codiceFiscale);
       $applicationArray['codice_fiscale'] = array_shift($codiceFiscaleParts);
       $applicationArray['operator_name'] = $s->getOperatore() ? $s->getOperatore()->getFullName() : null;
+      //@todo check perfomance: children count add one additional db query each result
+      $applicationArray['children_count'] = $parameters['collate'] ? $s->getChildren()->count() : null;
 
       try{
         $this->checkUserCanAccessPratica($user, $s);
@@ -201,7 +207,7 @@ class OperatoriController extends Controller
 
     $timeZone = date_default_timezone_get();
     $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '". $timeZone. "') AS tslot
-            FROM pratica AS p WHERE p.status > 1000 GROUP BY tslot ORDER BY tslot ASC";
+            FROM pratica AS p WHERE p.status > 1000 and p.submission_time IS NOT NULL GROUP BY tslot ORDER BY tslot ASC";
 
     /** @var EntityManager $em */
     $em = $this->getDoctrine()->getManager();
@@ -362,7 +368,6 @@ class OperatoriController extends Controller
     $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
-    $praticaCorrelata = null;
     $fiscalCode = null;
     if ($pratica->getType() == Pratica::TYPE_FORMIO) {
       /** @var Schema $schema */
@@ -372,23 +377,13 @@ class OperatoriController extends Controller
         if (isset($data['applicant.fiscal_code.fiscal_code'])) {
           $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
         }
-        if (isset($data['related_applications'])) {
-          try {
-            $praticaCorrelata = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find(
-              trim($data['related_applications'])
-            );
-          } catch (\Exception $exception) {}
-        }
       }
-    }
-
-    if (!$fiscalCode){
-      $fiscalCode = $applicant->getCodiceFiscale() ;
+    } else {
+      $fiscalCode = $applicant->getCodiceFiscale();
     }
 
     return [
       'pratiche_recenti' => $praticheRecenti,
-      'pratica_correlata' => $praticaCorrelata,
       'form' => $form->createView(),
       'modalForm' => $modalForm->createView(),
       'pratica' => $pratica,
@@ -465,6 +460,31 @@ class OperatoriController extends Controller
       'flow' => $praticaFlowService,
       'user' => $user,
     ];
+  }
+
+  /**
+   * @Route("/{pratica}/pdf", name="operatori_pratiche_show_pdf")
+   * @param Pratica $pratica
+   *
+   * @return BinaryFileResponse
+   */
+  public function showPdfAction(Request $request, Pratica $pratica)
+  {
+    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+
+    $fileName = $allegato->getOriginalFilename();
+    if (substr($fileName, -3) != $allegato->getFile()->getExtension() ) {
+      $fileName .= '.' . $allegato->getFile()->getExtension();
+    }
+
+    return new BinaryFileResponse(
+      $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
+      200,
+      [
+        'Content-type' => 'application/octet-stream',
+        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
+      ]
+    );
   }
 
 
@@ -728,7 +748,7 @@ class OperatoriController extends Controller
     foreach ($result as $valore) {
       $status[] = array(
         "status" => $valore['status'],
-        "name" => $this->get('translator')->trans('stato_'.$valore['status'])
+        "name" => $this->get('translator')->trans('pratica.dettaglio.stato_'.$valore['status'])
       );
     }
 
@@ -765,7 +785,7 @@ class OperatoriController extends Controller
 
     $calculateInterval = date('Y-m-d H:i:s', strtotime($timeDiff));
 
-    $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'";
+    $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'" . "and p.submission_time IS NOT NULL";
 
     if($services && $services != 'all'){
       $where .= " AND s.slug =" ."'".$services."'";

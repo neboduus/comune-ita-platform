@@ -71,7 +71,14 @@
         </div>
         <div class="my-2">
           <h3 class="d-inline">{{ pratica.user.fullName }}</h3>
-          <h4 class="d-inline pl-3">{{ fiscal_code }}</h4>
+          <h4 class="d-inline pl-3">
+            {{ fiscal_code }}
+            {% if pratica.user.idp != "anonymous" %}
+              <span data-toggle="tooltip" title="Identità del cittadino verificata">
+                <svg class="icon icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+              </span>
+            {% endif %}
+          </h4>
         </div>
       </div>
     </div>
@@ -141,50 +148,22 @@
             <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
           </div>
           {% endif %}
+          <div class="col-12 pb-3">
+            <h6>{{ 'pratica.iter' | trans }}</h6>
+            {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
+          </div>
           {% if  pratica.operatore %}
             <div class="col-12 pb-3">
               <h6>{{ 'pratica.operatore' | trans }}:</h6>
               <p class="m-0">{{ pratica.operatore.fullName }}</p>
             </div>
           {% endif %}
+          {% if pratica.parent or pratica.children.count > 0 %}
           <div class="col-12 pb-3">
-            <h6>{{ 'operatori.pratica_correlata' | trans }}</h6>
-            <div class="it-list-wrapper">
-              <ul class="it-list">
-                {% if  pratica_correlata %}
-                  <li>
-                    <a style="box-shadow: 0 0 0 0 rgba(0,0,0,0) !important"
-                       href="{% if pratica_correlata.servizio.id in user.serviziAbilitati %}{{ path('operatori_show_pratica', {'pratica': pratica_correlata }) }}{% else %}#{% endif %}">
-                      <div class="it-rounded-icon ml-0">
-                        <svg class="icon icon-sm">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-                        </svg>
-                      </div>
-                      <div class="it-right-zone ml-0">
-                        <span class="text">
-                          {{ pratica_correlata.servizio.name }} <span class="badge badge-light ml-1">{{ pratica_correlata.statusName | trans }}</span>
-                          <em>
-                            del {{ pratica_correlata.submissionTime | date('d/m/Y H:i:s') }}
-                          </em>
-                        </span>
-                        <svg class="icon" style="min-width: 24px">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
-                        </svg>
-                      </div>
-                    </a>
-                  </li>
-                {% else %}
-                  <li>
-                    <span class="small font-italic">{{ 'operatori.no_pratica_correlata' | trans }}</span>
-                  </li>
-                {% endif %}
-              </ul>
-            </div>
+            <h6>{{ 'operatori.fascicolo' | trans }}</h6>
+            {{ include('@App/Operatori/parts/fascicolo.html.twig') }}
           </div>
-          <div class="col-12 pb-3">
-            <h6>{{ 'pratica.iter' | trans }}</h6>
-            {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
-          </div>
+          {% endif %}
           {% if pratiche_recenti|length > 0 %}
           <div class="col-12 pb-3">
             <h6>{{ 'operatori.ultime_pratiche' | trans }}</h6>

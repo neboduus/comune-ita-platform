@@ -41,6 +41,7 @@ use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 
 /**
@@ -436,10 +437,20 @@ class AdminController extends Controller
     $form = $flowService->createForm();
     if ($flowService->isValid($form)) {
 
-      $flowService->saveCurrentStepData($form);
+        $flowService->saveCurrentStepData($form);
 
-      if ($flowService->nextStep()) {
-        $this->getDoctrine()->getManager()->flush();
+        if ($flowService->nextStep()) {
+          try {
+            $this->getDoctrine()->getManager()->flush();
+          }catch (UniqueConstraintViolationException $e){
+            $this->addFlash('error', 'Controlla se esiste un servizio con lo stesso nome e di aver inserito correttamente tutti i campi obbligatori');
+            $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
+            return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId()]);
+          }
+          catch (\Exception $e) {
+            $this->addFlash('error', 'Si è verificato un errore, contatta il supporto tecnico');
+            return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
+          }
         $form = $flowService->createForm();
       } else {
 

@@ -62,7 +62,58 @@ if (data.tipologia === 'value') {
  	];
  }
 ```
-I
+
+## Fascicoli
+Un fascicolo è un raggruppamento di due o più pratiche relazionate con una relazione Genitore/Figlio (Parent/Child): la pratica figlia integra la pratica genitore.
+
+Per creare una relazione Genitore/Figlio (Parent/Child) tra due pratiche è necessario che la form della pratica figlia contenga i seguenti campi:
+* [`MUST`] un campo di testo `related_applications` dove l'utente deve inserire il numero della pratica genitore,
+* [`MUST`] un campo hidden (il cui identificatore può avere qualsiasi nome, ad esempio `calculate_related_applications`) di supporto per effettuare la validazione del numero di pratica inserito
+
+[`MUST`] Occorre impostare il seguente codice in `Validation` nel campo `related_applications`:
+```
+if (data.calculate_related_applications === "true") {
+    valid = "Questa pratica non necessita di integrazione"
+} else if (data.calculate_related_applications === 404) {
+    valid = "Pratica non trovata"
+}
+```
+[`MUST`] Occorre impostare il seguente codice in `Calculated Value` nel campo `calculate_related_applications`
+
+**Attenzione occorre specificare correttamente l'api url nella funzione `loadJSON` così composto `https://{host}/{instance}/api/status/applications/`**
+(nell'esempio è specificato `https://devsdc.opencontent.it/comune-di-rovereto/api/status/applications/`)
+```
+function loadJSON(path, success, error) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                if (success)
+                    success();
+            } else if (xhr.status === 404) {
+                data.pratica_validation = 404
+            } else if (xhr.status === 406) {
+                data.pratica_validation = 406
+            } else {
+                if (error)
+                    error();
+            }
+        }
+    };
+    xhr.open("GET", path, true);
+    xhr.send();
+}
+
+if (data.related_applications) {
+    loadJSON('https://devsdc.opencontent.it/comune-di-rovereto/api/status/applications/' + data.related_applications,
+        function () {
+            data.calculate_related_applications = "true"
+        },
+        function () {
+            data.calculate_related_applications = "false"
+        });
+}
+```
 
 
 ## Integrazioni

@@ -27,6 +27,7 @@ Encore
   .addEntry('calendar-manager', './assets/js/calendar-manager.js')
   .addEntry('fullcalendar-manager', './assets/js/fullcalendar-manager.js')
   .addEntry('chars-operator', './assets/js/chars-operator.js')
+  .addEntry('jquery-ui-only-calendar', './assets/js/jquery-ui-custom-calendar.js')
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
