@@ -18,6 +18,7 @@ use AppBundle\Logging\LogConstants;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use League\Csv\Writer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -32,6 +33,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -76,33 +79,157 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @todo megiare questa logica in ApplicationsAPIController
    * @Route("/pratiche",name="operatori_index_json")
    * @param Request $request
    * @return JsonResponse
    */
   public function indexJsonAction(Request $request)
   {
-    /** @var PraticaRepository $praticaRepository */
-    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-
     $limit = intval($request->get('limit', 10));
     $offset = intval($request->get('offset', 0));
-
-    $servizioId = $request->get('servizio', false);
     $parameters = [
-      'servizio' => $servizioId,
+      'servizio' => $request->get('servizio', false),
       'stato' => $request->get('stato', false),
       'workflow' => $request->get('workflow', false),
       'query_field' => $request->get('query_field', false),
       'query' => $request->get('query', false),
       'sort' => $request->get('sort', 'submissionTime'),
       'order' => $request->get('order', 'asc'),
-      'collate' => (bool)$request->get('collate', false),
+      'collate' => (int)$request->get('collate', false),
     ];
 
+    $result = $this->getFilteredPraticheByOperatore($parameters, $limit, $offset);
+
+    $request->setRequestFormat('json');
+    return new JsonResponse(json_encode($result), 200, [], true);
+  }
+
+  /**
+   * @Route("/pratiche/csv",name="operatori_index_csv")
+   * @param Request $request
+   */
+  public function indexCSVAction(Request $request)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy([
+      'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
+    ]);
+
+    $extraHeaders = $request->get('extra_headers', []);
+    $parameters = [
+      'servizio' => $request->get('servizio', false),
+      'stato' => $request->get('stato', false),
+      'workflow' => $request->get('workflow', false),
+      'query_field' => $request->get('query_field', false),
+      'query' => $request->get('query', false),
+      'sort' => $request->get('sort', 'submissionTime'),
+      'order' => $request->get('order', 'asc'),
+      'collate' => (int)$request->get('collate', false),
+    ];
+
+    $csv = Writer::createFromPath('php://temp', 'r+');
+    $result = $this->getFilteredPraticheByOperatore($parameters, 1, 0);
+    $schema = (array)$result['meta']['schema'];
+
+    $csvHeaders = [
+      'ID',
+      'Numero di protocollo',
+      'Login',
+      'Pagamenti',
+      'Richiedente',
+      'Codice fiscale',
+      'Data di inserimento',
+      'Stato',
+      'Operatore',
+      'Servizio',
+    ];
+    $extraValues = [];
+    foreach ($schema as $item) {
+      if (in_array($item['label'], $extraHeaders)) {
+        $extraValues[$item['name']] = $item['label'];
+      }
+    }
+    $csvHeaders = array_merge($csvHeaders, array_values($extraValues));
+    $csv->insertOne($csvHeaders);
+
+    $dataCount = 0;
+    $totalCount = $result['meta']['count'];
+    $limit = 500;
+    $offset = 0;
+    $responseCallback = function () use ($dataCount, $totalCount, $csv, $limit, $offset, $parameters, $servizi, $extraValues){
+      while ($dataCount < $totalCount) {
+        $result = $this->getFilteredPraticheByOperatore($parameters, $limit, $offset);
+        $data = $result['data'];
+        $dataCount += count($data);
+        $offset += $limit;
+        foreach ($data as $item) {
+          $serviceName = '?';
+          foreach ($servizi as $servizio) {
+            if ($item['service'] == $servizio->getSlug()) {
+              $serviceName = $servizio->getName();
+            }
+          }
+          $csvRow = [
+            $item['id'],
+            isset($item['protocol_number']) ? $item['protocol_number'] : '',
+            $item['idp'],
+            $item['is_payment_required'] ? $item['payment_complete'] : '',
+            $item['user_name'],
+            $item['codice_fiscale'],
+            isset($item['submission_time']) ? date('d/m/Y H:i:s', $item['submission_time']) : '',
+            $this->get('translator')->trans('pratica.dettaglio.stato_'.$item['status']),
+            $item['operator_name'],
+            $serviceName,
+          ];
+
+          foreach ($item['data'] as $key => $value) {
+            if (isset($extraValues[$key])) {
+              $csvRow[$key] = is_array($value) ? count($value) : $value;
+            }
+          }
+          $csv->insertOne($csvRow);
+        }
+      }
+      foreach ($csv->chunk(1024) as $offset => $chunk) {
+        echo $chunk;
+        flush();
+      }
+    };
+
+    $fileNameCreationDate = new \DateTime();
+    $fileName = 'export_'.$fileNameCreationDate->format('d-m-yy-H-m') . '.csv';
+    $response = new StreamedResponse();
+    $response->headers->set('Content-Encoding', 'none');
+    $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+
+    $disposition = $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $fileName
+    );
+
+    $response->headers->set('Content-Disposition', $disposition);
+    $response->headers->set('Content-Description', 'File Transfer');
+    $response->setCallback($responseCallback);
+    $response->send();
+  }
+
+  /**
+   * @todo mergiare questa logica in ApplicationsAPIController o in PraticaRepository?
+   * @param $parameters
+   * @param $limit
+   * @param $offset
+   * @return array
+   */
+  private function getFilteredPraticheByOperatore($parameters, $limit, $offset)
+  {
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
     try {
       $count = $praticaRepository->countPraticheByOperatore($user, $parameters);
       /** @var Pratica[] $data */
@@ -116,6 +243,7 @@ class OperatoriController extends Controller
     $schema = null;
     $result = [];
     $result['meta']['schema'] = false;
+    $servizioId = $parameters['servizio'];
     if ($servizioId && $count > 0){
       $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
       if ($servizio instanceof Servizio){
@@ -185,8 +313,7 @@ class OperatoriController extends Controller
       $result['data'][] = $applicationArray;
     }
 
-    $request->setRequestFormat('json');
-    return new JsonResponse(json_encode($result), 200, [], true);
+    return $result;
   }
 
   /**

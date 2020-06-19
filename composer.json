@@ -62,7 +62,8 @@
     "php-http/guzzle6-adapter": "2.0.1",
     "excelwebzone/recaptcha-bundle": "1.5.17",
     "ext-fileinfo": "^7.3",
-    "johngrogg/ics-parser": "^2.1"
+    "johngrogg/ics-parser": "^2.1",
+    "league/csv": "^9.0"
   },
   "require-dev": {
     "sensio/generator-bundle": "3.1.7",

@@ -215,6 +215,7 @@ class PraticaRepository extends EntityRepository
     }else {
       $qb->orderBy('pratica.submissionTime', 'desc');
     }
+    $qb->addOrderBy('pratica.id', 'desc');
 
     return $qb->setFirstResult($offset)
       ->setMaxResults($limit)
