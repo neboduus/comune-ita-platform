@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
@@ -19,7 +20,6 @@ use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\DataTable;
-use phpDocumentor\Reflection\Types\This;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -185,7 +185,7 @@ class CalendarsController extends Controller
    */
   public function deleteCalendarAction(Request $request, Calendar $calendar)
   {
-    if ($calendar->getOwner() != $this->getUser() && !$calendar->getModerators()->contains($this->getUser())) {
+    if (!$this->canUserAccessCalendar($calendar))  {
       $this->addFlash('error', 'Non possiedi i permessi per eliminare questo calendario');
       return $this->redirectToRoute('operatori_calendars_index');
     }
@@ -230,9 +230,7 @@ class CalendarsController extends Controller
    */
   public function editCalendarAction(Request $request, Calendar $calendar)
   {
-    /** @var User $user */
-    $user = $this->getUser();
-    if (!in_array(User::ROLE_ADMIN, $user->getRoles()) && $calendar->getOwner() != $user && !$calendar->getModerators()->contains($user)) {
+    if (!$this->canUserAccessCalendar($calendar))  {
       $this->addFlash('error', 'Non possiedi i permessi per modificare questo calendario');
       return $this->redirectToRoute('operatori_calendars_index');
     }
@@ -292,7 +290,7 @@ class CalendarsController extends Controller
    */
   public function showCalendarAction(Request $request, Calendar $calendar)
   {
-    if ($calendar->getOwner() != $this->getUser() && $calendar->getIsModerated() && !$calendar->getModerators()->contains($this->getUser())) {
+    if (!$this->canUserAccessCalendar($calendar))  {
       $this->addFlash('error', 'Non possiedi i permessi per visualizzare questo calendario');
       return $this->redirectToRoute('operatori_calendars_index');
     }
@@ -627,4 +625,12 @@ class CalendarsController extends Controller
         return 'Errore';
     }
   }
+  private function canUserAccessCalendar(Calendar $calendar) {
+    $user = $this->getUser();
+    if ($user instanceof AdminUser || $calendar->getOwner() == $user || ($calendar->getIsModerated() && $calendar->getModerators()->contains($user))) {
+      return true;
+    }
+    return false;
+  }
 }
+
