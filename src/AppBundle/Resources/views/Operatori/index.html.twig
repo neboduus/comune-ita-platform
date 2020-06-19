@@ -97,8 +97,8 @@
           'workflow': filterWorkflow.val(),
           'query_field': filterQueryBy.val(),
           'query': filterQuery.val(),
-          'sort': sort,
-          'order': order,
+          'sort': sort || 'submissionTime',
+          'order': order || 'asc',
           'limit': filterPratiche.val() != null ? filterPratiche.val() : defaultLimit,
           'collate': filterCollate.is(':checked') ? 1 : 0
         };
@@ -176,6 +176,20 @@
         }
       };
 
+      var refreshDownloadButton = function (response) {
+        var downloadParams = response.meta.parameter;
+        downloadParams['extra_headers[]'] = []
+        $.each(response.meta.schema, function () {
+          if (localStorage.getItem(localStoragePrefix + response.meta.parameter.servizio + this.name)) {
+            downloadParams['extra_headers[]'].push(
+              $.trim(resultsContainer.find('input[data-togglekey="' + this.name + '"]').next().text())
+            );
+          }
+        });
+        var downloadButton = resultsContainer.find('[data-download="true"]');
+        downloadButton.attr('href',downloadButton.data('href')+'?'+jQuery.param(downloadParams, true));
+      };
+
       var loadResponse = function(response){
         if (response.meta.count === 0) {
           resultsContainer.html(emptyTemplate.render({}));
@@ -196,6 +210,7 @@
             loadContents();
             e.preventDefault();
           });
+
           resultsContainer.find('.copy').click(function (e) {
             e.preventDefault();
             var button = $(this);
@@ -211,6 +226,7 @@
               window.location = $(this).data('href');
             }
           });
+          refreshDownloadButton(response);
           resultsContainer.find('[data-toggle="tooltip"]').tooltip();
           if (response.meta.schema) {
             resultsContainer.find('input[data-togglekey]').on('change', function () {
@@ -221,6 +237,7 @@
                 resultsContainer.find('[data-key="' + $(this).data('togglekey') + '"]').css('display', 'none');
                 if (typeof (Storage) !== "undefined") localStorage.removeItem(localStoragePrefix+response.meta.parameter.servizio + $(this).data('togglekey'));
               }
+              refreshDownloadButton(response);
             });
             if (typeof (Storage) !== "undefined") {
               $.each(response.meta.schema, function () {
@@ -276,9 +293,9 @@
           {{for meta.schema}}
             <div class="form-check">
               <input class="form-check-input" type="checkbox" data-togglekey="{{:name}}" id="{{:name}}">
-                <label class="form-check-label" for="{{:name}}">
-                  {{:label}}
-                </label>
+              <label class="form-check-label" for="{{:name}}">
+                {{:label}}
+              </label>
             </div>
           {{/for}}
           </div>
@@ -293,10 +310,15 @@
 <table class="table table-striped table-condensed table-hover" style="width: 100%;font-size:.87em">
   <thead>
     <tr>
-      <th>
+      <th style="white-space:nowrap">
         {{if meta.schema}}
           <button type="button" class="btn btn-secondary btn-xs text-nowrap py-1 px-2" data-toggle="modal" data-target="#tableOptions">Opzioni tabella</button>
         {{/if}}
+        <a data-download="true" data-href="{% endverbatim %}{{ path('operatori_index_csv') }}{% verbatim %}"  href="#" data-toggle="tooltip" title="Clicca per scaricare i dati in formato CSV" type="button" class="btn btn-default btn-xs p-0">
+          <svg class="icon icon-sm icon-primary">
+           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+          </svg>
+        </a>
       </th>
       <th>Login</th>
       <th>Pagamenti</th>
