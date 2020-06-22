@@ -117,18 +117,25 @@ class MyPayService
   public function getMyPayUrlForCurrentPayment(Pratica $pratica)
   {
     $data = $pratica->getPaymentData();
-    return $data['response']['url'];
+    return $data['response'];
   }
 
   /**
    * @param Pratica $pratica
    * @return string
    */
-  public function renderCallbackUrlForPayment(Pratica $pratica): string
+  public function renderCallbackUrlForPayment(Pratica $pratica, $anonymous = false): string
   {
-    return $this->router->generate('pratiche_payment_callback', [
-      'pratica' => $pratica->getId()
-    ], RouterInterface::ABSOLUTE_URL);;
+    if ($anonymous) {
+      return $this->router->generate('pratiche_anonime_payment_callback', [
+        'pratica' => $pratica->getId(),
+        'hash' => $pratica->getHash()
+      ], RouterInterface::ABSOLUTE_URL);
+    } else {
+      return $this->router->generate('pratiche_payment_callback', [
+        'pratica' => $pratica->getId()
+      ], RouterInterface::ABSOLUTE_URL);
+    }
   }
 
   /**
@@ -166,12 +173,20 @@ class MyPayService
       $provincia = substr($provincia, 0, 2);
     }
 
+    $cf = $pratica->getUser()->getCodiceFiscale();
+    $callBackUrl = $this->renderCallbackUrlForPayment($pratica);
+    $cfParts = explode('-', $cf);
+    if ( $this->isPayerAnonymous( $cf ) ) {
+      $cf = $cfParts[0];
+      $callBackUrl = $this->renderCallbackUrlForPayment($pratica, true);
+    }
+
     $request = array(
       'notifyUrl' => $this->renderUrlForPaymentOutcome($pratica),
-      'enteSILInviaRispostaPagamentoUrl' => $this->renderCallbackUrlForPayment($pratica), // Callback url
+      'enteSILInviaRispostaPagamentoUrl' => $callBackUrl, // Callback url
       'tipoIdentificativoUnivoco' => 'F',
-      'codiceIdentificativoUnivoco' => $pratica->getRichiedenteCodiceFiscale(), // Codice fiscale
-      'anagraficaPagatore' => $pratica->getRichiedenteNome() . ' ' . $pratica->getRichiedenteCognome(), // Nome e Cognome
+      'codiceIdentificativoUnivoco' => $cf, // Codice fiscale
+      'anagraficaPagatore' => $pratica->getUser()->getNome() . ' ' . $pratica->getUser()->getCognome(), // Nome e Cognome
       'indirizzoPagatore' => $user->getIndirizzoResidenza(),
       'civicoPagatore' => '',
       'capPagatore' => $user->getCapResidenza(),
@@ -218,14 +233,33 @@ class MyPayService
   {
     $paymentParameters = $pratica->getServizio()->getPaymentParameters();
 
+    $cf = $pratica->getUser()->getCodiceFiscale();
+    $callBackUrl = $this->renderCallbackUrlForPayment($pratica);
+    if ( $this->isPayerAnonymous( $cf ) ) {
+      $callBackUrl = $this->renderCallbackUrlForPayment($pratica, true);
+    }
+
     $data = array(
-      'enteSILInviaRispostaPagamentoUrl' => $this->renderCallbackUrlForPayment($pratica), // Callback url
+      'enteSILInviaRispostaPagamentoUrl' => $callBackUrl, // Callback url
       'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
       'password' => $paymentParameters['gateways']['mypay']['parameters']['password'],
       'identificativoUnivocoVersamento' => $iuv
     );
 
     return $data;
+  }
+
+  /**
+   * @param $cf
+   * @return bool
+   */
+  private function isPayerAnonymous($cf)
+  {
+    $cfParts = explode('-', $cf);
+    if ( count($cfParts) > 1) {
+      return true;
+    }
+    return false;
   }
 
   /**
