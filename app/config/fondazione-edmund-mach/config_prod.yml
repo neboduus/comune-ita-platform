@@ -9,7 +9,7 @@ imports:
 
 
 parameters:
-    prefix: fondazione-mach
+    prefix: fondazione-edmund-mach
     codice_meccanografico: fem
     database_name: sdc_fem
 
