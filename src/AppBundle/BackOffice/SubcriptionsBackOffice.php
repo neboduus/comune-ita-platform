@@ -7,7 +7,9 @@ namespace AppBundle\BackOffice;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
+use DateTime;
 use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class SubcriptionsBackOffice implements BackOfficeInterface
@@ -16,12 +18,21 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
   const PATH = 'operatori_subscription-service_index';
 
-  private $em;
+
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
   /**
    * @var TranslatorInterface $translator
    */
   private $translator;
+
+  /**
+   * @var EntityManager
+   */
+  private $em;
 
   private $required_headers = array(
     "name",
@@ -66,8 +77,9 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     )
   ];
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em)
+  public function __construct(LoggerInterface $logger, TranslatorInterface $translator, EntityManager $em)
   {
+    $this->logger = $logger;
     $this->translator = $translator;
     $this->em = $em;
   }
@@ -171,7 +183,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
     if (!$subscriber) {
       try {
-        $birthDate = new \DateTime($fixedData['natoAIl']);
+        $birthDate = \DateTime::createFromFormat('d/m/Y', $fixedData['natoAIl']);
         if (!$birthDate instanceof DateTime) {
           $birthDate = new \DateTime();
         }
@@ -191,6 +203,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
         $this->em->persist($subscriber);
         $this->em->flush();
       } catch (\Exception $exception) {
+        $this->logger->error($exception->getMessage() . ' on subscriber');
         return ['error' => $this->translator->trans('backoffice.integration.subscriptions.save_subscriber_error',  ['user' => $subscriber->getFiscalCode()])];
       }
     }
@@ -209,6 +222,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
       return $subscription;
     } catch (\Exception $exception) {
+      $this->logger->error($exception->getMessage() . ' on subscription');
       return ['error' => $this->translator->trans('backoffice.integration.subscriptions.save_subscription_error', ['user' => $subscriber->getFiscalCode()])];
     }
   }
