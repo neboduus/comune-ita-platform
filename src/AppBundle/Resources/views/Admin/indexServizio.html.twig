@@ -46,10 +46,10 @@
             <tbody>
             {% for item in items %}
               <tr>
-                <td data-title="Nome">
-                  <a class="text-nowrap" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
+                <td data-title="Nome" class="min-h-65">
+                  <a class="" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
                 </td>
-                <td><a class="btn btn-secondary btn-xs clone" href="#"
+                <td class="min-h-65"><a class="btn btn-secondary btn-xs clone" href="#"
                        data-url="{{ absolute_url(path('service_api_get', { 'id': item.id })) }}"
                        data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right"
                        data-html="true" title="Url servizio"
@@ -59,10 +59,10 @@
                     </svg>
                     <span>Copia URL</span></a>
                 </td>
-                <td data-title="Stato">
+                <td data-title="Stato" class="min-h-65">
                   {{ statuses[item.status] }}
                 </td>
-                <td data-title="Azioni" class="actions">
+                <td data-title="Azioni" class="actions" class="min-h-65">
                   <a class="btn btn-warning btn-xs mb-1" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
                     <svg class="icon icon-sm icon-white">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>

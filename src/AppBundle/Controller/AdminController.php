@@ -287,9 +287,10 @@ class AdminController extends Controller
   public function indexServizioAction()
   {
     $statuses = [
-      Servizio::STATUS_CANCELLED => 'Bozza',
-      Servizio::STATUS_AVAILABLE => 'Pubblicato',
-      Servizio::STATUS_SUSPENDED => 'Sospeso'
+      Servizio::STATUS_CANCELLED => $this->get('translator')->trans('servizio.statutes.bozza'),
+      Servizio::STATUS_AVAILABLE => $this->get('translator')->trans('servizio.statutes.pubblicato'),
+      Servizio::STATUS_SUSPENDED => $this->get('translator')->trans('servizio.statutes.sospeso'),
+      Servizio::STATUS_PRIVATE => $this->get('translator')->trans('servizio.statutes.privato')
     ];
 
     $em = $this->getDoctrine()->getManager();
