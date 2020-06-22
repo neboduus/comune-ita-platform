@@ -634,6 +634,7 @@ steps:
       sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
       si: 'Sì, sono sicuro'
       no: 'No'
+      payment_help_text_top: 'Verifica i dati inseriti prima di passare al metodo di pagamento'
       help_text_top: 'Controlla i dati che hai inserito'
       help_text_bottom: 'Per inviare la richiesta, premere il pulsante "Invia"'
 
@@ -1649,6 +1650,11 @@ gateway:
     identifier: 'Identificatore'
     data: 'Data emissione'
     ora: 'Ora emissione'
+  mypay:
+    redirect_button: "Paga adesso online"
+    redirect_text: "Usa il pulsante che segue per pagare online sul sito di MyPay/PagoPA.<br />A pagamento effettuato tornerai su questo sito per la conferma che la tua pratica è stata inoltrata correttamente all'Ente."
+    download_button: "Scarica avviso di pagamento"
+    download_text: "Usa il pulsante che segue per scaricare il documento PDF (Avviso di Pagamento) che potrai pagare presso un ufficio postale, un ATM Bancario, ricevitoria Sisal, l'App IO o Satispay."
 
 calendars:
   new: "Crea nuovo calendario"

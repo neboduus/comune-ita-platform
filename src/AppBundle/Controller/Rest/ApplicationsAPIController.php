@@ -318,7 +318,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    if ($application->getStatus() != Pratica::STATUS_PAYMENT_OUTCOME_PENDING) {
+    if (!in_array($application->getStatus(), [Pratica::STATUS_PAYMENT_OUTCOME_PENDING, Pratica::STATUS_PAYMENT_PENDING])) {
       return $this->view("Application isn't in correct state", Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 

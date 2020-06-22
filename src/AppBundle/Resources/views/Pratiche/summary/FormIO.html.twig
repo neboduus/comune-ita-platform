@@ -3,14 +3,22 @@
   {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
   {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and pratica.paymentData.response is defined %}
-    <div class='text-center mt-5'><a href="{{ pratica.paymentData.response.url }}" class='btn btn-lg btn-primary'>Procedi
-        con il pagamento sul sito di MyPay</a></div>
-    <p class='mt-5'>
-      Cliccando sul bottone qui sopra sarai reindirizzato verso l'infrastruttura di MyPay.<br/>
-      A pagamento completato sarai riportato a questa pagina, la verifica dell'esito avviene in automatico.
-    </p>
+
+    <div class="row">
+      <div class="col-sm-4"><strong>{{ 'pratica.numero'|trans }}</strong></div>
+      <div class="col-sm-8 d-inline-flex">
+        <code>{{ pratica.id }}</code>
+      </div>
+    </div>
+
+    <p class='mt-3'>{{ 'gateway.mypay.redirect_text'|trans|raw }}</p>
+    <div class='text-center mt-5'><a href="{{ pratica.paymentData.response.url }}" class='btn btn-lg btn-primary'>{{ 'gateway.mypay.redirect_button'|trans }}</a></div>
+
+    <p class='mt-3'>{{ 'gateway.mypay.download_text'|trans|raw }}</p>
+    <div class='text-center mt-5 mb-5'><a href="{{ pratica.paymentData.response.urlFileAvviso }}" class='btn btn-lg btn-secondary'>{{ 'gateway.mypay.download_button'|trans }}</a></div>
+
   {% elseif pratica.statusName == 'STATUS_PAYMENT_OUTCOME_PENDING' %}
-    <div class="alert alert-info">Siamo in attesa dell'esito del pagamento</div>
+    <div class="alert alert-info mb-5"><i class="fa fa-refresh fa-spin fa-fw"></i> Siamo in attesa dell'esito del pagamento</div>
   {% elseif pratica.status >= 1900 %}
     {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}

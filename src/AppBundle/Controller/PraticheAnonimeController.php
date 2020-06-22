@@ -150,19 +150,7 @@ class PraticheAnonimeController extends Controller
         $form = $flow->createForm();
       } else {
 
-        $user = $this->checkUser($pratica->getDematerializedForms());
-        $pratica->setUser($user);
         $em->persist($pratica);
-
-        $attachments = $pratica->getAllegati();
-        if (!empty($attachments)) {
-          /** @var Allegato $a */
-          foreach ($attachments as $a) {
-            $a->setOwner($user);
-            $a->setHash($pratica->getHash());
-            $em->persist($pratica);
-          }
-        }
         $em->flush();
         $flow->onFlowCompleted($pratica);
 
@@ -214,6 +202,33 @@ class PraticheAnonimeController extends Controller
     }
 
     return new Response(null, Response::HTTP_FORBIDDEN);
+  }
+
+  /**
+   * @Route("/{pratica}/payment-callback/{hash}", name="pratiche_anonime_payment_callback")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Pratica $pratica
+   *
+   * @return array|RedirectResponse
+   */
+  public function paymentCallbackAction(Request $request, Pratica $pratica, $hash)
+  {
+
+    if ($pratica->isValidHash($hash, $this->hashValidity)) {
+      $outcome = $request->get('esito');
+
+      if ($outcome == 'OK') {
+        $this->container->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_PAYMENT_OUTCOME_PENDING);
+      }
+
+      return $this->redirectToRoute('pratiche_anonime_show', [
+        'pratica' => $pratica,
+        'hash' => $pratica->getHash()
+      ]);
+    }
+
+    return new Response(null, Response::HTTP_FORBIDDEN);
+
   }
 
   /**
@@ -292,46 +307,6 @@ class PraticheAnonimeController extends Controller
     );
 
     return $pratica;
-  }
-
-  /**
-   * @param array $data
-   * @return CPSUser
-   * @throws \Exception
-   */
-  private function checkUser(array $data): CPSUser
-  {
-    $em = $this->getDoctrine()->getManager();
-    $cf = isset($data['flattened']['applicant.data.fiscal_code.data.fiscal_code']) ? $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] : false;
-
-    $birthDay = null;
-    if (isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl'])) {
-      $birthDay = \DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
-    }
-
-    $sessionString = md5($this->get('session')->getId()) . '-' . time();
-
-    $user = new CPSUser();
-    $user
-      ->setUsername($sessionString)
-      ->setCodiceFiscale($cf . '-' . $sessionString)
-      ->setEmail(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
-      ->setEmailContatto(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
-      ->setNome(isset($data['flattened']['applicant.data.completename.data.name']) ? $data['flattened']['applicant.data.completename.data.name'] : '')
-      ->setCognome(isset($data['flattened']['applicant.data.completename.data.surname']) ? $data['flattened']['applicant.data.completename.data.surname'] : '')
-      ->setDataNascita($birthDay)
-      ->setLuogoNascita(isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : '')
-      ->setSdcIndirizzoResidenza(isset($data['flattened']['applicant.data.address.data.address']) && !empty($data['flattened']['applicant.data.address.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : '')
-      ->setSdcCittaResidenza(isset($data['flattened']['applicant.data.address.data.municipality']) && !empty($data['flattened']['applicant.data.address.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : '')
-      ->setSdcCapResidenza(isset($data['flattened']['applicant.data.address.data.postal_code']) && !empty($data['flattened']['applicant.data.address.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : '');
-
-    $user->addRole('ROLE_USER')
-      ->addRole('ROLE_CPS_USER')
-      ->setEnabled(true)
-      ->setPassword('');
-
-    $em->persist($user);
-    return $user;
   }
 
 
