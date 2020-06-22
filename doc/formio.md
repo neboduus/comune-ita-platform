@@ -130,6 +130,21 @@ Oppure nel caso di iscrizione per conto di altri:
 * Subform `subscriber`: dati anagrafici del richiedente
 * Campo `code`: codice del servizio a sottoscrizione
 
+NOTE
+
+Il sistema consente un'unica iscrizione per corso, è dunque necessario bloccare iscrizioni duplicate
+durante la compilazione del modulo. A questo scopo è sufficiente effettuare una richiesta all'endpoint 
+`https://{host}/{instance}/subscriptions/availability?code={code}&cf={fiscal_code}` 
+dove 
+
+* `code` è il codice del corso per il quale si vuole verificare l'esistenza di duplicati;
+* `fiscal_code` è il codice fiscale del cittadino che si desidera iscrivere (nota distinzione `applicant` e `subscriber` descritta nel paragrafo precedente)
+
+La chiamata restituisce 400/406/200 a seconda della disponibilità dell'iscrizione. 
+
+Si rimanda alla validazione descritta nel paragrafo "Fascicoli".
+
+
 ### Prenotazione appuntamenti
 
 Per aggangiare un servizio form.io al backoffice della prenotazione appuntamenti la form dovrà contenere almeno i seguenti campi:
