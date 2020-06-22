@@ -47,7 +47,7 @@ class SubscriptionServicesController extends Controller
         ]), $subscriptionService->getName());
       }])
       ->add('code', TextColumn::class, ['label' => 'Codice', 'searchable' => true])
-      ->add('status', MapColumn::class, ['label' => 'Stato', 'searchable' => true, 'map' => $statuses])
+      ->add('status', MapColumn::class, ['label' => 'Stato', 'searchable' => false, 'map' => $statuses])
       ->add('subscriptions', TextColumn::class, ['label' => 'Iscrizioni', 'render' => function ($value, $subscriptionService) {
         if ($subscriptionService->getSubscribersLimit()) {
           return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscriptions',
