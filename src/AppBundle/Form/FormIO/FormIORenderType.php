@@ -219,18 +219,18 @@ class FormIORenderType extends AbstractType
       $user = $this->checkUser($pratica->getDematerializedForms());
       $pratica->setUser($user);
       $this->em->persist($pratica);
-    }
 
-    $attachments = $pratica->getAllegati();
-    if (!empty($attachments)) {
-      /** @var Allegato $a */
-      foreach ($attachments as $a) {
-        $a->setOwner($user);
-        $a->setHash($pratica->getHash());
-        $this->em->persist($pratica);
+      $attachments = $pratica->getAllegati();
+      if (!empty($attachments)) {
+        /** @var Allegato $a */
+        foreach ($attachments as $a) {
+          $a->setOwner($user);
+          $a->setHash($pratica->getHash());
+          $this->em->persist($pratica);
+        }
       }
+      $this->em->flush();
     }
-    $this->em->flush();
   }
 
 
