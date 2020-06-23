@@ -42,11 +42,9 @@ i.mandatory::after {
 table {
   td
   {
-    min-width: 200px;
     .min-h-65 {
       min-height: 65px;
     }
-     min-height: 65px;
     &.actions {
       width: 26%;
     }
