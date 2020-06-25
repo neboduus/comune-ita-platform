@@ -219,3 +219,7 @@ ewz_recaptcha:
   private_key: '%recaptcha_secret%'
   # Not needed as "%kernel.default_locale%" is the default value for the locale key
   locale_key:  %kernel.default_locale%
+
+# Sentry
+sentry:
+  dsn: '%sentry_dsn%'
