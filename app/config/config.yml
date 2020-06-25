@@ -204,7 +204,7 @@ nelmio_api_doc:
     areas:
         path_patterns: # an array of regexps
             #- ^/%prefix%/api(?!/doc$)
-            - ^/%prefix%/api/services|applications|subscription-services|calendars|meetings|folders|documents|users(?!/doc$)
+            - ^/%prefix%/api/services|applications|subscription-services|subscriptions|calendars|meetings|folders|documents|users(?!/doc$)
 
 # Lexit jwt Configuration
 lexik_jwt_authentication:
