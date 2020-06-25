@@ -61,6 +61,7 @@ services:
       FORMSERVER_PUBLIC_URL: $FORMSERVER_PUBLIC_URL
       RECAPTCHA_KEY: $RECAPTCHA_KEY
       RECAPTCHA_SECRET: $RECAPTCHA_SECRET
+      SENTRY_DSN: $SENTRY_DSN
       PHP_DATE_TIMEZONE: 'Europe/Rome'
     volumes:
       - "uploads:/var/www/html/var/uploads"
