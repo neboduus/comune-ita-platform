@@ -87,18 +87,7 @@ class OperatoriController extends Controller
   {
     $limit = intval($request->get('limit', 10));
     $offset = intval($request->get('offset', 0));
-    $parameters = [
-      'servizio' => $request->get('servizio', false),
-      'stato' => $request->get('stato', false),
-      'workflow' => $request->get('workflow', false),
-      'query_field' => $request->get('query_field', false),
-      'query' => $request->get('query', false),
-      'sort' => $request->get('sort', 'submissionTime'),
-      'order' => $request->get('order', 'asc'),
-      'collate' => (int)$request->get('collate', false),
-    ];
-
-    $result = $this->getFilteredPraticheByOperatore($parameters, $limit, $offset);
+    $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
 
     $request->setRequestFormat('json');
     return new JsonResponse(json_encode($result), 200, [], true);
@@ -118,21 +107,9 @@ class OperatoriController extends Controller
     $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy([
       'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
     ]);
-
     $extraHeaders = $request->get('extra_headers', []);
-    $parameters = [
-      'servizio' => $request->get('servizio', false),
-      'stato' => $request->get('stato', false),
-      'workflow' => $request->get('workflow', false),
-      'query_field' => $request->get('query_field', false),
-      'query' => $request->get('query', false),
-      'sort' => $request->get('sort', 'submissionTime'),
-      'order' => $request->get('order', 'asc'),
-      'collate' => (int)$request->get('collate', false),
-    ];
-
     $csv = Writer::createFromPath('php://temp', 'r+');
-    $result = $this->getFilteredPraticheByOperatore($parameters, 1, 0);
+    $result = $this->getFilteredPraticheByOperatore($request, 1, 0);
     $schema = (array)$result['meta']['schema'];
 
     $csvHeaders = [
@@ -160,9 +137,9 @@ class OperatoriController extends Controller
     $totalCount = $result['meta']['count'];
     $limit = 500;
     $offset = 0;
-    $responseCallback = function () use ($dataCount, $totalCount, $csv, $limit, $offset, $parameters, $servizi, $extraValues){
+    $responseCallback = function () use ($dataCount, $totalCount, $csv, $limit, $offset, $request, $servizi, $extraValues){
       while ($dataCount < $totalCount) {
-        $result = $this->getFilteredPraticheByOperatore($parameters, $limit, $offset);
+        $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
         $data = $result['data'];
         $dataCount += count($data);
         $offset += $limit;
@@ -218,14 +195,76 @@ class OperatoriController extends Controller
   }
 
   /**
+   * @Route("/pratiche/calculate",name="operatori_index_calculate")
+   * @param Request $request
+   */
+  public function indexCalculateAction(Request $request)
+  {
+    $result = [];
+    $functions = [
+      'sum' => 'getSumFieldsInPraticheByOperatore',
+      'avg' => 'getAvgFieldsInPraticheByOperatore',
+      'count' => 'getCountNotNullFieldsInPraticheByOperatore',
+    ];
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $parameters = $this->getPraticheFilters($request);
+    $servizioId = $parameters['servizio'];
+    if ($servizioId){
+      $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
+      if ($servizio instanceof Servizio){
+        /** @var Schema $schema */
+        $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+        foreach ($functions as $name => $repositoryMethod) {
+          $requestFields = $request->get($name, []);
+          if (!empty($requestFields)) {
+            $fields = [];
+            foreach ($requestFields as $requestField) {
+              if ($schema->hasComponent($requestField)) {
+                $fields[] = $schema->getComponent($requestField)->getName();
+              }
+            }
+            if (!empty($fields)) {
+              $result[$name] = $praticaRepository->{$repositoryMethod}(
+                $fields,
+                $user,
+                $parameters
+              );
+            }
+          }
+        }
+      }
+    }
+    $request->setRequestFormat('json');
+    return new JsonResponse(json_encode($result), 200, [], true);
+  }
+
+  private function getPraticheFilters($request)
+  {
+    return [
+      'servizio' => $request->get('servizio', false),
+      'stato' => $request->get('stato', false),
+      'workflow' => $request->get('workflow', false),
+      'query_field' => $request->get('query_field', false),
+      'query' => $request->get('query', false),
+      'sort' => $request->get('sort', 'submissionTime'),
+      'order' => $request->get('order', 'asc'),
+      'collate' => (int)$request->get('collate', false),
+    ];
+  }
+
+  /**
    * @todo mergiare questa logica in ApplicationsAPIController o in PraticaRepository?
-   * @param $parameters
+   * @param Request $request
    * @param $limit
    * @param $offset
    * @return array
    */
-  private function getFilteredPraticheByOperatore($parameters, $limit, $offset)
+  private function getFilteredPraticheByOperatore($request, $limit, $offset)
   {
+    $parameters = $this->getPraticheFilters($request);
     /** @var PraticaRepository $praticaRepository */
     $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
     /** @var OperatoreUser $user */
@@ -926,8 +965,8 @@ class OperatoriController extends Controller
 
     $sql = "SELECT COUNT(p.id), date_trunc('". $timeSlot ."', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."') AS tslot, s.name
             FROM pratica AS p LEFT JOIN servizio AS s ON p.servizio_id = s.id" .
-            $where .
-            " GROUP BY s.name, tslot ORDER BY tslot ASC";
+      $where .
+      " GROUP BY s.name, tslot ORDER BY tslot ASC";
 
     /** @var EntityManager $em */
     $em = $this->getDoctrine()->getManager();

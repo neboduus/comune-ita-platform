@@ -26,7 +26,7 @@ class FormIOType extends AbstractType
 
     foreach ($formIOSchema->getComponents() as $component) {
       if (empty($options['formio_validate_fields']) || in_array($component['name'], $options['formio_validate_fields'])) {
-        $builder->add($component['form_name'], $component['form_type'], $component['form_options']);
+        $builder->add($component->getFormName(), $component->getFormType(), $component->getFormOptions());
       }
     }
   }
