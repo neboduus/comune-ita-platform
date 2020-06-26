@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Controller\OperatoriController;
+use AppBundle\Services\JsonSelect;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityRepository;
@@ -222,14 +224,145 @@ class PraticaRepository extends EntityRepository
       ->getQuery()->execute();
   }
 
+  public function countPraticheByOperatore(OperatoreUser $user, $filters)
+  {
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return 0;
+    }
+    return $this->getPraticheByOperatoreQueryBuilder($filters, $user)->select('count(pratica.id)')
+      ->getQuery()->getSingleScalarResult();
+  }
+
+  /**
+   * @see OperatoriController::indexCalculateAction()
+   * @param array $fields
+   * @param OperatoreUser $user
+   * @param $filters
+   * @return array|int
+   */
+  public function getSumFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
+  {
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return 0;
+    }
+    $sqlSelectFields = [];
+    $fieldAliases = [];
+    foreach ($fields as $index => $field){
+      $formField = "pratica.dematerializedForms ".$field;
+      $formFieldAlias = 'df_'.$index;
+      $fieldAliases[$formFieldAlias] = $field;
+      $sqlSelectFields[] = "SUM(FORMIO_JSON_FIELD($formField, DECIMAL)) as $formFieldAlias";
+    }
+
+    $result = array_fill_keys($fields, 0);
+
+    if (!empty($sqlSelectFields)) {
+      $data = $this->getPraticheByOperatoreQueryBuilder($filters, $user, FormIO::class)
+        ->select($sqlSelectFields)
+        ->getQuery()->execute();
+      if (isset($data[0])){
+        foreach ($fieldAliases as $alias => $field){
+          $result[$field] = number_format($data[0][$alias], 2, ',', '.');
+        }
+      }
+    }
+
+    return $result;
+  }
+
+  /**
+   * @see OperatoriController::indexCalculateAction()
+   * @param array $fields
+   * @param OperatoreUser $user
+   * @param $filters
+   * @return array|int
+   */
+  public function getAvgFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
+  {
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return 0;
+    }
+    $sqlSelectFields = [];
+    $fieldAliases = [];
+    foreach ($fields as $index => $field){
+      $formField = "pratica.dematerializedForms ".$field;
+      $formFieldAlias = 'df_'.$index;
+      $fieldAliases[$formFieldAlias] = $field;
+      $sqlSelectFields[] = "AVG(FORMIO_JSON_FIELD($formField, DECIMAL)) as $formFieldAlias";
+    }
+
+    $result = array_fill_keys($fields, 0);
+
+    if (!empty($sqlSelectFields)) {
+      $data = $this->getPraticheByOperatoreQueryBuilder($filters, $user, FormIO::class)
+        ->select($sqlSelectFields)
+        ->getQuery()->execute();
+
+      if (isset($data[0])){
+        foreach ($fieldAliases as $alias => $field){
+          $result[$field] = number_format($data[0][$alias], 2, ',', '.');
+        }
+      }
+    }
+
+    return $result;
+  }
+
+  /**
+   * @see OperatoriController::indexCalculateAction()
+   * @param array $fields
+   * @param OperatoreUser $user
+   * @param $filters
+   * @return array|int
+   */
+  public function getCountNotNullFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
+  {
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)){
+      return 0;
+    }
+    $sqlSelectFields = [];
+    $fieldAliases = [];
+    foreach ($fields as $index => $field){
+      $formFieldAlias = 'df_'.$index;
+      $fieldAliases[$formFieldAlias] = $field;
+    }
+
+    $result = array_fill_keys($fields, 0);
+
+    if (!empty($fieldAliases)) {
+      foreach ($fieldAliases as $alias => $field) {
+        $data = $this->getPraticheByOperatoreQueryBuilder($filters, $user, FormIO::class)
+          ->select("count(FORMIO_JSON_FIELD(pratica.dematerializedForms $field)) as $alias")
+          ->andWhere("FORMIO_JSON_FIELD(pratica.dematerializedForms $field) IS NOT NULL")
+          ->andWhere("FORMIO_JSON_FIELD(pratica.dematerializedForms $field) != '[]'")
+          ->getQuery()->execute();
+        if (isset($data[0])) {
+          $result[$field] = number_format($data[0][$alias], 0, ',', '.');
+        }
+      }
+    }
+
+    return $result;
+  }
+
   /**
    * @param $filters
    * @param $user
    * @return \Doctrine\ORM\QueryBuilder
    */
-  private function getPraticheByOperatoreQueryBuilder($filters, OperatoreUser $user)
+  private function getPraticheByOperatoreQueryBuilder($filters, OperatoreUser $user, $entity = null)
   {
-    $qb = $this->createQueryBuilder('pratica');
+    if (!$entity){
+      $entity = Pratica::class;
+    }
+
+    $qb =  $this->getEntityManager()->createQueryBuilder()
+      ->select('pratica')
+      ->from($entity, 'pratica');
 
     $qb->andWhere('pratica.erogatore IN (:erogatore)')
       ->setParameter('erogatore', $user->getEnte()->getErogatori()->toArray());
@@ -305,16 +438,6 @@ class PraticaRepository extends EntityRepository
     }
 
     return $qb;
-  }
-
-  public function countPraticheByOperatore(OperatoreUser $user, $filters)
-  {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
-      return 0;
-    }
-    return $this->getPraticheByOperatoreQueryBuilder($filters, $user)->select('count(pratica.id)')
-      ->getQuery()->getSingleScalarResult();
   }
 
   /**

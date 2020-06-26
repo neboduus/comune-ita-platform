@@ -10,6 +10,9 @@ class Schema
 
   private $sources = [];
 
+  /**
+   * @return SchemaComponent[]
+   */
   private $components = [];
 
   /**
@@ -46,13 +49,7 @@ class Schema
 
   public function addComponent($name, $type, $options)
   {
-    $this->components[$name] = [
-      'name' => $name,
-      'form_name' => implode(':', explode('.', $name)),
-      'form_type' => $type,
-      'form_options' => $options,
-      'label' => isset($options['label']) ? $options['label'] : null,
-    ];
+    $this->components[$name] = new SchemaComponent($name, $type, $options);
   }
 
   public function hasComponents()
@@ -65,6 +62,9 @@ class Schema
     return array_column($this->components, $column);
   }
 
+  /**
+   * @return SchemaComponent[]
+   */
   public function getComponents()
   {
     return array_values($this->components);
@@ -75,9 +75,18 @@ class Schema
     return isset($this->components[$name]);
   }
 
+  public function countComponents()
+  {
+    return count($this->components);
+  }
+
+  /**
+   * @param $name
+   * @return array|SchemaComponent
+   */
   public function getComponent($name)
   {
-    return isset($this->components[$name]) ? $this->components[$name] : [];
+    return $this->components[$name];
   }
 
   public function addSource($id, $data)
@@ -94,7 +103,7 @@ class Schema
   {
     $required = [];
     foreach ($this->getComponents() as $component){
-      if (isset($component['form_options']['required']) && $component['form_options']['required']){
+      if ($component->isRequired()){
         $required[] = $component;
       }
     }
