@@ -7,7 +7,7 @@ applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
 releaseDate: '2020-06-26'
-softwareVersion: 1.5.7
+softwareVersion: 1.5.8
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
