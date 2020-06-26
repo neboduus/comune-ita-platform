@@ -185,7 +185,7 @@ export default class FormioCalendar extends Base {
               cssClass = cssClass + ' active';
             }
 
-            html = html.concat('<div class="col-6"><button type="button" data-slot="' + key +'" class="btn btn-ora '+  cssClass +'">'+ key +'</button></div>');
+            html = html.concat('<div class="col-6"><button type="button" data-slot="' + key +'" class="btn btn-ora p-0 '+  cssClass +'">'+ key +'</button></div>');
 
           });
           self.container.find('#slot-picker').html('<div class="col-12"><h6>Orari disponibili il ' + self.date + '</h6></div>' + html);
