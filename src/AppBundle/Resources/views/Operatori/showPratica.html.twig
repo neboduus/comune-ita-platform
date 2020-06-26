@@ -93,6 +93,12 @@
                 {{ 'operatori.attesa_modulo_protocollato'|trans }}
               </div>
             </div>
+          {% elseif pratica.servizio.isPaymentRequired and pratica.status <= 1510 %}
+            <div class="row mb-5">
+              <div class="col-12 d-flex justify-content-center">
+                {{ 'operatori.attesa_pagamento'|trans }}
+              </div>
+            </div>
           {% else %}
             <div class="row mb-5">
                 <div class="col-12 d-flex justify-content-center">

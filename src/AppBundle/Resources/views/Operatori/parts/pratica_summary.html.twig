@@ -15,6 +15,12 @@
       {{ 'operatori.note_interne' | trans }}
       <span class="badge badge-light ml-1">{{ pratica.commenti.count }}</span>
     </a>
+    {% if pratica.servizio.isPaymentRequired and pratica.paymentData is not empty %}
+      <a class="nav-item nav-link" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
+         aria-controls="pagamento" aria-selected="false">
+        {{ 'operatori.pagamento' | trans }}
+      </a>
+    {% endif %}
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -61,4 +67,11 @@
       {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
+  {% if pratica.paymentData is not empty %}
+    <div class="tab-pane py-4 fade" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">
+      <div class="m-3">
+        {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
+      </div>
+    </div>
+  {% endif %}
 </div>

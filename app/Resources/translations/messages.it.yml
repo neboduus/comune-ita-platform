@@ -460,6 +460,17 @@ operatori:
   modulo: 'Modulo'
   allegati: 'Allegati'
   note_interne: 'Note interne'
+  importo: "Importo"
+  pagamento: 'Pagamento'
+  gateway: "Metodo di pagamento"
+  anagrafica_pagatore: "Anagrafica pagatore"
+  email_pagatore: "Email pagatore"
+  causale: "Causale versamento"
+  iud: "IUD"
+  iuv: "IUV"
+  data_esecuzione_pagamento: "Data di esecuzione"
+  esito_pagamento: "Esito"
+  data_ora_ricevuta: "Data e ora ricevuta"
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
   suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
@@ -478,6 +489,7 @@ operatori:
   attesa_modulo_compilato: 'In attesa di generazione del modulo compilato'
   attesa_modulo_compilato_info: 'Stiamo generando il modulo compilato in PDF da inviare al protocollo'
   attesa_modulo_protocollato: 'In attesa di protocollazione'
+  attesa_pagamento: 'In attesa di pagamento'
   attesa_protocollo_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma."
   attesa_ricevuta_info: "Stiamo generando una ricevuta PDF da scaricare ed eventualmente stampare. Per ottenerla attendi su questa pagina."
   controlla_richiesta_protocollata_loggato: "Puoi controllare l’avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <i>Le mie pratiche</i>."
