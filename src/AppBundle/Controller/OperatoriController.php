@@ -860,7 +860,7 @@ class OperatoriController extends Controller
       ->getResult();
 
     $sql = "SELECT DISTINCT(status) as status
-            FROM pratica WHERE status > 1000 ORDER BY status ASC";
+            FROM pratica WHERE status > 1000 AND submission_time IS NOT NULL ORDER BY status ASC";
     try {
       $em = $this->getDoctrine()->getManager();
       $stmt = $em->getConnection()->prepare($sql);
@@ -895,7 +895,7 @@ class OperatoriController extends Controller
   {
     $status = $request->get('status');
     $services = $request->get('services');
-    $time = $request->get('time');
+    $time = (int) $request->get('time');
 
     if ($time <= 180) {
       $timeSlot = "minute";
@@ -914,12 +914,14 @@ class OperatoriController extends Controller
 
     $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'" . "and p.submission_time IS NOT NULL";
 
+    $sqlParams = [];
     if($services && $services != 'all'){
-      $where .= " AND s.slug =" ."'".$services."'";
+      $where .= " AND s.slug = ?";
+      $sqlParams []= $services;
     }
 
     if($status && $status != 'all'){
-      $where .= " AND p.status =" ."'".$status."'";
+      $where .= " AND p.status =" ."'". (int) $status."'";
     }
 
     $sql = "SELECT COUNT(p.id), date_trunc('". $timeSlot ."', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."') AS tslot, s.name
@@ -930,9 +932,8 @@ class OperatoriController extends Controller
     /** @var EntityManager $em */
     $em = $this->getDoctrine()->getManager();
     try {
-      $stmt = $em->getConnection()->prepare($sql);
-      //$stmt->bindValue(1, $calculateInterval);
-      $stmt->execute();
+
+      $stmt = $em->getConnection()->executeQuery($sql, $sqlParams);
       $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     }catch (DBALException $e){
       $this->get('logger')->error($e->getMessage());
@@ -960,50 +961,8 @@ class OperatoriController extends Controller
       }
       $data['series'][]=$temp;
     }
-
     $data['categories'] = $categories;
-    $data['query'] = $sql;
     return new Response(json_encode($data), 200);
 
-
-    /*
-    $calculateInterval = date('Y-m-d H:i:s', strtotime($time));
-    $sql = "WITH list_dates as (SELECT count(*) n_pratiche, s.name,  date_trunc('day', TO_TIMESTAMP(p.creation_time)::date) as days
-            FROM pratica as p
-            INNER JOIN servizio as s ON s.id = p.servizio_id
-            WHERE TO_TIMESTAMP(p.creation_time) >= '". $calculateInterval ."'" . $filterServices . $filterStatus . "
-            group by s.name, days) select name, array_agg(n_pratiche),array_agg(days) as d from list_dates group by name";
-
-    $stmt = $em->getConnection()->prepare($sql);
-    //$stmt->bindValue(1, $calculateInterval);
-    $stmt->execute();
-    $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
-    $series= [];
-    $categories= [];
-    $data= [];
-    if(count($result) > 0){
-      foreach ($result as $item){
-        array_push($series, array(
-          'name' => $item['name'],
-          'data' =>  array_map('intval', explode(',', substr($item['array_agg'], 1, -1))
-          ))
-        );
-        array_push($categories,$item['d']);
-      }
-
-      $b = [];
-      foreach ($categories as $key => $value) {
-        array_push($b, strlen($value));
-      }
-      $maxKey = max(array_keys($b));
-
-
-      $data = array(
-        'query'  => $sql,
-        'date'  => $calculateInterval,
-        'series' => $series,
-        'categories' => explode(',',substr(str_replace('"','',$categories[$maxKey]), 1, -1))
-      );
-    }*/
   }
 }
