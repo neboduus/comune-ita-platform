@@ -560,6 +560,11 @@ services:
     tags:
       - { name: twig.extension }
 
+  ocsdc.twig.htmlspecialchars_decode:
+    class: AppBundle\Twig\HtmlSpecialCharsDecode
+    tags:
+      - { name: twig.extension }
+
   ocsdc.pratica_status_service:
     class: AppBundle\Services\PraticaStatusService
     arguments: ["@doctrine.orm.entity_manager", "@logger", "@event_dispatcher"]

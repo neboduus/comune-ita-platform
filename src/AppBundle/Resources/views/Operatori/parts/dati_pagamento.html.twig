@@ -61,7 +61,7 @@
             {% else %}
               <tr>
                 <td class="text-center border-0" colspan="2">
-                  <a href="{{ pratica.paymentData.response.urlFileAvviso }}"
+                  <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
                      class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_button'|trans }}</a>
                 </td>
               </tr>
