@@ -623,14 +623,14 @@
 </table>
 </div>
 <div class="text-center">
-{{if links.next }}
+{{if links.prev }}
   <a class="btn {{if !links.prev}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.prev}}"{{if !links.prev}} style="cursor:not-allowed"{{/if}}>
       <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use></svg>
       Precedente
   </a>
 {{/if}}
   <span>{{:meta.count}} {{if meta.count == 1}}risultato{{else}}risultati{{/if}} - Pagina {{:currentPage}} di {{:pageCount}}</span>
-{{if links.prev}}
+{{if links.next}}
   <a class="btn {{if !links.next}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.next}}"{{if !links.next}} style="cursor:not-allowed"{{/if}}>
       Successivo
       <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use></svg>
