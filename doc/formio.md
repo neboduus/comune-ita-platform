@@ -11,6 +11,11 @@ Per poter inserire un pagamneto in un form va inserito un campo di tipo text e r
 ### Wizard
 * [`MUST`] Verificare nelle impostazioni delle pagine che non sia spuntato il campo Collapsible
 
+### Compomenti nascosti
+
+E'possibile nascondere un componente nell'anteprima e dalla stampa del form aggiungendo la classe css `d-preview-none`; durante la 
+compilazione del form il componente resterà visibile.
+
 ### Select popolato via API
 
 * [`SHOULD`] Quando si inserisce un componente di tipo **select** è buona norma popolare i campi `Data Path` (se presente)
