@@ -178,3 +178,15 @@ textarea {
   padding: 0 !important;
   background: none !important;
 }
+
+.formio-front.formio-summary .d-preview-none {
+  display: none;
+}
+
+@media print
+{
+  .d-preview-none, .d-preview-none *
+  {
+    display: none !important;
+  }
+}
