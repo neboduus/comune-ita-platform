@@ -41,8 +41,9 @@ class Validator
       $fieldsData = [];
       foreach ($validateFields as $field){
         $component = $schema->getComponent($field);
-        if (isset($component['form_name']) && isset($data[$component['form_name']])){
-          $fieldsData[$component['form_name']] = $data[$component['form_name']];
+        $componentFromName = $component->getFormName();
+        if (isset($data[$componentFromName])){
+          $fieldsData[$componentFromName] = $data[$componentFromName];
         }
       }
       $form->submit($fieldsData);

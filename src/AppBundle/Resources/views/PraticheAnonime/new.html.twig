@@ -99,6 +99,7 @@
     <div class="row mt-2">
       <div class="col-lg-4 px-lg-4 order-lg-2">
         {% if pratica.servizio.loginSuggested and flow.currentStep != flow.stepCount %}
+        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
           <div class="callout">
             <div class="callout-title">
               <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
@@ -117,6 +118,7 @@
               </p>
             </div>
           </div>
+          {% endif %}
         {% endif %}
 
         {# Info compilazione specificate nel servizio #}
@@ -134,7 +136,11 @@
           {% endif %}
 
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
-          {% if  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+          {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
+            <p>{{ 'steps.common.conferma.payment_help_text_top'|trans }}</p>
+            {{ include('AppBundle:PraticheAnonime/parts:pratica_summary.html.twig', {'pratica':form.vars.data}) }}
+            <p class="py-3">{{ 'operatori.recaptcha'| trans }}</p>
+          {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <p>{{ 'steps.common.conferma.help_text_top'|trans }}</p>
             {{ include('AppBundle:PraticheAnonime/parts:pratica_summary.html.twig', {'pratica':form.vars.data}) }}
             <p class="py-3">{{ 'operatori.recaptcha'| trans }}</p>
@@ -145,9 +151,11 @@
         </div>
 
         <div id="formio" class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
+        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
         <div class="mt-5">
           {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
         </div>
+        {% endif %}
         {{ form_end(form) }}
       </div>
 

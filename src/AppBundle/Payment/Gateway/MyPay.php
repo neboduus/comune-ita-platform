@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\VarDumper\VarDumper;
 
 class MyPay extends AbstractPaymentData implements EventSubscriberInterface
@@ -83,12 +84,18 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
    */
   private $em;
 
-  public function __construct(LoggerInterface $logger, MyPayService $myPayService, EntityManagerInterface $em, RouterInterface $router)
+  /**
+   * @var TranslatorInterface $translator
+   */
+  private $translator;
+
+  public function __construct(LoggerInterface $logger, MyPayService $myPayService, EntityManagerInterface $em, RouterInterface $router, TranslatorInterface $translator)
   {
     $this->logger = $logger;
     $this->myPayService = $myPayService;
     $this->em = $em;
     $this->router = $router;
+    $this->translator = $translator;
   }
 
   public static function getPaymentParameters()
@@ -185,24 +192,28 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
 
     try {
       if (isset($data['response']) && $data['response']['esito'] == 'OK') {
+
         $url = $this->myPayService->getMyPayUrlForCurrentPayment($pratica);
-        $helper->setDescriptionText("<div class='text-center mt-5'><a href='$url' class='btn btn-lg btn-primary'>Procedi con il pagamento sul sito di MyPay</a></div><p class='mt-5'>Cliccando sul bottone qui sopra sarai reindirizzato verso l'infrastruttura di MyPay.<br />A pagamento completato sarai riportato a questa pagina, la verifica dell'esito avviene in automatico.</p>");
+        $helper->setDescriptionText($this->generatePaymentButtons($pratica, $url));
+
       } else {
+
         $this->myPayService->createPaymentRequestForPratica($pratica);
         $this->em->flush();
         $url = $this->myPayService->getMyPayUrlForCurrentPayment($pratica);
-        $helper->setDescriptionText("<div class='text-center mt-5'><a href='$url' class='btn btn-lg btn-primary'>Procedi con il pagamento sul sito di MyPay</a></div><p class='mt-5'>Cliccando sul bottone qui sopra sarai reindirizzato verso l'infrastruttura di MyPay.<br />A pagamento completato sarai riportato a questa pagina, la verifica dell'esito avviene in automatico.</p>");
+        $helper->setDescriptionText($this->generatePaymentButtons($pratica, $url));
+
       }
 
     } catch (\Exception $e) {
-
       $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId() . ' - ' . $e->getMessage());
-      $this->logger->error($e);
       $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza.");
-
     }
   }
 
+  /**
+   * @param FormEvent $event
+   */
   public function onPreSubmit(FormEvent $event)
   {
     /** @var Pratica $application */
@@ -214,5 +225,19 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
         new FormError('Devi scegliere almeno un metodo di pagamento')
       );
     }
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param $url
+   * @return string
+   */
+  private function generatePaymentButtons( Pratica $pratica, $url )
+  {
+
+    $buttons = '<div class="row mt-5"><div class="col-sm-4"><strong>'.$this->translator->trans('pratica.numero').'</strong></div><div class="col-sm-8 d-inline-flex"><code>'.$pratica->getId().'</code></div></div>';
+    $buttons .= "<p class='mt-5'>".$this->translator->trans('gateway.mypay.redirect_text')."</p><div class='text-center mt-5'><a href='{$url['url']}' class='btn btn-lg btn-primary'>".$this->translator->trans('gateway.mypay.redirect_button')."</a></div>";
+    $buttons .= "<p class='mt-5'>".$this->translator->trans('gateway.mypay.download_text')."</p><div class='text-center mt-5'><a href='{$url['urlFileAvviso']}' class='btn btn-lg btn-secondary'>".$this->translator->trans('gateway.mypay.download_button')."</a></div>";
+    return $buttons;
   }
 }

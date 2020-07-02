@@ -130,8 +130,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
+    $queryParameters = ['offset' => $offset, 'limit' => $limit];
+    if ($serviceParameter)
+      $queryParameters['service'] = $serviceParameter;
+
     $repositoryService = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
+
+    if ($serviceParameter && !$service) {
+      return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
+    }
 
     $em = $this->getDoctrine()->getManager();
     $repoApplications = $em->getRepository(Pratica::class);
@@ -157,17 +165,19 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $result['meta']['parameter']['offset'] = $offset;
     $result['meta']['parameter']['limit'] = $limit;
 
-    $result['links']['self'] = $this->generateUrl('applications_api_list', ['offset' => $offset, 'limit' => $limit], UrlGeneratorInterface::ABSOLUTE_URL);
+    $result['links']['self'] = $this->generateUrl('applications_api_list', $queryParameters, UrlGeneratorInterface::ABSOLUTE_URL);
     $result['links']['prev'] = null;
     $result['links']['next'] = null;
     $result ['data'] = [];
 
     if ($offset != 0) {
-      $result['links']['prev'] = $this->generateUrl('applications_api_list', ['offset' => $offset - $limit, 'limit' => $limit], UrlGeneratorInterface::ABSOLUTE_URL);;
+      $queryParameters['offset'] = $offset - $limit;
+      $result['links']['prev'] = $this->generateUrl('applications_api_list', $queryParameters, UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     if ($offset + $limit < $count) {
-      $result['links']['next'] = $this->generateUrl('applications_api_list', ['offset' => $offset+$limit, 'limit' => $limit], UrlGeneratorInterface::ABSOLUTE_URL);
+      $queryParameters['offset'] = $offset + $limit;
+      $result['links']['next'] = $this->generateUrl('applications_api_list', $queryParameters, UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
 
@@ -204,12 +214,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
       $result = $repository->find($id);
       if ($result === null) {
-        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
 
       return $this->view(Application::fromEntity($result, $this->baseUrl . '/' . $result->getId()), Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view(["Object conversion error"], Response::HTTP_NOT_FOUND);
+      return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
     }
   }
 
@@ -224,7 +234,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *
    * @SWG\Response(
    *     response=404,
-   *     description="Object not found"
+   *     description="Attachment not found"
    * )
    * @SWG\Tag(name="applications")
    *
@@ -237,7 +247,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $repository = $this->getDoctrine()->getRepository('AppBundle:Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
-      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+      return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
     }
     /** @var File $file */
     $file = $result->getFile();
@@ -315,10 +325,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $application = $repository->find($id);
 
     if (!$application) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view("Application not found", Response::HTTP_NOT_FOUND);
     }
 
-    if ($application->getStatus() != Pratica::STATUS_PAYMENT_OUTCOME_PENDING) {
+    if (!in_array($application->getStatus(), [Pratica::STATUS_PAYMENT_OUTCOME_PENDING, Pratica::STATUS_PAYMENT_PENDING])) {
       return $this->view("Application isn't in correct state", Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -370,7 +380,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view("Application Payment Modified Successfully", Response::HTTP_OK);
   }
 
   /**

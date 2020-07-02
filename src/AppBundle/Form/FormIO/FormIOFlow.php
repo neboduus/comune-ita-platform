@@ -14,13 +14,15 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 class FormIOFlow extends PraticaFlow
 {
+
+
   const STEP_SELEZIONA_ENTE = 1;
 
   const STEP_MODULO_FORMIO = 2;
 
   protected $allowDynamicStepNavigation = true;
 
-  protected $revalidatePreviousSteps = true;
+  protected $revalidatePreviousSteps = false;
 
   public function onFlowCompleted(Pratica $pratica)
   {
@@ -65,10 +67,13 @@ class FormIOFlow extends PraticaFlow
     ksort($steps);
 
     // Attivo gli step di pagamento solo se è richiesto nel servizio
-    if ($this->isPaymentRequired()) {
+    if ($pratica->getServizio()->isPaymentRequired()) {
       $steps[] = array(
         'label' => 'steps.common.conferma.label',
         'form_type' => SummaryType::class,
+        'form_options' => [
+          'validation_groups' => 'recaptcha',
+        ],
         'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
           return $flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING;
         },

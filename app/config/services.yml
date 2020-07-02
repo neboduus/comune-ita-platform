@@ -117,8 +117,7 @@ services:
     autowire: true
 
   AppBundle\BackOffice\SubcriptionsBackOffice:
-    autowire: true
-    arguments: ["@translator"]
+    arguments: ["@logger","@translator","@doctrine.orm.entity_manager" ]
     tags: ['app.backoffice']
 
   AppBundle\BackOffice\CalendarsBackOffice:
@@ -558,6 +557,11 @@ services:
 
   ocsdc.twig.json_decode:
     class: AppBundle\Twig\JsonDecode
+    tags:
+      - { name: twig.extension }
+
+  ocsdc.twig.htmlspecialchars_decode:
+    class: AppBundle\Twig\HtmlSpecialCharsDecode
     tags:
       - { name: twig.extension }
 

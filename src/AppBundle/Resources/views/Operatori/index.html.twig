@@ -49,8 +49,8 @@
         return $('#results-data').data('show').replace('X', id);
       },
       'checkTypeData': function (value) {
-        if(typeof value === 'string' ){
-          return value;
+        if(typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ){
+          return value.toString();
         }else if(Array.isArray(value)){
           if (value.some(e => e.hasOwnProperty('data'))) {
             return 'N° file: '+ value.length;
@@ -71,6 +71,15 @@
           jQuery(this).css("backgroundColor", originalBg);
         });
     };
+    $.extend({
+      distinct : function(anArray) {
+        var result = [];
+        $.each(anArray, function(i,v){
+          if ($.inArray(v, result) === -1) result.push(v);
+        });
+        return result;
+      }
+    });
     $(document).ready(function () {
       var localStoragePrefix = '{{ instance_service.currentInstance }}-';
       var resultsContainer = $('#results-data');
@@ -90,6 +99,37 @@
       var sort = 'submissionTime';
       var order = 'asc';
 
+      var viewSettingsStorage = {
+        setItem: function (key, value) {
+          if (typeof (Storage) !== "undefined") {
+            localStorage.setItem(localStoragePrefix+key, JSON.stringify(value));
+          }
+        },
+        getItem: function (key, fallback) {
+          if (typeof (Storage) !== "undefined") {
+            if (localStorage.getItem(localStoragePrefix+key)) {
+              var value = localStorage.getItem(localStoragePrefix + key);
+              try {
+                return JSON.parse(value);
+              } catch (e) {
+                return value;
+              }
+            }
+          }
+
+          return fallback || null;
+        },
+        hasItem: function (key) {
+          if (typeof (Storage) !== "undefined") {
+            return !(localStorage.getItem(localStoragePrefix+key) === null);
+          }
+          return  false
+        },
+        displayField: function (needle, haystack) {
+          return haystack[key];
+        }
+      };
+
       var buildParams = function(){
         var params = {
           'servizio': filterServizio.val(),
@@ -97,15 +137,12 @@
           'workflow': filterWorkflow.val(),
           'query_field': filterQueryBy.val(),
           'query': filterQuery.val(),
-          'sort': sort,
-          'order': order,
+          'sort': sort || 'submissionTime',
+          'order': order || 'asc',
           'limit': filterPratiche.val() != null ? filterPratiche.val() : defaultLimit,
           'collate': filterCollate.is(':checked') ? 1 : 0
         };
-
-        if (typeof (Storage) !== "undefined") {
-          localStorage.setItem(localStoragePrefix+'pratiche_filters', JSON.stringify(params));
-        }
+        viewSettingsStorage.setItem('pratiche_filters', params);
         return params;
       };
 
@@ -119,7 +156,7 @@
 
       reset.on('click', function (e) {
         if (typeof (Storage) !== "undefined"){
-          localStorage.setItem(localStoragePrefix+'pratiche_filters', JSON.stringify({
+          viewSettingsStorage.setItem('pratiche_filters', {
             'servizio': '',
             'stato': '',
             'workflow': '',
@@ -127,7 +164,7 @@
             'query': '',
             'limit': defaultLimit,
             'collate': 0
-          }));
+          });
         }
         window.location.reload();
         e.preventDefault();
@@ -176,6 +213,55 @@
         }
       };
 
+      var refreshDownloadButton = function (response) {
+        var downloadParams = $.extend({}, response.meta.parameter);
+        downloadParams['extra_headers[]'] = []
+        $.each(response.meta.schema, function () {
+          var fields = viewSettingsStorage.getItem('fields-'+response.meta.parameter.servizio, []);
+          if ($.inArray(this.name, fields) > -1) {
+            downloadParams['extra_headers[]'].push(
+              $.trim(resultsContainer.find('input[data-show="' + this.name + '"]').data('label'))
+            );
+          }
+        });
+        var downloadButton = resultsContainer.find('[data-download="true"]');
+        downloadButton.attr('href',downloadButton.data('href')+'?'+jQuery.param(downloadParams, true));
+      };
+
+      var refreshCalculatedFields = function (response) {
+        var calcParams = $.extend({}, response.meta.parameter);
+        var tbody = $('tbody.calc');
+        tbody.css('display', 'none');
+        tbody.find('div.calc').css('display', 'none');
+        resultsContainer.find('input[data-function]').each(function () {
+          var func = $(this).data('function');
+          var divFunc = $('div.calc-'+func);
+          var storageCalculateKey = 'calculate-'+func+'-'+response.meta.parameter.servizio;
+          var calculateFields = viewSettingsStorage.getItem(storageCalculateKey, []);
+          if (calculateFields.length > 0){
+            tbody.css('display', 'table-row-group');
+            $.each(calculateFields, function () {
+              resultsContainer.find('[data-function="' + func + '"][data-calculate="' + this + '"]').prop('checked', true);
+              tbody.find('[data-key="'+this+'"] div.calc-'+func).css('display', 'block');
+              divFunc.find('[data-calc="'+this+'"]').html('...');
+            })
+            calcParams[func+'[]'] = calculateFields;
+          }
+        });
+        $.get(tbody.data('source'), calcParams, function (calcResponse) {
+          $.each(calcResponse, function (func, values) {
+            $.each(values, function (key, value) {
+              $('div.calc-'+func).find('[data-calc="'+key+'"]').html(value);
+            });
+          });
+        });
+      };
+
+      $('#reload').on('click', function (e) {
+        loadContents();
+        e.preventDefault();
+      });
+
       var loadResponse = function(response){
         if (response.meta.count === 0) {
           resultsContainer.html(emptyTemplate.render({}));
@@ -196,6 +282,7 @@
             loadContents();
             e.preventDefault();
           });
+
           resultsContainer.find('.copy').click(function (e) {
             e.preventDefault();
             var button = $(this);
@@ -211,46 +298,76 @@
               window.location = $(this).data('href');
             }
           });
+          refreshDownloadButton(response);
           resultsContainer.find('[data-toggle="tooltip"]').tooltip();
+
           if (response.meta.schema) {
-            resultsContainer.find('input[data-togglekey]').on('change', function () {
+
+            resultsContainer.find('[data-dismiss="modal"]').on('click',function (e) {
+              refreshCalculatedFields(response);
+            })
+
+            var storageShowKey = 'fields-'+response.meta.parameter.servizio;
+            var fields = viewSettingsStorage.getItem(storageShowKey, []);
+            resultsContainer.find('input[data-show]').on('change', function () {
+              var fieldKey = $(this).data('show');
               if ($(this).is(':checked')) {
-                resultsContainer.find('[data-key="' + $(this).data('togglekey') + '"]').css('display', 'table-cell');
-                if (typeof (Storage) !== "undefined") localStorage.setItem(localStoragePrefix+response.meta.parameter.servizio + $(this).data('togglekey'), 1);
+                resultsContainer.find('[data-key="' + fieldKey + '"]').css('display', 'table-cell');
+                resultsContainer.find('[data-calculate="' + fieldKey + '"]').removeAttr('disabled');
+                fields.push(fieldKey);
               } else {
-                resultsContainer.find('[data-key="' + $(this).data('togglekey') + '"]').css('display', 'none');
-                if (typeof (Storage) !== "undefined") localStorage.removeItem(localStoragePrefix+response.meta.parameter.servizio + $(this).data('togglekey'));
+                resultsContainer.find('[data-key="' + fieldKey + '"]').css('display', 'none');
+                resultsContainer.find('[data-calculate="' + fieldKey + '"]').prop('checked', false).trigger('change').attr('disabled', 'disabled');
+                fields = jQuery.grep(fields, function(value) {
+                  return value !== fieldKey;
+                });
+              }
+              viewSettingsStorage.setItem(storageShowKey, $.distinct(fields));
+              refreshDownloadButton(response);
+            });
+
+            resultsContainer.find('input[data-calculate]').on('change', function () {
+              var func = $(this).data('function');
+              var fieldKey = $(this).data('calculate');
+              var storageCalculateKey = 'calculate-'+func+'-'+response.meta.parameter.servizio;
+              var calculateFields = viewSettingsStorage.getItem(storageCalculateKey, []);
+              if ($(this).is(':checked')) {
+                calculateFields.push(fieldKey);
+              } else {
+                calculateFields = jQuery.grep(calculateFields, function(value) {
+                  return value !== fieldKey;
+                });
+              }
+              viewSettingsStorage.setItem(storageCalculateKey, $.distinct(calculateFields));
+            });
+
+            $.each(response.meta.schema, function () {
+              if ($.inArray(this.name, fields) > -1) {
+                resultsContainer.find('input[data-show="' + this.name + '"]').trigger('click');
               }
             });
-            if (typeof (Storage) !== "undefined") {
-              $.each(response.meta.schema, function () {
-                if (localStorage.getItem(localStoragePrefix+response.meta.parameter.servizio + this.name)) {
-                  resultsContainer.find('input[data-togglekey="' + this.name + '"]').trigger('click');
-                }
-              });
-            }
+            refreshCalculatedFields(response);
           }
+
         }
       };
 
-      if (typeof (Storage) !== "undefined") {
-        if (localStorage.getItem(localStoragePrefix+'pratiche_filters')){
-          var params = JSON.parse(localStorage.getItem(localStoragePrefix+'pratiche_filters'));
-          filterServizio.val(params.servizio);
-          filterStato.val(params.stato);
-          filterWorkflow.val(params.workflow);
-          filterQueryBy.val(params.query_field);
-          filterQuery.val(params.query);
-          filterPratiche.val(params.limit == null || params.limit === undefined ? defaultLimit : params.limit);
-          sort = params.sort;
-          order = params.order;
-          if (params.collate === 1){
-            filterCollate.prop('checked', true);
-          }else{
-            filterCollate.prop('checked', false);
-          }
-          showReset();
+      if (viewSettingsStorage.hasItem('pratiche_filters')){
+        var params = viewSettingsStorage.getItem('pratiche_filters');
+        filterServizio.val(params.servizio);
+        filterStato.val(params.stato);
+        filterWorkflow.val(params.workflow);
+        filterQueryBy.val(params.query_field);
+        filterQuery.val(params.query);
+        filterPratiche.val(params.limit ? params.limit : defaultLimit);
+        sort = params.sort;
+        order = params.order;
+        if (params.collate === 1){
+          filterCollate.prop('checked', true);
+        }else{
+          filterCollate.prop('checked', false);
         }
+        showReset();
       }
       loadContents();
     });
@@ -269,21 +386,79 @@
 </script>
 <script id="tpl-result" type="text/x-jsrender">
 {{if meta.schema}}
-<div class="modal fade" id="tableOptions" tabindex="-1" role="dialog" aria-labelledby="confirmAutoAssignLabel">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade" id="tableOptions" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="tableOptionsLabel">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Opzioni tabella</h5>
+            <button type="button" class="btn btn-xs btn-primary pull-right" data-dismiss="modal" aria-label="Close">
+              Applica e chiudi
+            </button>
+          </div>
           <div class="modal-body">
-          {{for meta.schema}}
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" data-togglekey="{{:name}}" id="{{:name}}">
-                <label class="form-check-label" for="{{:name}}">
-                  {{:label}}
-                </label>
-            </div>
-          {{/for}}
+            <table class="table table-sm">
+            <tr>
+                <th></th>
+                <th>Visualizza</th>
+                <th>Somma</th>
+                <th>Media</th>
+                <th>Conta</th>
+            </tr>
+            {{for meta.schema}}
+              <tr>
+                <td><strong>{{:label}}</strong></td>
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" data-label="{{:label}}" data-show="{{:name}}" id="{{:name}}">
+                    <label class="form-check-label" for="{{:name}}">
+                    <svg class="icon icon-sm">
+                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-password-visible"></use>
+                    </svg>
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  {{if type == 'number' || true}}
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" disabled="disabled" data-label="{{:label}}" data-calculate="{{:name}}" data-function="sum" id="sum-{{:name}}">
+                    <label class="form-check-label" for="sum-{{:name}}">
+                    <svg class="icon icon-sm">
+                     <use xlink:href="/bundles/app/images/sdc-sprite.svg#sum"></use>
+                    </svg>
+                    </label>
+                  </div>
+                  {{/if}}
+                </td>
+                <td>
+                  {{if type == 'number'|| true}}
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" disabled="disabled" data-label="{{:label}}" data-calculate="{{:name}}" data-function="avg" id="avg-{{:name}}">
+                    <label class="form-check-label" for="avg-{{:name}}">
+                    <svg class="icon icon-sm">
+                     <use xlink:href="/bundles/app/images/sdc-sprite.svg#avg"></use>
+                    </svg>
+                    </label>
+                  </div>
+                  {{/if}}
+                </td>
+                <td>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" disabled="disabled" data-label="{{:label}}" data-calculate="{{:name}}" data-function="count" id="count-{{:name}}">
+                    <label class="form-check-label" for="count-{{:name}}">
+                    <svg class="icon icon-sm">
+                     <use xlink:href="/bundles/app/images/sdc-sprite.svg#count"></use>
+                    </svg>
+                    </label>
+                  </div>
+                </td>
+              </tr>
+            {{/for}}
+            </table>
           </div>
           <div class="modal-footer">
-              <a type="button" class="btn btn-default" data-dismiss="modal">Chiudi</a>
+            <button type="button" class="btn btn-xs btn-primary pull-right" data-dismiss="modal" aria-label="Close">
+              Applica e chiudi
+            </button>
           </div>
       </div>
   </div>
@@ -293,10 +468,15 @@
 <table class="table table-striped table-condensed table-hover" style="width: 100%;font-size:.87em">
   <thead>
     <tr>
-      <th>
+      <th style="white-space:nowrap">
         {{if meta.schema}}
           <button type="button" class="btn btn-secondary btn-xs text-nowrap py-1 px-2" data-toggle="modal" data-target="#tableOptions">Opzioni tabella</button>
         {{/if}}
+        <a data-download="true" data-href="{% endverbatim %}{{ path('operatori_index_csv') }}{% verbatim %}"  href="#" data-toggle="tooltip" title="Clicca per scaricare i dati in formato CSV" type="button" class="btn btn-default btn-xs p-0">
+          <svg class="icon icon-sm icon-primary">
+           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+          </svg>
+        </a>
       </th>
       <th>Login</th>
       <th>Pagamenti</th>
@@ -372,7 +552,7 @@
           </span>
         {{/if}}
       </td>
-      <td>
+      <td style="white-space: nowrap">
         {{:user_name}}
         {{if idp != "anonymous"}}
           <span data-toggle="tooltip" title="Identità del cittadino verificata">
@@ -380,7 +560,7 @@
           </span>
         {{/if}}
       </td>
-      <td>
+      <td style="white-space: nowrap">
         {{:codice_fiscale}}
         {{if idp != "anonymous"}}
           <span data-toggle="tooltip" title="Identità del cittadino verificata">
@@ -411,21 +591,52 @@
     </tr>
   {{/for}}
   </tbody>
+  {{if meta.parameter.servizio && meta.schema}}
+  <tbody class="calc" style="border-bottom: 15px solid white;display: none" data-source="{% endverbatim %}{{ path('operatori_index_calculate') }}{% verbatim %}">
+    <tr>
+      <th colspan="{{if !meta.parameter.stato}}8{{else}}7{{/if}}" class="bg-white text-right border-0"></th>
+      {{for meta.schema}}
+        <td class="bg-100 p-1" data-key="{{:name}}" style="display: none">
+            <div class="calc calc-sum" style="display: none">
+                <svg class="icon icon-xs mr-2">
+                 <use xlink:href="/bundles/app/images/sdc-sprite.svg#sum"></use>
+                </svg>
+                <span data-calc="{{:name}}"></span>
+            </div>
+            <div class="calc calc-avg" style="display: none">
+                <svg class="icon icon-xs mr-2">
+                 <use xlink:href="/bundles/app/images/sdc-sprite.svg#avg"></use>
+                </svg>
+                <span data-calc="{{:name}}"></span>
+            </div>
+            <div class="calc calc-count" style="display: none">
+                <svg class="icon icon-xs mr-2">
+                 <use xlink:href="/bundles/app/images/sdc-sprite.svg#count"></use>
+                </svg>
+                <span data-calc="{{:name}}"></span>
+            </div>
+        </td>
+      {{/for}}
+    </tr>
+  </tbody>
+  {{/if}}
 </table>
 </div>
-{{if links.next || links.prev}}
 <div class="text-center">
-      <a class="btn {{if !links.prev}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.prev}}"{{if !links.prev}} style="cursor:not-allowed"{{/if}}>
-          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use></svg>
-          Precedente
-      </a>
-      <span>{{:meta.count}} risultati - Pagina {{:currentPage}} di {{:pageCount}}</span>
-      <a class="btn {{if !links.next}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.next}}"{{if !links.next}} style="cursor:not-allowed"{{/if}}>
-          Successivo
-          <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use></svg>
-      </a>
-</div>
+{{if links.prev }}
+  <a class="btn {{if !links.prev}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.prev}}"{{if !links.prev}} style="cursor:not-allowed"{{/if}}>
+      <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use></svg>
+      Precedente
+  </a>
 {{/if}}
+  <span>{{:meta.count}} {{if meta.count == 1}}risultato{{else}}risultati{{/if}} - Pagina {{:currentPage}} di {{:pageCount}}</span>
+{{if links.next}}
+  <a class="btn {{if !links.next}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.next}}"{{if !links.next}} style="cursor:not-allowed"{{/if}}>
+      Successivo
+      <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use></svg>
+  </a>
+{{/if}}
+</div>
 </script>
 {% endverbatim %}
 
@@ -506,11 +717,17 @@
           </div>
         </div>
         <div class="col-6 col-sm-6 col-lg-2">
-          <a id="reset" class="btn btn-secondary btn-md btn-icon p-2 mt-1" href="#">
+          <a id="reset" class="btn btn-secondary btn-xs btn-icon p-2 mr-2" href="#">
             <svg class="icon icon-white">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
             </svg>
             <span>Annulla ricerca</span>
+          </a>
+          <a id="reload" class="btn btn-secondary btn-xs btn-icon p-2" href="#">
+            <svg class="icon icon-white">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-refresh"></use>
+            </svg>
+            <span class="d-none">Ricarica ricerca</span>
           </a>
         </div>
       </div>

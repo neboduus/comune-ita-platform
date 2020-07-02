@@ -23,6 +23,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
 
 
@@ -48,7 +49,16 @@ class FormIORenderType extends AbstractType
    */
   private $schemaFactory;
 
+
+  /**
+   * @var LoggerInterface
+   */
   private $logger;
+
+  /**
+   * @var SessionInterface
+   */
+  private $session;
 
   private static $applicantUserMap = [
     'applicant.completename.name' => 'getNome',
@@ -68,18 +78,17 @@ class FormIORenderType extends AbstractType
    * FormIORenderType constructor.
    * @param EntityManager $entityManager
    * @param FormServerApiAdapterService $formServerService
+   * @param SchemaFactoryInterface $schemaFactory
+   * @param LoggerInterface $logger
+   * @param SessionInterface $session
    */
-  public function __construct(
-    EntityManager $entityManager,
-    FormServerApiAdapterService $formServerService,
-    SchemaFactoryInterface $schemaFactory,
-    LoggerInterface $logger
-  )
+  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService, SchemaFactoryInterface $schemaFactory, LoggerInterface $logger, SessionInterface $session)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
     $this->schemaFactory = $schemaFactory;
     $this->logger = $logger;
+    $this->session = $session;
   }
 
   /**
@@ -137,7 +146,8 @@ class FormIORenderType extends AbstractType
           ],
         ]
       )
-      ->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+      ->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'))
+      ->addEventListener(FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
   }
 
   public function getBlockPrefix()
@@ -145,6 +155,10 @@ class FormIORenderType extends AbstractType
     return 'formio_render';
   }
 
+  /**
+   * @param FormEvent $event
+   * @throws \Doctrine\ORM\ORMException
+   */
   public function onPreSubmit(FormEvent $event)
   {
     /** @var Pratica|DematerializedFormPratica $pratica */
@@ -191,6 +205,76 @@ class FormIORenderType extends AbstractType
   }
 
   /**
+   * @param FormEvent $event
+   */
+  public function onPostSubmit(FormEvent $event)
+  {
+
+    /** @var Pratica|DematerializedFormPratica $pratica */
+    $pratica = $event->getForm()->getData();
+
+    $user = $pratica->getUser();
+
+    if (!$user instanceof CPSUser) {
+      $user = $this->checkUser($pratica->getDematerializedForms());
+      $pratica->setUser($user);
+      $this->em->persist($pratica);
+
+      $attachments = $pratica->getAllegati();
+      if (!empty($attachments)) {
+        /** @var Allegato $a */
+        foreach ($attachments as $a) {
+          $a->setOwner($user);
+          $a->setHash($pratica->getHash());
+          $this->em->persist($pratica);
+        }
+      }
+      $this->em->flush();
+    }
+  }
+
+
+  /**
+   * @param array $data
+   * @return CPSUser
+   * @throws \Exception
+   */
+  private function checkUser(array $data): CPSUser
+  {
+
+    $cf = isset($data['flattened']['applicant.data.fiscal_code.data.fiscal_code']) ? $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] : false;
+
+    $birthDay = null;
+    if (isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl'])) {
+      $birthDay = \DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
+    }
+    $sessionString = md5($this->session->getId()) . '-' . time();
+    $user = new CPSUser();
+    $user
+      ->setUsername($sessionString)
+      ->setCodiceFiscale($cf . '-' . $sessionString)
+      ->setEmail(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
+      ->setEmailContatto(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
+      ->setNome(isset($data['flattened']['applicant.data.completename.data.name']) ? $data['flattened']['applicant.data.completename.data.name'] : '')
+      ->setCognome(isset($data['flattened']['applicant.data.completename.data.surname']) ? $data['flattened']['applicant.data.completename.data.surname'] : '')
+      ->setDataNascita($birthDay)
+      ->setLuogoNascita(isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : '')
+      ->setSdcIndirizzoResidenza(isset($data['flattened']['applicant.data.address.data.address']) && !empty($data['flattened']['applicant.data.address.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : '')
+      ->setSdcCittaResidenza(isset($data['flattened']['applicant.data.address.data.municipality']) && !empty($data['flattened']['applicant.data.address.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : '')
+      ->setSdcCapResidenza(isset($data['flattened']['applicant.data.address.data.postal_code']) && !empty($data['flattened']['applicant.data.address.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : '')
+      ->setSdcProvinciaResidenza(isset($data['flattened']['applicant.data.address.data.county']) && !empty($data['flattened']['applicant.data.address.data.county']) ? $data['flattened']['applicant.data.address.data.county'] : '');
+
+    $user->addRole('ROLE_USER')
+      ->addRole('ROLE_CPS_USER')
+      ->setEnabled(true)
+      ->setPassword('');
+
+    $this->em->persist($user);
+    return $user;
+  }
+
+
+  /**
    * @param FormIO $pratica
    * @return false|string
    */
@@ -211,6 +295,11 @@ class FormIORenderType extends AbstractType
     return \json_encode($data);
   }
 
+  /**
+   * @param Schema $schema
+   * @param CPSUser $user
+   * @return mixed
+   */
   private function getMappedFormDataWithUserData(Schema $schema, CPSUser $user)
   {
     $data = $schema->getDataBuilder();

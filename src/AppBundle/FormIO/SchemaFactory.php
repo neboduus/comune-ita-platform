@@ -29,8 +29,13 @@ class SchemaFactory implements SchemaFactoryInterface
 
   private $session;
 
-  public function __construct(FormIOSchemaProviderInterface $provider, HttpClientInterface $httpClient, SessionInterface $session)
-  {
+  private $useCache = true;
+
+  public function __construct(
+    FormIOSchemaProviderInterface $provider,
+    HttpClientInterface $httpClient,
+    SessionInterface $session
+  ) {
     $this->provider = $provider;
     $this->httpClient = $httpClient;
     $this->session = $session;
@@ -46,16 +51,40 @@ class SchemaFactory implements SchemaFactoryInterface
       return new Schema();
     }
 
-    if (!$this->hasCache($formIOId)) {
-      $schema = new Schema();
-      $schema->setId($formIOId);
-      $schema->setServer($this->provider->getFormServerUrl());
-      $this->parseForm($schema, $formIOId);
+    $cacheId = $this->provider->getFormServerUrl().$formIOId;
 
-      $this->setCache($formIOId, $schema);
+    if ($this->useCache && $this->hasCache($cacheId)) {
+      return $this->getCache($cacheId);
     }
 
-    return $this->getCache($formIOId);
+    $schema = new Schema();
+    $schema->setId($formIOId);
+    $schema->setServer($this->provider->getFormServerUrl());
+    $this->parseForm($schema, $formIOId);
+
+    if ($this->useCache && $schema->countComponents() > 0) {
+      $this->setCache($cacheId, $schema);
+    }
+
+    return $schema;
+  }
+
+  private function hasCache($id)
+  {
+    if ($this->session->isStarted()) {
+      return $this->session->has('form.factory.'.$id);
+    }
+
+    return isset(self::$cacheSchemas[$id]);
+  }
+
+  private function getCache($id)
+  {
+    if ($this->session->isStarted()) {
+      return $this->session->get('form.factory.'.$id);
+    }
+
+    return self::$cacheSchemas[$id];
   }
 
   private function parseForm(Schema $schema, $formIOId, $prefixKey = null, $prefixLabel = null)
@@ -73,7 +102,7 @@ class SchemaFactory implements SchemaFactoryInterface
       $adapterResult = $this->provider->getForm($formIOId);
       if ($adapterResult['status'] == 'success') {
         self::$cacheRemoteForms[$formIOId] = $adapterResult['form'];
-      }else{
+      } else {
         return false;
       }
     }
@@ -347,27 +376,11 @@ class SchemaFactory implements SchemaFactoryInterface
     return $options;
   }
 
-  private function hasCache($id)
-  {
-    if ($this->session->isStarted()){
-      return $this->session->has('form.factory.'.$id);
-    }
-    return isset(self::$cacheSchemas[$id]);
-  }
-
   private function setCache($id, $data)
   {
-    if ($this->session->isStarted()){
+    if ($this->session->isStarted()) {
       $this->session->set('form.factory.'.$id, $data);
     }
     self::$cacheSchemas[$id] = $data;
-  }
-
-  private function getCache($id)
-  {
-    if ($this->session->isStarted()){
-      return $this->session->get('form.factory.'.$id);
-    }
-    return self::$cacheSchemas[$id];
   }
 }

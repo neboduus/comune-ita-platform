@@ -97,6 +97,9 @@ doctrine:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
+        dql:
+            string_functions:
+                FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -204,7 +207,7 @@ nelmio_api_doc:
     areas:
         path_patterns: # an array of regexps
             #- ^/%prefix%/api(?!/doc$)
-            - ^/%prefix%/api/services|applications|subscription-services|calendars|meetings|folders|documents|users(?!/doc$)
+            - ^/%prefix%/api/services|applications|subscription-services|subscriptions|calendars|meetings|folders|documents|users(?!/doc$)
 
 # Lexit jwt Configuration
 lexik_jwt_authentication:
@@ -215,7 +218,11 @@ lexik_jwt_authentication:
 
 # Recaptcha configuration
 ewz_recaptcha:
-  public_key:  '%env(RECAPTCHA_KEY)%'
-  private_key: '%env(RECAPTCHA_SECRET)%'
+  public_key:  '%recaptcha_key%'
+  private_key: '%recaptcha_secret%'
   # Not needed as "%kernel.default_locale%" is the default value for the locale key
   locale_key:  %kernel.default_locale%
+
+# Sentry
+sentry:
+  dsn: '%sentry_dsn%'

@@ -18,6 +18,7 @@ use AppBundle\Logging\LogConstants;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use League\Csv\Writer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -32,6 +33,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -76,33 +79,196 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @todo megiare questa logica in ApplicationsAPIController
    * @Route("/pratiche",name="operatori_index_json")
    * @param Request $request
    * @return JsonResponse
    */
   public function indexJsonAction(Request $request)
   {
+    $limit = intval($request->get('limit', 10));
+    $offset = intval($request->get('offset', 0));
+    $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
+
+    $request->setRequestFormat('json');
+    return new JsonResponse(json_encode($result), 200, [], true);
+  }
+
+  /**
+   * @Route("/pratiche/csv",name="operatori_index_csv")
+   * @param Request $request
+   */
+  public function indexCSVAction(Request $request)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy([
+      'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
+    ]);
+    $extraHeaders = $request->get('extra_headers', []);
+    $csv = Writer::createFromPath('php://temp', 'r+');
+    $result = $this->getFilteredPraticheByOperatore($request, 1, 0);
+    $schema = (array)$result['meta']['schema'];
+
+    $csvHeaders = [
+      'ID',
+      'Numero di protocollo',
+      'Login',
+      'Pagamenti',
+      'Richiedente',
+      'Codice fiscale',
+      'Data di inserimento',
+      'Stato',
+      'Operatore',
+      'Servizio',
+    ];
+    $extraValues = [];
+    foreach ($schema as $item) {
+      if (in_array($item['label'], $extraHeaders)) {
+        $extraValues[$item['name']] = $item['label'];
+      }
+    }
+    $csvHeaders = array_merge($csvHeaders, array_values($extraValues));
+    $csv->insertOne($csvHeaders);
+
+    $dataCount = 0;
+    $totalCount = $result['meta']['count'];
+    $limit = 500;
+    $offset = 0;
+    $responseCallback = function () use ($dataCount, $totalCount, $csv, $limit, $offset, $request, $servizi, $extraValues){
+      while ($dataCount < $totalCount) {
+        $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
+        $data = $result['data'];
+        $dataCount += count($data);
+        $offset += $limit;
+        foreach ($data as $item) {
+          $serviceName = '?';
+          foreach ($servizi as $servizio) {
+            if ($item['service'] == $servizio->getSlug()) {
+              $serviceName = $servizio->getName();
+            }
+          }
+          $csvRow = [
+            $item['id'],
+            isset($item['protocol_number']) ? $item['protocol_number'] : '',
+            $item['idp'],
+            $item['is_payment_required'] ? $item['payment_complete'] : '',
+            $item['user_name'],
+            $item['codice_fiscale'],
+            isset($item['submission_time']) ? date('d/m/Y H:i:s', $item['submission_time']) : '',
+            $this->get('translator')->trans('pratica.dettaglio.stato_'.$item['status']),
+            $item['operator_name'],
+            $serviceName,
+          ];
+
+          foreach ($item['data'] as $key => $value) {
+            if (isset($extraValues[$key])) {
+              $csvRow[$key] = is_array($value) ? count($value) : $value;
+            }
+          }
+          $csv->insertOne($csvRow);
+        }
+      }
+      foreach ($csv->chunk(1024) as $offset => $chunk) {
+        echo $chunk;
+        flush();
+      }
+    };
+
+    $fileNameCreationDate = new \DateTime();
+    $fileName = 'export_'.$fileNameCreationDate->format('d-m-yy-H-m') . '.csv';
+    $response = new StreamedResponse();
+    $response->headers->set('Content-Encoding', 'none');
+    $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+
+    $disposition = $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $fileName
+    );
+
+    $response->headers->set('Content-Disposition', $disposition);
+    $response->headers->set('Content-Description', 'File Transfer');
+    $response->setCallback($responseCallback);
+    $response->send();
+  }
+
+  /**
+   * @Route("/pratiche/calculate",name="operatori_index_calculate")
+   * @param Request $request
+   */
+  public function indexCalculateAction(Request $request)
+  {
+    $result = [];
+    $functions = [
+      'sum' => 'getSumFieldsInPraticheByOperatore',
+      'avg' => 'getAvgFieldsInPraticheByOperatore',
+      'count' => 'getCountNotNullFieldsInPraticheByOperatore',
+    ];
     /** @var PraticaRepository $praticaRepository */
     $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
     /** @var OperatoreUser $user */
     $user = $this->getUser();
+    $parameters = $this->getPraticheFilters($request);
+    $servizioId = $parameters['servizio'];
+    if ($servizioId){
+      $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
+      if ($servizio instanceof Servizio){
+        /** @var Schema $schema */
+        $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+        foreach ($functions as $name => $repositoryMethod) {
+          $requestFields = $request->get($name, []);
+          if (!empty($requestFields)) {
+            $fields = [];
+            foreach ($requestFields as $requestField) {
+              if ($schema->hasComponent($requestField)) {
+                $fields[] = $schema->getComponent($requestField)->getName();
+              }
+            }
+            if (!empty($fields)) {
+              $result[$name] = $praticaRepository->{$repositoryMethod}(
+                $fields,
+                $user,
+                $parameters
+              );
+            }
+          }
+        }
+      }
+    }
+    $request->setRequestFormat('json');
+    return new JsonResponse(json_encode($result), 200, [], true);
+  }
 
-    $limit = intval($request->get('limit', 10));
-    $offset = intval($request->get('offset', 0));
-
-    $servizioId = $request->get('servizio', false);
-    $parameters = [
-      'servizio' => $servizioId,
+  private function getPraticheFilters($request)
+  {
+    return [
+      'servizio' => $request->get('servizio', false),
       'stato' => $request->get('stato', false),
       'workflow' => $request->get('workflow', false),
       'query_field' => $request->get('query_field', false),
       'query' => $request->get('query', false),
       'sort' => $request->get('sort', 'submissionTime'),
       'order' => $request->get('order', 'asc'),
-      'collate' => (bool)$request->get('collate', false),
+      'collate' => (int)$request->get('collate', false),
     ];
+  }
 
+  /**
+   * @todo mergiare questa logica in ApplicationsAPIController o in PraticaRepository?
+   * @param Request $request
+   * @param $limit
+   * @param $offset
+   * @return array
+   */
+  private function getFilteredPraticheByOperatore($request, $limit, $offset)
+  {
+    $parameters = $this->getPraticheFilters($request);
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
     try {
       $count = $praticaRepository->countPraticheByOperatore($user, $parameters);
       /** @var Pratica[] $data */
@@ -116,6 +282,7 @@ class OperatoriController extends Controller
     $schema = null;
     $result = [];
     $result['meta']['schema'] = false;
+    $servizioId = $parameters['servizio'];
     if ($servizioId && $count > 0){
       $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
       if ($servizio instanceof Servizio){
@@ -185,8 +352,7 @@ class OperatoriController extends Controller
       $result['data'][] = $applicationArray;
     }
 
-    $request->setRequestFormat('json');
-    return new JsonResponse(json_encode($result), 200, [], true);
+    return $result;
   }
 
   /**
@@ -733,7 +899,7 @@ class OperatoriController extends Controller
       ->getResult();
 
     $sql = "SELECT DISTINCT(status) as status
-            FROM pratica WHERE status > 1000 ORDER BY status ASC";
+            FROM pratica WHERE status > 1000 AND submission_time IS NOT NULL ORDER BY status ASC";
     try {
       $em = $this->getDoctrine()->getManager();
       $stmt = $em->getConnection()->prepare($sql);
@@ -768,7 +934,7 @@ class OperatoriController extends Controller
   {
     $status = $request->get('status');
     $services = $request->get('services');
-    $time = $request->get('time');
+    $time = (int) $request->get('time');
 
     if ($time <= 180) {
       $timeSlot = "minute";
@@ -787,25 +953,26 @@ class OperatoriController extends Controller
 
     $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '". $calculateInterval . "'" . "and p.submission_time IS NOT NULL";
 
+    $sqlParams = [];
     if($services && $services != 'all'){
-      $where .= " AND s.slug =" ."'".$services."'";
+      $where .= " AND s.slug = ?";
+      $sqlParams []= $services;
     }
 
     if($status && $status != 'all'){
-      $where .= " AND p.status =" ."'".$status."'";
+      $where .= " AND p.status =" ."'". (int) $status."'";
     }
 
     $sql = "SELECT COUNT(p.id), date_trunc('". $timeSlot ."', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."') AS tslot, s.name
             FROM pratica AS p LEFT JOIN servizio AS s ON p.servizio_id = s.id" .
-            $where .
-            " GROUP BY s.name, tslot ORDER BY tslot ASC";
+      $where .
+      " GROUP BY s.name, tslot ORDER BY tslot ASC";
 
     /** @var EntityManager $em */
     $em = $this->getDoctrine()->getManager();
     try {
-      $stmt = $em->getConnection()->prepare($sql);
-      //$stmt->bindValue(1, $calculateInterval);
-      $stmt->execute();
+
+      $stmt = $em->getConnection()->executeQuery($sql, $sqlParams);
       $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     }catch (DBALException $e){
       $this->get('logger')->error($e->getMessage());
@@ -833,50 +1000,8 @@ class OperatoriController extends Controller
       }
       $data['series'][]=$temp;
     }
-
     $data['categories'] = $categories;
-    $data['query'] = $sql;
     return new Response(json_encode($data), 200);
 
-
-    /*
-    $calculateInterval = date('Y-m-d H:i:s', strtotime($time));
-    $sql = "WITH list_dates as (SELECT count(*) n_pratiche, s.name,  date_trunc('day', TO_TIMESTAMP(p.creation_time)::date) as days
-            FROM pratica as p
-            INNER JOIN servizio as s ON s.id = p.servizio_id
-            WHERE TO_TIMESTAMP(p.creation_time) >= '". $calculateInterval ."'" . $filterServices . $filterStatus . "
-            group by s.name, days) select name, array_agg(n_pratiche),array_agg(days) as d from list_dates group by name";
-
-    $stmt = $em->getConnection()->prepare($sql);
-    //$stmt->bindValue(1, $calculateInterval);
-    $stmt->execute();
-    $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
-    $series= [];
-    $categories= [];
-    $data= [];
-    if(count($result) > 0){
-      foreach ($result as $item){
-        array_push($series, array(
-          'name' => $item['name'],
-          'data' =>  array_map('intval', explode(',', substr($item['array_agg'], 1, -1))
-          ))
-        );
-        array_push($categories,$item['d']);
-      }
-
-      $b = [];
-      foreach ($categories as $key => $value) {
-        array_push($b, strlen($value));
-      }
-      $maxKey = max(array_keys($b));
-
-
-      $data = array(
-        'query'  => $sql,
-        'date'  => $calculateInterval,
-        'series' => $series,
-        'categories' => explode(',',substr(str_replace('"','',$categories[$maxKey]), 1, -1))
-      );
-    }*/
   }
 }

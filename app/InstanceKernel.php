@@ -32,6 +32,7 @@ class InstanceKernel extends Kernel
       new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
       new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
       new EWZ\Bundle\RecaptchaBundle\EWZRecaptchaBundle(),
+      new Sentry\SentryBundle\SentryBundle(),
       new AppBundle\AppBundle(),
     ];
 
