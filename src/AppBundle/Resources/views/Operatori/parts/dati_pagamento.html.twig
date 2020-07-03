@@ -58,6 +58,12 @@
                 <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
                 <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
               </tr>
+              <tr>
+                <td class="text-center border-0" colspan="2">
+                  <a href="{{ pratica.paymentData.response.urlFileAvviso }}"
+                     class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_receipt_button'|trans }}</a>
+                </td>
+              </tr>
             {% else %}
               <tr>
                 <td class="text-center border-0" colspan="2">
