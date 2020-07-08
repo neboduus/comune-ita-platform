@@ -9,7 +9,7 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 
 ## Funzionalità principali
 
-- Creazione dei moduli da backend, grazie all'integrazione con [Form.IO](https://www.form.io/) un potente sistema di creazione di form dinamiche opensource 
+- Creazione dei moduli da backend, grazie all'integrazione con [Form.IO](https://www.form.io/) un potente sistema di creazione di form dinamiche opensource
 - Interfaccia responsive (Bootstrap Italia), conforme alle [Linee Guida di design per i servizi web della PA](https://designers.italia.it/guide/)
 - Autenticazione con [SPID](https://www.spid.gov.it/)
 - Integrazione con [PagoPA](https://teamdigitale.governo.it/it/projects/pagamenti-digitali.htm) attraverso MyPAY
@@ -30,7 +30,7 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 
 ## Struttura del progetto
 
-Il software è realizzato da una componente principale sviluppata con [Symfony](https://symfony.com/) e da varie componenti accessorie, che sono 
+Il software è realizzato da una componente principale sviluppata con [Symfony](https://symfony.com/) e da varie componenti accessorie, che sono
 facilmente sostituibili in caso di necessità:
 
 * symfony-app: costituisce l'interfaccia principale dell'applicativo, sia di front-end che di backend (utilizza postgresql come layer di persistenza) ed e' il software presente in questo repository
@@ -41,14 +41,14 @@ facilmente sostituibili in caso di necessità:
 ## Requisiti
 
 Lo stack applicativo è composto da:
-  
+
 * [Symfony 3.4](https://symfony.com/what-is-symfony) per lo sviluppo della componente principale che richiede quindi PHP 7.2.x
 * [Express](https://expressjs.com) per lo sviluppo del proxy MyPay, che richiede NodeJS
 * Java per lo sviluppo del proxy MyPay, che richiede quindi OpenJDK 8.x
 * PostgreSQL 10.x come database principale
 
-La distribuzione di questi componenti avviene mediante immagini [Docker](https://it.wikipedia.org/wiki/Docker), 
-non si tratta di un requisito, i singoli applicativi possono essere installati anche in assenza di esso, su un 
+La distribuzione di questi componenti avviene mediante immagini [Docker](https://it.wikipedia.org/wiki/Docker),
+non si tratta di un requisito, i singoli applicativi possono essere installati anche in assenza di esso, su un
 qualunque server Linux.
 
 ## Installazione
@@ -67,14 +67,14 @@ Oltre al cittadino che accede mediante SPID, posso accedere all'applicativo
 - i gestori delle pratiche, che ricevono notifica delle pratiche da elaborare e possono accettarle
   o rigettarle, allegando messagi o documenti
 - gli amministratori dell'Ente che possono impostare le informazioni generali dell'ente, configurare
-  i dati relativi al protocollo usato e al sistema di pagamento. Inoltre gli amministratori possono 
+  i dati relativi al protocollo usato e al sistema di pagamento. Inoltre gli amministratori possono
   creare a pubblicare servizi, progettando i moduli online che i cittadini dovranno compilare.
   gli amministratori hanno infine accesso anche ai log di sicurezza che consentono la verifica dei
   login effettuati da tutti gli utenti e del loro IP di provenienza
 
 ## Accesso alle API
 
-Per l'accesso alle API è necessario effettuare l'autenticazione come segue 
+Per l'accesso alle API è necessario effettuare l'autenticazione come segue
 
 1. si esegue una `POST` all'endpoint: `https://www.stanzadelcittadino.it/<ENTE>/api/auth` con body
 
@@ -85,7 +85,7 @@ Per l'accesso alle API è necessario effettuare l'autenticazione come segue
 }
 ```
 
-2. si ottiene come risposta un token JWT che si inserisce nelle successive chiamate come header 
+2. si ottiene come risposta un token JWT che si inserisce nelle successive chiamate come header
    `Authorization: Bearer <TOKEN>`
 
 Ad esempio, mediante il client da linea di comando [httpie](https://httpie.org/)
@@ -96,6 +96,16 @@ $ export TOKEN=$(http post https://www.stanzadelcittadino.it/comune-di-ala/api/a
 
 $ http get https://www.stanzadelcittadino.it/comune-di-ala/api/services "Authorization: Bearer $TOKEN"
 ```
+
+## Versionamento delle API
+È possibile specificare la versione delle Api che si vanno ad interrogare, questo è possibile in 2 modi differenti:
+* tramite parametro `version` da passare in get
+* tramite parametro `X-Accept-Version` da specificare nell' header della richiesta
+
+La versione di default è per retrocompatibilità la 1.x
+
+Dalla versione 2 le chiavi dei valori del campo data delle `applications` non sono più restituite
+come un insieme di strighe piatto separato dal punto (.) ma come campo json con le chiavi esplose.
 
 ## Build system, CI e test automatici
 
@@ -130,14 +140,14 @@ http://stanzadelcittadino.localtest.me
 
 e si dovrebbe vedere una pagina web del tutto simile a https://demosdc.opencontent.it/
 
-## Project status 
+## Project status
 
 Il progetto e' stabile e usato in produzione da alcune amministrazioni pubbliche.
 
 Sebbene lo sviluppo sia stato orientato fin dall'inizio alla modularità e alla configurabilità
 delle feature, molti aspetti di dettaglio e le interfacce di comunicazione con i proxy non sono
-abbastanza maturi per essere sostituiti con una semplice configurazione, in alcuni casi 
-pu' rendersi necessario la modifica del codice sorgente. Sono quindi graditi i contributi
+abbastanza maturi per essere sostituiti con una semplice configurazione, in alcuni casi
+può rendersi necessario la modifica del codice sorgente. Sono quindi graditi i contributi
 al codice per il supporto di altri sistemi di protocollo o di pagamento, purché siano fatte
 in modo modulare e configurabile, in modo da non pregiudicare la flessibilità del progetto.
 
