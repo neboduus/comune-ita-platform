@@ -276,7 +276,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $path = $result->getCreatedAt()->format('Y/m-d/Hi');
       $fileContent = file_get_contents($this->container->getParameter('kernel.project_dir'). '/var/uploads/pratiche/allegati/' . $path . DIRECTORY_SEPARATOR . $file->getFilename());
     }
-    $filename = $result->getFilename();
+    $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
     $response = new Response($fileContent);
     $disposition = $response->headers->makeDisposition(
       ResponseHeaderBag::DISPOSITION_ATTACHMENT,
