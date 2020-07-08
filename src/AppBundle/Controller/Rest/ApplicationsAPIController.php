@@ -75,6 +75,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   /**
    * List all Applications
    *  @Rest\Get("", name="applications_api_list")
+   *
    *  @SWG\Parameter(
    *      name="Authorization",
    *      in="header",
@@ -82,7 +83,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      type="string"
    *  )
-   *
+   *  @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
+   *  )
    *  @SWG\Parameter(
    *      name="service",
    *      in="query",
@@ -123,6 +130,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   {
     $offset = intval($request->get('offset', 0));
     $limit = intval($request->get('limit', 10));
+    $version = intval($request->get('version', 1));
 
     $serviceParameter = $request->get('service', false);
 
@@ -183,7 +191,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $applications = $repoApplications->findBy($criteria, ['creationTime' => 'ASC'], $limit, $offset );
     foreach ($applications as $s) {
-      $result ['data'][]= Application::fromEntity($s, $this->baseUrl . '/' . $s->getId());
+      $result ['data'][]= Application::fromEntity($s, $this->baseUrl . '/' . $s->getId(), true, $version);
     }
     return $this->view($result, Response::HTTP_OK);
   }
@@ -192,6 +200,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
   /**
    * Retreive an Applications
    * @Rest\Get("/{id}", name="application_api_get")
+   *
+   *  @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
+   *  )
    *
    * @SWG\Response(
    *     response=200,
@@ -206,18 +222,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param $id
+   * @param Request $request
    * @return \FOS\RestBundle\View\View
    */
-  public function getApplicationAction($id)
+  public function getApplicationAction($id, Request $request)
   {
+    $version = intval($request->get('version', 1));
+
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
-
-      return $this->view(Application::fromEntity($result, $this->baseUrl . '/' . $result->getId()), Response::HTTP_OK);
+      $data = Application::fromEntity($result, $this->baseUrl . '/' . $result->getId(), true, $version);
+      return $this->view($data, Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
     }

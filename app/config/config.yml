@@ -165,6 +165,11 @@ datatables:
 
 # FOSRestBundle Configuration
 fos_rest:
+    versioning:
+       enabled: true
+       resolvers:
+          query: true # Query parameter: /?version=1
+          custom_header: true # X-Accept-Version header
     view:
         view_response_listener:  true
         #formats:
@@ -184,11 +189,11 @@ fos_rest:
 nelmio_api_doc:
     documentation:
         info:
-            x-api-id: "sdc-api-1-0-1"
+            x-api-id: "sdc-api-2-0-0"
             x-audience: "external-public"
             title: "SDC Api Definition"
             description: ""
-            version: "1.0.1"
+            version: "2.0.0"
             contact:
                 name: "Opencontent S.c.a.r.l"
                 email: "support@opencontent.it"
