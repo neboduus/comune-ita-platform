@@ -33,6 +33,7 @@ class InstanceKernel extends Kernel
       new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
       new EWZ\Bundle\RecaptchaBundle\EWZRecaptchaBundle(),
       new Sentry\SentryBundle\SentryBundle(),
+      new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
       new AppBundle\AppBundle(),
     ];
 
