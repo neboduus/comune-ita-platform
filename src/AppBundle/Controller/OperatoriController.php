@@ -322,7 +322,7 @@ class OperatoriController extends Controller
       $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
-      $applicationArray['is_payment_required'] = $s->getServizio()->isPaymentRequired();
+      $applicationArray['is_payment_required'] = !empty($s->getPaymentData());
       $applicationArray['payment_complete'] = $s->getStatus() == Pratica::STATUS_PAYMENT_ERROR || $s->getStatus() <= Pratica::STATUS_PAYMENT_OUTCOME_PENDING ? false : true;
       $applicationArray['idp'] = $s->getUser()->getIdp();
       $applicantUser = $s->getUser();

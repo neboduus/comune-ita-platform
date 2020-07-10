@@ -462,6 +462,7 @@ operatori:
   note_interne: 'Note interne'
   importo: "Importo"
   pagamento: 'Pagamento'
+  pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
   gateway: "Metodo di pagamento"
   anagrafica_pagatore: "Anagrafica pagatore"
   email_pagatore: "Email pagatore"
