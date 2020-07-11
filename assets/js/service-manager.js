@@ -88,7 +88,7 @@ $(document).ready(function () {
         ['view', ['codeview']],
       ],
       hint: {
-        mentions: ['%pratica_id%', '%servizio%', '%protocollo%', '%motivazione%', '%user_name%'],
+        mentions: ['%pratica_id%', '%servizio%', '%protocollo%', '%messaggio_personale%', '%user_name%', '%indirizzo%'],
         match: /\B%(\w*)$/,
         search: function (keyword, callback) {
           callback($.grep(this.mentions, function (item) {

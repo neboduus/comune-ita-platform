@@ -260,14 +260,6 @@ class Servizio
   private $protocolRequired;
 
   /**
-   * @var string
-   * @deprecated
-   * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Email text")
-   */
-  private $emailText;
-
-  /**
    * @var FeedbackMessage[]
    * @ORM\Column(type="json", nullable=true)
    * @SWG\Property(description="Service feedback messages")
@@ -929,22 +921,6 @@ class Servizio
   public function setProtocolRequired(bool $protocolRequired)
   {
     $this->protocolRequired = $protocolRequired;
-  }
-
-  /**
-   * @return string
-   */
-  public function getEmailText(): ?string
-  {
-    return $this->emailText;
-  }
-
-  /**
-   * @param string $emailText
-   */
-  public function setEmailText(string $emailText)
-  {
-    $this->emailText = $emailText;
   }
 
   /**

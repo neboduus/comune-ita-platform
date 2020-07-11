@@ -51,5 +51,7 @@
     {% if pratica.motivazioneEsito %}
       <p class="mt-2 mb-0 p-2 bg-light">{{ pratica.motivazioneEsito }}</p>
     {% endif %}
+    <p class="py-2"><button class="btn btn-xs btn-outline-secondary" data-toggle="collapse" data-target="#collapseEmail" aria-expanded="false" aria-controls="collapseEmail"><i class="fa fa-paper-plane-o"></i> Visualizza l'email inviata all'utente</button></p>
+    <div class="collapse" id="collapseEmail">{{ sent_email|raw }}</div>
   </div>
 {% endif %}

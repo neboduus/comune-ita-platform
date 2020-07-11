@@ -64,7 +64,7 @@ servizio:
     privato: 'Privato'
     bozza: 'Bozza'
     sospeso: 'Sospeso'
-    
+
 pratica:
   guida_utente: 'Guida'
   email:
@@ -507,7 +507,9 @@ operatori:
     approva_o_rigetta:
       guida_alla_compilazione: 'Esprimi un esito sulla pratica ed eventualmente una motivazione'
       esito_label: 'Approva o rifiuta la pratica'
-      motivazione:esito_label: "Esprimi una motivazione sull'esito"
+      motivazione:
+        esito_label: "Messaggio personale"
+        esito_help: "Utilizza il box in alto aggiungere una motivazione o dare indicazioni specifiche al il cittadino"
     upload_risposta_firmata:
       testo_descrittivo: 'Scarica la risposta dal seguente <strong><a href="%link_download_risposta%">link</a></strong> e ricaricala firmata digitalmente <hr/>'
       guida_alla_compilazione: 'Scarica la risposta da firmare digitalmente'
@@ -546,7 +548,7 @@ email:
   detail_link: 'link'
   pratica:
     dear: 'Gentile <strong>%user_name%</strong>,'
-    thanks: 'La ringraziamo per aver utilizzato la stanza del cittadino.'
+    thanks: 'La ringraziamo per la collaborazione.'
     link: 'Per ulteriori dettagli visiti il seguente '
     link_download: 'Può scaricare i documenti  da lei richiesti al seguente '
     link_txt: 'Per ulteriori dettagli visiti il seguente link: '
@@ -584,16 +586,16 @@ email:
 messages:
   pratica:
     status:
-      1900: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta.<br />La ringraziamo per aver utilizzato la stanza del cittadino."
-      2000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta. In allegato il modulo da lei compilato.<br /><strong>Attenzione:</strong> questa è la ricevuta di presentazione della richiesta, NON è l'esito della domanda; le trasmetteremo un messaggio di accettazione o di rifiuto in una comunicazione e-mail successiva.<br />La ringraziamo per aver utilizzato la stanza del cittadino."
-      3000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta.<br />La ringraziamo per aver utilizzato la stanza del cittadino."
-      4000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore.<br />La ringraziamo per aver utilizzato la stanza del cittadino.'
+      1900: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      2000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta. In allegato il modulo da Lei compilato.<br /><strong>Attenzione:</strong> questa è la ricevuta di presentazione della richiesta, NON è l'esito della domanda; Le trasmetteremo un messaggio di accettazione o di rifiuto in una comunicazione e-mail successiva.<br />La ringraziamo per la collaborazione."
+      3000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta.<br />La ringraziamo per la collaborazione."
+      4000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore.<br />La ringraziamo per la collaborazione.'
       5000: ''
       6000: ''
-      7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con la seguente motivazione:<br /> %motivazione%<br />La ringraziamo per aver utilizzato la stanza del cittadino."
+      7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
       8000: ''
-      9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con la seguente motivazione:<br /> %motivazione%<br />La ringraziamo per aver utilizzato la stanza del cittadino."
-    no_reason: '<i>Nessuna motivazione specificata</i>'
+      9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
+    no_reason: '<i>Nessun messaggio specificato</i>'
 messaggi:
   messaggio: 'Messaggio'
   invia: 'Invia'
