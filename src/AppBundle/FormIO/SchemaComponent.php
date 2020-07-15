@@ -173,4 +173,9 @@ class SchemaComponent implements ArrayAccess, JsonSerializable
   {
     return isset($this->formOptions['required']) && $this->formOptions['required'];
   }
+
+  public function __toString()
+  {
+    return $this->getName();
+  }
 }

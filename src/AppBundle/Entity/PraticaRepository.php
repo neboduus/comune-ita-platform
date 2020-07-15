@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Controller\OperatoriController;
+use AppBundle\FormIO\SchemaComponent;
 use AppBundle\Services\JsonSelect;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
@@ -236,7 +237,7 @@ class PraticaRepository extends EntityRepository
 
   /**
    * @see OperatoriController::indexCalculateAction()
-   * @param array $fields
+   * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
    * @return array|int
@@ -245,12 +246,12 @@ class PraticaRepository extends EntityRepository
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
     if (empty($serviziAbilitati)){
-      return 0;
+      return 'n/a';
     }
     $sqlSelectFields = [];
     $fieldAliases = [];
     foreach ($fields as $index => $field){
-      $formField = "pratica.dematerializedForms ".$field;
+      $formField = "pratica.dematerializedForms ".$field->getName();
       $formFieldAlias = 'df_'.$index;
       $fieldAliases[$formFieldAlias] = $field;
       $sqlSelectFields[] = "SUM(FORMIO_JSON_FIELD($formField, DECIMAL)) as $formFieldAlias";
@@ -264,7 +265,11 @@ class PraticaRepository extends EntityRepository
         ->getQuery()->execute();
       if (isset($data[0])){
         foreach ($fieldAliases as $alias => $field){
-          $result[$field] = number_format($data[0][$alias], 2, ',', '.');
+          if ((int)$data[0][$alias] === 0 && $field->getType() !== 'number'){
+            $result[$field->getName()] = 'n/a';
+          }else {
+            $result[$field->getName()] = number_format($data[0][$alias], 2, ',', '.');
+          }
         }
       }
     }
@@ -274,7 +279,7 @@ class PraticaRepository extends EntityRepository
 
   /**
    * @see OperatoriController::indexCalculateAction()
-   * @param array $fields
+   * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
    * @return array|int
@@ -283,12 +288,12 @@ class PraticaRepository extends EntityRepository
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
     if (empty($serviziAbilitati)){
-      return 0;
+      return 'n/a';
     }
     $sqlSelectFields = [];
     $fieldAliases = [];
     foreach ($fields as $index => $field){
-      $formField = "pratica.dematerializedForms ".$field;
+      $formField = "pratica.dematerializedForms ".$field->getName();
       $formFieldAlias = 'df_'.$index;
       $fieldAliases[$formFieldAlias] = $field;
       $sqlSelectFields[] = "AVG(FORMIO_JSON_FIELD($formField, DECIMAL)) as $formFieldAlias";
@@ -303,7 +308,11 @@ class PraticaRepository extends EntityRepository
 
       if (isset($data[0])){
         foreach ($fieldAliases as $alias => $field){
-          $result[$field] = number_format($data[0][$alias], 2, ',', '.');
+          if ((int)$data[0][$alias] === 0 && $field->getType() !== 'number'){
+            $result[$field->getName()] = 'n/a';
+          }else {
+            $result[$field->getName()] = number_format($data[0][$alias], 2, ',', '.');
+          }
         }
       }
     }
@@ -313,7 +322,7 @@ class PraticaRepository extends EntityRepository
 
   /**
    * @see OperatoriController::indexCalculateAction()
-   * @param array $fields
+   * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
    * @return array|int
@@ -322,13 +331,13 @@ class PraticaRepository extends EntityRepository
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
     if (empty($serviziAbilitati)){
-      return 0;
+      return 'n/a';
     }
     $sqlSelectFields = [];
     $fieldAliases = [];
     foreach ($fields as $index => $field){
       $formFieldAlias = 'df_'.$index;
-      $fieldAliases[$formFieldAlias] = $field;
+      $fieldAliases[$formFieldAlias] = $field->getName();
     }
 
     $result = array_fill_keys($fields, 0);
