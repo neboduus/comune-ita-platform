@@ -16,6 +16,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class MailerService
@@ -47,6 +48,11 @@ class MailerService
    */
   private $logger;
 
+  /**
+   * @var UrlGeneratorInterface
+   */
+  private $router;
+
   private $blacklistedStates = [
     Pratica::STATUS_REQUEST_INTEGRATION,
     Pratica::STATUS_PROCESSING,
@@ -64,13 +70,14 @@ class MailerService
    * @param RegistryInterface $doctrine
    * @param LoggerInterface $logger
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger)
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, UrlGeneratorInterface $router)
   {
     $this->mailer = $mailer;
     $this->translator = $translator;
     $this->templating = $templating;
     $this->doctrine = $doctrine;
     $this->logger = $logger;
+    $this->router = $router;
   }
 
   /**
@@ -208,8 +215,9 @@ class MailerService
       '%pratica_id%' => $pratica->getId(),
       '%servizio%' => $pratica->getServizio()->getName(),
       '%protocollo%' => $pratica->getNumeroProtocollo(),
-      '%motivazione%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
+      '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
       '%user_name%' => $pratica->getUser()->getFullName(),
+      '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL)
     ];
 
     $textHtml = $this->templating->render(
