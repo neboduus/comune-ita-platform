@@ -9,6 +9,26 @@
     .filter-query .bootstrap-select{flex-grow: 2}
     .filter-query .input-group-append{flex-grow: 1}
     tr[data-href] {cursor: pointer;}
+    td{word-break: break-word;}
+    .loader {
+      border: 2px solid #fff;
+      border-radius: 50%;
+      border-top: 2px solid #333;
+      width: 14px;
+      height: 14px;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 {% endblock %}
 
@@ -243,7 +263,7 @@
             $.each(calculateFields, function () {
               resultsContainer.find('[data-function="' + func + '"][data-calculate="' + this + '"]').prop('checked', true);
               tbody.find('[data-key="'+this+'"] div.calc-'+func).css('display', 'block');
-              divFunc.find('[data-calc="'+this+'"]').html('...');
+              divFunc.find('[data-calc="'+this+'"]').html('<div class="loader"></div>');
             })
             calcParams[func+'[]'] = calculateFields;
           }
@@ -313,17 +333,22 @@
               var fieldKey = $(this).data('show');
               if ($(this).is(':checked')) {
                 resultsContainer.find('[data-key="' + fieldKey + '"]').css('display', 'table-cell');
-                resultsContainer.find('[data-calculate="' + fieldKey + '"]').removeAttr('disabled');
                 fields.push(fieldKey);
               } else {
                 resultsContainer.find('[data-key="' + fieldKey + '"]').css('display', 'none');
-                resultsContainer.find('[data-calculate="' + fieldKey + '"]').prop('checked', false).trigger('change').attr('disabled', 'disabled');
+                resultsContainer.find('[data-calculate="' + fieldKey + '"]').prop('checked', false).trigger('change');
                 fields = jQuery.grep(fields, function(value) {
                   return value !== fieldKey;
                 });
               }
               viewSettingsStorage.setItem(storageShowKey, $.distinct(fields));
               refreshDownloadButton(response);
+            });
+            resultsContainer.find('input[data-calculate]').on('change', function () {
+              var fieldKey = $(this).data('calculate');
+              if ($(this).is(':checked')) {
+                resultsContainer.find('[data-show="' + fieldKey + '"]').prop('checked', true).trigger('change');
+              }
             });
 
             resultsContainer.find('input[data-calculate]').on('change', function () {
@@ -420,7 +445,7 @@
                 <td>
                   {{if type == 'number' || true}}
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" disabled="disabled" data-label="{{:label}}" data-calculate="{{:name}}" data-function="sum" id="sum-{{:name}}">
+                    <input class="form-check-input" type="checkbox" data-label="{{:label}}" data-calculate="{{:name}}" data-function="sum" id="sum-{{:name}}">
                     <label class="form-check-label" for="sum-{{:name}}">
                     <svg class="icon icon-sm">
                      <use xlink:href="/bundles/app/images/sdc-sprite.svg#sum"></use>
@@ -432,7 +457,7 @@
                 <td>
                   {{if type == 'number'|| true}}
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" disabled="disabled" data-label="{{:label}}" data-calculate="{{:name}}" data-function="avg" id="avg-{{:name}}">
+                    <input class="form-check-input" type="checkbox" data-label="{{:label}}" data-calculate="{{:name}}" data-function="avg" id="avg-{{:name}}">
                     <label class="form-check-label" for="avg-{{:name}}">
                     <svg class="icon icon-sm">
                      <use xlink:href="/bundles/app/images/sdc-sprite.svg#avg"></use>
@@ -443,7 +468,7 @@
                 </td>
                 <td>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" disabled="disabled" data-label="{{:label}}" data-calculate="{{:name}}" data-function="count" id="count-{{:name}}">
+                    <input class="form-check-input" type="checkbox" data-label="{{:label}}" data-calculate="{{:name}}" data-function="count" id="count-{{:name}}">
                     <label class="form-check-label" for="count-{{:name}}">
                     <svg class="icon icon-sm">
                      <use xlink:href="/bundles/app/images/sdc-sprite.svg#count"></use>
@@ -600,20 +625,20 @@
     <tr>
       <th colspan="{{if !meta.parameter.stato}}8{{else}}7{{/if}}" class="bg-white text-right border-0"></th>
       {{for meta.schema}}
-        <td class="bg-100 p-1" data-key="{{:name}}" style="display: none">
+        <td class="bg-100 p-1" data-key="{{:name}}" style="display: none;white-space: nowrap">
             <div class="calc calc-sum" style="display: none">
                 <svg class="icon icon-xs mr-2">
                  <use xlink:href="/bundles/app/images/sdc-sprite.svg#sum"></use>
                 </svg>
                 <span data-calc="{{:name}}"></span>
             </div>
-            <div class="calc calc-avg" style="display: none">
+            <div class="calc calc-avg" style="display: none;white-space: nowrap">
                 <svg class="icon icon-xs mr-2">
                  <use xlink:href="/bundles/app/images/sdc-sprite.svg#avg"></use>
                 </svg>
                 <span data-calc="{{:name}}"></span>
             </div>
-            <div class="calc calc-count" style="display: none">
+            <div class="calc calc-count" style="display: none;white-space: nowrap">
                 <svg class="icon icon-xs mr-2">
                  <use xlink:href="/bundles/app/images/sdc-sprite.svg#count"></use>
                 </svg>

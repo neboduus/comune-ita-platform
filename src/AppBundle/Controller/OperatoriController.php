@@ -204,9 +204,27 @@ class OperatoriController extends Controller
   {
     $result = [];
     $functions = [
-      'sum' => 'getSumFieldsInPraticheByOperatore',
-      'avg' => 'getAvgFieldsInPraticheByOperatore',
-      'count' => 'getCountNotNullFieldsInPraticheByOperatore',
+      'sum' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
+        return $praticaRepository->getSumFieldsInPraticheByOperatore(
+          $fields,
+          $user,
+          $parameters
+        );
+      },
+      'avg' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
+        return $praticaRepository->getAvgFieldsInPraticheByOperatore(
+          $fields,
+          $user,
+          $parameters
+        );
+      },
+      'count' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
+        return $praticaRepository->getCountNotNullFieldsInPraticheByOperatore(
+          $fields,
+          $user,
+          $parameters
+        );
+      },
     ];
     /** @var PraticaRepository $praticaRepository */
     $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
@@ -219,21 +237,17 @@ class OperatoriController extends Controller
       if ($servizio instanceof Servizio) {
         /** @var Schema $schema */
         $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
-        foreach ($functions as $name => $repositoryMethod) {
+        foreach ($functions as $name => $callable) {
           $requestFields = $request->get($name, []);
           if (!empty($requestFields)) {
             $fields = [];
             foreach ($requestFields as $requestField) {
               if ($schema->hasComponent($requestField)) {
-                $fields[] = $schema->getComponent($requestField)->getName();
+                $fields[] = $schema->getComponent($requestField);
               }
             }
             if (!empty($fields)) {
-              $result[$name] = $praticaRepository->{$repositoryMethod}(
-                $fields,
-                $user,
-                $parameters
-              );
+              $result[$name] = call_user_func($callable, $praticaRepository, $fields, $user, $parameters);
             }
           }
         }
