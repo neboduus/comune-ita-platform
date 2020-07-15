@@ -270,12 +270,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
     /** @var File $file */
     $file = $result->getFile();
-    if ($result->getType() == 'modulo_compilato') {
-      $fileContent = file_get_contents($file->getPathname());
-    } else {
-      $path = $result->getCreatedAt()->format('Y/m-d/Hi');
-      $fileContent = file_get_contents($this->container->getParameter('kernel.project_dir'). '/var/uploads/pratiche/allegati/' . $path . DIRECTORY_SEPARATOR . $file->getFilename());
-    }
+    $fileContent = file_get_contents($file->getPathname());
     $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
     $response = new Response($fileContent);
     $disposition = $response->headers->makeDisposition(
