@@ -602,8 +602,7 @@ class OperatoriController extends Controller
    *
    * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public
-  function elaboraPraticaAction(Pratica $pratica)
+  public function elaboraPraticaAction(Pratica $pratica)
   {
     if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
@@ -670,8 +669,7 @@ class OperatoriController extends Controller
    *
    * @return BinaryFileResponse
    */
-  public
-  function showPdfAction(Request $request, Pratica $pratica)
+  public function showPdfAction(Request $request, Pratica $pratica)
   {
     $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
 
@@ -697,8 +695,7 @@ class OperatoriController extends Controller
    * @Template()
    * @return array
    */
-  public
-  function listOperatoriByEnteAction()
+  public function listOperatoriByEnteAction()
   {
     $operatoreRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
     $operatori = $operatoreRepo->findBy(
@@ -720,8 +717,7 @@ class OperatoriController extends Controller
    * @param OperatoreUser $operatore
    * @return array|RedirectResponse
    */
-  public
-  function detailOperatoreAction(Request $request, OperatoreUser $operatore)
+  public function detailOperatoreAction(Request $request, OperatoreUser $operatore)
   {
     /** @var OperatoreUser $user */
     $user = $this->getUser();
@@ -752,8 +748,7 @@ class OperatoriController extends Controller
   /**
    * @Route("/logout", name="logout")
    */
-  public
-  function logoutAction()
+  public function logoutAction()
   {
   }
 
@@ -761,8 +756,7 @@ class OperatoriController extends Controller
    * @param OperatoreUser $operatore
    * @return \Symfony\Component\Form\FormInterface
    */
-  private
-  function setupOperatoreForm(OperatoreUser $operatore)
+  private function setupOperatoreForm(OperatoreUser $operatore)
   {
     $formBuilder = $this->createFormBuilder()
       ->add('ambito', TextType::class,
@@ -779,8 +773,7 @@ class OperatoriController extends Controller
   /**
    * @return FormInterface
    */
-  private
-  function setupCommentForm()
+  private function setupCommentForm()
   {
     $translator = $this->get('translator');
     $data = array();
@@ -812,8 +805,7 @@ class OperatoriController extends Controller
    * @param OperatoreUser $user
    * @param Pratica $pratica
    */
-  private
-  function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
+  private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
   {
     $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
     if (!$isEnabled) {
@@ -825,8 +817,7 @@ class OperatoriController extends Controller
    * @param OperatoreUser $user
    * @param OperatoreUser $operatore
    */
-  private
-  function checkUserCanAccessOperatore(OperatoreUser $user, OperatoreUser $operatore)
+  private function checkUserCanAccessOperatore(OperatoreUser $user, OperatoreUser $operatore)
   {
     if ($user->getEnte() != $operatore->getEnte()) {
       throw new UnauthorizedHttpException("User can not read operatore {$operatore->getId()}");
@@ -837,8 +828,7 @@ class OperatoriController extends Controller
    * @param Pratica $pratica
    * @throws \Exception
    */
-  private
-  function completePraticaFlow(Pratica $pratica)
+  private function completePraticaFlow(Pratica $pratica)
   {
     if ($pratica->getStatus() == Pratica::STATUS_COMPLETE
       || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE
@@ -904,8 +894,7 @@ class OperatoriController extends Controller
    *
    * @return array
    */
-  private
-  function createThreadElementsForOperatoreAndPratica(OperatoreUser $operatore, Pratica $pratica)
+  private function createThreadElementsForOperatoreAndPratica(OperatoreUser $operatore, Pratica $pratica)
   {
     $messagesAdapterService = $this->get('ocsdc.messages_adapter');
     $threadId = $pratica->getUser()->getId() . '~' . $operatore->getId();
@@ -929,8 +918,7 @@ class OperatoriController extends Controller
   }
 
 
-  private
-  function populateSelectStatusServicesPratiche()
+  private function populateSelectStatusServicesPratiche()
   {
     /** @var EntityManager $em */
     $em = $this->getDoctrine()->getManager();
@@ -976,8 +964,7 @@ class OperatoriController extends Controller
    * @param Request $request
    * @return Response
    */
-  public
-  function metricheAction(Request $request)
+  public function metricheAction(Request $request)
   {
     $status = $request->get('status');
     $services = $request->get('services');
