@@ -151,7 +151,7 @@ class Application
   /**
    * @var Allegato
    * @SWG\Property(property="outcome_file", type="string", description="Outocome file")
-   * @Serializer\Type("string")
+   * @Serializer\Type("array")
    */
   private $outcomeFile;
 
@@ -568,18 +568,23 @@ class Application
     $dto->subject = $pratica->getOggetto();
 
 
+
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
       if ($version >= 2) {
         $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl);
       } else {
         $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl);
       }
-
     } else {
       $dto->data = [];
     }
 
     $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl) : [];
+
+    $dto->outcomeFile = ($loadFileCollection && $pratica->getRispostaOperatore() instanceof Allegato) ? self::prepareFile($pratica->getRispostaOperatore(), $attachmentEndpointUrl) : null;
+    $dto->outcome = $pratica->getEsito();
+    $dto->outcomeMotivation = $pratica->getMotivazioneEsito();
+
     //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());
 
     $dto->creationTime = $pratica->getCreationTime();
@@ -696,6 +701,9 @@ class Application
   public static function prepareFileCollection( $collection, $attachmentEndpointUrl = '')
   {
     $files = [];
+    if ( $collection == null) {
+      return $files;
+    }
     /** @var Allegato $c */
     foreach ($collection as $c) {
       $files[]= self::prepareFile($c, $attachmentEndpointUrl);
@@ -723,6 +731,8 @@ class Application
     $temp['name'] = $file->getName();
     $temp['url'] = $attachmentEndpointUrl . '/attachments/' .  $file->getId();
     $temp['originalName'] = $file->getFilename();
+    $temp['created_at'] = $file->getCreatedAt();
+
     return $temp;
   }
 
