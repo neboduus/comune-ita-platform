@@ -1,9 +1,14 @@
 <?php
 
-use Symfony\Component\HttpKernel\Kernel;
+use AppBundle\Form\PraticaFlowRegistry;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\Kernel;
 
-class InstanceKernel extends Kernel
+class InstanceKernel extends Kernel implements CompilerPassInterface
 {
   protected $identifier;
 
@@ -48,24 +53,9 @@ class InstanceKernel extends Kernel
     return $bundles;
   }
 
-  public function getRootDir()
-  {
-    return __DIR__;
-  }
-
   public function getCacheDir()
   {
-    return dirname(__DIR__) . '/var/cache/' . $this->getIdentifier() . '/' . $this->getEnvironment();
-  }
-
-  public function getLogDir()
-  {
-    return dirname(__DIR__) . '/var/logs/' . $this->getIdentifier() . '/' . $this->getEnvironment();
-  }
-
-  public function registerContainerConfiguration(LoaderInterface $loader)
-  {
-    $loader->load($this->getRootDir() . '/config/' . $this->getIdentifier() . '/config_' . $this->getEnvironment() . '.yml');
+    return dirname(__DIR__).'/var/cache/'.$this->getIdentifier().'/'.$this->getEnvironment();
   }
 
   /**
@@ -82,5 +72,57 @@ class InstanceKernel extends Kernel
   public function setIdentifier($identifier)
   {
     $this->identifier = $identifier;
+  }
+
+  public function getLogDir()
+  {
+    return dirname(__DIR__).'/var/logs/'.$this->getIdentifier().'/'.$this->getEnvironment();
+  }
+
+  public function registerContainerConfiguration(LoaderInterface $loader)
+  {
+    $loader->load($this->getRootDir().'/config/'.$this->getIdentifier().'/config_'.$this->getEnvironment().'.yml');
+  }
+
+  public function getRootDir()
+  {
+    return __DIR__;
+  }
+
+  public function process(ContainerBuilder $container)
+  {
+    if ($container->has(ServizioHandlerRegistry::class)) {
+      $definition = $container->findDefinition(ServizioHandlerRegistry::class);
+      $taggedServices = $container->findTaggedServiceIds('ocsdc.servizio.handler');
+      foreach ($taggedServices as $id => $tags) {
+        foreach ($tags as $attributes) {
+          if (isset($attributes['alias'])) {
+            $definition->addMethodCall(
+              'registerHandler',
+              [
+                new Reference($id),
+                $attributes['alias'],
+              ]
+            );
+            break;
+          }
+        }
+      }
+    }
+
+    if ($container->has(PraticaFlowRegistry::class)) {
+      $definition = $container->findDefinition(PraticaFlowRegistry::class);
+      $taggedServices = $container->findTaggedServiceIds('ocsdc.pratica.flow');
+
+      foreach ($taggedServices as $id => $tags) {
+        $alias = null;
+        foreach ($tags as $attributes) {
+          if (isset($attributes['alias']) && !$alias) {
+            $alias = $attributes['alias'];
+          }
+        }
+        $definition->addMethodCall('registerFlow', [new Reference($id), $alias]);
+      }
+    }
   }
 }

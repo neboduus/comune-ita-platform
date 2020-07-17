@@ -69,7 +69,7 @@ class AdminController extends Controller
    * @Route("/ente", name="admin_edit_ente")
    * @Template()
    * @param Request $request
-   * @return array
+   * @return array|Response
    */
   public function editEnteAction(Request $request)
   {
@@ -206,7 +206,6 @@ class AdminController extends Controller
 
   /**
    * Send password reset hash to user.
-   * @Template()
    * @Route("/operatore/{id}/resetpassword", name="admin_operatore_reset_password")
    * @Method({"GET", "POST"})
    */
@@ -228,7 +227,6 @@ class AdminController extends Controller
 
   /**
    * Deletes a operatoreUser entity.
-   * @Template()
    * @Route("/operatore/{id}/delete", name="admin_operatore_delete")
    * @Method({"GET", "POST", "DELETE"})
    */
@@ -290,7 +288,16 @@ class AdminController extends Controller
       Servizio::STATUS_CANCELLED => $this->get('translator')->trans('servizio.statutes.bozza'),
       Servizio::STATUS_AVAILABLE => $this->get('translator')->trans('servizio.statutes.pubblicato'),
       Servizio::STATUS_SUSPENDED => $this->get('translator')->trans('servizio.statutes.sospeso'),
-      Servizio::STATUS_PRIVATE => $this->get('translator')->trans('servizio.statutes.privato')
+      Servizio::STATUS_PRIVATE => $this->get('translator')->trans('servizio.statutes.privato'),
+      Servizio::STATUS_SCHEDULED => $this->get('translator')->trans('servizio.statutes.schedulato'),
+    ];
+
+    $accessLevels = [
+      Servizio::ACCESS_LEVEL_ANONYMOUS => 'Anonimo',
+      Servizio::ACCESS_LEVEL_SOCIAL => 'Social',
+      Servizio::ACCESS_LEVEL_SPID_L1 => 'Spid livello 1',
+      Servizio::ACCESS_LEVEL_SPID_L2 => 'Spid livello 2',
+      Servizio::ACCESS_LEVEL_CIE => 'Cie',
     ];
 
     $em = $this->getDoctrine()->getManager();
@@ -299,7 +306,8 @@ class AdminController extends Controller
     return array(
       'user' => $this->getUser(),
       'items' => $items,
-      'statuses' => $statuses
+      'statuses' => $statuses,
+      'access_levels' => $accessLevels,
     );
   }
 

@@ -50,6 +50,7 @@ servizio:
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Al momento il servizio non è attivo'
+  schedulato: 'Il servizio è attivo dal %from% al %to%'
   accedi_al_servizio: 'Accedi al servizio %name%'
   attivo_per: "Servizio attivo per:"
   servizi_area_title: '%area%'
@@ -64,6 +65,7 @@ servizio:
     privato: 'Privato'
     bozza: 'Bozza'
     sospeso: 'Sospeso'
+    schedulato: 'Schedulato'
 
 pratica:
   guida_utente: 'Guida'

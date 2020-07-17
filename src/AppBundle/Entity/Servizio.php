@@ -19,7 +19,7 @@ use JMS\Serializer\Annotation\AccessorOrder;
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\ServizioRepository")
  * @ORM\Table(name="servizio")
  * @ORM\HasLifecycleCallbacks
  */
@@ -30,14 +30,13 @@ class Servizio
   const STATUS_AVAILABLE = 1;
   const STATUS_SUSPENDED = 2;
   const STATUS_PRIVATE = 3;
-
+  const STATUS_SCHEDULED = 4;
 
   const ACCESS_LEVEL_ANONYMOUS = 0;
   const ACCESS_LEVEL_SOCIAL = 1000;
   const ACCESS_LEVEL_SPID_L1 = 2000;
   const ACCESS_LEVEL_SPID_L2 = 3000;
   const ACCESS_LEVEL_CIE = 4000;
-
 
   /**
    * @ORM\Column(type="guid")
@@ -266,6 +265,17 @@ class Servizio
    */
   private $feedbackMessages;
 
+  /**
+   * @var \DateTime
+   * @ORM\Column(type="datetime", nullable=true)
+   */
+  private $scheduledFrom;
+
+  /**
+   * @var \DateTime
+   * @ORM\Column(type="datetime", nullable=true)
+   */
+  private $scheduledTo;
 
   /**
    * Servizio constructor.
@@ -942,6 +952,38 @@ class Servizio
       $messages [$feedbackMessage->getTrigger()] = $feedbackMessage;
     }
     $this->feedbackMessages = $messages;
+  }
+
+  /**
+   * @return \DateTime
+   */
+  public function getScheduledFrom()
+  {
+    return $this->scheduledFrom;
+  }
+
+  /**
+   * @param \DateTime $scheduledFrom
+   */
+  public function setScheduledFrom(\DateTime $scheduledFrom)
+  {
+    $this->scheduledFrom = $scheduledFrom;
+  }
+
+  /**
+   * @return \DateTime
+   */
+  public function getScheduledTo()
+  {
+    return $this->scheduledTo;
+  }
+
+  /**
+   * @param \DateTime $scheduledTo
+   */
+  public function setScheduledTo(\DateTime $scheduledTo)
+  {
+    $this->scheduledTo = $scheduledTo;
   }
 
 }

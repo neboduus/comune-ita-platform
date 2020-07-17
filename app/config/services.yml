@@ -406,6 +406,11 @@ services:
 
   ocsdc.form.type.payment_gateway_type: '@AppBundle\Form\Base\PaymentGatewayType'
 
+  ocsdc.form_flow_registry: '@AppBundle\Form\PraticaFlowRegistry'
+
+  AppBundle\Form\PraticaFlowRegistry:
+    autowire: true
+
   ocsdc.form.flow.pratica:
     class: AppBundle\Form\Base\PraticaFlow
     parent: craue.form.flow
@@ -422,83 +427,121 @@ services:
   ocsdc.form.flow.asilonido:
     class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.asilonido }
 
   ocsdc.form.flow.autoletturaacqua:
     class: AppBundle\Form\AutoletturaAcqua\AutoletturaAcquaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.autoletturaacqua }
 
   ocsdc.form.flow.iscrizioneregistroassociazioni:
     class: AppBundle\Form\IscrizioneRegistroAssociazioni\IscrizioneRegistroAssociazioniFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.iscrizioneregistroassociazioni }
 
   ocsdc.form.flow.contributopannolini:
     class: AppBundle\Form\ContributoPannolini\ContributoPannoliniFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.contributopannolini }
 
   ocsdc.form.flow.cambioresidenza:
     class: AppBundle\Form\CambioResidenza\CambioResidenzaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.cambioresidenza }
 
   ocsdc.form.flow.allacciamentoacquedotto:
     class: AppBundle\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow
     parent: ocsdc.form.flow.pratica
     arguments: ["@logger","@translator"]
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.allacciamentoacquedotto }
 
   ocsdc.form.flow.certificatonascita:
     class: AppBundle\Form\CertificatoNascita\CertificatoNascitaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatonascita }
 
   ocsdc.form.flow.estrattonascita:
     class: AppBundle\Form\EstrattoNascita\EstrattoNascitaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattonascita }
 
   ocsdc.form.flow.attonascita:
     class: AppBundle\Form\AttoNascita\AttoNascitaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attonascita }
 
   ocsdc.form.flow.certificatomorte:
     class: AppBundle\Form\CertificatoMorte\CertificatoMorteFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatomorte }
 
   ocsdc.form.flow.estrattomorte:
     class: AppBundle\Form\EstrattoMorte\EstrattoMorteFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomorte }
 
   ocsdc.form.flow.attomorte:
     class: AppBundle\Form\AttoMorte\AttoMorteFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attomorte }
 
   ocsdc.form.flow.certificatomatrimonio:
     class: AppBundle\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatomatrimonio }
 
   ocsdc.form.flow.estrattomatrimonio:
     class: AppBundle\Form\EstrattoMatrimonio\EstrattoMatrimonioFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomatrimonio }
 
   ocsdc.form.flow.attomatrimonio:
     class: AppBundle\Form\AttoMatrimonio\AttoMatrimonioFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attomatrimonio }
 
-  ocsdc.form.flow.nullaostamatrimonio:
-    class: AppBundle\Form\CertificatoAnagrafico\CertificatoAnagraficoFlow
-    parent: ocsdc.form.flow.pratica
+#  ocsdc.form.flow.nullaostamatrimonio:
+#    class: AppBundle\Form\CertificatoAnagrafico\CertificatoAnagraficoFlow
+#    parent: ocsdc.form.flow.pratica
 
   ocsdc.form.flow.attestazioneanagrafica:
     class: AppBundle\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attestazioneanagrafica }
 
   ocsdc.form.flow.listeelettorali:
     class: AppBundle\Form\ListeElettorali\ListeElettoraliFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.listeelettorali }
 
   ocsdc.form.flow.statofamiglia:
     class: AppBundle\Form\StatoFamiglia\StatoFamigliaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.statofamiglia }
 
   ocsdc.form.flow.formio:
     class: AppBundle\Form\FormIO\FormIOFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.formio }
 
   # Inzio operatore
 
@@ -687,9 +730,27 @@ services:
     arguments: ["%formserver_private_url%", "@logger"]
 
   # Handlers servizi
+  AppBundle\Handlers\Servizio\ServizioHandlerRegistry:
+    autowire: true
+
+  AppBundle\Handlers\Servizio\DefaultHandler:
+    arguments:
+      - "@security.token_storage"
+      - "@logger"
+      - "@router"
+      - "@doctrine.orm.entity_manager"
+      - "@ocsdc.form_flow_registry"
+      - "@session"
+      - "@templating"
+      - "%formserver_public_url%"
+    tags:
+      - { name: ocsdc.servizio.handler, alias: default }
+
   ocsdc.handlers.servizio.imis:
     class: AppBundle\Handlers\Servizio\ImisHandler
-    arguments: ["@security.token_storage", "@logger"]
+    arguments: ["@security.token_storage", "@logger", "@router"]
+    tags:
+      - { name: ocsdc.servizio.handler, alias: ocsdc.servizio.handler }
 
   http.client:
     class: Symfony\Component\HttpClient\CurlHttpClient
