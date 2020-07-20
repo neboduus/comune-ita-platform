@@ -19,6 +19,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'OP_RELAZIONE_ENERGETICA',
             'OP_RELAZIONE_TECNICA',
             'OP_CATASTO',
+            'OP_ALTRO'
         ],
 
         Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI_ASSEVERATA => [
@@ -26,7 +27,8 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'OP_PLANIMETRIA_CILA',
             'OP_ELABORATO_PROGETTUALE',
             'OP_RELAZIONE_DITTA',
-            'OP_RELAZIONE_ENERGETICA'
+            'OP_RELAZIONE_ENERGETICA',
+            'OP_ALTRO'
         ],
 
         Pratica::TYPE_SCIA_PRATICA_EDILIZIA => [
@@ -66,6 +68,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'TEC_RELAZIONE_ACUSTICHE',
             'TEC_DOC_IMPATTO_ACUSTICO',
             'TEC_DOC_CLIMA_ACUSTICO',
+            'OP_ALTRO'
         ],
 
         Pratica::TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE => [
@@ -105,6 +108,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'TEC_RELAZIONE_ACUSTICHE',
             'TEC_DOC_IMPATTO_ACUSTICO',
             'TEC_DOC_CLIMA_ACUSTICO',
+            'OP_ALTRO'
         ],
 
         Pratica::TYPE_DOMANDA_DI_PERMESSO_DI_COSTRUIRE_IN_SANATORIA => [
@@ -134,6 +138,7 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'TEC_RELAZIONE_ACUSTICHE',
             'TEC_DOC_IMPATTO_ACUSTICO',
             'TEC_DOC_CLIMA_ACUSTICO',
+            'OP_ALTRO'
         ],
 
         Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI => [
@@ -161,7 +166,8 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'DUL_ANTINCENDIO',
             'DUL_CATASTO',
             'DUL_PLANIMETRIE',
-            'DUL_TULPS'
+            'DUL_TULPS',
+            'OP_ALTRO'
         ],
 
         Pratica::TYPE_AUTORIZZAZIONE_PAESAGGISTICA_SINDACO => [
@@ -169,7 +175,8 @@ class ElencoAllegatiTecnici extends AbstractSciaPraticaEdiliziaMappable
             'AMB_DESCRIZIONE',
             'AMB_CONFORMITA',
             'AMB_COMPATIBILITA',
-            'AMB_MISURE'
+            'AMB_MISURE',
+            'OP_ALTRO'
         ],
 
         Pratica::TYPE_SEGNALAZIONE_CERTIFICATA_AGIBILITA => [

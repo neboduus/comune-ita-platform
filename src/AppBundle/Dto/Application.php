@@ -151,7 +151,7 @@ class Application
   /**
    * @var Allegato
    * @SWG\Property(property="outcome_file", type="string", description="Outocome file")
-   * @Serializer\Type("string")
+   * @Serializer\Type("array")
    */
   private $outcomeFile;
 
@@ -556,8 +556,9 @@ class Application
    * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
    * @return Application
    */
-  public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '', $loadFileCollection = true)
+  public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '', $loadFileCollection = true, $version = 1)
   {
+
     $dto = new self();
     $dto->id = $pratica->getId();
     $dto->user = $pratica->getUser()->getId();
@@ -567,13 +568,23 @@ class Application
     $dto->subject = $pratica->getOggetto();
 
 
+
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
-      $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+      if ($version >= 2) {
+        $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+      } else {
+        $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+      }
     } else {
       $dto->data = [];
     }
 
     $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl) : [];
+
+    $dto->outcomeFile = ($loadFileCollection && $pratica->getRispostaOperatore() instanceof Allegato) ? self::prepareFile($pratica->getRispostaOperatore(), $attachmentEndpointUrl) : null;
+    $dto->outcome = $pratica->getEsito();
+    $dto->outcomeMotivation = $pratica->getMotivazioneEsito();
+
     //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());
 
     $dto->creationTime = $pratica->getCreationTime();
@@ -627,10 +638,59 @@ class Application
       if (self::isDateField($k)) {
         $decoratedData[$k] = self::prepareDateField($v);
       }
-
-
     }
     return $decoratedData;
+  }
+
+  public static function decorateDematerializedFormsV2( $data, $attachmentEndpointUrl = '')
+  {
+
+    if (!isset($data['flattened'])) {
+      return $data;
+    }
+
+    $decoratedData = $data['flattened'];
+    $keys = array_keys($decoratedData);
+
+    $multiArray = array();
+
+    foreach ($keys as $path) {
+      $parts       = explode('.', trim($path, '.'));
+      $section     = &$multiArray;
+      $sectionName = '';
+
+      $partsCount = count($parts);
+      $counter = 0;
+
+      foreach ($parts as $part) {
+        $counter ++;
+        $sectionName = $part;
+
+        // Salto data
+        if ($part === 'data') {
+          continue;
+        }
+
+        if (array_key_exists($sectionName, $section) === false) {
+          $section[$sectionName] = array();
+        }
+
+        // Se è l'ultimo elemento assegno il valore
+        if ($counter == $partsCount) {
+          if (self::isUploadField($data['schema'], $path)) {
+            $section[$sectionName] = self::prepareFormioFile($decoratedData[$path], $attachmentEndpointUrl);
+          } else if (self::isDateField($path)) {
+            $section[$sectionName] = self::prepareDateField($decoratedData[$path]);
+          } else {
+            $section[$sectionName] = $decoratedData[$path];
+          }
+        }
+        $section = &$section[$sectionName];
+
+      }
+    }
+
+    return $multiArray;
   }
 
   public static function isUploadField ($schema, $field)
@@ -641,6 +701,9 @@ class Application
   public static function prepareFileCollection( $collection, $attachmentEndpointUrl = '')
   {
     $files = [];
+    if ( $collection == null) {
+      return $files;
+    }
     /** @var Allegato $c */
     foreach ($collection as $c) {
       $files[]= self::prepareFile($c, $attachmentEndpointUrl);
@@ -668,6 +731,8 @@ class Application
     $temp['name'] = $file->getName();
     $temp['url'] = $attachmentEndpointUrl . '/attachments/' .  $file->getId();
     $temp['originalName'] = $file->getFilename();
+    $temp['created_at'] = $file->getCreatedAt();
+
     return $temp;
   }
 

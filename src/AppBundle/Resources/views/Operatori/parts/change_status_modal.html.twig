@@ -1,3 +1,10 @@
+<style>
+  .modal .form-group {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+</style>
+
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -17,6 +24,7 @@
               {{ form_row(modalForm.esito) }}
             </div>
             {{ form_rest(modalForm) }}
+            <small class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.esito_help' | trans }}</small>
             <div class="row justify-content-between">
               <div class="col-auto align-self-center">
                 <strong>
@@ -27,7 +35,7 @@
                 </strong>
               </div>
               <div class="col-auto">
-                <button type="submit" class="btn btn-primary float-right">Invia</button>
+                <button type="submit" class="btn btn-primary float-right">{{ 'messaggi.invia' | trans }}</button>
               </div>
             </div>
             {{ form_end(modalForm) }}

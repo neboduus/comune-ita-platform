@@ -101,6 +101,7 @@ class AllegatoController extends Controller
 
       case 'POST':
         $uploadedFile = $request->files->get('file');
+
         $allegato = new Allegato();
         $allegato->setFile($uploadedFile);
         $description = $request->get('description') ?? 'Allegato senza descrizione';
@@ -478,12 +479,18 @@ class AllegatoController extends Controller
     $destDir = $mapping->getUploadDestination() . '/' . $directoryNamer->directoryName($allegato, $mapping);
     $filePath = $destDir . DIRECTORY_SEPARATOR . $filename;
 
+    $filename = $allegato->getOriginalFilename();
+    $filenameParts = explode('.', $filename);
+    if (end($filenameParts) != $allegato->getFile()->getExtension()) {
+      $filename = $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension();
+    }
+
     return new BinaryFileResponse(
       $filePath,
       200,
       [
         'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension()),
+        'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
       ]
     );
   }

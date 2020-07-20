@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
  * Class User
@@ -25,11 +26,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 abstract class User extends BaseUser
 {
 
+    use TimestampableEntity;
+
     const ROLE_OPERATORE_ADMIN = 'ROLE_OPERATORE_ADMIN';
     const ROLE_OPERATORE = 'ROLE_OPERATORE';
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADMIN = 'ROLE_ADMIN';
-
 
     const USER_TYPE_OPERATORE = 'operatore';
     const USER_TYPE_CPS = 'cps';

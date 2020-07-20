@@ -1,6 +1,18 @@
 {% extends '::base.html.twig' %}
 
+
+
 {% block title %}Stanza del cittadino{% endblock %}
+{% block favicon %}
+  {% set ente = instance_service.getCurrentInstance() %}
+  {% set favicon = ente.getMetaAsArray('favicon') %}
+
+  {% if favicon is defined and favicon is not empty %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('bundles/app/images/' ~ favicon) }}"/>
+  {% else %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+  {% endif %}
+{% endblock %}
 
 {% block stylesheets %}
     {{ encore_entry_link_tags('app') }}

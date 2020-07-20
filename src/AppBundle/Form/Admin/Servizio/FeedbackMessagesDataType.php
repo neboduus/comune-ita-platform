@@ -65,21 +65,18 @@ class FeedbackMessagesDataType extends AbstractType
       $temp->setMessage(
         isset($tempMessage['message']) ? $tempMessage['message'] : $this->translator->trans('messages.pratica.status.'.$k)
       );
+
+      $defaultIsActive = true;
+      if ($k == Pratica::STATUS_PENDING) {
+        $defaultIsActive = false;
+      }
       $temp->setIsActive(
-        isset($tempMessage['isActive']) ? $tempMessage['isActive'] : true
+        isset($tempMessage['isActive']) ? $tempMessage['isActive'] : $defaultIsActive
       );
       $messages[] = $temp;
     }
 
     $builder
-      ->add(
-        'email_text',
-        TextareaType::class,
-        [
-          'label' => 'Testo email mostrato in caso di pratica accettata (da rimuovere)',
-          'required' => false,
-        ]
-      )
       ->add(
         'feedback_messages',
         CollectionType::class,
