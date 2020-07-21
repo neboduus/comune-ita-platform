@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-07-16'
-softwareVersion: 1.5.12
+releaseDate: '2020-07-21'
+softwareVersion: 1.5.13
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -69,6 +69,7 @@ usedBy:
   - Comune di Baselga di Pinè (TN)
   - Fondazione Mach (TN)
   - Provincia autonoma di Trento (TN)
+  - Comune di Niscemi (CL)
 roadmap: https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/ROADMAP.md
 categories:
   - communications
