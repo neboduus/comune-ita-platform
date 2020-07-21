@@ -95,7 +95,10 @@ class Vincoli extends AbstractSciaPraticaEdiliziaMappable
             'VIN_ALTRO',
             'VIN_ALTRO_AMBIENTI',
         ],
-        Pratica::TYPE_SEGNALAZIONE_CERTIFICATA_AGIBILITA => []
+        Pratica::TYPE_SEGNALAZIONE_CERTIFICATA_AGIBILITA => [],
+        Pratica::TYPE_COMUNICAZIONE_INIZIO_LAVORI_ASSEVERATA => [
+          'VIN_TUTELA_PAESAGGISTICA'
+        ]
     ];
 
     public function getProperties()
