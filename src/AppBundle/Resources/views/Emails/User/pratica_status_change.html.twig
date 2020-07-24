@@ -16,10 +16,6 @@
             {{ pratica.getMotivazioneEsito() }}
           </p>
         {% endif %}
-
-        {% if not pratica.servizio.getEmailText()  is empty and pratica.getEsito() and not pratica.getEsito() is null %}
-          {{ pratica.servizio.getEmailText()|raw }}
-        {% endif %}
         <p>
           {{ 'email.pratica.thanks'|trans() }}
         </p>
