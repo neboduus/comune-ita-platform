@@ -9,6 +9,11 @@ config_tmpl=app/config/templates/config_prod.yml.tmpl
 tmp_config_path=/tmp/tenants
 final_config_path=${TENANTS_CONFIG_PATH:?'La variable TENANTS_CONFIG_PATH deve essere valorizzata'}
 
+if [[ ! -f $config_tmpl ]]; then
+  echo "ERROR: file '$config_tmpl' missing (this script expect to be execute from the root of the symfony app)"
+  exit 1
+fi
+
 for dir in $tmp_config_path $final_config_path; do
         [[ ! -d $dir ]] && mkdir -p $dir
 done
