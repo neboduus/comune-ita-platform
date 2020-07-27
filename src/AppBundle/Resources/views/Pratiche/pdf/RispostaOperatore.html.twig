@@ -26,7 +26,16 @@
     {% endif %}
 </div>
 
-{{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
+<div class="data">
+    <p>
+        {{ 'pratica.pdf.luogo'|trans()|raw }}
+        {% if pratica.rispostaOperatore %}
+            {{ pratica.rispostaOperatore.createdAt|date("d/m/Y") }}
+        {% else %}
+            {{ "now"|date("d/m/Y") }}
+        {% endif %}
+    </p>
+</div>
 
 </body>
 </html>

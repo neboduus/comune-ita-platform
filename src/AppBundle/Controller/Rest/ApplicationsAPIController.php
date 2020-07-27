@@ -6,8 +6,11 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Dto\Application;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
+use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Model\PaymentOutcome;
 use AppBundle\Model\MetaPagedList;
 use AppBundle\Model\LinksPagedList;
@@ -268,15 +271,28 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
     }
-    /** @var File $file */
-    $file = $result->getFile();
-    $fileContent = file_get_contents($file->getPathname());
-    $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
-    $response = new Response($fileContent);
-    $disposition = $response->headers->makeDisposition(
-      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-      $filename
-    );
+    $pratica = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($id);
+
+    if ($result->getType() === RispostaOperatore::TYPE_DEFAULT) {
+      $fileContent = $this->pdfBuilder->renderForResponse($pratica);
+      $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
+      $response = new Response($fileContent);
+      $disposition = $response->headers->makeDisposition(
+        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+        $filename
+      );
+    } else {
+      /** @var File $file */
+      $file = $result->getFile();
+      $fileContent = file_get_contents($file->getPathname());
+      $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
+      $response = new Response($fileContent);
+      $disposition = $response->headers->makeDisposition(
+        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+        $filename
+      );
+    }
+
     $response->headers->set('Content-Disposition', $disposition);
 
     return $response;
