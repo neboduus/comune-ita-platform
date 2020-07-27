@@ -295,18 +295,34 @@ class MeetingService
     } else return;
 
     // Add link for cancel meeting
-    $userMessage = $userMessage . $this->translator->trans('meetings.email.cancel', [
-        'cancel_link' => $this->router->generate('cancel_meeting', [
-          'meetingHash' => $meeting->getCancelLink()
-        ], UrlGeneratorInterface::ABSOLUTE_URL),
-        'email_address' => $contact
-      ]);
+    if ($calendar->getContactEmail()) {
+      $userMessage = $userMessage . $this->translator->trans('meetings.email.cancel_with_contact', [
+          'cancel_link' => $this->router->generate('cancel_meeting', [
+            'meetingHash' => $meeting->getCancelLink()
+          ], UrlGeneratorInterface::ABSOLUTE_URL),
+          'email_address' => $contact
+        ]);
+    } else {
+      $userMessage = $userMessage . $this->translator->trans('meetings.email.cancel_without_contact', [
+          'cancel_link' => $this->router->generate('cancel_meeting', [
+            'meetingHash' => $meeting->getCancelLink()
+          ], UrlGeneratorInterface::ABSOLUTE_URL)
+        ]);
+    }
+
 
     // Add mail info
-    $userMessage = $userMessage . $this->translator->trans('meetings.email.info', [
-        'ente' => $ente->getName(),
-        'email_address' => $contact
-      ]);
+    if ($calendar->getContactEmail()) {
+      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_with_contact', [
+          'ente' => $ente->getName(),
+          'email_address' => $contact
+        ]);
+    } else {
+      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_without_contact', [
+          'ente' => $ente->getName()
+        ]);
+    }
+
 
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
@@ -457,19 +473,34 @@ class MeetingService
             'videoconference_link' => $link
           ]);
       }
-      $userMessage = $userMessage . $this->translator->trans('meetings.email.cancel', [
-          'cancel_link' => $this->router->generate('cancel_meeting', [
-            'meetingHash' => $meeting->getCancelLink()
-          ], UrlGeneratorInterface::ABSOLUTE_URL),
-          'email_address' => $contact
-        ]);
+      // Add link for cancel meeting
+      if ($calendar->getContactEmail()) {
+        $userMessage = $userMessage . $this->translator->trans('meetings.email.cancel_with_contact', [
+            'cancel_link' => $this->router->generate('cancel_meeting', [
+              'meetingHash' => $meeting->getCancelLink()
+            ], UrlGeneratorInterface::ABSOLUTE_URL),
+            'email_address' => $contact
+          ]);
+      } else {
+        $userMessage = $userMessage . $this->translator->trans('meetings.email.cancel_without_contact', [
+            'cancel_link' => $this->router->generate('cancel_meeting', [
+              'meetingHash' => $meeting->getCancelLink()
+            ], UrlGeneratorInterface::ABSOLUTE_URL)
+          ]);
+      }
     }
 
     // Add mail info
-    $userMessage = $userMessage . $this->translator->trans('meetings.email.info', [
-        'ente' => $ente->getName(),
-        'email_address' => $contact
-      ]);
+    if ($calendar->getContactEmail()) {
+      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_with_contact', [
+          'ente' => $ente->getName(),
+          'email_address' => $contact
+        ]);
+    } else {
+      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_without_contact', [
+          'ente' => $ente->getName()
+        ]);
+    }
 
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
@@ -523,10 +554,17 @@ class MeetingService
       'date' => $meeting->getFromTime()->format('d/m/Y'),
       'hour' => $meeting->getFromTime()->format('H:i')
     ]);
-    $mailInfo = $this->translator->trans('meetings.email.info', [
-      'ente' => $ente->getName(),
-      'email_address' => $calendar->getContactEmail()
-    ]);
+    if ($calendar->getContactEmail()) {
+      $mailInfo = $this->translator->trans('meetings.email.info_with_contact', [
+        'ente' => $ente->getName(),
+        'email_address' => $calendar->getContactEmail()
+      ]);
+    } else {
+      $mailInfo = $this->translator->trans('meetings.email.info_without_contact', [
+        'ente' => $ente->getName()
+      ]);
+    }
+
     $message = $message . $mailInfo;
 
 
