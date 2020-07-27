@@ -1705,42 +1705,46 @@ meetings:
     operatori:
       meeting_cancelled:
         subject: 'Annullamento appuntamento'
-        message: '<p>L appuntamento del giorno date alle ore hour è stato cancellato<p>'
+        message: "<p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b><p>"
       meeting_approved:
-        subject: 'Annullamento appuntamento'
-        message: '<p>L appuntamento del giorno date alle ore hour è stato approvato<p>'
+        subject: 'Approvazione appuntamento'
+        message: "<p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>approvato</b><p>"
       new_meeting:
         subject: 'Nuovo appuntamento'
-        message: '<p>Nuova richiesta di appuntamento a nome di name per il giorno date alle ore hour.<p>
-                  <p>Motivazione: user_message</p>'
-        approve_link: '<br><p>Clicca sul seguente link per approvare: <a href="approve_link">Approva</a></p>'
+        message: '<p>Nuova richiesta di appuntamento a nome di <b>name</b> per il giorno <b>date</b> alle ore <b>hour</b>.<p>
+                  <p>Motivazione: <b>user_message</b></p>'
+        approve_link: '<br><p>Clicca sul seguente link per approvare: <a href="approve_link"><b>Approva</b></a></p>'
     new_meeting:
-      pending: '<p>La informiamo che la sua richiesta è stata presa in carico.</p><p>Riceverà un email di conferma nonappena la sua richiesta verrà confermata.</p>'
-      approved: '<p>La informiamo che la sua richiesta è stata confermata.</p><p>La invitiamo a presentarsi alle ore hour del giorno date presso location</p>'
+      pending: '<p>La informiamo che la sua richiesta è stata <b>presa in carico</b>.</p><p>Riceverà un email di conferma non appena la sua richiesta verrà confermata.</p>'
+      approved: '<p>La informiamo che la sua richiesta è stata <b>confermata</b>.</p><p>La invitiamo a presentarsi alle ore <b>hour</b> del giorno <b>date</b> presso <b>location</b></p>'
       subject: 'Richiesta prenotazione appuntamento'
     edit_meeting:
-      refused: '<p>Siamo spiacenti di informarla che non è stato possibile accogliere la Sua richiesta di appuntamento per il giorno date</p><br>
-              <p>Per maggiori informazioni può contattarci all indirizzo <a href="email_address">email_address</a></p>'
-      rescheduled: '<p>La informiamo che l appuntamento del giorno old_date è stato spostato alle ore hour del giorno new_date presso location</p><br>'
+      refused: '<p>Siamo spiacenti di informarla che non è stato possibile accogliere la Sua richiesta di appuntamento per il giorno <b>date</b></p><br>
+              <p>Per maggiori informazioni può contattarci al seguente indirizzo email<a href="email_address"><b>email_address</b></a></p>'
+      rescheduled: "<p>La informiamo che l'appuntamento del giorno <b>old_date</b> è stato <b>spostato</b> alle ore <b>hour</b> del giorno <b>new_date</b> presso <b>location</b></p><br>"
       rescheduled_and_approved: '<p>Purtroppo non è stato possibile confermare il suo appuntamento nella data e orario richiesti, sarà possibile riceverla
-                                alle ore hour del giorno date presso location</p>'
-      approved: '<p>La informiamo che la sua richiesta è stata confermata.</p>
-                <p>La invitiamo a presentarsi alle ore hour del giorno date presso location</p>'
-      cancelled: '<p>La informiamo che l appuntamento previsto per il giorno date alle ore hour e stato annullato<p>'
+                                alle ore <b>hour</b> del giorno date presso <b>location</b></p>'
+      approved: '<p>La informiamo che la sua richiesta è stata <b>confermata</b>.</p>
+                <p>La invitiamo a presentarsi alle ore <b>hour</b> del giorno <b>date</b> presso <b>location</b></p>'
+      cancelled: "<p>La informiamo che l'appuntamento previsto per il giorno <b>date</b> alle ore <b>hour</b> e stato <b>annullato</b><p>"
       subject: 'Aggiornamenti richiesta appuntamento'
     delete_meeting:
-      delete: '<p>La informiamo che il suo appuntamento previsto per il giorno date alle ore hour è stato cancellato</p>'
+      delete: '<p>La informiamo che il suo appuntamento previsto per il giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b></p>'
       subject: 'Cancellazione appuntamento'
-    cancel: '<br><p>Nel caso non le sia possibile essere presente all appuntamento proposto la preghiamo di annullare l appuntamento
-            mediante <a href="cancel_link">questo link</a> oppure contattarci all indirizzo <a href="mailto:email_address">email_address</a></p>'
-    info: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
+    cancel_with_contact: '<br><p>Nel caso non le sia possibile essere presente all&apos;appuntamento proposto la preghiamo di annullare l&apos;appuntamento
+            mediante <a href="cancel_link"><b>questo link</b></a> oppure contattarci all&apos;indirizzo <a href="mailto:email_address"><b>email_address</b></a></p>'
+    cancel_without_contact: '<br><p>Nel caso non le sia possibile essere presente all&apos;appuntamento proposto la preghiamo di annullare l&apos;appuntamento
+                mediante <a href="cancel_link"><b>questo link</b></a></p>'
+    info_with_contact: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
                  nel caso tu non abbia fatto nessuna richiesta di questo tipo ti preghiamo di ignorare questo messaggio o segnalarlo
-                 all indirizzo <a href="mailto:email_address">email_address</a></i></p>'
+                 all&apos;indirizzo <a href="mailto:email_address"><b>email_address</b></a></i></p>'
+    info_without_contact: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
+                     nel caso tu non abbia fatto nessuna richiesta di questo tipo ti preghiamo di ignorare questo messaggio</i></p>'
     meeting_link:
-      message: '<p>Qualora non fosse possibile presentarsi fisicamente all appuntamento la invitiamo a partecipare collegandosi al seguente indirizzo: <a href="videoconference_link">videoconference_link</a><p>'
-      changed: '<p>La informiamo che è stato modificato l indirizzo della videoconferenza. Il nuovo indirizzo è il seguente: <a href="videoconference_link">videoconference_link</a></p>'
-      new: '<p>La informiamo che è qualora non fosse possibile presentarsi fisicamente all appuntamento la invitiamo a partecipare collegandosi al seguente indirizzo: <a href="videoconference_link">videoconference_link</a></p>'
-      removed: '<p>La informiamo che non è piu possibile partecipare remotamente all appuntamento utilizzando il link precedentemente fornitole<p>'
+      message: '<p>Qualora non fosse possibile presentarsi fisicamente all&apos;appuntamento la invitiamo a partecipare collegandosi al seguente indirizzo: <a href="videoconference_link"><b>videoconference_link</b></a><p>'
+      changed: '<p>La informiamo che è stato modificato l&apos;indirizzo della videoconferenza. Il nuovo indirizzo è il seguente: <a href="videoconference_link"><b>videoconference_link</b></a></p>'
+      new: '<p>La informiamo che è qualora non fosse possibile presentarsi fisicamente all appuntamento la invitiamo a partecipare collegandosi al seguente indirizzo: <a href="videoconference_link"><b>videoconference_link</b></a></p>'
+      removed: '<p>La informiamo che non è piu possibile partecipare remotamente all&apos;appuntamento utilizzando il link precedentemente fornitole<p>'
     success: 'Una notifica è stata inviata al cittadino con successo'
     cancel_success: 'Appuntamento annullato con successo'
 
