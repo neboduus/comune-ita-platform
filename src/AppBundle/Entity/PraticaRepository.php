@@ -556,4 +556,61 @@ class PraticaRepository extends EntityRepository
     return $qb->getQuery()->getResult();
   }
 
+  public function findPraticheByUser(CPSUser $user, $filters, $limit, $offset)
+  {
+    $qb = $this->getPraticheByUserQueryBuilder($filters, $user);
+    if (isset($filters['sort']) && isset($filters['order'])) {
+      $qb->orderBy('pratica.'.$filters['sort'], strtolower($filters['order']));
+    }else {
+      $qb->orderBy('pratica.submissionTime', 'desc');
+    }
+    $qb->addOrderBy('pratica.id', 'desc');
+
+    return $qb->setFirstResult($offset)
+      ->setMaxResults($limit)
+      ->getQuery()->execute();
+  }
+
+  public function countPraticheByUser(CPSUser $user, $filters)
+  {
+    return $this->getPraticheByUserQueryBuilder($filters, $user)->select('count(pratica.id)')
+      ->getQuery()->getSingleScalarResult();
+  }
+
+  private function getPraticheByUserQueryBuilder($filters, CPSUser $user)
+  {
+    if (!empty($filters['data'])) {
+      $entity = FormIO::class;
+    }else{
+      $entity = Pratica::class;
+    }
+
+    $qb =  $this->getEntityManager()->createQueryBuilder()
+      ->select('pratica')
+      ->from($entity, 'pratica');
+
+    if (!empty($filters['status'])) {
+      $qb->andWhere('pratica.status IN (:status)')
+        ->setParameter('status', (array)$filters['status']);
+    }
+
+    $qb->andWhere('pratica.user = :user')
+      ->setParameter('user', $user);
+
+    if (!empty($filters['service'])) {
+      $qb->andWhere('servizio.slug in (:service)')
+        ->leftJoin('pratica.servizio', 'servizio')
+        ->setParameter('service', (array)$filters['service']);
+    }
+
+    if (!empty($filters['data'])) {
+      foreach ($filters['data'] as $field => $value){
+        $fieldValueKey = str_replace('.', '', $field);
+        $qb->andWhere("LOWER(FORMIO_JSON_FIELD(pratica.dematerializedForms $field)) = :{$fieldValueKey}")
+          ->setParameter($fieldValueKey, strtolower($value));
+      }
+    }
+
+    return $qb;
+  }
 }
