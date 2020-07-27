@@ -16,8 +16,14 @@ lista_pratiche_bozza: 'Pratica in bozza'
 pratica_ricevuta: 'La richiesta è stata trasmessa. Grazie per la collaborazione'
 welcome: 'F: Benvenuta,|M: Benvenuto,'
 completa_profilo: "Verifica che l'email sia corretta, completa e conferma i dati del tuo profilo"
-error_message: "Ooops! Qualcosa non ha funzionato!"
-error_message_detail: "Per favore contatta il supporto tecnico e comunicagli cosa stavi facendo."
+error_back_to_home: "Torna alla Home"
+error_support: "Contatta il supporto tecnico"
+error_message: "Ooops!"
+error_message_detail: "Qualcosa non ha funzionato"
+error_message_403: "403 | Accesso negato"
+error_message_detail_403: "Noi hai i permessi per accedere a quest'area"
+error_message_404: "404 | Pagina non trovata"
+error_message_detail_404: "La pagina che cercavi potrebbe essere stata rimossa, aver cambiato indirizzo o  essere temporaneamente non disponibile"
 visualizza_colonne: "Visualizza colonne"
 visualizza_griglia: "Visualizza griglia"
 profilo_utente: "Profilo utente"
