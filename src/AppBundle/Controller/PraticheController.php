@@ -4,8 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\DematerializedFormAllegatiContainer;
-use AppBundle\Entity\DematerializedFormPratica;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
@@ -13,6 +12,8 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Base\PraticaFlow;
+use AppBundle\Handlers\Servizio\ForbiddenAccessException;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -85,88 +86,54 @@ class PraticheController extends Controller
    * @param Request $request
    * @param Servizio $servizio
    *
-   * @return \Symfony\Component\HttpFoundation\Response
+   * @return Response
    */
   public function newAction(Request $request, Servizio $servizio)
   {
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    if ( !in_array($servizio->getStatus(), [Servizio::STATUS_AVAILABLE, Servizio::STATUS_PRIVATE]) ) {
-      $this->addFlash('warning', 'Il servizio ' . $servizio->getName() . ' non è disponibile.');
+    $ente = $this->getDoctrine()
+      ->getRepository('AppBundle:Ente')
+      ->findOneBy(
+        [
+          'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
+            'prefix'
+          ) : $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null),
+        ]
+      );
+
+    if (!$ente instanceof Ente) {
+      $this->get('logger')->info(
+        LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
+        ['headers' => $request->headers]
+      );
+
+      throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
+    }
+
+    try {
+      $handler->canAccess($servizio, $ente);
+    } catch (ForbiddenAccessException $e) {
+      $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
+
       return $this->redirectToRoute('servizi_list');
     }
 
-    $user = $this->getUser();
-    if ($servizio->getHandler() == null || empty($servizio->getHandler()) || $servizio->getHandler() == 'default') {
+    try {
 
-      $praticaFQCN = $servizio->getPraticaFCQN();
-      $praticaInstance = new  $praticaFQCN();
-      $isServizioScia = $praticaInstance instanceof DematerializedFormPratica;
+      return $handler->execute($servizio, $ente);
+    } catch (\Exception $e) {
+      $this->get('logger')->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
 
-      $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-      $pratiche = $repo->findBy(
+      return $this->render(
+        '@App/Servizi/serviziFeedback.html.twig',
         array(
-          'user' => $user,
           'servizio' => $servizio,
-          'status' => Pratica::STATUS_DRAFT,
-        ),
-        array('creationTime' => 'ASC')
+          'status' => 'danger',
+          'message' => $handler->getErrorMessage(),
+          'message_detail' => $e->getMessage(),
+        )
       );
-
-      if (!$isServizioScia && !empty($pratiche)) {
-        return $this->redirectToRoute(
-          'pratiche_list_draft',
-          ['servizio' => $servizio->getSlug()]
-        );
-      }
-
-      $pratica = $this->createNewPratica($servizio, $user);
-
-      $enteSlug = $ente = null;
-      if ($this->getParameter('prefix') != null) {
-        $enteSlug = $this->getParameter('prefix');
-      } else {
-        $enteSlug = $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null);
-      }
-
-      if ($enteSlug != null) {
-        $ente = $this->getDoctrine()
-          ->getRepository('AppBundle:Ente')
-          ->findOneBySlug($enteSlug);
-      }
-
-      if ($ente != null) {
-        $pratica->setEnte($ente);
-        $this->infereErogatoreFromEnteAndServizio($pratica);
-        $this->getDoctrine()->getManager()->flush();
-      } else {
-        $this->get('logger')->info(
-          LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
-          [
-            'pratica' => $pratica,
-            'headers' => $request->headers,
-          ]
-        );
-      }
-
-      return $this->redirectToRoute(
-        'pratiche_compila',
-        ['pratica' => $pratica->getId()]
-      );
-
-    } else {
-      /** @var ServizioHandlerInterface $handler */
-      $handler = $this->get($servizio->getHandler());
-
-      if ($result = $handler->execute()) {
-        return $handler->execute();
-      }
-      /*throw new \Exception("Si è verificato un problema durante l'esecuzione del servizio {$servizio->getName()}");*/
-      //todo: recuperare mes da handler, per adesso faccio fix specifico per imis
-      return $this->render('@App/Servizi/serviziFeedback.html.twig', array(
-        'servizio' => $servizio,
-        'status' => 'danger',
-        'msg' => "Non é possibile effettuare il download del file. Non risultano immobili a suo nome all'interno del comune."
-      ));
     }
   }
 
@@ -216,11 +183,22 @@ class PraticheController extends Controller
   public function compilaAction(Request $request, Pratica $pratica)
   {
     $em = $this->getDoctrine()->getManager();
-    if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION && $pratica->getStatus() !== Pratica::STATUS_DRAFT && $pratica->getStatus() !== Pratica::STATUS_PAYMENT_PENDING) {
+    if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION
+      && $pratica->getStatus() !== Pratica::STATUS_DRAFT
+      && $pratica->getStatus() !== Pratica::STATUS_PAYMENT_PENDING) {
       return $this->redirectToRoute(
         'pratiche_show',
         ['pratica' => $pratica->getId()]
       );
+    }
+
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    try {
+      $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
+    } catch (ForbiddenAccessException $e) {
+      $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
+
+      return $this->redirectToRoute('pratiche');
     }
 
     $user = $this->getUser();
@@ -247,11 +225,6 @@ class PraticheController extends Controller
     if ($praticaFlowService->isValid($form)) {
 
       $currentStep = $praticaFlowService->getCurrentStepNumber();
-      //Erogatore
-      //FIXME: find a way to generalize the ente selection step
-      if ($currentStep == 1) {
-        $this->infereErogatoreFromEnteAndServizio($pratica);
-      }
 
       $praticaFlowService->saveCurrentStepData($form);
       $pratica->setLastCompiledStep($currentStep);
@@ -295,6 +268,22 @@ class PraticheController extends Controller
     ];
   }
 
+  private function checkUserCanAccessPratica(Pratica $pratica, CPSUser $user)
+  {
+    $praticaUser = $pratica->getUser();
+    $isTheOwner = $praticaUser->getId() === $user->getId();
+    $cfs = $pratica->getRelatedCFs();
+    if (!is_array($cfs)) {
+      $cfs = [$cfs];
+    }
+    $isRelated = in_array($user->getCodiceFiscale(), $cfs);
+
+
+    if (!$isTheOwner && !$isRelated) {
+      throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
+    }
+  }
+
   /**
    * @Route("/{pratica}", name="pratiche_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
@@ -305,16 +294,28 @@ class PraticheController extends Controller
    */
   public function showAction(Request $request, Pratica $pratica)
   {
-
+    /** @var CPSUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
     //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
+    $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
+      && $pratica->getUser()->getId() == $user->getId();
+    if ($canCompile) {
+      $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+      try {
+        $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
+      } catch (ForbiddenAccessException $e) {
+        $canCompile = false;
+      }
+    }
+
     $result = [
       'pratica' => $pratica,
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
+      'can_compile' => $canCompile,
       //'threads' => $thread,
     ];
 
@@ -330,6 +331,7 @@ class PraticheController extends Controller
       }
       $result['allegati'] = $allegati;
     }
+
     return $result;
   }
 
@@ -347,12 +349,18 @@ class PraticheController extends Controller
     $outcome = $request->get('esito');
 
     if ($outcome == 'OK') {
-      $this->container->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_PAYMENT_OUTCOME_PENDING);
+      $this->container->get('ocsdc.pratica_status_service')->setNewStatus(
+        $pratica,
+        Pratica::STATUS_PAYMENT_OUTCOME_PENDING
+      );
     }
 
-    return $this->redirectToRoute('pratiche_show', [
-      'pratica' => $pratica
-    ]);
+    return $this->redirectToRoute(
+      'pratiche_show',
+      [
+        'pratica' => $pratica,
+      ]
+    );
 
   }
 
@@ -371,12 +379,12 @@ class PraticheController extends Controller
     $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
 
     $fileName = $allegato->getOriginalFilename();
-    if (substr($fileName, -3) != $allegato->getFile()->getExtension() ) {
-      $fileName .= '.' . $allegato->getFile()->getExtension();
+    if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
+      $fileName .= '.'.$allegato->getFile()->getExtension();
     }
 
     return new BinaryFileResponse(
-      $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
+      $allegato->getFile()->getPath().'/'.$allegato->getFile()->getFilename(),
       200,
       [
         'Content-type' => 'application/octet-stream',
@@ -384,7 +392,6 @@ class PraticheController extends Controller
       ]
     );
   }
-
 
   /**
    * @Route("/{pratica}/delete", name="pratiche_delete")
@@ -432,7 +439,7 @@ class PraticheController extends Controller
         $allegati[] = [
           'allegato' => $allegato,
           'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
-          'protocollo' => $protocollo->protocollo
+          'protocollo' => $protocollo->protocollo,
         ];
       }
     }
@@ -454,83 +461,8 @@ class PraticheController extends Controller
     // Todo: validazione base del form
     $user = $this->getUser();
     $response = array('status' => 'OK');
+
     return JsonResponse::create($response, Response::HTTP_OK);
-  }
-
-  /**
-   * @param Servizio $servizio
-   * @param CPSUser $user
-   *
-   * @return Pratica
-   */
-  private function createNewPratica(Servizio $servizio, CPSUser $user)
-  {
-    $praticaClassName = $servizio->getPraticaFCQN();
-    /** @var PraticaFlow $praticaFlowService */
-    $praticaFlowService = $this->get($servizio->getPraticaFlowServiceName());
-
-    $pratica = new $praticaClassName();
-    if (!$pratica instanceof Pratica) {
-      throw new \RuntimeException("Wrong Pratica FCQN for servizio {$servizio->getName()}");
-    }
-    $pratica
-      ->setServizio($servizio)
-      //->setType($servizio->getSlug())
-      ->setUser($user)
-      ->setStatus(Pratica::STATUS_DRAFT);
-
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-    $lastPraticaList = $repo->findBy(
-      array(
-        'user' => $user,
-        'servizio' => $servizio,
-        'status' => [
-          Pratica::STATUS_COMPLETE,
-          Pratica::STATUS_SUBMITTED,
-          Pratica::STATUS_PENDING,
-          Pratica::STATUS_REGISTERED
-        ],
-      ),
-      array('creationTime' => 'DESC'),
-      1
-    );
-    $lastPratica = null;
-    if ($lastPraticaList) {
-      $lastPratica = $lastPraticaList[0];
-    }
-    if ($lastPratica instanceof Pratica) {
-      $praticaFlowService->populatePraticaFieldsWithLastPraticaValues($lastPratica, $pratica);
-    }
-
-    $user = $this->getUser();
-    $praticaFlowService->populatePraticaFieldsWithUserValues($user, $pratica);
-
-    $em = $this->getDoctrine()->getManager();
-    $em->persist($pratica);
-    $em->flush();
-
-    $this->get('logger')->info(
-      LogConstants::PRATICA_CREATED,
-      ['type' => $pratica->getType(), 'pratica' => $pratica]
-    );
-
-    return $pratica;
-  }
-
-  private function checkUserCanAccessPratica(Pratica $pratica, CPSUser $user)
-  {
-    $praticaUser = $pratica->getUser();
-    $isTheOwner = $praticaUser->getId() === $user->getId();
-    $cfs = $pratica->getRelatedCFs();
-    if (!is_array($cfs)) {
-      $cfs = [$cfs];
-    }
-    $isRelated = in_array($user->getCodiceFiscale(), $cfs);
-
-
-    if (!$isTheOwner && !$isRelated) {
-      throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
-    }
   }
 
   /**
@@ -576,21 +508,5 @@ class PraticheController extends Controller
     }
 
     return null;
-  }
-
-  private function infereErogatoreFromEnteAndServizio(Pratica $pratica)
-  {
-    $ente = $pratica->getEnte();
-    $servizio = $pratica->getServizio();
-    $erogatori = $servizio->getErogatori();
-    foreach ($erogatori as $erogatore) {
-      if ($erogatore->getEnti()->contains($ente)) {
-        $pratica->setErogatore($erogatore);
-
-        return;
-      }
-    }
-    //FIXME: testme
-    throw new \Error('Missing erogatore for service ');
   }
 }
