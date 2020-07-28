@@ -80,12 +80,22 @@ services:
     ports:
       - "443:443"
     labels:
+      traefik.enable: true
       traefik.frontend.rule: 'Host:stanzadelcittadino.localtest.me'
+      traefik.http.routers.apache.entrypoints: web
 
   traefik:
-    image: traefik:1.7
+    image: traefik:v2.2
     restart: unless-stopped
-    command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
+    #command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    labels:
+      traefik.http.routers.traefik.rule: 'Host(`localtest.me`)'
     ports:
       - '80:80'
         # - '443:443'
@@ -109,7 +119,9 @@ services:
     depends_on:
       - mongo
     labels:
+      traefik.enable: true
       traefik.frontend.rule: 'Host:formserver.localtest.me'
+      traefik.http.routers.formserver.entrypoints: web
 
   gotemberg:
     image: thecodingmachine/gotenberg:6
