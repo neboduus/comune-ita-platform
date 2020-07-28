@@ -80,7 +80,9 @@ pratica:
       subject: 'La richiesta n. %id% è stata aggiornata'
   iter: 'Iter della pratica'
   tooltip_durata_iter: "Durata iter: circa"
-  vai_alla_pratica: 'Vai alla pratica'
+  vai_alla_pratica: 'Prosegui la compilazione'
+  modifica_pratica: 'Modifica'
+  pratica_da_modificare: 'Sono richieste state richieste le seguenti modifiche:'
   nuova_pratica: 'Nuova pratica: %name%'
   integrazione_pratica: 'Integrazione pratica: %name%'
   integrazione_pratica_description: "Sono state richieste alcuni integrazioni per la pratica che hai inviato: correggi tutti i campi esposti contrasseganti dall'asterisco (*)"
@@ -159,6 +161,7 @@ pratica:
       abbr_rapporto_di_parentela: 'Parentela'
     allegati: 'File allegati'
     richiesta_integrazioni: 'Richiesta integrazioni'
+    richiesta_modifiche: 'Storico richieste di modifica'
     allegato:
       file: 'Nome del file'
       descrizione: 'Descrizione'
@@ -179,11 +182,12 @@ pratica:
     stato_8000: 'Rifiutata (in attesa di protocollazione del documento di esito)'
     stato_9000: 'Rifiutata'
 
-    stato_4100: 'Richiesta integrazioni (in attesa di protocollazione)'
+    stato_4100: 'Richiesta integrazioni'
     stato_4200: 'In attesa di integrazioni'
-    stato_4300: 'Integrazioni in attesa di protocollazione'
+    stato_4250: 'Inviate integrazioni'
+    stato_4300: 'Integrazioni acquisite'
     stato_4400: 'Integrazioni protocollate'
-    stato_4500: 'Presa in carico in seguito a integrazioni'
+    stato_4500: 'In carico in seguito a integrazioni'
 
     delega:
       titolo: 'Delega'
@@ -218,11 +222,12 @@ STATUS_PAYMENT_PENDING: 'In attesa di pagamento'
 STATUS_PAYMENT_OUTCOME_PENDING: "In attesa dell'esito di pagamento"
 STATUS_PAYMENT_SUCCESS: "Pagamento avvenuto con successo"
 STATUS_PAYMENT_ERROR: "Pagamento rifiutato"
-STATUS_REQUEST_INTEGRATION: 'Richiesta integrazioni (in attesa di protocollazione)'
+STATUS_REQUEST_INTEGRATION: 'Richiesta integrazioni'
 STATUS_DRAFT_FOR_INTEGRATION: 'In attesa di integrazioni'
-STATUS_SUBMITTED_AFTER_INTEGRATION: 'Integrazioni in attesa di protocollazione'
+STATUS_PRE_SUBMITTED_AFTER_INTEGRATION: 'Inviate integrazioni'
+STATUS_SUBMITTED_AFTER_INTEGRATION: 'Integrazioni acquisite'
 STATUS_REGISTERED_AFTER_INTEGRATION: 'Integrazioni protocollate'
-STATUS_PENDING_AFTER_INTEGRATION: 'Presa in carico in seguito a integrazioni'
+STATUS_PENDING_AFTER_INTEGRATION: 'In carico in seguito a integrazioni'
 STATUS_PROCESSING: 'In elaborazione'
 
 documenti:
@@ -462,6 +467,7 @@ operatori:
   approva: 'Approva'
   rifiuta: 'Rifiuta'
   rigetta: 'Rigetta'
+  richiedi_modifica: 'Richiedi modifica'
   elabora: 'Elabora'
   scrivi_al_cittadino: "Scrivi al cittadino"
   richiedi_intergrazioni: 'Richiedi intergrazioni'
@@ -470,6 +476,7 @@ operatori:
   note_interne: 'Note interne'
   importo: "Importo"
   pagamento: 'Pagamento'
+  versioni: 'Storico versioni'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
   gateway: "Metodo di pagamento"
   anagrafica_pagatore: "Anagrafica pagatore"
@@ -486,7 +493,7 @@ operatori:
   login: "Accedi"
   scarica: 'Scarica'
   info: "Info"
-  iter_completato: "La richiesta è stata <strong>%statusName%</strong> il %data% alle ore %ore%"
+  iter_completato: "La richiesta è <strong>%statusName%</strong> dal %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo"
   no_pratica_correlata: "Nessuna pratica correlata"

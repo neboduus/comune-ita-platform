@@ -3,10 +3,12 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Class FormIO
  * @ORM\Entity
+ * @Gedmo\Loggable
  */
 class FormIO extends Pratica implements DematerializedFormPratica
 {
@@ -14,6 +16,7 @@ class FormIO extends Pratica implements DematerializedFormPratica
   /**
    * @ORM\Column(type="json_array", options={"jsonb":true})
    * @var $dematerializedForms array
+   * @Gedmo\Versioned
    */
   protected $dematerializedForms;
 

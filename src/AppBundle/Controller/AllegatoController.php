@@ -130,14 +130,22 @@ class AllegatoController extends Controller
             return new Response('', Response::HTTP_FORBIDDEN);
           }
 
+          $removeFile = true;
           $applications = $file->getPratiche();
           /** @var Pratica $item */
           foreach ($applications as $item) {
+            if ($item->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION){
+              $removeFile = false;
+            }
             $item->removeAllegato($file);
             $em->persist($item);
           }
-          $em->remove($file);
-          $em->flush();;
+          if ($removeFile) {
+            $em->remove($file);
+          }else{
+            $em->persist($file);
+          }
+          $em->flush();
 
           return new Response('', Response::HTTP_OK);
 

@@ -15,10 +15,16 @@
       {{ 'operatori.note_interne' | trans }}
       <span class="badge badge-light ml-1">{{ pratica.commenti.count }}</span>
     </a>
-      <a class="nav-item nav-link" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
-         aria-controls="pagamento" aria-selected="false">
-        {{ 'operatori.pagamento' | trans }}
+    <a class="nav-item nav-link" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
+       aria-controls="pagamento" aria-selected="false">
+      {{ 'operatori.pagamento' | trans }}
+    </a>
+    {% if versions|length > 0 or pratica.richiesteIntegrazione|length > 0 %}
+      <a class="nav-item nav-link" id="versioni-tab" data-toggle="tab" href="#versioni" role="tab"
+         aria-controls="versioni" aria-selected="false">
+        {{ 'operatori.versioni' | trans }}
       </a>
+    {% endif %}
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -26,7 +32,7 @@
     {% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
       <div id="formio_summary" class="formio-front formio-summary"
            data-formserver_url="{{ formserver_url }}"
-           data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+           data-form_id="{{ pratica.servizio.getFormIoId }}"
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
@@ -65,9 +71,44 @@
       {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
-    <div class="tab-pane py-4 fade" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">
-      <div class="m-3">
-        {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
+  <div class="tab-pane py-4 fade" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">
+    <div class="m-3">
+      {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
+    </div>
+  </div>
+  {% if versions|length > 0 or pratica.richiesteIntegrazione|length > 0 %}
+  <div class="tab-pane py-4 fade" id="versioni" role="tabpanel" aria-labelledby="versioni-tab">
+    {% if pratica.richiesteIntegrazione|length > 0 %}
+      <div class="row mb-3 pl-4">
+        <div class="col-sm-4"><strong>{{ 'pratica.dettaglio.richiesta_modifiche'|trans }}</strong></div>
+        <div class="col-sm-8">
+          <dl class="row bg-white pt-0">
+            {% for allegato in pratica.richiesteIntegrazione %}
+              <dt class="col-sm-6">{{ allegato.createdAt|date(ocsdc_default_datetime_format) }}</dt>
+              <dd class="col-sm-6">{{ allegato.description }}</dd>
+            {% endfor %}
+          </dl>
+        </div>
+      </div>
+    {% endif %}
+    {% if versions|length > 0 %}
+    <div class="row  pl-4">
+      <div class="col-sm-4">
+        <p class="mt-0"><strong>{{ 'operatori.versioni' | trans }}</strong></p>
+        <a href="{{ path('operatori_compare_pratica', {'pratica': pratica.id}) }}" class="btn btn-xs btn-primary">Confronta versioni</a>
+      </div>
+      <div class="col-sm-8">
+        <dl class="row bg-white pt-0">
+          {% for version in versions %}
+            <dt class="col-sm-6">
+              {{ version.loggedAt|date(ocsdc_default_datetime_format) }}
+            </dt>
+            <dd class="col-sm-6">{{ version.version }}{% if loop.index == 1 %} <small>corrente</small>{% endif %}</dd>
+          {% endfor %}
+        </dl>
       </div>
     </div>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>

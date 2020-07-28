@@ -6,7 +6,7 @@
       <div class="col-sm-12">
         <div id="formio_summary_anonimo" class="formio-front formio-summary"
              data-formserver_url="{{ formserver_url }}"
-             data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+             data-form_id="{{ pratica.servizio.getFormIoId }}"
              data-submission="{{ pratica.dematerializedForms.data | json_encode}}">
         </div>
       </div>
@@ -16,6 +16,7 @@
 
 <script type='text/javascript'>
   document.onreadystatechange = function() {
+    Formio.setBaseUrl($('#formio_summary_anonimo').data('formserver_url'));
     Formio.createForm(document.getElementById('formio_summary_anonimo'), $('#formio_summary_anonimo').data('formserver_url') + '/printable/' + $('#formio_summary_anonimo').data('form_id') , {
       readOnly: true,
       noAlerts: true,

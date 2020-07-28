@@ -15,7 +15,6 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 class FormIOFlow extends PraticaFlow
 {
 
-
   const STEP_SELEZIONA_ENTE = 1;
 
   const STEP_MODULO_FORMIO = 2;
@@ -52,7 +51,7 @@ class FormIOFlow extends PraticaFlow
         'label' => 'steps.scia.modulo_default.label',
         'form_type' => FormIORenderType::class,
         'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
-          return $flow->getFormData()->getStatus() != Pratica::STATUS_DRAFT;
+          return $flow->getFormData()->getStatus() != Pratica::STATUS_DRAFT && $flow->getFormData()->getStatus() != Pratica::STATUS_DRAFT_FOR_INTEGRATION;
         },
       ),
     );
@@ -67,7 +66,7 @@ class FormIOFlow extends PraticaFlow
     ksort($steps);
 
     // Attivo gli step di pagamento solo se è richiesto nel servizio
-    if ($pratica->getServizio()->isPaymentRequired()) {
+    if ($pratica->getServizio()->isPaymentRequired() && $pratica->getStatus() != Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       $steps[] = array(
         'label' => 'steps.common.conferma.label',
         'form_type' => SummaryType::class,

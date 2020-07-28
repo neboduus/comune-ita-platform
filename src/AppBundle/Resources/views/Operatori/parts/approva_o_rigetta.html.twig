@@ -1,8 +1,8 @@
-{% if pratica.status < 5000 %}
+{% if pratica.status < 4100 or pratica.statusName == 'STATUS_PENDING_AFTER_INTEGRATION' %}
   <div class="row mb-5">
     {% if not pratica.servizio.praticaFlowOperatoreServiceName or pratica.servizio.praticaFlowOperatoreServiceName == 'ocsdc.form.flow.standardoperatore' %}
       {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
-      <div class="col-6 d-flex justify-content-center">
+      <div class="col-4 d-flex justify-content-center">
         <button class="btn btn-secondary" id="modal_refuse" data-toggle="modal"
                 data-target=".bd-example-modal-lg">
           <svg class="icon icon-light">
@@ -11,7 +11,16 @@
           {{ 'operatori.rigetta' | trans }}
         </button>
       </div>
-      <div class="col-6 d-flex justify-content-center">
+      <div class="col-4 d-flex justify-content-center">
+        <button class="btn btn-secondary" id="modal_request_modification" data-toggle="modal"
+                data-target=".bd-example-modal-lg">
+          <svg class="icon icon-light">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-refresh"></use>
+          </svg>
+          {{ 'operatori.richiedi_modifica' | trans }}
+        </button>
+      </div>
+      <div class="col-4 d-flex justify-content-center">
         <button class="btn btn-primary" id="modal_approve" data-toggle="modal"
                 data-target=".bd-example-modal-lg">
           <svg class="icon icon-light">
@@ -51,7 +60,9 @@
     {% if pratica.motivazioneEsito %}
       <p class="mt-2 mb-0 p-2 bg-light">{{ pratica.motivazioneEsito }}</p>
     {% endif %}
+    {% if sent_email != '' %}
     <p class="py-2"><button class="btn btn-xs btn-outline-secondary" data-toggle="collapse" data-target="#collapseEmail" aria-expanded="false" aria-controls="collapseEmail"><i class="fa fa-paper-plane-o"></i> Visualizza l'email inviata all'utente</button></p>
     <div class="collapse" id="collapseEmail">{{ sent_email|raw }}</div>
+    {% endif %}
   </div>
 {% endif %}

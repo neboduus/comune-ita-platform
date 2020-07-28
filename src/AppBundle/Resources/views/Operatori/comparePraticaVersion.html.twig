@@ -1,0 +1,96 @@
+{% extends '@App/Default/index.html.twig' %}
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" xmlns="http://www.w3.org/1999/html">
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+  <script type='text/javascript'>
+    window.onload = function () {
+
+      Formio.setBaseUrl('{{ formserver_url }}');
+      $('[data-version]').each(function () {
+        var version = $(this);
+        Formio.createForm(document.getElementById('version-'+version.data('version')), '{{ formserver_url }}/printable/' + version.data('form_id'), {
+          readOnly: true,
+          noAlerts: true,
+          language: 'it',
+          i18n: formIoI18n
+        }).then(function (form) {
+          form.submission = {
+            data: version.data('submission')
+          };
+          let delay = 3;
+          form.formReady.then(() => {
+            const disableFileLink = function () {
+              if (delay === 0) {
+                $('.formio-component-file a').each(function () {
+                  $(this).parent().html($(this).html());
+                });
+              } else {
+                delay--;
+                setTimeout(disableFileLink, 500);
+              }
+            };
+            disableFileLink();
+          });
+        });
+      });
+    };
+  </script>
+{% endblock %}
+
+{% block main_content %}
+<section id="intro" class="container px-4 my-4">
+  <div class="row">
+    <div class="col-lg-12 px-lg-4 py-lg-2">
+      <a href="{{ path('operatori_show_pratica', {'pratica': pratica.id}) }}" class="btn btn-xs btn-primary">Torna alla pratica</a>
+      <div class="my-2">
+        <h4 class="d-inline">Pratica <code>{{ pratica.id }}</code> di {{ pratica.user.fullName }}</h4>
+      </div>
+      <form class="my-3" method="get" action="{{ path('operatori_compare_pratica', {'pratica': pratica.id}) }}">
+        <div class="form-row">
+          <div class="col">
+            <select name="a" id="a" class="form-control border">
+              <option></option>
+              {% for i in version_numbers  %}
+                <option value="{{ i }}" {% if a == i %}selected="selected"{% endif %}>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col">
+            <select name="b" id="b" class="form-control border">
+              <option></option>
+              {% for i in version_numbers  %}
+                <option value="{{ i }}" {% if b == i %}selected="selected"{% endif %}>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col">
+            <input type="submit" class="btn btn-secondary" value="Confronta versioni">
+          </div>
+      </form>
+    </div>
+
+    <div class="row mt-3">
+      {% if a %}
+      <div class="col-md-6">
+        <h4>Versione {{ a }} <small>{{ a_version.loggedAt|date(ocsdc_default_datetime_format) }}</small></h4>
+        <div id="version-{{ a }}" data-version="{{ a }}" data-form_id="{{ pratica.servizio.getFormIoId }}" data-submission="{{ a_data | json_encode }}"></div>
+      </div>
+      {% endif %}
+      {% if b %}
+      <div class="col-md-6">
+        <h4>Versione {{ b }} <small>{{ b_version.loggedAt|date(ocsdc_default_datetime_format) }}</small></h4>
+        <div id="version-{{ b }}" data-version="{{ b }}" data-form_id="{{ pratica.servizio.getFormIoId }}" data-submission="{{ b_data | json_encode }}"></div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

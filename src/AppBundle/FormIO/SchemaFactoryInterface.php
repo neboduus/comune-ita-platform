@@ -5,8 +5,9 @@ namespace AppBundle\FormIO;
 interface SchemaFactoryInterface
 {
   /**
-   * @param $formIOId
+   * @param string $formIOId
+   * @param bool $useCache
    * @return Schema
    */
-  public function createFromFormId($formIOId);
+  public function createFromFormId($formIOId, $useCache = true);
 }

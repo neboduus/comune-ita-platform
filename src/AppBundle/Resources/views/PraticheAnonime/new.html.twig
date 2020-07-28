@@ -26,6 +26,7 @@
         $('.craue_formflow_buttons').addClass('d-none');
 
         Formio.icons = 'fontawesome';
+        Formio.setBaseUrl($('#formio').data('formserver_url'));
         Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
           noAlerts: true,
           language: 'it',

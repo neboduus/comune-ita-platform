@@ -132,6 +132,18 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
             } catch(AlreadyUploadException $e) {}
         }
 
+        // allego eventuali altri nuovi moduli compilati
+        /** @var Allegato $allegato */
+        foreach ($pratica->getModuliCompilati() as $allegato) {
+            try {
+                $this->validateUploadFile($pratica, $allegato);
+                $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
+            } catch(AlreadyUploadException $e){
+              $this->logger->error("Errore di protocollazione allegato: " . $allegato->getId() . " in pratica: " . $pratica->getId() );
+              // Todo: rischedulare upload allegati?
+            }
+        }
+
         $this->entityManager->persist($pratica);
         $this->entityManager->flush();
 

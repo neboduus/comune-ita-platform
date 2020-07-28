@@ -184,7 +184,7 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
    * @return array
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function createFormFromSchema($schema)
+  private function createFormFromSchema($schema)
   {
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(
@@ -211,7 +211,7 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
    * @param Servizio $serviceToClone
    * @return array
    */
-  public function cloneForm(Servizio $service, Servizio $serviceToClone)
+  public function cloneForm(Servizio $service)
   {
     $formID = $service->getFormIoId();
     $response = self::getForm($formID);
@@ -300,25 +300,8 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     return self::$cache[$this->formServerUrl.$formID];
   }
 
-  public function deleteForm(Servizio $service)
+  public function deleteForm($formID)
   {
-
-    $formID = false;
-    $flowsteps = $service->getFlowSteps();
-    if (!empty($flowsteps)) {
-      foreach ($flowsteps as $f) {
-        if (isset($f['type']) && $f['type'] == 'formio' && isset($f['parameters']['formio_id']) && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
-          break;
-        }
-      }
-    }
-    // Retrocompatibilità
-    if (!$formID) {
-      $additionalData = $service->getAdditionalData();
-      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
-    }
-
     if ($formID) {
       $client = new Client(['base_uri' => $this->formServerUrl]);
       $request = new Request(
@@ -340,7 +323,6 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     return false;
   }
 
-
   /**
    * @param $schema
    * @return array
@@ -358,8 +340,11 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     try {
       $response = $client->send($request);
       if ($response->getStatusCode() == 200) {
+        $responseBody = json_decode($response->getBody(), true);
+
         return [
           'status' => 'success',
+          'form_id' => $responseBody['_id'],
         ];
       }
 
@@ -407,26 +392,5 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
         'message' => $error,
       ];
     }
-  }
-
-  public function getFormIdFromService(Servizio $service)
-  {
-    $formID = false;
-    $flowsteps = $service->getFlowSteps();
-    if (!empty($flowsteps)) {
-      foreach ($flowsteps as $f) {
-        if (isset($f['type']) && $f['type'] == 'formio' && isset($f['parameters']['formio_id']) && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
-          break;
-        }
-      }
-    }
-    // Retrocompatibilità
-    if (!$formID) {
-      $additionalData = $service->getAdditionalData();
-      $formID = isset($additionalData['formio_id']) ? $additionalData['formio_id'] : false;
-    }
-
-    return $formID;
   }
 }

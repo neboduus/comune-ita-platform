@@ -2,23 +2,19 @@
 
 namespace AppBundle\Form\Admin\Servizio;
 
-use AppBundle\Entity\FormIO;
-use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Entity\Servizio;
-use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\FormIO\SchemaFactory;
+use AppBundle\FormIO\SchemaFactoryInterface;
+use AppBundle\Model\FlowStep;
+use AppBundle\Model\FormIOFlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Form\FormError;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Exception\GuzzleException;
 
 
 class FormIOBuilderRenderType extends AbstractType
@@ -34,14 +30,21 @@ class FormIOBuilderRenderType extends AbstractType
   private $formServerService;
 
   /**
-   * ChooseAllegatoType constructor.
-   *
-   * @param EntityManager $entityManager
+   * @var SchemaFactory
    */
-  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
+  private $schemaFactory;
+
+  /**
+   * ChooseAllegatoType constructor.
+   * @param EntityManager $entityManager
+   * @param FormServerApiAdapterService $formServerService
+   * @param SchemaFactoryInterface $schemaFactory
+   */
+  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService, SchemaFactoryInterface $schemaFactory)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
+    $this->schemaFactory = $schemaFactory;
   }
 
   /**
@@ -84,6 +87,19 @@ class FormIOBuilderRenderType extends AbstractType
         $event->getForm()->addError(
           new FormError($response['message'])
         );
+      } else {
+        $formId = $response['form_id'];
+        $flowStepList = $servizio->getFlowSteps();
+        $flowSteps = [];
+        foreach ($flowStepList as $flowStep) {
+          $flowStep = FlowStep::fromArray($flowStep);
+          if ($flowStep->getIdentifier() == $formId) {
+            $schema = $this->schemaFactory->createFromFormId($formId, false);
+            $flowStep = new FormIOFlowStep($formId, $schema->toArray());
+          }
+          $flowSteps[] = $flowStep;
+        }
+        $servizio->setFlowSteps($flowSteps);
       }
     }
 

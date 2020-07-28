@@ -4,17 +4,20 @@ namespace AppBundle\Handlers\Servizio;
 
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\PraticaFlowRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\Loggable\Entity\LogEntry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Templating\EngineInterface;
 
-class DefaultHandler extends AbstractServizioHandler
+class DefaultHandler extends AbstractServizioHandler implements FormServerAwareInterface
 {
   protected $errorMessage = "Errore inatteso: contattare il supporto";
 
@@ -109,5 +112,39 @@ class DefaultHandler extends AbstractServizioHandler
   public function getErrorMessage()
   {
     return $this->errorMessage;
+  }
+
+  protected function getServizioCurrentVersion(Servizio $servizio)
+  {
+    $repo = $this->em->getRepository(LogEntry::class);
+    /** @var LogEntry[] $logs */
+    $logs = $repo->getLogEntries($servizio);
+    if (count($logs) > 0){
+      return $logs[0]->getVersion();
+    }
+
+    return null;
+  }
+
+  public function getFormServerUrl()
+  {
+    return $this->formServerPublicUrl;
+  }
+
+  public function getFormServerUrlForPratica(Pratica $pratica)
+  {
+    $servizioVersion = $pratica->getServizioVersion();
+    if ($servizioVersion && $servizioVersion !== $this->getServizioCurrentVersion($pratica->getServizio())){
+      $formServerUrl = str_replace('/x/x', '', $this->router->generate('servizi_form', [
+        'servizioId' => $pratica->getServizio()->getId(),
+        'servizioVersion' => $servizioVersion,
+        'displayMode' => 'x',
+        'formId' => 'x',
+      ], Router::ABSOLUTE_URL));
+    }else{
+      $formServerUrl = $this->getFormServerUrl();
+    }
+
+    return $formServerUrl;
   }
 }

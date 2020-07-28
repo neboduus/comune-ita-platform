@@ -6,5 +6,5 @@ stof_doctrine_extensions:
         default:
             sluggable: false
             timestampable: true
-            loggable: false
+            loggable: true
             blameable: false

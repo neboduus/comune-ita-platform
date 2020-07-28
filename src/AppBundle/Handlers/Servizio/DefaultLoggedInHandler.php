@@ -72,6 +72,7 @@ class DefaultLoggedInHandler extends DefaultHandler
     }
     $pratica
       ->setServizio($servizio)
+      ->setServizioVersion($this->getServizioCurrentVersion($servizio))
       ->setUser($user)
       ->setStatus(Pratica::STATUS_DRAFT);
 

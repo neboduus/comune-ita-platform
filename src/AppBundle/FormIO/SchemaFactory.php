@@ -43,16 +43,17 @@ class SchemaFactory implements SchemaFactoryInterface
 
   /**
    * @param $formIOId
+   * @param bool $useCache
    * @return Schema
    */
-  public function createFromFormId($formIOId)
+  public function createFromFormId($formIOId, $useCache = true)
   {
     if (empty(trim($formIOId))) {
       return new Schema();
     }
 
+    $this->useCache = $useCache;
     $cacheId = $this->provider->getFormServerUrl().$formIOId;
-
     if ($this->useCache && $this->hasCache($cacheId)) {
       return $this->getCache($cacheId);
     }

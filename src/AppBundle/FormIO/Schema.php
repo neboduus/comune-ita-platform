@@ -110,4 +110,13 @@ class Schema
 
     return $required;
   }
+
+  public function toArray()
+  {
+    return [
+      'id' => $this->getId(),
+      'server' => $this->getServer(),
+      'sources' => $this->sources,
+    ];
+  }
 }

@@ -9,13 +9,20 @@ use AppBundle\Entity\ServizioRepository;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Model\FlowStep;
+use AppBundle\Model\FormIOFlowStep;
 use Doctrine\ORM\EntityRepository;
+use Gedmo\Loggable\Entity\LogEntry;
+use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Router;
 
 
 /**
@@ -142,4 +149,76 @@ class ServiziController extends Controller
     ];
   }
 
+  /**
+   * @Route("/formio/{servizioId}/{servizioVersion}/{displayMode}/{formId}", name="servizi_form")
+   * @param Request $request
+   * @param $servizioId
+   * @param $servizioVersion
+   * @param $displayMode
+   * @param $formId
+   * @return JsonResponse
+   */
+  public function serviziFormAction(Request $request, $servizioId, $servizioVersion, $displayMode, $formId)
+  {
+    $request->setRequestFormat('json');
+
+    $response = new JsonResponse();
+    $response->setPublic();
+
+    $cache = new FilesystemAdapter();
+    $formData = $cache->getItem("formio-{$servizioId}-{$servizioVersion}-{$displayMode}-{$formId}");
+
+    if ($formData->isHit()) {
+
+      return $response
+        ->setStatusCode(304)
+        ->setJson($formData->get());
+
+    }else{
+      /** @var LogEntryRepository $repo */
+      $repo = $this->getDoctrine()->getRepository(LogEntry::class);
+      /** @var Servizio $servizio */
+      $servizio = $this->getDoctrine()->getManager()->find(Servizio::class, $servizioId);
+
+      $repo->revert($servizio, $servizioVersion);
+
+      foreach ($servizio->getFlowSteps() as $flowStep) {
+        $step = FlowStep::fromArray($flowStep);
+        if ($step->getType() == FormIOFlowStep::TYPE && $step->hasParameter('formio_data')) {
+          $sources = $step->getParameter('formio_data')['sources'];
+
+          if (isset($sources[$formId])) {
+            $json = json_encode($sources[$formId]);
+            if ($displayMode === 'printable') {
+              $json = str_replace('"display":"wizard"', '"display":"form"', $json);
+            }
+
+            $formData->set($json);
+            $cache->save($formData);
+
+            return $response
+              ->setStatusCode(200)
+              ->setJson($json);
+          }
+
+        }
+      }
+    }
+
+    return $response->setStatusCode(404);
+  }
+
+  /**
+   * @Route("/formio/{servizioId}/{servizioVersion}/{displayMode}/{formId}/submission", name="servizi_form_submission")
+   * @param Request $request
+   * @param $servizioId
+   * @param $servizioVersion
+   * @param $displayMode
+   * @param $formId
+   * @return JsonResponse
+   */
+  public function serviziFormSubmissionAction(Request $request, $servizioId, $servizioVersion, $displayMode, $formId)
+  {
+    return JsonResponse::create();
+  }
 }

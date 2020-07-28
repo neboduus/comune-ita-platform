@@ -1,3 +1,20 @@
+{% if can_compile is defined and can_compile and pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
+
+  <div class="col-12 mt-5">
+    <div class="alert alert-danger mb-5">
+      <p><strong>{{ 'pratica.pratica_da_modificare'|trans }} </strong></p>
+      <p>{{ pratica.richiesteIntegrazione.first.description }}</p>
+      <p class="m-0">
+        <a class="btn btn-success btn-lg mb-0"
+           href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+          <i class="fa fa-pencil"></i>
+          {{ 'pratica.modifica_pratica'|trans }}
+        </a>
+      </p>
+    </div>
+  </div>
+{% endif %}
+
 <div id="pratica-summary">
 
   {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
@@ -19,19 +36,36 @@
 
   {% elseif pratica.statusName == 'STATUS_PAYMENT_OUTCOME_PENDING' %}
     <div class="alert alert-info mb-5"><i class="fa fa-refresh fa-spin fa-fw"></i> Siamo in attesa dell'esito del pagamento</div>
-  {% elseif pratica.status >= 1900 %}
+
+  {% elseif pratica.status >= 1900 and pratica.statusName != 'STATUS_DRAFT_FOR_INTEGRATION' %}
     {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}
 
-  {% if (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length == 0) or ( pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) %}
-    {% if formserver_url is defined and pratica.status < 2000 %}
+  {# Integrazioni #}
+  {% if pratica.richiesteIntegrazione|length > 0 and pratica.statusName != 'STATUS_DRAFT_FOR_INTEGRATION' %}
+    <div class="row bg-white">
+      <div class="col-sm-4"><strong>{{ 'pratica.dettaglio.richiesta_modifiche'|trans }}</strong></div>
+      <div class="col-sm-8">
+        <dl class="row bg-white pt-0">
+          {% for allegato in pratica.richiesteIntegrazione %}
+            <dt class="col-sm-3">{{ allegato.createdAt|date(ocsdc_default_date_format) }}</dt>
+            <dd class="col-sm-9">{{ allegato.description }}</dd>
+          {% endfor %}
+        </dl>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length == 0) or ( pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
+    {% if formserver_url is defined and (pratica.status < 2000 or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') %}
       <div id="formio_summary" class="formio-front formio-summary"
            data-formserver_url="{{ formserver_url }}"
-           data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+           data-form_id="{{ pratica.servizio.getFormIoId }}"
            data-submission="{% if pratica.dematerializedForms.data is defined %}{{ pratica.dematerializedForms.data | json_encode }}{% else %}[]{% endif %}">
       </div>
       <script type='text/javascript'>
         window.onload = function () {
+          Formio.setBaseUrl($('#formio_summary').data('formserver_url'));
           Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
             readOnly: true,
             noAlerts: true,
@@ -48,6 +82,7 @@
   {% endif %}
 
   {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+
 </div>
 
 

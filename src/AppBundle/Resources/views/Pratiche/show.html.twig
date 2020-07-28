@@ -15,7 +15,10 @@
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
 
-  {% if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo ) %}
+  {% if pratica.statusName == 'STATUS_PRE_SUBMIT'
+    or (pratica.statusName == 'STATUS_SUBMITTED' and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo )
+    or pratica.statusName == 'STATUS_PRE_SUBMITTED_AFTER_INTEGRATION'
+    or (pratica.status == 'STATUS_SUBMITTED_AFTER_INTEGRATION' and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo )%}
   <script>
     $(document).ready(function() {
       setInterval(function() {
@@ -32,8 +35,21 @@
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
-        <h1>{{ pratica.servizio.name }}</h1>
+        <h1 data-status="{{ pratica.status }}" data-status_name="{{ pratica.statusName }}">{{ pratica.servizio.name }}</h1>
       </div>
+
+      {# bottone di ripresa pratica in bozza (il bottone per inserire modifiche è in summary) #}
+      {% if can_compile and pratica.statusName == 'STATUS_DRAFT' %}
+        <div class="col-12 mt-5 text-center">
+          <p>
+            <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"
+               href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+              <i class="fa fa-pencil"></i>
+              {{ 'pratica.vai_alla_pratica'|trans }}
+            </a>
+          </p>
+        </div>
+      {% endif %}
 
       <div class="col-lg-8 px-lg-4 py-lg-2">
         {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
@@ -63,18 +79,6 @@
               </div>
             </div>
           {% endif %}
-          <div class="col-12 mt-5">
-            {% if can_compile %}
-              <h4>Azioni</h4>
-              <p>
-                <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"
-                   href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                  <i class="fa fa-arrow-circle-o-right"></i>
-                  {{ 'pratica.vai_alla_pratica'|trans }}
-                </a>
-              </p>
-            {% endif %}
-          </div>
         </div>
         {#{{ include('@App/Default/parts/chat.html.twig') }}#}
       </div>

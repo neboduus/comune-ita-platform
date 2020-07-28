@@ -13,6 +13,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
+use AppBundle\Handlers\Servizio\FormServerAwareInterface;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -193,12 +194,14 @@ class PraticheController extends Controller
     }
 
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
-    try {
-      $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
-    } catch (ForbiddenAccessException $e) {
-      $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
+    if ($pratica->getStatus() !== Pratica::STATUS_DRAFT) {
+      try {
+        $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
+      } catch (ForbiddenAccessException $e) {
+        $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
 
-      return $this->redirectToRoute('pratiche');
+        return $this->redirectToRoute('pratiche');
+      }
     }
 
     $user = $this->getUser();
@@ -258,11 +261,14 @@ class PraticheController extends Controller
       }
     }
 
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
     return [
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $formServerUrl,
       'user' => $user,
       //'threads' => $thread,
     ];
@@ -302,7 +308,8 @@ class PraticheController extends Controller
 
     $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
       && $pratica->getUser()->getId() == $user->getId();
-    if ($canCompile) {
+
+    if ($canCompile && $pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
       try {
         $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
@@ -311,10 +318,14 @@ class PraticheController extends Controller
       }
     }
 
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
     $result = [
       'pratica' => $pratica,
       'user' => $user,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $formServerUrl,
       'can_compile' => $canCompile,
       //'threads' => $thread,
     ];

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\PraticaRepository")
@@ -47,6 +48,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "form_io" = "FormIO"
  * })
  * @ORM\HasLifecycleCallbacks
+ * @Gedmo\Loggable
  */
 class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 {
@@ -65,6 +67,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   const STATUS_REQUEST_INTEGRATION = 4100;
   const STATUS_DRAFT_FOR_INTEGRATION = 4200;
+  const STATUS_PRE_SUBMITTED_AFTER_INTEGRATION = 4250;
   const STATUS_SUBMITTED_AFTER_INTEGRATION = 4300;
   const STATUS_REGISTERED_AFTER_INTEGRATION = 4400;
   const STATUS_PENDING_AFTER_INTEGRATION = 4500;
@@ -145,6 +148,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    * @ORM\JoinColumn(name="servizio_id", referencedColumnName="id", nullable=false)
    */
   private $servizio;
+
+  /**
+   * @ORM\Column(type="integer", name="servizio_version", nullable=true)
+   */
+  private $servizioVersion;
 
   /**
    * @ORM\ManyToOne(targetEntity="Erogatore")
@@ -1860,6 +1868,25 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function getChildren()
   {
     return $this->children;
+  }
+
+  /**
+   * @return int|null
+   */
+  public function getServizioVersion()
+  {
+    return $this->servizioVersion;
+  }
+
+  /**
+   * @param int|null $servizioVersion
+   * @return Pratica
+   */
+  public function setServizioVersion($servizioVersion)
+  {
+    $this->servizioVersion = $servizioVersion;
+
+    return $this;
   }
 
 }

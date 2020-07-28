@@ -59,6 +59,18 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
    */
   private $parameters = array();
 
+  final public static function fromArray(array $data)
+  {
+    $instance = new static();
+    foreach ($data as $key => $value){
+      if (property_exists($instance, $key)){
+        $instance->{$key} = $value;
+      }
+    }
+
+    return $instance;
+  }
+
   /**
    * @return string
    */
@@ -184,6 +196,15 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
   {
     $this->parameters[$key] = $value;
     return $this;
+  }
+
+  /**
+   * @param $key
+   * @return bool
+   */
+  public function hasParameter($key)
+  {
+    return isset($this->parameters[$key]);
   }
 
   /**

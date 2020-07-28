@@ -63,6 +63,7 @@
   <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
   <script>
     $(document).ready(function () {
+      let formIo = $('#formio');
       let formIoIdInput = $('#formio_render_form_id');
       if (formIoIdInput.length) {
         let customErrorContainer = $('#formio-custom-errors');
@@ -71,7 +72,8 @@
         $('.craue_formflow_buttons').addClass('d-none');
 
         Formio.icons = 'fontawesome';
-        Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + formIoIdInput.val(), {
+        Formio.setBaseUrl(formIo.data('formserver_url'));
+        Formio.createForm(document.getElementById('formio'), formIo.data('formserver_url') + '/form/' + formIoIdInput.val(), {
           noAlerts: true,
           language: 'it',
           i18n: formIoI18n,
@@ -161,19 +163,19 @@
       <div class="col-lg-12 px-lg-4 py-lg-2">
         {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
           <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
-          <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
-          {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
-            {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
-            <div class="alert alert-warning">
-              {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
-              (
-              <small>
-                <a
-                  href="{{ path( download_allegato_path, {'allegato': pratica.getRichiestaDiIntegrazioneAttiva.id}) }}">{{ 'allegato.scarica_allegato_richiesta_integrazione'|trans }}</a>
-              </small>
-              )
-            </div>
-          {% endif %}
+          <div class="alert alert-danger mb-5">
+            {% if pratica.servizio.getFormIoId and pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
+              <p><strong>{{ 'pratica.pratica_da_modificare'|trans }} </strong></p>
+              <p class="m-0">{{ pratica.richiesteIntegrazione.last.description }}</p>
+            {% else %}
+              <p><strong>{{ 'pratica.integrazione_pratica_description'|trans() }}<strong></p>
+              {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
+                {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
+                {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
+                (<small> <a href="{{ path( download_allegato_path, {'allegato': pratica.getRichiestaDiIntegrazioneAttiva.id}) }}">{{ 'allegato.scarica_allegato_richiesta_integrazione'|trans }}</a></small>)
+              {% endif %}
+            {% endif %}
+          </div>
         {% else %}
           <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
         {% endif %}

@@ -9,7 +9,7 @@ use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
-use AppBundle\Model\FlowStep;
+use AppBundle\Model\FormIOFlowStep;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use GuzzleHttp\Client;
@@ -389,16 +389,9 @@ class AdminController extends Controller
           $response = $this->container->get('ocsdc.formserver')->cloneFormFromRemote( $service, $remoteUrl .'/form');
           if ($response['status'] == 'success') {
             $formId = $response['form_id'];
-            $flowStep = new FlowStep();
-            $flowStep
-              ->setIdentifier($formId)
-              ->setType('formio')
-              ->addParameter('formio_id', $formId);
+            $schema = $this->get('formio.factory')->createFromFormId($formId);
+            $flowStep = new FormIOFlowStep($formId, $schema->toArray());
             $service->setFlowSteps([$flowStep]);
-            // Backup
-            $additionalData = $service->getAdditionalData();
-            $additionalData['formio_id'] = $formId;
-            $service->setAdditionalData($additionalData);
           } else {
             $em->remove($service);
             $em->flush();
@@ -607,7 +600,7 @@ class AdminController extends Controller
 
     try {
       if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
-        $this->container->get('ocsdc.formserver')->deleteForm($servizio);
+        $this->container->get('ocsdc.formserver')->deleteForm($servizio->getFormIoId());
       }
 
       $em = $this->getDoctrine()->getManager();

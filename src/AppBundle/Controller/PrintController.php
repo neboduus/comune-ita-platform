@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Handlers\Servizio\FormServerAwareInterface;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -61,8 +63,12 @@ class PrintController extends Controller
       }
     }
 
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
     return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $formServerUrl,
       'form' => $form->createView(),
       'pratica' => $pratica,
       'user' => $user,
@@ -117,8 +123,12 @@ class PrintController extends Controller
 
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
     return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $formServerUrl,
       'form' => $form->createView(),
       'pratica' => $pratica
     ];
@@ -171,8 +181,12 @@ class PrintController extends Controller
 
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
     return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $formServerUrl,
       'form' => $form->createView(),
       'pratica' => $pratica
     ];

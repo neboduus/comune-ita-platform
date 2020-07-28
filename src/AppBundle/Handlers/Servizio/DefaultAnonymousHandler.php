@@ -95,6 +95,7 @@ class DefaultAnonymousHandler extends DefaultHandler
     }
     $pratica
       ->setServizio($servizio)
+      ->setServizioVersion($this->getServizioCurrentVersion($servizio))
       ->setStatus(Pratica::STATUS_DRAFT)
       ->setHash(hash('sha256', $pratica->getId()).'-'.(new \DateTime())->getTimestamp());
 

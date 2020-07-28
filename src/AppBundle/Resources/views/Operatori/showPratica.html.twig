@@ -15,22 +15,29 @@
           crossorigin="anonymous"></script>
 
   <script>
-      $(document).ready(function () {
-          $('#modal_approve').on('click', function () {
-              $('#approva_o_rigetta_esito_0').prop('checked', true);
-              $('#modalTitle').html('Approva pratica');
-              $('#email_text').show();
-          });
-          $('#modal_refuse').on('click', function () {
-              $('#approva_o_rigetta_esito_1').prop('checked', true);
-              $('#modalTitle').html('Rigetta pratica');
-              $('#email_text').hide();
-          });
-      })
+    $(document).ready(function () {
+      $('#modal_approve').on('click', function () {
+        $('#approva_o_rigetta_esito_0').prop('checked', true);
+        $('#modalTitle').html('Approva pratica');
+        $('#email_text').show();
+      });
+      $('#modal_refuse').on('click', function () {
+        $('#approva_o_rigetta_esito_1').prop('checked', true);
+        $('#modalTitle').html('Rigetta pratica');
+        $('#email_text').hide();
+      });
+      $('#modal_request_modification').on('click', function () {
+        $('#approva_o_rigetta_esito_2').prop('checked', true);
+        $('#modalTitle').html('Richiedi modifica');
+        $('#email_text').hide();
+      });
+    })
   </script>
 
   <script type='text/javascript'>
       window.onload = function () {
+
+          Formio.setBaseUrl($('#formio_summary').data('formserver_url'));
           Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
               readOnly: true,
               noAlerts: true,

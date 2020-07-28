@@ -6,7 +6,10 @@ use AppBundle\Entity\FormIO;
 use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\FormIO\SchemaFactory;
+use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
+use AppBundle\Model\FormIOFlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Client;
@@ -34,14 +37,21 @@ class FormIOTemplateType extends AbstractType
   private $formServerService;
 
   /**
+   * @var SchemaFactory
+   */
+  private $schemaFactory;
+
+  /**
    * FormIOTemplateType constructor.
    * @param EntityManager $entityManager
    * @param FormServerApiAdapterService $formServerService
+   * @param SchemaFactoryInterface $schemaFactory
    */
-  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
+  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService, SchemaFactoryInterface $schemaFactory)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
+    $this->schemaFactory = $schemaFactory;
   }
 
   /**
@@ -86,26 +96,19 @@ class FormIOTemplateType extends AbstractType
         } else {
           $serviceToClone = $this->em->getRepository('AppBundle:Servizio')->find($serviceID);
           if ($serviceToClone instanceof Servizio) {
-            $this->cloneService($servizio, $serviceToClone);
-            $response = $this->formServerService->cloneForm($servizio, $serviceToClone);
+            $servizio->setName($serviceToClone->getName() . " (copia)");
+            $servizio->setDescription($serviceToClone->getDescription() ?? '');
+            $response = $this->formServerService->cloneForm($serviceToClone);
           }
         }
 
         if ($response['status'] == 'success') {
 
           $formId = $response['form_id'];
-          $flowStep = new FlowStep();
-          $flowStep
-            ->setIdentifier($formId)
-            ->setType('formio')
-            ->addParameter('formio_id', $formId);
+          $schema = $this->schemaFactory->createFromFormId($formId);
+          $flowStep = new FormIOFlowStep($formId, $schema->toArray());
 
           $servizio->setFlowSteps([$flowStep]);
-
-          // Backup
-          $additionalData = $servizio->getAdditionalData();
-          $additionalData['formio_id'] = $formId;
-          $servizio->setAdditionalData($additionalData);
 
         } else {
           $event->getForm()->addError(
@@ -130,14 +133,6 @@ class FormIOTemplateType extends AbstractType
   private function setupHelperData(FormIO $pratica, TestiAccompagnatoriProcedura $helper)
   {
     return json_encode($pratica->getDematerializedForms());
-  }
-
-  private function cloneService(Servizio $service, Servizio $ServiceToClone)
-  {
-
-    $service->setName($ServiceToClone->getName() . " (copia)");
-    $service->setDescription($ServiceToClone->getDescription() ?? '');
-
   }
 
   public function getBlockPrefix()

@@ -10,15 +10,19 @@ use AppBundle\Entity\FormIO;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\MessageType;
+use AppBundle\Form\Operatore\Base\ApprovaORigettaORichiediModificaType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
+use AppBundle\Handlers\Servizio\FormServerAwareInterface;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
-use AppBundle\Model\FeedbackMessage;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use Gedmo\Loggable\Entity\LogEntry;
 use League\Csv\Writer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -40,6 +44,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 
 /**
  * Class OperatoriController
@@ -530,15 +535,22 @@ class OperatoriController extends Controller
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
-    $modalForm = $this->createForm('AppBundle\Form\Operatore\Base\ApprovaORigettaType')->handleRequest($request);
+    $modalForm = $this->createForm(ApprovaORigettaORichiediModificaType::class)->handleRequest($request);
     if ($modalForm->isSubmitted()) {
-      $pratica->setEsito($modalForm->getData()['esito']);
-      if (isset($modalForm->getData()['motivazioneEsito'])) {
-        $pratica->setMotivazioneEsito($modalForm->getData()['motivazioneEsito']);
-      }
-
+      $formData = $modalForm->getData();
+      $motivazione = isset($formData['motivazioneEsito']) ? $formData['motivazioneEsito'] : '';
       try {
-        $this->completePraticaFlow($pratica);
+        switch ($formData['esito']) {
+          case 0:
+          case 1:
+            $pratica->setEsito((bool)$formData['esito']);
+            $pratica->setMotivazioneEsito($motivazione);
+            $this->completePraticaFlow($pratica);
+            break;
+          case 2:
+            $this->requestIntegrations($pratica, $motivazione);
+            break;
+        }
       } catch (\Exception $e) {
         $this->addFlash('error', $e->getMessage());
       }
@@ -566,6 +578,12 @@ class OperatoriController extends Controller
 
     $sentEmail = $this->getFeedbackMessage($pratica);
 
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
+    $versions = $repo = $this->getDoctrine()->getRepository(LogEntry::class)->getLogEntries($pratica);
+
     return [
       'pratiche_recenti' => $praticheRecenti,
       'form' => $form->createView(),
@@ -575,7 +593,8 @@ class OperatoriController extends Controller
       'threads' => $threads,
       'fiscal_code' => $fiscalCode,
       'sent_email' => $sentEmail,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $formServerUrl,
+      'versions' => $versions,
     ];
   }
 
@@ -701,7 +720,6 @@ class OperatoriController extends Controller
       ]
     );
   }
-
 
   /**
    * @Route("/list",name="operatori_list_by_ente")
@@ -902,6 +920,13 @@ class OperatoriController extends Controller
     }
   }
 
+  private function requestIntegrations(Pratica $pratica, $message)
+  {
+    $richiestaIntegrazione = new RichiestaIntegrazioneDTO([], null, $message);
+    $pratica->setLastCompiledStep(0);
+    $this->container->get('ocsdc.pratica_integration_service')->requestIntegration($pratica, $richiestaIntegrazione);
+  }
+
   /**
    * @param OperatoreUser $operatore
    * @param Pratica $pratica
@@ -930,7 +955,6 @@ class OperatoriController extends Controller
 
     return $threads;
   }
-
 
   private function populateSelectStatusServicesPratiche()
   {
@@ -1049,7 +1073,70 @@ class OperatoriController extends Controller
       $data['series'][] = $temp;
     }
     $data['categories'] = $categories;
-    return new Response(json_encode($data), 200);
 
+    return new Response(json_encode($data), 200);
+  }
+
+  /**
+   * @Route("/{pratica}/compare",name="operatori_compare_pratica")
+   * @Template()
+   * @param Pratica|DematerializedFormPratica $pratica
+   * @param Request $request
+   * @return array|RedirectResponse
+   */
+  public function comparePraticaVersionAction(Pratica $pratica, Request $request)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
+    /** @var LogEntry[] $versions */
+    $versions = $repo = $this->getDoctrine()->getRepository(LogEntry::class)->getLogEntries($pratica);
+
+    if (count($versions) <= 1){
+      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+    }
+
+    $a = $request->get('a', false);
+    $b = $request->get('b', false);
+    if ($b === $a){
+      $b = false;
+    }
+
+    $aVersion = null;
+    $bVersion = null;
+    $aData = [];
+    $bData = [];
+
+    $versionNumbers = [];
+    foreach ($versions as $version){
+      $versionNumbers[] = $version->getVersion();
+      if ($a ==  $version->getVersion()){
+        $aData = $version->getData()['dematerializedForms']['data'] ?? [];
+        $aVersion = $version;
+      }
+      if ($b ==  $version->getVersion()){
+        $bData = $version->getData()['dematerializedForms']['data'] ?? [];
+        $bVersion = $version;
+      }
+    }
+
+    return [
+      'pratica' => $pratica,
+      'user' => $this->getUser(),
+      'formserver_url' => $formServerUrl,
+      'versions' => $versions,
+      'version_numbers' => $versionNumbers,
+      'a' => $a,
+      'b' => $b,
+      'a_version' => $aVersion,
+      'b_version' => $bVersion,
+      'a_data' => $aData,
+      'b_data' => $bData,
+    ];
   }
 }

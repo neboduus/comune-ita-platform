@@ -526,7 +526,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       }
       $pdf = $this->createForPratica($pratica);
       $pratica->addModuloCompilato($pdf);
-      $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+      if ($pratica->getStatus() == Pratica::STATUS_PRE_SUBMIT) {
+        $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+      }elseif ($pratica->getStatus() == Pratica::STATUS_PRE_SUBMITTED_AFTER_INTEGRATION) {
+        $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
+      }
     }
   }
 }

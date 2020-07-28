@@ -20,7 +20,7 @@
         </div>
       </div>
     {% endif %}
-    <div class="row" style="background-color: #fff">
+    <div class="row bg-white">
       <div class="col-sm-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
       <div class="col-sm-8">
         {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}
@@ -31,14 +31,14 @@
   {# Bottone per download modulo compilato (solo operatore) #}
   {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
 
-  {% if pratica.numeroProtocollo or (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length > 0) %}
+  {% if pratica.statusName != 'STATUS_PRE_SUBMITTED_AFTER_INTEGRATION' and (pratica.numeroProtocollo or (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length > 0)) %}
     <div class="col-12 my-2">
       {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
     </div>
   {% else %}
   <div class="col-12 my-2">
     {# In attesa di generazione del pdf #}
-    {% if pratica.status == 1900 %}
+    {% if pratica.statusName == 'STATUS_PRE_SUBMIT' or pratica.statusName == 'STATUS_PRE_SUBMITTED_AFTER_INTEGRATION' %}
       {% if pratica.servizio.isProtocolRequired %}
         <p class="text-center m-0">
           <a href="#" class="btn btn-lg btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_compilato'|trans }}</a>

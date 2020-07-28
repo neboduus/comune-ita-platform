@@ -69,7 +69,7 @@ class IntegrationsDataType extends AbstractType
       'Pratica accettata' => Pratica::STATUS_COMPLETE,
       'Pratica rifiutata' => Pratica::STATUS_CANCELLED
     ];
-    
+
     /** @var Servizio $service */
     $service = $builder->getData();
     /** @var Ente $ente */
@@ -120,7 +120,7 @@ class IntegrationsDataType extends AbstractType
       ]);
       $this->em->persist($service);
 
-      $formSchema = $this->formServerService->getFormSchema($this->formServerService->getFormIdFromService($service));
+      $formSchema = $this->formServerService->getFormSchema($service->getFormIoId());
       /** @var BackOfficeInterface $backOfficeHandler */
       $backOfficeHandler = $this->container->get($data['action']);
 

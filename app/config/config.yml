@@ -100,6 +100,13 @@ doctrine:
         dql:
             string_functions:
                 FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
+        mappings:
+            gedmo_loggable:
+                type: annotation
+                prefix: Gedmo\Loggable\Entity
+                dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Loggable/Entity"
+                alias: GedmoLoggable # (optional) it will default to the name set for the mapping
+                is_bundle: false
 
 # Swiftmailer Configuration
 swiftmailer:

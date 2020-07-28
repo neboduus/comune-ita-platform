@@ -17,11 +17,11 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use JMS\Serializer\Annotation\AccessorOrder;
 
-
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ServizioRepository")
  * @ORM\Table(name="servizio")
  * @ORM\HasLifecycleCallbacks
+ * @Gedmo\Loggable
  */
 class Servizio
 {
@@ -183,6 +183,7 @@ class Servizio
    * @var FlowStep[]
    * @ORM\Column(type="json_array", nullable=true)
    * @SWG\Property(property="flow_steps", type="array", @SWG\Items(ref=@Model(type=FlowStep::class)))
+   * @Gedmo\Versioned
    */
   private $flowSteps;
 

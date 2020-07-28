@@ -5,6 +5,7 @@ namespace AppBundle\Form\Base;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormAllegatiContainer;
+use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\FormIO\SchemaFactoryInterface;
@@ -151,7 +152,11 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMIT);
 
     } elseif ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
-      $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
+      if ($pratica instanceof FormIO){
+        $this->statusService->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMITTED_AFTER_INTEGRATION);
+      }else {
+        $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
+      }
     }
   }
 
