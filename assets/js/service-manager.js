@@ -191,7 +191,8 @@ $(document).ready(function () {
           components: {
             htmlelement: true,
             columns: true,
-            pagebreak: true
+            pagebreak: true,
+            table: true
           }
         },
       },
