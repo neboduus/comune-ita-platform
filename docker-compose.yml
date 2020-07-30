@@ -81,8 +81,9 @@ services:
       - "443:443"
     labels:
       traefik.enable: true
-      traefik.frontend.rule: 'Host:stanzadelcittadino.localtest.me'
       traefik.http.routers.apache.entrypoints: web
+      traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+
 
   traefik:
     image: traefik:v2.2
@@ -120,8 +121,8 @@ services:
       - mongo
     labels:
       traefik.enable: true
-      traefik.frontend.rule: 'Host:formserver.localtest.me'
       traefik.http.routers.formserver.entrypoints: web
+      traefik.http.routers.apache.rule: 'Host(`formserver.localtest.me`)'
 
   gotemberg:
     image: thecodingmachine/gotenberg:6
