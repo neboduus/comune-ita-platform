@@ -639,14 +639,20 @@ services:
   ocsdc.form.flow.occupazionesuolopubblico:
     class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.occupazionesuolopubblico }
 
   ocsdc.form.flow.scia_pratica_edilizia:
     class: AppBundle\Form\Scia\SciaPraticaEdiliziaFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.scia_pratica_edilizia }
 
   ocsdc.form.flow.contributoassociazioni:
     class: AppBundle\Form\ContributoAssociazioni\ContributoAssociazioniFlow
     parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.contributoassociazioni }
 
   ocsdc.p7m_signature_check:
     class: AppBundle\Services\P7MSignatureCheckService
