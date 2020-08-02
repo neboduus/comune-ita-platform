@@ -324,10 +324,15 @@ class AdminController extends Controller
 
     $data = [];
     foreach ($items as $s) {
+      $descLimit = 150;
+      $description = strip_tags($s->getDescription());
+      if (strlen($description) > $descLimit) {
+        $description = substr($description, 0, $descLimit) . '...';
+      }
       $data [] = [
         'id' => $s->getId(),
         'title' => $s->getName(),
-        'description' => $s->getDescription()
+        'description' => $description
       ];
     }
 
