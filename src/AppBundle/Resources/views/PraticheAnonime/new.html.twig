@@ -99,7 +99,7 @@
     <div class="row mt-2">
       <div class="col-lg-4 px-lg-4 order-lg-2">
         {% if pratica.servizio.loginSuggested and flow.currentStep != flow.stepCount %}
-        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
+          {% if flow.getCurrentStepNumber() == 1 %}
           <div class="callout">
             <div class="callout-title">
               <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
