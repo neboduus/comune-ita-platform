@@ -70,13 +70,43 @@ $(document).ready(function () {
   }
 
   if ($("#general_data_flow_service_step").length /*|| $("#feedback_messages_data_flow_service_step").length*/) {
+    const limitChars = 2000;
     $('textarea').summernote({
       toolbar: [
-        ['style', ['style']],
+        ['style', ['bold', 'italic', 'underline', 'clear']],
         ['para', ['ul', 'ol', 'paragraph']],
         ['insert', ['link']],
         ['view', ['codeview']],
-      ]
+      ],
+      callbacks: {
+        onInit: function() {
+          let chars = $(this).parent().find(".note-editable").text();
+          let totalChars = chars.length;
+
+          $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di '+limitChars+' caratteri (<span class="total-chars">'+ totalChars +'</span> / <span class="max-chars"> '+limitChars+'</span>)</small>')
+        },
+        /*onKeydown: function() {
+          let chars = $(this).parent().find(".note-editable").text();
+          let totalChars = chars.length;
+
+          //Check and Limit Charaters
+          if(totalChars >= limitChars){
+            return false;
+          }
+        },*/
+        onChange: function() {
+          let chars = $(this).parent().find(".note-editable").text();
+          let totalChars = chars.length;
+
+          //Update value
+          $(this).parent().find(".total-chars").text(totalChars);
+
+          //Check and Limit Charaters
+          if(totalChars >= limitChars){
+            return false;
+          }
+        }
+      }
     });
   }
 
