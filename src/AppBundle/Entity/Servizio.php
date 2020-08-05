@@ -278,6 +278,20 @@ class Servizio
   private $scheduledTo;
 
   /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @Serializer\Exclude()
+   */
+  private $postSubmitValidationExpression;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true)
+   * @Serializer\Exclude()
+   */
+  private $postSubmitValidationMessage;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -984,6 +998,38 @@ class Servizio
   public function setScheduledTo(?\DateTime $scheduledTo)
   {
     $this->scheduledTo = $scheduledTo;
+  }
+
+  /**
+   * @return string
+   */
+  public function getPostSubmitValidationExpression()
+  {
+    return $this->postSubmitValidationExpression;
+  }
+
+  /**
+   * @param string $postSubmitValidationExpression
+   */
+  public function setPostSubmitValidationExpression($postSubmitValidationExpression)
+  {
+    $this->postSubmitValidationExpression = $postSubmitValidationExpression;
+  }
+
+  /**
+   * @return string
+   */
+  public function getPostSubmitValidationMessage()
+  {
+    return $this->postSubmitValidationMessage;
+  }
+
+  /**
+   * @param string $postSubmitValidationMessage
+   */
+  public function setPostSubmitValidationMessage($postSubmitValidationMessage)
+  {
+    $this->postSubmitValidationMessage = $postSubmitValidationMessage;
   }
 
 }

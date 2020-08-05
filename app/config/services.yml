@@ -770,6 +770,10 @@ services:
     class: AppBundle\FormIO\Validator
     arguments: ['@form.factory', '@formio.factory']
 
+  formio.expression_validator:
+    class: AppBundle\FormIO\ExpressionValidator
+    arguments: ['@form.factory', '@formio.factory', '@doctrine.orm.entity_manager', '@logger']
+
   AppBundle\FormIO\SchemaFactoryInterface: '@formio.factory'
 
   AppBundle\FormIO\FormIOType:
@@ -783,6 +787,13 @@ services:
     arguments: ['@formio.validator']
     tags:
       - { name: validator.constraint_validator, alias: 'formio.constraint_validator' }
+
+  formio.expression_based_validator:
+    class: AppBundle\Validator\Constraints\ExpressionBasedFormIOConstraintValidator
+    public: true
+    arguments: ['@formio.expression_validator']
+    tags:
+      - { name: validator.constraint_validator, alias: 'formio.expression_based_validator' }
 
   log_resolver.applicant_browser:
     class: AppBundle\Logging\ApplicantBrowserEventResolver

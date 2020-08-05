@@ -2,46 +2,34 @@
 
 namespace AppBundle\Controller;
 
-
 use AppBundle\Dto\Service;
 use AppBundle\Entity\AuditLog;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
-
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Model\FlowStep;
-use AppBundle\Services\FormServerApiAdapterService;
-use AppBundle\Services\InstanceService;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
+use Omines\DataTablesBundle\Column\DateTimeColumn;
+use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
-use Omines\DataTablesBundle\Adapter\ArrayAdapter;
-use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-
-use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 
 /**
@@ -69,7 +57,7 @@ class AdminController extends Controller
    * @Route("/ente", name="admin_edit_ente")
    * @Template()
    * @param Request $request
-   * @return array|Response
+   * @return array|RedirectResponse
    */
   public function editEnteAction(Request $request)
   {
@@ -488,6 +476,56 @@ class AdminController extends Controller
       'flow' => $flowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'user' => $user
+    ];
+  }
+
+  /**
+   * @Route("/servizio/{servizio}/custom-validation", name="admin_servizio_custom_validation")
+   * @ParamConverter("servizio", class="AppBundle:Servizio")
+   * @Template()
+   * @param Request $request
+   * @param Servizio $servizio
+   *
+   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   */
+  public function editCustomValidationServizioAction(Request $request, Servizio $servizio)
+  {
+    $user = $this->getUser();
+
+    $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+
+    $form = $this->createFormBuilder(null)->add(
+      "post_submit_validation_expression", TextareaType::class, [
+      "label" => 'Validazione al submit',
+      'required' => false,
+      'data' => $servizio->getPostSubmitValidationExpression()
+    ])->add(
+      "post_submit_validation_message", TextType::class, [
+      "label" => 'Messaggio di errore in caso di mancata validazione',
+      'required' => false,
+      'data' => $servizio->getPostSubmitValidationMessage()
+    ])->add(
+      'Save', SubmitType::class
+    )->getForm()->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $data = $form->getData();
+      $servizio->setPostSubmitValidationExpression($data['post_submit_validation_expression']);
+      $servizio->setPostSubmitValidationMessage($data['post_submit_validation_message']);
+      $entityManager = $this->getDoctrine()->getManager();
+      $entityManager->persist($servizio);
+      $entityManager->flush();
+      $this->addFlash('feedback', 'Validazione salvata correttamente');
+
+      return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
+    }
+
+    return [
+      'form' => $form->createView(),
+      'servizio' => $servizio,
+      'user' => $user,
+      'schema' => $schema,
+      'statuses' => Pratica::getStatuses()
     ];
   }
 

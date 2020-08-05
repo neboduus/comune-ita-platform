@@ -25,6 +25,12 @@ class Validator
 
   }
 
+  /**
+   * @param $formIOId
+   * @param $data
+   * @param array $validateFields
+   * @return string[]
+   */
   public function validateData($formIOId, $data, $validateFields = [])
   {
     $form = $this->formFactory->create(FormIOType::class, null, [
