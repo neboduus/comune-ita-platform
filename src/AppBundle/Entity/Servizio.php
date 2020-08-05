@@ -920,7 +920,7 @@ class Servizio
   /**
    * @return bool
    */
-  public function isProtocolRequired(): bool
+  public function isProtocolRequired(): ?bool
   {
     return $this->protocolRequired;
   }
@@ -928,7 +928,7 @@ class Servizio
   /**
    * @param bool $protocolRequired
    */
-  public function setProtocolRequired(bool $protocolRequired)
+  public function setProtocolRequired(?bool $protocolRequired)
   {
     $this->protocolRequired = $protocolRequired;
   }
@@ -965,7 +965,7 @@ class Servizio
   /**
    * @param \DateTime $scheduledFrom
    */
-  public function setScheduledFrom(\DateTime $scheduledFrom)
+  public function setScheduledFrom(?\DateTime $scheduledFrom)
   {
     $this->scheduledFrom = $scheduledFrom;
   }
@@ -981,7 +981,7 @@ class Servizio
   /**
    * @param \DateTime $scheduledTo
    */
-  public function setScheduledTo(\DateTime $scheduledTo)
+  public function setScheduledTo(?\DateTime $scheduledTo)
   {
     $this->scheduledTo = $scheduledTo;
   }
