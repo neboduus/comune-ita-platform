@@ -11,7 +11,7 @@
 
 {% block javascripts %}
   {{ encore_entry_script_tags('compile') }}
-
+  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
   <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -19,8 +19,9 @@
   <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
   <script>
     $(document).ready(function () {
-      if ($('#formio_render_form_id').length) {
-
+      let formIoIdInput = $('#formio_render_form_id');
+      if (formIoIdInput.length) {
+        let customErrorContainer = $('#formio-custom-errors');
         // Nascondo input symfony, trovare modo di fare submit di formio da esterno
         $('.craue_formflow_buttons').addClass('d-none');
 
@@ -38,10 +39,11 @@
               $('.craue_formflow_current_step.active').addClass('wizard');
             }
 
+            let dataContainer = $('#formio_render_dematerialized_forms');
             // Recupero i dati della pratica se presenti
-            if ($('#formio_render_dematerialized_forms').val() != '') {
+            if (dataContainer.val() != '') {
               form.submission = {
-                data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
+                data: JSON.parse(dataContainer.val()).data
               };
             }
 
@@ -49,15 +51,32 @@
               document.getElementById("formio").scrollIntoView();
             });
 
+            let realSubmitButton = $('.craue_formflow_button_class_next');
             form.nosubmit = true;
             // Triggered when they click the submit button.
             form.on('submit', function (submission) {
-              form.emit('submitDone', submission)
-              let data = $('form[name="formio_render"]').serialize();
-              //$('#formio_render_dematerialized_forms').val(data);
-              $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
-              //$('form[name="formio_render"]').submit();
-              $('.craue_formflow_button_class_next').trigger('click');
+              let submitButton = $('#formio button');
+              submitButton.hide();
+              $('<a href="#" id="loading-button" class="btn btn-secondary"><i class="fa fa-refresh fa-spin"></i> Attendere...</a>').insertAfter(submitButton.last());
+              customErrorContainer.empty().hide();
+              axios.post('{{ path( 'anonymous_formio_validate', {'servizio': pratica.servizio.slug}) }}', JSON.stringify(submission.data))
+                .then(function (reponse) {
+                  customErrorContainer.empty();
+                  let submitErrors = null;
+                  if (reponse.data.errors) {
+                    reponse.data.errors.forEach((error) => {
+                      customErrorContainer.append('<p class="m-0">' + error.toString() + '</p>');
+                    });
+                    customErrorContainer.show();
+                    $('#formio #loading-button').remove();
+                    submitButton.show();
+                  }else{
+                    form.emit('submitDone', submission)
+                    let data = $('form[name="formio_render"]').serialize();
+                    dataContainer.val(JSON.stringify(submission.data));
+                    realSubmitButton.trigger('click');
+                  }
+                });
             });
           });
       }
@@ -151,6 +170,9 @@
         </div>
 
         <div id="formio" class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
+
+        <div id="formio-custom-errors" class="formio-error-wrapper p-3 mb-2" style="display: none"></div>
+
         {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
         <div class="mt-5">
           {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}

@@ -24,8 +24,6 @@
   <script src="//unpkg.com/axios/dist/axios.min.js"></script>
   <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
   <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
-
-  {#<script src="{{ asset('bundles/app/js/chat.js') }}"></script>#}
   {% if form.vars.helper.vueApp %}
     <script src="{{ asset('bundles/app/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
     <script>
@@ -59,98 +57,96 @@
     })
   </script>
 
-
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
-  {#<script src="https://unpkg.com/formiojs@3.29.6/dist/formio.full.min.js"></script>#}
   <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
   <script>
     $(document).ready(function () {
-      if ($('#formio_render_form_id').length) {
+      let formIoIdInput = $('#formio_render_form_id');
+      if (formIoIdInput.length) {
+        let customErrorContainer = $('#formio-custom-errors');
 
         // Nascondo input symfony, trovare modo di fare submit di formio da esterno
         $('.craue_formflow_buttons').addClass('d-none');
 
         Formio.icons = 'fontawesome';
-        Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
+        Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + formIoIdInput.val(), {
           noAlerts: true,
           language: 'it',
           i18n: formIoI18n,
           buttonSettings: {
             showCancel: false
           }
-        })
-          .then(function (form) {
-
-            let delay = 3;
-            form.formReady.then(() => {
-              const disableApplicant = function () {
-                if (delay === 0) {
-                  $('.formio-component-applicant input').each(function (k) {
-                    if ($(this).prop("type") === "radio") {
-                      let name = $(this).prop('name');
-                      if ($(this).prop("checked")) {
-                        $("input[name='"+ name +"']").attr('disabled', 'disabled');
-                      }
-                    } else if ($(this).val()) {
-                      $(this).attr('disabled', 'disabled');
+        }).then(function (form) {
+          let delay = 3;
+          form.formReady.then(() => {
+            const disableApplicant = function () {
+              if (delay === 0) {
+                $('.formio-component-applicant input').each(function (k) {
+                  if ($(this).prop("type") === "radio") {
+                    let name = $(this).prop('name');
+                    if ($(this).prop("checked")) {
+                      $("input[name='" + name + "']").attr('disabled', 'disabled');
                     }
-                  });
-                } else {
-                  delay--;
-                  setTimeout(disableApplicant, 1000); // check again in a second
-                }
-              };
-              disableApplicant();
-            });
-
-            if (form.hasOwnProperty('wizard')) {
-              $('.craue_formflow_current_step.active').addClass('wizard');
-            }
-
-            // Recupero i dati della pratica se presenti
-            if ($('#formio_render_dematerialized_forms').val() != '') {
-              form.submission = {
-                data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
-              };
-            }
-
-            form.on('nextPage', function () {
-              document.getElementById("formio").scrollIntoView();
-            });
-
-            form.nosubmit = true;
-            // Triggered when they click the submit button.
-            form.on('submit', function (submission) {
-              /*return fetch('{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/pratiche/formio/validate', {
-                body: JSON.stringify(submission),
-                headers: {
-                  'content-type': 'application/json'
-                },
-                method: 'POST',
-                mode: 'cors'
-              })
-                .then(response => {
-                  form.emit('submitDone', submission)
-                  if (response.ok) {
-                    let data = $('form[name="formio_render"]').serialize();
-                    //$('#formio_render_dematerialized_forms').val(data);
-                    $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
-                    //$('form[name="formio_render"]').submit();
-                    $('.craue_formflow_button_class_next').trigger('click');
+                  } else if ($(this).val()) {
+                    $(this).attr('disabled', 'disabled');
                   }
-                })
-              */
-
-              form.emit('submitDone', submission)
-              let data = $('form[name="formio_render"]').serialize();
-              //$('#formio_render_dematerialized_forms').val(data);
-              $('#formio_render_dematerialized_forms').val(JSON.stringify(submission.data));
-              //$('form[name="formio_render"]').submit();
-              $('.craue_formflow_button_class_next').trigger('click');
-            });
+                });
+              } else {
+                delay--;
+                setTimeout(disableApplicant, 1000); // check again in a second
+              }
+            };
+            disableApplicant();
           });
+
+          if (form.hasOwnProperty('wizard')) {
+            $('.craue_formflow_current_step.active').addClass('wizard');
+          }
+
+          let dataContainer = $('#formio_render_dematerialized_forms');
+
+          // Recupero i dati della pratica se presenti
+          if (dataContainer.val() !== '') {
+            form.submission = {
+              data: JSON.parse(dataContainer.val()).data
+            };
+          }
+
+          form.on('nextPage', function () {
+            document.getElementById("formio").scrollIntoView();
+          });
+
+          let realSubmitButton = $('.craue_formflow_button_class_next');
+          form.nosubmit = true;
+
+          // Triggered when they click the submit button.
+          form.on('submit', function (submission) {
+            let submitButton = $('#formio button');
+            submitButton.hide();
+            $('<a href="#" id="loading-button" class="btn btn-secondary"><i class="fa fa-refresh fa-spin"></i> Attendere...</a>').insertAfter(submitButton.last());
+            customErrorContainer.empty().hide();
+            axios.post('{{ path( 'formio_validate', {'servizio': pratica.servizio.slug}) }}', JSON.stringify(submission.data))
+              .then(function (reponse) {
+                customErrorContainer.empty();
+                let submitErrors = null;
+                if (reponse.data.errors) {
+                  reponse.data.errors.forEach((error) => {
+                    customErrorContainer.append('<p class="m-0">' + error.toString() + '</p>');
+                  });
+                  customErrorContainer.show();
+                  $('#formio #loading-button').remove();
+                  submitButton.show();
+                }else{
+                  form.emit('submitDone', submission)
+                  let data = $('form[name="formio_render"]').serialize();
+                  dataContainer.val(JSON.stringify(submission.data));
+                  realSubmitButton.trigger('click');
+                }
+              });
+          });
+        });
       }
     });
   </script>
@@ -208,8 +204,6 @@
       <div class="col-lg-8 px-lg-4">
         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
         <div class="step-{{ flow.getCurrentStepNumber() }}">
-
-
           {{ form_errors(form) }}
 
           {% if form.vars.helper.descriptionText|length > 0 %}
@@ -229,12 +223,14 @@
 
           <div id="vueApp">
             {% if form.vars.helper.vueApp %}
-            <{{ form.vars.helper.vueApp }}>
-          </{{ form.vars.helper.vueApp }}>
-          {% endif %}
+            <{{ form.vars.helper.vueApp }}></{{ form.vars.helper.vueApp }}>
+            {% endif %}
+          </div>
         </div>
 
         <div id="formio" class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
+
+        <div id="formio-custom-errors" class="formio-error-wrapper p-3 mb-2" style="display: none"></div>
 
         {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
           <div class="mt-5">
@@ -245,36 +241,31 @@
         {{ form_end(form) }}
       </div>
 
-    </div>
-
-    <div class="col-lg-4 pt-5 pt-lg-2">
-
-      {% if form.vars.helper.guideText|length > 0 %}
-        <div class="callout">
-          <div class="callout-title">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
-            </svg>
-            {{ 'pratica.guida_utente'|trans }}
+      <div class="col-lg-4 pt-5 pt-lg-2">
+        {% if form.vars.helper.guideText|length > 0 %}
+          <div class="callout">
+            <div class="callout-title">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
+              </svg>
+              {{ 'pratica.guida_utente'|trans }}
+            </div>
+            <div class="body">
+              <p>{{ form.vars.helper.guideText|raw }}</p>
+            </div>
           </div>
-          <div class="body">
-            <p>{{ form.vars.helper.guideText|raw }}</p>
-          </div>
-        </div>
-      {% endif %}
+        {% endif %}
 
-      {# Info compilazione specificate nel servizio #}
-      {{ include('AppBundle:Pratiche/parts:compilation_info.html.twig') }}
+        {# Info compilazione specificate nel servizio #}
+        {{ include('AppBundle:Pratiche/parts:compilation_info.html.twig') }}
 
-      {# Note compilazione per utente #}
-      {{ include('AppBundle:Pratiche/parts:user_compilation_notes.html.twig') }}
+        {# Note compilazione per utente #}
+        {{ include('AppBundle:Pratiche/parts:user_compilation_notes.html.twig') }}
 
-
-      {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
-          {{ include('@App/Default/parts/chat.html.twig') }}
-      {% endif %}#}
-    </div>
-
+        {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
+            {{ include('@App/Default/parts/chat.html.twig') }}
+        {% endif %}#}
+      </div>
     </div>
   </section>
 

@@ -453,14 +453,29 @@ class PraticheController extends Controller
   }
 
   /**
-   * @Route("/formio/validate", name="formio_validate")
+   * @Route("/formio/validate/{servizio}", name="formio_validate")
+   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    *
+   * @param Request $request
+   * @param Servizio $servizio
+   *
+   * @return JsonResponse
    */
-  public function formioValidateAction(Request $request)
+  public function formioValidateAction(Request $request, Servizio $servizio)
   {
-    // Todo: validazione base del form
-    $user = $this->getUser();
-    $response = array('status' => 'OK');
+    $validator = $this->get('formio.expression_validator');
+
+    $errors = $validator->validateData(
+      $servizio->getFormIoId(),
+      $request->getContent(),
+      $servizio->getPostSubmitValidationExpression(),
+      $servizio->getPostSubmitValidationMessage()
+    );
+
+    $response = ['status' => 'OK', 'errors' => null];
+    if (!empty($errors)){
+      $response = ['status' => 'KO', 'errors' => $errors];
+    }
 
     return JsonResponse::create($response, Response::HTTP_OK);
   }

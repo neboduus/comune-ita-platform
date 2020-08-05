@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -115,6 +116,12 @@ class GeneralDataType extends AbstractType
       ])
       ->add('login_suggested', CheckboxType::class, [
         'label' => 'Suggerisci il Login per l\'autocompletamento?',
+        'required' => false
+      ])->add(
+        "post_submit_validation_expression", HiddenType::class, [
+        'required' => false
+      ])->add(
+        "post_submit_validation_message", HiddenType::class, [
         'required' => false
       ]);
   }

@@ -12,6 +12,7 @@ use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\FormIO\Schema;
 use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Services\FormServerApiAdapterService;
+use AppBundle\Validator\Constraints\ExpressionBasedFormIOConstraint;
 use AppBundle\Validator\Constraints\ServerSideFormIOConstraint;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
@@ -118,9 +119,19 @@ class FormIORenderType extends AbstractType
     ]);
     $notEmptyConstraint->message = "Il form non sembra essere compilato correttamente";
 
+    $notNullConstraint = new NotEqualTo([
+      'value' => '',
+      'groups' => ['flow_formIO_step1', 'Default']
+    ]);
+    $notNullConstraint->message = "Il form non sembra essere compilato correttamente";
+
     $serverSideCheckConstraint = new ServerSideFormIOConstraint([
       'formIOId' => $formID,
       'validateFields' => array_keys(self::$applicantUserMap),
+    ]);
+
+    $expressionBasedConstraint = new ExpressionBasedFormIOConstraint([
+      'service' => $pratica->getServizio()
     ]);
 
     $builder
@@ -142,6 +153,8 @@ class FormIORenderType extends AbstractType
           'required' => false,
           'constraints' => [
             $notEmptyConstraint,
+            $notNullConstraint,
+            $expressionBasedConstraint,
             //$serverSideCheckConstraint, //@todo
           ],
         ]
@@ -167,7 +180,7 @@ class FormIORenderType extends AbstractType
 
     if (isset($event->getData()['dematerialized_forms'])) {
       $data = json_decode($event->getData()['dematerialized_forms'], true);
-      $flattenedData = $this->arrayFlat($data);
+      $flattenedData = $this->arrayFlat((array)$data);
       $compiledData = $data;
     }
 
@@ -209,7 +222,6 @@ class FormIORenderType extends AbstractType
    */
   public function onPostSubmit(FormEvent $event)
   {
-
     /** @var Pratica|DematerializedFormPratica $pratica */
     $pratica = $event->getForm()->getData();
 
