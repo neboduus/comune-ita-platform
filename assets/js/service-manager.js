@@ -11,21 +11,41 @@ Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
+$(document).ready(function () {
 
-$(window).on('load', function () {
+  const serviceStatus = $('#general_data_status');
+  const scheduledFrom = $('#general_data_scheduled_from').parent();
+  const scheduledTo = $('#general_data_scheduled_to').parent();
+  const hideScheduler = function () {
+
+    console.log(serviceStatus.val());
+
+    if (serviceStatus.val() === '4') {
+      scheduledFrom.show();
+      scheduledTo.show();
+    } else {
+      scheduledFrom.hide();
+      scheduledTo.hide();
+    }
+  }
+  // Show/Hide scheduler on init
+  hideScheduler();
+
+  // Show/Hide scheduler on access level change
+  serviceStatus.change(function () {
+    hideScheduler()
+  })
+
+
   let loginCheckbox = $('#general_data_login_suggested');
   if ($('#general_data_access_level').val() === '0') {
     loginCheckbox.closest('div').show();
   } else {
     loginCheckbox.closest('div').hide();
   }
-});
-
-$(document).ready(function () {
 
   // Show/Hide login checkbox
   $('#general_data_access_level').change(function () {
-    let loginCheckbox = $('#general_data_login_suggested');
     if (this.value === '0') {
       loginCheckbox.closest('div').show();
     } else {

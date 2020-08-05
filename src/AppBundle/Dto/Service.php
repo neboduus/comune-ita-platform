@@ -129,6 +129,13 @@ class Service
   private $flowSteps;
 
   /**
+   * @var bool
+   * @Serializer\Type("boolean")
+   * @SWG\Property(description="Set true if a protocol is required")
+   */
+  private $protocolRequired;
+
+  /**
    * @var array
    * @SWG\Property(property="protocollo_parameters", description="Service's parameters for tenant's register"))
    * @Serializer\Type("array<string, string>")
@@ -161,15 +168,33 @@ class Service
    * @Assert\NotBlank(message="This field is mandatory: name")
    * @Assert\NotNull(message="This field is mandatory: name")
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended")
+   * @SWG\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended, 3 - private, 4 - scheduled")
    */
   private $status;
+
+  /**
+   * @Serializer\Type("integer")
+   * @SWG\Property(description="Accepts values: 0 - Anonymous, 1000 - Social, 2000 - Spid Level 1, 3000 - Spid Level 2, 4000 - Cie")
+   */
+  private $accessLevel;
 
   /**
    * @var bool
    * @SWG\Property(description="Enable or disable the suggestion to log in to auto-complete some fields")
    */
   private $loginSuggested;
+
+  /**
+   * @Serializer\Type("datetime")
+   * @SWG\Property(description="Scheduled from date time")
+   */
+  private $scheduledFrom;
+
+  /**
+   * @Serializer\Type("datetime")
+   * @SWG\Property(description="Scheduled to date time")
+   */
+  private $scheduledTo;
 
   /**
    * @return mixed
@@ -413,6 +438,22 @@ class Service
   }
 
   /**
+   * @return bool
+   */
+  public function isProtocolRequired()
+  {
+    return $this->protocolRequired;
+  }
+
+  /**
+   * @param bool $protocolRequired
+   */
+  public function setProtocolRequired($protocolRequired)
+  {
+    $this->protocolRequired = $protocolRequired;
+  }
+
+  /**
    * @return array
    */
   public function getProtocolloParameters()
@@ -423,7 +464,7 @@ class Service
   /**
    * @param array $protocolloParameters
    */
-  public function setProtocolloParameters( $protocolloParameters)
+  public function setProtocolloParameters($protocolloParameters)
   {
     if (!is_array($protocolloParameters)) {
       $parameters = json_decode($protocolloParameters, true);
@@ -496,6 +537,22 @@ class Service
   }
 
   /**
+   * @return mixed
+   */
+  public function getAccessLevel()
+  {
+    return $this->accessLevel;
+  }
+
+  /**
+   * @param mixed $accessLevel
+   */
+  public function setAccessLevel($accessLevel)
+  {
+    $this->accessLevel = $accessLevel;
+  }
+
+  /**
    * @return bool
    */
   public function isLoginSuggested()
@@ -512,6 +569,39 @@ class Service
     $this->loginSuggested = $loginSuggested;
     return $this;
   }
+
+  /**
+   * @return mixed
+   */
+  public function getScheduledFrom()
+  {
+    return $this->scheduledFrom;
+  }
+
+  /**
+   * @param mixed $scheduledFrom
+   */
+  public function setScheduledFrom($scheduledFrom)
+  {
+    $this->scheduledFrom = $scheduledFrom;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getScheduledTo()
+  {
+    return $this->scheduledTo;
+  }
+
+  /**
+   * @param mixed $scheduledTo
+   */
+  public function setScheduledTo($scheduledTo)
+  {
+    $this->scheduledTo = $scheduledTo;
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -535,12 +625,16 @@ class Service
     $dto->finalIndications = $servizio->getFinalIndications() ?? '';
     $dto->coverage = $servizio->getCoverage();
     $dto->flowSteps = $servizio->getFlowSteps();
+    $dto->setProtocolRequired($servizio->isProtocolRequired());
     $dto->protocolloParameters = [];
     $dto->paymentRequired = $servizio->isPaymentRequired();
     $dto->paymentParameters = [];
     $dto->sticky = $servizio->isSticky();
     $dto->status = $servizio->getStatus();
+    $dto->accessLevel = $servizio->getAccessLevel();
     $dto->loginSuggested = $servizio->isLoginSuggested() || false;
+    $dto->scheduledFrom = $servizio->getScheduledFrom();
+    $dto->scheduledTo = $servizio->getScheduledTo();
 
     return $dto;
   }
@@ -575,18 +669,23 @@ class Service
     if (count($this->flowSteps) > 0) {
       $temp = [];
       foreach ($this->flowSteps as $f) {
+        // Fixme
         $f->setParameters(\json_decode($f->getParameters(), true));
         $temp[]= $f;
       }
       $this->flowSteps = $temp;
     }
     $entity->setFlowSteps($this->flowSteps);
+    $entity->setProtocolRequired($this->isProtocolRequired());
     $entity->setProtocolloParameters($this->protocolloParameters);
     $entity->setPaymentRequired($this->paymentRequired);
     $entity->setPaymentParameters($this->paymentParameters);
     $entity->setSticky($this->sticky);
     $entity->setStatus($this->status);
+    $entity->setAccessLevel($this->getAccessLevel());
     $entity->setLoginSuggested($this->loginSuggested);
+    $entity->setScheduledFrom($this->scheduledFrom);
+    $entity->setScheduledTo($this->scheduledTo);
 
     return $entity;
   }

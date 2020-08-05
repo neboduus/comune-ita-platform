@@ -100,10 +100,14 @@ class GeneralDataType extends AbstractType
         'choices' => $statuses
       ])
       ->add('scheduled_from', DateTimeType::class, [
-        'label' => 'Schedulato a partire da'
+        'label' => 'Schedulato a partire da',
+        'required' => false,
+        'empty_data' => null
       ])
       ->add('scheduled_to', DateTimeType::class, [
-        'label' => 'Schedulato fino a'
+        'label' => 'Schedulato fino a',
+        'required' => false,
+        'empty_data' => null
       ])
       ->add('access_level', ChoiceType::class, [
         'label' => 'Livello di accesso al servizio',

@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -62,6 +63,7 @@ class ServizioFormType extends AbstractType
         'prototype' => true,
         "label" => false
       ])
+      ->add('protocol_required')
       ->add('protocollo_parameters')
       ->add('payment_required', CheckboxType::class)
       ->add('payment_parameters', PaymentParametersType::class, [
@@ -69,7 +71,17 @@ class ServizioFormType extends AbstractType
       ])
       ->add('sticky')
       ->add('status')
-      ->add('login_suggested');
+      ->add('access_level')
+      ->add('login_suggested')
+      ->add('scheduled_from', DateTimeType::class, [
+        'required' => false,
+        'empty_data' => null
+      ])
+      ->add('scheduled_to', DateTimeType::class, [
+        'required' => false,
+        'empty_data' => null
+      ])
+    ;
   }
 
   /**
