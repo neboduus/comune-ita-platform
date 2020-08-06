@@ -14,7 +14,7 @@
       <div class="col-12 px-lg-4 py-lg-2">
         <div class="mb-3">
           <small>
-            <a class="text-decoration-none" href="{{ path('documenti_list_cpsuser', {'folderId': document.folder.id}) }}">
+            <a class="text-decoration-none" href="{{ path('documenti_list_cpsuser', {'folderSlug': document.folder.slug}) }}">
               <svg class="icon icon-primary">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
               </svg>
@@ -42,7 +42,7 @@
           </div>
           <div class="col-2">
             <div class="float-right">
-              <a id="downloadDocument" href="{{ path('document_download_cpsuser', {'folderId':document.folder.id, 'documentId': document.id}) }}" download>
+              <a id="downloadDocument" href="{{ path('document_download_cpsuser', {'folderSlug':document.folder.slug, 'documentId': document.id}) }}" download>
                 <svg class="icon icon-primary">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
                 </svg>

@@ -32,7 +32,7 @@
                             <svg class="icon">
                                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
                             </svg>
-                            <a href="{{ path('documento_show_cpsuser', {'folderId': document.folder.id, 'documentId': document.id}) }}">{{ document.title }}</a>
+                            <a href="{{ path('documento_show_cpsuser', {'folderSlug': document.folder.slug, 'documentId': document.id}) }}">{{ document.title }}</a>
                         </li>
                     {% endfor %}
                     </ul>

@@ -45,6 +45,15 @@ class Folder
 
   /**
    * @var string
+   * @Gedmo\Slug(fields={"title"}, unique=false, updatable=true)
+   *
+   * @ORM\Column(name="slug", type="string", length=255, nullable=false)
+   * @SWG\Property(description="Folder's slug", type="string")
+   */
+  private $slug;
+
+  /**
+   * @var string
    *
    * @ORM\Column(name="description", type="text", nullable=true)
    * @SWG\Property(description="Folder's description", type="text")
@@ -145,6 +154,31 @@ class Folder
   public function getTitle()
   {
     return $this->title;
+  }
+
+  /**
+   * Set slug.
+   *
+   * @param string $slug
+   *
+   * @return Folder
+   */
+  public function setSlug($slug)
+  {
+    $this->slug = $slug;
+
+    return $this;
+  }
+
+
+  /**
+   * Get slug.
+   *
+   * @return string
+   */
+  public function getSlug()
+  {
+    return $this->slug;
   }
 
   /**
