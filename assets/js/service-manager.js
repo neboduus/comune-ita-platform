@@ -37,6 +37,22 @@ $(document).ready(function () {
   })
 
 
+  let folderInput = $('#general_data_folder_name');
+  if ($('#general_data_handler').val() === 'ocsdc.handlers.servizio.documents_sharing') {
+    folderInput.closest('div').show();
+  } else {
+    folderInput.closest('div').hide();
+  }
+
+  // Show/Hide login checkbox
+  $('#general_data_handler').change(function () {
+    if (this.value === 'ocsdc.handlers.servizio.documents_sharing') {
+      folderInput.closest('div').show();
+    } else {
+      folderInput.closest('div').hide();
+    }
+  })
+
   let loginCheckbox = $('#general_data_login_suggested');
   if ($('#general_data_access_level').val() === '0') {
     loginCheckbox.closest('div').show();

@@ -15,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class GeneralDataType extends AbstractType
 {
@@ -36,6 +38,8 @@ class GeneralDataType extends AbstractType
       'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
       'Cie' => Servizio::ACCESS_LEVEL_CIE,
     ];
+
+    $serviceHandlers = ['Compilazione modulo'=>'default', 'Consultazione documenti'=>'ocsdc.handlers.servizio.documents_sharing'];
 
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
@@ -84,6 +88,17 @@ class GeneralDataType extends AbstractType
         'required' => false,
         'empty_data' => 'La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.',
       ])
+      ->add('handler', ChoiceType::class, [
+        'label' => 'Tipologia del servizio',
+        'required' => true,
+        'choices' => $serviceHandlers
+      ])
+      ->add('folder_name', TextType::class, [
+        'label' => 'Nome della cartella',
+        'required' => false,
+        'mapped' => false,
+        'data' => array_key_exists('folder_name', $servizio->getAdditionalData()) ? $servizio->getAdditionalData()['folder_name'] : ''
+      ])
       ->add('sticky', CheckboxType::class, [
         'label' => 'In evidenza?',
         'required' => false
@@ -123,9 +138,20 @@ class GeneralDataType extends AbstractType
       ])->add(
         "post_submit_validation_message", HiddenType::class, [
         'required' => false
-      ]);
+      ])
+      ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
   }
 
+  public function onPreSubmit(FormEvent $event)
+  {
+    /**
+     * @var Servizio $servizio
+     */
+    $servizio = $event->getForm()->getData();
+    $additionalData = $servizio->getAdditionalData();
+    $additionalData['folder_name'] = $event->getData()['folder_name'];
+    $servizio->setAdditionalData($additionalData);
+  }
   public function getBlockPrefix()
   {
     return 'general_data';

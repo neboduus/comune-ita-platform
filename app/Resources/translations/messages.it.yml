@@ -58,6 +58,7 @@ servizio:
   sospeso: 'Al momento il servizio non è attivo'
   schedulato: 'Il servizio è attivo dal %from% al %to%'
   accedi_al_servizio: 'Accedi al servizio %name%'
+  accedi_ai_documenti: 'Accedi ai documenti'
   attivo_per: "Servizio attivo per:"
   servizi_area_title: '%area%'
   vai: "Vai al servizio"

@@ -752,6 +752,20 @@ services:
     tags:
       - { name: ocsdc.servizio.handler, alias: default }
 
+  ocsdc.handlers.servizio.documents_sharing:
+    class: AppBundle\Handlers\Servizio\DocumentsSharingHandler
+    arguments:
+      - "@security.token_storage"
+      - "@logger"
+      - "@router"
+      - "@doctrine.orm.entity_manager"
+      - "@ocsdc.form_flow_registry"
+      - "@session"
+      - "@templating"
+      - "%formserver_public_url%"
+    tags:
+      - { name: ocsdc.servizio.handler, alias: ocsdc.handlers.servizio.documents_sharing }
+
   ocsdc.handlers.servizio.imis:
     class: AppBundle\Handlers\Servizio\ImisHandler
     arguments: ["@security.token_storage", "@logger", "@router"]
