@@ -6,11 +6,8 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
-use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
-use Doctrine\DBAL\FetchMode;
-use Gedmo\Loggable\Entity\LogEntry;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -176,9 +173,13 @@ class DefaultController extends Controller
 
     $request->setRequestFormat('text');
     $response = new Response();
-    return $this->render( '@App/Default/metrics.html.twig', [
-      'metrics' => $metrics,
-    ]);
+
+    return $this->render(
+      '@App/Default/metrics.html.twig',
+      [
+        'metrics' => $metrics,
+      ]
+    );
   }
 
   /**
@@ -194,15 +195,19 @@ class DefaultController extends Controller
 
     /** @var Ente[] $enti */
     $enti = $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll();
-    foreach ($enti as $ente){
-      $result[] = ["targets" => [$hostname], "labels" => [
-        "job" => $hostname,
-        "env" => $env,
-        "__scheme__" => $scheme,
-        "__metrics_path__" =>  "/".$ente->getSlug()."/metrics"
-      ]];
+    foreach ($enti as $ente) {
+      $result[] = [
+        "targets" => [$hostname],
+        "labels" => [
+          "job" => $hostname,
+          "env" => $env,
+          "__scheme__" => $scheme,
+          "__metrics_path__" => "/".$ente->getSlug()."/metrics",
+        ],
+      ];
     }
     $request->setRequestFormat('json');
+
     return new JsonResponse(json_encode($result), 200, [], true);
   }
 }

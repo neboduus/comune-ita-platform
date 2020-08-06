@@ -467,6 +467,7 @@ operatori:
   approva: 'Approva'
   rifiuta: 'Rifiuta'
   rigetta: 'Rigetta'
+  modifica: 'Modifica'
   richiedi_modifica: 'Richiedi modifica'
   elabora: 'Elabora'
   scrivi_al_cittadino: "Scrivi al cittadino"

@@ -378,10 +378,9 @@ class PraticheController extends Controller
   /**
    * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
-   * @return array
+   * @return BinaryFileResponse
    */
   public function showPdfAction(Request $request, Pratica $pratica)
   {

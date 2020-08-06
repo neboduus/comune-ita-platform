@@ -13,9 +13,11 @@ use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\MessageType;
+use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Operatore\Base\ApprovaORigettaORichiediModificaType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
+use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\FormServerAwareInterface;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
@@ -44,7 +46,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Router;
 
 /**
  * Class OperatoriController
@@ -97,183 +98,8 @@ class OperatoriController extends Controller
     $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
 
     $request->setRequestFormat('json');
+
     return new JsonResponse(json_encode($result), 200, [], true);
-  }
-
-  /**
-   * @Route("/pratiche/csv",name="operatori_index_csv")
-   * @param Request $request
-   */
-  public function indexCSVAction(Request $request)
-  {
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-
-    /** @var PraticaRepository $praticaRepository */
-    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
-    $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy([
-      'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
-    ]);
-    $extraHeaders = $request->get('extra_headers', []);
-    $csv = Writer::createFromPath('php://temp', 'r+');
-    $result = $this->getFilteredPraticheByOperatore($request, 1, 0);
-    $schema = (array)$result['meta']['schema'];
-
-    $csvHeaders = [
-      'ID',
-      'Numero di protocollo',
-      'Login',
-      'Pagamenti',
-      'Richiedente',
-      'Codice fiscale',
-      'Data di inserimento',
-      'Stato',
-      'Operatore',
-      'Servizio',
-    ];
-    $extraValues = [];
-    foreach ($schema as $item) {
-      if (in_array($item['label'], $extraHeaders)) {
-        $extraValues[$item['name']] = $item['label'];
-      }
-    }
-    $csvHeaders = array_merge($csvHeaders, array_values($extraValues));
-    $csv->insertOne($csvHeaders);
-
-    $dataCount = 0;
-    $totalCount = $result['meta']['count'];
-    $limit = 500;
-    $offset = 0;
-    $responseCallback = function () use ($dataCount, $totalCount, $csv, $limit, $offset, $request, $servizi, $extraValues) {
-      while ($dataCount < $totalCount) {
-        $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
-        $data = $result['data'];
-        $dataCount += count($data);
-        $offset += $limit;
-        foreach ($data as $item) {
-          $serviceName = '?';
-          foreach ($servizi as $servizio) {
-            if ($item['service'] == $servizio->getSlug()) {
-              $serviceName = $servizio->getName();
-            }
-          }
-          $csvRow = [
-            $item['id'],
-            isset($item['protocol_number']) ? $item['protocol_number'] : '',
-            $item['idp'],
-            $item['is_payment_required'] ? $item['payment_complete'] : '',
-            $item['user_name'],
-            $item['codice_fiscale'],
-            isset($item['submission_time']) ? date('d/m/Y H:i:s', $item['submission_time']) : '',
-            $this->get('translator')->trans('pratica.dettaglio.stato_' . $item['status']),
-            $item['operator_name'],
-            $serviceName,
-          ];
-
-          foreach ($item['data'] as $key => $value) {
-            if (isset($extraValues[$key])) {
-              $csvRow[$key] = is_array($value) ? count($value) : $value;
-            }
-          }
-          $csv->insertOne($csvRow);
-        }
-      }
-      foreach ($csv->chunk(1024) as $offset => $chunk) {
-        echo $chunk;
-        flush();
-      }
-    };
-
-    $fileNameCreationDate = new \DateTime();
-    $fileName = 'export_' . $fileNameCreationDate->format('d-m-yy-H-m') . '.csv';
-    $response = new StreamedResponse();
-    $response->headers->set('Content-Encoding', 'none');
-    $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-
-    $disposition = $response->headers->makeDisposition(
-      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-      $fileName
-    );
-
-    $response->headers->set('Content-Disposition', $disposition);
-    $response->headers->set('Content-Description', 'File Transfer');
-    $response->setCallback($responseCallback);
-    $response->send();
-  }
-
-  /**
-   * @Route("/pratiche/calculate",name="operatori_index_calculate")
-   * @param Request $request
-   */
-  public function indexCalculateAction(Request $request)
-  {
-    $result = [];
-    $functions = [
-      'sum' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
-        return $praticaRepository->getSumFieldsInPraticheByOperatore(
-          $fields,
-          $user,
-          $parameters
-        );
-      },
-      'avg' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
-        return $praticaRepository->getAvgFieldsInPraticheByOperatore(
-          $fields,
-          $user,
-          $parameters
-        );
-      },
-      'count' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
-        return $praticaRepository->getCountNotNullFieldsInPraticheByOperatore(
-          $fields,
-          $user,
-          $parameters
-        );
-      },
-    ];
-    /** @var PraticaRepository $praticaRepository */
-    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-    $parameters = $this->getPraticheFilters($request);
-    $servizioId = $parameters['servizio'];
-    if ($servizioId) {
-      $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
-      if ($servizio instanceof Servizio) {
-        /** @var Schema $schema */
-        $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
-        foreach ($functions as $name => $callable) {
-          $requestFields = $request->get($name, []);
-          if (!empty($requestFields)) {
-            $fields = [];
-            foreach ($requestFields as $requestField) {
-              if ($schema->hasComponent($requestField)) {
-                $fields[] = $schema->getComponent($requestField);
-              }
-            }
-            if (!empty($fields)) {
-              $result[$name] = call_user_func($callable, $praticaRepository, $fields, $user, $parameters);
-            }
-          }
-        }
-      }
-    }
-    $request->setRequestFormat('json');
-    return new JsonResponse(json_encode($result), 200, [], true);
-  }
-
-  private function getPraticheFilters($request)
-  {
-    return [
-      'servizio' => $request->get('servizio', false),
-      'stato' => $request->get('stato', false),
-      'workflow' => $request->get('workflow', false),
-      'query_field' => $request->get('query_field', false),
-      'query' => $request->get('query', false),
-      'sort' => $request->get('sort', 'submissionTime'),
-      'order' => $request->get('order', 'asc'),
-      'collate' => (int)$request->get('collate', false),
-    ];
   }
 
   /**
@@ -340,11 +166,13 @@ class OperatoriController extends Controller
       //load Application Dto without file collection to reduce the number of db queries
       $application = Application::fromEntity($s, '', false);
       $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
-      $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
+      $minimunStatusForAssign = $s->getServizio()->isProtocolRequired(
+      ) ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
       $applicationArray['is_payment_required'] = !empty($s->getPaymentData());
-      $applicationArray['payment_complete'] = $s->getStatus() == Pratica::STATUS_PAYMENT_ERROR || $s->getStatus() <= Pratica::STATUS_PAYMENT_OUTCOME_PENDING ? false : true;
+      $applicationArray['payment_complete'] = $s->getStatus() == Pratica::STATUS_PAYMENT_ERROR || $s->getStatus(
+      ) <= Pratica::STATUS_PAYMENT_OUTCOME_PENDING ? false : true;
       $applicationArray['idp'] = $s->getUser()->getIdp();
       $applicantUser = $s->getUser();
       $codiceFiscale = $applicantUser instanceof CPSUser ? $applicantUser->getCodiceFiscale() : '';
@@ -364,7 +192,9 @@ class OperatoriController extends Controller
       if (isset($schema) && $schema->hasComponents() && $s instanceof FormIO) {
         $dematerialized = $s->getDematerializedForms();
         if (isset($dematerialized['data'])) {
-          $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray($dematerialized['data'])->toFullFilledFlatArray();
+          $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray(
+            $dematerialized['data']
+          )->toFullFilledFlatArray();
         } else {
           $applicationArray['data'] = array_fill_keys($schema->getComponentsColumns('name'), '');
         }
@@ -374,6 +204,211 @@ class OperatoriController extends Controller
     }
 
     return $result;
+  }
+
+  private function getPraticheFilters($request)
+  {
+    return [
+      'servizio' => $request->get('servizio', false),
+      'stato' => $request->get('stato', false),
+      'workflow' => $request->get('workflow', false),
+      'query_field' => $request->get('query_field', false),
+      'query' => $request->get('query', false),
+      'sort' => $request->get('sort', 'submissionTime'),
+      'order' => $request->get('order', 'asc'),
+      'collate' => (int)$request->get('collate', false),
+    ];
+  }
+
+  /**
+   * @param OperatoreUser $user
+   * @param Pratica $pratica
+   */
+  private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
+  {
+    $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
+    if (!$isEnabled) {
+      throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
+    }
+  }
+
+  /**
+   * @Route("/pratiche/csv",name="operatori_index_csv")
+   * @param Request $request
+   */
+  public function indexCSVAction(Request $request)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy(
+      [
+        'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
+      ]
+    );
+    $extraHeaders = $request->get('extra_headers', []);
+    $csv = Writer::createFromPath('php://temp', 'r+');
+    $result = $this->getFilteredPraticheByOperatore($request, 1, 0);
+    $schema = (array)$result['meta']['schema'];
+
+    $csvHeaders = [
+      'ID',
+      'Numero di protocollo',
+      'Login',
+      'Pagamenti',
+      'Richiedente',
+      'Codice fiscale',
+      'Data di inserimento',
+      'Stato',
+      'Operatore',
+      'Servizio',
+    ];
+    $extraValues = [];
+    foreach ($schema as $item) {
+      if (in_array($item['label'], $extraHeaders)) {
+        $extraValues[$item['name']] = $item['label'];
+      }
+    }
+    $csvHeaders = array_merge($csvHeaders, array_values($extraValues));
+    $csv->insertOne($csvHeaders);
+
+    $dataCount = 0;
+    $totalCount = $result['meta']['count'];
+    $limit = 500;
+    $offset = 0;
+    $responseCallback = function () use (
+      $dataCount,
+      $totalCount,
+      $csv,
+      $limit,
+      $offset,
+      $request,
+      $servizi,
+      $extraValues
+    ) {
+      while ($dataCount < $totalCount) {
+        $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
+        $data = $result['data'];
+        $dataCount += count($data);
+        $offset += $limit;
+        foreach ($data as $item) {
+          $serviceName = '?';
+          foreach ($servizi as $servizio) {
+            if ($item['service'] == $servizio->getSlug()) {
+              $serviceName = $servizio->getName();
+            }
+          }
+          $csvRow = [
+            $item['id'],
+            isset($item['protocol_number']) ? $item['protocol_number'] : '',
+            $item['idp'],
+            $item['is_payment_required'] ? $item['payment_complete'] : '',
+            $item['user_name'],
+            $item['codice_fiscale'],
+            isset($item['submission_time']) ? date('d/m/Y H:i:s', $item['submission_time']) : '',
+            $this->get('translator')->trans('pratica.dettaglio.stato_'.$item['status']),
+            $item['operator_name'],
+            $serviceName,
+          ];
+
+          foreach ($item['data'] as $key => $value) {
+            if (isset($extraValues[$key])) {
+              $csvRow[$key] = is_array($value) ? count($value) : $value;
+            }
+          }
+          $csv->insertOne($csvRow);
+        }
+      }
+      foreach ($csv->chunk(1024) as $offset => $chunk) {
+        echo $chunk;
+        flush();
+      }
+    };
+
+    $fileNameCreationDate = new \DateTime();
+    $fileName = 'export_'.$fileNameCreationDate->format('d-m-yy-H-m').'.csv';
+    $response = new StreamedResponse();
+    $response->headers->set('Content-Encoding', 'none');
+    $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+
+    $disposition = $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $fileName
+    );
+
+    $response->headers->set('Content-Disposition', $disposition);
+    $response->headers->set('Content-Description', 'File Transfer');
+    $response->setCallback($responseCallback);
+    $response->send();
+  }
+
+  /**
+   * @Route("/pratiche/calculate",name="operatori_index_calculate")
+   * @param Request $request
+   */
+  public function indexCalculateAction(Request $request)
+  {
+    $result = [];
+    $functions = [
+      'sum' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
+        return $praticaRepository->getSumFieldsInPraticheByOperatore(
+          $fields,
+          $user,
+          $parameters
+        );
+      },
+      'avg' => function (PraticaRepository $praticaRepository, array $fields, OperatoreUser $user, array $parameters) {
+        return $praticaRepository->getAvgFieldsInPraticheByOperatore(
+          $fields,
+          $user,
+          $parameters
+        );
+      },
+      'count' => function (
+        PraticaRepository $praticaRepository,
+        array $fields,
+        OperatoreUser $user,
+        array $parameters
+      ) {
+        return $praticaRepository->getCountNotNullFieldsInPraticheByOperatore(
+          $fields,
+          $user,
+          $parameters
+        );
+      },
+    ];
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $parameters = $this->getPraticheFilters($request);
+    $servizioId = $parameters['servizio'];
+    if ($servizioId) {
+      $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
+      if ($servizio instanceof Servizio) {
+        /** @var Schema $schema */
+        $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+        foreach ($functions as $name => $callable) {
+          $requestFields = $request->get($name, []);
+          if (!empty($requestFields)) {
+            $fields = [];
+            foreach ($requestFields as $requestField) {
+              if ($schema->hasComponent($requestField)) {
+                $fields[] = $schema->getComponent($requestField);
+              }
+            }
+            if (!empty($fields)) {
+              $result[$name] = call_user_func($callable, $praticaRepository, $fields, $user, $parameters);
+            }
+          }
+        }
+      }
+    }
+    $request->setRequestFormat('json');
+
+    return new JsonResponse(json_encode($result), 200, [], true);
   }
 
   /**
@@ -388,12 +423,12 @@ class OperatoriController extends Controller
     $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $servizi = $serviziRepository->findBy(
       [
-        'status' => Servizio::STATUS_AVAILABLE
+        'status' => Servizio::STATUS_AVAILABLE,
       ]
     );
 
     $timeZone = date_default_timezone_get();
-    $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '" . $timeZone . "') AS tslot
+    $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."') AS tslot
             FROM pratica AS p WHERE p.status > 1000 and p.submission_time IS NOT NULL GROUP BY tslot ORDER BY tslot ASC";
 
     /** @var EntityManager $em */
@@ -408,11 +443,52 @@ class OperatoriController extends Controller
     }
 
     $statusServices = $this->populateSelectStatusServicesPratiche();
+
     return array(
       'servizi' => $servizi,
       'pratiche' => $result,
       'user' => $this->getUser(),
-      'statusServices' => $statusServices
+      'statusServices' => $statusServices,
+    );
+  }
+
+  private function populateSelectStatusServicesPratiche()
+  {
+    /** @var EntityManager $em */
+    $em = $this->getDoctrine()->getManager();
+
+    //Servizi, pratiche  delle select di filtraggio
+    $serviziPratiche = $em->createQueryBuilder()
+      ->select('s.name', 's.slug')
+      ->from('AppBundle:Pratica', 'p')
+      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
+      ->distinct()
+      ->getQuery()
+      ->getResult();
+
+    $sql = "SELECT DISTINCT(status) as status
+            FROM pratica WHERE status > 1000 AND submission_time IS NOT NULL ORDER BY status ASC";
+    try {
+      $em = $this->getDoctrine()->getManager();
+      $stmt = $em->getConnection()->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll();
+    } catch (DBALException $e) {
+      $this->get('logger')->error($e->getMessage());
+      $result = [];
+    }
+
+    $status = [];
+    foreach ($result as $valore) {
+      $status[] = array(
+        "status" => $valore['status'],
+        "name" => $this->get('translator')->trans('pratica.dettaglio.stato_'.$valore['status']),
+      );
+    }
+
+    return array(
+      'statiPratiche' => $status,
+      'serviziPratiche' => $serviziPratiche,
     );
   }
 
@@ -438,7 +514,7 @@ class OperatoriController extends Controller
         $allegati[] = [
           'allegato' => $allegato,
           'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
-          'protocollo' => $protocollo->protocollo
+          'protocollo' => $protocollo->protocollo,
         ];
       }
     }
@@ -449,6 +525,38 @@ class OperatoriController extends Controller
       'user' => $user,
       'threads' => $threads,
     ];
+  }
+
+  /**
+   * @param OperatoreUser $operatore
+   * @param Pratica $pratica
+   *
+   * @return array
+   */
+  private function createThreadElementsForOperatoreAndPratica(OperatoreUser $operatore, Pratica $pratica)
+  {
+    $messagesAdapterService = $this->get('ocsdc.messages_adapter');
+    $threadId = $pratica->getUser()->getId().'~'.$operatore->getId();
+    $form = $this->createForm(
+      MessageType::class,
+      ['thread_id' => $threadId, 'sender_id' => $operatore->getId()],
+      [
+        'action' => $this->get('router')->generate(
+          'messages_controller_enqueue_for_operatore',
+          ['threadId' => $threadId]
+        ),
+        'method' => 'PUT',
+      ]
+    );
+
+    $threads[] = [
+      'threadId' => $threadId,
+      'title' => $pratica->getUser()->getFullName(),
+      'messages' => $messagesAdapterService->getDecoratedMessagesForThread($threadId, $operatore),
+      'form' => $form->createView(),
+    ];
+
+    return $threads;
   }
 
   /**
@@ -528,7 +636,7 @@ class OperatoriController extends Controller
         LogConstants::PRATICA_COMMENTED,
         [
           'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId()
+          'user' => $pratica->getUser()->getId(),
         ]
       );
 
@@ -554,6 +662,7 @@ class OperatoriController extends Controller
       } catch (\Exception $e) {
         $this->addFlash('error', $e->getMessage());
       }
+
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
@@ -567,7 +676,9 @@ class OperatoriController extends Controller
       /** @var Schema $schema */
       $schema = $this->container->get('formio.factory')->createFromFormId($pratica->getServizio()->getFormIoId());
       if (!empty($pratica->getDematerializedForms()['data'])) {
-        $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
+        $data = $schema->getDataBuilder()->setDataFromArray(
+          $pratica->getDematerializedForms()['data']
+        )->toFullFilledFlatArray();
         if (isset($data['applicant.fiscal_code.fiscal_code'])) {
           $fiscalCode = $data['applicant.fiscal_code.fiscal_code'];
         }
@@ -599,210 +710,6 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @param Pratica $pratica
-   * @param $status
-   */
-  private function getFeedbackMessage(Pratica $pratica)
-  {
-    $feedbackMessage = '';
-
-    if ($pratica->getEsito() !== null) {
-      $status = $pratica->getEsito() ? Pratica::STATUS_COMPLETE : Pratica::STATUS_CANCELLED;
-      $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
-
-      $router = $this->get('router');
-      $translator = $this->get('translator');
-      $placeholders = [
-        '%pratica_id%' => $pratica->getId(),
-        '%servizio%' => $pratica->getServizio()->getName(),
-        '%protocollo%' => $pratica->getNumeroProtocollo(),
-        '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $translator->trans('messages.pratica.no_reason'),
-        '%user_name%' => $pratica->getUser()->getFullName(),
-        '%indirizzo%' => $router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL)
-      ];
-
-      if (isset($feedbackMessages[$status])) {
-        $feedbackMessage = strtr($feedbackMessages[$status]['message'], $placeholders);
-      }
-    }
-    return $feedbackMessage;
-  }
-
-  /**
-   * @Route("/{pratica}/elabora",name="operatori_elabora_pratica")
-   * @Template()
-   * @param Pratica $pratica
-   *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
-   */
-  public function elaboraPraticaAction(Pratica $pratica)
-  {
-    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
-      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-    }
-
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($user, $pratica);
-
-    $praticaFlowService = null;
-    $praticaFlowServiceName = $pratica->getServizio()->getPraticaFlowOperatoreServiceName();
-
-    if ($praticaFlowServiceName) {
-      /** @var PraticaOperatoreFlow $praticaFlowService */
-      $praticaFlowService = $this->get($praticaFlowServiceName);
-    } else {
-      // Default pratica flow
-      $praticaFlowService = $this->get('ocsdc.form.flow.standardoperatore');
-    }
-
-    $praticaFlowService->setInstanceKey($user->getId());
-
-    $praticaFlowService->bind($pratica);
-
-    if ($pratica->getInstanceId() == null) {
-      $pratica->setInstanceId($praticaFlowService->getInstanceId());
-    }
-
-    $form = $praticaFlowService->createForm();
-    if ($praticaFlowService->isValid($form)) {
-
-      $praticaFlowService->saveCurrentStepData($form);
-      $pratica->setLastCompiledStep($praticaFlowService->getCurrentStepNumber());
-
-      if ($praticaFlowService->nextStep()) {
-        $this->getDoctrine()->getManager()->flush();
-        $form = $praticaFlowService->createForm();
-      } else {
-
-        try {
-          $this->completePraticaFlow($pratica);
-        } catch (\Exception $e) {
-          $this->addFlash('error', $e->getMessage());
-        }
-
-        $praticaFlowService->getDataManager()->drop($praticaFlowService);
-        $praticaFlowService->reset();
-
-        return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-      }
-    }
-
-    return [
-      'form' => $form->createView(),
-      'pratica' => $praticaFlowService->getFormData(),
-      'flow' => $praticaFlowService,
-      'user' => $user,
-    ];
-  }
-
-  /**
-   * @Route("/{pratica}/pdf", name="operatori_pratiche_show_pdf")
-   * @param Pratica $pratica
-   *
-   * @return BinaryFileResponse
-   */
-  public function showPdfAction(Request $request, Pratica $pratica)
-  {
-    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
-
-    $fileName = $allegato->getOriginalFilename();
-    if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
-      $fileName .= '.' . $allegato->getFile()->getExtension();
-    }
-
-    return new BinaryFileResponse(
-      $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
-      200,
-      [
-        'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
-      ]
-    );
-  }
-
-  /**
-   * @Route("/list",name="operatori_list_by_ente")
-   * @Security("has_role('ROLE_OPERATORE_ADMIN')")
-   * @Template()
-   * @return array
-   */
-  public function listOperatoriByEnteAction()
-  {
-    $operatoreRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
-    $operatori = $operatoreRepo->findBy(
-      [
-        'ente' => $this->getUser()->getEnte(),
-      ]
-    );
-    return array(
-      'operatori' => $operatori,
-      'user' => $this->getUser(),
-    );
-  }
-
-  /**
-   * @Route("/detail/{operatore}",name="operatori_detail")
-   * @Security("has_role('ROLE_OPERATORE_ADMIN')")
-   * @Template()
-   * @param Request $request
-   * @param OperatoreUser $operatore
-   * @return array|RedirectResponse
-   */
-  public function detailOperatoreAction(Request $request, OperatoreUser $operatore)
-  {
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-    $this->checkUserCanAccessOperatore($user, $operatore);
-    $form = $this->setupOperatoreForm($operatore)->handleRequest($request);
-
-    if ($form->isSubmitted()) {
-      $data = $form->getData();
-      //$this->storeOperatoreData($operatore->getId(), $data, $this->get('logger'));
-      $operatore->setAmbito($data['ambito']);
-      $this->getDoctrine()->getManager()->persist($operatore);
-      try {
-        $this->getDoctrine()->getManager()->flush();
-        $this->get('logger')->info(LogConstants::OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO, ['operatore_admin' => $this->getUser()->getId(), 'operatore' => $operatore->getId()]);
-      } catch (\Exception $e) {
-        $this->get('logger')->error($e->getMessage());
-      }
-      return $this->redirectToRoute('operatori_detail', ['operatore' => $operatore->getId()]);
-    }
-
-    return array(
-      'operatore' => $operatore,
-      'form' => $form->createView(),
-      'user' => $this->getUser(),
-    );
-  }
-
-  /**
-   * @Route("/logout", name="logout")
-   */
-  public function logoutAction()
-  {
-  }
-
-  /**
-   * @param OperatoreUser $operatore
-   * @return \Symfony\Component\Form\FormInterface
-   */
-  private function setupOperatoreForm(OperatoreUser $operatore)
-  {
-    $formBuilder = $this->createFormBuilder()
-      ->add('ambito', TextType::class,
-        ['label' => false, 'data' => $operatore->getAmbito(), 'required' => false]
-      )
-      ->add('save', SubmitType::class,
-        ['label' => $this->get('translator')->trans('operatori.profile.salva_modifiche')]
-      );
-    $form = $formBuilder->getForm();
-
-    return $form;
-  }
-
-  /**
    * @return FormInterface
    */
   private function setupCommentForm()
@@ -810,50 +717,39 @@ class OperatoriController extends Controller
     $translator = $this->get('translator');
     $data = array();
     $formBuilder = $this->createFormBuilder($data)
-      ->add('text', TextareaType::class, [
-        'label' => false,
-        'required' => true,
-        'attr' => [
-          'rows' => '5',
-          'class' => 'form-control input-inline',
-        ],
-      ])
+      ->add(
+        'text',
+        TextareaType::class,
+        [
+          'label' => false,
+          'required' => true,
+          'attr' => [
+            'rows' => '5',
+            'class' => 'form-control input-inline',
+          ],
+        ]
+      )
       ->add('createdAt', HiddenType::class, ['data' => time()])
-      ->add('creator', HiddenType::class, [
-        'data' => $this->getUser()->getFullName(),
-      ])
-      ->add('save', SubmitType::class, [
-        'label' => $translator->trans('operatori.aggiungi_commento'),
-        'attr' => [
-          'class' => 'btn btn-primary',
-        ],
-      ]);
+      ->add(
+        'creator',
+        HiddenType::class,
+        [
+          'data' => $this->getUser()->getFullName(),
+        ]
+      )
+      ->add(
+        'save',
+        SubmitType::class,
+        [
+          'label' => $translator->trans('operatori.aggiungi_commento'),
+          'attr' => [
+            'class' => 'btn btn-primary',
+          ],
+        ]
+      );
     $form = $formBuilder->getForm();
 
     return $form;
-  }
-
-  /**
-   * @param OperatoreUser $user
-   * @param Pratica $pratica
-   */
-  private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
-  {
-    $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-    if (!$isEnabled) {
-      throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
-    }
-  }
-
-  /**
-   * @param OperatoreUser $user
-   * @param OperatoreUser $operatore
-   */
-  private function checkUserCanAccessOperatore(OperatoreUser $user, OperatoreUser $operatore)
-  {
-    if ($user->getEnte() != $operatore->getEnte()) {
-      throw new UnauthorizedHttpException("User can not read operatore {$operatore->getId()}");
-    }
   }
 
   /**
@@ -928,72 +824,230 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @param OperatoreUser $operatore
+   * @param Pratica $pratica
+   * @param $status
+   */
+  private function getFeedbackMessage(Pratica $pratica)
+  {
+    $feedbackMessage = '';
+
+    if ($pratica->getEsito() !== null) {
+      $status = $pratica->getEsito() ? Pratica::STATUS_COMPLETE : Pratica::STATUS_CANCELLED;
+      $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
+
+      $router = $this->get('router');
+      $translator = $this->get('translator');
+      $placeholders = [
+        '%pratica_id%' => $pratica->getId(),
+        '%servizio%' => $pratica->getServizio()->getName(),
+        '%protocollo%' => $pratica->getNumeroProtocollo(),
+        '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito(
+        ) : $translator->trans('messages.pratica.no_reason'),
+        '%user_name%' => $pratica->getUser()->getFullName(),
+        '%indirizzo%' => $router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
+      ];
+
+      if (isset($feedbackMessages[$status])) {
+        $feedbackMessage = strtr($feedbackMessages[$status]['message'], $placeholders);
+      }
+    }
+
+    return $feedbackMessage;
+  }
+
+  /**
+   * @Route("/{pratica}/elabora",name="operatori_elabora_pratica")
+   * @Template()
    * @param Pratica $pratica
    *
+   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   */
+  public function elaboraPraticaAction(Pratica $pratica)
+  {
+    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE
+      || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
+      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+    }
+
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+
+    $praticaFlowService = null;
+    $praticaFlowServiceName = $pratica->getServizio()->getPraticaFlowOperatoreServiceName();
+
+    if ($praticaFlowServiceName) {
+      /** @var PraticaOperatoreFlow $praticaFlowService */
+      $praticaFlowService = $this->get($praticaFlowServiceName);
+    } else {
+      // Default pratica flow
+      $praticaFlowService = $this->get('ocsdc.form.flow.standardoperatore');
+    }
+
+    $praticaFlowService->setInstanceKey($user->getId());
+
+    $praticaFlowService->bind($pratica);
+
+    if ($pratica->getInstanceId() == null) {
+      $pratica->setInstanceId($praticaFlowService->getInstanceId());
+    }
+
+    $form = $praticaFlowService->createForm();
+    if ($praticaFlowService->isValid($form)) {
+
+      $praticaFlowService->saveCurrentStepData($form);
+      $pratica->setLastCompiledStep($praticaFlowService->getCurrentStepNumber());
+
+      if ($praticaFlowService->nextStep()) {
+        $this->getDoctrine()->getManager()->flush();
+        $form = $praticaFlowService->createForm();
+      } else {
+
+        try {
+          $this->completePraticaFlow($pratica);
+        } catch (\Exception $e) {
+          $this->addFlash('error', $e->getMessage());
+        }
+
+        $praticaFlowService->getDataManager()->drop($praticaFlowService);
+        $praticaFlowService->reset();
+
+        return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+      }
+    }
+
+    return [
+      'form' => $form->createView(),
+      'pratica' => $praticaFlowService->getFormData(),
+      'flow' => $praticaFlowService,
+      'user' => $user,
+    ];
+  }
+
+  /**
+   * @Route("/{pratica}/pdf", name="operatori_pratiche_show_pdf")
+   * @param Pratica $pratica
+   *
+   * @return BinaryFileResponse
+   */
+  public function showPdfAction(Request $request, Pratica $pratica)
+  {
+    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+
+    $fileName = $allegato->getOriginalFilename();
+    if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
+      $fileName .= '.'.$allegato->getFile()->getExtension();
+    }
+
+    return new BinaryFileResponse(
+      $allegato->getFile()->getPath().'/'.$allegato->getFile()->getFilename(),
+      200,
+      [
+        'Content-type' => 'application/octet-stream',
+        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
+      ]
+    );
+  }
+
+  /**
+   * @Route("/list",name="operatori_list_by_ente")
+   * @Security("has_role('ROLE_OPERATORE_ADMIN')")
+   * @Template()
    * @return array
    */
-  private function createThreadElementsForOperatoreAndPratica(OperatoreUser $operatore, Pratica $pratica)
+  public function listOperatoriByEnteAction()
   {
-    $messagesAdapterService = $this->get('ocsdc.messages_adapter');
-    $threadId = $pratica->getUser()->getId() . '~' . $operatore->getId();
-    $form = $this->createForm(
-      MessageType::class,
-      ['thread_id' => $threadId, 'sender_id' => $operatore->getId()],
+    $operatoreRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
+    $operatori = $operatoreRepo->findBy(
       [
-        'action' => $this->get('router')->generate('messages_controller_enqueue_for_operatore', ['threadId' => $threadId]),
-        'method' => 'PUT',
+        'ente' => $this->getUser()->getEnte(),
       ]
     );
 
-    $threads[] = [
-      'threadId' => $threadId,
-      'title' => $pratica->getUser()->getFullName(),
-      'messages' => $messagesAdapterService->getDecoratedMessagesForThread($threadId, $operatore),
-      'form' => $form->createView(),
-    ];
-
-    return $threads;
+    return array(
+      'operatori' => $operatori,
+      'user' => $this->getUser(),
+    );
   }
 
-  private function populateSelectStatusServicesPratiche()
+  /**
+   * @Route("/detail/{operatore}",name="operatori_detail")
+   * @Security("has_role('ROLE_OPERATORE_ADMIN')")
+   * @Template()
+   * @param Request $request
+   * @param OperatoreUser $operatore
+   * @return array|RedirectResponse
+   */
+  public function detailOperatoreAction(Request $request, OperatoreUser $operatore)
   {
-    /** @var EntityManager $em */
-    $em = $this->getDoctrine()->getManager();
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessOperatore($user, $operatore);
+    $form = $this->setupOperatoreForm($operatore)->handleRequest($request);
 
-    //Servizi, pratiche  delle select di filtraggio
-    $serviziPratiche = $em->createQueryBuilder()
-      ->select('s.name', 's.slug')
-      ->from('AppBundle:Pratica', 'p')
-      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
-      ->distinct()
-      ->getQuery()
-      ->getResult();
+    if ($form->isSubmitted()) {
+      $data = $form->getData();
+      //$this->storeOperatoreData($operatore->getId(), $data, $this->get('logger'));
+      $operatore->setAmbito($data['ambito']);
+      $this->getDoctrine()->getManager()->persist($operatore);
+      try {
+        $this->getDoctrine()->getManager()->flush();
+        $this->get('logger')->info(
+          LogConstants::OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO,
+          ['operatore_admin' => $this->getUser()->getId(), 'operatore' => $operatore->getId()]
+        );
+      } catch (\Exception $e) {
+        $this->get('logger')->error($e->getMessage());
+      }
 
-    $sql = "SELECT DISTINCT(status) as status
-            FROM pratica WHERE status > 1000 AND submission_time IS NOT NULL ORDER BY status ASC";
-    try {
-      $em = $this->getDoctrine()->getManager();
-      $stmt = $em->getConnection()->prepare($sql);
-      $stmt->execute();
-      $result = $stmt->fetchAll();
-    } catch (DBALException $e) {
-      $this->get('logger')->error($e->getMessage());
-      $result = [];
-    }
-
-    $status = [];
-    foreach ($result as $valore) {
-      $status[] = array(
-        "status" => $valore['status'],
-        "name" => $this->get('translator')->trans('pratica.dettaglio.stato_' . $valore['status'])
-      );
+      return $this->redirectToRoute('operatori_detail', ['operatore' => $operatore->getId()]);
     }
 
     return array(
-      'statiPratiche' => $status,
-      'serviziPratiche' => $serviziPratiche,
+      'operatore' => $operatore,
+      'form' => $form->createView(),
+      'user' => $this->getUser(),
     );
+  }
+
+  /**
+   * @param OperatoreUser $user
+   * @param OperatoreUser $operatore
+   */
+  private function checkUserCanAccessOperatore(OperatoreUser $user, OperatoreUser $operatore)
+  {
+    if ($user->getEnte() != $operatore->getEnte()) {
+      throw new UnauthorizedHttpException("User can not read operatore {$operatore->getId()}");
+    }
+  }
+
+  /**
+   * @param OperatoreUser $operatore
+   * @return \Symfony\Component\Form\FormInterface
+   */
+  private function setupOperatoreForm(OperatoreUser $operatore)
+  {
+    $formBuilder = $this->createFormBuilder()
+      ->add(
+        'ambito',
+        TextType::class,
+        ['label' => false, 'data' => $operatore->getAmbito(), 'required' => false]
+      )
+      ->add(
+        'save',
+        SubmitType::class,
+        ['label' => $this->get('translator')->trans('operatori.profile.salva_modifiche')]
+      );
+    $form = $formBuilder->getForm();
+
+    return $form;
+  }
+
+  /**
+   * @Route("/logout", name="logout")
+   */
+  public function logoutAction()
+  {
   }
 
   /**
@@ -1010,20 +1064,20 @@ class OperatoriController extends Controller
 
     if ($time <= 180) {
       $timeSlot = "minute";
-      $timeDiff = "- " . $time . " minutes";
+      $timeDiff = "- ".$time." minutes";
     } elseif ($time <= 1440) {
       $timeSlot = "hour";
-      $timeDiff = "- " . ($time / 60) . " hours";
+      $timeDiff = "- ".($time / 60)." hours";
     } else {
       $timeSlot = "day";
-      $timeDiff = "- " . ($time / 60 / 24) . " days";
+      $timeDiff = "- ".($time / 60 / 24)." days";
     }
 
     $timeZone = date_default_timezone_get();
 
     $calculateInterval = date('Y-m-d H:i:s', strtotime($timeDiff));
 
-    $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '" . $timeZone . "' >= '" . $calculateInterval . "'" . "and p.submission_time IS NOT NULL";
+    $where = " WHERE p.status > 1000 AND TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."' >= '".$calculateInterval."'"."and p.submission_time IS NOT NULL";
 
     $sqlParams = [];
     if ($services && $services != 'all') {
@@ -1032,12 +1086,12 @@ class OperatoriController extends Controller
     }
 
     if ($status && $status != 'all') {
-      $where .= " AND p.status =" . "'" . (int)$status . "'";
+      $where .= " AND p.status ="."'".(int)$status."'";
     }
 
-    $sql = "SELECT COUNT(p.id), date_trunc('" . $timeSlot . "', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '" . $timeZone . "') AS tslot, s.name
-            FROM pratica AS p LEFT JOIN servizio AS s ON p.servizio_id = s.id" .
-      $where .
+    $sql = "SELECT COUNT(p.id), date_trunc('".$timeSlot."', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '".$timeZone."') AS tslot, s.name
+            FROM pratica AS p LEFT JOIN servizio AS s ON p.servizio_id = s.id".
+      $where.
       " GROUP BY s.name, tslot ORDER BY tslot ASC";
 
     /** @var EntityManager $em */
@@ -1097,13 +1151,13 @@ class OperatoriController extends Controller
     /** @var LogEntry[] $versions */
     $versions = $repo = $this->getDoctrine()->getRepository(LogEntry::class)->getLogEntries($pratica);
 
-    if (count($versions) <= 1){
+    if (count($versions) <= 1) {
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
     $a = $request->get('a', false);
     $b = $request->get('b', false);
-    if ($b === $a){
+    if ($b === $a) {
       $b = false;
     }
 
@@ -1113,13 +1167,13 @@ class OperatoriController extends Controller
     $bData = [];
 
     $versionNumbers = [];
-    foreach ($versions as $version){
+    foreach ($versions as $version) {
       $versionNumbers[] = $version->getVersion();
-      if ($a ==  $version->getVersion()){
+      if ($a == $version->getVersion()) {
         $aData = $version->getData()['dematerializedForms']['data'] ?? [];
         $aVersion = $version;
       }
-      if ($b ==  $version->getVersion()){
+      if ($b == $version->getVersion()) {
         $bData = $version->getData()['dematerializedForms']['data'] ?? [];
         $bVersion = $version;
       }
@@ -1137,6 +1191,70 @@ class OperatoriController extends Controller
       'b_version' => $bVersion,
       'a_data' => $aData,
       'b_data' => $bData,
+    ];
+  }
+
+  /**
+   * @Route("/{pratica}/edit",name="operatori_modifica_pratica")
+   * @Template()
+   * @param Request $request
+   * @param Pratica $pratica
+   *
+   * @return array|RedirectResponse
+   */
+  public function editPraticaAction(Request $request, Pratica $pratica)
+  {
+    $em = $this->getDoctrine()->getManager();
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+
+    $pratica->setStatus(Pratica::STATUS_DRAFT_FOR_INTEGRATION);
+
+    /** @var PraticaFlow $praticaFlowService */
+    $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
+    $praticaFlowService->setInstanceKey($user->getId());
+    $praticaFlowService->bind($pratica);
+    if ($pratica->getInstanceId() == null) {
+      $pratica->setInstanceId($praticaFlowService->getInstanceId());
+    }
+    $resumeURI = $praticaFlowService->getResumeUrl($request);
+
+    $form = $praticaFlowService->createForm();
+
+    if ($praticaFlowService->isValid($form)) {
+
+      $praticaFlowService->saveCurrentStepData($form);
+      if ($praticaFlowService->nextStep()) {
+        $em->flush();
+        $form = $praticaFlowService->createForm();
+      } else {
+        $praticaFlowService->onFlowCompleted($pratica);
+        $this->get('logger')->info(
+          LogConstants::PRATICA_UPDATED,
+          ['id' => $pratica->getId(), 'pratica' => $pratica]
+        );
+        $praticaFlowService->getDataManager()->drop($praticaFlowService);
+        $praticaFlowService->reset();
+
+        return $this->redirectToRoute(
+          'operatori_show_pratica',
+          ['pratica' => $pratica->getId()]
+        );
+      }
+    }
+
+    $formServerUrl = $handler instanceof FormServerAwareInterface ?
+      $handler->getFormServerUrlForPratica($pratica) : $this->getParameter('formserver_public_url');
+
+    return [
+      'form' => $form->createView(),
+      'pratica' => $praticaFlowService->getFormData(),
+      'flow' => $praticaFlowService,
+      'formserver_url' => $formServerUrl,
+      'user' => $user,
     ];
   }
 }

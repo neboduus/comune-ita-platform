@@ -102,6 +102,7 @@
           {% for version in versions %}
             <dt class="col-sm-6">
               {{ version.loggedAt|date(ocsdc_default_datetime_format) }}
+              <small class="d-block">{{ version.username }}</small>
             </dt>
             <dd class="col-sm-6">{{ version.version }}{% if loop.index == 1 %} <small>corrente</small>{% endif %}</dd>
           {% endfor %}

@@ -1,50 +1,54 @@
 {% if pratica.status < 4100 or pratica.statusName == 'STATUS_PENDING_AFTER_INTEGRATION' %}
-  <div class="row mb-5">
+  <div class="mb-5">
     {% if not pratica.servizio.praticaFlowOperatoreServiceName or pratica.servizio.praticaFlowOperatoreServiceName == 'ocsdc.form.flow.standardoperatore' %}
       {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
-      <div class="col-4 d-flex justify-content-center">
-        <button class="btn btn-secondary" id="modal_refuse" data-toggle="modal"
-                data-target=".bd-example-modal-lg">
-          <svg class="icon icon-light">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
-          </svg>
-          {{ 'operatori.rigetta' | trans }}
-        </button>
-      </div>
-      <div class="col-4 d-flex justify-content-center">
-        <button class="btn btn-secondary" id="modal_request_modification" data-toggle="modal"
-                data-target=".bd-example-modal-lg">
-          <svg class="icon icon-light">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-refresh"></use>
-          </svg>
-          {{ 'operatori.richiedi_modifica' | trans }}
-        </button>
-      </div>
-      <div class="col-4 d-flex justify-content-center">
-        <button class="btn btn-primary" id="modal_approve" data-toggle="modal"
-                data-target=".bd-example-modal-lg">
-          <svg class="icon icon-light">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
-          </svg>
-          {{ 'operatori.approva' | trans }}
-        </button>
+      <div class="text-center">
+        <button class="btn btn-secondary py-2 px-3 mr-2" id="modal_refuse" data-toggle="modal"
+                  data-target=".bd-example-modal-lg">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+            </svg>
+            {{ 'operatori.rigetta' | trans }}
+          </button>
+          <button class="btn btn-secondary py-2 px-3 mr-2" id="modal_request_modification" data-toggle="modal"
+                  data-target=".bd-example-modal-lg">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-refresh"></use>
+            </svg>
+            {{ 'operatori.richiedi_modifica' | trans }}
+          </button>
+          <a href="{{ path('operatori_modifica_pratica', {'pratica': pratica}) }}" class="btn btn-secondary py-2 px-3 mr-2">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+            </svg>
+            {{ 'operatori.modifica' | trans }}
+          </a>
+          <button class="btn btn-primary py-2 px-3" id="modal_approve" data-toggle="modal"
+                  data-target=".bd-example-modal-lg">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+            </svg>
+            {{ 'operatori.approva' | trans }}
+          </button>
       </div>
     {% else %}
-      <div class="col-6 d-flex justify-content-center">
-        <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}" class="btn btn-secondary">
-          <svg class="icon icon-light">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
-          </svg>
-          {{ 'operatori.rigetta' | trans }}
-        </a>
-      </div>
-      <div class="col-6 d-flex justify-content-center">
-        <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}" class="btn btn-primary">
-          <svg class="icon icon-light">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
-          </svg>
-          {{ 'operatori.approva' | trans }}
-        </a>
+      <div class="row">
+        <div class="col-6 d-flex justify-content-center">
+          <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}" class="btn btn-secondary">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+            </svg>
+            {{ 'operatori.rigetta' | trans }}
+          </a>
+        </div>
+        <div class="col-6 d-flex justify-content-center">
+          <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}" class="btn btn-primary">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+            </svg>
+            {{ 'operatori.approva' | trans }}
+          </a>
+        </div>
       </div>
     {% endif %}
   </div>
