@@ -98,22 +98,11 @@ class PraticheAnonimeController extends Controller
   {
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    $ente = $this->getDoctrine()
-      ->getRepository('AppBundle:Ente')
-      ->findOneBy(
-        [
-          'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
-            'prefix'
-          ) : $request->query->get(PraticheController::ENTE_SLUG_QUERY_PARAMETER, null),
-        ]
-      );
+    $instanceService = $this->container->get('ocsdc.instance_service');
+    $ente = $instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
-      $this->get('logger')->info(
-        LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
-        ['headers' => $request->headers]
-      );
-
+      $this->get('logger')->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
       throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
     }
 
