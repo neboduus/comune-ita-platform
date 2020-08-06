@@ -39,7 +39,6 @@ class DefaultLoggedInHandler extends DefaultHandler
 
     $pratica = $this->createNewPratica($servizio, $user);
     $pratica->setEnte($ente);
-
     foreach ($servizio->getErogatori() as $erogatore) {
       if ($erogatore->getEnti()->contains($ente)) {
         $pratica->setErogatore($erogatore);
