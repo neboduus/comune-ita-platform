@@ -19,7 +19,7 @@ use JMS\Serializer\Annotation\AccessorOrder;
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\ServizioRepository")
  * @ORM\Table(name="servizio")
  * @ORM\HasLifecycleCallbacks
  */
@@ -30,14 +30,13 @@ class Servizio
   const STATUS_AVAILABLE = 1;
   const STATUS_SUSPENDED = 2;
   const STATUS_PRIVATE = 3;
-
+  const STATUS_SCHEDULED = 4;
 
   const ACCESS_LEVEL_ANONYMOUS = 0;
   const ACCESS_LEVEL_SOCIAL = 1000;
   const ACCESS_LEVEL_SPID_L1 = 2000;
   const ACCESS_LEVEL_SPID_L2 = 3000;
   const ACCESS_LEVEL_CIE = 4000;
-
 
   /**
    * @ORM\Column(type="guid")
@@ -266,6 +265,31 @@ class Servizio
    */
   private $feedbackMessages;
 
+  /**
+   * @var \DateTime
+   * @ORM\Column(type="datetime", nullable=true)
+   */
+  private $scheduledFrom;
+
+  /**
+   * @var \DateTime
+   * @ORM\Column(type="datetime", nullable=true)
+   */
+  private $scheduledTo;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @Serializer\Exclude()
+   */
+  private $postSubmitValidationExpression;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true)
+   * @Serializer\Exclude()
+   */
+  private $postSubmitValidationMessage;
 
   /**
    * Servizio constructor.
@@ -910,7 +934,7 @@ class Servizio
   /**
    * @return bool
    */
-  public function isProtocolRequired(): bool
+  public function isProtocolRequired(): ?bool
   {
     return $this->protocolRequired;
   }
@@ -918,7 +942,7 @@ class Servizio
   /**
    * @param bool $protocolRequired
    */
-  public function setProtocolRequired(bool $protocolRequired)
+  public function setProtocolRequired(?bool $protocolRequired)
   {
     $this->protocolRequired = $protocolRequired;
   }
@@ -942,6 +966,70 @@ class Servizio
       $messages [$feedbackMessage->getTrigger()] = $feedbackMessage;
     }
     $this->feedbackMessages = $messages;
+  }
+
+  /**
+   * @return \DateTime
+   */
+  public function getScheduledFrom()
+  {
+    return $this->scheduledFrom;
+  }
+
+  /**
+   * @param \DateTime $scheduledFrom
+   */
+  public function setScheduledFrom(?\DateTime $scheduledFrom)
+  {
+    $this->scheduledFrom = $scheduledFrom;
+  }
+
+  /**
+   * @return \DateTime
+   */
+  public function getScheduledTo()
+  {
+    return $this->scheduledTo;
+  }
+
+  /**
+   * @param \DateTime $scheduledTo
+   */
+  public function setScheduledTo(?\DateTime $scheduledTo)
+  {
+    $this->scheduledTo = $scheduledTo;
+  }
+
+  /**
+   * @return string
+   */
+  public function getPostSubmitValidationExpression()
+  {
+    return $this->postSubmitValidationExpression;
+  }
+
+  /**
+   * @param string $postSubmitValidationExpression
+   */
+  public function setPostSubmitValidationExpression($postSubmitValidationExpression)
+  {
+    $this->postSubmitValidationExpression = $postSubmitValidationExpression;
+  }
+
+  /**
+   * @return string
+   */
+  public function getPostSubmitValidationMessage()
+  {
+    return $this->postSubmitValidationMessage;
+  }
+
+  /**
+   * @param string $postSubmitValidationMessage
+   */
+  public function setPostSubmitValidationMessage($postSubmitValidationMessage)
+  {
+    $this->postSubmitValidationMessage = $postSubmitValidationMessage;
   }
 
 }

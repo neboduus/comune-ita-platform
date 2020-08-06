@@ -37,19 +37,12 @@
                 <td><code>{{ pratica.paymentData.request.causaleVersamento }}</code></td>
               </tr>
               <tr>
-                <td class="text-center border-0" colspan="2">
-                  <a href="{{ pratica.paymentData.response.urlFileAvviso }}"
-                     class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_receipt_button'|trans }}</a>
-                </td>
+                <td><b>{{ 'operatori.data_esecuzione_pagamento'|trans }}</b></td>
+                <td>{{ pratica.paymentData.request.dataEsecuzionePagamento }}</td>
               </tr>
-            {% else %}
               <tr>
                 <td><b>{{ 'operatori.iud'|trans }}</b></td>
                 <td><code>{{ pratica.paymentData.request.identificativoUnivocoDovuto }}</code></td>
-              </tr>
-              <tr>
-                <td><b>{{ 'operatori.data_esecuzione_pagamento'|trans }}</b></td>
-                <td>{{ pratica.paymentData.request.dataEsecuzionePagamento }}</td>
               </tr>
             {% endif %}
             {% if pratica.paymentData.response is defined %}
@@ -57,6 +50,7 @@
                 <td><b>{{ 'operatori.iuv'|trans }}</b></td>
                 <td><code>{{ pratica.paymentData.response.identificativoUnivocoVersamento }}</code></td>
               </tr>
+              {# Se c'è l'esito del pagamento scarico la ricevuta altrimenti scarico l'avviso #}
               {% if pratica.paymentData.outcome is defined %}
                 <tr>
                   <td><b>{{ 'operatori.esito_pagamento'|trans }}</b></td>
@@ -66,13 +60,19 @@
                   <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
                   <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
                 </tr>
-              {% else %}
                 <tr>
                   <td class="text-center border-0" colspan="2">
                     <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
-                       class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_button'|trans }}</a>
+                       class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_receipt_button'|trans }}</a>
                   </td>
                 </tr>
+                {% else %}
+                  <tr>
+                    <td class="text-center border-0" colspan="2">
+                      <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
+                         class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_button'|trans }}</a>
+                    </td>
+                  </tr>
               {% endif %}
             {% endif %}
           {% else %}

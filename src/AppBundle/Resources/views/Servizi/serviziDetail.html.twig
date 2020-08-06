@@ -88,13 +88,9 @@
         <div class="row">
           <div class="col-md-12">
             {#todo: usare constant()#}
-            {% if servizio.status == 0 %}
+            {% if not can_access %}
               <div class="alert alert-danger" role="alert">
-                <i class="fa fa-times" aria-hidden="true"></i> {{ 'servizio.cancellato'|trans }}
-              </div>
-            {% elseif servizio.status == 2 %}
-              <div class="alert alert-warning" role="alert">
-                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{ 'servizio.sospeso'|trans }}
+                <i class="fa fa-times" aria-hidden="true"></i> {{ deny_access_message }}
               </div>
             {% else %}
               <div>
@@ -102,18 +98,14 @@
                   <p class="text-center">
                     <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
                        class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
-                      {% if (servizio.handler == 'default' or servizio.handler is null or servizio.handler == '') %}
-                        <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': ''}) }}</span>
-                      {% else %}
                         <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                      {% endif %}
                     </a>
                   </p>
                 {% else %}
                   <p class="text-center">
                     <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
                        class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
-                      <span>{{ 'servizio.accedi_al_servizio'|trans({'%name%': ''}) }}</span>
+                      <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
                     </a>
                   </p>
                 {% endif %}

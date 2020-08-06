@@ -10,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +25,8 @@ class GeneralDataType extends AbstractType
       'Bozza' => Servizio::STATUS_CANCELLED,
       'Pubblicato' => Servizio::STATUS_AVAILABLE,
       'Non attivo' => Servizio::STATUS_SUSPENDED,
-      'Privato' => Servizio::STATUS_PRIVATE
+      'Privato' => Servizio::STATUS_PRIVATE,
+      'Schedulato' => Servizio::STATUS_SCHEDULED,
     ];
 
     $accessLevels = [
@@ -93,12 +96,32 @@ class GeneralDataType extends AbstractType
         'label' => 'Stato',
         'choices' => $statuses
       ])
+      ->add('status', ChoiceType::class, [
+        'label' => 'Stato',
+        'choices' => $statuses
+      ])
+      ->add('scheduled_from', DateTimeType::class, [
+        'label' => 'Schedulato a partire da',
+        'required' => false,
+        'empty_data' => null
+      ])
+      ->add('scheduled_to', DateTimeType::class, [
+        'label' => 'Schedulato fino a',
+        'required' => false,
+        'empty_data' => null
+      ])
       ->add('access_level', ChoiceType::class, [
         'label' => 'Livello di accesso al servizio',
         'choices' => $accessLevels
       ])
       ->add('login_suggested', CheckboxType::class, [
         'label' => 'Suggerisci il Login per l\'autocompletamento?',
+        'required' => false
+      ])->add(
+        "post_submit_validation_expression", HiddenType::class, [
+        'required' => false
+      ])->add(
+        "post_submit_validation_message", HiddenType::class, [
         'required' => false
       ]);
   }

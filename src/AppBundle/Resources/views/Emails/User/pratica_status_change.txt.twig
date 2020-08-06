@@ -5,10 +5,6 @@
     Con la seguente motivazione:
     {{ pratica.getMotivazioneEsito() }}
   {% endif %}
-
-  {% if not pratica.servizio.getEmailText()  is empty %}
-    {{ pratica.servizio.getEmailText() }}
-  {% endif %}
 {% endif %}
 {{ 'email.pratica.thanks'|trans() }}
 {{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}

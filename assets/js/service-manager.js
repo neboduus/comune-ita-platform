@@ -11,21 +11,41 @@ Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
+$(document).ready(function () {
 
-$(window).on('load', function () {
+  const serviceStatus = $('#general_data_status');
+  const scheduledFrom = $('#general_data_scheduled_from').parent();
+  const scheduledTo = $('#general_data_scheduled_to').parent();
+  const hideScheduler = function () {
+
+    console.log(serviceStatus.val());
+
+    if (serviceStatus.val() === '4') {
+      scheduledFrom.show();
+      scheduledTo.show();
+    } else {
+      scheduledFrom.hide();
+      scheduledTo.hide();
+    }
+  }
+  // Show/Hide scheduler on init
+  hideScheduler();
+
+  // Show/Hide scheduler on access level change
+  serviceStatus.change(function () {
+    hideScheduler()
+  })
+
+
   let loginCheckbox = $('#general_data_login_suggested');
   if ($('#general_data_access_level').val() === '0') {
     loginCheckbox.closest('div').show();
   } else {
     loginCheckbox.closest('div').hide();
   }
-});
-
-$(document).ready(function () {
 
   // Show/Hide login checkbox
   $('#general_data_access_level').change(function () {
-    let loginCheckbox = $('#general_data_login_suggested');
     if (this.value === '0') {
       loginCheckbox.closest('div').show();
     } else {
@@ -70,13 +90,43 @@ $(document).ready(function () {
   }
 
   if ($("#general_data_flow_service_step").length /*|| $("#feedback_messages_data_flow_service_step").length*/) {
+    const limitChars = 2000;
     $('textarea').summernote({
       toolbar: [
-        ['style', ['style']],
+        ['style', ['bold', 'italic', 'underline', 'clear']],
         ['para', ['ul', 'ol', 'paragraph']],
         ['insert', ['link']],
         ['view', ['codeview']],
-      ]
+      ],
+      callbacks: {
+        onInit: function() {
+          let chars = $(this).parent().find(".note-editable").text();
+          let totalChars = chars.length;
+
+          $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di '+limitChars+' caratteri (<span class="total-chars">'+ totalChars +'</span> / <span class="max-chars"> '+limitChars+'</span>)</small>')
+        },
+        /*onKeydown: function() {
+          let chars = $(this).parent().find(".note-editable").text();
+          let totalChars = chars.length;
+
+          //Check and Limit Charaters
+          if(totalChars >= limitChars){
+            return false;
+          }
+        },*/
+        onChange: function() {
+          let chars = $(this).parent().find(".note-editable").text();
+          let totalChars = chars.length;
+
+          //Update value
+          $(this).parent().find(".total-chars").text(totalChars);
+
+          //Check and Limit Charaters
+          if(totalChars >= limitChars){
+            return false;
+          }
+        }
+      }
     });
   }
 
@@ -191,7 +241,8 @@ $(document).ready(function () {
           components: {
             htmlelement: true,
             columns: true,
-            pagebreak: true
+            pagebreak: true,
+            table: true
           }
         },
       },

@@ -39,6 +39,7 @@
             <tr>
               <th>Nome</th>
               <th>Url</th>
+              <th>Livello di accesso</th>
               <th>Stato</th>
               <th>Azioni</th>
             </tr>
@@ -60,7 +61,14 @@
                     <span>Copia URL</span></a>
                 </td>
                 <td data-title="Stato" class="min-h-65">
+                  {{ access_levels[item.accessLevel] }}
+                </td>
+                <td data-title="Stato" class="min-h-65">
                   {{ statuses[item.status] }}
+                  {% if item.status == 4 %}
+                    <small class="d-block">da {{ item.scheduledFrom|date(ocsdc_default_datetime_format) }}</small>
+                    <small class="d-block">a {{ item.scheduledTo|date(ocsdc_default_datetime_format) }}</small>
+                  {% endif %}
                 </td>
                 <td data-title="Azioni" class="actions" class="min-h-65">
                   <a class="btn btn-warning btn-xs mb-1" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">

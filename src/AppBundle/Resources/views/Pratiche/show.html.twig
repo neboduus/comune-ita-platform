@@ -64,7 +64,7 @@
             </div>
           {% endif %}
           <div class="col-12 mt-5">
-            {% if (pratica.statusName == 'STATUS_DRAFT' or pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and user.id == pratica.user.id %}
+            {% if can_compile %}
               <h4>Azioni</h4>
               <p>
                 <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"

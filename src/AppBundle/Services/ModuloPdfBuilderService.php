@@ -140,7 +140,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $this->createAllegatoInstance($pratica, $unsignedResponse);
     $servizioName = $pratica->getServizio()->getName();
     $now = new \DateTime();
-    $now->setTimestamp($pratica->getSubmissionTime());
+    $now->setTimestamp(time());
     $unsignedResponse->setOriginalFilename("Servizio {$servizioName} " . $now->format('Ymdhi'));
     $unsignedResponse->setDescription(
       $this->translator->trans(
@@ -167,7 +167,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $this->createAllegatoInstance($pratica, $signedResponse);
     $servizioName = $pratica->getServizio()->getName();
     $now = new \DateTime();
-    $now->setTimestamp($pratica->getSubmissionTime());
+    $now->setTimestamp(time());
     $signedResponse->setOriginalFilename("Servizio {$servizioName} " . $now->format('Ymdhi'));
     $signedResponse->setDescription(
       $this->translator->trans(
@@ -375,7 +375,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @return string
    * @throws \ReflectionException
    */
-  private function renderForResponse(Pratica $pratica)
+  public function renderForResponse(Pratica $pratica)
   {
     $className = (new \ReflectionClass(RispostaOperatore::class))->getShortName();
 

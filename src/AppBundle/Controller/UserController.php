@@ -2,8 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Dto\Application;
 use AppBundle\Entity\CPSUser;
-use AppBundle\Form\Base\MessageType;
+use AppBundle\Entity\FormIO;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
 use AppBundle\Logging\LogConstants;
 use DateTime;
 use Psr\Log\LoggerInterface;
@@ -13,8 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -73,7 +76,7 @@ class UserController extends Controller
    * @Template()
    * @param Request $request
    *
-   * @return array
+   * @return array|RedirectResponse
    */
   public function profileAction(Request $request)
   {
@@ -282,5 +285,94 @@ class UserController extends Controller
     }
 
     return $enti;
+  }
+
+  /**
+   * @Route("/applications", name="user_applications_json")
+   * @param Request $request
+   *
+   * @return JsonResponse
+   */
+  public function applicationsAction(Request $request)
+  {
+    $result = [];
+
+    $parameters = [
+      'data' => $request->get('data', []),
+      'service' => $request->get('service', []),
+      'status' => $request->get('status', []),
+      'sort' => $request->get('sort', 'submissionTime'),
+      'order' => $request->get('order', 'asc'),
+    ];
+
+    foreach ($request->query->keys() as $queryParameter){
+      if (!array_key_exists($queryParameter, $parameters) && !in_array($queryParameter, ['limit', 'offset', 'output']) ){
+        $error = [
+          'error' => 'Bad Request',
+          'message' => "Unexpected parameter: $queryParameter"
+        ];
+        $request->setRequestFormat('json');
+        return new JsonResponse(json_encode($error), 400, [], true);
+      }
+    }
+
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+
+    $count = $praticaRepository->countPraticheByUser($user, $parameters);
+    $output = $request->get('output', 'count');
+
+    $result['meta']['count'] = $count;
+    $currentParameters = $parameters;
+
+    if ($output !== 'count'){
+      $limit = intval($request->get('limit', 10));
+      $offset = intval($request->get('offset', 0));
+      $data = $praticaRepository->findPraticheByUser($user, $parameters, $limit, $offset);
+
+      $currentParameters['offset'] = $offset;
+      $currentParameters['limit'] = $limit;
+      $result['links']['self'] = $this->generateUrl('user_applications_json', $currentParameters);
+      $result['links']['prev'] = null;
+      $result['links']['next'] = null;
+      if ($offset != 0) {
+        $prevParameters = $parameters;
+        $prevParameters['offset'] = $offset - $limit;
+        $prevParameters['limit'] = $limit;
+        $result['links']['prev'] = $this->generateUrl('user_applications_json', $prevParameters);
+      }
+      if ($offset + $limit < $count) {
+        $nextParameters = $parameters;
+        $nextParameters['offset'] = $offset + $limit;
+        $nextParameters['limit'] = $limit;
+        $result['links']['next'] = $this->generateUrl('user_applications_json', $nextParameters);
+      }
+
+      $serializer = $this->container->get('jms_serializer');
+      foreach ($data as $s) {
+        $application = Application::fromEntity($s, '', false);
+        $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
+        if ($s instanceof FormIO){
+          $schema = $this->container->get('formio.factory')->createFromFormId($s->getServizio()->getFormIoId());
+          if ($schema->hasComponents()) {
+            $dematerialized = $s->getDematerializedForms();
+            if (isset($dematerialized['data'])) {
+              $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray($dematerialized['data'])->toFullFilledFlatArray();
+            } else {
+              $applicationArray['data'] = array_fill_keys($schema->getComponentsColumns('name'), '');
+            }
+          }
+        }
+        $result['data'][] = $applicationArray;
+      }
+    }
+
+    $result['meta']['parameter'] = $currentParameters;
+
+    $request->setRequestFormat('json');
+    return new JsonResponse(json_encode($result), 200, [], true);
   }
 }

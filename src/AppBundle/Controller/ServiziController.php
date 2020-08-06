@@ -3,7 +3,12 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\ServizioRepository;
+use AppBundle\Handlers\Servizio\ForbiddenAccessException;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
+use AppBundle\Logging\LogConstants;
 use Doctrine\ORM\EntityRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,114 +25,121 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ServiziController extends Controller
 {
-    /**
-     * @Route("/", name="servizi_list")
-     * @Template()
-     * @param Request $request
-     * @return array
-     */
-    public function serviziAction(Request $request)
-    {
-        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-        $stickyServices = $serviziRepository->findBy(
-            [
-                'sticky' => true,
-                'status' => [Servizio::STATUS_AVAILABLE,Servizio::STATUS_SUSPENDED]
-            ],
-            [
-                'name' => 'ASC',
-            ]
-        );
-        $servizi = $serviziRepository->findBy(
-            [
-                'status' => [Servizio::STATUS_AVAILABLE,Servizio::STATUS_SUSPENDED]
-            ],
-            [
-                'name' => 'ASC',
-            ]
-        );
+  /**
+   * @Route("/", name="servizi_list")
+   * @Template()
+   * @param Request $request
+   * @return array
+   */
+  public function serviziAction(Request $request)
+  {
+    /** @var ServizioRepository $serviziRepository */
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $stickyServices = $serviziRepository->findStickyAvailable();
+    $servizi = $serviziRepository->findNotStickyAvailable();
 
-        return [
-            'sticky_services' => $stickyServices,
-            'servizi' => $servizi,
-            'user' => $this->getUser(),
-        ];
+    return [
+      'sticky_services' => $stickyServices,
+      'servizi' => $servizi,
+      'user' => $this->getUser(),
+    ];
+  }
+
+  /**
+   * @Route("/miller/{topic}/{subtopic}", name="servizi_miller", defaults={"topic":false, "subtopic":false})
+   * @param string $topic
+   * @param string $subtopic
+   * @param Request $request
+   * @return Response|array
+   */
+  public function serviziMillerAction($topic, $subtopic, Request $request)
+  {
+    return new Response(null, Response::HTTP_GONE);
+  }
+
+  /**
+   * @Route("/miller_ajax/{topic}/{subtopic}", name="servizi_miller_ajax", defaults={"subtopic":false})
+   * @param string $topic
+   * @param string $subtopic
+   * @param Request $request
+   * @return Response|array
+   */
+  public function serviziMillerAjaxAction($topic, $subtopic, Request $request)
+  {
+    return new Response(null, Response::HTTP_GONE);
+  }
+
+  /**
+   * @Route("/{slug}", name="servizi_show")
+   * @Template()
+   * @param string $slug
+   * @param Request $request
+   *
+   * @return array
+   */
+  public function serviziDetailAction($slug, Request $request)
+  {
+    $user = $this->getUser();
+
+    /** @var EntityRepository $serviziRepository */
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+
+    /** @var Servizio $servizio */
+    $servizio = $serviziRepository->findOneBySlug($slug);
+    if (!$servizio instanceof Servizio) {
+      throw new NotFoundHttpException("Servizio $slug not found");
     }
 
-    /**
-     * @Route("/miller/{topic}/{subtopic}", name="servizi_miller", defaults={"topic":false, "subtopic":false})
-     * @param string $topic
-     * @param string $subtopic
-     * @param Request $request
-     * @return Response|array
-     */
-    public function serviziMillerAction($topic, $subtopic, Request $request)
-    {
-        return new Response(null, Response::HTTP_GONE);
+    $serviziArea = $serviziRepository->createQueryBuilder('servizio')
+      ->andWhere('servizio.id != :servizio')
+      ->setParameter('servizio', $servizio->getId())
+      ->andWhere('servizio.ente IN (:ente)')
+      ->setParameter('ente', $servizio->getEnte())
+      ->andWhere('servizio.status = :status')
+      ->setParameter('status', Servizio::STATUS_AVAILABLE)
+      ->andWhere('servizio.topics in (:topics)')
+      ->setParameter('topics', $servizio->getTopics())
+      ->orderBy('servizio.name', 'asc')
+      ->setMaxResults(5)
+      ->getQuery()->execute();
+
+    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
+    $ente = $this->getDoctrine()
+      ->getRepository('AppBundle:Ente')
+      ->findOneBy(
+        [
+          'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
+            'prefix'
+          ) : $request->query->get(PraticheController::ENTE_SLUG_QUERY_PARAMETER, null),
+        ]
+      );
+
+    if (!$ente instanceof Ente) {
+      $this->get('logger')->info(
+        LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
+        ['headers' => $request->headers]
+      );
+
+      throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
     }
 
-    /**
-     * @Route("/miller_ajax/{topic}/{subtopic}", name="servizi_miller_ajax", defaults={"subtopic":false})
-     * @param string $topic
-     * @param string $subtopic
-     * @param Request $request
-     * @return Response|array
-     */
-    public function serviziMillerAjaxAction($topic, $subtopic, Request $request)
-    {
-      return new Response(null, Response::HTTP_GONE);
+    $canAccess = true;
+    $denyAccessMessage = false;
+    try {
+      $handler->canAccess($servizio, $ente);
+    } catch (ForbiddenAccessException $e) {
+      $canAccess = false;
+      $denyAccessMessage = $this->get('translator')->trans($e->getMessage(), $e->getParameters());
     }
 
-    /**
-     * @Route("/{slug}", name="servizi_show")
-     * @Template()
-     * @param string $slug
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function serviziDetailAction($slug, Request $request)
-    {
-        $user = $this->getUser();
-
-        /** @var EntityRepository $serviziRepository */
-        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-
-        /** @var Servizio $servizio */
-        $servizio = $serviziRepository->findOneBySlug($slug);
-        if (!$servizio instanceof Servizio){
-            throw new NotFoundHttpException("Servizio $slug not found");
-        }
-
-        $serviziArea = $serviziRepository->createQueryBuilder('servizio')
-          ->andWhere('servizio.id != :servizio')
-          ->setParameter('servizio', $servizio->getId())
-
-          ->andWhere('servizio.ente IN (:ente)')
-          ->setParameter('ente', $servizio->getEnte())
-
-          ->andWhere('servizio.status = :status')
-          ->setParameter('status', Servizio::STATUS_AVAILABLE)
-
-          ->andWhere('servizio.topics in (:topics)')
-          ->setParameter('topics', $servizio->getTopics())
-
-          ->orderBy('servizio.name', 'asc')
-          ->setMaxResults(5)
-
-          ->getQuery()->execute();
-
-        $handler = null;
-        if ($servizio->getHandler() != null && !empty($servizio->getHandler()) && $servizio->getHandler() != 'default') {
-            $handler = $this->get($servizio->getHandler());
-        }
-
-        return [
-            'user'         => $user,
-            'servizio'     => $servizio,
-            'servizi_area' => $serviziArea,
-            'handler'      => $handler
-        ];
-    }
+    return [
+      'user' => $user,
+      'servizio' => $servizio,
+      'servizi_area' => $serviziArea,
+      'handler' => $handler,
+      'can_access' => $canAccess,
+      'deny_access_message' => $denyAccessMessage,
+    ];
+  }
 
 }
