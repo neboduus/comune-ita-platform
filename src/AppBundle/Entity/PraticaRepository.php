@@ -8,6 +8,7 @@ use AppBundle\Services\JsonSelect;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityRepository;
+use Ramsey\Uuid\Uuid;
 
 /**
  * PraticaRepository
@@ -23,7 +24,7 @@ class PraticaRepository extends EntityRepository
 
   public function findRelatedPraticaForUser(CPSUser $user)
   {
-    $sql = 'SELECT id from pratica where (related_cfs)::jsonb @> \'"'.$user->getCodiceFiscale().'"\'';
+    $sql = 'SELECT id from pratica where (related_cfs)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\'';
 
 
     $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
@@ -163,7 +164,7 @@ class PraticaRepository extends EntityRepository
   public function findSubmittedPraticheByEnte(Ente $ente)
   {
     $qb = $this->createQueryBuilder('p');
-    $qb->where('p.status >= '.Pratica::STATUS_SUBMITTED)
+    $qb->where('p.status >= ' . Pratica::STATUS_SUBMITTED)
       ->andWhere('p.ente = :ente')
       ->setParameter('ente', $ente);
 
@@ -208,14 +209,14 @@ class PraticaRepository extends EntityRepository
   public function findPraticheByOperatore(OperatoreUser $user, $filters, $limit, $offset)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
+    if (empty($serviziAbilitati)) {
       return [];
     }
 
     $qb = $this->getPraticheByOperatoreQueryBuilder($filters, $user);
     if (isset($filters['sort']) && isset($filters['order'])) {
-      $qb->orderBy('pratica.'.$filters['sort'], strtolower($filters['order']));
-    }else {
+      $qb->orderBy('pratica.' . $filters['sort'], strtolower($filters['order']));
+    } else {
       $qb->orderBy('pratica.submissionTime', 'desc');
     }
     $qb->addOrderBy('pratica.id', 'desc');
@@ -228,31 +229,58 @@ class PraticaRepository extends EntityRepository
   public function countPraticheByOperatore(OperatoreUser $user, $filters)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
+    if (empty($serviziAbilitati)) {
       return 0;
     }
-    return $this->getPraticheByOperatoreQueryBuilder($filters, $user)->select('count(pratica.id)')
+
+    $qb = $this->getPraticheByOperatoreQueryBuilder($filters, $user);
+
+    return $qb->select('count(pratica.id)')
       ->getQuery()->getSingleScalarResult();
   }
 
   /**
-   * @see OperatoriController::indexCalculateAction()
+   * @param Pratica $pratica
+   * @return \Ramsey\Uuid\UuidInterface|null
+   * @throws \Exception
+   */
+  public function getFolderForApplication(Pratica $pratica)
+  {
+    $serviceGroup = $pratica->getServizio()->getServiceGroup();
+    if (!$serviceGroup) {
+      return null;
+    }
+
+    $result = $this->createQueryBuilder('pratica')
+      ->where('pratica.user = :user')->setParameter('user', $pratica->getUser())
+      ->andWhere('pratica.serviceGroup = :group')->setParameter('group', $serviceGroup)
+      ->andWhere('pratica.folderId IS NOT NULL')
+      ->orderBy('pratica.creationTime', 'DESC')
+      ->setFirstResult(0)
+      ->setMaxResults(1)
+      ->getQuery()->execute();
+
+    return !empty($result) ? $result[0]->getFolderId() : Uuid::uuid4();
+  }
+
+  /**
    * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
    * @return array|int
+   * @see OperatoriController::indexCalculateAction()
    */
   public function getSumFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
+    if (empty($serviziAbilitati)) {
       return 'n/a';
     }
     $sqlSelectFields = [];
     $fieldAliases = [];
-    foreach ($fields as $index => $field){
-      $formField = "pratica.dematerializedForms ".$field->getName();
-      $formFieldAlias = 'df_'.$index;
+    foreach ($fields as $index => $field) {
+      $formField = "pratica.dematerializedForms " . $field->getName();
+      $formFieldAlias = 'df_' . $index;
       $fieldAliases[$formFieldAlias] = $field;
       $sqlSelectFields[] = "SUM(FORMIO_JSON_FIELD($formField, DECIMAL)) as $formFieldAlias";
     }
@@ -263,11 +291,11 @@ class PraticaRepository extends EntityRepository
       $data = $this->getPraticheByOperatoreQueryBuilder($filters, $user, FormIO::class)
         ->select($sqlSelectFields)
         ->getQuery()->execute();
-      if (isset($data[0])){
-        foreach ($fieldAliases as $alias => $field){
-          if ((int)$data[0][$alias] === 0 && $field->getType() !== 'number'){
+      if (isset($data[0])) {
+        foreach ($fieldAliases as $alias => $field) {
+          if ((int)$data[0][$alias] === 0 && $field->getType() !== 'number') {
             $result[$field->getName()] = 'n/a';
-          }else {
+          } else {
             $result[$field->getName()] = number_format($data[0][$alias], 2, ',', '.');
           }
         }
@@ -278,23 +306,23 @@ class PraticaRepository extends EntityRepository
   }
 
   /**
-   * @see OperatoriController::indexCalculateAction()
    * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
    * @return array|int
+   * @see OperatoriController::indexCalculateAction()
    */
   public function getAvgFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
+    if (empty($serviziAbilitati)) {
       return 'n/a';
     }
     $sqlSelectFields = [];
     $fieldAliases = [];
-    foreach ($fields as $index => $field){
-      $formField = "pratica.dematerializedForms ".$field->getName();
-      $formFieldAlias = 'df_'.$index;
+    foreach ($fields as $index => $field) {
+      $formField = "pratica.dematerializedForms " . $field->getName();
+      $formFieldAlias = 'df_' . $index;
       $fieldAliases[$formFieldAlias] = $field;
       $sqlSelectFields[] = "AVG(FORMIO_JSON_FIELD($formField, DECIMAL)) as $formFieldAlias";
     }
@@ -306,11 +334,11 @@ class PraticaRepository extends EntityRepository
         ->select($sqlSelectFields)
         ->getQuery()->execute();
 
-      if (isset($data[0])){
-        foreach ($fieldAliases as $alias => $field){
-          if ((int)$data[0][$alias] === 0 && $field->getType() !== 'number'){
+      if (isset($data[0])) {
+        foreach ($fieldAliases as $alias => $field) {
+          if ((int)$data[0][$alias] === 0 && $field->getType() !== 'number') {
             $result[$field->getName()] = 'n/a';
-          }else {
+          } else {
             $result[$field->getName()] = number_format($data[0][$alias], 2, ',', '.');
           }
         }
@@ -321,22 +349,22 @@ class PraticaRepository extends EntityRepository
   }
 
   /**
-   * @see OperatoriController::indexCalculateAction()
    * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
    * @return array|int
+   * @see OperatoriController::indexCalculateAction()
    */
   public function getCountNotNullFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
+    if (empty($serviziAbilitati)) {
       return 'n/a';
     }
     $sqlSelectFields = [];
     $fieldAliases = [];
-    foreach ($fields as $index => $field){
-      $formFieldAlias = 'df_'.$index;
+    foreach ($fields as $index => $field) {
+      $formFieldAlias = 'df_' . $index;
       $fieldAliases[$formFieldAlias] = $field->getName();
     }
 
@@ -365,11 +393,11 @@ class PraticaRepository extends EntityRepository
    */
   private function getPraticheByOperatoreQueryBuilder($filters, OperatoreUser $user, $entity = null)
   {
-    if (!$entity){
+    if (!$entity) {
       $entity = Pratica::class;
     }
 
-    $qb =  $this->getEntityManager()->createQueryBuilder()
+    $qb = $this->getEntityManager()->createQueryBuilder()
       ->select('pratica')
       ->from($entity, 'pratica');
 
@@ -378,18 +406,24 @@ class PraticaRepository extends EntityRepository
 
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
 
-    if (!empty($filters['servizio']) && in_array($filters['servizio'], $serviziAbilitati)) {
+    $qb->andWhere('pratica.servizio IN (:servizio)')
+      ->setParameter('servizio', $serviziAbilitati);
+
+    if (!empty($filters['servizio'])) {
       $qb->andWhere('pratica.servizio = :servizio')
         ->setParameter('servizio', $filters['servizio']);
-    }else{
-      $qb->andWhere('pratica.servizio IN (:servizio)')
-        ->setParameter('servizio', $serviziAbilitati);
     }
+
+    if (!empty($filters['gruppo'])) {
+      $qb->andWhere('pratica.serviceGroup = :group')
+        ->setParameter('group', $filters['gruppo']);
+    }
+
 
     if (!empty($filters['stato'])) {
       $qb->andWhere('pratica.status = :stato')
         ->setParameter('stato', $filters['stato']);
-    }else{
+    } else {
       $qb->andWhere('pratica.status >= :stato')
         ->setParameter('stato', self::OPERATORI_LOWER_STATE);
     }
@@ -409,7 +443,7 @@ class PraticaRepository extends EntityRepository
             ->select('u.id')
             ->from('AppBundle\Entity\CPSUser', 'u')
             ->where("LOWER(u.codiceFiscale) LIKE LOWER(:searchTerm)")
-            ->setParameter('searchTerm', '%'.$filters['query'].'%')
+            ->setParameter('searchTerm', '%' . $filters['query'] . '%')
             ->getQuery()->getScalarResult();
 
           if (count($userIdList) > 0) {
@@ -423,7 +457,7 @@ class PraticaRepository extends EntityRepository
         case 2:
           $qb->andWhere('LOWER(user.nome) LIKE LOWER(:searchTerm) OR LOWER(user.cognome) LIKE LOWER(:searchTerm) OR CONCAT(LOWER(user.nome), \' \', LOWER(user.cognome)) LIKE LOWER(:searchTerm) OR CONCAT(LOWER(user.cognome), \' \', LOWER(user.nome)) LIKE LOWER(:searchTerm)')
             ->leftJoin('pratica.user', 'user')
-            ->setParameter('searchTerm', '%'.$filters['query'].'%');
+            ->setParameter('searchTerm', '%' . $filters['query'] . '%');
           break;
         case 3:
           $qb->andWhere('pratica.id = :searchTerm');
@@ -442,8 +476,11 @@ class PraticaRepository extends EntityRepository
         break;
     }
 
-    if ($filters['collate']){
+
+    if ($filters['collate']) {
       $qb->andWhere('pratica.parent IS NULL');
+      $qb->andWhere('pratica.id IN (:grouped)')
+        ->setParameter('grouped', $this->getApplicationsCollectionsId($filters['servizio']));
     }
 
     if (!empty($filters['last_status_change']) && count($filters['last_status_change']) == 2){
@@ -455,19 +492,92 @@ class PraticaRepository extends EntityRepository
     return $qb;
   }
 
+  private function getApplicationsCollectionsId($filterService)
+  {
+    $data = [];
+    if (empty($filterService)) {
+      $dql = 'SELECT json_agg(id) as ids, folder_id FROM pratica GROUP BY folder_id';
+    } else {
+      $dql = "SELECT json_agg(id) as ids, folder_id FROM pratica WHERE servizio_id = '$filterService' GROUP BY folder_id";
+    }
+
+    $stmt = $this->getEntityManager()->getConnection()->executeQuery($dql);
+    $result = $stmt->fetchAll();
+
+    foreach ($result as $r) {
+      $temp = \json_decode($r['ids']);
+      $data[] = $temp[0];
+    }
+
+    $dql = 'SELECT id FROM pratica WHERE folder_id IS NULL';
+    $stmt = $this->getEntityManager()->getConnection()->executeQuery($dql);
+    $result = $stmt->fetchAll();
+
+    foreach ($result as $r) {
+      if (!in_array($r['id'], $data)) {
+        $data[] = $r['id'];
+      }
+
+    }
+    return $data;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return Pratica[]
+   */
+  public function getApplicationsInFolder(Pratica $pratica)
+  {
+    $serviceGroup = $pratica->getServizio()->getServiceGroup();
+    $folderId = $pratica->getFolderId();
+    $applications = [];
+    if ($serviceGroup && $folderId){
+      $applications = $this->createQueryBuilder('pratica')
+        ->where('pratica.user = :user')->setParameter('user', $pratica->getUser())
+        ->andWhere('pratica.status >= :status')->setParameter('status', Pratica::STATUS_PRE_SUBMIT)
+        ->andWhere('pratica.folderId = :folderId')->setParameter('folderId', $folderId)
+        ->andWhere('pratica.parent IS NULL')
+        ->orderBy('pratica.submissionTime', 'DESC')
+        ->getQuery()->execute();
+    }
+    if (count($applications) == 0 && ($pratica->getParent() !== null || $pratica->getChildren()->count() > 0)){
+      $applications = $this->getApplicationsInFolder($pratica->getRootParent());
+    }
+    return $applications;
+  }
+
+  /**
+   * @param $serviceGroupId
+   * @param $allowedServices
+   * @return array
+   */
+  private function getServicesInServiceGroupByUser($serviceGroupId, $allowedServices)
+  {
+    $result = [];
+    $repo = $this->getEntityManager()->getRepository('AppBundle:Servizio');
+    $services = $repo->findBy(['serviceGroup' => $serviceGroupId]);
+
+    foreach ($services as $service) {
+      if (in_array($service->getId(), $allowedServices)) {
+        $result [] = $service->getId();
+      }
+    }
+    return $result;
+  }
+
   /**
    * @return array
    */
   public function getServizioIdListByOperatore(OperatoreUser $user, $minStatus = null)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
+    if (empty($serviziAbilitati)) {
       return [];
     }
     $servizio = 'where servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\')';
 
     $status = '';
-    if ($minStatus){
+    if ($minStatus) {
       $status = 'and status >= ' . (int)$minStatus;
     }
 
@@ -490,13 +600,13 @@ class PraticaRepository extends EntityRepository
   public function getStateListByOperatore(OperatoreUser $user, $minStatus = null)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)){
+    if (empty($serviziAbilitati)) {
       return [];
     }
     $servizio = 'where servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\')';
 
     $status = '';
-    if ($minStatus){
+    if ($minStatus) {
       $status = 'and status >= ' . (int)$minStatus;
     }
 
@@ -551,7 +661,7 @@ class PraticaRepository extends EntityRepository
   public function findRecentlySubmittedPraticheByUser(Pratica $pratica, CPSUser $user, $limit)
   {
     $qb = $this->createQueryBuilder('p');
-    $qb->where('p.status >= '.Pratica::STATUS_SUBMITTED)
+    $qb->where('p.status >= ' . Pratica::STATUS_SUBMITTED)
       ->andWhere('p.user = :user')
       ->setParameter('user', $user)
       ->andWhere('p.id NOT IN (:tree)')
@@ -566,8 +676,8 @@ class PraticaRepository extends EntityRepository
   {
     $qb = $this->getPraticheByUserQueryBuilder($filters, $user);
     if (isset($filters['sort']) && isset($filters['order'])) {
-      $qb->orderBy('pratica.'.$filters['sort'], strtolower($filters['order']));
-    }else {
+      $qb->orderBy('pratica.' . $filters['sort'], strtolower($filters['order']));
+    } else {
       $qb->orderBy('pratica.submissionTime', 'desc');
     }
     $qb->addOrderBy('pratica.id', 'desc');
@@ -587,11 +697,11 @@ class PraticaRepository extends EntityRepository
   {
     if (!empty($filters['data'])) {
       $entity = FormIO::class;
-    }else{
+    } else {
       $entity = Pratica::class;
     }
 
-    $qb =  $this->getEntityManager()->createQueryBuilder()
+    $qb = $this->getEntityManager()->createQueryBuilder()
       ->select('pratica')
       ->from($entity, 'pratica');
 
@@ -610,7 +720,7 @@ class PraticaRepository extends EntityRepository
     }
 
     if (!empty($filters['data'])) {
-      foreach ($filters['data'] as $field => $value){
+      foreach ($filters['data'] as $field => $value) {
         $fieldValueKey = str_replace('.', '', $field);
         $qb->andWhere("LOWER(FORMIO_JSON_FIELD(pratica.dematerializedForms $field)) = :{$fieldValueKey}")
           ->setParameter($fieldValueKey, strtolower($value));

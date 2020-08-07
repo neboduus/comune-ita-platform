@@ -33,9 +33,13 @@
             </div>
           </div>
           <div class="row">
-            {% for servizio in servizi %}
+            {% for item in servizi %}
               <div class="col-12 col-sm-6 col-lg-4">
-                {{ include('@App/Servizi/parts/panel/servizio.html.twig') }}
+                {% if item.type == 'service' %}
+                  {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item.object}) }}
+                {% else %}
+                  {{ include('@App/Servizi/parts/panel/service-group.html.twig', {'servizio':item.object}) }}
+                {% endif %}
               </div>
             {% endfor %}
           </div>

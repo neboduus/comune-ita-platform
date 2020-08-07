@@ -22,6 +22,7 @@ Encore
   .addEntry('compile', './assets/js/compile.js')
   .addEntry('user', './assets/js/user.js')
   .addEntry('service-manager', './assets/js/service-manager.js')
+  .addEntry('service-group-manager', './assets/js/service-group-manager.js')
   .addEntry('instance-manager', './assets/js/instance-manager.js')
   .addEntry('subscription-service-manager', './assets/js/subscription-service-manager.js')
   .addEntry('calendar-manager', './assets/js/calendar-manager.js')

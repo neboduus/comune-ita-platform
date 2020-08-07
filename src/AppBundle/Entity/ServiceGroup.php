@@ -1,0 +1,221 @@
+<?php
+
+
+namespace AppBundle\Entity;
+
+use AppBundle\Dto\Service;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Swagger\Annotations as SWG;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * ServiceGroup
+ *
+ * @ORM\Table(name="service_group")
+ * @ORM\Entity
+ *
+ */
+class ServiceGroup
+{
+
+  /**
+   * @ORM\Column(type="guid")
+   * @ORM\Id
+   * @SWG\Property(description="Service's uuid")
+   */
+  protected $id;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(type="string", length=255, unique=true)
+   * @Assert\NotBlank(message="name")
+   * @Assert\NotNull()
+   * @SWG\Property(description="Service's name")
+   */
+  private $name;
+
+  /**
+   * @var string
+   *
+   * @Gedmo\Slug(fields={"name"})
+   * @ORM\Column(type="string", length=255)
+   * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
+   */
+  private $slug;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string")
+   */
+  private $description;
+
+  /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true)
+   * @SWG\Property(description="Set true if application of  of this service group need to be registerd in folders")
+   */
+  private $registerInFolder;
+
+  /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Servizio", mappedBy="serviceGroup", cascade={"persist"})
+   */
+  private $services;
+
+  /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="serviceGroup", cascade={"persist"})
+   */
+  private $applications;
+
+  /**
+   * ServiceGroup constructor.
+   */
+  public function __construct()
+  {
+    if (!$this->id) {
+      $this->id = Uuid::uuid4();
+    }
+    $this->services = new ArrayCollection();
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
+
+  /**
+   * @param mixed $id
+   */
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
+
+  /**
+   * @return string
+   */
+  public function getName(): ?string
+  {
+    return $this->name;
+  }
+
+  /**
+   * @param string $name
+   */
+  public function setName(string $name)
+  {
+    $this->name = $name;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSlug(): ?string
+  {
+    return $this->slug;
+  }
+
+  /**
+   * @param string $slug
+   */
+  public function setSlug(string $slug)
+  {
+    $this->slug = $slug;
+  }
+
+  /**
+   * @return string
+   */
+  public function getDescription(): ?string
+  {
+    return $this->description;
+  }
+
+  /**
+   * @param string $description
+   */
+  public function setDescription(string $description)
+  {
+    $this->description = $description;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isRegisterInFolder(): ?bool
+  {
+    return $this->registerInFolder;
+  }
+
+  /**
+   * @param bool $registerInFolder
+   */
+  public function setRegisterInFolder(bool $registerInFolder)
+  {
+    $this->registerInFolder = $registerInFolder;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getServices()
+  {
+    return $this->services;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getPublicServices()
+  {
+    $result = new ArrayCollection();
+    /** @var Servizio $service */
+    foreach ($this->services as $service) {
+      if ($service->getStatus() == Servizio::STATUS_AVAILABLE || $service->getStatus() == Servizio::STATUS_SCHEDULED) {
+        $result->add($service);
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * @param mixed $services
+   */
+  public function setServices($services)
+  {
+    $this->services = $services;
+  }
+
+  /**
+   * @param Servizio $service
+   */
+  public function addService(Servizio $service)
+  {
+    if (!$this->services->contains($service)) {
+      $this->services[] = $service;
+    }
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getApplications()
+  {
+    return $this->applications;
+  }
+
+  /**
+   * @param mixed $applications
+   */
+  public function setApplications($applications)
+  {
+    $this->applications = $applications;
+  }
+
+}

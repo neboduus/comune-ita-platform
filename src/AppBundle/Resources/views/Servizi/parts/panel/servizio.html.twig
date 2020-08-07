@@ -12,7 +12,12 @@
                 <span class="category">{{ servizio.topics.name }}</span>
               {% endif %}
             </div>
-            <h5 class="card-title">{{ servizio.name }}</h5>
+            <h5 class="card-title">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+              </svg>
+              {{ servizio.name }}
+            </h5>
             <p class="card-text">{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit)|striptags ~ '...' : servizio.description|striptags  }}</p>
             <a class="read-more stretched-link text-decoration-none" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
                 <span class="text">Leggi di più</span>
