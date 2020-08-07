@@ -111,6 +111,18 @@ class Application
   private $submittedAt;
 
   /**
+   * @Serializer\Type("int")
+   * @SWG\Property(description="Latest status change timestamp", type="int")
+   */
+  private $latestStatusChangeTime;
+
+  /**
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Latest status change time", type="dateTime")
+   */
+  private $latestStatusChangeAt;
+
+  /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's protocol folder number")
    */
@@ -567,8 +579,6 @@ class Application
     $dto->service = $pratica->getServizio()->getSlug();
     $dto->subject = $pratica->getOggetto();
 
-
-
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
       if ($version >= 2) {
         $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl);
@@ -605,6 +615,15 @@ class Application
       }
     }
 
+    $dto->latestStatusChangeTime = $pratica->getLatestStatusChangeTimestamp();
+    if ($pratica->getLatestStatusChangeTimestamp()) {
+      try {
+        $date = new \DateTime();
+        $dto->latestStatusChangeAt = $date->setTimestamp($pratica->getLatestStatusChangeTimestamp());
+      } catch (\Exception $e) {
+        $dto->latestStatusChangeAt = $pratica->getLatestStatusChangeTimestamp();
+      }
+    }
 
     $dto->protocolFolderNumber = $pratica->getNumeroFascicolo();
     $dto->protocolNumber = $pratica->getNumeroProtocollo();
