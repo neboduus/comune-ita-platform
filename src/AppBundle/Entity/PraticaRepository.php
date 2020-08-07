@@ -446,6 +446,12 @@ class PraticaRepository extends EntityRepository
       $qb->andWhere('pratica.parent IS NULL');
     }
 
+    if (!empty($filters['last_status_change']) && count($filters['last_status_change']) == 2){
+      $qb->andWhere('pratica.latestStatusChangeTimestamp >= :start AND pratica.latestStatusChangeTimestamp <= :end');
+      $qb->setParameter('start', (int)$filters['last_status_change'][0]);
+      $qb->setParameter('end', (int)$filters['last_status_change'][1]);
+    }
+
     return $qb;
   }
 

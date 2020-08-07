@@ -122,6 +122,7 @@ class OperatoriController extends Controller
       'Richiedente',
       'Codice fiscale',
       'Data di inserimento',
+      'Ultimo cambio stato',
       'Stato',
       'Operatore',
       'Servizio',
@@ -160,6 +161,7 @@ class OperatoriController extends Controller
             $item['user_name'],
             $item['codice_fiscale'],
             isset($item['submission_time']) ? date('d/m/Y H:i:s', $item['submission_time']) : '',
+            isset($item['latest_status_change_time']) ? date('d/m/Y H:i:s', $item['latest_status_change_time']) : '',
             $this->get('translator')->trans('pratica.dettaglio.stato_' . $item['status']),
             $item['operator_name'],
             $serviceName,
@@ -268,6 +270,7 @@ class OperatoriController extends Controller
       'sort' => $request->get('sort', 'submissionTime'),
       'order' => $request->get('order', 'asc'),
       'collate' => (int)$request->get('collate', false),
+      'last_status_change' => (array)$request->get('last_status_change', []),
     ];
   }
 
