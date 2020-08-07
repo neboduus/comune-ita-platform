@@ -35,6 +35,8 @@ class FormIOFlow extends PraticaFlow
           $parent = $this->em->getRepository('AppBundle:Pratica')->find($parentId);
           if ($parent instanceof Pratica) {
             $pratica->setParent($parent);
+            $pratica->setServiceGroup($parent->getServizio()->getServiceGroup());
+            $pratica->setFolderId($parent->getFolderId());
           }
         }
       }

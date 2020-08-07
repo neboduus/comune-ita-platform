@@ -93,7 +93,7 @@
         var name = '?';
         var selector = $('#filter-servizio option[data-slug="'+service+'"]');
         if (selector.length > 0){
-          return selector.text();
+          return selector.data('name');
         }
         return name;
       },
@@ -227,7 +227,8 @@
 
       var buildParams = function(){
         var params = {
-          'servizio': filterServizio.val(),
+          'gruppo': null,
+          'servizio': null,
           'stato': filterStato.val(),
           'workflow': filterWorkflow.val(),
           'query_field': filterQueryBy.val(),
@@ -238,12 +239,18 @@
           'collate': filterCollate.is(':checked') ? 1 : 0,
           'last_status_change': filterStatusRange.data('start') ? [filterStatusRange.data('start'),filterStatusRange.data('end')] : []
         };
+        if (filterServizio.children("option:selected").data('type') === 'group') {
+          params.gruppo = filterServizio.val();
+        } else {
+          params.servizio = filterServizio.val();
+        }
         viewSettingsStorage.setItem('pratiche_filters', params);
         return params;
       };
 
       var isEmpty = function(object) {
         return object.servizio === ''
+          && object.gruppo === ''
           && object.stato === ''
           && object.workflow === ''
           && object.query === ''
@@ -254,6 +261,7 @@
       reset.on('click', function (e) {
         if (typeof (Storage) !== "undefined"){
           viewSettingsStorage.setItem('pratiche_filters', {
+            'gruppo': '',
             'servizio': '',
             'stato': '',
             'workflow': '',
@@ -627,7 +635,7 @@
       <td class="text-nowrap">
         {{if can_read}}
           <a class="text-decoration-none" href="{{:~showUrl(id)}}" class="text-nowrap mr-1" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.vai_al_dettaglio'|trans }}{% verbatim %}">
-            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.collate && children_count > 0}}s{{/if}}"></use></svg>
+            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.collate && (children_count > 0 || group )}}s{{/if}}"></use></svg>
           </a>
         {{/if}}
         <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
@@ -776,7 +784,16 @@
               <select id="filter-servizio" class="form-control filter-select form-control-chosen">
                 <option value="">Tutti</option>
                 {% for servizio in servizi %}
-                  <option data-slug="{{ servizio.slug }}" value="{{ servizio.id }}">{{ servizio.name }}</option>
+                  {% if servizio is iterable %}
+                    <option data-type="group" data-slug="{{ servizio.group.slug }}" data-name="{{ servizio.group.name }}" value="{{ servizio.group.id }}">{{ servizio.group.name }}</option>
+                    {% for s in servizio.services %}
+                      <option data-type="service" data-slug="{{ s.slug }}" data-name="{{ s.name }}" value="{{ s.id }}"> - {{ s.name }}</option>
+                    {% endfor %}
+                  {% else %}
+                    {# users is probably a string #}
+                    <option data-type="service" data-slug="{{ servizio.slug }}" data-name="{{ servizio.name }}" value="{{ servizio.id }}">{{ servizio.name }}</option>
+                  {% endif %}
+
                 {% endfor %}
               </select>
             </div>

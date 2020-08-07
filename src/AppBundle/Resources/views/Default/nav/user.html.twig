@@ -62,6 +62,12 @@
                   Servizi
                 </a>
               </li>
+              <li class="nav-item {% if 'service-group' in app.request.pathInfo %} active {% endif %}">
+                <a class="nav-link "
+                   href="{{ path('admin_service_group_index') }}">
+                  Gruppo di servizi
+                </a>
+              </li>
               <li class="nav-item {% if 'logs' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_logs_index') }}">

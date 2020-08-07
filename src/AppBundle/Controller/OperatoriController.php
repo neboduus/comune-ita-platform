@@ -64,8 +64,23 @@ class OperatoriController extends Controller
     $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy(
       [
         'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
+      ],
+      [
+        'name' => 'asc'
       ]
     );
+
+    $result = [];
+    /** @var Servizio $s */
+    foreach ($servizi as $s) {
+      if ($s->getServiceGroup()) {
+        $result[$s->getServiceGroup()->getSlug()]['group']= $s->getServiceGroup();
+        $result[$s->getServiceGroup()->getSlug()]['services'][$s->getSlug()]= $s;
+      } else {
+        $result[$s->getSlug()]= $s;
+      }
+    }
+
 
     $stati = [];
     foreach ($praticaRepository->getStateListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE) as $state) {
@@ -74,7 +89,7 @@ class OperatoriController extends Controller
     }
 
     return array(
-      'servizi' => $servizi,
+      'servizi' => $result,
       'stati' => $stati,
       'user' => $this->getUser(),
     );
@@ -262,6 +277,7 @@ class OperatoriController extends Controller
   private function getPraticheFilters($request)
   {
     return [
+      'gruppo' => $request->get('gruppo', false),
       'servizio' => $request->get('servizio', false),
       'stato' => $request->get('stato', false),
       'workflow' => $request->get('workflow', false),
@@ -351,6 +367,7 @@ class OperatoriController extends Controller
       $applicationArray['operator_name'] = $s->getOperatore() ? $s->getOperatore()->getFullName() : null;
       //@todo check perfomance: children count add one additional db query each result
       $applicationArray['children_count'] = $parameters['collate'] ? $s->getChildren()->count() : null;
+      $applicationArray['group'] = $parameters['collate'] && $s->getFolderId() != null ? true : false;
 
       try {
         $this->checkUserCanAccessPratica($user, $s);
@@ -571,6 +588,7 @@ class OperatoriController extends Controller
 
     return [
       'pratiche_recenti' => $praticheRecenti,
+      'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
       'form' => $form->createView(),
       'modalForm' => $modalForm->createView(),
       'pratica' => $pratica,
