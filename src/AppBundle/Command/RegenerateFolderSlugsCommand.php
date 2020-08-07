@@ -31,12 +31,6 @@ class RegenerateFolderSlugsCommand extends ContainerAwareCommand
     foreach($entiEntites as $entiEntity){
       $enti[] = $entiEntity->getName();
     }
-    $question = new ChoiceQuestion('Seleziona ente di riferimento', $enti, 0);
-    $enteName = $helper->ask($input, $output, $question);
-    $ente = $repo->findOneByName($enteName);
-    if (!$ente){
-      throw new InvalidArgumentException("Ente $enteName non trovato");
-    }
 
     $repo = $em->getRepository('AppBundle:Folder');
 
