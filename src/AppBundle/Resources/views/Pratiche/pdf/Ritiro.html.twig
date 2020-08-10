@@ -1,0 +1,25 @@
+<html>
+<head>
+  {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+
+<div class="chiede center_title">
+  <span class="text-uppercase"></span>
+</div>
+
+<div class="richiesta">
+  <p>
+    La richiesta numero {{ pratica.id }} del servizio {{ pratica.servizio.name }} è stata ritirata da {{ pratica.user.nome }} {{ pratica.user.cognome }}.
+  </p>
+</div>
+
+<div class="data">
+  <p>
+    {{ 'pratica.pdf.luogo'|trans()|raw }}
+    {{ "now"|date("d/m/Y") }}
+  </p>
+</div>
+
+</body>
+</html>

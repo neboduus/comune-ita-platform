@@ -57,6 +57,11 @@ class ProtocollaPraticaListener
             return;
           }
 
+          if ( $event->getNewStateIdentifier() == Pratica::STATUS_WITHDRAW) {
+            $this->protocollo->protocollaRitiro($pratica);
+            return;
+          }
+
         } else {
 
           /*if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {

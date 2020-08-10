@@ -180,6 +180,12 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     // Note: Not used in this handler
   }
 
+  public function sendRitiroToProtocollo(Pratica $pratica)
+  {
+    // TODO: Implement sendRitiroToProtocollo() method.
+  }
+
+
   /**
    * @param Pratica $pratica
    * @param $sender

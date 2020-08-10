@@ -76,6 +76,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   const STATUS_CANCELLED_WAITALLEGATIOPERATORE = 8000;
   const STATUS_CANCELLED = 9000;
+  const STATUS_WITHDRAW = 20000;
 
   const ACCEPTED = true;
   const REJECTED = false;
@@ -1903,5 +1904,20 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setFolderId($folderId)
   {
     $this->folderId = $folderId;
+  }
+
+  /**
+   * @return Allegato
+   */
+  public function getWithdrawAttachment()
+  {
+    $attachments = $this->allegati;
+    /** @var Allegato $item */
+    foreach ($attachments as $item) {
+      if ($item->getType() == Ritiro::TYPE_DEFAULT) {
+        return $item;
+      }
+    }
+    return null;
   }
 }

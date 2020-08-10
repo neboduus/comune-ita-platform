@@ -70,6 +70,12 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
     $risposta->setIdDocumentoProtocollo('rdp-' . $risposta->getId());
   }
 
+  public function sendRitiroToProtocollo(Pratica $pratica)
+  {
+    // TODO: Implement sendRitiroToProtocollo() method.
+  }
+
+
   public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     $risposta = $pratica->getRispostaOperatore();

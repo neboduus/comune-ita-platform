@@ -216,6 +216,12 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $this->em->flush();
   }
 
+  public function sendRitiroToProtocollo(Pratica $pratica)
+  {
+    // TODO: Implement sendRitiroToProtocollo() method.
+  }
+
+
   public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     $parameters = $this->retrieveProtocolloParametersForEnteAndServizio($pratica);

@@ -81,6 +81,7 @@ pratica:
   iter: 'Iter della pratica'
   tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
+  ritira_la_pratica: 'Ritira la pratica'
   nuova_pratica: 'Nuova pratica: %name%'
   integrazione_pratica: 'Integrazione pratica: %name%'
   integrazione_pratica_description: "Sono state richieste alcuni integrazioni per la pratica che hai inviato: correggi tutti i campi esposti contrasseganti dall'asterisco (*)"
@@ -178,6 +179,7 @@ pratica:
     stato_7000: 'Iter completato'
     stato_8000: 'Rifiutata (in attesa di protocollazione del documento di esito)'
     stato_9000: 'Rifiutata'
+    stato_20000: 'Ritirata'
 
     stato_4100: 'Richiesta integrazioni (in attesa di protocollazione)'
     stato_4200: 'In attesa di integrazioni'
@@ -415,6 +417,7 @@ user:
     pratiche_cancelled: 'Rifiutate'
     pratiche_related: 'Aperte per mio conto'
     pratiche_integration: 'Da integrare'
+    pratiche_withdrawn: 'Ritirate'
     vai_al_dettaglio: 'Dettaglio'
     avvisi_notizie: 'Avvisi / Notizie'
     scadenze: 'Scadenze'

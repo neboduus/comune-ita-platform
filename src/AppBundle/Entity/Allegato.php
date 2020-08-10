@@ -19,7 +19,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Table(name="allegato")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"default" = "Allegato", "modulo_compilato" = "ModuloCompilato", "allegato_operatore" = "AllegatoOperatore", "risposta_operatore" = "RispostaOperatore", "allegato_scia" = "AllegatoScia", "richiesta_integrazione" = "RichiestaIntegrazione", "integrazione" = "Integrazione"})
+ * @ORM\DiscriminatorMap({"default" = "Allegato", "modulo_compilato" = "ModuloCompilato", "allegato_operatore" = "AllegatoOperatore", "risposta_operatore" = "RispostaOperatore", "allegato_scia" = "AllegatoScia", "richiesta_integrazione" = "RichiestaIntegrazione", "integrazione" = "Integrazione", "ritiro" = "Ritiro"})
  * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable()
  * @SDCAssert\ValidMimeType
