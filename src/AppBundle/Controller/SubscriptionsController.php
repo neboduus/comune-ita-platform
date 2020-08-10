@@ -7,6 +7,7 @@ use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionService;
 
+use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
@@ -44,6 +45,9 @@ class SubscriptionsController extends Controller
    */
   public function showSubscriptionsAction(Request $request, SubscriptionService $subscriptionService)
   {
+    /** @var User $user */
+    $user = $this->getUser();
+
     $table = $this->createDataTable()
       ->add('show', TextColumn::class, ['label' => 'show', 'field' => 'subscriber.id', 'searchable' => false, 'orderable' => false, 'render' => function ($value, $subscriptionService) {
         return sprintf('<a href="%s"><svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-zoom-in"></use></svg></a>', $this->generateUrl('operatori_subscriber_show', [
@@ -85,6 +89,7 @@ class SubscriptionsController extends Controller
     }
 
     return array(
+      'user' => $user,
       'datatable' => $table, 'subscriptionService' => $subscriptionService
     );
   }
