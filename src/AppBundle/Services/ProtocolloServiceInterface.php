@@ -15,6 +15,8 @@ interface ProtocolloServiceInterface
 
   public function protocollaRisposta(Pratica $pratica);
 
+  public function protocollaRitiro(Pratica $pratica);
+
   public function protocollaAllegato(Pratica $pratica, AllegatoInterface $allegato);
 
   public function getHandler();

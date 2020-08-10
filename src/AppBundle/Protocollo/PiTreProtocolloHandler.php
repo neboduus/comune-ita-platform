@@ -167,6 +167,27 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
+   *
+   * @throws ResponseErrorException
+   */
+  public function sendRitiroToProtocollo(Pratica $pratica)
+  {
+    $withdrawAttachment = $pratica->getWithdrawAttachment();
+    $parameters = $this->getRititroParameters($pratica);
+    $parameters->set('method', 'createDocumentAndAddInProject');
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
+    $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
+    if ($responseData->getStatus() == 'success') {
+      $withdrawAttachment->setNumeroProtocollo($responseData->getNProt());
+      $withdrawAttachment->setIdDocumentoProtocollo($responseData->getIdDoc());
+    } else {
+      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+    }
+  }
+
+  /**
+   * @param Pratica $pratica
    * @param AllegatoInterface $allegato
    *
    * @throws ResponseErrorException
@@ -303,6 +324,48 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $parameters->setSenderCf($user->getCodiceFiscale());
       $parameters->setSenderEmail($user->getEmail());
     }
+
+    return $parameters;
+  }
+
+  private function getRititroParameters(Pratica $pratica)
+  {
+
+    $ritiro = $pratica->getWithdrawAttachment();
+    $ente = $pratica->getEnte();
+    $servizio = $pratica->getServizio();
+    /** @var CPSUser $user */
+    $user = $pratica->getUser();
+
+    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = new PiTreProtocolloParameters($parameters);
+
+    if (!$parameters->getInstance()) {
+      $parameters->setInstance($this->instance);
+    }
+
+    $object = $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+    if ($pratica->getOggetto() != null && !empty($pratica->getOggetto())) {
+      $object = $pratica->getOggetto() . ' - ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
+    }
+
+    $parameters->setDocumentObj('Ritiro ' . $object);
+    $parameters->setDocumentDescription('Ritiro ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
+
+    $path = $ritiro->getFile()->getPathname();
+    $parameters->setFileName($ritiro->getFile()->getFilename());
+    $fileContent = base64_encode(file_get_contents($path));
+    $parameters->setFile($fileContent);
+    $parameters->setChecksum(md5($fileContent));
+
+    $parameters->setIdProject($pratica->getNumeroFascicolo());
+    $parameters->setCreateProject(false);
+    $parameters->setDocumentType("A");
+
+    $parameters->setSenderName($user->getNome());
+    $parameters->setSenderSurname($user->getCognome());
+    $parameters->setSenderCf($user->getCodiceFiscale());
+    $parameters->setSenderEmail($user->getEmail());
 
     return $parameters;
   }

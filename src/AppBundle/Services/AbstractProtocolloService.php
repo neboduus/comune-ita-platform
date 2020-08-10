@@ -68,6 +68,15 @@ class AbstractProtocolloService
         }
     }
 
+    protected function validateRitiro(Pratica $pratica)
+    {
+      $ritiro = $pratica->getWithdrawAttachment();
+
+      if ($ritiro->getNumeroProtocollo() !== null) {
+        throw new AlreadySentException();
+      }
+    }
+
     protected function validateRispostaUploadFile(Pratica $pratica, AllegatoInterface $allegato)
     {
         $risposta = $pratica->getRispostaOperatore();

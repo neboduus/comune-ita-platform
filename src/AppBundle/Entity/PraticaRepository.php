@@ -117,6 +117,21 @@ class PraticaRepository extends EntityRepository
     );
   }
 
+  public function findWithdrawnPraticaForUser(CPSUser $user)
+  {
+    return $this->findBy(
+      [
+        'user' => $user,
+        'status' => [
+          Pratica::STATUS_WITHDRAW,
+        ],
+      ],
+      [
+        'creationTime' => 'DESC',
+      ]
+    );
+  }
+
   public function findDraftForIntegrationPraticaForUser(CPSUser $user)
   {
     return $this->findBy(
