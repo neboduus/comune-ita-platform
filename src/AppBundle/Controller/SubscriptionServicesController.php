@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\SubscriptionService;
+use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -31,6 +32,8 @@ class SubscriptionServicesController extends Controller
    */
   public function indexSubscriptionServiceAction(Request $request)
   {
+    /** @var User $user */
+    $user = $this->getUser();
     $statuses = [
       SubscriptionService::STATUS_WAITING => 'Pending',
       SubscriptionService::STATUS_ACTIVE => 'Attivo',
@@ -41,7 +44,7 @@ class SubscriptionServicesController extends Controller
 
 
     $table = $this->createDataTable()
-      ->add('name', TextColumn::class, ['label' => 'Nome', 'propertyPath'=> 'Nome','render' => function ($value, $subscriptionService) {
+      ->add('name', TextColumn::class, ['label' => 'Nome', 'propertyPath' => 'Nome', 'render' => function ($value, $subscriptionService) {
         return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscription-service_show', [
           'subscriptionService' => $subscriptionService->getId()
         ]), $subscriptionService->getName());
@@ -83,6 +86,7 @@ class SubscriptionServicesController extends Controller
     }
 
     return array(
+      'user' => $user,
       'items' => $items,
       'statuses' => $statuses,
       'datatable' => $table
@@ -99,6 +103,9 @@ class SubscriptionServicesController extends Controller
    */
   public function newSubscriptionServiceAction(Request $request)
   {
+    /** @var User $user */
+    $user = $this->getUser();
+
     $subscriptionService = new SubscriptionService();
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
@@ -118,6 +125,7 @@ class SubscriptionServicesController extends Controller
     }
 
     return array(
+      'user' => $user,
       'subscriptionService' => $subscriptionService,
       'form' => $form->createView(),
     );
@@ -159,6 +167,9 @@ class SubscriptionServicesController extends Controller
    */
   public function editSubscriptionServiceAction(Request $request, SubscriptionService $subscriptionService)
   {
+    /** @var User $user */
+    $user = $this->getUser();
+
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
 
@@ -177,6 +188,7 @@ class SubscriptionServicesController extends Controller
     }
 
     return [
+      'user' => $user,
       'form' => $form->createView(),
     ];
   }
@@ -189,8 +201,12 @@ class SubscriptionServicesController extends Controller
    */
   public function showSubscriptionServiceAction(Request $request, SubscriptionService $subscriptionService)
   {
+    /** @var User $user */
+    $user = $this->getUser();
+
     $deleteForm = $this->createDeleteForm($subscriptionService);
     return array(
+      'user' => $user,
       'subscriptionService' => $subscriptionService,
       'delete_form' => $deleteForm->createView(),
     );
