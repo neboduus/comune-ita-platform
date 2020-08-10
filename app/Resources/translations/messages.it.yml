@@ -228,6 +228,10 @@ STATUS_PROCESSING: 'In elaborazione'
 documenti:
   i_miei_documenti: "I miei documenti"
   no_documenti: "Non sono presenti documenti"
+  no_folder: "La cartella cercata non esiste oppure è stata eliminata"
+  no_document: "Il documento cercato non esiste oppure è stata eliminato"
+  no_document_permissions: "Non hai i permessi necessari per visualizzare questo documento"
+  document_search_error: "Si è verificato un errore durante la ricerca dei documenti"
   torna_alla_cartella: "Torna alla cartella"
   torna_alle_cartelle: "Torna alle cartelle"
   documento:

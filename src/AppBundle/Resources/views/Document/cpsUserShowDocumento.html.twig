@@ -9,12 +9,12 @@
 {% block main_content %}
 
   <section id="intro" class="container px-4 my-4">
-    {%  if document is defined %}
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
         <div class="mb-3">
           <small>
-            <a class="text-decoration-none" href="{{ path('documenti_list_cpsuser', {'folderId': document.folder.id}) }}">
+            <a class="text-decoration-none"
+               href="{{ path('documenti_list_cpsuser', {'folderId': document.folder.id}) }}">
               <svg class="icon icon-primary">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
               </svg>
@@ -33,16 +33,18 @@
               <svg class="icon mr-4">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
               </svg>
-            {% else  %}
+            {% else %}
               <svg class="icon mr-4">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clip"></use>
               </svg>
             {% endif %}
-            {{document.originalFileName}}
+            {{ document.originalFileName }}
           </div>
           <div class="col-2">
             <div class="float-right">
-              <a id="downloadDocument" href="{{ path('document_download_cpsuser', {'folderId':document.folder.id, 'documentId': document.id}) }}" download>
+              <a id="downloadDocument"
+                 href="{{ path('document_download_cpsuser', {'folderId':document.folder.id, 'documentId': document.id}) }}"
+                 download>
                 <svg class="icon icon-primary">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
                 </svg>
@@ -53,37 +55,37 @@
 
         <table id="folders_table" class="table border-bottom">
           <tr>
-            <td><strong>{{'documenti.documento.data_creazione' | trans}}</strong></td>
+            <td><strong>{{ 'documenti.documento.data_creazione' | trans }}</strong></td>
             <td>{{ document.createdAt | date('d/m/Y') }}</td>
           </tr>
           <tr>
-            <td><strong>{{'documenti.documento.disponibilità' | trans}}</strong></td>
-            <td>{{ 'documenti.documento.disponibile_fino_a' | trans({'%expire_at%':document.validityEnd | date('d/m/Y')}) | raw}}</td>
+            <td><strong>{{ 'documenti.documento.disponibilità' | trans }}</strong></td>
+            <td>{{ 'documenti.documento.disponibile_fino_a' | trans({'%expire_at%':document.validityEnd | date('d/m/Y')}) | raw }}</td>
           </tr>
-          {%  if document.validityEnd %}
+          {% if document.validityEnd %}
             <tr>
-              <td><strong>{{'documenti.documento.validità' | trans}}</strong></td>
+              <td><strong>{{ 'documenti.documento.validità' | trans }}</strong></td>
               <td>
                 {% if  document.validityEnd > date('now') %}
                   {{ 'documenti.documento.valido_da_a' | trans({
                     '%validity_begin%':document.validityBegin | date('d/m/Y'),
                     '%validity_end%':document.validityEnd | date('d/m/Y')
-                  }) | raw}}
+                  }) | raw }}
                 {% else %}
                   {{ 'documenti.documento.scaduto' | trans({
                     '%validity_end%':document.validityEnd | date('d/m/Y')
-                  }) | raw}}
+                  }) | raw }}
                   {% if document.correlatedServices|length > 0 %}
-                    {{ 'documenti.documento.rinnova' | trans | raw}}
+                    {{ 'documenti.documento.rinnova' | trans | raw }}
                   {% endif %}
                 {% endif %}
               </td>
             </tr>
           {% endif %}
           <tr>
-            <td class="align-middle"><strong>{{'documenti.documento.servizi_correlati' | trans}}</strong></td>
+            <td class="align-middle"><strong>{{ 'documenti.documento.servizi_correlati' | trans }}</strong></td>
             <td>
-              {% if  document.correlatedServices|length == 0%}
+              {% if  document.correlatedServices|length == 0 %}
                 <i>{{ 'documenti.documento.no_servizi_correlati' | trans }}</i>
               {% else %}
                 {% for service in document.correlatedServices %}
@@ -95,7 +97,6 @@
         </table>
       </div>
     </div>
-    {% endif %}
   </section>
 {% endblock %}
 

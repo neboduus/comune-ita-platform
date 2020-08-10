@@ -131,7 +131,7 @@ services:
       - !tagged app.backoffice
 
   AppBundle\Controller\DocumentController:
-    arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
+    arguments: ["@translator", "@doctrine.orm.default_entity_manager", "@logger"]
 
   AppBundle\Controller\SubscriptionsController:
     autowire: true
