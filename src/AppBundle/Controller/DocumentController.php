@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class DocumentController
@@ -32,9 +33,14 @@ class DocumentController extends Controller
    * @var LoggerInterface
    */
   private $logger;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
 
-  public function __construct(EntityManager $em, LoggerInterface $logger)
+  public function __construct(TranslatorInterface $translator, EntityManager $em, LoggerInterface $logger)
   {
+    $this->translator = $translator;
     $this->em = $em;
     $this->logger = $logger;
   }
@@ -76,33 +82,35 @@ class DocumentController extends Controller
   {
     $user = $this->getUser();
     $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
-    if (!$folder) {
-      return  new Response(null, Response::HTTP_NOT_FOUND);
-    }
-
     $documents = [];
-    if ($folder->getOwner() == $user)
-      $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findBy(['folder' => $folder]);
-    else {
-      try {
-        $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' and folder.id = \'' . $folder->getId() . '\'';
 
-        $stmt = $this->em->getConnection()->prepare($sql);
-        $stmt->execute();
-        $sharedDocuments = $stmt->fetchAll();
-
-        foreach ($sharedDocuments as $id) {
-          $documents[] = $this->em->getRepository('AppBundle:Document')->find($id);
-        }
-      } catch (DBALException $exception) {
-        $this->addFlash('warning', 'Si è verificato un errore dirante la ricerca dei documenti');
-      }
+    if (!$folder) {
+      $this->addFlash('warning', $this->translator->trans('documenti.no_folder'));
+      return $this->redirectToRoute('folders_list_cpsuser');
     }
+
+      if ($folder->getOwner() == $user)
+        $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findBy(['folder' => $folder]);
+      else {
+        try {
+          $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' and folder.id = \'' . $folder->getId() . '\'';
+
+          $stmt = $this->em->getConnection()->prepare($sql);
+          $stmt->execute();
+          $sharedDocuments = $stmt->fetchAll();
+
+          foreach ($sharedDocuments as $id) {
+            $documents[] = $this->em->getRepository('AppBundle:Document')->find($id);
+          }
+        } catch (DBALException $exception) {
+          $this->addFlash('warning', $this->translator->trans('documenti.document_search_error'));
+        }
+      }
 
     return [
       'documents' => $documents,
       'folder' => $folder,
-      'user' => $this->getUser(),
+      'user' => $user
     ];
   }
 
@@ -120,17 +128,22 @@ class DocumentController extends Controller
     $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
     $document = $this->em->getRepository('AppBundle:Document')->find($documentId);
 
-    if (!$folder || !$document) {
-      return new Response(null, Response::HTTP_NOT_FOUND);
+    if (!$folder) {
+      $this->addFlash('warning', $this->translator->trans('documenti.no_folder'));
+      return $this->redirectToRoute('folders_list_cpsuser');
+    } elseif (!$document) {
+      $this->addFlash('warning', $this->translator->trans('documenti.no_document'));
+      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId'=>$folderId]);
     }
 
     if ($folder->getOwner() == $user->getCodiceFiscale() || in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
       return [
         'document' => $document,
-        'user' => $this->getUser(),
+        'user' => $user,
       ];
     } else {
-      return new Response(null, Response::HTTP_UNAUTHORIZED);
+      $this->addFlash('warning', $this->translator->trans('documenti.no_document_permissions'));
+      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId'=>$folderId]);
     }
   }
 
