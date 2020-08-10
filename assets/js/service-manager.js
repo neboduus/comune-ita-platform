@@ -36,39 +36,30 @@ $(document).ready(function () {
     hideScheduler()
   })
 
-
-  let folderInput = $('#general_data_folder_name');
-  if ($('#general_data_handler').val() === 'ocsdc.handlers.servizio.documents_sharing') {
-    folderInput.closest('div').show();
-  } else {
-    folderInput.closest('div').hide();
+  function toggleElementByValue(conditionalElement, showValue, toggleElement, unCheck) {
+    if (conditionalElement.val() === showValue) {
+      toggleElement.closest('div').show();
+    } else {
+      if (unCheck) {
+        toggleElement.prop('checked', false);
+      }
+      toggleElement.closest('div').hide();
+    }
   }
 
-  // Show/Hide login checkbox
-  $('#general_data_handler').change(function () {
-    if (this.value === 'ocsdc.handlers.servizio.documents_sharing') {
-      folderInput.closest('div').show();
-    } else {
-      folderInput.closest('div').hide();
-    }
-  })
+  let handlerEl = $('#general_data_handler');
+  let folderNameEl = $('#general_data_folder_name');
+  toggleElementByValue(handlerEl, 'ocsdc.handlers.servizio.documents_sharing', folderNameEl, false);
+  handlerEl.change(function () {
+    toggleElementByValue(handlerEl, 'ocsdc.handlers.servizio.documents_sharing', folderNameEl, false)
+  });
 
-  let loginCheckbox = $('#general_data_login_suggested');
-  if ($('#general_data_access_level').val() === '0') {
-    loginCheckbox.closest('div').show();
-  } else {
-    loginCheckbox.closest('div').hide();
-  }
-
-  // Show/Hide login checkbox
-  $('#general_data_access_level').change(function () {
-    if (this.value === '0') {
-      loginCheckbox.closest('div').show();
-    } else {
-      loginCheckbox.prop('checked', false);
-      loginCheckbox.closest('div').hide();
-    }
-  })
+  let accessLevelEl = $('#general_data_access_level');
+  let loginCheckboxEl = $('#general_data_login_suggested');
+  toggleElementByValue(accessLevelEl, '0', loginCheckboxEl, false);
+  accessLevelEl.change(function () {
+    toggleElementByValue(accessLevelEl, '0', loginCheckboxEl, true)
+  });
 
   // Step Template form
   if ($("#formio_template_service_id").length) {
