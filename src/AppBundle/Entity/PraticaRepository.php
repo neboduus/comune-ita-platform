@@ -416,8 +416,9 @@ class PraticaRepository extends EntityRepository
       ->select('pratica')
       ->from($entity, 'pratica');
 
-    $qb->andWhere('pratica.erogatore IN (:erogatore)')
-      ->setParameter('erogatore', $user->getEnte()->getErogatori()->toArray());
+    // Rimosso per issue #177
+    /*$qb->andWhere('pratica.erogatore IN (:erogatore)')
+      ->setParameter('erogatore', $user->getEnte()->getErogatori()->toArray());*/
 
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
 
