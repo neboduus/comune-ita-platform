@@ -429,6 +429,7 @@ user:
 
   profile:
     title: 'Profilo utente'
+    dati_personali: 'Dati personali'
     info_da_sdc: 'Informazioni da sistema di autenticazione'
     dati_da_cps_guida: 'Queste informazioni sono state ricavate dalla carta provinciale dei servizi con cui ti sei autenticato e non possono essere modificate in questa applicazione'
     nome: 'Nome'
@@ -449,6 +450,13 @@ user:
     stato: 'Stato'
     residenza: 'Residenza'
     domicilio: 'Domicilio'
+    carta_identita: "Carta d'identità"
+    numero: 'Numero'
+    comune_rilascio: 'Rilasciata dal Comune di'
+    data_rilascio: 'Data di rilascio'
+    data_scadenza: 'Data di scadenza'
+    copia_domicilio: "Copia da domicilio"
+    copia_residenza: "Copia da residenza"
     salva_informazioni_contatto: 'Salva informazioni contatto'
     salva_informazioni_profilo: 'Salva informazioni profilo'
 

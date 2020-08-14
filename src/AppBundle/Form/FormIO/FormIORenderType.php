@@ -73,6 +73,8 @@ class FormIORenderType extends AbstractType
     'applicant.address.postal_code' => 'getCapResidenza',
     'applicant.email_address' => 'getEmail',
     'applicant.email_repeat' => 'getEmail',
+    'phone_number' => 'getTelefono',
+    'cell_number' => 'getCellulare'
   ];
 
   /**
@@ -200,12 +202,12 @@ class FormIORenderType extends AbstractType
 
     // Associo gli allegati alla pratica
     foreach ($flattenedData as $key => $value) {
-      if ( isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
+      if (isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
         foreach ($value as $file) {
           $id = $file['data']['id'];
           $attachment = $this->em->getRepository('AppBundle:Allegato')->find($id);
           if ($attachment instanceof Allegato) {
-            $attachments[]= $id;
+            $attachments[] = $id;
             $pratica->addAllegato($attachment);
           }
         }
@@ -333,7 +335,7 @@ class FormIORenderType extends AbstractType
               && isset($component['form_options']['choices'])
               && !empty($component['form_options']['choices'])) {
               $value = strtoupper($value);
-              if (!in_array($value, $component['form_options']['choices'])){
+              if (!in_array($value, $component['form_options']['choices'])) {
                 $value = null;
               }
             }
@@ -365,8 +367,8 @@ class FormIORenderType extends AbstractType
       }
 
       $isFile = false;
-      if ( !$isSchema && isset($this->schema[$key]['type']) &&
-        ( $this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report') )  {
+      if (!$isSchema && isset($this->schema[$key]['type']) &&
+        ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report')) {
         $isFile = true;
       }
       $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;

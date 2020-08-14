@@ -4,6 +4,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\CPSUser;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Model\IdCard;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -180,6 +181,7 @@ class CPSUserProvider implements UserProviderInterface
       },
       'luogoNascita' => function (CPSUser $user, $value) {
         $user->setLuogoNascita($value);
+        $user->setCodiceNascita($value);
       },
       'provinciaNascita' => function (CPSUser $user, $value) {
         $user->setProvinciaNascita($value);
@@ -250,6 +252,21 @@ class CPSUserProvider implements UserProviderInterface
       },
       'spidCode' => function (CPSUser $user, $value) {
         $user->setSpidCode($value);
+      },
+      'idCard'  => function(CPSUser  $user, $value) {
+        $idCard = new IdCard();
+        $data = explode(' ', $value);
+        $idCard->setNumero($data[1]);
+        $dataRilascio = \DateTime::createFromFormat('Y-m-d', $data[3]);
+        if ($dataRilascio instanceof \DateTime) {
+          $idCard->setDataRilascio($dataRilascio);
+        }
+        $dataScadenza = \DateTime::createFromFormat('Y-m-d', $data[4]);
+        if ($dataScadenza instanceof \DateTime) {
+          $idCard->setDataScadenza($dataScadenza);
+        }
+        $idCard->setComuneRilascio(str_replace("COMUNE", "", $data[2]));
+        $user->setIdCard($idCard);
       },
       'shibSessionId' => function (CPSUser $user, $value) {
         $user->setShibSessionId($value);
