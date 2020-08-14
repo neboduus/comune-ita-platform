@@ -333,6 +333,7 @@ class UserController extends Controller
       $offset = intval($request->get('offset', 0));
       $data = $praticaRepository->findPraticheByUser($user, $parameters, $limit, $offset);
 
+      $result['data'] = [];
       $currentParameters['offset'] = $offset;
       $currentParameters['limit'] = $limit;
       $result['links']['self'] = $this->generateUrl('user_applications_json', $currentParameters);
