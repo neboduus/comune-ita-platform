@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Comuni\ComuneConverter;
+use AppBundle\Model\IdCard;
 use AppBundle\Services\CPSUserProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Http\Discovery\Exception\NotFoundException;
 
 /**
  * Class CPSUser
@@ -40,6 +43,13 @@ class CPSUser extends User
    * @ORM\Column(name="luogo_nascita", type="text", nullable=true)
    */
   private $luogoNascita;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="codice_nascita", type="string", nullable=true)
+   */
+  private $codiceNascita;
 
   /**
    * @var string
@@ -288,6 +298,13 @@ class CPSUser extends User
   private $sdcStatoResidenza;
 
   /**
+   * @var IdCard
+   *
+   * @ORM\Column(name="id_card", type="json", nullable=true)
+   */
+  private $idCard;
+
+  /**
    * @var Collection
    *
    * @ORM\Column(name="accepted_terms", type="text")
@@ -360,6 +377,26 @@ class CPSUser extends User
   public function setLuogoNascita($luogoNascita)
   {
     $this->luogoNascita = $luogoNascita;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCodiceNascita()
+  {
+    return $this->codiceNascita;
+  }
+
+  /**
+   * @param string $codiceNascita
+   *
+   * @return CPSUser
+   */
+  public function setCodiceNascita($codiceNascita)
+  {
+    $this->codiceNascita = $codiceNascita;
 
     return $this;
   }
@@ -1190,6 +1227,32 @@ class CPSUser extends User
   }
 
   /**
+   * @return IdCard
+   */
+  public function getIdCard()
+  {
+    $tmp = new IdCard();
+    $tmp->setNumero($this->idCard['numero']);
+    $tmp->setComuneRilascio($this->idCard['comune_rilascio']);
+    $tmp->setDataRilascio(\DateTime::createFromFormat('d/m/Y', $this->idCard['data_rilascio']));
+    $tmp->setDataScadenza(\DateTime::createFromFormat('d/m/Y', $this->idCard['data_scadenza']));
+
+    return $tmp;
+  }
+
+  /**
+   * @param IdCard $idCard
+   *
+   * @return CPSUser
+   */
+  public function setIdCard($idCard)
+  {
+    $this->idCard = $idCard;
+
+    return $this;
+  }
+
+  /**
    * @return Collection
    */
   public function getAcceptedTerms(): Collection
@@ -1392,5 +1455,14 @@ class CPSUser extends User
     $data["Vicenza"] = 'VI';
     $data["Viterbo"] = 'VT';
     return $data;
+  }
+
+  public function getMunicipalityFromCode($code) {
+    try {
+      return ComuneConverter::translate($code);
+    } catch (\Exception $e) {
+      // There's no translation for given code and is not among translation's values
+      return $code;
+    }
   }
 }

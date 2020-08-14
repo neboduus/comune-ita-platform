@@ -7,6 +7,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
+use AppBundle\Form\IdCardType;
 use AppBundle\Logging\LogConstants;
 use DateTime;
 use Psr\Log\LoggerInterface;
@@ -112,13 +113,10 @@ class UserController extends Controller
   {
     $manager = $this->getDoctrine()->getManager();
 
-    $convertStinginDateTimeObject = new DateTime($data['data_nascita']);
-
     $user
       ->setEmailContatto($data['email_contatto'])
       ->setCellulareContatto($data['cellulare_contatto'])
-      ->setDataNascita($convertStinginDateTimeObject)
-      ->setLuogoNascita($data['luogo_nascita'])
+      ->setLuogoNascita($user->getMunicipalityFromCode($user->getCodiceNascita()))
       ->setSdcIndirizzoResidenza($data['sdc_indirizzo_residenza'])
       ->setSdcCapResidenza($data['sdc_cap_residenza'])
       ->setSdcCittaResidenza($data['sdc_citta_residenza'])
@@ -145,15 +143,17 @@ class UserController extends Controller
     $compiledCellulareData = $user->getCellulare();
     $compiledEmailData = $user->getEmail();
 
+    $compiledProvinciaNascita =  $user->getProvinciaNascita();
+
     $compiledIndirizzoResidenza = $user->getIndirizzoResidenza();
     $compiledCapResidenza = $user->getCapResidenza();
-    $compiledCittaResidenza = $user->getCittaResidenza();
+    $compiledCittaResidenza = $user->getMunicipalityFromCode($user->getCittaResidenza());
     $compiledProvinciaResidenza = $user->getProvinciaResidenza();
     $compiledStatoResidenza = $user->getStatoResidenza();
 
     $compiledIndirizzoDomicilio = $user->getIndirizzoDomicilio();
     $compiledCapDomicilio = $user->getCapDomicilio();
-    $compiledCittaDomicilio = $user->getCittaDomicilio();
+    $compiledCittaDomicilio = $user->getMunicipalityFromCode($user->getCittaDomicilio());
     $compiledProvinciaDomicilio = $user->getProvinciaDomicilio();
     $compiledStatoDomicilio = $user->getStatoDomicilio();
 
@@ -163,11 +163,6 @@ class UserController extends Controller
       $compiledEmailData = '';
     }
 
-    $birthDay = '';
-    if ( $user->getDataNascita() instanceof DateTime) {
-      $birthDay = $user->getDataNascita()->format('d-m-Y');
-    }
-
     $formBuilder = $this->createFormBuilder(null, ['attr' => ['id' => 'edit_user_profile']])
       ->add('email_contatto', EmailType::class,
         ['label' => false, 'data' => $compiledEmailData, 'required' => false]
@@ -175,11 +170,17 @@ class UserController extends Controller
       ->add('cellulare_contatto', TextType::class,
         ['label' => false, 'data' => $compiledCellulareData, 'required' => false]
       )
-      ->add('data_nascita', TextType::class,
-        ['label' => false, 'data' => $birthDay, 'required' => true, 'attr' => ['class' => 'sdc-datepicker']]
+      ->add('id_card', IdCardType::class,
+        ['label' => false, 'data' => $user->getIdCard(), 'required' => false]
       )
-      ->add('luogo_nascita', TextType::class,
-        ['label' => false, 'data' => $user->getLuogoNascita(), 'required' => true]
+      ->add('provincia_nascita', ChoiceType::class, [
+        'label' => false,
+        'data' => $compiledProvinciaNascita,
+        'choices' => array_merge(CPSUser::getProvinces(), ['Estero'=>'EE']),
+        'required' => false,
+      ])
+      ->add('stato_nascita', TextType::class,
+        ['label' => false, 'data' => $user->getStatoNascita(), 'required' => false]
       )
       ->add('sdc_indirizzo_residenza', TextType::class,
         ['label' => false, 'data' => $compiledIndirizzoResidenza, 'required' => true]
@@ -190,9 +191,6 @@ class UserController extends Controller
       ->add('sdc_citta_residenza', TextType::class,
         ['label' => false, 'data' => $compiledCittaResidenza, 'required' => true]
       )
-      /*->add('sdc_provincia_residenza', TextType::class,
-        ['label' => false, 'data' => $compiledProvinciaResidenza, 'required' => true]
-      )*/
       ->add('sdc_provincia_residenza', ChoiceType::class, [
         'label' => false,
         'data' => $compiledProvinciaResidenza,
@@ -211,9 +209,6 @@ class UserController extends Controller
       ->add('sdc_citta_domicilio', TextType::class,
         ['label' => false, 'data' => $compiledCittaDomicilio, 'required' => false]
       )
-      /*->add('sdc_provincia_domicilio', TextType::class,
-        ['label' => false, 'data' => $compiledProvinciaDomicilio, 'required' => false]
-      )*/
       ->add('sdc_provincia_domicilio', ChoiceType::class, [
         'label' => false,
         'data' => $compiledProvinciaDomicilio,
