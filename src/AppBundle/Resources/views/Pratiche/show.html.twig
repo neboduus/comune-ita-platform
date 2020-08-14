@@ -64,15 +64,27 @@
             </div>
           {% endif %}
           <div class="col-12 mt-5">
-            {% if can_compile %}
+            {% if can_compile or can_withdraw %}
               <h4>Azioni</h4>
-              <p>
-                <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"
-                   href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                  <i class="fa fa-arrow-circle-o-right"></i>
-                  {{ 'pratica.vai_alla_pratica'|trans }}
-                </a>
-              </p>
+              {% if can_compile %}
+                <p>
+                  <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"
+                     href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                    {{ 'pratica.vai_alla_pratica'|trans }}
+                  </a>
+                </p>
+              {% endif %}
+              {% if can_withdraw %}
+                <p>
+                  <a class="btn btn-danger btn-lg" style="margin-bottom: 30px"
+                     onclick="return confirm('Sei sicuro di procedere? Questa azione non potrà più essere annullata.');"
+                     href="{{ path('pratiche_withdraw', {'pratica': pratica.id}) }}">
+                    <svg class="icon icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use></svg>
+                    {{ 'pratica.ritira_la_pratica'|trans }}
+                  </a>
+                </p>
+              {% endif %}
             {% endif %}
           </div>
         </div>

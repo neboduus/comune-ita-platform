@@ -21,7 +21,8 @@
             </a>
           </small>
         </div>
-
+      </div>
+      <div class="col-12 px-lg-4 py-lg-2">
         <h3>{{ folder.title }}</h3>
         <p>{{ folder.description }}</p>
       </div>
@@ -88,7 +89,7 @@
           <tr>
             <td class="align-middle"><strong>{{ 'documenti.cartella.servizi_correlati' | trans }}</strong></td>
             <td>
-              {% if  folder.correlatedServices|length == 0%}
+              {% if  folder.correlatedServices|length == 0 %}
                 <i>{{ 'documenti.cartella.no_servizi_correlati' | trans }}</i>
               {% else %}
                 {% for service in folder.correlatedServices %}

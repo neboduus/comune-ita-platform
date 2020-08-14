@@ -4,6 +4,10 @@
   {{ parent() }}
   <link rel="stylesheet" type="text/css"
         href="{{ asset('bundles/app/css/jquery-ui.min.css') }}"/>
+  <link rel="stylesheet" type="text/css"
+        href="{{ asset('bundles/app/css/component-chosen.min.css') }}"/>
+  <link rel="stylesheet" type="text/css"
+        href="{{ asset('bundles/app/css/daterangepicker.css') }}"/>
   <style>
     .ui-tooltip {font-size: .8em;}
     .filter-query .bootstrap-select{flex-grow: 2}
@@ -29,6 +33,34 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    .label-sm-wrapper > label {
+      position: absolute;
+      color: #435a70;
+      font-size: 0.77778rem;
+      display: block;
+      font-weight: 600;
+      padding: 0 0.5rem;
+      line-height: calc(2.5rem - 1px);
+      top: 0;
+      transform: translateY(-75%);
+    }
+    .chosen-container-single .chosen-search input[type="text"]{
+      height: auto;
+    }
+    .chosen-container{
+      margin-top: 5px;
+    }
+    .chosen-input{
+      background-color: #fff !important;
+      border: 1px solid #ced4da !important;
+      outline: 0 !important;
+      border-radius: .25rem !important;
+      padding: .25rem 1rem .25rem .5rem !important;
+      width: 100% !important;
+      height: calc(1.5em + .75rem) !important;
+      transition: none !important;
+      margin-top: 5px;
+    }
   </style>
 {% endblock %}
 
@@ -37,7 +69,10 @@
   <script src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
   <script src="{{ asset('bundles/app/js/jquery-ui.min.js') }}"></script>
   <script src="{{ asset('bundles/app/js/moment.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/moment-it.js') }}"></script>
   <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/chosen.jquery.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/daterangepicker.js') }}"></script>
   <script>
     $.views.helpers({
       'formatId': function (id) {
@@ -58,7 +93,7 @@
         var name = '?';
         var selector = $('#filter-servizio option[data-slug="'+service+'"]');
         if (selector.length > 0){
-          return selector.text();
+          return selector.data('name');
         }
         return name;
       },
@@ -116,8 +151,48 @@
       var filterQuery = $('#filter-query');
       var filterPratiche = $('#filter-pratiche');
       var filterCollate = $('#filter-collate');
+      var filterStatusRange = $('input[name="status-range"]');
+      var chosenSelect = $('.form-control-chosen');
       var sort = 'submissionTime';
       var order = 'asc';
+
+      chosenSelect.chosen();
+      filterStatusRange.daterangepicker({
+        "locale": {
+          "format": "DD/MM/YYYY HH:mm",
+          "separator": " - ",
+          "applyLabel": "Applica",
+          "cancelLabel": "Cancella",
+          "fromLabel": "Da",
+          "toLabel": "A",
+          "customRangeLabel": "Personalizzato",
+          "weekLabel": "Set",
+          "daysOfWeek": ["Do","Lu","Ma","Me","Gi","Ve","Sa"],
+          "monthNames": ["Gennaio","Febbraio","Marzp","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobrr","Novembre","Dicembre"],
+          "firstDay": 1
+        },
+        timePicker: true,
+        timePicker24Hour: true,
+        alwaysShowCalendars: true,
+        autoUpdateInput: false,
+        opens: "center",
+        ranges: {
+          'Oggi': [moment().startOf('day'), moment().endOf('day')],
+          'Ieri': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+          'Questa settimana': [moment().startOf('week'), moment().endOf('week')],
+          'Settimana scorsa': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+          'Questo mese': [moment().startOf('month'), moment().endOf('month')],
+          'Mese scorso': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+      }).on('apply.daterangepicker', function(ev, picker) {
+        filterStatusRange.data('start', picker.startDate.format('X'));
+        filterStatusRange.data('end', picker.endDate.format('X'));
+        $(this).val(picker.startDate.format('DD/MM/YYYY HH:mm') + ' - ' + picker.endDate.format('DD/MM/YYYY HH:mm'));
+        loadContents();
+      }).on('cancel.daterangepicker', function(ev, picker) {
+        filterStatusRange.removeData('start').removeData('end').val('');
+        loadContents();
+      });
 
       var viewSettingsStorage = {
         setItem: function (key, value) {
@@ -152,7 +227,8 @@
 
       var buildParams = function(){
         var params = {
-          'servizio': filterServizio.val(),
+          'gruppo': null,
+          'servizio': null,
           'stato': filterStato.val(),
           'workflow': filterWorkflow.val(),
           'query_field': filterQueryBy.val(),
@@ -160,32 +236,43 @@
           'sort': sort || 'submissionTime',
           'order': order || 'asc',
           'limit': filterPratiche.val() != null ? filterPratiche.val() : defaultLimit,
-          'collate': filterCollate.is(':checked') ? 1 : 0
+          'collate': filterCollate.is(':checked') ? 1 : 0,
+          'last_status_change': filterStatusRange.data('start') ? [filterStatusRange.data('start'),filterStatusRange.data('end')] : []
         };
+        if (filterServizio.children("option:selected").data('type') === 'group') {
+          params.gruppo = filterServizio.val();
+        } else {
+          params.servizio = filterServizio.val();
+        }
         viewSettingsStorage.setItem('pratiche_filters', params);
         return params;
       };
 
       var isEmpty = function(object) {
         return object.servizio === ''
+          && object.gruppo === ''
           && object.stato === ''
           && object.workflow === ''
           && object.query === ''
-          && object.collate !== 1;
+          && object.collate !== 1
+          && object.last_status_change === [];
       };
 
       reset.on('click', function (e) {
         if (typeof (Storage) !== "undefined"){
           viewSettingsStorage.setItem('pratiche_filters', {
+            'gruppo': '',
             'servizio': '',
             'stato': '',
             'workflow': '',
             'query_field': '1',
             'query': '',
             'limit': defaultLimit,
-            'collate': 0
+            'collate': 0,
+            'last_status_change': []
           });
         }
+        filterStatusRange.removeData('start').removeData('end').val('');
         window.location.reload();
         e.preventDefault();
       });
@@ -393,6 +480,12 @@
           filterCollate.prop('checked', false);
         }
         showReset();
+        chosenSelect.trigger("chosen:updated");
+        if ($.isArray(params.last_status_change) && params.last_status_change.length === 2){
+          filterStatusRange.data('start', params.last_status_change[0]);
+          filterStatusRange.data('end', params.last_status_change[1]);
+          filterStatusRange.val(moment.unix(params.last_status_change[0]).format('DD/MM/YYYY HH:mm') + ' - ' + moment.unix(params.last_status_change[1]).format('DD/MM/YYYY HH:mm'));
+        }
       }
       loadContents();
     });
@@ -404,7 +497,7 @@
 
 {% verbatim %}
 <script id="tpl-spinner" type="text/x-jsrender">
-  <div class="text-center p-5"><em>Attendere il caricamento dei dati...</em></div>
+  <div class="text-center p-5"><div class="loader mb-1"></div> <em>Attendere il caricamento dei dati...</em></div>
 </script>
 <script id="tpl-empty" type="text/x-jsrender">
   <div class="text-center p-5"><em>Nessuna pratica trovata</em></div>
@@ -514,6 +607,13 @@
           <a href="#" data-sort="submissionTime" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
         </div>
       </th>
+      <th>
+        <div class="d-flex">
+          <div class="text-nowrap mr-1">Ultimo cambio stato </div>
+          <a href="#" data-sort="latestStatusChangeTimestamp" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
+          <a href="#" data-sort="latestStatusChangeTimestamp" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
+        </div>
+      </th>
       {{if !meta.parameter.stato}}
       <th>Stato</th>
       {{/if}}
@@ -535,7 +635,7 @@
       <td class="text-nowrap">
         {{if can_read}}
           <a class="text-decoration-none" href="{{:~showUrl(id)}}" class="text-nowrap mr-1" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.vai_al_dettaglio'|trans }}{% verbatim %}">
-            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.collate && children_count > 0}}s{{/if}}"></use></svg>
+            <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.collate && (children_count > 0 || group )}}s{{/if}}"></use></svg>
           </a>
         {{/if}}
         <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
@@ -597,9 +697,14 @@
           </span>
         {{/if}}
       </td>
-      <td class="text-nowrap">
+      <td class="text-nowrap" data-value="{{:submission_time}}">
         {{if submission_time}}
           {{:~formatDate(submission_time,"{% endverbatim %}{{ocsdc_default_moment_datetime_format}}{% verbatim %}")}}
+        {{/if}}
+      </td>
+      <td class="text-nowrap" data-value="{{:latest_status_change_time}}">
+        {{if latest_status_change_time && submission_time != latest_status_change_time }}
+          {{:~formatDate(latest_status_change_time,"{% endverbatim %}{{ocsdc_default_moment_datetime_format}}{% verbatim %}")}}
         {{/if}}
       </td>
       {{if !~metadata.parameter.stato}}
@@ -623,7 +728,7 @@
   {{if meta.parameter.servizio && meta.schema}}
   <tbody class="calc" style="border-bottom: 15px solid white;display: none" data-source="{% endverbatim %}{{ path('operatori_index_calculate') }}{% verbatim %}">
     <tr>
-      <th colspan="{{if !meta.parameter.stato}}8{{else}}7{{/if}}" class="bg-white text-right border-0"></th>
+      <th colspan="{{if !meta.parameter.stato}}9{{else}}8{{/if}}" class="bg-white text-right border-0"></th>
       {{for meta.schema}}
         <td class="bg-100 p-1" data-key="{{:name}}" style="display: none;white-space: nowrap">
             <div class="calc calc-sum" style="display: none">
@@ -674,12 +779,21 @@
       <div class="row">
         {% if servizi|length %}
           <div class="col-12 col-sm-6 col-lg-4 mb-5">
-            <div class="bootstrap-select-wrapper filter-servizio">
+            <div class="label-sm-wrapper filter-servizio">
               <label for="filter-servizio">Filtra per servizio</label>
-              <select id="filter-servizio" class="form-control filter-select">
+              <select id="filter-servizio" class="form-control filter-select form-control-chosen">
                 <option value="">Tutti</option>
                 {% for servizio in servizi %}
-                  <option data-slug="{{ servizio.slug }}" value="{{ servizio.id }}">{{ servizio.name }}</option>
+                  {% if servizio is iterable %}
+                    <option data-type="group" data-slug="{{ servizio.group.slug }}" data-name="{{ servizio.group.name }}" value="{{ servizio.group.id }}">{{ servizio.group.name }}</option>
+                    {% for s in servizio.services %}
+                      <option data-type="service" data-slug="{{ s.slug }}" data-name="{{ s.name }}" value="{{ s.id }}"> - {{ s.name }}</option>
+                    {% endfor %}
+                  {% else %}
+                    {# users is probably a string #}
+                    <option data-type="service" data-slug="{{ servizio.slug }}" data-name="{{ servizio.name }}" value="{{ servizio.id }}">{{ servizio.name }}</option>
+                  {% endif %}
+
                 {% endfor %}
               </select>
             </div>
@@ -687,9 +801,9 @@
         {% endif %}
         {% if stati|length %}
           <div class="col-12 col-sm-6 col-lg-4 mb-5">
-            <div class="bootstrap-select-wrapper filter-stato">
+            <div class="label-sm-wrapper filter-stato">
               <label for="filter-stato">Filtra per stato</label>
-              <select id="filter-stato" class="form-control filter-select">
+              <select id="filter-stato" class="form-control filter-select form-control-chosen">
                 <option value="">Tutti</option>
                 {% for stato in stati %}
                   <option value="{{ stato.id }}">{{ stato.name|trans }}</option>
@@ -699,9 +813,9 @@
           </div>
         {% endif %}
         <div class="col-12 col-sm-6 col-lg-4 mb-5">
-          <div class="bootstrap-select-wrapper filter-workflow">
+          <div class="label-sm-wrapper filter-workflow">
             <label for="filter-workflow">Filtra per lavorazione</label>
-            <select id="filter-workflow" class="form-control filter-select">
+            <select id="filter-workflow" class="form-control filter-select form-control-chosen">
               <option value="">Tutte</option>
               <option value="owned">In carico a {{ user.fullName }}</option>
               <option value="unassigned">Da assegnare</option>
@@ -723,10 +837,10 @@
             </div>
           </div>
         </div>
-        <div class="col-12 col-sm-6 col-lg-4 mb-5 mb-md-0">
-          <div class="bootstrap-select-wrapper">
-            <label for="filter-pratiche">Risultati per pagina</label>
-            <select id="filter-pratiche" class="form-control filter-select">
+        <div class="col-6 col-sm-6 col-md-4 col-lg-1 mb-5">
+          <div class="label-sm-wrapper">
+            <label for="filter-pratiche" class="text-nowrap overflow-hidden mw-100">Risultati per pagina</label>
+            <select id="filter-pratiche" class="form-control filter-select form-control-chosen">
               <option value="10">10</option>
               <option value="25">25</option>
               <option value="50">50</option>
@@ -734,12 +848,18 @@
             </select>
           </div>
         </div>
-        <div class="col-6 col-sm-6 col-lg-2">
+        <div class="col-6 col-sm-6 col-md-8 col-lg-3 mb-5">
+          <div class="label-sm-wrapper">
+            <label for="filter-status-range">Ultimo cambio stato</label>
+            <input type="text" id="status-range" name="status-range" class="chosen-input" onkeydown="event.preventDefault()">
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-md-4 col-lg-2">
           <div class="form-check">
             <div class="toggles">
               <label for="filter-collate">
                 Fascicola
-                <input type="checkbox" id="filter-collate" checked>
+                <input type="checkbox" id="filter-collate">
                 <span class="lever" style="position: relative;z-index: 10;"></span>
               </label>
             </div>

@@ -20,6 +20,13 @@ class DefaultAnonymousHandler extends DefaultHandler
   public function execute(Servizio $servizio, Ente $ente)
   {
     $pratica = $this->createNewPratica($servizio);
+    $pratica->setEnte($ente);
+
+    foreach ($servizio->getErogatori() as $erogatore) {
+      if ($erogatore->getEnti()->contains($ente)) {
+        $pratica->setErogatore($erogatore);
+      }
+    }
 
     if (!$this->session->isStarted()) {
       $this->session->start();

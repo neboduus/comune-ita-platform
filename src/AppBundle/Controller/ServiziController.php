@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\ServizioRepository;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
@@ -38,10 +39,31 @@ class ServiziController extends Controller
     $stickyServices = $serviziRepository->findStickyAvailable();
     $servizi = $serviziRepository->findNotStickyAvailable();
 
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $servicesGroup = $servicesGroupRepository->findAll();
+
+    $services = array();
+
+    /** @var Servizio $item */
+    foreach ($servizi as $item) {
+      $services[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
+      $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+    }
+
+    /** @var ServiceGroup $item */
+    foreach ($servicesGroup as $item) {
+      if ($item->getPublicServices()->count() > 0) {
+        $services[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
+        $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+      }
+    }
+
+    ksort($services);
+
     return [
       'sticky_services' => $stickyServices,
-      'servizi' => $servizi,
-      'user' => $this->getUser(),
+      'servizi' => $services,
+      'user' => $this->getUser()
     ];
   }
 
@@ -139,6 +161,31 @@ class ServiziController extends Controller
       'handler' => $handler,
       'can_access' => $canAccess,
       'deny_access_message' => $denyAccessMessage,
+    ];
+  }
+
+  /**
+   * @Route("/gruppo/{slug}", name="service_group_show")
+   * @Template()
+   * @param string $slug
+   * @param Request $request
+   *
+   * @return array
+   */
+  public function serviceGroupDetailAction($slug, Request $request)
+  {
+    $user = $this->getUser();
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+
+    /** @var Servizio $servizio */
+    $servizio = $serviziRepository->findOneBySlug($slug);
+    if (!$servizio instanceof ServiceGroup) {
+      throw new NotFoundHttpException("ServiceGroup $slug not found");
+    }
+
+    return [
+      'user' => $user,
+      'servizio' => $servizio
     ];
   }
 

@@ -6,6 +6,7 @@ use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormAllegatiContainer;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Logging\LogConstants;
@@ -70,6 +71,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
    * @param $prefix
    * @param SchemaFactoryInterface $formIOFactory
    * @param EntityManagerInterface $em
+   *
    */
   public function __construct(
     LoggerInterface $logger,
@@ -144,9 +146,16 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     if ($pratica instanceof DematerializedFormAllegatiContainer) {
       $this->dematerializer->attachAllegati($pratica);
     }
+    /** @var PraticaRepository $repo */
+    $repo = $this->em->getRepository(Pratica::class);
+
+    // Per non sovrascrivere comportamento in formio flow
+    if ($pratica->getFolderId() == null) {
+      $pratica->setServiceGroup($pratica->getServizio()->getServiceGroup());
+      $pratica->setFolderId($repo->getFolderForApplication($pratica));
+    }
 
     if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
-
       $pratica->setSubmissionTime(time());
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMIT);
 

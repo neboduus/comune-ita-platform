@@ -164,7 +164,7 @@
               <p class="m-0">{{ pratica.operatore.fullName }}</p>
             </div>
           {% endif %}
-          {% if pratica.parent or pratica.children.count > 0 %}
+          {% if applications_in_folder|length > 0 %}
           <div class="col-12 pb-3">
             <h6>{{ 'operatori.fascicolo' | trans }}</h6>
             {{ include('@App/Operatori/parts/fascicolo.html.twig') }}

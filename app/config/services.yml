@@ -131,7 +131,7 @@ services:
       - !tagged app.backoffice
 
   AppBundle\Controller\DocumentController:
-    arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
+    arguments: ["@translator", "@doctrine.orm.default_entity_manager", "@logger"]
 
   AppBundle\Controller\SubscriptionsController:
     autowire: true
@@ -155,7 +155,7 @@ services:
 
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator
-    arguments: ["%shibbolet_server_varnames%"]
+    arguments: ["%shibbolet_server_varnames%",'@Symfony\Component\Security\Core\Security']
 
   ocsdc.cps.terms_acceptance_listener:
     class: AppBundle\EventListener\TermsAcceptListener

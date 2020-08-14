@@ -2,13 +2,13 @@
 
 namespace AppBundle\Security;
 
-
 use AppBundle\Entity\CPSUser;
 use AppBundle\Services\CPSUserProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
@@ -22,13 +22,30 @@ class CPSAuthenticator extends AbstractGuardAuthenticator
 
   private $shibboletServerVarnames;
 
-  /**
-   * @var array
-   */
-  //TODO:test this mapping
-  public function __construct($shibboletServerVarnames)
+  private $security;
+
+  public function __construct($shibboletServerVarnames, Security $security)
   {
     $this->shibboletServerVarnames = $shibboletServerVarnames;
+    $this->security = $security;
+  }
+
+  public function supports(Request $request)
+  {
+    // if there is already an authenticated user (likely due to the session)
+    // then return false and skip authentication: there is no need.
+    $credential = $this->getCredentials($request);
+    $user = $this->security->getUser();
+    if (
+      $user instanceof CPSUser
+      && isset($credential['codiceFiscale'])
+      && strtolower($user->getCodiceFiscale()) == strtolower($credential['codiceFiscale'])
+    ) {
+      return false;
+    }
+
+    // the user is not logged in, so the authenticator should continue
+    return true;
   }
 
   /**

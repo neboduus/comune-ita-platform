@@ -61,6 +61,7 @@ class PraticheController extends Controller
     $praticheCancelled = $repo->findCancelledPraticaForUser($user);
     $praticheDraftForIntegration = $repo->findDraftForIntegrationPraticaForUser($user);
     $praticheRelated = $repo->findRelatedPraticaForUser($user);
+    $praticheWithdrawn = $repo->findWithdrawnPraticaForUser($user);
 
 
     return [
@@ -72,9 +73,10 @@ class PraticheController extends Controller
         'pending' => $pratichePending,
         //'processing' => $praticheProcessing,
         'completed' => $praticheCompleted,
-        'cancelled' => $praticheCancelled,
         'integration' => $praticheDraftForIntegration,
         'related' => $praticheRelated,
+        'cancelled' => $praticheCancelled,
+        'withdrawn' => $praticheWithdrawn
       ),
     ];
   }
@@ -92,22 +94,11 @@ class PraticheController extends Controller
   {
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    $ente = $this->getDoctrine()
-      ->getRepository('AppBundle:Ente')
-      ->findOneBy(
-        [
-          'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
-            'prefix'
-          ) : $request->query->get(self::ENTE_SLUG_QUERY_PARAMETER, null),
-        ]
-      );
+    $instanceService = $this->container->get('ocsdc.instance_service');
+    $ente = $instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
-      $this->get('logger')->info(
-        LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
-        ['headers' => $request->headers]
-      );
-
+      $this->get('logger')->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
       throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
     }
 
@@ -285,6 +276,17 @@ class PraticheController extends Controller
   }
 
   /**
+   * @param Pratica $pratica
+   * @param CPSUser $user
+   * @return bool
+   */
+  private function userCanWithdrawPratica(Pratica $pratica, User $user)
+  {
+    return ($pratica->getStatus() == Pratica::STATUS_SUBMITTED || $pratica->getStatus() == Pratica::STATUS_REGISTERED || $pratica->getStatus() == Pratica::STATUS_PENDING ||
+        $pratica->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION || $pratica->getStatus() == Pratica::STATUS_REGISTERED_AFTER_INTEGRATION) && $pratica->getUser()->getId() == $user->getId();
+  }
+
+  /**
    * @Route("/{pratica}", name="pratiche_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
@@ -311,11 +313,13 @@ class PraticheController extends Controller
       }
     }
 
+
     $result = [
       'pratica' => $pratica,
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'can_compile' => $canCompile,
+      'can_withdraw' => $this->userCanWithdrawPratica($pratica, $user)
       //'threads' => $thread,
     ];
 
@@ -333,6 +337,32 @@ class PraticheController extends Controller
     }
 
     return $result;
+  }
+
+  /**
+   * @Route("/{pratica}/withdraw", name="pratiche_withdraw")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Pratica $pratica
+   *
+   * @return array|RedirectResponse
+   */
+  public function withdrawAction(Request $request, Pratica $pratica)
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+    if ($this->userCanWithdrawPratica($pratica, $user)) {
+
+      $withdrawAttachment = $this->get('ocsdc.modulo_pdf_builder')->createWithdrawForPratica($pratica);
+      $pratica->addAllegato($withdrawAttachment);
+      $this->container->get('ocsdc.pratica_status_service')->setNewStatus(
+        $pratica,
+        Pratica::STATUS_WITHDRAW
+      );
+    }
+
+    return $this->redirectToRoute(
+      'pratiche_show', ['pratica' => $pratica->getId()]
+    );
   }
 
   /**

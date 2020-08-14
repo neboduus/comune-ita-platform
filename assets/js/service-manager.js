@@ -249,7 +249,8 @@ $(document).ready(function () {
             htmlelement: true,
             columns: true,
             pagebreak: true,
-            table: true
+            table: true,
+            datagrid:true
           }
         },
       },

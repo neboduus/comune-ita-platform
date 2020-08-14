@@ -76,6 +76,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   const STATUS_CANCELLED_WAITALLEGATIOPERATORE = 8000;
   const STATUS_CANCELLED = 9000;
+  const STATUS_WITHDRAW = 20000;
 
   const ACCEPTED = true;
   const REJECTED = false;
@@ -448,6 +449,17 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
    */
   private $parent;
+
+  /**
+   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ServiceGroup", inversedBy="applications")
+   * @ORM\JoinColumn(name="service_group_id", referencedColumnName="id", nullable=true)
+   */
+  private $serviceGroup;
+
+  /**
+   * @ORM\Column(type="guid", nullable=true)
+   */
+  private $folderId;
 
   /**
    * Pratica constructor.
@@ -1862,4 +1874,50 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     return $this->children;
   }
 
+  /**
+   * @return mixed
+   */
+  public function getServiceGroup()
+  {
+    return $this->serviceGroup;
+  }
+
+  /**
+   * @param mixed $serviceGroup
+   */
+  public function setServiceGroup($serviceGroup)
+  {
+    $this->serviceGroup = $serviceGroup;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getFolderId()
+  {
+    return $this->folderId;
+  }
+
+  /**
+   * @param mixed $folderId
+   */
+  public function setFolderId($folderId)
+  {
+    $this->folderId = $folderId;
+  }
+
+  /**
+   * @return Allegato
+   */
+  public function getWithdrawAttachment()
+  {
+    $attachments = $this->allegati;
+    /** @var Allegato $item */
+    foreach ($attachments as $item) {
+      if ($item->getType() == Ritiro::TYPE_DEFAULT) {
+        return $item;
+      }
+    }
+    return null;
+  }
 }

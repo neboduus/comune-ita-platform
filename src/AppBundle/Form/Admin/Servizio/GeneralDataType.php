@@ -115,6 +115,12 @@ class GeneralDataType extends AbstractType
         'label' => 'Stato',
         'choices' => $statuses
       ])
+      ->add('service_group', EntityType::class, [
+        'class' => 'AppBundle\Entity\ServiceGroup',
+        'choice_label' => 'name',
+        'label' => 'Gruppo di servizi',
+        'required' => false
+      ])
       ->add('scheduled_from', DateTimeType::class, [
         'label' => 'Schedulato a partire da',
         'required' => false,

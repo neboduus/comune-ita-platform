@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Subscriber;
+use AppBundle\Entity\User;
 use AppBundle\Model\SubscriberMessage;
 use AppBundle\Services\MailerService;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
@@ -38,6 +39,9 @@ class SubscriberController extends Controller
    */
   public function showSubscriberAction(Request $request, Subscriber $subscriber)
   {
+    /** @var User $user */
+    $user = $this->getUser();
+
     $tableData = [];
     $subscriptionServices = [];
 
@@ -112,6 +116,7 @@ class SubscriberController extends Controller
     }
 
     return array(
+      'user' => $user,
       'subscriber' => $subscriber,
       'datatable' => $table,
       'form' => $form->createView(),

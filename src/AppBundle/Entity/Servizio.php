@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use App\Entity\PostalAddress;
 use AppBundle\Model\FeedbackMessage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -292,6 +293,13 @@ class Servizio
   private $postSubmitValidationMessage;
 
   /**
+   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ServiceGroup", inversedBy="services")
+   * @ORM\JoinColumn(name="service_group_id", referencedColumnName="id", nullable=true)
+   * @SWG\Property(description="Service group id", type="string")
+   */
+  private $serviceGroup;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -310,6 +318,14 @@ class Servizio
     $this->setLoginSuggested(false);
     $this->setProtocolRequired(true);
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
+  }
+
+  /**
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string)$this->getName();
   }
 
   /**
@@ -1030,6 +1046,22 @@ class Servizio
   public function setPostSubmitValidationMessage($postSubmitValidationMessage)
   {
     $this->postSubmitValidationMessage = $postSubmitValidationMessage;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getServiceGroup()
+  {
+    return $this->serviceGroup;
+  }
+
+  /**
+   * @param mixed $serviceGroup
+   */
+  public function setServiceGroup(ServiceGroup $serviceGroup)
+  {
+    $this->serviceGroup = $serviceGroup;
   }
 
 }

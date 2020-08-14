@@ -12,6 +12,7 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\RispostaOperatoreDTO;
+use AppBundle\Entity\Ritiro;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
@@ -179,6 +180,25 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     );
     $this->em->persist($signedResponse);
     return $signedResponse;
+  }
+
+  /**
+   * @param Pratica $pratica
+   *
+   * @return Ritiro
+   * @throws \Exception
+   */
+  public function createWithdrawForPratica(Pratica $pratica)
+  {
+    $withdrawAttachment = new Ritiro();
+    $this->createAllegatoInstance($pratica, $withdrawAttachment);
+    $servizioName = $pratica->getServizio()->getName();
+    $now = new \DateTime();
+    $now->setTimestamp(time());
+    $withdrawAttachment->setOriginalFilename("Ritiro servizio {$servizioName} " . $now->format('Ymdhi'));
+    $withdrawAttachment->setDescription("Ritiro servizio {$servizioName} " . $now->format('Ymdhi'));
+    $this->em->persist($withdrawAttachment);
+    return $withdrawAttachment;
   }
 
 
@@ -378,7 +398,18 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   public function renderForResponse(Pratica $pratica)
   {
     $className = (new \ReflectionClass(RispostaOperatore::class))->getShortName();
+    return $this->renderForClass($pratica, $className);
+  }
 
+  /**
+   * @param Pratica $pratica
+   *
+   * @return string
+   * @throws \ReflectionException
+   */
+  public function renderForWithdraw(Pratica $pratica)
+  {
+    $className = (new \ReflectionClass(Ritiro::class))->getShortName();
     return $this->renderForClass($pratica, $className);
   }
 
@@ -409,8 +440,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $fileName = uniqid() . '.pdf';
     $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
     $content = null;
+
     if ($allegato instanceof RispostaOperatore) {
       $content = $this->renderForResponse($pratica);
+      $this->filesystem->dumpFile($filePath, $content);
+    } else if ($allegato instanceof Ritiro) {
+      $content = $this->renderForWithdraw($pratica);
       $this->filesystem->dumpFile($filePath, $content);
     } else {
       $content = $this->renderForPratica($pratica);
