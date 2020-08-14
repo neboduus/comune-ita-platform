@@ -30,7 +30,7 @@ class IdCard implements \JsonSerializable
   /**
    * @return string
    */
-  public function getNumero(): string
+  public function getNumero()
   {
     return $this->numero;
   }
@@ -38,7 +38,7 @@ class IdCard implements \JsonSerializable
   /**
    * @param string $numero
    */
-  public function setNumero(string $numero)
+  public function setNumero($numero)
   {
     $this->numero = $numero;
   }
@@ -46,7 +46,7 @@ class IdCard implements \JsonSerializable
   /**
    * @return string
    */
-  public function getComuneRilascio(): string
+  public function getComuneRilascio()
   {
     return $this->comuneRilascio;
   }
@@ -54,7 +54,7 @@ class IdCard implements \JsonSerializable
   /**
    * @param string $comuneRilascio
    */
-  public function setComuneRilascio(string $comuneRilascio)
+  public function setComuneRilascio($comuneRilascio)
   {
     $this->comuneRilascio = $comuneRilascio;
   }
@@ -72,7 +72,10 @@ class IdCard implements \JsonSerializable
    */
   public function getDataRilascio()
   {
-    return $this->dataRilascio;
+    if ($this->dataRilascio instanceof \DateTime) {
+      return $this->dataRilascio;
+    }
+    return null;
   }
 
   /**
@@ -88,7 +91,10 @@ class IdCard implements \JsonSerializable
    */
   public function getDataScadenza()
   {
-    return $this->dataScadenza;
+    if ($this->dataScadenza instanceof \DateTime) {
+      return $this->dataScadenza;
+    }
+    return null;
   }
 
 
