@@ -555,8 +555,12 @@ class PraticaRepository extends EntityRepository
         ->orderBy('pratica.submissionTime', 'DESC')
         ->getQuery()->execute();
     }
-    if (count($applications) == 0 && ($pratica->getParent() !== null || $pratica->getChildren()->count() > 0)){
+    if (count($applications) == 0 && $pratica->getParent() !== null ){
       $applications = $this->getApplicationsInFolder($pratica->getRootParent());
+    }
+
+    if ( count($applications) == 0 && $pratica->getChildren()->count() > 0 ) {
+      $applications[]=$pratica;
     }
     return $applications;
   }
