@@ -103,8 +103,8 @@ class IdCard implements \JsonSerializable
     return array(
       'numero' => $this->numero,
       'comune_rilascio' => $this->comuneRilascio,
-      'data_rilascio' => $this->dataRilascio->format('d/m/Y'),
-      'data_scadenza'=> $this->dataScadenza->format('d/m/Y'),
+      'data_rilascio' => $this->dataRilascio ? $this->dataRilascio->format('d/m/Y') : '',
+      'data_scadenza'=> $this->dataScadenza ? $this->dataScadenza->format('d/m/Y') : '',
     );
   }
 

@@ -1,9 +1,9 @@
 <?php
 
 
-namespace AppBundle\Comuni;
+namespace AppBundle\Helpers;
 
-class ComuneConverter
+class MunicipalityConverter
 {
   const data = [
     "A001"=> "Abano Terme",

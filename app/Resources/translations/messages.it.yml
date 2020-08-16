@@ -440,6 +440,8 @@ user:
     email: 'Indirizzo email'
     data_nascita: 'Data di nascita'
     luogo_nascita: 'Luogo di nascita'
+    provincia_nascita: 'Provincia di nascita'
+    stato_nascita: 'Stato di nascita'
     contatti_per_sdc: 'Contatti'
     contatti_per_sdc_guida: 'Il sistema utilizzerà questi dati per precompilare le tue pratiche ed inviarti notifiche e segnalazioni.'
     cellulare: 'Numero di telefono cellulare'

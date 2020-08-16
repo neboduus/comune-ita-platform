@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Comuni\ComuneConverter;
+use AppBundle\Helpers\MunicipalityConverter;
 use AppBundle\Model\IdCard;
 use AppBundle\Services\CPSUserProvider;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -1459,7 +1459,7 @@ class CPSUser extends User
 
   public function getMunicipalityFromCode($code) {
     try {
-      return ComuneConverter::translate($code);
+      return MunicipalityConverter::translate($code);
     } catch (\Exception $e) {
       // There's no translation for given code and is not among translation's values
       return $code;

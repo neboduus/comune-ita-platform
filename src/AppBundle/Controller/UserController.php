@@ -9,6 +9,8 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Form\IdCardType;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Security\CPSAuthenticator;
+use AppBundle\Services\CPSUserProvider;
 use DateTime;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -83,9 +85,11 @@ class UserController extends Controller
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
+
     $form = $this->setupSdcUserForm($user)->handleRequest($request);
 
     if ($form->isSubmitted()) {
+
       $data = $form->getData();
       $this->storeSdcUserData($user, $data, $this->get('logger'));
 
@@ -112,11 +116,12 @@ class UserController extends Controller
   private function storeSdcUserData(CPSUser $user, array $data, LoggerInterface $logger)
   {
     $manager = $this->getDoctrine()->getManager();
-
     $user
       ->setEmailContatto($data['email_contatto'])
       ->setCellulareContatto($data['cellulare_contatto'])
-      ->setLuogoNascita($user->getMunicipalityFromCode($user->getCodiceNascita()))
+      ->setCpsTelefono($data['telefono_contatto'])
+      ->setStatoNascita($data['stato_nascita'])
+      ->setIdCard($data['id_card'])
       ->setSdcIndirizzoResidenza($data['sdc_indirizzo_residenza'])
       ->setSdcCapResidenza($data['sdc_cap_residenza'])
       ->setSdcCittaResidenza($data['sdc_citta_residenza'])
@@ -142,6 +147,7 @@ class UserController extends Controller
   {
     $compiledCellulareData = $user->getCellulare();
     $compiledEmailData = $user->getEmail();
+    $compiledPhoneData = $user->getTelefono();
 
     $compiledProvinciaNascita =  $user->getProvinciaNascita();
 
@@ -170,15 +176,12 @@ class UserController extends Controller
       ->add('cellulare_contatto', TextType::class,
         ['label' => false, 'data' => $compiledCellulareData, 'required' => false]
       )
+      ->add('telefono_contatto', TextType::class,
+        ['label' => false, 'data' => $compiledPhoneData, 'required' => false]
+      )
       ->add('id_card', IdCardType::class,
         ['label' => false, 'data' => $user->getIdCard(), 'required' => false]
       )
-      ->add('provincia_nascita', ChoiceType::class, [
-        'label' => false,
-        'data' => $compiledProvinciaNascita,
-        'choices' => array_merge(CPSUser::getProvinces(), ['Estero'=>'EE']),
-        'required' => false,
-      ])
       ->add('stato_nascita', TextType::class,
         ['label' => false, 'data' => $user->getStatoNascita(), 'required' => false]
       )

@@ -123,6 +123,7 @@ parameters:
       statoResidenza: "shibb_pat_attribute_statoresidenza"
       telefono: "shibb_pat_attribute_telefono"
       titolo: "shibb_pat_attribute_titolo"
+      idCard: "shibb_IDCARD"
       x509certificate_issuerdn: "shibb_pat_attribute_x509certificate_issuerdn"
       x509certificate_subjectdn: "shibb_pat_attribute_x509certificate_subjectdn"
       x509certificate_base64: "shibb_pat_attribute_x509certificate_base64"
