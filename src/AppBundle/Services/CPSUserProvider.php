@@ -110,7 +110,8 @@ class CPSUserProvider implements UserProviderInterface
     if (!$user instanceof CPSUser) {
       $user = $this->createUserFromArray($data);
     } else {
-      $this->updateSecurityFields($user, $data);
+      $this->updateRequiredFields($user, $data);
+
     }
 
     return $user;
@@ -128,14 +129,14 @@ class CPSUserProvider implements UserProviderInterface
     }
 
     if ($user->getEmail() === null) {
-      $user->setEmail($user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN);
+      $user->setEmail($user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN);
       $this->logger->notice(
         LogConstants::CPS_USER_CREATED_WITH_BOGUS_DATA,
         ['user' => $user]
       );
     }
 
-    if ($user->getEmail() && $user->getEmail() !== $user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN) {
+    if ($user->getEmail() && $user->getEmail() !== $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN) {
       $user->setEmailContatto($user->getEmail());
     } elseif ($user->getCpsEmailPersonale()) {
       $user->setEmailContatto($user->getCpsEmailPersonale());
@@ -180,8 +181,8 @@ class CPSUserProvider implements UserProviderInterface
         }
       },
       'luogoNascita' => function (CPSUser $user, $value) {
-        $user->setLuogoNascita($value);
         $user->setCodiceNascita($value);
+        $user->setLuogoNascita($user->getMunicipalityFromCode($value));
       },
       'provinciaNascita' => function (CPSUser $user, $value) {
         $user->setProvinciaNascita($value);
@@ -253,20 +254,27 @@ class CPSUserProvider implements UserProviderInterface
       'spidCode' => function (CPSUser $user, $value) {
         $user->setSpidCode($value);
       },
-      'idCard'  => function(CPSUser  $user, $value) {
-        $idCard = new IdCard();
-        $data = explode(' ', $value);
-        $idCard->setNumero($data[1]);
-        $dataRilascio = \DateTime::createFromFormat('Y-m-d', $data[3]);
-        if ($dataRilascio instanceof \DateTime) {
-          $idCard->setDataRilascio($dataRilascio);
+      'idCard' => function (CPSUser $user, $value) {
+        try {
+          $idCard = new IdCard();
+          $data = explode(' ', $value);
+          $idCard->setNumero($data[1]);
+          $dataRilascio = \DateTime::createFromFormat('Y-m-d', $data[3]);
+          if ($dataRilascio instanceof \DateTime) {
+            $idCard->setDataRilascio($dataRilascio);
+          }
+          $dataScadenza = \DateTime::createFromFormat('Y-m-d', $data[4]);
+          if ($dataScadenza instanceof \DateTime) {
+            $idCard->setDataScadenza($dataScadenza);
+          }
+          $idCard->setComuneRilascio(str_replace("COMUNE", "", $data[2]));
+          $user->setIdCard($idCard);
+        } catch (\Exception $exception) {
+          $this->logger->error(
+            $exception->getMessage(),
+            ['type' => $user->getType(), 'user' => $user]
+          );
         }
-        $dataScadenza = \DateTime::createFromFormat('Y-m-d', $data[4]);
-        if ($dataScadenza instanceof \DateTime) {
-          $idCard->setDataScadenza($dataScadenza);
-        }
-        $idCard->setComuneRilascio(str_replace("COMUNE", "", $data[2]));
-        $user->setIdCard($idCard);
       },
       'shibSessionId' => function (CPSUser $user, $value) {
         $user->setShibSessionId($value);
@@ -282,7 +290,7 @@ class CPSUserProvider implements UserProviderInterface
     return $fieldSetters;
   }
 
-  private function updateSecurityFields(CPSUser $user, $data)
+  private function updateRequiredFields(CPSUser $user, $data)
   {
     $fieldSetters = [
       'x509certificate_issuerdn' => function (CPSUser $user, $value) {
@@ -318,6 +326,35 @@ class CPSUserProvider implements UserProviderInterface
       'shibAuthenticationIstant' => function (CPSUser $user, $value) {
         if ($user->getShibAuthenticationIstant() !== $value) {
           $user->setShibAuthenticationIstant($value);
+        }
+      },
+      'dataNascita' => function (CPSUser $user, $value) {
+        if ($user->getStatoNascita() === null || $user->getDataNascita() === '' || $user->getDataNascita()->format('d/m/Y') !== $value) {
+          $dateTime = \DateTime::createFromFormat('d/m/Y', $value);
+          if ($dateTime instanceof \DateTime) {
+            $user->setDataNascita($dateTime);
+          }
+        }
+      },
+      'luogoNascita' => function (CPSUser $user, $value) {
+        if ($user->getCodiceNascita() !== $value) {
+          $user->setCodiceNascita($value);
+          $user->setLuogoNascita($user->getMunicipalityFromCode($value));
+        }
+      },
+      'provinciaNascita' => function (CPSUser $user, $value) {
+        if ($user->getProvinciaNascita() !== $value) {
+          $user->setProvinciaNascita($value);
+        }
+      },
+      'statoNascita' => function (CPSUser $user, $value) {
+        if ($user->getStatoNascita() !== $value) {
+          $user->setStatoNascita($value);
+        }
+      },
+      'sesso' => function (CPSUser $user, $value) {
+        if ($user->getSesso() !== $value) {
+          $user->setSesso($value);
         }
       },
     ];
