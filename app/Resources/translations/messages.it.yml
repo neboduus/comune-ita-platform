@@ -226,6 +226,7 @@ STATUS_SUBMITTED_AFTER_INTEGRATION: 'Integrazioni in attesa di protocollazione'
 STATUS_REGISTERED_AFTER_INTEGRATION: 'Integrazioni protocollate'
 STATUS_PENDING_AFTER_INTEGRATION: 'Presa in carico in seguito a integrazioni'
 STATUS_PROCESSING: 'In elaborazione'
+STATUS_WITHDRAW: 'Ritirata'
 
 documenti:
   i_miei_documenti: "I miei documenti"
