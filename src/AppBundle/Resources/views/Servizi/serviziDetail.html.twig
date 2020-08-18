@@ -42,7 +42,7 @@
           {% endif %}
         {% endif %}
 
-        {% if servizio.who|striptags|trim != '' %}
+        {% if servizio.howto|striptags|trim != '' %}
           <article class="mb-3">
             <h4>Accedere al servizio</h4>
             {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
