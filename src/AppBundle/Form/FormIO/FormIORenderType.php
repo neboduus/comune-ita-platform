@@ -73,8 +73,8 @@ class FormIORenderType extends AbstractType
     'applicant.address.postal_code' => 'getCapResidenza',
     'applicant.email_address' => 'getEmail',
     'applicant.email_repeat' => 'getEmail',
-    'phone_number' => 'getTelefono',
-    'cell_number' => 'getCellulare'
+    'applicant.cell_number' => 'getCellulare',
+    'applicant.phone_number' => 'getTelefono'
   ];
 
   /**
@@ -267,6 +267,8 @@ class FormIORenderType extends AbstractType
     $user
       ->setUsername($sessionString)
       ->setCodiceFiscale($cf . '-' . $sessionString)
+      ->setCellulareContatto(isset($data['flattened']['applicant.data.cell_number']) ? $data['flattened']['applicant.data.cell_number'] : '')
+      ->setCpsTelefono(isset($data['flattened']['applicant.data.phone_number']) ? $data['flattened']['applicant.data.phone_number'] : '')
       ->setEmail(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
       ->setEmailContatto(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
       ->setNome(isset($data['flattened']['applicant.data.completename.data.name']) ? $data['flattened']['applicant.data.completename.data.name'] : '')
