@@ -12,6 +12,7 @@ class ServizioRepository extends EntityRepository
       ->where('s.status NOT IN (:notAvailableStatues)')
       ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
       ->andWhere('s.sticky = true')
+      ->andWhere('s.serviceGroup IS NULL')
       ->orderBy('s.name', 'ASC');
 
     return $qb->getQuery()->getResult();
@@ -23,6 +24,7 @@ class ServizioRepository extends EntityRepository
       ->where('s.status NOT IN (:notAvailableStatues)')
       ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
       ->andWhere('s.sticky = false OR s.sticky IS NULL')
+      ->andWhere('s.serviceGroup IS NULL')
       ->orderBy('s.name', 'ASC');
 
     return $qb->getQuery()->getResult();

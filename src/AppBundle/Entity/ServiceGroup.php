@@ -14,8 +14,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * ServiceGroup
  *
- * @ORM\Table(name="service_group")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\ServiceGroupRepository")
+ * @ORM\Table(name="service_group",)
  *
  */
 class ServiceGroup
@@ -52,6 +52,13 @@ class ServiceGroup
    * @ORM\Column(type="string")
    */
   private $description;
+
+  /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true)
+   * @SWG\Property(description="If selected the service group will be shown at the top of the page")
+   */
+  private $sticky;
 
   /**
    * @var bool
@@ -148,6 +155,24 @@ class ServiceGroup
   /**
    * @return bool
    */
+  public function isSticky()
+  {
+    return $this->sticky;
+  }
+
+  /**
+   * @param bool $sticky
+   * @return $this
+   */
+  public function setSticky( $sticky )
+  {
+    $this->sticky = $sticky;
+    return $this;
+  }
+
+  /**
+   * @return bool
+   */
   public function isRegisterInFolder(): ?bool
   {
     return $this->registerInFolder;
@@ -177,11 +202,67 @@ class ServiceGroup
     $result = new ArrayCollection();
     /** @var Servizio $service */
     foreach ($this->services as $service) {
-      if ($service->getStatus() == Servizio::STATUS_AVAILABLE || $service->getStatus() == Servizio::STATUS_SCHEDULED) {
+      if ($service->getStatus() == Servizio::STATUS_AVAILABLE || $service->getStatus() == Servizio::STATUS_SUSPENDED || $service->getStatus() == Servizio::STATUS_SCHEDULED) {
         $result->add($service);
       }
     }
     return $result;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getStickyServices()
+  {
+    $result = new ArrayCollection();
+    /** @var Servizio $service */
+    foreach ($this->services as $service) {
+      // Only sticky services
+      if ($service->isSticky() && $service->getStatus() !== Servizio::STATUS_CANCELLED) {
+        /*
+         * For all STICKY services
+         * If service group is private (i.e. all services are private) show all services
+         * show only not private services otherwise
+         */
+        if ((!$this->isPrivate() && $service->getStatus() !== Servizio::STATUS_PRIVATE) || $this->isPrivate() ) {
+          $result->add($service);
+        }
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getNotStickyServices()
+  {
+    $result = new ArrayCollection();
+    /** @var Servizio $service */
+    foreach ($this->services as $service) {
+      /*
+         * For all NOT STICKY services
+         * If service group is private (i.e. all services are private) show all services
+         * show only not private services otherwise
+         */
+      if (!$service->isSticky() && $service->getStatus() !== Servizio::STATUS_CANCELLED) {
+        if ((!$this->isPrivate() && $service->getStatus() !== Servizio::STATUS_PRIVATE) || $this->isPrivate() ) {
+          $result->add($service);
+        }
+      }
+    }
+    return $result;
+  }
+
+  public function isPrivate() {
+    $private = true;
+    /** @var Servizio $service */
+    foreach ($this->services as $service) {
+      if ($service->getStatus() !== Servizio::STATUS_PRIVATE) {
+        $private = false;
+      }
+    }
+    return $private;
   }
 
   /**

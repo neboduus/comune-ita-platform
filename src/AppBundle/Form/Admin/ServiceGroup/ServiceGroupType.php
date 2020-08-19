@@ -23,6 +23,10 @@ class ServiceGroupType extends AbstractType
         'label' => 'Descrizione',
         'required' => false
       ])
+      ->add('sticky', CheckboxType::class, [
+        'label' => 'In evidenza?',
+        'required' => false,
+      ])
       ->add('register_in_folder', CheckboxType::class, [
         'label' => 'Protocollare all\'interno dello stesso fascicolo?',
         'required' => false
