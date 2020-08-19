@@ -186,22 +186,22 @@ class UserController extends Controller
         ['label' => false, 'data' => $user->getStatoNascita(), 'required' => false]
       )
       ->add('sdc_indirizzo_residenza', TextType::class,
-        ['label' => false, 'data' => $compiledIndirizzoResidenza, 'required' => true]
+        ['label' => false, 'data' => $compiledIndirizzoResidenza, 'required' => false]
       )
       ->add('sdc_cap_residenza', TextType::class,
-        ['label' => false, 'data' => $compiledCapResidenza, 'required' => true]
+        ['label' => false, 'data' => $compiledCapResidenza, 'required' => false]
       )
       ->add('sdc_citta_residenza', TextType::class,
-        ['label' => false, 'data' => $compiledCittaResidenza, 'required' => true]
+        ['label' => false, 'data' => $compiledCittaResidenza, 'required' => false]
       )
       ->add('sdc_provincia_residenza', ChoiceType::class, [
         'label' => false,
         'data' => $compiledProvinciaResidenza,
         'choices' => CPSUser::getProvinces(),
-        'required' => true
+        'required' => false
       ])
       ->add('sdc_stato_residenza', TextType::class,
-        ['label' => false, 'data' => $compiledStatoResidenza, 'required' => true]
+        ['label' => false, 'data' => $compiledStatoResidenza, 'required' => false]
       )
       ->add('sdc_indirizzo_domicilio', TextType::class,
         ['label' => false, 'data' => $compiledIndirizzoDomicilio, 'required' => false]
@@ -222,7 +222,7 @@ class UserController extends Controller
         ['label' => false, 'data' => $compiledStatoDomicilio, 'required' => false]
       )
       ->add('save', SubmitType::class,
-        ['label' => 'user.profile.salva_informazioni_profilo']
+        ['label' => 'user.profile.salva']
       );
     $form = $formBuilder->getForm();
 

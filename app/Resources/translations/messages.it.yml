@@ -463,6 +463,7 @@ user:
     copia_residenza: "Copia da residenza"
     salva_informazioni_contatto: 'Salva informazioni contatto'
     salva_informazioni_profilo: 'Salva informazioni profilo'
+    salva: 'Salva'
 
 operatori:
   allega_risposta_firmata: 'Allega la risposta firmata'
