@@ -63,7 +63,8 @@ class IntegrationsDataType extends AbstractType
     $statuses = [
       'Nessuna integrazione prevista' => 0,
       'Pratica pagata' => Pratica::STATUS_PAYMENT_SUCCESS,
-      'Pratica inviata' => Pratica::STATUS_SUBMITTED,
+      'Pratica inviata' => Pratica::STATUS_PRE_SUBMIT,
+      'Pratica acquisita' => Pratica::STATUS_SUBMITTED,
       'Pratica protocollata' => Pratica::STATUS_REGISTERED,
       'Pratica presa in carico' => Pratica::STATUS_PENDING,
       'Pratica accettata' => Pratica::STATUS_COMPLETE,
