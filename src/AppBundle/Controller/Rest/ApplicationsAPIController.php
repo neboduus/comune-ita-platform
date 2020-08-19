@@ -100,6 +100,20 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Slug of the service"
    *  )
+   * @SWG\Parameter(
+   *      name="order",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Order field. Default creationTime"
+   *  )
+   * @SWG\Parameter(
+   *      name="sort",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Sorting criteria of the order field. Default ASC"
+   *  )
    *  @SWG\Parameter(
    *      name="offset",
    *      in="query",
@@ -136,6 +150,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     $serviceParameter = $request->get('service', false);
+    $orderParameter = $request->get('order', false);
+    $sortParameter = $request->get('sort', false);
 
     if ( $limit  > 100 ) {
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
@@ -144,6 +160,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
     if ($serviceParameter)
       $queryParameters['service'] = $serviceParameter;
+    if ($orderParameter)
+      $queryParameters['order'] = $orderParameter;
+    if ($sortParameter)
+      $queryParameters['sort'] = $sortParameter;
 
     $repositoryService = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
@@ -192,11 +212,17 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
 
-    $applications = $repoApplications->findBy($criteria, ['creationTime' => 'ASC'], $limit, $offset );
-    foreach ($applications as $s) {
-      $result ['data'][]= Application::fromEntity($s, $this->baseUrl . '/' . $s->getId(), true, $version);
+    $order = $orderParameter ? $orderParameter : "creationTime";
+    $sort = $sortParameter ? $sortParameter : "ASC";
+    try {
+      $applications = $repoApplications->findBy($criteria, [$order => $sort], $limit, $offset );
+      foreach ($applications as $s) {
+        $result ['data'][]= Application::fromEntity($s, $this->baseUrl . '/' . $s->getId(), true, $version);
+      }
+      return $this->view($result, Response::HTTP_OK);
+    } catch (\Exception $exception) {
+      return $this->view($exception->getMessage(), Response::HTTP_BAD_REQUEST);
     }
-    return $this->view($result, Response::HTTP_OK);
   }
 
 
