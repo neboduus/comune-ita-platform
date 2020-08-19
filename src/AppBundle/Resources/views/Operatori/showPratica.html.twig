@@ -43,18 +43,17 @@
 
               let delay = 3;
               form.formReady.then(() => {
-                const disableFileLink = function(){
-                  if( delay === 0 ) {
-                    $('.formio-component-file a').each(function(){
-                      $(this).parent().html($(this).html());
-                    });
-                  }
-                  else {
-                    delay--;
-                    setTimeout(disableFileLink, 500);
-                  }
-                };
-                disableFileLink();
+                  const disableFileLink = function () {
+                      if (delay === 0) {
+                          $('.formio-component-file a').each(function () {
+                              $(this).parent().html($(this).html());
+                          });
+                      } else {
+                          delay--;
+                          setTimeout(disableFileLink, 500);
+                      }
+                  };
+                  disableFileLink();
               });
           });
       };
@@ -75,7 +74,8 @@
             {{ fiscal_code }}
             {% if pratica.user.idp != "anonymous" %}
               <span data-toggle="tooltip" title="Identità del cittadino verificata">
-                <svg class="icon icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+                <svg class="icon icon-success"><use
+                          xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
               </span>
             {% endif %}
           </h4>
@@ -85,7 +85,7 @@
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         {% if pratica.operatore %}
-        {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
+          {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
         {% else %}
           {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
             <div class="row mb-5">
@@ -99,16 +99,24 @@
                 {{ 'operatori.attesa_pagamento'|trans }}
               </div>
             </div>
+          {% elseif pratica.status == 20000%}
+            <div class="row mb-5">
+              <div class="col-12 d-flex justify-content-center">
+                {{ 'operatori.pratica_ritirata'|trans({
+                  '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),
+                  '%ore%': pratica.latestStatusChangeTimestamp | date('H:i:s')})| raw }}
+              </div>
+            </div>
           {% else %}
             <div class="row mb-5">
-                <div class="col-12 d-flex justify-content-center">
-                  <a class="btn btn-primary" href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
-                    <svg class="icon icon-light" href="#">
-                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
-                    </svg>
-                    {{ 'operatori.prendi_in_carico_pratica' | trans }}
-                  </a>
-                </div>
+              <div class="col-12 d-flex justify-content-center">
+                <a class="btn btn-primary" href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
+                  <svg class="icon icon-light" href="#">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                  </svg>
+                  {{ 'operatori.prendi_in_carico_pratica' | trans }}
+                </a>
+              </div>
             </div>
           {% endif %}
         {% endif %}
@@ -118,20 +126,20 @@
         <div class="row pl-3 mb-5 d-flex justify-content-between">
           <div class="col-auto ">
             {% if pratica.moduliCompilati|length > 0 %}
-            <a class="btn btn-outline-secondary"
-               href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
-              <svg class="icon icon-sm">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-              </svg>
-              {{ 'operatori.scarica' | trans }}
-            </a>
-              {% else %}
-                <button class="btn btn-outline-secondary" disabled>
-                  <svg class="icon icon-sm">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-                  </svg>
-                  {{ 'operatori.scarica' | trans }}
-                </button>
+              <a class="btn btn-outline-secondary"
+                 href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
+                <svg class="icon icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                </svg>
+                {{ 'operatori.scarica' | trans }}
+              </a>
+            {% else %}
+              <button class="btn btn-outline-secondary" disabled>
+                <svg class="icon icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                </svg>
+                {{ 'operatori.scarica' | trans }}
+              </button>
             {% endif %}
           </div>
           <div class="col-auto">
@@ -149,10 +157,10 @@
             <code class="text-nowrap">{{ pratica.id }}</code>
           </div>
           {% if  pratica.numeroProtocollo %}
-          <div class="col-12 pb-3">
-            <h6>{{ 'pratica.protocollo' | trans }}:</h6>
-            <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
-          </div>
+            <div class="col-12 pb-3">
+              <h6>{{ 'pratica.protocollo' | trans }}:</h6>
+              <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
+            </div>
           {% endif %}
           <div class="col-12 pb-3">
             <h6>{{ 'pratica.iter' | trans }}</h6>
@@ -165,16 +173,16 @@
             </div>
           {% endif %}
           {% if applications_in_folder|length > 0 %}
-          <div class="col-12 pb-3">
-            <h6>{{ 'operatori.fascicolo' | trans }}</h6>
-            {{ include('@App/Operatori/parts/fascicolo.html.twig') }}
-          </div>
+            <div class="col-12 pb-3">
+              <h6>{{ 'operatori.fascicolo' | trans }}</h6>
+              {{ include('@App/Operatori/parts/fascicolo.html.twig') }}
+            </div>
           {% endif %}
           {% if pratiche_recenti|length > 0 %}
-          <div class="col-12 pb-3">
-            <h6>{{ 'operatori.ultime_pratiche' | trans }}</h6>
-            {{ include('@App/Operatori/parts/pratiche_recenti.html.twig') }}
-          </div>
+            <div class="col-12 pb-3">
+              <h6>{{ 'operatori.ultime_pratiche' | trans }}</h6>
+              {{ include('@App/Operatori/parts/pratiche_recenti.html.twig') }}
+            </div>
           {% endif %}
         </div>
       </div>
