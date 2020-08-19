@@ -505,6 +505,7 @@ operatori:
   scarica: 'Scarica'
   info: "Info"
   iter_completato: "La richiesta è stata <strong>%statusName%</strong> il %data% alle ore %ore%"
+  pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo"
   no_pratica_correlata: "Nessuna pratica correlata"
