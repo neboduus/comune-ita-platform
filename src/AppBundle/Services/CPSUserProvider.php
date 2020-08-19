@@ -329,7 +329,7 @@ class CPSUserProvider implements UserProviderInterface
         }
       },
       'dataNascita' => function (CPSUser $user, $value) {
-        if ($user->getStatoNascita() === null || $user->getDataNascita() === '' || $user->getDataNascita()->format('d/m/Y') !== $value) {
+        if ($user->getDataNascita() === null || $user->getDataNascita() === '' || $user->getDataNascita()->format('d/m/Y') !== $value) {
           $dateTime = \DateTime::createFromFormat('d/m/Y', $value);
           if ($dateTime instanceof \DateTime) {
             $user->setDataNascita($dateTime);
