@@ -12,9 +12,13 @@
             </div>
           </div>
           <div class="row">
-            {% for servizio in sticky_services %}
+            {% for item in sticky_services %}
               <div class="col-12">
-                {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
+              {% if item.type == 'service' %}
+                {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig', {'servizio':item.object}) }}
+              {% else %}
+                {{ include('@App/Servizi/parts/panel/service-group_sticky.html.twig', {'servizio':item.object}) }}
+              {% endif %}
               </div>
             {% endfor %}
           </div>
@@ -29,7 +33,7 @@
         <div class="container px-4">
           <div class="row mt-5">
             <div class="col">
-              <h3 class="mb-4 text-primary">Tutti i servizi</h3>
+              <h3 class="mb-4 text-primary">{{ 'tutti_i_servizi'|trans() }}</h3>
             </div>
           </div>
           <div class="row">

@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\ServiceGroup;
+use AppBundle\Entity\ServiceGroupRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\ServizioRepository;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
@@ -36,13 +37,17 @@ class ServiziController extends Controller
   {
     /** @var ServizioRepository $serviziRepository */
     $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    /** @var ServiceGroupRepository $servicesGroupRepository */
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+
     $stickyServices = $serviziRepository->findStickyAvailable();
     $servizi = $serviziRepository->findNotStickyAvailable();
 
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
-    $servicesGroup = $servicesGroupRepository->findAll();
+    $stickyservicesGroup = $servicesGroupRepository->findStickyAvailable();
+    $servicesGroup = $servicesGroupRepository->findNotStickyAvailable();
 
     $services = array();
+    $sticky = array();
 
     /** @var Servizio $item */
     foreach ($servizi as $item) {
@@ -58,10 +63,24 @@ class ServiziController extends Controller
       }
     }
 
+    /** @var Servizio $item */
+    foreach ($stickyServices as $item) {
+      $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
+      $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+    }
+
+    /** @var ServiceGroup $item */
+    foreach ($stickyservicesGroup as $item) {
+      if ($item->getPublicServices()->count() > 0) {
+        $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
+        $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+      }
+    }
+
     ksort($services);
 
     return [
-      'sticky_services' => $stickyServices,
+      'sticky_services' => $sticky,
       'servizi' => $services,
       'user' => $this->getUser()
     ];

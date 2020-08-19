@@ -19,12 +19,39 @@
     </div>
   </section>
 
-  {% if servizio.getPublicServices %}
+  {%  if servizio.getStickyServices.count > 0 %}
     <section class="container px-4 my-4">
       <div class="pb-5">
         <div class="container px-4">
+          <div class="row mt-5">
+            <div class="col">
+              <h3 class="mb-4 text-primary">{{ 'servizi_primo_piano'|trans() }}</h3>
+            </div>
+          </div>
           <div class="row">
-            {% for item in servizio.getPublicServices %}
+            {% for servizio in servizio.getStickyServices %}
+              <div class="col-12">
+                {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+
+  {% if servizio.getNotStickyServices.count > 0 %}
+    <section class="container px-4 my-4">
+      <div class="pb-5">
+        <div class="container px-4">
+          <div class="row mt-5">
+            <div class="col">
+              <h3 class="mb-4 text-primary">{{ 'tutti_i_servizi'|trans() }}</h3>
+            </div>
+          </div>
+          <div class="row">
+            {% for item in servizio.getNotStickyServices %}
               <div class="col-12 col-sm-6 col-lg-4">
                   {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
               </div>
