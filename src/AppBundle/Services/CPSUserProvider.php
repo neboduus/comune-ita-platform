@@ -387,12 +387,12 @@ class CPSUserProvider implements UserProviderInterface
       && $user->getDataNascita() !== ''
       && $user->getLuogoNascita() !== null
       && $user->getLuogoNascita() !== ''
-      && $user->getIndirizzoResidenza() !== null
+      /*&& $user->getIndirizzoResidenza() !== null
       && $user->getCapResidenza() !== null
       && $user->getCittaResidenza() !== null
       && $user->getProvinciaResidenza() !== null
       && $user->getProvinciaResidenza() !== ''
-      && in_array($user->getProvinciaResidenza(), CPSUser::getProvinces())
+      && in_array($user->getProvinciaResidenza(), CPSUser::getProvinces())*/
       && $user->getCellulare() !== null
       && $user->getEmail() !== null
       && !in_array($user->getEmail(), self::EMAIL_BLACKLIST);
