@@ -49,6 +49,7 @@ class FeedbackMessagesDataType extends AbstractType
       Pratica::STATUS_PENDING => 'Presa in carico',
       Pratica::STATUS_COMPLETE => 'Iter completato',
       Pratica::STATUS_CANCELLED => 'Rifiutata',
+      Pratica::STATUS_WITHDRAW => 'Ritirata',
     ];
 
     /** @var Servizio $service */
