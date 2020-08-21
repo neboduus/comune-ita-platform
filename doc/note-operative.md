@@ -47,7 +47,7 @@ L'ambiente demo ha un deploy semplificato rispetto alla produzione, effettuato u
 le dipendenze dal sistema di hosting molto ridotte, ma ci sono ancora dei dettagli da fixare per renderlo
 un deploy pulito.
 
-I container *app* e *apache* sono interdipendenti, per la precisione il container *apache* deve avere 
+I container *app* e *apache* sono interdipendenti, per la precisione il container *apache* deve avere
 la directory `/var/www/html/web` identica a quella dell'immagine del container php. Questo non è risolto
 durante la build ma a runtime, e comporta delle operazioni manuali durante il deploy. Per aggiornare
 questi componenti eseguire i seguenti step:
@@ -58,6 +58,27 @@ questi componenti eseguire i seguenti step:
     docker volume rm sdc_app
     docker-compose up -d
 
+### Release
 
+Per effettuare una release si utilizza una procedura automatica che sfrutta:
+
+ * release-it  (https://www.npmjs.com/package/release-it)
+ * auto-changelog (https://www.npmjs.com/package/auto-changelog)
+
+Le procedura per effettuare una release è cos' composta:
+
+* Approvare tutte le eventuali mr che vogliamo facciano parte della release
+* Posizionarsi sulla root del progetto, branch master aggiornato
+* Eseguire il comando `release-it`
+* Il sistema mostrerà il changelog e proporrà una sceata tra le possibili prossime versioni (patch, minor, major, prepatch, preminor, premajor...), fare riferimento a https://semver.org/lang/it/ per i dettagli sulle versioni
+* Una volta scelta la versione il repository avrà come modifiche il file di changelog generato già aggiunto nello stage
+* Aggiornare manualmente il file publicode.yml modificando nuova versione e data di aggiornamento a aggiungerlo nello stage tramite `git add publicode.yml`
+* Rispondere si (Y) a tutte le opzioni che release-it propone in seguito:
+    - Commit (Release x.x.x)?
+    - Tag (x.x.x)?
+    - Push?
+    - Create a release on GitLab (Release x.x.x)?
+
+è possibile testare la procedura di release senza apportare modifiche con il comando `release-it --dry-run`
 
 
