@@ -596,6 +596,7 @@ email:
         submitted.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
         registered.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della richiesta."
         pending.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
+        withdraw: "le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
         payment:
           pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
           success: "le comunichiamo che il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong> è avvenuto con successo"
@@ -624,6 +625,7 @@ messages:
       7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
       8000: ''
       9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
+      20000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
     no_reason: '<i>Nessun messaggio specificato</i>'
 messaggi:
   messaggio: 'Messaggio'

@@ -31,7 +31,7 @@ class FeedbackMessage implements \JsonSerializable
   /**
    * @return string
    */
-  public function getName(): string
+  public function getName(): ?string
   {
     return $this->name;
   }
@@ -39,7 +39,7 @@ class FeedbackMessage implements \JsonSerializable
   /**
    * @param string $name
    */
-  public function setName(string $name)
+  public function setName(?string $name)
   {
     $this->name = $name;
   }
@@ -47,7 +47,7 @@ class FeedbackMessage implements \JsonSerializable
   /**
    * @return string
    */
-  public function getTrigger(): string
+  public function getTrigger(): ?string
   {
     return $this->trigger;
   }
@@ -55,7 +55,7 @@ class FeedbackMessage implements \JsonSerializable
   /**
    * @param string $trigger
    */
-  public function setTrigger(string $trigger)
+  public function setTrigger(?string $trigger)
   {
     $this->trigger = $trigger;
   }
