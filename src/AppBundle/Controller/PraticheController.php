@@ -282,8 +282,7 @@ class PraticheController extends Controller
    */
   private function userCanWithdrawPratica(Pratica $pratica, User $user)
   {
-    return ($pratica->getStatus() == Pratica::STATUS_SUBMITTED || $pratica->getStatus() == Pratica::STATUS_REGISTERED || $pratica->getStatus() == Pratica::STATUS_PENDING ||
-        $pratica->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION || $pratica->getStatus() == Pratica::STATUS_REGISTERED_AFTER_INTEGRATION) && $pratica->getUser()->getId() == $user->getId();
+    return $pratica->getStatus() == Pratica::STATUS_SUBMITTED && empty($pratica->getPaymentData()) && !$pratica->getServizio()->isProtocolRequired() && $pratica->getUser()->getId() == $user->getId();
   }
 
   /**
