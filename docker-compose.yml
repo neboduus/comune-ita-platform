@@ -82,9 +82,13 @@ services:
     labels:
       traefik.enable: true
 
-      traefik.http.routers.apache-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/comune-di-bugliano/login`)"
       traefik.http.routers.apache-auth.entrypoints: web
-      traefik.http.routers.apache-auth.middlewares: spid-auth
+      traefik.http.routers.apache-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/comune-di-bugliano/login`)"
+      traefik.http.routers.apache-auth.middlewares: "spid-auth"
+
+      traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
+      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Email,X-Forwarded-User-Familyname,X-Forwarded-User-Fiscalnumber,X-Forwarded-User-Name"
+      traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
 
       traefik.http.routers.apache.entrypoints: web
       traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`)'
@@ -99,13 +103,9 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - '--entryPoints.web.forwardedHeaders.insecure'
     labels:
       traefik.http.routers.traefik.rule: 'Host(`localtest.me`)'
-
-      #traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
-      traefik.http.middlewares.spid-auth.forwardauth.address: http://openlogin
-      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Email,X-Forwarded-User-Familyname,X-Forwarded-User-Fiscalnumber,X-Forwarded-User-Name"
-      traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
     ports:
       - '80:80'
         # - '443:443'
@@ -185,7 +185,7 @@ services:
     labels:
       traefik.enable: true
       prometheus.disable: true
-      #traefik.http.services.openlogin.loadbalancer.server.port: 2015
+      traefik.http.services.openlogin.loadbalancer.server.port: 2015
       traefik.http.routers.openlogin-http.rule: Host(`auth.localtest.me`)
       traefik.http.routers.openlogin-http.entrypoints: web
     volumes:
@@ -196,6 +196,8 @@ services:
   idp:
     image: italia/spid-testenv2
     restart: unless-stopped
+    depends_on:
+      - openlogin
     volumes:
       - ./openlogin/idp:/app/conf
     environment:
@@ -203,7 +205,7 @@ services:
     labels:
       traefik.enable: true
       #prometheus.disable: true
-      #traefik.http.services.idp.loadbalancer.server.port: 80
+      traefik.http.services.idp.loadbalancer.server.port: 80
       traefik.http.routers.idp-http.rule: 'Host(`spid.localtest.me`)'
       traefik.http.routers.idp-http.entrypoints: web
     links:

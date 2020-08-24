@@ -24,7 +24,6 @@
 /bower_components
 /node_modules
 /coverage
-/openlogin
 .idea/
 .env
 yarn-error.log
