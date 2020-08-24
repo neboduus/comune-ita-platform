@@ -156,9 +156,13 @@ services:
     class: AppBundle\Services\CPSUserProvider
     arguments: ["@doctrine.orm.default_entity_manager", "@logger"]
 
+  ocsdc.pat.authenticator:
+    class: AppBundle\Security\PatAuthenticator
+    arguments: ["@router", "%shibbolet_server_varnames%"]
+
   ocsdc.openlogin.authenticator:
     class: AppBundle\Security\OpenLoginAuthenticator
-    arguments: ["@router", "%shibbolet_server_varnames%"]
+    arguments: ["@router"]
 
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator

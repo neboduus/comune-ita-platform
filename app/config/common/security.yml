@@ -105,7 +105,9 @@ security:
                 delete_cookies: ['PHPSESSID', 'token', 'refresh_token']
             guard:
                 authenticators:
+                    - ocsdc.pat.authenticator
                     - ocsdc.openlogin.authenticator
+                entry_point: ocsdc.pat.authenticator
 
         main:
             anonymous: ~

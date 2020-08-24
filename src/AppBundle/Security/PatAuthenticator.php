@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class OpenLoginAuthenticator extends AbstractGuardAuthenticator
+class PatAuthenticator extends AbstractGuardAuthenticator
 {
   use TargetPathTrait;
 
@@ -34,36 +34,40 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
    */
   private $urlGenerator;
 
+  private $shibboletServerVarnames;
 
   /**
    * OpenLoginAuthenticator constructor.
    * @param UrlGeneratorInterface $urlGenerator
    * @param array $shibboletServerVarnames
    */
-  public function __construct( UrlGeneratorInterface $urlGenerator)
+  public function __construct( UrlGeneratorInterface $urlGenerator, $shibboletServerVarnames )
   {
     $this->urlGenerator = $urlGenerator;
+    $this->shibboletServerVarnames = $shibboletServerVarnames;
   }
 
   public function supports(Request $request)
   {
     // Prosegue se...
-    return  $request->attributes->get('_route') === 'login_open' && $this->checkHeaderUserData($request);
+    return  $request->attributes->get('_route') === 'login_pat' && $this->checkShibbolethUserData($request);
   }
 
   public function getCredentials(Request $request)
   {
     $credentials = $this->createUserDataFromRequest($request);
 
-    if ($credentials[self::KEY_PARAMETER_NAME] === null) {
-      return null;
-    }
-
     return $credentials;
   }
 
   public function getUser($credentials, UserProviderInterface $userProvider)
   {
+    /*$user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
+
+    if (!$user) {
+      // fail authentication with a custom error
+      throw new Exception("User with Username {$credentials['username']} could not be found.");
+    }*/
 
     if ($userProvider instanceof CPSUserProvider) {
       return $userProvider->provideUser($credentials);
@@ -144,13 +148,13 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
    */
   private function createUserDataFromRequest(Request $request)
   {
-    //codiceFiscale, cognome, nome, emailAddress, spidCode
-
-    $data[self::KEY_PARAMETER_NAME] = $request->headers->get('x-forwarded-user-fiscalnumber');
-    $data['cognome'] = $request->headers->get('x-forwarded-user-familyname');
-    $data['nome'] = $request->headers->get('x-forwarded-user-name');
-    $data['emailAddress'] = $request->headers->get('x-forwarded-user-email');
-    $data['spidCode'] = $request->headers->get('x-forwarded-user');
+    // Shibd
+    $userDataKeys = array_flip($this->shibboletServerVarnames);
+    $serverProps = $request->server->all();
+    $data = [];
+    foreach ($userDataKeys as $shibbKey => $ourKey) {
+      $data[$ourKey] = isset($serverProps[$shibbKey]) ? $serverProps[$shibbKey] : null;
+    }
 
     // Fallback on session
     if ( $data[self::KEY_PARAMETER_NAME] == null) {
@@ -166,17 +170,15 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
    *
    * Check if at least one shibboleth parameter is present
    */
-  private function checkHeaderUserData(Request $request)
+  private function checkShibbolethUserData(Request $request)
   {
-
-    $headers = ['x-forwarded-user-provider', 'x-forwarded-user-name', 'x-forwarded-user-fiscalnumber', 'x-forwarded-user-familyname',
-               'x-forwarded-user-email', 'x-forwarded-user'];
-
-    foreach ($headers as $key) {
-      if (!$request->headers->has($key)) {
-        return false;
+    $userDataKeys = array_flip($this->shibboletServerVarnames);
+    $serverProps = $request->server->all();
+    foreach ($userDataKeys as $shibbKey => $ourKey) {
+      if (isset($serverProps[$shibbKey])) {
+        return true;
       }
     }
-    return true;
+    return false;
   }
 }

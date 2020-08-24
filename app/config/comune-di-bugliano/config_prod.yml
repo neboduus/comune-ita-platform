@@ -12,6 +12,7 @@ parameters:
     prefix: comune-di-bugliano
     codice_meccanografico: c_cbug
     database_name: sdc_bugliano
+    login_route: login_open
 
 framework:
     router:

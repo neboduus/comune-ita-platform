@@ -83,11 +83,11 @@ services:
       traefik.enable: true
 
       traefik.http.routers.apache-auth.entrypoints: web
-      traefik.http.routers.apache-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/comune-di-bugliano/login`)"
+      traefik.http.routers.apache-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/comune-di-bugliano/login-open`)"
       traefik.http.routers.apache-auth.middlewares: "spid-auth"
 
       traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
-      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Email,X-Forwarded-User-Familyname,X-Forwarded-User-Fiscalnumber,X-Forwarded-User-Name"
+      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Email,X-Forwarded-User-Familyname,X-Forwarded-User-Fiscalnumber,X-Forwarded-User-Name,X-Forwarded-User-Provider"
       traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
 
       traefik.http.routers.apache.entrypoints: web

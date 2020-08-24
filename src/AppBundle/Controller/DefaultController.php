@@ -52,21 +52,26 @@ class DefaultController extends Controller
    * @Route("/privacy", name="privacy")
    * @Template()
    */
-  public function privacyAction()
-  {
-  }
+  public function privacyAction() {}
 
   /**
    * @Route("/login", name="login")
-   * @Template()
    */
   public function loginAction()
   {
     // Redirect in base ad istanza
-    $url = '';
-    return new RedirectResponse($url);
-    //return new Response('aaaa', Response::HTTP_OK);
+    return $this->redirectToRoute($this->getParameter('login_route'));
   }
+
+  /**
+   * @Route("/login-pat", name="login_pat")
+   */
+  public function loginPatAction() {}
+
+  /**
+   * @Route("/login-open", name="login_open")
+   */
+  public function loginOpenAction() {}
 
   /**
    * @Route("/logout", name="logout")
