@@ -122,7 +122,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.formserver.entrypoints: web
-      traefik.http.routers.apache.rule: 'Host(`formserver.localtest.me`)'
+      traefik.http.routers.formserver.rule: 'Host(`formserver.localtest.me`)'
 
   gotemberg:
     image: thecodingmachine/gotenberg:6
