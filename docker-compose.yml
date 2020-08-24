@@ -81,12 +81,16 @@ services:
       - "443:443"
     labels:
       traefik.enable: true
+
+      traefik.http.routers.apache-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/comune-di-bugliano/login`)"
+      traefik.http.routers.apache-auth.entrypoints: web
+      traefik.http.routers.apache-auth.middlewares: spid-auth
+
       traefik.http.routers.apache.entrypoints: web
       traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`)'
 
-
   traefik:
-    image: traefik:v2.2
+    image: 'traefik:2.0'
     restart: unless-stopped
     #command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
     command:
@@ -97,6 +101,11 @@ services:
       - "--entrypoints.web.address=:80"
     labels:
       traefik.http.routers.traefik.rule: 'Host(`localtest.me`)'
+
+      #traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
+      traefik.http.middlewares.spid-auth.forwardauth.address: http://openlogin
+      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Email,X-Forwarded-User-Familyname,X-Forwarded-User-Fiscalnumber,X-Forwarded-User-Name"
+      traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
     ports:
       - '80:80'
         # - '443:443'
@@ -146,6 +155,59 @@ services:
       #DEFAULT_WEBHOOK_URL_TIMEOUT: "2.5"
       #MAXIMUM_WEBHOOK_URL_TIMEOUT: "2.5"
       MAXIMUM_WAIT_DELAY: "30"
+
+  openlogin:
+    image: registry.gitlab.com/opencontent/traefik-spid-auth:dda06a6b
+    restart: unless-stopped
+    environment:
+      SYNFONY_ENV: dev
+      ENABLE_PROVIDERS: spid
+      SP_ENTITYID: 'http://auth.localtest.me/'
+      SP_SINGLELOGOUT: 'http://auth.localtest.me/slo'
+      SP_ACS: 'http://auth.localtest.me/acs'
+      TEST_SPID_IDP: 'enabled'
+      TEST_SPID_IDP_ID: 'http://spid.localtest.me/'
+      TEST_SPID_IDP_NAME: 'Test IdP'
+      TEST_SPID_IDP_METADATA_NUMBER: 10
+      #facebook
+      OAUTH_FACEBOOK_CLIENT_ID: ''
+      OAUTH_FACEBOOK_CLIENT_SECRET: ''
+      #github
+      OAUTH_GITHUB_CLIENT_ID: ''
+      OAUTH_GITHUB_CLIENT_SECRET: ''
+      #google
+      OAUTH_GOOGLE_CLIENT_ID: ''
+      OAUTH_GOOGLE_CLIENT_SECRET: ''
+      #instagram
+      OAUTH_INSTAGRAM_CLIENT_ID: ''
+      OAUTH_INSTAGRAM_CLIENT_SECRET: ''
+      COOKIE_LIFETIME_SECONDS: 20
+    labels:
+      traefik.enable: true
+      prometheus.disable: true
+      #traefik.http.services.openlogin.loadbalancer.server.port: 2015
+      traefik.http.routers.openlogin-http.rule: Host(`auth.localtest.me`)
+      traefik.http.routers.openlogin-http.entrypoints: web
+    volumes:
+      #- ./openlogin/var:/srv/app/var:rw
+      - ./openlogin/spid:/srv/app/spid:ro
+
+  # identity provider di prova
+  idp:
+    image: italia/spid-testenv2
+    restart: unless-stopped
+    volumes:
+      - ./openlogin/idp:/app/conf
+    environment:
+      FLASK_ENV: development
+    labels:
+      traefik.enable: true
+      #prometheus.disable: true
+      #traefik.http.services.idp.loadbalancer.server.port: 80
+      traefik.http.routers.idp-http.rule: 'Host(`spid.localtest.me`)'
+      traefik.http.routers.idp-http.entrypoints: web
+    links:
+      - "openlogin:auth.localtest.me"
 
 volumes:
   pgdata:

@@ -62,6 +62,9 @@ class DefaultController extends Controller
    */
   public function loginAction()
   {
+    // Redirect in base ad istanza
+    $url = '';
+    return new RedirectResponse($url);
     //return new Response('aaaa', Response::HTTP_OK);
   }
 
