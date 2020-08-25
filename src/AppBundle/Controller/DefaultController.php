@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -70,14 +71,7 @@ class DefaultController extends Controller
    */
   public function loginPatAction()
   {
-  }
-
-  /**
-   * @Route("/logout-pat", name="logout_pat")
-   */
-  public function logoutPatAction()
-  {
-    return $this->redirect('/Shibboleth.sso/Logout');
+    throw new UnauthorizedHttpException("Something went wrong in authenticator");
   }
 
   /**
@@ -85,14 +79,7 @@ class DefaultController extends Controller
    */
   public function loginOpenAction()
   {
-  }
-
-  /**
-   * @Route("/logout-open", name="logout_open")
-   */
-  public function logoutOpenAction()
-  {
-    return $this->redirect('/'.$this->getParameter('prefix').'/logout-open');
+    throw new UnauthorizedHttpException("Something went wrong in authenticator");
   }
 
   /**
