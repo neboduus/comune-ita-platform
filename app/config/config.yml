@@ -31,6 +31,7 @@ framework:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  null
         save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+        cookie_path: "/%prefix%"
     fragments:       ~
     http_method_override: true
     assets: ~

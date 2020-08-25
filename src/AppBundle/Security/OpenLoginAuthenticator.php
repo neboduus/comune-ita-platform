@@ -1,140 +1,120 @@
 <?php
 
-
 namespace AppBundle\Security;
 
-
-use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\User;
-use AppBundle\Services\CPSUserProvider;
-use Doctrine\ORM\EntityManagerInterface;
-use \Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class OpenLoginAuthenticator extends AbstractGuardAuthenticator
+class OpenLoginAuthenticator extends AbstractAuthenticator
 {
-  use TargetPathTrait;
-
-  const KEY_PARAMETER_NAME = 'codiceFiscale';
-
-  /**
-   * @var UrlGeneratorInterface
-   */
-  private $urlGenerator;
-
-
-  /**
-   * OpenLoginAuthenticator constructor.
-   * @param UrlGeneratorInterface $urlGenerator
-   * @param array $shibboletServerVarnames
-   */
-  public function __construct( UrlGeneratorInterface $urlGenerator)
+  public function __construct(UrlGeneratorInterface $urlGenerator)
   {
     $this->urlGenerator = $urlGenerator;
   }
 
   public function supports(Request $request)
   {
-    // Prosegue se...
-    return  $request->attributes->get('_route') === 'login_open' && $this->checkHeaderUserData($request);
-  }
-
-  public function getCredentials(Request $request)
-  {
-    $credentials = $this->createUserDataFromRequest($request);
-
-    if ($credentials[self::KEY_PARAMETER_NAME] === null) {
-      return null;
-    }
-
-    return $credentials;
-  }
-
-  public function getUser($credentials, UserProviderInterface $userProvider)
-  {
-
-    if ($userProvider instanceof CPSUserProvider) {
-      return $userProvider->provideUser($credentials);
-    }
-    throw new \InvalidArgumentException(
-      sprintf("UserProvider for CPSAuthenticator must be a %s instance", CPSUserProvider::class)
-    );
+    return $request->attributes->get('_route') === 'login_open' && $this->checkHeaderUserData($request);
   }
 
   /**
-   * @param $credentials
-   * @param UserInterface $user
+   * @param Request $request
    * @return bool
+   *
+   * Check if minimum header parameter is present
    */
-  public function checkCredentials($credentials, UserInterface $user)
+  private function checkHeaderUserData(Request $request)
   {
+    $fields = [
+      self::KEY_PARAMETER_NAME,
+      'cognome',
+      'nome',
+      'emailAddress',
+    ];
+
+    foreach ($fields as $field) {
+      if (!$this->getHeaderValue($request, $field)) {
+        return false;
+      }
+    }
+
     return true;
   }
 
-  /**
-   * @param Request $request
-   * @param AuthenticationException|null $authException
-   * @return JsonResponse|Response
-   */
-  public function start(Request $request, AuthenticationException $authException = null)
+  private function getHeaderValue(Request $request, $field)
   {
-    $url = $this->getLoginUrl();
-    return new RedirectResponse($url);
-  }
-
-  /**
-   * @param Request $request
-   * @param AuthenticationException $exception
-   * @return RedirectResponse|Response|null
-   */
-  public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
-  {
-    $url = $this->getLoginUrl();
-    return new RedirectResponse($url);
-  }
-
-  /**
-   * @param Request $request
-   * @param TokenInterface $token
-   * @param string $providerKey
-   * @return RedirectResponse|Response|null
-   */
-  public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
-  {
-    if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-      return new RedirectResponse($targetPath);
+    $mappedField = $this->getHeadersMap()[$field];
+    if (is_callable($mappedField)) {
+      return call_user_func($mappedField, $request);
+    } elseif (is_string($mappedField) && $request->headers->has($mappedField) && $request->headers->get($mappedField) !== '') {
+      return $request->headers->get($mappedField);
     }
 
-    return new RedirectResponse($this->urlGenerator->generate('user_dashboard'));
+    return false;
   }
 
   /**
-   * @return bool
+   * @see https://docs.italia.it/italia/spid/spid-regole-tecniche/it/stabile/attributi.html
+   * @return string[]
    */
-  public function supportsRememberMe()
+  private function getHeadersMap()
   {
-    //return false;
-  }
+    return [
+      'spidCode' => 'x-forwarded-user-spidcode',
 
+      'nome' => 'x-forwarded-user-name',
 
-  /**
-   * Return correct login route
-   */
-  private function getLoginUrl()
-  {
-    return $this->urlGenerator->generate('login');
+      'cognome' => 'x-forwarded-user-familyname',
+
+      'luogoNascita' => 'x-forwarded-user-placeofbirth',
+
+      'provinciaNascita' => 'x-forwarded-user-countyofbirth',
+
+      'dataNascita' => function (Request $request) {
+        $xsDate = $request->headers->get('x-forwarded-user-dateofbirth');
+        if (!empty($xsDate)){
+          $dateTime = \DateTime::createFromFormat('Y-m-d', $xsDate);
+          if ($dateTime instanceof \DateTime) {
+            return $dateTime->format('d/m/Y');
+          }
+        }
+        return false;
+      },
+
+      'sesso' => 'x-forwarded-user-gender',
+
+      //companyName
+
+      'indirizzoResidenza' => 'x-forwarded-user-registeredoffice',
+
+      self::KEY_PARAMETER_NAME => function (Request $request) {
+        return str_replace('TINIT-', '', $request->headers->get('x-forwarded-user-fiscalnumber'));
+      },
+
+      //ivaCode
+
+      'idCard' => 'x-forwarded-user-idcard',
+
+      'cellulare' => 'x-forwarded-user-mobilephone',
+
+      'emailAddress' => function (Request $request) {
+        if ($request->headers->has('x-forwarded-user-digitaladdress') && !empty(
+          $request->headers->get(
+            'x-forwarded-user-digitaladdress'
+          )
+          )) {
+          return $request->headers->get('x-forwarded-user-digitaladdress');
+        }
+
+        return $request->headers->get('x-forwarded-user-email');
+      },
+
+      'emailAddressPersonale' => 'x-forwarded-user-email',
+
+      'indirizzoDomicilio' => 'x-forwarded-user-address',
+
+      'provider' => 'x-forwarded-user-provider',
+    ];
   }
 
   /**
@@ -142,41 +122,22 @@ class OpenLoginAuthenticator extends AbstractGuardAuthenticator
    * @param $userDataKeys
    * @return array
    */
-  private function createUserDataFromRequest(Request $request)
+  protected function createUserDataFromRequest(Request $request)
   {
-    //codiceFiscale, cognome, nome, emailAddress, spidCode
-
-    $data[self::KEY_PARAMETER_NAME] = $request->headers->get('x-forwarded-user-fiscalnumber');
-    $data['cognome'] = $request->headers->get('x-forwarded-user-familyname');
-    $data['nome'] = $request->headers->get('x-forwarded-user-name');
-    $data['emailAddress'] = $request->headers->get('x-forwarded-user-email');
-    $data['spidCode'] = $request->headers->get('x-forwarded-user');
+    $data = [];
+    foreach (array_keys($this->getHeadersMap()) as $field) {
+      $value = $this->getHeaderValue($request, $field);
+      if ($value) {
+        $data[$field] = $value;
+      }
+    }
 
     // Fallback on session
-    if ( $data[self::KEY_PARAMETER_NAME] == null) {
+    if ($data[self::KEY_PARAMETER_NAME] == null) {
       $data = $request->getSession()->get('user_data');
     }
 
     return $data;
   }
 
-  /**
-   * @param Request $request
-   * @return bool
-   *
-   * Check if at least one shibboleth parameter is present
-   */
-  private function checkHeaderUserData(Request $request)
-  {
-
-    $headers = ['x-forwarded-user-provider', 'x-forwarded-user-name', 'x-forwarded-user-fiscalnumber', 'x-forwarded-user-familyname',
-               'x-forwarded-user-email', 'x-forwarded-user'];
-
-    foreach ($headers as $key) {
-      if (!$request->headers->has($key)) {
-        return false;
-      }
-    }
-    return true;
-  }
 }

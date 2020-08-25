@@ -132,4 +132,5 @@ parameters:
       shibSessionIndex: "shibb_Shib-Session-Index"
       shibAuthenticationIstant: "shibb_Shib-Authentication-Instant"
     sentry_dsn: ''
-    login_route 'login_pat' #name of the route
+    login_route: 'login_pat' #name of the route
+    single_logout_url: '/Shibboleth.sso/Logout'

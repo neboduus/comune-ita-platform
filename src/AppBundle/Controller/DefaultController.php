@@ -8,7 +8,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
-use Doctrine\DBAL\FetchMode;
+use AppBundle\Security\LogoutSuccessHandler;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -52,7 +52,9 @@ class DefaultController extends Controller
    * @Route("/privacy", name="privacy")
    * @Template()
    */
-  public function privacyAction() {}
+  public function privacyAction()
+  {
+  }
 
   /**
    * @Route("/login", name="login")
@@ -66,16 +68,37 @@ class DefaultController extends Controller
   /**
    * @Route("/login-pat", name="login_pat")
    */
-  public function loginPatAction() {}
+  public function loginPatAction()
+  {
+  }
+
+  /**
+   * @Route("/logout-pat", name="logout_pat")
+   */
+  public function logoutPatAction()
+  {
+    return $this->redirect('/Shibboleth.sso/Logout');
+  }
 
   /**
    * @Route("/login-open", name="login_open")
    */
-  public function loginOpenAction() {}
+  public function loginOpenAction()
+  {
+  }
 
   /**
-   * @Route("/logout", name="logout")
+   * @Route("/logout-open", name="logout_open")
+   */
+  public function logoutOpenAction()
+  {
+    return $this->redirect('/'.$this->getParameter('prefix').'/logout-open');
+  }
+
+  /**
+   * @Route("/logout", name="user_logout")
    * @throws Exception
+   * @see LogoutSuccessHandler
    */
   public function logout()
   {
@@ -201,9 +224,13 @@ class DefaultController extends Controller
 
     $request->setRequestFormat('text');
     $response = new Response();
-    return $this->render( '@App/Default/metrics.html.twig', [
-      'metrics' => $metrics,
-    ]);
+
+    return $this->render(
+      '@App/Default/metrics.html.twig',
+      [
+        'metrics' => $metrics,
+      ]
+    );
   }
 
   /**
@@ -219,15 +246,19 @@ class DefaultController extends Controller
 
     /** @var Ente[] $enti */
     $enti = $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll();
-    foreach ($enti as $ente){
-      $result[] = ["targets" => [$hostname], "labels" => [
-        "job" => $hostname,
-        "env" => $env,
-        "__scheme__" => $scheme,
-        "__metrics_path__" =>  "/".$ente->getSlug()."/metrics"
-      ]];
+    foreach ($enti as $ente) {
+      $result[] = [
+        "targets" => [$hostname],
+        "labels" => [
+          "job" => $hostname,
+          "env" => $env,
+          "__scheme__" => $scheme,
+          "__metrics_path__" => "/".$ente->getSlug()."/metrics",
+        ],
+      ];
     }
     $request->setRequestFormat('json');
+
     return new JsonResponse(json_encode($result), 200, [], true);
   }
 }

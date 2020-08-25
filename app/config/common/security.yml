@@ -69,8 +69,8 @@ security:
                 provider: fos_userbundle
                 csrf_token_generator: security.csrf.token_manager
             logout:
-              path:   logout
-              target: /%prefix%/
+                path:   logout
+                target: /%prefix%/
 
         giscom_api:
             pattern: ^/%prefix%/api/v\d+\.\d+/giscom/pratica/.*/.*
@@ -100,9 +100,10 @@ security:
             #pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
             provider: cps
             logout:
-                path: logout #name of the route
+                path: user_logout #name of the route
                 target: /%prefix%/
-                delete_cookies: ['PHPSESSID', 'token', 'refresh_token']
+                delete_cookies: ['_forward_auth_csrf', '_forward_auth_spid', 'PHPSESSID', 'token', 'refresh_token']
+                success_handler: ocsdc.logout_success_handler
             guard:
                 authenticators:
                     - ocsdc.pat.authenticator

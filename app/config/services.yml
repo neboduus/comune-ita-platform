@@ -808,3 +808,7 @@ services:
 
   log_resolver.applicant_browser:
     class: AppBundle\Logging\ApplicantBrowserEventResolver
+
+  ocsdc.logout_success_handler:
+    class: AppBundle\Security\LogoutSuccessHandler
+    arguments: ['@router', "%single_logout_url%"]
