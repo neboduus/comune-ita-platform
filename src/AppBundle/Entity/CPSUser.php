@@ -461,6 +461,34 @@ class CPSUser extends User
     return $this;
   }
 
+
+  /**
+   * @return string
+   */
+  public function getSessoAsString()
+  {
+    if ($this->sesso === "M") {
+      return "maschio";
+    } else if ($this->sesso === "F") {
+      return "femmina";
+    }
+  }
+
+  /**
+   * @param string $sesso
+   *
+   * @return CPSUser
+   */
+  public function setSessoAsString($sesso)
+  {
+    if ($sesso === "maschio") {
+      $this->sesso = "M";
+    } else if ($sesso === "femmina") {
+      $this->sesso = "F";
+    }
+    return $this;
+  }
+
   /**
    * @return string
    */
