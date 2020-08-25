@@ -71,10 +71,13 @@ class FormIORenderType extends AbstractType
     'applicant.address.house_number' => '',
     'applicant.address.municipality' => 'getCittaResidenza',
     'applicant.address.postal_code' => 'getCapResidenza',
+    'applicant.address.county' => 'getProvinciaResidenza',
     'applicant.email_address' => 'getEmail',
     'applicant.email_repeat' => 'getEmail',
     'applicant.cell_number' => 'getCellulare',
-    'applicant.phone_number' => 'getTelefono'
+    'applicant.phone_number' => 'getTelefono',
+    'applicant.gender.gender' => 'getSessoAsString',
+    'cell_number' => 'getCellulare'
   ];
 
   /**
@@ -267,6 +270,7 @@ class FormIORenderType extends AbstractType
     $user
       ->setUsername($sessionString)
       ->setCodiceFiscale($cf . '-' . $sessionString)
+      ->setSessoAsString(isset($data['flattened']['applicant.gender.gender']) ? $data['flattened']['applicant.gender.gender'] : '')
       ->setCellulareContatto(isset($data['flattened']['applicant.data.cell_number']) ? $data['flattened']['applicant.data.cell_number'] : '')
       ->setCpsTelefono(isset($data['flattened']['applicant.data.phone_number']) ? $data['flattened']['applicant.data.phone_number'] : '')
       ->setEmail(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
@@ -336,7 +340,10 @@ class FormIORenderType extends AbstractType
             if ($component['form_type'] == ChoiceType::class
               && isset($component['form_options']['choices'])
               && !empty($component['form_options']['choices'])) {
-              $value = strtoupper($value);
+              // FIXME: fai le cose piu ordinate!!
+              if ($schemaFlatName !== 'applicant.gender.gender') {
+                $value = strtoupper($value);
+              }
               if (!in_array($value, $component['form_options']['choices'])) {
                 $value = null;
               }
