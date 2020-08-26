@@ -7,7 +7,6 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 use Craue\FormFlowBundle\Storage\DataManager as BaseDataManager;
 use Craue\FormFlowBundle\Storage\SerializableFile;
 use Craue\FormFlowBundle\Storage\StorageInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -62,12 +61,22 @@ class DataManager extends BaseDataManager
     $this->tokenStorage = $tokenStorage;
     $this->user = $this->tokenStorage->getToken()->getuser();
     $this->session = $session;
+  }
 
-    if ($this->user instanceof User) {
-      $this->id = $this->user->getId();
-    } else {
-      $this->id = $this->session->getId();
+  private function getId()
+  {
+    if ($this->id === null){
+      if ($this->user instanceof User) {
+        $this->id = $this->user->getId();
+      } else {
+        if (!$this->session->isStarted()) {
+          $this->session->start();
+        }
+        $this->id = $this->session->getId();
+      }
     }
+
+    return $this->id;
   }
 
   /**
@@ -89,7 +98,7 @@ class DataManager extends BaseDataManager
     $this->drop($flow);
 
     // save new data
-    $savedFlows = $this->getStorage()->get($this->id, array());
+    $savedFlows = $this->getStorage()->get($this->getId(), array());
 
     $savedFlows = array_merge_recursive($savedFlows, array(
       $flow->getName() => array(
@@ -99,7 +108,7 @@ class DataManager extends BaseDataManager
       ),
     ));
 
-    $this->getStorage()->set($this->id, $savedFlows);
+    $this->getStorage()->set($this->getId(), $savedFlows);
   }
 
   /**
@@ -108,14 +117,14 @@ class DataManager extends BaseDataManager
   public function drop(FormFlowInterface $flow)
   {
 
-    $savedFlows = $this->getStorage()->get($this->id, array());
+    $savedFlows = $this->getStorage()->get($this->getId(), array());
 
     // remove data for only this flow instance
     if (isset($savedFlows[$flow->getName()][$flow->getInstanceId()])) {
       unset($savedFlows[$flow->getName()][$flow->getInstanceId()]);
     }
 
-    $this->getStorage()->set($this->id, $savedFlows);
+    $this->getStorage()->set($this->getId(), $savedFlows);
   }
 
   /**
@@ -126,7 +135,7 @@ class DataManager extends BaseDataManager
     $data = array();
 
     // try to find data for the given flow
-    $savedFlows = $this->getStorage()->get($this->id, array());
+    $savedFlows = $this->getStorage()->get($this->getId(), array());
     if (isset($savedFlows[$flow->getName()][$flow->getInstanceId()][self::DATA_KEY])) {
       $data = $savedFlows[$flow->getName()][$flow->getInstanceId()][self::DATA_KEY];
     }
@@ -149,7 +158,7 @@ class DataManager extends BaseDataManager
    */
   public function exists(FormFlowInterface $flow)
   {
-    $savedFlows = $this->getStorage()->get($this->id, array());
+    $savedFlows = $this->getStorage()->get($this->getId(), array());
 
     return isset($savedFlows[$flow->getName()][$flow->getInstanceId()][self::DATA_KEY]);
   }
@@ -159,7 +168,7 @@ class DataManager extends BaseDataManager
    */
   public function listFlows()
   {
-    return array_keys($this->getStorage()->get($this->id, array()));
+    return array_keys($this->getStorage()->get($this->getId(), array()));
   }
 
   /**
@@ -167,7 +176,7 @@ class DataManager extends BaseDataManager
    */
   public function listInstances($name)
   {
-    $savedFlows = $this->getStorage()->get($this->id, array());
+    $savedFlows = $this->getStorage()->get($this->getId(), array());
 
     if (array_key_exists($name, $savedFlows)) {
       return array_keys($savedFlows[$name]);
@@ -181,6 +190,6 @@ class DataManager extends BaseDataManager
    */
   public function dropAll()
   {
-    $this->getStorage()->remove($this->id);
+    $this->getStorage()->remove($this->getId());
   }
 }
