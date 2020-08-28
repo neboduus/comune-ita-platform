@@ -85,7 +85,11 @@
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         {% if pratica.operatore %}
-          {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
+          {% if pratica.operatore == user %}
+            {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
+          {% else %}
+            {{ include('@App/Operatori/parts/riassegna.html.twig') }}
+          {% endif %}
         {% else %}
           {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
             <div class="row mb-5">
@@ -99,7 +103,7 @@
                 {{ 'operatori.attesa_pagamento'|trans }}
               </div>
             </div>
-          {% elseif pratica.status == 20000%}
+          {% elseif pratica.status == 20000 %}
             <div class="row mb-5">
               <div class="col-12 d-flex justify-content-center">
                 {{ 'operatori.pratica_ritirata'|trans({
@@ -162,10 +166,6 @@
               <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
             </div>
           {% endif %}
-          <div class="col-12 pb-3">
-            <h6>{{ 'pratica.iter' | trans }}</h6>
-            {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
-          </div>
           {% if  pratica.operatore %}
             <div class="col-12 pb-3">
               <h6>{{ 'pratica.operatore' | trans }}:</h6>
@@ -184,6 +184,10 @@
               {{ include('@App/Operatori/parts/pratiche_recenti.html.twig') }}
             </div>
           {% endif %}
+          <div class="col-12 pb-3">
+            <h6>{{ 'pratica.iter' | trans }}</h6>
+            {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
+          </div>
         </div>
       </div>
     </div>

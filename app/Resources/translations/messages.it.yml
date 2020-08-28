@@ -489,6 +489,7 @@ operatori:
   allega_risposta_firmata: 'Allega la risposta firmata'
   vai_al_dettaglio: 'Vedi dettaglio'
   prendi_in_carico_pratica: 'Prendi in carico'
+  subentra: 'Subentra a %completename%'
   sicuro_di_prendere_in_carico_la_pratica: 'Confermi la presa in carico della pratica %name%?'
   si: 'Sì, sono sicuro'
   no: "No, annulla l'operazione"
