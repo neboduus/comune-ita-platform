@@ -76,6 +76,24 @@ servizio:
     sospeso: 'Sospeso'
     schedulato: 'Schedulato'
 
+gruppo_di_servizi:
+  gruppo_di_servizi: 'Gruppo di servizi'
+  nome: 'Nome'
+  descrizione: 'Descrizione'
+  protocollazione_fascicoli: 'Protocollazione in fascicoli'
+  azioni: 'Azioni'
+  modifica: 'Modifica'
+  rimuovi: 'Rimuovi'
+  elimina: 'Elimina'
+  crea: 'Crea nuovo gruppo di servizi'
+  attivata: 'Attivata'
+  disattivata: 'Disattivata'
+  servizi: 'Servizi facenti parte del gruppo'
+  nessun_servizio: 'Non sono presenti servizi in questo gruppo'
+  torna_alla_lista: 'Torna alla lista'
+  servizio_rimosso: 'Servizo rimosso correttamente'
+  errore_rimozione: 'Impossibile rimovere il servizio'
+
 pratica:
   guida_utente: 'Guida'
   email:
