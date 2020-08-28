@@ -238,4 +238,9 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       }
     }
   }
+
+  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $this->sendAllegatoToProtocollo($pratica, $allegato);
+  }
 }

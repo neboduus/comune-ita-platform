@@ -415,4 +415,10 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $corrispondente = $smistamento->addChild('web:corrispondente', null, 'web');
     $corrispondente->addChild('web:codice', $parameters['smistamento'], 'web');
   }
+
+  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $this->sendAllegatoToProtocollo($pratica, $allegato);
+  }
+
 }

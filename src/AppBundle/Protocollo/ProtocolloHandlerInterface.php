@@ -43,4 +43,9 @@ interface ProtocolloHandlerInterface
    */
   public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato);
 
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   */
+  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato);
 }
