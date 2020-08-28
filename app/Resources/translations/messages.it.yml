@@ -17,6 +17,7 @@ lista_pratiche_bozza: 'Pratica in bozza'
 pratica_ricevuta: 'La richiesta è stata trasmessa. Grazie per la collaborazione'
 welcome: 'F: Benvenuta,|M: Benvenuto,'
 completa_profilo: "Verifica che l'email sia corretta, completa e conferma i dati del tuo profilo"
+aggiorna_profilo: "I tuoi dati sono stati aggiornati correttamente."
 error_back_to_home: "Torna alla Home"
 error_support: "Contatta il supporto tecnico"
 error_message: "Ooops!"

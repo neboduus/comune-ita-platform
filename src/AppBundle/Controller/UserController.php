@@ -96,7 +96,8 @@ class UserController extends Controller
       $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'user_profile';
       $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
       $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
-
+      $this->addFlash(
+        'success',$this->get('translator')->trans('aggiorna_profilo'));
       return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
     } else {
       if ($request->query->has('r')) {

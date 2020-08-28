@@ -26,6 +26,52 @@
           $('[data-id=form_sdc_provincia_residenza]').find(".filter-option-inner-inner").html($('#form_sdc_provincia_domicilio option:selected').text())
           $('#form_sdc_stato_residenza').val($('#form_sdc_stato_domicilio').val());
       }
+
+
+      $('#form_save').on('click', function (element, child){
+        var form = document.querySelector('form')
+        var errorsFieldForm = [];
+
+       function createListErr(ulList){
+         errorsFieldForm.forEach(el =>{
+             var listItem = $('<li></li>').text(el);
+             listItem.appendTo(ulList)
+           }
+         )
+        }
+
+        form.addEventListener('invalid', (e) => {
+          if(e.target){
+            errorsFieldForm.push(e.target.previousSibling.innerText)
+          }
+
+          if($('.alert.alert-danger').length > 0 ){
+            $("#edit_user_profile").find('.alert.alert-danger').remove()
+            $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
+              "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
+              "<ul class='list-error'>"+
+              "</ul>"+
+              "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+              "    <span aria-hidden=\"true\">&times;</span>\n" +
+              "  </button>\n" +
+              "</div>"
+            );
+            createListErr($('ul.list-error'))
+
+          }else{
+            $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
+              "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
+              "<ul class='list-error'>"+
+              "</ul>"+
+              "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+              "    <span aria-hidden=\"true\">&times;</span>\n" +
+              "  </button>\n" +
+              "</div>"
+            );
+            createListErr($('ul.list-error'))
+          }
+          }, true)
+      });
   </script>
 {% endblock %}
 {% block main_content %}
@@ -238,6 +284,6 @@
         </div>
       </div>
     </div>
+    <p id="log"></p>
   </section>
-
 {% endblock %}
