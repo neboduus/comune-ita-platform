@@ -213,7 +213,7 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
    */
   public function cloneForm(Servizio $service, Servizio $serviceToClone)
   {
-    $formID = $service->getFormIoId();
+    $formID = $serviceToClone->getFormIoId();
     $response = self::getForm($formID);
     if ($response['status'] != 'success') {
       return [
@@ -226,7 +226,7 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     $form['title'] = $service->getName();
     $form['name'] = $service->getSlug();
     $form['path'] = $service->getSlug();
-    $form['description'] = $service->getDescription();
+    $form['description'] = $service->getDescription() !== "" ? $service->getDescription() : $service->getName();
 
     unset($form['_id'], $form['modified'], $form['created'], $form['__v']);
 
