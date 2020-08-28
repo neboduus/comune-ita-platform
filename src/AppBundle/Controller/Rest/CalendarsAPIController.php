@@ -226,7 +226,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       // Set meetings key (Format: start_time-end_time-count)
       $meetings = [];
       foreach ($_meetings as $meeting) {
-        $meetings[$meeting['start_time']->format('H:i') . '-' . $meeting['end_time']->format('H:i') . '-' . $meeting['count']] = $meeting;
+        $meetings[$meeting['start_time']->format('H:i') . '-' . $meeting['end_time']->format('H:i')] = $meeting;
       }
 
       // Retrieve calendar slots by input date
@@ -240,7 +240,9 @@ class CalendarsAPIController extends AbstractFOSRestController
       // Set availability of slots
       foreach ($slots as $key => $day) {
         if (array_key_exists($key, $meetings)) {
-          $slots[$key] = $slots[$key] + ['availability' => false];
+          $slots[$key]['availability'] = $meetings[$key]['count'] >= $slots[$key]['slots_available'] ? false : true;
+          $slots[$key]['slots_available'] = max($slots[$key]['slots_available'] - $meetings[$key]['count'], 0);
+
         } else {
           if ($allAvailabilities) {
             $noticeInterval = new DateInterval('PT0H');

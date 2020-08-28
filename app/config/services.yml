@@ -121,8 +121,11 @@ services:
     tags: ['app.backoffice']
 
   AppBundle\BackOffice\CalendarsBackOffice:
-    autowire: true
-    arguments: ["@translator"]
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@ocsdc.instance_service'
+      - '@ocsdc.meeting_service'
+      - "@translator"
     tags: ['app.backoffice']
 
   ocsdc.backoffices:
