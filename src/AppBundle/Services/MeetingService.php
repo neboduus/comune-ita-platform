@@ -120,8 +120,8 @@ class MeetingService
         $isValidDate = true;
         $slots = $this->explodeMeetings($openingHour, $meeting->getFromTime());
         $meetingEnd = clone $meeting->getToTime();
-        //$meetingEnd->modify('+ '.$openingHour->getIntervalMinutes().' minutes');
-        $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i') . '-' . $openingHour->getMeetingQueue();
+        $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i');
+
         if (array_key_exists($slotKey, $slots)) {
           $isValidSlot = true;
           $meeting->setOpeningHour($openingHour);
@@ -165,10 +165,11 @@ class MeetingService
       $_end = clone $_begin;
       $_end = $_end->add($meetingInterval);
       if ($_end <= $end && $shoudAdd) {
-        $intervals[$_begin->format('H:i') . '-' . $_end->modify('- ' . $openingHour->getIntervalMinutes() . ' minutes')->format('H:i') . '-' . $openingHour->getMeetingQueue()] = [
+        $intervals[$_begin->format('H:i') . '-' . $_end->modify('- ' . $openingHour->getIntervalMinutes() . ' minutes')->format('H:i')] = [
           'date' => $date->format('Y-m-d'),
           'start_time' => $_begin->format('H:i'),
           'end_time' => $_end->format('H:i'),
+          'slots_available' =>  $openingHour->getMeetingQueue()
         ];
       }
     }
@@ -576,6 +577,48 @@ class MeetingService
         $meeting->getName(),
         $message,
         $this->translator->trans('meetings.email.delete_meeting.subject'),
+        $ente);
+    }
+  }
+
+
+  /**
+   * Sends email for unavailable meeting
+   *
+   * @param Meeting $meeting
+   * @throws \Twig\Error\Error
+   */
+  public function sendEmailUnavailableMeeting(Meeting $meeting)
+  {
+    $calendar = $meeting->getCalendar();
+    $ente = $this->instanceService->getCurrentInstance();
+
+    $message = $this->translator->trans('meetings.email.invalid_meeting.invalid', [
+      'date' => $meeting->getFromTime()->format('d/m/Y'),
+      'hour' => $meeting->getFromTime()->format('H:i')
+    ]);
+    if ($calendar->getContactEmail()) {
+      $mailInfo = $this->translator->trans('meetings.email.info_with_contact', [
+        'ente' => $ente->getName(),
+        'email_address' => $calendar->getContactEmail()
+      ]);
+    } else {
+      $mailInfo = $this->translator->trans('meetings.email.info_without_contact', [
+        'ente' => $ente->getName()
+      ]);
+    }
+
+    $message = $message . $mailInfo;
+
+
+    if ($meeting->getEmail()) {
+      $this->mailer->dispatchMail(
+        $this->defaultSender,
+        $ente->getName(),
+        $meeting->getEmail(),
+        $meeting->getName(),
+        $message,
+        $this->translator->trans('meetings.email.invalid_meeting.subject'),
         $ente);
     }
   }

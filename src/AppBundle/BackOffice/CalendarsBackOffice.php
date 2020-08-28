@@ -7,6 +7,7 @@ namespace AppBundle\BackOffice;
 use AppBundle\Entity\Meeting;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
+use AppBundle\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -17,9 +18,19 @@ class CalendarsBackOffice implements BackOfficeInterface
 
   const PATH = 'operatori_calendars_index';
 
+  /**
+   * @var EntityManager
+   */
   private $em;
-
+  /**
+   * @var InstanceService
+   */
   private $is;
+
+  /**
+   * @var MeetingService
+   */
+  private $meetingService;
 
   /**
    * @var TranslatorInterface $translator
@@ -35,9 +46,10 @@ class CalendarsBackOffice implements BackOfficeInterface
     )
   ];
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is)
+  public function __construct(EntityManager $em, InstanceService $is, MeetingService $meetingService, TranslatorInterface $translator)
   {
     $this->translator = $translator;
+    $this->meetingService = $meetingService;
     $this->em = $em;
     $this->is = $is;
   }
@@ -69,9 +81,9 @@ class CalendarsBackOffice implements BackOfficeInterface
     $integrationType = null;
     foreach ($requiredFields as $type => $fields) {
       sort($fields);
-      if(! $integrationType && array_values(array_intersect(array_keys($meetingData), array_values($fields))) == array_values($fields)) {
+      if (!$integrationType && array_values(array_intersect(array_keys($meetingData), array_values($fields))) == array_values($fields)) {
         // Integration type found: no previous integration found
-        $integrationType=$type;
+        $integrationType = $type;
       }
     }
     if (!$integrationType) {
@@ -112,6 +124,13 @@ class CalendarsBackOffice implements BackOfficeInterface
       $meeting->setUserMessage($meetingData['user_message']);
       $meeting->setFromTime($start);
       $meeting->setToTime($end);
+
+      if (!$this->meetingService->isSlotAvailable($meeting) || !$this->meetingService->isSlotValid($meeting)) {
+        // Send email
+        $this->meetingService->sendEmailUnavailableMeeting($meeting);
+        return ['error' => $this->translator->trans('backoffice.integration.calendars.invalid_slot')];
+
+      }
 
       $this->em->persist($meeting);
       $this->em->flush($meeting);

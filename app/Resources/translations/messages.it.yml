@@ -1762,6 +1762,10 @@ meetings:
     delete_meeting:
       delete: '<p>La informiamo che il suo appuntamento previsto per il giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b></p>'
       subject: 'Cancellazione appuntamento'
+    invalid_meeting:
+      invalid: "<p>Siamo spiacenti di informarLa che non è stato possibile prenotare l'appuntamento da Lei richiesto per il giorno <b>date</b> alle ore <b>hour</b> in quanto l'orario
+                selezionato non ci risulta essere disponibile.</p>"
+      subject: "Appuntamento non valido"
     cancel_with_contact: '<br><p>Nel caso non le sia possibile essere presente all&apos;appuntamento proposto la preghiamo di annullare l&apos;appuntamento
             mediante <a href="cancel_link"><b>questo link</b></a> oppure contattarci all&apos;indirizzo <a href="mailto:email_address"><b>email_address</b></a></p>'
     cancel_without_contact: '<br><p>Nel caso non le sia possibile essere presente all&apos;appuntamento proposto la preghiamo di annullare l&apos;appuntamento
@@ -1788,6 +1792,7 @@ backoffice:
       missing_contacts: "E' necessario fornire almeno un recapito"
       calendar_error: 'Non esiste un calendario con id calendar_id'
       save_meeting_error: 'Si è verificato un errore durante il salvataggio della prenotazione'
+      invalid_slot: 'Lo slot selezionato non è valido oppure non è disponibile'
     subscriptions:
       subscription_service_error: 'Non esiste un servizio con codice code'
       limit_error: 'Limite massimo di iscrizioni raggiunto. Utente user non iscritto al corso code'

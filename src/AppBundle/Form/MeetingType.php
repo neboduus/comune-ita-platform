@@ -108,8 +108,12 @@ class MeetingType extends AbstractType
     /** @var Meeting $meeting */
     $meeting = $event->getForm()->getData();
 
-    if (!$this->meetingService->isSlotAvailable($meeting))
-      $event->getForm()->addError(new FormError($this->translator->trans('meetings.error.slot_unavailable')));
+    // Don't check slot availability if meeting is cancelled or refused
+    if ($meeting->getStatus() !== Meeting::STATUS_REFUSED && $meeting->getStatus() !== Meeting::STATUS_CANCELLED) {
+      if (!$this->meetingService->isSlotAvailable($meeting))
+        $event->getForm()->addError(new FormError($this->translator->trans('meetings.error.slot_unavailable')));
+    }
+
     if (!$this->meetingService->isSlotValid($meeting))
       $event->getForm()->addError(new FormError($this->translator->trans('meetings.error.slot_invalid')));
   }
