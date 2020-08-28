@@ -146,7 +146,7 @@ abstract class User extends BaseUser
     public function getFullName()
     {
         if ($this->fullName == null){
-            $this->fullName = $this->cognome . ' ' . $this->nome;
+            $this->fullName = $this->nome . ' ' . $this->cognome;
         }
         return $this->fullName;
     }

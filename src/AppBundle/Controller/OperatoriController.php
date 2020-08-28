@@ -15,7 +15,6 @@ use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
 use AppBundle\Logging\LogConstants;
-use AppBundle\Model\FeedbackMessage;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
@@ -74,10 +73,10 @@ class OperatoriController extends Controller
     /** @var Servizio $s */
     foreach ($servizi as $s) {
       if ($s->getServiceGroup()) {
-        $result[$s->getServiceGroup()->getSlug()]['group']= $s->getServiceGroup();
-        $result[$s->getServiceGroup()->getSlug()]['services'][$s->getSlug()]= $s;
+        $result[$s->getServiceGroup()->getSlug()]['group'] = $s->getServiceGroup();
+        $result[$s->getServiceGroup()->getSlug()]['services'][$s->getSlug()] = $s;
       } else {
-        $result[$s->getSlug()]= $s;
+        $result[$s->getSlug()] = $s;
       }
     }
 
@@ -506,6 +505,49 @@ class OperatoriController extends Controller
         [
           'pratica' => $pratica->getId(),
           'user' => $pratica->getUser()->getId(),
+        ]
+      );
+    } catch (\Exception $e) {
+      $this->addFlash('error', $e->getMessage());
+    }
+
+    return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+  }
+
+  /**
+   * @Route("/{pratica}/reassign",name="operatori_reassign_pratica")
+   * @param Pratica $pratica
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   * @throws \Exception
+   */
+  public function reassignPraticaAction(Pratica $pratica)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+
+    try {
+      if ($pratica->getOperatore() === null) {
+        throw new BadRequestHttpException(
+          "La pratica non è assegnata ad alcun operatore"
+        );
+      }
+
+      if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
+        throw new BadRequestHttpException("La pratica non ha ancora un numero di protocollo");
+      }
+
+      $oldUser = $pratica->getOperatore();
+      $pratica->setOperatore($user);
+      $this->get('doctrine.orm.entity_manager')->flush($pratica);
+
+      $this->get('logger')->info(
+        LogConstants::PRATICA_REASSIGNED,
+        [
+          'pratica' => $pratica->getId(),
+          'user' => $pratica->getUser()->getId(),
+          'old_user' => $oldUser->getId(),
         ]
       );
     } catch (\Exception $e) {
