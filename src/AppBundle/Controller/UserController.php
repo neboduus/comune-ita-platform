@@ -167,6 +167,8 @@ class UserController extends Controller
     //Se la email contiene il valore fake, forziamo l'utente a riscrivere una mail corretta resettando il campo
     $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
     if (preg_match($regex, $compiledEmailData)) {
+      $this->addFlash(
+        'danger',$this->get('translator')->trans('fake_email_message'));
       $compiledEmailData = '';
     }
 
