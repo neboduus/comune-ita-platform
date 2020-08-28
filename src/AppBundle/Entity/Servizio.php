@@ -1058,7 +1058,7 @@ class Servizio
   /**
    * @param mixed $serviceGroup
    */
-  public function setServiceGroup(ServiceGroup $serviceGroup)
+  public function setServiceGroup(?ServiceGroup $serviceGroup)
   {
     $this->serviceGroup = $serviceGroup;
   }
