@@ -31,6 +31,7 @@ profilo_utente: "Profilo utente"
 operatore: "Operatore"
 credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
+fake_email_message: 'Per proseguire è necessario aggiornare la tua email'
 
 nav:
   home: 'Homepage'
