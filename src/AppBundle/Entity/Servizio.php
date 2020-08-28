@@ -16,7 +16,6 @@ use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use JMS\Serializer\Annotation\AccessorOrder;
 
 
 /**

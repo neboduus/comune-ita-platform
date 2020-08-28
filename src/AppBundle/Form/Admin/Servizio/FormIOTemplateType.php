@@ -6,18 +6,15 @@ use AppBundle\Entity\FormIO;
 use AppBundle\Entity\SciaPraticaEdilizia;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Form\FormError;
 
 
@@ -137,7 +134,34 @@ class FormIOTemplateType extends AbstractType
 
     $service->setName($ServiceToClone->getName() . " (copia)");
     $service->setDescription($ServiceToClone->getDescription() ?? '');
+    $service->setHowto($ServiceToClone->getHowto() ?? '');
+    $service->setWho($ServiceToClone->getWho() ?? '');
+    $service->setSpecialCases($ServiceToClone->getSpecialCases() ?? '');
+    $service->setMoreInfo($ServiceToClone->getMoreInfo() ?? '');
+    $service->setCompilationInfo($ServiceToClone->getCompilationInfo() ?? '');
+    $service->setFinalIndications($ServiceToClone->getFinalIndications() ?? '');
+    $service->setCoverage($ServiceToClone->getCoverage() ?? '');
+    $service->setHandler($ServiceToClone->getHandler() ?? 'default');
+    $service->setServiceGroup($ServiceToClone->getServiceGroup() ?? []);
+    $service->setAccessLevel($ServiceToClone->getAccessLevel() ?? Servizio::ACCESS_LEVEL_SPID_L2);
+    $service->setLoginSuggested($ServiceToClone->isLoginSuggested() ?? false);
+    $service->setSticky($ServiceToClone->isSticky() ?? false);
+    $service->setProtocolRequired($ServiceToClone->isProtocolRequired() ?? false);
+    $service->setProtocolloParameters($ServiceToClone->getProtocolloParameters() ?? []);
+    $service->setPaymentRequired($ServiceToClone->isPaymentRequired() ?? false);
+    $service->setPaymentParameters($ServiceToClone->getPaymentParameters() ?? []);
+    $service->setIntegrations($ServiceToClone->getIntegrations() ?? []);
 
+    $feedbackMessages = [];
+    foreach ($ServiceToClone->getFeedbackMessages() as $item) {
+      $feedbackMessage = new FeedbackMessage();
+      $feedbackMessage->setIsActive($item['isActive']);
+      $feedbackMessage->setMessage($item['message']);
+      $feedbackMessage->setName($item['name']);
+      $feedbackMessage->setTrigger($item['trigger']);
+      $feedbackMessages[] = $feedbackMessage;
+    }
+    $service->setFeedbackMessages($feedbackMessages);
   }
 
   public function getBlockPrefix()
