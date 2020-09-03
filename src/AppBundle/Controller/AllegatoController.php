@@ -231,16 +231,19 @@ class AllegatoController extends Controller
   {
     $logger = $this->get('logger');
     $user = $this->getUser();
-    $canDownload = $allegato->getOwner() === $user;
-
     $session = $this->get('session');
-    if (!$canDownload && $session->isStarted() && $session->has(Pratica::HASH_SESSION_KEY)){
+    $canDownload = $allegato->getOwner() === $user;
+    if (!$canDownload) {
       $pratica = $allegato->getPratiche()->first();
       if ($pratica instanceof Pratica) {
-        $canDownload = $pratica->isValidHash($session->get(Pratica::HASH_SESSION_KEY), $this->getParameter('hash_validity'));
+        if ($user instanceof CPSUser) {
+          $relatedCFs = $pratica->getRelatedCFs();
+          $canDownload = is_array($relatedCFs) && in_array($user->getCodiceFiscale(), $relatedCFs);
+        } elseif ($session->isStarted() && $session->has(Pratica::HASH_SESSION_KEY)) {
+          $canDownload = $pratica->isValidHash($session->get(Pratica::HASH_SESSION_KEY), $this->getParameter('hash_validity'));
+        }
       }
     }
-
     if ($canDownload) {
       $logger->info(
         LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
