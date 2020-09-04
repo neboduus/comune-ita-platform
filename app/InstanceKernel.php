@@ -39,6 +39,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
       new EWZ\Bundle\RecaptchaBundle\EWZRecaptchaBundle(),
       new Sentry\SentryBundle\SentryBundle(),
       new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+      new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
       new AppBundle\AppBundle(),
     ];
 
