@@ -235,3 +235,12 @@ sentry:
     excluded_exceptions:
       - Symfony\Component\Security\Core\Exception\AccessDeniedException
       - Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException
+
+# Flagception configuration
+flagception:
+  # Your Features (optional you left it empty)
+  features:
+    # Feature name as key
+    feature_new_outdatedbrowser:
+      # Default flag if inactive or active (default: false)
+      default: false
