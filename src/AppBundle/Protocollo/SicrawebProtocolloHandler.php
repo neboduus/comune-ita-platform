@@ -193,5 +193,9 @@ class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
     return $parameters;
   }
 
+  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $this->sendAllegatoToProtocollo($pratica, $allegato);
+  }
 }
 

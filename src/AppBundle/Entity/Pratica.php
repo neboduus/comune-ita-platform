@@ -773,7 +773,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @param string $numeroDiProtocollo
+   * @param mixed $numeroDiProtocollo
    *
    * @return Pratica
    */

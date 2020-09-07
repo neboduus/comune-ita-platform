@@ -5,7 +5,6 @@ namespace AppBundle\Protocollo;
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Pratica;
 
-
 class DummyProtocolloHandler implements ProtocolloHandlerInterface
 {
   public function getConfigParameters()
