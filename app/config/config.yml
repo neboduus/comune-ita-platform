@@ -244,3 +244,4 @@ flagception:
     feature_new_outdatedbrowser:
       # Default flag if inactive or active (default: false)
       default: false
+      env: FEATURE_NEW_OUTDATED_BROWSER

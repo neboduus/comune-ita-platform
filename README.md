@@ -140,6 +140,23 @@ http://stanzadelcittadino.localtest.me
 
 e si dovrebbe vedere una pagina web del tutto simile a https://demosdc.opencontent.it/
 
+## Abilitazione features
+
+Mediante specifiche variabili d'ambiente è possibile abilitare o disabilitare features.
+
+    FEATURE_NOME=true
+
+ Feature disponibili:
+   - Nuovo Browser outdated, si abilita tramite la variabile d'ambiente
+
+
+       FEATURE_NEW_OUTDATED_BROWSER
+
+   sostituisce il vecchio plugin browser outdated per la verifica di browser obsoleti.
+   Migliora la scelta di browser compatibili tramite la versione minima configurata.
+   Supporta browser mobile con callback specifiche per Web - Android - IOS
+
+
 ## Project status
 
 Il progetto e' stabile e usato in produzione da alcune amministrazioni pubbliche.

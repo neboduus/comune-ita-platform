@@ -29,7 +29,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "highcharts": "^8.1.0",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "outdated-browser-rework": "^2.10.0"
   },
   "version": "1.5.25"
 }
