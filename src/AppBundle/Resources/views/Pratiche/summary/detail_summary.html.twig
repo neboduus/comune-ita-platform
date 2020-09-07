@@ -10,15 +10,15 @@
       {{ 'operatori.allegati' | trans }}
       <span class="badge badge-light ml-1">{{ pratica.allegati.count }}</span>
     </a>
-    <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} " id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
+    <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} {% if not pratica.operatore %} disabled {% endif %}" id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
        aria-controls="messaggi" aria-selected="{{ tab and tab == 'note' }}">
       {{ 'operatori.messaggi' | trans }}
-      <span class="badge badge-light ml-1">{{ pratica.commenti.count + pratica.messages | length }}</span>
+      <span class="badge badge-light ml-1">{{ pratica.publicMessages | length }}</span>
     </a>
-      <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
-         aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
-        {{ 'operatori.pagamento' | trans }}
-      </a>
+    <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
+       aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
+      {{ 'operatori.pagamento' | trans }}
+    </a>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -51,7 +51,7 @@
           {{ allegato.getHumanReadableFileSize }}
         </div>
         <div class="col-2">
-          <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
+          <a href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
             <svg class="icon icon-primary">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
             </svg>
@@ -62,12 +62,12 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel" aria-labelledby="messaggi-tab">
     <div class="m-3">
-      {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+      {{ include('@App/Pratiche/summary/parts/commenti.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
-    <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">
-      <div class="m-3">
-        {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
-      </div>
+  <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">
+    <div class="m-3">
+      {{ include('@App/Pratiche/summary/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
     </div>
+  </div>
 </div>

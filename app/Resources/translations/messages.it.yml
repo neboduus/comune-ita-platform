@@ -3,6 +3,8 @@ claim: 'Servizi on-line del %ente_name%'
 intro: '<p><span>Attraverso "La Stanza del Cittadino" potrai accedere con pochi click a tutti i servizi messi a disposizione dei cittadini.<br />In caso di primo accesso ti verrà chiesto di confermare i tuoi dati prima di usufruire del servizio.</span></p>'
 salva: 'Salva'
 elimina: 'Elimina'
+reply: 'Rispondi'
+view: 'Visualizza'
 terms_do_il_consenso: 'Dò il consenso'
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
@@ -216,6 +218,8 @@ pratica:
       cf: 'Codice Fiscale'
       data_nascita: 'Data di nascita'
       indirizzo: 'Indirizzo'
+  messaggi:
+    oggetto: 'Nuovo messaggio richiesta numero %pratica%'
 
 
   modulo:
@@ -509,6 +513,7 @@ operatori:
   modulo: 'Modulo'
   allegati: 'Allegati'
   note_interne: 'Note interne'
+  messaggi: 'Messaggi'
   importo: "Importo"
   pagamento: 'Pagamento'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
