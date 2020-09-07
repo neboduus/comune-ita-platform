@@ -40,13 +40,59 @@
             {{ pratica.servizio.name }}
             <span class="h3 primary-color">[{{ pratica.statusName | trans }}]</span>
           </h1>
-
         </div>
       </div>
     </div>
 
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
+
+        {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED') %}
+          <div class="row last">
+            <div class="col-xs-12 col-sm-12">
+              <div class="alert alert-{% if pratica.esito %}success{% else %}danger{% endif %}">
+                {% if pratica.esito %}
+                  <h5>{{ 'pratica.dettaglio.esito.accettata'|trans|raw }}</h5>
+                {% else %}
+                  <h5>{{ 'pratica.dettaglio.esito.rifiutata'|trans|raw }}</h5>
+                {% endif %}
+
+                {% if pratica.motivazioneEsito %}
+                  <p class="m-0">{{ pratica.motivazioneEsito }}</p>
+                {% endif %}
+
+                {% if pratica.allegatiOperatore|length > 0 %}
+                  {% for allegato in pratica.allegatiOperatore %}
+                    <div class="row my-3">
+                      <div class="col-2">
+                        {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
+                          <i class="fa fa-2x fa-file-pdf-o"></i>
+                        {% else %}
+                          <i class="fa fa-2x fa-file-o"></i>
+                        {% endif %}
+                      </div>
+                      <div class="col-6 text-truncate">
+                        {{ allegato.originalFilename }}
+                      </div>
+                      <div class="col-2">
+                        {{ allegato.getHumanReadableFileSize }}
+                      </div>
+                      <div class="col-2">
+                        <a href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
+                          <svg class="icon icon-primary">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
         {{ include('@App/Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}
       </div>
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">

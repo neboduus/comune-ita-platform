@@ -12,20 +12,26 @@
         <div class="row">
           <div class="col-lg-12 px-lg-4 py-lg-2">
             <h1 id="modalTitle"></h1>
+            <p>Verrà inviata una comunicazione email all’indirizzo dell’utente <a href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
           </div>
-        </div>
-        <div class="mx-4">
-          <p>Verrà inviata una comunicazione email all’indirizzo dell’utente <a href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
         </div>
         <div class="row">
           <div class="col-lg-12 px-lg-4 py-lg-2">
-            {{ form_start(modalForm) }}
-            <div class="d-none">
-              {{ form_row(modalForm.esito) }}
-            </div>
-            {{ form_rest(modalForm) }}
+            {{ form_start(outcomeForm) }}
+            <div class="d-none">{{ form_row(outcomeForm.outcome) }}</div>
+            {{ form_row(outcomeForm.message) }}
             <small class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.esito_help' | trans }}</small>
-            <div class="row justify-content-between">
+            <div class="form-group">
+              <label>{{ 'operatori.flow.approva_o_rigetta.motivazione.allega_label' | trans }}</label>
+              {{ form_row(outcomeForm.attachments) }}
+            </div>
+            <div id="vueApp" class="px-2">
+              {% if outcomeForm.vars.helper.vueApp %}
+                <{{ outcomeForm.vars.helper.vueApp }}></{{ outcomeForm.vars.helper.vueApp }}>
+              {% endif %}
+              <small class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.allega_help' | trans }}</small>
+            </div>
+            <div class="row justify-content-between mt-3">
               <div class="col-auto align-self-center">
                 <strong>
                   <svg class="icon icon-sm">
@@ -38,7 +44,9 @@
                 <button type="submit" class="btn btn-primary float-right">{{ 'messaggi.invia' | trans }}</button>
               </div>
             </div>
-            {{ form_end(modalForm) }}
+            {{ form_rest(outcomeForm) }}
+
+            {{ form_end(outcomeForm) }}
           </div>
         </div>
       </div>

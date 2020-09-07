@@ -5,6 +5,7 @@
         integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
         crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 {% endblock %}
 
 {% block javascripts %}
@@ -14,16 +15,27 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
-
+  {% if outcomeForm.vars.helper.vueApp %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
+    <script src="//unpkg.com/element-ui/lib/index.js"></script>
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="{{ asset('bundles/app/js/components/' ~ outcomeForm.vars.helper.vueApp ~ '.js') }}"></script>
+    <script>
+      let vueBundledData = {{ outcomeForm.vars.helper.vueBundledData|raw }};
+      new Vue({
+        el: "#vueApp"
+      });
+    </script>
+  {% endif %}
   <script>
       $(document).ready(function () {
           $('#modal_approve').on('click', function () {
-              $('#approva_o_rigetta_esito_0').prop('checked', true);
+              $('#outcome_outcome_0').prop('checked', true);
               $('#modalTitle').html('Approva pratica');
               $('#email_text').show();
           });
           $('#modal_refuse').on('click', function () {
-              $('#approva_o_rigetta_esito_1').prop('checked', true);
+              $('#outcome_outcome_1').prop('checked', true);
               $('#modalTitle').html('Rigetta pratica');
               $('#email_text').hide();
           });

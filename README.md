@@ -147,14 +147,15 @@ Mediante specifiche variabili d'ambiente è possibile abilitare o disabilitare f
     FEATURE_NOME=true
 
  Feature disponibili:
-   - Nuovo Browser outdated, si abilita tramite la variabile d'ambiente
-
-
-       FEATURE_NEW_OUTDATED_BROWSER
-
+   - Nuovo Browser outdated, si abilita tramite la variabile d'ambiente `FEATURE_NEW_OUTDATED_BROWSER`:
    sostituisce il vecchio plugin browser outdated per la verifica di browser obsoleti.
    Migliora la scelta di browser compatibili tramite la versione minima configurata.
    Supporta browser mobile con callback specifiche per Web - Android - IOS
+
+
+   - Nuova interfaccia di dettaglio pratica per il cittadino, si abilita tramite la variabile d'ambiente `FEATURE_APPLICATION_DETAIL`:
+   sostituisce l'interfaccia di dettaglio ad uso del cittadino, migliorandone la user experience.
+   Consente inoltre lo scambio di messaggi tra operatore e cittadino.
 
 
 ## Project status
