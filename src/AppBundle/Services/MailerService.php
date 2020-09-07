@@ -4,12 +4,13 @@
 namespace AppBundle\Services;
 
 
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
-use AppBundle\Entity\User;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\SubscriberMessage;
 use Psr\Log\LoggerInterface;
@@ -217,7 +218,7 @@ class MailerService
       '%protocollo%' => $pratica->getNumeroProtocollo(),
       '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
       '%user_name%' => $pratica->getUser()->getFullName(),
-      '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL)
+      '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
     ];
 
     $textHtml = $this->templating->render(
@@ -240,9 +241,26 @@ class MailerService
     // Send attachment to user if status is submitted
     if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
       if ($pratica->getModuliCompilati()->count() > 0) {
+        /** @var ModuloCompilato $moduloCompilato */
         $moduloCompilato = $pratica->getModuliCompilati()->first();
         if (is_file($moduloCompilato->getFile()->getPathname())) {
-          $message->attach(\Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname()));
+          $attachment = \Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname());
+          $attachment->setFilename($moduloCompilato->getFile()->getFilename());
+          $message->attach($attachment);
+        }
+      }
+    }
+
+    // Send operator attachment to user if status is complete
+    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE) {
+      if ($pratica->getAllegatiOperatore()->count() > 0) {
+        /** @var AllegatoOperatore $allegato */
+        foreach ($pratica->getAllegatiOperatore() as $allegato) {
+          if (is_file($allegato->getFile()->getPathname())) {
+            $attachment = \Swift_Attachment::fromPath($allegato->getFile()->getPathname());
+            $attachment->setFilename($allegato->getFile()->getFilename());
+            $message->attach($attachment);
+          }
         }
       }
     }
@@ -275,7 +293,7 @@ class MailerService
           'AppBundle:Emails/User:pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
-            'user_name'    => $pratica->getUser()->getFullName()
+            'user_name'    => $pratica->getUser()->getFullName(),
           )
         ),
         'text/html'
@@ -285,7 +303,7 @@ class MailerService
           'AppBundle:Emails/User:pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
-            'user_name'    => $pratica->getUser()->getFullName()
+            'user_name'    => $pratica->getUser()->getFullName(),
           )
         ),
         'text/plain'

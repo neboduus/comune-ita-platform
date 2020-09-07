@@ -5,9 +5,11 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\AllegatoScia;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Integrazione;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\User;
 use AppBundle\Form\Base\AllegatoType;
@@ -27,8 +29,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 
 /**
@@ -116,7 +121,7 @@ class AllegatoController extends Controller
         $em->flush();
 
         $data = [
-          'id' => $allegato->getId()
+          'id' => $allegato->getId(),
         ];
         return new JsonResponse($data);
         break;
@@ -292,6 +297,68 @@ class AllegatoController extends Controller
     }
     $this->logUnauthorizedAccessAttempt($allegato, $logger);
     throw new NotFoundHttpException(); //security by obscurity
+  }
+
+  /**
+   * @param Request $request
+   * @Route("/operatori/allegati/upload/{id}",name="allegati_upload_operatore")
+   * @Method("POST")
+   * @return mixed
+   */
+  public function operatoreAllegatoUploadAction(Request $request, Pratica $pratica)
+  {
+    if ($pratica->getStatus() !== Pratica::STATUS_PENDING && $pratica->getStatus() !== Pratica::STATUS_PENDING_AFTER_INTEGRATION){
+      return new JsonResponse("Pratica {$pratica->getId()} is not pending", Response::HTTP_BAD_REQUEST);
+    }
+
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
+    $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
+    if (!$isEnabled) {
+      return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
+    }
+
+    if ($pratica->getOperatore()->getId() !== $user->getId()) {
+      return new JsonResponse("User can not access pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
+    }
+
+    $uploadedFile = $request->files->get('file');
+    $pathParts = pathinfo($uploadedFile->getRealPath());
+    $dirname = $pathParts['dirname'];
+    $targetFile = $dirname . '/' . $pratica->getId() . time();
+
+    $allegato = new AllegatoOperatore();
+    $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
+    $allegato->setFile($uploadedFile);
+    $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
+    $allegato->setOwner($pratica->getUser());
+
+    $violations = $this->get('validator')->validate($allegato);
+
+    if ($violations->count() > 0) {
+      $messages = [];
+      /** @var ConstraintViolationInterface $violation */
+      foreach ($violations as $violation){
+        $messages[] = $violation->getMessage();
+      }
+      return new JsonResponse(implode(', ', $messages), Response::HTTP_BAD_REQUEST);
+    }
+
+    $em = $this->getDoctrine()->getManager();
+    $em->persist($allegato);
+
+    $em->flush();
+
+    $data = [
+      'name' => $allegato->getOriginalFilename(),
+      'url' => '#',
+      'id' => $allegato->getId(),
+    ];
+
+    @unlink($targetFile);
+
+    return new JsonResponse($data);
   }
 
   /**

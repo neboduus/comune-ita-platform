@@ -3,7 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Dto\Application;
+use AppBundle\Dto\ApplicationOutcome;
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\FormIO;
@@ -13,6 +15,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\MessageType;
+use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
 use AppBundle\Logging\LogConstants;
@@ -575,7 +578,6 @@ class OperatoriController extends Controller
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
 
-
     $form = $this->setupCommentForm();
     $form->handleRequest($request);
 
@@ -620,15 +622,26 @@ class OperatoriController extends Controller
         $em->flush();
       }
 
-
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note']);
     }
 
-    $modalForm = $this->createForm('AppBundle\Form\Operatore\Base\ApprovaORigettaType')->handleRequest($request);
-    if ($modalForm->isSubmitted()) {
-      $pratica->setEsito($modalForm->getData()['esito']);
-      if (isset($modalForm->getData()['motivazioneEsito'])) {
-        $pratica->setMotivazioneEsito($modalForm->getData()['motivazioneEsito']);
+    $outcome = (new ApplicationOutcome())->setApplicationId($pratica->getId());
+    $outcomeForm = $this->createForm(ApplicationOutcomeType::class, $outcome)->handleRequest($request);
+    if ($outcomeForm->isSubmitted()) {
+
+      $allegatoOperatoreRepository = $this->getDoctrine()->getRepository(AllegatoOperatore::class);
+
+      /** @var ApplicationOutcome $outcome */
+      $outcome = $outcomeForm->getData();
+      $pratica->setEsito($outcome->getOutcome());
+      $pratica->setMotivazioneEsito($outcome->getMessage());
+      foreach ($outcome->getAttachments() as $attachment){
+        if (isset($attachment['id'])) {
+          $allegatoOperatore = $allegatoOperatoreRepository->findOneBy(['id' => $attachment['id']]);
+          if ($allegatoOperatore instanceof AllegatoOperatore) {
+            $pratica->addAllegatoOperatore($allegatoOperatore);
+          }
+        }
       }
 
       try {
@@ -664,7 +677,7 @@ class OperatoriController extends Controller
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
       'form' => $form->createView(),
-      'modalForm' => $modalForm->createView(),
+      'outcomeForm' => $outcomeForm->createView(),
       'pratica' => $pratica,
       'user' => $this->getUser(),
       'threads' => $threads,

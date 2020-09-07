@@ -17,8 +17,8 @@
       </div>
       {% if pratica.allegatiOperatore|length > 0 %}
         {% for allegato in pratica.allegatiOperatore %}
-          <div class="col-8">{{ allegato.description }}</div>
-          <div class="col-4">
+          <div class="col-8 mb-1">{{ allegato.description }}</div>
+          <div class="col-4 mb-1">
             <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}"
                class="btn btn-success btn-md">{{ 'operatori.scarica'|trans }}</a>
           </div>
