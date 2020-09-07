@@ -6,10 +6,14 @@
   <title>{% block title %}{% endblock %}</title>
   {% block stylesheets %}{% endblock %}
   {% block favicon %}{% endblock %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"
-          integrity="sha256-yV0saZESxHBqfSfNncH044y3GHbsxLZJbQQmuxrXv90=" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css"
-        integrity="sha256-KNfTksp/+PcmJJ0owdo8yBLi/SVMQrH/PNPm25nR/pI=" crossorigin="anonymous"/>
+  {% if feature('feature_new_outdatedbrowser') %}
+    {{ encore_entry_script_tags('outdated-browser-rework') }}
+  {% else %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.js"
+              integrity="sha256-yV0saZESxHBqfSfNncH044y3GHbsxLZJbQQmuxrXv90=" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css"
+            integrity="sha256-KNfTksp/+PcmJJ0owdo8yBLi/SVMQrH/PNPm25nR/pI=" crossorigin="anonymous"/>
+  {% endif %}
   <!-- Google Tag Manager -->
   <script>(function (w, d, s, l, i) {
       w[l] = w[l] || [];
@@ -35,7 +39,6 @@
 
 {% block header %}{% endblock %}
 {% block content_container %}{% endblock %}
-
   <div class="cookiebar">
     <p>Questo sito usa cookies tecnici e cookies di terze parti per la raccolta in forma aggregata e anonima di dati che aiutano a migliorare la fruibilità dei contenuti.
       Proseguendo la navigazione del sito acconsenti all'uso dei cookie.</p>
@@ -65,14 +68,17 @@
 
     //call plugin function after DOM ready
     addLoadEvent(function () {
+      {% if not feature('feature_new_outdatedbrowser') %}
       outdatedBrowser({
         bgColor: '#3478bd',
         color: '#ffffff',
         lowerThan: 'object-fit',
         languagePath: ''
       })
+    {% endif %}
     });
   </script>
+{% if not feature('feature_new_outdatedbrowser') %}
   <div id="outdated" style="height: 100%;opacity: 0.95;background-color: #3478bd">
     <div style="position: absolute;width: 100%;top: 30%;">
       <h6>Il tuo browser è obsoleto!</h6>
@@ -85,6 +91,9 @@
       </p>
     </div>
   </div>
+  {% else %}
+    <div id="outdated"></div>
+{% endif %}
 {% block javascripts %}{% endblock %}
 </body>
 </html>
