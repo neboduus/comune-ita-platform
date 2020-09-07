@@ -108,7 +108,7 @@ class AllegatoController extends Controller
         $allegato->setDescription($description);
         $allegato->setOriginalFilename($request->get('name'));
         $user  = $this->getUser();
-        if ($user instanceof User) {
+        if ($user instanceof CPSUser || $user instanceof User) {
           $allegato->setOwner($user);
         }
         $allegato->setHash(hash('sha256', $session->getId()));
@@ -238,7 +238,7 @@ class AllegatoController extends Controller
       if ($pratica instanceof Pratica) {
         if ($user instanceof CPSUser) {
           $relatedCFs = $pratica->getRelatedCFs();
-          $canDownload = is_array($relatedCFs) && in_array($user->getCodiceFiscale(), $relatedCFs);
+          $canDownload = (is_array($relatedCFs) && in_array($user->getCodiceFiscale(), $relatedCFs ) || $pratica->getUser() == $user);
         } elseif ($session->isStarted() && $session->has(Pratica::HASH_SESSION_KEY)) {
           $canDownload = $pratica->isValidHash($session->get(Pratica::HASH_SESSION_KEY), $this->getParameter('hash_validity'));
         }

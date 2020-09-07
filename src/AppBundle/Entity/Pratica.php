@@ -193,6 +193,14 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $allegatiOperatore;
 
   /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="application")
+   * @ORM\OrderBy({"createdAt" = "ASC"})
+   * @var ArrayCollection
+   */
+  private $messages;
+
+
+  /**
    * @ORM\OneToOne(targetEntity="AppBundle\Entity\RispostaOperatore", orphanRemoval=false)
    * @ORM\JoinColumn(nullable=true)
    * @var RispostaOperatore
@@ -476,6 +484,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->allegati = new ArrayCollection();
     $this->moduliCompilati = new ArrayCollection();
     $this->allegatiOperatore = new ArrayCollection();
+    $this->messages = new ArrayCollection();
     $this->nucleoFamiliare = new ArrayCollection();
     $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
     $this->storicoStati = new ArrayCollection();
@@ -902,6 +911,30 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
     return $this;
   }
+
+  /**
+   * @return Collection
+   */
+  public function getMessages()
+  {
+    return $this->messages;
+  }
+
+  /**
+   * @return Collection
+   */
+  public function getPublicMessages()
+  {
+    $publicMessages = new ArrayCollection();
+    foreach ($this->getMessages() as $message) {
+      /** @var Message $message */
+      if ($message->getVisibility() == Message::VISIBILITY_APPLICANT) {
+        $publicMessages[] = $message;
+      }
+    }
+    return $publicMessages;
+  }
+
 
   /**
    * @return string

@@ -61,6 +61,9 @@ services:
       - "@ocsdc.allegati.dematerialized_attacher"
       - '%hash_validity%'
 
+  AppBundle\Controller\TrackingController:
+    autowire: true
+
   GuzzleHttp\Client: '@guzzle.client.mypay'
 
   AppBundle\Form\Scia\PraticaEdiliziaVincoliType:
@@ -608,6 +611,11 @@ services:
 
   ocsdc.twig.htmlspecialchars_decode:
     class: AppBundle\Twig\HtmlSpecialCharsDecode
+    tags:
+      - { name: twig.extension }
+
+  ocsdc.twig.time_ago:
+    class: AppBundle\Twig\TimeAgo
     tags:
       - { name: twig.extension }
 

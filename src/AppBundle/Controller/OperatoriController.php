@@ -7,6 +7,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\FormIO;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
@@ -23,7 +24,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -569,17 +570,33 @@ class OperatoriController extends Controller
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($user, $pratica);
+    $tab = $request->query->get('tab');
 
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
 
-    $form = $this->setupCommentForm()->handleRequest($request);
+
+    $form = $this->setupCommentForm();
+    $form->handleRequest($request);
 
     if ($form->isSubmitted()) {
-      $commento = $form->getData();
-      $pratica->addCommento($commento);
-      $this->getDoctrine()->getManager()->flush();
+      $data = $form->getData();
 
+      $message = new Message();
+      $message->setAuthor($user);
+      $message->setApplication($pratica);
+      $message->setProtocolRequired(false);
+      $message->setVisibility($data['visibility'] ? Message::VISIBILITY_INTERNAL : Message::VISIBILITY_APPLICANT);
+      $message->setMessage($data['message']);
+      $callToActions = [
+        ['label'=>'view', 'link'=>$this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+        ['label'=>'reply', 'link'=>$this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+      ];
+      $message->setCallToAction($callToActions);
+
+      $em = $this->getDoctrine()->getManager();
+      $em->persist($message);
+      $em->flush();
 
       $this->get('logger')->info(
         LogConstants::PRATICA_COMMENTED,
@@ -589,7 +606,22 @@ class OperatoriController extends Controller
         ]
       );
 
-      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+      // Todo: rendere asincrono l'invio delle email
+      if ($message->getVisibility() == Message::VISIBILITY_APPLICANT) {
+        $defaultSender = $this->getParameter('default_from_email_address');
+        $instance = $this->get('ocsdc.instance_service')->getCurrentInstance();
+        $userReceiver = $message->getApplication()->getUser();
+        $subject = $this->get('translator')->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
+        $mess = $message->getMessage() . '<img src="' . $this->get('router')->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId() .'">';
+        $this->get('ocsdc.mailer')->dispatchMail($defaultSender, $instance->getName(),$userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+
+        $message->setSentAt(time());
+        $em->persist($message);
+        $em->flush();
+      }
+
+
+      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note']);
     }
 
     $modalForm = $this->createForm('AppBundle\Form\Operatore\Base\ApprovaORigettaType')->handleRequest($request);
@@ -639,6 +671,7 @@ class OperatoriController extends Controller
       'fiscal_code' => $fiscalCode,
       'sent_email' => $sentEmail,
       'formserver_url' => $this->getParameter('formserver_public_url'),
+      'tab' => $tab
     ];
   }
 
@@ -852,30 +885,27 @@ class OperatoriController extends Controller
    */
   private function setupCommentForm()
   {
-    $translator = $this->get('translator');
     $data = array();
     $formBuilder = $this->createFormBuilder($data)
-      ->add('text', TextareaType::class, [
-        'label' => false,
-        'required' => true,
-        'attr' => [
-          'rows' => '5',
-          'class' => 'form-control input-inline',
-        ],
-      ])
-      ->add('createdAt', HiddenType::class, ['data' => time()])
-      ->add('creator', HiddenType::class, [
-        'data' => $this->getUser()->getFullName(),
-      ])
-      ->add('save', SubmitType::class, [
-        'label' => $translator->trans('operatori.aggiungi_commento'),
-        'attr' => [
-          'class' => 'btn btn-primary',
-        ],
-      ]);
-    $form = $formBuilder->getForm();
-
-    return $form;
+        ->add('message', TextareaType::class, [
+          'label' => 'Testo del messaggio',
+          'required' => true,
+          'attr' => [
+            'rows' => '5',
+            'class' => 'form-control input-inline',
+          ],
+        ])
+        ->add('visibility', CheckboxType::class, [
+          'label'=>'Nota privata?',
+          'required' => false
+        ])
+        ->add('save', SubmitType::class, [
+          'label' => 'Invia',
+          'attr' => [
+            'class' => 'btn btn-primary',
+          ],
+        ]);
+    return $formBuilder->getForm();
   }
 
   /**

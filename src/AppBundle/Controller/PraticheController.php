@@ -6,6 +6,9 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\GiscomPratica;
+use AppBundle\Entity\Message;
+use AppBundle\Entity\Nota;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
@@ -15,16 +18,22 @@ use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Model\CallToAction;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class PraticheController
@@ -339,6 +348,115 @@ class PraticheController extends Controller
   }
 
   /**
+   * @Route("/{pratica}/detail", name="pratica_show_detail")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @Template()
+   * @param Pratica $pratica
+   *
+   * @return RedirectResponse
+   */
+  public function detailAction(Request $request, Pratica $pratica)
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($pratica, $user);
+    $tab = $request->query->get('tab');
+
+    $resumeURI = $request->getUri();
+    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+
+    $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
+      && $pratica->getUser()->getId() == $user->getId();
+    if ($canCompile) {
+      $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+      try {
+        $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
+      } catch (ForbiddenAccessException $e) {
+        $canCompile = false;
+      }
+    }
+
+    $form = $this->setupCommentForm();
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted()) {
+      $data = $form->getData();
+
+      $message = new Message();
+      $message->setAuthor($user);
+      $message->setApplication($pratica);
+      $message->setProtocolRequired(false);
+      $message->setVisibility(Message::VISIBILITY_APPLICANT);
+      $message->setMessage($data['message']);
+      $callToActions = [
+        ['label'=>'view', 'link'=>$this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+        ['label'=>'reply', 'link'=>$this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+      ];
+      $message->setCallToAction($callToActions);
+
+      $em = $this->getDoctrine()->getManager();
+      $em->persist($message);
+      $em->flush();
+
+      $this->get('logger')->info(
+        LogConstants::PRATICA_COMMENTED,
+        [
+          'pratica' => $pratica->getId(),
+          'user' => $pratica->getUser()->getId()
+        ]
+      );
+
+      // Todo: rendere asincrono l'invio delle email
+      if ($pratica->getOperatore()) {
+        $instance = $this->get('ocsdc.instance_service')->getCurrentInstance();
+        /** @var OperatoreUser $userReceiver */
+        $userReceiver = $message->getApplication()->getOperatore();
+        $subject = $this->get('translator')->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
+        $mess = $message->getMessage() . '<img src="' . $this->get('router')->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId() .'">';
+        $this->get('ocsdc.mailer')->dispatchMail($user->getEmail(), $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+
+        $message->setSentAt(time());
+        $em->persist($message);
+        $em->flush();
+      }
+
+
+      return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note']);
+    }
+
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
+
+    $result = [
+      'pratiche_recenti' => $praticheRecenti,
+      'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
+      'form' => $form->createView(),
+      'tab' => $tab,
+      'pratica' => $pratica,
+      'user' => $user,
+      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'can_compile' => $canCompile,
+      'can_withdraw' => $this->userCanWithdrawPratica($pratica, $user)
+      //'threads' => $thread,
+    ];
+
+    if ($pratica instanceof GiscomPratica) {
+      $allegati = [];
+      $attachments = $pratica->getAllegati();
+      if (count($attachments) > 0) {
+
+        /** @var Allegato $a */
+        foreach ($attachments as $a) {
+          $allegati[$a->getId()] = $a->getNumeroProtocollo();
+        }
+      }
+      $result['allegati'] = $allegati;
+    }
+
+    return $result;
+  }
+
+  /**
    * @Route("/{pratica}/withdraw", name="pratiche_withdraw")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Pratica $pratica
@@ -553,4 +671,29 @@ class PraticheController extends Controller
 
     return null;
   }
+
+  /**
+   * @return FormInterface
+   */
+  private function setupCommentForm()
+  {
+    $data = array();
+    $formBuilder = $this->createFormBuilder($data)
+      ->add('message', TextareaType::class, [
+        'label' => 'Testo del messaggio',
+        'required' => true,
+        'attr' => [
+          'rows' => '5',
+          'class' => 'form-control input-inline',
+        ],
+      ])
+      ->add('save', SubmitType::class, [
+        'label' => 'Invia',
+        'attr' => [
+          'class' => 'btn btn-primary',
+        ],
+      ]);
+    return $formBuilder->getForm();
+  }
+
 }

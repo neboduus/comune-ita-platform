@@ -1,0 +1,87 @@
+<style>
+    .bg-aliceblue {
+        background-color: aliceblue;
+    }
+</style>
+<div class="row">
+  <div class="col-md-12">
+    <ul class="list-unstyled">
+      {% for message in pratica.publicMessages %}
+        <li class="mb-4">
+          <div class="rounded rounded-lg px-2 py-3 shadow
+          {% if message.author == user %} ml-5 {% else %} mr-5 bg-aliceblue{% endif %}">
+            <div class="{% if message.author == user %} d-flex flex-row-reverse text-right {% endif %}">
+              <div class="d-inline-block  align-top">
+                <div class="avatar mx-2 {% if message.author != user %} bg-white {% endif %}">
+                  <svg class="icon icon-secondary">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+                  </svg>
+                </div>
+              </div>
+              <div class="d-inline-block">
+                <p class="mb-0 text-secondary">
+                  <b>{{ message.author.fullName }}</b><small></small>
+                </p>
+              </div>
+            </div>
+            <div class="mx-4 {% if message.author == user %} float-right {% endif %}">
+              <p class="my-3">{{ message.message }}</p>
+              {% if message.author != pratica.user %}<img class="d-none" src="{{ path('track_message', {'id':message.id}) }}">{% endif %}
+            </div>
+            <div class="clearfix"></div>
+            <div class="d-inline-block collapse-div collapse-left-icon border-0 float-left">
+              <div class="collapse-header">
+                <button class="btn btn-link btn-xs border-top-0 py-1" data-toggle="collapse"
+                        data-target="#info_{{ message.id }}" aria-expanded="false" aria-controls="accordion2">
+                  maggiori informazioni
+                </button>
+              </div>
+            </div>
+            <div id="info_{{ message.id }}" class="collapse p-3">
+              <div class="clearfix"></div>
+              <small class="d-flex justify-content-between">
+                <span class="font-weight-bold">Inviato:</span>
+                <span>
+                    {% if message.sentAt %}
+                      {{ message.sentAt |date(ocsdc_default_datetime_format) }}
+                    {% else %}
+                      --
+                    {% endif %}
+                  </span>
+              </small>
+              <small class="d-flex justify-content-between">
+                <span class="font-weight-bold">Letto:</span>
+                <span>
+                    {% if message.readAt %}
+                      {{ message.readAt |date(ocsdc_default_datetime_format) }}
+                    {% else %}
+                      --
+                    {% endif %}
+                  </span>
+              </small>
+            </div>
+
+            <div class="d-inline-block float-right">
+              <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
+                {% if not message.sentAt %}
+                  <i class="fa fa-check text-100 mx-1"
+                     title="Messaggio creato il {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></i>
+                {% elseif not message.readAt %}
+                  <i class="fas fa-check-double text-100 mx-1"
+                     title="Messaggio consegnato il {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></i>
+                {% else %}
+                  <i class="fas fa-check-double mx-1" style="color: dodgerblue"
+                     title="Messaggio letto il {{ message.readAt | date(ocsdc_default_datetime_format) }}"></i>
+                {% endif %}
+              </small>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+    <div>
+      {{ form(form) }}
+    </div>
+  </div>
+</div>

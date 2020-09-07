@@ -751,4 +751,24 @@ class PraticaRepository extends EntityRepository
 
     return $qb;
   }
+
+  public function getMessages($filters, Pratica $pratica)
+  {
+    $qb = $this->getEntityManager()->createQueryBuilder()
+      ->select('message')
+      ->from('AppBundle:Message', 'message');
+
+    if (!empty($filters['visibility'])) {
+      $qb->andWhere('pratica.visibility = :visibility')
+        ->setParameter('visibility', (array)$filters['visibility']);
+    }
+
+    $qb->andWhere('message.application = :application')
+      ->setParameter('application', $pratica)
+      ->orderBy('message.createdAt', 'asc');
+
+
+    return $qb->getQuery()->getResult();
+  }
+
 }

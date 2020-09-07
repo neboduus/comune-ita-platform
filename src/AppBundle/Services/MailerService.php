@@ -372,9 +372,10 @@ class MailerService
    * @param $message
    * @param $subject
    * @param Ente $ente
+   * @param array $callToActions
    * @return int
    */
-  public function dispatchMail($fromAddress, $fromName, $toAddress, $toName, $message, $subject, Ente $ente)
+  public function dispatchMail($fromAddress, $fromName, $toAddress, $toName, $message, $subject, Ente $ente, $callToActions)
   {
     $sentAmount = 0;
 
@@ -390,6 +391,7 @@ class MailerService
               array(
                 'message' => $message,
                 'ente' => $ente,
+                'call_to_actions' => $callToActions
               )
             ),
             'text/html'

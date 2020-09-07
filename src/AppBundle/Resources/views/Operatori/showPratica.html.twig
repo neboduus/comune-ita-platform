@@ -1,8 +1,9 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-        xmlns="http://www.w3.org/1999/html">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
 {% endblock %}
 
@@ -91,7 +92,7 @@
             {{ include('@App/Operatori/parts/riassegna.html.twig') }}
           {% endif %}
         {% else %}
-          {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
+          {% if pratica.status >= 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
             <div class="row mb-5">
               <div class="col-12 d-flex justify-content-center">
                 {{ 'operatori.attesa_modulo_protocollato'|trans }}
@@ -156,15 +157,21 @@
           </div>
         </div>
         <div class="row my-4 pl-4">
-          <div class="col-12 pb-3">
-            <h6>{{ 'pratica.numero' | trans }}:</h6>
-            <code class="text-nowrap">{{ pratica.id }}</code>
-          </div>
-          {% if  pratica.numeroProtocollo %}
+          {% if pratica.type == 'form_io' %}
             <div class="col-12 pb-3">
-              <h6>{{ 'pratica.protocollo' | trans }}:</h6>
-              <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
+              <h6>{{ 'pratica.numero' | trans }}:</h6>
+              <code class="text-nowrap">{{ pratica.id }}</code>
             </div>
+            <div class="col-12 pb-3">
+              <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
+              <span class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
+            </div>
+            {% if  pratica.numeroProtocollo %}
+              <div class="col-12 pb-3">
+                <h6>{{ 'pratica.protocollo' | trans }}:</h6>
+                <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
+              </div>
+            {% endif %}
           {% endif %}
           {% if  pratica.operatore %}
             <div class="col-12 pb-3">

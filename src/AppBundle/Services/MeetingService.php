@@ -333,7 +333,9 @@ class MeetingService
         $meeting->getName(),
         $userMessage,
         $this->translator->trans('meetings.email.new_meeting.subject'),
-        $ente);
+        $ente,
+        []
+      );
     }
 
     $operatoreMessage = $this->translator->trans('meetings.email.operatori.new_meeting.message', [
@@ -352,7 +354,9 @@ class MeetingService
         'Contatto Calendario',
         $operatoreMessage,
         $this->translator->trans('meetings.email.operatori.new_meeting.subject'),
-        $ente);
+        $ente,
+        []
+      );
     }
 
     // Send email for each moderator
@@ -372,7 +376,9 @@ class MeetingService
               UrlGeneratorInterface::ABSOLUTE_URL)
           ]),
           $this->translator->trans('meetings.email.operatori.new_meeting.subject'),
-          $ente);
+          $ente,
+          []
+        );
       }
     }
   }
@@ -511,7 +517,9 @@ class MeetingService
         $meeting->getName(),
         $userMessage,
         $this->translator->trans('meetings.email.edit_meeting.subject'),
-        $ente);
+        $ente,
+        []
+      );
     }
 
     if ($statusChanged && $status == Meeting::STATUS_APPROVED) {
@@ -536,7 +544,9 @@ class MeetingService
         'Contatto Calendario',
         $contactMessage,
         $subject,
-        $ente);
+        $ente,
+        []
+      );
     }
   }
 
@@ -577,7 +587,9 @@ class MeetingService
         $meeting->getName(),
         $message,
         $this->translator->trans('meetings.email.delete_meeting.subject'),
-        $ente);
+        $ente,
+        []
+      );
     }
   }
 

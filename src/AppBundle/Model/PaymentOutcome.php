@@ -53,7 +53,7 @@ class PaymentOutcome implements \JsonSerializable
 
   /**
    * @var array
-   * @Serializer\Type("array<string, string>")
+   * @Serializer\Type("array")
    * @SWG\Property(description="Payment data")
    *
    */
