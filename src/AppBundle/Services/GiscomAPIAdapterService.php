@@ -149,21 +149,22 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
 
         } catch (\Exception $e) {
             $response = new Response(500, [], $e->getMessage());
-            if (method_exists($e, 'getResponse')) {
+            if (method_exists($e, 'getResponse') && $e->getResponse() instanceof ResponseInterface) {
                 $response = $e->getResponse();
             }
 
             /**
              * Remote response body here should be  {Message: somestring}
              */
-            $logContext['remote_error_response'] = $response->getBody() . "";
+            $logContext['remote_error_response'] = $response->getBody()."";
             if (!is_object($logContext['remote_error_response'])) {
-                try {
-                    $logContext['remote_error_response'] = json_decode($logContext['remote_error_response'],true);
-                } catch (\Exception $e) {
-                    /* NOOP: null or already  */
-                }
+              try {
+                $logContext['remote_error_response'] = json_decode($logContext['remote_error_response'], true);
+              } catch (\Exception $e) {
+                /* NOOP: null or already  */
+              }
             }
+
             $this->logger->error("Error when creating pratica {$pratica->getId()} on Giscom Side, message: {$e->getMessage()} ", $logContext);
 
             return $response;
