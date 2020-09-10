@@ -41,7 +41,7 @@
     </tbody>
 </table>
 
-<table class="table">
+<table class="table page-break-before">
     <tbody>
     <tr>
         <th>
@@ -60,7 +60,7 @@
     </tbody>
 </table>
 
-<table class="table">
+<table class="table page-break-before">
     <tbody>
     <tr>
         <th>
@@ -93,7 +93,7 @@
     </tbody>
 </table>
 
-<table class="table">
+<table class="table page-break-before">
     <tbody>
     <tr>
         <th>
@@ -121,9 +121,7 @@
 </table>
 
 {{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
-
 {{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
-
 {{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
 {{ include('AppBundle:Pratiche/pdf/parts:footer.html.twig') }}
 </body>
