@@ -1,0 +1,26 @@
+imports:
+    - { resource: ../parameters.yml }
+    - { resource: ../common/security.yml }
+    - { resource: ../common/monolog.yml }
+    - { resource: ../services.yml }
+    - { resource: ../bundles/ }
+    - { resource: "@AppBundle/Resources/config/services.yml" }
+    - { resource: ../config.yml }
+
+
+parameters:
+    prefix: comune-di-preganziol
+    codice_meccanografico: H022
+    database_name: sdc_preganziol
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/common/routing.yml"
+        strict_requirements: true
+
+twig:
+    globals:
+        endpoint_prefix: '%prefix%'
+
+services:
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pec"
