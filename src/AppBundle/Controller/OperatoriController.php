@@ -672,7 +672,9 @@ class OperatoriController extends Controller
       /** @var ApplicationOutcome $outcome */
       $outcome = $outcomeForm->getData();
       $pratica->setEsito($outcome->getOutcome());
-      $pratica->setMotivazioneEsito($outcome->getMessage());
+      if ($outcome->getMessage() !== null) {
+        $pratica->setMotivazioneEsito($outcome->getMessage());
+      }
       foreach ($outcome->getAttachments() as $attachment) {
         if (isset($attachment['id'])) {
           $allegatoOperatore = $allegatoOperatoreRepository->findOneBy(['id' => $attachment['id']]);
