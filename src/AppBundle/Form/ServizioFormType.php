@@ -81,6 +81,7 @@ class ServizioFormType extends AbstractType
         'required' => false,
         'empty_data' => null
       ])
+      ->add('service_group')
     ;
   }
 

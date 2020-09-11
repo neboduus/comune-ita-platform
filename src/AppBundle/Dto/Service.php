@@ -4,6 +4,7 @@
 namespace AppBundle\Dto;
 
 use AppBundle\Entity\Categoria;
+use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;
 use AppBundle\Model\PaymentParameters;
 use AppBundle\Model\FlowStep;
@@ -195,6 +196,12 @@ class Service
    * @SWG\Property(description="Scheduled to date time")
    */
   private $scheduledTo;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Services groups (slug)")
+   */
+  private $serviceGroup;
 
   /**
    * @return mixed
@@ -602,6 +609,22 @@ class Service
     $this->scheduledTo = $scheduledTo;
   }
 
+  /**
+   * @return mixed
+   */
+  public function getServiceGroup()
+  {
+    return $this->serviceGroup;
+  }
+
+  /**
+   * @param mixed $serviceGroup
+   */
+  public function setServiceGroup($serviceGroup)
+  {
+    $this->serviceGroup = $serviceGroup;
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -635,6 +658,7 @@ class Service
     $dto->loginSuggested = $servizio->isLoginSuggested() || false;
     $dto->scheduledFrom = $servizio->getScheduledFrom();
     $dto->scheduledTo = $servizio->getScheduledTo();
+    $dto->serviceGroup = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null;
 
     return $dto;
   }
@@ -686,6 +710,11 @@ class Service
     $entity->setLoginSuggested($this->loginSuggested);
     $entity->setScheduledFrom($this->scheduledFrom);
     $entity->setScheduledTo($this->scheduledTo);
+
+    // Avoid validation error on patch
+    if ($this->serviceGroup instanceof ServiceGroup) {
+      $entity->setServiceGroup($this->serviceGroup);
+    }
 
     return $entity;
   }

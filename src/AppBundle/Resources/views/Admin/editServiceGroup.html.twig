@@ -34,7 +34,7 @@
                 <tr>
                   <td>{{ service.name }}</td>
                   <td>
-                    <a href="{{ path('admin_servizio_edit', {'servizio': service}) }}"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
+                    <a href="{{ path('admin_servizio_edit', {'servizio': service.id}) }}"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
                   </td>
                   <td>
                     <a href="{{ path('admin_service_remove_group', {'id': service.id}) }}"

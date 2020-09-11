@@ -7,18 +7,19 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
-use AppBundle\Entity\ServiceGroup;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\PaymentParameters;
 use AppBundle\Model\FlowStep;
 use AppBundle\Model\AdditionalData;
-use AppBundle\Entity\Servizio;
+use AppBundle\Entity\ServiceGroup;
 use AppBundle\Dto\Service;
 use AppBundle\Services\InstanceService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\View\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,9 +40,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @property EntityManager em
  * @property InstanceService is
  * @package AppBundle\Controller
- * @Route("/services")
+ * @Route("/services-groups")
  */
-class ServicesAPIController extends AbstractFOSRestController
+class ServicesGroupAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
@@ -53,109 +54,68 @@ class ServicesAPIController extends AbstractFOSRestController
 
 
   /**
-   * List all Services
-   * @Rest\Get("", name="services_api_list")
+   * List all Services groups
+   * @Rest\Get("", name="services_groups_api_list")
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retrieve list of services",
+   *     description="Retrieve list of services groups",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Service::class))
+   *         @SWG\Items(ref=@Model(type=ServiceGroup::class))
    *     )
    * )
-   * @SWG\Tag(name="services")
+   * @SWG\Tag(name="services-groups")
    */
-  public function getServicesAction()
+  public function getServicesGroupsAction()
   {
     $result = [];
-    $services = $this->getDoctrine()->getRepository('AppBundle:Servizio')->findAll();
+    $services = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup')->findAll();
     foreach ($services as $s) {
-      $result []= Service::fromEntity($s);
+      $result []= $s;
     }
 
     return $this->view($result, Response::HTTP_OK);
   }
 
   /**
-   * Retreive a Service
-   * @Rest\Get("/{id}", name="service_api_get")
+   * Retreive a Service group
+   * @Rest\Get("/{id}", name="service_group_api_get")
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive a Service",
-   *     @Model(type=Service::class)
+   *     description="Retreive a Service group",
+   *     @Model(type=ServiceGroup::class)
    * )
    *
    * @SWG\Response(
    *     response=404,
-   *     description="Service not found"
+   *     description="Not found"
    * )
-   * @SWG\Tag(name="services")
+   * @SWG\Tag(name="services-groups")
    *
    * @param $id
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function getServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      return $this->view(Service::fromEntity($result), Response::HTTP_OK);
+      return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
   }
 
-  /**
-   * Retreive form Service schema
-   * @Rest\Get("/{id}/form", name="form_service_api_get")
-   *
-   * @SWG\Response(
-   *     response=200,
-   *     description="Retreive service Form schma"
-   * )
-   *
-   * @SWG\Response(
-   *     response=404,
-   *     description="Form schema not found"
-   * )
-   * @SWG\Tag(name="services")
-   *
-   * @param $id
-   * @return \FOS\RestBundle\View\View
-   */
-  public function getFormServiceAction($id)
-  {
-    try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-      /** @var Servizio $service */
-      $service = $repository->find($id);
-      if ($service === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
-      }
-
-      $formServerService = $this->container->get('ocsdc.formserver');
-      $response = $formServerService->getForm($service->getFormIoId());
-
-      if ($response['status'] == 'success') {
-        return $this->view($response['form'], Response::HTTP_OK);
-      } else {
-        return $this->view("Form not found", Response::HTTP_NOT_FOUND);
-      }
-    } catch (\Exception $e) {
-      return $this->view("Service not found", Response::HTTP_NOT_FOUND);
-    }
-  }
-
 
   /**
-   * Create a Service
-   * @Rest\Post(name="services_api_post")
+   * Create a Service Group
+   * @Rest\Post(name="services_group_api_post")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -166,35 +126,35 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
-   *     name="Service",
+   *     name="Service Group",
    *     in="body",
    *     type="json",
-   *     description="The service to create",
+   *     description="The service group to create",
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Service::class)
+   *         ref=@Model(type=ServiceGroup::class)
    *     )
    * )
    *
    * @SWG\Response(
    *     response=201,
-   *     description="Create a Service"
+   *     description="Create a Service group"
    * )
    *
    * @SWG\Response(
    *     response=400,
    *     description="Bad request"
    * )
-   * @SWG\Tag(name="services")
+   * @SWG\Tag(name="services-groups")
    *
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function postServiceAction(Request $request)
   {
-    $serviceDto = new Service();
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+    $serviceGroup = new ServiceGroup();
+    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
     if (!$form->isValid()) {
@@ -209,28 +169,21 @@ class ServicesAPIController extends AbstractFOSRestController
 
     $em = $this->getDoctrine()->getManager();
 
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-    if ($category instanceof Categoria) {
-      $serviceDto->setTopics($category);
-    }
-
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-    if ($serviceGroup instanceof ServiceGroup) {
-      $serviceDto->setServiceGroup($serviceGroup);
-    }
-
-    $service = $serviceDto->toEntity();
-    $service->setPraticaFCQN('\AppBundle\Entity\FormIO');
-    $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
-
-    // Imposto l'ente in base all'istanza
-    $service->setEnte($this->container->get('ocsdc.instance_service')->getCurrentInstance());
-
     try {
-      $em->persist($service);
+      $em->persist($serviceGroup);
       $em->flush();
+    } catch (UniqueConstraintViolationException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Duplicate object'
+      ];
+      $this->get('logger')->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -243,12 +196,12 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view(Service::fromEntity($service), Response::HTTP_CREATED);
+    return $this->view($serviceGroup, Response::HTTP_CREATED);
   }
 
   /**
-   * Edit full Service
-   * @Rest\Put("/{id}", name="services_api_put")
+   * Edit full Service group
+   * @Rest\Put("/{id}", name="service_group_api_put")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -259,20 +212,20 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
-   *     name="Service",
+   *     name="Service group",
    *     in="body",
    *     type="json",
-   *     description="The service to create",
+   *     description="The service group to create",
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Service::class)
+   *         ref=@Model(type=ServiceGroup::class)
    *     )
    * )
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Edit full Service"
+   *     description="Edit full Service group"
    * )
    *
    * @SWG\Response(
@@ -284,23 +237,21 @@ class ServicesAPIController extends AbstractFOSRestController
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="services")
+   * @SWG\Tag(name="services-groups")
    *
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function putServiceAction($id, Request $request)
   {
-    /*try {*/
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    $service = $repository->find($id);
+    $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $serviceGroup = $repository->find($id);
 
-    if (!$service) {
+    if (!$serviceGroup) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    //$serviceDto = Service::fromEntity($service);
-    $serviceDto = new Service();
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+
+    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
     if (!$form->isValid()) {
@@ -314,20 +265,9 @@ class ServicesAPIController extends AbstractFOSRestController
     }
 
     $em = $this->getDoctrine()->getManager();
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-    if ($category instanceof Categoria) {
-      $serviceDto->setTopics($category);
-    }
-
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-    if ($serviceGroup instanceof ServiceGroup) {
-      $serviceDto->setServiceGroup($serviceGroup);
-    }
-
-    $service = $serviceDto->toEntity($service);
 
     try {
-      $em->persist($service);
+      $em->persist($serviceGroup);
       $em->flush();
     } catch (\Exception $e) {
 
@@ -343,14 +283,11 @@ class ServicesAPIController extends AbstractFOSRestController
     }
 
     return $this->view("Object Modified Successfully", Response::HTTP_OK);
-    /*} catch (\Exception $e) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
-    }*/
   }
 
   /**
-   * Patch a Service
-   * @Rest\Patch("/{id}", name="services_api_patch")
+   * Patch a Service group
+   * @Rest\Patch("/{id}", name="service_group_api_patch")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -361,20 +298,20 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
-   *     name="Service",
+   *     name="Service group",
    *     in="body",
    *     type="json",
-   *     description="The service to create",
+   *     description="The service group to create",
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Service::class)
+   *         ref=@Model(type=ServiceGroup::class)
    *     )
    * )
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Patch a Service"
+   *     description="Patch a Service group"
    * )
    *
    * @SWG\Response(
@@ -386,22 +323,22 @@ class ServicesAPIController extends AbstractFOSRestController
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="services")
+   * @SWG\Tag(name="services-groups")
    *
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function patchServiceAction($id, Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    $service = $repository->find($id);
+    $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $serviceGroup = $repository->find($id);
 
-    if (!$service) {
+    if (!$serviceGroup) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $serviceDto = Service::fromEntity($service);
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+
+    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
     if (!$form->isValid()) {
@@ -414,20 +351,8 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-    if ($category instanceof Categoria) {
-      $serviceDto->setTopics($category);
-    }
-
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-    if ($serviceGroup instanceof ServiceGroup) {
-      $serviceDto->setServiceGroup($serviceGroup);
-    }
-
-    $service = $serviceDto->toEntity($service);
-
     try {
-      $em->persist($service);
+      $em->persist($serviceGroup);
       $em->flush();
     } catch (\Exception $e) {
 
@@ -446,20 +371,20 @@ class ServicesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Delete a Service
-   * @Rest\Delete("/{id}", name="services_api_delete")
+   * Delete a Service group
+   * @Rest\Delete("/{id}", name="service_gropu_api_delete")
    *
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
-   * @SWG\Tag(name="services")
+   * @SWG\Tag(name="services-groups")
    *
    * @Method("DELETE")
    */
   public function deleteAction($id)
   {
-    $service = $this->getDoctrine()->getRepository('AppBundle:Servizio')->find($id);
+    $service = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup')->find($id);
     if ($service) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -477,40 +402,9 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   private function processForm(Request $request, FormInterface $form)
   {
-    $data = $this->normalizeData(json_decode($request->getContent(), true));
+    $data = json_decode($request->getContent(), true);
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  public function normalizeData($data)
-  {
-    // Todo: find better way
-    if (isset($data['flow_steps']) && count($data['flow_steps']) > 0) {
-      $temp = [];
-      foreach ($data['flow_steps'] as $f) {
-        $f['parameters'] = \json_encode($f['parameters']);
-        $temp[]= $f;
-      }
-      $data['flow_steps'] = $temp;
-    }
-
-    // Todo: find better way
-    if ( isset($data['payment_parameters']['gateways']) && count($data['payment_parameters']['gateways']) > 0 ) {
-      $sanitizedGateways = [];
-      foreach ($data['payment_parameters']['gateways'] as $gateway) {
-        $parameters = \json_encode($gateway['parameters']);
-        $gateway['parameters'] = $parameters;
-        $sanitizedGateways [$gateway['identifier']]= $gateway;
-      }
-      $data['payment_parameters']['gateways'] = $sanitizedGateways;
-    }
-
-    // Todo: find better way
-    if (isset($data['protocollo_parameters'])) {
-      $data['protocollo_parameters'] = \json_encode($data['protocollo_parameters']);
-    }
-
-    return $data;
   }
 
   /**
