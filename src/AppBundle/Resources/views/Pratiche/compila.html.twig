@@ -118,6 +118,11 @@
             document.getElementById("formio").scrollIntoView();
           });
 
+            $('.btn-wizard-nav-cancel').on('click', function (e) {
+                e.preventDefault()
+                location.reload();
+            })
+
           let realSubmitButton = $('.craue_formflow_button_class_next');
           form.nosubmit = true;
 
