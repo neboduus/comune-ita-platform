@@ -104,7 +104,13 @@
             {{ include('@App/Operatori/parts/riassegna.html.twig') }}
           {% endif %}
         {% else %}
-          {% if pratica.status >= 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
+          {% if pratica.status == 1900 %}
+            <div class="row mb-5">
+              <div class="col-12 d-flex justify-content-center">
+                {{ 'operatori.attesa_modulo_compilato'|trans }}
+              </div>
+            </div>
+          {% elseif pratica.status > 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
             <div class="row mb-5">
               <div class="col-12 d-flex justify-content-center">
                 {{ 'operatori.attesa_modulo_protocollato'|trans }}
