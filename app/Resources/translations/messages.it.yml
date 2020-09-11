@@ -220,6 +220,7 @@ pratica:
       indirizzo: 'Indirizzo'
   messaggi:
     oggetto: 'Nuovo messaggio richiesta numero %pratica%'
+    messaggio: '%message% <img src="%link%">'
 
 
   modulo:
@@ -513,7 +514,6 @@ operatori:
   modulo: 'Modulo'
   allegati: 'Allegati'
   note_interne: 'Note interne'
-  messaggi: 'Messaggi'
   importo: "Importo"
   pagamento: 'Pagamento'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
@@ -528,6 +528,22 @@ operatori:
   data_ora_ricevuta: "Data e ora ricevuta"
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
+  messaggi:
+    titolo: 'Messaggi'
+    aggiungi_nota_privata: 'Aggiungi nota interna'
+    invia: 'Invia messaggio'
+    non_disponibile_anonimo: 'Funzionalità non dispobibile per gli utenti anonimi'
+    prendi_in_carico_per_abilitare: 'Prendi in carico la pratica per abilitare questa funzionalità'
+    pubblico: 'Invia messaggio pubblico al cittadino'
+    privato: 'Una nota interna non sarà visibile al cittadino'
+    ha_aggiunto_nota_privata: 'ha aggiunto una nota privata'
+    info: 'info'
+    letto: 'Letto'
+    inviato: 'Inviato'
+    creato_il: 'Messaggio creato il %data%'
+    consegnato_il: 'Messaggio consegnato il %data%'
+    letto_il: 'Messaggio letto il %data%'
+    feedback_inviato: "Il messaggio verrà recapitato a breve all'indirizzo %email%. Una eventuale risposta del cittadino comparirà in questa stessa pagina"
   suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
   login: "Accedi"
   scarica: 'Scarica'

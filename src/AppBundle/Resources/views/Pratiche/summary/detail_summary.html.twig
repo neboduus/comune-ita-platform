@@ -12,7 +12,7 @@
     </a>
     <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} {% if not pratica.operatore %} disabled {% endif %}" id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
        aria-controls="messaggi" aria-selected="{{ tab and tab == 'note' }}">
-      {{ 'operatori.messaggi' | trans }}
+      {{ 'operatori.messaggi.titolo' | trans }}
       <span class="badge badge-light ml-1">{{ pratica.publicMessages | length }}</span>
     </a>
     <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
@@ -62,7 +62,7 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel" aria-labelledby="messaggi-tab">
     <div class="m-3">
-      {{ include('@App/Pratiche/summary/parts/commenti.html.twig', {'pratica':pratica}) }}
+      {{ include('@App/Pratiche/summary/parts/messaggi.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">

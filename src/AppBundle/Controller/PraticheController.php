@@ -357,6 +357,12 @@ class PraticheController extends Controller
    */
   public function detailAction(Request $request, Pratica $pratica)
   {
+    $translator = $this->get('translator');
+
+    if (!$this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
+      return $this->redirectToRoute('pratiche_show', ['pratica' => $pratica]);
+    }
+
     /** @var CPSUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
@@ -411,8 +417,10 @@ class PraticheController extends Controller
         $instance = $this->get('ocsdc.instance_service')->getCurrentInstance();
         /** @var OperatoreUser $userReceiver */
         $userReceiver = $message->getApplication()->getOperatore();
-        $subject = $this->get('translator')->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
-        $mess = $message->getMessage() . '<img src="' . $this->get('router')->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId() .'">';
+        $subject = $translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
+        $mess = $translator->trans('pratica.messaggi.messaggio', [
+          '%message%' => $message->getMessage(),
+          '%link%' => $this->get('router')->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
         $this->get('ocsdc.mailer')->dispatchMail($user->getEmail(), $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
         $message->setSentAt(time());
