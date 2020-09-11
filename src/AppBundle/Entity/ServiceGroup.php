@@ -3,13 +3,13 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Dto\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Swagger\Annotations as SWG;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * ServiceGroup
@@ -50,6 +50,7 @@ class ServiceGroup
   /**
    * @var string
    * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Services group description")
    */
   private $description;
 
@@ -69,11 +70,13 @@ class ServiceGroup
 
   /**
    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Servizio", mappedBy="serviceGroup", cascade={"persist"})
+   * @Serializer\Exclude()
    */
   private $services;
 
   /**
    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="serviceGroup", cascade={"persist"})
+   * @Serializer\Exclude()
    */
   private $applications;
 
