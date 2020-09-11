@@ -53,12 +53,6 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
             'label' => 'Panel',
             'title' => 'Richiedente',
             'breadcrumbClickable' => true,
-            'buttonSettings' =>
-              array(
-                'previous' => true,
-                'cancel' => true,
-                'next' => true,
-              ),
             'collapsible' => false,
             'mask' => false,
             'tableView' => false,
