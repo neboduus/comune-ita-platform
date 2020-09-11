@@ -12,8 +12,17 @@
     </a>
     <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} " id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
        aria-controls="messaggi" aria-selected="{{ tab and tab == 'note' }}">
-      {{ 'operatori.messaggi' | trans }}
-      <span class="badge badge-light ml-1">{{ pratica.commenti.count + pratica.messages | length }}</span>
+      {% if feature('feature_application_detail') %}
+        {{ 'operatori.messaggi.titolo' | trans }}
+        <span class="badge badge-light ml-1">
+        {{ pratica.commenti.count + pratica.messages | length }}
+      </span>
+      {% else %}
+        {{ 'operatori.note_interne' | trans }}
+        <span class="badge badge-light ml-1">
+        {{ pratica.commenti.count }}
+      </span>
+      {% endif %}
     </a>
       <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
          aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
@@ -62,7 +71,11 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel" aria-labelledby="messaggi-tab">
     <div class="m-3">
-      {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+      {% if feature('feature_application_detail') %}
+        {{ include('AppBundle:Operatori/parts:messaggi.html.twig', {'pratica':pratica}) }}
+      {% else %}
+        {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+      {% endif %}
     </div>
   </div>
     <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">

@@ -28,9 +28,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -570,6 +572,8 @@ class OperatoriController extends Controller
    */
   public function showPraticaAction(Pratica $pratica, Request $request)
   {
+    $translator = $this->get('translator');
+
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($user, $pratica);
@@ -582,47 +586,81 @@ class OperatoriController extends Controller
     $form->handleRequest($request);
 
     if ($form->isSubmitted()) {
-      $data = $form->getData();
+      // Check if application detail feature is enabled
+      if ($this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
+        $visibility = $form->getClickedButton()->getName();
 
-      $message = new Message();
-      $message->setAuthor($user);
-      $message->setApplication($pratica);
-      $message->setProtocolRequired(false);
-      $message->setVisibility($data['visibility'] ? Message::VISIBILITY_INTERNAL : Message::VISIBILITY_APPLICANT);
-      $message->setMessage($data['message']);
-      $callToActions = [
-        ['label'=>'view', 'link'=>$this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
-        ['label'=>'reply', 'link'=>$this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
-      ];
-      $message->setCallToAction($callToActions);
+        // Funzionalità non disponibile agli utenti anonimi
+        if ($pratica->getUser()->getIdp() == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
+          $form->addError(new FormError($translator->trans('operatori.messaggi.non_disponibile_anonimo')));
+        }
 
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($message);
-      $em->flush();
+        // E' necessario prendere in carico la pratica per inviare messaggi pubblici
+        if (!$pratica->getOperatore() && $visibility == Message::VISIBILITY_APPLICANT) {
+          $form->addError(new FormError($translator->trans('operatori.messaggi.prendi_in_carico_per_abilitare')));
+        }
 
-      $this->get('logger')->info(
-        LogConstants::PRATICA_COMMENTED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId()
-        ]
-      );
+        if ($form->isValid()) {
+          $data = $form->getData();
+          $callToActions = [
+            ['label' => 'view', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+            ['label' => 'reply', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+          ];
 
-      // Todo: rendere asincrono l'invio delle email
-      if ($message->getVisibility() == Message::VISIBILITY_APPLICANT) {
-        $defaultSender = $this->getParameter('default_from_email_address');
-        $instance = $this->get('ocsdc.instance_service')->getCurrentInstance();
-        $userReceiver = $message->getApplication()->getUser();
-        $subject = $this->get('translator')->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
-        $mess = $message->getMessage() . '<img src="' . $this->get('router')->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId() .'">';
-        $this->get('ocsdc.mailer')->dispatchMail($defaultSender, $instance->getName(),$userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+          $message = new Message();
+          $message->setAuthor($user);
+          $message->setApplication($pratica);
+          $message->setProtocolRequired(false);
+          $message->setVisibility($visibility);
+          $message->setMessage($data['message']);
+          $message->setCallToAction($callToActions);
 
-        $message->setSentAt(time());
-        $em->persist($message);
-        $em->flush();
+          $em = $this->getDoctrine()->getManager();
+          $em->persist($message);
+          $em->flush();
+
+          $this->get('logger')->info(
+            LogConstants::PRATICA_COMMENTED,
+            [
+              'pratica' => $pratica->getId(),
+              'user' => $pratica->getUser()->getId()
+            ]
+          );
+
+          // Todo: rendere asincrono l'invio delle email
+          if ($visibility == Message::VISIBILITY_APPLICANT) {
+            $defaultSender = $this->getParameter('default_from_email_address');
+            $instance = $this->get('ocsdc.instance_service')->getCurrentInstance();
+            $userReceiver = $message->getApplication()->getUser();
+            $subject = $translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
+            $mess = $translator->trans('pratica.messaggi.messaggio', [
+              '%message%' => $message->getMessage(),
+              '%link%' => $this->get('router')->generate('track_message', ['id' => $message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id=' . $message->getId()]);
+            $this->get('ocsdc.mailer')->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+
+            $this->addFlash('info', $translator->trans('operatori.messaggi.feedback_inviato', ['%email%' =>$message->getApplication()->getUser()->getEmailContatto() ]));
+            $message->setSentAt(time());
+            $em->persist($message);
+            $em->flush();
+          }
+
+          return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
+        }
+
+      } else {
+        $commento = $form->getData();
+        $pratica->addCommento($commento);
+        $this->getDoctrine()->getManager()->flush();
+
+        $this->get('logger')->info(
+          LogConstants::PRATICA_COMMENTED,
+          [
+            'pratica' => $pratica->getId(),
+            'user' => $pratica->getUser()->getId()
+          ]
+        );
+        return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
       }
-
-      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note']);
     }
 
     $outcome = (new ApplicationOutcome())->setApplicationId($pratica->getId());
@@ -635,7 +673,7 @@ class OperatoriController extends Controller
       $outcome = $outcomeForm->getData();
       $pratica->setEsito($outcome->getOutcome());
       $pratica->setMotivazioneEsito($outcome->getMessage());
-      foreach ($outcome->getAttachments() as $attachment){
+      foreach ($outcome->getAttachments() as $attachment) {
         if (isset($attachment['id'])) {
           $allegatoOperatore = $allegatoOperatoreRepository->findOneBy(['id' => $attachment['id']]);
           if ($allegatoOperatore instanceof AllegatoOperatore) {
@@ -899,7 +937,10 @@ class OperatoriController extends Controller
   private function setupCommentForm()
   {
     $data = array();
-    $formBuilder = $this->createFormBuilder($data)
+    $translator = $this->get('translator');
+
+    if ($this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
+      $formBuilder = $this->createFormBuilder($data)
         ->add('message', TextareaType::class, [
           'label' => 'Testo del messaggio',
           'required' => true,
@@ -908,16 +949,42 @@ class OperatoriController extends Controller
             'class' => 'form-control input-inline',
           ],
         ])
-        ->add('visibility', CheckboxType::class, [
-          'label'=>'Nota privata?',
-          'required' => false
+        ->add('applicant', SubmitType::class, [
+          'label' => $translator->trans('operatori.messaggi.invia'),
+          'attr' => [
+            'class' => 'btn btn-primary',
+            'title' => $translator->trans('operatori.messaggi.pubblico'),
+          ],
+        ])
+        ->add('internal', SubmitType::class, [
+          'label' => $translator->trans('operatori.messaggi.aggiungi_nota_privata'),
+          'attr' => [
+            'class' => 'btn btn-secondary',
+            'title' => $translator->trans('operatori.messaggi.privato'),
+          ],
+        ]);
+    } else {
+      $formBuilder = $this->createFormBuilder($data)
+        ->add('text', TextareaType::class, [
+          'label' => false,
+          'required' => true,
+          'attr' => [
+            'rows' => '5',
+            'class' => 'form-control input-inline',
+          ],
+        ])
+        ->add('createdAt', HiddenType::class, ['data' => time()])
+        ->add('creator', HiddenType::class, [
+          'data' => $this->getUser()->getFullName(),
         ])
         ->add('save', SubmitType::class, [
-          'label' => 'Invia',
+          'label' => $translator->trans('operatori.aggiungi_commento'),
           'attr' => [
             'class' => 'btn btn-primary',
           ],
         ]);
+    }
+
     return $formBuilder->getForm();
   }
 
