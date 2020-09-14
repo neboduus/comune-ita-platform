@@ -228,6 +228,12 @@ export default class FormioCalendar extends Base {
         error: function (jqXhr, textStatus, errorMessage) { // error callback
           alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
           console.log(errorMessage);
+        }, complete: function (){
+          //Click available hour button only is visible for auto selection
+          var btnHourActive = $('.btn-ora.available.active');
+          if(btnHourActive.length > 0 && btnHourActive.is(":visible")){
+            btnHourActive.click();
+          }
         }
       });
   }
