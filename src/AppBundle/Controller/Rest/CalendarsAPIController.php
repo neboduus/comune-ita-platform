@@ -111,6 +111,30 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     description="Retreive Calendar's availabilities",
    * )
    *
+   *  @SWG\Parameter(
+   *      name="available",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get only available dates: available dates includes at least one available slot"
+   *  )
+   *
+   * @SWG\Parameter(
+   *      name="from_time",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get availabilities from given date"
+   *  )
+   *
+   * @SWG\Parameter(
+   *      name="to_time",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get availabilities to given date"
+   *  )
+   *
    * @SWG\Response(
    *     response=404,
    *     description="Calendar not found"
@@ -123,6 +147,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarAvailabilitiesAction($id, Request $request)
   {
+    $excludeUnavailable = $request->get('available');
     $startDate = $request->query->get('from_time');
     $endDate = $request->query->get('to_time');
     try {
@@ -159,6 +184,18 @@ class CalendarsAPIController extends AbstractFOSRestController
         }
       }
 
+      if(isset($excludeUnavailable)) {
+        $availableAvailabilities = [];
+        foreach ($availabilities as $availability) {
+
+          if (!empty($this->meetingService->getAvailabilitiesByDate($calendar, new DateTime($availability), false, true))) {
+            $availableAvailabilities[] = $availability;
+          }
+        }
+        return $this->view(array_values($availableAvailabilities), Response::HTTP_OK);
+      }
+
+
       return $this->view(array_values($availabilities), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -168,6 +205,22 @@ class CalendarsAPIController extends AbstractFOSRestController
   /**
    * Retreive a Calendar availabilities by Date
    * @Rest\Get("/{id}/availabilities/{date}", name="calendar-day-availabilities_api_get")
+   *
+   * @SWG\Parameter(
+   *      name="all",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get all availabilities apart from calendar configurations"
+   *  )
+   *
+   * @SWG\Parameter(
+   *      name="available",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get only available slots"
+   *  )
    *
    * @SWG\Response(
    *     response=200,
@@ -188,6 +241,14 @@ class CalendarsAPIController extends AbstractFOSRestController
   public function getCalendarAvailabilitiesByDateAction($id, $date, Request $request)
   {
     $allAvailabilities = strtolower($request->get('all') == 'true') ? true : false;
+    $excludeUnavailable = $request->get('available');
+
+    try {
+      $inputDate = new DateTime($date);
+    } catch (\Exception $e)
+    {
+      return $this->view( 'Invalid parameter. ' . $date . ' is not a valid date' , Response::HTTP_BAD_REQUEST);
+    }
 
     try {
       /** @var OpeningHour[] $openingHours */
@@ -197,66 +258,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      try {
-        $inputDate = new DateTime($date);
-      } catch (\Exception $e)
-      {
-        return $this->view( 'Invalid parameter. ' . $date . ' is not a valid date' , Response::HTTP_BAD_REQUEST);
-      }
-
-      $slots = array();
-
-      // Retrieve all meetings of a given calendar in a given day grouped by from_time and to_time
-      $_meetings = $this->em->createQueryBuilder()
-        ->select('count(meeting.fromTime) as count', 'meeting.fromTime as start_time', 'meeting.toTime as end_time')
-        ->from('AppBundle:Meeting', 'meeting')
-        ->where('meeting.calendar = :calendar')
-        ->andWhere('meeting.fromTime >= :startDate')
-        ->andWhere('meeting.toTime < :endDate')
-        ->andWhere ('meeting.status != :refused')
-        ->andWhere ('meeting.status != :cancelled')
-        ->setParameter('refused', Meeting::STATUS_REFUSED)
-        ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
-        ->setParameter('calendar', $calendar)
-        ->setParameter('startDate', (new DateTime($date))->setTime(0, 0, 0))
-        ->setParameter('endDate', (new DateTime($date))->setTime(23, 59, 59))
-        ->groupBy('meeting.fromTime', 'meeting.toTime')
-        ->getQuery()->getResult();
-
-      // Set meetings key (Format: start_time-end_time-count)
-      $meetings = [];
-      foreach ($_meetings as $meeting) {
-        $meetings[$meeting['start_time']->format('H:i') . '-' . $meeting['end_time']->format('H:i')] = $meeting;
-      }
-
-      // Retrieve calendar slots by input date
-      foreach ($openingHours as $openingHour) {
-        if (in_array($inputDate->format('Y-m-d'), $this->meetingService->explodeDays($openingHour, $allAvailabilities)) && $openingHour->getStartDate() <= $inputDate && $openingHour->getEndDate() >= $inputDate) {
-          $slots = array_merge($slots, $this->meetingService->explodeMeetings($openingHour, $inputDate));
-        }
-      }
-      ksort($slots);
-
-      // Set availability of slots
-      foreach ($slots as $key => $day) {
-        if (array_key_exists($key, $meetings)) {
-          $slots[$key]['availability'] = $meetings[$key]['count'] >= $slots[$key]['slots_available'] ? false : true;
-          $slots[$key]['slots_available'] = max($slots[$key]['slots_available'] - $meetings[$key]['count'], 0);
-
-        } else {
-          if ($allAvailabilities) {
-            $noticeInterval = new DateInterval('PT0H');
-          } else {
-            $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
-          }
-          $now = (new DateTime())->add($noticeInterval)->format('Y-m-d:H:i');
-          $start = (\DateTime::createFromFormat('Y-m-d:H:i', $day['date'] . ':' . $day['start_time']))->format('Y-m-d:H:i');
-          if ($start <= $now)
-            $slots[$key] = $slots[$key] + ['availability' => false];
-          else
-            $slots[$key] = $slots[$key] + ['availability' => true];
-        }
-      }
+      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable));
 
       return $this->view(array_values($slots), Response::HTTP_OK);
     } catch (\Exception $e) {
