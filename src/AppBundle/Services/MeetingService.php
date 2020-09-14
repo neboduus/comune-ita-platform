@@ -4,6 +4,7 @@
 namespace AppBundle\Services;
 
 
+use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
 use DateInterval;
@@ -631,7 +632,75 @@ class MeetingService
         $meeting->getName(),
         $message,
         $this->translator->trans('meetings.email.invalid_meeting.subject'),
-        $ente);
+        $ente,
+        []);
     }
+  }
+
+  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false) {
+    /** @var OpeningHour[] $openingHours */
+    $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $calendar]);
+
+    $start = clone($date)->setTime(0, 0, 0);
+    $end = clone($date)->setTime(23, 59, 59);
+
+    $slots = array();
+
+    $_meetings = $this->entityManager->createQueryBuilder()
+      ->select('count(meeting.fromTime) as count', 'meeting.fromTime as start_time', 'meeting.toTime as end_time')
+      ->from('AppBundle:Meeting', 'meeting')
+      ->where('meeting.calendar = :calendar')
+      ->andWhere('meeting.fromTime >= :startDate')
+      ->andWhere('meeting.toTime < :endDate')
+      ->andWhere ('meeting.status != :refused')
+      ->andWhere ('meeting.status != :cancelled')
+      ->setParameter('refused', Meeting::STATUS_REFUSED)
+      ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
+      ->setParameter('calendar', $calendar)
+      ->setParameter('startDate', $start)
+      ->setParameter('endDate', $end)
+      ->groupBy('meeting.fromTime', 'meeting.toTime')
+      ->getQuery()->getResult();
+
+    // Set meetings key (Format: start_time-end_time-count)
+    $meetings = [];
+    foreach ($_meetings as $meeting) {
+      $meetings[$meeting['start_time']->format('H:i') . '-' . $meeting['end_time']->format('H:i')] = $meeting;
+    }
+
+    // Retrieve calendar slots by input date
+    foreach ($openingHours as $openingHour) {
+      if (in_array($date->format('Y-m-d'), $this->explodeDays($openingHour, $all)) && $openingHour->getStartDate() <= $date && $openingHour->getEndDate() >= $date) {
+        $slots = array_merge($slots, $this->explodeMeetings($openingHour, $date));
+      }
+    }
+    ksort($slots);
+
+    $availableSlots = [];
+    // Set availability of slots
+    foreach ($slots as $key => $day) {
+      if (array_key_exists($key, $meetings)) {
+        $slots[$key]['availability'] = $meetings[$key]['count'] >= $slots[$key]['slots_available'] ? false : true;
+        $slots[$key]['slots_available'] = max($slots[$key]['slots_available'] - $meetings[$key]['count'], 0);
+
+      } else {
+        if ($all) {
+          $noticeInterval = new DateInterval('PT0H');
+        } else {
+          $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
+        }
+        $now = (new DateTime())->add($noticeInterval)->format('Y-m-d:H:i');
+        $start = (\DateTime::createFromFormat('Y-m-d:H:i', $day['date'] . ':' . $day['start_time']))->format('Y-m-d:H:i');
+        if ($start <= $now)
+          $slots[$key] = $slots[$key] + ['availability' => false];
+        else
+          $slots[$key] = $slots[$key] + ['availability' => true];
+        if ($slots[$key]['availability'] == true) {
+          $availableSlots[$key] = $slots[$key];
+        }
+      }
+    }
+    if ($exludeUnavailable) return $availableSlots;
+    else return $slots;
   }
 }
