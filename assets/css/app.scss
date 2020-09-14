@@ -171,3 +171,22 @@ $primary-b: 74;
   }
 }
 
+
+  @media screen {
+    #pratica-summary{
+    .d-preview-calendar{
+      display: block;
+    }
+      .d-preview-calendar-none{
+        display: none;
+      }
+  }
+    .d-preview-calendar{
+      display: none;
+    }
+    .d-preview-calendar-none{
+      display: block;
+    }
+}
+
+

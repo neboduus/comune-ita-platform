@@ -51,8 +51,9 @@ export default class FormioCalendar extends Base {
       }
     });
     // Calling super.render will wrap it html as a component.
-    return super.render(`<div id="calendar-container-${this.id}" class="slot-calendar"><div class="row"><div class="col-12 col-md-6"><h6>${this.component.label}</h6>
-<div  class="date-picker"></div></div><div class="col-12 col-md-6"><div class="row" id="slot-picker"></div></div></div></div>${content}`);
+    return super.render(`<div id="calendar-container-${this.id}" class="slot-calendar d-print-none d-preview-calendar-none"><div class="row"><div class="col-12 col-md-6"><h6>${this.component.label}</h6>
+<div class="date-picker"></div></div><div class="col-12 col-md-6"><div class="row" id="slot-picker"></div></div></div></div>${content}
+<div id="date-picker-print"></div>`);
   }
 
   /**
@@ -92,14 +93,13 @@ export default class FormioCalendar extends Base {
     $.datepicker.setDefaults($.datepicker.regional['it']);
 
     if (calendarID !== '' && calendarID != null) {
-      $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities',
+      $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities?available',
         {
           dataType: 'json', // type of response data
           beforeSend: function(){
             self.container.find('.date-picker').append(self.loaderTpl);
           },
           success: function (data, status, xhr) {   // success callback function
-
             $('#loader').remove();
             self.calendar = self.container.find('.date-picker').datepicker({
               minDate: new Date(data.sort()[0]),
@@ -108,11 +108,14 @@ export default class FormioCalendar extends Base {
               onSelect: function(dateText) {
                 self.date = dateText;
                 self.getDaySlots();
+                var slotText = self.slot ? ' alle ore '+ self.slot : '';
+                $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' '+ slotText+'</div>')
+
               },
               beforeShowDay: function(date){
                 var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
                 return [ data.indexOf(string) !=  -1 ]
-              }
+              },
             });
 
             if (self.date) {
@@ -120,11 +123,18 @@ export default class FormioCalendar extends Base {
               self.calendar.datepicker("setDate", parsedDate.toDate());
               self.getDaySlots();
             }
-
           },
           error: function (jqXhr, textStatus, errorMessage) { // error callback
             alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
             console.log(errorMessage);
+          }, complete: function () {
+            //Auto-click current selected day
+            if(!self.date)
+            $('a.ui-state-active').click();
+
+            if(self.date && self.slot)
+            $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
+
           }
         });
     }
@@ -157,6 +167,9 @@ export default class FormioCalendar extends Base {
     this.slot = explodedValue[1];
   }
 
+
+
+
   getDaySlots(){
     let self = this,
         calendarID = this.component.calendarId,
@@ -174,29 +187,43 @@ export default class FormioCalendar extends Base {
         },
         success: function (data, status, xhr) {   // success callback function
           $('#loader').remove();
-          $(data).each(function( index, element ) {
-            var cssClass = 'available';
-            if (!element.availability) {
-              cssClass = 'disabled';
-            }
+          var countAllElmAvailables = data.filter(function(item){
+            return item.availability;
+          }).length;
 
-            let key = element.start_time + '-' + element.end_time;
-            if (key == self.slot) {
-              cssClass = cssClass + ' active';
-            }
+          if(countAllElmAvailables === 0){
+            self.container.find('#slot-picker').html('<div class="callout warning">\n' +
+              '  <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use></svg>Attenzione</div>\n' +
+              '  <p>Non è possibile prendere appuntamento in questa giornata, tutti gli appuntamenti a disposizione sono stati già prenotati</p>\n' +
+              '</div>');
+          }else{
+            $(data).each(function( index, element ) {
+              var cssClass = 'available';
+              if (!element.availability) {
+                cssClass = 'disabled';
+              }
 
-            html = html.concat('<div class="col-6"><button type="button" data-slot="' + key +'" class="btn btn-ora p-0 '+  cssClass +'">'+ key +'</button></div>');
+              let key = element.start_time + '-' + element.end_time;
+              if (key == self.slot) {
+                  cssClass = cssClass + ' active';
+              }
 
-          });
-          self.container.find('#slot-picker').html('<div class="col-12"><h6>Orari disponibili il ' + self.date + '</h6></div>' + html);
+              html = html.concat('<div class="col-6"><button type="button" data-slot="' + key +'" class="btn btn-ora p-0 '+  cssClass +'">'+ key +'</button></div>');
 
-          $('.btn-ora.available').on('click', function (e) {
-            e.preventDefault();
-            $('.btn-ora.active').removeClass('active');
-            $(this).addClass('active');
-            self.slot = $(this).data('slot');
-            self.updateValue();
-          })
+            });
+            self.container.find('#slot-picker').html('<div class="col-12"><h6>Orari disponibili il ' + self.date + '</h6></div>' + html);
+
+            $('.btn-ora.available').on('click', function (e) {
+              e.preventDefault();
+              $('.btn-ora.active').removeClass('active');
+              $(this).addClass('active');
+              self.slot = $(this).data('slot');
+              self.updateValue();
+              $('#date-picker-print').html('<div class="d-print-block d-preview-calendar d-preview-calendar-none"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
+
+            })
+          }
+
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
           alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
@@ -204,4 +231,5 @@ export default class FormioCalendar extends Base {
         }
       });
   }
+
 }

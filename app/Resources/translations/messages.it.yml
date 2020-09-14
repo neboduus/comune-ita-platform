@@ -157,7 +157,7 @@ pratica:
     luogo: 'L&igrave;'
     riferimento_sdc: 'Riferimento in Stanza del cittadino:'
   dettaglio:
-    data_ora_presentazione: 'Data e ora di presentazione'
+    data_ora_presentazione: 'Richiesta presentata il'
     alle: 'alle'
     stato: 'Stato corrente'
     servizio: 'Servizio'

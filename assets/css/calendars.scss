@@ -47,3 +47,11 @@
 .my-legend a {
   color: #777;
 }
+
+#slot-picker{
+  button.disabled{
+    pointer-events: none;
+    background: linear-gradient(to top left, #fff calc(50% - 2px), #d9364f, #fff calc(50% + 2px));
+    color: #4a4a4a;
+  }
+}
