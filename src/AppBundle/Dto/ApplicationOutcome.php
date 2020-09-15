@@ -76,7 +76,7 @@ class ApplicationOutcome
    * @param string $message
    * @return ApplicationOutcome
    */
-  public function setMessage(string $message): ApplicationOutcome
+  public function setMessage(?string $message): ApplicationOutcome
   {
     $this->message = $message;
 
