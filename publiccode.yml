@@ -124,8 +124,9 @@ description:
     apiDocumentation: 'https://stanzadelcittadino.it/comune-di-ala/api/doc'
     documentation: 'https://manuale-stanza-del-cittadino.readthedocs.io/it/latest/'
     shortDescription: >-
-      Progettato con il Team Digitale utilizzando lo “starter KIT per il sito di
-      un comune
+      Creazione moduli compilabili online e pratiche digitali con
+      backoffice per gli operatori. Gestione Appuntamenti presso gli uffici o 
+      online.
     longDescription: >
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
       asilo nido), verificare lo stato delle pratiche, ricevere comunicazioni da
@@ -142,28 +143,22 @@ description:
       Trentini - ANCI Trentino, che accompagna i comuni nella revisione dei
       servizi al cittadino in un’ottica digitale (digital first)
     features:
-      - Interfaccia responsive (Bootstrap Italia), conforme Linee Guida di design per i servizi web della PA
-      - Autenticazione con SPID
-      - Integrazione con PagoPA attraverso MyPAY
-      - Meccanismo di compilazione on-line dei moduli a step
-      - >-
-        Gestione completa dell’iter: invio, presa in carico, risposta al cittadino,
-        richiesta integrazioni
-      - >-
-        Controllo della validità di firme digitali e formati dei file, per la
-        conservazione sostitutiva
-      - >-
-        Generazione automatica delle ricevuta di invio dell’istanza, in formato
-        pdf
-      - >-
-        Integrazione con il sito comunale Comunweb: prossime scadenze e
-        descrizione dei servizi
-      - >-
-        Integrazione con alcuni dei sistemi di protocollazione più diffusi
-        presso i comuni (tra cui, PiTre)
-      - Creazione da backend di form complessi, a piu' step, con integrazione di API esterne
-      - >-
-        Integrazione completa con form.io per generazione dinamica dei moduli online
+      - Gestione Appuntamenti, per singole persone, per Uffici e per sportelli con più operatori.
+      - Possibilità di approvare/spostare appuntamenti e gestire orari multipli di apertura.
+      - Interfaccia responsive (Bootstrap Italia) conforme Linee Guida di design per i servizi web della PA
+      - Autenticazione con SPID o Social e possibilità di aprire servizi anche senza autenticazione
+      - Possibilità di scrivere al cittadino dal backoffice (con ricevuta di presa visione e PEC)
+      - Integrazione con PagoPA attraverso MyPAY o altri gateway di pagamento regionali
+      - Meccanismo di compilazione on-line dei moduli a step, con possibilità di salvare bozze 
+      - Gestione completa dell’iter: invio, presa in carico, risposta al cittadino, richiesta integrazioni
+      - Controllo della validità di firme digitali e formati dei file, per la conservazione sostitutiva
+      - Generazione automatica del modulo compilato con ricevuta di invio dell’istanza, in formato PDF
+      - Integrazione con il sito comunale Comunweb: prossime scadenze e descrizione dei servizi
+      - Integrazione con i sistemi di protocollazione più diffusi: PiTre, Infor, Maggioli.
+      - Possibilità di raccogliere servizi diversi in unico fascicolo
+      - Pubblicazione documenti nell'area riservata del cittadino (cert. fiscali, tassa rifiuti, multe)
+      - Creazione da parte di tecnici comunali di form complessi, con integrazione di API esterne
+      - Integrazione completa con software open-source form.io per generazione dinamica dei moduli online
     screenshots:
       - images/sdc001.jpg
       - images/sdc002.jpg
@@ -172,3 +167,4 @@ description:
       - images/sdc005.jpg
       - images/sdc006.jpg
       - images/sdc007.jpg
+
