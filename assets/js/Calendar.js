@@ -109,7 +109,7 @@ export default class FormioCalendar extends Base {
                 self.date = dateText;
                 self.getDaySlots();
                 var slotText = self.slot ? ' alle ore '+ self.slot : '';
-                $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' '+ slotText+'</div>')
+                $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>L\' appuntamento selezionato è: </b> '+ self.date +' '+ slotText+'</div>')
 
               },
               beforeShowDay: function(date){
@@ -133,7 +133,7 @@ export default class FormioCalendar extends Base {
             $('a.ui-state-active').click();
 
             if(self.date && self.slot)
-            $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
+            $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>L\' appuntamento selezionato è: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
 
           }
         });
@@ -219,7 +219,7 @@ export default class FormioCalendar extends Base {
               $(this).addClass('active');
               self.slot = $(this).data('slot');
               self.updateValue();
-              $('#date-picker-print').html('<div class="d-print-block d-preview-calendar d-preview-calendar-none"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
+              $('#date-picker-print').html('<div class="d-print-block d-preview-calendar d-preview-calendar-none"><b>L\' appuntamento selezionato è: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
 
             })
           }
