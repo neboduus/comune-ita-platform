@@ -161,10 +161,6 @@ export default class FormioCalendar extends Base {
     return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId +')';
   }
 
-  getData(){
-    return this.date
-  }
-
   /**
    * Set the value of the component into the dom elements.
    *
