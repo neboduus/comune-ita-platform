@@ -53,7 +53,7 @@ export default class FormioCalendar extends Base {
     // Calling super.render will wrap it html as a component.
     return super.render(`<div id="calendar-container-${this.id}" class="slot-calendar d-print-none d-preview-calendar-none"><div class="row"><div class="col-12 col-md-6"><h6>${this.component.label}</h6>
 <div class="date-picker"></div></div><div class="col-12 col-md-6"><div class="row" id="slot-picker"></div></div></div></div>${content}
-<div id="date-picker-print"></div>`);
+<div id="date-picker-print" class="d-print-block d-preview-calendar"></div>`);
   }
 
   /**
@@ -92,7 +92,15 @@ export default class FormioCalendar extends Base {
 
     $.datepicker.setDefaults($.datepicker.regional['it']);
 
+
     if (calendarID !== '' && calendarID != null) {
+      //Aggiungo timeout per aspettare il caricamento completo del calendario
+      setTimeout(function (){
+        if(self.date && self.slot){
+          $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot)
+        }
+      },1000)
+
       $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities?available',
         {
           dataType: 'json', // type of response data
@@ -109,8 +117,7 @@ export default class FormioCalendar extends Base {
                 self.date = dateText;
                 self.getDaySlots();
                 var slotText = self.slot ? ' alle ore '+ self.slot : '';
-                $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' '+ slotText+'</div>')
-
+                $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' '+ slotText)
               },
               beforeShowDay: function(date){
                 var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
@@ -126,17 +133,19 @@ export default class FormioCalendar extends Base {
           },
           error: function (jqXhr, textStatus, errorMessage) { // error callback
             alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
-            console.log(errorMessage);
           }, complete: function () {
             //Auto-click current selected day
-            if(!self.date)
-            $('a.ui-state-active').click();
+            var dayActive = $('a.ui-state-active');
+            if(!self.date && dayActive.length > 0){
+              dayActive.click();
+            }
 
             if(self.date && self.slot)
-            $('#date-picker-print').html('<div class="d-print-block d-preview-calendar"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
+            $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot)
 
           }
         });
+
     }
 
     // Allow basic component functionality to attach like field logic and tooltips.
@@ -150,6 +159,10 @@ export default class FormioCalendar extends Base {
    */
   getValue() {
     return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId +')';
+  }
+
+  getData(){
+    return this.date
   }
 
   /**
@@ -166,8 +179,6 @@ export default class FormioCalendar extends Base {
     this.date = explodedValue[0];
     this.slot = explodedValue[1];
   }
-
-
 
 
   getDaySlots(){
@@ -219,15 +230,14 @@ export default class FormioCalendar extends Base {
               $(this).addClass('active');
               self.slot = $(this).data('slot');
               self.updateValue();
-              $('#date-picker-print').html('<div class="d-print-block d-preview-calendar d-preview-calendar-none"><b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot +'</div>')
-
+              $('#date-picker-print').addClass('d-preview-calendar-none');
+              $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot)
             })
           }
 
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
           alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
-          console.log(errorMessage);
         }, complete: function (){
           //Click available hour button only is visible for auto selection
           var btnHourActive = $('.btn-ora.available.active');
@@ -237,5 +247,6 @@ export default class FormioCalendar extends Base {
         }
       });
   }
+
 
 }
