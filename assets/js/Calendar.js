@@ -142,7 +142,6 @@ export default class FormioCalendar extends Base {
 
             if(self.date && self.slot)
             $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot)
-
           }
         });
 
