@@ -94,13 +94,6 @@ export default class FormioCalendar extends Base {
 
 
     if (calendarID !== '' && calendarID != null) {
-      //Aggiungo timeout per aspettare il caricamento completo del calendario
-      setTimeout(function (){
-        if(self.date && self.slot){
-          $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot)
-        }
-      },1000)
-
       $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities',
         {
           dataType: 'json', // type of response data
@@ -173,9 +166,13 @@ export default class FormioCalendar extends Base {
     if (!value) {
       return;
     }
+
     let explodedValue = value.replace(")", "").replace(' (', " @ ").replace(/\//g, "-").split(" @ ");
     this.date = explodedValue[0];
     this.slot = explodedValue[1];
+    if(this.date && this.slot){
+      $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ this.date +' alle ore '+ this.slot)
+    }
   }
 
 
