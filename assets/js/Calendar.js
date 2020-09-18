@@ -101,7 +101,7 @@ export default class FormioCalendar extends Base {
         }
       },1000)
 
-      $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities?available',
+      $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities',
         {
           dataType: 'json', // type of response data
           beforeSend: function(){
@@ -110,7 +110,7 @@ export default class FormioCalendar extends Base {
           success: function (data, status, xhr) {   // success callback function
             $('#loader').remove();
             self.calendar = self.container.find('.date-picker').datepicker({
-              minDate: new Date(data.sort()[0]),
+              minDate: new Date(data.sort((a, b) => a.date.localeCompare(b.date))[0]),
               firstDay: 1,
               dateFormat: 'dd-mm-yy',
               onSelect: function(dateText) {
@@ -121,7 +121,10 @@ export default class FormioCalendar extends Base {
               },
               beforeShowDay: function(date){
                 var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-                return [ data.indexOf(string) !=  -1 ]
+                if(data.some(e => e.available === false && e.date === string)){
+                  return [ data.some(e => e.date === string) , 'not-available']
+                }
+                return [ (data.some(e => e.date === string)) ]
               },
             });
 
