@@ -60,7 +60,7 @@ $(document).ready(function () {
     header: {
       left: 'prev,today,next',
       center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay, listWeek'
+      right: 'dayGridMonth,timeGridWeek,timeGridDay, listMonth, listWeek, listDay'
     },
     slotDuration: calculateSlot(),
     contentHeight: 600,
@@ -97,6 +97,24 @@ $(document).ready(function () {
   });
 
   calendar.render();
+  $('.fc-listDay-button').hide()
+  $('.fc-listWeek-button').hide()
+
+  $('.fc-dayGridMonth-button').on('click', function () {
+    $('.fc-listDay-button').hide()
+    $('.fc-listWeek-button').hide()
+    $('.fc-listMonth-button').show()
+  })
+  $('.fc-timeGridWeek-button').on('click', function () {
+    $('.fc-listDay-button').hide()
+    $('.fc-listMonth-button').hide()
+    $('.fc-listWeek-button').show()
+  })
+  $('.fc-timeGridDay-button').on('click', function () {
+    $('.fc-listWeek-button').hide()
+    $('.fc-listMonth-button').hide()
+    $('.fc-listDay-button').show()
+  })
 });
 
 
@@ -232,9 +250,7 @@ function getSlots(date, start, callback) {
         // If start is defined get right slot
         if (start && start === response[i]['start_time']) slot = value;
         else if (!slot && !start && available) slot = value;
-        if (!available)
-          $("#slots").append("<option value='" + value + "'disabled>" + value + "</option>");
-        else
+        if (available)
           $("#slots").append("<option value='" + value + "'>" + value + "</option>");
       }
       callback(slot);
