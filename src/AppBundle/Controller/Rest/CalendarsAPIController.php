@@ -111,7 +111,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     description="Retreive Calendar's availabilities",
    * )
    *
-   *  @SWG\Parameter(
+   * @SWG\Parameter(
    *      name="available",
    *      in="query",
    *      type="string",
@@ -147,7 +147,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarAvailabilitiesAction($id, Request $request)
   {
-    $excludeUnavailable = $request->get('available');
     $startDate = $request->query->get('from_time');
     $endDate = $request->query->get('to_time');
     try {
@@ -184,16 +183,12 @@ class CalendarsAPIController extends AbstractFOSRestController
         }
       }
 
-      if(isset($excludeUnavailable)) {
-        $availableAvailabilities = [];
-        foreach ($availabilities as $availability) {
+      $availableAvailabilities = [];
+      foreach ($availabilities as $availability) {
 
-          if (!empty($this->meetingService->getAvailabilitiesByDate($calendar, new DateTime($availability), false, true))) {
-            $availableAvailabilities[] = $availability;
-          }
-        }
-        return $this->view(array_values($availableAvailabilities), Response::HTTP_OK);
+        $availableAvailabilities[] = ['date' => $availability, 'available' => !empty($this->meetingService->getAvailabilitiesByDate($calendar, new DateTime($availability), false, true))];
       }
+      return $this->view(array_values($availableAvailabilities), Response::HTTP_OK);
 
 
       return $this->view(array_values($availabilities), Response::HTTP_OK);
@@ -245,9 +240,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     try {
       $inputDate = new DateTime($date);
-    } catch (\Exception $e)
-    {
-      return $this->view( 'Invalid parameter. ' . $date . ' is not a valid date' , Response::HTTP_BAD_REQUEST);
+    } catch (\Exception $e) {
+      return $this->view('Invalid parameter. ' . $date . ' is not a valid date', Response::HTTP_BAD_REQUEST);
     }
 
     try {
