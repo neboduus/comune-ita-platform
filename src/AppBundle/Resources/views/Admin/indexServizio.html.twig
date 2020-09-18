@@ -51,15 +51,30 @@
                 <td data-title="Nome" class="min-h-65">
                   <a class="" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
                 </td>
-                <td class="min-h-65"><a class="btn btn-secondary btn-xs clone" href="#"
-                       data-url="{{ absolute_url(path('service_api_get', { 'id': item.id })) }}"
-                       data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right"
-                       data-html="true" title="Url servizio"
-                       data-content="Copia l'URL ed incollala nel form clona servizio da url.">
-                    <svg class="icon icon-sm icon-white">
-                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-copy"></use>
-                    </svg>
-                    <span>Copia URL</span></a>
+                <td class="min-h-65">
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Copia
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item clone" href="#"
+                         data-url="{{ absolute_url(path('servizi_show', { 'slug': item.slug })) }}"
+                         data-container="body" data-toggle="popover" data-trigger="hover"
+                         data-placement="right"
+                         data-html="true" title="Url pubblico del servizio"
+                         data-content="Copia l'URL pubblico del servizio.">
+                        Url pubblico
+                      </a>
+                      <a class="dropdown-item clone" href="#"
+                         data-url="{{ absolute_url(path('service_api_get', { 'id': item.id })) }}"
+                         data-container="body" data-toggle="popover" data-trigger="hover"
+                         data-placement="right"
+                         data-html="true" title="Url servizio"
+                         data-content="Copia l'URL ed incollala nel form Importa servizio da remoto.">
+                        Url Api
+                      </a>
+                    </div>
+                  </div>
                 </td>
                 <td data-title="Gruppo">{% if item.serviceGroup %}{{ item.serviceGroup.name }}{% endif %}</td>
                 <td data-title="Stato" class="min-h-65">
@@ -73,7 +88,8 @@
                   {% endif %}
                 </td>
                 <td data-title="Azioni" class="min-h-65 actions">
-                  <a class="btn btn-warning btn-xs mb-1" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
+                  <a class="btn btn-warning btn-xs mb-1"
+                     href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
                     <svg class="icon icon-sm icon-white">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
                     </svg>

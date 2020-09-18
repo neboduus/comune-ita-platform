@@ -82,6 +82,7 @@ gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
   nome: 'Nome'
   descrizione: 'Descrizione'
+  url: 'Url'
   protocollazione_fascicoli: 'Protocollazione in fascicoli'
   azioni: 'Azioni'
   modifica: 'Modifica'
