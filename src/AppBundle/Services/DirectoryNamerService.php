@@ -55,7 +55,8 @@ class DirectoryNamerService implements DirectoryNamerInterface
       'allegato_scia',
       'richiesta_integrazione',
       'integrazione',
-      'ritiro']
+      'ritiro',
+        'messaggio']
     );
   }
 

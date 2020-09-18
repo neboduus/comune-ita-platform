@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Dto\Application;
 use AppBundle\Dto\ApplicationOutcome;
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormPratica;
@@ -579,40 +580,39 @@ class OperatoriController extends Controller
     $this->checkUserCanAccessPratica($user, $pratica);
     $tab = $request->query->get('tab');
 
+    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
+
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
 
-    $form = $this->setupCommentForm();
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted()) {
+    $messageForm = $this->setupCommentForm($pratica);
+    $messageForm->handleRequest($request);
+    if ($messageForm->isSubmitted()) {
       // Check if application detail feature is enabled
       if ($this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
-        $visibility = $form->getClickedButton()->getName();
+        $visibility = $messageForm->getClickedButton()->getName();
 
         // Funzionalità non disponibile agli utenti anonimi
         if ($pratica->getUser()->getIdp() == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
-          $form->addError(new FormError($translator->trans('operatori.messaggi.non_disponibile_anonimo')));
+          $messageForm->addError(new FormError($translator->trans('operatori.messaggi.non_disponibile_anonimo')));
         }
 
         // E' necessario prendere in carico la pratica per inviare messaggi pubblici
         if (!$pratica->getOperatore() && $visibility == Message::VISIBILITY_APPLICANT) {
-          $form->addError(new FormError($translator->trans('operatori.messaggi.prendi_in_carico_per_abilitare')));
+          $messageForm->addError(new FormError($translator->trans('operatori.messaggi.prendi_in_carico_per_abilitare')));
         }
 
-        if ($form->isValid()) {
-          $data = $form->getData();
+        if ($messageForm->isValid()) {
+          /** @var Message $message */
+          $message = $messageForm->getData();
+
           $callToActions = [
             ['label' => 'view', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
             ['label' => 'reply', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
           ];
 
-          $message = new Message();
-          $message->setAuthor($user);
-          $message->setApplication($pratica);
           $message->setProtocolRequired(false);
           $message->setVisibility($visibility);
-          $message->setMessage($data['message']);
           $message->setCallToAction($callToActions);
 
           $em = $this->getDoctrine()->getManager();
@@ -648,7 +648,7 @@ class OperatoriController extends Controller
         }
 
       } else {
-        $commento = $form->getData();
+        $commento = $messageForm->getData();
         $pratica->addCommento($commento);
         $this->getDoctrine()->getManager()->flush();
 
@@ -716,7 +716,8 @@ class OperatoriController extends Controller
     return [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
-      'form' => $form->createView(),
+      'messageAttachments' => $attachments,
+      'messageForm' => $messageForm->createView(),
       'outcomeForm' => $outcomeForm->createView(),
       'pratica' => $pratica,
       'user' => $this->getUser(),
@@ -936,35 +937,16 @@ class OperatoriController extends Controller
   /**
    * @return FormInterface
    */
-  private function setupCommentForm()
+  private function setupCommentForm(Pratica $pratica)
   {
     $data = array();
     $translator = $this->get('translator');
 
     if ($this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
-      $formBuilder = $this->createFormBuilder($data)
-        ->add('message', TextareaType::class, [
-          'label' => 'Testo del messaggio',
-          'required' => true,
-          'attr' => [
-            'rows' => '5',
-            'class' => 'form-control input-inline',
-          ],
-        ])
-        ->add('applicant', SubmitType::class, [
-          'label' => $translator->trans('operatori.messaggi.invia'),
-          'attr' => [
-            'class' => 'btn btn-primary',
-            'title' => $translator->trans('operatori.messaggi.pubblico'),
-          ],
-        ])
-        ->add('internal', SubmitType::class, [
-          'label' => $translator->trans('operatori.messaggi.aggiungi_nota_privata'),
-          'attr' => [
-            'class' => 'btn btn-secondary',
-            'title' => $translator->trans('operatori.messaggi.privato'),
-          ],
-        ]);
+      $message = new Message();
+      $message->setApplication($pratica);
+      $message->setAuthor($this->getUser());
+      $form = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
     } else {
       $formBuilder = $this->createFormBuilder($data)
         ->add('text', TextareaType::class, [
@@ -985,9 +967,10 @@ class OperatoriController extends Controller
             'class' => 'btn btn-primary',
           ],
         ]);
+      $form = $formBuilder->getForm();
     }
 
-    return $formBuilder->getForm();
+    return $form;
   }
 
   /**

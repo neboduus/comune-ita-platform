@@ -21,102 +21,123 @@
       {% endfor %}
       {% if feature('feature_application_detail') %}
         {% for message in pratica.messages %}
-        <li class="mb-4">
-          <div class="rounded rounded-lg px-2 py-3 shadow
-          {% if message.visibility == 'internal'%} bg-blanchedalmond
+          <li class="mb-4">
+            <div class="rounded rounded-lg px-2 py-3 shadow
+          {% if message.visibility == 'internal' %} bg-blanchedalmond
           {% elseif message.author == user %} ml-5
           {% else %} bg-aliceblue mr-5
           {% endif %}
           ">
-          <div class="{% if message.author == user %} d-flex flex-row-reverse text-right{% endif %}">
-            <div class="d-inline-block  align-top">
-              <div class="avatar mx-2 {% if message.visibility == 'internal' or message.author != user %} bg-white {% endif %}">
-                <svg class="icon icon-secondary">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
-                </svg>
+              <div class="{% if message.author == user %} d-flex flex-row-reverse text-right{% endif %}">
+                <div class="d-inline-block  align-top">
+                  <div class="avatar mx-2 {% if message.visibility == 'internal' or message.author != user %} bg-white {% endif %}">
+                    <svg class="icon icon-secondary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+                    </svg>
+                  </div>
+                </div>
+                <div class="d-inline-block">
+                  <p class="mb-0 text-secondary">
+                    <b>{{ message.author.fullName }}</b><small>{% if message.visibility == 'internal' %} {{ 'operatori.messaggi.ha_aggiunto_nota_privata' | trans }} {% endif %}</small>
+                  </p>
+                </div>
               </div>
-            </div>
-            <div class="d-inline-block">
-              <p class="mb-0 text-secondary">
-                <b>{{ message.author.fullName }}</b><small>{% if message.visibility == 'internal' %} {{ 'operatori.messaggi.ha_aggiunto_nota_privata' | trans }} {% endif %}</small>
-              </p>
-            </div>
-          </div>
-          <div class="mx-4 {% if message.author == user %} float-right {% endif %}">
-            <p class="my-3">{{ message.message }}</p>
-            {% if message.author == pratica.user %}<img class="d-none" src="{{ path('track_message', {'id':message.id}) }}">{% endif %}
-          </div>
-          <div class="clearfix"></div>
-          {% if message.visibility == 'applicant' %}
-          <div class="d-inline-block collapse-div collapse-left-icon border-0 float-left">
-            <div class="collapse-header">
-              <button class="btn btn-link btn-xs border-top-0 py-1" data-toggle="collapse"
-                      data-target="#info_{{ message.id }}" aria-expanded="false" aria-controls="accordion2">
-                {{ 'operatori.messaggi.info' | trans }}
-              </button>
-            </div>
-          </div>
-          <div id="info_{{ message.id }}" class="collapse p-3">
-            <div class="clearfix"></div>
-            <small class="d-flex justify-content-between">
-              <span class="font-weight-bold">{{ 'operatori.messaggi.inviato' | trans }}:</span>
-              <span>
+              <div class="mx-4 {% if message.author == user %} float-right {% endif %}">
+                <p class="my-3">{{ message.message | raw }}</p>
+                {% if message.author == pratica.user %}<img class="d-none"
+                                                            src="{{ path('track_message', {'id':message.id}) }}">{% endif %}
+              </div>
+              <div class="clearfix"></div>
+              <div class="mx-4 mb-3">
+                {% for attachment in message.attachments %}
+                  <div class="clearfix"></div>
+                  <a class="text-decoration-none d-block"
+                     href="{{ path('allegati_download_operatore', {'allegato': attachment.id}) }}">
+                    <small><i class="fa fa-file mr-2"></i> {{ attachment.description }}</small>
+                  </a>
+                {% endfor %}
+              </div>
+              {% if message.visibility == 'applicant' %}
+                <div class="d-inline-block collapse-div collapse-left-icon border-0 float-left">
+                  <div class="collapse-header">
+                    <button class="btn btn-link btn-xs border-top-0 py-1" data-toggle="collapse"
+                            data-target="#info_{{ message.id }}" aria-expanded="false" aria-controls="accordion2">
+                      {{ 'operatori.messaggi.info' | trans }}
+                    </button>
+                  </div>
+                </div>
+                <div id="info_{{ message.id }}" class="collapse p-3">
+                  <div class="clearfix"></div>
+                  <small class="d-flex justify-content-between">
+                    <span class="font-weight-bold">{{ 'operatori.messaggi.inviato' | trans }}:</span>
+                    <span>
                       {% if message.sentAt %}
                         {{ message.sentAt |date(ocsdc_default_datetime_format) }}
                       {% else %}
                         --
                       {% endif %}
                     </span>
-            </small>
-            <small class="d-flex justify-content-between">
-              <span class="font-weight-bold">{{ 'operatori.messaggi.letto' | trans }}:</span>
-              <span>
+                  </small>
+                  <small class="d-flex justify-content-between">
+                    <span class="font-weight-bold">{{ 'operatori.messaggi.letto' | trans }}:</span>
+                    <span>
                       {% if message.readAt %}
                         {{ message.readAt |date(ocsdc_default_datetime_format) }}
                       {% else %}
                         --
                       {% endif %}
                     </span>
-            </small>
-          </div>
-          {% endif %}
-
-          <div class="d-inline-block float-right">
-            <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
-              {% if not message.sentAt %}
-                <i class="fa fa-check text-100 mx-1"
-                   title="{{ 'operatori.messaggi.creato_il' | trans({'%data%': message.createdAt | date(ocsdc_default_datetime_format) })}}"></i>
-              {% elseif not message.readAt %}
-                <i class="fas fa-check-double text-100 mx-1"
-                   title="{{ 'operatori.messaggi.consegnato_il' | trans({'%data%': message.sentAt | date(ocsdc_default_datetime_format) })}}"></i>
-              {% else %}
-                <i class="fas fa-check-double mx-1" style="color: dodgerblue"
-                   title="{{ 'operatori.messaggi.letto_il' | trans({'%data%': message.readAt | date(ocsdc_default_datetime_format) })}}"></i>
+                  </small>
+                </div>
               {% endif %}
-            </small>
-          </div>
-          <div class="clearfix"></div>
-    </div>
-    </li>
-    {% endfor %}
-      {% endif %}
-  </ul>
-  <div>
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-      {{ form_row(form.message) }}
-    <div class="d-flex justify-content-between">
-      {% if pratica.user.idp == 'anonymous' %}
-        <div>{{ form_widget(form.applicant, {'attr': {'class': 'btn btn-primary', 'disabled': true, 'title': 'operatori.messaggi.non_disponibile_anonimo' | trans}}) }}</div>
-      {% elseif not pratica.operatore%}
-        <div>{{ form_widget(form.applicant, {'attr': {'class': 'btn btn-primary', 'disabled': true, 'title': 'operatori.messaggi.prendi_in_carico_per_abilitare'|trans}}) }}</div>
-      {% else %}
-        <div>{{ form_widget(form.applicant) }}</div>
-      {% endif %}
-      <div>{{ form_widget(form.internal) }}</div>
-    </div>
 
-    {{ form_end(form) }}
+              <div class="d-inline-block float-right">
+                <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
+                  {% if not message.sentAt %}
+                    <i class="fa fa-check text-100 mx-1"
+                       title="{{ 'operatori.messaggi.creato_il' | trans({'%data%': message.createdAt | date(ocsdc_default_datetime_format) }) }}"></i>
+                  {% elseif not message.readAt %}
+                    <i class="fas fa-check-double text-100 mx-1"
+                       title="{{ 'operatori.messaggi.consegnato_il' | trans({'%data%': message.sentAt | date(ocsdc_default_datetime_format) }) }}"></i>
+                  {% else %}
+                    <i class="fas fa-check-double mx-1" style="color: dodgerblue"
+                       title="{{ 'operatori.messaggi.letto_il' | trans({'%data%': message.readAt | date(ocsdc_default_datetime_format) }) }}"></i>
+                  {% endif %}
+                </small>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+          </li>
+        {% endfor %}
+      {% endif %}
+    </ul>
+    <div>
+      {{ form_start(messageForm) }}
+      {{ form_errors(messageForm) }}
+      {{ form_row(messageForm.message, {'attr': {'class': 'summernote'}}) }}
+
+      <div {% if pratica.status < 4000 %} class="d-none" d-none {% endif %}>
+        <div class="form-group mb-0 pb-0">
+          <label>{{ 'operatori.messaggi.allega_label' | trans }}</label>
+          {{ form_row(messageForm.attachments) }}
+        </div>
+        <div id="vueApp2" class="px-2">
+          <message_attachments id="upload_message_attachment"></message_attachments>
+          <small class="form-text text-muted">{{ 'operatori.messaggi.allega_help' | trans }}</small>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between mt-5">
+        {% if pratica.user.idp == 'anonymous' %}
+          <div>{{ form_widget(messageForm.applicant, {'attr': {'disabled': true, 'title': 'operatori.messaggi.non_disponibile_anonimo' | trans}}) }}</div>
+        {% elseif not pratica.operatore %}
+          <div>{{ form_widget(messageForm.applicant, {'attr': {'disabled': true, 'title': 'operatori.messaggi.prendi_in_carico_per_abilitare'|trans}}) }}</div>
+        {% else %}
+          <div>{{ form_widget(messageForm.applicant, {'attr': {'onclick': 'return confirm("Sei sicuro di voler procedere? Se decidi di procedere verrà inviata un email al cittadino all\'indirizzo email %email%")' | trans({ "%email%": pratica.user.emailContatto }) }}) }}</div>
+        {% endif %}
+        <div>{{ form_widget(messageForm.internal) }}</div>
+      </div>
+      {{ form_end(messageForm) }}
+    </div>
   </div>
-</div>
 </div>

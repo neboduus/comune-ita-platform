@@ -61,6 +61,14 @@ Formio.registerComponent('financial_report', FinancialReport);
 
 
 $(document).ready(function () {
+    $('.summernote').summernote({
+      toolbar: [
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['para', ['ul', 'ol']],
+        ['insert', ['link']],
+      ]
+    });
+
 
   if ($('#pratica_select_payment_gateway_payment_type').length) {
     $('button.craue_formflow_button_class_next').on('click', function (e) {

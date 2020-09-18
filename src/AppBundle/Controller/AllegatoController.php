@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\AllegatoScia;
 use AppBundle\Entity\CPSUser;
@@ -18,6 +19,7 @@ use AppBundle\Logging\LogConstants;
 use Doctrine\ORM\Query;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -349,6 +351,124 @@ class AllegatoController extends Controller
     $em->persist($allegato);
 
     $em->flush();
+
+    $data = [
+      'name' => $allegato->getOriginalFilename(),
+      'url' => '#',
+      'id' => $allegato->getId(),
+    ];
+
+    @unlink($targetFile);
+
+    return new JsonResponse($data);
+  }
+
+  /**
+   * @param Request $request
+   * @Route("/pratiche/allegati/message/upload/{id}",name="cps_user_allegato_messaggio_upload")
+   * @Method("POST")
+   * @return mixed
+   */
+  public function cpsUserAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
+  {
+    if ($pratica->getStatus() !== Pratica::STATUS_PENDING && $pratica->getStatus() !== Pratica::STATUS_PENDING_AFTER_INTEGRATION){
+      return new JsonResponse("Pratica {$pratica->getId()} is not pending", Response::HTTP_BAD_REQUEST);
+    }
+
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+
+    if ($pratica->getUser()->getId() !== $user->getId()) {
+      return new JsonResponse("User can not access pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
+    }
+
+    $uploadedFile = $request->files->get('file');
+    $pathParts = pathinfo($uploadedFile->getRealPath());
+    $dirname = $pathParts['dirname'];
+    $targetFile = $dirname . '/' . $pratica->getId() . time();
+
+    $allegato = new AllegatoMessaggio();
+    $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
+    $allegato->setFile($uploadedFile);
+    $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
+    $allegato->setOwner($pratica->getUser());
+
+    $violations = $this->get('validator')->validate($allegato);
+
+    if ($violations->count() > 0) {
+      $messages = [];
+      /** @var ConstraintViolationInterface $violation */
+      foreach ($violations as $violation){
+        $messages[] = $violation->getMessage();
+      }
+      return new JsonResponse(implode(', ', $messages), Response::HTTP_BAD_REQUEST);
+    }
+
+    $em = $this->getDoctrine()->getManager();
+    $em->persist($allegato);
+
+    $em->flush();
+
+
+    $data = [
+      'name' => $allegato->getOriginalFilename(),
+      'url' => '#',
+      'id' => $allegato->getId(),
+    ];
+
+    @unlink($targetFile);
+
+    return new JsonResponse($data);
+  }
+
+  /**
+   * @param Request $request
+   * @Route("/operatori/allegati/message/upload/{id}",name="operatore_allegato_messaggio_upload")
+   * @Method("POST")
+   * @return mixed
+   */
+  public function operatoreAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
+  {
+    if ($pratica->getStatus() !== Pratica::STATUS_PENDING && $pratica->getStatus() !== Pratica::STATUS_PENDING_AFTER_INTEGRATION){
+      return new JsonResponse("Pratica {$pratica->getId()} is not pending", Response::HTTP_BAD_REQUEST);
+    }
+
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
+    dump($pratica->getServizio()->getId());
+    $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
+    if (!$isEnabled) {
+      return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
+    }
+
+    $uploadedFile = $request->files->get('file');
+    $pathParts = pathinfo($uploadedFile->getRealPath());
+    $dirname = $pathParts['dirname'];
+    $targetFile = $dirname . '/' . $pratica->getId() . time();
+
+    $allegato = new AllegatoMessaggio();
+    $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
+    $allegato->setFile($uploadedFile);
+    $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
+    $allegato->setOwner($pratica->getUser());
+
+    $violations = $this->get('validator')->validate($allegato);
+
+    if ($violations->count() > 0) {
+      $messages = [];
+      /** @var ConstraintViolationInterface $violation */
+      foreach ($violations as $violation){
+        $messages[] = $violation->getMessage();
+      }
+      return new JsonResponse(implode(', ', $messages), Response::HTTP_BAD_REQUEST);
+    }
+
+    $em = $this->getDoctrine()->getManager();
+    $em->persist($allegato);
+
+    $em->flush();
+
 
     $data = [
       'name' => $allegato->getOriginalFilename(),
