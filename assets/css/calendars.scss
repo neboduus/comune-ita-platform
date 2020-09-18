@@ -55,3 +55,19 @@
     color: #4a4a4a;
   }
 }
+
+.date-picker {
+  td{
+    &.not-available:not(.ui-state-disabled){
+      background: linear-gradient(to top left, #fff calc(50% - 2px), #d9364f, #fff calc(50% + 2px));
+      & a.ui-state-active {
+        background-color: #2222;
+        color: #555!important;
+        border: none;
+      }
+      &.ui-datepicker-today > a{
+        border: none;
+      }
+    }
+  }
+}
