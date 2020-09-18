@@ -3,8 +3,11 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -66,11 +69,18 @@ class Message
   private $clickedAt;
 
   /**
-   * @ORM\OneToOne(targetEntity="AppBundle\Entity\Nota", orphanRemoval=false)
-   * @ORM\JoinColumn(nullable=true)
-   * @var Nota
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\AllegatoMessaggio", inversedBy="messages", orphanRemoval=false)
+   * @var ArrayCollection
+   * @Assert\Valid(traverse=true)
    */
-  private $attachment;
+  private $attachments;
+
+  /**
+   * @ORM\OneToOne(targetEntity="AppBundle\Entity\AllegatoMessaggio", orphanRemoval=false)
+   * @ORM\JoinColumn(nullable=true)
+   * @var AllegatoMessaggio
+   */
+  private $generatedDocument;
 
   /**
    * @var bool
@@ -104,6 +114,7 @@ class Message
     }
     $this->createdAt = time();
     $this->setProtocolRequired(true);
+    $this->attachments = new ArrayCollection();
   }
 
   /**
@@ -273,20 +284,54 @@ class Message
   }
 
   /**
-   * @return Nota
+   * @return Collection
    */
-  public function getAttachment()
+  public function getAttachments()
   {
-    return $this->attachment;
+    return $this->attachments;
   }
 
   /**
-   * @param Nota $attachment
+   * @param AllegatoMessaggio $attachment
    * @return $this
    */
-  public function addAttachment($attachment)
+  public function addAttachment(AllegatoMessaggio $attachment)
   {
-    $this->attachment = $attachment;
+    if (!$this->attachments->contains($attachment)) {
+      $this->attachments->add($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param AllegatoMessaggio $attachment
+   *
+   * @return $this
+   */
+  public function removeAttachment(AllegatoMessaggio $attachment)
+  {
+    if ($this->attachments->contains($attachment)) {
+      $this->attachments->removeElement($attachment);
+    }
+    return $this;
+  }
+
+  /**
+   * @return AllegatoMessaggio
+   */
+  public function getGeneratedDocument()
+  {
+    return $this->generatedDocument;
+  }
+
+  /**
+   * @param AllegatoMessaggio $document
+   * @return $this
+   */
+  public function addGeneratedDocument($document)
+  {
+    $this->generatedDocument = $document;
 
     return $this;
   }

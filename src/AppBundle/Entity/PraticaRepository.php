@@ -759,8 +759,33 @@ class PraticaRepository extends EntityRepository
       ->from('AppBundle:Message', 'message');
 
     if (!empty($filters['visibility'])) {
-      $qb->andWhere('pratica.visibility = :visibility')
+      $qb->andWhere('message.visibility = :visibility')
         ->setParameter('visibility', (array)$filters['visibility']);
+    }
+
+    $qb->andWhere('message.application = :application')
+      ->setParameter('application', $pratica)
+      ->orderBy('message.createdAt', 'asc');
+
+
+    return $qb->getQuery()->getResult();
+  }
+
+  public function getMessageAttachments($filters, Pratica $pratica)
+  {
+    $qb = $this->getEntityManager()->createQueryBuilder()
+      ->select('attachment')
+      ->from('AppBundle:AllegatoMessaggio', 'attachment')
+      ->join('attachment.messages', 'message');
+
+    if (!empty($filters['visibility'])) {
+      $qb->andWhere('message.visibility = :visibility')
+        ->setParameter('visibility', (array)$filters['visibility']);
+    }
+
+    if (!empty($filters['author'])) {
+      $qb->andWhere('message.author = :author')
+        ->setParameter('author', (array)$filters['author']);
     }
 
     $qb->andWhere('message.application = :application')

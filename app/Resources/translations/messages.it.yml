@@ -529,15 +529,23 @@ operatori:
   data_ora_ricevuta: "Data e ora ricevuta"
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
+  allegati_modulo: 'Documenti allegati al modulo'
+  allegati_messaggi: 'Documenti allegati nei messaggi'
   messaggi:
     titolo: 'Messaggi'
+    testo_messaggio: 'Testo del messaggio'
+    no_attachments: 'Non sono presenti allegati a questa pratica'
+    anonymous: 'Questa funzionalità non è disponibile agli utenti anonimi'
+    no_operator: 'Non è possibile inviare o ricevere messaggi finchè la pratica non viene presa in carico da un operatore'
+    allega_label: "Documenti allegati"
+    allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
     aggiungi_nota_privata: 'Aggiungi nota interna'
     invia: 'Invia messaggio'
     non_disponibile_anonimo: 'Funzionalità non dispobibile per gli utenti anonimi'
     prendi_in_carico_per_abilitare: 'Prendi in carico la pratica per abilitare questa funzionalità'
     pubblico: 'Invia messaggio pubblico al cittadino'
     privato: 'Una nota interna non sarà visibile al cittadino'
-    ha_aggiunto_nota_privata: 'ha aggiunto una nota privata'
+    ha_aggiunto_nota_privata: 'ha aggiunto una nota interna'
     info: 'info'
     letto: 'Letto'
     inviato: 'Inviato'

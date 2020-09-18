@@ -3,17 +3,24 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Nota
+ * Class AllegatoMessaggio
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Nota extends Allegato
+class AllegatoMessaggio extends Allegato
 {
-  const TYPE_DEFAULT = 'nota';
+  const TYPE_DEFAULT = 'messaggio';
+
+  /**
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Message", mappedBy="attachments")
+   * @var ArrayCollection
+   */
+  private $messages;
 
   /**
    * @ORM\Column(type="string", nullable=true)
@@ -27,8 +34,9 @@ class Nota extends Allegato
    */
   private $numeriProtocollo;
 
+
   /**
-   * Ritiro constructor.
+   * Allegato Messaggio constructor.
    */
   public function __construct()
   {
@@ -43,6 +51,52 @@ class Nota extends Allegato
   }
 
   /**
+   * @return ArrayCollection
+   */
+  public function getMessages(): Collection
+  {
+    return $this->messages;
+  }
+
+  /**
+   * @param Message $message
+   * @return $this
+   */
+  public function addMessage(Message $message)
+  {
+    if (!$this->messages->contains($message)) {
+      $this->messages->add($message);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param Message $message
+   * @return $this
+   */
+  public function removeMessage(Message $message)
+  {
+    if ($this->messages->contains($message)) {
+      $this->messages->removeElement($message);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param $protocolledAt
+   *
+   * @return $this
+   */
+  public function setProtocolledAt($protocolledAt)
+  {
+    $this->protocolledAt = $protocolledAt;
+
+    return $this;
+  }
+
+  /**
    * @return string|null
    */
   public function getIdDocumentoProtocollo()
@@ -52,7 +106,7 @@ class Nota extends Allegato
 
   /**
    * @param string $idDocumentoProtocollo
-   * @return Nota
+   * @return AllegatoMessaggio
    */
   public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
   {
@@ -63,7 +117,7 @@ class Nota extends Allegato
   /**
    * @param array $numeroDiProtocollo
    *
-   * @return Nota
+   * @return AllegatoMessaggio
    */
   public function addNumeroDiProtocollo($numeroDiProtocollo)
   {
@@ -103,5 +157,16 @@ class Nota extends Allegato
     $this->numeriProtocollo = new ArrayCollection(json_decode($this->numeriProtocollo));
   }
 
+  public function getPratiche(): Collection
+  {
+    $pratiche = new ArrayCollection();
+    foreach ($this->messages as $message) {
+      /** @var Message $message */
 
+      if (!$pratiche->contains($message->getApplication())) {
+        $pratiche->add($message->getApplication());
+      }
+    }
+    return $pratiche;
+  }
 }

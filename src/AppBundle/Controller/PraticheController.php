@@ -368,8 +368,7 @@ class PraticheController extends Controller
     $this->checkUserCanAccessPratica($pratica, $user);
     $tab = $request->query->get('tab');
 
-    $resumeURI = $request->getUri();
-    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
+    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 
     $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
       && $pratica->getUser()->getId() == $user->getId();
@@ -382,22 +381,23 @@ class PraticheController extends Controller
       }
     }
 
-    $form = $this->setupCommentForm();
-    $form->handleRequest($request);
+    $message = new Message();
+    $message->setApplication($pratica);
+    $message->setAuthor($user);
+    $messageForm = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
+    $messageForm->handleRequest($request);
 
-    if ($form->isSubmitted()) {
-      $data = $form->getData();
+    if ($messageForm->isSubmitted() && $messageForm->isValid()) {
+      /** @var Message $message */
+      $message = $messageForm->getData();
 
-      $message = new Message();
-      $message->setAuthor($user);
-      $message->setApplication($pratica);
-      $message->setProtocolRequired(false);
-      $message->setVisibility(Message::VISIBILITY_APPLICANT);
-      $message->setMessage($data['message']);
       $callToActions = [
         ['label'=>'view', 'link'=>$this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
         ['label'=>'reply', 'link'=>$this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
       ];
+
+      $message->setProtocolRequired(false);
+      $message->setVisibility(Message::VISIBILITY_APPLICANT);
       $message->setCallToAction($callToActions);
 
       $em = $this->getDoctrine()->getManager();
@@ -438,7 +438,8 @@ class PraticheController extends Controller
     $result = [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
-      'form' => $form->createView(),
+      'messageAttachments' => $attachments,
+      'messageForm' => $messageForm->createView(),
       'tab' => $tab,
       'pratica' => $pratica,
       'user' => $user,
@@ -679,29 +680,4 @@ class PraticheController extends Controller
 
     return null;
   }
-
-  /**
-   * @return FormInterface
-   */
-  private function setupCommentForm()
-  {
-    $data = array();
-    $formBuilder = $this->createFormBuilder($data)
-      ->add('message', TextareaType::class, [
-        'label' => 'Testo del messaggio',
-        'required' => true,
-        'attr' => [
-          'rows' => '5',
-          'class' => 'form-control input-inline',
-        ],
-      ])
-      ->add('save', SubmitType::class, [
-        'label' => 'Invia',
-        'attr' => [
-          'class' => 'btn btn-primary',
-        ],
-      ]);
-    return $formBuilder->getForm();
-  }
-
 }

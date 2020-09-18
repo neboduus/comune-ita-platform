@@ -1,28 +1,33 @@
 <nav>
   <div class="nav nav-tabs auto" id="pratica-details" role="tablist">
-    <a class="nav-item nav-link {% if not tab or tab == 'modulo' %} active {% endif %}" id="modulo-tab" data-toggle="tab" href="#modulo" role="tab"
+    <a class="nav-item nav-link {% if not tab or tab == 'modulo' %} active {% endif %}" id="modulo-tab"
+       data-toggle="tab" href="#modulo" role="tab"
        aria-controls="modulo" aria-selected="{{ not tab or tab == 'modulo' }}">
       {{ 'operatori.modulo' | trans }}
     </a>
-    <a class="nav-item nav-link {% if pratica.allegati.count == 0 %} disabled {% endif %} {% if tab == 'allegati' %} active {% endif %}" id="allegati-tab"
+    <a class="nav-item nav-link {% if tab == 'allegati' %} active {% endif %}"
+       id="allegati-tab"
        data-toggle="tab" href="#allegati" role="tab"
        aria-controls="allegati" aria-selected="{{ tab and tab == 'allegati' }}">
       {{ 'operatori.allegati' | trans }}
-      <span class="badge badge-light ml-1">{{ pratica.allegati.count }}</span>
+      <span class="badge badge-light ml-1">{{ pratica.allegati.count + messageAttachments|length }}</span>
     </a>
-    <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} {% if not pratica.operatore %} disabled {% endif %}" id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
+    <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %}"
+       id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
        aria-controls="messaggi" aria-selected="{{ tab and tab == 'note' }}">
       {{ 'operatori.messaggi.titolo' | trans }}
       <span class="badge badge-light ml-1">{{ pratica.publicMessages | length }}</span>
     </a>
-    <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab" href="#pagamento" role="tab"
+    <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab"
+       href="#pagamento" role="tab"
        aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
       {{ 'operatori.pagamento' | trans }}
     </a>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
-  <div class="tab-pane py-4 fade show {% if not tab or tab == 'modulo' %} show active {% endif %}" id="modulo" role="tabpanel" aria-labelledby="modulo-tab">
+  <div class="tab-pane py-4 fade show {% if not tab or tab == 'modulo' %} show active {% endif %}" id="modulo"
+       role="tabpanel" aria-labelledby="modulo-tab">
     {% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
       <div id="formio_summary" class="formio-front formio-summary"
            data-formserver_url="{{ formserver_url }}"
@@ -33,39 +38,76 @@
       {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
-  <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
+  <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati"
+       role="tabpanel" aria-labelledby="allegati-tab">
     {# @var allegato \AppBundle\Entity\Allegato #}
-    {% for allegato in pratica.allegati %}
-      <div class="row align-items-center text-center my-3">
-        <div class="col-2">
-          {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
-            <i class="fa fa-2x fa-file-pdf-o"></i>
-          {% else %}
-            <i class="fa fa-2x fa-file-o"></i>
-          {% endif %}
+    {% if pratica.allegati.count + messageAttachments|length  == 0 %}
+      <div class="font-italic text-center">{{ 'operatori.messaggi.no_attachments' | trans }}</div>
+    {% endif %}
+    {% if pratica.allegati.count > 0 %}
+      <h6 class="primary-color">{{ 'operatori.allegati_modulo' | trans }}</h6>
+      {% for allegato in pratica.allegati %}
+        <div class="row align-items-center text-center mt-3 mb-5">
+          <div class="col-2">
+            {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
+              <i class="fa fa-2x fa-file-pdf-o"></i>
+            {% else %}
+              <i class="fa fa-2x fa-file-o"></i>
+            {% endif %}
+          </div>
+          <div class="col-6 text-truncate">
+            {{ allegato.originalFilename }}
+          </div>
+          <div class="col-2">
+            {{ allegato.getHumanReadableFileSize }}
+          </div>
+          <div class="col-2">
+            <a href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
+              <svg class="icon icon-primary">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+              </svg>
+            </a>
+          </div>
         </div>
-        <div class="col-6 text-truncate">
-          {{ allegato.originalFilename }}
+      {% endfor %}
+    {% endif %}
+    {# @var allegato \AppBundle\Entity\AllegatoMessaggio #}
+    {% if messageAttachments|length > 0 %}
+      <h6 class="primary-color">{{ 'operatori.allegati_messaggi' | trans }}</h6>
+      {% for allegato in messageAttachments %}
+        <div class="row align-items-center text-center mt-3 mb-5">
+          <div class="col-2">
+            {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
+              <i class="fa fa-2x fa-file-pdf-o"></i>
+            {% else %}
+              <i class="fa fa-2x fa-file-o"></i>
+            {% endif %}
+          </div>
+          <div class="col-6 text-truncate">
+            {{ allegato.originalFilename }}
+          </div>
+          <div class="col-2">
+            {{ allegato.getHumanReadableFileSize }}
+          </div>
+          <div class="col-2">
+            <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
+              <svg class="icon icon-primary">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+              </svg>
+            </a>
+          </div>
         </div>
-        <div class="col-2">
-          {{ allegato.getHumanReadableFileSize }}
-        </div>
-        <div class="col-2">
-          <a href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
-            <svg class="icon icon-primary">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-            </svg>
-          </a>
-        </div>
-      </div>
-    {% endfor %}
+      {% endfor %}
+    {% endif %}
   </div>
-  <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel" aria-labelledby="messaggi-tab">
+  <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel"
+       aria-labelledby="messaggi-tab">
     <div class="m-3">
       {{ include('@App/Pratiche/summary/parts/messaggi.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
-  <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel" aria-labelledby="pagamento-tab">
+  <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
+       aria-labelledby="pagamento-tab">
     <div class="m-3">
       {{ include('@App/Pratiche/summary/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
     </div>
