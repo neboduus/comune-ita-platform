@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-09-11'
-softwareVersion: 1.6.2
+releaseDate: '2020-09-18'
+softwareVersion: 1.6.4
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -125,7 +125,7 @@ description:
     documentation: 'https://manuale-stanza-del-cittadino.readthedocs.io/it/latest/'
     shortDescription: >-
       Creazione moduli compilabili online e pratiche digitali con
-      backoffice per gli operatori. Gestione Appuntamenti presso gli uffici o 
+      backoffice per gli operatori. Gestione Appuntamenti presso gli uffici o
       online.
     longDescription: >
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
@@ -149,7 +149,7 @@ description:
       - Autenticazione con SPID o Social e possibilità di aprire servizi anche senza autenticazione
       - Possibilità di scrivere al cittadino dal backoffice (con ricevuta di presa visione e PEC)
       - Integrazione con PagoPA attraverso MyPAY o altri gateway di pagamento regionali
-      - Meccanismo di compilazione on-line dei moduli a step, con possibilità di salvare bozze 
+      - Meccanismo di compilazione on-line dei moduli a step, con possibilità di salvare bozze
       - Gestione completa dell’iter: invio, presa in carico, risposta al cittadino, richiesta integrazioni
       - Controllo della validità di firme digitali e formati dei file, per la conservazione sostitutiva
       - Generazione automatica del modulo compilato con ricevuta di invio dell’istanza, in formato PDF
