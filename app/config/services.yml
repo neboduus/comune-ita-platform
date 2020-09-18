@@ -178,6 +178,10 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -100 }
 
+  ocsdc.redirect.after.login:
+    class: AppBundle\Handlers\Auth\AfterLoginRedirection
+    arguments: [ '@router','@security.authorization_checker' ]
+
   gedmo.listener.sluggable:
     class: Gedmo\Sluggable\SluggableListener
     tags:
