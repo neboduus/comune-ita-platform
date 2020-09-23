@@ -54,7 +54,7 @@ class ApplicationMessageType extends AbstractType
       ->add('internal', SubmitType::class, [
         'label' => 'operatori.messaggi.aggiungi_nota_privata',
         'attr' => [
-          'class' => 'btn btn-secondary'
+          'class' => 'btn btn-primary'
         ]
       ]);
 

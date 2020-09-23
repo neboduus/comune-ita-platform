@@ -591,7 +591,7 @@ operatori:
         esito_label: "Messaggio personale"
         esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al il cittadino"
         allega_label: "Documenti allegati"
-        allega_help: "Allega eventuali documenti in formato pdf"
+        allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
     upload_risposta_firmata:
       testo_descrittivo: 'Scarica la risposta dal seguente <strong><a href="%link_download_risposta%">link</a></strong> e ricaricala firmata digitalmente <hr/>'
       guida_alla_compilazione: 'Scarica la risposta da firmare digitalmente'
