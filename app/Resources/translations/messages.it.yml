@@ -5,7 +5,7 @@ salva: 'Salva'
 elimina: 'Elimina'
 reply: 'Rispondi'
 view: 'Visualizza'
-terms_do_il_consenso: 'Dò il consenso'
+terms_do_il_consenso: "ho letto l'informativa"
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
 servizi_pending: 'Servizi con pratiche inviate'
