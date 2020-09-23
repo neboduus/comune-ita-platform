@@ -150,11 +150,11 @@ description:
       - Possibilità di scrivere al cittadino dal backoffice (con ricevuta di presa visione e PEC)
       - Integrazione con PagoPA attraverso MyPAY o altri gateway di pagamento regionali
       - Meccanismo di compilazione on-line dei moduli a step, con possibilità di salvare bozze
-      - Gestione completa dell’iter: invio, presa in carico, risposta al cittadino, richiesta integrazioni
+      - Gestione completa dell’iter. Invio, presa in carico, risposta al cittadino, richiesta integrazioni
       - Controllo della validità di firme digitali e formati dei file, per la conservazione sostitutiva
       - Generazione automatica del modulo compilato con ricevuta di invio dell’istanza, in formato PDF
-      - Integrazione con il sito comunale Comunweb: prossime scadenze e descrizione dei servizi
-      - Integrazione con i sistemi di protocollazione più diffusi: PiTre, Infor, Maggioli.
+      - Integrazione con il sito comunale Comunweb per prossime scadenze e descrizione dei servizi
+      - Integrazione con i sistemi di protocollazione più diffusi (PiTre, Infor, Maggioli).
       - Possibilità di raccogliere servizi diversi in unico fascicolo
       - Pubblicazione documenti nell'area riservata del cittadino (cert. fiscali, tassa rifiuti, multe)
       - Creazione da parte di tecnici comunali di form complessi, con integrazione di API esterne
@@ -167,4 +167,9 @@ description:
       - images/sdc005.jpg
       - images/sdc006.jpg
       - images/sdc007.jpg
+      - images/sdc007.jpg
+      - images/sdc008.jpg
+      - images/sdc009.jpg
+      - images/sdc010.jpg
+      - images/sdc011.jpg
 
