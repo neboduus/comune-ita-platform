@@ -1073,7 +1073,7 @@ class Servizio
   /**
    * @return bool
    */
-  public function isAllowReopening(): bool
+  public function isAllowReopening(): ?bool
   {
     return $this->allowReopening;
   }
@@ -1081,7 +1081,7 @@ class Servizio
   /**
    * @param bool $allowReopening
    */
-  public function setAllowReopening(bool $allowReopening)
+  public function setAllowReopening(?bool $allowReopening)
   {
     $this->allowReopening = $allowReopening;
   }
