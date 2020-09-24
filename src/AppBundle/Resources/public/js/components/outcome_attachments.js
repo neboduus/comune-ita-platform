@@ -3,13 +3,13 @@
 Vue.component('outcome_attachments', {
   template: `<div>
       <el-upload
-        class="vue-upload"
+        class="vue-upload pb-0"
         :action="prefix+'/operatori/allegati/upload/'+applicationId"
         :on-success="onSuccess"
         :on-remove="onRemove"
         :on-error="onError"
         :multiple="true">
-        <el-button size="small" type="primary">Carica allegato</el-button>
+        <el-button type="primary">Carica allegato</el-button>
       </el-upload>
     </div>`,
   data: function () {
