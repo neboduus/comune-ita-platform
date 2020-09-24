@@ -160,8 +160,8 @@
         {{ include('@App/Operatori/parts/pratica_summary.html.twig') }}
       </div>
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
-        <div class="row pl-3 mb-5 d-flex justify-content-between">
-          <div class="col-auto ">
+        <div class="row pl-4">
+          <div class="col-5">
             {% if pratica.moduliCompilati|length > 0 %}
               <a class="btn btn-outline-secondary"
                  href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
@@ -179,7 +179,7 @@
               </button>
             {% endif %}
           </div>
-          <div class="col-auto">
+          <div class="col-7">
             <a class="btn btn-outline-secondary" href="mailto:{{ pratica.user.emailContatto }}">
               <svg class="icon icon-sm">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
@@ -188,6 +188,19 @@
             </a>
           </div>
         </div>
+        {% if pratica.operatore and pratica.operatore == user and pratica.isInFinalStates and pratica.servizio.allowReopening %}
+          <div class="row my-4 pl-4">
+            <div class="col-12">
+              <a class="btn btn-warning btn-toolbar" href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
+                <svg class="icon icon-white icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                </svg>
+                {{ 'operatori.riapri_pratica' | trans }}
+              </a>
+            </div>
+          </div>
+        {% endif %}
+
         <div class="row my-4 pl-4">
           {% if pratica.type == 'form_io' %}
             <div class="col-12 pb-3">

@@ -15,6 +15,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\StatusChange;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
@@ -505,7 +506,15 @@ class OperatoriController extends Controller
       }
 
       $pratica->setOperatore($user);
-      $this->get('ocsdc.pratica_status_service')->setNewStatus($pratica, Pratica::STATUS_PENDING);
+      $statusChange = new StatusChange();
+      $statusChange->setEvento('Presa in carico');
+      $statusChange->setOperatore($user->getFullName());
+      $statusChange->setMessage('Pratica presa in carico da ' . $user->getFullName());
+      $this->get('ocsdc.pratica_status_service')->setNewStatus(
+        $pratica,
+        Pratica::STATUS_PENDING,
+        $statusChange
+      );
 
       $this->get('logger')->info(
         LogConstants::PRATICA_ASSIGNED,
@@ -730,8 +739,44 @@ class OperatoriController extends Controller
   }
 
   /**
+   * @Route("/{pratica}/reopen",name="operatori_show_reopen")
+   * @param Pratica|DematerializedFormPratica $pratica
+   * @return array|RedirectResponse
+   */
+  public function reopenPraticaAction(Pratica $pratica)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+    if ($pratica->isInFinalStates() && $pratica->getServizio()->isAllowReopening()) {
+      try {
+        $pratica->setEsito(null);
+        $pratica->setMotivazioneEsito(null);
+        $pratica->removeRispostaOperatore();
+
+        $statusChange = new StatusChange();
+        $statusChange->setEvento('Riapertura pratica');
+        $statusChange->setOperatore($user->getFullName());
+        $statusChange->setMessage('Pratica riaperta da ' . $user->getFullName());
+
+        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+          $pratica,
+          Pratica::STATUS_PENDING,
+          $statusChange
+        );
+        $this->addFlash('success', 'Pratica riaperta correttamente');
+      } catch (\Exception $e) {
+        $this->addFlash('error', 'Si è verificato un errore durante la riapertura della pratica.');
+      }
+    } else {
+      $this->addFlash('error', 'La pratica non può essere riaperta.');
+    }
+    return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+  }
+
+  /**
    * @param Pratica $pratica
-   * @param $status
+   * @return string
    */
   private function getFeedbackMessage(Pratica $pratica)
   {
@@ -1016,17 +1061,27 @@ class OperatoriController extends Controller
 
     $protocolloIsRequired = $pratica->getServizio()->isProtocolRequired();
 
+    $user = $this->getUser();
+    $statusChange = new StatusChange();
+    $statusChange->setOperatore($user->getFullName());
+
     if ($pratica->getEsito()) {
+
+
+      $statusChange->setEvento('Approvazione pratica');
+      $statusChange->setMessage('Pratica approvata da ' . $user->getFullName());
 
       if ($protocolloIsRequired) {
         $this->get('ocsdc.pratica_status_service')->setNewStatus(
           $pratica,
-          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE
+          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
+          $statusChange
         );
       } else {
         $this->get('ocsdc.pratica_status_service')->setNewStatus(
           $pratica,
-          Pratica::STATUS_COMPLETE
+          Pratica::STATUS_COMPLETE,
+          $statusChange
         );
       }
 
@@ -1038,15 +1093,21 @@ class OperatoriController extends Controller
         ]
       );
     } else {
+
+      $statusChange->setEvento('Rifiuto pratica');
+      $statusChange->setMessage('Pratica rifiutata da ' . $user->getFullName());
+
       if ($protocolloIsRequired) {
         $this->get('ocsdc.pratica_status_service')->setNewStatus(
           $pratica,
-          Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE
+          Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
+          $statusChange
         );
       } else {
         $this->get('ocsdc.pratica_status_service')->setNewStatus(
           $pratica,
-          Pratica::STATUS_CANCELLED
+          Pratica::STATUS_CANCELLED,
+          $statusChange
         );
       }
 

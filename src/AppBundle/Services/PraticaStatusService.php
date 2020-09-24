@@ -104,6 +104,11 @@ class PraticaStatusService
       [Pratica::STATUS_REQUEST_INTEGRATION => Pratica::STATUS_WITHDRAW],
       [Pratica::STATUS_REGISTERED_AFTER_INTEGRATION => Pratica::STATUS_WITHDRAW],
 
+      // Riapertura
+      [Pratica::STATUS_CANCELLED => Pratica::STATUS_PENDING],
+      [Pratica::STATUS_COMPLETE => Pratica::STATUS_PENDING],
+      [Pratica::STATUS_WITHDRAW => Pratica::STATUS_PENDING],
+
     ];
   }
 

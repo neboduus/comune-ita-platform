@@ -129,6 +129,10 @@ class GeneralDataType extends AbstractType
       ])->add(
         "post_submit_validation_message", HiddenType::class, [
         'required' => false
+      ])
+      ->add('allow_reopening', CheckboxType::class, [
+        'label' => 'Consenti riapertura?',
+        'required' => false
       ]);
   }
 

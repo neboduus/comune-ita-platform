@@ -299,6 +299,13 @@ class Servizio
   private $serviceGroup;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true, options={"default":"0"})
+   * @SWG\Property(description="If selected, service's applications can be reopend")
+   */
+  private $allowReopening;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -1061,6 +1068,22 @@ class Servizio
   public function setServiceGroup(?ServiceGroup $serviceGroup)
   {
     $this->serviceGroup = $serviceGroup;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isAllowReopening(): bool
+  {
+    return $this->allowReopening;
+  }
+
+  /**
+   * @param bool $allowReopening
+   */
+  public function setAllowReopening(bool $allowReopening)
+  {
+    $this->allowReopening = $allowReopening;
   }
 
 }

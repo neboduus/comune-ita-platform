@@ -511,6 +511,7 @@ operatori:
   rigetta: 'Rigetta'
   elabora: 'Elabora'
   scrivi_al_cittadino: "Scrivi al cittadino"
+  riapri_pratica: "Riapri pratica"
   richiedi_intergrazioni: 'Richiedi intergrazioni'
   modulo: 'Modulo'
   allegati: 'Allegati'
