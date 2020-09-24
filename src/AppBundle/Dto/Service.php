@@ -204,6 +204,13 @@ class Service
   private $serviceGroup;
 
   /**
+   * @var bool
+   * @Serializer\Type("boolean")
+   * @SWG\Property(description="If selected, service's applications can be reopend")
+   */
+  private $allowReopening;
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -625,6 +632,22 @@ class Service
     $this->serviceGroup = $serviceGroup;
   }
 
+  /**
+   * @return bool
+   */
+  public function isAllowReopening(): bool
+  {
+    return $this->allowReopening;
+  }
+
+  /**
+   * @param bool $allowReopening
+   */
+  public function setAllowReopening(bool $allowReopening)
+  {
+    $this->allowReopening = $allowReopening;
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -659,6 +682,7 @@ class Service
     $dto->scheduledFrom = $servizio->getScheduledFrom();
     $dto->scheduledTo = $servizio->getScheduledTo();
     $dto->serviceGroup = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null;
+    $dto->allowReopening = $servizio->isAllowReopening();
 
     return $dto;
   }
@@ -715,6 +739,8 @@ class Service
     if ($this->serviceGroup instanceof ServiceGroup) {
       $entity->setServiceGroup($this->serviceGroup);
     }
+
+    $entity->setAllowReopening($this->allowReopening);
 
     return $entity;
   }

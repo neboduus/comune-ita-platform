@@ -78,6 +78,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   const STATUS_CANCELLED = 9000;
   const STATUS_WITHDRAW = 20000;
 
+  const FINAL_STATES = [
+    Pratica::STATUS_COMPLETE,
+    Pratica::STATUS_CANCELLED,
+    Pratica::STATUS_WITHDRAW
+  ];
+
   const ACCEPTED = true;
   const REJECTED = false;
 
@@ -1561,7 +1567,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   /**
    * @param bool $esito
    */
-  public function setEsito(bool $esito)
+  public function setEsito(?bool $esito)
   {
     $this->esito = $esito;
   }
@@ -1577,7 +1583,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   /**
    * @param string $motivazioneEsito
    */
-  public function setMotivazioneEsito(string $motivazioneEsito)
+  public function setMotivazioneEsito(?string $motivazioneEsito)
   {
     $this->motivazioneEsito = $motivazioneEsito;
   }
@@ -1598,6 +1604,16 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function addRispostaOperatore($rispostaOperatore)
   {
     $this->rispostaOperatore = $rispostaOperatore;
+
+    return $this;
+  }
+
+  /**
+   * @return $this
+   */
+  public function removeRispostaOperatore()
+  {
+    $this->rispostaOperatore = null;
 
     return $this;
   }
@@ -1952,5 +1968,13 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       }
     }
     return null;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isInFinalStates()
+  {
+    return in_array($this->status, self::FINAL_STATES);
   }
 }

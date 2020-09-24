@@ -10,6 +10,9 @@
               <b>{{ ('pratica.dettaglio.stato_'~change[0])| trans }}</b>
               <br>
               il {{ timestamp|date('d/m/Y') }} alle {{ timestamp|date('H:i') }}
+              {% if change[1] is defined and change[1].message is defined %}
+                <br><small>{{ change[1].message }}</small>
+              {% endif %}
             </div>
           </div>
         </div>

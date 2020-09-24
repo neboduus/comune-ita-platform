@@ -8,102 +8,159 @@ namespace AppBundle\Entity;
  */
 class StatusChange
 {
-    private $timestamp;
-    private $evento;
-    private $operatore;
-    private $responsabile;
-    private $struttura;
-    private $message;
+  private $timestamp;
+  private $evento;
+  private $operatore;
+  private $responsabile;
+  private $struttura;
+  private $message;
 
+  /**
+   * StatusChange constructor.
+   * @param array $data
+   * @throws \Exception
+   */
+  public function __construct($data = [])
+  {
     /**
-     * StatusChange constructor.
-     * @param array $data
-     * @throws \Exception
+     * Since GISCOM uses different codes we have to map them here
+     * We look for the giscom mapping and fallback to the raw value if none is found
      */
-    public function __construct($data)
-    {
-        /**
-         * Since GISCOM uses different codes we have to map them here
-         * We look for the giscom mapping and fallback to the raw value if none is found
-         */
-        $this->evento = $data['evento'];
-        $this->operatore = $data['operatore'];
-        $this->responsabile = $data['responsabile'];
-        $this->struttura = $data['struttura'];
-        $this->timestamp = $data['timestamp'] ?? $data['time'];
-        /**
-         * Giscom is asking for SDC to relay the error message to the user
-         */
-        $this->message = $data['message'] ?? null;
-
-        if(!is_int($this->timestamp)){
-            $date = new \DateTime($this->timestamp, new \DateTimeZone('Europe/Rome'));
-            $this->timestamp = $date->getTimestamp();
-        }
-    }
-
+    $this->evento = $data['evento'] ?? null;
+    $this->operatore = $data['operatore'] ?? null;
+    $this->responsabile = $data['responsabile'] ?? null;
+    $this->struttura = $data['struttura'] ?? null;
+    $this->timestamp = $data['timestamp'] ?? $data['time'] ?? null;
     /**
-     * @return int
+     * Giscom is asking for SDC to relay the error message to the user
      */
-    public function getTimestamp(): int
-    {
-        return $this->timestamp;
-    }
+    $this->message = $data['message'] ?? null;
 
-    /**
-     * @return string
-     */
-    public function getEvento(): string
-    {
-        return $this->evento;
+    if (!is_int($this->timestamp)) {
+      $date = new \DateTime($this->timestamp, new \DateTimeZone('Europe/Rome'));
+      $this->timestamp = $date->getTimestamp();
     }
+  }
 
-    /**
-     * @return string
-     */
-    public function getOperatore(): string
-    {
-        return $this->operatore;
-    }
+  /**
+   * @return int
+   */
+  public function getTimestamp(): int
+  {
+    return $this->timestamp;
+  }
 
-    /**
-     * @return string
-     */
-    public function getResponsabile(): string
-    {
-        return $this->responsabile;
-    }
+  /**
+   * @param int $timestamp
+   */
+  public function setTimestamp(int $timestamp)
+  {
+    $this->timestamp = $timestamp;
+  }
 
-    /**
-     * @return string
-     */
-    public function getStruttura(): string
-    {
-        return $this->struttura;
-    }
+  /**
+   * @return mixed
+   */
+  public function getEvento()
+  {
+    return $this->evento;
+  }
 
-    /**
-     * @return string
-     */
-    public function toJson()
-    {
-        return json_encode(
-            $this->toArray()
-        );
-    }
+  /**
+   * @param mixed $evento
+   */
+  public function setEvento($evento)
+  {
+    $this->evento = $evento;
+  }
 
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'evento' => $this->evento,
-            'operatore' => $this->operatore,
-            'responsabile' => $this->responsabile,
-            'struttura' => $this->struttura,
-            'timestamp' => $this->timestamp,
-            'message' => $this->message
-        ];
-    }
+  /**
+   * @return mixed
+   */
+  public function getOperatore()
+  {
+    return $this->operatore;
+  }
+
+  /**
+   * @param mixed $operatore
+   */
+  public function setOperatore($operatore)
+  {
+    $this->operatore = $operatore;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getResponsabile()
+  {
+    return $this->responsabile;
+  }
+
+  /**
+   * @param mixed $responsabile
+   */
+  public function setResponsabile($responsabile)
+  {
+    $this->responsabile = $responsabile;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getStruttura()
+  {
+    return $this->struttura;
+  }
+
+  /**
+   * @param mixed $struttura
+   */
+  public function setStruttura($struttura)
+  {
+    $this->struttura = $struttura;
+  }
+
+  /**
+   * @return mixed|null
+   */
+  public function getMessage()
+  {
+    return $this->message;
+  }
+
+  /**
+   * @param string|null $message
+   */
+  public function setMessage($message)
+  {
+    $this->message = $message;
+  }
+
+
+  /**
+   * @return string
+   */
+  public function toJson()
+  {
+    return json_encode(
+      $this->toArray()
+    );
+  }
+
+  /**
+   * @return array
+   */
+  public function toArray()
+  {
+    return [
+      'evento' => $this->evento,
+      'operatore' => $this->operatore,
+      'responsabile' => $this->responsabile,
+      'struttura' => $this->struttura,
+      'timestamp' => $this->timestamp,
+      'message' => $this->message,
+    ];
+  }
 }
