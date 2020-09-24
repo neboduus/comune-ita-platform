@@ -2,38 +2,22 @@
 
 namespace AppBundle\Controller\Rest;
 
-use AppBundle\Entity\Categoria;
-use AppBundle\Entity\Ente;
-use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\PraticaRepository;
-use AppBundle\Logging\LogConstants;
-use AppBundle\Model\PaymentParameters;
-use AppBundle\Model\FlowStep;
-use AppBundle\Model\AdditionalData;
 use AppBundle\Entity\ServiceGroup;
-use AppBundle\Dto\Service;
 use AppBundle\Services\InstanceService;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class ServicesAPIController
@@ -44,7 +28,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  */
 class ServicesGroupAPIController extends AbstractFOSRestController
 {
-  const CURRENT_API_VERSION = '1.0';
 
   public function __construct(EntityManager $em, InstanceService $is)
   {
@@ -79,12 +62,12 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Service group
+   * Retreive a Service group by id or slug
    * @Rest\Get("/{id}", name="service_group_api_get")
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive a Service group",
+   *     description="Retreive a Service group by id or slug",
    *     @Model(type=ServiceGroup::class)
    * )
    *
@@ -101,14 +84,20 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   {
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
-      $result = $repository->find($id);
+
+      if (Uuid::isValid($id) ) {
+        $result = $repository->find($id);
+      } else {
+        $result = $repository->findOneBy(['slug' => $id]);
+      }
+
       if ($result === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
