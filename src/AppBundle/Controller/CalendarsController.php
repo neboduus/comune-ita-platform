@@ -21,6 +21,7 @@ use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\DataTable;
+use Omines\DataTablesBundle\DataTableState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -328,14 +329,15 @@ class CalendarsController extends Controller
     ];
 
     $table = $this->createDataTable()
-      ->add('fromTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'Y-m-d'])
-      ->add('id', TextColumn::class, ['label' => 'Orario', 'render' => function ($value, $meeting) {
+      ->add('fromTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'Y-m-d', 'searchable' => false])
+      ->add('id', TextColumn::class, ['label' => 'Orario', 'searchable' => false, 'render' => function ($value, $meeting) {
         return sprintf('%s - %s', $meeting->getFromTime()->format('H:i'), $meeting->getToTime()->format('H:i'));
       }])
-      ->add('Nome e Cognome', TextColumn::class, ['label' => 'Utente', 'searchable' => true, 'render' => function ($value, $meeting) {
-        if ($meeting->getUser()) return $meeting->getUser()->getUsername();
+      ->add('user', TextColumn::class, ['label' => 'Utente', 'field'=>'user.nome', 'searchable' => true, 'render' => function ($value, $meeting) {
+        if ($meeting->getUser()->getFullName() !== ' ') return $meeting->getUser()->getFullName();
         else return 'Utente Anonimo';
       }])
+      ->add('cognome', TextColumn::class, ['label' => 'Utente', 'field'=>'user.cognome', 'searchable' => true, 'visible'=>false])
       ->add('email', TextColumn::class, ['label' => 'Email', 'searchable' => true, 'render' => function ($value, $meeting) {
         return $value ? sprintf('<a href="mailto:%s"><div class="text-truncate">%s</div></a>', $value, $value) : '---';
       }])
@@ -343,7 +345,7 @@ class CalendarsController extends Controller
         return $value ? $value : '---';
       }])
       ->add('rescheduled', NumberColumn::class, ['label' => 'Rinvii'])
-      ->add('status', TextColumn::class, ['label' => 'Stato', 'render' => function ($value, $calendar) {
+      ->add('status', TextColumn::class, ['label' => 'Stato', 'searchable' => false, 'render' => function ($value, $calendar) {
         return $this->getStatusAsString($value);
       }])
       ->addOrderBy('fromTime', DataTable::SORT_DESCENDING)
@@ -352,8 +354,10 @@ class CalendarsController extends Controller
         'entity' => Meeting::class,
         'query' => function (QueryBuilder $builder) use ($calendar) {
           $builder
-            ->select('meeting')
+            ->select('meeting', 'user')
             ->from(Meeting::class, 'meeting')
+            ->leftJoin('meeting.user', 'user')
+            ->leftJoin('meeting.calendar', 'calendar')
             ->where('meeting.calendar = :calendar')
             ->setParameter('calendar', $calendar);
         },
