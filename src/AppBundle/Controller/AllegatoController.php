@@ -84,7 +84,7 @@ class AllegatoController extends Controller
   public function uploadAllegatoAction(Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-
+    $logger = $this->get('logger');
     $session = $this->get('session');
     if (!$session->isStarted()){
       $session->start();
@@ -107,25 +107,40 @@ class AllegatoController extends Controller
         break;
 
       case 'POST':
-        $uploadedFile = $request->files->get('file');
+        try {
 
-        $allegato = new Allegato();
-        $allegato->setFile($uploadedFile);
-        $description = $request->get('description') ?? 'Allegato senza descrizione';
-        $allegato->setDescription($description);
-        $allegato->setOriginalFilename($request->get('name'));
-        $user  = $this->getUser();
-        if ($user instanceof CPSUser || $user instanceof User) {
-          $allegato->setOwner($user);
+          $uploadedFile = $request->files->get('file');
+          if (is_null($uploadedFile)) {
+            $logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
+            return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_UPLOAD_ERROR], Response::HTTP_INTERNAL_SERVER_ERROR);
+          }
+
+          if (!is_file($uploadedFile->getRealPath())) {
+            $logger->error(LogConstants::ALLEGATO_FILE_NOT_FOUND, $request->request->all());
+            return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_NOT_FOUND], Response::HTTP_NOT_FOUND);
+          }
+
+          $allegato = new Allegato();
+          $allegato->setFile($uploadedFile);
+          $description = $request->get('description') ?? 'Allegato senza descrizione';
+          $allegato->setDescription($description);
+          $allegato->setOriginalFilename($request->get('name'));
+          $user  = $this->getUser();
+          if ($user instanceof CPSUser || $user instanceof User) {
+            $allegato->setOwner($user);
+          }
+          $allegato->setHash(hash('sha256', $session->getId()));
+          $em->persist($allegato);
+          $em->flush();
+
+          $data = [
+            'id' => $allegato->getId(),
+          ];
+          return new JsonResponse($data);
+        } catch (\Exception $e) {
+          return new JsonResponse(['status' => 'error', 'message' => 'Whoops, looks like something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        $allegato->setHash(hash('sha256', $session->getId()));
-        $em->persist($allegato);
-        $em->flush();
 
-        $data = [
-          'id' => $allegato->getId(),
-        ];
-        return new JsonResponse($data);
         break;
 
       case 'DELETE':
@@ -168,8 +183,17 @@ class AllegatoController extends Controller
    */
   public function cpsUserUploadAllegatoSciaAction(Request $request, Pratica $pratica)
   {
-
+    $logger = $this->get('logger');
     $uploadedFile = $request->files->get('file');
+    if (is_null($uploadedFile)) {
+      $logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
+      return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_UPLOAD_ERROR], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    if (!is_file($uploadedFile->getRealPath())) {
+      $logger->error(LogConstants::ALLEGATO_FILE_NOT_FOUND, $request->request->all());
+      return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_NOT_FOUND], Response::HTTP_NOT_FOUND);
+    }
 
     $pathParts = pathinfo($uploadedFile->getRealPath());
     $dirname = $pathParts['dirname'];
