@@ -28,6 +28,9 @@ class LogConstants
   const ALLEGATO_CANCELLAZIONE_NEGATA = "Denied deleting allegato {allegato} by user {user}";
   const ALLEGATO_CANCELLAZIONE_PERMESSA = "Allowed delete of allegato {allegato} by user {user}";
 
+  const ALLEGATO_UPLOAD_ERROR = "Upload error";
+  const ALLEGATO_FILE_NOT_FOUND = "File not found";
+
   const PRATICA_CHANGED_STATUS = "Pratica {pratica} status has changed from {before_status} to {after_status}";
   const PRATICA_CHANGED_STATUS_FAILED = "Failed changing pratica {pratica} from {before_status} to {after_status}, error: {error}";
 
