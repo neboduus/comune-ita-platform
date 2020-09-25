@@ -220,10 +220,9 @@
             <p>Verifica i dati inseriti prima di passare al metodo di pagamento</p>
             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
-            <p>{{ 'steps.common.conferma.help_text_top'|trans }}</p>
+            <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% endif %}
-
           {{ form_rest(form) }}
 
           <div id="vueApp">

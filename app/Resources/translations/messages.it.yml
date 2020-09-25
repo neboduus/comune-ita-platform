@@ -735,7 +735,7 @@ steps:
       si: 'Sì, sono sicuro'
       no: 'No'
       payment_help_text_top: 'Verifica i dati inseriti prima di passare al metodo di pagamento'
-      help_text_top: 'Controlla i dati che hai inserito'
+      help_text_top: "Scorri l'anteprima verificando che tutti i dati siano corretti e fai click su Invia alla fine della pagina"
       help_text_bottom: 'Per inviare la richiesta, premere il pulsante "Invia"'
 
     nucleo_familiare:
