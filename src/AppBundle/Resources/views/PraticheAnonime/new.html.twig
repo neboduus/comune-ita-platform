@@ -162,11 +162,11 @@
 
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
           {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
-            <p>{{ 'steps.common.conferma.payment_help_text_top'|trans }}</p>
+            <p><b>{{ 'steps.common.conferma.payment_help_text_top'|trans }}</b></p>
             {{ include('AppBundle:PraticheAnonime/parts:pratica_summary.html.twig', {'pratica':form.vars.data}) }}
             <p class="py-3">{{ 'operatori.recaptcha'| trans }}</p>
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
-            <p>{{ 'steps.common.conferma.help_text_top'|trans }}</p>
+            <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
             {{ include('AppBundle:PraticheAnonime/parts:pratica_summary.html.twig', {'pratica':form.vars.data}) }}
             <p class="py-3">{{ 'operatori.recaptcha'| trans }}</p>
           {% endif %}
