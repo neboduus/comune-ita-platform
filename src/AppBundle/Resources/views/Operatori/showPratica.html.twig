@@ -15,32 +15,33 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
-  {% if outcomeForm.vars.helper.vueApp  or messageForm.vars.helper.vueApp %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
-    <script src="//unpkg.com/element-ui/lib/index.js"></script>
-    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
 
-      <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
-      <script>
-          let vueBundledDataMessage = {
-              "attachments": [],
-              "upload_url": "{{ path('operatore_allegato_messaggio_upload', {'id': pratica.id }) }}"
-          };
-          new Vue({
-              el: "#vueApp2"
-          });
-      </script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
+  <script src="//unpkg.com/element-ui/lib/index.js"></script>
+  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
 
-    {% if outcomeForm.vars.helper.vueApp %}
-      <script src="{{ asset('bundles/app/js/components/outcome_attachments.js') }}"></script>
+  {% if feature('feature_application_detail') %}
+    <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
+    <script>
+        let vueBundledDataMessage = {
+            "attachments": [],
+            "upload_url": "{{ path('operatore_allegato_messaggio_upload', {'id': pratica.id }) }}"
+        };
+        new Vue({
+            el: "#vueApp2"
+        });
+    </script>
+  {% endif %}
+  {% if outcomeForm.vars.helper.vueApp and pratica.operatore == user %}
+      <script src="{{ asset('bundles/app/js/components/' ~ outcomeForm.vars.helper.vueApp ~ '.js') }}"></script>
       <script>
           let vueBundledData = {{ outcomeForm.vars.helper.vueBundledData|raw }};
           new Vue({
               el: "#vueApp"
           });
       </script>
-    {% endif %}
   {% endif %}
+
   <script>
       $(document).ready(function () {
           $('#modal_approve').on('click', function () {
