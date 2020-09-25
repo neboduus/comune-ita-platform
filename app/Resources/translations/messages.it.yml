@@ -551,7 +551,7 @@ operatori:
     letto: 'Letto'
     inviato: 'Inviato'
     creato_il: 'Messaggio creato il %data%'
-    consegnato_il: 'Messaggio consegnato il %data%'
+    consegnato_il: 'Messaggio inviato il %data%'
     letto_il: 'Messaggio letto il %data%'
     feedback_inviato: "Il messaggio verrà recapitato a breve all'indirizzo %email%. Una eventuale risposta del cittadino comparirà in questa stessa pagina"
   suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'

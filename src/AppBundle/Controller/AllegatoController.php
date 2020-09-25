@@ -436,7 +436,6 @@ class AllegatoController extends Controller
     /** @var OperatoreUser $user */
     $user = $this->getUser();
 
-    dump($pratica->getServizio()->getId());
     $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
     if (!$isEnabled) {
       return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
