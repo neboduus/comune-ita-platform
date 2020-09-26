@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Dto\Application;
 use AppBundle\Dto\ApplicationOutcome;
 use AppBundle\Entity\Allegato;
-use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormPratica;
@@ -24,12 +23,10 @@ use AppBundle\Logging\LogConstants;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
-use League\Csv\Writer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -123,46 +120,48 @@ class OperatoriController extends Controller
    */
   public function indexCSVAction(Request $request)
   {
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
+    $responseCallback = function () use ($request) {
 
-    /** @var PraticaRepository $praticaRepository */
-    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
-    $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy([
-      'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
-    ]);
-    $extraHeaders = $request->get('extra_headers', []);
-    $csv = Writer::createFromPath('php://temp', 'r+');
-    $result = $this->getFilteredPraticheByOperatore($request, 1, 0);
-    $schema = (array)$result['meta']['schema'];
+      /** @var OperatoreUser $user */
+      $user = $this->getUser();
 
-    $csvHeaders = [
-      'ID',
-      'Numero di protocollo',
-      'Login',
-      'Pagamenti',
-      'Richiedente',
-      'Codice fiscale',
-      'Data di inserimento',
-      'Ultimo cambio stato',
-      'Stato',
-      'Operatore',
-      'Servizio',
-    ];
-    $extraValues = [];
-    foreach ($schema as $item) {
-      if (in_array($item['label'], $extraHeaders)) {
-        $extraValues[$item['name']] = $item['label'];
+      /** @var PraticaRepository $praticaRepository */
+      $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+      $servizi = $this->getDoctrine()->getRepository(Servizio::class)->findBy([
+        'id' => $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE),
+      ]);
+      $extraHeaders = $request->get('extra_headers', []);
+      $handle = fopen('php://output', 'w');
+      $result = $this->getFilteredPraticheByOperatore($request, 1, 0);
+      $schema = (array)$result['meta']['schema'];
+
+      $csvHeaders = [
+        'ID',
+        'Numero di protocollo',
+        'Login',
+        'Pagamenti',
+        'Richiedente',
+        'Codice fiscale',
+        'Data di inserimento',
+        'Ultimo cambio stato',
+        'Stato',
+        'Operatore',
+        'Servizio',
+      ];
+      $extraValues = [];
+      foreach ($schema as $item) {
+        if (in_array($item['label'], $extraHeaders)) {
+          $extraValues[$item['name']] = trim($item['label']);
+        }
       }
-    }
-    $csvHeaders = array_merge($csvHeaders, array_values($extraValues));
-    $csv->insertOne($csvHeaders);
+      $csvHeaders = array_merge($csvHeaders, array_values($extraValues));
+      fputcsv($handle, $csvHeaders);
 
-    $dataCount = 0;
-    $totalCount = $result['meta']['count'];
-    $limit = 500;
-    $offset = 0;
-    $responseCallback = function () use ($dataCount, $totalCount, $csv, $limit, $offset, $request, $servizi, $extraValues) {
+      $dataCount = 0;
+      $totalCount = $result['meta']['count'];
+      $limit = 100;
+      $offset = 0;
+
       while ($dataCount < $totalCount) {
         $result = $this->getFilteredPraticheByOperatore($request, $limit, $offset);
         $data = $result['data'];
@@ -194,13 +193,13 @@ class OperatoriController extends Controller
               $csvRow[$key] = is_array($value) ? count($value) : $value;
             }
           }
-          $csv->insertOne($csvRow);
+          fputcsv($handle, array_values($csvRow));
+          flush();
         }
+        $this->getDoctrine()->getManager()->clear();
       }
-      foreach ($csv->chunk(1024) as $offset => $chunk) {
-        echo $chunk;
-        flush();
-      }
+
+      fclose($handle);
     };
 
     $fileNameCreationDate = new \DateTime();
@@ -208,14 +207,13 @@ class OperatoriController extends Controller
     $response = new StreamedResponse();
     $response->headers->set('Content-Encoding', 'none');
     $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-
-    $disposition = $response->headers->makeDisposition(
+    $response->headers->set('X-Accel-Buffering', 'no');
+    $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
       ResponseHeaderBag::DISPOSITION_ATTACHMENT,
       $fileName
-    );
-
-    $response->headers->set('Content-Disposition', $disposition);
+    ));
     $response->headers->set('Content-Description', 'File Transfer');
+    $response->setStatusCode(Response::HTTP_OK);
     $response->setCallback($responseCallback);
     $response->send();
   }
