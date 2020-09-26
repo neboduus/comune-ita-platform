@@ -334,8 +334,10 @@
             );
           }
         });
+        var queryString = jQuery.param(downloadParams, true);
         var downloadButton = resultsContainer.find('[data-download="true"]');
-        downloadButton.attr('href',downloadButton.data('href')+'?'+jQuery.param(downloadParams, true));
+        // Todo: find better way
+        downloadButton.attr('href',downloadButton.data('href')+'?' + queryString.replace(/last_status_change/g, 'last_status_change[]'));
       };
 
       var refreshCalculatedFields = function (response) {
