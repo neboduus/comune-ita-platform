@@ -1,4 +1,4 @@
-{% if pratica.status < 5000 %}
+{% if pratica.canBeAssigned %}
   <div class="row mb-5">
     <div class="col-12 d-flex justify-content-center">
       <a class="btn btn-primary" href="{{ path('operatori_reassign_pratica', {'pratica': pratica}) }}">

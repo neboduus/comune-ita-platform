@@ -249,9 +249,31 @@ class PraticaRepository extends EntityRepository
     }
 
     $qb = $this->getPraticheByOperatoreQueryBuilder($filters, $user);
+    return $qb->select('count(pratica.id)')->getQuery()->getSingleScalarResult();
 
-    return $qb->select('count(pratica.id)')
-      ->getQuery()->getSingleScalarResult();
+  }
+
+  public function findStatesPraticheByOperatore(OperatoreUser $user, $filters, $limit, $offset)
+  {
+    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (empty($serviziAbilitati)) {
+      return [];
+    }
+
+    $qb = $this->getPraticheByOperatoreQueryBuilder($filters, $user, null, 'DISTINCT pratica.status');
+    $qb->addOrderBy('pratica.status', 'asc');
+
+    $result =  $qb->setFirstResult($offset)->setMaxResults($limit)->getQuery()->execute();
+    $states = [];
+    $states[] = ['id' => '', 'name' => 'Tutti'];
+    foreach ($result as $s) {
+      foreach ($this->getClassConstants() as $name => $value) {
+        if ($value == $s['status'] && strpos($name, 'STATUS_') === 0) {
+          $states[] = ['id' => $s['status'], 'name' => $name];
+        }
+      }
+    }
+    return $states;
   }
 
   /**
@@ -406,15 +428,16 @@ class PraticaRepository extends EntityRepository
    * @param $user
    * @return \Doctrine\ORM\QueryBuilder
    */
-  private function getPraticheByOperatoreQueryBuilder($filters, OperatoreUser $user, $entity = null)
+  private function getPraticheByOperatoreQueryBuilder($filters, OperatoreUser $user, $entity = null, $fields = 'pratica')
   {
     if (!$entity) {
       $entity = Pratica::class;
     }
 
     $qb = $this->getEntityManager()->createQueryBuilder()
-      ->select('pratica')
-      ->from($entity, 'pratica');
+      ->select($fields)
+      ->from($entity, 'pratica')
+      ->leftJoin('pratica.servizio', 'servizio');
 
     // Rimosso per issue #177
     /*$qb->andWhere('pratica.erogatore IN (:erogatore)')
@@ -488,7 +511,9 @@ class PraticaRepository extends EntityRepository
           ->setParameter('operatore', $user);
         break;
       case 'unassigned':
-        $qb->andWhere('pratica.operatore IS NULL');
+        $qb->andWhere('pratica.operatore IS NULL')
+           ->andWhere('servizio.workflow = :workflow_forward')
+           ->setParameter('workflow_forward', Servizio::WORKFLOW_APPROVAL);
         break;
     }
 

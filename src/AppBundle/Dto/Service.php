@@ -211,6 +211,13 @@ class Service
   private $allowReopening;
 
   /**
+   * @var integer
+   * @Serializer\Type("integer")
+   * @SWG\Property(description="If selected, service's applications can be reopend")
+   */
+  private $workflow;
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -648,6 +655,22 @@ class Service
     $this->allowReopening = $allowReopening;
   }
 
+  /**
+   * @return int
+   */
+  public function getWorkflow()
+  {
+    return $this->workflow;
+  }
+
+  /**
+   * @param int $workflow
+   */
+  public function setWorkflow(int $workflow)
+  {
+    $this->workflow = $workflow;
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -683,6 +706,7 @@ class Service
     $dto->scheduledTo = $servizio->getScheduledTo();
     $dto->serviceGroup = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null;
     $dto->allowReopening = $servizio->isAllowReopening();
+    $dto->workflow = $servizio->getWorkflow();
 
     return $dto;
   }
@@ -741,6 +765,7 @@ class Service
     }
 
     $entity->setAllowReopening($this->allowReopening);
+    $entity->setWorkflow($this->workflow);
 
     return $entity;
   }

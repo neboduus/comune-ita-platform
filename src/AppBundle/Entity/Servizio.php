@@ -38,6 +38,9 @@ class Servizio
   const ACCESS_LEVEL_SPID_L2 = 3000;
   const ACCESS_LEVEL_CIE = 4000;
 
+  const WORKFLOW_APPROVAL = 0;
+  const WORKFLOW_FORWARD = 1;
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
@@ -304,6 +307,13 @@ class Servizio
    * @SWG\Property(description="If selected, service's applications can be reopend")
    */
   private $allowReopening;
+
+  /**
+   * @var integer
+   * @ORM\Column(type="integer", nullable=true, options={"default":"0"})
+   * @SWG\Property(description="Service workflow type, accepts values: 0 - Approval, 1 - Forward")
+   */
+  private $workflow;
 
   /**
    * Servizio constructor.
@@ -1084,6 +1094,22 @@ class Servizio
   public function setAllowReopening(?bool $allowReopening)
   {
     $this->allowReopening = $allowReopening;
+  }
+
+  /**
+   * @return int
+   */
+  public function getWorkflow()
+  {
+    return $this->workflow;
+  }
+
+  /**
+   * @param int $workflow
+   */
+  public function setWorkflow(int $workflow)
+  {
+    $this->workflow = $workflow;
   }
 
 }

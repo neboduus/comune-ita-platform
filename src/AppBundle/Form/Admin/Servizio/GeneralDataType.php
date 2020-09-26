@@ -37,6 +37,11 @@ class GeneralDataType extends AbstractType
       'Cie' => Servizio::ACCESS_LEVEL_CIE,
     ];
 
+    $workflows = [
+      'Approvazione' => Servizio::WORKFLOW_APPROVAL,
+      'Inoltro' => Servizio::WORKFLOW_FORWARD
+    ];
+
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
 
@@ -133,6 +138,10 @@ class GeneralDataType extends AbstractType
       ->add('allow_reopening', CheckboxType::class, [
         'label' => 'Consenti riapertura?',
         'required' => false
+      ])
+      ->add('workflow', ChoiceType::class, [
+        'label' => 'Flusso di lavoro',
+        'choices' => $workflows
       ]);
   }
 

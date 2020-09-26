@@ -306,15 +306,24 @@ class OperatoriController extends Controller
    */
   private function getFilteredPraticheByOperatore($request, $limit, $offset)
   {
+    $translator = $this->get('translator');
     $parameters = $this->getPraticheFilters($request);
     /** @var PraticaRepository $praticaRepository */
     $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
     /** @var OperatoreUser $user */
     $user = $this->getUser();
+
+    $filters = [];
+
     try {
       $count = $praticaRepository->countPraticheByOperatore($user, $parameters);
       /** @var Pratica[] $data */
       $data = $praticaRepository->findPraticheByOperatore($user, $parameters, $limit, $offset);
+      $tempStates = $praticaRepository->findStatesPraticheByOperatore($user, $parameters, $limit, $offset);
+      foreach ($tempStates as $state) {
+        $state['name'] = $this->get('translator')->trans($state['name']);
+        $filters['states'][] = $state;
+      }
     } catch (\Throwable $e) {
       $count = 0;
       $data = [];
@@ -335,6 +344,7 @@ class OperatoriController extends Controller
       }
     }
 
+    $result['filters'] = $filters;
     $result['meta']['count'] = $count;
     $currentParameters = $parameters;
     $currentParameters['offset'] = $offset;

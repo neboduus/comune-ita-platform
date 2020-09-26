@@ -82,6 +82,8 @@ class ServizioFormType extends AbstractType
         'empty_data' => null
       ])
       ->add('service_group')
+      ->add('allow_reopening')
+      ->add('workflow')
     ;
   }
 
