@@ -1977,4 +1977,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   {
     return in_array($this->status, self::FINAL_STATES);
   }
+
+  /**
+   * @return bool
+   */
+  public function canBeAssigned()
+  {
+    return ($this->status < self::STATUS_PROCESSING && $this->servizio->getWorkflow() != Servizio::WORKFLOW_FORWARD);
+  }
 }

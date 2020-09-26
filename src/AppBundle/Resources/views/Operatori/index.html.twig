@@ -376,6 +376,21 @@
         if (response.meta.count === 0) {
           resultsContainer.html(emptyTemplate.render({}));
         } else {
+
+          // Popolo la select degli stati
+          var filterStatoVal = filterStato.val();
+          if (response.filters.states.length > 0) {
+            filterStato.html('');
+            $.each(response.filters.states, function (k, v) {
+              var selected = '';
+              if (filterStatoVal == v.id) {
+                selected = ' selected="selected"';
+              }
+              filterStato.append('<option value="' + v.id + '"' + selected +'>' + v.name + '</option>')
+            });
+            chosenSelect.trigger("chosen:updated");
+          }
+
           response.currentPage = response.meta.count > 0 ?
             (response.meta.parameter.offset > 0 ? Math.ceil(response.meta.parameter.offset/response.meta.parameter.limit)+1 : 1)
             : 0;

@@ -1,4 +1,4 @@
-{% if pratica.status < 5000 %}
+{% if pratica.canBeAssigned %}
   <div class="row mb-5">
     {% if not pratica.servizio.praticaFlowOperatoreServiceName or pratica.servizio.praticaFlowOperatoreServiceName == 'ocsdc.form.flow.standardoperatore' %}
       {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
