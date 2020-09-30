@@ -590,7 +590,7 @@ operatori:
       esito_label: 'Approva o rifiuta la pratica'
       motivazione:
         esito_label: "Messaggio personale"
-        esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al il cittadino"
+        esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al/il cittadino"
         allega_label: "Documenti allegati"
         allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
     upload_risposta_firmata:
