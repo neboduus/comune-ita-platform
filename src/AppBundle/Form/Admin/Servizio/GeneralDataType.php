@@ -26,7 +26,7 @@ class GeneralDataType extends AbstractType
       'Pubblicato' => Servizio::STATUS_AVAILABLE,
       'Non attivo' => Servizio::STATUS_SUSPENDED,
       'Privato' => Servizio::STATUS_PRIVATE,
-      'Schedulato' => Servizio::STATUS_SCHEDULED,
+      'Programmato' => Servizio::STATUS_SCHEDULED,
     ];
 
     $accessLevels = [
@@ -105,21 +105,31 @@ class GeneralDataType extends AbstractType
         'label' => 'Stato',
         'choices' => $statuses
       ])
+      ->add('scheduled_from', DateTimeType::class, [
+        'label' => 'Data di attivazione del servizio',
+        'required' => false,
+        'empty_data' => null,
+        'placeholder' => [
+          'year' => 'Anno', 'month' => 'Mese', 'day' => 'Giorno',
+          'hour' => 'Ora', 'minute' => 'Minuto', 'second' => 'Secondo',
+        ],
+        'label_attr' => ['class' => 'label-datetime-field']
+      ])
+      ->add('scheduled_to', DateTimeType::class, [
+        'label' => 'Data di cessazione del servizio',
+        'required' => false,
+        'empty_data' => null,
+        'placeholder' => [
+          'year' => 'Anno', 'month' => 'Mese', 'day' => 'Giorno',
+          'hour' => 'Ora', 'minute' => 'Minuto', 'second' => 'Secondo',
+        ],
+        'label_attr' => ['class' => 'label-datetime-field']
+      ])
       ->add('service_group', EntityType::class, [
         'class' => 'AppBundle\Entity\ServiceGroup',
         'choice_label' => 'name',
         'label' => 'Gruppo di servizi',
         'required' => false
-      ])
-      ->add('scheduled_from', DateTimeType::class, [
-        'label' => 'Schedulato a partire da',
-        'required' => false,
-        'empty_data' => null
-      ])
-      ->add('scheduled_to', DateTimeType::class, [
-        'label' => 'Schedulato fino a',
-        'required' => false,
-        'empty_data' => null
       ])
       ->add('access_level', ChoiceType::class, [
         'label' => 'Livello di accesso al servizio',

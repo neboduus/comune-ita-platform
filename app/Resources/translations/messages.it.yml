@@ -76,7 +76,7 @@ servizio:
     privato: 'Privato'
     bozza: 'Bozza'
     sospeso: 'Sospeso'
-    schedulato: 'Schedulato'
+    schedulato: 'Programmato'
 
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
