@@ -64,7 +64,7 @@
     "ext-fileinfo": "^7.3",
     "johngrogg/ics-parser": "2.1.18",
     "league/csv": "9.6.0",
-    "sentry/sentry-symfony": "3.5.1",
+    "sentry/sentry-symfony": "3.5.2",
     "stof/doctrine-extensions-bundle": "v1.3.0",
     "flagception/flagception-bundle": "3.5.1"
   },
