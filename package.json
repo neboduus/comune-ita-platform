@@ -27,7 +27,7 @@
     "webpack-notifier": "1.8.0"
   },
   "dependencies": {
-    "axios": "0.19.2",
+    "axios": "0.20.0",
     "highcharts": "8.1.0",
     "lodash": "4.17.15",
     "outdated-browser-rework": "2.10.0"
