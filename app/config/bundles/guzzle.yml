@@ -9,7 +9,7 @@ guzzle:
     protocollo_cct:
       base_url: '%pitre_adapter_url%'
       options:
-        timeout: 50
+        timeout: 120
       headers:
         Accept: 'application/json'
     comunweb:
@@ -22,7 +22,7 @@ guzzle:
     giscom:
       base_url: '%giscom_adapter_url%'
       options:
-        timeout: 50
+        timeout: 120
         verify: false
         auth:
           - '%giscom_adapter_username%' # login

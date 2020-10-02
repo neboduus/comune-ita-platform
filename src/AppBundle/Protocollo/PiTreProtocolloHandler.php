@@ -6,6 +6,7 @@ use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RispostaIntegrazione;
 use AppBundle\Protocollo\Exception\ResponseErrorException;
 use GuzzleHttp\Client;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -88,6 +89,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
+   * @param AllegatoInterface $richiesta
    *
    * @throws ResponseErrorException
    */
@@ -105,6 +107,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     if ($responseData->getStatus() == 'success') {
       $richiesta->setNumeroProtocollo($responseData->getNProt());
       $richiesta->setIdDocumentoProtocollo($responseData->getIdDoc());
+      $pratica->addNumeroDiProtocollo([
+        'id' => $richiesta->getId(),
+        'protocollo' => $responseData->getIdDoc() ?? '',
+      ]);
     } else {
       throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
@@ -112,23 +118,47 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
-   * @param AllegatoInterface $allegato
+   * @param AllegatoInterface $risposta
    *
    * @throws ResponseErrorException
    */
-  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $integrazione)
+  public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $risposta)
   {
-    $parameters = $this->getIntegrazioneParameters($pratica, $integrazione);
+    $parameters = $this->getRispostaIntegrazioneParameters($pratica, $risposta);
     $parameters->set('method', 'createDocumentAndAddInProject');
-
-    //$queryString = http_build_query($parameters->all());
-    //$response = $this->client->get('?' . $queryString);
     $response = $this->client->post('', ['form_params' => $parameters->all()]);
-
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
 
     if ($responseData->getStatus() == 'success') {
-      $integrazione->setNumeroProtocollo($responseData->getNProt());
+      $risposta->setNumeroProtocollo($responseData->getNProt());
+      $risposta->setIdDocumentoProtocollo($responseData->getIdDoc());
+      $pratica->addNumeroDiProtocollo([
+        'id' => $risposta->getId(),
+        'protocollo' => $responseData->getIdDoc() ?? '',
+      ]);
+    } else {
+      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+    }
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $rispostaIntegrazione
+   * @param AllegatoInterface $integrazione
+   *
+   * @throws ResponseErrorException
+   */
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $integrazione)
+  {
+    $parameters = $this->getIntegrazioneParameters($pratica, $rispostaIntegrazione, $integrazione);
+    $parameters->set('method', 'createDocumentAndAddInProject');
+    $parameters->set('method', 'uploadFileToDocument');
+    // trasmissionIDArray va valorizzato solo per il metodo createDocumentAndAddInProject
+    $parameters->remove('trasmissionIDArray');
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+    $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
+
+    if ($responseData->getStatus() == 'success') {
       $integrazione->setIdDocumentoProtocollo($responseData->getIdDoc());
       // Aggiungo id allegato alla pratica
       $pratica->addNumeroDiProtocollo([
@@ -140,6 +170,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
   }
+
 
   /**
    * @param Pratica $pratica
@@ -411,7 +442,12 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     return $parameters;
   }
 
-  private function getIntegrazioneParameters(Pratica $pratica, AllegatoInterface $integrazione)
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   * @return PiTreProtocolloParameters
+   */
+  private function getRispostaIntegrazioneParameters(Pratica $pratica, AllegatoInterface $allegato)
   {
     $ente = $pratica->getEnte();
     $servizio = $pratica->getServizio();
@@ -430,12 +466,12 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $object = $pratica->getOggetto() . ' - ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
     }
 
-    $parameters->setDocumentObj('Integrazione ' . $object);
-    $parameters->setDocumentDescription('Integrazione ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
+    $parameters->setDocumentObj('Risposta integrazione ' . $object);
+    $parameters->setDocumentDescription('Risposta integrazione ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
-    //$parameters->setFilePath($integrazione->getFile()->getPathname());
-    $path = $integrazione->getFile()->getPathname();
-    $parameters->setFileName($integrazione->getFile()->getFilename());
+    //$parameters->setFilePath($richiesta->getFile()->getPathname());
+    $path = $allegato->getFile()->getPathname();
+    $parameters->setFileName($allegato->getFile()->getFilename());
     $fileContent = base64_encode(file_get_contents($path));
     $parameters->setFile($fileContent);
     $parameters->setChecksum(md5($fileContent));
@@ -448,6 +484,37 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     $parameters->setSenderSurname($user->getCognome());
     $parameters->setSenderCf($user->getCodiceFiscale());
     $parameters->setSenderEmail($user->getEmail());
+
+    return $parameters;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param RispostaIntegrazione $rispostaIntegrazione
+   * @param AllegatoInterface $integrazione
+   * @return PiTreProtocolloParameters
+   */
+  private function getIntegrazioneParameters(Pratica $pratica, RispostaIntegrazione $rispostaIntegrazione,  AllegatoInterface $integrazione)
+  {
+    $ente = $pratica->getEnte();
+    $servizio = $pratica->getServizio();
+    /** @var CPSUser $user */
+    $user = $pratica->getUser();
+
+    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = new PiTreProtocolloParameters($parameters);
+
+    if (!$parameters->getInstance()) {
+      $parameters->setInstance($this->instance);
+    }
+
+    $parameters->setDocumentId($rispostaIntegrazione->getIdDocumentoProtocollo());
+    $path = $integrazione->getFile()->getPathname();
+    $parameters->setFileName($integrazione->getFile()->getFilename());
+    $fileContent = base64_encode(file_get_contents($path));
+    $parameters->setFile($fileContent);
+    $parameters->setChecksum(md5($fileContent));
+    $parameters->setAttachmentDescription($integrazione->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
     return $parameters;
   }

@@ -48,28 +48,33 @@ class DirectoryNamerService implements DirectoryNamerInterface
 
   private function isUserAwareAllegato(Allegato $object)
   {
-    return in_array($object->getType(), [
-      'modulo_compilato',
-      'allegato_operatore',
-      'risposta_operatore',
-      'allegato_scia',
-      'richiesta_integrazione',
-      'integrazione',
-      'ritiro',
-        'messaggio']
+
+    return in_array(
+      $object->getType(),
+      [
+        'modulo_compilato',
+        'allegato_operatore',
+        'risposta_operatore',
+        'allegato_scia',
+        'richiesta_integrazione',
+        'risposta_integrazione',
+        'integrazione',
+        'ritiro',
+        'messaggio'
+      ]
     );
   }
 
   /**
-   * @todo Da rimuovere: fix per PAT - Domanda di bonus alimentare
    * @param Allegato $object
    * @return bool
+   * @todo Da rimuovere: fix per PAT - Domanda di bonus alimentare
    */
   private function isBOAAllegato(Allegato $object)
   {
     $pratiche = $object->getPratiche();
-    foreach ($pratiche as $pratica){
-      if ($pratica instanceof Pratica && $pratica->getServizio()->getSlug() == 'domanda-di-bonus-alimentare'){
+    foreach ($pratiche as $pratica) {
+      if ($pratica instanceof Pratica && $pratica->getServizio()->getSlug() == 'domanda-di-bonus-alimentare') {
 
         return true;
       }

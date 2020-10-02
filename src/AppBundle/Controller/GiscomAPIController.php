@@ -83,11 +83,10 @@ class GiscomAPIController extends Controller
      * @Security("has_role('ROLE_GISCOM')")
      * @return Response
      */
-    public function viePraticaAction(Request $request, Pratica $pratica)
+    public function viewPraticaAction(Request $request, Pratica $pratica)
     {
         $mapper = $this->container->get('ocsdc.giscom_api.mapper');
         $giscomPratica = $mapper->map($pratica);
-
         return new JsonResponse([
             'pratica' => $giscomPratica,
         ]);

@@ -160,6 +160,11 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMIT);
 
     } elseif ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+
+      // Creo il file principale per le integrazioni
+      $integrationsAnswer = $this->pdfBuilder->creaModuloProtocollabilePerRispostaIntegrazione($pratica);
+      $pratica->addAllegato($integrationsAnswer);
+
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
     }
   }

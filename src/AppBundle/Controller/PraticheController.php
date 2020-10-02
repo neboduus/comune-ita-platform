@@ -308,7 +308,6 @@ class PraticheController extends Controller
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
-    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
     $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
       && $pratica->getUser()->getId() == $user->getId();
@@ -338,7 +337,11 @@ class PraticheController extends Controller
 
         /** @var Allegato $a */
         foreach ($attachments as $a) {
-          $allegati[$a->getId()] = $a->getNumeroProtocollo();
+          $allegati[$a->getId()] = [
+            'numero_protocollo' => $a->getNumeroProtocollo(),
+            'id_documento_protocollo'  => $a->getIdDocumentoProtocollo(),
+            'description'  => $a->getDescription()
+          ];
         }
       }
       $result['allegati'] = $allegati;
@@ -456,7 +459,11 @@ class PraticheController extends Controller
 
         /** @var Allegato $a */
         foreach ($attachments as $a) {
-          $allegati[$a->getId()] = $a->getNumeroProtocollo();
+          $allegati[$a->getId()] = [
+            'numero_protocollo' => $a->getNumeroProtocollo(),
+            'id_documento_protocollo'  => $a->getIdDocumentoProtocollo(),
+            'description'  => $a->getDescription()
+          ];
         }
       }
       $result['allegati'] = $allegati;

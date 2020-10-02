@@ -133,9 +133,28 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
-   * @throws \Exception
    */
-  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $this->sendAllegatoToProtocollo($pratica, $allegato);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   */
+  public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $this->sendAllegatoToProtocollo($pratica, $allegato);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $rispostaIntegrazione
+   * @param AllegatoInterface $allegato
+   * @throws \Twig\Error\Error
+   */
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
   {
     $parameters = $pratica->getServizio()->getProtocolloParameters();
     $this->checkParameters($parameters);
@@ -170,19 +189,30 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     }
   }
 
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   */
   public function sendAllegatoToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     // Note: Not used in this handler
   }
 
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   */
   public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     // Note: Not used in this handler
   }
 
+  /**
+   * @param Pratica $pratica
+   */
   public function sendRitiroToProtocollo(Pratica $pratica)
   {
-    // TODO: Implement sendRitiroToProtocollo() method.
+    // Note: Not used in this handler
   }
 
 
@@ -237,10 +267,5 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
         throw new \Exception("Missing required field: " . $parameter);
       }
     }
-  }
-
-  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
-  {
-    $this->sendAllegatoToProtocollo($pratica, $allegato);
   }
 }

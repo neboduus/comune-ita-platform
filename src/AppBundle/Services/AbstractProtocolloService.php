@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RichiestaIntegrazione;
+use AppBundle\Entity\RispostaIntegrazione;
 use AppBundle\Protocollo\Exception\AlreadySentException;
 use AppBundle\Protocollo\Exception\AlreadyUploadException;
 use AppBundle\Protocollo\Exception\ParentNotRegisteredException;
@@ -74,6 +75,17 @@ class AbstractProtocolloService
   protected function validateRichiestaIntegrazione(Pratica $pratica, RichiestaIntegrazione $richiesta)
   {
     if ($richiesta->getNumeroProtocollo() !== null) {
+      throw new AlreadySentException();
+    }
+  }
+
+  /**
+   * @param RispostaIntegrazione $risposta
+   * @throws AlreadySentException
+   */
+  protected function validateRispostaIntegrazione(RispostaIntegrazione $risposta)
+  {
+    if ($risposta->getNumeroProtocollo() !== null) {
       throw new AlreadySentException();
     }
   }

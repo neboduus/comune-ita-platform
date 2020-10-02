@@ -1,0 +1,26 @@
+<html>
+<head>
+  {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+
+<p style="margin-top: 80px">Risposta a richiesta di integrazione del {{ richiesta_integrazione.createdAt | date('d/m/Y') }}.</p>
+{% if richiesta_integrazione.description %}
+  <p>
+    Note di richiesta:<br/>
+    {{ richiesta_integrazione.description }}
+  </p>
+{% endif %}
+
+{% if integrazioni|length > 0 %}
+  <p>Integrazioni</p>
+  <ul>
+    {% for i in integrazioni %}
+      <li>{{ i.originalFilename }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+
+</body>
+</html>

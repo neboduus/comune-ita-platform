@@ -158,6 +158,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
+   * @throws \Exception
    */
   public function sendAllegatoToProtocollo(Pratica $pratica, AllegatoInterface $allegato): void
   {
@@ -176,8 +177,27 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
+   * @throws \Exception
    */
-  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $parameters = $this->retrieveProtocolloParametersForEnteAndServizio($pratica);
+    $request = $this->createSendAllegatoRequestBody($pratica->getNumeroProtocollo(), $allegato, $parameters);
+    $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl']);
+
+    $pratica->addNumeroDiProtocollo([
+      'id' => $allegato->getId(),
+      'protocollo' => $response,
+    ]);
+  }
+
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $rispostaIntegrazione
+   * @param AllegatoInterface $allegato
+   */
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
   {
     $this->sendAllegatoToProtocollo($pratica, $allegato);
   }

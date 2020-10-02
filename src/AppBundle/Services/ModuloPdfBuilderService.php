@@ -5,11 +5,14 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\GiscomPratica;
+use AppBundle\Entity\Integrazione;
+use AppBundle\Entity\IntegrazioneRepository;
 use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\RichiestaIntegrazioneRequestInterface;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RispostaIntegrazione;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\RispostaOperatoreDTO;
 use AppBundle\Entity\Ritiro;
@@ -277,7 +280,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     if (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) {
       $content = base64_decode($payload['FileRichiesta']);
       unset($payload['FileRichiesta']);
-      $fileName = uniqid() . '.p7m';
+      $fileName = uniqid() . '.pdf.p7m';
     } else {
       $content = $this->renderForPraticaIntegrationRequest($pratica, $integrationRequest);
       $fileName = uniqid() . '.pdf';
@@ -285,7 +288,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     $integration->setPayload($payload);
     $integration->setOwner($pratica->getUser());
-    $integration->setOriginalFilename((new \DateTime())->format('Ymdhi'));
+    $integration->setOriginalFilename($fileName);
     $integration->setDescription($integrationRequest->getMessage());
     $integration->setPratica($pratica);
 
@@ -299,6 +302,38 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $this->em->persist($integration);
 
     return $integration;
+  }
+
+  /**
+   * @param Pratica $pratica
+   *
+   * @return RispostaIntegrazione
+   * @throws \Exception
+   */
+  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica)
+  {
+
+    $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+
+    $attachment = new RispostaIntegrazione();
+    $content = $this->renderForPraticaIntegrationAnswer($pratica);
+    $fileName = uniqid() . '.pdf';
+    $attachment->setIdRichiestaIntegrazione($integrationRequest->getId());
+
+    $attachment->setOwner($pratica->getUser());
+    $attachment->setOriginalFilename($fileName);
+    $attachment->setDescription('Risposta a richiesta integrazione: ' . $integrationRequest->getId());
+
+    $destinationDirectory = $this->getDestinationDirectoryFromContext($attachment);
+    $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
+
+    $this->filesystem->dumpFile($filePath, $content);
+    $attachment->setFile(new File($filePath));
+    $attachment->setFilename($fileName);
+
+    $this->em->persist($attachment);
+
+    return $attachment;
   }
 
   /**
@@ -346,6 +381,48 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
+      'user' => $pratica->getUser(),
+    ]);
+
+    $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
+
+    try {
+      $index = DocumentFactory::makeFromString('index.html', $html);
+
+      $request = new HTMLRequest($index);
+      $request->setPaperSize(GotembergRequest::A4);
+      $request->setMargins(GotembergRequest::NO_MARGINS);
+      $response =  $client->post($request);
+      $fileStream = $response->getBody();
+      return $fileStream->getContents();
+
+    } catch (RequestException $e) {
+      # this exception is thrown if given paper size or margins are not correct.
+    } catch (ClientException $e) {
+      # this exception is thrown by the client if the API has returned a code != 200.
+    } catch (\Exception $e) {
+
+    }
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return string
+   */
+  private function renderForPraticaIntegrationAnswer(Pratica $pratica)
+  {
+
+    $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+    /** @var IntegrazioneRepository $integrationRepo */
+    $integrationRepo = $this->em->getRepository('AppBundle:Integrazione');
+
+    /** @var Integrazione[] $integrations */
+    $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
+
+    $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/answer_integration.html.twig', [
+      'pratica' => $pratica,
+      'richiesta_integrazione' => $integrationRequest,
+      'integrazioni' => $integrations,
       'user' => $pratica->getUser(),
     ]);
 
