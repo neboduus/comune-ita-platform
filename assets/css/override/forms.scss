@@ -193,3 +193,21 @@ textarea {
     display: none !important;
   }
 }
+.label-datetime-field{
+  background-color: transparent;
+  font-weight: 600;
+  line-height: calc(2.5rem - 1px);
+  transition: 0.2s ease-out;
+  top: 0;
+  font-size: 1rem;
+  cursor: text;
+  display: block;
+  max-width: 100%;
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 0.5rem;
+  color: #435a70;
+}
+
