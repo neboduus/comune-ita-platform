@@ -20,7 +20,7 @@
     $(document).ready(function() {
       setInterval(function() {
         window.location.reload();
-      }, 60000);
+      }, 15000);
     });
   </script>
   {% endif %}
@@ -28,7 +28,6 @@
 {% endblock %}
 
 {% block main_content %}
-
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
@@ -43,7 +42,6 @@
         {% endif %}
         {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
       </div>
-
 
       <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
         <div class="row">

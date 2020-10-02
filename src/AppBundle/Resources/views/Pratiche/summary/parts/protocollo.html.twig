@@ -40,18 +40,12 @@
     {# In attesa di generazione del pdf #}
     {% if pratica.status == 1900 %}
       {% if pratica.servizio.isProtocolRequired %}
-        <p class="text-center m-0">
-          <a href="#" class="btn btn-lg btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_compilato'|trans }}</a>
-        </p>
-        <p class="text-center m-0">
+        {%  set fcqn_parts = pratica.servizio.praticaFCQN | split('\\') %}
+        {% set class_name = fcqn_parts|last %}
+        <p class="text-center m-0 {{ 'd-none-'~ class_name }}">
           {{ 'operatori.attesa_modulo_compilato_info'|trans|raw }}
         </p>
       {% else %}
-        <p class="text-center m-0">
-          <a href="#" class="btn btn-lg btn-secondary my-2 disabled">
-            <i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_ricevuta'|trans }}
-          </a>
-        </p>
         <p class="my-2">
           {{ 'operatori.attesa_ricevuta_info'|trans|raw }}
           {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
@@ -65,9 +59,6 @@
     {% elseif pratica.status == 2000  %}
 
       {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
-        <p class="text-center m-0">
-          <a href="#" class="btn btn-lg btn-secondary my-2 disabled"><i class="fa fa-refresh fa-spin fa-fw"></i> {{ 'operatori.attesa_modulo_protocollato'|trans }}</a>
-        </p>
         <p class="my-2">
           {{ 'operatori.attesa_protocollo_info'|trans|raw }}
           {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}

@@ -4,6 +4,7 @@
 
   {{ include('AppBundle:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
 
+
   {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
@@ -28,4 +29,5 @@
 
   {# Integrazioni #}
   {{ include('AppBundle:Pratiche/summary/parts:richieste_integrazioni.html.twig', {'pratica':pratica, 'user': user}) }}
+
 </div>
