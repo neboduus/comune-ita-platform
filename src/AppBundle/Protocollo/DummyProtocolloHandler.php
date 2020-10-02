@@ -47,11 +47,19 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
     ]);
   }
 
+  public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $pratica->addNumeroDiProtocollo([
+      'id' => $allegato->getId(),
+      'protocollo' => 'r-' . $allegato->getId(),
+    ]);
+  }
+
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
    */
-  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
   {
     $pratica->addNumeroDiProtocollo([
       'id' => $allegato->getId(),

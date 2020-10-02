@@ -10,6 +10,7 @@ class Meta extends AbstractSciaPraticaEdiliziaMappable
     {
         return [
             'DOC_RIC',
+            'MODULO_COMPILATO',
             'DOC_ACC',
             'DOC_RIG'
         ];

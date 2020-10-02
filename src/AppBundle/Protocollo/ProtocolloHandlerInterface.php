@@ -23,12 +23,6 @@ interface ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
-   * @param AllegatoInterface $allegato
-   */
-  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato);
-
-  /**
-   * @param Pratica $pratica
    */
   public function sendRispostaToProtocollo(Pratica $pratica);
 
@@ -48,4 +42,17 @@ interface ProtocolloHandlerInterface
    * @param AllegatoInterface $allegato
    */
   public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato);
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   */
+  public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato);
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $rispostaIntegrazione
+   * @param AllegatoInterface $allegato
+   */
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato);
 }

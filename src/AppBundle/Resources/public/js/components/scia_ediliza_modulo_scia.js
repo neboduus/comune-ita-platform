@@ -5,7 +5,7 @@ Vue.component('scia_ediliza_modulo_scia', {
         <div class="row-upload">
             <el-upload
               class="vue-upload"
-              :data="{type: 'type'}"
+              :data="{type: 'type', description: 'Modulo principale della domanda'}"
               :action="prefix+'/pratiche/allegati/upload/scia/'+idPratica"
               :file-list="files"
               :on-success="onChange"

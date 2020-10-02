@@ -5,8 +5,11 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Integrazione;
+use AppBundle\Entity\IntegrazioneRepository;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RichiestaIntegrazione;
+use AppBundle\Entity\RispostaIntegrazione;
+use AppBundle\Entity\RispostaIntegrazioneRepository;
 use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Protocollo\Exception\AlreadySentException;
@@ -135,7 +138,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS,
         new ProtocollaPraticaSuccessEvent($pratica)
       );
-    }else{
+    } else {
       throw new IncompleteExecutionException();
     }
   }
@@ -151,14 +154,19 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     $this->validatePraticaForUploadFile($pratica);
     $allegati = $pratica->getRichiesteIntegrazione();
 
-    if (!empty($allegati)) {
-      foreach ($allegati as $allegato) {
-        try {
-          $this->validateUploadFile($pratica, $allegato);
-          $this->logger->debug(__METHOD__, ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]);
-          $this->handler->sendRichiestaIntegrazioneToProtocollo($pratica, $allegato);
 
-        } catch (AlreadyUploadException $e) {
+    if (!empty($allegati)) {
+      /** @var Allegato $allegato */
+      foreach ($allegati as $allegato) {
+        if ($allegato->getType() === RichiestaIntegrazione::TYPE_DEFAULT) {
+          try {
+            $this->validateRichiestaIntegrazione($pratica, $allegato);
+            $this->logger->debug(__METHOD__, ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]);
+            $this->handler->sendRichiestaIntegrazioneToProtocollo($pratica, $allegato);
+            $this->entityManager->persist($allegato);
+            $this->entityManager->flush();
+          } catch (AlreadySentException $e) {
+          }
         }
       }
       $this->entityManager->persist($pratica);
@@ -175,44 +183,96 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
    * @throws ParentNotRegisteredException
    * @throws ORMException
    * @throws OptimisticLockException
+   * @throws IncompleteExecutionException
    */
   public function protocollaAllegatiIntegrazione(Pratica $pratica)
   {
     $this->validatePraticaForUploadFile($pratica);
-    $allegati = $pratica->getAllegati();
+    $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
 
-    /** @var Allegato $allegato */
-    foreach ($allegati as $allegato) {
+    if (!$integrationRequest instanceof RichiestaIntegrazione) {
+      $this->logger->error("Non ci sono richieste di integrazioni attive", ['pratica' => $pratica->getId()]);
+      return false;
+    }
+
+    $dispatchSuccess = true;
+
+    /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
+    $integrationAnswerRepo = $this->entityManager->getRepository('AppBundle:RispostaIntegrazione');
+
+    /** @var RispostaIntegrazione $integrationAnswer */
+    $integrationAnswerCollection = $integrationAnswerRepo->findByIntegrationRequest($integrationRequest->getId());
+    if (empty($integrationAnswerCollection)) {
+      throw new \Exception('Integration answer not found');
+    }
+    $integrationAnswer = $integrationAnswerCollection[0];
+
+    try {
+      $this->validateRispostaIntegrazione($integrationAnswer);
+      $this->logger->debug(__METHOD__.' send risposta', ['risposta_integrazione' => $pratica->getId()]);
+      $this->handler->sendRispostaIntegrazioneToProtocollo($pratica, $integrationAnswer);
+      $this->entityManager->persist($integrationAnswer);
+      $this->entityManager->flush();
+      $dispatchSuccess = true;
+
+    } catch (AlreadySentException $e) {
+      $this->logger->debug(
+        "Risposta la risposta integrazione già inviata al protocollo",
+        ['risposta_integrazione' => $integrationAnswer->getId(), 'pratica' => $pratica->getId()]
+      );
+    } catch (GuzzleException $e) {
+      $this->logger->error(
+        "Errore inviando la risposta integrazion al protocollo",
+        ['risposta_integrazione' => $integrationAnswer->getId(), 'pratica' => $pratica->getId()]
+      );
+      $dispatchSuccess = false;
+    }
+
+    /** @var IntegrazioneRepository $integrationRepo */
+    $integrationRepo = $this->entityManager->getRepository('AppBundle:Integrazione');
+
+    /** @var Integrazione[] $integrations */
+    $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
+
+    foreach ($integrations as $allegato) {
       try {
         $this->validateUploadFile($pratica, $allegato);
-        if ($allegato->getType() == Integrazione::TYPE_DEFAULT) {
-          $this->logger->debug(
-            __METHOD__.' send allegato',
-            ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]
-          );
-          $this->handler->sendIntegrazioneToProtocollo($pratica, $allegato);
-        } else {
-          $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
-        }
+        $this->logger->debug(
+          __METHOD__.': send integrazione',
+          ['integrazione' => $allegato->getId(), 'pratica' => $pratica->getId()]
+        );
+        $this->handler->sendIntegrazioneToProtocollo($pratica, $integrationAnswer, $allegato);
+        $this->entityManager->persist($allegato);
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
 
       } catch (AlreadyUploadException $e) {
+        $this->logger->debug(
+          "Integrazione già inviata al protocollo",
+          ['integrazione' => $allegato->getId(), 'pratica' => $pratica->getId()]
+        );
+      } catch (GuzzleException $e) {
+        $this->logger->error(
+          "Errore inviando l'allegato al protocollo",
+          ['integrazione' => $allegato->getId(), 'pratica' => $pratica->getId()]
+        );
+        $dispatchSuccess = false;
       }
     }
 
-    $this->entityManager->persist($pratica);
-    $this->entityManager->flush();
+    if ($dispatchSuccess) {
+      $integrationRequest->markAsDone();
+      $this->entityManager->persist($integrationRequest);
 
-    $richiestaIntegrazione = $pratica->getRichiestaDiIntegrazioneAttiva();
-    if ($richiestaIntegrazione instanceof RichiestaIntegrazione) {
-      $richiestaIntegrazione->markAsDone();
-      $this->entityManager->persist($richiestaIntegrazione);
+      $integrationAnswer->markAsDone();
+      $this->entityManager->persist($integrationAnswer);
+
       $this->entityManager->flush();
-    }
 
-    $this->dispatcher->dispatch(
-      ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS,
-      new ProtocollaPraticaSuccessEvent($pratica)
-    );
+      $this->dispatcher->dispatch(ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS, new ProtocollaPraticaSuccessEvent($pratica));
+    } else {
+      throw new IncompleteExecutionException();
+    }
   }
 
   /**

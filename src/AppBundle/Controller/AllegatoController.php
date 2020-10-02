@@ -12,6 +12,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Integrazione;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Entity\User;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
@@ -180,9 +181,11 @@ class AllegatoController extends Controller
    * @Route("/pratiche/allegati/upload/scia/{id}",name="allegati_scia_create_cpsuser")
    * @Method("POST")
    * @return mixed
+   * @throws \Exception
    */
   public function cpsUserUploadAllegatoSciaAction(Request $request, Pratica $pratica)
   {
+
     $logger = $this->get('logger');
     $uploadedFile = $request->files->get('file');
     if (is_null($uploadedFile)) {
@@ -195,16 +198,17 @@ class AllegatoController extends Controller
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_NOT_FOUND], Response::HTTP_NOT_FOUND);
     }
 
+    $uploadedFile = $request->files->get('file');
     $pathParts = pathinfo($uploadedFile->getRealPath());
-    $dirname = $pathParts['dirname'];
 
-    $targetFile = $dirname . '/' . $pratica->getId() . time();
+    /*$targetFile = $dirname . '/' . $pratica->getId() . time();
     exec("openssl smime -verify -inform DER -in {$uploadedFile->getRealPath()} -noverify > {$targetFile} 2>&1");
 
     if (!in_array(mime_content_type($targetFile), array('application/pdf', 'application/octet-stream' ))) {
       unlink($targetFile);
       return new JsonResponse('Sono permessi solo file pdf firmati', Response::HTTP_BAD_REQUEST);
-    }
+    }*/
+
     /*$content = file_get_contents($uploadedFile->getRealPath());
     @($parser = new \TCPDF_PARSER(ltrim($content)));
     list($xref, $data) = $parser->getParsedData();
@@ -215,14 +219,21 @@ class AllegatoController extends Controller
       return new JsonResponse('Sono permessi solo file protetti dalla modifica', Response::HTTP_BAD_REQUEST);
     }*/
 
+
     if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+      $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+      if ( !$integrationRequest instanceof RichiestaIntegrazione ) {
+        throw new \Exception('Integration request not found.');
+      }
       $allegato = new Integrazione();
+      $allegato->setIdRichiestaIntegrazione($integrationRequest->getId());
     } else {
       $allegato = new AllegatoScia();
     }
 
     $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
     $allegato->setFile($uploadedFile);
+
     $description = $request->get('description') ?? 'Allegato senza descrizione';
     $allegato->setDescription($description);
 
@@ -247,7 +258,7 @@ class AllegatoController extends Controller
       }
     }
 
-    unlink($targetFile);
+    //unlink($targetFile);
     return new JsonResponse($data);
   }
 

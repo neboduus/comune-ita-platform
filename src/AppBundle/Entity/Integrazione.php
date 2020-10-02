@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\IntegrazioneRepository")
  */
 class Integrazione extends Allegato
 {
@@ -26,6 +27,12 @@ class Integrazione extends Allegato
    * @var ArrayCollection
    */
   private $numeriProtocollo;
+
+  /**
+   * @ORM\Column(type="json_array", options={"jsonb":true})
+   * @var \JsonSerializable
+   */
+  private $payload;
 
   /**
    * ModuloCompilato constructor.
@@ -98,6 +105,24 @@ class Integrazione extends Allegato
   {
     $this->numeriProtocollo = new ArrayCollection(json_decode($this->numeriProtocollo));
   }
+
+  /**
+   * @return \JsonSerializable
+   */
+  public function getIdRichiestaIntegrazione()
+  {
+    $payload = $this->payload;
+    return $payload[RichiestaIntegrazione::TYPE_DEFAULT];
+  }
+
+  /**
+   * @param $idRichiestaIntegrazione
+   */
+  public function setIdRichiestaIntegrazione($idRichiestaIntegrazione): void
+  {
+    $this->payload = [RichiestaIntegrazione::TYPE_DEFAULT => $idRichiestaIntegrazione];
+  }
+
 
   public function getType(): string
   {

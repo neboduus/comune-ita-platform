@@ -100,6 +100,7 @@ doctrine:
     dql:
       string_functions:
         FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
+        JSON_FIELD: AppBundle\Doctrine\JsonFieldParser
 
 # Swiftmailer Configuration
 swiftmailer:

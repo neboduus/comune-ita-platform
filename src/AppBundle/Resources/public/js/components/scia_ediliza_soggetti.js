@@ -5,7 +5,7 @@ Vue.component('scia_ediliza_soggetti', {
         <div>
             <el-upload
               class="vue-upload"
-              :data="{type: 'type'}"
+              :data="{type: 'type', description: 'Soggetti aventi titolo'}"
               :action="prefix+'/pratiche/allegati/upload/scia/'+idPratica"
               :file-list="files"
               :on-success="onChange"

@@ -131,6 +131,7 @@ pratica:
   nucleoFamiliare: 'Composizione del nucleo familiare'
   pagamento: 'Pagamento'
   non_specificato: 'Non specificato'
+  nessun_file_specificato: 'Nessun file specificato'
   pdf:
     dati_autenticazione: '<strong>Informazioni tecniche</strong> <small>(Dati generati automaticamente dalla Stanza del Cittadino</small>)'
     spett_le: 'Spett.le'
@@ -184,6 +185,7 @@ pratica:
       abbr_rapporto_di_parentela: 'Parentela'
     allegati: 'File allegati'
     richiesta_integrazioni: 'Richiesta integrazioni'
+    risposte_integrazioni: 'Risposte integrazioni'
     allegato:
       file: 'Nome del file'
       descrizione: 'Descrizione'
@@ -648,7 +650,7 @@ email:
         draft: ''
         draft.for.integration: "le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
         submitted.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
-        registered.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della richiesta."
+        registered.after.integration: "le comunichiamo che l'integrazione alla sua richiesta con protocollo <strong>%protocollo%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della richiesta."
         pending.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         withdraw: "le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
         payment:
@@ -1203,8 +1205,8 @@ steps:
           title: ''
           description: Obblighi in materia di sicurezza nei luoghi di lavoro di cui al d.lgs n. 81/2008
         DOM_DOC_DIRITTI_SEGRETERIA:
-          title: 'Ricevuta attestante il pagamento dei diritti di segreteria'
-          description: ''
+          title: ''
+          description: 'Ricevuta attestante il pagamento dei diritti di segreteria'
         DOM_DOC_PAGAMENTO_CONTRIBUTO:
           title: ''
           description: Documentazione attestante il pagamento del contributo di costruzione

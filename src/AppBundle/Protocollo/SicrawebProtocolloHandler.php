@@ -80,10 +80,31 @@ class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
+   * @throws ResponseErrorException
+   */
+  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    $this->sendAllegatoToProtocollo($pratica, $allegato);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   */
+  public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  {
+
+  }
+
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $rispostaIntegrazione
+   * @param AllegatoInterface $allegato
    *
    * @throws ResponseErrorException
    */
-  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
   {
     $this->sendAllegatoToProtocollo($pratica, $allegato);
   }
@@ -193,9 +214,14 @@ class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
     return $parameters;
   }
 
-  public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
+  /**
+   * @param Pratica $pratica
+   */
+  public function sendRitiroToProtocollo(Pratica $pratica)
   {
-    $this->sendAllegatoToProtocollo($pratica, $allegato);
+    // TODO: Implement sendRitiroToProtocollo() method.
   }
+
+
 }
 

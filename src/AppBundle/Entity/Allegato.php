@@ -19,7 +19,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ORM\Table(name="allegato")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"default" = "Allegato", "modulo_compilato" = "ModuloCompilato", "allegato_operatore" = "AllegatoOperatore", "risposta_operatore" = "RispostaOperatore", "allegato_scia" = "AllegatoScia", "richiesta_integrazione" = "RichiestaIntegrazione", "integrazione" = "Integrazione", "ritiro" = "Ritiro", "messaggio" = "AllegatoMessaggio"})
+ * @ORM\DiscriminatorMap({"default" = "Allegato", "modulo_compilato" = "ModuloCompilato", "allegato_operatore" = "AllegatoOperatore", "risposta_operatore" = "RispostaOperatore", "allegato_scia" = "AllegatoScia", "richiesta_integrazione" = "RichiestaIntegrazione", "risposta_integrazione" = "RispostaIntegrazione", "integrazione" = "Integrazione", "ritiro" = "Ritiro", "messaggio" = "AllegatoMessaggio"})
  * @ORM\HasLifecycleCallbacks
  * @Vich\Uploadable()
  * @SDCAssert\ValidMimeType
@@ -67,7 +67,7 @@ class Allegato implements AllegatoInterface
 
   /**
    * @var string
-   * @ORM\Column(type="string")
+   * @ORM\Column(type="text")
    */
   private $description;
 
@@ -76,6 +76,12 @@ class Allegato implements AllegatoInterface
    * @ORM\Column(type="string", nullable=true)
    */
   private $numeroProtocollo;
+
+  /**
+   * @ORM\Column(type="string", nullable=true)
+   * @var string
+   */
+  private $idDocumentoProtocollo;
 
   /**
    * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="allegati")
@@ -201,6 +207,24 @@ class Allegato implements AllegatoInterface
   public function setNumeroProtocollo(string $numeroProtocollo)
   {
     $this->numeroProtocollo = $numeroProtocollo;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getIdDocumentoProtocollo()
+  {
+    return $this->idDocumentoProtocollo;
+  }
+
+  /**
+   * @param string $idDocumentoProtocollo
+   * @return Allegato
+   */
+  public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
+  {
+    $this->idDocumentoProtocollo = $idDocumentoProtocollo;
     return $this;
   }
 
