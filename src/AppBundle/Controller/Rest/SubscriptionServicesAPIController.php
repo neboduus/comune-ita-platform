@@ -426,9 +426,6 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     foreach ($form->all() as $childForm) {
       if ($childForm instanceof FormInterface) {
         if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          echo '<pre>';
-          print_r($childErrors);
-          echo '</pre>';
           $errors[] = $childErrors;
         }
       }

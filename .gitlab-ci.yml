@@ -1,5 +1,8 @@
 image: docker:latest
 
+services:
+  - docker:dind
+
 # build -> push -> delivery
 stages:
   - build
@@ -10,9 +13,15 @@ stages:
 variables:
   DOCKER_BUILDKIT: 1
   PHP_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/app"
-  PHP_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/app:${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}"
+  PHP_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/app:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
   APACHE_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/apache"
-  APACHE_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/apache:${CI_COMMIT_SHORT_SHA}"
+  APACHE_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/apache:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
+
+
+###################################################################################################################
+#
+# Build images with a temporary name
+#
 
 build_php:
   stage: build
@@ -20,7 +29,7 @@ build_php:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $PHP_IMAGE_NAME:latest || true
-    - docker pull $PHP_IMAGE_TMP 2> /dev/null || docker build --pull --cache-from $PHP_IMAGE_NAME:latest -t $PHP_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_NAME --build-arg CI_COMMIT_TAG=$CI_COMMIT_TAG --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA .
+    - docker pull $PHP_IMAGE_TMP 2> /dev/null || docker build --pull --cache-from $PHP_IMAGE_NAME:latest -t $PHP_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_SLUG --build-arg CI_COMMIT_TAG=$CI_COMMIT_TAG --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA .
     - docker push $PHP_IMAGE_TMP
   only:
     - branches
@@ -39,8 +48,10 @@ build_apache:
     - tags
 
 
-
-
+###################################################################################################################
+#
+# Push PHP image with defintive name 
+#
 
 push_php_branch:
   stage: push
@@ -48,8 +59,8 @@ push_php_branch:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $PHP_IMAGE_TMP
-    - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:${CI_COMMIT_REF_NAME/\//-}"
-    - docker push "$PHP_IMAGE_NAME:${CI_COMMIT_REF_NAME/\//-}"
+    - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+    - docker push "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
   only:
     - branches
   except:
@@ -78,7 +89,10 @@ push_php_latest:
     - master
 
 
-
+###################################################################################################################
+#
+# Push Apache image with defintive name 
+#
 
 push_apache_branch:
   stage: push
@@ -86,8 +100,8 @@ push_apache_branch:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $APACHE_IMAGE_TMP
-    - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:${CI_COMMIT_REF_NAME/\//-}"
-    - docker push "$APACHE_IMAGE_NAME:${CI_COMMIT_REF_NAME/\//-}"
+    - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+    - docker push "$APACHE_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
   only:
     - branches
   except:
@@ -116,7 +130,10 @@ push_apache_latest:
     - master
 
 
-
+###################################################################################################################
+#
+# Test jobs
+#
 
 #zap_baseline:
 #  stage: test
@@ -126,20 +143,45 @@ push_apache_latest:
 #    # -z -config rules.csrf.ignorelist=search,login then ZAP will not fail the scan if forms with an ID of "search" or "login" do not have anti CSRF tokens.
 #    # - docker run -t owasp/zap2docker-stable zap-baseline.py -j -t https://10.0.1.22/ # with ajax scanning
 
-publiccode:
-    stage: test
-    allow_failure: true
-    script:
-      - docker run -v $(pwd):/var/tmp:ro -t --rm golang sh -c "go get github.com/italia/publiccode-parser-go/pcvalidate; cd /var/tmp; /go/bin/pcvalidate -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master publiccode.yml"
+#publiccode:
+#  stage: test
+#  allow_failure: true
+#  script:
+#    - docker run -v $(pwd):/var/tmp:ro -t --rm golang sh -c "go get github.com/italia/publiccode-parser-go/pcvalidate; cd /var/tmp; /go/bin/pcvalidate -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master publiccode.yml"
 
 
-dummy_protocol:
-    stage: test
-    allow_failure: true
-    script:
-      - echo "Looking for configuration files containing protocollo.handlers.dummy:"
-      - find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \;
-      - if [[ $(find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \; | wc -l) -gt 0 ]]; then echo "Error, at least one production file contains dummy protocol!" && exit 1; else echo "OK, no dummy protocol in production files"; fi
+php-qa-tools:
+  stage: test
+  allow_failure: true
+  script:
+    # commands are executed with a path like: /builds/LzfeuYfm/0/opencontent/stanzadelcittadino
+    # to have reports uploaded to gitlab the runners must have /builds path shared
+    # ->  https://gitlab.com/gitlab-org/gitlab-foss/-/issues/41227
+    - docker run -t --rm -u "$UID" -v "$(pwd):/app" eko3alpha/docker-phpqa --tools phpmetrics,phploc,phpcs,php-cs-fixer,phpmd,pdepend,parallel-lint --report offline --ignoredDirs vendor,build,migrations,test --buildDir /app/reports 
+  artifacts:
+    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - reports/*
+    when: always
 
-# vim: set noet sw=4 ts=4:
+var-dump-check:
+  stage: test
+  script:
+    - docker run -t --rm -v "$(pwd):/app" umutphp/php-docker-images-for-ci:7.3 var-dump-check /app
 
+security_composer_checker:
+  stage: test
+  image: umutphp/php-docker-images-for-ci:7.3
+  script:
+    - security-checker security:check composer.lock
+
+
+#dummy_protocol:
+#  stage: test
+#  allow_failure: true
+#  script:
+#    - echo "Looking for configuration files containing protocollo.handlers.dummy:"
+#    - find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \;
+#    - if [[ $(find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \; | wc -l) -gt 0 ]]; then echo "Error, at least one production file contains dummy protocol!" && exit 1; else echo "OK, no dummy protocol in production files"; fi
+
+# vim: autoindent tabstop=2 shiftwidth=2 expandtab softtabstop=2 filetype=yaml fileencoding=utf-8
