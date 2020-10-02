@@ -71,6 +71,9 @@ $primary-b: 74;
       border: $timeline-pin-circle-border;
       margin-right: $v-gap * 2;
       background: #fff;
+      &.in-progress{
+        background:#efefef !important;
+      }
     }
 
     svg {
@@ -187,6 +190,16 @@ $primary-b: 74;
     .d-preview-calendar-none{
       display: block;
     }
+}
+
+.d-none{
+  &-FormIO{
+display: none;
+  }
+  &-SciaPraticaEdilizia{
+    display: none;
+
+  }
 }
 
 

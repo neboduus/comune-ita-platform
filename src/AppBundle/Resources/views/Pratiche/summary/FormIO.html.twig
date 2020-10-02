@@ -24,7 +24,7 @@
   {% endif %}
 
   {% if (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length == 0) or ( pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) %}
-    {% if formserver_url is defined and pratica.status < 2000 %}
+    {% if formserver_url is defined and pratica.status < 1900 %}
       <div id="formio_summary" class="formio-front formio-summary"
            data-formserver_url="{{ formserver_url }}"
            data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
