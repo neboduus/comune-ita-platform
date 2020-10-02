@@ -652,13 +652,11 @@ class AdminController extends Controller
   {
     $errors = array();
     foreach ($form->getErrors() as $error) {
-      dump($error);
       $errors[] = $error->getMessage();
     }
     foreach ($form->all() as $childForm) {
       if ($childForm instanceof FormInterface) {
         if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          dump($childForm);
           $errors[] = $childErrors;
         }
       }
