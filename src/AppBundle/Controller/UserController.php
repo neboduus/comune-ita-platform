@@ -8,6 +8,7 @@ use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Form\IdCardType;
+use AppBundle\Helpers\MunicipalityConverter;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Security\CPSAuthenticator;
 use AppBundle\Services\CPSUserProvider;
@@ -134,6 +135,14 @@ class UserController extends Controller
       ->setSdcProvinciaDomicilio($data['sdc_provincia_domicilio'])
       ->setSdcStatoDomicilio($data['sdc_stato_domicilio']);
 
+    if (!$user->getLuogoNascita() && isset($data['luogo_nascita'])){
+      $user->setLuogoNascita($data['luogo_nascita']);
+    }
+
+    if (!$user->getProvinciaNascita() && isset($data['provincia_nascita'])){
+      $user->setProvinciaNascita($data['provincia_nascita']);
+    }
+
     $manager->persist($user);
 
     try {
@@ -227,6 +236,19 @@ class UserController extends Controller
       ->add('save', SubmitType::class,
         ['label' => 'user.profile.salva']
       );
+
+    if (!$user->getLuogoNascita()){
+      $formBuilder->add('luogo_nascita', ChoiceType::class,
+        ['label' => false, 'required' => true, 'choices' => array_flip(MunicipalityConverter::getCodes())]
+      );
+    }
+
+    if (!$user->getProvinciaNascita()){
+      $formBuilder->add('provincia_nascita', ChoiceType::class,
+        ['label' => false, 'required' => true, 'choices' => CPSUser::getProvinces()]
+      );
+    }
+
     $form = $formBuilder->getForm();
 
     return $form;

@@ -21,7 +21,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
   const TYPE_SEND_APPLICATION = 'send_applcation';
   const TYPE_SEND_INTEGRATION = 'send_integration';
-    const TYPE_SEND_RESULT      = 'send_result';
+  const TYPE_SEND_RESULT      = 'send_result';
 
 
   /** @var string */
@@ -90,6 +90,10 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $this->mailer = new Swift_Mailer($transport);
   }
 
+  public function getName()
+  {
+    return 'Pec';
+  }
 
   public function getConfigParameters()
   {

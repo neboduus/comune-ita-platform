@@ -1,0 +1,152 @@
+{
+    "marinogiulio": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "M",
+            "registeredOffice": "Piazza Antonino 5\nSesto Laerte, 71263 Monza e della Brianza (FC)",
+            "companyName": "Rinaldi Group",
+            "fiscalNumber": "TINIT-SLACUT84C58M321W",
+            "spidCode": "TENVOMKiBqVuGh",
+            "email": "hrinaldi@hotmail.it",
+            "name": "Eustachio",
+            "dateOfBirth": "2006-12-15",
+            "familyName": "Santoro"
+        }
+    },
+    "qrossi": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "F",
+            "registeredOffice": "Canale Gastone 635\nGrassi laziale, 95672 Palermo (BT)",
+            "companyName": "Martini, Ferrari e Rizzi s.r.l.",
+            "fiscalNumber": "TINIT-VWAQNV06Y59B726M",
+            "spidCode": "TENVnb5OCZjw6u",
+            "email": "lombardograzia@vitale.com",
+            "name": "Thea",
+            "dateOfBirth": "1977-08-31",
+            "familyName": "Giuliani"
+        }
+    },
+    "fbattaglia": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "M",
+            "registeredOffice": "Vicolo Giuliani 95 Appartamento 82\nGuerra veneto, 58309 Grosseto (PU)",
+            "companyName": "Fabbri, Riva e Conte e figli",
+            "fiscalNumber": "TINIT-OOGHTY68V39Y997T",
+            "spidCode": "TENVsO8yt8Acgy",
+            "email": "giacobbe16@sala.eu",
+            "name": "Giovanna",
+            "dateOfBirth": "1974-01-12",
+            "familyName": "Guerra"
+        }
+    },
+    "bortolo93": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "M",
+            "registeredOffice": "Canale Ruggiero 22\nSesto Isabel, 68356 Verona (OG)",
+            "companyName": "Ferretti Group",
+            "fiscalNumber": "TINIT-MKWNEY28B30J155G",
+            "spidCode": "TENVoAVeqAgaZM",
+            "email": "ortensia70@libero.it",
+            "name": "Rufo",
+            "dateOfBirth": "1994-08-28",
+            "familyName": "Morelli"
+        }
+    },
+    "test": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "M",
+            "registeredOffice": "Strada Danthon 024 Piano 1\nRosalba a mare, 17866 Ascoli Piceno (PO)",
+            "companyName": "Milani-Rossi e figli",
+            "fiscalNumber": "TINIT-ZAJOLP07P87K313S",
+            "spidCode": "TENVvQzgs1sxSh",
+            "email": "mde-santis@serra.org",
+            "name": "Ruth",
+            "dateOfBirth": "1990-05-31",
+            "familyName": "Leone"
+        }
+    },
+    "radamesferraro": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "M",
+            "registeredOffice": "Incrocio Nayade 9 Piano 8\nEmanuel sardo, 97083 Como (PA)",
+            "companyName": "Giordano SPA",
+            "fiscalNumber": "TINIT-NYIXYG01O73K989H",
+            "spidCode": "TENVWl662fkG2Y",
+            "email": "smartinelli@testa-caruso.eu",
+            "name": "Selvaggia",
+            "dateOfBirth": "1993-09-20",
+            "familyName": "De Angelis"
+        }
+    },
+    "fontanaantimo": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "F",
+            "registeredOffice": "Via Nadir 44\nEmidio laziale, 33625 Lecco (RC)",
+            "companyName": "Farina e figli",
+            "fiscalNumber": "TINIT-FDKZVV21Y95Z234Q",
+            "spidCode": "TENV6fWbkmVfi9",
+            "email": "sashaferrara@gentile.com",
+            "name": "Mirko",
+            "dateOfBirth": "1978-03-15",
+            "familyName": "Testa"
+        }
+    },
+    "marianiabramo": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "F",
+            "registeredOffice": "Incrocio Ferrari 06 Piano 7\nBianco laziale, 56397 Trapani (TE)",
+            "companyName": "Longo Group",
+            "fiscalNumber": "TINIT-GLKUNF84C65R991T",
+            "spidCode": "TENVb5My0fTwze",
+            "email": "nestore82@tin.it",
+            "name": "Marvin",
+            "dateOfBirth": "1998-05-14",
+            "familyName": "Fontana"
+        }
+    },
+    "fabio43": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "F",
+            "registeredOffice": "Incrocio Lia 3 Piano 1\nSan Mercedes, 35743 Potenza (ME)",
+            "companyName": "Martino-Martini e figli",
+            "fiscalNumber": "TINIT-KICBCX48P64R455R",
+            "spidCode": "TENVyE7j46LQKS",
+            "email": "espositomuzio@battaglia.com",
+            "name": "Tosca",
+            "dateOfBirth": "2019-12-29",
+            "familyName": "Milani"
+        }
+    },
+    "piersilvio95": {
+        "sp": null,
+        "pwd": "test",
+        "attrs": {
+            "gender": "F",
+            "registeredOffice": "Strada Michele 1 Piano 9\nKarim lido, 10605 Grosseto (AQ)",
+            "companyName": "Grassi s.r.l.",
+            "fiscalNumber": "TINIT-QTEOCY84F17N880Y",
+            "spidCode": "TENVrptbD6CgYG",
+            "email": "damicoerminia@tele2.it",
+            "name": "Morgana",
+            "dateOfBirth": "1976-03-29",
+            "familyName": "Bernardi"
+        }
+    }
+}

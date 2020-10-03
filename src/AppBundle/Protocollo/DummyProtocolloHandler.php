@@ -7,6 +7,11 @@ use AppBundle\Entity\Pratica;
 
 class DummyProtocolloHandler implements ProtocolloHandlerInterface
 {
+  public function getName()
+  {
+    return 'Dummy';
+  }
+
   public function getConfigParameters()
   {
     return false;

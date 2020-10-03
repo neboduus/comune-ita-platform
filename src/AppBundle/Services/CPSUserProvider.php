@@ -111,7 +111,6 @@ class CPSUserProvider implements UserProviderInterface
       $user = $this->createUserFromArray($data);
     } else {
       $this->updateRequiredFields($user, $data);
-
     }
 
     return $user;

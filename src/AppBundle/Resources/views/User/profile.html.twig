@@ -164,20 +164,28 @@
                       </div>
                       <div class="col-12 col-md-6">
                         <div class="form-group">
-                          <label for="luogo_nascita">{{ 'user.profile.luogo_nascita'|trans() }}</label>
-                          <input type="text" class="form-control" id="luogo_nascita" required="required"
-                                 value="{{ user.municipalityFromCode(user.luogoNascita) }}"
-                                 disabled="disabled">
+                          {% if not user.luogoNascita %}
+                            {{ form_row(form.luogo_nascita, {'label': 'user.profile.luogo_nascita'|trans()}) }}
+                          {% else %}
+                            <label for="luogo_nascita">{{ 'user.profile.luogo_nascita'|trans() }}</label>
+                            <input type="text" class="form-control" id="luogo_nascita" required="required"
+                                   value="{{ user.municipalityFromCode(user.luogoNascita) }}"
+                                   disabled="disabled">
+                          {% endif %}
                         </div>
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-6">
                         <div class="form-group">
-                          <label for="provincia_nascita">{{ 'user.profile.provincia_nascita'|trans() }}</label>
-                          <input type="text" class="form-control" id="provincia_nascita" required="required"
-                                 value="{{ user.provinciaNascita }}"
-                                 disabled="disabled">
+                          {% if not user.provinciaNascita %}
+                            {{ form_row(form.provincia_nascita, {'label': 'user.profile.provincia_nascita'|trans()}) }}
+                          {% else %}
+                            <label for="provincia_nascita">{{ 'user.profile.provincia_nascita'|trans() }}</label>
+                            <input type="text" class="form-control" id="provincia_nascita" required="required"
+                                   value="{{ user.provinciaNascita }}"
+                                   disabled="disabled">
+                          {% endif %}
                         </div>
                       </div>
                       <div class="col-6">
