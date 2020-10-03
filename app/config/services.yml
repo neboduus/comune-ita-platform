@@ -119,7 +119,7 @@ services:
     autowire: true
 
   AppBundle\Services\InstanceService:
-    autowire: true
+    arguments: [ "@doctrine", "%prefix%" ]
 
   AppBundle\Payment\Gateway\Bollo:
     autowire: true
@@ -689,8 +689,8 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.contributoassociazioni }
 
-  ocsdc.p7m_signature_check:
-    class: AppBundle\Services\P7MSignatureCheckService
+  AppBundle\Services\P7MSignatureCheckService:
+    autowire: true
 
   ocsdc.p7m_thumbnailer_service:
     class: AppBundle\Services\P7MThumbnailerService

@@ -7,6 +7,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\Gateway\MyPay;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +24,7 @@ class SelectPaymentGatewayType extends AbstractType
   private $gatewaysMap;
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -32,7 +33,7 @@ class SelectPaymentGatewayType extends AbstractType
    */
   private $statusService;
 
-  public function __construct(EntityManager $entityManager, PraticaStatusService $statusService)
+  public function __construct(EntityManagerInterface $entityManager, PraticaStatusService $statusService)
   {
     $this->em = $entityManager;
     $this->statusService = $statusService;
