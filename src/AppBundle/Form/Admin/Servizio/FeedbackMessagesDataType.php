@@ -9,6 +9,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\FeedbackMessageType;
 use AppBundle\Model\FeedbackMessage;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -33,7 +34,7 @@ class FeedbackMessagesDataType extends AbstractType
   /**
    * FeedbackMessagesDataType constructor.
    */
-  public function __construct(TranslatorInterface $translator, EntityManager $entityManager)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager)
   {
     $this->translator = $translator;
     $this->em = $entityManager;

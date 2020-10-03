@@ -9,6 +9,7 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\DematerializedFormAllegatiAttacherService;
+use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
@@ -55,6 +56,9 @@ class PraticheAnonimeController extends Controller
    */
   protected $dematerializer;
 
+  /** @var InstanceService */
+  protected $instanceService;
+
   /**
    * @var bool
    */
@@ -68,6 +72,7 @@ class PraticheAnonimeController extends Controller
    * @param PraticaStatusService $statusService
    * @param ModuloPdfBuilderService $pdfBuilder
    * @param DematerializedFormAllegatiAttacherService $dematerializer
+   * @param InstanceService $instanceService
    * @param $hashValidity
    */
   public function __construct(
@@ -76,6 +81,7 @@ class PraticheAnonimeController extends Controller
     PraticaStatusService $statusService,
     ModuloPdfBuilderService $pdfBuilder,
     DematerializedFormAllegatiAttacherService $dematerializer,
+    InstanceService $instanceService,
     $hashValidity
   ) {
     $this->logger = $logger;
@@ -83,6 +89,7 @@ class PraticheAnonimeController extends Controller
     $this->statusService = $statusService;
     $this->pdfBuilder = $pdfBuilder;
     $this->dematerializer = $dematerializer;
+    $this->instanceService = $instanceService;
     $this->hashValidity = $hashValidity;
   }
 
@@ -98,8 +105,7 @@ class PraticheAnonimeController extends Controller
   {
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    $instanceService = $this->container->get('ocsdc.instance_service');
-    $ente = $instanceService->getCurrentInstance();
+    $ente = $this->instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
       $this->get('logger')->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
@@ -174,16 +180,17 @@ class PraticheAnonimeController extends Controller
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
+   * @param PraticaStatusService $statusService
    * @param $hash
    * @return Response
    */
-  public function paymentCallbackAction(Request $request, Pratica $pratica, $hash)
+  public function paymentCallbackAction(Request $request, Pratica $pratica, PraticaStatusService $statusService, $hash)
   {
     if ($pratica->isValidHash($hash, $this->hashValidity)) {
       $outcome = $request->get('esito');
 
       if ($outcome == 'OK') {
-        $this->container->get('ocsdc.pratica_status_service')->setNewStatus(
+        $statusService->setNewStatus(
           $pratica,
           Pratica::STATUS_PAYMENT_OUTCOME_PENDING
         );

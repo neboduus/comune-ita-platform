@@ -24,7 +24,7 @@ services:
       [ '@ocsdc.meeting_service' ]
 
   AppBundle\Controller\APIController:
-    autowire: true
+    arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service']
 
   AppBundle\Controller\Rest\ServicesAPIController:
     autowire: true
@@ -48,6 +48,24 @@ services:
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
 
+  AppBundle\Controller\AdminController:
+    autowire: true
+
+  AppBundle\Controller\PraticheController:
+    autowire: true
+
+  AppBundle\Controller\OperatoriController:
+    autowire: true
+
+  AppBundle\Controller\GiscomAPIController:
+    arguments:
+      - '@logger'
+      - '@ocsdc.pratica_status_service'
+      - '@ocsdc.status_mapper.giscom'
+      - '@ocsdc.pratica_integration_service'
+      - '@ocsdc.giscom_api.mapper'
+      - '@ocsdc.giscom_api.adapter_direct'
+
   AppBundle\Controller\Rest\FoldersAPIController:
     arguments: [ '@translator', '@doctrine.orm.entity_manager','@ocsdc.instance_service' ]
 
@@ -62,6 +80,7 @@ services:
       - "@ocsdc.pratica_status_service"
       - "@ocsdc.modulo_pdf_builder"
       - "@ocsdc.allegati.dematerialized_attacher"
+      - "@ocsdc.instance_service"
       - '%hash_validity%'
 
   AppBundle\Controller\TrackingController:
@@ -118,6 +137,9 @@ services:
   AppBundle\Services\MyPayService:
     autowire: true
 
+  AppBundle\Services\InstanceService:
+    arguments: [ "@doctrine", "%prefix%" ]
+
   AppBundle\Payment\Gateway\Bollo:
     autowire: true
 
@@ -129,6 +151,7 @@ services:
 
   AppBundle\BackOffice\SubcriptionsBackOffice:
     arguments: [ "@logger","@translator","@doctrine.orm.entity_manager" ]
+    public: true
     tags: [ 'app.backoffice' ]
 
   AppBundle\BackOffice\CalendarsBackOffice:
@@ -137,12 +160,14 @@ services:
       - '@ocsdc.instance_service'
       - '@ocsdc.meeting_service'
       - "@translator"
+    public: true
     tags: [ 'app.backoffice' ]
 
-  ocsdc.backoffices:
-    class: AppBundle\Services\BackOfficeCollection
+  AppBundle\Services\BackOfficeCollection:
     arguments:
       - !tagged app.backoffice
+
+  ocsdc.backoffices: '@AppBundle\Services\BackOfficeCollection'
 
   AppBundle\Controller\DocumentController:
     arguments: [ "@translator", "@doctrine.orm.default_entity_manager", "@logger" ]
@@ -227,8 +252,7 @@ services:
     arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', '@router' ]
 
 
-  ocsdc.modulo_pdf_builder:
-    class: AppBundle\Services\ModuloPdfBuilderService
+  AppBundle\Services\ModuloPdfBuilderService:
     arguments:
       - "@filesystem"
       - "@doctrine.orm.default_entity_manager"
@@ -243,6 +267,7 @@ services:
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.schedule_action_service"
 
+  ocsdc.modulo_pdf_builder: '@AppBundle\Services\ModuloPdfBuilderService'
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
 
@@ -277,15 +302,14 @@ services:
     #        arguments: ["@doctrine.orm.entity_manager",'@logger', '@ocsdc.allegati.directory_namer',  '@vich_uploader.property_mapping_factory' ]
     public: false
 
-  ocsdc.protocollo_delayed:
-    class: AppBundle\Services\DelayedProtocolloService
+  AppBundle\Services\DelayedProtocolloService:
     arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
 
-  ocsdc.protocollo_direct:
-    class: AppBundle\Services\ProtocolloService
+  AppBundle\Services\ProtocolloService:
     arguments: [ "@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher" ]
 
-  ocsdc.protocollo: "@ocsdc.protocollo_delayed"
+  ocsdc.protocollo: '@AppBundle\Services\DelayedProtocolloService'
+  ocsdc.protocollo_direct: '@AppBundle\Services\ProtocolloService'
 
   ocsdc.pratica_listeners.createpdf:
     class: AppBundle\EventListener\CreatePdfPraticaListener
@@ -639,9 +663,11 @@ services:
     tags:
       - { name: twig.extension }
 
-  ocsdc.pratica_status_service:
-    class: AppBundle\Services\PraticaStatusService
-    arguments: [ "@doctrine.orm.entity_manager", "@logger", "@event_dispatcher" ]
+  AppBundle\Services\PraticaStatusService:
+    #arguments: [ "@doctrine.orm.entity_manager", "@logger", "@event_dispatcher" ]
+    autowire: true
+
+  ocsdc.pratica_status_service: '@AppBundle\Services\PraticaStatusService'
 
   ocsdc.protocollo_success_events_subscriber:
     class: AppBundle\EventListener\ProtocolloSuccessSubscriber
@@ -659,9 +685,11 @@ services:
     class: AppBundle\Services\TermsAcceptanceCheckerService
     arguments: [ "@doctrine" ]
 
-  ocsdc.instance_service:
-    class: AppBundle\Services\InstanceService
-    arguments: [ "@doctrine", "%prefix%" ]
+  #ocsdc.instance_service:
+  #  class: AppBundle\Services\InstanceService
+  #  arguments: [ "@doctrine", "%prefix%" ]
+
+  ocsdc.instance_service: '@AppBundle\Services\InstanceService'
 
   ocsdc.version_service:
     class: AppBundle\Services\VersionService
@@ -685,8 +713,10 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.contributoassociazioni }
 
-  ocsdc.p7m_signature_check:
-    class: AppBundle\Services\P7MSignatureCheckService
+  AppBundle\Services\P7MSignatureCheckService:
+    autowire: true
+
+  ocsdc.p7m_signature_check: '@AppBundle\Services\P7MSignatureCheckService'
 
   ocsdc.p7m_thumbnailer_service:
     class: AppBundle\Services\P7MThumbnailerService
@@ -762,9 +792,10 @@ services:
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.modulo_pdf_builder"
 
-  ocsdc.formserver:
-    class: AppBundle\Services\FormServerApiAdapterService
+  AppBundle\Services\FormServerApiAdapterService:
     arguments: [ "%formserver_private_url%", "@logger" ]
+
+  ocsdc.formserver: '@AppBundle\Services\FormServerApiAdapterService'
 
   # Handlers servizi
   AppBundle\Handlers\Servizio\ServizioHandlerRegistry:

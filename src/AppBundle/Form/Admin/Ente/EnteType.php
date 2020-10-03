@@ -11,7 +11,7 @@ use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Model\Gateway;
 use AppBundle\Services\BackOfficeCollection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -38,7 +38,7 @@ class EnteType extends AbstractType
    */
   private $backOfficeCollection;
 
-  public function __construct(EntityManager $entityManager, BackOfficeCollection $backOffices)
+  public function __construct(EntityManagerInterface $entityManager, BackOfficeCollection $backOffices)
   {
     $this->em = $entityManager;
     $this->backOfficeCollection = $backOffices;

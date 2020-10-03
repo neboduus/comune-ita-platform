@@ -11,6 +11,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Services\BackOfficeCollection;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -49,7 +50,7 @@ class IntegrationsDataType extends AbstractType
    */
   private $backOfficeCollection;
 
-  public function __construct(TranslatorInterface $translator, Container $container, EntityManager $entityManager, FormServerApiAdapterService $formServerService, BackOfficeCollection $backOffices)
+  public function __construct(TranslatorInterface $translator, Container $container, EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService, BackOfficeCollection $backOffices)
   {
     $this->container = $container;
     $this->em = $entityManager;
@@ -70,7 +71,7 @@ class IntegrationsDataType extends AbstractType
       'Pratica accettata' => Pratica::STATUS_COMPLETE,
       'Pratica rifiutata' => Pratica::STATUS_CANCELLED
     ];
-    
+
     /** @var Servizio $service */
     $service = $builder->getData();
     /** @var Ente $ente */

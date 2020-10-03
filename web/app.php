@@ -61,7 +61,6 @@ if ( !empty($identifier) && file_exists( __DIR__.'/../app/config/' .$identifier 
     $kernel = new AppKernel($env, $debug);
 }
 
-$kernel->loadClassCache();
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);

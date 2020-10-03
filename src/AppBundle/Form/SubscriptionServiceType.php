@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\SubscriptionService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -23,7 +24,7 @@ class SubscriptionServiceType extends AbstractType
    */
   private $em;
 
-  public function __construct(EntityManager $entityManager)
+  public function __construct(EntityManagerInterface $entityManager)
   {
     $this->em = $entityManager;
   }

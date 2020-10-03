@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\OperatoreUser;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -19,11 +20,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CalendarType extends AbstractType
 {
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
-  public function __construct(EntityManager $entityManager)
+  public function __construct(EntityManagerInterface $entityManager)
   {
     $this->em = $entityManager;
   }

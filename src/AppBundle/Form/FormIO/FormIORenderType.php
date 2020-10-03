@@ -15,6 +15,7 @@ use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Validator\Constraints\ExpressionBasedFormIOConstraint;
 use AppBundle\Validator\Constraints\ServerSideFormIOConstraint;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -82,13 +83,13 @@ class FormIORenderType extends AbstractType
 
   /**
    * FormIORenderType constructor.
-   * @param EntityManager $entityManager
+   * @param EntityManagerInterface $entityManager
    * @param FormServerApiAdapterService $formServerService
    * @param SchemaFactoryInterface $schemaFactory
    * @param LoggerInterface $logger
    * @param SessionInterface $session
    */
-  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService, SchemaFactoryInterface $schemaFactory, LoggerInterface $logger, SessionInterface $session)
+  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService, SchemaFactoryInterface $schemaFactory, LoggerInterface $logger, SessionInterface $session)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;

@@ -6,6 +6,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\IdCard;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;

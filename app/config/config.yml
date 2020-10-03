@@ -9,6 +9,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+  #container.autowiring.strict_mode: true
   locale: it
 
 framework:
@@ -26,7 +27,6 @@ framework:
     templating:
         engines: ['twig']
     trusted_hosts:   ~
-    trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  null
@@ -230,7 +230,7 @@ ewz_recaptcha:
   public_key: '%recaptcha_key%'
   private_key: '%recaptcha_secret%'
   # Not needed as "%kernel.default_locale%" is the default value for the locale key
-  locale_key: %kernel.default_locale%
+  locale_key: '%kernel.default_locale%'
 
 # Sentry
 sentry:
