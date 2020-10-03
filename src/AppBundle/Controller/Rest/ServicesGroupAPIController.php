@@ -6,6 +6,7 @@ use AppBundle\Entity\ServiceGroup;
 use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * Class ServicesAPIController
- * @property EntityManager em
+ * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/services-groups")
@@ -29,7 +30,7 @@ use Ramsey\Uuid\Uuid;
 class ServicesGroupAPIController extends AbstractFOSRestController
 {
 
-  public function __construct(EntityManager $em, InstanceService $is)
+  public function __construct(EntityManagerInterface $em, InstanceService $is)
   {
     $this->em = $em;
     $this->is = $is;
@@ -146,7 +147,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -243,7 +244,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -330,7 +331,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',

@@ -6,6 +6,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\ModuloPdfBuilderService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -74,13 +75,17 @@ class PrintController extends Controller
   /**
    * @Route("/{pratica}/show", name="print_pratiche_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
    * @param Pratica $pratica
-   *
+   * @param ModuloPdfBuilderService $pdfBuilderService
+   * @return Response
+   * @throws \TheCodingMachine\Gotenberg\ClientException
+   * @throws \TheCodingMachine\Gotenberg\RequestException
    */
-  public function printPraticaShowAction(Request $request, Pratica $pratica)
+  public function printPraticaShowAction(Request $request, Pratica $pratica, ModuloPdfBuilderService $pdfBuilderService)
   {
 
-    $fileContent = $this->container->get('ocsdc.modulo_pdf_builder')->generatePdfUsingGotemberg($pratica);
+    $fileContent = $pdfBuilderService->generatePdfUsingGotemberg($pratica);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';
@@ -127,14 +132,18 @@ class PrintController extends Controller
   /**
    * @Route("/service/{service}/pdf", name="print_service_pdf")
    * @ParamConverter("service", class="AppBundle:Servizio")
+   * @param Request $request
    * @param Servizio $service
    *
+   * @param ModuloPdfBuilderService $pdfBuilderService
    * @return Response
+   * @throws \TheCodingMachine\Gotenberg\ClientException
+   * @throws \TheCodingMachine\Gotenberg\RequestException
    */
-  public function printServicePdfAction(Request $request, Servizio $service)
+  public function printServicePdfAction(Request $request, Servizio $service, ModuloPdfBuilderService $pdfBuilderService)
   {
 
-    $fileContent = $this->container->get('ocsdc.modulo_pdf_builder')->generateServicePdfUsingGotemberg($service);
+    $fileContent = $pdfBuilderService->generateServicePdfUsingGotemberg($service);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';

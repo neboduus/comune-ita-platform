@@ -9,6 +9,7 @@ use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
 use AppBundle\Services\P7MSignatureCheckService;
 use AppBundle\Validator\Constraints\AtLeastOneAttachmentConstraint;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,12 +39,12 @@ class PraticaEdiliziaAllegatiModuloSciaType extends AbstractType
     /**
      * ChooseAllegatoType constructor.
      *
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param ValidatorInterface $validator
      * @param P7MSignatureCheckService $p7mCheckService
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         P7MSignatureCheckService $p7mCheckService
     ) {

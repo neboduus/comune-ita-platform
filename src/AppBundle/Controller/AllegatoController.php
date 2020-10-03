@@ -62,7 +62,7 @@ class AllegatoController extends Controller
     $form->add($this->get('translator')->trans('salva'), SubmitType::class);
 
     $form->handleRequest($request);
-    if ($form->isValid()) {
+    if ($form->isSubmitted() && $form->isValid()) {
       $allegato->setOwner($this->getUser());
       $em = $this->getDoctrine()->getManager();
       $em->persist($allegato);

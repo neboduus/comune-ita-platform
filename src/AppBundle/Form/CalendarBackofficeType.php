@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\OperatoreUser;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -34,7 +35,7 @@ class CalendarBackofficeType extends AbstractType
    */
   private $em;
 
-  public function __construct(EntityManager $entityManager, TranslatorInterface $translator)
+  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
   {
     $this->em = $entityManager;
     $this->translator = $translator;

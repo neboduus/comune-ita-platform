@@ -18,6 +18,7 @@ use AppBundle\Services\InstanceService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -36,7 +37,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class ServicesAPIController
- * @property EntityManager em
+ * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/services")
@@ -45,7 +46,13 @@ class ServicesAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  public function __construct(EntityManager $em, InstanceService $is)
+  /** @var EntityManagerInterface  */
+  private $em;
+
+  /** @var InstanceService  */
+  private $is;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is)
   {
     $this->em = $em;
     $this->is = $is;
@@ -129,7 +136,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param $id
    * @return \FOS\RestBundle\View\View
    */
-  public function getFormServiceAction($id)
+  public function getFormServiceAction($id, FormServerApiAdapterService $formServerService)
   {
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
@@ -139,7 +146,6 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      $formServerService = $this->container->get('ocsdc.formserver');
       $response = $formServerService->getForm($service->getFormIoId());
 
       if ($response['status'] == 'success') {
@@ -197,7 +203,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -224,7 +230,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
 
     // Imposto l'ente in base all'istanza
-    $service->setEnte($this->container->get('ocsdc.instance_service')->getCurrentInstance());
+    $service->setEnte($this->is->getCurrentInstance());
 
     try {
       $em->persist($service);
@@ -303,7 +309,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -404,7 +410,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',

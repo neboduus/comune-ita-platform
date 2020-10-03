@@ -8,6 +8,7 @@ use AppBundle\Entity\Document;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class DocumentsAPIController
- * @property EntityManager em
+ * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/documents")
@@ -42,7 +43,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, $rootDir, EntityManager $em, InstanceService $is)
+  public function __construct(TranslatorInterface $translator, $rootDir, EntityManagerInterface $em, InstanceService $is)
   {
     $this->translator = $translator;
     $this->rootDir = $rootDir;
@@ -236,7 +237,7 @@ class DocumentsAPIController extends AbstractFOSRestController
 
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
 
       $data = [
@@ -322,7 +323,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -408,7 +409,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',

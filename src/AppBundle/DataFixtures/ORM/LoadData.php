@@ -9,6 +9,7 @@ use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
+use AppBundle\Services\InstanceService;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -46,7 +47,20 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     /** @var  ContainerInterface */
     private $container;
 
-    public function setContainer(ContainerInterface $container = null)
+    /** @var InstanceService */
+    private $instanceService;
+
+  /**
+   * LoadData constructor.
+   * @param InstanceService $instanceService
+   */
+  public function __construct(InstanceService $instanceService)
+  {
+    $this->instanceService = $instanceService;
+  }
+
+
+  public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
@@ -178,7 +192,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     public function loadServizi(ObjectManager $manager)
     {
 
-        $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
+        $ente = $this->instanceService->getCurrentInstance();
         if (!$ente instanceof Ente) {
            return;
         }

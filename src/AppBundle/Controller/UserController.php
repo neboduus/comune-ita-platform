@@ -8,11 +8,13 @@ use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Form\IdCardType;
+use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Helpers\MunicipalityConverter;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Security\CPSAuthenticator;
 use AppBundle\Services\CPSUserProvider;
 use DateTime;
+use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -314,9 +316,11 @@ class UserController extends Controller
    * @Route("/applications", name="user_applications_json")
    * @param Request $request
    *
+   * @param Serializer $serializer
+   * @param SchemaFactory $schemaFactory
    * @return JsonResponse
    */
-  public function applicationsAction(Request $request)
+  public function applicationsAction(Request $request, Serializer $serializer, SchemaFactory $schemaFactory)
   {
     $result = [];
 
@@ -375,12 +379,11 @@ class UserController extends Controller
         $result['links']['next'] = $this->generateUrl('user_applications_json', $nextParameters);
       }
 
-      $serializer = $this->container->get('jms_serializer');
       foreach ($data as $s) {
         $application = Application::fromEntity($s, '', false);
         $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
         if ($s instanceof FormIO){
-          $schema = $this->container->get('formio.factory')->createFromFormId($s->getServizio()->getFormIoId());
+          $schema = $schemaFactory->createFromFormId($s->getServizio()->getFormIoId());
           if ($schema->hasComponents()) {
             $dematerialized = $s->getDematerializedForms();
             if (isset($dematerialized['data'])) {

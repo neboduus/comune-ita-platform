@@ -19,6 +19,7 @@ use AppBundle\Protocollo\Exception\ParentNotRegisteredException;
 use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Protocollo\ProtocolloHandlerInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -49,7 +50,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
   public function __construct(
     ProtocolloHandlerInterface $handler,
-    EntityManager $entityManager,
+    EntityManagerInterface $entityManager,
     LoggerInterface $logger,
     EventDispatcherInterface $dispatcher
   ) {

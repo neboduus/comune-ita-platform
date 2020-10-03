@@ -11,6 +11,7 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class CalendarsAPIController
- * @property EntityManager em
+ * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/calendars")
@@ -39,7 +40,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   private $meetingService;
 
-  public function __construct(EntityManager $em, InstanceService $is, MeetingService $meetingService)
+  public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService)
   {
     $this->em = $em;
     $this->is = $is;
@@ -306,7 +307,7 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -393,7 +394,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -480,7 +481,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -752,7 +753,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -837,7 +838,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -927,7 +928,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',

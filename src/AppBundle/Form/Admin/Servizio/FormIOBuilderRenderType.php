@@ -8,6 +8,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,9 +37,9 @@ class FormIOBuilderRenderType extends AbstractType
   /**
    * ChooseAllegatoType constructor.
    *
-   * @param EntityManager $entityManager
+   * @param EntityManagerInterface $entityManager
    */
-  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
+  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;

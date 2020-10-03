@@ -19,10 +19,13 @@ use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
+use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\ModuloPdfBuilderService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use JMS\Serializer\Serializer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -51,6 +54,24 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class OperatoriController extends Controller
 {
+
+  /** @var SchemaFactory */
+  private $schemaFactory;
+
+  /** @var Serializer */
+  private $serializer;
+
+  /**
+   * OperatoriController constructor.
+   * @param SchemaFactory $schemaFactory
+   * @param Serializer $serializer
+   */
+  public function __construct(SchemaFactory $schemaFactory, Serializer $serializer)
+  {
+    $this->schemaFactory = $schemaFactory;
+    $this->serializer = $serializer;
+  }
+
 
   /**
    * @Route("/",name="operatori_index")
@@ -221,6 +242,8 @@ class OperatoriController extends Controller
   /**
    * @Route("/pratiche/calculate",name="operatori_index_calculate")
    * @param Request $request
+   * @param SchemaFactory $schemaFactory
+   * @return JsonResponse
    */
   public function indexCalculateAction(Request $request)
   {
@@ -258,7 +281,7 @@ class OperatoriController extends Controller
       $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
       if ($servizio instanceof Servizio) {
         /** @var Schema $schema */
-        $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+        $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
         foreach ($functions as $name => $callable) {
           $requestFields = $request->get($name, []);
           if (!empty($requestFields)) {
@@ -335,7 +358,7 @@ class OperatoriController extends Controller
     if ($servizioId && $count > 0) {
       $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
       if ($servizio instanceof Servizio) {
-        $schema = $this->container->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+        $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
         if ($schema->hasComponents()) {
           $result['meta']['schema'] = $schema->getComponents();
         }
@@ -364,11 +387,10 @@ class OperatoriController extends Controller
       $result['links']['next'] = $this->generateUrl('operatori_index_json', $nextParameters);
     }
 
-    $serializer = $this->container->get('jms_serializer');
     foreach ($data as $s) {
       //load Application Dto without file collection to reduce the number of db queries
       $application = Application::fromEntity($s, '', false);
-      $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
+      $applicationArray = json_decode($this->serializer->serialize($application, 'json'), true);
       $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
@@ -717,7 +739,7 @@ class OperatoriController extends Controller
     $fiscalCode = null;
     if ($pratica->getType() == Pratica::TYPE_FORMIO) {
       /** @var Schema $schema */
-      $schema = $this->container->get('formio.factory')->createFromFormId($pratica->getServizio()->getFormIoId());
+      $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
       if (!empty($pratica->getDematerializedForms()['data'])) {
         $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
         if (isset($data['applicant.fiscal_code.fiscal_code'])) {
@@ -882,13 +904,16 @@ class OperatoriController extends Controller
 
   /**
    * @Route("/{pratica}/pdf", name="operatori_pratiche_show_pdf")
+   * @param Request $request
    * @param Pratica $pratica
    *
+   * @param ModuloPdfBuilderService $pdfBuilderService
    * @return BinaryFileResponse
+   * @throws \Exception
    */
-  public function showPdfAction(Request $request, Pratica $pratica)
+  public function showPdfAction(Request $request, Pratica $pratica, ModuloPdfBuilderService $pdfBuilderService)
   {
-    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+    $allegato = $pdfBuilderService->showForPratica($pratica);
 
     $fileName = $allegato->getOriginalFilename();
     if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
