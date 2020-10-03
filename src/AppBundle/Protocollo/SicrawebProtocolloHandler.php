@@ -25,6 +25,12 @@ class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
     $this->instance = $instance;
   }
 
+  public function getName()
+  {
+    return 'SicraWeb';
+  }
+
+
   public function getConfigParameters()
   {
     return false;
@@ -221,7 +227,6 @@ class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
   {
     // TODO: Implement sendRitiroToProtocollo() method.
   }
-
 
 }
 

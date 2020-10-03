@@ -12,31 +12,32 @@ parameters:
   locale: it
 
 framework:
-  default_locale: it
-  #esi:             ~
-  translator: ~
-  secret: "%secret%"
-  router:
-    resource: "%kernel.root_dir%/config/routing.yml"
-    strict_requirements: ~
-  form: ~
-  csrf_protection: ~
-  validation: { enable_annotations: true }
-  #serializer:      { enable_annotations: true }
-  templating:
-    engines: [ 'twig' ]
-  trusted_hosts: ~
-  trusted_proxies: ~
-  session:
-    # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-    handler_id: null
-    save_path: "%kernel.root_dir%/../var/sessions/%kernel.environment%"
-  fragments: ~
-  http_method_override: true
-  assets: ~
-  request:
-    formats:
-      text: [ 'text/plain' ]
+    default_locale: it
+    #esi:             ~
+    translator:      ~
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    #serializer:      { enable_annotations: true }
+    templating:
+        engines: ['twig']
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id:  null
+        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+        cookie_path: "/%prefix%"
+    fragments:       ~
+    http_method_override: true
+    assets: ~
+    request:
+      formats:
+        text: ['text/plain']
 
 # Fos User Configuration
 fos_user:
@@ -72,6 +73,8 @@ twig:
     version_service: "@ocsdc.version_service"
     backoffices: "@ocsdc.backoffices"
     login_callout_texts: "%login_callout_texts%"
+    login_route: "%login_route%"
+    protocollo_handler: "@ocsdc.protocollo.handler"
 
 
 # Doctrine Configuration

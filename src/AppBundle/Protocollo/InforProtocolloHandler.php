@@ -74,6 +74,11 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $this->propertyMappingFactory = $pmf;
   }
 
+  public function getName()
+  {
+    return 'Infor';
+  }
+
   public function getConfigParameters()
   {
     /*

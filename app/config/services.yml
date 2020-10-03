@@ -167,6 +167,14 @@ services:
     class: AppBundle\Services\CPSUserProvider
     arguments: [ "@doctrine.orm.default_entity_manager", "@logger" ]
 
+  ocsdc.pat.authenticator:
+    class: AppBundle\Security\PatAuthenticator
+    arguments: ["@router", "%shibbolet_server_varnames%", "%login_route%"]
+
+  ocsdc.openlogin.authenticator:
+    class: AppBundle\Security\OpenLoginAuthenticator
+    arguments: ["@router", "%login_route%"]
+
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator
     arguments: [ "%shibbolet_server_varnames%",'@Symfony\Component\Security\Core\Security' ]
@@ -820,3 +828,7 @@ services:
 
   log_resolver.applicant_browser:
     class: AppBundle\Logging\ApplicantBrowserEventResolver
+
+  ocsdc.logout_success_handler:
+    class: AppBundle\Security\LogoutSuccessHandler
+    arguments: ['@router', "%single_logout_url%"]

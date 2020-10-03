@@ -8,6 +8,11 @@ use AppBundle\Entity\Pratica;
 interface ProtocolloHandlerInterface
 {
 
+  public function getName();
+
+  /**
+   * @return mixed
+   */
   public function getConfigParameters();
 
   /**

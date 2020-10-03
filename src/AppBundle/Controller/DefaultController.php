@@ -8,7 +8,9 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
-use Doctrine\DBAL\FetchMode;
+use AppBundle\Security\AbstractAuthenticator;
+use AppBundle\Security\LogoutSuccessHandler;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -19,6 +21,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -53,6 +56,45 @@ class DefaultController extends Controller
    */
   public function privacyAction()
   {
+  }
+
+  /**
+   * @Route("/login", name="login")
+   */
+  public function loginAction()
+  {
+    // Redirect in base a configurazione di istanza
+    return $this->redirectToRoute($this->getAuthRedirect());
+  }
+
+  /**
+   * @Route("/auth/login-pat", name="login_pat")
+   */
+  public function loginPatAction()
+  {
+    throw new UnauthorizedHttpException("Something went wrong in authenticator");
+  }
+
+  /**
+   * @Route("/auth/login-open", name="login_open")
+   * @param Request $request
+   */
+  public function loginOpenAction(Request $request)
+  {
+    if ($request->query->has('_abort')){
+      return $this->redirectToRoute('home');
+    }
+    throw new UnauthorizedHttpException("Something went wrong in authenticator");
+  }
+
+  /**
+   * @Route("/logout", name="user_logout")
+   * @throws Exception
+   * @see LogoutSuccessHandler
+   */
+  public function logout()
+  {
+    throw new Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
   }
 
   /**
@@ -174,9 +216,13 @@ class DefaultController extends Controller
 
     $request->setRequestFormat('text');
     $response = new Response();
-    return $this->render( '@App/Default/metrics.html.twig', [
-      'metrics' => $metrics,
-    ]);
+
+    return $this->render(
+      '@App/Default/metrics.html.twig',
+      [
+        'metrics' => $metrics,
+      ]
+    );
   }
 
   /**
@@ -192,15 +238,28 @@ class DefaultController extends Controller
 
     /** @var Ente[] $enti */
     $enti = $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll();
-    foreach ($enti as $ente){
-      $result[] = ["targets" => [$hostname], "labels" => [
-        "job" => $hostname,
-        "env" => $env,
-        "__scheme__" => $scheme,
-        "__metrics_path__" =>  "/".$ente->getSlug()."/metrics"
-      ]];
+    foreach ($enti as $ente) {
+      $result[] = [
+        "targets" => [$hostname],
+        "labels" => [
+          "job" => $hostname,
+          "env" => $env,
+          "__scheme__" => $scheme,
+          "__metrics_path__" => "/".$ente->getSlug()."/metrics",
+        ],
+      ];
     }
     $request->setRequestFormat('json');
+
     return new JsonResponse(json_encode($result), 200, [], true);
+  }
+
+  private function getAuthRedirect()
+  {
+    if ($this->getParameter('login_route') == AbstractAuthenticator::LOGIN_TYPE_NONE) {
+      return 'home';
+    }
+
+    return $this->getParameter('login_route');
   }
 }

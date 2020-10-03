@@ -30,6 +30,11 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     $this->instance = $instance;
   }
 
+  public function getName()
+  {
+    return 'PiTre';
+  }
+
   public function getConfigParameters()
   {
     return PiTreProtocolloParameters::getEnteParametersKeys();

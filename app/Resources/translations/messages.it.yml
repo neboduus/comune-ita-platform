@@ -1855,3 +1855,9 @@ backoffice:
       save_subscriber_error: 'Si è verificato un errore durante il salvataggio dell utente user'
       save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
 
+login_type:
+  none: 'Nessuno'
+  login_pat: 'Spid PAD'
+  login_open: 'Openlogin'
+
+

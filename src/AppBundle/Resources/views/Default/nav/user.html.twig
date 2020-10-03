@@ -4,8 +4,8 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <div class="menu-wrapper user-menu">
-            <ul class="nav justify-content-center">
+          <div class="menu-wrapper user-menu pl-4">
+            <ul class="nav">
               <li
                 class="nav-item {% if  'parametri-protocollo' not in app.request.pathInfo and 'usage' not in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link" href="{{ path('operatori_index') }}">
@@ -42,8 +42,8 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <div class="menu-wrapper user-menu">
-            <ul class="nav justify-content-center">
+          <div class="menu-wrapper user-menu pl-4">
+            <ul class="nav">
               <li class="nav-item {% if 'ente' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_edit_ente') }}">
@@ -86,36 +86,46 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <div class="menu-wrapper user-menu">
-            <ul class="nav justify-content-center">
-              <li class="nav-item {% if 'dashboard' in app.request.pathInfo %} active {% endif %}">
-                <a class="nav-link " href="{{ path('user_dashboard') }}">
-                  {{ 'nav.dashboard'|trans }}
-                </a></li>
-              <li class="nav-item {% if 'servizi' in app.request.pathInfo %} active {% endif %}">
-                <a class="nav-link " href="{{ path('servizi_list') }}">
-                  {{ 'nav.servizi'|trans }}
-                </a></li>
-              <li
-                class="nav-item {% if 'pratiche' in app.request.pathInfo and 'allegati' not in app.request.pathInfo %} active {% endif %}">
-                <a class="nav-link " href="{{ path('pratiche') }}">
-                  {{ 'nav.pratiche'|trans }}
-                </a>
-              </li>
-              <li class="nav-item {% if 'profilo' in app.request.pathInfo %} active {% endif %}">
-                <a class="nav-link " href="{{ path('user_profile') }}">
-                  {{ 'nav.profilo'|trans }}
-                </a></li>
-              <li class="nav-item {% if 'allegati' in app.request.pathInfo %} active {% endif %}">
-                <a class="nav-link " href="{{ path('allegati_list_cpsuser') }}">
-                  {{ 'nav.allegati'|trans }}
-                </a>
-              </li>
-              <li class="nav-item {% if 'documenti' in app.request.pathInfo %} active {% endif %}">
-                <a class="nav-link " href="{{ path('folders_list_cpsuser') }}">
-                  {{ 'nav.documenti'|trans }}
-                </a>
-              </li>
+          <div class="menu-wrapper user-menu pl-4">
+            <ul class="nav">
+              {% if  login_route == constant('AppBundle\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE')  %}
+                <li class="nav-item {% if 'servizi' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('servizi_list') }}">
+                    {{ 'nav.servizi'|trans }}
+                  </a>
+                </li>
+              {% else %}
+                <li class="nav-item {% if 'dashboard' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('user_dashboard') }}">
+                    {{ 'nav.dashboard'|trans }}
+                  </a>
+                </li>
+                <li class="nav-item {% if 'servizi' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('servizi_list') }}">
+                    {{ 'nav.servizi'|trans }}
+                  </a>
+                </li>
+                <li class="nav-item {% if 'pratiche' in app.request.pathInfo and 'allegati' not in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('pratiche') }}">
+                    {{ 'nav.pratiche'|trans }}
+                  </a>
+                </li>
+                <li class="nav-item {% if 'profilo' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('user_profile') }}">
+                    {{ 'nav.profilo'|trans }}
+                  </a>
+                </li>
+                <li class="nav-item {% if 'allegati' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('allegati_list_cpsuser') }}">
+                    {{ 'nav.allegati'|trans }}
+                  </a>
+                </li>
+                <li class="nav-item {% if 'documenti' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('folders_list_cpsuser') }}">
+                    {{ 'nav.documenti'|trans }}
+                  </a>
+                </li>
+              {% endif %}
             </ul>
           </div>
         </div>
