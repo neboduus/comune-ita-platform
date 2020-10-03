@@ -6,6 +6,7 @@ use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\Subscription;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -20,7 +21,7 @@ use Swagger\Annotations as SWG;
 
 /**
  * Class SubscriptionsAPIController
- * @property EntityManager em
+ * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/subscription-services")
@@ -30,7 +31,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
 
   const CURRENT_API_VERSION = '1.0';
 
-  public function __construct(EntityManager $em, InstanceService $is)
+  public function __construct(EntityManagerInterface $em, InstanceService $is)
   {
     $this->em = $em;
     $this->is = $is;

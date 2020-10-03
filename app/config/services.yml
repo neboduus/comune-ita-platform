@@ -24,7 +24,7 @@ services:
       [ '@ocsdc.meeting_service' ]
 
   AppBundle\Controller\APIController:
-    autowire: true
+    arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service']
 
   AppBundle\Controller\Rest\ServicesAPIController:
     autowire: true
@@ -116,6 +116,9 @@ services:
       - { name: form.type }
 
   AppBundle\Services\MyPayService:
+    autowire: true
+
+  AppBundle\Services\InstanceService:
     autowire: true
 
   AppBundle\Payment\Gateway\Bollo:
@@ -227,8 +230,7 @@ services:
     arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', '@router' ]
 
 
-  ocsdc.modulo_pdf_builder:
-    class: AppBundle\Services\ModuloPdfBuilderService
+  AppBundle\Services\ModuloPdfBuilderService:
     arguments:
       - "@filesystem"
       - "@doctrine.orm.default_entity_manager"
@@ -639,9 +641,9 @@ services:
     tags:
       - { name: twig.extension }
 
-  ocsdc.pratica_status_service:
-    class: AppBundle\Services\PraticaStatusService
-    arguments: [ "@doctrine.orm.entity_manager", "@logger", "@event_dispatcher" ]
+  AppBundle\Services\PraticaStatusService:
+    #arguments: [ "@doctrine.orm.entity_manager", "@logger", "@event_dispatcher" ]
+    autowire: true
 
   ocsdc.protocollo_success_events_subscriber:
     class: AppBundle\EventListener\ProtocolloSuccessSubscriber
@@ -659,9 +661,11 @@ services:
     class: AppBundle\Services\TermsAcceptanceCheckerService
     arguments: [ "@doctrine" ]
 
-  ocsdc.instance_service:
-    class: AppBundle\Services\InstanceService
-    arguments: [ "@doctrine", "%prefix%" ]
+  #ocsdc.instance_service:
+  #  class: AppBundle\Services\InstanceService
+  #  arguments: [ "@doctrine", "%prefix%" ]
+
+  ocsdc.instance_service: '@AppBundle\Services\InstanceService'
 
   ocsdc.version_service:
     class: AppBundle\Services\VersionService

@@ -20,6 +20,7 @@ use AppBundle\Services\PraticaStatusService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,7 +44,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class ServicesAPIController
- * @property EntityManager em
+ * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/applications")
@@ -65,7 +66,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   protected $baseUrl = '';
 
-  public function __construct(EntityManager $em, InstanceService $is, PraticaStatusService $statusService, ModuloPdfBuilderService $pdfBuilder, UrlGeneratorInterface $router)
+  public function __construct(EntityManagerInterface $em, InstanceService $is, PraticaStatusService $statusService, ModuloPdfBuilderService $pdfBuilder, UrlGeneratorInterface $router)
   {
     $this->em = $em;
     $this->is = $is;

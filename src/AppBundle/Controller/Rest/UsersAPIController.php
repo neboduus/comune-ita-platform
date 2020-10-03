@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Dto\User;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class UsersAPIController
- * @property EntityManager em
+ * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
  * @Route("/users")
@@ -36,7 +37,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is)
   {
     $this->translator = $translator;
     $this->em = $em;
