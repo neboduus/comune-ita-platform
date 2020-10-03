@@ -364,7 +364,7 @@ class AdminController extends Controller
         $data = $serviceApi->normalizeData($responseBody);
         $form->submit($data, true);
 
-        if (!$form->isValid()) {
+        if ($form->isSubmitted() && !$form->isValid()) {
           $this->addFlash('error', 'Si è verificato un problema in fase di importazione.');
           return $this->redirectToRoute('admin_servizio_index');
         }

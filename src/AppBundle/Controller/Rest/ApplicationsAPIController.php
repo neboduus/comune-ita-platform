@@ -393,7 +393,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\PaymentOutcomeType', $paymentOutcome);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',

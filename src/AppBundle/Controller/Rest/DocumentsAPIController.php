@@ -237,7 +237,7 @@ class DocumentsAPIController extends AbstractFOSRestController
 
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
 
       $data = [
@@ -323,7 +323,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -409,7 +409,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',

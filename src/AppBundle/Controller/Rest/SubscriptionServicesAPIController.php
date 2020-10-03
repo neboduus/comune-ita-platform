@@ -160,7 +160,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -247,7 +247,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -335,7 +335,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -603,7 +603,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
@@ -710,7 +710,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
@@ -798,7 +798,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
-    if (!$form->isValid()) {
+    if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
