@@ -7,6 +7,7 @@ use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,7 +29,7 @@ class APIController extends AbstractFOSRestController
     const CURRENT_API_VERSION = 'v1.0';
     const SCHEDA_INFORMATIVA_REMOTE_PARAMETER = 'remote';
 
-    public function __construct(EntityManager $em, InstanceService $is)
+    public function __construct(EntityManagerInterface $em, InstanceService $is)
     {
         $this->em = $em;
         $this->is = $is;
