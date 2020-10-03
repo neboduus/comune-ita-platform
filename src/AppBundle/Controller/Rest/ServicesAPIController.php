@@ -130,7 +130,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param $id
    * @return \FOS\RestBundle\View\View
    */
-  public function getFormServiceAction($id)
+  public function getFormServiceAction($id, FormServerApiAdapterService $formServerService)
   {
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
@@ -140,7 +140,6 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      $formServerService = $this->container->get('ocsdc.formserver');
       $response = $formServerService->getForm($service->getFormIoId());
 
       if ($response['status'] == 'success') {
@@ -190,9 +189,10 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="services")
    *
    * @param Request $request
+   * @param InstanceService $instanceService
    * @return \FOS\RestBundle\View\View
    */
-  public function postServiceAction(Request $request)
+  public function postServiceAction(Request $request, InstanceService $instanceService)
   {
     $serviceDto = new Service();
     $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
@@ -225,7 +225,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
 
     // Imposto l'ente in base all'istanza
-    $service->setEnte($this->container->get('ocsdc.instance_service')->getCurrentInstance());
+    $service->setEnte($instanceService->getCurrentInstance());
 
     try {
       $em->persist($service);

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Rest\ServicesAPIController;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\AuditLog;
 use AppBundle\Entity\Categoria;
@@ -10,6 +11,8 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Model\FlowStep;
+use AppBundle\Services\FormServerApiAdapterService;
+use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use GuzzleHttp\Client;
@@ -57,21 +60,17 @@ class AdminController extends Controller
    * @Route("/ente", name="admin_edit_ente")
    * @Template()
    * @param Request $request
+   * @param InstanceService $instanceService
    * @return array|RedirectResponse
    */
-  public function editEnteAction(Request $request)
+  public function editEnteAction(Request $request, InstanceService $instanceService)
   {
     $entityManager = $this->getDoctrine()->getManager();
-    $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
+    $ente = $instanceService->getCurrentInstance();
     $form = $this->createForm('AppBundle\Form\Admin\Ente\EnteType', $ente);
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
-      // $form->getData() holds the submitted values
-      // but, the original `$task` variable has also been updated
       $ente = $form->getData();
-
-      // ... perform some action, such as saving the task to the database
-      // for example, if Task is a Doctrine entity, save it!
 
       $entityManager->persist($ente);
       $entityManager->flush();
@@ -110,8 +109,11 @@ class AdminController extends Controller
    * @Template()
    * @Route("/operatore/new", name="admin_operatore_new")
    * @Method({"GET", "POST"})
+   * @param Request $request
+   * @param InstanceService $instanceService
+   * @return array|RedirectResponse
    */
-  public function newOperatoreAction(Request $request)
+  public function newOperatoreAction(Request $request, InstanceService $instanceService)
   {
     $operatoreUser = new Operatoreuser();
     $form = $this->createForm('AppBundle\Form\OperatoreUserType', $operatoreUser);
@@ -119,7 +121,7 @@ class AdminController extends Controller
 
     if ($form->isSubmitted() && $form->isValid()) {
       $em = $this->getDoctrine()->getManager();
-      $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
+      $ente = $instanceService->getCurrentInstance();
 
       $tokenGenerator = $this->get('fos_user.util.token_generator');
 
@@ -329,14 +331,16 @@ class AdminController extends Controller
 
   /**
    * @Route("/servizio/import", name="admin_servizio_import")
-   * @param Servizio $servizio
-   *
+   * @param Request $request
+   * @param InstanceService $instanceService
+   * @param ServicesAPIController $serviceApi
+   * @param FormServerApiAdapterService $formServer
    * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function importServizioAction(Request $request)
+  public function importServizioAction(Request $request, InstanceService $instanceService, ServicesAPIController $serviceApi, FormServerApiAdapterService $formServer)
   {
     $em = $this->getDoctrine()->getManager();
-    $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
+    $ente = $instanceService->getCurrentInstance();
 
     $remoteUrl = $request->get('url');
     $client = new Client();
@@ -357,7 +361,6 @@ class AdminController extends Controller
         $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
         unset($responseBody['id'], $responseBody['slug']);
 
-        $serviceApi = $this->container->get('AppBundle\Controller\Rest\ServicesAPIController');
         $data = $serviceApi->normalizeData($responseBody);
         $form->submit($data, true);
 
@@ -386,7 +389,7 @@ class AdminController extends Controller
         $em->flush();
 
         if (!empty($service->getFormIoId())) {
-          $response = $this->container->get('ocsdc.formserver')->cloneFormFromRemote( $service, $remoteUrl .'/form');
+          $response = $formServer->cloneFormFromRemote( $service, $remoteUrl .'/form');
           if ($response['status'] == 'success') {
             $formId = $response['form_id'];
             $flowStep = new FlowStep();
@@ -533,12 +536,15 @@ class AdminController extends Controller
    * Creates a new Service entity.
    * @Route("/servizio/new", name="admin_service_new")
    * @Method({"GET", "POST"})
+   * @param Request $request
+   * @param InstanceService $instanceService
+   * @return RedirectResponse|Response|null
    */
-  public function newServiceAction(Request $request)
+  public function newServiceAction(Request $request, InstanceService $instanceService)
   {
 
     $servizio = new Servizio();
-    $ente = $this->container->get('ocsdc.instance_service')->getCurrentInstance();
+    $ente = $instanceService->getCurrentInstance();
 
     $servizio->setName('Nuovo Servizio ' . time());
     $servizio->setPraticaFCQN('\AppBundle\Entity\FormIO');
@@ -602,12 +608,12 @@ class AdminController extends Controller
    * @Route("/servizio/{id}/delete", name="admin_servizio_delete")
    * @Method("GET")
    */
-  public function deleteServiceAction(Request $request, Servizio $servizio)
+  public function deleteServiceAction(Request $request, Servizio $servizio, FormServerApiAdapterService $formServer)
   {
 
     try {
       if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
-        $this->container->get('ocsdc.formserver')->deleteForm($servizio);
+        $formServer->deleteForm($servizio);
       }
 
       $em = $this->getDoctrine()->getManager();
@@ -627,8 +633,12 @@ class AdminController extends Controller
   /**
    * @Route("/servizio/{servizio}/schema", name="admin_servizio_schema_edit")
    * @ParamConverter("servizio", class="AppBundle:Servizio")
+   * @param Request $request
+   * @param Servizio $servizio
+   * @param FormServerApiAdapterService $formServer
+   * @return JsonResponse
    */
-  public function formioValidateAction(Request $request, Servizio $servizio)
+  public function formioValidateAction(Request $request, Servizio $servizio, FormServerApiAdapterService $formServer)
   {
 
     $data = $request->get('schema');
@@ -636,7 +646,7 @@ class AdminController extends Controller
       $schema = \json_decode($data, true);
 
       try {
-        $response = $this->container->get('ocsdc.formserver')->editForm($schema);
+        $response = $formServer->editForm($schema);
         return JsonResponse::create($response, Response::HTTP_OK);
       } catch (\Exception $exception) {
         return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

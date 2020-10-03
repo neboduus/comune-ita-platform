@@ -132,6 +132,7 @@ services:
 
   AppBundle\BackOffice\SubcriptionsBackOffice:
     arguments: [ "@logger","@translator","@doctrine.orm.entity_manager" ]
+    public: true
     tags: [ 'app.backoffice' ]
 
   AppBundle\BackOffice\CalendarsBackOffice:
@@ -140,6 +141,7 @@ services:
       - '@ocsdc.instance_service'
       - '@ocsdc.meeting_service'
       - "@translator"
+    public: true
     tags: [ 'app.backoffice' ]
 
   AppBundle\Services\BackOfficeCollection:

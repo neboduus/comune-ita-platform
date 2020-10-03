@@ -16,20 +16,21 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class PaymentGatewayType extends AbstractType
 {
-  /**
-   * @var EntityManager
-   */
+
+  /** @var EntityManagerInterface  */
   private $em;
 
-  /**
-   * @var Container
-   */
+  /** @var ContainerInterface  */
   private $container;
 
-  public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
+  /** @var MyPayService */
+  private $myPayService;
+
+  public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, MyPayService $myPayService)
   {
     $this->em = $entityManager;
     $this->container = $container;
+    $this->myPayService = $myPayService;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -49,11 +50,7 @@ class PaymentGatewayType extends AbstractType
     $paymentData = $pratica->getPaymentData() ?? [];
 
     if ($gatewayClassHandler === MyPay::class) {
-      //This stinks like fresh cat shit
-      //I wrote it, I know it
-      $mypayService = $this->container->get(MyPayService::class);
-
-      $pratica->setPaymentData($mypayService->getSanitizedPaymentData($pratica));
+      $pratica->setPaymentData($this->myPayService->getSanitizedPaymentData($pratica));
 
       $builder
         ->add('payment_data', HiddenType::class,

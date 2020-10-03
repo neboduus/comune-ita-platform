@@ -9,6 +9,7 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\DematerializedFormAllegatiAttacherService;
+use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
@@ -92,13 +93,13 @@ class PraticheAnonimeController extends Controller
    * @param Request $request
    * @param Servizio $servizio
    *
+   * @param InstanceService $instanceService
    * @return Response
    */
-  public function newAction(Request $request, Servizio $servizio)
+  public function newAction(Request $request, Servizio $servizio, InstanceService $instanceService)
   {
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    $instanceService = $this->container->get('ocsdc.instance_service');
     $ente = $instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
@@ -174,16 +175,17 @@ class PraticheAnonimeController extends Controller
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
+   * @param PraticaStatusService $statusService
    * @param $hash
    * @return Response
    */
-  public function paymentCallbackAction(Request $request, Pratica $pratica, $hash)
+  public function paymentCallbackAction(Request $request, Pratica $pratica, PraticaStatusService $statusService, $hash)
   {
     if ($pratica->isValidHash($hash, $this->hashValidity)) {
       $outcome = $request->get('esito');
 
       if ($outcome == 'OK') {
-        $this->container->get('ocsdc.pratica_status_service')->setNewStatus(
+        $statusService->setNewStatus(
           $pratica,
           Pratica::STATUS_PAYMENT_OUTCOME_PENDING
         );

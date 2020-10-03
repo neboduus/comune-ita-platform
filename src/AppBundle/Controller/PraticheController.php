@@ -19,6 +19,9 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\CallToAction;
+use AppBundle\Services\InstanceService;
+use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\PraticaStatusService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -97,13 +100,13 @@ class PraticheController extends Controller
    * @param Request $request
    * @param Servizio $servizio
    *
+   * @param InstanceService $instanceService
    * @return Response
    */
-  public function newAction(Request $request, Servizio $servizio)
+  public function newAction(Request $request, Servizio $servizio, InstanceService $instanceService)
   {
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    $instanceService = $this->container->get('ocsdc.instance_service');
     $ente = $instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
@@ -475,19 +478,23 @@ class PraticheController extends Controller
   /**
    * @Route("/{pratica}/withdraw", name="pratiche_withdraw")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
    * @param Pratica $pratica
    *
+   * @param PraticaStatusService $praticaStatusService
+   * @param ModuloPdfBuilderService $pdfBuilderService
    * @return array|RedirectResponse
+   * @throws \Exception
    */
-  public function withdrawAction(Request $request, Pratica $pratica)
+  public function withdrawAction(Request $request, Pratica $pratica, PraticaStatusService $praticaStatusService, ModuloPdfBuilderService $pdfBuilderService)
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
     if ($this->userCanWithdrawPratica($pratica, $user)) {
 
-      $withdrawAttachment = $this->get('ocsdc.modulo_pdf_builder')->createWithdrawForPratica($pratica);
+      $withdrawAttachment = $pdfBuilderService->createWithdrawForPratica($pratica);
       $pratica->addAllegato($withdrawAttachment);
-      $this->container->get('ocsdc.pratica_status_service')->setNewStatus(
+      $praticaStatusService->setNewStatus(
         $pratica,
         Pratica::STATUS_WITHDRAW
       );
@@ -501,18 +508,21 @@ class PraticheController extends Controller
   /**
    * @Route("/{pratica}/payment-callback", name="pratiche_payment_callback")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
    * @param Pratica $pratica
    *
+   * @param PraticaStatusService $praticaStatusService
    * @return array|RedirectResponse
+   * @throws \Exception
    */
-  public function paymentCallbackAction(Request $request, Pratica $pratica)
+  public function paymentCallbackAction(Request $request, Pratica $pratica, PraticaStatusService $praticaStatusService)
   {
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $outcome = $request->get('esito');
 
     if ($outcome == 'OK') {
-      $this->container->get('ocsdc.pratica_status_service')->setNewStatus(
+      $praticaStatusService->setNewStatus(
         $pratica,
         Pratica::STATUS_PAYMENT_OUTCOME_PENDING
       );
@@ -531,15 +541,17 @@ class PraticheController extends Controller
    * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
+   * @param Request $request
    * @param Pratica $pratica
    *
-   * @return array
+   * @param ModuloPdfBuilderService $pdfBuilderService
+   * @return BinaryFileResponse
    */
-  public function showPdfAction(Request $request, Pratica $pratica)
+  public function showPdfAction(Request $request, Pratica $pratica, ModuloPdfBuilderService $pdfBuilderService)
   {
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
-    $allegato = $this->container->get('ocsdc.modulo_pdf_builder')->showForPratica($pratica);
+    $allegato = $pdfBuilderService->showForPratica($pratica);
 
     $fileName = $allegato->getOriginalFilename();
     if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {

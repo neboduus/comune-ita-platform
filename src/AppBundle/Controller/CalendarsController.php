@@ -28,6 +28,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -565,10 +566,10 @@ class CalendarsController extends Controller
    * @param Request $request the request
    * @param Meeting $id The Meeting entity
    *
+   * @param FormFactoryInterface $formFactory
    * @return array|RedirectResponse|Response
-   * @throws \Exception
    */
-  public function editMeetingAction(Request $request, $id)
+  public function editMeetingAction(Request $request, $id, FormFactoryInterface $formFactory)
   {
     $em = $this->getDoctrine()->getManager();
     $meeting = $em->getRepository('AppBundle:Meeting')->find($id);
@@ -586,7 +587,7 @@ class CalendarsController extends Controller
       $this->addFlash('warning', $this->translator->trans('meetings.no_email_warning'));
 
 
-    $form = $this->container->get('form.factory')
+    $form = $formFactory
       ->createNamedBuilder(null, FormType::class, null, array('csrf_protection' => false))
       ->add('approve', SubmitType::class, [
         'label' => 'Conferma',
