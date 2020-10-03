@@ -6,6 +6,7 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 
@@ -27,7 +28,7 @@ class ScheduleActionService
     protected $entityRepository;
 
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;

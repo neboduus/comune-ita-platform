@@ -7,6 +7,7 @@ use AppBundle\Entity\OpeningHour;
 use AppBundle\Services\MeetingService;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -36,7 +37,7 @@ class OpeningHourType extends AbstractType
    */
   private $meetingService;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $entityManager, MeetingService $meetingService)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, MeetingService $meetingService)
   {
     $this->translator = $translator;
     $this->em = $entityManager;

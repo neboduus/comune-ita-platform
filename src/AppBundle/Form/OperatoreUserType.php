@@ -6,6 +6,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Services\InstanceService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,7 +28,7 @@ class OperatoreUserType extends AbstractType
    */
   private $instanceService;
 
-  public function __construct(EntityManager $entityManager, InstanceService $instanceService)
+  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService)
   {
     $this->em = $entityManager;
     $this->instanceService = $instanceService;

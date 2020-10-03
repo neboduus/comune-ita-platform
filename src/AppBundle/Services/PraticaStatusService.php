@@ -8,6 +8,7 @@ use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Logging\LogConstants;
 use AppBundle\PraticaEvents;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -33,11 +34,11 @@ class PraticaStatusService
   /**
    * PraticaStatusService constructor.
    *
-   * @param EntityManager $entityManager
+   * @param EntityManagerInterface $entityManager
    * @param LoggerInterface $logger
    * @param EventDispatcherInterface $dispatcher
    */
-  public function __construct(EntityManager $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
+  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
   {
     $this->entityManager = $entityManager;
     $this->logger = $logger;

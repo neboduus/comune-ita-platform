@@ -8,6 +8,7 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Protocollo\Exception\AlreadySentException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class DelayedProtocolloService extends AbstractProtocolloService implements ProtocolloServiceInterface, ScheduledActionHandlerInterface
@@ -47,7 +48,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
 
   public function __construct(
     ProtocolloServiceInterface $protocolloService,
-    EntityManager $entityManager,
+    EntityManagerInterface $entityManager,
     LoggerInterface $logger,
     ScheduleActionService $scheduleActionService
   )

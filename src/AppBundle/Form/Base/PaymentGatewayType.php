@@ -7,6 +7,7 @@ use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\Gateway\MyPay;
 use AppBundle\Services\MyPayService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -25,7 +26,7 @@ class PaymentGatewayType extends AbstractType
    */
   private $container;
 
-  public function __construct(EntityManager $entityManager, ContainerInterface $container)
+  public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
   {
     $this->em = $entityManager;
     $this->container = $container;

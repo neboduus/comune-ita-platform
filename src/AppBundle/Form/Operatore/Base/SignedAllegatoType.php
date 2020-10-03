@@ -7,6 +7,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Form\Base\ChooseAllegatoType;
 use AppBundle\Services\P7MSignatureCheckService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -25,11 +26,11 @@ class SignedAllegatoType extends ChooseAllegatoType
     /**
      * ChooseAllegatoType constructor.
      *
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param ValidatorInterface $validator
      * @param P7MSignatureCheckService $service
      */
-    public function __construct(EntityManager $entityManager, ValidatorInterface $validator, P7MSignatureCheckService $service)
+    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator, P7MSignatureCheckService $service)
     {
         parent::__construct($entityManager, $validator);
         $this->p7mCheckerService = $service;

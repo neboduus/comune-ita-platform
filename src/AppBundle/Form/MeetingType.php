@@ -6,6 +6,7 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -40,7 +41,7 @@ class MeetingType extends AbstractType
    */
   private $translator;
 
-  public function __construct(EntityManager $entityManager, MeetingService $meetingService, TranslatorInterface $translator)
+  public function __construct(EntityManagerInterface $entityManager, MeetingService $meetingService, TranslatorInterface $translator)
   {
     $this->em = $entityManager;
     $this->meetingService = $meetingService;

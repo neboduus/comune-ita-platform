@@ -15,6 +15,7 @@ use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Validator\Constraints\ExpressionBasedFormIOConstraint;
 use AppBundle\Validator\Constraints\ServerSideFormIOConstraint;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

@@ -12,6 +12,7 @@ use DatePeriod;
 use DateTime;
 use DateTimeZone;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -44,7 +45,7 @@ class MeetingService
   private $router;
 
   public function __construct(
-    EntityManager $entityManager,
+    EntityManagerInterface $entityManager,
     InstanceService $instanceService,
     MailerService $mailer, $defaultSender,
     TranslatorInterface $translator,

@@ -6,6 +6,7 @@ namespace AppBundle\Form\Base;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -32,10 +33,10 @@ class UploadAllegatoType extends AbstractType
     /**
      * ChooseAllegatoType constructor.
      *
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param ValidatorInterface $validator
      */
-    public function __construct(EntityManager $entityManager, ValidatorInterface $validator)
+    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
     {
         $this->entityManager = $entityManager;
         $this->validator = $validator;

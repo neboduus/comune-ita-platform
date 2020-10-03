@@ -10,6 +10,7 @@ use AppBundle\Form\PaymentParametersType;
 use AppBundle\Model\Gateway;
 use AppBundle\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -46,7 +47,7 @@ class PaymentDataType extends AbstractType
    */
   private $fields = [];
 
-  public function __construct(EntityManager $entityManager, FormServerApiAdapterService $formServerService)
+  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;

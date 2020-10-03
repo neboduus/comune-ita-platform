@@ -10,6 +10,7 @@ use AppBundle\Form\PaymentParametersType;
 use AppBundle\Protocollo\PiTreProtocolloParameters;
 use AppBundle\Services\ProtocolloService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,7 +32,7 @@ class ProtocolDataType extends AbstractType
    */
   private $em;
 
-  public function __construct(ProtocolloService $protocolloService, EntityManager $entityManager)
+  public function __construct(ProtocolloService $protocolloService, EntityManagerInterface $entityManager)
   {
     $this->protocolloService = $protocolloService;
     $this->em = $entityManager;
