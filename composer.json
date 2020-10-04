@@ -64,7 +64,8 @@
     "league/csv": "*",
     "sentry/sentry-symfony": "*",
     "stof/doctrine-extensions-bundle": "*",
-    "flagception/flagception-bundle": "*"
+    "flagception/flagception-bundle": "*",
+    "symfony/flex": "^1.9"
   },
   "require-dev": {
     "symfony/phpunit-bridge": "^4.0",
@@ -86,6 +87,9 @@
     "symfony-assets-install": "hard",
     "incenteev-parameters": {
       "file": "app/config/parameters.yml"
+    },
+    "symfony": {
+      "allow-contrib": true
     }
   }
 }
