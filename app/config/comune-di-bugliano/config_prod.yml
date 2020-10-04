@@ -12,8 +12,8 @@ parameters:
     prefix: comune-di-bugliano
     codice_meccanografico: c_cbug
     database_name: sdc_bugliano
-    login_route: login_open
-    single_logout_url: 'http://auth.localtest.me/slo?redirect=http://stanzadelcittadino.localtest.me/comune-di-bugliano/'
+    #login_route: login_open
+    #single_logout_url: 'http://auth.localtest.me/slo?redirect=http://stanzadelcittadino.localtest.me/comune-di-bugliano/'
 
 framework:
     router:

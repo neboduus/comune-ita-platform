@@ -57,7 +57,7 @@ RUN ./compose_conf/php/init-uploads.sh
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
 # lo script richiede che il file dei parametri sia già al suo posto
-RUN composer run-script post-docker-install-cmd
+#RUN composer run-script post-docker-install-cmd
 
 COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
 
