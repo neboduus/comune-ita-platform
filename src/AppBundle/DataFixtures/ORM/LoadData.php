@@ -42,7 +42,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
             'new' => 0,
             'updated' => 0,
         ]
-        ];
+      ];
 
     /** @var  ContainerInterface */
     private $container;
@@ -54,15 +54,17 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
    * LoadData constructor.
    * @param InstanceService $instanceService
    */
-  public function __construct(InstanceService $instanceService)
+  public function __construct(InstanceService $instanceService = null)
   {
     $this->instanceService = $instanceService;
   }
 
-
   public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+        if ($this->instanceService === null){
+          $this->instanceService = $this->container->get('ocsdc.instance_service');
+        }
     }
 
     public function load(ObjectManager $manager)
