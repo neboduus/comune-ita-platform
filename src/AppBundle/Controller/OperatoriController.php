@@ -171,7 +171,7 @@ class OperatoriController extends Controller
       ];
       $extraValues = [];
       foreach ($schema as $item) {
-        if (in_array($item['label'], $extraHeaders)) {
+        if (in_array(trim($item['label']), $extraHeaders)) {
           $extraValues[$item['name']] = trim($item['label']);
         }
       }
