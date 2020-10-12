@@ -100,8 +100,8 @@ class CalendarsController extends Controller
 
         return sprintf('<a class="btn-link %s" href="%s">%s</a>', $canAccess ? "" : "disabled",
           $this->generateUrl('operatori_calendar_show', [
-          'calendar' => $calendar['id']
-        ]), $calendar['title']);
+            'calendar' => $calendar['id']
+          ]), $calendar['title']);
       }])
       ->add('owner', TextColumn::class, ['label' => 'Proprietario', 'searchable' => true])
       ->add('isModerated', TextColumn::class, ['label' => 'Moderazione', 'render' => function ($value, $calendar) {
@@ -398,12 +398,12 @@ class CalendarsController extends Controller
         switch ($meeting->getStatus()) {
           case 0: // STATUS_PENDING
             $color = 'var(--white)';
-            $borderColor = 'var(--primary)';
-            $textColor = 'var(--primary)';
+            $borderColor = 'var(--success)';
+            $textColor = 'var(--success)';
             break;
           case 1: // STATUS_APPROVED
-            $color = 'var(--primary)';
-            $borderColor = 'var(--primary)';
+            $color = 'var(--indigo)';
+            $borderColor = 'var(--indigo)';
             $textColor = 'var(--white)';
             break;
           case 2: // STATUS_REFUSED
