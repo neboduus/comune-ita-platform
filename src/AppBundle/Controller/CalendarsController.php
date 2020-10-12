@@ -342,6 +342,10 @@ class CalendarsController extends Controller
       ->add('email', TextColumn::class, ['label' => 'Email', 'searchable' => true, 'render' => function ($value, $meeting) {
         return $value ? sprintf('<a href="mailto:%s"><div class="text-truncate">%s</div></a>', $value, $value) : '---';
       }])
+      ->add('fiscalCode', TextColumn::class, ['label' => 'Codice fiscale', 'searchable' => true, 'render' => function ($value, $meeting) {
+        if ($meeting->getFiscalCode()) return $meeting->getFiscalCode();
+        else return '---';
+      }])
       ->add('phoneNumber', TextColumn::class, ['label' => 'Recapito', 'render' => function ($value, $meeting) {
         return $value ? $value : '---';
       }])
