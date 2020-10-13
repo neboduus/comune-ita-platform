@@ -64,8 +64,8 @@ $(document).ready(function () {
     },
     slotDuration: calculateSlot(),
     contentHeight: 600,
-    minTime: '08:00:00',
-    maxTime: '19:00:00',
+    minTime: JSON.parse($('#hidden').attr('data-range-time-event')).min,
+    maxTime: JSON.parse($('#hidden').attr('data-range-time-event')).max,
     eventRender: function (info) {
       if (info.event.extendedProps.status === 0) {
         var dotEl = info.el.getElementsByClassName('fc-event-dot')[0];
