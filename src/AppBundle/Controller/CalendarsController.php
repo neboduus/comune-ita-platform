@@ -497,6 +497,22 @@ class CalendarsController extends Controller
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 
+    function blockMinutesRound($time, $calculateHour, $minutes = '30', $format = "H:i") {
+      $seconds = strtotime($time);
+      $hour = intval(date("H", $seconds));
+      if($calculateHour && $hour < 19){
+        $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60) + ((20 - $hour) * 3600);
+        return date($format, $rounded);
+      }else{
+        $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60);
+        return date($format, $rounded);
+      }
+
+    }
+
+    $minDate = min(array_map(function($item) { return blockMinutesRound($item['start'],false); }, $events));
+    $maxDate = max(array_map(function($item) { return blockMinutesRound($item['end'],true); }, $events));
+
     // Check permissions if calendar is moderated
     if (!$calendar->getIsModerated() || ($this->getUser() == $calendar->getOwner() || $calendar->getModerators()->contains($this->getUser())))
       $canEdit = true;
@@ -513,7 +529,11 @@ class CalendarsController extends Controller
       'statuses' => $statuses,
       'minDuration' => $minDuration,
       'datatable' => $table,
-      'token' => $jwt
+      'token' => $jwt,
+      'rangeTimeEvent' => array(
+        'min'=> $minDate,
+        'max' => $maxDate
+      )
     );
   }
 
