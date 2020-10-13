@@ -160,6 +160,7 @@ services:
       - '@ocsdc.instance_service'
       - '@ocsdc.meeting_service'
       - "@translator"
+      - "@logger"
     public: true
     tags: [ 'app.backoffice' ]
 
