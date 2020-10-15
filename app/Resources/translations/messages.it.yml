@@ -1714,6 +1714,13 @@ steps:
 
 
 protocollo:
+  available_keys: 'Chiavi disponibili per il servizio'
+  available_keys_description: 'Di seguito sono elencate le chiavi disponibili per la costruzione dell''oggetto del protocollo'
+  no_available_keys: 'Non ci sono chiavi disponibili per la costruzione dell''oggetto del protocollo'
+  invalid_document_object_key: 'La chiave %key% non è valida: non esiste un campo nel modulo con questa chiave'
+  invalid_folder_object_key: 'La chiave %key% non è valida: non esiste un campo nel servizio %service% con questa chiave'
+  invalid_form_key_for_document_object: 'Non è stato possibile modificare il form: La chiave %key% deve essere presente poichè utilizzata nell''oggetto del documento protocollato'
+  invalid_form_key_for_folder_object:  'Non è stato possibile modificare il form: La chiave %key% deve essere presente poichè utilizzata nell''oggetto del fascicolo protocollato'
   recipientIDArray: 'Destinatari documenti (recipientIDArray)'
   recipientTypeIDArray: 'Tipologia di destinatari documenti (recipientTypeIDArray)'
   codeNodeClassification: 'Ramo Titolario (codeNodeClassification)'

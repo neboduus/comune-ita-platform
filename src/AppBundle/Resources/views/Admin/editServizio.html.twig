@@ -58,6 +58,27 @@
       <div class="col-lg-12 px-lg-4">
         <div class="step-{{ flow.getCurrentStepNumber() }}">
 
+          {% if  flow.currentStepLabel == "Dati protocollo" and servizio.isProtocolRequired and schema %}
+            <div id="schema_keys_helper" class="collapse-div" role="tablist">
+              <div class="collapse-header" id="available_keys_header">
+                <button data-toggle="collapse" data-target="#available_keys" aria-expanded="false" aria-controls="available_keys">
+                  <svg class="icon icon-primary icon-sm"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use></svg>
+                  {{ 'protocollo.available_keys' | trans }}
+                </button>
+              </div>
+              <div id="available_keys" class="collapse" role="tabpanel" aria-labelledby="available_keys_header" data-parent="#schema_keys_helper">
+                <div class="collapse-body text-secondary">
+                  <p>{{ 'protocollo.available_keys_description' | trans }}</p>
+                  <ul>
+                    {% for component in  schema.components %}
+                      <li class="font-weight-semibold text-secondary">%{{ component.name }}%</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          {% endif %}
           {{ form_start(form, {'action': path('admin_servizio_edit', {'servizio': servizio.id }) } ) }}
           {{ form_errors(form) }}
 

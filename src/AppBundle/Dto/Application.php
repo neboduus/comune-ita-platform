@@ -7,6 +7,8 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\ServiceGroup;
+use AppBundle\Entity\Servizio;
 use AppBundle\Mapper\Giscom\File;
 use AppBundle\Mapper\Giscom\FileCollection;
 use AppBundle\Payment\PaymentDataInterface;
@@ -40,6 +42,12 @@ class Application
 
   /**
    * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's user fiscal code")
+   */
+  private $fiscalCode;
+
+  /**
+   * @Serializer\Type("string")
    * @SWG\Property(description="Applications's user name")
    */
   private $userName;
@@ -51,6 +59,17 @@ class Application
    */
   private $service;
 
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's document object")
+   */
+  private $documentObject;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's folder object")
+   */
+  private $folderObject;
 
   /**
    * @Serializer\Type("string")
@@ -81,7 +100,7 @@ class Application
   /**
    * @var Allegato[]
    * @SWG\Property(property="attachments", description="Attachments list")
-   * @Serializer\Type("string")
+   * @Serializer\Type("array")
    */
   private $attachments;
 
@@ -138,7 +157,7 @@ class Application
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's protocol document number")
    */
-  private $protocolDcoumentId;
+  private $protocolDocumentId;
 
   /**
    * @var String[]
@@ -166,6 +185,13 @@ class Application
    * @Serializer\Type("array")
    */
   private $outcomeFile;
+
+  /**
+   * @var Allegato[]
+   * @SWG\Property(property="outcome_attachments", description="Outcome attachments list")
+   * @Serializer\Type("array")
+   */
+  private $outcomeAttachments;
 
   /**
    * @Serializer\Type("string")
@@ -228,6 +254,22 @@ class Application
   /**
    * @return mixed
    */
+  public function getFiscalCode()
+  {
+    return $this->fiscalCode;
+  }
+
+  /**
+   * @param mixed $fiscalCode
+   */
+  public function setFiscalCode($fiscalCode)
+  {
+    $this->fiscalCode = $fiscalCode;
+  }
+
+  /**
+   * @return mixed
+   */
   public function getService()
   {
     return $this->service;
@@ -239,6 +281,38 @@ class Application
   public function setService($service)
   {
     $this->service = $service;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getDocumentObject()
+  {
+    return $this->documentObject;
+  }
+
+  /**
+   * @param mixed $documentObject
+   */
+  public function setDocumentObject($documentObject)
+  {
+    $this->documentObject = $documentObject;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getFolderObject()
+  {
+    return $this->folderObject;
+  }
+
+  /**
+   * @param mixed $folderObject
+   */
+  public function setFolderObject($folderObject)
+  {
+    $this->folderObject = $folderObject;
   }
 
   /**
@@ -420,23 +494,23 @@ class Application
   /**
    * @return mixed
    */
-  public function getProtocolDcoumentId()
+  public function getProtocolDocumentId()
   {
-    return $this->protocolDcoumentId;
+    return $this->protocolDocumentId;
   }
 
   /**
-   * @param mixed $protocolDcoumentId
+   * @param mixed $protocolDocumentId
    */
-  public function setProtocolDcoumentId($protocolDcoumentId)
+  public function setProtocolDocumentId($protocolDocumentId)
   {
-    $this->protocolDcoumentId = $protocolDcoumentId;
+    $this->protocolDocumentId = $protocolDocumentId;
   }
 
   /**
    * @return String[]
    */
-  public function getProtocolNumbers(): array
+  public function getProtocolNumbers(): ?array
   {
     return $this->protocolNumbers;
   }
@@ -495,6 +569,22 @@ class Application
   public function setOutcomeFile(Allegato $outcomeFile)
   {
     $this->outcomeFile = $outcomeFile;
+  }
+
+  /**
+   * @return Allegato[]
+   */
+  public function getOutcomeAttachments(): array
+  {
+    return $this->outcomeAttachments;
+  }
+
+  /**
+   * @param Allegato[] $outcomeAttachments
+   */
+  public function setOutcomeAttachments(array $outcomeAttachments)
+  {
+    $this->outcomeAttachments = $outcomeAttachments;
   }
 
   /**
@@ -574,9 +664,12 @@ class Application
     $dto = new self();
     $dto->id = $pratica->getId();
     $dto->user = $pratica->getUser()->getId();
+    $dto->fiscalCode = $pratica->getUser()->getCodiceFiscale();
     $dto->userName = $pratica->getUser()->getFullName();
     $dto->tenant = $pratica->getEnte()->getId();
     $dto->service = $pratica->getServizio()->getSlug();
+    $dto->documentObject = self::getPopulatedDocumentObject($pratica);
+    $dto->folderObject = self::getPopulatedFolderObject($pratica);
     $dto->subject = $pratica->getOggetto();
 
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
@@ -595,7 +688,8 @@ class Application
     $dto->outcome = $pratica->getEsito();
     $dto->outcomeMotivation = $pratica->getMotivazioneEsito();
 
-    //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());
+    $dto->attachments = self::prepareFileCollection($pratica->getAllegati(), $attachmentEndpointUrl);
+    $dto->outcomeAttachments = self::prepareFileCollection($pratica->getAllegatiOperatore(), $attachmentEndpointUrl);
 
     $dto->creationTime = $pratica->getCreationTime();
     try {
@@ -627,7 +721,7 @@ class Application
 
     $dto->protocolFolderNumber = $pratica->getNumeroFascicolo();
     $dto->protocolNumber = $pratica->getNumeroProtocollo();
-    $dto->protocolDcoumentId = $pratica->getIdDocumentoProtocollo();
+    $dto->protocolDocumentId = $pratica->getIdDocumentoProtocollo();
     $dto->protocolNumbers = null;
     $dto->outcome = $pratica->getEsito();
 
@@ -803,5 +897,80 @@ class Application
       return $paymetdata;
     }
     return [];
+  }
+
+  public static function getPopulatedDocumentObject(Pratica $pratica) {
+    if (isset($pratica->getServizio()->getAdditionalData()['document_object'])) {
+      $documentObject = $pratica->getServizio()->getAdditionalData()['document_object'];
+    } else {
+      $documentObject = Servizio::DEFAULT_DOCUMENT_OBJECT;
+    }
+
+    if (!$pratica->getServizio()->isProtocolRequired()) {
+      return null;
+    }
+
+    if (!isset($pratica->getDematerializedForms()['flattened'])) {
+      return $documentObject;
+    }
+
+    $decoratedData = $pratica->getDematerializedForms()['flattened'];
+
+    preg_match_all('/%(.*?)%/', $documentObject, $matches);
+
+    foreach ($matches[1] as $match) {
+      foreach (array_keys($decoratedData) as $key) {
+        if ($match === $key) {
+          $documentObject = str_replace('%'.$match.'%', $decoratedData[$key], $documentObject);
+        } else if ($match === str_replace('.data.', '.', $key)) {
+          $documentObject = str_replace('%'.$match.'%', $decoratedData[$key], $documentObject);
+        }
+      }
+    }
+
+    $documentObject = str_replace('%service%', $pratica->getServizio()->getName(), $documentObject);
+    $documentObject = str_replace('%service_group%', $pratica->getServizio()->getServiceGroup() ? $pratica->getServizio()->getServiceGroup()->getName() : "", $documentObject);
+    $documentObject = str_replace('%application_id%', $pratica->getId(), $documentObject);
+
+    return $documentObject;
+  }
+
+
+  public static function getPopulatedFolderObject (Pratica $pratica) {
+    $serviceGroup = $pratica->getServizio()->getServiceGroup();
+    $service = $pratica->getServizio();
+
+    if (!$service->isProtocolRequired()) {
+      return null;
+    }
+
+    if ($serviceGroup && $serviceGroup->isRegisterInFolder()) {
+      # Protocollazione nello stesso fascicolo
+      $folderObject = isset($serviceGroup->getAdditionalData()['folder_object']) ? $serviceGroup->getAdditionalData()['folder_object'] : ServiceGroup::DEFAULT_FOLDER_OBJECT;
+    } else {
+      $folderObject = isset($service->getAdditionalData()['folder_object']) ? $service->getAdditionalData()['folder_object'] : Servizio::DEFAULT_FOLDER_OBJECT;
+    }
+
+    if (!isset($pratica->getDematerializedForms()['flattened'])) {
+      return $folderObject;
+    }
+
+    $decoratedData = $pratica->getDematerializedForms()['flattened'];
+
+    preg_match_all('/%(.*?)%/', $folderObject, $matches);
+
+    foreach ($matches[1] as $match) {
+      foreach (array_keys($decoratedData) as $key) {
+        if ($match === $key) {
+          $folderObject = str_replace('%'.$match.'%', $decoratedData[$key], $folderObject);
+        } else if ($match === str_replace('.data.', '.', $key)) {
+          $folderObject = str_replace('%'.$match.'%', $decoratedData[$key], $folderObject);
+        }
+      }
+    }
+    $folderObject = str_replace('%service%', $service->getName(), $folderObject);
+    $folderObject = str_replace('%service_group%', $serviceGroup ? $serviceGroup->getName() : "", $folderObject);
+
+    return $folderObject;
   }
 }

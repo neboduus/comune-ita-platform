@@ -69,6 +69,16 @@ class ServiceGroupController extends Controller
     $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $form->handleRequest($request);
 
+    $schemas = [];
+    foreach ($serviceGroup->getServices() as $service) {
+      $schemas[] = $this->get('formio.factory')->createFromFormId($service->getFormIoId())->getComponents();
+    }
+    if (count($schemas) > 1) {
+      $schema = call_user_func_array('array_intersect', $schemas);
+    } else {
+      $schema = $schemas;
+    }
+
     if ($form->isSubmitted() && $form->isValid()) {
       $this->getDoctrine()->getManager()->flush();
 
@@ -78,7 +88,8 @@ class ServiceGroupController extends Controller
     return $this->render( '@App/Admin/editServiceGroup.html.twig', [
       'user'  => $this->getUser(),
       'item' => $serviceGroup,
-      'form' => $form->createView()
+      'form' => $form->createView(),
+      'schema' => $schema
     ]);
   }
 

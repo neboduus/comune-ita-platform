@@ -436,6 +436,8 @@ class AdminController extends Controller
     $flowService->setInstanceKey($user->getId());
     $flowService->bind($servizio);
 
+    $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+
     $form = $flowService->createForm();
     if ($flowService->isValid($form)) {
 
@@ -472,6 +474,7 @@ class AdminController extends Controller
 
     return [
       'form' => $form->createView(),
+      'schema' => $schema,
       'servizio' => $flowService->getFormData(),
       'flow' => $flowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),

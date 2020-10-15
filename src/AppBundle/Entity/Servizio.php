@@ -41,6 +41,10 @@ class Servizio
   const WORKFLOW_APPROVAL = 0;
   const WORKFLOW_FORWARD = 1;
 
+  const DEFAULT_DOCUMENT_OBJECT = "%service% - Richiedente %applicant.completename.name% %applicant.completename.surname% (%applicant.fiscal_code.fiscal_code%) - Pratica numero %application_id%";
+  const DEFAULT_FOLDER_OBJECT = "%service% - Richiedente %applicant.completename.name% %applicant.completename.surname% (%applicant.fiscal_code.fiscal_code%)";
+
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id

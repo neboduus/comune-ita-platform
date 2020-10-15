@@ -42,10 +42,29 @@ class SchemaFactory implements SchemaFactoryInterface
   }
 
   /**
-   * @param $formIOId
+   * @param array $form
    * @return Schema
    */
-  public function createFromFormId($formIOId)
+  public function createFromArray(array $form)
+  {
+    if (empty($form)) {
+      return new Schema();
+    }
+    $schema = new Schema();
+    if (isset($form['_id'])) {
+      $schema->setId($form['_id']);
+    }
+    $schema->setServer($this->provider->getFormServerUrl());
+    $this->parseComponent($schema, $form);
+    return $schema;
+  }
+
+  /**
+   * @param $formIOId
+   * @param bool $useCache
+   * @return Schema
+   */
+  public function createFromFormId($formIOId, $useCache=true)
   {
     if (empty(trim($formIOId))) {
       return new Schema();
@@ -53,8 +72,10 @@ class SchemaFactory implements SchemaFactoryInterface
 
     $cacheId = $this->provider->getFormServerUrl().$formIOId;
 
-    if ($this->useCache && $this->hasCache($cacheId)) {
-      return $this->getCache($cacheId);
+    if ($useCache) {
+      if ($this->useCache && $this->hasCache($cacheId)) {
+        return $this->getCache($cacheId);
+      }
     }
 
     $schema = new Schema();

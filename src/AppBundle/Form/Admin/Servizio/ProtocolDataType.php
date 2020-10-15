@@ -4,19 +4,22 @@
 namespace AppBundle\Form\Admin\Servizio;
 
 
+use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
-use AppBundle\Form\PaymentParametersType;
-use AppBundle\Protocollo\PiTreProtocolloParameters;
+use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Services\ProtocolloService;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 class ProtocolDataType extends AbstractType
@@ -31,10 +34,22 @@ class ProtocolDataType extends AbstractType
    */
   private $em;
 
-  public function __construct(ProtocolloService $protocolloService, EntityManager $entityManager)
+  /**
+   * @var SchemaFactory
+   */
+  private $schemaFactory;
+
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  public function __construct(ProtocolloService $protocolloService, EntityManager $entityManager, SchemaFactory $schemaFactory, TranslatorInterface $translator)
   {
     $this->protocolloService = $protocolloService;
     $this->em = $entityManager;
+    $this->schemaFactory = $schemaFactory;
+    $this->translator = $translator;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -46,6 +61,32 @@ class ProtocolDataType extends AbstractType
 
     $currentServiceParameters = $service->getProtocolloParameters();
 
+    if ($service->isProtocolRequired()) {
+      $builder
+        ->add('document_object', TextareaType::class, [
+          'label' => 'Oggetto del documento',
+          'mapped' => false,
+          'data' => isset($service->getAdditionalData()['document_object']) ? $service->getAdditionalData()['document_object'] : Servizio::DEFAULT_DOCUMENT_OBJECT
+        ]);
+
+      if ($service->getServiceGroup() && $service->getServiceGroup()->isRegisterInFolder()) {
+        $builder
+          ->add('folder_object', TextareaType::class, [
+            'label' => 'Oggetto del fascicolo',
+            'mapped' => false,
+            'data' => isset($service->getServiceGroup()->getAdditionalData()['folder_object']) ? $service->getServiceGroup()->getAdditionalData()['folder_object'] : ServiceGroup::DEFAULT_FOLDER_OBJECT,
+            'attr' => ['readonly'=>true]
+          ]);
+      } else {
+        $builder
+          ->add('folder_object', TextareaType::class, [
+            'label' => 'Oggetto del fascicolo',
+            'mapped' => false,
+            'data' => isset($service->getAdditionalData()['folder_object']) ? $service->getAdditionalData()['folder_object'] : Servizio::DEFAULT_FOLDER_OBJECT
+          ]);
+      }
+    }
+
     if ($configParameters) {
       $builder
         ->add('parameters_needed', BlockQuoteType::class, [
@@ -54,7 +95,7 @@ class ProtocolDataType extends AbstractType
       foreach ($configParameters as $key => $param) {
         if (is_array($param)) {
 
-          $paramForm = $builder->create( $key,FormType::class, [
+          $paramForm = $builder->create($key, FormType::class, [
             'mapped' => false,
             'label_attr' => ['class' => 'pb-4'],
           ]);
@@ -111,6 +152,49 @@ class ProtocolDataType extends AbstractType
       }
     }*/
 
+    $schema = $this->schemaFactory->createFromFormId($service->getFormIoId(), false);
+    $extraKeys = ["service", "application_id"];
+    if ($service->getServiceGroup()) {
+      $extraKeys[] = "service_group";
+    }
+    $additionalData = $service->getAdditionalData();
+
+    # Oggetto documento protocollo
+    $documentObject = $data['document_object'];
+    preg_match_all('/%(.*?)%/', $documentObject, $matches);
+
+    foreach ($matches[1] as $match) {
+      if (!$schema->hasComponent($match) && !in_array($match, $extraKeys)) {
+        $event->getForm()->addError(
+          new FormError($this->translator->trans('protocollo.invalid_document_object_key', ['%key%' => $match]))
+        );
+      }
+    }
+
+    $additionalData['document_object'] = $documentObject;
+
+    # Oggetto fascicolo protocollo
+    $folderObject = $data['folder_object'];
+
+    if ($service->getServiceGroup() && $service->getServiceGroup()->isRegisterInFolder()) {
+      # Ricavo oggetto del fascicolo dal gruppo
+      unset($additionalData['folder_object']);
+    } else {
+      # Verifico che tutte le chiavi siano presenti
+      preg_match_all('/%(.*?)%/', $folderObject, $matches);
+
+      foreach ($matches[1] as $match) {
+        if (!$schema->hasComponent($match) && !in_array($match, $extraKeys)) {
+          $event->getForm()->addError(
+            new FormError($this->translator->trans('protocollo.invalid_document_object_key', ['%key%' => $match]))
+          );
+        }
+      }
+      $additionalData['folder_object'] = $folderObject;
+    }
+
+    $service->setAdditionalData($additionalData);
+
     $service->setProtocolloParameters($data);
     $this->em->persist($service);
   }
@@ -120,4 +204,5 @@ class ProtocolDataType extends AbstractType
   {
     return 'protocol_data';
   }
+
 }

@@ -20,6 +20,8 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class ServiceGroup
 {
+  const DEFAULT_FOLDER_OBJECT = "%service_group% - Richiedente %applicant.completename.name% %applicant.completename.surname% (%applicant.fiscal_code.fiscal_code%)";
+
 
   /**
    * @ORM\Column(type="guid")
@@ -79,6 +81,13 @@ class ServiceGroup
    * @Serializer\Exclude()
    */
   private $applications;
+
+  /**
+   * @var array
+   * @ORM\Column(type="array", nullable=true)
+   * @Serializer\Exclude()
+   */
+  private $additionalData;
 
   /**
    * ServiceGroup constructor.
@@ -300,6 +309,24 @@ class ServiceGroup
   public function setApplications($applications)
   {
     $this->applications = $applications;
+  }
+
+  /**
+   * @return array
+   */
+  public function getAdditionalData()
+  {
+    return $this->additionalData;
+  }
+
+  /**
+   * @param array $additionalData
+   * @return ServiceGroup
+   */
+  public function setAdditionalData(array $additionalData): ServiceGroup
+  {
+    $this->additionalData = $additionalData;
+    return $this;
   }
 
 }

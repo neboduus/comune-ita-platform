@@ -9,6 +9,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
+use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Model\PaymentOutcome;
@@ -77,28 +78,35 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   /**
    * List all Applications
-   *  @Rest\Get("", name="applications_api_list")
+   * @Rest\Get("", name="applications_api_list")
    *
-   *  @SWG\Parameter(
+   * @SWG\Parameter(
    *      name="Authorization",
    *      in="header",
    *      description="The authentication Bearer",
    *      required=false,
    *      type="string"
    *  )
-   *  @SWG\Parameter(
+   * @SWG\Parameter(
    *      name="version",
    *      in="query",
    *      type="string",
    *      required=false,
    *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
    *  )
-   *  @SWG\Parameter(
+   * @SWG\Parameter(
    *      name="service",
    *      in="query",
    *      type="string",
    *      required=false,
    *      description="Slug of the service"
+   *  )
+   * @SWG\Parameter(
+   *      name="service_group",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Slug of the service group"
    *  )
    * @SWG\Parameter(
    *      name="order",
@@ -114,14 +122,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Sorting criteria of the order field. Default ASC"
    *  )
-   *  @SWG\Parameter(
+   * @SWG\Parameter(
    *      name="offset",
    *      in="query",
    *      type="integer",
    *      required=false,
    *      description="Offset of the query"
    *  )
-   *  @SWG\Parameter(
+   * @SWG\Parameter(
    *      name="limit",
    *      in="query",
    *      type="integer",
@@ -150,16 +158,19 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     $serviceParameter = $request->get('service', false);
+    $serviceGroupParameter = $request->get('service_group', false);
     $orderParameter = $request->get('order', false);
     $sortParameter = $request->get('sort', false);
 
-    if ( $limit  > 100 ) {
+    if ($limit > 100) {
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
     if ($serviceParameter)
       $queryParameters['service'] = $serviceParameter;
+    if ($serviceGroupParameter)
+      $queryParameters['service_group'] = $serviceGroupParameter;
     if ($orderParameter)
       $queryParameters['order'] = $orderParameter;
     if ($sortParameter)
@@ -170,6 +181,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     if ($serviceParameter && !$service) {
       return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    $repositoryServiceGroup = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $serviceGroup = $repositoryServiceGroup->findOneBy(['slug' => $serviceGroupParameter]);
+
+    if ($serviceGroupParameter && !$serviceGroup) {
+      return $this->view(["Service group not found"], Response::HTTP_NOT_FOUND);
     }
 
     $em = $this->getDoctrine()->getManager();
@@ -186,12 +204,20 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $criteria = ['servizio' => $service->getId()];
     }
 
+    if ($serviceGroup instanceof ServiceGroup) {
+      $query
+        ->where('a.serviceGroup = :serviceGroupId')
+        ->setParameter('serviceGroupId', $serviceGroup->getId());
+
+      $criteria = ['serviceGroup' => $serviceGroup->getId()];
+    }
+
     $count = $query
       ->getQuery()
       ->getSingleScalarResult();
 
 
-    $result=[];
+    $result = [];
     $result['meta']['count'] = $count;
     $result['meta']['parameter']['offset'] = $offset;
     $result['meta']['parameter']['limit'] = $limit;
@@ -215,9 +241,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $order = $orderParameter ? $orderParameter : "creationTime";
     $sort = $sortParameter ? $sortParameter : "ASC";
     try {
-      $applications = $repoApplications->findBy($criteria, [$order => $sort], $limit, $offset );
+      $applications = $repoApplications->findBy($criteria, [$order => $sort], $limit, $offset);
       foreach ($applications as $s) {
-        $result ['data'][]= Application::fromEntity($s, $this->baseUrl . '/' . $s->getId(), true, $version);
+        $result ['data'][] = Application::fromEntity($s, $this->baseUrl . '/' . $s->getId(), true, $version);
       }
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $exception) {
@@ -230,7 +256,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Retreive an Applications
    * @Rest\Get("/{id}", name="application_api_get")
    *
-   *  @SWG\Parameter(
+   * @SWG\Parameter(
    *      name="version",
    *      in="query",
    *      type="string",
@@ -289,7 +315,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param $id
    * @return BinaryFileResponse|\FOS\RestBundle\View\View
    */
-  public function attachmentAction($id,  $attachmentId)
+  public function attachmentAction($id, $attachmentId)
   {
 
     $repository = $this->getDoctrine()->getRepository('AppBundle:Allegato');

@@ -407,6 +407,11 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Admin\ServiceGroup\ServiceGroupType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\Admin\Ente\EnteType:
     autowire: true
     tags:
