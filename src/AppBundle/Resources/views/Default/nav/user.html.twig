@@ -5,7 +5,7 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="menu-wrapper user-menu pl-4">
-            <ul class="nav">
+            <ul class="nav justify-content-center">
               <li
                 class="nav-item {% if  'parametri-protocollo' not in app.request.pathInfo and 'usage' not in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link" href="{{ path('operatori_index') }}">
@@ -43,7 +43,7 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="menu-wrapper user-menu pl-4">
-            <ul class="nav">
+            <ul class="nav justify-content-center">
               <li class="nav-item {% if 'ente' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_edit_ente') }}">
@@ -87,7 +87,7 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="menu-wrapper user-menu pl-4">
-            <ul class="nav">
+            <ul class="nav justify-content-center">
               {% if  login_route == constant('AppBundle\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE')  %}
                 <li class="nav-item {% if 'servizi' in app.request.pathInfo %} active {% endif %}">
                   <a class="nav-link " href="{{ path('servizi_list') }}">

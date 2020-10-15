@@ -12,6 +12,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Mapper\Giscom\GiscomStatusMapper;
+use AppBundle\Services\DelayedGiscomAPIAdapterService;
 use AppBundle\Services\GiscomAPIAdapterService;
 use AppBundle\Services\GiscomAPIMapperService;
 use AppBundle\Services\PraticaIntegrationService;
@@ -67,6 +68,9 @@ class GiscomAPIController extends Controller
   /** @var GiscomAPIAdapterService */
   private $giscomAPIAdapterService;
 
+  /** @var DelayedGiscomAPIAdapterService */
+  private $delayedGiscomAPIAdapterService;
+
   /**
    * GiscomAPIController constructor.
    * @param LoggerInterface $logger
@@ -75,6 +79,7 @@ class GiscomAPIController extends Controller
    * @param PraticaIntegrationService $integrationService
    * @param GiscomAPIMapperService $mapper
    * @param GiscomAPIAdapterService $giscomAPIAdapterService
+   * @param DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService
    */
   public function __construct(
     LoggerInterface $logger,
@@ -82,7 +87,8 @@ class GiscomAPIController extends Controller
     GiscomStatusMapper $statusMapper,
     PraticaIntegrationService $integrationService,
     GiscomAPIMapperService $mapper,
-    GiscomAPIAdapterService $giscomAPIAdapterService
+    GiscomAPIAdapterService $giscomAPIAdapterService,
+    DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService
   ) {
     $this->logger = $logger;
     $this->statusService = $statusService;
@@ -90,6 +96,7 @@ class GiscomAPIController extends Controller
     $this->integrationService = $integrationService;
     $this->mapper = $mapper;
     $this->giscomAPIAdapterService = $giscomAPIAdapterService;
+    $this->delayedGiscomAPIAdapterService = $delayedGiscomAPIAdapterService;
   }
 
 
@@ -237,7 +244,7 @@ class GiscomAPIController extends Controller
 
 
       // Richiesta codici fiscali relazionati
-      $giscomAdpterService = $this->get('ocsdc.giscom_api.adapter_delayed');
+      $giscomAdpterService = $this->delayedGiscomAPIAdapterService;
       $giscomAdpterService->askRelatedCFsForPraticaToGiscom($pratica);
 
     } catch (UniqueConstraintViolationException $e) {
@@ -413,7 +420,7 @@ class GiscomAPIController extends Controller
 
     $message = isset($payload['NoteRichiesta']) ? $payload['NoteRichiesta'] : '';
 
-    $this->get('logger')->info(
+    $this->logger->info(
       LogConstants::RICHIESTA_INTEGRAZIONE_FROM_GISCOM,
       [
         'id' => $pratica->getId(),

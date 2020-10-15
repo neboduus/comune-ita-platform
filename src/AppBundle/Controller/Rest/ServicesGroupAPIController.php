@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -30,10 +31,21 @@ use Ramsey\Uuid\Uuid;
 class ServicesGroupAPIController extends AbstractFOSRestController
 {
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is)
+  /** @var EntityManagerInterface  */
+  private $em;
+
+  /** @var InstanceService  */
+  private $is;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
 
@@ -168,7 +180,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => 'Duplicate object'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -179,7 +191,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -265,7 +277,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -350,7 +362,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );

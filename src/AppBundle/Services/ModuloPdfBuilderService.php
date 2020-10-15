@@ -69,7 +69,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   private $directoryNamer;
 
   /**
-   * @var WkhtmltopdfService
+   * @var string
    */
   private $wkhtmltopdfService;
 
@@ -538,7 +538,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param $className
    * @return string
    */
-  private function renderForClass(Pratica $pratica, $className): string
+  private function renderForClass(Pratica $pratica, $className)
   {
     $html = $this->templating->render('AppBundle:Pratiche:pdf/' . $className . '.html.twig', [
       'pratica' => $pratica,
@@ -559,8 +559,10 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     } catch (RequestException $e) {
       # this exception is thrown if given paper size or margins are not correct.
+
     } catch (ClientException $e) {
       # this exception is thrown by the client if the API has returned a code != 200.
+
     } catch (\Exception $e) {
 
     }

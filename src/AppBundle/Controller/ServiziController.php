@@ -12,12 +12,14 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
@@ -27,6 +29,27 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ServiziController extends Controller
 {
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  /**
+   * ServiziController constructor.
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   */
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger)
+  {
+    $this->logger = $logger;
+    $this->translator = $translator;
+  }
+
+
   /**
    * @Route("/", name="servizi_list")
    * @Template()
@@ -156,7 +179,7 @@ class ServiziController extends Controller
       );
 
     if (!$ente instanceof Ente) {
-      $this->get('logger')->info(
+      $this->logger->info(
         LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
         ['headers' => $request->headers]
       );
@@ -170,7 +193,7 @@ class ServiziController extends Controller
       $handler->canAccess($servizio, $ente);
     } catch (ForbiddenAccessException $e) {
       $canAccess = false;
-      $denyAccessMessage = $this->get('translator')->trans($e->getMessage(), $e->getParameters());
+      $denyAccessMessage = $this->translator->trans($e->getMessage(), $e->getParameters());
     }
 
     return [
@@ -223,11 +246,11 @@ class ServiziController extends Controller
       $service->setServiceGroup(null);
       $em->persist($service);
       $em->flush();
-      $this->addFlash('feedback', $this->get('translator')->trans('gruppo_di_servizi.servizio_rimosso'));
+      $this->addFlash('feedback', $this->translator->trans('gruppo_di_servizi.servizio_rimosso'));
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
 
     } catch (\Exception $exception) {
-      $this->addFlash('warning', $this->get('translator')->trans('gruppo_di_servizi.errore_rimozione'));
+      $this->addFlash('warning', $this->translator->trans('gruppo_di_servizi.errore_rimozione'));
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
     }
   }

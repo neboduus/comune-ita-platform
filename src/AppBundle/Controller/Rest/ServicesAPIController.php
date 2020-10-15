@@ -20,6 +20,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -52,10 +53,14 @@ class ServicesAPIController extends AbstractFOSRestController
   /** @var InstanceService  */
   private $is;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is)
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
 
@@ -242,7 +247,7 @@ class ServicesAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -341,7 +346,7 @@ class ServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -441,7 +446,7 @@ class ServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );

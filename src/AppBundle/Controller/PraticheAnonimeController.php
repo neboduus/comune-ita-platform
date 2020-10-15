@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\FormIO\ExpressionValidator;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
@@ -64,6 +65,9 @@ class PraticheAnonimeController extends Controller
    */
   protected $hashValidity;
 
+  /** @var ExpressionValidator */
+  protected $expressionValidator;
+
   /**
    * PraticaFlow constructor.
    *
@@ -74,6 +78,7 @@ class PraticheAnonimeController extends Controller
    * @param DematerializedFormAllegatiAttacherService $dematerializer
    * @param InstanceService $instanceService
    * @param $hashValidity
+   * @param ExpressionValidator $expressionValidator
    */
   public function __construct(
     LoggerInterface $logger,
@@ -82,7 +87,8 @@ class PraticheAnonimeController extends Controller
     ModuloPdfBuilderService $pdfBuilder,
     DematerializedFormAllegatiAttacherService $dematerializer,
     InstanceService $instanceService,
-    $hashValidity
+    $hashValidity,
+    ExpressionValidator $expressionValidator
   ) {
     $this->logger = $logger;
     $this->translator = $translator;
@@ -91,6 +97,7 @@ class PraticheAnonimeController extends Controller
     $this->dematerializer = $dematerializer;
     $this->instanceService = $instanceService;
     $this->hashValidity = $hashValidity;
+    $this->expressionValidator = $expressionValidator;
   }
 
   /**
@@ -108,14 +115,14 @@ class PraticheAnonimeController extends Controller
     $ente = $this->instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
-      $this->get('logger')->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
+      $this->logger->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
       throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
     }
 
     try {
       $handler->canAccess($servizio, $ente);
     } catch (ForbiddenAccessException $e) {
-      $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
+      $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
       return $this->redirectToRoute('servizi_list');
     }
@@ -124,7 +131,7 @@ class PraticheAnonimeController extends Controller
 
       return $handler->execute($servizio, $ente);
     } catch (\Exception $e) {
-      $this->get('logger')->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
+      $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
 
       return $this->render(
         '@App/Servizi/serviziFeedback.html.twig',
@@ -250,7 +257,7 @@ class PraticheAnonimeController extends Controller
    */
   public function formioValidateAction(Request $request, Servizio $servizio)
   {
-    $validator = $this->get('formio.expression_validator');
+    $validator = $this->expressionValidator;
 
     $errors = $validator->validateData(
       $servizio->getFormIoId(),

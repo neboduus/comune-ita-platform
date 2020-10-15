@@ -10,11 +10,14 @@ use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Form\Admin\ServiceFlow;
+use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 use GuzzleHttp\Client;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -33,6 +36,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
@@ -49,14 +53,42 @@ class AdminController extends Controller
   /** @var FormServerApiAdapterService */
   private $formServer;
 
+  /**@var TokenGeneratorInterface */
+  private $tokenGenerator;
+
+  /** @var TranslatorInterface */
+  private $translator;
+
+  /** @var ServiceFlow */
+  private $serviceFlow;
+
+  /** @var SchemaFactoryInterface */
+  private $schemaFactory;
+
   /**
    * AdminController constructor.
    * @param InstanceService $instanceService
+   * @param FormServerApiAdapterService $formServer
+   * @param TokenGeneratorInterface $tokenGenerator
+   * @param TranslatorInterface $translator
+   * @param ServiceFlow $serviceFlow
+   * @param SchemaFactoryInterface $schemaFactory
    */
-  public function __construct(InstanceService $instanceService, FormServerApiAdapterService $formServer)
+  public function __construct(
+    InstanceService $instanceService,
+    FormServerApiAdapterService $formServer,
+    TokenGeneratorInterface $tokenGenerator,
+    TranslatorInterface $translator,
+    ServiceFlow $serviceFlow,
+    SchemaFactoryInterface $schemaFactory
+  )
   {
     $this->instanceService = $instanceService;
     $this->formServer = $formServer;
+    $this->tokenGenerator = $tokenGenerator;
+    $this->translator = $translator;
+    $this->serviceFlow = $serviceFlow;
+    $this->schemaFactory = $schemaFactory;
   }
 
 
@@ -138,12 +170,10 @@ class AdminController extends Controller
       $em = $this->getDoctrine()->getManager();
       $ente = $this->instanceService->getCurrentInstance();
 
-      $tokenGenerator = $this->get('fos_user.util.token_generator');
-
       $operatoreUser
         ->setEnte($ente)
         ->setPlainPassword(md5(time()))
-        ->setConfirmationToken($tokenGenerator->generateToken())
+        ->setConfirmationToken($this->tokenGenerator->generateToken())
         ->setPasswordRequestedAt(new \DateTime())
         ->setEnabled(true);
       $em->persist($operatoreUser);
@@ -151,6 +181,7 @@ class AdminController extends Controller
 
       $mailer = $this->get('fos_user.mailer');
       $mailer->sendResettingEmailMessage($operatoreUser);
+
       $this->addFlash('feedback', 'Operatore creato con successo');
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
@@ -217,9 +248,8 @@ class AdminController extends Controller
   public function resetPasswordOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
     $em = $this->getDoctrine()->getManager();
-    $tokenGenerator = $this->get('fos_user.util.token_generator');
     $operatoreUser
-      ->setConfirmationToken($tokenGenerator->generateToken())
+      ->setConfirmationToken($this->tokenGenerator->generateToken())
       ->setPasswordRequestedAt(new \DateTime());
     $em->persist($operatoreUser);
     $em->flush();
@@ -290,11 +320,11 @@ class AdminController extends Controller
   public function indexServizioAction()
   {
     $statuses = [
-      Servizio::STATUS_CANCELLED => $this->get('translator')->trans('servizio.statutes.bozza'),
-      Servizio::STATUS_AVAILABLE => $this->get('translator')->trans('servizio.statutes.pubblicato'),
-      Servizio::STATUS_SUSPENDED => $this->get('translator')->trans('servizio.statutes.sospeso'),
-      Servizio::STATUS_PRIVATE => $this->get('translator')->trans('servizio.statutes.privato'),
-      Servizio::STATUS_SCHEDULED => $this->get('translator')->trans('servizio.statutes.schedulato'),
+      Servizio::STATUS_CANCELLED => $this->translator->trans('servizio.statutes.bozza'),
+      Servizio::STATUS_AVAILABLE => $this->translator->trans('servizio.statutes.pubblicato'),
+      Servizio::STATUS_SUSPENDED => $this->translator->trans('servizio.statutes.sospeso'),
+      Servizio::STATUS_PRIVATE => $this->translator->trans('servizio.statutes.privato'),
+      Servizio::STATUS_SCHEDULED => $this->translator->trans('servizio.statutes.schedulato'),
     ];
 
     $accessLevels = [
@@ -448,7 +478,7 @@ class AdminController extends Controller
   public function editServizioAction(Servizio $servizio)
   {
     $user = $this->getUser();
-    $flowService = $this->get('ocsdc.form.flow.service');
+    $flowService = $this->serviceFlow;
     $flowService->setInstanceKey($user->getId());
     $flowService->bind($servizio);
 
@@ -508,7 +538,7 @@ class AdminController extends Controller
   {
     $user = $this->getUser();
 
-    $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+    $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
 
     $form = $this->createFormBuilder(null)->add(
       "post_submit_validation_expression", TextareaType::class, [
@@ -575,7 +605,7 @@ class AdminController extends Controller
     $this->getDoctrine()->getManager()->flush();
 
     $user = $this->getUser();
-    $flowService = $this->get('ocsdc.form.flow.service');
+    $flowService = $this->serviceFlow;
 
     $flowService->setInstanceKey($user->getId());
 

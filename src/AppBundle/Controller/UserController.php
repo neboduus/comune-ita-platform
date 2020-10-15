@@ -13,6 +13,7 @@ use AppBundle\Helpers\MunicipalityConverter;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Security\CPSAuthenticator;
 use AppBundle\Services\CPSUserProvider;
+use AppBundle\Services\RemoteContentProviderServiceInterface;
 use DateTime;
 use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class UserController
@@ -34,6 +36,29 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends Controller
 {
+
+  /** @var LoggerInterface */
+  private $logger;
+
+  /** @var TranslatorInterface */
+  private $translator;
+
+  /** @var RemoteContentProviderServiceInterface */
+  private $remoteContentProviderService;
+
+  /**
+   * UserController constructor.
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   */
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RemoteContentProviderServiceInterface $remoteContentProviderService)
+  {
+    $this->logger = $logger;
+    $this->translator = $translator;
+    $this->remoteContentProviderService = $remoteContentProviderService;
+  }
+
+
   /**
    * @Route("/", name="user_dashboard")
    * @Template()
@@ -94,19 +119,19 @@ class UserController extends Controller
     if ($form->isSubmitted()) {
 
       $data = $form->getData();
-      $this->storeSdcUserData($user, $data, $this->get('logger'));
+      $this->storeSdcUserData($user, $data, $this->logger);
 
       $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'user_profile';
       $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
       $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
       $this->addFlash(
-        'success',$this->get('translator')->trans('aggiorna_profilo'));
+        'success',$this->translator->trans('aggiorna_profilo'));
       return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
     } else {
       if ($request->query->has('r')) {
         $this->addFlash(
           'warning',
-          $this->get('translator')->trans('completa_profilo')
+          $this->translator->trans('completa_profilo')
         );
       }
     }
@@ -179,7 +204,7 @@ class UserController extends Controller
     $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
     if (preg_match($regex, $compiledEmailData)) {
       $this->addFlash(
-        'danger',$this->get('translator')->trans('fake_email_message'));
+        'danger',$this->translator->trans('fake_email_message'));
       $compiledEmailData = '';
     }
 
@@ -264,9 +289,8 @@ class UserController extends Controller
    */
   public function latestNewsAction(Request $request)
   {
-    $newsProvider = $this->get('ocsdc.remote_content_provider');
     $enti = $this->getEntiFromCurrentUser();
-    $data = $newsProvider->getLatestNews($enti);
+    $data = $this->remoteContentProviderService->getLatestNews($enti);
     $response = new JsonResponse($data);
     $response->setMaxAge(3600);
     $response->setSharedMaxAge(3600);
@@ -281,9 +305,8 @@ class UserController extends Controller
    */
   public function latestDeadlinesAction(Request $request)
   {
-    $newsProvider = $this->get('ocsdc.remote_content_provider');
     $enti = $this->getEntiFromCurrentUser();
-    $data = $newsProvider->getLatestDeadlines($enti);
+    $data = $this->remoteContentProviderService->getLatestDeadlines($enti);
     $response = new JsonResponse($data);
     $response->setMaxAge(3600);
     $response->setSharedMaxAge(3600);

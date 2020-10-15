@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -35,16 +36,22 @@ class CalendarsAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  /**
-   * @var MeetingService
-   */
+  private $em;
+
+  private $is;
+
+  /** @var MeetingService */
   private $meetingService;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService)
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
+    $this->logger = $logger;
   }
 
 
@@ -329,7 +336,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -415,7 +422,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -501,7 +508,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -772,7 +779,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -858,7 +865,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -948,7 +955,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );

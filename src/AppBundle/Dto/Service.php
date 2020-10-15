@@ -642,7 +642,7 @@ class Service
   /**
    * @return bool
    */
-  public function isAllowReopening(): bool
+  public function isAllowReopening()
   {
     return $this->allowReopening;
   }

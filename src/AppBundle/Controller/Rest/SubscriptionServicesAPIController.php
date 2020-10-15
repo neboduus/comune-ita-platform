@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\FormInterface;
@@ -31,10 +32,21 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
 
   const CURRENT_API_VERSION = '1.0';
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is)
+  /** @var EntityManagerInterface  */
+  private $em;
+
+  /** @var InstanceService  */
+  private $is;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
   /**
@@ -181,7 +193,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -268,7 +280,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -355,7 +367,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -625,7 +637,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
           'title' => 'There was an error during save process',
           'description' => $e->getMessage()
         ];
-        $this->get('logger')->error(
+        $this->logger->error(
           $e->getMessage(),
           ['request' => $request]
         );
@@ -644,7 +656,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -730,7 +742,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -818,7 +830,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
