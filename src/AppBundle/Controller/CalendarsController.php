@@ -14,6 +14,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use ICal\ICal;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -56,12 +57,18 @@ class CalendarsController extends Controller
    */
   private $meetingService;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService)
+  /**
+   * @var JWTTokenManagerInterface
+   */
+  private $JWTTokenManager;
+
+  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
+    $this->JWTTokenManager = $JWTTokenManager;
   }
 
   /**
@@ -518,7 +525,7 @@ class CalendarsController extends Controller
       $canEdit = true;
     else $canEdit = false;
 
-    $jwt = $this->get('lexik_jwt_authentication.jwt_manager')->create($this->getUser());
+    $jwt = $this->JWTTokenManager->create($this->getUser());
 
     return array(
       'user'=>$user,

@@ -30,6 +30,20 @@ use TheCodingMachine\Gotenberg\Request as GotembergRequest;
  */
 class PrintController extends Controller
 {
+  /**
+   * @var ModuloPdfBuilderService
+   */
+  private $moduloPdfBuilderService;
+
+  /**
+   * PrintController constructor.
+   * @param ModuloPdfBuilderService $moduloPdfBuilderService
+   */
+  public function __construct(ModuloPdfBuilderService $moduloPdfBuilderService)
+  {
+    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
+  }
+
 
   /**
    * @Route("/pratica/{pratica}", name="print_pratiche")
@@ -77,15 +91,14 @@ class PrintController extends Controller
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
-   * @param ModuloPdfBuilderService $pdfBuilderService
    * @return Response
    * @throws \TheCodingMachine\Gotenberg\ClientException
    * @throws \TheCodingMachine\Gotenberg\RequestException
    */
-  public function printPraticaShowAction(Request $request, Pratica $pratica, ModuloPdfBuilderService $pdfBuilderService)
+  public function printPraticaShowAction(Request $request, Pratica $pratica)
   {
 
-    $fileContent = $pdfBuilderService->generatePdfUsingGotemberg($pratica);
+    $fileContent = $this->moduloPdfBuilderService->generatePdfUsingGotemberg($pratica);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';
@@ -140,10 +153,10 @@ class PrintController extends Controller
    * @throws \TheCodingMachine\Gotenberg\ClientException
    * @throws \TheCodingMachine\Gotenberg\RequestException
    */
-  public function printServicePdfAction(Request $request, Servizio $service, ModuloPdfBuilderService $pdfBuilderService)
+  public function printServicePdfAction(Request $request, Servizio $service)
   {
 
-    $fileContent = $pdfBuilderService->generateServicePdfUsingGotemberg($service);
+    $fileContent = $this->moduloPdfBuilderService->generateServicePdfUsingGotemberg($service);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';

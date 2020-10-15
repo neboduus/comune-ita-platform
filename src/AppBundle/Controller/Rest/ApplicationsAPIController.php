@@ -22,6 +22,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -66,7 +67,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   protected $baseUrl = '';
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, PraticaStatusService $statusService, ModuloPdfBuilderService $pdfBuilder, UrlGeneratorInterface $router)
+  /** @var LoggerInterface  */
+  protected $logger;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is, PraticaStatusService $statusService, ModuloPdfBuilderService $pdfBuilder, UrlGeneratorInterface $router, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
@@ -74,6 +78,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->pdfBuilder = $pdfBuilder;
     $this->router = $router;
     $this->baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
+    $this->logger = $logger;
   }
 
   /**
@@ -430,7 +435,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );

@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class DefaultController
@@ -31,6 +32,23 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DefaultController extends Controller
 {
+
+  /** @var LoggerInterface */
+  private $logger;
+
+  /** @var TranslatorInterface */
+  private $translator;
+
+  /**
+   * DefaultController constructor.
+   */
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger)
+  {
+    $this->logger = $logger;
+    $this->translator = $translator;
+  }
+
+
   /**
    * @Template()
    * @return array()
@@ -106,7 +124,7 @@ class DefaultController extends Controller
    */
   public function termsAcceptAction(Request $request)
   {
-    $logger = $this->get('logger');
+    $logger = $this->logger;
 
     $repo = $this->getDoctrine()->getRepository('AppBundle:TerminiUtilizzo');
 
@@ -152,7 +170,6 @@ class DefaultController extends Controller
    */
   private function setupTermsAcceptanceForm($terms): FormInterface
   {
-    $translator = $this->get('translator');
     $data = array();
     $formBuilder = $this->createFormBuilder($data);
     foreach ($terms as $term) {
@@ -160,12 +177,12 @@ class DefaultController extends Controller
         (string)$term->getId(),
         CheckboxType::class,
         array(
-          'label' => $translator->trans('terms_do_il_consenso'),
+          'label' => $this->translator->trans('terms_do_il_consenso'),
           'required' => true,
         )
       );
     }
-    $formBuilder->add('save', SubmitType::class, array('label' => $translator->trans('salva')));
+    $formBuilder->add('save', SubmitType::class, array('label' => $this->translator->trans('salva')));
     $form = $formBuilder->getForm();
 
     return $form;
