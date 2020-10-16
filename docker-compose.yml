@@ -71,7 +71,7 @@ services:
     depends_on:
       - php
     environment:
-      WEB_DOCUMENT_ROOT: /var/www/html/web
+      WEB_DOCUMENT_ROOT: /var/www/html/public
       WEB_PHP_SOCKET: php:9000
       ORGANIZATION: $ORGANIZATION
       SERVER_NAME: $SERVER_NAME
