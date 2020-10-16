@@ -49,11 +49,11 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
 
     if ($servizio != '*' && $servizio != 'Tutti') {
       if ($servizio) {
-        $servizio = $this->em->getRepository('AppBundle:Servizio')->findOneByName($servizio);
+        $servizio = $this->em->getRepository('App:Servizio')->findOneByName($servizio);
       }
 
       if (!$servizio) {
-        $servizio = $this->em->getRepository('AppBundle:Servizio')->findOneBySlug($servizio);
+        $servizio = $this->em->getRepository('App:Servizio')->findOneBySlug($servizio);
       }
 
       if (!$servizio) {
@@ -83,7 +83,7 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
       $enti[] = $entiEntity->getName();
     }
     $enteName = $this->io->choice('Seleziona l\'ente da configurare', $enti);
-    $ente = $this->em->getRepository('AppBundle:Ente')->findOneByName($enteName);
+    $ente = $this->em->getRepository('App:Ente')->findOneByName($enteName);
     if (!$ente) {
       throw new InvalidArgumentException("Ente $enteName non trovato");
     }
@@ -159,7 +159,7 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
    */
   private function getServizi()
   {
-    $repo = $this->em->getRepository('AppBundle:Servizio');
+    $repo = $this->em->getRepository('App:Servizio');
 
     return $repo->findAll();
   }
@@ -169,7 +169,7 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
    */
   private function getEnti()
   {
-    $repo = $this->em->getRepository('AppBundle:Ente');
+    $repo = $this->em->getRepository('App:Ente');
 
     return $repo->findAll();
   }

@@ -26,7 +26,7 @@ class ExternalCalendarType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
       $resolver->setDefaults(array(
-        'data_class' => 'AppBundle\Model\ExternalCalendar',
+        'data_class' => 'App\Model\ExternalCalendar',
         'csrf_protection' => false
       ));
     }

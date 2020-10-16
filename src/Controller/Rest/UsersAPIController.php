@@ -23,7 +23,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class UsersAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/users")
  */
 class UsersAPIController extends AbstractFOSRestController
@@ -82,7 +82,7 @@ class UsersAPIController extends AbstractFOSRestController
 
     $qb = $this->em->createQueryBuilder()
       ->select('user')
-      ->from('AppBundle:CPSUser', 'user');
+      ->from('App:CPSUser', 'user');
 
     if (isset($cf)) {
       $qb->andWhere('lower(user.codiceFiscale) = :cf')
@@ -130,7 +130,7 @@ class UsersAPIController extends AbstractFOSRestController
   public function getUserAction(Request $request, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
+      $repository = $this->getDoctrine()->getRepository('App:CPSUser');
       $result = $repository->find($id);
 
       if ($result === null) {
@@ -184,7 +184,7 @@ class UsersAPIController extends AbstractFOSRestController
   public function postUserAction(Request $request)
   {
     $userDto = new User();
-    $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
+    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -272,14 +272,14 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function putUserAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
+    $repository = $this->getDoctrine()->getRepository('App:CPSUser');
     $user = $repository->find($id);
 
     if (!$user) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
     $userDto = new User();
-    $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
+    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -361,14 +361,14 @@ class UsersAPIController extends AbstractFOSRestController
   public function patchuserAction($id, Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
+    $repository = $this->getDoctrine()->getRepository('App:CPSUser');
     $user = $repository->find($id);
 
     if (!$user) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
     $userDto = User::fromEntity($user);
-    $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
+    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -418,7 +418,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $user = $this->getDoctrine()->getRepository('AppBundle:CPSUser')->find($id);
+    $user = $this->getDoctrine()->getRepository('App:CPSUser')->find($id);
     if ($user) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

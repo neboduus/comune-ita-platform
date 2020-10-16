@@ -15,7 +15,7 @@ use Http\Discovery\Exception\NotFoundException;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
- * @package AppBundle\Entity
+ * @package App\Entity
  */
 class CPSUser extends User
 {

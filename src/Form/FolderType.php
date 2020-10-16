@@ -23,12 +23,12 @@ class FolderType extends AbstractType
         'required' => false
       ])
       ->add('owner', EntityType::class, [
-        'class' => 'AppBundle\Entity\CPSUser',
+        'class' => 'App\Entity\CPSUser',
         'label' => 'proprietario',
         'required' => true
       ])
       ->add('correlated_services', EntityType::class, [
-        'class' => 'AppBundle\Entity\Servizio',
+        'class' => 'App\Entity\Servizio',
         'label' => 'Servizi correlati',
         'multiple' => true,
       ]);
@@ -37,7 +37,7 @@ class FolderType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\Folder',
+      'data_class' => 'App\Entity\Folder',
       'csrf_protection' => false
     ));
   }

@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class UserController
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/user")
  */
 class UserController extends Controller
@@ -44,10 +44,10 @@ class UserController extends Controller
   {
     $user = $this->getUser();
 
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
     $servizi = $serviziRepository->findBy([], [], 3);
 
-    $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $praticheRepo = $this->getDoctrine()->getRepository('App:Pratica');
     $pratiche = $praticheRepo->findBy(
       ['user' => $user],
       ['creationTime' => 'DESC'],
@@ -57,7 +57,7 @@ class UserController extends Controller
     $threads = [];
 
     $documents = [];
-    $documentRepo = $this->getDoctrine()->getRepository('AppBundle:Document');
+    $documentRepo = $this->getDoctrine()->getRepository('App:Document');
 
     $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
     $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
@@ -295,13 +295,13 @@ class UserController extends Controller
     $entityManager = $this->getDoctrine()->getManager();
     $entiPerUser = $entityManager->createQueryBuilder()
       ->select('IDENTITY(p.ente)')->distinct()
-      ->from('AppBundle:Pratica', 'p')
+      ->from('App:Pratica', 'p')
       ->where('p.user = :user')
       ->setParameter('user', $this->getUser())
       ->getQuery()
       ->getResult();
 
-    $repository = $entityManager->getRepository('AppBundle:Ente');
+    $repository = $entityManager->getRepository('App:Ente');
     if (count($entiPerUser) > 0) {
       $entiPerUser = array_reduce($entiPerUser, 'array_merge', array());
       $enti = $repository->findBy(['id' => $entiPerUser]);

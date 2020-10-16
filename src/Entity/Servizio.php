@@ -19,7 +19,7 @@ use Swagger\Annotations as SWG;
 
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Entity\ServizioRepository")
+ * @ORM\Entity(repositoryClass="App\Entity\ServizioRepository")
  * @ORM\Table(name="servizio")
  * @ORM\HasLifecycleCallbacks
  */
@@ -295,7 +295,7 @@ class Servizio
   private $postSubmitValidationMessage;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ServiceGroup", inversedBy="services")
+   * @ORM\ManyToOne(targetEntity="App\Entity\ServiceGroup", inversedBy="services")
    * @ORM\JoinColumn(name="service_group_id", referencedColumnName="id", nullable=true)
    * @SWG\Property(description="Service group id", type="string")
    */

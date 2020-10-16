@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Class AdminUser
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
- * @package AppBundle\Entity
+ * @package App\Entity
  */
 class AdminUser extends User
 {

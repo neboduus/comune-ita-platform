@@ -25,7 +25,7 @@ class InstanceService
     }
 
     /**
-     * @return \AppBundle\Entity\Ente|bool
+     * @return \App\Entity\Ente|bool
      */
     public function getCurrentInstance()
     {
@@ -33,7 +33,7 @@ class InstanceService
         {
             return false;
         }
-        $repo = $this->doctrine->getRepository('AppBundle:Ente');
+        $repo = $this->doctrine->getRepository('App:Ente');
         $ente = $repo->findOneBy(array('slug' => $this->instance));
         return $ente;
     }

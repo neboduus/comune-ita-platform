@@ -32,7 +32,7 @@ class ScheduleActionService
         LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;
-        $this->entityRepository = $this->entityManager->getRepository('AppBundle:ScheduledAction');
+        $this->entityRepository = $this->entityManager->getRepository('App:ScheduledAction');
         $this->logger = $logger;
     }
 
@@ -80,7 +80,7 @@ class ScheduleActionService
 
     /**
      * @param string $hostname
-     * @return \AppBundle\Entity\ScheduledAction[]
+     * @return \App\Entity\ScheduledAction[]
      */
     public function getPendingActions($hostname)
     {
@@ -101,7 +101,7 @@ class ScheduleActionService
 
       $qb = $this->entityManager->createQueryBuilder();
       return $qb->select('t')
-        ->from('AppBundle:ScheduledAction', 't')
+        ->from('App:ScheduledAction', 't')
         ->where($qb->expr()->isNotNull('t.hostname'))
         ->andWhere('t.status = :status')
         ->setParameter('status', $status)

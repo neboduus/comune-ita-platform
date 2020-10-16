@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * ServiceGroup
  *
- * @ORM\Entity(repositoryClass="AppBundle\Entity\ServiceGroupRepository")
+ * @ORM\Entity(repositoryClass="App\Entity\ServiceGroupRepository")
  * @ORM\Table(name="service_group",)
  *
  */
@@ -69,13 +69,13 @@ class ServiceGroup
   private $registerInFolder;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Servizio", mappedBy="serviceGroup", cascade={"persist"})
+   * @ORM\OneToMany(targetEntity="App\Entity\Servizio", mappedBy="serviceGroup", cascade={"persist"})
    * @Serializer\Exclude()
    */
   private $services;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="serviceGroup", cascade={"persist"})
+   * @ORM\OneToMany(targetEntity="App\Entity\Pratica", mappedBy="serviceGroup", cascade={"persist"})
    * @Serializer\Exclude()
    */
   private $applications;

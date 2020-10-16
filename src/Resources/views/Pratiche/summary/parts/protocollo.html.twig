@@ -29,11 +29,11 @@
   </div>
 
   {# Bottone per download modulo compilato (solo operatore) #}
-  {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('App:Pratiche/summary/parts:moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
 
   {% if pratica.numeroProtocollo or (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length > 0) %}
     <div class="col-12 my-2">
-      {{ include('AppBundle:Pratiche/summary/parts:moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
+      {{ include('App:Pratiche/summary/parts:moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
     </div>
   {% else %}
   <div class="col-12 my-2">

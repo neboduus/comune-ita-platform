@@ -23,7 +23,7 @@ use Swagger\Annotations as SWG;
  * Class SubscriptionsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/subscription-services")
  */
 class SubscriptionServicesAPIController extends AbstractFOSRestController
@@ -60,7 +60,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     if (strtolower($request->query->get('available')) == 'true') {
       $subscriptionServices = $this->em->createQueryBuilder()
         ->select('t1')
-        ->from('AppBundle:SubscriptionService', 't1')
+        ->from('App:SubscriptionService', 't1')
         ->leftJoin('t1.subscriptions', 't2')
         ->groupBy('t1.id')
         ->having('COUNT(t2) < t1.subscribersLimit OR t1.subscribersLimit is NULL')
@@ -69,7 +69,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         ->setParameter('now', new \DateTime())
         ->getQuery()->getResult();
     } else {
-      $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
+      $subscriptionServices = $this->getDoctrine()->getRepository('App:SubscriptionService')->findAll();
     }
 
     foreach ($subscriptionServices as $subscriptionService) {
@@ -104,7 +104,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function getSubscriptionServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+      $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -157,7 +157,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function postSubscriptionServiceAction(Request $request)
   {
     $subscriptionService = new SubscriptionService();
-    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -237,14 +237,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function putSubscriptionServiceAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+    $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -326,13 +326,13 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function patchSubscriptionServiceAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+    $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -389,7 +389,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $subscriptionService = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->find($id);
+    $subscriptionService = $this->getDoctrine()->getRepository('App:SubscriptionService')->find($id);
     if ($subscriptionService) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -464,7 +464,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function getSubscriptionsAction($subscription_service_id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+      $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
       $subscriptionService = $repository->find($subscription_service_id);
       if ($subscriptionService === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -507,7 +507,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function getSubscriptionAction($subscription_service_id, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+      $repository = $this->getDoctrine()->getRepository('App:Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
       if ($subscription === null) {
@@ -545,7 +545,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteSubscriptionAction($subscription_service_id, $id)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->getDoctrine()->getRepository('App:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     if ($subscription) {
       // debated point: should we 404 on an unknown nickname?
@@ -600,7 +600,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function postSubscriptionAction(Request $request)
   {
     $subscription = new Subscription();
-    $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
+    $form = $this->createForm('App\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -613,7 +613,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $subscriber = $this->em->getRepository('AppBundle:Subscriber')->findOneBy(['fiscal_code' => $subscription->getSubscriber()->getFiscalCode()]);
+    $subscriber = $this->em->getRepository('App:Subscriber')->findOneBy(['fiscal_code' => $subscription->getSubscriber()->getFiscalCode()]);
 
     if (!$subscriber) {
       try {
@@ -701,13 +701,13 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function putSubscriptionAction($subscription_service_id, $id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->getDoctrine()->getRepository('App:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
+    $form = $this->createForm('App\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -789,13 +789,13 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function patchSubscriptionAction($subscription_service_id, $id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->getDoctrine()->getRepository('App:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
+    $form = $this->createForm('App\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {

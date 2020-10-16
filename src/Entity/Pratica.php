@@ -9,7 +9,7 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Entity\PraticaRepository")
+ * @ORM\Entity(repositoryClass="App\Entity\PraticaRepository")
  * @ORM\Table(name="pratica")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
@@ -142,7 +142,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $id;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+   * @ORM\ManyToOne(targetEntity="App\Entity\User")
    * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
    */
   private $user;
@@ -166,7 +166,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $ente;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OperatoreUser")
+   * @ORM\ManyToOne(targetEntity="App\Entity\OperatoreUser")
    * @ORM\JoinColumn(name="operatore_id", referencedColumnName="id", nullable=true)
    */
   private $operatore;
@@ -178,28 +178,28 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $oggetto;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Allegato", inversedBy="pratiche", orphanRemoval=false)
+   * @ORM\ManyToMany(targetEntity="App\Entity\Allegato", inversedBy="pratiche", orphanRemoval=false)
    * @var ArrayCollection
    * @Assert\Valid(traverse=true)
    */
   private $allegati;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ModuloCompilato", inversedBy="pratiche2", orphanRemoval=false)
+   * @ORM\ManyToMany(targetEntity="App\Entity\ModuloCompilato", inversedBy="pratiche2", orphanRemoval=false)
    * @var ArrayCollection
    * @Assert\Valid(traverse=true)
    */
   private $moduliCompilati;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\AllegatoOperatore", inversedBy="pratiche3", orphanRemoval=false)
+   * @ORM\ManyToMany(targetEntity="App\Entity\AllegatoOperatore", inversedBy="pratiche3", orphanRemoval=false)
    * @var ArrayCollection
    * @Assert\Valid(traverse=true)
    */
   private $allegatiOperatore;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Message", mappedBy="application")
+   * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="application")
    * @ORM\OrderBy({"createdAt" = "ASC"})
    * @var ArrayCollection
    */
@@ -207,14 +207,14 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
 
   /**
-   * @ORM\OneToOne(targetEntity="AppBundle\Entity\RispostaOperatore", orphanRemoval=false)
+   * @ORM\OneToOne(targetEntity="App\Entity\RispostaOperatore", orphanRemoval=false)
    * @ORM\JoinColumn(nullable=true)
    * @var RispostaOperatore
    */
   private $rispostaOperatore;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
+   * @ORM\OneToMany(targetEntity="App\Entity\ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
    * @ORM\JoinColumn(nullable=true)
    * @var ArrayCollection
    */
@@ -410,7 +410,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $userCompilationNotes;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\RichiestaIntegrazione", mappedBy="praticaPerCuiServeIntegrazione", orphanRemoval=false)
+   * @ORM\OneToMany(targetEntity="App\Entity\RichiestaIntegrazione", mappedBy="praticaPerCuiServeIntegrazione", orphanRemoval=false)
    * @var ArrayCollection
    */
   private $richiesteIntegrazione;
@@ -465,7 +465,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $parent;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ServiceGroup", inversedBy="applications")
+   * @ORM\ManyToOne(targetEntity="App\Entity\ServiceGroup", inversedBy="applications")
    * @ORM\JoinColumn(name="service_group_id", referencedColumnName="id", nullable=true)
    */
   private $serviceGroup;

@@ -579,7 +579,7 @@ class Application
     $dto->service = $pratica->getServizio()->getSlug();
     $dto->subject = $pratica->getOggetto();
 
-    if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
+    if ($pratica->getServizio()->getPraticaFCQN() == '\App\Entity\FormIO') {
       if ($version >= 2) {
         $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl);
       } else {

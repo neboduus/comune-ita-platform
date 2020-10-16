@@ -29,14 +29,14 @@ class Subscription
   protected $id;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Subscriber", inversedBy="subscriptions")
+   * @ORM\ManyToOne(targetEntity="App\Entity\Subscriber", inversedBy="subscriptions")
    * @ORM\JoinColumn(nullable=false)
    * @SWG\Property(description="Subscription's subscriber")
    */
   private $subscriber;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SubscriptionService", inversedBy="subscriptions")
+   * @ORM\ManyToOne(targetEntity="App\Entity\SubscriptionService", inversedBy="subscriptions")
    * @Serializer\Exclude()
    * @ORM\JoinColumn(nullable=false)
    * @SWG\Property(description="Subscription's Subscription Service")

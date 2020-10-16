@@ -44,12 +44,12 @@
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
-      {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+      {{ include('App:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati"
        role="tabpanel" aria-labelledby="allegati-tab">
-    {# @var allegato \AppBundle\Entity\Allegato #}
+    {# @var allegato \App\Entity\Allegato #}
     {% if pratica.allegati.count + messageAttachments|length  == 0 %}
       <div class="font-italic text-center">{{ 'operatori.messaggi.no_attachments' | trans }}</div>
     {% endif %}
@@ -112,16 +112,16 @@
        aria-labelledby="messaggi-tab">
     <div class="m-3">
       {% if feature('feature_application_detail') %}
-        {{ include('AppBundle:Operatori/parts:messaggi.html.twig', {'pratica':pratica}) }}
+        {{ include('App:Operatori/parts:messaggi.html.twig', {'pratica':pratica}) }}
       {% else %}
-        {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+        {{ include('App:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
       {% endif %}
     </div>
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
        aria-labelledby="pagamento-tab">
     <div class="m-3">
-      {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
+      {{ include('App:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
 </div>

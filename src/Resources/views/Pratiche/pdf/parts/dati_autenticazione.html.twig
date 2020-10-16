@@ -1,4 +1,4 @@
-{# @var user \AppBundle\Entity\CPSUser #}
+{# @var user \App\Entity\CPSUser #}
 <p class="page-break-before">{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
 <table style="font-size: 8pt;table-layout: fixed; background-color: #e3e3e3; border: 1px solid #ccc" class="table autenticazione">
   {% for key, value in user.getSecurityFields %}

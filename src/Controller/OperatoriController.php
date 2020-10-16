@@ -437,7 +437,7 @@ class OperatoriController extends Controller
   {
     //$repo = $this->getDoctrine()->getRepository(Pratica::class);
     //$pratiche = $repo->findSubmittedPraticheByEnte($this->get('ocsdc.instance_service')->getCurrentInstance());
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
     $servizi = $serviziRepository->findBy(
       [
         'status' => Servizio::STATUS_AVAILABLE
@@ -485,7 +485,7 @@ class OperatoriController extends Controller
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      $allegato = $this->getDoctrine()->getRepository('App:Allegato')->find($protocollo->id);
       if ($allegato instanceof Allegato) {
         $allegati[] = [
           'allegato' => $allegato,
@@ -619,7 +619,7 @@ class OperatoriController extends Controller
     $this->checkUserCanAccessPratica($user, $pratica);
     $tab = $request->query->get('tab');
 
-    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->getDoctrine()->getRepository('App:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
 
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
@@ -733,7 +733,7 @@ class OperatoriController extends Controller
 
     $threads = $this->createThreadElementsForOperatoreAndPratica($user, $pratica);
     /** @var PraticaRepository $repository */
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
     $fiscalCode = null;
@@ -939,7 +939,7 @@ class OperatoriController extends Controller
    */
   public function listOperatoriByEnteAction()
   {
-    $operatoreRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
+    $operatoreRepo = $this->getDoctrine()->getRepository('App:OperatoreUser');
     $operatori = $operatoreRepo->findBy(
       [
         'ente' => $this->getUser()->getEnte(),
@@ -1024,7 +1024,7 @@ class OperatoriController extends Controller
       $message = new Message();
       $message->setApplication($pratica);
       $message->setAuthor($this->getUser());
-      $form = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
+      $form = $this->createForm('App\Form\ApplicationMessageType', $message);
     } else {
       $formBuilder = $this->createFormBuilder($data)
         ->add('text', TextareaType::class, [
@@ -1192,8 +1192,8 @@ class OperatoriController extends Controller
     //Servizi, pratiche  delle select di filtraggio
     $serviziPratiche = $em->createQueryBuilder()
       ->select('s.name', 's.slug')
-      ->from('AppBundle:Pratica', 'p')
-      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
+      ->from('App:Pratica', 'p')
+      ->innerJoin('App:Servizio', 's', 'WITH', 's.id = p.servizio')
       ->distinct()
       ->getQuery()
       ->getResult();

@@ -378,7 +378,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest)
   {
-    $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/integration.html.twig', [
+    $html = $this->templating->render('App:Pratiche:pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'user' => $pratica->getUser(),
@@ -414,12 +414,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
     /** @var IntegrazioneRepository $integrationRepo */
-    $integrationRepo = $this->em->getRepository('AppBundle:Integrazione');
+    $integrationRepo = $this->em->getRepository('App:Integrazione');
 
     /** @var Integrazione[] $integrations */
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
 
-    $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/answer_integration.html.twig', [
+    $html = $this->templating->render('App:Pratiche:pdf/parts/answer_integration.html.twig', [
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'integrazioni' => $integrations,
@@ -540,7 +540,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForClass(Pratica $pratica, $className): string
   {
-    $html = $this->templating->render('AppBundle:Pratiche:pdf/' . $className . '.html.twig', [
+    $html = $this->templating->render('App:Pratiche:pdf/' . $className . '.html.twig', [
       'pratica' => $pratica,
       'user' => $pratica->getUser(),
     ]);
@@ -610,7 +610,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica|GiscomPratica $pratica
-   * @throws \AppBundle\ScheduledAction\Exception\AlreadyScheduledException
+   * @throws \App\ScheduledAction\Exception\AlreadyScheduledException
    */
   public function createForPraticaAsync(Pratica $pratica)
   {
@@ -632,7 +632,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $params = unserialize($action->getParams());
     if ($action->getType() == self::SCHEDULED_CREATE_FOR_PRATICA) {
       /** @var Pratica $pratica */
-      $pratica = $this->em->getRepository('AppBundle:Pratica')->find($params['pratica']);
+      $pratica = $this->em->getRepository('App:Pratica')->find($params['pratica']);
       if (!$pratica instanceof Pratica) {
         throw new \Exception('Not found application with id: ' . $params['pratica']);
       }

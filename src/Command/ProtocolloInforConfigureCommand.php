@@ -92,7 +92,7 @@ class ProtocolloInforConfigureCommand extends ContainerAwareCommand
             $servizi[] = $servizioEntity->getName();
         }
         $servizioName = $this->io->choice('Seleziona il servizio da configurare', $servizi);
-        $servizio = $this->em->getRepository('AppBundle:Servizio')->findOneByName($servizioName);
+        $servizio = $this->em->getRepository('App:Servizio')->findOneByName($servizioName);
         if (!$servizio) {
             throw new InvalidArgumentException("Servizio $servizioName non trovato");
         }
@@ -144,7 +144,7 @@ class ProtocolloInforConfigureCommand extends ContainerAwareCommand
      */
     private function getServizi()
     {
-        $repo = $this->em->getRepository('AppBundle:Servizio');
+        $repo = $this->em->getRepository('App:Servizio');
 
         return $repo->findAll();
     }
@@ -154,7 +154,7 @@ class ProtocolloInforConfigureCommand extends ContainerAwareCommand
      */
     private function getEnti()
     {
-        $repo = $this->em->getRepository('AppBundle:Ente');
+        $repo = $this->em->getRepository('App:Ente');
 
         return $repo->findAll();
     }

@@ -39,7 +39,7 @@ class Meeting
   private $id;
 
   /**
- * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar")
+ * @ORM\ManyToOne(targetEntity="App\Entity\Calendar")
  * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
  * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
  * @SWG\Property(description="Meeting's calendar id", type="string")
@@ -48,7 +48,7 @@ class Meeting
   private $calendar;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OpeningHour", inversedBy="meetings")
+   * @ORM\ManyToOne(targetEntity="App\Entity\OpeningHour", inversedBy="meetings")
    * @ORM\JoinColumn(name="opening_hour_id", referencedColumnName="id", nullable=true)
    * @SWG\Property(description="Meeting's opening hour id", type="string")
    * @Serializer\Exclude()
@@ -88,7 +88,7 @@ class Meeting
   private $name;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
+   * @ORM\ManyToOne(targetEntity="App\Entity\CPSUser")
    * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
    * @SWG\Property(description="Meeting's user id", type="string")
    * @Serializer\Exclude()

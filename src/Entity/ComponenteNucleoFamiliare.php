@@ -43,7 +43,7 @@ class ComponenteNucleoFamiliare
     private $codiceFiscale;
 
     /**
-     * @ORM\ManyToOne(inversedBy="nucleoFamiliare", targetEntity="AppBundle\Entity\Pratica")
+     * @ORM\ManyToOne(inversedBy="nucleoFamiliare", targetEntity="App\Entity\Pratica")
      * @var Pratica $pratica
      */
     private $pratica;

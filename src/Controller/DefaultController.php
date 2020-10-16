@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class DefaultController
  *
- * @package AppBundle\Controller
+ * @package App\Controller
  */
 class DefaultController extends Controller
 {
@@ -37,7 +37,7 @@ class DefaultController extends Controller
    */
   public function commonAction()
   {
-    return array('enti' => $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll());
+    return array('enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll());
   }
 
   /**
@@ -47,7 +47,7 @@ class DefaultController extends Controller
    */
   public function indexAction()
   {
-    return $this->forward('AppBundle:Servizi:servizi');
+    return $this->forward(ServiziController::class . '::serviziAction');
   }
 
   /**
@@ -108,7 +108,7 @@ class DefaultController extends Controller
   {
     $logger = $this->get('logger');
 
-    $repo = $this->getDoctrine()->getRepository('AppBundle:TerminiUtilizzo');
+    $repo = $this->getDoctrine()->getRepository('App:TerminiUtilizzo');
 
     /**
      * FIXME: gestire termini multipli
@@ -237,7 +237,7 @@ class DefaultController extends Controller
     $scheme = $request->isSecure() ? 'https' : 'http';
 
     /** @var Ente[] $enti */
-    $enti = $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll();
+    $enti = $this->getDoctrine()->getRepository('App:Ente')->findAll();
     foreach ($enti as $ente) {
       $result[] = [
         "targets" => [$hostname],

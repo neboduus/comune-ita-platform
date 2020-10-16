@@ -44,7 +44,7 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     $loader->setContainer($this->getContainer());
     $loader->loadPaymentGateways($manager);
 
-    $repo = $manager->getRepository('AppBundle:Ente');
+    $repo = $manager->getRepository('App:Ente');
     $ente = $repo->findOneBySlug($instance);
     $isEnte = false;
     if ( $ente instanceof Ente ) {
@@ -75,7 +75,7 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
       ->setSiteUrl($url);
 
     /** @var PaymentGateway $bollo */
-    $bollo = $manager->getRepository('AppBundle:PaymentGateway')->findOneByIdentifier('bollo');
+    $bollo = $manager->getRepository('App:PaymentGateway')->findOneByIdentifier('bollo');
     $gateway = new Gateway();
     $gateway->setIdentifier($bollo->getIdentifier());
     $gateway->setParameters(array('identifier' => $bollo->getIdentifier(), 'parameters' => null));

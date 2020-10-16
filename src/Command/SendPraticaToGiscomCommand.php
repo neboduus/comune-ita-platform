@@ -30,7 +30,7 @@ class SendPraticaToGiscomCommand extends ContainerAwareCommand
     $question = new Question('Inserisci id della pratica: ', '');
     $applicationId = $helper->ask($input, $output, $question);
 
-    $repository = $this->getContainer()->get('doctrine')->getRepository('AppBundle:Pratica');
+    $repository = $this->getContainer()->get('doctrine')->getRepository('App:Pratica');
 
     $application = $repository->find($applicationId);
 

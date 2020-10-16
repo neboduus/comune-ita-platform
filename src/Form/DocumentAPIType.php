@@ -32,12 +32,12 @@ class DocumentAPIType extends AbstractType
   {
     $builder
       ->add('owner', EntityType::class, [
-        'class' => 'AppBundle\Entity\CPSUser',
+        'class' => 'App\Entity\CPSUser',
         'required' => true,
         'label' => 'Proprietario'
       ])
       ->add('folder', EntityType::class, [
-        'class' => 'AppBundle\Entity\Folder',
+        'class' => 'App\Entity\Folder',
         'required' => true,
         'label' => 'Cartella'
       ])
@@ -67,7 +67,7 @@ class DocumentAPIType extends AbstractType
         'required' => true
       ])
       ->add('topics', EntityType::class, [
-        'class' => 'AppBundle\Entity\Categoria',
+        'class' => 'App\Entity\Categoria',
         'label' => 'Topics',
         'multiple' => true
       ])
@@ -102,7 +102,7 @@ class DocumentAPIType extends AbstractType
         'label' => 'Data di scadenza'
       ])
       ->add('correlated_services', EntityType::class, [
-        'class' => 'AppBundle\Entity\Servizio',
+        'class' => 'App\Entity\Servizio',
         'label' => 'Servizi correlati',
         'multiple' => true
       ])
@@ -197,7 +197,7 @@ class DocumentAPIType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\Document',
+      'data_class' => 'App\Entity\Document',
       'csrf_protection' => false
     ));
   }

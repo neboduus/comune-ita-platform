@@ -82,7 +82,7 @@ class FormIOTemplateType extends AbstractType
         if ( $serviceID == 'new' ) {
           $response = $this->formServerService->createForm($servizio);
         } else {
-          $serviceToClone = $this->em->getRepository('AppBundle:Servizio')->find($serviceID);
+          $serviceToClone = $this->em->getRepository('App:Servizio')->find($serviceID);
           if ($serviceToClone instanceof Servizio) {
             $this->cloneService($servizio, $serviceToClone);
             $response = $this->formServerService->cloneForm($servizio, $serviceToClone);

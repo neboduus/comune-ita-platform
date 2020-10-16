@@ -238,7 +238,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       ->setTo($receiver, $ente->getName())
       ->setBody(
         $this->templating->render(
-          'AppBundle:Emails/Pec:content.html.twig',
+          'App:Emails/Pec:content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type
@@ -248,7 +248,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       )
       ->addPart(
         $this->templating->render(
-          'AppBundle:Emails/Pec:content.html.twig',
+          'App:Emails/Pec:content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type

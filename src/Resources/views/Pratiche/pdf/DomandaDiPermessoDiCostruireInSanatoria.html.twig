@@ -1,10 +1,10 @@
 <html>
 <head>
-  {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('App:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
 </head>
 <body>
 
-{{ include('AppBundle:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+{{ include('App:Pratiche/pdf/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
 
 <div class="chiede center_title">
   {{ 'scia_pratica_edilizia.pdf.segnala'|trans() }}
@@ -115,9 +115,9 @@
   </tbody>
 </table>
 
-{{ include('AppBundle:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
-{{ include('AppBundle:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
-{{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
-{{ include('AppBundle:Pratiche/pdf/parts:footer.html.twig') }}
+{{ include('App:Pratiche/pdf/parts:data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
+{{ include('App:Pratiche/pdf/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+{{ include('App:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'user': user}) }}
+{{ include('App:Pratiche/pdf/parts:footer.html.twig') }}
 </body>
 </html>

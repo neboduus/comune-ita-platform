@@ -17,7 +17,7 @@ class SelezionaNidoType extends AbstractType
         $helper->setStepTitle('steps.iscrizione_asilo_nido.seleziona_nido.title', true);
 
         $builder->add('struttura', EntityType::class, [
-            'class' => 'AppBundle\Entity\AsiloNido',
+            'class' => 'App\Entity\AsiloNido',
             'choices' => $builder->getData()->getEnte()->getAsili(),
             'choice_label' => 'name',
             'expanded' => false,

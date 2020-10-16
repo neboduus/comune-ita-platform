@@ -40,7 +40,7 @@ class SubscriptionServicesController extends Controller
       SubscriptionService::STATUS_UNACTIVE => 'Inattivo'
     ];
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('AppBundle:SubscriptionService')->findAll();
+    $items = $em->getRepository('App:SubscriptionService')->findAll();
 
 
     $table = $this->createDataTable()
@@ -107,7 +107,7 @@ class SubscriptionServicesController extends Controller
     $user = $this->getUser();
 
     $subscriptionService = new SubscriptionService();
-    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -158,7 +158,7 @@ class SubscriptionServicesController extends Controller
 
   /**
    * @Route("operatori/subscription-service/{subscriptionService}/edit", name="operatori_subscription-service_edit")
-   * @ParamConverter("subscriptionService", class="AppBundle:SubscriptionService")
+   * @ParamConverter("subscriptionService", class="App:SubscriptionService")
    * @Template()
    * @param Request $request the request
    * @param SubscriptionService $subscriptionService The SubscriptionService entity
@@ -170,7 +170,7 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {

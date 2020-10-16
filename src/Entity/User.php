@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\UserBundle\Model\User as BaseUser;
 use Ramsey\Uuid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class User
@@ -21,9 +21,9 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  *      @ORM\AttributeOverride(name="email", column=@ORM\Column(type="string", name="email", length=255, unique=false, nullable=true)),
  *      @ORM\AttributeOverride(name="emailCanonical", column=@ORM\Column(type="string", name="email_canonical", length=255, unique=false, nullable=true))
  * })
- * @package AppBundle\Entity
+ * @package App\Entity
  */
-abstract class User extends BaseUser
+abstract class User implements UserInterface
 {
 
     use TimestampableEntity;
@@ -199,5 +199,28 @@ abstract class User extends BaseUser
         return $this;
     }
 
+  public function getRoles()
+  {
+    // TODO: Implement getRoles() method.
+  }
 
+  public function getPassword()
+  {
+    // TODO: Implement getPassword() method.
+  }
+
+  public function getSalt()
+  {
+    // TODO: Implement getSalt() method.
+  }
+
+  public function getUsername()
+  {
+    // TODO: Implement getUsername() method.
+  }
+
+  public function eraseCredentials()
+  {
+    // TODO: Implement eraseCredentials() method.
+  }
 }

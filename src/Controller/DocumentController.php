@@ -53,7 +53,7 @@ class DocumentController extends Controller
   {
     $user = $this->getUser();
     // Get all user's folders
-    $folders = $this->getDoctrine()->getRepository('AppBundle:Folder')->findBy(['owner' => $user]);
+    $folders = $this->getDoctrine()->getRepository('App:Folder')->findBy(['owner' => $user]);
 
     // Get folders with shared documents
     $sql = 'SELECT DISTINCT folder.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\'';
@@ -62,7 +62,7 @@ class DocumentController extends Controller
     $sharedIds = $stmt->fetchAll();
 
     foreach ($sharedIds as $id) {
-      $folders[] = $this->em->getRepository('AppBundle:Folder')->find($id);
+      $folders[] = $this->em->getRepository('App:Folder')->find($id);
     }
 
     return [
@@ -81,7 +81,7 @@ class DocumentController extends Controller
   public function cpsUserListDocumentsAction(Request $request, $folderId)
   {
     $user = $this->getUser();
-    $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
+    $folder = $this->em->getRepository('App:Folder')->find($folderId);
     $documents = [];
 
     if (!$folder) {
@@ -90,7 +90,7 @@ class DocumentController extends Controller
     }
 
       if ($folder->getOwner() == $user)
-        $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findBy(['folder' => $folder]);
+        $documents = $this->getDoctrine()->getRepository('App:Document')->findBy(['folder' => $folder]);
       else {
         try {
           $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' and folder.id = \'' . $folder->getId() . '\'';
@@ -100,7 +100,7 @@ class DocumentController extends Controller
           $sharedDocuments = $stmt->fetchAll();
 
           foreach ($sharedDocuments as $id) {
-            $documents[] = $this->em->getRepository('AppBundle:Document')->find($id);
+            $documents[] = $this->em->getRepository('App:Document')->find($id);
           }
         } catch (DBALException $exception) {
           $this->addFlash('warning', $this->translator->trans('documenti.document_search_error'));
@@ -125,8 +125,8 @@ class DocumentController extends Controller
   public function cpsUserShowDocumentoAction(Request $request, $folderId, $documentId)
   {
     $user = $this->getUser();
-    $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
-    $document = $this->em->getRepository('AppBundle:Document')->find($documentId);
+    $folder = $this->em->getRepository('App:Folder')->find($folderId);
+    $document = $this->em->getRepository('App:Document')->find($documentId);
 
     if (!$folder) {
       $this->addFlash('warning', $this->translator->trans('documenti.no_folder'));
@@ -159,8 +159,8 @@ class DocumentController extends Controller
   public function downloadDocumentAction(Request $request, $folderId,  $documentId)
   {
     $user = $this->getUser();
-    $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
-    $document = $this->em->getRepository('AppBundle:Document')->find($documentId);
+    $folder = $this->em->getRepository('App:Folder')->find($folderId);
+    $document = $this->em->getRepository('App:Document')->find($documentId);
 
     if ($folder->getOwner() != $user->getCodiceFiscale() && !in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
       return new Response(null, Response::HTTP_UNAUTHORIZED);

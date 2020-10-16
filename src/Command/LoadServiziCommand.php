@@ -35,7 +35,7 @@ class LoadServiziCommand extends ContainerAwareCommand{
 
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('AppBundle:Ente');
+        $repo = $em->getRepository('App:Ente');
         $entiEntites = $repo->findAll();
         $ente = null;
         foreach($entiEntites as $entiEntity){

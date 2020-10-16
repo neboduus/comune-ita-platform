@@ -472,7 +472,7 @@ class PraticaRepository extends EntityRepository
         case 1:
 //          @todo must must must refactor
 //          Non è possibile usare una JOIN in dql!
-//          [Semantical Error] Error: Class AppBundle\Entity\User has no field or association named codiceFiscale
+//          [Semantical Error] Error: Class App\Entity\User has no field or association named codiceFiscale
 //          $qb->andWhere('LOWER(user.codiceFiscale) LIKE LOWER(:searchTerm)')
 //            ->leftJoin('pratica.user', 'user')
 //            ->setParameter('searchTerm', '%'.$filters['query'].'%');
@@ -480,7 +480,7 @@ class PraticaRepository extends EntityRepository
 
           $userIdList = $this->getEntityManager()->createQueryBuilder()
             ->select('u.id')
-            ->from('AppBundle\Entity\CPSUser', 'u')
+            ->from('App\Entity\CPSUser', 'u')
             ->where("LOWER(u.codiceFiscale) LIKE LOWER(:searchTerm)")
             ->setParameter('searchTerm', '%' . $filters['query'] . '%')
             ->getQuery()->getScalarResult();
@@ -599,7 +599,7 @@ class PraticaRepository extends EntityRepository
   private function getServicesInServiceGroupByUser($serviceGroupId, $allowedServices)
   {
     $result = [];
-    $repo = $this->getEntityManager()->getRepository('AppBundle:Servizio');
+    $repo = $this->getEntityManager()->getRepository('App:Servizio');
     $services = $repo->findBy(['serviceGroup' => $serviceGroupId]);
 
     foreach ($services as $service) {
@@ -781,7 +781,7 @@ class PraticaRepository extends EntityRepository
   {
     $qb = $this->getEntityManager()->createQueryBuilder()
       ->select('message')
-      ->from('AppBundle:Message', 'message');
+      ->from('App:Message', 'message');
 
     if (!empty($filters['visibility'])) {
       $qb->andWhere('message.visibility = :visibility')
@@ -800,7 +800,7 @@ class PraticaRepository extends EntityRepository
   {
     $qb = $this->getEntityManager()->createQueryBuilder()
       ->select('attachment')
-      ->from('AppBundle:AllegatoMessaggio', 'attachment')
+      ->from('App:AllegatoMessaggio', 'attachment')
       ->join('attachment.messages', 'message');
 
     if (!empty($filters['visibility'])) {

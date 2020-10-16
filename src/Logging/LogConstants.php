@@ -4,7 +4,7 @@ namespace App\Logging;
 
 /**
  * Class Constants
- * @package AppBundle\Logging
+ * @package App\Logging
  */
 class LogConstants
 {

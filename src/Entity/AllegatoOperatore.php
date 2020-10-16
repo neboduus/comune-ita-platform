@@ -19,7 +19,7 @@ class AllegatoOperatore extends Allegato
     const TYPE_DEFAULT = 'allegato_operatore';
 
     /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="allegatiOperatore")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Pratica", mappedBy="allegatiOperatore")
      * @var ArrayCollection $pratiche
      */
     private $pratiche3;

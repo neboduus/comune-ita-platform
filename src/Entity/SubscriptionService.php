@@ -181,7 +181,7 @@ class SubscriptionService
 
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Subscription", mappedBy="subscription_service")
+   * @ORM\OneToMany(targetEntity="App\Entity\Subscription", mappedBy="subscription_service")
    * @Serializer\Exclude()
    * @SWG\Property(description="Subscription Service's subscriptions")
    */

@@ -25,7 +25,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class SubscriptionsController
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/operatori/subscriptions")
  */
 class SubscriptionsController extends Controller

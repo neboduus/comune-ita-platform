@@ -1,8 +1,8 @@
 <div id="pratica-summary">
 
-    {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
+    {{ include('App:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
-    {{ include('AppBundle:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+    {{ include('App:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
 
     <div class="row">
         <div class="col-xs-12 col-sm-3"><strong>{{ 'steps.allacciamento_acquedotto.dati_contatto.title'|trans }}</strong></div>

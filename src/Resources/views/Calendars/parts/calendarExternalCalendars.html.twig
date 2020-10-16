@@ -2,18 +2,18 @@
 <fieldset class="bg-light p-3 mb-3">
   <div id="external_calendars"
        data-prototype='
-             <div id="appbundle_calendar_external_calendars___name__">
+             <div id="App_calendar_external_calendars___name__">
                <div class="row">
                  <div class="col-3">
                    <div class="form-group">
-                     <label for="appbundle_calendar_external_calendars___name___name" class="required">Nome</label>
-                     <input type="text" id="appbundle_calendar_external_calendars___name___name" name="appbundle_calendar[external_calendars][__name__][name]" required="required" class="form-control" />
+                     <label for="App_calendar_external_calendars___name___name" class="required">Nome</label>
+                     <input type="text" id="App_calendar_external_calendars___name___name" name="App_calendar[external_calendars][__name__][name]" required="required" class="form-control" />
                    </div>
                  </div>
                  <div class="col-7">
                    <div class="form-group">
-                     <label for="appbundle_calendar_external_calendars___name___url" class="required">Url</label>
-                     <input type="textl" id="appbundle_calendar_external_calendars___name___url" name="appbundle_calendar[external_calendars][__name__][url]" required="required" class="form-control" />
+                     <label for="App_calendar_external_calendars___name___url" class="required">Url</label>
+                     <input type="textl" id="App_calendar_external_calendars___name___url" name="App_calendar[external_calendars][__name__][url]" required="required" class="form-control" />
                    </div>
                  </div>
                  <div class="col-2">
@@ -35,7 +35,7 @@
     {% if form.external_calendars|length > 0 %}
       {% for external_calendar in form.external_calendars %}
         <div class="js-external_calendar-item">
-          <div id="appbundle_calendar_external_calendars___name__">
+          <div id="App_calendar_external_calendars___name__">
             <div class="row">
               <div class="col-3">
                 {{ form_row(external_calendar.name) }}

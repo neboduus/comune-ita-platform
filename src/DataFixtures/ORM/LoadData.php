@@ -122,7 +122,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     public function loadEnti(ObjectManager $manager)
     {
         $data = $this->getData('Enti');
-        $entiRepo = $manager->getRepository('AppBundle:Ente');
+        $entiRepo = $manager->getRepository('App:Ente');
 
         foreach ($data as $item) {
 
@@ -150,7 +150,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
 
             $asiliNames = explode('##', $item['asili']);
             $asiliNames = array_map('trim', $asiliNames);
-            $asili = $manager->getRepository('AppBundle:AsiloNido')->findBy(['name' => $asiliNames]);
+            $asili = $manager->getRepository('App:AsiloNido')->findBy(['name' => $asiliNames]);
             foreach ($asili as $asilo) {
                 $ente->addAsilo($asilo);
             }
@@ -162,7 +162,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     public function loadCategories(ObjectManager $manager)
     {
         $data = $this->getData('Categorie');
-        $categoryRepo = $manager->getRepository('AppBundle:Categoria');
+        $categoryRepo = $manager->getRepository('App:Categoria');
         foreach ($data as $item) {
             $category = $categoryRepo->findOneByTreeId($item['tree_id']);
             $parent   = $categoryRepo->findOneByTreeId($item['tree_parent_id']);
@@ -198,8 +198,8 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
         }
 
         $data = $this->getData('Servizi');
-        $serviziRepo = $manager->getRepository('AppBundle:Servizio');
-        $categoryRepo = $manager->getRepository('AppBundle:Categoria');
+        $serviziRepo = $manager->getRepository('App:Servizio');
+        $categoryRepo = $manager->getRepository('App:Categoria');
         foreach ($data as $item) {
             $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
 
@@ -234,7 +234,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
                 $this->counters['servizi']['updated']++;
             }
 
-            $enti = $manager->getRepository('AppBundle:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
+            $enti = $manager->getRepository('App:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
             foreach ($enti as $ente) {
                 $erogatore = new Erogatore();
                 $erogatore->setName('Erogatore di '.$servizio->getName().' per '.$ente->getName());
@@ -253,7 +253,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     public function loadPaymentGateways(ObjectManager $manager)
     {
         $data = $this->getData('PaymentGateways');
-        $gatewayRepo = $manager->getRepository('AppBundle:PaymentGateway');
+        $gatewayRepo = $manager->getRepository('App:PaymentGateway');
         foreach ($data as $item) {
             $gateway = $gatewayRepo->findOneByName($item['name']);
             if (!$gateway) {

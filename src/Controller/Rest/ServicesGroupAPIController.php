@@ -24,7 +24,7 @@ use Ramsey\Uuid\Uuid;
  * Class ServicesAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/services-groups")
  */
 class ServicesGroupAPIController extends AbstractFOSRestController
@@ -54,7 +54,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   public function getServicesGroupsAction()
   {
     $result = [];
-    $services = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup')->findAll();
+    $services = $this->getDoctrine()->getRepository('App:ServiceGroup')->findAll();
     foreach ($services as $s) {
       $result []= $s;
     }
@@ -84,7 +84,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   public function getServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+      $repository = $this->getDoctrine()->getRepository('App:ServiceGroup');
 
       if (Uuid::isValid($id) ) {
         $result = $repository->find($id);
@@ -144,7 +144,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   public function postServiceAction(Request $request)
   {
     $serviceGroup = new ServiceGroup();
-    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
+    $form = $this->createForm('App\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -234,14 +234,14 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    */
   public function putServiceAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $repository = $this->getDoctrine()->getRepository('App:ServiceGroup');
     $serviceGroup = $repository->find($id);
 
     if (!$serviceGroup) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
+    $form = $this->createForm('App\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -321,14 +321,14 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   public function patchServiceAction($id, Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $repository = $this->getDoctrine()->getRepository('App:ServiceGroup');
     $serviceGroup = $repository->find($id);
 
     if (!$serviceGroup) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
+    $form = $this->createForm('App\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -374,7 +374,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $service = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup')->find($id);
+    $service = $this->getDoctrine()->getRepository('App:ServiceGroup')->find($id);
     if ($service) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

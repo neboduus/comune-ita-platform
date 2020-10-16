@@ -35,12 +35,12 @@
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
-      {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+      {{ include('App:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati"
        role="tabpanel" aria-labelledby="allegati-tab">
-    {# @var allegato \AppBundle\Entity\Allegato #}
+    {# @var allegato \App\Entity\Allegato #}
     {% if pratica.allegati.count + messageAttachments|length  == 0 %}
       <div class="font-italic text-center">{{ 'operatori.messaggi.no_attachments' | trans }}</div>
     {% endif %}
@@ -71,7 +71,7 @@
         </div>
       {% endfor %}
     {% endif %}
-    {# @var allegato \AppBundle\Entity\AllegatoMessaggio #}
+    {# @var allegato \App\Entity\AllegatoMessaggio #}
     {% if messageAttachments|length > 0 %}
       <h6 class="primary-color">{{ 'operatori.allegati_messaggi' | trans }}</h6>
       {% for allegato in messageAttachments %}

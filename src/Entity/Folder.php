@@ -52,7 +52,7 @@ class Folder
   private $description;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
+   * @ORM\ManyToOne(targetEntity="App\Entity\CPSUser")
    * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
    * @SWG\Property(description="Folder's owner id", type="string")
@@ -61,14 +61,14 @@ class Folder
   private $owner;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Document", mappedBy="folder")
+   * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="folder")
    * @Serializer\Exclude()
    * @SWG\Property(description="Folder's documents")
    */
   private $documents;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Ente")
+   * @ORM\ManyToOne(targetEntity="App\Entity\Ente")
    * @ORM\JoinColumn(name="tenant_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (tenant)")
    * @SWG\Property(description="Folder's tenant id", type="string")
@@ -78,7 +78,7 @@ class Folder
 
   /**
    * Lists of services' ids: Many Folders have Many Correlated Services.
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Servizio")
+   * @ORM\ManyToMany(targetEntity="App\Entity\Servizio")
    * @ORM\JoinTable(name="folders_services",
    *      joinColumns={@ORM\JoinColumn(name="folder_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="service_id", referencedColumnName="id")}

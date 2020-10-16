@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\AppBundle;
+use App\App;
 use App\Entity\OperatoreUser;
 
 use App\ScheduledAction\ScheduledActionHandlerInterface;
@@ -32,7 +32,7 @@ class SecureUserCommand extends ContainerAwareCommand
         $inactiveUserLifeTime = $this->getContainer()->getParameter('InactiveUserLifeTime');
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        //$repo = $em->getRepository('AppBundle::Operatore');
+        //$repo = $em->getRepository('App::Operatore');
         //$operatori = $repo->findBy();
 
 

@@ -62,11 +62,11 @@ class MessagesAdapterService
             $repo = null;
             switch (get_class($user)) {
                 case CPSUser::class :
-                    $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+                    $repo = $this->doctrine->getRepository('App:OperatoreUser');
                     $response = $this->decorateThreadsForUser($response, $repo);
                     break;
                 case OperatoreUser::class :
-                    $repo = $this->doctrine->getRepository('AppBundle:CPSUser');
+                    $repo = $this->doctrine->getRepository('App:CPSUser');
                     $response = $this->decorateThreadsForOperatore($response, $repo);
                     break;
             }
@@ -162,7 +162,7 @@ class MessagesAdapterService
         try {
             $response = \GuzzleHttp\json_decode((string)$this->client->get('/thread/'.$threadId)->getBody());
             if (count($response) > 0 && $this->checkThreadIdIsCorrect($response[0])) {
-                $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+                $repo = $this->doctrine->getRepository('App:OperatoreUser');
                 $response = $this->decorateThreadsForUser($response, $repo);
                 return $response;
             }
@@ -196,7 +196,7 @@ class MessagesAdapterService
         $threadId = $user->getId().'~'.$operatore->getId();
         try {
             $response =  \GuzzleHttp\json_decode((string)$this->client->put('/thread', ['json' => ['threadId' => $threadId, 'servizioId' => $servizio->getId()]])->getBody());
-            $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+            $repo = $this->doctrine->getRepository('App:OperatoreUser');
             $response = $this->decorateThreadsForUser($response, $repo);
             return $response;
         } catch (RequestException $e) {
@@ -273,7 +273,7 @@ class MessagesAdapterService
     {
         foreach ($undecoratedResponse as &$thread) {
             $thread->nomeThread = 'Servizio';
-            $operatoriRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
+            $operatoriRepo = $this->getDoctrine()->getRepository('App:OperatoreUser');
             $operatoreId = preg_split('/~/', $thread->threadId)[1];
             $operatore = $operatoriRepo->find($operatoreId);
             if ($operatore) {

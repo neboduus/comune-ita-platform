@@ -21,7 +21,7 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
  * Class APIController
  * @property EntityManager em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/api/v1.0")
  */
 class APIController extends AbstractFOSRestController
@@ -55,7 +55,7 @@ class APIController extends AbstractFOSRestController
     {
         $repo = $this->em->getRepository(Pratica::class);
         $pratiche = $repo->findSubmittedPraticheByEnte($this->is->getCurrentInstance());
-        $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+        $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
         $servizi = $serviziRepository->findBy(
             [
                 'status' => [1]

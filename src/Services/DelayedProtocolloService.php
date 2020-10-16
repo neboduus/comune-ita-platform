@@ -164,7 +164,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
     try {
       if ($action->getType() == self::SCHEDULED_ITEM_PROTOCOLLA_PRATICA) {
 
-        $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+        $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
 
         if ($pratica instanceof Pratica) {
           $this->protocolloService->protocollaPratica($pratica);
@@ -172,7 +172,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
 
       } elseif ($action->getType() == self::SCHEDULED_ITEM_PROTOCOLLA_RICHIESTE_INTEGRAZIONE) {
 
-        $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+        $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
 
         if ($pratica instanceof Pratica) {
           $this->protocolloService->protocollaRichiesteIntegrazione($pratica);
@@ -181,7 +181,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
 
       } elseif ($action->getType() == self::SCHEDULED_ITEM_PROTOCOLLA_ALLEGATI) {
 
-        $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+        $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
 
         if ($pratica instanceof Pratica) {
           $this->protocolloService->protocollaAllegatiIntegrazione($pratica);
@@ -189,7 +189,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
 
       } elseif ($action->getType() == self::SCHEDULED_ITEM_PROTOCOLLA_RISPOSTA) {
 
-        $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+        $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
 
         if ($pratica instanceof Pratica) {
           $this->protocolloService->protocollaRisposta($pratica);
@@ -197,8 +197,8 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
 
       } elseif ($action->getType() == self::SCHEDULED_ITEM_PROTOCOLLA_ALLEGATO) {
 
-        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($params['allegato']);
-        $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+        $allegato = $this->entityManager->getRepository('App:Allegato')->find($params['allegato']);
+        $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
 
         if ($pratica instanceof Pratica && $allegato instanceof AllegatoInterface) {
           $this->protocolloService->protocollaAllegato($pratica, $allegato);
@@ -206,7 +206,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
 
       } elseif ($action->getType() == self::SCHEDULED_ITEM_PROTOCOLLA_RITIRO) {
 
-        $pratica = $this->entityManager->getRepository('AppBundle:Pratica')->find($params['pratica']);
+        $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
 
         if ($pratica instanceof Pratica) {
           $this->protocolloService->protocollaRitiro($pratica);

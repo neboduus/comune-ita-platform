@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\AppBundle;
+use App\App;
 use App\Entity\Categoria;
 use App\Entity\Servizio;
 use App\Services\FormServerApiAdapterService;
@@ -31,11 +31,11 @@ class ServizioFormType extends AbstractType
     $builder
       ->add('name')
       ->add('tenant', EntityType::class, [
-        'class' => 'AppBundle\Entity\Ente',
+        'class' => 'App\Entity\Ente',
         'choice_label' => 'name',
       ])
       /*->add('topics', EntityType::class, [
-        'class' => 'AppBundle\Entity\Categoria',
+        'class' => 'App\Entity\Categoria',
         'choice_label' => 'name',
       ])*/
       ->add('topics')
@@ -94,7 +94,7 @@ class ServizioFormType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Dto\Service',
+      'data_class' => 'App\Dto\Service',
       'csrf_protection' => false
     ));
   }

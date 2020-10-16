@@ -41,7 +41,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Class PraticheController
  *
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/pratiche")
  */
 class PraticheController extends Controller
@@ -60,7 +60,7 @@ class PraticheController extends Controller
     /** @var CPSUser $user */
     $user = $this->getUser();
     /** @var PraticaRepository $repo */
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repo = $this->getDoctrine()->getRepository('App:Pratica');
     $pratiche = $repo->findBy(
       array('user' => $user),
       array('status' => 'DESC')
@@ -95,7 +95,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{servizio}/new", name="pratiche_new")
-   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio
@@ -142,7 +142,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{servizio}/draft", name="pratiche_list_draft")
-   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
    * @Template()
    * @param Servizio $servizio
    *
@@ -151,7 +151,7 @@ class PraticheController extends Controller
   public function listDraftByServiceAction(Servizio $servizio)
   {
     $user = $this->getUser();
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repo = $this->getDoctrine()->getRepository('App:Pratica');
     $pratiche = $repo->findBy(
       array(
         'user' => $user,
@@ -177,7 +177,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/compila/{pratica}", name="pratiche_compila")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -299,7 +299,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}", name="pratiche_show")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -355,7 +355,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/detail", name="pratica_show_detail")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -374,7 +374,7 @@ class PraticheController extends Controller
     $this->checkUserCanAccessPratica($pratica, $user);
     $tab = $request->query->get('tab');
 
-    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->getDoctrine()->getRepository('App:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 
     $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
       && $pratica->getUser()->getId() == $user->getId();
@@ -390,7 +390,7 @@ class PraticheController extends Controller
     $message = new Message();
     $message->setApplication($pratica);
     $message->setAuthor($user);
-    $messageForm = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
+    $messageForm = $this->createForm('App\Form\ApplicationMessageType', $message);
     $messageForm->handleRequest($request);
 
     if ($messageForm->isSubmitted() && $messageForm->isValid()) {
@@ -438,7 +438,7 @@ class PraticheController extends Controller
       return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note']);
     }
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
 
     $result = [
@@ -477,7 +477,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/withdraw", name="pratiche_withdraw")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -507,7 +507,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/payment-callback", name="pratiche_payment_callback")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -539,7 +539,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Request $request
    * @param Pratica $pratica
@@ -570,7 +570,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/delete", name="pratiche_delete")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -594,7 +594,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/protocollo", name="pratiche_show_protocolli")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -609,7 +609,7 @@ class PraticheController extends Controller
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      $allegato = $this->getDoctrine()->getRepository('App:Allegato')->find($protocollo->id);
       if ($allegato instanceof Allegato) {
         $allegati[] = [
           'allegato' => $allegato,
@@ -629,7 +629,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/formio/validate/{servizio}", name="formio_validate")
-   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio

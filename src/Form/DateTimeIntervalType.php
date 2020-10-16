@@ -27,7 +27,7 @@ class DateTimeIntervalType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
       $resolver->setDefaults(array(
-        'data_class' => 'AppBundle\Model\DateTimeInterval',
+        'data_class' => 'App\Model\DateTimeInterval',
         'csrf_protection' => false
       ));
     }

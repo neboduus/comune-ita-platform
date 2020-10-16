@@ -129,6 +129,6 @@ class SubscriptionServiceType extends AbstractType
   public
   function getBlockPrefix()
   {
-    return 'appbundle_subscriptionservice';
+    return 'App_subscriptionservice';
   }
 }

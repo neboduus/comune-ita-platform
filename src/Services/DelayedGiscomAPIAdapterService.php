@@ -51,7 +51,7 @@ class DelayedGiscomAPIAdapterService implements ScheduledActionHandlerInterface,
     /**
      * @param Pratica|GiscomPratica $pratica
      *
-     * @throws \AppBundle\ScheduledAction\Exception\AlreadyScheduledException
+     * @throws \App\ScheduledAction\Exception\AlreadyScheduledException
      */
     public function sendPraticaToGiscom(GiscomPratica $pratica)
     {
@@ -69,7 +69,7 @@ class DelayedGiscomAPIAdapterService implements ScheduledActionHandlerInterface,
     /**
      * @param Pratica|GiscomPratica $pratica
      *
-     * @throws \AppBundle\ScheduledAction\Exception\AlreadyScheduledException
+     * @throws \App\ScheduledAction\Exception\AlreadyScheduledException
      */
     public function askRelatedCFsForPraticaToGiscom(GiscomPratica $pratica)
     {
@@ -88,13 +88,13 @@ class DelayedGiscomAPIAdapterService implements ScheduledActionHandlerInterface,
     {
         $params = unserialize($action->getParams());
         if ($action->getType() == self::SCHEDULED_ITEM_TYPE_SEND) {
-            $pratica = $this->em->getRepository('AppBundle:Pratica')->find($params['pratica']);
+            $pratica = $this->em->getRepository('App:Pratica')->find($params['pratica']);
 
             if ($pratica instanceof GiscomPratica) {
                 $this->giscomAPIAdapterService->sendPraticaToGiscom($pratica);
             }
         } elseif ($action->getType() == self::SCHEDULED_ITEM_TYPE_ASK_CFS) {
-            $pratica = $this->em->getRepository('AppBundle:Pratica')->find($params['pratica']);
+            $pratica = $this->em->getRepository('App:Pratica')->find($params['pratica']);
 
             if ($pratica instanceof GiscomPratica) {
                 $this->giscomAPIAdapterService->askRelatedCFsforPraticaToGiscom($pratica);

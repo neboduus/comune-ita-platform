@@ -23,7 +23,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class FoldersAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/folders")
  */
 class FoldersAPIController extends AbstractFOSRestController
@@ -87,7 +87,7 @@ class FoldersAPIController extends AbstractFOSRestController
 
     $qb = $this->em->createQueryBuilder()
       ->select('folder')
-      ->from('AppBundle:Folder', 'folder')
+      ->from('App:Folder', 'folder')
       ->leftJoin('folder.owner', 'owner');
 
     if (isset($cf)) {
@@ -137,7 +137,7 @@ class FoldersAPIController extends AbstractFOSRestController
   public function getFolderAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Folder');
+      $repository = $this->getDoctrine()->getRepository('App:Folder');
       $folder = $repository->find($id);
       if ($folder === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -193,7 +193,7 @@ class FoldersAPIController extends AbstractFOSRestController
     $folder = new Folder();
     $folder->setTenant($this->is->getCurrentInstance());
 
-    $form = $this->createForm('AppBundle\Form\FolderType', $folder);
+    $form = $this->createForm('App\Form\FolderType', $folder);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -271,14 +271,14 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function putFolderAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Folder');
+    $repository = $this->getDoctrine()->getRepository('App:Folder');
     $folder = $repository->find($id);
 
     if (!$folder) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\FolderType', $folder);
+    $form = $this->createForm('App\Form\FolderType', $folder);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -360,13 +360,13 @@ class FoldersAPIController extends AbstractFOSRestController
   public function patchFolderAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Folder');
+    $repository = $this->getDoctrine()->getRepository('App:Folder');
     $folder = $repository->find($id);
 
     if (!$folder) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('AppBundle\Form\FolderType', $folder);
+    $form = $this->createForm('App\Form\FolderType', $folder);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -423,7 +423,7 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $folder = $this->getDoctrine()->getRepository('AppBundle:Folder')->find($id);
+    $folder = $this->getDoctrine()->getRepository('App:Folder')->find($id);
     if ($folder) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

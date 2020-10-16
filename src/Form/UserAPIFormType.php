@@ -33,7 +33,7 @@ class UserAPIFormType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Dto\User',
+      'data_class' => 'App\Dto\User',
       'csrf_protection' => false
     ));
   }

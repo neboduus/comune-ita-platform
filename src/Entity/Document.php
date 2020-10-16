@@ -36,7 +36,7 @@ class Document
   private $id;
 
   /**
- * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
+ * @ORM\ManyToOne(targetEntity="App\Entity\CPSUser")
  * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
  * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
  * @SWG\Property(description="Document's owner id", type="string")
@@ -45,7 +45,7 @@ class Document
   private $owner;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Folder", inversedBy="documents")
+   * @ORM\ManyToOne(targetEntity="App\Entity\Folder", inversedBy="documents")
    * @ORM\JoinColumn(name="folder_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (folder)")
    * @SWG\Property(description="Document's folder id", type="string")
@@ -109,7 +109,7 @@ class Document
   private $downloadLink;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Ente")
+   * @ORM\ManyToOne(targetEntity="App\Entity\Ente")
    * @ORM\JoinColumn(name="tenant_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (tenant)")
    * @SWG\Property(description="Document's tenant id", type="string")
@@ -127,7 +127,7 @@ class Document
 
   /**
    * Many Documents have Many Topics.
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Categoria")
+   * @ORM\ManyToMany(targetEntity="App\Entity\Categoria")
    * @ORM\JoinTable(name="documents_topics",
    *      joinColumns={@ORM\JoinColumn(name="document_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="categoria_id", referencedColumnName="id")}
@@ -215,7 +215,7 @@ class Document
 
   /**
    * Many Documents have Many Correlated Services.
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Servizio")
+   * @ORM\ManyToMany(targetEntity="App\Entity\Servizio")
    * @ORM\JoinTable(name="document_services",
    *      joinColumns={@ORM\JoinColumn(name="document_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="service_id", referencedColumnName="id")}

@@ -22,23 +22,22 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class ServiziController
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/servizi")
  */
 class ServiziController extends Controller
 {
   /**
    * @Route("/", name="servizi_list")
-   * @Template()
    * @param Request $request
-   * @return array
+   * @return Response
    */
   public function serviziAction(Request $request)
   {
     /** @var ServizioRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
     /** @var ServiceGroupRepository $servicesGroupRepository */
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('App:ServiceGroup');
 
     $stickyServices = $serviziRepository->findStickyAvailable();
     $servizi = $serviziRepository->findNotStickyAvailable();
@@ -51,39 +50,42 @@ class ServiziController extends Controller
 
     /** @var Servizio $item */
     foreach ($servizi as $item) {
-      $services[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
-      $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+      $services[$item->getSlug().'-'.$item->getId()]['type'] = 'service';
+      $services[$item->getSlug().'-'.$item->getId()]['object'] = $item;
     }
 
     /** @var ServiceGroup $item */
     foreach ($servicesGroup as $item) {
       if ($item->getPublicServices()->count() > 0) {
-        $services[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
-        $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+        $services[$item->getSlug().'-'.$item->getId()]['type'] = 'group';
+        $services[$item->getSlug().'-'.$item->getId()]['object'] = $item;
       }
     }
 
     /** @var Servizio $item */
     foreach ($stickyServices as $item) {
-      $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
-      $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+      $sticky[$item->getSlug().'-'.$item->getId()]['type'] = 'service';
+      $sticky[$item->getSlug().'-'.$item->getId()]['object'] = $item;
     }
 
     /** @var ServiceGroup $item */
     foreach ($stickyservicesGroup as $item) {
       if ($item->getPublicServices()->count() > 0) {
-        $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
-        $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+        $sticky[$item->getSlug().'-'.$item->getId()]['type'] = 'group';
+        $sticky[$item->getSlug().'-'.$item->getId()]['object'] = $item;
       }
     }
 
     ksort($services);
 
-    return [
-      'sticky_services' => $sticky,
-      'servizi' => $services,
-      'user' => $this->getUser()
-    ];
+    return $this->render(
+      'Servizi/serviziDetail.html.twig',
+      [
+        'sticky_services' => $sticky,
+        'servizi' => $services,
+        'user' => $this->getUser(),
+      ]
+    );
   }
 
   /**
@@ -123,7 +125,7 @@ class ServiziController extends Controller
     $user = $this->getUser();
 
     /** @var EntityRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
 
     /** @var Servizio $servizio */
     $servizio = $serviziRepository->findOneBySlug($slug);
@@ -146,7 +148,7 @@ class ServiziController extends Controller
 
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
     $ente = $this->getDoctrine()
-      ->getRepository('AppBundle:Ente')
+      ->getRepository('App:Ente')
       ->findOneBy(
         [
           'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
@@ -194,7 +196,7 @@ class ServiziController extends Controller
   public function serviceGroupDetailAction($slug, Request $request)
   {
     $user = $this->getUser();
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:ServiceGroup');
 
     /** @var Servizio $servizio */
     $servizio = $serviziRepository->findOneBySlug($slug);
@@ -204,7 +206,7 @@ class ServiziController extends Controller
 
     return [
       'user' => $user,
-      'servizio' => $servizio
+      'servizio' => $servizio,
     ];
   }
 
@@ -224,10 +226,12 @@ class ServiziController extends Controller
       $em->persist($service);
       $em->flush();
       $this->addFlash('feedback', $this->get('translator')->trans('gruppo_di_servizi.servizio_rimosso'));
+
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
 
     } catch (\Exception $exception) {
       $this->addFlash('warning', $this->get('translator')->trans('gruppo_di_servizi.errore_rimozione'));
+
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
     }
   }

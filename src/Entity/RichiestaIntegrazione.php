@@ -29,7 +29,7 @@ class RichiestaIntegrazione extends Allegato
     private $payload;
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Pratica", inversedBy="richiesteIntegrazione")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Pratica", inversedBy="richiesteIntegrazione")
      * @var Pratica $praticaPerCuiServeIntegrazione
      */
     private $praticaPerCuiServeIntegrazione;

@@ -21,7 +21,7 @@
               <small>Modulo principale</small>
             </td>
             <td data-title="" class="text-right">
-              {{ include('AppBundle:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': pratica.dematerializedForms.moduloDomanda.id}) }}
+              {{ include('App:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': pratica.dematerializedForms.moduloDomanda.id}) }}
             </td>
           </tr>
         {% endif %}

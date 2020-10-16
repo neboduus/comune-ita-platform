@@ -94,7 +94,7 @@ class OperatoreUserType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\OperatoreUser'
+      'data_class' => 'App\Entity\OperatoreUser'
     ));
   }
 
@@ -103,7 +103,7 @@ class OperatoreUserType extends AbstractType
    */
   public function getBlockPrefix()
   {
-    return 'appbundle_operatoreuser';
+    return 'App_operatoreuser';
   }
 
 

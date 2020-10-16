@@ -123,7 +123,7 @@ class MailerService
         $ids[] = $id['id'];
       }
 
-      $repo = $this->doctrine->getRepository('AppBundle:OperatoreUser');
+      $repo = $this->doctrine->getRepository('App:OperatoreUser');
       $operatori = $repo->findById($ids);
       if ($operatori != null && !empty($operatori)) {
         foreach ($operatori as $operatore) {
@@ -222,7 +222,7 @@ class MailerService
     ];
 
     $textHtml = $this->templating->render(
-      'AppBundle:Emails/User:feedback_message.html.twig',
+      'App:Emails/User:feedback_message.html.twig',
       array(
         'pratica' => $pratica,
         'placeholder' => $placeholders,
@@ -290,7 +290,7 @@ class MailerService
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(
-          'AppBundle:Emails/User:pratica_status_change.html.twig',
+          'App:Emails/User:pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
             'user_name'    => $pratica->getUser()->getFullName(),
@@ -300,7 +300,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'AppBundle:Emails/User:pratica_status_change.txt.twig',
+          'App:Emails/User:pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
             'user_name'    => $pratica->getUser()->getFullName(),
@@ -349,7 +349,7 @@ class MailerService
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(
-          'AppBundle:Emails/Operatore:pratica_status_change.html.twig',
+          'App:Emails/Operatore:pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
             'user_name' => $operatore->getFullName(),
@@ -359,7 +359,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'AppBundle:Emails/Operatore:pratica_status_change.txt.twig',
+          'App:Emails/Operatore:pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
             'user_name' => $operatore->getFullName(),
@@ -405,7 +405,7 @@ class MailerService
           ->setTo($toAddress, $toName)
           ->setBody(
             $this->templating->render(
-              'AppBundle:Emails/General:message.html.twig',
+              'App:Emails/General:message.html.twig',
               array(
                 'message' => $message,
                 'ente' => $ente,
@@ -416,7 +416,7 @@ class MailerService
           )
           ->addPart(
             $this->templating->render(
-              'AppBundle:Emails/General:message.txt.twig',
+              'App:Emails/General:message.txt.twig',
               array(
                 'message' => $message,
                 'ente' => $ente,
@@ -500,7 +500,7 @@ class MailerService
       ->setBcc($operatoreUser->getEmail(), $operatoreUser->getFullName())
       ->setBody(
         $this->templating->render(
-          'AppBundle:Emails/Subscriber:subscriber_message.html.twig',
+          'App:Emails/Subscriber:subscriber_message.html.twig',
           array(
             'message' => $subscriberMessage->getMessage(),
           )
@@ -509,7 +509,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'AppBundle:Emails/Subscriber:subscriber_message.txt.twig',
+          'App:Emails/Subscriber:subscriber_message.txt.twig',
           array(
             'message' => $subscriberMessage->getMessage(),
           )

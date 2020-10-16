@@ -37,7 +37,7 @@ class PaymentGatewayType extends AbstractType
   {
     /** @var Pratica $pratica */
     $pratica = $builder->getData();
-    $entityRepository = $this->em->getRepository('AppBundle:PaymentGateway');
+    $entityRepository = $this->em->getRepository('App:PaymentGateway');
     $gateway = $pratica->getPaymentType();
     $gatewayClassHandler = $gateway->getFcqn();
 

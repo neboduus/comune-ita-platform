@@ -14,7 +14,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Class Allegato
- * @package AppBundle\Entity
+ * @package App\Entity
  * @ORM\Entity
  * @ORM\Table(name="allegato")
  * @ORM\InheritanceType("SINGLE_TABLE")
@@ -84,13 +84,13 @@ class Allegato implements AllegatoInterface
   private $idDocumentoProtocollo;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="allegati")
+   * @ORM\ManyToMany(targetEntity="App\Entity\Pratica", mappedBy="allegati")
    * @var ArrayCollection
    */
   private   $pratiche;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\CPSUser")
+   * @ORM\ManyToOne(targetEntity="App\Entity\CPSUser")
    * @var CPSUser
    */
   private $owner;

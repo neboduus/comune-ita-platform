@@ -51,7 +51,7 @@ class GeneralDataType extends AbstractType
       "required" => true,
     ])
       ->add('topics', EntityType::class, [
-        'class' => 'AppBundle\Entity\Categoria',
+        'class' => 'App\Entity\Categoria',
         'choice_label' => 'name',
         'label' => 'Categoria'
       ])
@@ -126,7 +126,7 @@ class GeneralDataType extends AbstractType
         'label_attr' => ['class' => 'label-datetime-field']
       ])
       ->add('service_group', EntityType::class, [
-        'class' => 'AppBundle\Entity\ServiceGroup',
+        'class' => 'App\Entity\ServiceGroup',
         'choice_label' => 'name',
         'label' => 'Gruppo di servizi',
         'required' => false

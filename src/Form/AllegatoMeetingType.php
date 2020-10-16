@@ -26,7 +26,7 @@ class AllegatoMeetingType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\AllegatoMeeting',
+      'data_class' => 'App\Entity\AllegatoMeeting',
       'csrf_protection' => false
     ));
   }
@@ -36,7 +36,7 @@ class AllegatoMeetingType extends AbstractType
    */
   public function getBlockPrefix()
   {
-    return 'appbundle_allegatomeeting';
+    return 'App_allegatomeeting';
   }
 
 

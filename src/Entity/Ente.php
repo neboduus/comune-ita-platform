@@ -59,7 +59,7 @@ class Ente
 
   /**
    * @var ArrayCollection
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperatoreUser", mappedBy="ente", fetch="EAGER")
+   * @ORM\OneToMany(targetEntity="App\Entity\OperatoreUser", mappedBy="ente", fetch="EAGER")
    * @Serializer\Exclude()
    */
   private $operatori;
@@ -77,7 +77,7 @@ class Ente
   private $siteUrl;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Erogatore", mappedBy="enti")
+   * @ORM\ManyToMany(targetEntity="App\Entity\Erogatore", mappedBy="enti")
    * @var Collection;
    * @Serializer\Exclude()
    */

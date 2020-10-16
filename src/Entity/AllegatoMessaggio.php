@@ -17,7 +17,7 @@ class AllegatoMessaggio extends Allegato
   const TYPE_DEFAULT = 'messaggio';
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Message", mappedBy="attachments")
+   * @ORM\ManyToMany(targetEntity="App\Entity\Message", mappedBy="attachments")
    * @var ArrayCollection
    */
   private $messages;

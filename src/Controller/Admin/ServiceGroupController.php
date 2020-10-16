@@ -24,7 +24,7 @@ class ServiceGroupController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
 
-    $items = $em->getRepository('AppBundle:ServiceGroup')->findAll();
+    $items = $em->getRepository('App:ServiceGroup')->findAll();
 
     return $this->render( '@App/Admin/indexServiceGroup.html.twig', [
       'user'  => $this->getUser(),
@@ -40,7 +40,7 @@ class ServiceGroupController extends Controller
   public function newServiceGroupAction(Request $request)
   {
     $serviceGroup = new ServiceGroup();
-    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
+    $form = $this->createForm('App\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -66,7 +66,7 @@ class ServiceGroupController extends Controller
    */
   public function editServiceGroupAction(Request $request, ServiceGroup $serviceGroup)
   {
-    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
+    $form = $this->createForm('App\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {

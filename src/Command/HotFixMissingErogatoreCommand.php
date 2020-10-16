@@ -62,7 +62,7 @@ class HotFixMissingErogatoreCommand extends ContainerAwareCommand
    */
   private function getServizi()
   {
-    $repo = $this->em->getRepository('AppBundle:Servizio');
+    $repo = $this->em->getRepository('App:Servizio');
 
     return $repo->findAll();
   }

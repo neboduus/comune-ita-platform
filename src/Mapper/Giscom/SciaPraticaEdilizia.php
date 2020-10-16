@@ -347,8 +347,8 @@ class SciaPraticaEdilizia implements HashableInterface
   public function getTipiIntervento()
   {
     switch ($this->tipo) {
-      case \AppBundle\Entity\SciaPraticaEdilizia::TYPE_SCIA_PRATICA_EDILIZIA:
-//            case \AppBundle\Entity\SciaPraticaEdilizia::TYPE_PERMESSO_DI_COSTRUIRE:
+      case \App\Entity\SciaPraticaEdilizia::TYPE_SCIA_PRATICA_EDILIZIA:
+//            case \App\Entity\SciaPraticaEdilizia::TYPE_PERMESSO_DI_COSTRUIRE:
         return [
           self::MANUTENZIONE_STRAORDINARIA,
           self::RISTRUTTURAZIONE_EDILIZIA,

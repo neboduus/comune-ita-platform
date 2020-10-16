@@ -15,7 +15,7 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 /**
  * Class CPSAuthenticator
- * @package AppBundle\Security
+ * @package App\Security
  */
 class CPSAuthenticator extends AbstractGuardAuthenticator
 {

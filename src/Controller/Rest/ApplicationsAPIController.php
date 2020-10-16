@@ -46,7 +46,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * Class ServicesAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/applications")
  */
 class ApplicationsAPIController extends AbstractFOSRestController
@@ -166,7 +166,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if ($sortParameter)
       $queryParameters['sort'] = $sortParameter;
 
-    $repositoryService = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $repositoryService = $this->getDoctrine()->getRepository('App:Servizio');
     $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
 
     if ($serviceParameter && !$service) {
@@ -260,7 +260,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+      $repository = $this->getDoctrine()->getRepository('App:Pratica');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
@@ -293,12 +293,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function attachmentAction($id,  $attachmentId)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Allegato');
+    $repository = $this->getDoctrine()->getRepository('App:Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
     }
-    $pratica = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($id);
+    $pratica = $this->getDoctrine()->getRepository('App:Pratica')->find($id);
 
     if ($result->getType() === RispostaOperatore::TYPE_DEFAULT) {
       $fileContent = $this->pdfBuilder->renderForResponse($pratica);
@@ -378,7 +378,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    */
   public function postApplicationPaymentAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
     $application = $repository->find($id);
 
     if (!$application) {
@@ -390,7 +390,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $paymentOutcome = new paymentOutcome();
-    $form = $this->createForm('AppBundle\Form\PaymentOutcomeType', $paymentOutcome);
+    $form = $this->createForm('App\Form\PaymentOutcomeType', $paymentOutcome);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {

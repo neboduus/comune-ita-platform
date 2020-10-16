@@ -134,8 +134,8 @@ class ServizioCreateCommand extends ContainerAwareCommand
         }
 
         $manager = $this->getContainer()->get('doctrine')->getManager();
-        $serviziRepo = $manager->getRepository('AppBundle:Servizio');
-        $categoryRepo = $manager->getRepository('AppBundle:Categoria');
+        $serviziRepo = $manager->getRepository('App:Servizio');
+        $categoryRepo = $manager->getRepository('App:Categoria');
 
         $servizio = $serviziRepo->findOneByName($name);
         $ente = $this->getContainer()->get('ocsdc.instance_service')->getCurrentInstance();
@@ -164,7 +164,7 @@ class ServizioCreateCommand extends ContainerAwareCommand
             $manager->persist($servizio);
 
             $codiciMeccanograficiEnti = $this->getContainer()->getParameter('codice_meccanografico');
-            $enti = $manager->getRepository('AppBundle:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
+            $enti = $manager->getRepository('App:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
             foreach ($enti as $ente) {
                 $erogatore = new Erogatore();
                 $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());

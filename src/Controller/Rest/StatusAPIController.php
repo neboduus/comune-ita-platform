@@ -16,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * Class ServicesAPIController
  * @property EntityManager em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/status")
  */
 class StatusAPIController extends AbstractFOSRestController
@@ -58,7 +58,7 @@ class StatusAPIController extends AbstractFOSRestController
   public function getApplicationStatusAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+      $repository = $this->getDoctrine()->getRepository('App:Pratica');
       /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {

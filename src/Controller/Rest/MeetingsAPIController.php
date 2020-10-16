@@ -25,7 +25,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class MeetingsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/meetings")
  */
 class MeetingsAPIController extends AbstractFOSRestController
@@ -84,7 +84,7 @@ class MeetingsAPIController extends AbstractFOSRestController
     $meetings = array();
 
     foreach ($results as $result) {
-      $meetings[] = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result);
+      $meetings[] = $this->getDoctrine()->getRepository('App:Meeting')->find($result);
     }
 
     return $this->view($meetings, Response::HTTP_OK);
@@ -132,7 +132,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       $result = $builder->getQuery()->getOneOrNullResult();
 
       if ($result) {
-        $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result['id']);
+        $meeting = $this->getDoctrine()->getRepository('App:Meeting')->find($result['id']);
         return $this->view($meeting, Response::HTTP_OK);
       }
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -184,7 +184,7 @@ class MeetingsAPIController extends AbstractFOSRestController
   {
     $meeting = new Meeting();
 
-    $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
+    $form = $this->createForm('App\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -218,12 +218,12 @@ class MeetingsAPIController extends AbstractFOSRestController
       } else if ($meeting->getFiscalCode() && !$meeting->getUser()) {
         $result = $em->createQueryBuilder()
           ->select('user.id')
-          ->from('AppBundle:User', 'user')
+          ->from('App:User', 'user')
           ->where('upper(user.username) = upper(:username)')
           ->setParameter('username', $meeting->getFiscalCode())
           ->getQuery()->getResult();
         if ( !empty($result)) {
-          $repository = $em->getRepository('AppBundle:CPSUser');
+          $repository = $em->getRepository('App:CPSUser');
           /**
            * @var CPSUser $user
            */
@@ -318,14 +318,14 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function putMeetingAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
+    $repository = $this->getDoctrine()->getRepository('App:Meeting');
     $meeting = $repository->find($id);
     $oldMeeting = clone $meeting;
 
     if (!$meeting) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
+    $form = $this->createForm('App\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -415,14 +415,14 @@ class MeetingsAPIController extends AbstractFOSRestController
   public function patchMeetingAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
+    $repository = $this->getDoctrine()->getRepository('App:Meeting');
     $meeting = $repository->find($id);
     $oldMeeting = clone $meeting;
 
     if (!$meeting) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
+    $form = $this->createForm('App\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -490,7 +490,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($id);
+    $meeting = $this->getDoctrine()->getRepository('App:Meeting')->find($id);
     if ($meeting) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ContributoPannolini extends Pratica
 {
-//bin/console o:crea-s contributo_pannolini "Contributo Acquisto Pannolini" "AppBundle\Entity\ContributoPannolini" ocsdc.form.flow.contributopannolini
+//bin/console o:crea-s contributo_pannolini "Contributo Acquisto Pannolini" "App\Entity\ContributoPannolini" ocsdc.form.flow.contributopannolini
     const PANNOLINO_LAVABILE = 1;
     const PANNOLINO_BIOPANNOLINO = 2;
 

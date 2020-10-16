@@ -38,7 +38,7 @@
                 {% endif %}
               </nav>
             </div>
-            {% if  login_route != constant('AppBundle\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE')  %}
+            {% if  login_route != constant('App\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE')  %}
               {{ include('@App/Default/parts/user_badge.html.twig') }}
             {% endif %}
           </div>

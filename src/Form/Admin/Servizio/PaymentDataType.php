@@ -82,7 +82,7 @@ class PaymentDataType extends AbstractType
     $tenantGateways = $service->getEnte()->getGateways();
 
     // Gateways abilitati nel tenant
-    $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
+    $gateways = $this->em->getRepository('App:PaymentGateway')->findBy([
       'identifier' => array_keys($tenantGateways)
     ]);
     $gatewaysChoice = [];

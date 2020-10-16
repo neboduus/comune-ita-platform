@@ -131,7 +131,7 @@ class OpeningHourType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\OpeningHour',
+      'data_class' => 'App\Entity\OpeningHour',
       'csrf_protection' => false
     ));
   }
@@ -141,7 +141,7 @@ class OpeningHourType extends AbstractType
    */
   public function getBlockPrefix()
   {
-    return 'appbundle_openinghour';
+    return 'App_openinghour';
   }
 
 }

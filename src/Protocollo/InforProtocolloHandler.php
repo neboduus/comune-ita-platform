@@ -15,7 +15,7 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 /**
  * Class InforProtocolloHandler
- * @package AppBundle\Protocollo
+ * @package App\Protocollo
  *
  *
  * Infor positive response

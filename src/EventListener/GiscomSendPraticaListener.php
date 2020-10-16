@@ -15,7 +15,7 @@ use App\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 
 /**
  * Class GiscomSendPraticaListener
- * @package AppBundle\EventListener
+ * @package App\EventListener
  */
 class GiscomSendPraticaListener implements EventSubscriberInterface
 {

@@ -32,7 +32,7 @@ class IdCardType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Model\IdCard',
+      'data_class' => 'App\Model\IdCard',
       'csrf_protection' => false
     ));
   }

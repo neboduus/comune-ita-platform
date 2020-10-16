@@ -95,7 +95,7 @@ class CalendarsController extends Controller
 
     $table = $this->createDataTable()
       ->add('title', TextColumn::class, ['label' => 'Titolo', 'propertyPath' => 'Titolo', 'render' => function ($value, $calendar) {
-        $cal = $this->em->getRepository('AppBundle:Calendar')->find($calendar['id']);
+        $cal = $this->em->getRepository('App:Calendar')->find($calendar['id']);
         $canAccess = $this->canUserAccessCalendar($cal);
 
         return sprintf('<a class="btn-link %s" href="%s">%s</a>', $canAccess ? "" : "disabled",
@@ -112,7 +112,7 @@ class CalendarsController extends Controller
         }
       }])
       ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $calendar) {
-        $cal = $this->em->getRepository('AppBundle:Calendar')->find($value);
+        $cal = $this->em->getRepository('App:Calendar')->find($value);
         $canAccess = $this->canUserAccessCalendar($cal);
         return sprintf('
         <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none %s" href="%s"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
@@ -157,7 +157,7 @@ class CalendarsController extends Controller
     $calendar = new Calendar();
     $calendar->setOwner($this->getUser());
     $calendar->setModerators([$this->getUser()]);
-    $form = $this->createForm('AppBundle\Form\CalendarBackofficeType', $calendar);
+    $form = $this->createForm('App\Form\CalendarBackofficeType', $calendar);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -239,7 +239,7 @@ class CalendarsController extends Controller
 
   /**
    * @Route("operatori/calendars/{calendar}/edit", name="operatori_calendar_edit")
-   * @ParamConverter("calendar", class="AppBundle:Calendar")
+   * @ParamConverter("calendar", class="App:Calendar")
    * @Template()
    * @param Request $request the request
    * @param Calendar $calendar The Calendar entity
@@ -256,14 +256,14 @@ class CalendarsController extends Controller
       return $this->redirectToRoute('operatori_calendars_index');
     }
 
-    $form = $this->createForm('AppBundle\Form\CalendarBackofficeType', $calendar);
+    $form = $this->createForm('App\Form\CalendarBackofficeType', $calendar);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
       $em = $this->getDoctrine()->getManager();
 
       try {
-        $openingHours = $em->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $calendar]);
+        $openingHours = $em->getRepository('App:OpeningHour')->findBy(['calendar' => $calendar]);
         $storedIds = [];
         foreach ($openingHours as $openingHour) {
           $storedIds[$openingHour->getId()] = $openingHour;
@@ -374,7 +374,7 @@ class CalendarsController extends Controller
     $em = $this->getDoctrine()->getManager();
     $meetings = $em->createQueryBuilder()
       ->select('meeting')
-      ->from('AppBundle:Meeting', 'meeting')
+      ->from('App:Meeting', 'meeting')
       ->where('meeting.calendar = :calendar')
       ->andWhere('meeting.status != :refused')
       ->andWhere('meeting.status != :cancelled')
@@ -526,7 +526,7 @@ class CalendarsController extends Controller
   public function cancelMeetingAction(Request $request, $meetingHash)
   {
     $em = $this->getDoctrine()->getManager();
-    $meeting = $em->getRepository('AppBundle:Meeting')->findOneBy(['cancelLink' => $meetingHash]);
+    $meeting = $em->getRepository('App:Meeting')->findOneBy(['cancelLink' => $meetingHash]);
     if (!$meeting)
       return new Response(null, Response::HTTP_NOT_FOUND);
 
@@ -572,7 +572,7 @@ class CalendarsController extends Controller
   public function editMeetingAction(Request $request, $id, FormFactoryInterface $formFactory)
   {
     $em = $this->getDoctrine()->getManager();
-    $meeting = $em->getRepository('AppBundle:Meeting')->find($id);
+    $meeting = $em->getRepository('App:Meeting')->find($id);
     if (!$meeting)
       return new Response(null, Response::HTTP_NOT_FOUND);
 

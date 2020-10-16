@@ -40,7 +40,7 @@ class SciaPraticaEdilizia extends Pratica implements DematerializedFormPratica, 
     {
         parent::__construct();
         $this->type = self::TYPE_SCIA_PRATICA_EDILIZIA;
-        $this->dematerializedForms = (new \AppBundle\Mapper\Giscom\SciaPraticaEdilizia())->toHash();
+        $this->dematerializedForms = (new \App\Mapper\Giscom\SciaPraticaEdilizia())->toHash();
     }
 
     /**

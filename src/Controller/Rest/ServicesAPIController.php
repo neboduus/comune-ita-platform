@@ -39,7 +39,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * Class ServicesAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/services")
  */
 class ServicesAPIController extends AbstractFOSRestController
@@ -70,7 +70,7 @@ class ServicesAPIController extends AbstractFOSRestController
   public function getServicesAction()
   {
     $result = [];
-    $services = $this->getDoctrine()->getRepository('AppBundle:Servizio')->findAll();
+    $services = $this->getDoctrine()->getRepository('App:Servizio')->findAll();
     foreach ($services as $s) {
       $result []= Service::fromEntity($s);
     }
@@ -100,7 +100,7 @@ class ServicesAPIController extends AbstractFOSRestController
   public function getServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      $repository = $this->getDoctrine()->getRepository('App:Servizio');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -133,7 +133,7 @@ class ServicesAPIController extends AbstractFOSRestController
   public function getFormServiceAction($id, FormServerApiAdapterService $formServerService)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      $repository = $this->getDoctrine()->getRepository('App:Servizio');
       /** @var Servizio $service */
       $service = $repository->find($id);
       if ($service === null) {
@@ -195,7 +195,7 @@ class ServicesAPIController extends AbstractFOSRestController
   public function postServiceAction(Request $request, InstanceService $instanceService)
   {
     $serviceDto = new Service();
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+    $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -210,18 +210,18 @@ class ServicesAPIController extends AbstractFOSRestController
 
     $em = $this->getDoctrine()->getManager();
 
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    $category = $em->getRepository('App:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
     if ($category instanceof Categoria) {
       $serviceDto->setTopics($category);
     }
 
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
+    $serviceGroup = $em->getRepository('App:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
     if ($serviceGroup instanceof ServiceGroup) {
       $serviceDto->setServiceGroup($serviceGroup);
     }
 
     $service = $serviceDto->toEntity();
-    $service->setPraticaFCQN('\AppBundle\Entity\FormIO');
+    $service->setPraticaFCQN('\App\Entity\FormIO');
     $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
 
     // Imposto l'ente in base all'istanza
@@ -293,7 +293,7 @@ class ServicesAPIController extends AbstractFOSRestController
   public function putServiceAction($id, Request $request)
   {
     /*try {*/
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $repository = $this->getDoctrine()->getRepository('App:Servizio');
     $service = $repository->find($id);
 
     if (!$service) {
@@ -301,7 +301,7 @@ class ServicesAPIController extends AbstractFOSRestController
     }
     //$serviceDto = Service::fromEntity($service);
     $serviceDto = new Service();
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+    $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -315,12 +315,12 @@ class ServicesAPIController extends AbstractFOSRestController
     }
 
     $em = $this->getDoctrine()->getManager();
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    $category = $em->getRepository('App:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
     if ($category instanceof Categoria) {
       $serviceDto->setTopics($category);
     }
 
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
+    $serviceGroup = $em->getRepository('App:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
     if ($serviceGroup instanceof ServiceGroup) {
       $serviceDto->setServiceGroup($serviceGroup);
     }
@@ -395,14 +395,14 @@ class ServicesAPIController extends AbstractFOSRestController
   public function patchServiceAction($id, Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $repository = $this->getDoctrine()->getRepository('App:Servizio');
     $service = $repository->find($id);
 
     if (!$service) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
     $serviceDto = Service::fromEntity($service);
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+    $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -415,12 +415,12 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    $category = $em->getRepository('App:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
     if ($category instanceof Categoria) {
       $serviceDto->setTopics($category);
     }
 
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
+    $serviceGroup = $em->getRepository('App:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
     if ($serviceGroup instanceof ServiceGroup) {
       $serviceDto->setServiceGroup($serviceGroup);
     }
@@ -460,7 +460,7 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $service = $this->getDoctrine()->getRepository('AppBundle:Servizio')->find($id);
+    $service = $this->getDoctrine()->getRepository('App:Servizio')->find($id);
     if ($service) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

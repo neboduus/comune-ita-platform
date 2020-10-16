@@ -32,7 +32,7 @@ class Calendar
   private $id;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+   * @ORM\ManyToOne(targetEntity="App\Entity\User")
    * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
    * @SWG\Property(description="Calendar's owner id", type="string")
@@ -95,7 +95,7 @@ class Calendar
 
   /**
    * Many Calendars have Many Operators.
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\OperatoreUser")
+   * @ORM\ManyToMany(targetEntity="App\Entity\OperatoreUser")
    * @ORM\JoinTable(name="calendars_operators",
    *      joinColumns={@ORM\JoinColumn(name="calendar_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="operator_id", referencedColumnName="id")}
@@ -106,7 +106,7 @@ class Calendar
   private $moderators;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\OpeningHour", mappedBy="calendar")
+   * @ORM\OneToMany(targetEntity="App\Entity\OpeningHour", mappedBy="calendar")
    * @Serializer\Exclude()
    */
   private $openingHours;

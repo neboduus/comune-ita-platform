@@ -70,7 +70,7 @@ class MeetingService
     // Retrieve all meetings in the same time slot
     $meetings = $this->entityManager->createQueryBuilder()
       ->select('openingHour.meetingQueue', 'count(meeting.fromTime) as meetingCount')
-      ->from('AppBundle:Meeting', 'meeting')
+      ->from('App:Meeting', 'meeting')
       ->leftJoin('meeting.calendar', 'calendar')
       ->leftJoin('calendar.openingHours', 'openingHour')
       ->where('meeting.calendar = :calendar')
@@ -111,7 +111,7 @@ class MeetingService
         return false;
     }
 
-    $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $meeting->getCalendar()]);
+    $openingHours = $this->entityManager->getRepository('App:OpeningHour')->findBy(['calendar' => $meeting->getCalendar()]);
     // Check if given date and given slot is correct
     $isValidDate = false;
     $isValidSlot = false;
@@ -640,7 +640,7 @@ class MeetingService
 
   public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false) {
     /** @var OpeningHour[] $openingHours */
-    $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $calendar]);
+    $openingHours = $this->entityManager->getRepository('App:OpeningHour')->findBy(['calendar' => $calendar]);
 
     $start = clone($date)->setTime(0, 0, 0);
     $end = clone($date)->setTime(23, 59, 59);
@@ -649,7 +649,7 @@ class MeetingService
 
     $_meetings = $this->entityManager->createQueryBuilder()
       ->select('count(meeting.fromTime) as count', 'meeting.fromTime as start_time', 'meeting.toTime as end_time')
-      ->from('AppBundle:Meeting', 'meeting')
+      ->from('App:Meeting', 'meeting')
       ->where('meeting.calendar = :calendar')
       ->andWhere('meeting.fromTime >= :startDate')
       ->andWhere('meeting.toTime < :endDate')

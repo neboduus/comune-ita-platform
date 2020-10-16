@@ -48,7 +48,7 @@ class EnteType extends AbstractType
   {
     /** @var Ente $ente */
     $ente = $builder->getData();
-    $availableGateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
+    $availableGateways = $this->em->getRepository('App:PaymentGateway')->findBy([
       'enabled' => 1
     ]);
 
@@ -72,8 +72,8 @@ class EnteType extends AbstractType
     }
 
     /*$backOffices = [
-      'Aggiungi iscrizione' => "AppBundle\BackOffice\SubcriptionsBackOffice",
-      'Prenota appuntamento' => "AppBundle\BackOffice\CalendarsBackOffice"
+      'Aggiungi iscrizione' => "App\BackOffice\SubcriptionsBackOffice",
+      'Prenota appuntamento' => "App\BackOffice\CalendarsBackOffice"
     ];*/
 
     $backOfficesData = [];

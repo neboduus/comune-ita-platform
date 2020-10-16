@@ -95,7 +95,7 @@ class AllegatoController extends Controller
 
       case 'GET':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
           if ($file->getHash() == hash('sha256', $session->getId())){
             return $this->createBinaryResponseForAllegato($file);
@@ -146,7 +146,7 @@ class AllegatoController extends Controller
 
       case 'DELETE':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
           if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $session->getId())) {
@@ -568,7 +568,7 @@ class AllegatoController extends Controller
     $isOperatoreAmongstTheAllowedOnes = false;
     $becauseOfPratiche = [];
 
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repo = $this->getDoctrine()->getRepository('App:Pratica');
     $pratiche = $repo->findBy(
       array('rispostaOperatore' => $allegato)
     );
@@ -630,9 +630,9 @@ class AllegatoController extends Controller
       $query = $this->getDoctrine()
         ->getManager()
         ->createQuery("SELECT allegato
-                FROM AppBundle\Entity\Allegato allegato
-                WHERE (allegato INSTANCE OF AppBundle\Entity\Allegato OR allegato INSTANCE OF AppBundle\Entity\AllegatoScia)
-                AND (allegato NOT INSTANCE OF AppBundle\Entity\ModuloCompilato )
+                FROM App\Entity\Allegato allegato
+                WHERE (allegato INSTANCE OF App\Entity\Allegato OR allegato INSTANCE OF App\Entity\AllegatoScia)
+                AND (allegato NOT INSTANCE OF App\Entity\ModuloCompilato )
                 AND allegato.owner = :user
                 ORDER BY allegato.filename ASC")
         ->setParameter('user', $this->getUser());

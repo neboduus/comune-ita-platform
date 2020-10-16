@@ -26,7 +26,7 @@ class DematerializedFormAllegatiAttacherService
      */
     public function attachAllegati(DematerializedFormAllegatiContainer $pratica)
     {
-        $allegatiRepo = $this->em->getRepository('AppBundle:Allegato');
+        $allegatiRepo = $this->em->getRepository('App:Allegato');
         $allegatiIdList = $pratica->getAllegatiIdList();
         foreach ($allegatiIdList as $id) {
             $allegato = $allegatiRepo->find($id);

@@ -33,7 +33,7 @@ use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class APIController
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/api/v1.0")
  */
 class GiscomAPIController extends Controller
@@ -47,7 +47,7 @@ class GiscomAPIController extends Controller
   private $logger;
 
   /**
-   * @var \AppBundle\Services\PraticaStatusService
+   * @var \App\Services\PraticaStatusService
    */
   private $statusService;
 
@@ -167,7 +167,7 @@ class GiscomAPIController extends Controller
 
       $securityUser = $this->getUser();
       $user = $this->getDoctrine()
-        ->getRepository('AppBundle:OperatoreUser')
+        ->getRepository('App:OperatoreUser')
         ->findOneByUsername($securityUser->getUsername());
 
 
@@ -175,7 +175,7 @@ class GiscomAPIController extends Controller
 
       /** @var Servizio $servizio */
       $servizio = $this->getDoctrine()
-        ->getRepository('AppBundle:Servizio')
+        ->getRepository('App:Servizio')
         ->findOneByPraticaFCQN(SciaPraticaEdilizia::class);
 
       $enteSlug = $ente = null;
@@ -186,7 +186,7 @@ class GiscomAPIController extends Controller
       if ($enteSlug != null) {
         /** @var Ente $ente */
         $ente = $this->getDoctrine()
-          ->getRepository('AppBundle:Ente')
+          ->getRepository('App:Ente')
           ->findOneBySlug($enteSlug);
       }
 

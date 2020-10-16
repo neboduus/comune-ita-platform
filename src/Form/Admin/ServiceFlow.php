@@ -60,7 +60,7 @@ class ServiceFlow extends FormFlow
   protected function loadStepsConfig()
   {
     // Mostro lo step per la configurazione di formio solo se necessario
-    if ($this->getFormData()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
+    if ($this->getFormData()->getPraticaFCQN() == '\App\Entity\FormIO') {
       $steps[self::STEP_FORM_TEMPLATE] = array(
         'label' => 'Template del form',
         'form_type' => FormIOTemplateType::class,
@@ -92,7 +92,7 @@ class ServiceFlow extends FormFlow
     );
 
     // Mostro lo step per la configurazione di formio solo se necessario
-    if ($this->getFormData()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
+    if ($this->getFormData()->getPraticaFCQN() == '\App\Entity\FormIO') {
 
       $steps[self::STEP_FORM_FIELDS] = array(
         'label' => 'Campi del form',

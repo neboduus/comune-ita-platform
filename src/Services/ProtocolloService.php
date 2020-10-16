@@ -199,7 +199,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     $dispatchSuccess = true;
 
     /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
-    $integrationAnswerRepo = $this->entityManager->getRepository('AppBundle:RispostaIntegrazione');
+    $integrationAnswerRepo = $this->entityManager->getRepository('App:RispostaIntegrazione');
 
     /** @var RispostaIntegrazione $integrationAnswer */
     $integrationAnswerCollection = $integrationAnswerRepo->findByIntegrationRequest($integrationRequest->getId());
@@ -230,7 +230,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     }
 
     /** @var IntegrazioneRepository $integrationRepo */
-    $integrationRepo = $this->entityManager->getRepository('AppBundle:Integrazione');
+    $integrationRepo = $this->entityManager->getRepository('App:Integrazione');
 
     /** @var Integrazione[] $integrations */
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());

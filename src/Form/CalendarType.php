@@ -42,8 +42,8 @@ class CalendarType extends AbstractType
     $owners = $this->em
       ->createQuery(
         "SELECT user
-             FROM AppBundle\Entity\User user
-             WHERE (user INSTANCE OF AppBundle\Entity\OperatoreUser OR user INSTANCE OF AppBundle\Entity\AdminUser)"
+             FROM App\Entity\User user
+             WHERE (user INSTANCE OF App\Entity\OperatoreUser OR user INSTANCE OF App\Entity\AdminUser)"
       )->getResult();
     $owners = array_values($owners);
 
@@ -110,7 +110,7 @@ class CalendarType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\Calendar',
+      'data_class' => 'App\Entity\Calendar',
       'csrf_protection' => false
     ));
   }
@@ -120,7 +120,7 @@ class CalendarType extends AbstractType
    */
   public function getBlockPrefix()
   {
-    return 'appbundle_calendar';
+    return 'App_calendar';
   }
 
 

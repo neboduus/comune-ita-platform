@@ -42,7 +42,7 @@ class OperatoreCreateCommand extends ContainerAwareCommand
         $password = $helper->ask($input, $output, $question);
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('AppBundle:Ente');
+        $repo = $em->getRepository('App:Ente');
         $entiEntites = $repo->findAll();
         $enti = [];
         foreach($entiEntites as $entiEntity){

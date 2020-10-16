@@ -58,7 +58,7 @@ class MeetingType extends AbstractType
         'required' => true,
       ])
       ->add('user', EntityType::class, [
-        'class' => 'AppBundle\Entity\CPSUser',
+        'class' => 'App\Entity\CPSUser',
         'required' => false,
         'label' => 'User'
       ])
@@ -122,7 +122,7 @@ class MeetingType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\Meeting',
+      'data_class' => 'App\Entity\Meeting',
       'csrf_protection' => false
     ));
   }

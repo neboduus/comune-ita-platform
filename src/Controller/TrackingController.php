@@ -25,7 +25,7 @@ class TrackingController extends Controller
     $id = $request->query->get('id');
     if ($id) {
       $em = $this->get('doctrine.orm.entity_manager');
-      $message = $em->getRepository('AppBundle:Message')->find($id);
+      $message = $em->getRepository('App:Message')->find($id);
       if ($message and !$message->getReadAt()) {
         $message->setReadAt(time());
         try {

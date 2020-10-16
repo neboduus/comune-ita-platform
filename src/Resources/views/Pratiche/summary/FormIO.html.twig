@@ -1,6 +1,6 @@
 <div id="pratica-summary">
 
-  {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('App:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
   {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and pratica.paymentData.response is defined %}
 
@@ -20,7 +20,7 @@
   {% elseif pratica.statusName == 'STATUS_PAYMENT_OUTCOME_PENDING' %}
     <div class="alert alert-info mb-5"><i class="fa fa-refresh fa-spin fa-fw"></i> Siamo in attesa dell'esito del pagamento</div>
   {% elseif pratica.status >= 1900 %}
-    {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
+    {{ include('App:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}
 
   {% if (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length == 0) or ( pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) %}
@@ -47,7 +47,7 @@
     {% endif %}
   {% endif %}
 
-  {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('App:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 </div>
 
 

@@ -19,7 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * Class SubscriptionsAPIController
  * @property EntityManager em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/subscriptions")
  *
  */
@@ -70,7 +70,7 @@ class SubscriptionsAPIController extends AbstractFOSRestController
 
     $subscription = $this->getDoctrine()->getManager()->createQueryBuilder()
       ->select('subscription')
-      ->from('AppBundle:Subscription', 'subscription')
+      ->from('App:Subscription', 'subscription')
       ->leftJoin('subscription.subscription_service', 'service')
       ->leftJoin('subscription.subscriber', 'subscriber')
       ->where('service.code = :code')

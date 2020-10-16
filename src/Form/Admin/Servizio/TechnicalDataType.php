@@ -25,7 +25,7 @@ class TechnicalDataType extends AbstractType
             ]
         )
         ->add('topics', EntityType::class, [
-            'class' => 'AppBundle\Entity\Categoria',
+            'class' => 'App\Entity\Categoria',
             'choice_label' => 'name',
         ])
         ->add('description')

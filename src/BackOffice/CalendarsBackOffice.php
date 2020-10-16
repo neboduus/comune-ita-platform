@@ -97,7 +97,7 @@ class CalendarsBackOffice implements BackOfficeInterface
     }
     preg_match_all("/\(([^\)]*)\)/", $meetingData['calendar'], $matches);
 
-    $repo = $this->em->getRepository('AppBundle:Calendar');
+    $repo = $this->em->getRepository('App:Calendar');
     $calendar = $repo->findOneBy(['id' => $matches[1]]);
     if (!$calendar) {
       return ['error' => $this->translator->trans('backoffice.integration.calendars.calendar_error', ['calendar_id' => $matches[1]])];

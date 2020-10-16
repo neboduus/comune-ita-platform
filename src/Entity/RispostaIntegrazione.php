@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ORM\Entity(repositoryClass="AppBundle\Entity\RispostaIntegrazioneRepository")
+ * @ORM\Entity(repositoryClass="App\Entity\RispostaIntegrazioneRepository")
  */
 class RispostaIntegrazione extends Allegato
 {

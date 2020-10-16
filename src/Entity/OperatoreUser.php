@@ -11,7 +11,7 @@ use Xiidea\EasyAuditBundle\Annotation\ORMSubscribedEvents;
  * Class OperatoreUser
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
- * @package AppBundle\Entity
+ * @package App\Entity
  * @ORMSubscribedEvents("updated, created, deleted")
  */
 class OperatoreUser extends User

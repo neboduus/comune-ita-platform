@@ -36,7 +36,7 @@ class OpeningHour
   private $id;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar", inversedBy="openingHours")
+   * @ORM\ManyToOne(targetEntity="App\Entity\Calendar", inversedBy="openingHours")
    * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
    * @SWG\Property(description="Opening Hour's calendar id", type="string")
@@ -108,7 +108,7 @@ class OpeningHour
   private $intervalMinutes;
 
   /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Meeting", mappedBy="openingHour")
+   * @ORM\OneToMany(targetEntity="App\Entity\Meeting", mappedBy="openingHour")
    * @Serializer\Exclude()
    */
   private $meetings;

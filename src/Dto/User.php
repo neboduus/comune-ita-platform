@@ -107,10 +107,10 @@ class User
   }
 
   /**
-   * @param \AppBundle\Entity\CPSUser $user
+   * @param \App\Entity\CPSUser $user
    * @return CpsUser
    */
-  public static function fromEntity(\AppBundle\Entity\CPSUser $user)
+  public static function fromEntity(\App\Entity\CPSUser $user)
   {
     $dto = new self();
     $dto->id = $user->getId();
@@ -121,13 +121,13 @@ class User
   }
 
   /**
-   * @param \AppBundle\Entity\CPSUser|null $entity
-   * @return \AppBundle\Entity\CPSUser
+   * @param \App\Entity\CPSUser|null $entity
+   * @return \App\Entity\CPSUser
    */
-  public function toEntity(\AppBundle\Entity\CPSUser $entity = null)
+  public function toEntity(\App\Entity\CPSUser $entity = null)
   {
     if (!$entity) {
-      $entity = new \AppBundle\Entity\CPSUser();
+      $entity = new \App\Entity\CPSUser();
     }
     $entity->setCodiceFiscale($this->codiceFiscale);
     $entity->setUsername($this->codiceFiscale ? $this->codiceFiscale : $this->getId());

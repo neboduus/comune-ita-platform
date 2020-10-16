@@ -20,7 +20,7 @@ class DefaultLoggedInHandler extends DefaultHandler
     $praticaFQCN = $servizio->getPraticaFCQN();
     $praticaInstance = new $praticaFQCN();
 
-    $repo = $this->em->getRepository('AppBundle:Pratica');
+    $repo = $this->em->getRepository('App:Pratica');
     $pratiche = $repo->findBy(
       array(
         'user' => $user,
@@ -74,7 +74,7 @@ class DefaultLoggedInHandler extends DefaultHandler
       ->setUser($user)
       ->setStatus(Pratica::STATUS_DRAFT);
 
-    $repo = $this->em->getRepository('AppBundle:Pratica');
+    $repo = $this->em->getRepository('App:Pratica');
     $lastPraticaList = $repo->findBy(
       array(
         'user' => $user,

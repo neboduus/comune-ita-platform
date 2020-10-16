@@ -37,7 +37,7 @@ class Subscriber
     private $surname;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Subscription", mappedBy="subscriber")
+     * @ORM\OneToMany(targetEntity="App\Entity\Subscription", mappedBy="subscriber")
      * @Serializer\Exclude()
      * @SWG\Property(description="Subscriber's subscriptions")
      */

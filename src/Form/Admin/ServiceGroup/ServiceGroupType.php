@@ -39,7 +39,7 @@ class ServiceGroupType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\ServiceGroup',
+      'data_class' => 'App\Entity\ServiceGroup',
       'csrf_protection' => false
     ));
   }

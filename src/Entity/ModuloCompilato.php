@@ -19,7 +19,7 @@ class ModuloCompilato extends Allegato
   const TYPE_DEFAULT = 'modulo_compilato';
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="moduliCompilati")
+   * @ORM\ManyToMany(targetEntity="App\Entity\Pratica", mappedBy="moduliCompilati")
    * @var ArrayCollection $pratiche
    */
   private $pratiche2;

@@ -1,5 +1,5 @@
 {% if pratica.statusName != 'STATUS_DRAFT' %}
-  {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('App:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
 
   <div class="row mt-5">
     <div class="col-12 col-sm-3"><strong>{{ 'pratica.dettaglio.stato'|trans }}</strong></div>
@@ -21,9 +21,9 @@
   </div>
 {% endif %}
 
-{{ include('AppBundle:Pratiche/summary/parts:richiedente.html.twig', {'pratica':pratica, 'user': user}) }}
+{{ include('App:Pratiche/summary/parts:richiedente.html.twig', {'pratica':pratica, 'user': user}) }}
 
-{{ include('AppBundle:Pratiche/summary/parts:delega.html.twig', {'pratica':pratica, 'user': user}) }}
+{{ include('App:Pratiche/summary/parts:delega.html.twig', {'pratica':pratica, 'user': user}) }}
 
 {% if pratica.oggetto != null %}
   <div class="row">

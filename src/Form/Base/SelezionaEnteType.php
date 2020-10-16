@@ -18,7 +18,7 @@ class SelezionaEnteType extends AbstractType
         $helper->setStepTitle('steps.common.seleziona_ente.title', true);
 
         $builder->add('ente', EntityType::class, [
-            'class' => 'AppBundle\Entity\Ente',
+            'class' => 'App\Entity\Ente',
             'choices' => $builder->getData()->getServizio()->getEnti(),
             'choice_label' => 'name',
             'expanded' => false,

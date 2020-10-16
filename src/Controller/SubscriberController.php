@@ -105,7 +105,7 @@ class SubscriberController extends Controller
     // Message
     $subscriberMessage = new SubscriberMessage();
     $subscriberMessage->setSubscriber($subscriber);
-    $form = $this->createForm('AppBundle\Form\SubscriberMessageType', $subscriberMessage);
+    $form = $this->createForm('App\Form\SubscriberMessageType', $subscriberMessage);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {

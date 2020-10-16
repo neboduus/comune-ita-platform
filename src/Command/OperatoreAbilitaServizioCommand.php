@@ -29,7 +29,7 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
         $question = new Question('Inserisci lo username ');
         $username = $helper->ask($input, $output, $question);
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $operatoriRepo = $em->getRepository('AppBundle:OperatoreUser');
+        $operatoriRepo = $em->getRepository('App:OperatoreUser');
         /** @var OperatoreUser $user */
         $user = $operatoriRepo->findOneByUsername($username);
         if (!$user) {
@@ -55,7 +55,7 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
         $question = new ChoiceQuestion('Seleziona il servizio da abilitare', $serviziNames);
         $servizioId = $helper->ask($input, $output, $question);
 
-        $serviziRepo = $em->getRepository('AppBundle:Servizio');
+        $serviziRepo = $em->getRepository('App:Servizio');
 
         if ($servizioId != '*') {
             if (!$serviziRepo->find($servizioId)) {

@@ -58,7 +58,7 @@ class SelectPaymentGatewayType extends AbstractType
     }
 
     // Gateways abilitati
-    $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
+    $gateways = $this->em->getRepository('App:PaymentGateway')->findBy([
       'identifier' => $availableGateways
     ]);
     /** @var PaymentGateway $g */
@@ -67,7 +67,7 @@ class SelectPaymentGatewayType extends AbstractType
     }
 
     $builder->add('payment_type', EntityType::class, [
-      'class' => 'AppBundle\Entity\PaymentGateway',
+      'class' => 'App\Entity\PaymentGateway',
       'choices' => $gateways,
       'choice_label' => 'name',
       'expanded' => true,

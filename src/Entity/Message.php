@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
- * @ORM\Entity(repositoryClass="AppBundle\Entity\PraticaRepository")
+ * @ORM\Entity(repositoryClass="App\Entity\PraticaRepository")
  * @ORM\Table(name="message")
  **/
 class Message
@@ -32,13 +32,13 @@ class Message
   private $message;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+   * @ORM\ManyToOne(targetEntity="App\Entity\User")
    * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
    */
   private $author;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Pratica", inversedBy="messages")
+   * @ORM\ManyToOne(targetEntity="App\Entity\Pratica", inversedBy="messages")
    * @ORM\JoinColumn(name="pratica_id", referencedColumnName="id", nullable=false)
    */
   private $application;
@@ -69,14 +69,14 @@ class Message
   private $clickedAt;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\AllegatoMessaggio", inversedBy="messages", orphanRemoval=false)
+   * @ORM\ManyToMany(targetEntity="App\Entity\AllegatoMessaggio", inversedBy="messages", orphanRemoval=false)
    * @var ArrayCollection
    * @Assert\Valid(traverse=true)
    */
   private $attachments;
 
   /**
-   * @ORM\OneToOne(targetEntity="AppBundle\Entity\AllegatoMessaggio", orphanRemoval=false)
+   * @ORM\OneToOne(targetEntity="App\Entity\AllegatoMessaggio", orphanRemoval=false)
    * @ORM\JoinColumn(nullable=true)
    * @var AllegatoMessaggio
    */
