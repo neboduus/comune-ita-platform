@@ -660,7 +660,7 @@ class OperatoriController extends Controller
 
       $oldUser = $pratica->getOperatore();
       $pratica->setOperatore($user);
-      $this->enti->flush($pratica);
+      $this->entityManager->flush($pratica);
 
       $this->logger->info(
         LogConstants::PRATICA_REASSIGNED,
