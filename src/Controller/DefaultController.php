@@ -50,15 +50,19 @@ class DefaultController extends Controller
 
 
   /**
+   * @Route("/", name="home")
    * @return Response
    */
   public function commonAction()
   {
-    return $this->render('Default/common.html.twig',  array('enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll()));
+    return $this->render(
+      'Default/common.html.twig',
+      ['enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll()]
+    );
   }
 
   /**
-   * @Route("/asd", name="home")
+   * @Route("/asd", name="forward_home")
    *
    * @return Response
    */
@@ -69,7 +73,6 @@ class DefaultController extends Controller
 
   /**
    * @Route("/privacy", name="privacy")
-   * @Template()
    */
   public function privacyAction()
   {
@@ -116,7 +119,6 @@ class DefaultController extends Controller
 
   /**
    * @Route("/terms_accept/", name="terms_accept")
-   * @Template()
    * @param Request $request
    *
    * @return array
@@ -156,11 +158,11 @@ class DefaultController extends Controller
       $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
     }
 
-    return [
+    $this->render('Default/termsAccept.html.twig', [
       'form' => $form->createView(),
       'terms' => $terms,
       'user' => $user,
-    ];
+    ]);
   }
 
   /**
@@ -220,7 +222,6 @@ class DefaultController extends Controller
 
   /**
    * @Route("/metrics", name="sdc_metrics")
-   * @Template()
    *
    * @return Response
    */
@@ -234,7 +235,7 @@ class DefaultController extends Controller
     $response = new Response();
 
     return $this->render(
-      '@App/Default/metrics.html.twig',
+      'Default/metrics.html.twig',
       [
         'metrics' => $metrics,
       ]
