@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Form\Base;
+namespace AppBundle\Form\Base;
 
-use App\Entity\PaymentGateway;
-use App\Entity\Pratica;
-use App\Entity\Servizio;
-use App\Form\Extension\TestiAccompagnatoriProcedura;
-use App\Payment\Gateway\MyPay;
+use AppBundle\Entity\PaymentGateway;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\Payment\Gateway\MyPay;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\VarDumper\VarDumper;
-use App\Services\PraticaStatusService;
+use AppBundle\Services\PraticaStatusService;
 
 class SelectPaymentGatewayType extends AbstractType
 {
@@ -58,7 +58,7 @@ class SelectPaymentGatewayType extends AbstractType
     }
 
     // Gateways abilitati
-    $gateways = $this->em->getRepository('App:PaymentGateway')->findBy([
+    $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
       'identifier' => $availableGateways
     ]);
     /** @var PaymentGateway $g */
@@ -67,7 +67,7 @@ class SelectPaymentGatewayType extends AbstractType
     }
 
     $builder->add('payment_type', EntityType::class, [
-      'class' => 'App\Entity\PaymentGateway',
+      'class' => 'AppBundle\Entity\PaymentGateway',
       'choices' => $gateways,
       'choice_label' => 'name',
       'expanded' => true,

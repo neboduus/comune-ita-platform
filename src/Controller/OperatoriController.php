@@ -1,31 +1,38 @@
 <?php
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
-use App\Dto\Application;
-use App\Dto\ApplicationOutcome;
-use App\Entity\Allegato;
-use App\Entity\AllegatoOperatore;
-use App\Entity\CPSUser;
-use App\Entity\DematerializedFormPratica;
-use App\Entity\FormIO;
-use App\Entity\Message;
-use App\Entity\OperatoreUser;
-use App\Entity\Pratica;
-use App\Entity\PraticaRepository;
-use App\Entity\Servizio;
-use App\Entity\StatusChange;
-use App\Form\Base\MessageType;
-use App\Form\Operatore\Base\ApplicationOutcomeType;
-use App\Form\Operatore\Base\PraticaOperatoreFlow;
-use App\FormIO\Schema;
-use App\FormIO\SchemaFactory;
-use App\Logging\LogConstants;
-use App\Services\ModuloPdfBuilderService;
+use AppBundle\Dto\Application;
+use AppBundle\Dto\ApplicationOutcome;
+use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoOperatore;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\DematerializedFormPratica;
+use AppBundle\Entity\FormIO;
+use AppBundle\Entity\Message;
+use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\Servizio;
+use AppBundle\Entity\StatusChange;
+use AppBundle\Form\Base\MessageType;
+use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
+use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
+use AppBundle\FormIO\Schema;
+use AppBundle\FormIO\SchemaFactory;
+use AppBundle\Logging\LogConstants;
+use AppBundle\Services\InstanceService;
+use AppBundle\Services\MailerService;
+use AppBundle\Services\MessagesAdapterService;
+use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Flagception\Manager\FeatureManagerInterface;
 use JMS\Serializer\Serializer;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -47,6 +54,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class OperatoriController
@@ -61,15 +70,83 @@ class OperatoriController extends Controller
   /** @var Serializer */
   private $serializer;
 
+  /** @var TranslatorInterface */
+  private $translator;
+
+  /** * @var LoggerInterface */
+  private $logger;
+
+  /** * @var PraticaStatusService */
+  private $praticaStatusService;
+
+  /** @var InstanceService */
+  private $instanceService;
+
+  /* @var EntityManagerInterface */
+  private $entityManager;
+  /**
+   * @var FeatureManagerInterface
+   */
+  private $featureManager;
+  /**
+   * @var RouterInterface
+   */
+  private $router;
+  /**
+   * @var MailerService
+   */
+  private $mailerService;
+  /**
+   * @var ModuloPdfBuilderService
+   */
+  private $moduloPdfBuilderService;
+  /**
+   * @var MessagesAdapterService
+   */
+  private $messagesAdapterService;
+
   /**
    * OperatoriController constructor.
    * @param SchemaFactory $schemaFactory
    * @param Serializer $serializer
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   * @param PraticaStatusService $praticaStatusService
+   * @param InstanceService $instanceService
+   * @param EntityManagerInterface $entityManager
+   * @param FeatureManagerInterface $featureManager
+   * @param RouterInterface $router
+   * @param MailerService $mailerService
+   * @param ModuloPdfBuilderService $moduloPdfBuilderService
+   * @param MessagesAdapterService $messagesAdapterService
    */
-  public function __construct(SchemaFactory $schemaFactory, Serializer $serializer)
+  public function __construct(
+    SchemaFactory $schemaFactory,
+    Serializer $serializer,
+    TranslatorInterface $translator,
+    LoggerInterface $logger,
+    PraticaStatusService $praticaStatusService,
+    InstanceService $instanceService,
+    EntityManagerInterface $entityManager,
+    FeatureManagerInterface $featureManager,
+    RouterInterface $router,
+    MailerService $mailerService,
+    ModuloPdfBuilderService $moduloPdfBuilderService,
+    MessagesAdapterService $messagesAdapterService
+  )
   {
     $this->schemaFactory = $schemaFactory;
     $this->serializer = $serializer;
+    $this->translator = $translator;
+    $this->logger = $logger;
+    $this->praticaStatusService = $praticaStatusService;
+    $this->instanceService = $instanceService;
+    $this->entityManager = $entityManager;
+    $this->featureManager = $featureManager;
+    $this->router = $router;
+    $this->mailerService = $mailerService;
+    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
+    $this->messagesAdapterService = $messagesAdapterService;
   }
 
 
@@ -109,7 +186,7 @@ class OperatoriController extends Controller
 
     $stati = [];
     foreach ($praticaRepository->getStateListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE) as $state) {
-      $state['name'] = $this->get('translator')->trans($state['name']);
+      $state['name'] = $this->translator->trans($state['name']);
       $stati[] = $state;
     }
 
@@ -171,7 +248,7 @@ class OperatoriController extends Controller
       ];
       $extraValues = [];
       foreach ($schema as $item) {
-        if (in_array($item['label'], $extraHeaders)) {
+        if (in_array(trim($item['label']), $extraHeaders)) {
           $extraValues[$item['name']] = trim($item['label']);
         }
       }
@@ -204,7 +281,7 @@ class OperatoriController extends Controller
             $item['codice_fiscale'],
             isset($item['submission_time']) ? date('d/m/Y H:i:s', $item['submission_time']) : '',
             isset($item['latest_status_change_time']) ? date('d/m/Y H:i:s', $item['latest_status_change_time']) : '',
-            $this->get('translator')->trans('pratica.dettaglio.stato_' . $item['status']),
+            $this->translator->trans('pratica.dettaglio.stato_' . $item['status']),
             $item['operator_name'],
             $serviceName,
           ];
@@ -327,7 +404,6 @@ class OperatoriController extends Controller
    */
   private function getFilteredPraticheByOperatore($request, $limit, $offset)
   {
-    $translator = $this->get('translator');
     $parameters = $this->getPraticheFilters($request);
     /** @var PraticaRepository $praticaRepository */
     $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
@@ -342,7 +418,7 @@ class OperatoriController extends Controller
       $data = $praticaRepository->findPraticheByOperatore($user, $parameters, $limit, $offset);
       $tempStates = $praticaRepository->findStatesPraticheByOperatore($user, $parameters, $limit, $offset);
       foreach ($tempStates as $state) {
-        $state['name'] = $this->get('translator')->trans($state['name']);
+        $state['name'] = $this->translator->trans($state['name']);
         $filters['states'][] = $state;
       }
     } catch (\Throwable $e) {
@@ -435,9 +511,7 @@ class OperatoriController extends Controller
    */
   public function usageAction()
   {
-    //$repo = $this->getDoctrine()->getRepository(Pratica::class);
-    //$pratiche = $repo->findSubmittedPraticheByEnte($this->get('ocsdc.instance_service')->getCurrentInstance());
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $servizi = $serviziRepository->findBy(
       [
         'status' => Servizio::STATUS_AVAILABLE
@@ -455,7 +529,7 @@ class OperatoriController extends Controller
       $stmt->execute();
       $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     } catch (DBALException $e) {
-      $this->get('logger')->error($e->getMessage());
+      $this->logger->error($e->getMessage());
       $result = [];
     }
 
@@ -485,7 +559,7 @@ class OperatoriController extends Controller
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->getDoctrine()->getRepository('App:Allegato')->find($protocollo->id);
+      $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
       if ($allegato instanceof Allegato) {
         $allegati[] = [
           'allegato' => $allegato,
@@ -510,7 +584,7 @@ class OperatoriController extends Controller
    */
   public function impostazioniProtocolloListAction()
   {
-    return array('parameters' => $this->get('ocsdc.instance_service')->getCurrentInstance()->getProtocolloParameters());
+    return array('parameters' => $this->instanceService->getCurrentInstance()->getProtocolloParameters());
   }
 
   /**
@@ -540,13 +614,13 @@ class OperatoriController extends Controller
       $statusChange->setEvento('Presa in carico');
       $statusChange->setOperatore($user->getFullName());
       $statusChange->setMessage('Pratica presa in carico da ' . $user->getFullName());
-      $this->get('ocsdc.pratica_status_service')->setNewStatus(
+      $this->praticaStatusService->setNewStatus(
         $pratica,
         Pratica::STATUS_PENDING,
         $statusChange
       );
 
-      $this->get('logger')->info(
+      $this->logger->info(
         LogConstants::PRATICA_ASSIGNED,
         [
           'pratica' => $pratica->getId(),
@@ -586,9 +660,9 @@ class OperatoriController extends Controller
 
       $oldUser = $pratica->getOperatore();
       $pratica->setOperatore($user);
-      $this->get('doctrine.orm.entity_manager')->flush($pratica);
+      $this->entityManager->flush($pratica);
 
-      $this->get('logger')->info(
+      $this->logger->info(
         LogConstants::PRATICA_REASSIGNED,
         [
           'pratica' => $pratica->getId(),
@@ -612,14 +686,14 @@ class OperatoriController extends Controller
    */
   public function showPraticaAction(Pratica $pratica, Request $request)
   {
-    $translator = $this->get('translator');
+    $translator = $this->translator;
 
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($user, $pratica);
     $tab = $request->query->get('tab');
 
-    $attachments = $this->getDoctrine()->getRepository('App:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
 
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
@@ -628,7 +702,7 @@ class OperatoriController extends Controller
     $messageForm->handleRequest($request);
     if ($messageForm->isSubmitted()) {
       // Check if application detail feature is enabled
-      if ($this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
+      if ($this->featureManager->isActive('feature_application_detail')) {
         $visibility = $messageForm->getClickedButton()->getName();
 
         // Funzionalità non disponibile agli utenti anonimi
@@ -658,7 +732,7 @@ class OperatoriController extends Controller
           $em->persist($message);
           $em->flush();
 
-          $this->get('logger')->info(
+          $this->logger->info(
             LogConstants::PRATICA_COMMENTED,
             [
               'pratica' => $pratica->getId(),
@@ -669,13 +743,13 @@ class OperatoriController extends Controller
           // Todo: rendere asincrono l'invio delle email
           if ($visibility == Message::VISIBILITY_APPLICANT) {
             $defaultSender = $this->getParameter('default_from_email_address');
-            $instance = $this->get('ocsdc.instance_service')->getCurrentInstance();
+            $instance = $this->instanceService->getCurrentInstance();
             $userReceiver = $message->getApplication()->getUser();
             $subject = $translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
             $mess = $translator->trans('pratica.messaggi.messaggio', [
               '%message%' => $message->getMessage(),
-              '%link%' => $this->get('router')->generate('track_message', ['id' => $message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id=' . $message->getId()]);
-            $this->get('ocsdc.mailer')->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+              '%link%' => $this->router->generate('track_message', ['id' => $message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id=' . $message->getId()]);
+            $this->mailerService->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
             $this->addFlash('info', $translator->trans('operatori.messaggi.feedback_inviato', ['%email%' =>$message->getApplication()->getUser()->getEmailContatto() ]));
             $message->setSentAt(time());
@@ -691,7 +765,7 @@ class OperatoriController extends Controller
         $pratica->addCommento($commento);
         $this->getDoctrine()->getManager()->flush();
 
-        $this->get('logger')->info(
+        $this->logger->info(
           LogConstants::PRATICA_COMMENTED,
           [
             'pratica' => $pratica->getId(),
@@ -733,7 +807,7 @@ class OperatoriController extends Controller
 
     $threads = $this->createThreadElementsForOperatoreAndPratica($user, $pratica);
     /** @var PraticaRepository $repository */
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
     $fiscalCode = null;
@@ -789,7 +863,7 @@ class OperatoriController extends Controller
         $statusChange->setOperatore($user->getFullName());
         $statusChange->setMessage('Pratica riaperta da ' . $user->getFullName());
 
-        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+        $this->praticaStatusService->setNewStatus(
           $pratica,
           Pratica::STATUS_PENDING,
           $statusChange
@@ -816,8 +890,8 @@ class OperatoriController extends Controller
       $status = $pratica->getEsito() ? Pratica::STATUS_COMPLETE : Pratica::STATUS_CANCELLED;
       $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
 
-      $router = $this->get('router');
-      $translator = $this->get('translator');
+      $router = $this->router;
+      $translator = $this->translator;
       $placeholders = [
         '%pratica_id%' => $pratica->getId(),
         '%servizio%' => $pratica->getServizio()->getName(),
@@ -911,9 +985,9 @@ class OperatoriController extends Controller
    * @return BinaryFileResponse
    * @throws \Exception
    */
-  public function showPdfAction(Request $request, Pratica $pratica, ModuloPdfBuilderService $pdfBuilderService)
+  public function showPdfAction(Request $request, Pratica $pratica)
   {
-    $allegato = $pdfBuilderService->showForPratica($pratica);
+    $allegato = $this->moduloPdfBuilderService->showForPratica($pratica);
 
     $fileName = $allegato->getOriginalFilename();
     if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
@@ -939,7 +1013,7 @@ class OperatoriController extends Controller
    */
   public function listOperatoriByEnteAction()
   {
-    $operatoreRepo = $this->getDoctrine()->getRepository('App:OperatoreUser');
+    $operatoreRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
     $operatori = $operatoreRepo->findBy(
       [
         'ente' => $this->getUser()->getEnte(),
@@ -968,14 +1042,13 @@ class OperatoriController extends Controller
 
     if ($form->isSubmitted()) {
       $data = $form->getData();
-      //$this->storeOperatoreData($operatore->getId(), $data, $this->get('logger'));
       $operatore->setAmbito($data['ambito']);
       $this->getDoctrine()->getManager()->persist($operatore);
       try {
         $this->getDoctrine()->getManager()->flush();
-        $this->get('logger')->info(LogConstants::OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO, ['operatore_admin' => $this->getUser()->getId(), 'operatore' => $operatore->getId()]);
+        $this->logger->info(LogConstants::OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO, ['operatore_admin' => $this->getUser()->getId(), 'operatore' => $operatore->getId()]);
       } catch (\Exception $e) {
-        $this->get('logger')->error($e->getMessage());
+        $this->logger->error($e->getMessage());
       }
       return $this->redirectToRoute('operatori_detail', ['operatore' => $operatore->getId()]);
     }
@@ -1005,7 +1078,7 @@ class OperatoriController extends Controller
         ['label' => false, 'data' => $operatore->getAmbito(), 'required' => false]
       )
       ->add('save', SubmitType::class,
-        ['label' => $this->get('translator')->trans('operatori.profile.salva_modifiche')]
+        ['label' => $this->translator->trans('operatori.profile.salva_modifiche')]
       );
     $form = $formBuilder->getForm();
 
@@ -1018,13 +1091,13 @@ class OperatoriController extends Controller
   private function setupCommentForm(Pratica $pratica)
   {
     $data = array();
-    $translator = $this->get('translator');
+    $translator = $this->translator;
 
-    if ($this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
+    if ($this->featureManager->isActive('feature_application_detail')) {
       $message = new Message();
       $message->setApplication($pratica);
       $message->setAuthor($this->getUser());
-      $form = $this->createForm('App\Form\ApplicationMessageType', $message);
+      $form = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
     } else {
       $formBuilder = $this->createFormBuilder($data)
         ->add('text', TextareaType::class, [
@@ -1088,7 +1161,7 @@ class OperatoriController extends Controller
     }
 
     if ($pratica->getRispostaOperatore() == null) {
-      $signedResponse = $this->get('ocsdc.modulo_pdf_builder')->createSignedResponseForPratica($pratica);
+      $signedResponse = $this->moduloPdfBuilderService->createSignedResponseForPratica($pratica);
       $pratica->addRispostaOperatore($signedResponse);
     }
 
@@ -1105,20 +1178,20 @@ class OperatoriController extends Controller
       $statusChange->setMessage('Pratica approvata da ' . $user->getFullName());
 
       if ($protocolloIsRequired) {
-        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+        $this->praticaStatusService->setNewStatus(
           $pratica,
           Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
           $statusChange
         );
       } else {
-        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+        $this->praticaStatusService->setNewStatus(
           $pratica,
           Pratica::STATUS_COMPLETE,
           $statusChange
         );
       }
 
-      $this->get('logger')->info(
+      $this->logger->info(
         LogConstants::PRATICA_APPROVED,
         [
           'pratica' => $pratica->getId(),
@@ -1131,20 +1204,20 @@ class OperatoriController extends Controller
       $statusChange->setMessage('Pratica rifiutata da ' . $user->getFullName());
 
       if ($protocolloIsRequired) {
-        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+        $this->messagesAdapterService->setNewStatus(
           $pratica,
           Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
           $statusChange
         );
       } else {
-        $this->get('ocsdc.pratica_status_service')->setNewStatus(
+        $this->praticaStatusService->setNewStatus(
           $pratica,
           Pratica::STATUS_CANCELLED,
           $statusChange
         );
       }
 
-      $this->get('logger')->info(
+      $this->logger->info(
         LogConstants::PRATICA_CANCELLED,
         [
           'pratica' => $pratica->getId(),
@@ -1162,13 +1235,13 @@ class OperatoriController extends Controller
    */
   private function createThreadElementsForOperatoreAndPratica(OperatoreUser $operatore, Pratica $pratica)
   {
-    $messagesAdapterService = $this->get('ocsdc.messages_adapter');
+    $messagesAdapterService = $this->messagesAdapterService;
     $threadId = $pratica->getUser()->getId() . '~' . $operatore->getId();
     $form = $this->createForm(
       MessageType::class,
       ['thread_id' => $threadId, 'sender_id' => $operatore->getId()],
       [
-        'action' => $this->get('router')->generate('messages_controller_enqueue_for_operatore', ['threadId' => $threadId]),
+        'action' => $this->router->generate('messages_controller_enqueue_for_operatore', ['threadId' => $threadId]),
         'method' => 'PUT',
       ]
     );
@@ -1192,8 +1265,8 @@ class OperatoriController extends Controller
     //Servizi, pratiche  delle select di filtraggio
     $serviziPratiche = $em->createQueryBuilder()
       ->select('s.name', 's.slug')
-      ->from('App:Pratica', 'p')
-      ->innerJoin('App:Servizio', 's', 'WITH', 's.id = p.servizio')
+      ->from('AppBundle:Pratica', 'p')
+      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
       ->distinct()
       ->getQuery()
       ->getResult();
@@ -1206,7 +1279,7 @@ class OperatoriController extends Controller
       $stmt->execute();
       $result = $stmt->fetchAll();
     } catch (DBALException $e) {
-      $this->get('logger')->error($e->getMessage());
+      $this->logger->error($e->getMessage());
       $result = [];
     }
 
@@ -1214,7 +1287,7 @@ class OperatoriController extends Controller
     foreach ($result as $valore) {
       $status[] = array(
         "status" => $valore['status'],
-        "name" => $this->get('translator')->trans('pratica.dettaglio.stato_' . $valore['status'])
+        "name" => $this->translator->trans('pratica.dettaglio.stato_' . $valore['status'])
       );
     }
 
@@ -1275,7 +1348,7 @@ class OperatoriController extends Controller
       $stmt = $em->getConnection()->executeQuery($sql, $sqlParams);
       $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     } catch (DBALException $e) {
-      $this->get('logger')->error($e->getMessage());
+      $this->logger->error($e->getMessage());
       $result = [];
     }
 

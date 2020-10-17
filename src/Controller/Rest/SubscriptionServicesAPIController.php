@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Controller\Rest;
+namespace AppBundle\Controller\Rest;
 
-use App\Entity\SubscriptionService;
-use App\Entity\Subscription;
-use App\Services\InstanceService;
+use AppBundle\Entity\SubscriptionService;
+use AppBundle\Entity\Subscription;
+use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\FormInterface;
@@ -23,7 +24,7 @@ use Swagger\Annotations as SWG;
  * Class SubscriptionsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/subscription-services")
  */
 class SubscriptionServicesAPIController extends AbstractFOSRestController
@@ -31,10 +32,21 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
 
   const CURRENT_API_VERSION = '1.0';
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is)
+  /** @var EntityManagerInterface  */
+  private $em;
+
+  /** @var InstanceService  */
+  private $is;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
   /**
@@ -60,7 +72,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     if (strtolower($request->query->get('available')) == 'true') {
       $subscriptionServices = $this->em->createQueryBuilder()
         ->select('t1')
-        ->from('App:SubscriptionService', 't1')
+        ->from('AppBundle:SubscriptionService', 't1')
         ->leftJoin('t1.subscriptions', 't2')
         ->groupBy('t1.id')
         ->having('COUNT(t2) < t1.subscribersLimit OR t1.subscribersLimit is NULL')
@@ -69,7 +81,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         ->setParameter('now', new \DateTime())
         ->getQuery()->getResult();
     } else {
-      $subscriptionServices = $this->getDoctrine()->getRepository('App:SubscriptionService')->findAll();
+      $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
     }
 
     foreach ($subscriptionServices as $subscriptionService) {
@@ -104,7 +116,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function getSubscriptionServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -157,7 +169,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function postSubscriptionServiceAction(Request $request)
   {
     $subscriptionService = new SubscriptionService();
-    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -181,7 +193,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -237,14 +249,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function putSubscriptionServiceAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -268,7 +280,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -326,13 +338,13 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function patchSubscriptionServiceAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
+    $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -355,7 +367,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -389,7 +401,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $subscriptionService = $this->getDoctrine()->getRepository('App:SubscriptionService')->find($id);
+    $subscriptionService = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->find($id);
     if ($subscriptionService) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -464,7 +476,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function getSubscriptionsAction($subscription_service_id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:SubscriptionService');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
       $subscriptionService = $repository->find($subscription_service_id);
       if ($subscriptionService === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -507,7 +519,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function getSubscriptionAction($subscription_service_id, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Subscription');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
       if ($subscription === null) {
@@ -545,7 +557,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteSubscriptionAction($subscription_service_id, $id)
   {
-    $repository = $this->getDoctrine()->getRepository('App:Subscription');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     if ($subscription) {
       // debated point: should we 404 on an unknown nickname?
@@ -600,7 +612,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function postSubscriptionAction(Request $request)
   {
     $subscription = new Subscription();
-    $form = $this->createForm('App\Form\SubscriptionType', $subscription);
+    $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -613,7 +625,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $subscriber = $this->em->getRepository('App:Subscriber')->findOneBy(['fiscal_code' => $subscription->getSubscriber()->getFiscalCode()]);
+    $subscriber = $this->em->getRepository('AppBundle:Subscriber')->findOneBy(['fiscal_code' => $subscription->getSubscriber()->getFiscalCode()]);
 
     if (!$subscriber) {
       try {
@@ -625,7 +637,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
           'title' => 'There was an error during save process',
           'description' => $e->getMessage()
         ];
-        $this->get('logger')->error(
+        $this->logger->error(
           $e->getMessage(),
           ['request' => $request]
         );
@@ -644,7 +656,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -701,13 +713,13 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function putSubscriptionAction($subscription_service_id, $id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:Subscription');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\SubscriptionType', $subscription);
+    $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -730,7 +742,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -789,13 +801,13 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   public function patchSubscriptionAction($subscription_service_id, $id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Subscription');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\SubscriptionType', $subscription);
+    $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -818,7 +830,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );

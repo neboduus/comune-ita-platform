@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
-use App\Entity\Allegato;
-use App\Entity\Pratica;
-use App\Entity\Servizio;
-use App\Logging\LogConstants;
-use App\Services\ModuloPdfBuilderService;
+use AppBundle\Entity\Allegato;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
+use AppBundle\Logging\LogConstants;
+use AppBundle\Services\ModuloPdfBuilderService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -25,15 +25,29 @@ use TheCodingMachine\Gotenberg\Request as GotembergRequest;
 /**
  * Class PraticheAnonimeController
  *
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/print")
  */
 class PrintController extends Controller
 {
+  /**
+   * @var ModuloPdfBuilderService
+   */
+  private $moduloPdfBuilderService;
+
+  /**
+   * PrintController constructor.
+   * @param ModuloPdfBuilderService $moduloPdfBuilderService
+   */
+  public function __construct(ModuloPdfBuilderService $moduloPdfBuilderService)
+  {
+    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
+  }
+
 
   /**
    * @Route("/pratica/{pratica}", name="print_pratiche")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -42,7 +56,7 @@ class PrintController extends Controller
   public function printPraticaAction(Request $request, Pratica $pratica)
   {
     $user = $pratica->getUser();
-    $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
+    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
     $attachments = $pratica->getAllegati();
     $preparedAttachments = [];
@@ -74,18 +88,17 @@ class PrintController extends Controller
 
   /**
    * @Route("/{pratica}/show", name="print_pratiche_show")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
-   * @param ModuloPdfBuilderService $pdfBuilderService
    * @return Response
    * @throws \TheCodingMachine\Gotenberg\ClientException
    * @throws \TheCodingMachine\Gotenberg\RequestException
    */
-  public function printPraticaShowAction(Request $request, Pratica $pratica, ModuloPdfBuilderService $pdfBuilderService)
+  public function printPraticaShowAction(Request $request, Pratica $pratica)
   {
 
-    $fileContent = $pdfBuilderService->generatePdfUsingGotemberg($pratica);
+    $fileContent = $this->moduloPdfBuilderService->generatePdfUsingGotemberg($pratica);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';
@@ -109,7 +122,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}", name="print_service")
-   * @ParamConverter("service", class="App:Servizio")
+   * @ParamConverter("service", class="AppBundle:Servizio")
    * @Template()
    * @param Servizio $service
    *
@@ -120,7 +133,7 @@ class PrintController extends Controller
 
     $pratica = $this->createApplication($service);
 
-    $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
+    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
     return [
       'formserver_url' => $this->getParameter('formserver_public_url'),
@@ -131,7 +144,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}/pdf", name="print_service_pdf")
-   * @ParamConverter("service", class="App:Servizio")
+   * @ParamConverter("service", class="AppBundle:Servizio")
    * @param Request $request
    * @param Servizio $service
    *
@@ -140,10 +153,10 @@ class PrintController extends Controller
    * @throws \TheCodingMachine\Gotenberg\ClientException
    * @throws \TheCodingMachine\Gotenberg\RequestException
    */
-  public function printServicePdfAction(Request $request, Servizio $service, ModuloPdfBuilderService $pdfBuilderService)
+  public function printServicePdfAction(Request $request, Servizio $service)
   {
 
-    $fileContent = $pdfBuilderService->generateServicePdfUsingGotemberg($service);
+    $fileContent = $this->moduloPdfBuilderService->generateServicePdfUsingGotemberg($service);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';
@@ -167,7 +180,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}/preview", name="preview_service")
-   * @ParamConverter("service", class="App:Servizio")
+   * @ParamConverter("service", class="AppBundle:Servizio")
    * @Template()
    * @param Servizio $service
    *
@@ -178,7 +191,7 @@ class PrintController extends Controller
 
     $pratica = $this->createApplication($service);
 
-    $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
+    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
     return [
       'formserver_url' => $this->getParameter('formserver_public_url'),

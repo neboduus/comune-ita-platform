@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Controller\Rest;
+namespace AppBundle\Controller\Rest;
 
-use App\Dto\User;
-use App\Services\InstanceService;
+use AppBundle\Dto\User;
+use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,7 +24,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class UsersAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/users")
  */
 class UsersAPIController extends AbstractFOSRestController
@@ -37,11 +38,15 @@ class UsersAPIController extends AbstractFOSRestController
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is)
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
   /**
@@ -82,7 +87,7 @@ class UsersAPIController extends AbstractFOSRestController
 
     $qb = $this->em->createQueryBuilder()
       ->select('user')
-      ->from('App:CPSUser', 'user');
+      ->from('AppBundle:CPSUser', 'user');
 
     if (isset($cf)) {
       $qb->andWhere('lower(user.codiceFiscale) = :cf')
@@ -130,7 +135,7 @@ class UsersAPIController extends AbstractFOSRestController
   public function getUserAction(Request $request, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:CPSUser');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
       $result = $repository->find($id);
 
       if ($result === null) {
@@ -184,7 +189,7 @@ class UsersAPIController extends AbstractFOSRestController
   public function postUserAction(Request $request)
   {
     $userDto = new User();
-    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
+    $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -216,7 +221,7 @@ class UsersAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -272,14 +277,14 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function putUserAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:CPSUser');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
     $user = $repository->find($id);
 
     if (!$user) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
     $userDto = new User();
-    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
+    $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -304,7 +309,7 @@ class UsersAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -361,14 +366,14 @@ class UsersAPIController extends AbstractFOSRestController
   public function patchuserAction($id, Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('App:CPSUser');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
     $user = $repository->find($id);
 
     if (!$user) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
     $userDto = User::fromEntity($user);
-    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
+    $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -392,7 +397,7 @@ class UsersAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -418,7 +423,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $user = $this->getDoctrine()->getRepository('App:CPSUser')->find($id);
+    $user = $this->getDoctrine()->getRepository('AppBundle:CPSUser')->find($id);
     if ($user) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

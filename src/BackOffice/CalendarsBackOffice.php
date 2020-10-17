@@ -9,6 +9,7 @@ use App\Services\InstanceService;
 use App\Services\MailerService;
 use App\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -46,12 +47,18 @@ class CalendarsBackOffice implements BackOfficeInterface
     )
   ];
 
-  public function __construct(EntityManager $em, InstanceService $is, MeetingService $meetingService, TranslatorInterface $translator)
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+  public function __construct(EntityManager $em, InstanceService $is, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->meetingService = $meetingService;
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
   public function getName()
@@ -87,12 +94,14 @@ class CalendarsBackOffice implements BackOfficeInterface
       }
     }
     if (!$integrationType) {
+      $this->logger->error($this->translator->trans('backoffice.integration.fields_error'));
       return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
     }
 
     // Check contacts. At least one among tel, cell, email is required
     if (!$meetingData['applicant.data.email_address'] &&
-      !$meetingData['applicant.data.phone_number']) {
+      !$meetingData['applicant.data.phone_number'] && !$meetingData['applicant.data.cell_number']) {
+      $this->logger->error($this->translator->trans('backoffice.integration.calendars.missing_contacts'));
       return ['error' => $this->translator->trans('backoffice.integration.calendars.missing_contacts')];
     }
     preg_match_all("/\(([^\)]*)\)/", $meetingData['calendar'], $matches);
@@ -100,6 +109,7 @@ class CalendarsBackOffice implements BackOfficeInterface
     $repo = $this->em->getRepository('App:Calendar');
     $calendar = $repo->findOneBy(['id' => $matches[1]]);
     if (!$calendar) {
+      $this->logger->error($this->translator->trans('backoffice.integration.calendars.calendar_error', ['calendar_id' => $matches[1]]));
       return ['error' => $this->translator->trans('backoffice.integration.calendars.calendar_error', ['calendar_id' => $matches[1]])];
     }
     // Get start-end datetime
@@ -114,11 +124,16 @@ class CalendarsBackOffice implements BackOfficeInterface
     $end = \DateTime::createFromFormat('d/m/Y:H:i', $date . ':' . $endTime);
 
     try {
+
       $meeting = new Meeting();
       $meeting->setCalendar($calendar);
       $meeting->setEmail($meetingData['applicant.data.email_address']);
       $meeting->setName($data->getUser()->getFullName());
-      $meeting->setPhoneNumber($meetingData['applicant.data.phone_number']);
+      if (isset($meetingData['applicant.data.phone_number'])) {
+        $meeting->setPhoneNumber($meetingData['applicant.data.phone_number']);
+      } else if (isset($meetingData['applicant.data.cell_number'])) {
+        $meeting->setPhoneNumber($meetingData['applicant.data.cell_number']);
+      }
       $meeting->setFiscalCode($meetingData['applicant.data.fiscal_code.data.fiscal_code']);
       $meeting->setUser($data->getUser());
       $meeting->setUserMessage($meetingData['user_message']);
@@ -128,6 +143,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       if (!$this->meetingService->isSlotAvailable($meeting) || !$this->meetingService->isSlotValid($meeting)) {
         // Send email
         $this->meetingService->sendEmailUnavailableMeeting($meeting);
+        $this->logger->error($this->translator->trans('backoffice.integration.calendars.invalid_slot'));
         return ['error' => $this->translator->trans('backoffice.integration.calendars.invalid_slot')];
 
       }
@@ -137,6 +153,7 @@ class CalendarsBackOffice implements BackOfficeInterface
 
       return $meeting;
     } catch (\Exception $exception) {
+      $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
       return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
     }
   }

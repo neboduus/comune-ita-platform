@@ -1,22 +1,23 @@
 <?php
 
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
 
-use App\Entity\Allegato;
-use App\Entity\AllegatoMessaggio;
-use App\Entity\AllegatoOperatore;
-use App\Entity\AllegatoScia;
-use App\Entity\CPSUser;
-use App\Entity\Integrazione;
-use App\Entity\OperatoreUser;
-use App\Entity\Pratica;
-use App\Entity\RichiestaIntegrazione;
-use App\Entity\User;
-use App\Form\Base\AllegatoType;
-use App\Form\Extension\TestiAccompagnatoriProcedura;
-use App\Logging\LogConstants;
+use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoMessaggio;
+use AppBundle\Entity\AllegatoOperatore;
+use AppBundle\Entity\AllegatoScia;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Integrazione;
+use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RichiestaIntegrazione;
+use AppBundle\Entity\User;
+use AppBundle\Form\Base\AllegatoType;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
+use AppBundle\Logging\LogConstants;
+use AppBundle\Services\ModuloPdfBuilderService;
 use Doctrine\ORM\Query;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -36,8 +37,13 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
+use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
+use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 /**
  * Class AllegatoController
@@ -47,6 +53,56 @@ use Vich\UploaderBundle\Mapping\PropertyMapping;
  */
 class AllegatoController extends Controller
 {
+
+  /** @var TranslatorInterface $translator */
+  private $translator;
+
+  /** @var RouterInterface  */
+  private $router;
+
+  /** @var LoggerInterface */
+  private $logger;
+
+  /** @var ValidatorInterface */
+  private $validator;
+
+  /** @var ModuloPdfBuilderService */
+  private $moduloPdfBuilderService;
+
+  /** @var DirectoryNamerInterface */
+  private $directoryNamer;
+
+  /** @var PropertyMappingFactory */
+  private $propertyMappingFactory;
+
+  /**
+   * AllegatoController constructor.
+   * @param TranslatorInterface $translator
+   * @param RouterInterface $router
+   * @param LoggerInterface $logger
+   * @param ValidatorInterface $validator
+   * @param ModuloPdfBuilderService $moduloPdfBuilderService
+   * @param DirectoryNamerInterface $directoryNamer
+   * @param PropertyMappingFactory $propertyMappingFactory
+   */
+  public function __construct(
+    TranslatorInterface $translator,
+    RouterInterface $router,
+    LoggerInterface $logger,
+    ValidatorInterface $validator,
+    ModuloPdfBuilderService $moduloPdfBuilderService,
+    DirectoryNamerInterface $directoryNamer,
+    PropertyMappingFactory $propertyMappingFactory
+  )
+  {
+    $this->translator = $translator;
+    $this->router = $router;
+    $this->logger = $logger;
+    $this->validator = $validator;
+    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
+    $this->directoryNamer = $directoryNamer;
+    $this->propertyMappingFactory = $propertyMappingFactory;
+  }
 
   /**
    * @param Request $request
@@ -58,8 +114,8 @@ class AllegatoController extends Controller
   {
     $allegato = new Allegato();
 
-    $form = $this->createForm(AllegatoType::class, $allegato, ['helper' => new TestiAccompagnatoriProcedura($this->get('translator'))]);
-    $form->add($this->get('translator')->trans('salva'), SubmitType::class);
+    $form = $this->createForm(AllegatoType::class, $allegato, ['helper' => new TestiAccompagnatoriProcedura($this->translator)]);
+    $form->add($this->translator->trans('salva'), SubmitType::class);
 
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
@@ -68,7 +124,7 @@ class AllegatoController extends Controller
       $em->persist($allegato);
       $em->flush();
 
-      return new RedirectResponse($this->get('router')->generate('allegati_list_cpsuser'));
+      return new RedirectResponse($this->router->generate('allegati_list_cpsuser'));
     }
 
     return [
@@ -85,7 +141,6 @@ class AllegatoController extends Controller
   public function uploadAllegatoAction(Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-    $logger = $this->get('logger');
     $session = $this->get('session');
     if (!$session->isStarted()){
       $session->start();
@@ -95,7 +150,7 @@ class AllegatoController extends Controller
 
       case 'GET':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
           if ($file->getHash() == hash('sha256', $session->getId())){
             return $this->createBinaryResponseForAllegato($file);
@@ -112,12 +167,12 @@ class AllegatoController extends Controller
 
           $uploadedFile = $request->files->get('file');
           if (is_null($uploadedFile)) {
-            $logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
+            $this->logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
             return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_UPLOAD_ERROR], Response::HTTP_INTERNAL_SERVER_ERROR);
           }
 
           if (!is_file($uploadedFile->getRealPath())) {
-            $logger->error(LogConstants::ALLEGATO_FILE_NOT_FOUND, $request->request->all());
+            $this->logger->error(LogConstants::ALLEGATO_FILE_NOT_FOUND, $request->request->all());
             return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_NOT_FOUND], Response::HTTP_NOT_FOUND);
           }
 
@@ -146,7 +201,7 @@ class AllegatoController extends Controller
 
       case 'DELETE':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
           if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $session->getId())) {
@@ -186,15 +241,14 @@ class AllegatoController extends Controller
   public function cpsUserUploadAllegatoSciaAction(Request $request, Pratica $pratica)
   {
 
-    $logger = $this->get('logger');
     $uploadedFile = $request->files->get('file');
     if (is_null($uploadedFile)) {
-      $logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
+      $this->logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_UPLOAD_ERROR], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     if (!is_file($uploadedFile->getRealPath())) {
-      $logger->error(LogConstants::ALLEGATO_FILE_NOT_FOUND, $request->request->all());
+      $this->logger->error(LogConstants::ALLEGATO_FILE_NOT_FOUND, $request->request->all());
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_NOT_FOUND], Response::HTTP_NOT_FOUND);
     }
 
@@ -250,13 +304,13 @@ class AllegatoController extends Controller
       'type' => $request->get('type') ?? null,
     ];
 
-    if ($this->getParameter('generate_p7m_thumbnail') == true) {
+    /*if ($this->getParameter('generate_p7m_thumbnail') == true) {
       $p7mThumbnailService = $this->get('ocsdc.p7m_thumbnailer_service');
       if ($p7mThumbnailService->createThumbnailForAllegato($allegato)) {
         $data['url'] = $this->get('router')->generate('allegati_download_thumbnail_cpsuser',
           ['allegato' => $allegato->getId()]);
       }
-    }
+    }*/
 
     //unlink($targetFile);
     return new JsonResponse($data);
@@ -271,7 +325,7 @@ class AllegatoController extends Controller
    */
   public function cpsUserAllegatoDownloadAction(Request $request, Allegato $allegato)
   {
-    $logger = $this->get('logger');
+
     $user = $this->getUser();
     $session = $this->get('session');
     $canDownload = $allegato->getOwner() === $user;
@@ -287,7 +341,7 @@ class AllegatoController extends Controller
       }
     }
     if ($canDownload) {
-      $logger->info(
+      $this->logger->info(
         LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
         [
           'user' => $user ? $user->getId() : $allegato->getHash(),
@@ -298,41 +352,7 @@ class AllegatoController extends Controller
 
       return $this->createBinaryResponseForAllegato($allegato);
     }
-    $this->logUnauthorizedAccessAttempt($allegato, $logger);
-    throw new NotFoundHttpException(); //security by obscurity
-  }
-
-  /**
-   * @param Request $request
-   * @param Allegato $allegato
-   * @Route("/pratiche/allegati/thumbnail/{allegato}", name="allegati_download_thumbnail_cpsuser")
-   * @return BinaryFileResponse
-   * @throws NotFoundHttpException
-   */
-  public function cpsUserAllegatoThumbnailAction(Request $request, Allegato $allegato)
-  {
-    $logger = $this->get('logger');
-    $user = $this->getUser();
-    if ($allegato->getOwner() === $user) {
-      $logger->info(
-        LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
-        [
-          'user' => $user->getId() . ' (' . $user->getNome() . ' ' . $user->getCognome() . ')',
-          'originalFileName' => $allegato->getOriginalFilename(),
-          'allegato' => $allegato->getId(),
-        ]
-      );
-
-      $filename = $allegato->getFilename();
-      $directoryNamer = $this->get('ocsdc.allegati.directory_namer');
-      /** @var PropertyMapping $mapping */
-      $mapping = $this->get('vich_uploader.property_mapping_factory')->fromObject($allegato)[0];
-      $destDir = $mapping->getUploadDestination() . '/' . $directoryNamer->directoryName($allegato, $mapping) . '/thumbnails';
-      $filePath = $destDir . DIRECTORY_SEPARATOR . $filename . '.png';
-
-      return new BinaryFileResponse($filePath);
-    }
-    $this->logUnauthorizedAccessAttempt($allegato, $logger);
+    $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
     throw new NotFoundHttpException(); //security by obscurity
   }
 
@@ -371,7 +391,7 @@ class AllegatoController extends Controller
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
 
-    $violations = $this->get('validator')->validate($allegato);
+    $violations = $this->validator->validate($allegato);
 
     if ($violations->count() > 0) {
       $messages = [];
@@ -428,7 +448,7 @@ class AllegatoController extends Controller
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
 
-    $violations = $this->get('validator')->validate($allegato);
+    $violations = $this->validator->validate($allegato);
 
     if ($violations->count() > 0) {
       $messages = [];
@@ -487,7 +507,7 @@ class AllegatoController extends Controller
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
 
-    $violations = $this->get('validator')->validate($allegato);
+    $violations = $this->validator->validate($allegato);
 
     if ($violations->count() > 0) {
       $messages = [];
@@ -524,7 +544,6 @@ class AllegatoController extends Controller
    */
   public function operatoreAllegatoDownloadAction(Request $request, Allegato $allegato)
   {
-    $logger = $this->get('logger');
     $user = $this->getUser();
     $isOperatoreAmongstTheAllowedOnes = false;
     $becauseOfPratiche = [];
@@ -538,7 +557,7 @@ class AllegatoController extends Controller
     }
 
     if ($isOperatoreAmongstTheAllowedOnes) {
-      $logger->info(
+      $this->logger->info(
         LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE,
         [
           'user' => $user->getId() . ' (' . $user->getNome() . ' ' . $user->getCognome() . ')',
@@ -550,7 +569,7 @@ class AllegatoController extends Controller
 
       return $this->createBinaryResponseForAllegato($allegato);
     }
-    $this->logUnauthorizedAccessAttempt($allegato, $logger);
+    $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
     throw new NotFoundHttpException(); //security by obscurity
   }
 
@@ -563,12 +582,11 @@ class AllegatoController extends Controller
    */
   public function operatoreRispostaDownloadAction(Request $request, Allegato $allegato)
   {
-    $logger = $this->get('logger');
     $user = $this->getUser();
     $isOperatoreAmongstTheAllowedOnes = false;
     $becauseOfPratiche = [];
 
-    $repo = $this->getDoctrine()->getRepository('App:Pratica');
+    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $pratiche = $repo->findBy(
       array('rispostaOperatore' => $allegato)
     );
@@ -581,7 +599,7 @@ class AllegatoController extends Controller
     }
 
     if ($isOperatoreAmongstTheAllowedOnes) {
-      $logger->info(
+      $this->logger->info(
         LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE,
         [
           'user' => $user->getId() . ' (' . $user->getNome() . ' ' . $user->getCognome() . ')',
@@ -593,7 +611,7 @@ class AllegatoController extends Controller
 
       return $this->createBinaryResponseForAllegato($allegato);
     }
-    $this->logUnauthorizedAccessAttempt($allegato, $logger);
+    $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
     throw new NotFoundHttpException(); //security by obscurity
   }
 
@@ -612,7 +630,7 @@ class AllegatoController extends Controller
       throw new NotFoundHttpException();
     }
 
-    $unsignedResponse = $this->get('ocsdc.modulo_pdf_builder')->createUnsignedResponseForPratica($pratica);
+    $unsignedResponse = $this->moduloPdfBuilderService->createUnsignedResponseForPratica($pratica);
     return $this->createBinaryResponseForAllegato($unsignedResponse);
   }
 
@@ -630,9 +648,9 @@ class AllegatoController extends Controller
       $query = $this->getDoctrine()
         ->getManager()
         ->createQuery("SELECT allegato
-                FROM App\Entity\Allegato allegato
-                WHERE (allegato INSTANCE OF App\Entity\Allegato OR allegato INSTANCE OF App\Entity\AllegatoScia)
-                AND (allegato NOT INSTANCE OF App\Entity\ModuloCompilato )
+                FROM AppBundle\Entity\Allegato allegato
+                WHERE (allegato INSTANCE OF AppBundle\Entity\Allegato OR allegato INSTANCE OF AppBundle\Entity\AllegatoScia)
+                AND (allegato NOT INSTANCE OF AppBundle\Entity\ModuloCompilato )
                 AND allegato.owner = :user
                 ORDER BY allegato.filename ASC")
         ->setParameter('user', $this->getUser());
@@ -672,15 +690,15 @@ class AllegatoController extends Controller
         $em->remove($allegato);
         $em->flush();
         $this->get('session')->getFlashBag()
-          ->add('info', $this->get('translator')->trans('allegato.cancellato'));
-        $this->get('logger')->info(LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA, [
+          ->add('info', $this->translator->trans('allegato.cancellato'));
+        $this->logger->info(LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA, [
           'allegato' => $allegato,
           'user' => $this->getUser(),
         ]);
       }
     }
 
-    return new RedirectResponse($this->get('router')->generate('allegati_list_cpsuser'));
+    return new RedirectResponse($this->router->generate('allegati_list_cpsuser'));
   }
 
   private function canDeleteAllegato(Allegato $allegato)
@@ -697,9 +715,9 @@ class AllegatoController extends Controller
   private function createBinaryResponseForAllegato(Allegato $allegato)
   {
     $filename = $allegato->getFilename();
-    $directoryNamer = $this->get('ocsdc.allegati.directory_namer');
+    $directoryNamer = $this->directoryNamer;
     /** @var PropertyMapping $mapping */
-    $mapping = $this->get('vich_uploader.property_mapping_factory')->fromObject($allegato)[0];
+    $mapping = $this->propertyMappingFactory->fromObject($allegato)[0];
     $destDir = $mapping->getUploadDestination() . '/' . $directoryNamer->directoryName($allegato, $mapping);
     $filePath = $destDir . DIRECTORY_SEPARATOR . $filename;
 
@@ -744,7 +762,7 @@ class AllegatoController extends Controller
       return $this->createFormBuilder(array('id' => $allegato->getId()))
         ->add('id', HiddenType::class)
         ->add('elimina', SubmitType::class, ['attr' => ['class' => 'btn btn-xs btn-danger']])
-        ->setAction($this->get('router')->generate('allegati_delete_cpsuser',
+        ->setAction($this->router->generate('allegati_delete_cpsuser',
           ['allegato' => $allegato->getId()]))
         ->setMethod('DELETE')
         ->getForm();

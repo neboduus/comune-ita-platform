@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
-use App\Dto\Application;
-use App\Entity\CPSUser;
-use App\Entity\FormIO;
-use App\Entity\Pratica;
-use App\Entity\PraticaRepository;
-use App\Form\IdCardType;
-use App\FormIO\SchemaFactory;
-use App\Helpers\MunicipalityConverter;
-use App\Logging\LogConstants;
-use App\Security\CPSAuthenticator;
-use App\Services\CPSUserProvider;
+use AppBundle\Dto\Application;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\FormIO;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
+use AppBundle\Form\IdCardType;
+use AppBundle\FormIO\SchemaFactory;
+use AppBundle\Helpers\MunicipalityConverter;
+use AppBundle\Logging\LogConstants;
+use AppBundle\Security\CPSAuthenticator;
+use AppBundle\Services\CPSUserProvider;
+use AppBundle\Services\RemoteContentProviderServiceInterface;
 use DateTime;
 use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
@@ -26,14 +27,38 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class UserController
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/user")
  */
 class UserController extends Controller
 {
+
+  /** @var LoggerInterface */
+  private $logger;
+
+  /** @var TranslatorInterface */
+  private $translator;
+
+  /** @var RemoteContentProviderServiceInterface */
+  private $remoteContentProviderService;
+
+  /**
+   * UserController constructor.
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   */
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RemoteContentProviderServiceInterface $remoteContentProviderService)
+  {
+    $this->logger = $logger;
+    $this->translator = $translator;
+    $this->remoteContentProviderService = $remoteContentProviderService;
+  }
+
+
   /**
    * @Route("/", name="user_dashboard")
    * @Template()
@@ -44,10 +69,10 @@ class UserController extends Controller
   {
     $user = $this->getUser();
 
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $servizi = $serviziRepository->findBy([], [], 3);
 
-    $praticheRepo = $this->getDoctrine()->getRepository('App:Pratica');
+    $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $pratiche = $praticheRepo->findBy(
       ['user' => $user],
       ['creationTime' => 'DESC'],
@@ -57,7 +82,7 @@ class UserController extends Controller
     $threads = [];
 
     $documents = [];
-    $documentRepo = $this->getDoctrine()->getRepository('App:Document');
+    $documentRepo = $this->getDoctrine()->getRepository('AppBundle:Document');
 
     $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
     $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
@@ -94,19 +119,19 @@ class UserController extends Controller
     if ($form->isSubmitted()) {
 
       $data = $form->getData();
-      $this->storeSdcUserData($user, $data, $this->get('logger'));
+      $this->storeSdcUserData($user, $data, $this->logger);
 
       $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'user_profile';
       $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
       $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
       $this->addFlash(
-        'success',$this->get('translator')->trans('aggiorna_profilo'));
+        'success',$this->translator->trans('aggiorna_profilo'));
       return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
     } else {
       if ($request->query->has('r')) {
         $this->addFlash(
           'warning',
-          $this->get('translator')->trans('completa_profilo')
+          $this->translator->trans('completa_profilo')
         );
       }
     }
@@ -179,7 +204,7 @@ class UserController extends Controller
     $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
     if (preg_match($regex, $compiledEmailData)) {
       $this->addFlash(
-        'danger',$this->get('translator')->trans('fake_email_message'));
+        'danger',$this->translator->trans('fake_email_message'));
       $compiledEmailData = '';
     }
 
@@ -264,9 +289,8 @@ class UserController extends Controller
    */
   public function latestNewsAction(Request $request)
   {
-    $newsProvider = $this->get('ocsdc.remote_content_provider');
     $enti = $this->getEntiFromCurrentUser();
-    $data = $newsProvider->getLatestNews($enti);
+    $data = $this->remoteContentProviderService->getLatestNews($enti);
     $response = new JsonResponse($data);
     $response->setMaxAge(3600);
     $response->setSharedMaxAge(3600);
@@ -281,9 +305,8 @@ class UserController extends Controller
    */
   public function latestDeadlinesAction(Request $request)
   {
-    $newsProvider = $this->get('ocsdc.remote_content_provider');
     $enti = $this->getEntiFromCurrentUser();
-    $data = $newsProvider->getLatestDeadlines($enti);
+    $data = $this->remoteContentProviderService->getLatestDeadlines($enti);
     $response = new JsonResponse($data);
     $response->setMaxAge(3600);
     $response->setSharedMaxAge(3600);
@@ -295,13 +318,13 @@ class UserController extends Controller
     $entityManager = $this->getDoctrine()->getManager();
     $entiPerUser = $entityManager->createQueryBuilder()
       ->select('IDENTITY(p.ente)')->distinct()
-      ->from('App:Pratica', 'p')
+      ->from('AppBundle:Pratica', 'p')
       ->where('p.user = :user')
       ->setParameter('user', $this->getUser())
       ->getQuery()
       ->getResult();
 
-    $repository = $entityManager->getRepository('App:Ente');
+    $repository = $entityManager->getRepository('AppBundle:Ente');
     if (count($entiPerUser) > 0) {
       $entiPerUser = array_reduce($entiPerUser, 'array_merge', array());
       $enti = $repository->findBy(['id' => $entiPerUser]);

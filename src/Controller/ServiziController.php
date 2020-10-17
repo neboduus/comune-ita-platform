@@ -1,43 +1,67 @@
 <?php
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
 
-use App\Entity\Ente;
-use App\Entity\ServiceGroup;
-use App\Entity\ServiceGroupRepository;
-use App\Entity\Servizio;
-use App\Entity\ServizioRepository;
-use App\Handlers\Servizio\ForbiddenAccessException;
-use App\Handlers\Servizio\ServizioHandlerRegistry;
-use App\Logging\LogConstants;
+use AppBundle\Entity\Ente;
+use AppBundle\Entity\ServiceGroup;
+use AppBundle\Entity\ServiceGroupRepository;
+use AppBundle\Entity\Servizio;
+use AppBundle\Entity\ServizioRepository;
+use AppBundle\Handlers\Servizio\ForbiddenAccessException;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
+use AppBundle\Logging\LogConstants;
 use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
  * Class ServiziController
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/servizi")
  */
 class ServiziController extends Controller
 {
   /**
+   * @var LoggerInterface
+   */
+  private $logger;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  /**
+   * ServiziController constructor.
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   */
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger)
+  {
+    $this->logger = $logger;
+    $this->translator = $translator;
+  }
+
+
+  /**
    * @Route("/", name="servizi_list")
+   * @Template()
    * @param Request $request
-   * @return Response
+   * @return array
    */
   public function serviziAction(Request $request)
   {
     /** @var ServizioRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     /** @var ServiceGroupRepository $servicesGroupRepository */
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
 
     $stickyServices = $serviziRepository->findStickyAvailable();
     $servizi = $serviziRepository->findNotStickyAvailable();
@@ -50,42 +74,39 @@ class ServiziController extends Controller
 
     /** @var Servizio $item */
     foreach ($servizi as $item) {
-      $services[$item->getSlug().'-'.$item->getId()]['type'] = 'service';
-      $services[$item->getSlug().'-'.$item->getId()]['object'] = $item;
+      $services[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
+      $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
     }
 
     /** @var ServiceGroup $item */
     foreach ($servicesGroup as $item) {
       if ($item->getPublicServices()->count() > 0) {
-        $services[$item->getSlug().'-'.$item->getId()]['type'] = 'group';
-        $services[$item->getSlug().'-'.$item->getId()]['object'] = $item;
+        $services[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
+        $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
       }
     }
 
     /** @var Servizio $item */
     foreach ($stickyServices as $item) {
-      $sticky[$item->getSlug().'-'.$item->getId()]['type'] = 'service';
-      $sticky[$item->getSlug().'-'.$item->getId()]['object'] = $item;
+      $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
+      $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
     }
 
     /** @var ServiceGroup $item */
     foreach ($stickyservicesGroup as $item) {
       if ($item->getPublicServices()->count() > 0) {
-        $sticky[$item->getSlug().'-'.$item->getId()]['type'] = 'group';
-        $sticky[$item->getSlug().'-'.$item->getId()]['object'] = $item;
+        $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
+        $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
       }
     }
 
     ksort($services);
 
-    return $this->render(
-      'Servizi/serviziDetail.html.twig',
-      [
-        'sticky_services' => $sticky,
-        'servizi' => $services,
-        'user' => $this->getUser(),
-      ]
-    );
+    return [
+      'sticky_services' => $sticky,
+      'servizi' => $services,
+      'user' => $this->getUser()
+    ];
   }
 
   /**
@@ -125,7 +146,7 @@ class ServiziController extends Controller
     $user = $this->getUser();
 
     /** @var EntityRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
 
     /** @var Servizio $servizio */
     $servizio = $serviziRepository->findOneBySlug($slug);
@@ -148,7 +169,7 @@ class ServiziController extends Controller
 
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
     $ente = $this->getDoctrine()
-      ->getRepository('App:Ente')
+      ->getRepository('AppBundle:Ente')
       ->findOneBy(
         [
           'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
@@ -158,7 +179,7 @@ class ServiziController extends Controller
       );
 
     if (!$ente instanceof Ente) {
-      $this->get('logger')->info(
+      $this->logger->info(
         LogConstants::PRATICA_WRONG_ENTE_REQUESTED,
         ['headers' => $request->headers]
       );
@@ -172,7 +193,7 @@ class ServiziController extends Controller
       $handler->canAccess($servizio, $ente);
     } catch (ForbiddenAccessException $e) {
       $canAccess = false;
-      $denyAccessMessage = $this->get('translator')->trans($e->getMessage(), $e->getParameters());
+      $denyAccessMessage = $this->translator->trans($e->getMessage(), $e->getParameters());
     }
 
     return [
@@ -196,7 +217,7 @@ class ServiziController extends Controller
   public function serviceGroupDetailAction($slug, Request $request)
   {
     $user = $this->getUser();
-    $serviziRepository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
 
     /** @var Servizio $servizio */
     $servizio = $serviziRepository->findOneBySlug($slug);
@@ -206,7 +227,7 @@ class ServiziController extends Controller
 
     return [
       'user' => $user,
-      'servizio' => $servizio,
+      'servizio' => $servizio
     ];
   }
 
@@ -225,13 +246,11 @@ class ServiziController extends Controller
       $service->setServiceGroup(null);
       $em->persist($service);
       $em->flush();
-      $this->addFlash('feedback', $this->get('translator')->trans('gruppo_di_servizi.servizio_rimosso'));
-
+      $this->addFlash('feedback', $this->translator->trans('gruppo_di_servizi.servizio_rimosso'));
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
 
     } catch (\Exception $exception) {
-      $this->addFlash('warning', $this->get('translator')->trans('gruppo_di_servizi.errore_rimozione'));
-
+      $this->addFlash('warning', $this->translator->trans('gruppo_di_servizi.errore_rimozione'));
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
     }
   }

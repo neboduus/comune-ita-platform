@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
-use App\Entity\Ente;
-use App\Entity\Pratica;
-use App\Entity\Servizio;
-use App\Handlers\Servizio\ForbiddenAccessException;
-use App\Handlers\Servizio\ServizioHandlerRegistry;
-use App\Logging\LogConstants;
-use App\Services\DematerializedFormAllegatiAttacherService;
-use App\Services\InstanceService;
-use App\Services\ModuloPdfBuilderService;
-use App\Services\PraticaStatusService;
+use AppBundle\Entity\Ente;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
+use AppBundle\FormIO\ExpressionValidator;
+use AppBundle\Handlers\Servizio\ForbiddenAccessException;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
+use AppBundle\Logging\LogConstants;
+use AppBundle\Services\DematerializedFormAllegatiAttacherService;
+use AppBundle\Services\InstanceService;
+use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -26,7 +27,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Class PraticheAnonimeController
  *
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/pratiche-anonime")
  */
 class PraticheAnonimeController extends Controller
@@ -56,10 +57,16 @@ class PraticheAnonimeController extends Controller
    */
   protected $dematerializer;
 
+  /** @var InstanceService */
+  protected $instanceService;
+
   /**
    * @var bool
    */
   protected $hashValidity;
+
+  /** @var ExpressionValidator */
+  protected $expressionValidator;
 
   /**
    * PraticaFlow constructor.
@@ -69,7 +76,9 @@ class PraticheAnonimeController extends Controller
    * @param PraticaStatusService $statusService
    * @param ModuloPdfBuilderService $pdfBuilder
    * @param DematerializedFormAllegatiAttacherService $dematerializer
+   * @param InstanceService $instanceService
    * @param $hashValidity
+   * @param ExpressionValidator $expressionValidator
    */
   public function __construct(
     LoggerInterface $logger,
@@ -77,40 +86,43 @@ class PraticheAnonimeController extends Controller
     PraticaStatusService $statusService,
     ModuloPdfBuilderService $pdfBuilder,
     DematerializedFormAllegatiAttacherService $dematerializer,
-    $hashValidity
+    InstanceService $instanceService,
+    $hashValidity,
+    ExpressionValidator $expressionValidator
   ) {
     $this->logger = $logger;
     $this->translator = $translator;
     $this->statusService = $statusService;
     $this->pdfBuilder = $pdfBuilder;
     $this->dematerializer = $dematerializer;
+    $this->instanceService = $instanceService;
     $this->hashValidity = $hashValidity;
+    $this->expressionValidator = $expressionValidator;
   }
 
   /**
    * @Route("/{servizio}/new", name="pratiche_anonime_new")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    * @param Request $request
    * @param Servizio $servizio
    *
-   * @param InstanceService $instanceService
    * @return Response
    */
-  public function newAction(Request $request, Servizio $servizio, InstanceService $instanceService)
+  public function newAction(Request $request, Servizio $servizio)
   {
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    $ente = $instanceService->getCurrentInstance();
+    $ente = $this->instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
-      $this->get('logger')->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
+      $this->logger->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
       throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
     }
 
     try {
       $handler->canAccess($servizio, $ente);
     } catch (ForbiddenAccessException $e) {
-      $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
+      $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
       return $this->redirectToRoute('servizi_list');
     }
@@ -119,7 +131,7 @@ class PraticheAnonimeController extends Controller
 
       return $handler->execute($servizio, $ente);
     } catch (\Exception $e) {
-      $this->get('logger')->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
+      $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
 
       return $this->render(
         '@App/Servizi/serviziFeedback.html.twig',
@@ -135,7 +147,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}", name="pratiche_anonime_show")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Request $request
    * @param Pratica $pratica
@@ -172,7 +184,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}/payment-callback/{hash}", name="pratiche_anonime_payment_callback")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @param PraticaStatusService $statusService
@@ -205,7 +217,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}/pdf", name="pratiche_anonime_show_pdf")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -236,7 +248,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/formio/validate/{servizio}", name="anonymous_formio_validate")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio
@@ -245,7 +257,7 @@ class PraticheAnonimeController extends Controller
    */
   public function formioValidateAction(Request $request, Servizio $servizio)
   {
-    $validator = $this->get('formio.expression_validator');
+    $validator = $this->expressionValidator;
 
     $errors = $validator->validateData(
       $servizio->getFormIoId(),

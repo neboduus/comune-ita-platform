@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Controller\Rest;
+namespace AppBundle\Controller\Rest;
 
-use App\Entity\Folder;
-use App\Services\InstanceService;
+use AppBundle\Entity\Folder;
+use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,7 +24,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class FoldersAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/folders")
  */
 class FoldersAPIController extends AbstractFOSRestController
@@ -37,11 +38,15 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is)
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
   /**
@@ -87,7 +92,7 @@ class FoldersAPIController extends AbstractFOSRestController
 
     $qb = $this->em->createQueryBuilder()
       ->select('folder')
-      ->from('App:Folder', 'folder')
+      ->from('AppBundle:Folder', 'folder')
       ->leftJoin('folder.owner', 'owner');
 
     if (isset($cf)) {
@@ -137,7 +142,7 @@ class FoldersAPIController extends AbstractFOSRestController
   public function getFolderAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Folder');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Folder');
       $folder = $repository->find($id);
       if ($folder === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -193,7 +198,7 @@ class FoldersAPIController extends AbstractFOSRestController
     $folder = new Folder();
     $folder->setTenant($this->is->getCurrentInstance());
 
-    $form = $this->createForm('App\Form\FolderType', $folder);
+    $form = $this->createForm('AppBundle\Form\FolderType', $folder);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -216,7 +221,7 @@ class FoldersAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -271,14 +276,14 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function putFolderAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:Folder');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Folder');
     $folder = $repository->find($id);
 
     if (!$folder) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\FolderType', $folder);
+    $form = $this->createForm('AppBundle\Form\FolderType', $folder);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -302,7 +307,7 @@ class FoldersAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -360,13 +365,13 @@ class FoldersAPIController extends AbstractFOSRestController
   public function patchFolderAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Folder');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Folder');
     $folder = $repository->find($id);
 
     if (!$folder) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\FolderType', $folder);
+    $form = $this->createForm('AppBundle\Form\FolderType', $folder);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -389,7 +394,7 @@ class FoldersAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -423,7 +428,7 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $folder = $this->getDoctrine()->getRepository('App:Folder')->find($id);
+    $folder = $this->getDoctrine()->getRepository('AppBundle:Folder')->find($id);
     if ($folder) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

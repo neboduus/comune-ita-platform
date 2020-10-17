@@ -38,22 +38,58 @@ services:
   AppBundle\Controller\Rest\UsersAPIController:
     autowire: true
 
+  AppBundle\Controller\MessagesController:
+    autowire: true
+
+  AppBundle\Controller\UserController:
+    autowire: true
+
   AppBundle\Controller\Rest\CalendarsAPIController:
-    arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service', '@ocsdc.meeting_service' ]
+    autowire: true
 
   AppBundle\Controller\Rest\MeetingsAPIController:
     autowire: true
-    arguments: [ "@translator" ]
 
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
 
+  AppBundle\Controller\AdminController:
+    autowire: true
+
+  AppBundle\Controller\PraticheController:
+    autowire: true
+
+  AppBundle\Controller\OperatoriController:
+    autowire: true
+
+  AppBundle\Controller\DefaultController:
+    autowire: true
+
+  AppBundle\Controller\AllegatoController:
+    autowire: true
+
+  AppBundle\Controller\ServiziController:
+    autowire: true
+
+  AppBundle\Controller\PrintController:
+    autowire: true
+
+  AppBundle\Controller\GiscomAPIController:
+    arguments:
+      - '@logger'
+      - '@ocsdc.pratica_status_service'
+      - '@ocsdc.status_mapper.giscom'
+      - '@ocsdc.pratica_integration_service'
+      - '@ocsdc.giscom_api.mapper'
+      - '@ocsdc.giscom_api.adapter_direct'
+      - '@ocsdc.giscom_api.adapter_delayed'
+
   AppBundle\Controller\Rest\FoldersAPIController:
-    arguments: [ '@translator', '@doctrine.orm.entity_manager','@ocsdc.instance_service' ]
+    autowire: true
 
   AppBundle\Controller\Rest\DocumentsAPIController:
     arguments:
-      [ "@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service' ]
+      [ "@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service', '@logger' ]
 
   AppBundle\Controller\PraticheAnonimeController:
     arguments:
@@ -62,7 +98,9 @@ services:
       - "@ocsdc.pratica_status_service"
       - "@ocsdc.modulo_pdf_builder"
       - "@ocsdc.allegati.dematerialized_attacher"
+      - "@ocsdc.instance_service"
       - '%hash_validity%'
+      - "@formio.expression_validator"
 
   AppBundle\Controller\TrackingController:
     autowire: true
@@ -141,6 +179,7 @@ services:
       - '@ocsdc.instance_service'
       - '@ocsdc.meeting_service'
       - "@translator"
+      - "@logger"
     public: true
     tags: [ 'app.backoffice' ]
 
@@ -161,11 +200,7 @@ services:
     arguments: [ "@ocsdc.mailer", "%default_from_email_address%", "@logger" ]
 
   AppBundle\Controller\CalendarsController:
-    arguments:
-      - "@translator"
-      - '@doctrine.orm.entity_manager'
-      - '@ocsdc.instance_service'
-      - '@ocsdc.meeting_service'
+    autowire: true
 
   Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
 
@@ -606,8 +641,7 @@ services:
     parent: ocsdc.form.flow.praticaoperatore
 
   # Flow service servizio
-  ocsdc.form.flow.service:
-    class: AppBundle\Form\Admin\ServiceFlow
+  AppBundle\Form\Admin\ServiceFlow:
     parent: craue.form.flow
     arguments: [ "@logger","@translator" ]
 

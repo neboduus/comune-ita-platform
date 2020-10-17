@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Controller\Rest;
+namespace AppBundle\Controller\Rest;
 
-use App\Entity\CPSUser;
-use App\Entity\Meeting;
-use App\Entity\User;
-use App\Services\InstanceService;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Meeting;
+use AppBundle\Entity\User;
+use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -25,7 +26,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class MeetingsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/meetings")
  */
 class MeetingsAPIController extends AbstractFOSRestController
@@ -41,11 +42,15 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is)
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
 
@@ -84,7 +89,7 @@ class MeetingsAPIController extends AbstractFOSRestController
     $meetings = array();
 
     foreach ($results as $result) {
-      $meetings[] = $this->getDoctrine()->getRepository('App:Meeting')->find($result);
+      $meetings[] = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result);
     }
 
     return $this->view($meetings, Response::HTTP_OK);
@@ -132,7 +137,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       $result = $builder->getQuery()->getOneOrNullResult();
 
       if ($result) {
-        $meeting = $this->getDoctrine()->getRepository('App:Meeting')->find($result['id']);
+        $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result['id']);
         return $this->view($meeting, Response::HTTP_OK);
       }
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -184,7 +189,7 @@ class MeetingsAPIController extends AbstractFOSRestController
   {
     $meeting = new Meeting();
 
-    $form = $this->createForm('App\Form\MeetingType', $meeting);
+    $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -218,12 +223,12 @@ class MeetingsAPIController extends AbstractFOSRestController
       } else if ($meeting->getFiscalCode() && !$meeting->getUser()) {
         $result = $em->createQueryBuilder()
           ->select('user.id')
-          ->from('App:User', 'user')
+          ->from('AppBundle:User', 'user')
           ->where('upper(user.username) = upper(:username)')
           ->setParameter('username', $meeting->getFiscalCode())
           ->getQuery()->getResult();
         if ( !empty($result)) {
-          $repository = $em->getRepository('App:CPSUser');
+          $repository = $em->getRepository('AppBundle:CPSUser');
           /**
            * @var CPSUser $user
            */
@@ -262,7 +267,7 @@ class MeetingsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -318,14 +323,14 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function putMeetingAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:Meeting');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
     $meeting = $repository->find($id);
     $oldMeeting = clone $meeting;
 
     if (!$meeting) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\MeetingType', $meeting);
+    $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -358,7 +363,7 @@ class MeetingsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -415,14 +420,14 @@ class MeetingsAPIController extends AbstractFOSRestController
   public function patchMeetingAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Meeting');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
     $meeting = $repository->find($id);
     $oldMeeting = clone $meeting;
 
     if (!$meeting) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\MeetingType', $meeting);
+    $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -456,7 +461,7 @@ class MeetingsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -490,7 +495,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $meeting = $this->getDoctrine()->getRepository('App:Meeting')->find($id);
+    $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($id);
     if ($meeting) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

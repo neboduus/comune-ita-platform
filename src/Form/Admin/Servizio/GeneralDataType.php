@@ -87,7 +87,7 @@ class GeneralDataType extends AbstractType
       ->add('final_indications', TextareaType::class, [
         'label' => 'Indicazioni mostrate al termine della compilazione del servizio',
         'required' => false,
-        'empty_data' => 'La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.',
+        //'empty_data' => 'La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.',
       ])
       ->add('sticky', CheckboxType::class, [
         'label' => 'In evidenza?',

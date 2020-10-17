@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Controller\Rest;
+namespace AppBundle\Controller\Rest;
 
-use App\Entity\AdminUser;
-use App\Entity\CPSUser;
-use App\Entity\Document;
-use App\Entity\OperatoreUser;
-use App\Services\InstanceService;
+use AppBundle\Entity\AdminUser;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Document;
+use AppBundle\Entity\OperatoreUser;
+use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,7 +29,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class DocumentsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/documents")
  */
 class DocumentsAPIController extends AbstractFOSRestController
@@ -43,12 +44,16 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, $rootDir, EntityManagerInterface $em, InstanceService $is)
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(TranslatorInterface $translator, $rootDir, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->rootDir = $rootDir;
     $this->em = $em;
     $this->is = $is;
+    $this->logger = $logger;
   }
 
   /**
@@ -109,7 +114,7 @@ class DocumentsAPIController extends AbstractFOSRestController
 
     $qb = $this->em->createQueryBuilder()
       ->select('document')
-      ->from('App:Document', 'document')
+      ->from('AppBundle:Document', 'document')
       ->leftJoin('document.folder', 'folder')
       ->leftJoin('document.owner', 'owner');
 
@@ -168,7 +173,7 @@ class DocumentsAPIController extends AbstractFOSRestController
   public function getDocumentAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Document');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Document');
       $document = $repository->find($id);
       if ($document === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -235,7 +240,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     }
 
 
-    $form = $this->createForm('App\Form\DocumentAPIType', $document);
+    $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -259,7 +264,7 @@ class DocumentsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -314,13 +319,13 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function putDocumentAction($id, Request $request)
   {
-    $document = $this->em->getRepository('App:Document')->find($id);
+    $document = $this->em->getRepository('AppBundle:Document')->find($id);
 
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\DocumentAPIType', $document);
+    $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -344,7 +349,7 @@ class DocumentsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -401,12 +406,12 @@ class DocumentsAPIController extends AbstractFOSRestController
   public function patchDocumentAction($id, Request $request)
   {
 
-    $document = $this->em->getRepository('App:Document')->find($id);
+    $document = $this->em->getRepository('AppBundle:Document')->find($id);
 
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\DocumentAPIType', $document);
+    $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -429,7 +434,7 @@ class DocumentsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -463,7 +468,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function deleteDocumentAction($id)
   {
-    $document = $this->getDoctrine()->getRepository('App:Document')->find($id);
+    $document = $this->getDoctrine()->getRepository('AppBundle:Document')->find($id);
     if ($document) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -504,7 +509,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function downloadDocumentAction($id)
   {
-    $document = $this->em->getRepository('App:Document')->find($id);
+    $document = $this->em->getRepository('AppBundle:Document')->find($id);
 
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);

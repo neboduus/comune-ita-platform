@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Controller\Rest;
+namespace AppBundle\Controller\Rest;
 
-use App\Entity\Calendar;
-use App\Entity\Meeting;
-use App\Entity\OpeningHour;
-use App\Services\InstanceService;
-use App\Services\MeetingService;
+use AppBundle\Entity\Calendar;
+use AppBundle\Entity\Meeting;
+use AppBundle\Entity\OpeningHour;
+use AppBundle\Services\InstanceService;
+use AppBundle\Services\MeetingService;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,23 +29,29 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * Class CalendarsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/calendars")
  */
 class CalendarsAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  /**
-   * @var MeetingService
-   */
+  private $em;
+
+  private $is;
+
+  /** @var MeetingService */
   private $meetingService;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService)
+  /** @var LoggerInterface */
+  private $logger;
+
+  public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
+    $this->logger = $logger;
   }
 
 
@@ -64,7 +71,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarsAction()
   {
-    $calendars = $this->getDoctrine()->getRepository('App:Calendar')->findAll();
+    $calendars = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findAll();
 
     return $this->view($calendars, Response::HTTP_OK);
   }
@@ -91,7 +98,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   public function getCalendarAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Calendar');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -152,8 +159,8 @@ class CalendarsAPIController extends AbstractFOSRestController
     $endDate = $request->query->get('to_time');
     try {
       /** @var OpeningHour[] $openingHours */
-      $openingHours = $this->getDoctrine()->getRepository('App:OpeningHour')->findBy(['calendar' => $id]);
-      $calendar = $this->getDoctrine()->getRepository('App:Calendar')->findOneBy(['id' => $id]);
+      $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
+      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($calendar === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
@@ -247,8 +254,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     try {
       /** @var OpeningHour[] $openingHours */
-      $openingHours = $this->getDoctrine()->getRepository('App:OpeningHour')->findBy(['calendar' => $id]);
-      $calendar = $this->getDoctrine()->getRepository('App:Calendar')->findOneBy(['id' => $id]);
+      $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
+      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($openingHours === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
@@ -305,7 +312,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   {
     $calendar = new Calendar();
 
-    $form = $this->createForm('App\Form\CalendarType', $calendar);
+    $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -329,7 +336,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -385,13 +392,13 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function putCalendarAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:Calendar');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
     $calendar = $repository->find($id);
 
     if (!$calendar) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\CalendarType', $calendar);
+    $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -415,7 +422,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -472,13 +479,13 @@ class CalendarsAPIController extends AbstractFOSRestController
   public function patchCalendarAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Calendar');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
     $calendar = $repository->find($id);
 
     if (!$calendar) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\CalendarType', $calendar);
+    $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -501,7 +508,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -535,7 +542,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $calendar = $this->getDoctrine()->getRepository('App:Calendar')->find($id);
+    $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->find($id);
     if ($calendar) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -610,7 +617,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   public function getOpeningHoursAction($calendar_id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Calendar');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
       $calendar = $repository->find($calendar_id);
       if ($calendar === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -648,7 +655,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   public function getOpeningHourAction($calendar_id, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:OpeningHour');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
       $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
       if ($openingHour === null) {
@@ -686,7 +693,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function deleteOpeningHourAction($calendar_id, $id)
   {
-    $repository = $this->getDoctrine()->getRepository('App:OpeningHour');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
     if ($openingHour) {
       // debated point: should we 404 on an unknown nickname?
@@ -744,13 +751,13 @@ class CalendarsAPIController extends AbstractFOSRestController
 
   public function postOpeningHourAction($calendar_id, Request $request)
   {
-    $calendar = $this->em->getRepository('App:Calendar')->find($calendar_id);
+    $calendar = $this->em->getRepository('AppBundle:Calendar')->find($calendar_id);
     if (!$calendar) {
       return $this->view('Calendar not found', Response::HTTP_BAD_REQUEST);
     }
     $openingHour = new OpeningHour();
     $openingHour->setCalendar($calendar);
-    $form = $this->createForm('App\Form\OpeningHourType', $openingHour);
+    $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -772,7 +779,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -829,13 +836,13 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function putOpeningHourAction($calendar_id, $id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:OpeningHour');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
     if (!$openingHour) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\OpeningHourType', $openingHour);
+    $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -858,7 +865,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => $e->getMessage()
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -917,7 +924,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   public function patchOpeningHourAction($calendar_id, $id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:OpeningHour');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
     $openingHour->setDaysOfWeek([]);
@@ -925,7 +932,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     if (!$openingHour) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('App\Form\OpeningHourType', $openingHour);
+    $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -948,7 +955,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during save process'
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );

@@ -1,27 +1,31 @@
 <?php
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
-use App\Entity\Allegato;
-use App\Entity\CPSUser;
-use App\Entity\Ente;
-use App\Entity\GiscomPratica;
-use App\Entity\Message;
-use App\Entity\Nota;
-use App\Entity\OperatoreUser;
-use App\Entity\Pratica;
-use App\Entity\PraticaRepository;
-use App\Entity\Servizio;
-use App\Entity\User;
-use App\Form\Base\MessageType;
-use App\Form\Base\PraticaFlow;
-use App\Handlers\Servizio\ForbiddenAccessException;
-use App\Handlers\Servizio\ServizioHandlerRegistry;
-use App\Logging\LogConstants;
-use App\Model\CallToAction;
-use App\Services\InstanceService;
-use App\Services\ModuloPdfBuilderService;
-use App\Services\PraticaStatusService;
+use AppBundle\Entity\Allegato;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Ente;
+use AppBundle\Entity\GiscomPratica;
+use AppBundle\Entity\Message;
+use AppBundle\Entity\Nota;
+use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\Servizio;
+use AppBundle\Entity\User;
+use AppBundle\Form\Base\MessageType;
+use AppBundle\Form\Base\PraticaFlow;
+use AppBundle\FormIO\ExpressionValidator;
+use AppBundle\Handlers\Servizio\ForbiddenAccessException;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
+use AppBundle\Logging\LogConstants;
+use AppBundle\Model\CallToAction;
+use AppBundle\Services\InstanceService;
+use AppBundle\Services\MailerService;
+use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\PraticaStatusService;
+use Flagception\Manager\FeatureManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -37,17 +41,82 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class PraticheController
  *
- * @package App\Controller
+ * @package AppBundle\Controller
  * @Route("/pratiche")
  */
 class PraticheController extends Controller
 {
 
   const ENTE_SLUG_QUERY_PARAMETER = 'ente';
+
+  /** @var InstanceService */
+  private $instanceService;
+
+  /** @var PraticaStatusService */
+  private $praticaStatusService;
+
+  /** @var ModuloPdfBuilderService */
+  private $pdfBuilderService;
+
+  /** @var ExpressionValidator */
+  private $expressionValidator;
+
+  /** @var LoggerInterface */
+  private $logger;
+
+  /** @var TranslatorInterface */
+  private $translator;
+
+  /** @var RouterInterface */
+  private $router;
+
+  /** @var MailerService */
+  private $mailer;
+
+  /** @var FeatureManagerInterface */
+  private $featureManager;
+
+
+  /**
+   * PraticheController constructor.
+   * @param InstanceService $instanceService
+   * @param PraticaStatusService $praticaStatusService
+   * @param ModuloPdfBuilderService $moduloPdfBuilderService
+   * @param ExpressionValidator $validator
+   * @param LoggerInterface $logger
+   * @param TranslatorInterface $translator
+   * @param RouterInterface $router
+   * @param MailerService $mailer
+   * @param FeatureManagerInterface $featureManager
+   */
+  public function __construct(
+    InstanceService $instanceService,
+    PraticaStatusService $praticaStatusService,
+    ModuloPdfBuilderService $moduloPdfBuilderService,
+    ExpressionValidator $validator,
+    LoggerInterface $logger,
+    TranslatorInterface $translator,
+    RouterInterface $router,
+    MailerService $mailer,
+    FeatureManagerInterface $featureManager
+  )
+  {
+    $this->instanceService = $instanceService;
+    $this->praticaStatusService = $praticaStatusService;
+    $this->pdfBuilderService = $moduloPdfBuilderService;
+    $this->expressionValidator = $validator;
+    $this->logger = $logger;
+    $this->translator = $translator;
+    $this->router = $router;
+    $this->mailer = $mailer;
+    $this->featureManager = $featureManager;
+  }
 
   /**
    * @Route("/", name="pratiche")
@@ -60,7 +129,7 @@ class PraticheController extends Controller
     /** @var CPSUser $user */
     $user = $this->getUser();
     /** @var PraticaRepository $repo */
-    $repo = $this->getDoctrine()->getRepository('App:Pratica');
+    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $pratiche = $repo->findBy(
       array('user' => $user),
       array('status' => 'DESC')
@@ -95,29 +164,28 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{servizio}/new", name="pratiche_new")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio
    *
-   * @param InstanceService $instanceService
    * @return Response
    */
-  public function newAction(Request $request, Servizio $servizio, InstanceService $instanceService)
+  public function newAction(Request $request, Servizio $servizio)
   {
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
 
-    $ente = $instanceService->getCurrentInstance();
+    $ente = $this->instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
-      $this->get('logger')->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
+      $this->logger->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
       throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
     }
 
     try {
       $handler->canAccess($servizio, $ente);
     } catch (ForbiddenAccessException $e) {
-      $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
+      $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
       return $this->redirectToRoute('servizi_list');
     }
@@ -126,7 +194,7 @@ class PraticheController extends Controller
 
       return $handler->execute($servizio, $ente);
     } catch (\Exception $e) {
-      $this->get('logger')->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
+      $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
 
       return $this->render(
         '@App/Servizi/serviziFeedback.html.twig',
@@ -142,7 +210,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{servizio}/draft", name="pratiche_list_draft")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    * @Template()
    * @param Servizio $servizio
    *
@@ -151,7 +219,7 @@ class PraticheController extends Controller
   public function listDraftByServiceAction(Servizio $servizio)
   {
     $user = $this->getUser();
-    $repo = $this->getDoctrine()->getRepository('App:Pratica');
+    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $pratiche = $repo->findBy(
       array(
         'user' => $user,
@@ -177,7 +245,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/compila/{pratica}", name="pratiche_compila")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -199,7 +267,7 @@ class PraticheController extends Controller
     try {
       $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
     } catch (ForbiddenAccessException $e) {
-      $this->addFlash('warning', $this->get('translator')->trans($e->getMessage(), $e->getParameters()));
+      $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
       return $this->redirectToRoute('pratiche');
     }
@@ -244,7 +312,7 @@ class PraticheController extends Controller
 
         $praticaFlowService->onFlowCompleted($pratica);
 
-        $this->get('logger')->info(
+        $this->logger->info(
           LogConstants::PRATICA_UPDATED,
           ['id' => $pratica->getId(), 'pratica' => $pratica]
         );
@@ -299,7 +367,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}", name="pratiche_show")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -355,7 +423,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/detail", name="pratica_show_detail")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -363,9 +431,9 @@ class PraticheController extends Controller
    */
   public function detailAction(Request $request, Pratica $pratica)
   {
-    $translator = $this->get('translator');
+    $translator = $this->translator;
 
-    if (!$this->get('flagception.manager.feature_manager')->isActive('feature_application_detail')) {
+    if (!$this->featureManager->isActive('feature_application_detail')) {
       return $this->redirectToRoute('pratiche_show', ['pratica' => $pratica]);
     }
 
@@ -374,7 +442,7 @@ class PraticheController extends Controller
     $this->checkUserCanAccessPratica($pratica, $user);
     $tab = $request->query->get('tab');
 
-    $attachments = $this->getDoctrine()->getRepository('App:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 
     $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
       && $pratica->getUser()->getId() == $user->getId();
@@ -390,7 +458,7 @@ class PraticheController extends Controller
     $message = new Message();
     $message->setApplication($pratica);
     $message->setAuthor($user);
-    $messageForm = $this->createForm('App\Form\ApplicationMessageType', $message);
+    $messageForm = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
     $messageForm->handleRequest($request);
 
     if ($messageForm->isSubmitted() && $messageForm->isValid()) {
@@ -410,7 +478,7 @@ class PraticheController extends Controller
       $em->persist($message);
       $em->flush();
 
-      $this->get('logger')->info(
+      $this->logger->info(
         LogConstants::PRATICA_COMMENTED,
         [
           'pratica' => $pratica->getId(),
@@ -420,14 +488,14 @@ class PraticheController extends Controller
 
       // Todo: rendere asincrono l'invio delle email
       if ($pratica->getOperatore()) {
-        $instance = $this->get('ocsdc.instance_service')->getCurrentInstance();
+        $instance = $this->instanceService->getCurrentInstance();
         /** @var OperatoreUser $userReceiver */
         $userReceiver = $message->getApplication()->getOperatore();
         $subject = $translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
         $mess = $translator->trans('pratica.messaggi.messaggio', [
           '%message%' => $message->getMessage(),
-          '%link%' => $this->get('router')->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
-        $this->get('ocsdc.mailer')->dispatchMail($user->getEmail(), $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+          '%link%' => $this->router->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
+        $this->mailer->dispatchMail($user->getEmail(), $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
         $message->setSentAt(time());
         $em->persist($message);
@@ -438,7 +506,7 @@ class PraticheController extends Controller
       return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note']);
     }
 
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
 
     $result = [
@@ -477,7 +545,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/withdraw", name="pratiche_withdraw")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -486,15 +554,15 @@ class PraticheController extends Controller
    * @return array|RedirectResponse
    * @throws \Exception
    */
-  public function withdrawAction(Request $request, Pratica $pratica, PraticaStatusService $praticaStatusService, ModuloPdfBuilderService $pdfBuilderService)
+  public function withdrawAction(Request $request, Pratica $pratica)
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
     if ($this->userCanWithdrawPratica($pratica, $user)) {
 
-      $withdrawAttachment = $pdfBuilderService->createWithdrawForPratica($pratica);
+      $withdrawAttachment = $this->pdfBuilderService->createWithdrawForPratica($pratica);
       $pratica->addAllegato($withdrawAttachment);
-      $praticaStatusService->setNewStatus(
+      $this->praticaStatusService->setNewStatus(
         $pratica,
         Pratica::STATUS_WITHDRAW
       );
@@ -507,7 +575,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/payment-callback", name="pratiche_payment_callback")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -515,14 +583,14 @@ class PraticheController extends Controller
    * @return array|RedirectResponse
    * @throws \Exception
    */
-  public function paymentCallbackAction(Request $request, Pratica $pratica, PraticaStatusService $praticaStatusService)
+  public function paymentCallbackAction(Request $request, Pratica $pratica)
   {
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $outcome = $request->get('esito');
 
     if ($outcome == 'OK') {
-      $praticaStatusService->setNewStatus(
+      $this->praticaStatusService->setNewStatus(
         $pratica,
         Pratica::STATUS_PAYMENT_OUTCOME_PENDING
       );
@@ -539,19 +607,17 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
-   * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
-   * @param ModuloPdfBuilderService $pdfBuilderService
    * @return BinaryFileResponse
    */
-  public function showPdfAction(Request $request, Pratica $pratica, ModuloPdfBuilderService $pdfBuilderService)
+  public function showPdfAction(Request $request, Pratica $pratica)
   {
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
-    $allegato = $pdfBuilderService->showForPratica($pratica);
+    $allegato = $this->pdfBuilderService->showForPratica($pratica);
 
     $fileName = $allegato->getOriginalFilename();
     if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
@@ -570,7 +636,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/delete", name="pratiche_delete")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -594,7 +660,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/protocollo", name="pratiche_show_protocolli")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -609,7 +675,7 @@ class PraticheController extends Controller
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->getDoctrine()->getRepository('App:Allegato')->find($protocollo->id);
+      $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
       if ($allegato instanceof Allegato) {
         $allegati[] = [
           'allegato' => $allegato,
@@ -629,7 +695,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/formio/validate/{servizio}", name="formio_validate")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio
@@ -638,7 +704,7 @@ class PraticheController extends Controller
    */
   public function formioValidateAction(Request $request, Servizio $servizio)
   {
-    $validator = $this->get('formio.expression_validator');
+    $validator = $this->expressionValidator;
 
     $errors = $validator->validateData(
       $servizio->getFormIoId(),
@@ -653,50 +719,5 @@ class PraticheController extends Controller
     }
 
     return JsonResponse::create($response, Response::HTTP_OK);
-  }
-
-  /**
-   * @param Pratica $pratica
-   * @param $user
-   * @return array
-   */
-  private function createThreadElementsForUserAndPratica(Pratica $pratica, User $user, $returnURL)
-  {
-
-    if ($pratica->getEnte()) {
-      $messagesAdapterService = $this->get('ocsdc.messages_adapter');
-      //FIXME: this should be the Capofila Ente (the first in the array of the Erogatore's ones)
-      $ente = $pratica->getEnte();
-      $servizio = $pratica->getServizio();
-      $userThread = $messagesAdapterService->getThreadsForUserEnteAndService($user, $ente, $servizio);
-      if (!$userThread) {
-        return null;
-      }
-
-      $threadId = $userThread[0]->threadId;
-      $threadForm = $this->createForm(
-        MessageType::class,
-        [
-          'thread_id' => $threadId,
-          'sender_id' => $user->getId(),
-          'return_url' => $returnURL,
-        ],
-        [
-          'action' => $this->get('router')->generate('messages_controller_enqueue_for_user', ['threadId' => $threadId]),
-          'method' => 'PUT',
-        ]
-      );
-
-      $thread = [
-        'threadId' => $threadId,
-        'title' => $userThread[0]->title,
-        'messages' => $messagesAdapterService->getDecoratedMessagesForThread($threadId, $user),
-        'form' => $threadForm->createView(),
-      ];
-
-      return [$thread];
-    }
-
-    return null;
   }
 }

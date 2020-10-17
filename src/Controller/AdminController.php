@@ -1,20 +1,23 @@
 <?php
 
-namespace App\Controller;
+namespace AppBundle\Controller;
 
-use App\Controller\Rest\ServicesAPIController;
-use App\Dto\Service;
-use App\Entity\AuditLog;
-use App\Entity\Categoria;
-use App\Entity\Erogatore;
-use App\Entity\OperatoreUser;
-use App\Entity\Pratica;
-use App\Entity\Servizio;
-use App\Model\FlowStep;
-use App\Services\FormServerApiAdapterService;
-use App\Services\InstanceService;
+use AppBundle\Controller\Rest\ServicesAPIController;
+use AppBundle\Dto\Service;
+use AppBundle\Entity\AuditLog;
+use AppBundle\Entity\Categoria;
+use AppBundle\Entity\Erogatore;
+use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
+use AppBundle\Form\Admin\ServiceFlow;
+use AppBundle\FormIO\SchemaFactoryInterface;
+use AppBundle\Model\FlowStep;
+use AppBundle\Services\FormServerApiAdapterService;
+use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 use GuzzleHttp\Client;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -33,6 +36,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
@@ -42,6 +46,51 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends Controller
 {
   use DataTablesTrait;
+
+  /** @var InstanceService */
+  private $instanceService;
+
+  /** @var FormServerApiAdapterService */
+  private $formServer;
+
+  /**@var TokenGeneratorInterface */
+  private $tokenGenerator;
+
+  /** @var TranslatorInterface */
+  private $translator;
+
+  /** @var ServiceFlow */
+  private $serviceFlow;
+
+  /** @var SchemaFactoryInterface */
+  private $schemaFactory;
+
+  /**
+   * AdminController constructor.
+   * @param InstanceService $instanceService
+   * @param FormServerApiAdapterService $formServer
+   * @param TokenGeneratorInterface $tokenGenerator
+   * @param TranslatorInterface $translator
+   * @param ServiceFlow $serviceFlow
+   * @param SchemaFactoryInterface $schemaFactory
+   */
+  public function __construct(
+    InstanceService $instanceService,
+    FormServerApiAdapterService $formServer,
+    TokenGeneratorInterface $tokenGenerator,
+    TranslatorInterface $translator,
+    ServiceFlow $serviceFlow,
+    SchemaFactoryInterface $schemaFactory
+  )
+  {
+    $this->instanceService = $instanceService;
+    $this->formServer = $formServer;
+    $this->tokenGenerator = $tokenGenerator;
+    $this->translator = $translator;
+    $this->serviceFlow = $serviceFlow;
+    $this->schemaFactory = $schemaFactory;
+  }
+
 
   /**
    * @Route("/", name="admin_index")
@@ -60,14 +109,13 @@ class AdminController extends Controller
    * @Route("/ente", name="admin_edit_ente")
    * @Template()
    * @param Request $request
-   * @param InstanceService $instanceService
    * @return array|RedirectResponse
    */
-  public function editEnteAction(Request $request, InstanceService $instanceService)
+  public function editEnteAction(Request $request)
   {
     $entityManager = $this->getDoctrine()->getManager();
-    $ente = $instanceService->getCurrentInstance();
-    $form = $this->createForm('App\Form\Admin\Ente\EnteType', $ente);
+    $ente = $this->instanceService->getCurrentInstance();
+    $form = $this->createForm('AppBundle\Form\Admin\Ente\EnteType', $ente);
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
       $ente = $form->getData();
@@ -96,7 +144,7 @@ class AdminController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
 
-    $operatoreUsers = $em->getRepository('App:OperatoreUser')->findAll();
+    $operatoreUsers = $em->getRepository('AppBundle:OperatoreUser')->findAll();
 
     return array(
       'user' => $this->getUser(),
@@ -110,25 +158,22 @@ class AdminController extends Controller
    * @Route("/operatore/new", name="admin_operatore_new")
    * @Method({"GET", "POST"})
    * @param Request $request
-   * @param InstanceService $instanceService
    * @return array|RedirectResponse
    */
-  public function newOperatoreAction(Request $request, InstanceService $instanceService)
+  public function newOperatoreAction(Request $request)
   {
     $operatoreUser = new Operatoreuser();
-    $form = $this->createForm('App\Form\OperatoreUserType', $operatoreUser);
+    $form = $this->createForm('AppBundle\Form\OperatoreUserType', $operatoreUser);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
       $em = $this->getDoctrine()->getManager();
-      $ente = $instanceService->getCurrentInstance();
-
-      $tokenGenerator = $this->get('fos_user.util.token_generator');
+      $ente = $this->instanceService->getCurrentInstance();
 
       $operatoreUser
         ->setEnte($ente)
         ->setPlainPassword(md5(time()))
-        ->setConfirmationToken($tokenGenerator->generateToken())
+        ->setConfirmationToken($this->tokenGenerator->generateToken())
         ->setPasswordRequestedAt(new \DateTime())
         ->setEnabled(true);
       $em->persist($operatoreUser);
@@ -136,6 +181,7 @@ class AdminController extends Controller
 
       $mailer = $this->get('fos_user.mailer');
       $mailer->sendResettingEmailMessage($operatoreUser);
+
       $this->addFlash('feedback', 'Operatore creato con successo');
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
@@ -178,7 +224,7 @@ class AdminController extends Controller
    */
   public function editOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
-    $editForm = $this->createForm('App\Form\OperatoreUserType', $operatoreUser);
+    $editForm = $this->createForm('AppBundle\Form\OperatoreUserType', $operatoreUser);
     $editForm->handleRequest($request);
 
     if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -202,9 +248,8 @@ class AdminController extends Controller
   public function resetPasswordOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
     $em = $this->getDoctrine()->getManager();
-    $tokenGenerator = $this->get('fos_user.util.token_generator');
     $operatoreUser
-      ->setConfirmationToken($tokenGenerator->generateToken())
+      ->setConfirmationToken($this->tokenGenerator->generateToken())
       ->setPasswordRequestedAt(new \DateTime());
     $em->persist($operatoreUser);
     $em->flush();
@@ -275,11 +320,11 @@ class AdminController extends Controller
   public function indexServizioAction()
   {
     $statuses = [
-      Servizio::STATUS_CANCELLED => $this->get('translator')->trans('servizio.statutes.bozza'),
-      Servizio::STATUS_AVAILABLE => $this->get('translator')->trans('servizio.statutes.pubblicato'),
-      Servizio::STATUS_SUSPENDED => $this->get('translator')->trans('servizio.statutes.sospeso'),
-      Servizio::STATUS_PRIVATE => $this->get('translator')->trans('servizio.statutes.privato'),
-      Servizio::STATUS_SCHEDULED => $this->get('translator')->trans('servizio.statutes.schedulato'),
+      Servizio::STATUS_CANCELLED => $this->translator->trans('servizio.statutes.bozza'),
+      Servizio::STATUS_AVAILABLE => $this->translator->trans('servizio.statutes.pubblicato'),
+      Servizio::STATUS_SUSPENDED => $this->translator->trans('servizio.statutes.sospeso'),
+      Servizio::STATUS_PRIVATE => $this->translator->trans('servizio.statutes.privato'),
+      Servizio::STATUS_SCHEDULED => $this->translator->trans('servizio.statutes.schedulato'),
     ];
 
     $accessLevels = [
@@ -291,7 +336,7 @@ class AdminController extends Controller
     ];
 
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('App:Servizio')->findBy([], ['name' => 'ASC']);
+    $items = $em->getRepository('AppBundle:Servizio')->findBy([], ['name' => 'ASC']);
 
     return array(
       'user' => $this->getUser(),
@@ -310,7 +355,7 @@ class AdminController extends Controller
   {
 
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('App:Servizio')->findBy(['praticaFCQN' => '\App\Entity\FormIO'], ['name' => 'ASC']);
+    $items = $em->getRepository('AppBundle:Servizio')->findBy(['praticaFCQN' => '\AppBundle\Entity\FormIO'], ['name' => 'ASC']);
 
     $data = [];
     foreach ($items as $s) {
@@ -332,15 +377,13 @@ class AdminController extends Controller
   /**
    * @Route("/servizio/import", name="admin_servizio_import")
    * @param Request $request
-   * @param InstanceService $instanceService
    * @param ServicesAPIController $serviceApi
-   * @param FormServerApiAdapterService $formServer
    * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function importServizioAction(Request $request, InstanceService $instanceService, ServicesAPIController $serviceApi, FormServerApiAdapterService $formServer)
+  public function importServizioAction(Request $request, ServicesAPIController $serviceApi)
   {
     $em = $this->getDoctrine()->getManager();
-    $ente = $instanceService->getCurrentInstance();
+    $ente = $this->instanceService->getCurrentInstance();
 
     $remoteUrl = $request->get('url');
     $client = new Client();
@@ -358,7 +401,7 @@ class AdminController extends Controller
         $responseBody['tenant'] = $ente->getId();
 
         $serviceDto = new Service();
-        $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
+        $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
         unset($responseBody['id'], $responseBody['slug']);
 
         $data = $serviceApi->normalizeData($responseBody);
@@ -369,14 +412,14 @@ class AdminController extends Controller
           return $this->redirectToRoute('admin_servizio_index');
         }
 
-        $category = $em->getRepository('App:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+        $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
         if ($category instanceof Categoria) {
           $serviceDto->setTopics($category);
         }
 
         $service = $serviceDto->toEntity();
         $service->setName($service->getName() . ' (importato ' . date('d/m/Y H:i:s') . ')');
-        $service->setPraticaFCQN('\App\Entity\FormIO');
+        $service->setPraticaFCQN('\AppBundle\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
         $service->setEnte($ente);
         // Erogatore
@@ -389,7 +432,7 @@ class AdminController extends Controller
         $em->flush();
 
         if (!empty($service->getFormIoId())) {
-          $response = $formServer->cloneFormFromRemote( $service, $remoteUrl .'/form');
+          $response = $this->formServer->cloneFormFromRemote( $service, $remoteUrl .'/form');
           if ($response['status'] == 'success') {
             $formId = $response['form_id'];
             $flowStep = new FlowStep();
@@ -426,7 +469,7 @@ class AdminController extends Controller
 
   /**
    * @Route("/servizio/{servizio}/edit", name="admin_servizio_edit")
-   * @ParamConverter("servizio", class="App:Servizio")
+   * @ParamConverter("servizio", class="AppBundle:Servizio")
    * @Template()
    * @param Servizio $servizio
    *
@@ -435,7 +478,7 @@ class AdminController extends Controller
   public function editServizioAction(Servizio $servizio)
   {
     $user = $this->getUser();
-    $flowService = $this->get('ocsdc.form.flow.service');
+    $flowService = $this->serviceFlow;
     $flowService->setInstanceKey($user->getId());
     $flowService->bind($servizio);
 
@@ -484,7 +527,7 @@ class AdminController extends Controller
 
   /**
    * @Route("/servizio/{servizio}/custom-validation", name="admin_servizio_custom_validation")
-   * @ParamConverter("servizio", class="App:Servizio")
+   * @ParamConverter("servizio", class="AppBundle:Servizio")
    * @Template()
    * @param Request $request
    * @param Servizio $servizio
@@ -495,7 +538,7 @@ class AdminController extends Controller
   {
     $user = $this->getUser();
 
-    $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId());
+    $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
 
     $form = $this->createFormBuilder(null)->add(
       "post_submit_validation_expression", TextareaType::class, [
@@ -537,17 +580,16 @@ class AdminController extends Controller
    * @Route("/servizio/new", name="admin_service_new")
    * @Method({"GET", "POST"})
    * @param Request $request
-   * @param InstanceService $instanceService
    * @return RedirectResponse|Response|null
    */
-  public function newServiceAction(Request $request, InstanceService $instanceService)
+  public function newServiceAction(Request $request)
   {
 
     $servizio = new Servizio();
-    $ente = $instanceService->getCurrentInstance();
+    $ente = $this->instanceService->getCurrentInstance();
 
     $servizio->setName('Nuovo Servizio ' . time());
-    $servizio->setPraticaFCQN('\App\Entity\FormIO');
+    $servizio->setPraticaFCQN('\AppBundle\Entity\FormIO');
     $servizio->setPraticaFlowServiceName('ocsdc.form.flow.formio');
     $servizio->setEnte($ente);
     $servizio->setStatus(Servizio::STATUS_CANCELLED);
@@ -563,7 +605,7 @@ class AdminController extends Controller
     $this->getDoctrine()->getManager()->flush();
 
     $user = $this->getUser();
-    $flowService = $this->get('ocsdc.form.flow.service');
+    $flowService = $this->serviceFlow;
 
     $flowService->setInstanceKey($user->getId());
 
@@ -608,12 +650,12 @@ class AdminController extends Controller
    * @Route("/servizio/{id}/delete", name="admin_servizio_delete")
    * @Method("GET")
    */
-  public function deleteServiceAction(Request $request, Servizio $servizio, FormServerApiAdapterService $formServer)
+  public function deleteServiceAction(Request $request, Servizio $servizio)
   {
 
     try {
-      if ($servizio->getPraticaFCQN() == '\App\Entity\FormIO') {
-        $formServer->deleteForm($servizio);
+      if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
+        $this->formServer->deleteForm($servizio);
       }
 
       $em = $this->getDoctrine()->getManager();
@@ -632,13 +674,12 @@ class AdminController extends Controller
 
   /**
    * @Route("/servizio/{servizio}/schema", name="admin_servizio_schema_edit")
-   * @ParamConverter("servizio", class="App:Servizio")
+   * @ParamConverter("servizio", class="AppBundle:Servizio")
    * @param Request $request
    * @param Servizio $servizio
-   * @param FormServerApiAdapterService $formServer
    * @return JsonResponse
    */
-  public function formioValidateAction(Request $request, Servizio $servizio, FormServerApiAdapterService $formServer)
+  public function formioValidateAction(Request $request, Servizio $servizio)
   {
 
     $data = $request->get('schema');
@@ -646,7 +687,7 @@ class AdminController extends Controller
       $schema = \json_decode($data, true);
 
       try {
-        $response = $formServer->editForm($schema);
+        $response = $this->formServer->editForm($schema);
         return JsonResponse::create($response, Response::HTTP_OK);
       } catch (\Exception $exception) {
         return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

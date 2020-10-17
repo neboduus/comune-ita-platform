@@ -14,6 +14,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use ICal\ICal;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -56,12 +57,18 @@ class CalendarsController extends Controller
    */
   private $meetingService;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService)
+  /**
+   * @var JWTTokenManagerInterface
+   */
+  private $JWTTokenManager;
+
+  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
+    $this->JWTTokenManager = $JWTTokenManager;
   }
 
   /**
@@ -100,8 +107,8 @@ class CalendarsController extends Controller
 
         return sprintf('<a class="btn-link %s" href="%s">%s</a>', $canAccess ? "" : "disabled",
           $this->generateUrl('operatori_calendar_show', [
-          'calendar' => $calendar['id']
-        ]), $calendar['title']);
+            'calendar' => $calendar['id']
+          ]), $calendar['title']);
       }])
       ->add('owner', TextColumn::class, ['label' => 'Proprietario', 'searchable' => true])
       ->add('isModerated', TextColumn::class, ['label' => 'Moderazione', 'render' => function ($value, $calendar) {
@@ -342,6 +349,10 @@ class CalendarsController extends Controller
       ->add('email', TextColumn::class, ['label' => 'Email', 'searchable' => true, 'render' => function ($value, $meeting) {
         return $value ? sprintf('<a href="mailto:%s"><div class="text-truncate">%s</div></a>', $value, $value) : '---';
       }])
+      ->add('fiscalCode', TextColumn::class, ['label' => 'Codice fiscale', 'searchable' => true, 'render' => function ($value, $meeting) {
+        if ($meeting->getFiscalCode()) return $meeting->getFiscalCode();
+        else return '---';
+      }])
       ->add('phoneNumber', TextColumn::class, ['label' => 'Recapito', 'render' => function ($value, $meeting) {
         return $value ? $value : '---';
       }])
@@ -394,12 +405,12 @@ class CalendarsController extends Controller
         switch ($meeting->getStatus()) {
           case 0: // STATUS_PENDING
             $color = 'var(--white)';
-            $borderColor = 'var(--primary)';
-            $textColor = 'var(--primary)';
+            $borderColor = 'var(--success)';
+            $textColor = 'var(--success)';
             break;
           case 1: // STATUS_APPROVED
-            $color = 'var(--primary)';
-            $borderColor = 'var(--primary)';
+            $color = 'var(--indigo)';
+            $borderColor = 'var(--indigo)';
             $textColor = 'var(--white)';
             break;
           case 2: // STATUS_REFUSED
@@ -493,12 +504,28 @@ class CalendarsController extends Controller
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 
+    function blockMinutesRound($time, $calculateHour, $minutes = '30', $format = "H:i") {
+      $seconds = strtotime($time);
+      $hour = intval(date("H", $seconds));
+      if($calculateHour && $hour < 19){
+        $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60) + ((20 - $hour) * 3600);
+        return date($format, $rounded);
+      }else{
+        $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60);
+        return date($format, $rounded);
+      }
+
+    }
+
+    $minDate = min(array_map(function($item) { return blockMinutesRound($item['start'],false); }, $events));
+    $maxDate = max(array_map(function($item) { return blockMinutesRound($item['end'],true); }, $events));
+
     // Check permissions if calendar is moderated
     if (!$calendar->getIsModerated() || ($this->getUser() == $calendar->getOwner() || $calendar->getModerators()->contains($this->getUser())))
       $canEdit = true;
     else $canEdit = false;
 
-    $jwt = $this->get('lexik_jwt_authentication.jwt_manager')->create($this->getUser());
+    $jwt = $this->JWTTokenManager->create($this->getUser());
 
     return array(
       'user'=>$user,
@@ -509,7 +536,11 @@ class CalendarsController extends Controller
       'statuses' => $statuses,
       'minDuration' => $minDuration,
       'datatable' => $table,
-      'token' => $jwt
+      'token' => $jwt,
+      'rangeTimeEvent' => array(
+        'min'=> $minDate,
+        'max' => $maxDate
+      )
     );
   }
 
