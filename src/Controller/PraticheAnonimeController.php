@@ -1,18 +1,18 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
-use AppBundle\Entity\Ente;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\Servizio;
-use AppBundle\FormIO\ExpressionValidator;
-use AppBundle\Handlers\Servizio\ForbiddenAccessException;
-use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
-use AppBundle\Logging\LogConstants;
-use AppBundle\Services\DematerializedFormAllegatiAttacherService;
-use AppBundle\Services\InstanceService;
-use AppBundle\Services\ModuloPdfBuilderService;
-use AppBundle\Services\PraticaStatusService;
+use App\Entity\Ente;
+use App\Entity\Pratica;
+use App\Entity\Servizio;
+use App\FormIO\ExpressionValidator;
+use App\Handlers\Servizio\ForbiddenAccessException;
+use App\Handlers\Servizio\ServizioHandlerRegistry;
+use App\Logging\LogConstants;
+use App\Services\DematerializedFormAllegatiAttacherService;
+use App\Services\InstanceService;
+use App\Services\ModuloPdfBuilderService;
+use App\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -27,7 +27,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Class PraticheAnonimeController
  *
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/pratiche-anonime")
  */
 class PraticheAnonimeController extends Controller
@@ -102,7 +102,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{servizio}/new", name="pratiche_anonime_new")
-   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
    * @param Request $request
    * @param Servizio $servizio
    *
@@ -147,7 +147,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}", name="pratiche_anonime_show")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Request $request
    * @param Pratica $pratica
@@ -184,7 +184,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}/payment-callback/{hash}", name="pratiche_anonime_payment_callback")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @param PraticaStatusService $statusService
@@ -217,7 +217,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}/pdf", name="pratiche_anonime_show_pdf")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -248,7 +248,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/formio/validate/{servizio}", name="anonymous_formio_validate")
-   * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio

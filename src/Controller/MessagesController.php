@@ -1,11 +1,11 @@
 <?php
 
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 
-use AppBundle\Entity\User;
-use AppBundle\Services\MessagesAdapterService;
+use App\Entity\User;
+use App\Services\MessagesAdapterService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;

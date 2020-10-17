@@ -17,187 +17,194 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"operatore" = "OperatoreUser", "cps" = "CPSUser", "admin" = "AdminUser"})
  * @UniqueEntity(fields="usernameCanonical", errorPath="username", message="fos_user.username.already_used")
- * @ORM\AttributeOverrides({
- *      @ORM\AttributeOverride(name="email", column=@ORM\Column(type="string", name="email", length=255, unique=false, nullable=true)),
- *      @ORM\AttributeOverride(name="emailCanonical", column=@ORM\Column(type="string", name="email_canonical", length=255, unique=false, nullable=true))
- * })
  * @package App\Entity
  */
 abstract class User implements UserInterface
 {
 
-    use TimestampableEntity;
+  use TimestampableEntity;
 
-    const ROLE_OPERATORE_ADMIN = 'ROLE_OPERATORE_ADMIN';
-    const ROLE_OPERATORE = 'ROLE_OPERATORE';
-    const ROLE_USER = 'ROLE_USER';
-    const ROLE_ADMIN = 'ROLE_ADMIN';
+  const ROLE_OPERATORE_ADMIN = 'ROLE_OPERATORE_ADMIN';
+  const ROLE_OPERATORE = 'ROLE_OPERATORE';
+  const ROLE_USER = 'ROLE_USER';
+  const ROLE_ADMIN = 'ROLE_ADMIN';
 
-    const USER_TYPE_OPERATORE = 'operatore';
-    const USER_TYPE_CPS = 'cps';
-    const USER_TYPE_ADMIN = 'admin';
+  const USER_TYPE_OPERATORE = 'operatore';
+  const USER_TYPE_CPS = 'cps';
+  const USER_TYPE_ADMIN = 'admin';
 
-    const FAKE_EMAIL_DOMAIN = 'cps.didnt.have.my.email.tld';
+  const FAKE_EMAIL_DOMAIN = 'cps.didnt.have.my.email.tld';
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="cognome", type="string")
-     */
-    private $cognome;
+  /**
+   * @ORM\Column(type="guid")
+   * @ORM\Id
+   */
+  protected $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="nome", type="string")
-     */
-    private $nome;
+  /**
+   * @var string
+   * @ORM\Column(name="nome", type="string")
+   */
+  private $nome;
 
-    /**
-     * @ORM\Column(type="guid")
-     * @ORM\Id
-     */
-    protected $id;
+  /**
+   * @var string
+   * @ORM\Column(name="cognome", type="string")
+   */
+  private $cognome;
 
-    protected $type;
+  /**
+   * @var string
+   * @ORM\Column(type="string", name="email", length=255, unique=false, nullable=true)
+   */
+  protected $email;
 
-    protected $fullName;
+  /**
+   * @var string
+   * @ORM\Column(type="string", name="email_canonical", length=255, unique=false, nullable=true)
+   */
+  protected $emailCanonical;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $emailContatto;
+  protected $type;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     */
-    protected $cellulareContatto;
+  protected $fullName;
 
-    /**
-     * User constructor.
-     *
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->id = Uuid::uuid4();
+  /**
+   * @var string
+   *
+   * @ORM\Column(type="string", nullable=true)
+   */
+  protected $emailContatto;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(type="string", nullable=true)
+   */
+  protected $cellulareContatto;
+
+  /**
+   * User constructor.
+   *
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->id = Uuid::uuid4();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getId()
+  {
+    return (string)$this->id;
+  }
+
+  public function hasPassword()
+  {
+    return $this->password !== null;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCognome()
+  {
+    return $this->cognome;
+  }
+
+  /**
+   * @param $cognome
+   *
+   * @return User
+   */
+  public function setCognome($cognome)
+  {
+    $this->cognome = $cognome;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getNome()
+  {
+    return $this->nome;
+  }
+
+  /**
+   * @param $nome
+   *
+   * @return User
+   */
+  public function setNome($nome)
+  {
+    $this->nome = $nome;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFullName()
+  {
+    if ($this->fullName == null) {
+      $this->fullName = $this->nome.' '.$this->cognome;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getId()
-    {
-        return (string) $this->id;
-    }
+    return $this->fullName;
+  }
 
-    public function hasPassword()
-    {
-        return $this->password !== null;
-    }
+  /**
+   * @return string
+   */
+  public function getType()
+  {
+    return $this->type;
+  }
 
-    /**
-     * @return string
-     */
-    public function getCognome()
-    {
-        return $this->cognome;
-    }
+  /**
+   * @return string
+   */
+  public function getEmailContatto()
+  {
+    return $this->emailContatto;
+  }
 
-    /**
-     * @param $cognome
-     *
-     * @return User
-     */
-    public function setCognome($cognome)
-    {
-        $this->cognome = $cognome;
+  /**
+   * @param string $emailContatto
+   *
+   * @return $this
+   */
+  public function setEmailContatto($emailContatto)
+  {
+    $this->emailContatto = $emailContatto;
 
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * @return string
-     */
-    public function getNome()
-    {
-        return $this->nome;
-    }
+  /**
+   * @return string
+   */
+  public function getCellulareContatto()
+  {
+    return $this->cellulareContatto;
+  }
 
-    /**
-     * @param $nome
-     *
-     * @return User
-     */
-    public function setNome($nome)
-    {
-        $this->nome = $nome;
+  /**
+   * @param string $cellulareContatto
+   *
+   * @return $this
+   */
+  public function setCellulareContatto($cellulareContatto)
+  {
+    $this->cellulareContatto = $cellulareContatto;
 
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFullName()
-    {
-        if ($this->fullName == null){
-            $this->fullName = $this->nome . ' ' . $this->cognome;
-        }
-        return $this->fullName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmailContatto()
-    {
-        return $this->emailContatto;
-    }
-
-    /**
-     * @param string $emailContatto
-     *
-     * @return $this
-     */
-    public function setEmailContatto($emailContatto)
-    {
-        $this->emailContatto = $emailContatto;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCellulareContatto()
-    {
-        return $this->cellulareContatto;
-    }
-
-    /**
-     * @param string $cellulareContatto
-     *
-     * @return $this
-     */
-    public function setCellulareContatto($cellulareContatto)
-    {
-        $this->cellulareContatto = $cellulareContatto;
-
-        return $this;
-    }
+    return $this;
+  }
 
   public function getRoles()
   {

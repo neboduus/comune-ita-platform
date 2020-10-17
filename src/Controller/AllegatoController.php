@@ -1,23 +1,23 @@
 <?php
 
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
 
-use AppBundle\Entity\Allegato;
-use AppBundle\Entity\AllegatoMessaggio;
-use AppBundle\Entity\AllegatoOperatore;
-use AppBundle\Entity\AllegatoScia;
-use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\Integrazione;
-use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\RichiestaIntegrazione;
-use AppBundle\Entity\User;
-use AppBundle\Form\Base\AllegatoType;
-use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
-use AppBundle\Logging\LogConstants;
-use AppBundle\Services\ModuloPdfBuilderService;
+use App\Entity\Allegato;
+use App\Entity\AllegatoMessaggio;
+use App\Entity\AllegatoOperatore;
+use App\Entity\AllegatoScia;
+use App\Entity\CPSUser;
+use App\Entity\Integrazione;
+use App\Entity\OperatoreUser;
+use App\Entity\Pratica;
+use App\Entity\RichiestaIntegrazione;
+use App\Entity\User;
+use App\Form\Base\AllegatoType;
+use App\Form\Extension\TestiAccompagnatoriProcedura;
+use App\Logging\LogConstants;
+use App\Services\ModuloPdfBuilderService;
 use Doctrine\ORM\Query;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -150,7 +150,7 @@ class AllegatoController extends Controller
 
       case 'GET':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
           if ($file->getHash() == hash('sha256', $session->getId())){
             return $this->createBinaryResponseForAllegato($file);
@@ -201,7 +201,7 @@ class AllegatoController extends Controller
 
       case 'DELETE':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
           if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $session->getId())) {
@@ -586,7 +586,7 @@ class AllegatoController extends Controller
     $isOperatoreAmongstTheAllowedOnes = false;
     $becauseOfPratiche = [];
 
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repo = $this->getDoctrine()->getRepository('App:Pratica');
     $pratiche = $repo->findBy(
       array('rispostaOperatore' => $allegato)
     );
@@ -648,9 +648,9 @@ class AllegatoController extends Controller
       $query = $this->getDoctrine()
         ->getManager()
         ->createQuery("SELECT allegato
-                FROM AppBundle\Entity\Allegato allegato
-                WHERE (allegato INSTANCE OF AppBundle\Entity\Allegato OR allegato INSTANCE OF AppBundle\Entity\AllegatoScia)
-                AND (allegato NOT INSTANCE OF AppBundle\Entity\ModuloCompilato )
+                FROM App\Entity\Allegato allegato
+                WHERE (allegato INSTANCE OF App\Entity\Allegato OR allegato INSTANCE OF App\Entity\AllegatoScia)
+                AND (allegato NOT INSTANCE OF App\Entity\ModuloCompilato )
                 AND allegato.owner = :user
                 ORDER BY allegato.filename ASC")
         ->setParameter('user', $this->getUser());

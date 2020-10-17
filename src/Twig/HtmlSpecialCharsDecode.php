@@ -3,9 +3,10 @@
 namespace App\Twig;
 
 
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
-class HtmlSpecialCharsDecode  extends \Twig_Extension
+class HtmlSpecialCharsDecode  extends AbstractExtension
 {
 
     public function getName()

@@ -1,12 +1,12 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
-use AppBundle\Entity\Allegato;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\Servizio;
-use AppBundle\Logging\LogConstants;
-use AppBundle\Services\ModuloPdfBuilderService;
+use App\Entity\Allegato;
+use App\Entity\Pratica;
+use App\Entity\Servizio;
+use App\Logging\LogConstants;
+use App\Services\ModuloPdfBuilderService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -25,7 +25,7 @@ use TheCodingMachine\Gotenberg\Request as GotembergRequest;
 /**
  * Class PraticheAnonimeController
  *
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/print")
  */
 class PrintController extends Controller
@@ -47,7 +47,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/pratica/{pratica}", name="print_pratiche")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @Template()
    * @param Pratica $pratica
    *
@@ -56,7 +56,7 @@ class PrintController extends Controller
   public function printPraticaAction(Request $request, Pratica $pratica)
   {
     $user = $pratica->getUser();
-    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
+    $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
 
     $attachments = $pratica->getAllegati();
     $preparedAttachments = [];
@@ -88,7 +88,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/{pratica}/show", name="print_pratiche_show")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @ParamConverter("pratica", class="App:Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -122,7 +122,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}", name="print_service")
-   * @ParamConverter("service", class="AppBundle:Servizio")
+   * @ParamConverter("service", class="App:Servizio")
    * @Template()
    * @param Servizio $service
    *
@@ -133,7 +133,7 @@ class PrintController extends Controller
 
     $pratica = $this->createApplication($service);
 
-    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
+    $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
 
     return [
       'formserver_url' => $this->getParameter('formserver_public_url'),
@@ -144,7 +144,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}/pdf", name="print_service_pdf")
-   * @ParamConverter("service", class="AppBundle:Servizio")
+   * @ParamConverter("service", class="App:Servizio")
    * @param Request $request
    * @param Servizio $service
    *
@@ -180,7 +180,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}/preview", name="preview_service")
-   * @ParamConverter("service", class="AppBundle:Servizio")
+   * @ParamConverter("service", class="App:Servizio")
    * @Template()
    * @param Servizio $service
    *
@@ -191,7 +191,7 @@ class PrintController extends Controller
 
     $pratica = $this->createApplication($service);
 
-    $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
+    $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
 
     return [
       'formserver_url' => $this->getParameter('formserver_public_url'),

@@ -2,7 +2,7 @@
 namespace App\Services;
 
 use App\Entity\CPSUser;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Class TermsAcceptanceCheckerService
@@ -10,15 +10,15 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class TermsAcceptanceCheckerService
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     private $doctrine;
 
     /**
      * TermsAcceptanceCheckerService constructor.
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      */
-    public function __construct(RegistryInterface $doctrine)
+    public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
     }

@@ -1,37 +1,37 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
-use AppBundle\Dto\Application;
-use AppBundle\Dto\ApplicationOutcome;
-use AppBundle\Entity\Allegato;
-use AppBundle\Entity\AllegatoOperatore;
-use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\DematerializedFormPratica;
-use AppBundle\Entity\FormIO;
-use AppBundle\Entity\Message;
-use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\PraticaRepository;
-use AppBundle\Entity\Servizio;
-use AppBundle\Entity\StatusChange;
-use AppBundle\Form\Base\MessageType;
-use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
-use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
-use AppBundle\FormIO\Schema;
-use AppBundle\FormIO\SchemaFactory;
-use AppBundle\Logging\LogConstants;
-use AppBundle\Services\InstanceService;
-use AppBundle\Services\MailerService;
-use AppBundle\Services\MessagesAdapterService;
-use AppBundle\Services\ModuloPdfBuilderService;
-use AppBundle\Services\PraticaStatusService;
+use App\Dto\Application;
+use App\Dto\ApplicationOutcome;
+use App\Entity\Allegato;
+use App\Entity\AllegatoOperatore;
+use App\Entity\CPSUser;
+use App\Entity\DematerializedFormPratica;
+use App\Entity\FormIO;
+use App\Entity\Message;
+use App\Entity\OperatoreUser;
+use App\Entity\Pratica;
+use App\Entity\PraticaRepository;
+use App\Entity\Servizio;
+use App\Entity\StatusChange;
+use App\Form\Base\MessageType;
+use App\Form\Operatore\Base\ApplicationOutcomeType;
+use App\Form\Operatore\Base\PraticaOperatoreFlow;
+use App\FormIO\Schema;
+use App\FormIO\SchemaFactory;
+use App\Logging\LogConstants;
+use App\Services\InstanceService;
+use App\Services\MailerService;
+use App\Services\MessagesAdapterService;
+use App\Services\ModuloPdfBuilderService;
+use App\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
-use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -67,7 +67,7 @@ class OperatoriController extends Controller
   /** @var SchemaFactory */
   private $schemaFactory;
 
-  /** @var Serializer */
+  /** @var SerializerInterface */
   private $serializer;
 
   /** @var TranslatorInterface */
@@ -108,7 +108,7 @@ class OperatoriController extends Controller
   /**
    * OperatoriController constructor.
    * @param SchemaFactory $schemaFactory
-   * @param Serializer $serializer
+   * @param SerializerInterface $serializer
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param PraticaStatusService $praticaStatusService
@@ -122,7 +122,7 @@ class OperatoriController extends Controller
    */
   public function __construct(
     SchemaFactory $schemaFactory,
-    Serializer $serializer,
+    SerializerInterface $serializer,
     TranslatorInterface $translator,
     LoggerInterface $logger,
     PraticaStatusService $praticaStatusService,
@@ -511,7 +511,7 @@ class OperatoriController extends Controller
    */
   public function usageAction()
   {
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
     $servizi = $serviziRepository->findBy(
       [
         'status' => Servizio::STATUS_AVAILABLE
@@ -559,7 +559,7 @@ class OperatoriController extends Controller
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      $allegato = $this->getDoctrine()->getRepository('App:Allegato')->find($protocollo->id);
       if ($allegato instanceof Allegato) {
         $allegati[] = [
           'allegato' => $allegato,
@@ -693,7 +693,7 @@ class OperatoriController extends Controller
     $this->checkUserCanAccessPratica($user, $pratica);
     $tab = $request->query->get('tab');
 
-    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->getDoctrine()->getRepository('App:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
 
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
@@ -807,7 +807,7 @@ class OperatoriController extends Controller
 
     $threads = $this->createThreadElementsForOperatoreAndPratica($user, $pratica);
     /** @var PraticaRepository $repository */
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
     $fiscalCode = null;
@@ -1013,7 +1013,7 @@ class OperatoriController extends Controller
    */
   public function listOperatoriByEnteAction()
   {
-    $operatoreRepo = $this->getDoctrine()->getRepository('AppBundle:OperatoreUser');
+    $operatoreRepo = $this->getDoctrine()->getRepository('App:OperatoreUser');
     $operatori = $operatoreRepo->findBy(
       [
         'ente' => $this->getUser()->getEnte(),
@@ -1097,7 +1097,7 @@ class OperatoriController extends Controller
       $message = new Message();
       $message->setApplication($pratica);
       $message->setAuthor($this->getUser());
-      $form = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
+      $form = $this->createForm('App\Form\ApplicationMessageType', $message);
     } else {
       $formBuilder = $this->createFormBuilder($data)
         ->add('text', TextareaType::class, [
@@ -1265,8 +1265,8 @@ class OperatoriController extends Controller
     //Servizi, pratiche  delle select di filtraggio
     $serviziPratiche = $em->createQueryBuilder()
       ->select('s.name', 's.slug')
-      ->from('AppBundle:Pratica', 'p')
-      ->innerJoin('AppBundle:Servizio', 's', 'WITH', 's.id = p.servizio')
+      ->from('App:Pratica', 'p')
+      ->innerJoin('App:Servizio', 's', 'WITH', 's.id = p.servizio')
       ->distinct()
       ->getQuery()
       ->getResult();

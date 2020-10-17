@@ -13,12 +13,14 @@ use App\Entity\Pratica;
 use App\Entity\Subscriber;
 use App\Model\FeedbackMessage;
 use App\Model\SubscriberMessage;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class MailerService
 {
@@ -35,12 +37,12 @@ class MailerService
   private $translator;
 
   /**
-   * @var TemplatingExtension
+   * @var Environment
    */
   private $templating;
 
   /**
-   * @var RegistryInterface
+   * @var ManagerRegistry
    */
   private $doctrine;
 
@@ -67,11 +69,11 @@ class MailerService
    * MailerService constructor.
    * @param \Swift_Mailer $mailer
    * @param TranslatorInterface $translator
-   * @param TwigEngine $templating
-   * @param RegistryInterface $doctrine
+   * @param Environment $templating
+   * @param ManagerRegistry $doctrine
    * @param LoggerInterface $logger
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, UrlGeneratorInterface $router)
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, Environment $templating, ManagerRegistry $doctrine, LoggerInterface $logger, UrlGeneratorInterface $router)
   {
     $this->mailer = $mailer;
     $this->translator = $translator;

@@ -1,19 +1,19 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace App\Controller;
 
-use AppBundle\Dto\Application;
-use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\FormIO;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\PraticaRepository;
-use AppBundle\Form\IdCardType;
-use AppBundle\FormIO\SchemaFactory;
-use AppBundle\Helpers\MunicipalityConverter;
-use AppBundle\Logging\LogConstants;
-use AppBundle\Security\CPSAuthenticator;
-use AppBundle\Services\CPSUserProvider;
-use AppBundle\Services\RemoteContentProviderServiceInterface;
+use App\Dto\Application;
+use App\Entity\CPSUser;
+use App\Entity\FormIO;
+use App\Entity\Pratica;
+use App\Entity\PraticaRepository;
+use App\Form\IdCardType;
+use App\FormIO\SchemaFactory;
+use App\Helpers\MunicipalityConverter;
+use App\Logging\LogConstants;
+use App\Security\CPSAuthenticator;
+use App\Services\CPSUserProvider;
+use App\Services\RemoteContentProviderServiceInterface;
 use DateTime;
 use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
@@ -31,7 +31,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class UserController
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/user")
  */
 class UserController extends Controller
@@ -69,10 +69,10 @@ class UserController extends Controller
   {
     $user = $this->getUser();
 
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
     $servizi = $serviziRepository->findBy([], [], 3);
 
-    $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $praticheRepo = $this->getDoctrine()->getRepository('App:Pratica');
     $pratiche = $praticheRepo->findBy(
       ['user' => $user],
       ['creationTime' => 'DESC'],
@@ -82,7 +82,7 @@ class UserController extends Controller
     $threads = [];
 
     $documents = [];
-    $documentRepo = $this->getDoctrine()->getRepository('AppBundle:Document');
+    $documentRepo = $this->getDoctrine()->getRepository('App:Document');
 
     $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
     $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
@@ -318,13 +318,13 @@ class UserController extends Controller
     $entityManager = $this->getDoctrine()->getManager();
     $entiPerUser = $entityManager->createQueryBuilder()
       ->select('IDENTITY(p.ente)')->distinct()
-      ->from('AppBundle:Pratica', 'p')
+      ->from('App:Pratica', 'p')
       ->where('p.user = :user')
       ->setParameter('user', $this->getUser())
       ->getQuery()
       ->getResult();
 
-    $repository = $entityManager->getRepository('AppBundle:Ente');
+    $repository = $entityManager->getRepository('App:Ente');
     if (count($entiPerUser) > 0) {
       $entiPerUser = array_reduce($entiPerUser, 'array_merge', array());
       $enti = $repository->findBy(['id' => $entiPerUser]);

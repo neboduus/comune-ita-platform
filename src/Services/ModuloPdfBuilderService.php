@@ -36,6 +36,7 @@ use TheCodingMachine\Gotenberg\URLRequest;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
+use Twig\Environment;
 
 class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 {
@@ -74,7 +75,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   private $wkhtmltopdfService;
 
   /**
-   * @var EngineInterface
+   * @var Environment
    */
   private $templating;
 
@@ -110,7 +111,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     PropertyMappingFactory $propertyMappingFactory,
     DirectoryNamerInterface $directoryNamer,
     string $wkhtmltopdfService,
-    EngineInterface $templating,
+    Environment $templating,
     $dateTimeFormat,
     UrlGeneratorInterface $router,
     string $printablePassword,

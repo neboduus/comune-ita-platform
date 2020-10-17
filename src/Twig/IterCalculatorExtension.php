@@ -4,8 +4,10 @@ namespace App\Twig;
 
 use App\Entity\Pratica;
 use Carbon\Carbon;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
-class IterCalculatorExtension extends \Twig_Extension
+class IterCalculatorExtension extends AbstractExtension
 {
 
     private $durationStartStatus;
@@ -29,7 +31,7 @@ class IterCalculatorExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('iter_duration', array($this, 'getIterDuration')),
+            new TwigFilter('iter_duration', array($this, 'getIterDuration')),
         );
     }
 

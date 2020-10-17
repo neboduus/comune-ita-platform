@@ -8,37 +8,34 @@ use App\Services\CPSUserProvider;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraints\DateTime;
 
 class CompleteProfileListener
 {
 
-    /**
-     * @var Router
-     */
+    /** @var RouterInterface */
     private $router;
 
-    /**
-     * @var TokenStorage
-     */
+    /** @var TokenStorageInterface */
     private $tokenStorage;
 
-    /**
-     * @var CPSUserProvider
-     */
+    /** @var CPSUserProvider */
     private $userProvider;
 
     private $passwordLifeTime;
 
-    /**
-     * CompleteProfileListener constructor.
-     *
-     * @param Router $router
-     * @param TokenStorage $tokenStorage
-     * @param CPSUserProvider $userProvider
-     */
-    public function __construct(Router $router, TokenStorage $tokenStorage, CPSUserProvider $userProvider, $passwordLifeTime)
+  /**
+   * CompleteProfileListener constructor.
+   *
+   * @param RouterInterface $router
+   * @param TokenStorageInterface $tokenStorage
+   * @param CPSUserProvider $userProvider
+   * @param $passwordLifeTime
+   */
+    public function __construct(RouterInterface $router, TokenStorageInterface $tokenStorage, CPSUserProvider $userProvider, $passwordLifeTime)
 
     {
         $this->router = $router;

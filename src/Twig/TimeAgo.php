@@ -3,9 +3,10 @@
 namespace App\Twig;
 
 
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
-class TimeAgo extends \Twig_Extension
+class TimeAgo extends AbstractExtension
 {
 
   public function getName()

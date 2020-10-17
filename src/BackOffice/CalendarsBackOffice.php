@@ -9,6 +9,7 @@ use App\Services\InstanceService;
 use App\Services\MailerService;
 use App\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -20,7 +21,7 @@ class CalendarsBackOffice implements BackOfficeInterface
   const PATH = 'operatori_calendars_index';
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
   /**
@@ -52,7 +53,15 @@ class CalendarsBackOffice implements BackOfficeInterface
    */
   private $logger;
 
-  public function __construct(EntityManager $em, InstanceService $is, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
+  /**
+   * CalendarsBackOffice constructor.
+   * @param EntityManagerInterface $em
+   * @param InstanceService $is
+   * @param MeetingService $meetingService
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   */
+  public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->meetingService = $meetingService;

@@ -19,7 +19,7 @@ services:
     environment:
       PHP_FPM_CLEAR_ENV: 'no'
       ENV: DEMO
-      SYMFONY_ENV: $SYMFONY_ENV
+      APP_ENV: $SYMFONY_ENV
       PREFIX: $PREFIX
       DB_DRIVER: $DB_DRIVER
       DB_HOST: $DB_HOST

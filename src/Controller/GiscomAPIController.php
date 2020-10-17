@@ -12,6 +12,7 @@ use App\Entity\Servizio;
 use App\Entity\StatusChange;
 use App\Logging\LogConstants;
 use App\Mapper\Giscom\GiscomStatusMapper;
+use App\Services\DelayedGiscomAPIAdapterService;
 use App\Services\GiscomAPIAdapterService;
 use App\Services\GiscomAPIMapperService;
 use App\Services\PraticaIntegrationService;
@@ -61,23 +62,41 @@ class GiscomAPIController extends Controller
    */
   private $integrationService;
 
+  /** @var GiscomAPIMapperService */
+  private $mapper;
+
+  /** @var GiscomAPIAdapterService */
+  private $giscomAPIAdapterService;
+
+  /** @var DelayedGiscomAPIAdapterService */
+  private $delayedGiscomAPIAdapterService;
+
   /**
    * GiscomAPIController constructor.
-   * @param \Symfony\Bridge\Monolog\Logger $logger
+   * @param LoggerInterface $logger
    * @param PraticaStatusService $statusService
    * @param GiscomStatusMapper $statusMapper
    * @param PraticaIntegrationService $integrationService
+   * @param GiscomAPIMapperService $mapper
+   * @param GiscomAPIAdapterService $giscomAPIAdapterService
+   * @param DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService
    */
   public function __construct(
     LoggerInterface $logger,
     PraticaStatusService $statusService,
     GiscomStatusMapper $statusMapper,
-    PraticaIntegrationService $integrationService
+    PraticaIntegrationService $integrationService,
+    GiscomAPIMapperService $mapper,
+    GiscomAPIAdapterService $giscomAPIAdapterService,
+    DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService
   ) {
     $this->logger = $logger;
     $this->statusService = $statusService;
     $this->statusMapper = $statusMapper;
     $this->integrationService = $integrationService;
+    $this->mapper = $mapper;
+    $this->giscomAPIAdapterService = $giscomAPIAdapterService;
+    $this->delayedGiscomAPIAdapterService = $delayedGiscomAPIAdapterService;
   }
 
 
@@ -103,12 +122,11 @@ class GiscomAPIController extends Controller
    * @Security("has_role('ROLE_GISCOM')")
    * @param Request $request
    * @param Pratica $pratica
-   * @param GiscomAPIMapperService $mapper
    * @return Response
    */
-  public function viewPraticaAction(Request $request, Pratica $pratica, GiscomAPIMapperService $mapper)
+  public function viewPraticaAction(Request $request, Pratica $pratica)
   {
-    $giscomPratica = $mapper->map($pratica);
+    $giscomPratica = $this->mapper->map($pratica);
     return new JsonResponse(
       [
         'pratica' => $giscomPratica,
@@ -226,7 +244,7 @@ class GiscomAPIController extends Controller
 
 
       // Richiesta codici fiscali relazionati
-      $giscomAdpterService = $this->get('ocsdc.giscom_api.adapter_delayed');
+      $giscomAdpterService = $this->delayedGiscomAPIAdapterService;
       $giscomAdpterService->askRelatedCFsForPraticaToGiscom($pratica);
 
     } catch (UniqueConstraintViolationException $e) {
@@ -250,10 +268,9 @@ class GiscomAPIController extends Controller
    * @Security("has_role('ROLE_GISCOM')")
    * @param Request $request
    * @param Pratica $pratica
-   * @param GiscomAPIAdapterService $giscomAPIAdapterService
    * @return Response
    */
-  public function addStatusChangeToPraticaAction(Request $request, Pratica $pratica, GiscomAPIAdapterService $giscomAPIAdapterService)
+  public function addStatusChangeToPraticaAction(Request $request, Pratica $pratica)
   {
     $content = $request->getContent();
     if (empty($content)) {
@@ -325,7 +342,7 @@ class GiscomAPIController extends Controller
     $this->logger->info(LogConstants::PRATICA_UPDATED_STATUS_FROM_GISCOM, ['statusChange' => $statusChange]);
 
     try {
-      $giscomAPIAdapterService->askRelatedCFsForPraticaToGiscom($pratica);
+      $this->giscomAPIAdapterService->askRelatedCFsForPraticaToGiscom($pratica);
     } catch (\Exception $e) {
       $this->logger->error(LogConstants::PRATICA_UPDATED_STATUS_FROM_GISCOM, ['Ask related cfs' => $e->getMessage()]);
     }
@@ -403,7 +420,7 @@ class GiscomAPIController extends Controller
 
     $message = isset($payload['NoteRichiesta']) ? $payload['NoteRichiesta'] : '';
 
-    $this->get('logger')->info(
+    $this->logger->info(
       LogConstants::RICHIESTA_INTEGRAZIONE_FROM_GISCOM,
       [
         'id' => $pratica->getId(),

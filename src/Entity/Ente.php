@@ -414,7 +414,7 @@ class Ente
   }
 
   /**
-   * @param bool $attribute
+   * @param bool|string $attribute
    * @return mixed
    */
   public function getMetaAsArray($attribute = false)

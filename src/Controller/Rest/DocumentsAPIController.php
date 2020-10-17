@@ -1,12 +1,12 @@
 <?php
 
-namespace AppBundle\Controller\Rest;
+namespace App\Controller\Rest;
 
-use AppBundle\Entity\AdminUser;
-use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\Document;
-use AppBundle\Entity\OperatoreUser;
-use AppBundle\Services\InstanceService;
+use App\Entity\AdminUser;
+use App\Entity\CPSUser;
+use App\Entity\Document;
+use App\Entity\OperatoreUser;
+use App\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -29,7 +29,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class DocumentsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/documents")
  */
 class DocumentsAPIController extends AbstractFOSRestController
@@ -114,7 +114,7 @@ class DocumentsAPIController extends AbstractFOSRestController
 
     $qb = $this->em->createQueryBuilder()
       ->select('document')
-      ->from('AppBundle:Document', 'document')
+      ->from('App:Document', 'document')
       ->leftJoin('document.folder', 'folder')
       ->leftJoin('document.owner', 'owner');
 
@@ -173,7 +173,7 @@ class DocumentsAPIController extends AbstractFOSRestController
   public function getDocumentAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Document');
+      $repository = $this->getDoctrine()->getRepository('App:Document');
       $document = $repository->find($id);
       if ($document === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -240,7 +240,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     }
 
 
-    $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
+    $form = $this->createForm('App\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -319,13 +319,13 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function putDocumentAction($id, Request $request)
   {
-    $document = $this->em->getRepository('AppBundle:Document')->find($id);
+    $document = $this->em->getRepository('App:Document')->find($id);
 
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
+    $form = $this->createForm('App\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -406,12 +406,12 @@ class DocumentsAPIController extends AbstractFOSRestController
   public function patchDocumentAction($id, Request $request)
   {
 
-    $document = $this->em->getRepository('AppBundle:Document')->find($id);
+    $document = $this->em->getRepository('App:Document')->find($id);
 
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
+    $form = $this->createForm('App\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -468,7 +468,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function deleteDocumentAction($id)
   {
-    $document = $this->getDoctrine()->getRepository('AppBundle:Document')->find($id);
+    $document = $this->getDoctrine()->getRepository('App:Document')->find($id);
     if ($document) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -509,7 +509,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function downloadDocumentAction($id)
   {
-    $document = $this->em->getRepository('AppBundle:Document')->find($id);
+    $document = $this->em->getRepository('App:Document')->find($id);
 
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);

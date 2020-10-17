@@ -12,6 +12,7 @@ use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use ICal\ICal;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -43,8 +44,10 @@ class CalendarsController extends Controller
 {
   use DataTablesTrait;
 
+  /** @var EntityManagerInterface */
   private $em;
 
+  /** @var InstanceService  */
   private $is;
 
   /**
@@ -62,7 +65,7 @@ class CalendarsController extends Controller
    */
   private $JWTTokenManager;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->translator = $translator;
     $this->em = $em;

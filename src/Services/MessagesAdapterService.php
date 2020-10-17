@@ -6,6 +6,7 @@ use App\Entity\Ente;
 use App\Entity\OperatoreUser;
 use App\Entity\Servizio;
 use App\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 use FOS\UserBundle\Model\UserInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -21,24 +22,25 @@ class MessagesAdapterService
 {
     const REMOTE_ENDPOINT_UNAVAILABLE_EXCEPTION_MESSAGE = 'Remote messages endpoint is unavailable';
 
-    /**
-     * @var Client
-     */
+    /** @var Client */
     private $client;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
+
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    private $messagesEnabled;
 
     /**
      * MessagesAdapterService constructor.
      * @param Client $client
      * @param LoggerInterface $logger
-     * @param RegistryInterface $doctrine
+     * @param ManagerRegistry $doctrine
      * @param $messagesEnabled
      */
-    public function __construct(Client $client, LoggerInterface $logger, RegistryInterface $doctrine, $messagesEnabled)
+    public function __construct(Client $client, LoggerInterface $logger, ManagerRegistry $doctrine, $messagesEnabled)
     {
         $this->client = $client;
         $this->logger = $logger;

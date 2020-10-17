@@ -50,16 +50,15 @@ class DefaultController extends Controller
 
 
   /**
-   * @Template()
-   * @return array()
+   * @return Response
    */
   public function commonAction()
   {
-    return array('enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll());
+    return $this->render('Default/common.html.twig',  array('enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll()));
   }
 
   /**
-   * @Route("/", name="home")
+   * @Route("/asd", name="home")
    *
    * @return Response
    */
