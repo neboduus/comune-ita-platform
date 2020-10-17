@@ -1,0 +1,139 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block main_content %}
+  {# Imposto come default la prima chiave dell'array #}
+  {% set active_key = tab_pratiche|keys|first %}
+  {% set find = false %}
+  {% for k, v in tab_pratiche %}
+    {% if v|length > 0 and not find %}
+      {% set active_key = k %}
+      {% set find = true %}
+    {% endif %}
+  {% endfor %}
+
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+
+        <h1>{{ title|trans() }}</h1>
+
+        {% if msg is defined %}
+          <div class="alert alert-{{ msg.type }}" role="alert">{{ msg.text|trans() }}</div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-12 d-md-none d-lg-none d-xl-none">
+            <div class="bootstrap-select-wrapper">
+              <select class="form-control select_tabs">
+                {% for key, value in tab_pratiche %}
+                  <option value="#{{ key }}">{{ ('user.dashboard.pratiche_' ~ key)|trans }}
+                    ({{ value|length }})
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="nav-tabs-hidescroll hidescroll-ico d-none d-md-block d-lg-block d-xl-block">
+              <ul class="nav nav-tabs auto">
+                {% for key, value in tab_pratiche %}
+                  <li class="nav-item">
+                    <a class="nav-link {% if key == active_key %}active{% endif %}"
+                       href="#{{ key }}" aria-controls="{{ key }}" role="tab" data-toggle="tab">
+                      {{ ('user.dashboard.pratiche_' ~ key)|trans }} <span
+                              class="badge badge-pill badge-light ml-1">{{ value|length }}</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="tab-content mt-4">
+              {% for key, value in tab_pratiche %}
+                <div role="tabpanel"
+                     class="tab-pane fade {{ key }}{% if key == active_key %} show active{% endif %}"
+                     id="{{ key }}">
+                  {# <h3>{{ ('user.dashboard.pratiche_' ~ key)|trans }}</h3> #}
+                  {% if value|length > 0 %}
+                    <div id="no-more-tables">
+                      <table class="table table-striped table-condensed cf">
+                        <thead class="cf">
+                        <tr>
+                          <th>{{ 'pratica.servizio'|trans }}</th>
+                          <th>{{ 'pratica.noteDiCompilazione'|trans }}</th>
+                          <th>{{ 'pratica.protocollo'|trans }}</th>
+                          <th class="text-nowrap">{{ 'pratica.data_di_compilazione'|trans }}</th>
+                          <th>Azioni</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for pratica in value %}
+                          <tr class="pratica"
+                              data-pratica="{{ pratica.id }}"
+                              data-user="{{ pratica.user.id }}"
+                              data-status="{{ pratica.status }}">
+
+                            <td data-title="{{ 'pratica.servizio'|trans }}">{{ pratica.servizio.name }}</td>
+                            <td data-title="{{ 'pratica.noteDiCompilazione'|trans }}">{{ pratica.userCompilationNotes }}</td>
+                            <td class="text-nowrap" data-title="{{ 'pratica.protocollo'|trans }}">
+                              {% if pratica.servizio.isProtocolRequired %}
+                                {% if pratica.numeroProtocollo %}
+                                  <code>{{ pratica.numeroProtocollo }}</code>
+                                {% elseif pratica.statusName != 'STATUS_DRAFT' %}
+                                  <em>{{ 'pratica.in_attesa_protocollo'|trans }}</em>
+                                {% endif %}
+                              {% else %}
+                                <em>{{ 'pratica.protocollo_non_richiesto'|trans }}</em>
+                              {% endif %}
+                            </td>
+                            <td class="text-nowrap"
+                                data-title="{{ 'pratica.data_di_compilazione'|trans }}">
+                              {{ pratica.creationTime|date(ocsdc_default_datetime_format) }}
+                            </td>
+                            <td data-title="Azioni" class="text-nowrap">
+                              <a href="{% if feature('feature_application_detail') %}{{ path('pratica_show_detail', {'pratica': pratica}) }}{% else %}{{ path('pratiche_show', {'pratica': pratica}) }}{% endif %}"
+                                 class="btn btn-primary btn-xs"><i class="fa fa-eye"
+                                                                   aria-hidden="true"></i> {{ 'user.dashboard.vai_al_dettaglio'|trans }}
+                              </a>
+                              {% if pratica.status == 1000 %}
+                                <a href="{{ path('pratiche_delete', {'pratica': pratica}) }}"
+                                   class="btn btn-danger btn-xs"
+                                   onclick="return confirm('Vuoi veramente eliminare la pratica?');"><i
+                                          class="fa fa-trash" aria-hidden="true"></i>
+                                  Elimina</a>
+                              {% endif %}
+                            </td>
+
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <div class="alert alert-info" role="alert">
+                      {{ 'pratica.empty'|trans() }}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="row d-none">
+    {% if pratiche|length > 0 %}
+      {% for pratica in pratiche %}
+        <div class="col-sm-4">
+          {{ include('Pratiche/parts/panel/pratica.html.twig') }}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info" role="alert"><i class="fa fa-info"
+                                                    aria-hidden="true"></i> {{ 'pratica.empty'|trans() }}</div>
+    {% endif %}
+  </div>
+
+{% endblock %}

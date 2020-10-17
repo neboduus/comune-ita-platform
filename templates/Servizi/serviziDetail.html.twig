@@ -1,0 +1,160 @@
+{% extends 'Default/index.html.twig' %}
+{% block main_content %}
+
+
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-12 px-lg-4 py-lg-2">
+        <h1>{{ servizio.name }}</h1>
+      </div>
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+
+        {% if servizio.description|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Cos'è</h4>
+            {{ servizio.description|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.who|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>A chi si rivolge</h4>
+            {{ servizio.who|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.coverage %}
+          {% if servizio.coverage is not iterable %}
+            {% set coverage = servizio.coverage|split(',') %}
+          {% elseif servizio.coverage[0] is defined %}
+            {% set coverage = servizio.coverage[0]|split(',') %}
+          {% else %}
+            {% set coverage = null %}
+          {% endif %}
+          {% if coverage %}
+          <article class="mb-3">
+            <h5>Copertura geografica</h5>
+            {% for c in coverage %}
+              <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary"><span
+                  class="chip-label">{{ c }}</span></div>
+            {% endfor %}
+          </article>
+          {% endif %}
+        {% endif %}
+
+        {% if servizio.howto|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Accedere al servizio</h4>
+            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.specialCases|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Casi particolari</h4>
+            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.moreInfo|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>Maggiori informazioni</h4>
+            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale is defined %}
+          <br/>
+          <div class="alert alert-info">
+            <p>
+              {#<a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Scarica il modulo da
+                  compilare</b></a><br/>#}
+              <a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Questo è il modulo
+                  principale del servizio</b></a> e andrà compilato e caricato quando il sistema lo
+              chiederà.
+            </p>
+          </div>
+        {% endif %}
+
+        {% if servizio.isPaymentRequired %}
+          <br/>
+          <div class="alert alert-info">
+            <p>
+              Prima dell'invio del modulo online <b>sarà necessario completare il pagamento nella modalità indicata</b>
+            </p>
+          </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-md-12">
+            {#todo: usare constant()#}
+            {% if not can_access %}
+              <div class="alert alert-danger" role="alert">
+                <i class="fa fa-times" aria-hidden="true"></i> {{ deny_access_message }}
+              </div>
+            {% else %}
+              <div>
+                {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
+                  <p class="text-center">
+                    <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
+                       class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
+                        <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                    </a>
+                  </p>
+                {% else %}
+                  <p class="text-center">
+                    <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
+                       class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
+                      <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                    </a>
+                  </p>
+                {% endif %}
+
+                {% if servizio.enti|length > 1 %}
+                  <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
+                      :</strong>
+                    <ul class="list-unstyled">
+                      {% for ente in servizio.enti %}
+                        <li>
+                          <a href="{{ ente.siteUrl }}">
+                            <small>{{ ente.name }}</small>
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if servizi_area|length > 0 and servizio.topics %}
+      <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
+        <div class="border-left border-light pl-5 pb-4">
+        <h6>{% if servizio.topics %}Altri servizi disponibili in {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h6>
+        <div class="link-list-wrapper">
+          <ul class="link-list">
+            {% for s in servizi_area %}
+              <li>
+                <a class="list-item icon-left pr-0{% if s.id == servizio.id %} active{% endif %}"
+                   href="{{ path('servizi_show', {'slug': s.slug}) }}">
+                  <svg class="icon icon-primary">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
+                  </svg>
+                  <span style="line-height: 1.7">{{ s.name }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </section>
+
+{% endblock %}

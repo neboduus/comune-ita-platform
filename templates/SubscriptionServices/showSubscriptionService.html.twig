@@ -1,0 +1,120 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+{% endblock %}
+
+{% block main_content %}
+
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>{{ subscriptionService.name }}</h1>
+        <p><i>{{ subscriptionService.description | striptags }}</i></p>
+        <div>
+          {%  for tag in subscriptionService.tags %}
+            <div class="chip chip-simple chip-lg">
+              <span class="chip-label">{{tag}}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        <div id="no-more-tables" class="table-striped">
+          <table class="table table-bordered table-striped table-condensed cf">
+            <tbody>
+            <tr>
+              <th>Codice</th>
+              <td>{{ subscriptionService.code }}</td>
+            </tr>
+            <tr>
+              <th>Durata</th>
+              <td>dal {{ subscriptionService.beginDate|date('d/m/Y') }} al {{ subscriptionService.endDate|date('d/m/Y') }}</td>
+            </tr>
+            <tr>
+              <th>Apertura iscrizioni</th>
+              <td>dal {{ subscriptionService.subscriptionBegin|date('d/m/Y') }} al {{ subscriptionService.subscriptionEnd|date('d/m/Y') }}</td>
+            </tr>
+            <tr>
+              <th>Quota di iscrizione</th>
+              <td>
+                {% if subscriptionService.subscriptionAmount %}{{ subscriptionService.subscriptionAmount | number_format(2) }}€
+                {% else %} ---
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th>Numero di iscritti</th>
+              <td>
+                {% if subscriptionService.subscribersLimit %}{{ subscriptionService.subscriptions.count }} di {{ subscriptionService.subscribersLimit }}
+                {% else %} {{ subscriptionService.subscriptions.count }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th>Messaggio di iscrizione</th>
+              <td>
+                {% if subscriptionService.subscriptionMessage %}{{ subscriptionService.subscriptionMessage | striptags }}
+                {% else %} ---
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th>Messaggio iniziale</th>
+              <td>
+                {% if subscriptionService.beginMessage %}{{ subscriptionService.beginMessage | striptags }}
+                {% else %} ---
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th>Messaggio finale </th>
+              <td>
+                {% if subscriptionService.endMessage %}{{ subscriptionService.endMessage | striptags }}
+                {% else %} ---
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th>Pagamenti</th>
+              <td>
+                {% if subscriptionService.subscriptionPayments %}
+                  <ul>
+                    {% for payment in subscriptionService.subscriptionPayments %}
+                      <li>
+                        <b>{{ payment.date|date('d/m/Y') }}</b>: {{ payment.amount}}€
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %} ---
+                {% endif %}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <a class="btn btn-100 btn-sm" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
+            <a class="btn btn-primary btn-sm" href="{{ path('operatori_subscriptions', { 'subscriptionService': subscriptionService.id }) }}">Iscrizioni</a>
+            <a class="btn btn-warning btn-sm" href="{{ path('operatori_subscription-service_edit', { 'subscriptionService': subscriptionService.id }) }}">Modifica</a>
+          </div>
+          <div class="col-4">
+            {{ form_start(delete_form) }}
+            <div>
+              <a class="btn btn-danger btn-sm float-right" onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');" href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">Elimina</a>
+              {{ form_end(delete_form) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

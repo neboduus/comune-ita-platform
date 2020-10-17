@@ -1,0 +1,69 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ encore_entry_script_tags('subscription-service-manager') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_link_tags('subscription-service-manager') }}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>Crea nuovo servizio a sottoscrizione</h1>
+      </div>
+
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.name) }}
+        <div class="row">
+          <div class="col-6">
+            {{ form_row(form.code) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(form.tags) }}
+          </div>
+        </div>
+        {{ form_row(form.description) }}
+        <div class="row">
+          <div class="col-6">
+            {{ form_row(form.subscription_begin) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(form.subscription_end) }}
+          </div>
+        </div>
+        {{ form_row(form.subscription_amount) }}
+        <div class="row">
+          <div class="col-6">
+            {{ form_row(form.begin_date) }}
+          </div>
+          <div class="col-6">
+            {{ form_row(form.end_date) }}
+          </div>
+        </div>
+        {{ form_row(form.subscribers_limit) }}
+        {{ form_row(form.subscription_message) }}
+        {{ form_row(form.begin_message) }}
+        {{ form_row(form.end_message) }}
+        {{ form_row(form.status) }}
+
+        {{ include('SubscriptionServices/parts/subscriptionServicePayments.html.twig') }}
+
+        <div class="row">
+          <div class="col-6">
+            <input class="btn btn-success" type="submit" value="Crea"/>
+          </div>
+          <div class="col-6 text-right">
+            <a class="btn btn-100" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
+          </div>
+        </div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
+{% endblock %}

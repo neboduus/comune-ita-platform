@@ -1,0 +1,80 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+{% endblock %}
+
+{% block main_content %}
+
+
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2 text-center">
+        <h2>Benvenuto nella dashboard di amministrazione</h2>
+      </div>
+      <div class="card-wrapper card-teaser-wrapper col-lg-12">
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-settings"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_edit_ente') }}">
+              <h5 class="card-title">Impostazioni istanza</h5>
+            </a>
+            <p class="card-text">Configurazioni generali dell'ente</p>
+          </div>
+        </div>
+
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_operatore_index') }}">
+              <h5 class="card-title">Operatori</h5>
+            </a>
+            <p class="card-text">Gestione degli operatori</p>
+          </div>
+        </div>
+
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_servizio_index') }}">
+              <h5 class="card-title">Servizi</h5>
+            </a>
+            <p class="card-text">Gestione dei servizi</p>
+          </div>
+        </div>
+
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_logs_index') }}">
+              <h5 class="card-title">Logs</h5>
+            </a>
+            <p class="card-text">Logs di sistema</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+          crossorigin="anonymous"></script>
+
+  {% if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo ) %}
+  <script>
+    $(document).ready(function() {
+      setInterval(function() {
+        window.location.reload();
+      }, 15000);
+    });
+  </script>
+  {% endif %}
+
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-12 px-lg-4 py-lg-2">
+        <h1>{{ pratica.servizio.name }}</h1>
+      </div>
+
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+        {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
+          <div class="alert alert-info">
+            {{ pratica.servizio.finalIndications | raw }}
+          </div>
+        {% endif %}
+        {{ include('App:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+      </div>
+
+      <div class="col-lg-3 offset-lg-1 pt-5 pt-lg-2 ">
+        <div class="row">
+          <div class="col-12">
+            {{ include('App:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
+          </div>
+          {% if pratica.userCompilationNotes %}
+            <div class="col-12">
+              <div id="compilationNotes" class="callout my-5">
+                <div class="callout-title py-1 px-2">
+                  <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use></svg>
+                  {{ 'pratica.le_tue_note'|trans }}
+                </div>
+                <div class="body">
+                  <p>{{ pratica.userCompilationNotes}}</p>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          <div class="col-12 mt-5">
+            {% if can_compile or can_withdraw %}
+              <h4>Azioni</h4>
+              {% if can_compile %}
+                <p>
+                  <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"
+                     href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                    {{ 'pratica.vai_alla_pratica'|trans }}
+                  </a>
+                </p>
+              {% endif %}
+              {% if can_withdraw %}
+                <p>
+                  <a class="btn btn-danger btn-lg" style="margin-bottom: 30px"
+                     onclick="return confirm('Sei sicuro di procedere? Questa azione non potrà più essere annullata.');"
+                     href="{{ path('pratiche_withdraw', {'pratica': pratica.id}) }}">
+                    <svg class="icon icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use></svg>
+                    {{ 'pratica.ritira_la_pratica'|trans }}
+                  </a>
+                </p>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        {#{{ include('Default/parts/chat.html.twig') }}#}
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

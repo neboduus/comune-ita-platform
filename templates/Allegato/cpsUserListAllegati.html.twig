@@ -1,0 +1,94 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block main_content %}
+
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-lg-12 px-lg-4 py-lg-2">
+                <h1>Allegati</h1>
+
+                <div class="row">
+                    {% for item in allegati %}
+
+                        {#{% if loop.index % 3 == 1 %}
+                            <div class="row list">
+                        {% endif %}#}
+
+                        <div class="col-12 col-sm-6 col-lg-4" data-allegato="{{ item.allegato.id }}">
+
+                            <article class="card-wrapper card-space">
+                                <div class="card card-bg rounded shadow">
+                                    <div class="card-body">
+                                        <div class="category-top">
+                                            <svg class="icon">
+                                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                                            </svg>
+                                            <a class="category" href="#">{{ item.allegato.originalFilename }}</a>
+                                        </div>
+                                        <h5 class="card-title">
+                                            {{ item.allegato.description }}
+                                        </h5>
+                                        <p class="card-text">
+                                            {% if item.allegato.pratiche | length > 0 %}
+                                            <strong>{{ 'pratica.dettaglio.allegato.pratiche_list_intro'|trans }}</strong>
+                                        <ul class="list-unstyled">
+                                            {% for pratica in item.allegato.pratiche %}
+                                                <li>
+                                                    <a href="{{ path('pratiche_show', {'pratica': pratica}) }}">
+                                                        <small>{{ pratica.servizio.name }}
+                                                            ({{ ('pratica.dettaglio.stato_'~pratica.status)|trans }}
+                                                            {% if pratica.statusName == 'STATUS_SUBMITTED' %}{{ pratica.submissionTime|date(ocsdc_default_date_format) }}{% else %}{{ pratica.creationTime|date(ocsdc_default_date_format) }}{% endif %}
+                                                            )
+                                                        </small>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% endif %}
+                                        </p>
+
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <a href="{{ path( 'allegati_download_cpsuser', {'allegato': item.allegato.id}) }}"
+                                                   class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="pull-right">
+                                                    {% if item.deleteform %}
+                                                        {{ form(item.deleteform) }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </article>
+
+
+                            {#<article class="panel panel-default servizio">
+                                <div class="panel-body">
+                                    <div data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">
+                                        <strong>{{ 'pratica.dettaglio.allegato.file'|trans }}</strong>
+                                        {{ item.allegato.originalFilename }}
+                                    </div>
+                                    <div data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">
+                                        <strong>{{ 'pratica.dettaglio.allegato.descrizione'|trans }}</strong>
+                                        {{ item.allegato.description }}
+                                    </div>
+                                </div>
+                            </article>#}
+                        </div>
+
+                        {#{% if (loop.index % 3 == 0 or loop.last) %}
+                            </div>
+                        {% endif %}#}
+
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+

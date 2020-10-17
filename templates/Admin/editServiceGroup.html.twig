@@ -1,0 +1,60 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('service-group-manager') }}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h2>{{ 'gruppo_di_servizi.modifica' | trans() }} - {{ item.name }}</h2>
+      </div>
+
+
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+      </div>
+
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <div class="form-group">
+          <label>{{ 'gruppo_di_servizi.servizi' | trans() }}</label>
+          {% if item.services.count > 0 %}
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">{{ 'gruppo_di_servizi.nome' | trans() }}</th>
+                <th scope="col">{{ 'gruppo_di_servizi.modifica' | trans() }}</th>
+                <th scope="col">{{ 'gruppo_di_servizi.rimuovi' | trans() }}</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for service in item.services %}
+                <tr>
+                  <td>{{ service.name }}</td>
+                  <td>
+                    <a href="{{ path('admin_servizio_edit', {'servizio': service.id}) }}"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
+                  </td>
+                  <td>
+                    <a href="{{ path('admin_service_remove_group', {'id': service.id}) }}"
+                       onclick="return confirm('Sei sicuro di procedere? Il servizio verrà rimosso dal gruppo di servizi');">
+                      <svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <em>{{ 'gruppo_di_servizi.nessun_servizio' | trans() }}</em>
+          {% endif %}
+        </div>
+
+        <input class="btn btn-primary mr-1" type="submit" value="Salva" style="float: left"/>
+        <a class="btn btn-100 mr-1" href="{{ path('admin_service_group_index') }}" style="float: left">{{ 'gruppo_di_servizi.torna_alla_lista' | trans() }}</a>
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
+{% endblock %}

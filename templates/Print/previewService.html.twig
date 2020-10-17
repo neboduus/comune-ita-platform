@@ -1,0 +1,54 @@
+{% extends 'Default/index.html.twig' %}
+
+{% set ente = instance_service.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+  <script>
+    $(document).ready(function () {
+      if ($('#formio_render_form_id').length) {
+
+        Formio.icons = 'fontawesome';
+        Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
+          noAlerts: true,
+          language: 'it',
+          i18n: formIoI18n,
+          readOnly: false,
+          //renderMode: 'html'
+        });
+      }
+    });
+  </script>
+
+{% endblock %}
+
+{% block main_content %}
+
+<section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
+  <div class="row">
+    <div class="col-lg-12 px-lg-4 py-lg-2">
+      <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-lg-8 px-lg-4">
+      {{ form_start(form) }}
+      {{ form_errors(form) }}
+      {{ form_rest(form) }}
+      <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

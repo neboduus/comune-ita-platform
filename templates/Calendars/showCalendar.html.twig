@@ -1,0 +1,263 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('fullcalendar-manager') }}
+
+  <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css"/>
+  <style>
+
+    @media only screen and (max-width: 600px) {
+      .fc-toolbar.fc-header-toolbar {
+        display: block;
+      }
+
+      .fc-timeGridWeek-button {
+        display: none;
+      }
+
+      .fc-dayGridMonth-button {
+        display: none;
+      }
+    }
+
+    .fc td.fc-today {
+      background-image: none;
+    }
+
+    input[type=date], input[type=datetime-local], input[type=email], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], textarea {
+      font-weight: 100;
+    }
+  </style>
+{% endblock %}
+
+{% block javascripts %}
+
+  {{ encore_entry_script_tags('fullcalendar-manager') }}
+
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/locales-all.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.js"></script>
+  <script type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js"></script>
+  <script type="text/javascript" src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+<script>
+  /**
+   * Edits meeting by API request
+   * @param btnId: button id to retrieve data
+   * @param changeStatus: new status
+   */
+  function editEvent(btnId, changeStatus) {
+    let status;
+    if (changeStatus) status = changeStatus;
+    else status = $('#modalStatus').html();
+
+    let date = $('#modalDate').val();
+    let slot = $('#modalSlot').val().split(' - ');
+    let start = slot[0];
+    let end = slot[1];
+    let id = $('#modalId').html();
+
+    if (!start || !end)
+        return $('#modalError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+
+    let data = {
+      status: status,
+      from_time: new Date(`${date}T${start}`).toISOString(),
+      to_time: new Date(`${date}T${end}`).toISOString(),
+      email: $('#modalEmail').val(),
+      phone_number: $('#modalPhone').val(),
+      user_message: $('#modalDescription').val(),
+      videoconference_link: $('#modalVideoconferenceLink').val(),
+    };
+    let url = $(`#${btnId}`).attr('data-url');
+    let token = $('#hidden').attr('data-token');
+    url = url.replace("meeting_id", id);
+    $.ajax({
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+      },
+      url: url,
+      type: 'PATCH',
+      data: JSON.stringify(data),
+      success: function (response, textStatus, jqXhr) {
+        location.reload();
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+          let errorMessage = ''
+          if ( jqXHR.responseJSON.errors) {
+              jqXHR.responseJSON.errors.forEach(function (error) {
+                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
+              })
+          } else {
+              // Errore generico
+              errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante il salvataggio dell\'appuntamento</li>`
+          }
+        $('#modalError').html(errorMessage);
+      },
+    });
+  }
+
+  /**
+   * Creates a meeting by API request
+   * @param btnId: button id to retrieve data
+   * @param calendar: calendar id
+   */
+  function createMeeting(btnId, calendar) {
+    let date = $('#modalNewDate').val();
+    let slot = $('#modalNewSlot').val().split(' - ');
+    let start = slot[0];
+    let end = slot[1];
+
+      if (!start || !end)
+          return $('#modalNewError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+
+    let data = {
+      status: 1,
+      from_time: new Date(`${date}T${start}`).toISOString(),
+      to_time: new Date(`${date}T${end}`).toISOString(),
+      user_message: $('#modalNewDescription').val(),
+      fiscal_code: $('#modalNewFiscalCode').val(),
+      videoconference_link: $('#modalNewVideoconferenceLink').val(),
+      email: $('#modalNewEmail').val(),
+      name: $('#modalNewName').val(),
+      phone_number: $('#modalNewPhone').val(),
+      calendar: calendar
+    };
+
+    let url = $(`#${btnId}`).attr('data-url');
+    let token = $('#hidden').attr('data-token');
+    $.ajax({
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+      },
+      url: url,
+      type: 'POST',
+      data: JSON.stringify(data),
+      success: function (response, textStatus, jqXhr) {
+        location.reload();
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+          let errorMessage = ''
+          if ( jqXHR.responseJSON.errors) {
+              jqXHR.responseJSON.errors.forEach(function (error) {
+                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
+              })
+          } else {
+              // Errore generico
+              errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante il salvataggio dell\'appuntamento</li>`
+          }
+          $('#modalNewError').html(errorMessage);
+      },
+    });
+  }
+</script>
+
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>
+          {{ calendar.title }}
+        </h1>
+      </div>
+    </div>
+    <div id="hidden" class="hidden"
+         data-url='{{ path("calendar-day-availabilities_api_get", {'id': 'calendar_id', 'date': 'date'}) }}'
+         data-calendar='{{ calendar.id }}'
+         data-events='{{ events | json_encode }}'
+         data-duration='{{ minDuration }}'
+         data-token='{{ token }}'
+    ></div>
+    <div class="nav-tabs-hidescroll mt-4 mt-md-5">
+      <ul class="nav nav-tabs auto no-border no-background" id="tab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link text-primary active" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
+             aria-controls="calendar" aria-selected="true">Calendario</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-primary" id="meetings-tab" data-toggle="tab" href="#meetings" role="tab"
+             aria-controls="meetings" aria-selected="false">Appuntamenti</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-primary" id="detail-tab" data-toggle="tab" href="#detail" role="tab"
+             aria-controls="detail" aria-selected="false">Dettaglio</a>
+        </li>
+      </ul>
+    </div>
+    <div class="row">
+      <div class="col">
+        <!-- prettier-ignore -->
+        <div class="tab-content mt-5 mt-md-3" id="myTabContent">
+          <div class="tab-pane fade show active" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+            {{ include('App:Calendars/parts:showFullCalendar.html.twig') }}
+          </div>
+          <div class="tab-pane fade" id="meetings" role="tabpanel" aria-labelledby="meetings-tab">
+            {{ include('App:Calendars/parts:showTable.html.twig') }}
+          </div>
+          <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+            {{ include('App:Calendars/parts:showDetails.html.twig') }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 float-right">
+        <p><small class="text-200">Creato da {{ calendar.owner.username }}
+            il {{ calendar.createdAt | date('d/m/Y') }}, ultima modifica il {{ calendar.updatedAt | date('d/m/Y') }}
+            alle {{ calendar.updatedAt | date('H:i') }} </small></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8">
+        <a class="btn btn-100 btn-sm" href="{{ path('operatori_calendars_index') }}">Torna alla lista</a>
+        <a class="btn btn-primary btn-sm" href="#" onclick="printJS({
+        printable: 'fullcalendar',
+        type: 'html',
+        honorColor: true,
+         css: ['https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css']})">
+          Stampa
+        </a>
+        <a class="btn btn-warning btn-sm"
+           href="{{ path('operatori_calendar_edit', { 'calendar': calendar.id }) }}">Modifica</a>
+      </div>
+      <div class="col-4">
+        {{ form_start(delete_form) }}
+        <div>
+          <a class="btn btn-danger btn-sm float-right"
+             onclick="return confirm('Sei sicuro di procedere? il calendario verrà eliminato definitivamente.');"
+             href="{{ path('operatori_calendar_delete', { 'id': calendar.id }) }}">Elimina</a>
+          {{ form_end(delete_form) }}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

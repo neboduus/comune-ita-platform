@@ -19,8 +19,8 @@
 /web/css
 /web/js
 /web/build
-/web/bootstrap-italia
-/web/VERSION
+/public/bootstrap-italia
+/public/VERSION
 /bower_components
 /node_modules
 /coverage

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% block title %}Stanza del cittadino{% endblock %}
+{% block favicon %}
+  {% set ente = instance_service.getCurrentInstance() %}
+  {% set favicon = ente.getMetaAsArray('favicon') %}
+
+  {% if favicon is defined and favicon is not empty %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('bundles/app/images/' ~ favicon) }}"/>
+  {% else %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+  {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+{% block header %}
+    {{ include('Default/header/header.html.twig') }}
+{% endblock %}
+
+{% block content_container %}
+    <main>
+
+        {{ include('Default/nav/user.html.twig') }}
+        {{ include('Default/parts/breadcrumb.html.twig') }}
+        {{ include('Default/parts/flashes.html.twig') }}
+
+        {% block main_content %}{% endblock %}
+
+
+        {{ include('Default/parts/survey.html.twig') }}
+    </main>
+{% endblock %}
+
+{% block footer %}
+    {{ include('Default/footer/prefooter.html.twig') }}
+    {{ include('Default/footer/footer.html.twig') }}
+    {{ include('Default/footer/subfooter.html.twig') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+

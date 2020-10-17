@@ -1,0 +1,210 @@
+{% extends 'Default/index.html.twig' %}
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
+    <script src="//unpkg.com/element-ui/lib/index.js"></script>
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
+    <script type="application/javascript">
+        let vueBundledDataMessage = {
+            "attachments": [],
+            "upload_url": "{{ path('cps_user_allegato_messaggio_upload', {'id': pratica.id }) }}"
+        };
+        new Vue({
+            el: "#vueApp"
+        });
+    </script>
+
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+          crossorigin="anonymous"></script>
+  <script type='text/javascript'>
+      window.onload = function () {
+          Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
+              readOnly: true,
+              noAlerts: true,
+              language: 'it',
+              i18n: formIoI18n
+          }).then(function (form) {
+              form.submission = {
+                  data: $('#formio_summary').data('submission')
+              };
+          });
+      };
+  </script>
+
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <div class="my-2">
+          <h1>
+            {{ pratica.servizio.name }}
+            <span class="h3 primary-color">[{{ pratica.statusName | trans }}]</span>
+          </h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+
+        {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED') %}
+          <div class="row last">
+            <div class="col-xs-12 col-sm-12">
+              <div class="alert alert-{% if pratica.esito %}success{% else %}danger{% endif %}">
+                {% if pratica.esito %}
+                  <h5>{{ 'pratica.dettaglio.esito.accettata'|trans|raw }}</h5>
+                {% else %}
+                  <h5>{{ 'pratica.dettaglio.esito.rifiutata'|trans|raw }}</h5>
+                {% endif %}
+
+                {% if pratica.motivazioneEsito %}
+                  <p class="m-0">{{ pratica.motivazioneEsito }}</p>
+                {% endif %}
+
+                {% if pratica.allegatiOperatore|length > 0 %}
+                  {% for allegato in pratica.allegatiOperatore %}
+                    <div class="row my-3">
+                      <div class="col-2">
+                        {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
+                          <i class="fa fa-2x fa-file-pdf-o"></i>
+                        {% else %}
+                          <i class="fa fa-2x fa-file-o"></i>
+                        {% endif %}
+                      </div>
+                      <div class="col-6 text-truncate">
+                        {{ allegato.originalFilename }}
+                      </div>
+                      <div class="col-2">
+                        {{ allegato.getHumanReadableFileSize }}
+                      </div>
+                      <div class="col-2">
+                        <a href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
+                          <svg class="icon icon-primary">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        {{ include('Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}
+      </div>
+      <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
+        <div class="row pl-3 mb-5 d-flex justify-content-between">
+          <div class="col-auto ">
+            {% if pratica.moduliCompilati|length > 0 %}
+              <a class="btn btn-outline-secondary"
+                 href="{{ path('allegati_download_cpsuser', {'allegato': pratica.moduliCompilati[0]}) }}">
+                <svg class="icon icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                </svg>
+                {{ 'operatori.scarica' | trans }}
+              </a>
+            {% else %}
+              <button class="btn btn-outline-secondary" disabled>
+                <svg class="icon icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                </svg>
+                {{ 'operatori.scarica' | trans }}
+              </button>
+            {% endif %}
+          </div>
+          <div class="col-auto">
+            {% if can_compile or can_withdraw %}
+              {% if can_compile %}
+                <a class="btn btn-success" data-action="edit_draft"
+                   href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+                  <i class="fa fa-arrow-circle-o-right"></i>
+                  {{ 'pratica.vai_alla_pratica'|trans }}
+                </a>
+              {% endif %}
+              {% if can_withdraw %}
+                <a class="btn btn-danger"
+                   onclick="return confirm('Sei sicuro di procedere? Questa azione non potrà più essere annullata.');"
+                   href="{{ path('pratiche_withdraw', {'pratica': pratica.id}) }}">
+                  <svg class="icon icon-white icon-sm">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                  </svg>
+                  {{ 'pratica.ritira_la_pratica'|trans }}
+                </a>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        <div class="row my-4 pl-4">
+          {% if pratica.type == 'form_io' %}
+            <div class="col-12 pb-3">
+              <h6>{{ 'pratica.numero' | trans }}:</h6>
+              <code class="text-nowrap">{{ pratica.id }}</code>
+            </div>
+            <div class="col-12 pb-3">
+              <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
+              <span class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
+            </div>
+            {% if  pratica.servizio.isProtocolrequired %}
+              <div class="col-12 pb-3">
+                <h6>{{ 'pratica.protocollo' | trans }}:</h6>
+                {% if pratica.numeroProtocollo %}
+                  <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
+                {% else %}
+                  <span class="text-nowrap font-italic">{{ 'pratica.in_attesa_protocollo'| trans }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endif %}
+          <div class="col-12 pb-3">
+            {{ include('Pratiche/parts/pratica_iter.html.twig') }}
+          </div>
+          {% if pratica.userCompilationNotes %}
+            <div class="col-12">
+              <div id="compilationNotes" class="callout my-5">
+                <div class="callout-title py-1 px-2">
+                  <svg class="icon">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
+                  </svg>
+                  {{ 'pratica.le_tue_note'|trans }}
+                </div>
+                <div class="body">
+                  <p>{{ pratica.userCompilationNotes }}</p>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          {% if applications_in_folder|length > 0 %}
+            <div class="col-12 pb-3">
+              <h6>{{ 'operatori.fascicolo' | trans }}</h6>
+              {{ include('Pratiche/summary/parts/fascicolo.html.twig') }}
+            </div>
+          {% endif %}
+          {% if pratiche_recenti|length > 0 %}
+            <div class="col-12 pb-3">
+              <h6>{{ 'operatori.ultime_pratiche' | trans }}</h6>
+              {{ include('Pratiche/summary/parts/pratiche_recenti.html.twig') }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
