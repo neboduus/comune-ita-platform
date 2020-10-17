@@ -14,6 +14,7 @@ use AppBundle\Model\FlowStep;
 use AppBundle\Model\AdditionalData;
 use AppBundle\Entity\Servizio;
 use AppBundle\Dto\Service;
+use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -55,12 +56,17 @@ class ServicesAPIController extends AbstractFOSRestController
 
   /** @var LoggerInterface */
   private $logger;
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerApiAdapterService;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
+  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, FormServerApiAdapterService $formServerApiAdapterService)
   {
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
+    $this->formServerApiAdapterService = $formServerApiAdapterService;
   }
 
 
@@ -141,7 +147,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param $id
    * @return \FOS\RestBundle\View\View
    */
-  public function getFormServiceAction($id, FormServerApiAdapterService $formServerService)
+  public function getFormServiceAction($id)
   {
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
@@ -151,7 +157,7 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      $response = $formServerService->getForm($service->getFormIoId());
+      $response = $this->formServerApiAdapterService->getForm($service->getFormIoId());
 
       if ($response['status'] == 'success') {
         return $this->view($response['form'], Response::HTTP_OK);
