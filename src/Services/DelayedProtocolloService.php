@@ -26,7 +26,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
   const SCHEDULED_ITEM_PROTOCOLLA_ALLEGATO = 'protocollo.uploadFile';
 
   /**
-   * @var ProtocolloServiceInterface
+   * @var ProtocolloService
    */
   protected $protocolloService;
 
@@ -47,7 +47,7 @@ class DelayedProtocolloService extends AbstractProtocolloService implements Prot
 
 
   public function __construct(
-    ProtocolloServiceInterface $protocolloService,
+    ProtocolloService $protocolloService,
     EntityManagerInterface $entityManager,
     LoggerInterface $logger,
     ScheduleActionService $scheduleActionService

@@ -1,0 +1,224 @@
+paths:
+#dedicated
+  - uri: bugliano.localtest.me
+    path: ''
+    instance: comune-di-bugliano
+#alias
+  - uri: stanzadelcittadino.localtest.me
+    path: bugliano
+    instance: comune-di-bugliano
+#defaults
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-bugliano
+    instance: comune-di-bugliano
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-ala
+    instance: comune-di-ala
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-arco
+    instance: comune-di-arco
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-borgo-lares
+    instance: comune-di-borgo-lares
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-canal-san-bovo
+    instance: comune-di-canal-san-bovo
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-castello-tesino
+    instance: comune-di-castello-tesino
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-cavedine
+    instance: comune-di-cavedine
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-folgaria
+    instance: comune-di-folgaria
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-imer
+    instance: comune-di-imer
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-lavarone
+    instance: comune-di-lavarone
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-ledro
+    instance: comune-di-ledro
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-luserna
+    instance: comune-di-luserna
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-maniago
+    instance: comune-di-maniago
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-mezzano
+    instance: comune-di-mezzano
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-moena
+    instance: comune-di-moena
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-mori
+    instance: comune-di-mori
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-niscemi
+    instance: comune-di-niscemi
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-pergine
+    instance: comune-di-pergine
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-preganziol
+    instance: comune-di-preganziol
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-riva-del-garda
+    instance: comune-di-riva-del-garda
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-rovereto
+    instance: comune-di-rovereto
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-schio
+    instance: comune-di-schio
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-tavagnacco
+    instance: comune-di-tavagnacco
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-tre-ville
+    instance: comune-di-tre-ville
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-trento
+    instance: comune-di-trento
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-vallelaghi
+    instance: comune-di-vallelaghi
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-vicopisano
+    instance: comune-di-vicopisano
+  - uri: stanzadelcittadino.localtest.me
+    path: fondazione-edmund-mach
+    instance: fondazione-edmund-mach
+  - uri: stanzadelcittadino.localtest.me
+    path: procura-generale-della-repubblica-di-trento
+    instance: procura-generale-della-repubblica-di-trento
+  - uri: stanzadelcittadino.localtest.me
+    path: provincia-autonoma-di-trento
+    instance: provincia-autonoma-di-trento
+
+instances:
+  comune-di-bugliano:
+    codice_meccanografico: c_cbug
+    database_name: sdc_bugliano
+    login_route: login_open
+    single_logout_url: 'http://auth.localtest.me/slo?redirect=http://stanzadelcittadino.localtest.me/comune-di-bugliano/'
+    protocollo: dummy
+  comune-di-ala:
+    codice_meccanografico: c_a116
+    database_name: sdc_ala
+    protocollo: pitre
+  comune-di-arco:
+    codice_meccanografico: I531
+    database_name: sdc_arco
+    protocollo: pec
+  comune-di-borgo-lares:
+    codice_meccanografico: c_m353
+    database_name: sdc_borgolares
+    protocollo: pitre
+  comune-di-canal-san-bovo:
+    codice_meccanografico: c_b577
+    database_name: sdc_canalsanbovo
+    protocollo: pitre
+  comune-di-castello-tesino:
+    codice_meccanografico: c_c194
+    database_name: sdc_castellotesino
+    protocollo: pitre
+  comune-di-cavedine:
+    codice_meccanografico: c_c393
+    database_name: sdc_cavedine
+    protocollo: pitre
+  comune-di-folgaria:
+    codice_meccanografico: c_d651
+    database_name: sdc_folgaria
+    protocollo: pitre
+  comune-di-imer:
+    codice_meccanografico: c_e288
+    database_name: sdc_imer
+    protocollo: pitre
+  comune-di-lavarone:
+    codice_meccanografico: c_e492
+    database_name: sdc_lavarone
+    protocollo: pitre
+  comune-di-ledro:
+    codice_meccanografico: c_m313
+    database_name: sdc_ledro
+    protocollo: pitre
+  comune-di-luserna:
+    codice_meccanografico: c_e757
+    database_name: sdc_luserna
+    protocollo: pitre
+  comune-di-maniago:
+    codice_meccanografico: c_e889
+    database_name: sdc_maniago
+    protocollo: pitre
+  comune-di-mezzano:
+    codice_meccanografico: F176
+    database_name: sdc_mezzano
+    protocollo: pitre
+  comune-di-moena:
+    codice_meccanografico: c_f263
+    database_name: sdc_moena
+    protocollo: pitre
+  comune-di-mori:
+    codice_meccanografico: c_f728
+    database_name: sdc_mori
+    protocollo: pitre
+  comune-di-niscemi:
+    codice_meccanografico: F899
+    database_name: sdc_niscemi
+    protocollo: pec
+  comune-di-pergine:
+    codice_meccanografico: G452
+    database_name: sdc_pergine
+    protocollo: pec
+  comune-di-preganziol:
+    codice_meccanografico: H022
+    database_name: sdc_preganziol
+    protocollo: pec
+  comune-di-riva-del-garda:
+    codice_meccanografico: H330
+    database_name: sdc_rivadelgarda
+    protocollo: dummy
+  comune-di-rovereto:
+    codice_meccanografico: c_h612
+    database_name: sdc_rovereto
+    protocollo: pec
+  comune-di-schio:
+    codice_meccanografico: I531
+    database_name: sdc_schio
+    protocollo: dummy
+  comune-di-tavagnacco:
+    codice_meccanografico: L065
+    database_name: sdc_tavagnacco
+    protocollo: dummy
+  comune-di-tre-ville:
+    codice_meccanografico: c_m361
+    database_name: sdc_treville
+    protocollo: pitre
+  comune-di-trento:
+    codice_meccanografico: L378
+    database_name: sdc_trento
+    protocollo: dummy
+  comune-di-vallelaghi:
+    codice_meccanografico: c_m362
+    database_name: sdc_vallelaghi
+    protocollo: pitre
+  comune-di-vicopisano:
+    codice_meccanografico: L850
+    database_name: sdc_vicopisano
+    protocollo: pec
+  fondazione-edmund-mach:
+    codice_meccanografico: fem
+    database_name: sdc_fem
+    protocollo: pitre
+  procura-generale-della-repubblica-di-trento:
+    codice_meccanografico: PGRTN
+    database_name: sdc_procurageneraletrento
+    protocollo: pec
+  provincia-autonoma-di-trento:
+    codice_meccanografico: p_TN
+    database_name: sdc_provinciatrento
+    protocollo: pec

@@ -5,4 +5,22 @@ twig:
   exception_controller: null
   globals:
     locale: '%locale%'
-    instance_service: '@ocsdc.instance_service'
+    header_top:
+      title: "%header_top_title%"
+      link: "%header_top_link%"
+    footer_credits: "%footer_credits%"
+    ocsdc_iter_duration_start_status: "%ocsdc_iter_duration_start_status%"
+    ocsdc_iter_duration_end_statuses: "%ocsdc_iter_duration_end_statuses%"
+    ocsdc_default_date_format: "%ocsdc_default_date_format%"
+    ocsdc_default_datetime_format: "%ocsdc_default_datetime_format%"
+    ocsdc_slim_datetime_format: "%ocsdc_slim_datetime_format%"
+    ocsdc_default_moment_datetime_format: "%ocsdc_default_moment_datetime_format%"
+    ocsdc_default_time_format: "%ocsdc_default_time_format%"
+    ocsdc_scheme: "%ocsdc_scheme%"
+    ocsdc_host: "%ocsdc_host%"
+    instance_service: "@ocsdc.instance_service"
+    version_service: "@ocsdc.version_service"
+    backoffices: "@ocsdc.backoffices"
+    login_callout_texts: "%login_callout_texts%"
+    login_route: "%login_route%"
+    #protocollo_handler: "@ocsdc.protocollo.handler"

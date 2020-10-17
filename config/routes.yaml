@@ -1,3 +1,22 @@
-index:
-    path: /
-    controller: App\Controller\DefaultController::commonAction
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::commonAction
+
+api_auth:
+  path: "/%prefix%/api/auth"
+  methods:  [POST]
+
+rest:
+  resource: ../src/Controller/Rest
+  type: annotation
+  prefix: "/%prefix%/api"
+
+app.swagger_ui:
+  path: "/%prefix%/api/doc"
+  methods: GET
+  defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+
+app.swagger:
+  path: "/%prefix%/api/doc.json"
+  methods: GET
+  defaults: { _controller: nelmio_api_doc.controller.swagger }

@@ -2,9 +2,12 @@
 <?php
 
 use App\Kernel;
+use App\InstanceKernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\ErrorHandler\Debug;
+use Symfony\Component\Yaml\Yaml;
 
 if (!in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
     echo 'Warning: The console should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
@@ -23,6 +26,8 @@ if (null !== $env = $input->getParameterOption(['--env', '-e'], null, true)) {
     putenv('APP_ENV='.$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $env);
 }
 
+$instance = $input->getParameterOption(['--instance', '-i'], '');
+
 if ($input->hasParameterOption('--no-debug', true)) {
     putenv('APP_DEBUG='.$_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = '0');
 }
@@ -37,6 +42,25 @@ if ($_SERVER['APP_DEBUG']) {
     }
 }
 
-$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+if (!empty($instance)) {
+  $instances = Yaml::parse(file_get_contents(__DIR__.'/../config/instances_dev.yml'));
+  $instanceParams = $instances['instances'];
+  if (!isset($instanceParams[$instance])) {
+    throw new Exception("Instance $instance not found");
+  }
+  $kernel = new InstanceKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+  $kernel->setIdentifier($instance);
+  $kernel->setInstanceParameters($instanceParams[$instance]);
+} else {
+  $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+}
+
 $application = new Application($kernel);
+
+// Aggiungo l'opzione instance all'input definition altrimenti da errore
+$inputDefinition = $application->getDefinition();
+$inputDefinition->addOption(
+  new InputOption('instance', 'i', InputOption::VALUE_OPTIONAL, 'Name of the Instance', null)
+);
+
 $application->run($input);

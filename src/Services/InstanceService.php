@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Entity\Ente;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 
 class InstanceService
 {
@@ -22,16 +24,26 @@ class InstanceService
     $this->instance = $instance;
   }
 
+  public function hasInstance()
+  {
+    return !empty($this->instance);
+  }
+
   /**
-   * @return \App\Entity\Ente|bool
+   * @return Ente|object|null
+   * @throws RuntimeException
    */
   public function getCurrentInstance()
   {
-    if ($this->instance == null) {
-      return false;
+    if (empty($this->instance)) {
+      throw new RuntimeException("Ente not configured");
     }
+
     $repo = $this->doctrine->getRepository('App:Ente');
     $ente = $repo->findOneBy(array('slug' => $this->instance));
+    if (!$ente instanceof Ente) {
+      throw new RuntimeException("Ente $this->instance not found");
+    }
 
     return $ente;
   }

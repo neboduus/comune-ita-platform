@@ -12,9 +12,8 @@ use Hoa\Event\Exception;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Bundle\TwigBundle\TwigEngine;
-use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class PecProtocolloHandler implements ProtocolloHandlerInterface
 {
@@ -45,7 +44,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   private $translator;
 
   /**
-   * @var TwigEngine
+   * @var Environment
    */
   private $templating;
 
@@ -67,10 +66,10 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @param string $password
    * @param string $sender
    * @param TranslatorInterface $translator
-   * @param TemplatingExtension $templating
+   * @param Environment $templating
    * @param LoggerInterface $logger
    */
-  public function __construct(string $host, string $port, $user, $password, string $sender, TranslatorInterface $translator, TwigEngine $templating, LoggerInterface $logger)
+  public function __construct(string $host, string $port, $user, $password, string $sender, TranslatorInterface $translator, Environment $templating, LoggerInterface $logger)
   {
     $this->host = $host;
     $this->port = $port;

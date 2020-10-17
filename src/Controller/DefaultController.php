@@ -7,9 +7,11 @@ use App\Entity\Ente;
 use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
 use App\Entity\TerminiUtilizzo;
+use App\InstanceKernel;
 use App\Logging\LogConstants;
 use App\Security\AbstractAuthenticator;
 use App\Security\LogoutSuccessHandler;
+use App\Services\InstanceService;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -48,27 +50,21 @@ class DefaultController extends Controller
     $this->translator = $translator;
   }
 
-
   /**
    * @Route("/", name="home")
-   * @return Response
-   */
-  public function commonAction()
-  {
-    return $this->render(
-      'Default/common.html.twig',
-      ['enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll()]
-    );
-  }
-
-  /**
-   * @Route("/asd", name="forward_home")
    *
    * @return Response
    */
   public function indexAction()
   {
-    return $this->forward(ServiziController::class . '::serviziAction');
+    if ($this->container->get('kernel') instanceof InstanceKernel) {
+      return $this->forward(ServiziController::class . '::serviziAction');
+    } else {
+      return $this->render(
+        'Default/common.html.twig',
+        ['enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll()]
+      );
+    }
   }
 
   /**

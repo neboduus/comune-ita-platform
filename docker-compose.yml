@@ -64,6 +64,9 @@ services:
       RECAPTCHA_SECRET: $RECAPTCHA_SECRET
       SENTRY_DSN: $SENTRY_DSN
       PHP_DATE_TIMEZONE: 'Europe/Rome'
+      JWT_SECRET_KEY: $JWT_SECRET_KEY
+      JWT_PUBLIC_KEY: $JWT_PUBLIC_KEY
+      JWT_PASSPHRASE: $JWT_PASSPHRASE
     volumes:
       - "uploads:/var/www/html/var/uploads"
 

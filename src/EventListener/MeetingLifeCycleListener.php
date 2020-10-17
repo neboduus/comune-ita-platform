@@ -8,7 +8,7 @@ use App\Entity\Meeting;
 use App\Services\InstanceService;
 use App\Services\MailerService;
 use App\Services\MeetingService;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;

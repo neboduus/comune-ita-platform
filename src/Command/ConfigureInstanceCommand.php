@@ -8,20 +8,32 @@ use App\Entity\Ente;
 use App\Entity\OperatoreUser;
 use App\Entity\PaymentGateway;
 use App\Model\Gateway;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ConfigureInstanceCommand extends ContainerAwareCommand
+class ConfigureInstanceCommand extends Command
 {
 
-  /**
-   * @var
-   */
+  /** @var LoadData */
+  private $loader;
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /** @var SymfonyStyle */
   private $symfonyStyle;
+
+  public function __construct(EntityManagerInterface $entityManager, LoadData $loader)
+  {
+    $this->loader = $loader;
+    parent::__construct();
+    $this->entityManager = $entityManager;
+  }
 
   protected function configure()
   {
@@ -39,9 +51,8 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
       throw new InvalidArgumentException("Devi specificare un'istanza");
     }
 
-    $manager = $this->getContainer()->get('doctrine')->getManager();
-    $loader = new LoadData();
-    $loader->setContainer($this->getContainer());
+    $manager = $this->entityManager;
+    $loader = $this->loader;
     $loader->loadPaymentGateways($manager);
 
     $repo = $manager->getRepository('App:Ente');
@@ -85,11 +96,9 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     $manager->persist($ente);
     $manager->flush();
 
-    $loader = new LoadData();
-    $loader->setContainer($this->getContainer());
-    $loader->loadCategories($manager);
-    $loader->loadServizi($manager);
-    $loader->loadTerminiUtilizzo($manager);
+    $this->loader->loadCategories($manager);
+    $this->loader->loadServizi($manager);
+    $this->loader->loadTerminiUtilizzo($manager);
 
 
     if ($ente) {
@@ -108,7 +117,7 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     $username = $this->symfonyStyle->ask('Inserisci lo username: ', 'admin');
     $password = $this->symfonyStyle->ask('Inserisci la password: ', '');
 
-    $um = $this->getContainer()->get('fos_user.user_manager');
+    //$um = $this->getContainer()->get('fos_user.user_manager');
 
     $user = (new AdminUser())
       ->setUsername($username)
@@ -119,7 +128,10 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
       ->setEnabled(true);
 
     try {
-      $um->updateUser($user);
+      //$um->updateUser($user);
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
+
       $this->symfonyStyle->text('Ok: generato nuovo admin');
     } catch (\Exception $e) {
       $this->symfonyStyle->text('Errore: ' . $e->getMessage());
