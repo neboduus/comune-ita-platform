@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\ServiceGroup;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  * Class ServiceGroupController
  * @Route("/admin/service-group")
  */
-class ServiceGroupController extends Controller
+class ServiceGroupController extends AbstractController
 {
   /**
    * Lists all Service Group entities.

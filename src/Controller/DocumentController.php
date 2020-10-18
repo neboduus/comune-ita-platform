@@ -47,7 +47,6 @@ class DocumentController extends Controller
 
   /**
    * @Route("/", name="folders_list_cpsuser")
-   * @Template()
    */
   public function cpsUserListFoldersAction()
   {
@@ -56,7 +55,8 @@ class DocumentController extends Controller
     $folders = $this->getDoctrine()->getRepository('App:Folder')->findBy(['owner' => $user]);
 
     // Get folders with shared documents
-    $sql = 'SELECT DISTINCT folder.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\'';
+    $sql = 'SELECT DISTINCT folder.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"'.$user->getCodiceFiscale(
+      ).'"\'';
     $stmt = $this->em->getConnection()->prepare($sql);
     $stmt->execute();
     $sharedIds = $stmt->fetchAll();
@@ -65,15 +65,17 @@ class DocumentController extends Controller
       $folders[] = $this->em->getRepository('App:Folder')->find($id);
     }
 
-    return [
-      'folders' => $folders,
-      'user' => $this->getUser(),
-    ];
+    return $this->render(
+      'Document/cpsUserListFolders.html.twig',
+      [
+        'folders' => $folders,
+        'user' => $this->getUser(),
+      ]
+    );
   }
 
   /**
    * @Route("/{folderId}", name="documenti_list_cpsuser")
-   * @Template()
    * @param Request $request
    * @param string $folderId
    * @return array|Response
@@ -86,37 +88,41 @@ class DocumentController extends Controller
 
     if (!$folder) {
       $this->addFlash('warning', $this->translator->trans('documenti.no_folder'));
+
       return $this->redirectToRoute('folders_list_cpsuser');
     }
 
-      if ($folder->getOwner() == $user)
-        $documents = $this->getDoctrine()->getRepository('App:Document')->findBy(['folder' => $folder]);
-      else {
-        try {
-          $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' and folder.id = \'' . $folder->getId() . '\'';
+    if ($folder->getOwner() == $user) {
+      $documents = $this->getDoctrine()->getRepository('App:Document')->findBy(['folder' => $folder]);
+    } else {
+      try {
+        $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"'.$user->getCodiceFiscale(
+          ).'"\' and folder.id = \''.$folder->getId().'\'';
 
-          $stmt = $this->em->getConnection()->prepare($sql);
-          $stmt->execute();
-          $sharedDocuments = $stmt->fetchAll();
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $stmt->execute();
+        $sharedDocuments = $stmt->fetchAll();
 
-          foreach ($sharedDocuments as $id) {
-            $documents[] = $this->em->getRepository('App:Document')->find($id);
-          }
-        } catch (DBALException $exception) {
-          $this->addFlash('warning', $this->translator->trans('documenti.document_search_error'));
+        foreach ($sharedDocuments as $id) {
+          $documents[] = $this->em->getRepository('App:Document')->find($id);
         }
+      } catch (DBALException $exception) {
+        $this->addFlash('warning', $this->translator->trans('documenti.document_search_error'));
       }
+    }
 
-    return [
-      'documents' => $documents,
-      'folder' => $folder,
-      'user' => $user
-    ];
+    return $this->render(
+      'Document/cpsUserListDocuments.html.twig',
+      [
+        'documents' => $documents,
+        'folder' => $folder,
+        'user' => $user,
+      ]
+    );
   }
 
   /**
    * @Route("/{folderId}/{documentId}", name="documento_show_cpsuser")
-   * @Template()
    * @param Request $request
    * @param string $folderId
    * @param string $documentId
@@ -130,20 +136,29 @@ class DocumentController extends Controller
 
     if (!$folder) {
       $this->addFlash('warning', $this->translator->trans('documenti.no_folder'));
+
       return $this->redirectToRoute('folders_list_cpsuser');
     } elseif (!$document) {
       $this->addFlash('warning', $this->translator->trans('documenti.no_document'));
-      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId'=>$folderId]);
+
+      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId' => $folderId]);
     }
 
-    if ($folder->getOwner() == $user->getCodiceFiscale() || in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
-      return [
-        'document' => $document,
-        'user' => $user,
-      ];
+    if ($folder->getOwner() == $user->getCodiceFiscale() || in_array(
+        $user->getCodiceFiscale(),
+        (array)$document->getReadersAllowed()
+      )) {
+      return $this->render(
+        'Document/cpsUserShowDocumento.html.twig',
+        [
+          'document' => $document,
+          'user' => $user,
+        ]
+      );
     } else {
       $this->addFlash('warning', $this->translator->trans('documenti.no_document_permissions'));
-      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId'=>$folderId]);
+
+      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId' => $folderId]);
     }
   }
 
@@ -156,22 +171,25 @@ class DocumentController extends Controller
    * @return Response
    * @throws \Exception
    */
-  public function downloadDocumentAction(Request $request, $folderId,  $documentId)
+  public function downloadDocumentAction(Request $request, $folderId, $documentId)
   {
     $user = $this->getUser();
     $folder = $this->em->getRepository('App:Folder')->find($folderId);
     $document = $this->em->getRepository('App:Document')->find($documentId);
 
-    if ($folder->getOwner() != $user->getCodiceFiscale() && !in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
+    if ($folder->getOwner() != $user->getCodiceFiscale() && !in_array(
+        $user->getCodiceFiscale(),
+        (array)$document->getReadersAllowed()
+      )) {
       return new Response(null, Response::HTTP_UNAUTHORIZED);
     }
 
     $extension = explode('.', $document->getOriginalFilename());
     $extension = end($extension);
 
-    $filePath = '../var/uploads/documents/users/' .
-      $document->getOwnerId() . DIRECTORY_SEPARATOR . $document->getFolderId() .
-      DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
+    $filePath = '../var/uploads/documents/users/'.
+      $document->getOwnerId().DIRECTORY_SEPARATOR.$document->getFolderId().
+      DIRECTORY_SEPARATOR.$document->getId().'.'.$extension;
 
     if (!file_exists($filePath) && $document->getAddress()) {
       $filePath = $document->getAddress();
@@ -198,16 +216,18 @@ class DocumentController extends Controller
     $response->headers->set('Content-Type', $document->getMimeType());
 
     try {
-      $document->setLastReadAt( new \DateTime());
+      $document->setLastReadAt(new \DateTime());
       $document->setDownloadsCounter($document->getDownloadsCounter() + 1);
       $this->em->persist($document);
       $this->em->flush();
 
     } catch (ORMException $e) {
       $this->logger->notice(
-        LogConstants::DOCUMENT_UPDATE_ERROR, ['document' => $document]
+        LogConstants::DOCUMENT_UPDATE_ERROR,
+        ['document' => $document]
       );
     }
+
     return $response;
   }
 }

@@ -11,11 +11,12 @@ use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SubscriberController extends Controller
+class SubscriberController extends AbstractController
 {
   use DataTablesTrait;
 
@@ -34,7 +35,6 @@ class SubscriberController extends Controller
 
   /**
    * Finds and displays a SubscriptionService entity.
-   * @Template()
    * @Route("/operatori/subscriber/{subscriber}", name="operatori_subscriber_show")
    */
   public function showSubscriberAction(Request $request, Subscriber $subscriber)
@@ -49,8 +49,8 @@ class SubscriberController extends Controller
     foreach ($subscriber->getSubscriptions() as $subscription) {
       $subscriptionServices[] = $subscription->getSubscriptionService()->getName();
 
-      if ($subscription->getSubscriptionService()->getSubscriptionAmount())
-        // Subscription Amount entry
+      if ($subscription->getSubscriptionService()->getSubscriptionAmount()) // Subscription Amount entry
+      {
         $tableData[] = array(
           'created_at' => $subscription->getCreatedAt(),
           'subscription_service_name' => $subscription->getSubscriptionService()->getName(),
@@ -59,8 +59,9 @@ class SubscriberController extends Controller
           'start_date' => $subscription->getSubscriptionService()->getBeginDate(),
           'end_date' => $subscription->getSubscriptionService()->getEndDate(),
           'payment_date' => $subscription->getSubscriptionService()->getBeginDate(),
-          'payment_amount' => $subscription->getSubscriptionService()->getSubscriptionAmount()
+          'payment_amount' => $subscription->getSubscriptionService()->getSubscriptionAmount(),
         );
+      }
       // Subscription Payments entries
       foreach ($subscription->getSubscriptionService()->getSubscriptionPayments() as $payment) {
         $tableData[] = array(
@@ -78,23 +79,75 @@ class SubscriberController extends Controller
 
     // Initializa datatable with previously created array data
     $table = $this->createDataTable()
-      ->add('subscription_service_name', TextColumn::class, ['label' => 'Nome', 'searchable' => true, 'orderable' => true, 'render' => function ($value, $subscription) {
-        return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscription-service_show', [
-          'subscriptionService' => $subscription['subscription_service_id']
-        ]), $value);
-      }])
+      ->add(
+        'subscription_service_name',
+        TextColumn::class,
+        [
+          'label' => 'Nome',
+          'searchable' => true,
+          'orderable' => true,
+          'render' => function ($value, $subscription) {
+            return sprintf(
+              '<a href="%s">%s</a>',
+              $this->generateUrl(
+                'operatori_subscription-service_show',
+                [
+                  'subscriptionService' => $subscription['subscription_service_id'],
+                ]
+              ),
+              $value
+            );
+          },
+        ]
+      )
       // ->add('subscription_service_code', TextColumn::class, ['label' => 'Codice', 'searchable' => true, 'orderable'=> true])
-      ->add('created_at', DateTimeColumn::class, ['label' => 'Iscrizione', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true])
-      ->add('start_date', DateTimeColumn::class, ['label' => 'Inizio', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true])
-      ->add('end_date', DateTimeColumn::class, ['label' => 'Fine', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true])
+      ->add(
+        'created_at',
+        DateTimeColumn::class,
+        ['label' => 'Iscrizione', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true]
+      )
+      ->add(
+        'start_date',
+        DateTimeColumn::class,
+        ['label' => 'Inizio', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true]
+      )
+      ->add(
+        'end_date',
+        DateTimeColumn::class,
+        ['label' => 'Fine', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true]
+      )
       //->add('payment_amount', TextColumn::class, ['label' => 'Importo', 'searchable' => false, 'orderable' => true])
-      ->add('payment_amount', TextColumn::class, ['label' => 'Importo', 'searchable' => false, 'orderable' => true,  'render' => function ($value, $subscription) {
-        return sprintf('<span>%s €</span>', number_format ( $value, 2 ));
-      }])
-      ->add('payment_date', DateTimeColumn::class, ['label' => 'Scadenza', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true])
-      ->add('stato', TextColumn::class, ['label' => 'Stato', 'searchable' => false, 'orderable' => true, 'render' => function ($value, $subscription) {
-        return sprintf('<svg class="icon icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>');
-      }])
+      ->add(
+        'payment_amount',
+        TextColumn::class,
+        [
+          'label' => 'Importo',
+          'searchable' => false,
+          'orderable' => true,
+          'render' => function ($value, $subscription) {
+            return sprintf('<span>%s €</span>', number_format($value, 2));
+          },
+        ]
+      )
+      ->add(
+        'payment_date',
+        DateTimeColumn::class,
+        ['label' => 'Scadenza', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true]
+      )
+      ->add(
+        'stato',
+        TextColumn::class,
+        [
+          'label' => 'Stato',
+          'searchable' => false,
+          'orderable' => true,
+          'render' => function ($value, $subscription) {
+            return sprintf(
+              '<svg class="icon icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>'
+            );
+          },
+        ]
+      )
       ->createAdapter(ArrayAdapter::class, $tableData)
       ->handleRequest($request);
 
@@ -115,11 +168,14 @@ class SubscriberController extends Controller
       return $this->redirectToRoute('operatori_subscriber_show', ['subscriber' => $subscriber->getId()]);
     }
 
-    return array(
-      'user' => $user,
-      'subscriber' => $subscriber,
-      'datatable' => $table,
-      'form' => $form->createView(),
+    return $this->render(
+      'Subscriber/index.html.twig',
+      array(
+        'user' => $user,
+        'subscriber' => $subscriber,
+        'datatable' => $table,
+        'form' => $form->createView(),
+      )
     );
   }
 }

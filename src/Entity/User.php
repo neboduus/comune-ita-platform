@@ -232,7 +232,7 @@ abstract class User implements UserInterface
   /**
    * @return UuidInterface
    */
-  public function getId(): UuidInterface
+  public function getId()
   {
     return $this->id;
   }

@@ -14,7 +14,9 @@ use App\Logging\LogConstants;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,7 +29,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @package App\Controller
  * @Route("/servizi")
  */
-class ServiziController extends Controller
+class ServiziController extends AbstractController
 {
   /**
    * @var LoggerInterface
@@ -52,7 +54,6 @@ class ServiziController extends Controller
 
   /**
    * @Route("/", name="servizi_list")
-   * @Template()
    * @param Request $request
    * @return array
    */
@@ -102,44 +103,19 @@ class ServiziController extends Controller
 
     ksort($services);
 
-    return [
+    return $this->render('Servizi/servizi.html.twig', [
       'sticky_services' => $sticky,
       'servizi' => $services,
       'user' => $this->getUser()
-    ];
-  }
-
-  /**
-   * @Route("/miller/{topic}/{subtopic}", name="servizi_miller", defaults={"topic":false, "subtopic":false})
-   * @param string $topic
-   * @param string $subtopic
-   * @param Request $request
-   * @return Response|array
-   */
-  public function serviziMillerAction($topic, $subtopic, Request $request)
-  {
-    return new Response(null, Response::HTTP_GONE);
-  }
-
-  /**
-   * @Route("/miller_ajax/{topic}/{subtopic}", name="servizi_miller_ajax", defaults={"subtopic":false})
-   * @param string $topic
-   * @param string $subtopic
-   * @param Request $request
-   * @return Response|array
-   */
-  public function serviziMillerAjaxAction($topic, $subtopic, Request $request)
-  {
-    return new Response(null, Response::HTTP_GONE);
+    ]);
   }
 
   /**
    * @Route("/{slug}", name="servizi_show")
-   * @Template()
    * @param string $slug
    * @param Request $request
    *
-   * @return array
+   * @return Response
    */
   public function serviziDetailAction($slug, Request $request)
   {
@@ -196,23 +172,22 @@ class ServiziController extends Controller
       $denyAccessMessage = $this->translator->trans($e->getMessage(), $e->getParameters());
     }
 
-    return [
+    return $this->render('Servizi/serviziDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio,
       'servizi_area' => $serviziArea,
       'handler' => $handler,
       'can_access' => $canAccess,
       'deny_access_message' => $denyAccessMessage,
-    ];
+    ]);
   }
 
   /**
    * @Route("/gruppo/{slug}", name="service_group_show")
-   * @Template()
    * @param string $slug
    * @param Request $request
    *
-   * @return array
+   * @return Response
    */
   public function serviceGroupDetailAction($slug, Request $request)
   {
@@ -225,10 +200,10 @@ class ServiziController extends Controller
       throw new NotFoundHttpException("ServiceGroup $slug not found");
     }
 
-    return [
+    return $this->render('Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio
-    ];
+    ]);
   }
 
   /**
@@ -236,7 +211,7 @@ class ServiziController extends Controller
    * @Route("/{id}/remove_group", name="admin_service_remove_group")
    * @param Request $request
    * @param Servizio $service
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   * @return RedirectResponse
    */
   public function removeServiceFromGroup(Request $request, Servizio $service)
   {

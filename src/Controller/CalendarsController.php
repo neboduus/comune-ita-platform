@@ -47,7 +47,7 @@ class CalendarsController extends Controller
   /** @var EntityManagerInterface */
   private $em;
 
-  /** @var InstanceService  */
+  /** @var InstanceService */
   private $is;
 
   /**
@@ -65,8 +65,13 @@ class CalendarsController extends Controller
    */
   private $JWTTokenManager;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
-  {
+  public function __construct(
+    TranslatorInterface $translator,
+    EntityManagerInterface $em,
+    InstanceService $is,
+    MeetingService $meetingService,
+    JWTTokenManagerInterface $JWTTokenManager
+  ) {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
@@ -76,7 +81,6 @@ class CalendarsController extends Controller
 
   /**
    * Lists all Calendars
-   * @Template()
    * @Route("/operatori/calendars", name="operatori_calendars_index")
    */
   public function indexCalendarsAction(Request $request)
@@ -104,56 +108,94 @@ class CalendarsController extends Controller
     }
 
     $table = $this->createDataTable()
-      ->add('title', TextColumn::class, ['label' => 'Titolo', 'propertyPath' => 'Titolo', 'render' => function ($value, $calendar) {
-        $cal = $this->em->getRepository('App:Calendar')->find($calendar['id']);
-        $canAccess = $this->canUserAccessCalendar($cal);
+      ->add(
+        'title',
+        TextColumn::class,
+        [
+          'label' => 'Titolo',
+          'propertyPath' => 'Titolo',
+          'render' => function ($value, $calendar) {
+            $cal = $this->em->getRepository('App:Calendar')->find($calendar['id']);
+            $canAccess = $this->canUserAccessCalendar($cal);
 
-        return sprintf('<a class="btn-link %s" href="%s">%s</a>', $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_show', [
-            'calendar' => $calendar['id']
-          ]), $calendar['title']);
-      }])
+            return sprintf(
+              '<a class="btn-link %s" href="%s">%s</a>',
+              $canAccess ? "" : "disabled",
+              $this->generateUrl(
+                'operatori_calendar_show',
+                [
+                  'calendar' => $calendar['id'],
+                ]
+              ),
+              $calendar['title']
+            );
+          },
+        ]
+      )
       ->add('owner', TextColumn::class, ['label' => 'Proprietario', 'searchable' => true])
-      ->add('isModerated', TextColumn::class, ['label' => 'Moderazione', 'render' => function ($value, $calendar) {
-        if ($value) {
-          return sprintf('<span class="badge badge-outline-primary"><svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-locked"></use></svg>Richiede moderazione</span>');
-        } else {
-          return sprintf('<span class="badge badge-outline-secondary"><svg class="icon icon-sm icon-secondary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use></svg>Non richiede moderazione</span>');
-        }
-      }])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $calendar) {
-        $cal = $this->em->getRepository('App:Calendar')->find($value);
-        $canAccess = $this->canUserAccessCalendar($cal);
-        return sprintf('
+      ->add(
+        'isModerated',
+        TextColumn::class,
+        [
+          'label' => 'Moderazione',
+          'render' => function ($value, $calendar) {
+            if ($value) {
+              return sprintf(
+                '<span class="badge badge-outline-primary"><svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-locked"></use></svg>Richiede moderazione</span>'
+              );
+            } else {
+              return sprintf(
+                '<span class="badge badge-outline-secondary"><svg class="icon icon-sm icon-secondary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use></svg>Non richiede moderazione</span>'
+              );
+            }
+          },
+        ]
+      )
+      ->add(
+        'id',
+        TextColumn::class,
+        [
+          'label' => 'Azioni',
+          'render' => function ($value, $calendar) {
+            $cal = $this->em->getRepository('App:Calendar')->find($value);
+            $canAccess = $this->canUserAccessCalendar($cal);
+
+            return sprintf(
+              '
         <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none %s" href="%s"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
         <a class="btn btn-warning btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block %s" href="%s">Modifica</a>
         <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none %s" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il calendario verrà eliminato definitivamente.\');"><svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg></a>
         <a class="btn btn-danger btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block %s" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il calendario verrà eliminato definitivamente.\');">Elimina</a>',
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_edit', ['calendar' => $value]),
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_edit', ['calendar' => $value]),
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_delete', ['id' => $value]),
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_delete', ['id' => $value]),
-        );
-      }])
+              $canAccess ? "" : "disabled",
+              $this->generateUrl('operatori_calendar_edit', ['calendar' => $value]),
+              $canAccess ? "" : "disabled",
+              $this->generateUrl('operatori_calendar_edit', ['calendar' => $value]),
+              $canAccess ? "" : "disabled",
+              $this->generateUrl('operatori_calendar_delete', ['id' => $value]),
+              $canAccess ? "" : "disabled",
+              $this->generateUrl('operatori_calendar_delete', ['id' => $value]),
+            );
+          },
+        ]
+      )
       ->createAdapter(ArrayAdapter::class, $data)
       ->handleRequest($request);
 
     if ($table->isCallback()) {
       return $table->getResponse();
     }
-    return array(
-      'user' => $user,
-      'datatable' => $table
+
+    return $this->render(
+      'Calendars/index.html.twig',
+      array(
+        'user' => $user,
+        'datatable' => $table,
+      )
     );
   }
 
   /**
    * Creates a new Calendar entity.
-   * @Template()
    * @Route("/operatori/calendars/new", name="operatori_calendar_new")
    * @Method({"GET", "POST"})
    * @param Request $request the request
@@ -186,20 +228,24 @@ class CalendarsController extends Controller
         $em->flush();
 
         $this->addFlash('feedback', 'Calendario creato correttamente');
+
         return $this->redirectToRoute('operatori_calendars_index');
       } catch (\Exception $exception) {
         if ($exception instanceof UniqueConstraintViolationException) {
-          $this->addFlash('error', 'Creazione fallita: esiste già un calendario con nome ' . $calendar->getTitle());
+          $this->addFlash('error', 'Creazione fallita: esiste già un calendario con nome '.$calendar->getTitle());
         } else {
           $this->addFlash('error', 'Creazione fallita');
         }
       }
     }
 
-    return array(
-      'user' => $user,
-      'calendar' => $calendar,
-      'form' => $form->createView(),
+    return $this->render(
+      'Calendars/newCalendar.html.twig',
+      array(
+        'user' => $user,
+        'calendar' => $calendar,
+        'form' => $form->createView(),
+      )
     );
   }
 
@@ -215,6 +261,7 @@ class CalendarsController extends Controller
   {
     if (!$this->canUserAccessCalendar($calendar)) {
       $this->addFlash('error', 'Non possiedi i permessi per eliminare questo calendario');
+
       return $this->redirectToRoute('operatori_calendars_index');
     }
 
@@ -228,6 +275,7 @@ class CalendarsController extends Controller
       return $this->redirectToRoute('operatori_calendars_index');
     } catch (ForeignKeyConstraintViolationException $exception) {
       $this->addFlash('warning', 'Impossibile eliminare il calendario');
+
       return $this->redirectToRoute('operatori_calendars_index');
     }
   }
@@ -250,7 +298,6 @@ class CalendarsController extends Controller
   /**
    * @Route("operatori/calendars/{calendar}/edit", name="operatori_calendar_edit")
    * @ParamConverter("calendar", class="App:Calendar")
-   * @Template()
    * @param Request $request the request
    * @param Calendar $calendar The Calendar entity
    *
@@ -263,6 +310,7 @@ class CalendarsController extends Controller
 
     if (!$this->canUserAccessCalendar($calendar)) {
       $this->addFlash('error', 'Non possiedi i permessi per modificare questo calendario');
+
       return $this->redirectToRoute('operatori_calendars_index');
     }
 
@@ -301,22 +349,25 @@ class CalendarsController extends Controller
         $em->flush();
 
         $this->addFlash('feedback', 'Calendario modificato correttamente');
+
         return $this->redirectToRoute('operatori_calendars_index');
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore durante il salvataggio: ' . $exception->getMessage());
+        $this->addFlash('error', 'Si è verificato un errore durante il salvataggio: '.$exception->getMessage());
       }
     }
 
-    return [
-      'user' => $user,
-      'form' => $form->createView(),
-      'calendar' => $calendar
-    ];
+    return $this->render(
+      'Calendars/editCalendar.html.twig',
+      [
+        'user' => $user,
+        'form' => $form->createView(),
+        'calendar' => $calendar,
+      ]
+    );
   }
 
   /**
    * Finds and displays a Calendar entity.
-   * @Template()
    * @Route("/operatori/calendars/{calendar}", name="operatori_calendar_show")
    * @throws \Exception
    */
@@ -327,6 +378,7 @@ class CalendarsController extends Controller
 
     if (!$this->canUserAccessCalendar($calendar)) {
       $this->addFlash('error', 'Non possiedi i permessi per visualizzare questo calendario');
+
       return $this->redirectToRoute('operatori_calendars_index');
     }
 
@@ -341,42 +393,107 @@ class CalendarsController extends Controller
 
     $table = $this->createDataTable()
       ->add('fromTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'Y-m-d', 'searchable' => false])
-      ->add('id', TextColumn::class, ['label' => 'Orario', 'searchable' => false, 'render' => function ($value, $meeting) {
-        return sprintf('%s - %s', $meeting->getFromTime()->format('H:i'), $meeting->getToTime()->format('H:i'));
-      }])
-      ->add('user', TextColumn::class, ['label' => 'Utente', 'field'=>'user.nome', 'searchable' => true, 'render' => function ($value, $meeting) {
-        if ($meeting->getUser()->getFullName() !== ' ') return $meeting->getUser()->getFullName();
-        else return 'Utente Anonimo';
-      }])
-      ->add('cognome', TextColumn::class, ['label' => 'Utente', 'field'=>'user.cognome', 'searchable' => true, 'visible'=>false])
-      ->add('email', TextColumn::class, ['label' => 'Email', 'searchable' => true, 'render' => function ($value, $meeting) {
-        return $value ? sprintf('<a href="mailto:%s"><div class="text-truncate">%s</div></a>', $value, $value) : '---';
-      }])
-      ->add('fiscalCode', TextColumn::class, ['label' => 'Codice fiscale', 'searchable' => true, 'render' => function ($value, $meeting) {
-        if ($meeting->getFiscalCode()) return $meeting->getFiscalCode();
-        else return '---';
-      }])
-      ->add('phoneNumber', TextColumn::class, ['label' => 'Recapito', 'render' => function ($value, $meeting) {
-        return $value ? $value : '---';
-      }])
+      ->add(
+        'id',
+        TextColumn::class,
+        [
+          'label' => 'Orario',
+          'searchable' => false,
+          'render' => function ($value, $meeting) {
+            return sprintf('%s - %s', $meeting->getFromTime()->format('H:i'), $meeting->getToTime()->format('H:i'));
+          },
+        ]
+      )
+      ->add(
+        'user',
+        TextColumn::class,
+        [
+          'label' => 'Utente',
+          'field' => 'user.nome',
+          'searchable' => true,
+          'render' => function ($value, $meeting) {
+            if ($meeting->getUser()->getFullName() !== ' ') {
+              return $meeting->getUser()->getFullName();
+            } else {
+              return 'Utente Anonimo';
+            }
+          },
+        ]
+      )
+      ->add(
+        'cognome',
+        TextColumn::class,
+        ['label' => 'Utente', 'field' => 'user.cognome', 'searchable' => true, 'visible' => false]
+      )
+      ->add(
+        'email',
+        TextColumn::class,
+        [
+          'label' => 'Email',
+          'searchable' => true,
+          'render' => function ($value, $meeting) {
+            return $value ? sprintf(
+              '<a href="mailto:%s"><div class="text-truncate">%s</div></a>',
+              $value,
+              $value
+            ) : '---';
+          },
+        ]
+      )
+      ->add(
+        'fiscalCode',
+        TextColumn::class,
+        [
+          'label' => 'Codice fiscale',
+          'searchable' => true,
+          'render' => function ($value, $meeting) {
+            if ($meeting->getFiscalCode()) {
+              return $meeting->getFiscalCode();
+            } else {
+              return '---';
+            }
+          },
+        ]
+      )
+      ->add(
+        'phoneNumber',
+        TextColumn::class,
+        [
+          'label' => 'Recapito',
+          'render' => function ($value, $meeting) {
+            return $value ? $value : '---';
+          },
+        ]
+      )
       ->add('rescheduled', NumberColumn::class, ['label' => 'Rinvii'])
-      ->add('status', TextColumn::class, ['label' => 'Stato', 'searchable' => false, 'render' => function ($value, $calendar) {
-        return $this->getStatusAsString($value);
-      }])
+      ->add(
+        'status',
+        TextColumn::class,
+        [
+          'label' => 'Stato',
+          'searchable' => false,
+          'render' => function ($value, $calendar) {
+            return $this->getStatusAsString($value);
+          },
+        ]
+      )
       ->addOrderBy('fromTime', DataTable::SORT_DESCENDING)
       ->addOrderBy('id', DataTable::SORT_ASCENDING)
-      ->createAdapter(ORMAdapter::class, [
-        'entity' => Meeting::class,
-        'query' => function (QueryBuilder $builder) use ($calendar) {
-          $builder
-            ->select('meeting', 'user')
-            ->from(Meeting::class, 'meeting')
-            ->leftJoin('meeting.user', 'user')
-            ->leftJoin('meeting.calendar', 'calendar')
-            ->where('meeting.calendar = :calendar')
-            ->setParameter('calendar', $calendar);
-        },
-      ])
+      ->createAdapter(
+        ORMAdapter::class,
+        [
+          'entity' => Meeting::class,
+          'query' => function (QueryBuilder $builder) use ($calendar) {
+            $builder
+              ->select('meeting', 'user')
+              ->from(Meeting::class, 'meeting')
+              ->leftJoin('meeting.user', 'user')
+              ->leftJoin('meeting.calendar', 'calendar')
+              ->where('meeting.calendar = :calendar')
+              ->setParameter('calendar', $calendar);
+          },
+        ]
+      )
       ->handleRequest($request);
 
     if ($table->isCallback()) {
@@ -467,7 +584,7 @@ class CalendarsController extends Controller
         'start' => $closingPeriod->getFromTime()->format('c'),
         'end' => $closingPeriod->getToTime()->format('c'),
         'rendering' => 'background',
-        'color' => 'var(--200)'
+        'color' => 'var(--200)',
       ];
     }
 
@@ -475,16 +592,23 @@ class CalendarsController extends Controller
     $externalEvents = [];
 
     foreach ($calendar->getExternalCalendars() as $externalCalendar) {
-      $externalCalendars[$externalCalendar->getName()] = new ICal('ICal.ics', array(
-        'defaultSpan' => 2,     // Default value
-        'defaultTimeZone' => 'UTC',
-        'defaultWeekStart' => 'MO',  // Default value
-        'disableCharacterReplacement' => false, // Default value
-        'filterDaysAfter' => null,  // Default value
-        'filterDaysBefore' => null,  // Default value
-        'skipRecurrence' => false, // Default value
-      ));
-      $externalCalendars[$externalCalendar->getName()]->initUrl($externalCalendar->getUrl(), $username = null, $password = null, $userAgent = null);
+      $externalCalendars[$externalCalendar->getName()] = new ICal(
+        'ICal.ics', array(
+          'defaultSpan' => 2,     // Default value
+          'defaultTimeZone' => 'UTC',
+          'defaultWeekStart' => 'MO',  // Default value
+          'disableCharacterReplacement' => false, // Default value
+          'filterDaysAfter' => null,  // Default value
+          'filterDaysBefore' => null,  // Default value
+          'skipRecurrence' => false, // Default value
+        )
+      );
+      $externalCalendars[$externalCalendar->getName()]->initUrl(
+        $externalCalendar->getUrl(),
+        $username = null,
+        $password = null,
+        $userAgent = null
+      );
       foreach ($externalCalendars[$externalCalendar->getName()]->events() as $event) {
         $externalEvents[] = [
           'start' => (new DateTime($event->dtstart))->format('c'),
@@ -507,42 +631,65 @@ class CalendarsController extends Controller
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 
-    function blockMinutesRound($time, $calculateHour, $minutes = '30', $format = "H:i") {
+    function blockMinutesRound($time, $calculateHour, $minutes = '30', $format = "H:i")
+    {
       $seconds = strtotime($time);
       $hour = intval(date("H", $seconds));
-      if($calculateHour && $hour < 19){
+      if ($calculateHour && $hour < 19) {
         $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60) + ((20 - $hour) * 3600);
+
         return date($format, $rounded);
-      }else{
+      } else {
         $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60);
+
         return date($format, $rounded);
       }
 
     }
 
-    $minDate = min(array_map(function($item) { return blockMinutesRound($item['start'],false); }, $events));
-    $maxDate = max(array_map(function($item) { return blockMinutesRound($item['end'],true); }, $events));
+    $minDate = min(
+      array_map(
+        function ($item) {
+          return blockMinutesRound($item['start'], false);
+        },
+        $events
+      )
+    );
+    $maxDate = max(
+      array_map(
+        function ($item) {
+          return blockMinutesRound($item['end'], true);
+        },
+        $events
+      )
+    );
 
     // Check permissions if calendar is moderated
-    if (!$calendar->getIsModerated() || ($this->getUser() == $calendar->getOwner() || $calendar->getModerators()->contains($this->getUser())))
+    if (!$calendar->getIsModerated() || ($this->getUser() == $calendar->getOwner() || $calendar->getModerators(
+        )->contains($this->getUser()))) {
       $canEdit = true;
-    else $canEdit = false;
+    } else {
+      $canEdit = false;
+    }
 
     $jwt = $this->JWTTokenManager->create($this->getUser());
 
-    return array(
-      'user'=>$user,
-      'calendar' => $calendar,
-      'canEdit' => $canEdit,
-      'delete_form' => $deleteForm->createView(),
-      'events' => array_values($events),
-      'statuses' => $statuses,
-      'minDuration' => $minDuration,
-      'datatable' => $table,
-      'token' => $jwt,
-      'rangeTimeEvent' => array(
-        'min'=> $minDate,
-        'max' => $maxDate
+    return $this->render(
+      'Calendars/showCalendar.html.twig',
+      array(
+        'user' => $user,
+        'calendar' => $calendar,
+        'canEdit' => $canEdit,
+        'delete_form' => $deleteForm->createView(),
+        'events' => array_values($events),
+        'statuses' => $statuses,
+        'minDuration' => $minDuration,
+        'datatable' => $table,
+        'token' => $jwt,
+        'rangeTimeEvent' => array(
+          'min' => $minDate,
+          'max' => $maxDate,
+        ),
       )
     );
   }
@@ -550,7 +697,6 @@ class CalendarsController extends Controller
   /**
    * Cancels meeting
    * @Route("meetings/{meetingHash}/cancel", name="cancel_meeting")
-   * @Template()
    * @param Request $request the request
    * @param String $meetingHash The Meeting hash
    *
@@ -561,17 +707,22 @@ class CalendarsController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
     $meeting = $em->getRepository('App:Meeting')->findOneBy(['cancelLink' => $meetingHash]);
-    if (!$meeting)
+    if (!$meeting) {
       return new Response(null, Response::HTTP_NOT_FOUND);
+    }
 
     $limitDate = clone $meeting->getFromTime();
-    $limitDate = $limitDate->sub(new \DateInterval('P' . $meeting->getCalendar()->getAllowCancelDays() . 'D'));
+    $limitDate = $limitDate->sub(new \DateInterval('P'.$meeting->getCalendar()->getAllowCancelDays().'D'));
     $canCancel = new \DateTime() <= $limitDate;
 
-    $form = $this->createFormBuilder()->add('save', SubmitType::class, [
-      'label' => 'Annulla appuntamento',
-      'attr' => ['class' => 'btn btn-danger']
-    ])->getForm();
+    $form = $this->createFormBuilder()->add(
+      'save',
+      SubmitType::class,
+      [
+        'label' => 'Annulla appuntamento',
+        'attr' => ['class' => 'btn btn-danger'],
+      ]
+    )->getForm();
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -582,13 +733,20 @@ class CalendarsController extends Controller
 
         $this->addFlash('feedback', $this->translator->trans('meetings.email.cancel_success'));
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore durante l\'annullamento dell\'appuntamento' . $exception->getMessage());
+        $this->addFlash(
+          'error',
+          'Si è verificato un errore durante l\'annullamento dell\'appuntamento'.$exception->getMessage()
+        );
       }
     }
-    return array(
-      'form' => $form->createView(),
-      'canCancel' => $canCancel,
-      'meeting' => $meeting
+
+    return $this->render(
+      'Calendars/cancelMeeting.html.twig',
+      array(
+        'form' => $form->createView(),
+        'canCancel' => $canCancel,
+        'meeting' => $meeting,
+      )
     );
 
   }
@@ -596,7 +754,6 @@ class CalendarsController extends Controller
   /**
    * Approves meeting
    * @Route("operatori/meetings/{id}/approve", name="operatori_approve_meeting")
-   * @Template()
    * @param Request $request the request
    * @param Meeting $id The Meeting entity
    *
@@ -607,34 +764,48 @@ class CalendarsController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
     $meeting = $em->getRepository('App:Meeting')->find($id);
-    if (!$meeting)
+    if (!$meeting) {
       return new Response(null, Response::HTTP_NOT_FOUND);
+    }
 
     if ($meeting->getStatus() != Meeting::STATUS_PENDING) {
       return array(
         'form' => null,
-        'meeting' => $meeting
+        'meeting' => $meeting,
       );
     }
 
-    if (!$meeting->getEmail())
+    if (!$meeting->getEmail()) {
       $this->addFlash('warning', $this->translator->trans('meetings.no_email_warning'));
+    }
 
 
     $form = $formFactory
       ->createNamedBuilder(null, FormType::class, null, array('csrf_protection' => false))
-      ->add('approve', SubmitType::class, [
-        'label' => 'Conferma',
-        'attr' => ['class' => 'btn btn-sm btn-success']
-      ])
-      ->add('refuse', SubmitType::class, [
-        'label' => 'Rifiuta',
-        'attr' => ['class' => 'btn btn-sm btn-danger']
-      ])
-      ->add('cancel', SubmitType::class, [
-        'label' => 'Annulla',
-        'attr' => ['class' => 'btn btn-sm btn-warning']
-      ])
+      ->add(
+        'approve',
+        SubmitType::class,
+        [
+          'label' => 'Conferma',
+          'attr' => ['class' => 'btn btn-sm btn-success'],
+        ]
+      )
+      ->add(
+        'refuse',
+        SubmitType::class,
+        [
+          'label' => 'Rifiuta',
+          'attr' => ['class' => 'btn btn-sm btn-danger'],
+        ]
+      )
+      ->add(
+        'cancel',
+        SubmitType::class,
+        [
+          'label' => 'Annulla',
+          'attr' => ['class' => 'btn btn-sm btn-warning'],
+        ]
+      )
       ->getForm();
     $form->handleRequest($request);
 
@@ -663,12 +834,19 @@ class CalendarsController extends Controller
 
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore durante la modifica dell\'appuntamento' . $exception->getMessage());
+        $this->addFlash(
+          'error',
+          'Si è verificato un errore durante la modifica dell\'appuntamento'.$exception->getMessage()
+        );
       }
     }
-    return array(
-      'form' => $form->createView(),
-      'meeting' => $meeting
+
+    return $this->render(
+      'Calendars/editMeeting.html.twig',
+      array(
+        'form' => $form->createView(),
+        'meeting' => $meeting,
+      )
     );
   }
 
@@ -701,9 +879,11 @@ class CalendarsController extends Controller
   private function canUserAccessCalendar(Calendar $calendar)
   {
     $user = $this->getUser();
-    if ($user instanceof AdminUser || $calendar->getOwner() == $user || ($calendar->getIsModerated() && $calendar->getModerators()->contains($user))) {
+    if ($user instanceof AdminUser || $calendar->getOwner() == $user || ($calendar->getIsModerated(
+        ) && $calendar->getModerators()->contains($user))) {
       return true;
     }
+
     return false;
   }
 }

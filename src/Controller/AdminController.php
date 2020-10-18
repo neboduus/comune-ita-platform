@@ -81,8 +81,7 @@ class AdminController extends Controller
     TranslatorInterface $translator,
     ServiceFlow $serviceFlow,
     SchemaFactoryInterface $schemaFactory
-  )
-  {
+  ) {
     $this->instanceService = $instanceService;
     $this->formServer = $formServer;
     $this->tokenGenerator = $tokenGenerator;
@@ -94,22 +93,23 @@ class AdminController extends Controller
 
   /**
    * @Route("/", name="admin_index")
-   * @Template()
    * @param Request $request
-   * @return array
+   * @return Response
    */
   public function indexAction(Request $request)
   {
-    return array(
-      'user' => $this->getUser()
+    return $this->render(
+      'Admin/index.html.twig',
+      array(
+        'user' => $this->getUser(),
+      )
     );
   }
 
   /**
    * @Route("/ente", name="admin_edit_ente")
-   * @Template()
    * @param Request $request
-   * @return array|RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function editEnteAction(Request $request)
   {
@@ -126,39 +126,40 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_edit_ente');
     }
 
-    return array(
-      'user' => $this->getUser(),
-      'ente' => $ente,
-      'form' => $form->createView()
+    return $this->render(
+      'Admin/editEnte.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'ente' => $ente,
+        'form' => $form->createView(),
+      )
     );
   }
 
 
   /**
-   * Lists all operatoreUser entities.
-   * @Template()
-   * @Route("/operatore", name="admin_operatore_index")
-   * @Method("GET")
+   * @return Response
    */
   public function indexOperatoreAction()
   {
     $em = $this->getDoctrine()->getManager();
-
     $operatoreUsers = $em->getRepository('App:OperatoreUser')->findAll();
 
-    return array(
-      'user' => $this->getUser(),
-      'operatoreUsers' => $operatoreUsers,
+    return $this->render(
+      'Admin/indexOperatore.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'operatoreUsers' => $operatoreUsers,
+      )
     );
   }
 
   /**
    * Creates a new operatoreUser entity.
-   * @Template()
    * @Route("/operatore/new", name="admin_operatore_new")
    * @Method({"GET", "POST"})
    * @param Request $request
-   * @return array|RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function newOperatoreAction(Request $request)
   {
@@ -183,21 +184,23 @@ class AdminController extends Controller
       $mailer->sendResettingEmailMessage($operatoreUser);
 
       $this->addFlash('feedback', 'Operatore creato con successo');
+
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
-    return array(
-      'user' => $this->getUser(),
-      'operatoreUser' => $operatoreUser,
-      'form' => $form->createView(),
+    return $this->render(
+      'Admin/newOperatore.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'operatoreUser' => $operatoreUser,
+        'form' => $form->createView(),
+      )
     );
   }
 
   /**
    * Finds and displays a operatoreUser entity.
-   * @Template()
    * @Route("/operatore/{id}", name="admin_operatore_show")
-   * @Method("GET")
    */
   public function showOperatoreAction(OperatoreUser $operatoreUser)
   {
@@ -205,20 +208,22 @@ class AdminController extends Controller
       $serviziAbilitati = $this->getDoctrine()
         ->getRepository(Servizio::class)
         ->findBy(['id' => $operatoreUser->getServiziAbilitati()->toArray()]);
-    }else{
+    } else {
       $serviziAbilitati = [];
     }
 
-    return array(
-      'user' => $this->getUser(),
-      'operatoreUser' => $operatoreUser,
-      'servizi_abilitati' => $serviziAbilitati
+    return $this->render(
+      'Admin/showOperatore.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'operatoreUser' => $operatoreUser,
+        'servizi_abilitati' => $serviziAbilitati,
+      )
     );
   }
 
   /**
    * Displays a form to edit an existing operatoreUser entity.
-   * @Template()
    * @Route("/operatore/{id}/edit", name="admin_operatore_edit")
    * @Method({"GET", "POST"})
    */
@@ -233,10 +238,13 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
     }
 
-    return array(
-      'user' => $this->getUser(),
-      'operatoreUser' => $operatoreUser,
-      'edit_form' => $editForm->createView()
+    return $this->render(
+      'Admin/editOperatore.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'operatoreUser' => $operatoreUser,
+        'edit_form' => $editForm->createView(),
+      )
     );
   }
 
@@ -254,8 +262,9 @@ class AdminController extends Controller
     $em->persist($operatoreUser);
     $em->flush();
 
-    $mailer = $this->get('fos_user.mailer');
-    $mailer->sendResettingEmailMessage($operatoreUser);
+    // todo: fix sf4
+    //$mailer = $this->get('fos_user.mailer');
+    //$mailer->sendResettingEmailMessage($operatoreUser);
 
     return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
   }
@@ -272,10 +281,12 @@ class AdminController extends Controller
       $em->remove($operatoreUser);
       $em->flush();
       $this->addFlash('feedback', 'Operatore eliminato correttamente');
+
       return $this->redirectToRoute('admin_operatore_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
       $this->addFlash('warning', 'Impossibile eliminare l\'operatore, ci sono delle pratiche collegate.');
+
       return $this->redirectToRoute('admin_servizio_index');
     }
   }
@@ -283,7 +294,6 @@ class AdminController extends Controller
 
   /**
    * Lists all operatoreLogs entities.
-   * @Template()
    * @Route("/logs", name="admin_logs_index")
    * @Method({"GET", "POST"})
    */
@@ -295,25 +305,30 @@ class AdminController extends Controller
       ->add('user', TextColumn::class, ['label' => 'Utente'])
       ->add('description', TextColumn::class, ['label' => 'Descrizione'])
       ->add('ip', TextColumn::class, ['label' => 'Ip'])
-      ->createAdapter(ORMAdapter::class, [
-        'entity' => AuditLog::class,
-      ])
+      ->createAdapter(
+        ORMAdapter::class,
+        [
+          'entity' => AuditLog::class,
+        ]
+      )
       ->handleRequest($request);
 
     if ($table->isCallback()) {
       return $table->getResponse();
     }
 
-    return array(
-      'user' => $this->getUser(),
-      'datatable' => $table
+    return $this->render(
+      'Admin/indexLogs.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'datatable' => $table,
+      )
     );
   }
 
 
   /**
    * Lists all operatoreUser entities.
-   * @Template()
    * @Route("/servizio", name="admin_servizio_index")
    * @Method("GET")
    */
@@ -338,11 +353,14 @@ class AdminController extends Controller
     $em = $this->getDoctrine()->getManager();
     $items = $em->getRepository('App:Servizio')->findBy([], ['name' => 'ASC']);
 
-    return array(
-      'user' => $this->getUser(),
-      'items' => $items,
-      'statuses' => $statuses,
-      'access_levels' => $accessLevels,
+    return $this->render(
+      'Admin/indexServizio.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'items' => $items,
+        'statuses' => $statuses,
+        'access_levels' => $accessLevels,
+      )
     );
   }
 
@@ -362,12 +380,12 @@ class AdminController extends Controller
       $descLimit = 150;
       $description = strip_tags($s->getDescription());
       if (strlen($description) > $descLimit) {
-        $description = substr($description, 0, $descLimit) . '...';
+        $description = substr($description, 0, $descLimit).'...';
       }
       $data [] = [
         'id' => $s->getId(),
         'title' => $s->getName(),
-        'description' => $description
+        'description' => $description,
       ];
     }
 
@@ -409,6 +427,7 @@ class AdminController extends Controller
 
         if ($form->isSubmitted() && !$form->isValid()) {
           $this->addFlash('error', 'Si è verificato un problema in fase di importazione.');
+
           return $this->redirectToRoute('admin_servizio_index');
         }
 
@@ -418,13 +437,13 @@ class AdminController extends Controller
         }
 
         $service = $serviceDto->toEntity();
-        $service->setName($service->getName() . ' (importato ' . date('d/m/Y H:i:s') . ')');
+        $service->setName($service->getName().' (importato '.date('d/m/Y H:i:s').')');
         $service->setPraticaFCQN('\App\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
         $service->setEnte($ente);
         // Erogatore
         $erogatore = new Erogatore();
-        $erogatore->setName('Erogatore di ' . $service->getName() . ' per ' . $ente->getName());
+        $erogatore->setName('Erogatore di '.$service->getName().' per '.$ente->getName());
         $erogatore->addEnte($ente);
         $em->persist($erogatore);
         $service->activateForErogatore($erogatore);
@@ -432,7 +451,7 @@ class AdminController extends Controller
         $em->flush();
 
         if (!empty($service->getFormIoId())) {
-          $response = $this->formServer->cloneFormFromRemote( $service, $remoteUrl .'/form');
+          $response = $this->formServer->cloneFormFromRemote($service, $remoteUrl.'/form');
           if ($response['status'] == 'success') {
             $formId = $response['form_id'];
             $flowStep = new FlowStep();
@@ -449,6 +468,7 @@ class AdminController extends Controller
             $em->remove($service);
             $em->flush();
             $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
+
             return $this->redirectToRoute('admin_servizio_index');
           }
         }
@@ -457,6 +477,7 @@ class AdminController extends Controller
         $em->flush();
 
         $this->addFlash('success', 'Servizio importato corettamente');
+
         return $this->redirectToRoute('admin_servizio_index');
 
       }
@@ -464,16 +485,16 @@ class AdminController extends Controller
       $this->addFlash('error', $e->getMessage());
       $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
     }
+
     return $this->redirectToRoute('admin_servizio_index');
   }
 
   /**
    * @Route("/servizio/{servizio}/edit", name="admin_servizio_edit")
    * @ParamConverter("servizio", class="App:Servizio")
-   * @Template()
    * @param Servizio $servizio
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function editServizioAction(Servizio $servizio)
   {
@@ -485,20 +506,24 @@ class AdminController extends Controller
     $form = $flowService->createForm();
     if ($flowService->isValid($form)) {
 
-        $flowService->saveCurrentStepData($form);
+      $flowService->saveCurrentStepData($form);
 
-        if ($flowService->nextStep()) {
-          try {
-            $this->getDoctrine()->getManager()->flush();
-          }catch (UniqueConstraintViolationException $e){
-            $this->addFlash('error', 'Controlla se esiste un servizio con lo stesso nome e di aver inserito correttamente tutti i campi obbligatori');
-            $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
-            return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId()]);
-          }
-          catch (\Exception $e) {
-            $this->addFlash('error', 'Si è verificato un errore, contatta il supporto tecnico');
-            return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
-          }
+      if ($flowService->nextStep()) {
+        try {
+          $this->getDoctrine()->getManager()->flush();
+        } catch (UniqueConstraintViolationException $e) {
+          $this->addFlash(
+            'error',
+            'Controlla se esiste un servizio con lo stesso nome e di aver inserito correttamente tutti i campi obbligatori'
+          );
+          $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
+
+          return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId()]);
+        } catch (\Exception $e) {
+          $this->addFlash('error', 'Si è verificato un errore, contatta il supporto tecnico');
+
+          return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
+        }
         $form = $flowService->createForm();
       } else {
 
@@ -516,19 +541,21 @@ class AdminController extends Controller
       }
     }
 
-    return [
-      'form' => $form->createView(),
-      'servizio' => $flowService->getFormData(),
-      'flow' => $flowService,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
-      'user' => $user
-    ];
+    return $this->render(
+      'Admin/editServizio.html.twig',
+      [
+        'form' => $form->createView(),
+        'servizio' => $flowService->getFormData(),
+        'flow' => $flowService,
+        'formserver_url' => $this->getParameter('formserver_public_url'),
+        'user' => $user,
+      ]
+    );
   }
 
   /**
    * @Route("/servizio/{servizio}/custom-validation", name="admin_servizio_custom_validation")
    * @ParamConverter("servizio", class="App:Servizio")
-   * @Template()
    * @param Request $request
    * @param Servizio $servizio
    *
@@ -541,17 +568,24 @@ class AdminController extends Controller
     $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
 
     $form = $this->createFormBuilder(null)->add(
-      "post_submit_validation_expression", TextareaType::class, [
-      "label" => 'Validazione al submit',
-      'required' => false,
-      'data' => $servizio->getPostSubmitValidationExpression()
-    ])->add(
-      "post_submit_validation_message", TextType::class, [
-      "label" => 'Messaggio di errore in caso di mancata validazione',
-      'required' => false,
-      'data' => $servizio->getPostSubmitValidationMessage()
-    ])->add(
-      'Save', SubmitType::class
+      "post_submit_validation_expression",
+      TextareaType::class,
+      [
+        "label" => 'Validazione al submit',
+        'required' => false,
+        'data' => $servizio->getPostSubmitValidationExpression(),
+      ]
+    )->add(
+      "post_submit_validation_message",
+      TextType::class,
+      [
+        "label" => 'Messaggio di errore in caso di mancata validazione',
+        'required' => false,
+        'data' => $servizio->getPostSubmitValidationMessage(),
+      ]
+    )->add(
+      'Save',
+      SubmitType::class
     )->getForm()->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -566,13 +600,13 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
     }
 
-    return [
+    return $this->render('Admin/editCustomValidationServizio.html.twig', [
       'form' => $form->createView(),
       'servizio' => $servizio,
       'user' => $user,
       'schema' => $schema,
-      'statuses' => Pratica::getStatuses()
-    ];
+      'statuses' => Pratica::getStatuses(),
+    ]);
   }
 
   /**
@@ -588,7 +622,7 @@ class AdminController extends Controller
     $servizio = new Servizio();
     $ente = $this->instanceService->getCurrentInstance();
 
-    $servizio->setName('Nuovo Servizio ' . time());
+    $servizio->setName('Nuovo Servizio '.time());
     $servizio->setPraticaFCQN('\App\Entity\FormIO');
     $servizio->setPraticaFlowServiceName('ocsdc.form.flow.formio');
     $servizio->setEnte($ente);
@@ -596,7 +630,7 @@ class AdminController extends Controller
 
     // Erogatore
     $erogatore = new Erogatore();
-    $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
+    $erogatore->setName('Erogatore di '.$servizio->getName().' per '.$ente->getName());
     $erogatore->addEnte($ente);
     $this->getDoctrine()->getManager()->persist($erogatore);
     $servizio->activateForErogatore($erogatore);
@@ -635,13 +669,16 @@ class AdminController extends Controller
       }
     }
 
-    return $this->render('@App/Admin/editServizio.html.twig', [
-      'form' => $form->createView(),
-      'servizio' => $flowService->getFormData(),
-      'flow' => $flowService,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
-      'user' => $user
-    ]);
+    return $this->render(
+      '@App/Admin/editServizio.html.twig',
+      [
+        'form' => $form->createView(),
+        'servizio' => $flowService->getFormData(),
+        'flow' => $flowService,
+        'formserver_url' => $this->getParameter('formserver_public_url'),
+        'user' => $user,
+      ]
+    );
 
   }
 
@@ -650,8 +687,11 @@ class AdminController extends Controller
    * @Route("/servizio/{id}/delete", name="admin_servizio_delete")
    * @Method("GET")
    */
-  public function deleteServiceAction(Request $request, Servizio $servizio)
-  {
+  public
+  function deleteServiceAction(
+    Request $request,
+    Servizio $servizio
+  ) {
 
     try {
       if ($servizio->getPraticaFCQN() == '\App\Entity\FormIO') {
@@ -667,6 +707,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_index');
     } catch (ForeignKeyConstraintViolationException $exception) {
       $this->addFlash('warning', 'Impossibile eliminare il servizio, ci sono delle pratiche collegate.');
+
       return $this->redirectToRoute('admin_servizio_index');
     }
 
@@ -679,8 +720,11 @@ class AdminController extends Controller
    * @param Servizio $servizio
    * @return JsonResponse
    */
-  public function formioValidateAction(Request $request, Servizio $servizio)
-  {
+  public
+  function formioValidateAction(
+    Request $request,
+    Servizio $servizio
+  ) {
 
     $data = $request->get('schema');
     if (!empty($data)) {
@@ -688,6 +732,7 @@ class AdminController extends Controller
 
       try {
         $response = $this->formServer->editForm($schema);
+
         return JsonResponse::create($response, Response::HTTP_OK);
       } catch (\Exception $exception) {
         return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -699,8 +744,10 @@ class AdminController extends Controller
    * @param FormInterface $form
    * @return array
    */
-  private function getErrorsFromForm(FormInterface $form)
-  {
+  private
+  function getErrorsFromForm(
+    FormInterface $form
+  ) {
     $errors = array();
     foreach ($form->getErrors() as $error) {
       $errors[] = $error->getMessage();
@@ -712,6 +759,7 @@ class AdminController extends Controller
         }
       }
     }
+
     return $errors;
   }
 

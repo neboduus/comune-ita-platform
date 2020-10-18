@@ -15,7 +15,7 @@ use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -148,7 +148,6 @@ class PraticheAnonimeController extends Controller
   /**
    * @Route("/{pratica}", name="pratiche_anonime_show")
    * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -159,10 +158,13 @@ class PraticheAnonimeController extends Controller
   {
     if ($pratica->isValidHash($this->getHash($request), $this->hashValidity)) {
 
-      return [
-        'pratica' => $pratica,
-        'formserver_url' => $this->getParameter('formserver_public_url'),
-      ];
+      return $this->render(
+        'PraticheAnonime/show.html.twig',
+        [
+          'pratica' => $pratica,
+          'formserver_url' => $this->getParameter('formserver_public_url'),
+        ]
+      );
     }
 
     return new Response(null, Response::HTTP_FORBIDDEN);
@@ -267,7 +269,7 @@ class PraticheAnonimeController extends Controller
     );
 
     $response = ['status' => 'OK', 'errors' => null];
-    if (!empty($errors)){
+    if (!empty($errors)) {
       $response = ['status' => 'KO', 'errors' => $errors];
     }
 

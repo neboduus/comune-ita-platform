@@ -151,62 +151,9 @@ services:
   App\Controller\APIController:
     arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service' ]
 
-  App\Controller\Rest\ServicesAPIController:
-    autowire: true
-
-  App\Controller\Rest\ServicesGroupAPIController:
-    autowire: true
-
-  App\Controller\Rest\ApplicationsAPIController:
-    autowire: true
-
-  App\Controller\Rest\UsersAPIController:
-    autowire: true
-
-  App\Controller\MessagesController:
-    autowire: true
-
-  App\Controller\UserController:
-    autowire: true
-
-  App\Controller\Rest\CalendarsAPIController:
-    autowire: true
-
-  App\Controller\Rest\MeetingsAPIController:
-    autowire: true
-
-  App\Controller\Rest\SubscriptionServicesAPIController:
-    autowire: true
-
-  App\Controller\AdminController:
-    autowire: true
-
-  App\Controller\PraticheController:
-    autowire: true
-
-  App\Controller\OperatoriController:
-    autowire: true
-
-  App\Controller\DefaultController:
-    autowire: true
-
-  App\Controller\AllegatoController:
-    autowire: true
-
-  App\Controller\ServiziController:
-    autowire: true
-
-  App\Controller\PrintController:
-    autowire: true
-
-
-
-  App\Controller\Rest\FoldersAPIController:
-    autowire: true
-
   App\Controller\Rest\DocumentsAPIController:
     arguments:
-      [ "@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service', '@logger' ]
+      $rootDir: "%kernel.root_dir%"
 
   App\Controller\PraticheAnonimeController:
     arguments:
@@ -218,9 +165,6 @@ services:
       - "@ocsdc.instance_service"
       - '%hash_validity%'
       - "@formio.expression_validator"
-
-  App\Controller\TrackingController:
-    autowire: true
 
   GuzzleHttp\Client: '@eight_points_guzzle.client.mypay'
 
@@ -328,19 +272,19 @@ services:
     class: App\Security\CPSAuthenticator
     arguments: [ "%shibbolet_server_varnames%",'@Symfony\Component\Security\Core\Security' ]
 
-  #App\EventListener\TermsAcceptListener:
-  #  tags:
-  #    - { name: kernel.event_listener, event: kernel.request, priority: -10 }
+  App\EventListener\TermsAcceptListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -10 }
 
-  #ocsdc.cps.complete_profile_listener:
-  #  class: App\EventListener\CompleteProfileListener
-  #  arguments: [ "@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%" ]
-  #  tags:
-  #    - { name: kernel.event_listener, event: kernel.request, priority: -100 }
+  ocsdc.cps.complete_profile_listener:
+    class: App\EventListener\CompleteProfileListener
+    arguments: [ "@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%" ]
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -100 }
 
-  #ocsdc.redirect.after.login:
-  #  class: App\Handlers\Auth\AfterLoginRedirection
-  #  arguments: [ '@router','@security.authorization_checker' ]
+  ocsdc.redirect.after.login:
+    class: App\Handlers\Auth\AfterLoginRedirection
+    arguments: [ '@router','@security.authorization_checker' ]
 
   gedmo.listener.sluggable:
     class: Gedmo\Sluggable\SluggableListener

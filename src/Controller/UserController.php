@@ -18,6 +18,7 @@ use DateTime;
 use JMS\Serializer\Serializer;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -35,7 +36,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @package App\Controller
  * @Route("/user")
  */
-class UserController extends Controller
+class UserController extends AbstractController
 {
 
   /** @var LoggerInterface */
@@ -52,8 +53,11 @@ class UserController extends Controller
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RemoteContentProviderServiceInterface $remoteContentProviderService)
-  {
+  public function __construct(
+    TranslatorInterface $translator,
+    LoggerInterface $logger,
+    RemoteContentProviderServiceInterface $remoteContentProviderService
+  ) {
     $this->logger = $logger;
     $this->translator = $translator;
     $this->remoteContentProviderService = $remoteContentProviderService;
@@ -62,7 +66,6 @@ class UserController extends Controller
 
   /**
    * @Route("/", name="user_dashboard")
-   * @Template()
    * @param Request $request
    * @return array
    */
@@ -85,7 +88,8 @@ class UserController extends Controller
     $documents = [];
     $documentRepo = $this->getDoctrine()->getRepository('App:Document');
 
-    $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
+    $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"'.$user->getCodiceFiscale(
+      ).'"\' or document.owner_id = \''.$user->getId().'\')';
     $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
     $stmt->execute();
     $documentsIds = $stmt->fetchAll();
@@ -94,12 +98,15 @@ class UserController extends Controller
       $documents[] = $documentRepo->find($id);
     }
 
-    return array(
-      'user' => $user,
-      'servizi' => $servizi,
-      'pratiche' => $pratiche,
-      'threads' => $threads,
-      'documents' => $documents
+    return $this->render(
+      'User/index.html.twig',
+      array(
+        'user' => $user,
+        'servizi' => $servizi,
+        'pratiche' => $pratiche,
+        'threads' => $threads,
+        'documents' => $documents,
+      )
     );
   }
 
@@ -125,7 +132,10 @@ class UserController extends Controller
       $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
       $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
       $this->addFlash(
-        'success',$this->translator->trans('aggiorna_profilo'));
+        'success',
+        $this->translator->trans('aggiorna_profilo')
+      );
+
       return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
     } else {
       if ($request->query->has('r')) {
@@ -136,10 +146,13 @@ class UserController extends Controller
       }
     }
 
-    return $this->render('User/profile.html.twig', [
-      'form'      => $form->createView(),
-      'user'      => $user,
-    ]);
+    return $this->render(
+      'User/profile.html.twig',
+      [
+        'form' => $form->createView(),
+        'user' => $user,
+      ]
+    );
   }
 
   private function storeSdcUserData(CPSUser $user, array $data, LoggerInterface $logger)
@@ -162,11 +175,11 @@ class UserController extends Controller
       ->setSdcProvinciaDomicilio($data['sdc_provincia_domicilio'])
       ->setSdcStatoDomicilio($data['sdc_stato_domicilio']);
 
-    if (!$user->getLuogoNascita() && isset($data['luogo_nascita'])){
+    if (!$user->getLuogoNascita() && isset($data['luogo_nascita'])) {
       $user->setLuogoNascita($data['luogo_nascita']);
     }
 
-    if (!$user->getProvinciaNascita() && isset($data['provincia_nascita'])){
+    if (!$user->getProvinciaNascita() && isset($data['provincia_nascita'])) {
       $user->setProvinciaNascita($data['provincia_nascita']);
     }
 
@@ -186,7 +199,7 @@ class UserController extends Controller
     $compiledEmailData = $user->getEmail();
     $compiledPhoneData = $user->getTelefono();
 
-    $compiledProvinciaNascita =  $user->getProvinciaNascita();
+    $compiledProvinciaNascita = $user->getProvinciaNascita();
 
     $compiledIndirizzoResidenza = $user->getIndirizzoResidenza();
     $compiledCapResidenza = $user->getCapResidenza();
@@ -204,74 +217,116 @@ class UserController extends Controller
     $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
     if (preg_match($regex, $compiledEmailData)) {
       $this->addFlash(
-        'danger',$this->translator->trans('fake_email_message'));
+        'danger',
+        $this->translator->trans('fake_email_message')
+      );
       $compiledEmailData = '';
     }
 
     $formBuilder = $this->createFormBuilder(null, ['attr' => ['id' => 'edit_user_profile']])
-      ->add('email_contatto', EmailType::class,
+      ->add(
+        'email_contatto',
+        EmailType::class,
         ['label' => false, 'data' => $compiledEmailData, 'required' => false]
       )
-      ->add('cellulare_contatto', TextType::class,
+      ->add(
+        'cellulare_contatto',
+        TextType::class,
         ['label' => false, 'data' => $compiledCellulareData, 'required' => false]
       )
-      ->add('telefono_contatto', TextType::class,
+      ->add(
+        'telefono_contatto',
+        TextType::class,
         ['label' => false, 'data' => $compiledPhoneData, 'required' => false]
       )
-      ->add('id_card', IdCardType::class,
+      ->add(
+        'id_card',
+        IdCardType::class,
         ['label' => false, 'data' => $user->getIdCard(), 'required' => false]
       )
-      ->add('stato_nascita', TextType::class,
+      ->add(
+        'stato_nascita',
+        TextType::class,
         ['label' => false, 'data' => $user->getStatoNascita(), 'required' => false]
       )
-      ->add('sdc_indirizzo_residenza', TextType::class,
+      ->add(
+        'sdc_indirizzo_residenza',
+        TextType::class,
         ['label' => false, 'data' => $compiledIndirizzoResidenza, 'required' => false]
       )
-      ->add('sdc_cap_residenza', TextType::class,
+      ->add(
+        'sdc_cap_residenza',
+        TextType::class,
         ['label' => false, 'data' => $compiledCapResidenza, 'required' => false]
       )
-      ->add('sdc_citta_residenza', TextType::class,
+      ->add(
+        'sdc_citta_residenza',
+        TextType::class,
         ['label' => false, 'data' => $compiledCittaResidenza, 'required' => false]
       )
-      ->add('sdc_provincia_residenza', ChoiceType::class, [
-        'label' => false,
-        'data' => $compiledProvinciaResidenza,
-        'choices' => CPSUser::getProvinces(),
-        'required' => false
-      ])
-      ->add('sdc_stato_residenza', TextType::class,
+      ->add(
+        'sdc_provincia_residenza',
+        ChoiceType::class,
+        [
+          'label' => false,
+          'data' => $compiledProvinciaResidenza,
+          'choices' => CPSUser::getProvinces(),
+          'required' => false,
+        ]
+      )
+      ->add(
+        'sdc_stato_residenza',
+        TextType::class,
         ['label' => false, 'data' => $compiledStatoResidenza, 'required' => false]
       )
-      ->add('sdc_indirizzo_domicilio', TextType::class,
+      ->add(
+        'sdc_indirizzo_domicilio',
+        TextType::class,
         ['label' => false, 'data' => $compiledIndirizzoDomicilio, 'required' => false]
       )
-      ->add('sdc_cap_domicilio', TextType::class,
+      ->add(
+        'sdc_cap_domicilio',
+        TextType::class,
         ['label' => false, 'data' => $compiledCapDomicilio, 'required' => false]
       )
-      ->add('sdc_citta_domicilio', TextType::class,
+      ->add(
+        'sdc_citta_domicilio',
+        TextType::class,
         ['label' => false, 'data' => $compiledCittaDomicilio, 'required' => false]
       )
-      ->add('sdc_provincia_domicilio', ChoiceType::class, [
-        'label' => false,
-        'data' => $compiledProvinciaDomicilio,
-        'choices' => CPSUser::getProvinces(),
-        'required' => false
-      ])
-      ->add('sdc_stato_domicilio', TextType::class,
+      ->add(
+        'sdc_provincia_domicilio',
+        ChoiceType::class,
+        [
+          'label' => false,
+          'data' => $compiledProvinciaDomicilio,
+          'choices' => CPSUser::getProvinces(),
+          'required' => false,
+        ]
+      )
+      ->add(
+        'sdc_stato_domicilio',
+        TextType::class,
         ['label' => false, 'data' => $compiledStatoDomicilio, 'required' => false]
       )
-      ->add('save', SubmitType::class,
+      ->add(
+        'save',
+        SubmitType::class,
         ['label' => 'user.profile.salva']
       );
 
-    if (!$user->getLuogoNascita()){
-      $formBuilder->add('luogo_nascita', ChoiceType::class,
+    if (!$user->getLuogoNascita()) {
+      $formBuilder->add(
+        'luogo_nascita',
+        ChoiceType::class,
         ['label' => false, 'required' => true, 'choices' => array_flip(MunicipalityConverter::getCodes())]
       );
     }
 
-    if (!$user->getProvinciaNascita()){
-      $formBuilder->add('provincia_nascita', ChoiceType::class,
+    if (!$user->getProvinciaNascita()) {
+      $formBuilder->add(
+        'provincia_nascita',
+        ChoiceType::class,
         ['label' => false, 'required' => true, 'choices' => CPSUser::getProvinces()]
       );
     }
@@ -294,6 +349,7 @@ class UserController extends Controller
     $response = new JsonResponse($data);
     $response->setMaxAge(3600);
     $response->setSharedMaxAge(3600);
+
     return $response;
   }
 
@@ -310,6 +366,7 @@ class UserController extends Controller
     $response = new JsonResponse($data);
     $response->setMaxAge(3600);
     $response->setSharedMaxAge(3600);
+
     return $response;
   }
 
@@ -355,13 +412,17 @@ class UserController extends Controller
       'order' => $request->get('order', 'asc'),
     ];
 
-    foreach ($request->query->keys() as $queryParameter){
-      if (!array_key_exists($queryParameter, $parameters) && !in_array($queryParameter, ['limit', 'offset', 'output']) ){
+    foreach ($request->query->keys() as $queryParameter) {
+      if (!array_key_exists($queryParameter, $parameters) && !in_array(
+          $queryParameter,
+          ['limit', 'offset', 'output']
+        )) {
         $error = [
           'error' => 'Bad Request',
-          'message' => "Unexpected parameter: $queryParameter"
+          'message' => "Unexpected parameter: $queryParameter",
         ];
         $request->setRequestFormat('json');
+
         return new JsonResponse(json_encode($error), 400, [], true);
       }
     }
@@ -378,7 +439,7 @@ class UserController extends Controller
     $result['meta']['count'] = $count;
     $currentParameters = $parameters;
 
-    if ($output !== 'count'){
+    if ($output !== 'count') {
       $limit = intval($request->get('limit', 10));
       $offset = intval($request->get('offset', 0));
       $data = $praticaRepository->findPraticheByUser($user, $parameters, $limit, $offset);
@@ -405,12 +466,14 @@ class UserController extends Controller
       foreach ($data as $s) {
         $application = Application::fromEntity($s, '', false);
         $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
-        if ($s instanceof FormIO){
+        if ($s instanceof FormIO) {
           $schema = $schemaFactory->createFromFormId($s->getServizio()->getFormIoId());
           if ($schema->hasComponents()) {
             $dematerialized = $s->getDematerializedForms();
             if (isset($dematerialized['data'])) {
-              $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray($dematerialized['data'])->toFullFilledFlatArray();
+              $applicationArray['data'] = $schema->getDataBuilder()->setDataFromArray(
+                $dematerialized['data']
+              )->toFullFilledFlatArray();
             } else {
               $applicationArray['data'] = array_fill_keys($schema->getComponentsColumns('name'), '');
             }
@@ -423,6 +486,7 @@ class UserController extends Controller
     $result['meta']['parameter'] = $currentParameters;
 
     $request->setRequestFormat('json');
+
     return new JsonResponse(json_encode($result), 200, [], true);
   }
 }

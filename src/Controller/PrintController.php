@@ -8,7 +8,8 @@ use App\Entity\Servizio;
 use App\Logging\LogConstants;
 use App\Services\ModuloPdfBuilderService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -28,7 +29,7 @@ use TheCodingMachine\Gotenberg\Request as GotembergRequest;
  * @package App\Controller
  * @Route("/print")
  */
-class PrintController extends Controller
+class PrintController extends AbstractController
 {
   /**
    * @var ModuloPdfBuilderService
@@ -48,7 +49,6 @@ class PrintController extends Controller
   /**
    * @Route("/pratica/{pratica}", name="print_pratiche")
    * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
    * @return array
@@ -60,29 +60,32 @@ class PrintController extends Controller
 
     $attachments = $pratica->getAllegati();
     $preparedAttachments = [];
-    if ( $attachments->count() > 0) {
+    if ($attachments->count() > 0) {
       /** @var Allegato $a */
       foreach ($attachments as $a) {
         $temp = [];
         $temp['id'] = $a->getId();
         $temp['local_name'] = $a->getFilename();
 
-        $originalFilenameParts = explode('-',  $a->getOriginalFilename());
-        $userFilename = implode('-', array_slice($originalFilenameParts, 0, -5)) . '.' . $a->getFile()->getExtension();
+        $originalFilenameParts = explode('-', $a->getOriginalFilename());
+        $userFilename = implode('-', array_slice($originalFilenameParts, 0, -5)).'.'.$a->getFile()->getExtension();
         $temp['original_filename'] = $userFilename;
         $temp['hash'] = hash_file('md5', $a->getFile()->getPathname());
 
-        $preparedAttachments[]=$temp;
+        $preparedAttachments[] = $temp;
       }
     }
 
-    return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
-      'form' => $form->createView(),
-      'pratica' => $pratica,
-      'user' => $user,
-      'attachments' => $preparedAttachments
-    ];
+    return $this->render(
+      'Print/printPratica.html.twig',
+      [
+        'formserver_url' => $this->getParameter('formserver_public_url'),
+        'form' => $form->createView(),
+        'pratica' => $pratica,
+        'user' => $user,
+        'attachments' => $preparedAttachments,
+      ]
+    );
 
   }
 
@@ -101,7 +104,7 @@ class PrintController extends Controller
     $fileContent = $this->moduloPdfBuilderService->generatePdfUsingGotemberg($pratica);
 
     // Provide a name for your file with extension
-    $filename = time() . '.pdf';
+    $filename = time().'.pdf';
 
     // Return a response with a specific content
     $response = new Response($fileContent);
@@ -123,7 +126,6 @@ class PrintController extends Controller
   /**
    * @Route("/service/{service}", name="print_service")
    * @ParamConverter("service", class="App:Servizio")
-   * @Template()
    * @param Servizio $service
    *
    * @return array
@@ -135,11 +137,14 @@ class PrintController extends Controller
 
     $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
 
-    return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
-      'form' => $form->createView(),
-      'pratica' => $pratica
-    ];
+    return $this->render(
+      'Print/previewService.html.twig',
+      [
+        'formserver_url' => $this->getParameter('formserver_public_url'),
+        'form' => $form->createView(),
+        'pratica' => $pratica,
+      ]
+    );
   }
 
   /**
@@ -159,7 +164,7 @@ class PrintController extends Controller
     $fileContent = $this->moduloPdfBuilderService->generateServicePdfUsingGotemberg($service);
 
     // Provide a name for your file with extension
-    $filename = time() . '.pdf';
+    $filename = time().'.pdf';
 
     // Return a response with a specific content
     $response = new Response($fileContent);
@@ -181,7 +186,6 @@ class PrintController extends Controller
   /**
    * @Route("/service/{service}/preview", name="preview_service")
    * @ParamConverter("service", class="App:Servizio")
-   * @Template()
    * @param Servizio $service
    *
    * @return array
@@ -193,11 +197,14 @@ class PrintController extends Controller
 
     $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
 
-    return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
-      'form' => $form->createView(),
-      'pratica' => $pratica
-    ];
+    return $this->render(
+      'Print/previewService.html.twig',
+      [
+        'formserver_url' => $this->getParameter('formserver_public_url'),
+        'form' => $form->createView(),
+        'pratica' => $pratica,
+      ]
+    );
   }
 
   /**

@@ -27,7 +27,8 @@ use App\Services\PraticaStatusService;
 use Flagception\Manager\FeatureManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -50,7 +51,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @package App\Controller
  * @Route("/pratiche")
  */
-class PraticheController extends Controller
+class PraticheController extends AbstractController
 {
 
   const ENTE_SLUG_QUERY_PARAMETER = 'ente';
@@ -120,7 +121,6 @@ class PraticheController extends Controller
 
   /**
    * @Route("/", name="pratiche")
-   * @Template()
    *
    * @return array
    */
@@ -145,7 +145,7 @@ class PraticheController extends Controller
     $praticheWithdrawn = $repo->findWithdrawnPraticaForUser($user);
 
 
-    return [
+    return $this->render('Pratiche/index.html.twig', [
       'user' => $user,
       'pratiche' => $pratiche,
       'title' => 'lista_pratiche',
@@ -158,8 +158,8 @@ class PraticheController extends Controller
         'related' => $praticheRelated,
         'cancelled' => $praticheCancelled,
         'withdrawn' => $praticheWithdrawn
-      ),
-    ];
+      )
+    ]);
   }
 
   /**
@@ -211,7 +211,6 @@ class PraticheController extends Controller
   /**
    * @Route("/{servizio}/draft", name="pratiche_list_draft")
    * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
-   * @Template()
    * @param Servizio $servizio
    *
    * @return array
@@ -232,7 +231,7 @@ class PraticheController extends Controller
       array('creationTime' => 'ASC')
     );
 
-    return [
+    return $this->render('Pratiche/listDraftByService.html.twig',  [
       'user' => $user,
       'pratiche' => $pratiche,
       'title' => 'bozze_servizio',
@@ -240,13 +239,12 @@ class PraticheController extends Controller
         'type' => 'warning',
         'text' => 'msg_bozze_servizio',
       ),
-    ];
+    ]);
   }
 
   /**
    * @Route("/compila/{pratica}", name="pratiche_compila")
    * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
    * @return array|RedirectResponse
@@ -329,14 +327,14 @@ class PraticheController extends Controller
       }
     }
 
-    return [
+    return $this->render('Pratiche/compila.html.twig', [
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'user' => $user,
       //'threads' => $thread,
-    ];
+    ]);
   }
 
   private function checkUserCanAccessPratica(Pratica $pratica, CPSUser $user)
@@ -368,10 +366,9 @@ class PraticheController extends Controller
   /**
    * @Route("/{pratica}", name="pratiche_show")
    * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
-   * @return array
+   * @return Response
    */
   public function showAction(Request $request, Pratica $pratica)
   {
@@ -418,16 +415,15 @@ class PraticheController extends Controller
       $result['allegati'] = $allegati;
     }
 
-    return $result;
+    return $this->render('Pratiche/show.html.twig', $result);
   }
 
   /**
    * @Route("/{pratica}/detail", name="pratica_show_detail")
    * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
-   * @return RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function detailAction(Request $request, Pratica $pratica)
   {
@@ -540,7 +536,7 @@ class PraticheController extends Controller
       $result['allegati'] = $allegati;
     }
 
-    return $result;
+    return $this->render('Pratiche/detail.html.twig', $result);
   }
 
   /**
@@ -549,9 +545,7 @@ class PraticheController extends Controller
    * @param Request $request
    * @param Pratica $pratica
    *
-   * @param PraticaStatusService $praticaStatusService
-   * @param ModuloPdfBuilderService $pdfBuilderService
-   * @return array|RedirectResponse
+   * @return RedirectResponse
    * @throws \Exception
    */
   public function withdrawAction(Request $request, Pratica $pratica)
@@ -579,8 +573,7 @@ class PraticheController extends Controller
    * @param Request $request
    * @param Pratica $pratica
    *
-   * @param PraticaStatusService $praticaStatusService
-   * @return array|RedirectResponse
+   * @return RedirectResponse
    * @throws \Exception
    */
   public function paymentCallbackAction(Request $request, Pratica $pratica)
@@ -612,6 +605,7 @@ class PraticheController extends Controller
    * @param Pratica $pratica
    *
    * @return BinaryFileResponse
+   * @throws \Exception
    */
   public function showPdfAction(Request $request, Pratica $pratica)
   {
@@ -637,10 +631,9 @@ class PraticheController extends Controller
   /**
    * @Route("/{pratica}/delete", name="pratiche_delete")
    * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
-   * @return array
+   * @return RedirectResponse
    */
   public function deleteAction(Request $request, Pratica $pratica)
   {
@@ -661,10 +654,9 @@ class PraticheController extends Controller
   /**
    * @Route("/{pratica}/protocollo", name="pratiche_show_protocolli")
    * @ParamConverter("pratica", class="App:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
-   * @return array
+   * @return Response
    */
   public function showProtocolliAction(Request $request, Pratica $pratica)
   {
@@ -685,12 +677,12 @@ class PraticheController extends Controller
       }
     }
 
-    return [
+    return $this->render('Pratiche/showProtocolli.html.twig', [
       'pratica' => $pratica,
       'allegati' => $allegati,
       'user' => $user,
       //'threads' => $thread,
-    ];
+    ]);
   }
 
   /**

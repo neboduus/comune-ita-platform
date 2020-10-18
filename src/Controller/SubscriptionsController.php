@@ -15,6 +15,7 @@ use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use stdClass;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  * @package App\Controller
  * @Route("/operatori/subscriptions")
  */
-class SubscriptionsController extends Controller
+class SubscriptionsController extends AbstractController
 {
   use DataTablesTrait;
   private $subscriptionsBackOffice;
@@ -40,7 +41,6 @@ class SubscriptionsController extends Controller
 
   /**
    * Lists all subscriptions entities.
-   * @Template()
    * @Route("/{subscriptionService}", name="operatori_subscriptions")
    */
   public function showSubscriptionsAction(Request $request, SubscriptionService $subscriptionService)
@@ -88,10 +88,10 @@ class SubscriptionsController extends Controller
       return $table->getResponse();
     }
 
-    return array(
+    return $this->render('Subscriptions/showSubscriptions.html.twig', array(
       'user' => $user,
       'datatable' => $table, 'subscriptionService' => $subscriptionService
-    );
+    ));
   }
 
   /**
