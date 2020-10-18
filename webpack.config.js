@@ -33,16 +33,11 @@ Encore
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
-
-  // will require an extra script tag for runtime.js
-  // but, you probably want this, unless you're building a single-page app
   .enableSingleRuntimeChunk()
-
   .cleanupOutputBeforeBuild()
-
   .enableSourceMaps(!Encore.isProduction())
-  // enables hashed filenames (e.g. app.abc123.css)
   .enableVersioning(Encore.isProduction())
+  .enableIntegrityHashes(Encore.isProduction())
 
   // uncomment if you use TypeScript
   //.enableTypeScriptLoader()
@@ -56,10 +51,17 @@ Encore
 
   // uncomment if you're having problems with a jQuery plugin
   .autoProvidejQuery()
-  .addPlugin(new CopyWebpackPlugin([
-    {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../bootstrap-italia/dist/fonts/'},
-    {from: './node_modules/bootstrap-italia/dist/svg/', to: '../bootstrap-italia/dist/svg/'}
-  ]))
+  .autoProvideVariables({})
+  .copyFiles({
+    from: './node_modules/bootstrap-italia/dist/',
+    to: '../bootstrap-italia/dist/[path][name].[hash:8].[ext]',
+    pattern: /\.(eot|ttf|woff|woff2|svg)$/,
+  })
+  .copyFiles({
+    from: './assets/app/',
+    to: '../bundles/app/[path][name].[hash:8].[ext]',
+    pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css)$/,
+  })
 ;
 
 

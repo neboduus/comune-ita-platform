@@ -1,4 +1,7 @@
 {
+  "name": "Sdc",
+  "version": "1.6.0",
+  "author": "Opencontent",
   "devDependencies": {
     "@babel/core": "7.11.6",
     "@babel/plugin-proposal-class-properties": "7.10.4",
@@ -6,31 +9,36 @@
     "@babel/preset-env": "7.11.5",
     "@symfony/webpack-encore": "0.31.0",
     "babel-loader": "8.1.0",
-    "bootstrap": "4.5.2",
-    "bootstrap-italia": "1.4.1",
-    "bootstrap-select": "1.13.18",
     "copy-webpack-plugin": "5.1.2",
     "datatables.net-bs4": "1.10.22",
     "file-loader": "4.3.0",
-    "formiojs": "4.11.0",
-    "jquery": "3.5.1",
-    "jquery-datepicker": "1.12.3",
-    "jsrender": "1.0.7",
-    "moment": "2.29.0",
     "node-sass": "4.14.1",
     "owl.carousel": "2.3.4",
     "popper.js": "1.16.1",
-    "sass-loader": "7.3.1",
-    "summernote": "0.8.12",
+    "sass-loader": "^9.0.1",
     "svgxuse": "1.2.6",
     "webpack-jquery-ui": "2.0.1",
     "webpack-notifier": "1.8.0"
   },
   "dependencies": {
+    "bootstrap": "4.5.2",
+    "bootstrap-italia": "1.4.1",
+    "bootstrap-select": "1.13.18",
+    "formiojs": "4.11.0",
+    "jquery": "3.5.1",
+    "jquery-datepicker": "1.12.3",
+    "jsrender": "1.0.7",
+    "moment": "2.29.0",
+    "summernote": "0.8.12",
     "axios": "0.20.0",
     "highcharts": "8.1.0",
     "lodash": "4.17.15",
     "outdated-browser-rework": "2.10.0"
   },
-  "version": "1.6.0"
+  "peerDependencies": {
+    "webpack": "^4.41.0"
+  },
+  "resolutions": {
+    "webpack": "^4.41.0"
+  }
 }
