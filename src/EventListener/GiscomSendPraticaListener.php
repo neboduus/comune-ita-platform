@@ -32,11 +32,11 @@ class GiscomSendPraticaListener implements EventSubscriberInterface
 
     /**
      * GiscomSendPraticaListener constructor.
-     * @param GiscomAPIAdapterService $giscomAPIAdapterService
+     * @param GiscomAPIAdapterServiceInterface $giscomAPIAdapterService
      * @param LoggerInterface         $logger
      */
     public function __construct(
-        GiscomAPIAdapterService $giscomAPIAdapterService,
+        GiscomAPIAdapterServiceInterface $giscomAPIAdapterService,
         LoggerInterface $logger
     )
     {

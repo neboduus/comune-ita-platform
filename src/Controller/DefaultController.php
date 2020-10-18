@@ -117,7 +117,7 @@ class DefaultController extends Controller
    * @Route("/terms_accept/", name="terms_accept")
    * @param Request $request
    *
-   * @return array
+   * @return Response
    */
   public function termsAcceptAction(Request $request)
   {
@@ -154,7 +154,7 @@ class DefaultController extends Controller
       $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
     }
 
-    $this->render('Default/termsAccept.html.twig', [
+    return $this->render('Default/termsAccept.html.twig', [
       'form' => $form->createView(),
       'terms' => $terms,
       'user' => $user,

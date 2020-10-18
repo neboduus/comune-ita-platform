@@ -165,7 +165,7 @@ class InstanceKernel extends BaseKernel
       }
     }
 
-    if ($container->has(ProtocolloHandlerRegistry::class)) {
+    /*if ($container->has(ProtocolloHandlerRegistry::class)) {
       $definition = $container->findDefinition(ProtocolloHandlerRegistry::class);
       $taggedServices = $container->findTaggedServiceIds('ocsdc.protocollo.handler');
       foreach ($taggedServices as $id => $tags) {
@@ -177,6 +177,6 @@ class InstanceKernel extends BaseKernel
         }
         $definition->addMethodCall('registerHandler', [new Reference($id), $alias]);
       }
-    }
+    }*/
   }
 }

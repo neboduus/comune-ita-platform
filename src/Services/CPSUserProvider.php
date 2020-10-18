@@ -36,10 +36,10 @@ class CPSUserProvider implements UserProviderInterface
   /**
    * UserProvider constructor.
    *
-   * @param EntityManager $em
+   * @param EntityManagerInterface $em
    * @param LoggerInterface $logger
    */
-  public function __construct(EntityManager $em, LoggerInterface $logger)
+  public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->logger = $logger;
@@ -113,7 +113,6 @@ class CPSUserProvider implements UserProviderInterface
     } else {
       $this->updateRequiredFields($user, $data);
     }
-
     return $user;
   }
 

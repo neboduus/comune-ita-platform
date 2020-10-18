@@ -1,23 +1,160 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
-    providers:
-        users_in_memory: { memory: null }
-    firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-        main:
-            anonymous: lazy
-            provider: users_in_memory
+  # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+  encoders:
+    App\Entity\User: bcrypt
+    App\Entity\AdminUser: bcrypt
+    App\Entity\OperatoreUser: bcrypt
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
+  providers:
+    chain_provider:
+      chain:
+        providers: [ in_memory, app_user_provider, cps ]
+    in_memory:
+      memory:
+        users:
+          ez:
+            password: '%ez_password%'
+            roles: 'ROLE_EZ'
+          giscom:
+            password: '%giscom_password%'
+            roles: 'ROLE_GISCOM'
+    cps:
+      id: App\Services\CPSUserProvider
 
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+    app_user_provider:
+      entity:
+        class: App\Entity\User
+        property: username
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
-    access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+      anonymous: true
+
+    api_login:
+      pattern: ^/%prefix%/api/auth
+      stateless: true
+      anonymous: true
+      provider: chain_provider
+      json_login:
+        check_path: /%prefix%/api/auth
+        require_previous_session: false
+        success_handler: lexik_jwt_authentication.handler.authentication_success
+        failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+    api:
+      pattern: /%prefix%/api/(services|services-groups|calendars|status)
+      methods: [ POST, PUT, PATCH, DELETE ]
+      stateless: true
+      provider: app_user_provider
+      guard:
+        authenticators:
+          - lexik_jwt_authentication.jwt_token_authenticator
+
+    api_secure:
+      pattern: /%prefix%/api/(folders|documents|users|meetings|applications)
+      stateless: true
+      provider: app_user_provider
+      guard:
+        authenticators:
+          - lexik_jwt_authentication.jwt_token_authenticator
+
+    #operatori:
+    #  logout_on_user_change: true
+    #  anonymous: ~
+    #  pattern: ^/%prefix%/(operatori|admin)
+    #  form_login:
+    #    check_path: fos_user_security_check
+    #    login_path: fos_user_security_login
+    #    provider: fos_userbundle
+    #    csrf_token_generator: security.csrf.token_manager
+    #    success_handler: ocsdc.redirect.after.login
+    #  logout:
+    #    path: logout
+    #    target: /%prefix%/
+
+    giscom_api:
+      logout_on_user_change: true
+      pattern: ^/%prefix%/api/v\d+\.\d+/giscom/pratica/.*/.*
+      http_basic:
+        provider: in_memory
+
+    ez_api:
+      logout_on_user_change: true
+      pattern: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*
+      http_basic:
+        provider: in_memory
+
+    print:
+      logout_on_user_change: true
+      pattern: ^/%prefix%/print/pratica/.*
+      http_basic:
+        provider: in_memory
+
+    user_api:
+      logout_on_user_change: true
+      pattern: ^/%prefix%/api/v\d+\.\d+/user/.*
+      guard:
+        provider: cps
+        authenticators:
+          - ocsdc.cps.token_authenticator
+
+    open_login:
+      logout_on_user_change: true
+      anonymous: true
+      #pattern: ^/%prefix%/login
+      #pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
+      provider: cps
+      logout:
+        path: user_logout #name of the route
+        target: /%prefix%/
+        delete_cookies: [ '_forward_auth_csrf', '_forward_auth_spid', 'PHPSESSID', 'token', 'refresh_token' ]
+        success_handler: ocsdc.logout_success_handler
+      guard:
+        authenticators:
+          - ocsdc.pat.authenticator
+          - ocsdc.openlogin.authenticator
+        entry_point: ocsdc.pat.authenticator
+
+    main:
+      anonymous: ~
+
+    #main:
+    #  anonymous: lazy
+    #  provider: users_in_memory
+
+      # activate different ways to authenticate
+      # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+      # https://symfony.com/doc/current/security/impersonating_user.html
+      # switch_user: true
+
+  role_hierarchy:
+    ROLE_ADMIN: ROLE_USER
+    ROLE_OPERATORE_ADMIN: ROLE_OPERATORE
+    ROLE_OPERATORE: ROLE_USER
+
+  # Easy way to control access for large sections of your site
+  # Note: Only the *first* access control that matches will be used
+  access_control:
+    - { path: ^/%prefix%/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+    - { path: ^/%prefix%/(pratiche|terms_accept|user|documenti)/, role: ROLE_USER }
+    #- { path: ^/%prefix%/login, role: [ROLE_USER] }
+    #- { path: ^/%prefix%/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+
+    - { path: ^/%prefix%/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori/profile/edit, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori/profile/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori/subscriptions, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori/subscription-service, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori/subscriber, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori/calendars, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori, role: ROLE_OPERATORE }
+    - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
+    - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
+    - { path: ^/%prefix%/admin, role: ROLE_ADMIN }

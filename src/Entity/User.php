@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,7 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"operatore" = "OperatoreUser", "cps" = "CPSUser", "admin" = "AdminUser"})
- * @UniqueEntity(fields="usernameCanonical", errorPath="username", message="fos_user.username.already_used")
+ * @UniqueEntity(fields="usernameCanonical", errorPath="username", message="This value is already used.")
  * @package App\Entity
  */
 abstract class User implements UserInterface
@@ -43,15 +45,15 @@ abstract class User implements UserInterface
 
   /**
    * @var string
-   * @ORM\Column(name="nome", type="string")
+   * @ORM\Column(type="string", length=180, unique=true)
    */
-  private $nome;
+  protected $username;
 
   /**
    * @var string
-   * @ORM\Column(name="cognome", type="string")
+   * @ORM\Column(type="string", length=180)
    */
-  private $cognome;
+  protected $usernameCanonical;
 
   /**
    * @var string
@@ -65,8 +67,73 @@ abstract class User implements UserInterface
    */
   protected $emailCanonical;
 
+  /**
+   * @ORM\Column(name="enabled", type="boolean")
+   */
+  protected $enabled;
+
+  /**
+   * The salt to use for hashing.
+   *
+   * @var string
+   * @ORM\Column(type="string", length=255)
+   */
+  protected $salt;
+
+  /**
+   * Encrypted password. Must be persisted.
+   *
+   * @var string
+   * @ORM\Column(type="string", length=255)
+   */
+  protected $password;
+
+  /**
+   * Plain password. Used for model validation. Must not be persisted.
+   *
+   * @var string
+   */
+  protected $plainPassword;
+
+  /**
+   * @var \DateTime
+   */
+  protected $lastLogin;
+
+  /**
+   * Random string sent to the user email address in order to verify it.
+   *
+   * @var string
+   * @ORM\Column(type="string", length=180)
+   */
+  protected $confirmationToken;
+
+  /**
+   * @var \DateTime
+   */
+  protected $passwordRequestedAt;
+
+  /**
+   * @ORM\Column(type="array")
+   */
+  protected $roles;
+
+  /**
+   * @var string
+   * @ORM\Column(name="nome", type="string")
+   */
+  private $nome;
+
+  /**
+   * @var string
+   * @ORM\Column(name="cognome", type="string")
+   */
+  private $cognome;
+
+  /** @var string */
   protected $type;
 
+  /** @var string */
   protected $fullName;
 
   /**
@@ -89,21 +156,252 @@ abstract class User implements UserInterface
    */
   public function __construct()
   {
-    parent::__construct();
     $this->id = Uuid::uuid4();
+    $this->enabled = false;
+    $this->roles = array();
   }
 
   /**
-   * {@inheritDoc}
+   * @param $role
+   * @return $this
    */
-  public function getId()
+  public function addRole($role)
   {
-    return (string)$this->id;
+    $role = strtoupper($role);
+    if ($role === self::ROLE_USER) {
+      return $this;
+    }
+
+    if (!in_array($role, $this->roles, true)) {
+      $this->roles[] = $role;
+    }
+
+    return $this;
   }
+
+  /**
+   * @return array
+   */
+  public function getRoles()
+  {
+    $roles = $this->roles;
+    // guarantee every user at least has ROLE_USER
+    $roles[] = self::ROLE_USER;
+
+    return array_unique($roles);
+  }
+
+  /**
+   * @param $role
+   * @return bool
+   */
+  public function hasRole($role)
+  {
+    return in_array(strtoupper($role), $this->getRoles(), true);
+  }
+
+  /**
+   * @param $role
+   * @return $this
+   */
+  public function removeRole($role)
+  {
+    if (false !== $key = array_search(strtoupper($role), $this->roles, true)) {
+      unset($this->roles[$key]);
+      $this->roles = array_values($this->roles);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param array $roles
+   * @return $this
+   */
+  public function setRoles(array $roles)
+  {
+    $this->roles = array();
+
+    foreach ($roles as $role) {
+      $this->addRole($role);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @return UuidInterface
+   */
+  public function getId(): UuidInterface
+  {
+    return $this->id;
+  }
+
+  /**
+   * @param UuidInterface $id
+   */
+  public function setId(UuidInterface $id): void
+  {
+    $this->id = $id;
+  }
+
+  /**
+   * @return string
+   */
+  public function getUsernameCanonical(): string
+  {
+    return $this->usernameCanonical;
+  }
+
+  /**
+   * @param string $usernameCanonical
+   */
+  public function setUsernameCanonical(string $usernameCanonical): void
+  {
+    $this->usernameCanonical = $usernameCanonical;
+  }
+
+  /**
+   * @return string
+   */
+  public function getEmailCanonical(): string
+  {
+    return $this->emailCanonical;
+  }
+
+  /**
+   * @param string $emailCanonical
+   */
+  public function setEmailCanonical(string $emailCanonical): void
+  {
+    $this->emailCanonical = $emailCanonical;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isEnabled(): bool
+  {
+    return $this->enabled;
+  }
+
+  /**
+   * @param bool $enabled
+   */
+  public function setEnabled(bool $enabled)
+  {
+    $this->enabled = $enabled;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getPlainPassword(): string
+  {
+    return $this->plainPassword;
+  }
+
+  /**
+   * @param string $plainPassword
+   */
+  public function setPlainPassword(string $plainPassword): void
+  {
+    $this->plainPassword = $plainPassword;
+  }
+
+  /**
+   * @return \DateTime
+   */
+  public function getLastLogin(): \DateTime
+  {
+    return $this->lastLogin;
+  }
+
+  /**
+   * @param \DateTime $lastLogin
+   */
+  public function setLastLogin(\DateTime $lastLogin): void
+  {
+    $this->lastLogin = $lastLogin;
+  }
+
+  /**
+   * @return string
+   */
+  public function getConfirmationToken(): string
+  {
+    return $this->confirmationToken;
+  }
+
+  /**
+   * @param string $confirmationToken
+   */
+  public function setConfirmationToken(string $confirmationToken): void
+  {
+    $this->confirmationToken = $confirmationToken;
+  }
+
+  /**
+   * @return \DateTime
+   */
+  public function getPasswordRequestedAt(): \DateTime
+  {
+    return $this->passwordRequestedAt;
+  }
+
+  /**
+   * @param \DateTime $passwordRequestedAt
+   */
+  public function setPasswordRequestedAt(\DateTime $passwordRequestedAt): void
+  {
+    $this->passwordRequestedAt = $passwordRequestedAt;
+  }
+
+  /**
+   * @return Collection
+   */
+  public function getGroups(): Collection
+  {
+    return $this->groups;
+  }
+
+  /**
+   * @param Collection $groups
+   */
+  public function setGroups(Collection $groups): void
+  {
+    $this->groups = $groups;
+  }
+
+
+
+
 
   public function hasPassword()
   {
     return $this->password !== null;
+  }
+
+
+  /**
+   * @return string
+   */
+  public function getNome()
+  {
+    return $this->nome;
+  }
+
+  /**
+   * @param $nome
+   *
+   * @return User
+   */
+  public function setNome($nome)
+  {
+    $this->nome = $nome;
+
+    return $this;
   }
 
   /**
@@ -122,26 +420,6 @@ abstract class User implements UserInterface
   public function setCognome($cognome)
   {
     $this->cognome = $cognome;
-
-    return $this;
-  }
-
-  /**
-   * @return string
-   */
-  public function getNome()
-  {
-    return $this->nome;
-  }
-
-  /**
-   * @param $nome
-   *
-   * @return User
-   */
-  public function setNome($nome)
-  {
-    $this->nome = $nome;
 
     return $this;
   }
@@ -206,28 +484,64 @@ abstract class User implements UserInterface
     return $this;
   }
 
-  public function getRoles()
+  /**
+   * @see UserInterface
+   */
+  public function getPassword(): string
   {
-    // TODO: Implement getRoles() method.
+    return (string)$this->password;
   }
 
-  public function getPassword()
+  public function setPassword(string $password): self
   {
-    // TODO: Implement getPassword() method.
+    $this->password = $password;
+
+    return $this;
   }
 
-  public function getSalt()
+  /**
+   * @return string
+   */
+  public function getUsername(): string
   {
-    // TODO: Implement getSalt() method.
+    return $this->username;
   }
 
-  public function getUsername()
+  /**
+   * @param string $username
+   */
+  public function setUsername(string $username): void
   {
-    // TODO: Implement getUsername() method.
+    $this->username = $username;
+    $this->usernameCanonical = $username;
+  }
+
+  /**
+   * @return string
+   */
+  public function getEmail()
+  {
+    return $this->email;
+  }
+
+  /**
+   * @param string $email
+   */
+  public function setEmail(string $email): void
+  {
+    $this->email = $email;
   }
 
   public function eraseCredentials()
   {
-    // TODO: Implement eraseCredentials() method.
+    $this->plainPassword = null;
+  }
+
+  /**
+   * @see UserInterface
+   */
+  public function getSalt()
+  {
+    // not needed when using the "bcrypt" algorithm in security.yaml
   }
 }

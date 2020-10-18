@@ -199,15 +199,7 @@ services:
   App\Controller\PrintController:
     autowire: true
 
-  App\Controller\GiscomAPIController:
-    arguments:
-      - '@logger'
-      - '@ocsdc.pratica_status_service'
-      - '@ocsdc.status_mapper.giscom'
-      - '@ocsdc.pratica_integration_service'
-      - '@ocsdc.giscom_api.mapper'
-      - '@ocsdc.giscom_api.adapter_direct'
-      - '@ocsdc.giscom_api.adapter_delayed'
+
 
   App\Controller\Rest\FoldersAPIController:
     autowire: true
@@ -336,19 +328,19 @@ services:
     class: App\Security\CPSAuthenticator
     arguments: [ "%shibbolet_server_varnames%",'@Symfony\Component\Security\Core\Security' ]
 
-  App\EventListener\TermsAcceptListener:
-    tags:
-      - { name: kernel.event_listener, event: kernel.request, priority: -10 }
+  #App\EventListener\TermsAcceptListener:
+  #  tags:
+  #    - { name: kernel.event_listener, event: kernel.request, priority: -10 }
 
-  ocsdc.cps.complete_profile_listener:
-    class: App\EventListener\CompleteProfileListener
-    arguments: [ "@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%" ]
-    tags:
-      - { name: kernel.event_listener, event: kernel.request, priority: -100 }
+  #ocsdc.cps.complete_profile_listener:
+  #  class: App\EventListener\CompleteProfileListener
+  #  arguments: [ "@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%" ]
+  #  tags:
+  #    - { name: kernel.event_listener, event: kernel.request, priority: -100 }
 
-  ocsdc.redirect.after.login:
-    class: App\Handlers\Auth\AfterLoginRedirection
-    arguments: [ '@router','@security.authorization_checker' ]
+  #ocsdc.redirect.after.login:
+  #  class: App\Handlers\Auth\AfterLoginRedirection
+  #  arguments: [ '@router','@security.authorization_checker' ]
 
   gedmo.listener.sluggable:
     class: Gedmo\Sluggable\SluggableListener
@@ -362,9 +354,7 @@ services:
     tags:
       - { name: monolog.processor }
 
-  ocsdc.form.flow.type_extension.help_data:
-    class: App\Form\Extension\HelpDataTypeExtension
-    arguments: [ "@translator", "%prefix%" ]
+  App\Form\Extension\HelpDataTypeExtension:
     tags:
       - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 
@@ -388,11 +378,8 @@ services:
 
   ocsdc.protocollo.client: "@eight_points_guzzle.client.protocollo_cct"
 
-  #ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
-  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.config"
-
-  App\Protocollo\ProtocolloHandlerInterface:
-    autowire: true
+  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
+  #ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.config"
 
   App\Protocollo\ProtocolloHandlerRegistry:
     autowire: true
@@ -442,21 +429,15 @@ services:
     tags:
       - { name: ocsdc.protocollo.handler, alias: infor }
 
-  #App\Services\DelayedProtocolloService:
-    #arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
-
-  #App\Services\ProtocolloService:
-    #arguments: [ "@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher" ]
-
-  App\Services\ProtocolloServiceInterface: '@App\Services\DelayedProtocolloService'
-
   App\Services\DelayedProtocolloService:
-    tags:
-      - { name: 'app.schedule_action_handler', alias: 'ocsdc.protocollo' }
+    arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
+
+  App\Services\ProtocolloService:
+    arguments: [ "@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher" ]
 
 
-  #ocsdc.protocollo: '@App\Services\DelayedProtocolloService'
-  #ocsdc.protocollo_direct: '@App\Services\ProtocolloService'
+  ocsdc.protocollo: '@App\Services\DelayedProtocolloService'
+  ocsdc.protocollo_direct: '@App\Services\ProtocolloService'
 
   ocsdc.pratica_listeners.createpdf:
     class: App\EventListener\CreatePdfPraticaListener
@@ -479,7 +460,7 @@ services:
 
   ocsdc.pratica_listeners.protocollo:
     class: App\EventListener\ProtocollaPraticaListener
-    #arguments: [ "@ocsdc.protocollo", "@ocsdc.pratica_status_service","@logger" ]
+    arguments: [ "@ocsdc.protocollo", "@ocsdc.pratica_status_service","@logger" ]
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 100 }
 
@@ -936,8 +917,7 @@ services:
 
   App\Validator\Constraints\AtLeastOneAttachmentConstraintValidator: '@ocsdc.validator.scia.at_least_one_attachment'
 
-  ocsdc.giscom_api.adapter_direct:
-    class: App\Services\GiscomAPIAdapterService
+  App\Services\GiscomAPIAdapterService:
     arguments:
       - '@eight_points_guzzle.client.giscom'
       - '@doctrine.orm.entity_manager'
@@ -945,25 +925,31 @@ services:
       - '@ocsdc.giscom_api.mapper'
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.status_mapper.giscom"
+    autowire: false
+    autoconfigure: false
 
-  ocsdc.giscom_api.adapter_delayed:
-    class: App\Services\DelayedGiscomAPIAdapterService
+
+  App\Services\DelayedGiscomAPIAdapterService:
     arguments:
-      - '@ocsdc.giscom_api.adapter_direct'
+      - '@App\Services\GiscomAPIAdapterService'
       - '@doctrine.orm.entity_manager'
       - '@logger'
       - "@ocsdc.schedule_action_service"
+    autowire: false
+    autoconfigure: false
+    tags:
+      - { name: 'app.schedule_action_handler', alias: 'ocsdc.giscom_api.adapter' }
 
-  ocsdc.giscom_api.adapter: "@ocsdc.giscom_api.adapter_delayed"
+  App\Services\GiscomAPIAdapterServiceInterface: '@App\Services\DelayedGiscomAPIAdapterService'
+
+  #ocsdc.giscom_api.adapter: "@ocsdc.giscom_api.adapter_delayed"
 
   ocsdc.allegati.dematerialized_attacher:
     class: App\Services\DematerializedFormAllegatiAttacherService
     arguments:
       - '@doctrine.orm.entity_manager'
 
-  ocsdc.protocollo_success_giscom_subscriber:
-    class: App\EventListener\GiscomSendPraticaListener
-    arguments: [ "@ocsdc.giscom_api.adapter", "@logger" ]
+  App\EventListener\GiscomSendPraticaListener:
     tags:
       - { name: kernel.event_subscriber }
 

@@ -26,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -104,10 +105,9 @@ class UserController extends Controller
 
   /**
    * @Route("/profile", name="user_profile")
-   * @Template()
    * @param Request $request
    *
-   * @return array|RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function profileAction(Request $request)
   {
@@ -136,10 +136,10 @@ class UserController extends Controller
       }
     }
 
-    return [
+    return $this->render('User/profile.html.twig', [
       'form'      => $form->createView(),
       'user'      => $user,
-    ];
+    ]);
   }
 
   private function storeSdcUserData(CPSUser $user, array $data, LoggerInterface $logger)
