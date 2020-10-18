@@ -10,7 +10,7 @@ RUN yarn install
 
 COPY assets ./assets
 RUN yarn encore production
-RUN ls -l web
+RUN ls -l public
 
 # prepare the vendor dir for symfony
 FROM wodby/php:7.3 as builder
@@ -40,14 +40,14 @@ ENV PHP_FPM_GROUP=wodby
 WORKDIR /var/www/html
 
 COPY --chown=wodby:wodby ./ .
-COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
+COPY --chown=wodby:wodby --from=assets /home/node/app/public /var/www/html/public
 
 # Add version file
 ARG CI_COMMIT_REF_NAME=no-branch
 ARG CI_COMMIT_SHORT_SHA=1234567
 ARG CI_COMMIT_TAG
 RUN chmod 755 ./compose_conf/scripts/*.sh
-RUN ./compose_conf/scripts/get-version.sh > /var/www/html/web/VERSION
+RUN ./compose_conf/scripts/get-version.sh > /var/www/html/public/VERSION
 
 COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
 RUN chmod 755 ./bin/*.sh

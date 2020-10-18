@@ -3,20 +3,7 @@ doctrine:
     #postgres://$DB_USER:$DB_PASSWORD@$DB_HOST/$DB_NAME?server_version=10
     #url: '%env(resolve:DATABASE_URL)%'
     url: '%database_driver%://%database_user%:%database_password%@%database_host%/%database_name%?server_version=10'
-    #dbname: '%env(resolve:DB_NAME)%'
-    #host: '%env(resolve:DB_HOST)%'
-    #port: '%env(resolve:DB_PORT)%'
-    #user: '%env(resolve:DB_USER)%'
-    #password: '%env(resolve:DB_PASSWORD)%'
-    #driver: 'postgresql'
-    #server_version: '10'
-    #database_driver: '%env(DB_DRIVER)%'
-    #database_host: '%env(DB_HOST)%'
-    #database_port: '%env(DB_PORT)%'
-    #database_name: '%env(DB_NAME)%'
-    #database_user: '%env(DB_USER)%'
-    #database_password: '%env(DB_PASSWORD)%'
-
+    charset: UTF8
 
   orm:
     auto_generate_proxy_classes: true
@@ -29,3 +16,7 @@ doctrine:
         dir: '%kernel.project_dir%/src/Entity'
         prefix: 'App\Entity'
         alias: App
+    dql:
+      string_functions:
+        FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
+        JSON_FIELD: AppBundle\Doctrine\JsonFieldParser

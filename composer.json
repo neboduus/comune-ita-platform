@@ -38,6 +38,7 @@
     "sentry/sentry-symfony": "*",
     "stof/doctrine-extensions-bundle": "*",
     "symfony/apache-pack": "^1.0",
+    "symfony/asset": "4.4.*",
     "symfony/flex": "^1.9",
     "symfony/monolog-bundle": "*",
     "symfony/polyfill-apcu": "*",
@@ -46,6 +47,8 @@
     "symfony/twig-bundle": "4.4.*",
     "symfony/webpack-encore-bundle": "^1.7",
     "thecodingmachine/gotenberg-php-client": "*",
+    "twig/extra-bundle": "^2.12|^3.0",
+    "twig/twig": "^2.12|^3.0",
     "vich/uploader-bundle": "^1.15"
   },
   "require-dev": {

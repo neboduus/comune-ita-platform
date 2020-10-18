@@ -1,5 +1,12 @@
 # See full configuration at https://github.com/bestit/flagception-bundle
 flagception:
-    features:
-        demo_123:
-            default: true
+  # Your Features (optional you left it empty)
+  features:
+    # Feature name as key
+    feature_new_outdatedbrowser:
+      # Default flag if inactive or active (default: false)
+      default: false
+      env: FEATURE_NEW_OUTDATED_BROWSER
+    feature_application_detail:
+      default: false
+      env: FEATURE_APPLICATION_DETAIL

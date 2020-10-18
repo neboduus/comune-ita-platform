@@ -1,6 +1,10 @@
-<IfModule mod_rewrite.c>
+<IfModule mod_negotiation.c>
     Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
     RewriteEngine On
+    Options Indexes FollowSymLinks
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
