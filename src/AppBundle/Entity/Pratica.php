@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Dto\UserAuthenticationData;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -146,6 +147,17 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
    */
   private $user;
+
+  /**
+   * @ORM\Column(type="json", nullable=true)
+   */
+  private $authenticationData;
+
+  /**
+   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\UserSession")
+   * @ORM\JoinColumn(name="session_data_id", referencedColumnName="id", nullable=true)
+   */
+  private $sessionData;
 
   /**
    * @ORM\ManyToOne(targetEntity="Servizio")
@@ -526,6 +538,47 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setUser(User $user)
   {
     $this->user = $user;
+
+    return $this;
+  }
+
+  /**
+   * @return UserAuthenticationData
+   */
+  public function getAuthenticationData()
+  {
+    $data = (array)json_decode($this->authenticationData, true);
+
+    return UserAuthenticationData::fromArray($data);
+  }
+
+  /**
+   * @param UserAuthenticationData $authenticationData
+   *
+   * @return $this
+   */
+  public function setAuthenticationData(UserAuthenticationData $authenticationData)
+  {
+    $this->authenticationData = json_encode($authenticationData);
+
+    return $this;
+  }
+
+  /**
+   * @return UserSession
+   */
+  public function getSessionData()
+  {
+    return $this->sessionData;
+  }
+
+  /**
+   * @param UserSession $sessionData
+   * @return Pratica
+   */
+  public function setSessionData($sessionData)
+  {
+    $this->sessionData = $sessionData;
 
     return $this;
   }
@@ -1986,7 +2039,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     return ($this->status < self::STATUS_PROCESSING && $this->servizio->getWorkflow() != Servizio::WORKFLOW_FORWARD);
 
   }
-  
+
   public function getIntegrationAnswers()
   {
     $answers = new ArrayCollection();

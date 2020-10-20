@@ -83,6 +83,7 @@ services:
       - '@ocsdc.giscom_api.mapper'
       - '@ocsdc.giscom_api.adapter_direct'
       - '@ocsdc.giscom_api.adapter_delayed'
+      - '@AppBundle\Services\UserSessionService'
 
   AppBundle\Controller\Rest\FoldersAPIController:
     autowire: true
@@ -215,11 +216,11 @@ services:
 
   ocsdc.pat.authenticator:
     class: AppBundle\Security\PatAuthenticator
-    arguments: ["@router", "%shibbolet_server_varnames%", "%login_route%"]
+    arguments: ["@router", "%shibbolet_server_varnames%", "%login_route%", '@AppBundle\Services\UserSessionService']
 
   ocsdc.openlogin.authenticator:
     class: AppBundle\Security\OpenLoginAuthenticator
-    arguments: ["@router", "%login_route%"]
+    arguments: ["@router", "%login_route%", '@AppBundle\Services\UserSessionService']
 
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator
@@ -494,6 +495,7 @@ services:
       - "%prefix%"
       - "@formio.factory"
       - "@doctrine.orm.entity_manager"
+      - '@AppBundle\Services\UserSessionService'
 
   ocsdc.form.flow.asilonido:
     class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
@@ -831,6 +833,7 @@ services:
       - "@session"
       - "@templating"
       - "%formserver_public_url%"
+      - '@AppBundle\Services\UserSessionService'
     tags:
       - { name: ocsdc.servizio.handler, alias: default }
 
@@ -883,3 +886,6 @@ services:
   ocsdc.logout_success_handler:
     class: AppBundle\Security\LogoutSuccessHandler
     arguments: ['@router', "%single_logout_url%"]
+
+  AppBundle\Services\UserSessionService:
+    autowire: true

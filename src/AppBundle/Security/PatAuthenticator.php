@@ -2,8 +2,12 @@
 
 namespace AppBundle\Security;
 
+use AppBundle\Dto\UserAuthenticationData;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Services\UserSessionService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class PatAuthenticator extends AbstractAuthenticator
 {
@@ -14,16 +18,16 @@ class PatAuthenticator extends AbstractAuthenticator
    * @param UrlGeneratorInterface $urlGenerator
    * @param array $shibboletServerVarNames
    */
-  public function __construct(UrlGeneratorInterface $urlGenerator, $shibboletServerVarNames, $loginRoute)
-  {
+  public function __construct(
+    UrlGeneratorInterface $urlGenerator,
+    $shibboletServerVarNames,
+    $loginRoute,
+    UserSessionService $userSessionService
+  ) {
     $this->urlGenerator = $urlGenerator;
     $this->shibboletServerVarNames = $shibboletServerVarNames;
     $this->loginRoute = $loginRoute;
-  }
-
-  protected function getLoginRouteSupported()
-  {
-    return ['login_pat'];
+    $this->userSessionService = $userSessionService;
   }
 
   public function supports(Request $request)
@@ -33,6 +37,7 @@ class PatAuthenticator extends AbstractAuthenticator
     } catch (\Exception $e) {
       return false;
     }
+
     return $request->attributes->get('_route') === 'login_pat' && $this->checkShibbolethUserData($request);
   }
 
@@ -53,6 +58,16 @@ class PatAuthenticator extends AbstractAuthenticator
     }
 
     return false;
+  }
+
+  protected function getLoginRouteSupported()
+  {
+    return ['login_pat'];
+  }
+
+  protected function getRequestDataToStoreInUserSession(Request $request)
+  {
+    return $this->createUserDataFromRequest($request);
   }
 
   /**
@@ -77,4 +92,26 @@ class PatAuthenticator extends AbstractAuthenticator
     return $data;
   }
 
+  protected function getUserAuthenticationData(Request $request, UserInterface $user)
+  {
+    if ($request->server->has($this->shibboletServerVarNames['spidCode'])) {
+      $data = [
+        'authenticationMethod' => CPSUser::IDP_SPID,
+        'sessionId' => $request->server->get($this->shibboletServerVarNames['shibSessionId']),
+        'spidCode' => $request->server->get($this->shibboletServerVarNames['spidCode']),
+      ];
+    } else {
+      $data = [
+        'authenticationMethod' => CPSUser::IDP_CPS_OR_CNS,
+        'sessionId' => $request->server->get($this->shibboletServerVarNames['shibSessionId']),
+        'certificateIssuer' => $request->server->get($this->shibboletServerVarNames['x509certificate_issuerdn']),
+        'certificateSubject' => $request->server->get($this->shibboletServerVarNames['x509certificate_subjectdn']),
+        'certificate' => $request->server->get($this->shibboletServerVarNames['x509certificate_base64']),
+        'instant' => $request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']),
+        'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
+      ];
+    }
+
+    return UserAuthenticationData::fromArray($data);
+  }
 }

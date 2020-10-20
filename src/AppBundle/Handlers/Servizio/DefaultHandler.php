@@ -6,6 +6,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\PraticaFlowRegistry;
+use AppBundle\Services\UserSessionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,6 +39,11 @@ class DefaultHandler extends AbstractServizioHandler
 
   protected $formServerPublicUrl;
 
+  /**
+   * @var UserSessionService
+   */
+  protected $userSessionService;
+
   public function __construct(
     TokenStorage $tokenStorage,
     LoggerInterface $logger,
@@ -46,13 +52,15 @@ class DefaultHandler extends AbstractServizioHandler
     PraticaFlowRegistry $flowRegistry,
     SessionInterface $session,
     EngineInterface $templating,
-    $formServerPublicUrl
+    $formServerPublicUrl,
+    UserSessionService $userSessionService
   ) {
     $this->em = $em;
     $this->flowRegistry = $flowRegistry;
     $this->session = $session;
     $this->templating = $templating;
     $this->formServerPublicUrl = $formServerPublicUrl;
+    $this->userSessionService = $userSessionService;
 
     parent::__construct($tokenStorage, $logger, $router);
   }
@@ -75,7 +83,8 @@ class DefaultHandler extends AbstractServizioHandler
         $this->flowRegistry,
         $this->session,
         $this->templating,
-        $this->formServerPublicUrl
+        $this->formServerPublicUrl,
+        $this->userSessionService
       ))->execute($servizio, $ente);
 
     } else {
@@ -96,7 +105,8 @@ class DefaultHandler extends AbstractServizioHandler
         $this->flowRegistry,
         $this->session,
         $this->templating,
-        $this->formServerPublicUrl
+        $this->formServerPublicUrl,
+        $this->userSessionService
       ))->execute($servizio, $ente);
     }
   }

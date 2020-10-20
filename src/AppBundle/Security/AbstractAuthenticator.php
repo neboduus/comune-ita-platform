@@ -2,8 +2,10 @@
 
 namespace AppBundle\Security;
 
+use AppBundle\Dto\UserAuthenticationData;
 use AppBundle\Entity\Ente;
 use AppBundle\Services\CPSUserProvider;
+use AppBundle\Services\UserSessionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +34,11 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
   protected $loginRoute;
 
   /**
+   * @var UserSessionService
+   */
+  protected $userSessionService;
+
+  /**
    * @return string[]
    */
   abstract protected function getLoginRouteSupported();
@@ -49,10 +56,22 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
 
   /**
    * @param Request $request
-   * @param $userDataKeys
    * @return array
    */
   abstract protected function createUserDataFromRequest(Request $request);
+
+  /**
+   * @param Request $request
+   * @return array
+   */
+  abstract protected function getRequestDataToStoreInUserSession(Request $request);
+
+  /**
+   * @param Request $request
+   * @param UserInterface $user
+   * @return UserAuthenticationData
+   */
+  abstract protected function getUserAuthenticationData(Request $request, UserInterface $user);
 
   public function getUser($credentials, UserProviderInterface $userProvider)
   {
@@ -114,6 +133,11 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
    */
   public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
   {
+    $this->userSessionService->createCurrentUserSessionData(
+      $token->getUser(),
+      $this->getRequestDataToStoreInUserSession($request),
+      $this->getUserAuthenticationData($request, $token->getUser())
+    );
     if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
       return new RedirectResponse($targetPath);
     }
