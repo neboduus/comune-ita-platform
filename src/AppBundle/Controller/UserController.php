@@ -7,6 +7,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\ServizioRepository;
 use AppBundle\Form\IdCardType;
 use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Helpers\MunicipalityConverter;
@@ -69,8 +70,9 @@ class UserController extends Controller
   {
     $user = $this->getUser();
 
+    /** @var ServizioRepository $serviziRepository */
     $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    $servizi = $serviziRepository->findBy([], [], 3);
+    $servizi = $serviziRepository->findStickyAvailable(3);
 
     $praticheRepo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $pratiche = $praticheRepo->findBy(
