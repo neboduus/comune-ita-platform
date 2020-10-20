@@ -1,3 +1,12 @@
+//Import FormIo styles, full library
+@import "~formiojs/dist/formio.full.min.css";
+
+.form-builder-group-header {
+  padding: 0;
+  button {
+    text-align: left;
+  }
+}
 
 .slot-calendar, .sdc-datepicker, #ui-datepicker-div {
 
