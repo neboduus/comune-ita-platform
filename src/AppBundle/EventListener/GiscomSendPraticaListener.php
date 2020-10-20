@@ -3,16 +3,12 @@
 namespace AppBundle\EventListener;
 
 
-use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Event\ProtocollaPraticaSuccessEvent;
-use AppBundle\Form\Scia\SciaPraticaEdiliziaFlow;
 use AppBundle\Protocollo\ProtocolloEvents;
-use AppBundle\Services\GiscomAPIAdapterService;
 use AppBundle\Services\GiscomAPIAdapterServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use AppBundle\Services\ScheduleActionService;
 use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 
 /**
@@ -22,7 +18,7 @@ use AppBundle\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 class GiscomSendPraticaListener implements EventSubscriberInterface
 {
     /**
-     * @var GiscomAPIAdapterService
+     * @var GiscomAPIAdapterServiceInterface
      */
     private $giscomAPIAdapterService;
 
@@ -33,11 +29,11 @@ class GiscomSendPraticaListener implements EventSubscriberInterface
 
     /**
      * GiscomSendPraticaListener constructor.
-     * @param GiscomAPIAdapterService $giscomAPIAdapterService
+     * @param GiscomAPIAdapterServiceInterface $giscomAPIAdapterService
      * @param LoggerInterface         $logger
      */
     public function __construct(
-      GiscomAPIAdapterService $giscomAPIAdapterService,
+        GiscomAPIAdapterServiceInterface $giscomAPIAdapterService,
         LoggerInterface $logger
     )
     {
