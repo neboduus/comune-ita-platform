@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
-  <link rel="stylesheet" href="https://unpkg.com/formiojs@latest/dist/formio.full.min.css">
+
 {% endblock %}
 
 {% block javascripts %}
@@ -16,7 +16,7 @@
   <script>
     $(document).ready(function () {
       if ($('#formio_render_form_id').length) {
-        
+
         Formio.icons = 'fontawesome';
         Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
           noAlerts: true,
