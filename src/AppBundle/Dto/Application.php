@@ -11,9 +11,11 @@ use AppBundle\Mapper\Giscom\File;
 use AppBundle\Mapper\Giscom\FileCollection;
 use AppBundle\Payment\PaymentDataInterface;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use phpDocumentor\Reflection\Types\Collection;
 use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,18 +31,21 @@ class Application
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Application's uuid")
+   * @Groups({"read"})
    */
   protected $id;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's user (uuid)")
+   * @Groups({"read"})
    */
   private $user;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's user name")
+   * @Groups({"read"})
    */
   private $userName;
 
@@ -48,6 +53,7 @@ class Application
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's service (slug)")
+   * @Groups({"read"})
    */
   private $service;
 
@@ -55,18 +61,21 @@ class Application
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's tenant (uuid)")
+   * @Groups({"read"})
    */
   private $tenant;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's subject")
+   * @Groups({"read"})
    */
   private $subject;
 
   /**
    * @var array
    * @SWG\Property(property="data", description="Applcation's data")
+   * @Groups({"read"})
    * @Serializer\Type("array")
    */
   private $data;
@@ -75,13 +84,15 @@ class Application
    * @var ModuloCompilato[]
    * @SWG\Property(property="compiled_modules", description="Compiled module file")
    * @Serializer\Type("array")
+   * @Groups({"read"})
    */
   private $compiledModules;
 
   /**
    * @var Allegato[]
-   * @SWG\Property(property="attachments", description="Attachments list")
-   * @Serializer\Type("string")
+   * @SWG\Property(property="attachments", description="Attachments list", type="array", @SWG\Items(type="object"))
+   * @Serializer\Type("array")
+   * @Groups({"read"})
    */
   private $attachments;
 
@@ -89,61 +100,71 @@ class Application
   /**
    * @Serializer\Type("int")
    * @SWG\Property(description="Creation time", type="int")
+   * @Groups({"read"})
    */
   private $creationTime;
 
   /**
    * @Serializer\Type("DateTime")
    * @SWG\Property(description="Creation date time", type="dateTime")
+   * @Groups({"read"})
    */
   private $createdAt;
 
   /**
    * @Serializer\Type("int")
    * @SWG\Property(description="Submission time", type="int")
+   * @Groups({"read"})
    */
   private $submissionTime;
 
   /**
    * @Serializer\Type("DateTime")
    * @SWG\Property(description="Submission date time", type="dateTime")
+   * @Groups({"read"})
    */
   private $submittedAt;
 
   /**
    * @Serializer\Type("int")
    * @SWG\Property(description="Latest status change timestamp", type="int")
+   * @Groups({"read"})
    */
   private $latestStatusChangeTime;
 
   /**
    * @Serializer\Type("DateTime")
    * @SWG\Property(description="Latest status change time", type="dateTime")
+   * @Groups({"read"})
    */
   private $latestStatusChangeAt;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's protocol folder number")
+   * @Groups({"read", "write"})
    */
   private $protocolFolderNumber;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's protocol number")
+   * @Groups({"read", "write"})
    */
   private $protocolNumber;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's protocol document number")
+   * @Groups({"read", "write"})
    */
-  private $protocolDcoumentId;
+  private $protocolDocumentId;
 
   /**
-   * @var String[]
-   * @SWG\Property(property="protocol_numbers", type="string", description="Protocol numbers related to application")
-   * @Serializer\Type("string")
+   * @var array
+   * @SWG\Property(property="protocol_numbers", type="array", @SWG\Items(type="object"), description="Protocol numbers related to application")
+   * @Serializer\Type("array<array>")
+   * @Groups({"read"})
    */
   private $protocolNumbers;
 
@@ -151,12 +172,14 @@ class Application
    * @var bool
    * @Serializer\Type("boolean")
    * @SWG\Property(description="If selected the service will be shown at the top of the page")
+   * @Groups({"read"})
    */
   private $outcome;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Outocome motivation")
+   * @Groups({"read"})
    */
   private $outcomeMotivation;
 
@@ -164,12 +187,45 @@ class Application
    * @var Allegato
    * @SWG\Property(property="outcome_file", type="string", description="Outocome file")
    * @Serializer\Type("array")
+   * @Groups({"read"})
    */
   private $outcomeFile;
 
   /**
+   * @var Allegato[]
+   * @SWG\Property(property="outcome_attachments", description="Outcome attachments list", type="array", @SWG\Items(type="object"))
+   * @Serializer\Type("array")
+   * @Groups({"read"})
+   */
+  private $outcomeAttachments;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's outcome protocol number")
+   * @Groups({"read", "write"})
+   */
+  private $outcomeProtocolNumber;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's outcome protocol document number")
+   * @Groups({"read", "write"})
+   */
+  private $outcomeProtocolDocumentId;
+
+  /**
+   * @var array
+   * @SWG\Property(property="outcome_protocol_numbers", type="array", @SWG\Items(type="object"), description="Protocol numbers related to application's outcome")
+   * @Serializer\Type("array<array>")
+   * @Groups({"read"})
+   */
+  private $outcomeProtocolNumbers;
+
+
+  /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Pyment gateway used")
+   * @Groups({"read"})
    */
   private $paymentType;
 
@@ -177,18 +233,21 @@ class Application
    * @var array
    * @SWG\Property(property="payment_data", description="Payment data")
    * @Serializer\Type("array")
+   * @Groups({"read"})
    */
   private $paymentData;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications status")
+   * @Groups({"read"})
    */
   private $status;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications status name")
+   * @Groups({"read"})
    */
   private $statusName;
 
@@ -420,21 +479,21 @@ class Application
   /**
    * @return mixed
    */
-  public function getProtocolDcoumentId()
+  public function getProtocolDocumentId()
   {
-    return $this->protocolDcoumentId;
+    return $this->protocolDocumentId;
   }
 
   /**
-   * @param mixed $protocolDcoumentId
+   * @param mixed $protocolDocumentId
    */
-  public function setProtocolDcoumentId($protocolDcoumentId)
+  public function setProtocolDocumentId($protocolDocumentId)
   {
-    $this->protocolDcoumentId = $protocolDcoumentId;
+    $this->protocolDocumentId = $protocolDocumentId;
   }
 
   /**
-   * @return String[]
+   * @return array
    */
   public function getProtocolNumbers(): array
   {
@@ -442,7 +501,7 @@ class Application
   }
 
   /**
-   * @param String[] $protocolNumbers
+   * @param array $protocolNumbers
    */
   public function setProtocolNumbers(array $protocolNumbers)
   {
@@ -495,6 +554,70 @@ class Application
   public function setOutcomeFile(Allegato $outcomeFile)
   {
     $this->outcomeFile = $outcomeFile;
+  }
+
+  /**
+   * @return Allegato[]
+   */
+  public function getOutcomeAttachments(): array
+  {
+    return $this->outcomeAttachments;
+  }
+
+  /**
+   * @param Allegato[] $outcomeAttachments
+   */
+  public function setOutcomeAttachments(array $outcomeAttachments)
+  {
+    $this->outcomeAttachments = $outcomeAttachments;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getOutcomeProtocolNumber()
+  {
+    return $this->outcomeProtocolNumber;
+  }
+
+  /**
+   * @param mixed $outcomeProtocolNumber
+   */
+  public function setOutcomeProtocolNumber($outcomeProtocolNumber)
+  {
+    $this->outcomeProtocolNumber = $outcomeProtocolNumber;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getOutcomeProtocolDocumentId()
+  {
+    return $this->outcomeProtocolDocumentId;
+  }
+
+  /**
+   * @param mixed $outcomeProtocolDocumentId
+   */
+  public function setOutcomeProtocolDocumentId($outcomeProtocolDocumentId)
+  {
+    $this->outcomeProtocolDocumentId = $outcomeProtocolDocumentId;
+  }
+
+  /**
+   * @return array
+   */
+  public function getOutcomeProtocolNumbers(): ?array
+  {
+    return $this->outcomeProtocolNumbers;
+  }
+
+  /**
+   * @param array $outcomeProtocolNumbers
+   */
+  public function setOutcomeProtocolNumbers(array $outcomeProtocolNumbers)
+  {
+    $this->outcomeProtocolNumbers = $outcomeProtocolNumbers;
   }
 
   /**
@@ -595,7 +718,8 @@ class Application
     $dto->outcome = $pratica->getEsito();
     $dto->outcomeMotivation = $pratica->getMotivazioneEsito();
 
-    //$dto->attachments = self::prepareFileCollection($pratica->getAllegati());
+    $dto->attachments = self::prepareFileCollection($pratica->getAllegati(), $attachmentEndpointUrl);
+    $dto->outcomeAttachments = self::prepareFileCollection($pratica->getAllegatiOperatore(), $attachmentEndpointUrl);
 
     $dto->creationTime = $pratica->getCreationTime();
     try {
@@ -627,9 +751,16 @@ class Application
 
     $dto->protocolFolderNumber = $pratica->getNumeroFascicolo();
     $dto->protocolNumber = $pratica->getNumeroProtocollo();
-    $dto->protocolDcoumentId = $pratica->getIdDocumentoProtocollo();
-    $dto->protocolNumbers = null;
+    $dto->protocolDocumentId = $pratica->getIdDocumentoProtocollo();
+    $dto->protocolNumbers = $pratica->getNumeriProtocollo()->toArray();
     $dto->outcome = $pratica->getEsito();
+
+    if ($pratica->getRispostaOperatore()) {
+      $dto->outcomeProtocolNumber = $pratica->getRispostaOperatore()->getNumeroProtocollo();
+      $dto->outcomeProtocolDocumentId = $pratica->getRispostaOperatore()->getIdDocumentoProtocollo();
+      $dto->outcomeProtocolNumbers = $pratica->getRispostaOperatore()->getNumeriProtocollo()->toArray();
+
+    }
 
     //$dto->outcomeMotivation = $pratica->getMotivazioneEsito();
     //$dto->outcomeFile = $pratica->getRispostaOperatore();
@@ -784,6 +915,27 @@ class Application
     if (!$entity) {
       $entity = new Pratica();
     }
+
+    # Protocollo modulo compilato
+    $entity->setNumeroProtocollo($this->getProtocolNumber());
+    $entity->setNumeroFascicolo($this->getProtocolFolderNumber());
+    $entity->setIdDocumentoProtocollo($this->getProtocolDocumentId());
+
+    $entity->addNumeroDiProtocollo([
+      'id' => $this->getProtocolDocumentId(),
+      'protocollo' => $this->getProtocolNumber(),
+    ]);
+
+    # Protocollo risposta operatore
+    $rispostaOperatore = $entity->getRispostaOperatore();
+    if ($rispostaOperatore) {
+      $rispostaOperatore->setNumeroProtocollo($this->getOutcomeProtocolNumber());
+      $rispostaOperatore->setIdDocumentoProtocollo($this->getOutcomeProtocolDocumentId());
+      $rispostaOperatore->addNumeroDiProtocollo([
+        'id' => $this->getOutcomeProtocolDocumentId(),
+        'protocollo' => $this->getOutcomeProtocolNumber(),
+      ]);
+    }
     return $entity;
   }
 
@@ -798,9 +950,7 @@ class Application
       $gatewayClassHandler = $gateway->getFcqn();
 
 
-      $paymetdata = $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
-
-      return $paymetdata;
+      return $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
     }
     return [];
   }
