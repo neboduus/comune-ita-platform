@@ -42,6 +42,7 @@ class AllegatoMessaggio extends Allegato
   {
     parent::__construct();
     $this->type = self::TYPE_DEFAULT;
+    $this->messages = new ArrayCollection();
     $this->numeriProtocollo = new ArrayCollection();
   }
 
