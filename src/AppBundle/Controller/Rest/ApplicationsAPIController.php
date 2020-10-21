@@ -143,7 +143,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *         type="object",
    *         @SWG\Property(property="meta", type="object", ref=@Model(type=MetaPagedList::class)),
    *         @SWG\Property(property="links", type="object", ref=@Model(type=LinksPagedList::class)),
-   *         @SWG\Property(property="data", type="array", @SWG\Items(ref=@Model(type=Application::class)))
+   *         @SWG\Property(property="data", type="array", @SWG\Items(ref=@Model(type=Application::class, groups={"read"})))
    *     )
    * )
    * @SWG\Tag(name="applications")
@@ -171,15 +171,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if ($sortParameter)
       $queryParameters['sort'] = $sortParameter;
 
-    $repositoryService = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
     $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
 
     if ($serviceParameter && !$service) {
       return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $em = $this->getDoctrine()->getManager();
-    $repoApplications = $em->getRepository(Pratica::class);
+    $repoApplications = $this->em->getRepository(Pratica::class);
     $query = $repoApplications->createQueryBuilder('a')
       ->select('count(a.id)');
 
@@ -247,7 +246,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive an Application",
-   *     @Model(type=Application::class)
+   *     @Model(type=Application::class, groups={"read"})
    * )
    *
    * @SWG\Response(
@@ -265,7 +264,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('AppBundle:Pratica');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
@@ -298,12 +297,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function attachmentAction($id,  $attachmentId)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Allegato');
+    $repository = $this->em->getRepository('AppBundle:Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
     }
-    $pratica = $this->getDoctrine()->getRepository('AppBundle:Pratica')->find($id);
+    $pratica = $this->em->getRepository('AppBundle:Pratica')->find($id);
 
     if ($result->getType() === RispostaOperatore::TYPE_DEFAULT) {
       $fileContent = $this->pdfBuilder->renderForResponse($pratica);
@@ -383,7 +382,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    */
   public function postApplicationPaymentAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->em->getRepository('AppBundle:Pratica');
     $application = $repository->find($id);
 
     if (!$application) {
@@ -443,6 +442,120 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     return $this->view("Application Payment Modified Successfully", Response::HTTP_OK);
+  }
+
+  /**
+   * Patch an Application
+   * @Rest\Patch("/{id}", name="applications_api_patch")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Application",
+   *     in="body",
+   *     type="json",
+   *     description="The application to patch",
+   *     required=true,
+   *     @SWG\Schema(
+   *         type="object",
+   *         ref=@Model(type=Application::class, groups={"write"})
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Patch an Application"
+   * )
+   *
+   * @SWG\Response(
+   *     response=400,
+   *     description="Bad request"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return \FOS\RestBundle\View\View
+   */
+  public function patchApplicationAction($id, Request $request)
+  {
+
+    $repository = $this->em->getRepository('AppBundle:Pratica');
+    $application = $repository->find($id);
+
+    if (!$application) {
+      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+    }
+
+    if (in_array($application->getStatus(), [Pratica::STATUS_DRAFT, Pratica::STATUS_PAYMENT_OUTCOME_PENDING, Pratica::STATUS_PAYMENT_PENDING])) {
+      return $this->view("Application isn't in correct state", Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    if (!$application->getServizio()->isProtocolRequired()) {
+      return $this->view("Application does not need to be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    if($application->getType() !== Pratica::TYPE_FORMIO) {
+      return $this->view("Application can not be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    $_application = Application::fromEntity($application);
+    $form = $this->createForm('AppBundle\Form\ApplicationType', $_application);
+    $this->processForm($request, $form);
+
+    if (!$form->isValid()) {
+      $errors = $this->getErrorsFromForm($form);
+      $data = [
+        'type' => 'validation_error',
+        'title' => 'There was a validation error',
+        'errors' => $errors
+      ];
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    try {
+      if (!$application->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_SUBMITTED) {
+        $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);
+      }
+      $rispostaOperatore = $application->getRispostaOperatore();
+      if ($rispostaOperatore) {
+        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
+          $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
+        }
+        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
+          $this->statusService->setNewStatus($application, Pratica::STATUS_CANCELLED);
+        }
+      }
+
+      $application = $_application->toEntity($application);
+      $this->em->persist($application);
+      $this->em->flush();
+
+    } catch (\Exception $e) {
+
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process'
+      ];
+      $this->get('logger')->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    return $this->view("Object Patched Successfully", Response::HTTP_OK);
   }
 
   /**
