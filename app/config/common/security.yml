@@ -94,19 +94,9 @@ security:
       http_basic:
         provider: in_memory
 
-    user_api:
-      logout_on_user_change: true
-      pattern: ^/%prefix%/api/v\d+\.\d+/user/.*
-      guard:
-        provider: cps
-        authenticators:
-          - ocsdc.cps.token_authenticator
-
     open_login:
       logout_on_user_change: true
       anonymous: true
-      #pattern: ^/%prefix%/login
-      #pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/
       provider: cps
       logout:
         path: user_logout #name of the route
@@ -135,8 +125,7 @@ security:
     - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
     - { path: ^/%prefix%/(pratiche|terms_accept|user|documenti)/, role: ROLE_USER }
-    #- { path: ^/%prefix%/login, role: [ROLE_USER] }
-    #- { path: ^/%prefix%/operatori/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_USER }
 
     - { path: ^/%prefix%/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/operatori/profile/edit, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
