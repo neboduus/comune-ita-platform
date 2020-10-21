@@ -1,5 +1,8 @@
 {% extends '@App/Default/index.html.twig' %}
-
+{% block javascripts %}
+  {{ parent() }}
+{{ encore_entry_script_tags('edit-operator') }}
+{% endblock %}
 {% block main_content %}
   <section id="intro" class="container px-4 my-4">
     <div class="row">
@@ -9,7 +12,45 @@
 
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
+        {{ form_row(edit_form.nome) }}
+        {{ form_row(edit_form.cognome) }}
+        {{ form_row(edit_form.username) }}
+        {{ form_row(edit_form.email) }}
+        {% block checkbox_hierarchy_widget %}
+          <ul class="list-unstyled" id="mainList">
+            {% for choiceOrOptionGroup,children in edit_form.services.vars.choices %}
+              {% if children is iterable %}
+                <ul>
+                  {% for child,choiceView in children %}
+                    <li class="d-block">
+                      <label class="checkbox">
+                        {{ form_widget(edit_form.services[child],{
+                          'attr':{
+                            'value': choiceView.data
+                          }}) }}
+                      </label>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                {% if not loop.first %}
+                  </li>
+                {% endif %}
+                <li>
+                <label class="checkbox">
+                  {{ form_widget(edit_form.services.offsetGet(choiceOrOptionGroup),{
+                    'attr':{
+                      'value': children.data,
+                      'class':'group'
+                    }}) }}
+                </label>
+              {% endif %}
+              {% if loop.last %}
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endblock %}
         <input class="btn btn-primary mr-1" type="submit" value="Modifica" style="float: left"/>
         <a class="btn btn-100 mr-1" href="{{ path('admin_operatore_index') }}" style="float: left">Torna alla lista</a>
         {{ form_end(edit_form) }}

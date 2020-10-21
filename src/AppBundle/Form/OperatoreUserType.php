@@ -48,11 +48,23 @@ class OperatoreUserType extends AbstractType
     foreach($erogatori as $erogatore) {
       $serviziErogati = $erogatore->getServizi()->toArray();
       $servizi = array_merge($servizi, $serviziErogati);
+
     }
 
     $serviceChoices = [];
     foreach ($servizi as $s) {
-      $serviceChoices[$s->getName()] = $s->getId();
+      if($s->getServiceGroup()){
+        if (array_key_exists($s->getServiceGroup()->getName(),$serviceChoices)){
+          $serviceChoices[$s->getServiceGroup()->getName().'services'][$s->getName()] = $s->getId();
+        }else{
+          $serviceChoices[$s->getServiceGroup()->getName()] = 'group';
+          $serviceChoices[$s->getServiceGroup()->getName().'services'] = array(
+           $s->getName() => $s->getId()
+          );
+        }
+      }else{
+        $serviceChoices[$s->getName()] = $s->getId();
+      }
     }
 
     $builder
@@ -67,10 +79,31 @@ class OperatoreUserType extends AbstractType
         'expanded' => true,
         'multiple' => true,
         'required' => false,
-        'label' => 'Seleziona i servizi abilitati per l\'operatore',
+        'label' => 'Seleziona i servizi abilitati per l\'operatore'
       ]);
 
-    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmitWithGroups'));
+  }
+
+  public function onPreSubmitWithGroups(FormEvent $event)
+  {
+    /** @var OperatoreUser $operatore */
+    $operatore = $event->getForm()->getData();
+    $serviziAbilitati = new ArrayCollection();
+    $data = $event->getData();
+
+    if (isset($data['services']) && !empty($data['services'])) {
+      foreach ($data['services'] as $k => $s) {
+        if($s != 'group'){
+          $serviziAbilitati->add($s);
+        }else{
+          unset($data['services'][$k]);
+        }
+      }
+      $data['services'] = $operatore->parseServizi($serviziAbilitati);
+      $event->setData($data);
+    }
+    $operatore->setServiziAbilitati($serviziAbilitati);
   }
 
   public function onPreSubmit(FormEvent $event)
