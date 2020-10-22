@@ -245,6 +245,8 @@ abstract class User implements UserInterface
     $this->id = $id;
   }
 
+
+
   /**
    * @return string
    */
@@ -510,10 +512,11 @@ abstract class User implements UserInterface
   /**
    * @param string $username
    */
-  public function setUsername(string $username): void
+  public function setUsername(string $username)
   {
     $this->username = $username;
     $this->usernameCanonical = $username;
+    return $this;
   }
 
   /**
@@ -527,9 +530,10 @@ abstract class User implements UserInterface
   /**
    * @param string $email
    */
-  public function setEmail(string $email): void
+  public function setEmail(string $email)
   {
     $this->email = $email;
+    return $this;
   }
 
   public function eraseCredentials()

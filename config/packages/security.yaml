@@ -2,8 +2,8 @@ security:
   # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
   encoders:
     App\Entity\User: bcrypt
-    App\Entity\AdminUser: bcrypt
-    App\Entity\OperatoreUser: bcrypt
+    #App\Entity\AdminUser: bcrypt
+    #App\Entity\OperatoreUser: bcrypt
 
   providers:
     chain_provider:
@@ -74,6 +74,25 @@ security:
     #    path: logout
     #    target: /%prefix%/
 
+    backend:
+      logout_on_user_change: true
+      anonymous: true
+      pattern: ^/%prefix%/(operatori|admin)
+      user_checker: App\Security\UserChecker
+      provider: app_user_provider
+      form_login:
+        check_path: security_login
+        login_path: security_login
+        csrf_token_generator: security.csrf.token_manager
+        success_handler: ocsdc.redirect.after.login
+      logout:
+        path: security_logout
+        target: /%prefix%/
+        delete_cookies: [ 'PHPSESSID', 'token', 'refresh_token' ]
+      guard:
+        authenticators:
+          - App\Security\LoginFormAuthenticator
+
     giscom_api:
       logout_on_user_change: true
       pattern: ^/%prefix%/api/v\d+\.\d+/giscom/pratica/.*/.*
@@ -139,9 +158,9 @@ security:
   # Note: Only the *first* access control that matches will be used
   access_control:
     - { path: ^/%prefix%/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/%prefix%/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/operatori/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    #- { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
     - { path: ^/%prefix%/(pratiche|terms_accept|user|documenti)/, role: ROLE_USER }
     #- { path: ^/%prefix%/login, role: [ROLE_USER] }

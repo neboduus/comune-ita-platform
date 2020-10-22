@@ -31,8 +31,8 @@ class ConfigureInstanceCommand extends Command
   public function __construct(EntityManagerInterface $entityManager, LoadData $loader)
   {
     $this->loader = $loader;
-    parent::__construct();
     $this->entityManager = $entityManager;
+    parent::__construct();
   }
 
   protected function configure()

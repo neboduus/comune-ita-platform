@@ -138,7 +138,10 @@ class AdminController extends Controller
 
 
   /**
-   * @return Response
+   * Lists all operatoreUser entities.
+   * @Template()
+   * @Route("/operatore", name="admin_operatore_index")
+   * @Method("GET")
    */
   public function indexOperatoreAction()
   {

@@ -55,6 +55,7 @@
     "asimlqt/php-google-spreadsheet-client": "3.0.2",
     "escapestudios/symfony2-coding-standard": "2.11.0",
     "phpspec/phpspec": "*",
+    "phpstan/phpstan": "^0.12.50",
     "phpunit/phpunit": "7.5.20",
     "roave/security-advisories": "dev-master",
     "squizlabs/php_codesniffer": "*",

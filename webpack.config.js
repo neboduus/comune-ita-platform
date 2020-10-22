@@ -1,5 +1,4 @@
 var Encore = require('@symfony/webpack-encore');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 Encore
 // directory where compiled assets will be stored
@@ -45,6 +44,11 @@ Encore
   .configureBabel(function(babelConfig) {
     babelConfig.plugins.push('@babel/plugin-proposal-class-properties');
   })
+  // Todo: da verifcare cosa fa
+  .configureBabelPresetEnv((config) => {
+    config.useBuiltIns = 'usage';
+    config.corejs = 3;
+  })
 
   // uncomment if you use Sass/SCSS files
   .enableSassLoader()
@@ -54,12 +58,14 @@ Encore
   .autoProvideVariables({})
   .copyFiles({
     from: './node_modules/bootstrap-italia/dist/',
-    to: '../bootstrap-italia/dist/[path][name].[hash:8].[ext]',
+    //to: '../bootstrap-italia/dist/[path][name].[hash:8].[ext]',
+    to: '../bootstrap-italia/dist/[path][name].[ext]',
     pattern: /\.(eot|ttf|woff|woff2|svg)$/,
   })
   .copyFiles({
     from: './assets/app/',
-    to: '../bundles/app/[path][name].[hash:8].[ext]',
+    //to: '../bundles/app/[path][name].[hash:8].[ext]',
+    to: '../bundles/app/[path][name].[ext]',
     pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css)$/,
   })
 ;

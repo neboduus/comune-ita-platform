@@ -1,0 +1,12 @@
+{% extends 'auth.html.twig' %}
+
+{% block body_id 'feedback' %}
+{% block title 'Conferma' %}
+
+{% block left %}
+  <div class="row">
+    <div class="col">
+      {{ include('default/_flash_messages.html.twig', {dismissable: false}) }}
+    </div>
+  </div>
+{% endblock %}
