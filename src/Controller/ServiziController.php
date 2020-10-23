@@ -11,6 +11,7 @@ use App\Entity\ServizioRepository;
 use App\Handlers\Servizio\ForbiddenAccessException;
 use App\Handlers\Servizio\ServizioHandlerRegistry;
 use App\Logging\LogConstants;
+use App\Services\InstanceService;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -40,15 +41,25 @@ class ServiziController extends AbstractController
    */
   private $translator;
 
+  /** @var ServizioHandlerRegistry */
+  private $servizioHandlerRegistry;
+
+  /** @var InstanceService */
+  private $instanceService;
+
   /**
    * ServiziController constructor.
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
+   * @param ServizioHandlerRegistry $servizioHandlerRegistry
+   * @param InstanceService $instanceService
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, ServizioHandlerRegistry $servizioHandlerRegistry, InstanceService $instanceService)
   {
     $this->logger = $logger;
     $this->translator = $translator;
+    $this->servizioHandlerRegistry = $servizioHandlerRegistry;
+    $this->instanceService = $instanceService;
   }
 
 
@@ -143,16 +154,8 @@ class ServiziController extends AbstractController
       ->setMaxResults(5)
       ->getQuery()->execute();
 
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
-    $ente = $this->getDoctrine()
-      ->getRepository('App:Ente')
-      ->findOneBy(
-        [
-          'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
-            'prefix'
-          ) : $request->query->get(PraticheController::ENTE_SLUG_QUERY_PARAMETER, null),
-        ]
-      );
+    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
+    $ente = $this->instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
       $this->logger->info(

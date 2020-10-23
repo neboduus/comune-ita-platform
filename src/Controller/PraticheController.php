@@ -15,6 +15,7 @@ use App\Entity\Servizio;
 use App\Entity\User;
 use App\Form\Base\MessageType;
 use App\Form\Base\PraticaFlow;
+use App\Form\PraticaFlowRegistry;
 use App\FormIO\ExpressionValidator;
 use App\Handlers\Servizio\ForbiddenAccessException;
 use App\Handlers\Servizio\ServizioHandlerRegistry;
@@ -83,6 +84,9 @@ class PraticheController extends AbstractController
   /** @var FeatureManagerInterface */
   private $featureManager;
 
+  /** @var ServizioHandlerRegistry */
+  private $servizioHandlerRegistry;
+
 
   /**
    * PraticheController constructor.
@@ -95,6 +99,7 @@ class PraticheController extends AbstractController
    * @param RouterInterface $router
    * @param MailerService $mailer
    * @param FeatureManagerInterface $featureManager
+   * @param ServizioHandlerRegistry $servizioHandlerRegistry
    */
   public function __construct(
     InstanceService $instanceService,
@@ -105,7 +110,8 @@ class PraticheController extends AbstractController
     TranslatorInterface $translator,
     RouterInterface $router,
     MailerService $mailer,
-    FeatureManagerInterface $featureManager
+    FeatureManagerInterface $featureManager,
+    ServizioHandlerRegistry $servizioHandlerRegistry
   )
   {
     $this->instanceService = $instanceService;
@@ -117,6 +123,7 @@ class PraticheController extends AbstractController
     $this->router = $router;
     $this->mailer = $mailer;
     $this->featureManager = $featureManager;
+    $this->servizioHandlerRegistry = $servizioHandlerRegistry;
   }
 
   /**
@@ -173,7 +180,7 @@ class PraticheController extends AbstractController
    */
   public function newAction(Request $request, Servizio $servizio)
   {
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
+    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
 
     $ente = $this->instanceService->getCurrentInstance();
 
@@ -245,11 +252,13 @@ class PraticheController extends AbstractController
   /**
    * @Route("/compila/{pratica}", name="pratiche_compila")
    * @ParamConverter("pratica", class="App:Pratica")
+   * @param Request $request
    * @param Pratica $pratica
    *
+   * @param PraticaFlowRegistry $praticaFlowRegistry
    * @return array|RedirectResponse
    */
-  public function compilaAction(Request $request, Pratica $pratica)
+  public function compilaAction(Request $request, Pratica $pratica, PraticaFlowRegistry $praticaFlowRegistry)
   {
     $em = $this->getDoctrine()->getManager();
     if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION
@@ -261,7 +270,7 @@ class PraticheController extends AbstractController
       );
     }
 
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
     try {
       $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
     } catch (ForbiddenAccessException $e) {
@@ -274,7 +283,10 @@ class PraticheController extends AbstractController
     $this->checkUserCanAccessPratica($pratica, $user);
 
     /** @var PraticaFlow $praticaFlowService */
-    $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
+    #$praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
+    $praticaFlowService = $praticaFlowRegistry->getByName($pratica->getServizio()->getPraticaFlowServiceName());
+
+
 
     if ($pratica->getServizio()->isPaymentRequired()) {
       $praticaFlowService->setPaymentRequired(true);

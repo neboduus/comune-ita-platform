@@ -2,8 +2,7 @@
 
 namespace App\Form\Extension;
 
-use App\Services\InstanceService;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TestiAccompagnatoriProcedura
 {
@@ -22,12 +21,12 @@ class TestiAccompagnatoriProcedura
 
   private $vueBundledData;
 
-  private $instanceService;
+  private $prefix;
 
-  public function __construct(TranslatorInterface $translator, InstanceService $instanceService)
+  public function __construct(TranslatorInterface $translator, $prefix)
   {
     $this->translator = $translator;
-    $this->instanceService = $instanceService;
+    $this->prefix = $prefix;
   }
 
   /**
@@ -35,7 +34,7 @@ class TestiAccompagnatoriProcedura
    */
   public function getGuideText()
   {
-    return !empty($this->guideText) ? $this->guideText : null;
+    return !empty( $this->guideText ) ? $this->guideText : null;
   }
 
   /**
@@ -56,7 +55,7 @@ class TestiAccompagnatoriProcedura
    */
   public function getDescriptionText()
   {
-    return !empty($this->descriptionText) ? $this->descriptionText : null;
+    return !empty( $this->descriptionText ) ? $this->descriptionText : null;
   }
 
   /**
@@ -142,6 +141,7 @@ class TestiAccompagnatoriProcedura
    */
   public function getPrefix()
   {
-    return $this->instanceService->getPrefix() ? '/' . $this->instanceService->getPrefix() : null;
+    return $this->prefix ? '/' . $this->prefix : null;
   }
+
 }

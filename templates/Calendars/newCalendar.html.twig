@@ -30,9 +30,9 @@
           {{ form_row(form.moderators) }}
         </div>
 
-        {{ include('App:Calendars/parts:calendarExternalCalendars.html.twig') }}
-        {{ include('App:Calendars/parts:calendarOpeningHours.html.twig') }}
-        {{ include('App:Calendars/parts:calendarClosingPeriods.html.twig') }}
+        {{ include('Calendars/parts/calendarExternalCalendars.html.twig') }}
+        {{ include('Calendars/parts/calendarOpeningHours.html.twig') }}
+        {{ include('Calendars/parts/calendarClosingPeriods.html.twig') }}
 
         <div class="form-group m-0 p-0">
           <label for="appbundle_calendar_rolling_days">{{ 'calendars.rolling_days.label' | trans() }}</label>

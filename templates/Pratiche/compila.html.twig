@@ -159,7 +159,7 @@
 {% endblock %}
 
 {% block main_content %}
-  {% form_theme form ':form:ocsdc_form_style.html.twig' %}
+  {% form_theme form 'form/ocsdc_form_style.html.twig' %}
 
   <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
     <div class="row">
@@ -201,7 +201,7 @@
 
     <div class="row hidden-xs">
       <div class="col-md-12 mt-4 mb-4">
-        {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+        {% include '@CraueFormFlow/FormFlow/stepList.html.twig' %}
       </div>
     </div>
 
@@ -218,10 +218,10 @@
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
           {% if currentStep.formType == "App\\Form\\Base\\SummaryType" %}
             <p>Verifica i dati inseriti prima di passare al metodo di pagamento</p>
-            {{ include('App:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
-            {{ include('App:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% endif %}
           {{ form_rest(form) }}
 
@@ -238,7 +238,7 @@
 
         {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
           <div class="mt-5">
-            {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
+            {% include '@CraueFormFlow/FormFlow/buttons.html.twig' %}
           </div>
         {% endif %}
 
@@ -261,10 +261,10 @@
         {% endif %}
 
         {# Info compilazione specificate nel servizio #}
-        {{ include('App:Pratiche/parts:compilation_info.html.twig') }}
+        {{ include('Pratiche/parts/compilation_info.html.twig') }}
 
         {# Note compilazione per utente #}
-        {{ include('App:Pratiche/parts:user_compilation_notes.html.twig') }}
+        {{ include('Pratiche/parts/user_compilation_notes.html.twig') }}
 
         {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
             {{ include('Default/parts/chat.html.twig') }}
@@ -274,7 +274,7 @@
   </section>
 
   {# Modal di conferma #}
-  {{ include('App:Pratiche/parts:confirm_modal.html.twig') }}
+  {{ include('Pratiche/parts/confirm_modal.html.twig') }}
 
 {% endblock %}
 

@@ -9,6 +9,7 @@ use App\Entity\Servizio;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class AbstractServizioHandler implements ServizioHandlerInterface
@@ -19,7 +20,7 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
   protected $callToActionText = '';
 
   /**
-   * @var TokenStorage
+   * @var TokenStorageInterface
    */
   protected $tokenStorage;
 
@@ -33,7 +34,7 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
    */
   protected $router;
 
-  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
+  public function __construct(TokenStorageInterface $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
   {
     $this->tokenStorage = $tokenStorage;
     $this->logger = $logger;

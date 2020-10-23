@@ -120,7 +120,7 @@
     {% endif %}
 
 
-    {{ include('App:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
+    {{ include('Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
 
     {# @var user \App\Entity\CPSUser #}
     {% if user is defined  and user.getSecurityFields %}

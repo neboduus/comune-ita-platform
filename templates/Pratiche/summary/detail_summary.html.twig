@@ -35,7 +35,7 @@
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
-      {{ include('App:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+      {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati"

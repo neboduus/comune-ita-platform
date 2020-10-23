@@ -547,6 +547,10 @@ services:
       - "@formio.factory"
       - "@doctrine.orm.entity_manager"
 
+  App\Form\Extension\TestiAccompagnatoriProcedura:
+    arguments:
+      $prefix: "%prefix%"
+
   ocsdc.form.flow.asilonido:
     class: App\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
     autowire: false
@@ -818,8 +822,7 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.occupazionesuolopubblico }
 
-  ocsdc.form.flow.scia_pratica_edilizia:
-    class: App\Form\Scia\SciaPraticaEdiliziaFlow
+  App\Form\Scia\SciaPraticaEdiliziaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
@@ -926,17 +929,11 @@ services:
   # Handlers servizi
   App\Handlers\Servizio\ServizioHandlerRegistry:
     autowire: true
+    public: true
 
   App\Handlers\Servizio\DefaultHandler:
     arguments:
-      - "@security.token_storage"
-      - "@logger"
-      - "@router"
-      - "@doctrine.orm.entity_manager"
-      - "@ocsdc.form_flow_registry"
-      - "@session"
-      - "@templating"
-      - "%formserver_public_url%"
+      $formServerPublicUrl: formserver_public_url
     tags:
       - { name: ocsdc.servizio.handler, alias: default }
 

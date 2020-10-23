@@ -8,11 +8,13 @@ use App\Entity\Servizio;
 use App\Form\PraticaFlowRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Twig\Environment;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Templating\EngineInterface;
+
 
 class DefaultHandler extends AbstractServizioHandler
 {
@@ -33,19 +35,19 @@ class DefaultHandler extends AbstractServizioHandler
    */
   protected $session;
 
-  /** @var EngineInterface */
+  /** @var Environment */
   protected $templating;
 
   protected $formServerPublicUrl;
 
   public function __construct(
-    TokenStorage $tokenStorage,
+    TokenStorageInterface $tokenStorage,
     LoggerInterface $logger,
     UrlGeneratorInterface $router,
     EntityManagerInterface $em,
     PraticaFlowRegistry $flowRegistry,
     SessionInterface $session,
-    EngineInterface $templating,
+    Environment $templating,
     $formServerPublicUrl
   ) {
     $this->em = $em;

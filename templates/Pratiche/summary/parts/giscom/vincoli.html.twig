@@ -27,7 +27,7 @@
                       {% if allegati[f.id] is defined and allegati[f.id].description %}<small>{{ allegati[f.id].description }}</small>{% endif %}
                     </td>
                     <td data-title="" class="text-right">
-                      {{ include('App:Pratiche/summary/parts:download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}
+                      {{ include('Pratiche/summary/parts/download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': f.id}) }}
                     </td>
                   </tr>
                 {% endif %}

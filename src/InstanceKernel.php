@@ -112,7 +112,9 @@ class InstanceKernel extends BaseKernel
   {
     $instanceParameters = $this->getInstanceParameters();
     $instanceParameters['instance'] = $this->getIdentifier();
-    if (!isset($instanceParameters['prefix'])) {
+    $instanceParameters['prefix'] = $this->getIdentifier();
+    // todo: Verificare
+    if (!isset($instanceParameters['prefix']) || empty($instanceParameters['prefix'])) {
       $instanceParameters['prefix'] = self::DEFAULT_PREFIX;
     }
 
