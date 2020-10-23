@@ -160,7 +160,7 @@ security:
     - { path: ^/%prefix%/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/operatori/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    #- { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/operatori/reset-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
     - { path: ^/%prefix%/(pratiche|terms_accept|user|documenti)/, role: ROLE_USER }
     #- { path: ^/%prefix%/login, role: [ROLE_USER] }
@@ -168,7 +168,7 @@ security:
 
     - { path: ^/%prefix%/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/operatori/profile/edit, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori/profile/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/operatori/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/operatori/subscriptions, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/operatori/subscription-service, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/operatori/subscriber, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }

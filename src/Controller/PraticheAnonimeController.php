@@ -134,7 +134,7 @@ class PraticheAnonimeController extends Controller
       $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
 
       return $this->render(
-        '@App/Servizi/serviziFeedback.html.twig',
+        'Servizi/serviziFeedback.html.twig',
         array(
           'servizio' => $servizio,
           'status' => 'danger',

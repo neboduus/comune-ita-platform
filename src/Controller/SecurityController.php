@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\Security\NewPasswordType;
 use App\Form\Security\PasswordRequestType;
+use App\Services\InstanceService;
 use App\Services\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -33,13 +35,31 @@ class SecurityController extends AbstractController
 {
   use TargetPathTrait;
 
+  /** @var MailerService  */
   private $mailer;
+
+  /** @var ParameterBagInterface  */
   private $params;
 
-  public function __construct(MailerService $mailer, ParameterBagInterface $params)
+  /** @var InstanceService */
+  private $instanceService;
+
+  /** @var RouterInterface */
+  private $router;
+
+  /**
+   * SecurityController constructor.
+   * @param MailerService $mailer
+   * @param ParameterBagInterface $params
+   * @param InstanceService $instanceService
+   * @param RouterInterface $router
+   */
+  public function __construct(MailerService $mailer, ParameterBagInterface $params, InstanceService $instanceService, RouterInterface $router)
   {
     $this->mailer = $mailer;
     $this->params = $params;
+    $this->instanceService = $instanceService;
+    $this->router = $router;
   }
 
   /**
@@ -88,8 +108,8 @@ class SecurityController extends AbstractController
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      $username = $form->get('username')->getData();
-      $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+      $email = $form->get('email')->getData();
+      $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
       if (!$user instanceof User) {
         $this->addFlash('danger', "Utente non trovato...");
@@ -107,13 +127,75 @@ class SecurityController extends AbstractController
       $user->setConfirmationToken($token);
       $entityManager->flush();
 
-      //$this->mailer->sendResetPasswordMessage($user);
+      $this->mailer->dispatchMail(
+        $this->getParameter('default_from_email_address'),
+        $this->instanceService->getCurrentInstance()->getName(),
+        $user->getEmail(),
+        $user->getFullName(),
+        'Ricevi questa email perchè hai richiesto il reset della password su Stanza del Cittadino, clicca sul bottone in basso per continuare.',
+        'Ciao '.$user->getFullName(),
+        $this->instanceService->getCurrentInstance(),
+        [
+          [
+            'link' => $this->router->generate(
+              'reset_password_confirm',
+              ['token' => $user->getConfirmationToken()]
+            ),
+            'label' => 'Vai',
+          ],
+        ]
+      );
       $this->addFlash('info', "Controlla la tua casella e-mail per il link di conferma!");
 
       return $this->redirectToRoute('security_login');
     }
 
     return $this->render('Security/reset-password.html.twig', ['form' => $form->createView()]);
+  }
+
+  /**
+   * @Route("/change-password", name="security_change_password", methods={"GET", "POST"})
+   *
+   * @param Request $request
+   * @param EntityManagerInterface $entityManager
+   * @param UserPasswordEncoderInterface $encoder
+   * @param TokenStorageInterface $tokenStorage
+   * @param SessionInterface $session
+   *
+   * @return RedirectResponse|Response
+   */
+  public function changePassword(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, SessionInterface $session)
+  {
+    /** @var User $user */
+    $user = $this->getUser();
+    $form = $this->createForm(NewPasswordType::class);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+      $plainPassword = $form->get('plainPassword')->getData();
+      $password = $encoder->encodePassword($user, $plainPassword);
+      $user->setPassword($password);
+      $user->setConfirmationToken(null);
+      $user->setLastChangePassword();
+      $entityManager->persist($user);
+      $entityManager->flush();
+
+      $token = new UsernamePasswordToken($user, $password, 'main');
+      $tokenStorage->setToken($token);
+      $session->set('_security_main', serialize($token));
+
+      $this->addFlash('success', "La nuova password è stata impostata. Esegui il login!");
+      return $this->redirectToRoute('security_login');
+    }
+
+    return $this->render(
+      'security/reset-password-confirm.html.twig',
+      array(
+        'user' => $this->getUser(),
+        'form' => $form->createView(),
+      )
+    );
+
   }
 
   /**
@@ -154,7 +236,7 @@ class SecurityController extends AbstractController
 
       $this->addFlash('success', "La nuova password è stata impostata. Esegui il login!");
 
-      return $this->redirectToRoute('Security_login');
+      return $this->redirectToRoute('security_login');
     }
 
     return $this->render(
@@ -167,12 +249,30 @@ class SecurityController extends AbstractController
   /**
    * @Route("/profile", name="security_profile")
    * @param Request $request
+   * @param EntityManagerInterface $entityManager
    * @return Response
    */
-  public function profile(Request $request)
+  public function profile(Request $request, EntityManagerInterface $entityManager)
   {
-    echo 'aaaa';
-    exit;
+
+    $user = $this->getUser();
+    $form = $this->createForm('App\Form\ProfileUserType', $user);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+      $entityManager->persist($user);
+      $entityManager->flush();
+      return $this->redirectToRoute('security_profile');
+    }
+
+    return $this->render(
+      'Security/profile.twig',
+      array(
+        'user' => $this->getUser(),
+        'form' => $form->createView(),
+      )
+    );
   }
 
   /**

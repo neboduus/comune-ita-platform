@@ -139,8 +139,6 @@ services:
     arguments:
       $defaultSender: '%default_from_email_address%'
 
-
-
   ocsdc.meeting_eventlistener:
     class: App\EventListener\MeetingLifeCycleListener
     tags:

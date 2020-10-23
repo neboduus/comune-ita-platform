@@ -62,6 +62,7 @@ Encore
     to: '../bootstrap-italia/dist/[path][name].[ext]',
     pattern: /\.(eot|ttf|woff|woff2|svg)$/,
   })
+  // Todo: verifica se spostare a livello di php
   .copyFiles({
     from: './assets/app/',
     //to: '../bundles/app/[path][name].[hash:8].[ext]',

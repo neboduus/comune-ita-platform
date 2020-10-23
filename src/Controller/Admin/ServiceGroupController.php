@@ -27,7 +27,7 @@ class ServiceGroupController extends AbstractController
 
     $items = $em->getRepository('App:ServiceGroup')->findAll();
 
-    return $this->render( '@App/Admin/indexServiceGroup.html.twig', [
+    return $this->render( 'Admin/indexServiceGroup.html.twig', [
       'user'  => $this->getUser(),
       'items' => $items
     ]);
@@ -53,7 +53,7 @@ class ServiceGroupController extends AbstractController
       return $this->redirectToRoute('admin_service_group_index');
     }
 
-    return $this->render( '@App/Admin/editServiceGroup.html.twig', [
+    return $this->render( 'Admin/editServiceGroup.html.twig', [
       'user'  => $this->getUser(),
       'item' => $serviceGroup,
       'form' => $form->createView()
@@ -76,7 +76,7 @@ class ServiceGroupController extends AbstractController
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
     }
 
-    return $this->render( '@App/Admin/editServiceGroup.html.twig', [
+    return $this->render( 'Admin/editServiceGroup.html.twig', [
       'user'  => $this->getUser(),
       'item' => $serviceGroup,
       'form' => $form->createView()

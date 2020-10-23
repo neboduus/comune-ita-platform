@@ -14,10 +14,10 @@ use App\Entity\Subscriber;
 use App\Model\FeedbackMessage;
 use App\Model\SubscriberMessage;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Bundle\TwigBundle\TwigEngine;
-use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
+use Swift_Mailer;
+use Swift_Message;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -27,7 +27,7 @@ class MailerService
   const SES_CONFIGURATION_SET = 'SesDeliveryLogsToSNS';
 
   /**
-   * @var \Swift_Mailer $mailer
+   * @var Swift_Mailer $mailer
    */
   private $mailer;
 
@@ -56,6 +56,7 @@ class MailerService
    */
   private $router;
 
+
   private $blacklistedStates = [
     Pratica::STATUS_REQUEST_INTEGRATION,
     Pratica::STATUS_PROCESSING,
@@ -67,13 +68,21 @@ class MailerService
 
   /**
    * MailerService constructor.
-   * @param \Swift_Mailer $mailer
+   * @param Swift_Mailer $mailer
    * @param TranslatorInterface $translator
    * @param Environment $templating
    * @param ManagerRegistry $doctrine
    * @param LoggerInterface $logger
+   * @param UrlGeneratorInterface $router
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, Environment $templating, ManagerRegistry $doctrine, LoggerInterface $logger, UrlGeneratorInterface $router)
+  public function __construct(
+    Swift_Mailer $mailer,
+    TranslatorInterface $translator,
+    Environment $templating,
+    ManagerRegistry $doctrine,
+    LoggerInterface $logger,
+    UrlGeneratorInterface $router
+   )
   {
     $this->mailer = $mailer;
     $this->translator = $translator;
@@ -88,7 +97,6 @@ class MailerService
    * @param $fromAddress
    * @param bool $resend
    * @return int
-   * @throws \Twig\Error\Error
    */
   public function dispatchMailForPratica(Pratica $pratica, $fromAddress, $resend = false)
   {
@@ -102,7 +110,7 @@ class MailerService
         $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
         $sentAmount += $this->send($CPSUsermessage);
         $pratica->setLatestCPSCommunicationTimestamp(time());
-      } catch (\Exception $e){
+      } catch (Exception $e){
         $this->logger->error('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
     }
@@ -132,7 +140,7 @@ class MailerService
           try {
             $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $operatore);
             $sentAmount += $this->send($operatoreUserMessage);
-          } catch (\Exception $e){
+          } catch (Exception $e){
             $this->logger->error('Error in dispatchMailForPratica (All operators): Email: ' . $operatore->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
           }
         }
@@ -145,7 +153,7 @@ class MailerService
           $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
           $sentAmount += $this->send($operatoreUserMessage);
           $pratica->setLatestOperatoreCommunicationTimestamp(time());
-        } catch (\Exception $e){
+        } catch (Exception $e){
           $this->logger->error('Error in dispatchMailForPratica (Assigned operator): Email: ' . $pratica->getOperatore()->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
         }
       }
@@ -157,14 +165,14 @@ class MailerService
   /**
    * @param $message
    * @return int
-   * @throws \Exception
+   * @throws Exception
    */
   private function send($message)
   {
     $failed = [];
     $count = $this->mailer->send($message, $failed);
     if (count($failed) > 0){
-      throw new \Exception(implode(',', $failed));
+      throw new Exception(implode(',', $failed));
     }
     return $count;
   }
@@ -192,7 +200,7 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return \Swift_Message
+   * @return Swift_Message
    * @throws \Twig\Error\Error
    */
   private function setupCPSUserMessage(Pratica $pratica, $fromAddress)
@@ -211,7 +219,7 @@ class MailerService
     /** @var FeedbackMessage $feedbackMessage */
     $feedbackMessage = $feedbackMessages[$pratica->getStatus()];
     if (!$feedbackMessage['isActive']){
-      throw new \Exception('Message for '.$pratica->getStatus().' is not active');
+      throw new Exception('Message for '.$pratica->getStatus().' is not active');
     }
 
     $placeholders = [
@@ -224,7 +232,7 @@ class MailerService
     ];
 
     $textHtml = $this->templating->render(
-      'App:Emails/User:feedback_message.html.twig',
+      'Emails/User:feedback_message.html.twig',
       array(
         'pratica' => $pratica,
         'placeholder' => $placeholders,
@@ -233,7 +241,7 @@ class MailerService
     );
     $textPlain = strip_tags($textHtml);
 
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -275,7 +283,7 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return \Swift_Message
+   * @return Swift_Message
    * @throws \Twig\Error\Error
    */
   private function setupCPSUserMessageFallback(Pratica $pratica, $fromAddress)
@@ -286,13 +294,13 @@ class MailerService
     $ente = $pratica->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(
-          'App:Emails/User:pratica_status_change.html.twig',
+          'Emails/User:pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
             'user_name'    => $pratica->getUser()->getFullName(),
@@ -302,7 +310,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'App:Emails/User:pratica_status_change.txt.twig',
+          'Emails/User:pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
             'user_name'    => $pratica->getUser()->getFullName(),
@@ -330,7 +338,7 @@ class MailerService
    * @param Pratica $pratica
    * @param $fromAddress
    * @param OperatoreUser|null $operatore
-   * @return \Swift_Message
+   * @return Swift_Message
    * @throws \Twig\Error\Error
    */
   private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress, OperatoreUser $operatore = null)
@@ -345,13 +353,13 @@ class MailerService
     $ente = $pratica->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(
-          'App:Emails/Operatore:pratica_status_change.html.twig',
+          'Emails/Operatore:pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
             'user_name' => $operatore->getFullName(),
@@ -361,7 +369,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'App:Emails/Operatore:pratica_status_change.txt.twig',
+          'Emails/Operatore:pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
             'user_name' => $operatore->getFullName(),
@@ -401,13 +409,13 @@ class MailerService
 
     if ($this->isValidEmail($toAddress)) {
       try {
-        $emailMessage = \Swift_Message::newInstance()
+        $emailMessage = (new \Swift_Message())
           ->setSubject($subject)
           ->setFrom($fromAddress, $fromName)
           ->setTo($toAddress, $toName)
           ->setBody(
             $this->templating->render(
-              'App:Emails/General:message.html.twig',
+              'Emails/General:message.html.twig',
               array(
                 'message' => $message,
                 'ente' => $ente,
@@ -418,7 +426,7 @@ class MailerService
           )
           ->addPart(
             $this->templating->render(
-              'App:Emails/General:message.txt.twig',
+              'Emails/General:message.txt.twig',
               array(
                 'message' => $message,
                 'ente' => $ente,
@@ -428,7 +436,7 @@ class MailerService
           );
         $this->addCustomHeadersToMessage($emailMessage);
         $sentAmount += $this->send($emailMessage);
-      } catch (\Exception $e){
+      } catch (Exception $e){
         $this->logger->error('Error in dispatchMail: Email: ' . $toAddress . ' - ' . $e->getMessage());
       }
     } else {
@@ -461,7 +469,7 @@ class MailerService
       try {
         $message = $this->setupSubscriberMessage($subscriberMessage, $fromAddress, $operatore);
         $sentAmount += $this->send($message);
-      } catch (\Exception $e){
+      } catch (Exception $e){
         $this->logger->error('Error in dispatchMailForSubscriber: Email: ' . $subscriberMessage->getSubscriber()->getEmail() . ' - ' . $e->getMessage());
       }
     }
@@ -484,7 +492,7 @@ class MailerService
    * @param SubscriberMessage $subscriberMessage
    * @param $fromAddress
    * @param OperatoreUser $operatoreUser
-   * @return \Swift_Message
+   * @return Swift_Message
    * @throws \Twig\Error\Error
    */
   private function setupSubscriberMessage(SubscriberMessage $subscriberMessage, $fromAddress, OperatoreUser $operatoreUser)
@@ -495,14 +503,14 @@ class MailerService
     $ente = $operatoreUser->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $emailMessage = \Swift_Message::newInstance()
+    $emailMessage = (new \Swift_Message())
       ->setSubject($subscriberMessage->getSubject())
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
       ->setBcc($operatoreUser->getEmail(), $operatoreUser->getFullName())
       ->setBody(
         $this->templating->render(
-          'App:Emails/Subscriber:subscriber_message.html.twig',
+          'Emails/Subscriber:subscriber_message.html.twig',
           array(
             'message' => $subscriberMessage->getMessage(),
           )
@@ -511,7 +519,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'App:Emails/Subscriber:subscriber_message.txt.twig',
+          'Emails/Subscriber:subscriber_message.txt.twig',
           array(
             'message' => $subscriberMessage->getMessage(),
           )
@@ -528,9 +536,9 @@ class MailerService
   }
 
   /**
-   * @param \Swift_Message $message
+   * @param Swift_Message $message
    */
-  private function addCustomHeadersToMessage(\Swift_Message $message)
+  private function addCustomHeadersToMessage(Swift_Message $message)
   {
     $message
       ->getHeaders()

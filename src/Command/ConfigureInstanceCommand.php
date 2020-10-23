@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ConfigureInstanceCommand extends Command
 {
@@ -28,10 +29,17 @@ class ConfigureInstanceCommand extends Command
   /** @var SymfonyStyle */
   private $symfonyStyle;
 
-  public function __construct(EntityManagerInterface $entityManager, LoadData $loader)
-  {
+  /** @var UserPasswordEncoderInterface */
+  private $passwordEncoder;
+
+  public function __construct(
+    EntityManagerInterface $entityManager,
+    LoadData $loader,
+    UserPasswordEncoderInterface $passwordEncoder
+  ) {
     $this->loader = $loader;
     $this->entityManager = $entityManager;
+    $this->passwordEncoder = $passwordEncoder;
     parent::__construct();
   }
 
@@ -58,7 +66,7 @@ class ConfigureInstanceCommand extends Command
     $repo = $manager->getRepository('App:Ente');
     $ente = $repo->findOneBySlug($instance);
     $isEnte = false;
-    if ( $ente instanceof Ente ) {
+    if ($ente instanceof Ente) {
       $isEnte = true;
     }
 
@@ -108,7 +116,8 @@ class ConfigureInstanceCommand extends Command
     $this->symfonyStyle->success("Istanza configurata con successo");
   }
 
-  private function createAdmin() {
+  private function createAdmin()
+  {
 
     $this->symfonyStyle->title("Inserisci i dati per la creazione di un admin");
     $nome = $this->symfonyStyle->ask("Inserisci il nome: ", 'Opencontent');
@@ -117,24 +126,28 @@ class ConfigureInstanceCommand extends Command
     $username = $this->symfonyStyle->ask('Inserisci lo username: ', 'admin');
     $password = $this->symfonyStyle->ask('Inserisci la password: ', '');
 
-    //$um = $this->getContainer()->get('fos_user.user_manager');
-
-    $user = (new AdminUser())
-      ->setUsername($username)
-      ->setPlainPassword($password)
-      ->setEmail($email)
-      ->setNome($nome)
-      ->setCognome($cognome)
-      ->setEnabled(true);
-
     try {
-      //$um->updateUser($user);
+
+      $user = (new AdminUser())
+        ->setUsername($username)
+        ->setEmail($email)
+        ->setNome($nome)
+        ->setCognome($cognome)
+        ->setEnabled(true);
+
+      $user->setPassword(
+        $this->passwordEncoder->encodePassword(
+          $user,
+          $password
+        )
+      );
+
       $this->entityManager->persist($user);
       $this->entityManager->flush();
 
       $this->symfonyStyle->text('Ok: generato nuovo admin');
     } catch (\Exception $e) {
-      $this->symfonyStyle->text('Errore: ' . $e->getMessage());
+      $this->symfonyStyle->text('Errore: '.$e->getMessage());
     }
   }
 }

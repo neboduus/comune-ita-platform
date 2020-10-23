@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67ee8ffa7fb51da5e88159ef0be27bab",
+    "content-hash": "a24438e74d3b05572b3cf767ffb0300c",
     "packages": [
         {
             "name": "anyx/login-gate-bundle",

@@ -114,6 +114,13 @@ abstract class User implements UserInterface
   protected $passwordRequestedAt;
 
   /**
+   * @var \DateTime
+   *
+   * @ORM\Column(name="last_change_password", type="datetime", nullable=true)
+   */
+  protected $lastChangePassword;
+
+  /**
    * @ORM\Column(type="array")
    */
   protected $roles;
@@ -339,9 +346,10 @@ abstract class User implements UserInterface
   /**
    * @param string $confirmationToken
    */
-  public function setConfirmationToken(string $confirmationToken): void
+  public function setConfirmationToken(?string $confirmationToken)
   {
     $this->confirmationToken = $confirmationToken;
+    return $this;
   }
 
   /**
@@ -354,30 +362,32 @@ abstract class User implements UserInterface
 
   /**
    * @param \DateTime $passwordRequestedAt
+   * @return User
    */
-  public function setPasswordRequestedAt(\DateTime $passwordRequestedAt): void
+  public function setPasswordRequestedAt(\DateTime $passwordRequestedAt)
   {
     $this->passwordRequestedAt = $passwordRequestedAt;
+    return $this;
   }
 
   /**
-   * @return Collection
+   * @return \DateTime
    */
-  public function getGroups(): Collection
+  public function getLastChangePassword()
   {
-    return $this->groups;
+    return $this->lastChangePassword;
   }
 
   /**
-   * @param Collection $groups
+   * @param \DateTime $lastChangePassword
    */
-  public function setGroups(Collection $groups): void
+  public function setLastChangePassword(\DateTime $lastChangePassword = null)
   {
-    $this->groups = $groups;
+    if ($lastChangePassword == null ){
+      $lastChangePassword = new \DateTime();
+    }
+    $this->lastChangePassword = $lastChangePassword;
   }
-
-
-
 
 
   public function hasPassword()
@@ -489,7 +499,7 @@ abstract class User implements UserInterface
   /**
    * @see UserInterface
    */
-  public function getPassword(): string
+  public function getPassword()
   {
     return (string)$this->password;
   }
@@ -504,7 +514,7 @@ abstract class User implements UserInterface
   /**
    * @return string
    */
-  public function getUsername(): string
+  public function getUsername()
   {
     return $this->username;
   }

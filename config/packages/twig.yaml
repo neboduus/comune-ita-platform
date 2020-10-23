@@ -25,4 +25,4 @@ twig:
     backoffices: "@ocsdc.backoffices"
     login_callout_texts: "%login_callout_texts%"
     login_route: "%login_route%"
-    #protocollo_handler: "@ocsdc.protocollo.handler"
+    protocollo_handler: "@ocsdc.protocollo.handler"

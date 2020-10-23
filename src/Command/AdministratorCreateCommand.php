@@ -76,6 +76,7 @@ class AdministratorCreateCommand extends Command
       );
       $this->entityManager->persist($user);
       $this->entityManager->flush();
+
       $output->writeln('Ok: generato nuovo admin');
     } catch (\Exception $e) {
       $output->writeln('Errore: '.$e->getMessage());

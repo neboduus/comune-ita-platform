@@ -15,6 +15,7 @@ use App\FormIO\SchemaFactoryInterface;
 use App\Model\FlowStep;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
+use App\Services\MailerService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use GuzzleHttp\Client;
@@ -35,6 +36,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -65,6 +67,12 @@ class AdminController extends Controller
   /** @var SchemaFactoryInterface */
   private $schemaFactory;
 
+  /** @var MailerService */
+  private $mailer;
+
+  /** @var RouterInterface */
+  private $router;
+
   /**
    * AdminController constructor.
    * @param InstanceService $instanceService
@@ -73,6 +81,8 @@ class AdminController extends Controller
    * @param TranslatorInterface $translator
    * @param ServiceFlow $serviceFlow
    * @param SchemaFactoryInterface $schemaFactory
+   * @param MailerService $mailer
+   * @param RouterInterface $router
    */
   public function __construct(
     InstanceService $instanceService,
@@ -80,7 +90,9 @@ class AdminController extends Controller
     TokenGeneratorInterface $tokenGenerator,
     TranslatorInterface $translator,
     ServiceFlow $serviceFlow,
-    SchemaFactoryInterface $schemaFactory
+    SchemaFactoryInterface $schemaFactory,
+    MailerService $mailer,
+    RouterInterface $router
   ) {
     $this->instanceService = $instanceService;
     $this->formServer = $formServer;
@@ -88,6 +100,8 @@ class AdminController extends Controller
     $this->translator = $translator;
     $this->serviceFlow = $serviceFlow;
     $this->schemaFactory = $schemaFactory;
+    $this->mailer = $mailer;
+    $this->router = $router;
   }
 
 
@@ -139,7 +153,6 @@ class AdminController extends Controller
 
   /**
    * Lists all operatoreUser entities.
-   * @Template()
    * @Route("/operatore", name="admin_operatore_index")
    * @Method("GET")
    */
@@ -176,15 +189,32 @@ class AdminController extends Controller
 
       $operatoreUser
         ->setEnte($ente)
-        ->setPlainPassword(md5(time()))
+        ->setPassword(md5(time()))
         ->setConfirmationToken($this->tokenGenerator->generateToken())
         ->setPasswordRequestedAt(new \DateTime())
         ->setEnabled(true);
       $em->persist($operatoreUser);
       $em->flush();
 
-      $mailer = $this->get('fos_user.mailer');
-      $mailer->sendResettingEmailMessage($operatoreUser);
+      $this->mailer->dispatchMail(
+        $this->getParameter('default_from_email_address'),
+        $this->instanceService->getCurrentInstance()->getName(),
+        $operatoreUser->getEmail(),
+        $operatoreUser->getFullName(),
+        'Ricevi questa email perchè ti è stato creato un account da opeatore sulla Stanza del Cittadino, clicca sul bottone in basso per effettuare il primo login.',
+        'Benvenuto '.$operatoreUser->getFullName(),
+        $this->instanceService->getCurrentInstance(),
+        [
+          [
+            'link' => $this->router->generate(
+              'reset_password_confirm',
+              ['token' => $operatoreUser->getConfirmationToken()]
+            ),
+            'label' => 'Vai',
+          ],
+        ]
+      );
+
 
       $this->addFlash('feedback', 'Operatore creato con successo');
 
@@ -265,9 +295,24 @@ class AdminController extends Controller
     $em->persist($operatoreUser);
     $em->flush();
 
-    // todo: fix sf4
-    //$mailer = $this->get('fos_user.mailer');
-    //$mailer->sendResettingEmailMessage($operatoreUser);
+    $this->mailer->dispatchMail(
+      $this->getParameter('default_from_email_address'),
+      $this->instanceService->getCurrentInstance()->getName(),
+      $operatoreUser->getEmail(),
+      $operatoreUser->getFullName(),
+      'Ricevi questa email perchè è stata resettata la tua password su Stanza del Cittadino, clicca sul bottone in basso per continuare.',
+      'Ciao '.$operatoreUser->getFullName(),
+      $this->instanceService->getCurrentInstance(),
+      [
+        [
+          'link' => $this->router->generate(
+            'reset_password_confirm',
+            ['token' => $operatoreUser->getConfirmationToken()]
+          ),
+          'label' => 'Vai',
+        ],
+      ]
+    );
 
     return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
   }
@@ -603,13 +648,16 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
     }
 
-    return $this->render('Admin/editCustomValidationServizio.html.twig', [
-      'form' => $form->createView(),
-      'servizio' => $servizio,
-      'user' => $user,
-      'schema' => $schema,
-      'statuses' => Pratica::getStatuses(),
-    ]);
+    return $this->render(
+      'Admin/editCustomValidationServizio.html.twig',
+      [
+        'form' => $form->createView(),
+        'servizio' => $servizio,
+        'user' => $user,
+        'schema' => $schema,
+        'statuses' => Pratica::getStatuses(),
+      ]
+    );
   }
 
   /**
@@ -673,7 +721,7 @@ class AdminController extends Controller
     }
 
     return $this->render(
-      '@App/Admin/editServizio.html.twig',
+      'Admin/editServizio.html.twig',
       [
         'form' => $form->createView(),
         'servizio' => $flowService->getFormData(),

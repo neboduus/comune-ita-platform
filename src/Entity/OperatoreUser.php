@@ -35,13 +35,6 @@ class OperatoreUser extends User
      */
     private $serviziAbilitati;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="last_change_password", type="datetime", nullable=true)
-     */
-    private $lastChangePassword;
-
 
     /**
      * OperatoreUser constructor.
@@ -69,7 +62,6 @@ class OperatoreUser extends User
     public function setEnte(Ente $ente)
     {
         $this->ente = $ente;
-
         return $this;
     }
 
@@ -131,22 +123,6 @@ class OperatoreUser extends User
         if ($this->serviziAbilitati instanceof Collection) {
             $this->serviziAbilitati = json_encode($this->getServiziAbilitati()->toArray());
         }
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getLastChangePassword()
-    {
-        return $this->lastChangePassword;
-    }
-
-    /**
-     * @param \DateTime $lastChangePassword
-     */
-    public function setLastChangePassword(\DateTime $lastChangePassword)
-    {
-        $this->lastChangePassword = $lastChangePassword;
     }
 
 }

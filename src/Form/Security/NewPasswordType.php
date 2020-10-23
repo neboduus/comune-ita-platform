@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -37,8 +38,8 @@ class NewPasswordType extends AbstractType
             ),
             new Length(
               [
-                'min' => 6,
-                'minMessage' => 'Inserisci almeno 6 caratteri',
+                'min' => 4,
+                'minMessage' => 'Inserisci almeno 4 caratteri',
                 // max length allowed by Symfony for security reasons
                 'max' => 4096,
               ]
@@ -46,5 +47,15 @@ class NewPasswordType extends AbstractType
           ],
         ]
       );
+  }
+
+  /**
+   * @param OptionsResolver $resolver
+   */
+  public function configureOptions(OptionsResolver $resolver)
+  {
+    $resolver->setDefaults(array(
+      'csrf_protection' => false
+    ));
   }
 }

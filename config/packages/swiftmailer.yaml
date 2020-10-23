@@ -1,9 +1,10 @@
 swiftmailer:
-  #url: '%env(MAILER_URL)%'
-  transport: "%mailer_transport%"
-  host: "%mailer_host%"
-  port: "%mailer_port%"
-  username: "%mailer_user%"
-  password: "%mailer_password%"
-  encryption: "%mailer_encription%"
+  url: '%env(MAILER_URL)%'
+  # Todo: configurare ses
+  #transport: "%mailer_transport%"
+  #host: "%mailer_host%"
+  #port: "%mailer_port%"
+  #username: "%mailer_user%"
+  #password: "%mailer_password%"
+  #encryption: "%mailer_encription%"
   spool: { type: 'memory' }
