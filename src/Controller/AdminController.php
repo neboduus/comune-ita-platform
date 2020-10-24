@@ -19,6 +19,7 @@ use App\Services\MailerService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -444,7 +445,8 @@ class AdminController extends Controller
    * @Route("/servizio/import", name="admin_servizio_import")
    * @param Request $request
    * @param ServicesAPIController $serviceApi
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return array|RedirectResponse
+   * @throws GuzzleException
    */
   public function importServizioAction(Request $request, ServicesAPIController $serviceApi)
   {
@@ -486,7 +488,7 @@ class AdminController extends Controller
 
         $service = $serviceDto->toEntity();
         $service->setName($service->getName().' (importato '.date('d/m/Y H:i:s').')');
-        $service->setPraticaFCQN('\App\Entity\FormIO');
+        $service->setPraticaFCQN('App\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
         $service->setEnte($ente);
         // Erogatore
@@ -607,7 +609,7 @@ class AdminController extends Controller
    * @param Request $request
    * @param Servizio $servizio
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function editCustomValidationServizioAction(Request $request, Servizio $servizio)
   {

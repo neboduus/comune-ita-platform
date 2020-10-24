@@ -2,23 +2,31 @@
 
 namespace App\Security;
 
+use App\Entity\CPSUser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Security;
 
 class PatAuthenticator extends AbstractAuthenticator
 {
   private $shibboletServerVarNames;
 
+  /** @var Security */
+  private $security;
+
   /**
    * OpenLoginAuthenticator constructor.
    * @param UrlGeneratorInterface $urlGenerator
    * @param array $shibboletServerVarNames
+   * @param $loginRoute
+   * @param Security $security
    */
-  public function __construct(UrlGeneratorInterface $urlGenerator, $shibboletServerVarNames, $loginRoute)
+  public function __construct(UrlGeneratorInterface $urlGenerator, $shibboletServerVarNames, $loginRoute, Security $security)
   {
     $this->urlGenerator = $urlGenerator;
     $this->shibboletServerVarNames = $shibboletServerVarNames;
     $this->loginRoute = $loginRoute;
+    $this->security = $security;
   }
 
   protected function getLoginRouteSupported()
@@ -31,6 +39,15 @@ class PatAuthenticator extends AbstractAuthenticator
     try {
       $this->checkLoginRoute();
     } catch (\Exception $e) {
+      return false;
+    }
+    $credential = $this->getCredentials($request);
+    $user = $this->security->getUser();
+    if (
+      $user instanceof CPSUser
+      && isset($credential['codiceFiscale'])
+      && strtolower($user->getCodiceFiscale()) == strtolower($credential['codiceFiscale'])
+    ) {
       return false;
     }
     return $request->attributes->get('_route') === 'login_pat' && $this->checkShibbolethUserData($request);

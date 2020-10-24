@@ -21,34 +21,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 {
-  /**
-   * @var LoggerInterface
-   */
+  /** @var LoggerInterface */
   protected $logger;
 
-  /**
-   * @var TranslatorInterface
-   */
+  /** @var TranslatorInterface */
   protected $translator;
 
-  /**
-   * @var PraticaStatusService
-   */
+  /** @var PraticaStatusService */
   protected $statusService;
 
-  /**
-   * @var ModuloPdfBuilderService
-   */
+  /** @var ModuloPdfBuilderService */
   protected $pdfBuilder;
 
-  /**
-   * @var DematerializedFormAllegatiAttacherService
-   */
+  /** @var DematerializedFormAllegatiAttacherService */
   protected $dematerializer;
 
-  /**
-   * @var bool
-   */
   protected $revalidatePreviousSteps = false;
 
   protected $handleFileUploads = false;

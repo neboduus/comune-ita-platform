@@ -129,7 +129,7 @@ class PraticheController extends AbstractController
   /**
    * @Route("/", name="pratiche")
    *
-   * @return array
+   * @return Response
    */
   public function indexAction()
   {
@@ -220,7 +220,7 @@ class PraticheController extends AbstractController
    * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
    * @param Servizio $servizio
    *
-   * @return array
+   * @return Response
    */
   public function listDraftByServiceAction(Servizio $servizio)
   {
@@ -271,19 +271,18 @@ class PraticheController extends AbstractController
     }
 
     $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
-    try {
+    /*try {
       $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
     } catch (ForbiddenAccessException $e) {
       $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
       return $this->redirectToRoute('pratiche');
-    }
+    }*/
 
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
+    //$this->checkUserCanAccessPratica($pratica, $user);
 
     /** @var PraticaFlow $praticaFlowService */
-    #$praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
     $praticaFlowService = $praticaFlowRegistry->getByName($pratica->getServizio()->getPraticaFlowServiceName());
 
     if ($pratica->getServizio()->isPaymentRequired()) {
@@ -297,8 +296,6 @@ class PraticheController extends AbstractController
     if ($pratica->getInstanceId() == null) {
       $pratica->setInstanceId($praticaFlowService->getInstanceId());
     }
-    $resumeURI = $praticaFlowService->getResumeUrl($request);
-    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
     $form = $praticaFlowService->createForm();
     if ($praticaFlowService->isValid($form)) {
