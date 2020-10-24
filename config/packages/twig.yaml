@@ -26,3 +26,4 @@ twig:
     login_callout_texts: "%login_callout_texts%"
     login_route: "%login_route%"
     protocollo_handler: "@ocsdc.protocollo.handler"
+    endpoint_prefix: '%prefix%'
