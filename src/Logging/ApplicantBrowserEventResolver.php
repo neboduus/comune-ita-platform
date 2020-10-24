@@ -6,9 +6,8 @@ use App\Entity\Pratica;
 use App\Event\PraticaOnChangeStatusEvent;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
-use Xiidea\EasyAuditBundle\Resolver\EventResolverInterface;
 
-class ApplicantBrowserEventResolver implements EventResolverInterface
+class ApplicantBrowserEventResolver
 {
   public function getEventLogInfo(Event $event, $eventName)
   {

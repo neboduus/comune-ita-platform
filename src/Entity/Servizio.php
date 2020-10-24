@@ -324,7 +324,7 @@ class Servizio
       $this->id = Uuid::uuid4();
     }
 
-    $this->enti = new ArrayCollection();
+    $this->ente = new ArrayCollection();
     $this->erogatori = new ArrayCollection();
     $this->flowSteps = new ArrayCollection();
     $this->feedbackMessages = new ArrayCollection();

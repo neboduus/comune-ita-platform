@@ -9,7 +9,6 @@ use App\Entity\Integrazione;
 use App\Entity\IntegrazioneRepository;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\RichiestaIntegrazioneDTO;
-use App\Entity\RichiestaIntegrazioneRequestInterface;
 use App\Entity\ModuloCompilato;
 use App\Entity\Pratica;
 use App\Entity\RispostaIntegrazione;
@@ -20,7 +19,7 @@ use App\Entity\ScheduledAction;
 use App\Entity\Servizio;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

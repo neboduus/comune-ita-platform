@@ -6,6 +6,7 @@ use App\Form\Base\AccettazioneIstruzioniType;
 use App\Form\Base\DatiRichiedenteType;
 use App\Form\Base\PraticaFlow;
 use App\Form\Base\SelezionaEnteType;
+use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 /**
  * Class AttestazioneAnagraficaFlow

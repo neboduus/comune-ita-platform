@@ -20,6 +20,7 @@ use App\Model\LinksPagedList;
 use App\Services\InstanceService;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
+use App\Utils\UploadedBase64File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
@@ -56,15 +57,16 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ApplicationsAPIController extends AbstractFOSRestController
 {
+  /** @var EntityManagerInterface  */
+  private $em;
 
-  /**
-   * @var
-   */
+  /** @var InstanceService  */
+  private $is;
+
+  /**  @var */
   private $statusService;
 
-  /**
-   * @var ModuloPdfBuilderService
-   */
+  /** @var ModuloPdfBuilderService */
   protected $pdfBuilder;
 
   protected $router;

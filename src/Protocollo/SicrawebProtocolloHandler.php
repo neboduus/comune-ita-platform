@@ -8,9 +8,7 @@ use App\Entity\Pratica;
 use App\Protocollo\Exception\ResponseErrorException;
 use GuzzleHttp\Client;
 
-/**
- * @property $instance string
- */
+
 class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
 {
 
@@ -18,6 +16,9 @@ class SicrawebProtocolloHandler implements ProtocolloHandlerInterface
    * @var Client
    */
   private $client;
+
+  /** @var string */
+  private $instance;
 
   public function __construct(Client $client, $instance)
   {

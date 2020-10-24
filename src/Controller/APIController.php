@@ -19,8 +19,6 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 
 /**
  * Class APIController
- * @property EntityManager em
- * @property InstanceService is
  * @package App\Controller
  * @Route("/api/v1.0")
  */
@@ -28,6 +26,12 @@ class APIController extends AbstractFOSRestController
 {
     const CURRENT_API_VERSION = 'v1.0';
     const SCHEDA_INFORMATIVA_REMOTE_PARAMETER = 'remote';
+
+    /** @var EntityManagerInterface  */
+    private $em;
+
+    /** @var InstanceService  */
+    private $is;
 
     public function __construct(EntityManagerInterface $em, InstanceService $is)
     {

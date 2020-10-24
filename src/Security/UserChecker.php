@@ -27,7 +27,7 @@ class UserChecker implements UserCheckerInterface
 
     // user is disabled, show a generic Account Not Found message.
     if (!$user->isEnabled()) {
-      throw new AccountDisabledException();
+      throw new \Exception('User is disabled');
     }
   }
 

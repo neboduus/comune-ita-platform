@@ -79,16 +79,23 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
    */
   private $myPayService;
 
-  /**
-   * @var EntityManagerInterface
-   */
+  /** @var EntityManagerInterface */
   private $em;
 
-  /**
-   * @var TranslatorInterface $translator
-   */
+  /** @var TranslatorInterface $translator */
   private $translator;
 
+  /* @var RouterInterface */
+  private $router;
+
+  /**
+   * MyPay constructor.
+   * @param LoggerInterface $logger
+   * @param MyPayService $myPayService
+   * @param EntityManagerInterface $em
+   * @param RouterInterface $router
+   * @param TranslatorInterface $translator
+   */
   public function __construct(LoggerInterface $logger, MyPayService $myPayService, EntityManagerInterface $em, RouterInterface $router, TranslatorInterface $translator)
   {
     $this->logger = $logger;

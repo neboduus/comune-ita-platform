@@ -7,16 +7,14 @@ use App\Entity\OperatoreUser;
 use App\Entity\Servizio;
 use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
-use FOS\UserBundle\Model\UserInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class MessagesAdapterService
- * @property RegistryInterface doctrine
- * @property boolean
  */
 class MessagesAdapterService
 {
@@ -275,7 +273,7 @@ class MessagesAdapterService
     {
         foreach ($undecoratedResponse as &$thread) {
             $thread->nomeThread = 'Servizio';
-            $operatoriRepo = $this->getDoctrine()->getRepository('App:OperatoreUser');
+            $operatoriRepo = $this->doctrine->getRepository('App:OperatoreUser');
             $operatoreId = preg_split('/~/', $thread->threadId)[1];
             $operatore = $operatoriRepo->find($operatoreId);
             if ($operatore) {

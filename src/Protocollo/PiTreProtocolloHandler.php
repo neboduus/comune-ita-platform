@@ -14,15 +14,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-/**
- * @property $instance string
- */
 class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 {
-  /**
-   * @var Client
-   */
+  /** @var Client */
   private $client;
+
+  /** @var  */
+  private $instance;
 
   public function __construct(Client $client, $instance)
   {

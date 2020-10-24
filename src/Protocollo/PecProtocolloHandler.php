@@ -231,7 +231,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   {
     $ente = $pratica->getEnte();
     $praticaIdParts = explode('-', $pratica->getId());
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($pratica->getServizio()->getName() . ' - ' . $pratica->getUser()->getFullName() . ' ('. end($praticaIdParts) .')')
       ->setFrom($sender, 'Stanza del Cittadino')
       ->setTo($receiver, $ente->getName())

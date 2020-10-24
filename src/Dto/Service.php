@@ -488,9 +488,9 @@ class Service
   public function setProtocolloParameters($protocolloParameters)
   {
     if (!is_array($protocolloParameters)) {
-      $parameters = json_decode($protocolloParameters, true);
+      $protocolloParameters = json_decode($protocolloParameters, true);
     }
-    $this->protocolloParameters = $parameters;
+    $this->protocolloParameters = $protocolloParameters;
   }
 
   /**

@@ -10,6 +10,7 @@ use App\Form\Base\PraticaFlow;
 use App\Form\Base\SelezionaEnteType;
 use App\Form\Base\SelectPaymentGatewayType;
 use App\Form\Base\PaymentGatewayType;
+use Craue\FormFlowBundle\Form\FormFlowInterface;
 
 
 class AutoletturaAcquaFlow extends PraticaFlow
