@@ -75,7 +75,7 @@ security:
     #    target: /%prefix%/
 
     backend:
-      logout_on_user_change: true
+      #logout_on_user_change: true
       anonymous: true
       pattern: ^/%prefix%/(operatori|admin)
       user_checker: App\Security\UserChecker
@@ -120,7 +120,7 @@ security:
           - ocsdc.cps.token_authenticator
 
     open_login:
-      logout_on_user_change: true
+      #logout_on_user_change: true
       anonymous: true
       #pattern: ^/%prefix%/login
       #pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti|login)/

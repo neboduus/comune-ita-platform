@@ -76,7 +76,7 @@ class DefaultAnonymousHandler extends DefaultHandler
 
     return (new Response())->setContent(
       $this->templating->render(
-        'App:PraticheAnonime:new.html.twig',
+        'PraticheAnonime/new.html.twig',
         [
           'form' => $form->createView(),
           'pratica' => $praticaFlowService->getFormData(),

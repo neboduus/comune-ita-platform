@@ -256,7 +256,7 @@ class PraticheController extends AbstractController
    * @param Pratica $pratica
    *
    * @param PraticaFlowRegistry $praticaFlowRegistry
-   * @return array|RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function compilaAction(Request $request, Pratica $pratica, PraticaFlowRegistry $praticaFlowRegistry)
   {
@@ -285,8 +285,6 @@ class PraticheController extends AbstractController
     /** @var PraticaFlow $praticaFlowService */
     #$praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
     $praticaFlowService = $praticaFlowRegistry->getByName($pratica->getServizio()->getPraticaFlowServiceName());
-
-
 
     if ($pratica->getServizio()->isPaymentRequired()) {
       $praticaFlowService->setPaymentRequired(true);
@@ -392,7 +390,7 @@ class PraticheController extends AbstractController
     $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
       && $pratica->getUser()->getId() == $user->getId();
     if ($canCompile) {
-      $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+      $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
       try {
         $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
       } catch (ForbiddenAccessException $e) {

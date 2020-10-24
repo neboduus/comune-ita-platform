@@ -922,7 +922,8 @@ services:
       - "@ocsdc.modulo_pdf_builder"
 
   App\Services\FormServerApiAdapterService:
-    arguments: [ "%formserver_private_url%", "@logger" ]
+    arguments:
+      $formServerUrl: "%formserver_private_url%"
 
   ocsdc.formserver: '@App\Services\FormServerApiAdapterService'
 
@@ -986,3 +987,13 @@ services:
   ocsdc.logout_success_handler:
     class: App\Security\LogoutSuccessHandler
     arguments: [ '@router', "%single_logout_url%" ]
+
+  craue.form.flow.storage_default:
+    class: Craue\FormFlowBundle\Storage\DoctrineStorage
+    public: false
+    arguments: [ "@doctrine.dbal.default_connection", "@ocsdc.form.flow.storage_key_generator" ]
+
+  craue.form.flow.data_manager_default:
+    class: App\Form\DataManager
+    public: false
+    arguments: [ "@craue.form.flow.storage", "@security.token_storage", "@session" ]

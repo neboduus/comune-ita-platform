@@ -132,7 +132,6 @@ class PraticheAnonimeController extends Controller
       return $handler->execute($servizio, $ente);
     } catch (\Exception $e) {
       $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
-
       return $this->render(
         'Servizi/serviziFeedback.html.twig',
         array(
