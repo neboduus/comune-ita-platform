@@ -373,6 +373,22 @@ class Message
   }
 
   /**
+   * @return string
+   */
+  public function getProtocolNumber(): ?string
+  {
+    return $this->protocolNumber;
+  }
+
+  /**
+   * @param string $protocolNumber
+   */
+  public function setProtocolNumber(?string $protocolNumber): void
+  {
+    $this->protocolNumber = $protocolNumber;
+  }
+
+  /**
    * @return array
    */
   public function getCallToAction(): ?array

@@ -171,6 +171,12 @@ services:
     tags:
       - { name: form.type }
 
+  App\Form\Rest\MessageFormType:
+    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
+
   App\Form\Scia\PraticaEdiliziaVincoliType:
     autowire: true
     tags:

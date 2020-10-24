@@ -60,6 +60,7 @@ class ServicesAPIController extends AbstractFOSRestController
   /** @var FormServerApiAdapterService */
   private $formServerApiAdapterService;
 
+
   public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, FormServerApiAdapterService $formServerApiAdapterService)
   {
     $this->em = $em;

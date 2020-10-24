@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Controller;
 
 use App\Dto\Application;
@@ -7,6 +8,7 @@ use App\Entity\CPSUser;
 use App\Entity\FormIO;
 use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
+use App\Entity\ServizioRepository;
 use App\Form\IdCardType;
 use App\FormIO\SchemaFactory;
 use App\Helpers\MunicipalityConverter;
@@ -67,14 +69,15 @@ class UserController extends AbstractController
   /**
    * @Route("/", name="user_dashboard")
    * @param Request $request
-   * @return array
+   * @return Response
    */
   public function indexAction(Request $request)
   {
     $user = $this->getUser();
 
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
-    $servizi = $serviziRepository->findBy([], [], 3);
+    /** @var ServizioRepository $serviziRepository */
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $servizi = $serviziRepository->findStickyAvailable(3);
 
     $praticheRepo = $this->getDoctrine()->getRepository('App:Pratica');
     $pratiche = $praticheRepo->findBy(

@@ -491,6 +491,7 @@ class PraticheController extends AbstractController
 
       // Todo: rendere asincrono l'invio delle email
       if ($pratica->getOperatore()) {
+        $defaultSender = $this->getParameter('default_from_email_address');
         $instance = $this->instanceService->getCurrentInstance();
         /** @var OperatoreUser $userReceiver */
         $userReceiver = $message->getApplication()->getOperatore();
@@ -498,7 +499,7 @@ class PraticheController extends AbstractController
         $mess = $translator->trans('pratica.messaggi.messaggio', [
           '%message%' => $message->getMessage(),
           '%link%' => $this->router->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
-        $this->mailer->dispatchMail($user->getEmail(), $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+        $this->mailer->dispatchMail($defaultSender, $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
         $message->setSentAt(time());
         $em->persist($message);

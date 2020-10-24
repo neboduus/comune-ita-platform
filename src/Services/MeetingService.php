@@ -313,20 +313,6 @@ class MeetingService
         ]);
     }
 
-
-    // Add mail info
-    if ($calendar->getContactEmail()) {
-      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_with_contact', [
-          'ente' => $ente->getName(),
-          'email_address' => $contact
-        ]);
-    } else {
-      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_without_contact', [
-          'ente' => $ente->getName()
-        ]);
-    }
-
-
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
         $this->defaultSender,
@@ -499,18 +485,6 @@ class MeetingService
       }
     }
 
-    // Add mail info
-    if ($calendar->getContactEmail()) {
-      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_with_contact', [
-          'ente' => $ente->getName(),
-          'email_address' => $contact
-        ]);
-    } else {
-      $userMessage = $userMessage . $this->translator->trans('meetings.email.info_without_contact', [
-          'ente' => $ente->getName()
-        ]);
-    }
-
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
         $this->defaultSender,
@@ -567,19 +541,6 @@ class MeetingService
       'date' => $meeting->getFromTime()->format('d/m/Y'),
       'hour' => $meeting->getFromTime()->format('H:i')
     ]);
-    if ($calendar->getContactEmail()) {
-      $mailInfo = $this->translator->trans('meetings.email.info_with_contact', [
-        'ente' => $ente->getName(),
-        'email_address' => $calendar->getContactEmail()
-      ]);
-    } else {
-      $mailInfo = $this->translator->trans('meetings.email.info_without_contact', [
-        'ente' => $ente->getName()
-      ]);
-    }
-
-    $message = $message . $mailInfo;
-
 
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
@@ -611,19 +572,6 @@ class MeetingService
       'date' => $meeting->getFromTime()->format('d/m/Y'),
       'hour' => $meeting->getFromTime()->format('H:i')
     ]);
-    if ($calendar->getContactEmail()) {
-      $mailInfo = $this->translator->trans('meetings.email.info_with_contact', [
-        'ente' => $ente->getName(),
-        'email_address' => $calendar->getContactEmail()
-      ]);
-    } else {
-      $mailInfo = $this->translator->trans('meetings.email.info_without_contact', [
-        'ente' => $ente->getName()
-      ]);
-    }
-
-    $message = $message . $mailInfo;
-
 
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(

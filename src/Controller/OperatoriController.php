@@ -1300,7 +1300,7 @@ class OperatoriController extends Controller
       $statusChange->setMessage('Pratica rifiutata da '.$user->getFullName());
 
       if ($protocolloIsRequired) {
-        $this->messagesAdapterService->setNewStatus(
+        $this->praticaStatusService->setNewStatus(
           $pratica,
           Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
           $statusChange

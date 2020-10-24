@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 class ServizioRepository extends EntityRepository
 {
-  public function findStickyAvailable()
+  public function findStickyAvailable(int $limit = null)
   {
     $qb = $this->createQueryBuilder('s')
       ->where('s.status NOT IN (:notAvailableStatues)')
@@ -14,6 +14,10 @@ class ServizioRepository extends EntityRepository
       ->andWhere('s.sticky = true')
       ->andWhere('s.serviceGroup IS NULL')
       ->orderBy('s.name', 'ASC');
+
+    if ($limit){
+      $qb->setMaxResults($limit);
+    }
 
     return $qb->getQuery()->getResult();
   }
