@@ -1,12 +1,12 @@
 <?php
 
 
-namespace AppBundle\Dto;
+namespace App\Dto;
 
 
-use AppBundle\Entity\Allegato;
-use AppBundle\Entity\Pratica;
-use AppBundle\Model\File;
+use App\Entity\Allegato;
+use App\Entity\Pratica;
+use App\Model\File;
 use DateTime;
 use Exception;
 use JMS\Serializer\Annotation as Serializer;
@@ -14,8 +14,7 @@ use JMS\Serializer\Annotation\Groups;
 use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use \AppBundle\Entity\Message as MessageEntity;
-use function GuzzleHttp\Psr7\_parse_request_uri;
+use App\Entity\Message as MessageEntity;
 
 class Message
 {
@@ -373,7 +372,7 @@ class Message
     }
 
     $entity->setMessage($this->getMessage());
-    if ($this->getAuthor() instanceof \AppBundle\Entity\User) {
+    if ($this->getAuthor() instanceof \App\Entity\User) {
       $entity->setAuthor($this->getAuthor());
     }
     if ($this->getApplication() instanceof Pratica) {

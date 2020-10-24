@@ -184,7 +184,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['sort'] = $sortParameter;
     }
 
-    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $repositoryService = $this->em->getRepository('App:Servizio');
     $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
 
     if ($serviceParameter && !$service) {
@@ -290,7 +290,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
@@ -324,13 +324,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function attachmentAction($id, $attachmentId)
   {
 
-    $repository = $this->em->getRepository('AppBundle:Allegato');
+    $repository = $this->em->getRepository('App:Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $pratica = $this->em->getRepository('AppBundle:Pratica')->find($id);
+    $pratica = $this->em->getRepository('App:Pratica')->find($id);
 
     if ($result->getType() === RispostaOperatore::TYPE_DEFAULT) {
       $fileContent = $this->pdfBuilder->renderForResponse($pratica);
@@ -411,7 +411,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationPaymentAction($id, Request $request)
   {
 
-    $repository = $this->em->getRepository('AppBundle:Pratica');
+    $repository = $this->em->getRepository('App:Pratica');
     $application = $repository->find($id);
 
     if (!$application) {
@@ -525,7 +525,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function patchApplicationAction($id, Request $request)
   {
 
-    $repository = $this->em->getRepository('AppBundle:Pratica');
+    $repository = $this->em->getRepository('App:Pratica');
     $application = $repository->find($id);
 
     if (!$application) {
@@ -548,7 +548,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $_application = Application::fromEntity($application);
-    $form = $this->createForm('AppBundle\Form\ApplicationType', $_application);
+    $form = $this->createForm('App\Form\ApplicationType', $_application);
     $this->processForm($request, $form);
 
     if (!$form->isValid()) {
@@ -624,7 +624,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function messagesAction($id)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
     /** @var Pratica $result */
     $result = $repository->find($id);
     if ($result === null) {
@@ -668,7 +668,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function messageAction($messageId)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Message');
+    $repository = $this->getDoctrine()->getRepository('App:Message');
     /** @var MessageEntity $result */
     $result = $repository->find($messageId);
     if ($result === null) {
@@ -722,7 +722,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postMessageAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
 
     /** @var Pratica $application */
     $application = $repository->find($id);
@@ -736,7 +736,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $message->setAuthor($user);
     $message->setCreatedAt(new \DateTime());
 
-    $form = $this->createForm('AppBundle\Form\Rest\MessageFormType', $message);
+    $form = $this->createForm('App\Form\Rest\MessageFormType', $message);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -838,7 +838,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $allowedPatchFields = ['sent_at', 'read_at', 'clicked_at', 'protocolled_at', 'protocol_number'];
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Message');
+    $repository = $this->getDoctrine()->getRepository('App:Message');
     $messageEntity = $repository->find($messageId);
     if (!$messageEntity) {
       return $this->view("Message not found", Response::HTTP_NOT_FOUND);
@@ -861,7 +861,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $message = Message::fromEntity($messageEntity, $this->baseUrl.'/'.$messageEntity->getId());
 
-    $form = $this->createForm('AppBundle\Form\Rest\MessageFormType', $message);
+    $form = $this->createForm('App\Form\Rest\MessageFormType', $message);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -918,7 +918,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function messageAttachmentAction($attachmentId)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Allegato');
+    $repository = $this->getDoctrine()->getRepository('App:Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);

@@ -1,11 +1,11 @@
 <?php
 
-namespace AppBundle\Form\Rest;
+namespace App\Form\Rest;
 
 
-use AppBundle\Dto\Message;
-use AppBundle\Entity\Servizio;
-use AppBundle\Form\Rest\FileType;
+use App\Dto\Message;
+use App\Entity\Servizio;
+use App\Form\Rest\FileType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -107,7 +107,7 @@ class MessageFormType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Dto\Message',
+      'data_class' => 'App\Dto\Message',
       'allow_extra_fields' => true,
       'csrf_protection' => false
     ));

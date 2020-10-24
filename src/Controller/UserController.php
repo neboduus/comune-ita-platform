@@ -76,7 +76,7 @@ class UserController extends AbstractController
     $user = $this->getUser();
 
     /** @var ServizioRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
     $servizi = $serviziRepository->findStickyAvailable(3);
 
     $praticheRepo = $this->getDoctrine()->getRepository('App:Pratica');

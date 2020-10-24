@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Form\Rest;
+namespace App\Form\Rest;
 
-use AppBundle\Model\File;
+use App\Model\File;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
