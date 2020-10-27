@@ -12,13 +12,11 @@ use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -381,8 +379,6 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *     description="The resource was deleted successfully."
    * )
    * @SWG\Tag(name="services-groups")
-   *
-   * @Method("DELETE")
    */
   public function deleteAction($id)
   {

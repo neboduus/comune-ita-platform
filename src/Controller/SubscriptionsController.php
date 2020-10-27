@@ -6,22 +6,18 @@ namespace App\Controller;
 use App\BackOffice\SubcriptionsBackOffice;
 use App\Entity\Subscription;
 use App\Entity\SubscriptionService;
-
 use App\Entity\User;
-use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Omines\DataTablesBundle\DataTableFactory;
 use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 
 /**
@@ -31,12 +27,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  */
 class SubscriptionsController extends AbstractController
 {
-  use DataTablesTrait;
   private $subscriptionsBackOffice;
 
-  public function __construct(SubcriptionsBackOffice $subscriptionsBackOffice)
+  private $dataTableFactory;
+
+  public function __construct(SubcriptionsBackOffice $subscriptionsBackOffice, DataTableFactory $dataTableFactory)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
+    $this->dataTableFactory = $dataTableFactory;
   }
 
   /**
@@ -48,7 +46,7 @@ class SubscriptionsController extends AbstractController
     /** @var User $user */
     $user = $this->getUser();
 
-    $table = $this->createDataTable()
+    $table = $this->dataTableFactory->create()
       ->add('show', TextColumn::class, ['label' => 'show', 'field' => 'subscriber.id', 'searchable' => false, 'orderable' => false, 'render' => function ($value, $subscriptionService) {
         return sprintf('<a href="%s"><svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-zoom-in"></use></svg></a>', $this->generateUrl('operatori_subscriber_show', [
           'subscriber' => $value
@@ -96,8 +94,7 @@ class SubscriptionsController extends AbstractController
 
   /**
    * @param Request $request
-   * @Route("/{subscriptionService}/upload",name="operatori_importa_csv_iscrizioni")
-   * @Method("POST")
+   * @Route("/{subscriptionService}/upload",name="operatori_importa_csv_iscrizioni", methods={"POST"})
    * @return mixed
    * @throws \Exception
    */
@@ -152,7 +149,7 @@ class SubscriptionsController extends AbstractController
    *
    * @param Subscription $subscription The Subscription entity
    *
-   * @return \Symfony\Component\Form\Form The form
+   * @return FormInterface The form
    */
   private function createDeleteForm(Subscription $subscription)
   {
@@ -164,8 +161,7 @@ class SubscriptionsController extends AbstractController
 
   /**
    * Deletes a Subscription entity.
-   * @Route("/operatori/subscription/{id}/delete", name="operatori_subscription_delete")
-   * @Method("GET")
+   * @Route("/operatori/subscription/{id}/delete", name="operatori_subscription_delete", methods={"GET"})
    * @param Request $request the request
    * @param Subscription $subscription The Subscription entity
    * @return \Symfony\Component\HttpFoundation\RedirectResponse

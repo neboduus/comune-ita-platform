@@ -9,7 +9,6 @@ use App\Entity\RichiestaIntegrazioneDTO;
 use App\Entity\RispostaOperatoreDTO;
 use App\Entity\SciaPraticaEdilizia;
 use App\Entity\Servizio;
-use App\Entity\StatusChange;
 use App\Logging\LogConstants;
 use App\Mapper\Giscom\GiscomStatusMapper;
 use App\Services\DelayedGiscomAPIAdapterService;
@@ -19,18 +18,15 @@ use App\Services\PraticaIntegrationService;
 use App\Services\PraticaStatusService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ramsey\Uuid\Uuid;
 use App\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class APIController
@@ -99,16 +95,8 @@ class GiscomAPIController extends Controller
     $this->delayedGiscomAPIAdapterService = $delayedGiscomAPIAdapterService;
   }
 
-
-  public function setContainer(ContainerInterface $container = null)
-  {
-    parent::setContainer($container);
-
-  }
-
   /**
-   * @Route("/giscom/", name="giscom_api_ping")
-   * @Method({"GET"})
+   * @Route("/giscom/", name="giscom_api_ping", methods={"GET"})
    * @return Response
    */
   public function indexAction(Request $request)
@@ -117,8 +105,7 @@ class GiscomAPIController extends Controller
   }
 
   /**
-   * @Route("/giscom/pratica/{pratica}/view", name="giscom_api_pratica_view")
-   * @Method({"GET"})
+   * @Route("/giscom/pratica/{pratica}/view", name="giscom_api_pratica_view", methods={"GET"})
    * @Security("has_role('ROLE_GISCOM')")
    * @param Request $request
    * @param Pratica $pratica
@@ -135,8 +122,7 @@ class GiscomAPIController extends Controller
   }
 
   /**
-   * @Route("/giscom/pratica/attachment/{attachment}", name="giscom_api_attachment")
-   * @Method({"GET"})
+   * @Route("/giscom/pratica/attachment/{attachment}", name="giscom_api_attachment", methods={"GET"})
    * @Security("has_role('ROLE_GISCOM')")
    * @return Response
    */
@@ -160,8 +146,7 @@ class GiscomAPIController extends Controller
   }
 
   /**
-   * @Route("/giscom/pratica/offline/create", name="giscom_api_offline_pratica_create")
-   * @Method({"POST"})
+   * @Route("/giscom/pratica/offline/create", name="giscom_api_offline_pratica_create", methods={"POST"})
    * @Security("has_role('ROLE_GISCOM')")
    * @return Response
    */
@@ -263,8 +248,7 @@ class GiscomAPIController extends Controller
   }
 
   /**
-   * @Route("/giscom/pratica/{pratica}/status", name="giscom_api_pratica_update_status")
-   * @Method({"POST"})
+   * @Route("/giscom/pratica/{pratica}/status", name="giscom_api_pratica_update_status", methods={"POST"})
    * @Security("has_role('ROLE_GISCOM')")
    * @param Request $request
    * @param Pratica $pratica
@@ -352,8 +336,7 @@ class GiscomAPIController extends Controller
   }
 
   /**
-   * @Route("/giscom/pratica/{pratica}/protocolli", name="giscom_api_pratica_update_protocolli")
-   * @Method({"POST"})
+   * @Route("/giscom/pratica/{pratica}/protocolli", name="giscom_api_pratica_update_protocolli", methods={"POST"})
    * @Security("has_role('ROLE_GISCOM')")
    * @return Response
    */
@@ -383,8 +366,7 @@ class GiscomAPIController extends Controller
   }
 
   /**
-   * @Route("/giscom/pratica/{pratica}/richiestaIntegrazioni", name="giscom_api_pratica_richiesta_integrazioni")
-   * @Method({"POST"})
+   * @Route("/giscom/pratica/{pratica}/richiestaIntegrazioni", name="giscom_api_pratica_richiesta_integrazioni", methods={"POST"})
    * @Security("has_role('ROLE_GISCOM')")
    * @return Response
    * @throws \Exception

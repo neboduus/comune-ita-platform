@@ -10,7 +10,7 @@ use App\Entity\Subscription;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubcriptionsBackOffice implements BackOfficeInterface
 {

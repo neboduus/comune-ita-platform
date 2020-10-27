@@ -12,7 +12,7 @@ use Hoa\Event\Exception;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class PecProtocolloHandler implements ProtocolloHandlerInterface
@@ -237,7 +237,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       ->setTo($receiver, $ente->getName())
       ->setBody(
         $this->templating->render(
-          'App:Emails/Pec:content.html.twig',
+          'Emails/Pec/content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type
@@ -247,7 +247,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       )
       ->addPart(
         $this->templating->render(
-          'App:Emails/Pec:content.html.twig',
+          'Emails/Pec/content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type

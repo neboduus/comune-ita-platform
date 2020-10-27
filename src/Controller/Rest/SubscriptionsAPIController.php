@@ -11,7 +11,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 

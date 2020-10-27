@@ -5,10 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\ServiceGroup;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class ServiceGroupController
@@ -18,8 +16,7 @@ class ServiceGroupController extends AbstractController
 {
   /**
    * Lists all Service Group entities.
-   * @Route("", name="admin_service_group_index")
-   * @Method("GET")
+   * @Route("", name="admin_service_group_index", methods={"GET"})
    */
   public function indexServiceGroupAction()
   {
@@ -35,8 +32,7 @@ class ServiceGroupController extends AbstractController
 
   /**
    * Creates a new service group entity.
-   * @Route("/new", name="admin_service_group_new")
-   * @Method({"GET", "POST"})
+   * @Route("/new", name="admin_service_group_new", methods={"GET", "POST"})
    */
   public function newServiceGroupAction(Request $request)
   {
@@ -62,8 +58,7 @@ class ServiceGroupController extends AbstractController
 
   /**
    * Displays a form to edit an existing service group entity.
-   * @Route("/{id}/edit", name="admin_service_group_edit")
-   * @Method({"GET", "POST"})
+   * @Route("/{id}/edit", name="admin_service_group_edit", methods={"GET", "POST"})
    */
   public function editServiceGroupAction(Request $request, ServiceGroup $serviceGroup)
   {
@@ -85,8 +80,7 @@ class ServiceGroupController extends AbstractController
 
   /**
    * Deletes a service group entity.
-   * @Route("/{id}/delete", name="admin_service_group_delete")
-   * @Method({"GET", "POST", "DELETE"})
+   * @Route("/{id}/delete", name="admin_service_group_delete", methods={"GET", "POST", "DELETE"})
    */
   public function deleteServiceGroupAction(Request $request, ServiceGroup $serviceGroup)
   {

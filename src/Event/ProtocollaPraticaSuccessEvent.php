@@ -3,14 +3,14 @@
 namespace App\Event;
 
 use App\Entity\Pratica;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ProtocollaPraticaSuccessEvent extends Event
 {
     /**
      * @var Pratica
      */
-    private $pratica;
+    protected $pratica;
 
     public function __construct(Pratica $pratica)
     {

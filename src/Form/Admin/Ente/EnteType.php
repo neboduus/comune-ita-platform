@@ -9,6 +9,7 @@ use App\Entity\Ente;
 use App\Entity\Servizio;
 use App\Form\Base\BlockQuoteType;
 use App\Model\Gateway;
+use App\Payment\PaymentGatewayRegistry;
 use App\Services\BackOfficeCollection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,7 +30,7 @@ class EnteType extends AbstractType
 {
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -38,10 +39,13 @@ class EnteType extends AbstractType
    */
   private $backOfficeCollection;
 
-  public function __construct(EntityManagerInterface $entityManager, BackOfficeCollection $backOffices)
+  private $paymentGatewayRegistry;
+
+  public function __construct(EntityManagerInterface $entityManager, BackOfficeCollection $backOffices, PaymentGatewayRegistry $paymentGatewayRegistry)
   {
     $this->em = $entityManager;
     $this->backOfficeCollection = $backOffices;
+    $this->paymentGatewayRegistry = $paymentGatewayRegistry;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -114,7 +118,8 @@ class EnteType extends AbstractType
     ]);
 
     foreach ($availableGateways as $g) {
-      $parameters = $g->getFcqn()::getPaymentParameters();
+      $paymentGateway = $this->paymentGatewayRegistry->get($g->getFcqn());
+      $parameters = $paymentGateway::getPaymentParameters();
       if (count($parameters) > 0) {
 
         $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [

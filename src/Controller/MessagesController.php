@@ -6,8 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Services\MessagesAdapterService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,9 +34,8 @@ class MessagesController extends Controller
   /**
    * @param Request $request
    * @param string $threadId
-   * @Route(name="messages_controller_enqueue_for_user", path="/user/messages/{threadId}")
-   * @Route(name="messages_controller_enqueue_for_operatore", path="/operatori/messages/{threadId}")
-   * @Method({"PUT"})
+   * @Route(name="messages_controller_enqueue_for_user", path="/user/messages/{threadId}", methods={"PUT"})
+   * @Route(name="messages_controller_enqueue_for_operatore", path="/operatori/messages/{threadId}", methods={"PUT"})
    * @return Response
    */
   public function postMessageAction(Request $request, $threadId)
@@ -59,9 +57,8 @@ class MessagesController extends Controller
 
   /**
    * @param Request $request
-   * @Route(name="message_controller_get_threads_for_user", path="/user/threads")
-   * @Route(name="message_controller_get_threads_for_operatore", path="/operatori/threads")
-   * @Method({"GET"})
+   * @Route(name="message_controller_get_threads_for_user", path="/user/threads", methods={"GET"})
+   * @Route(name="message_controller_get_threads_for_operatore", path="/operatori/threads", methods={"GET"})
    */
   public function getThreadsAction(Request $request)
   {
@@ -72,9 +69,8 @@ class MessagesController extends Controller
 
 
   /**
-   * @Route(name="messages_controller_get_messages_for_thread_and_user", path="/user/messages/{threadId}")
-   * @Route(name="messages_controller_get_messages_for_thread_and_operatore", path="/operatori/messages/{threadId}")
-   * @Method({"GET"})
+   * @Route(name="messages_controller_get_messages_for_thread_and_user", path="/user/messages/{threadId}", methods={"GET"})
+   * @Route(name="messages_controller_get_messages_for_thread_and_operatore", path="/operatori/messages/{threadId}", methods={"GET"})
    */
   public function getMessagesForThreadAction(Request $request, $threadId)
   {

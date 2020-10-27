@@ -5,6 +5,7 @@ twig:
   exception_controller: null
   form_themes:
     - 'bootstrap_4_layout.html.twig'
+    - '@EWZRecaptcha/Form/ewz_recaptcha_widget.html.twig'
   globals:
     locale: '%locale%'
     header_top:

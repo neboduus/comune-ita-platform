@@ -4,16 +4,13 @@
 namespace App\Controller\Rest;
 
 use App\Dto\Application;
-use App\Dto\Service;
 use App\Dto\Message;
 use App\Entity\Allegato;
 use App\Entity\AllegatoMessaggio;
-use App\Entity\AllegatoOperatore;
 use App\Entity\Pratica;
 use App\Entity\Message as MessageEntity;
 use App\Entity\RispostaOperatore;
 use App\Entity\Servizio;
-use App\Form\Base\AllegatoType;
 use App\Model\PaymentOutcome;
 use App\Model\MetaPagedList;
 use App\Model\LinksPagedList;
@@ -21,30 +18,21 @@ use App\Services\InstanceService;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use App\Utils\UploadedBase64File;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -160,7 +148,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="applications")
    */
-
   public function getApplicationsAction(Request $request)
   {
     $offset = intval($request->get('offset', 0));
@@ -253,7 +240,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
 
       return $this->view($result, Response::HTTP_OK);
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
       return $this->view($exception->getMessage(), Response::HTTP_BAD_REQUEST);
     }
   }
@@ -300,7 +287,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = Application::fromEntity($result, $this->baseUrl.'/'.$result->getId(), true, $version);
 
       return $this->view($data, Response::HTTP_OK);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
     }
   }
@@ -321,7 +308,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param $id
-   * @return BinaryFileResponse|View
+   * @return Response|View
    */
   public function attachmentAction($id, $attachmentId)
   {
@@ -462,7 +449,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_ERROR);
       }
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
 
       $data = [
         'type' => 'error',
@@ -584,13 +571,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $this->em->persist($application);
       $this->em->flush();
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
 
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
@@ -768,7 +755,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       $this->em->persist($messageEntity);
       $this->em->flush();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -881,7 +868,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     try {
       $this->em->persist($messageEntity);
       $this->em->flush();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
 
       $data = [
         'type' => 'error',

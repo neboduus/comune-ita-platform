@@ -521,7 +521,7 @@ class Servizio
    */
   public function getPraticaFCQN()
   {
-    return $this->praticaFCQN;
+    return str_replace('AppBundle\\', 'App\\', $this->praticaFCQN);
   }
 
   /**

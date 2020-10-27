@@ -2,7 +2,7 @@
 
 namespace App\Form\Extension;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TestiAccompagnatoriProcedura
 {

@@ -5,7 +5,6 @@ namespace App\Command;
 use App\DataFixtures\ORM\LoadData;
 use App\Entity\AdminUser;
 use App\Entity\Ente;
-use App\Entity\OperatoreUser;
 use App\Entity\PaymentGateway;
 use App\Model\Gateway;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +18,6 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ConfigureInstanceCommand extends Command
 {
-
   /** @var LoadData */
   private $loader;
 
@@ -52,7 +50,6 @@ class ConfigureInstanceCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-
     $this->symfonyStyle = new SymfonyStyle($input, $output);
     $instance = $input->getOption('instance');
     if (empty($instance)) {
@@ -69,7 +66,6 @@ class ConfigureInstanceCommand extends Command
     if ($ente instanceof Ente) {
       $isEnte = true;
     }
-
 
     $this->symfonyStyle->title("Inserisci i dati per la configurazione dell'istanza");
     $suggestion = $isEnte ? $ente->getName() : 'Comune di Bugliano';
@@ -108,12 +104,13 @@ class ConfigureInstanceCommand extends Command
     $this->loader->loadServizi($manager);
     $this->loader->loadTerminiUtilizzo($manager);
 
-
     if ($ente) {
       $this->createAdmin();
     }
 
     $this->symfonyStyle->success("Istanza configurata con successo");
+
+    return 0;
   }
 
   private function createAdmin()

@@ -8,6 +8,7 @@ use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
 use App\Entity\TerminiUtilizzo;
 use App\InstanceKernel;
+use App\InstancesProvider;
 use App\Logging\LogConstants;
 use App\Security\AbstractAuthenticator;
 use App\Security\LogoutSuccessHandler;
@@ -15,7 +16,7 @@ use App\Services\InstanceService;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
@@ -25,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class DefaultController
@@ -42,12 +43,18 @@ class DefaultController extends Controller
   private $translator;
 
   /**
+   * @var InstanceService
+   */
+  private $instanceService;
+
+  /**
    * DefaultController constructor.
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, InstanceService $instanceService)
   {
     $this->logger = $logger;
     $this->translator = $translator;
+    $this->instanceService = $instanceService;
   }
 
   /**
@@ -57,12 +64,21 @@ class DefaultController extends Controller
    */
   public function indexAction()
   {
-    if ($this->container->get('kernel') instanceof InstanceKernel) {
+    if ($this->instanceService->hasInstance()) {
       return $this->forward(ServiziController::class . '::serviziAction');
     } else {
+      $enti = $this->getDoctrine()->getRepository('App:Ente')->findAll();
+      if (empty($enti)){
+        foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance){
+          $enti[] = [
+            'name' => isset($instance['name']) ? $instance['name'] : ucwords(str_replace('-', ' ', $identifier)),
+            'slug' => $identifier
+          ];
+        }
+      }
       return $this->render(
         'Default/common.html.twig',
-        ['enti' => $this->getDoctrine()->getRepository('App:Ente')->findAll()]
+        ['enti' => $enti]
       );
     }
   }

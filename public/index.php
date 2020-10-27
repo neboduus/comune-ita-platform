@@ -1,5 +1,6 @@
 <?php
 
+use App\InstancesProvider;
 use App\Kernel;
 use App\InstanceKernel;
 use Symfony\Component\ErrorHandler\Debug;
@@ -22,59 +23,24 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
     Request::setTrustedHosts([$trustedHosts]);
 }
 
-
-
-$currentInstance = false;
-$instances = Yaml::parse(file_get_contents(__DIR__.'/../config/instances_dev.yml'));
-$instancePaths = $instances['paths'];
-$instanceParams = $instances['instances'];
-
-usort(
-  $instancePaths,
-  function ($a, $b) {
-    $aPath = $a['uri'].'/'.$a['path'];
-    $bPath = $b['uri'].'/'.$b['path'];
-    if (mb_strlen($aPath) == mb_strlen($bPath)) {
-      return 0;
-    }
-
-    return (mb_strlen($aPath) < mb_strlen($bPath)) ? 1 : -1;
-  }
-);
+$instanceProvider = InstancesProvider::factory();
 
 $request = Request::createFromGlobals();
 $host = $request->getHost();
 $pathInfoParts = explode('/', trim($request->getPathInfo(), '/'));
 $path = isset($pathInfoParts[0]) ? $pathInfoParts[0] : null;
 
-$identifier = false;
-foreach ($instancePaths as $item) {
-  if ($item['uri'] == $host && (
-      (!empty($item['path']) && $item['path'] == $path)
-      || empty($item['path'])
-      || (empty($item['path']) && $path == InstanceKernel::DEFAULT_PREFIX)
-    )) {
+$instanceIdentifier = $instanceProvider->match($host, $path);
 
-    $identifier = $item['instance'];
-
-    if (isset($instanceParams[$identifier])) {
-      if (!empty($item['path'])) {
-        $instanceParams[$identifier]['prefix'] = $item['path'];
-      } elseif ($path != InstanceKernel::DEFAULT_PREFIX) {
-        $response = new RedirectResponse('/'.InstanceKernel::DEFAULT_PREFIX, 302);
-        $response->send();
-        exit;
-      }
-      break;
-    }
-
-  }
+if ($instanceIdentifier instanceof RedirectResponse){
+  $instanceIdentifier->send();
+  exit;
 }
 
-if ($identifier && isset($instanceParams[$identifier])) {
+if ($instanceIdentifier && $instanceProvider->hasInstance($instanceIdentifier)) {
   $kernel = new InstanceKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
-  $kernel->setIdentifier($identifier);
-  $kernel->setInstanceParameters($instanceParams[$identifier]);
+  $kernel->setIdentifier($instanceIdentifier);
+  $kernel->setInstanceParameters($instanceProvider->getInstance($instanceIdentifier));
 } else {
   $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 }

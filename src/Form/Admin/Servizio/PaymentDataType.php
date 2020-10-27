@@ -8,6 +8,7 @@ use App\Entity\Servizio;
 use App\Form\Base\BlockQuoteType;
 use App\Form\PaymentParametersType;
 use App\Model\Gateway;
+use App\Payment\PaymentGatewayRegistry;
 use App\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,10 +48,13 @@ class PaymentDataType extends AbstractType
    */
   private $fields = [];
 
-  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService)
+  private $gatewayRegistry;
+
+  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService,  PaymentGatewayRegistry $gatewayRegistry)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
+    $this->gatewayRegistry = $gatewayRegistry;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -124,7 +128,8 @@ class PaymentDataType extends AbstractType
 
 
     foreach ($gateways as $g) {
-      $parameters = $g->getFcqn()::getPaymentParameters();
+      $paymentGateway = $this->gatewayRegistry->get($g->getFcqn());
+      $parameters = $paymentGateway::getPaymentParameters();
       if (count($parameters) > 0) {
         $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
           'label' => false,

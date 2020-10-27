@@ -19,7 +19,7 @@ use App\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class ServiceFlow extends FormFlow

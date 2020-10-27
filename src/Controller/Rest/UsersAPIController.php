@@ -4,21 +4,18 @@ namespace App\Controller\Rest;
 
 use App\Dto\User;
 use App\Services\InstanceService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class UsersAPIController
@@ -417,7 +414,6 @@ class UsersAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="users")
    *
-   * @Method("DELETE")
    * @param $id
    * @return View
    */

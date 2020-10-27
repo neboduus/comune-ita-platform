@@ -5,7 +5,7 @@
         <p><strong>{{ pratica.paymentType.name }}</strong></p>
         {%  set fcqn_parts = pratica.paymentType.fcqn | split('\\') %}
         {% set class_name = fcqn_parts|last %}
-        {{ include('Gateway/pdf:' ~ class_name ~ '.html.twig', {'pratica':pratica, 'user': user}) }}
+        {{ include('Gateway/pdf/' ~ class_name ~ '.html.twig', {'pratica':pratica, 'user': user}) }}
 
     </div>
 {% endif %}

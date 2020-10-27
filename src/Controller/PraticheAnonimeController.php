@@ -15,14 +15,15 @@ use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class PraticheAnonimeController
@@ -68,6 +69,12 @@ class PraticheAnonimeController extends Controller
   /** @var ExpressionValidator */
   protected $expressionValidator;
 
+  /** @var ServizioHandlerRegistry */
+  protected $servizioHandlerRegistry;
+
+  /** @var SessionInterface */
+  protected $session;
+
   /**
    * PraticaFlow constructor.
    *
@@ -79,6 +86,8 @@ class PraticheAnonimeController extends Controller
    * @param InstanceService $instanceService
    * @param $hashValidity
    * @param ExpressionValidator $expressionValidator
+   * @param ServizioHandlerRegistry $servizioHandlerRegistry
+   * @param SessionInterface $session
    */
   public function __construct(
     LoggerInterface $logger,
@@ -88,7 +97,9 @@ class PraticheAnonimeController extends Controller
     DematerializedFormAllegatiAttacherService $dematerializer,
     InstanceService $instanceService,
     $hashValidity,
-    ExpressionValidator $expressionValidator
+    ExpressionValidator $expressionValidator,
+    ServizioHandlerRegistry $servizioHandlerRegistry,
+    SessionInterface $session
   ) {
     $this->logger = $logger;
     $this->translator = $translator;
@@ -98,6 +109,8 @@ class PraticheAnonimeController extends Controller
     $this->instanceService = $instanceService;
     $this->hashValidity = $hashValidity;
     $this->expressionValidator = $expressionValidator;
+    $this->servizioHandlerRegistry = $servizioHandlerRegistry;
+    $this->session = $session;
   }
 
   /**
@@ -110,7 +123,7 @@ class PraticheAnonimeController extends Controller
    */
   public function newAction(Request $request, Servizio $servizio)
   {
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
+    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
 
     $ente = $this->instanceService->getCurrentInstance();
 
@@ -171,13 +184,12 @@ class PraticheAnonimeController extends Controller
 
   private function getHash(Request $request)
   {
-    $session = $this->get('session');
-    if (!$session->isStarted()) {
-      $session->start();
+    if (!$this->session->isStarted()) {
+      $this->session->start();
     }
     $hash = $request->query->get('hash');
     if ($hash) {
-      $session->set(Pratica::HASH_SESSION_KEY, $hash);
+      $this->session->set(Pratica::HASH_SESSION_KEY, $hash);
     }
 
     return $hash;

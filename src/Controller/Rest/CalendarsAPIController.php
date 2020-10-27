@@ -3,27 +3,21 @@
 namespace App\Controller\Rest;
 
 use App\Entity\Calendar;
-use App\Entity\Meeting;
 use App\Entity\OpeningHour;
 use App\Services\InstanceService;
 use App\Services\MeetingService;
-use DateInterval;
 use DateTime;
-use DateTimeZone;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class CalendarsAPIController
@@ -536,7 +530,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="calendars")
    *
-   * @Method("DELETE")
    * @param $id
    * @return View
    */
@@ -688,7 +681,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param $calendar_id
    * @param $id
    *
-   * @Method("DELETE")
    * @return View
    */
   public function deleteOpeningHourAction($calendar_id, $id)

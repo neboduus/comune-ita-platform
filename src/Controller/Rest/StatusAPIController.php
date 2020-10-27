@@ -7,7 +7,7 @@ use App\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;

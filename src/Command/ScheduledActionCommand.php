@@ -2,19 +2,58 @@
 
 namespace App\Command;
 
-use App\Entity\ScheduledAction;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
+use App\Services\InstanceService;
+use App\Services\SchedulableActionRegistry;
 use App\Services\ScheduleActionService;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Exception;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\Routing\RouterInterface;
+use Throwable;
+use function json_encode;
 
 
-class ScheduledActionCommand extends ContainerAwareCommand
+class ScheduledActionCommand extends Command
 {
+  private $instanceService;
+
+  private $logger;
+
+  private $scheduleActionService;
+
+  private $router;
+
+  private $schedulableActionRegistry;
+
+  private $scheme;
+
+  private $host;
+
+  public function __construct(
+    InstanceService $instanceService,
+    LoggerInterface $logger,
+    ScheduleActionService $scheduleActionService,
+    RouterInterface $router,
+    SchedulableActionRegistry $schedulableActionRegistry,
+    string $scheme,
+    string $host
+  ) {
+    $this->instanceService = $instanceService;
+    $this->logger = $logger;
+    $this->scheduleActionService = $scheduleActionService;
+    $this->router = $router;
+    $this->schedulableActionRegistry = $schedulableActionRegistry;
+    $this->scheme = $scheme;
+    $this->host = $host;
+
+    parent::__construct();
+  }
+
   protected function configure()
   {
     $this
@@ -29,16 +68,12 @@ class ScheduledActionCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
     $hostname = gethostname();
-    $logger = $this->getContainer()->get('logger');
 
-    $context = $this->getContainer()->get('router')->getContext();
-    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
+    $context = $this->router->getContext();
+    $context->setHost($this->host);
+    $context->setScheme($this->scheme);
 
-    $logger->info('Starting a scheduled action with options: ' . \json_encode($input->getOptions()));
-
-    /** @var ScheduleActionService $scheduleActionService */
-    $scheduleActionService = $this->getContainer()->get('ocsdc.schedule_action_service');
+    $this->logger->info('Starting a scheduled action with options: ' . json_encode($input->getOptions()));
 
     $count = (int)$input->getOption('count');
     if (!$count) {
@@ -53,41 +88,41 @@ class ScheduledActionCommand extends ContainerAwareCommand
     }
 
     if (!$forceHostname) {
-      $logger->info("Try to reserve $count actions for host $hostname");
-      $scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes);
+      $this->logger->info("Try to reserve $count actions for host $hostname");
+      $this->scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes);
     } else {
       $hostname = $forceHostname;
-      $logger->info("Force execution for host $hostname");
+      $this->logger->info("Force execution for host $hostname");
     }
 
-    $actions = $scheduleActionService->getPendingActions($hostname);
+    $actions = $this->scheduleActionService->getPendingActions($hostname);
     $count = count($actions);
-    $logger->info("Execute $count actions for host $hostname");
+    $this->logger->info("Execute $count actions for host $hostname");
 
     foreach ($actions as $action) {
       try {
-        $service = $this->getContainer()->get($action->getService());
+        $service = $this->schedulableActionRegistry->getByName($action->getService());
         if ($service instanceof ScheduledActionHandlerInterface) {
-          $logger->info('Execute ' . $action->getType() . ' with params ' . $action->getParams());
+          $this->logger->info('Execute ' . $action->getType() . ' with params ' . $action->getParams());
           try {
             $service->executeScheduledAction($action);
-            $scheduleActionService->markAsDone($action);
-          } catch (\Exception $e) {
-            $logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
-          } catch (\ErrorException $e) {
-            $logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
+            $this->scheduleActionService->markAsDone($action);
+          } catch (Exception $e) {
+            $this->logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
+          } catch (Throwable $e) {
+            $this->logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
           }
         } else {
-          $logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
-          $scheduleActionService->markAsInvalid($action);
+          $this->logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
+          $this->scheduleActionService->markAsInvalid($action);
         }
       } catch (ServiceNotFoundException $e) {
-        $logger->error($e->getMessage());
-        $scheduleActionService->markAsInvalid($action);
+        $this->logger->error($e->getMessage());
+        $this->scheduleActionService->markAsInvalid($action);
       }
     }
 
-    $countByHostname = $scheduleActionService->getStatistic();
+    $countByHostname = $this->scheduleActionService->getStatistic();
     foreach ($countByHostname as $count) {
       $message = 'Pending ' . $count['count'] . ' actions ';
       if (empty($count['hostname'])) {
@@ -95,7 +130,9 @@ class ScheduledActionCommand extends ContainerAwareCommand
       } else {
         $message .= 'reserved by host ' . $count['hostname'];
       }
-      $logger->info($message);
+      $this->logger->info($message);
     }
+
+    return 0;
   }
 }

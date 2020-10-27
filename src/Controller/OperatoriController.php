@@ -18,6 +18,7 @@ use App\Entity\StatusChange;
 use App\Form\Base\MessageType;
 use App\Form\Operatore\Base\ApplicationOutcomeType;
 use App\Form\Operatore\Base\PraticaOperatoreFlow;
+use App\Form\PraticaFlowRegistry;
 use App\FormIO\Schema;
 use App\FormIO\SchemaFactory;
 use App\Logging\LogConstants;
@@ -33,10 +34,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -55,7 +54,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class OperatoriController
@@ -84,26 +83,24 @@ class OperatoriController extends Controller
 
   /* @var EntityManagerInterface */
   private $entityManager;
-  /**
-   * @var FeatureManagerInterface
-   */
+
+  /** @var FeatureManagerInterface */
   private $featureManager;
-  /**
-   * @var RouterInterface
-   */
+
+  /** @var RouterInterface */
   private $router;
-  /**
-   * @var MailerService
-   */
+
+  /** * @var MailerService */
   private $mailerService;
-  /**
-   * @var ModuloPdfBuilderService
-   */
+
+  /** @var ModuloPdfBuilderService */
   private $moduloPdfBuilderService;
-  /**
-   * @var MessagesAdapterService
-   */
+
+  /** @var MessagesAdapterService */
   private $messagesAdapterService;
+
+  /** @var PraticaFlowRegistry */
+  private $praticaFlowRegistry;
 
   /**
    * OperatoriController constructor.
@@ -119,6 +116,7 @@ class OperatoriController extends Controller
    * @param MailerService $mailerService
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param MessagesAdapterService $messagesAdapterService
+   * @param PraticaFlowRegistry $praticaFlowRegistry
    */
   public function __construct(
     SchemaFactory $schemaFactory,
@@ -132,7 +130,8 @@ class OperatoriController extends Controller
     RouterInterface $router,
     MailerService $mailerService,
     ModuloPdfBuilderService $moduloPdfBuilderService,
-    MessagesAdapterService $messagesAdapterService
+    MessagesAdapterService $messagesAdapterService,
+    PraticaFlowRegistry $praticaFlowRegistry
   ) {
     $this->schemaFactory = $schemaFactory;
     $this->serializer = $serializer;
@@ -146,12 +145,13 @@ class OperatoriController extends Controller
     $this->mailerService = $mailerService;
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->messagesAdapterService = $messagesAdapterService;
+    $this->praticaFlowRegistry = $praticaFlowRegistry;
   }
 
 
   /**
    * @Route("/",name="operatori_index")
-   * @return array
+   * @return Response
    */
   public function indexAction()
   {
@@ -523,7 +523,7 @@ class OperatoriController extends Controller
 
   /**
    * @Route("/usage",name="operatori_usage")
-   * @return array
+   * @return Response
    */
   public function usageAction()
   {
@@ -566,7 +566,7 @@ class OperatoriController extends Controller
    * @Route("/{pratica}/protocollo", name="operatori_pratiche_show_protocolli")
    * @param Pratica $pratica
    *
-   * @return array
+   * @return Response
    * @throws \Exception
    */
   public function showProtocolliAction(Pratica $pratica)
@@ -684,7 +684,7 @@ class OperatoriController extends Controller
 
       $oldUser = $pratica->getOperatore();
       $pratica->setOperatore($user);
-      $this->entityManager->flush($pratica);
+      $this->entityManager->flush();
 
       $this->logger->info(
         LogConstants::PRATICA_REASSIGNED,
@@ -705,7 +705,7 @@ class OperatoriController extends Controller
    * @Route("/{pratica}/detail",name="operatori_show_pratica")
    * @param Pratica|DematerializedFormPratica $pratica
    * @param Request $request
-   * @return array|RedirectResponse
+   * @return Response
    */
   public function showPraticaAction(Pratica $pratica, Request $request)
   {
@@ -987,7 +987,7 @@ class OperatoriController extends Controller
    * @Route("/{pratica}/elabora",name="operatori_elabora_pratica")
    * @param Pratica $pratica
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response
    */
   public function elaboraPraticaAction(Pratica $pratica)
   {
@@ -1005,10 +1005,10 @@ class OperatoriController extends Controller
 
     if ($praticaFlowServiceName) {
       /** @var PraticaOperatoreFlow $praticaFlowService */
-      $praticaFlowService = $this->get($praticaFlowServiceName);
+      $praticaFlowService = $this->praticaFlowRegistry->getByName($praticaFlowServiceName);
     } else {
       // Default pratica flow
-      $praticaFlowService = $this->get('ocsdc.form.flow.standardoperatore');
+      $praticaFlowService = $this->praticaFlowRegistry->getByName('ocsdc.form.flow.standardoperatore');
     }
 
     $praticaFlowService->setInstanceKey($user->getId());
@@ -1086,7 +1086,7 @@ class OperatoriController extends Controller
   /**
    * @Route("/list",name="operatori_list_by_ente")
    * @Security("has_role('ROLE_OPERATORE_ADMIN')")
-   * @return array
+   * @return Response
    */
   public function listOperatoriByEnteAction()
   {
@@ -1111,7 +1111,7 @@ class OperatoriController extends Controller
    * @Security("has_role('ROLE_OPERATORE_ADMIN')")
    * @param Request $request
    * @param OperatoreUser $operatore
-   * @return array|RedirectResponse
+   * @return Response
    */
   public function detailOperatoreAction(Request $request, OperatoreUser $operatore)
   {
@@ -1394,8 +1394,7 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @Route("/usage/metriche", name="metriche")
-   * @Method("GET")
+   * @Route("/usage/metriche", name="metriche", methods={"GET"})
    * @param Request $request
    * @return Response
    */

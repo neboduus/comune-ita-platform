@@ -69,13 +69,13 @@ class ScheduleActionService
     public function markAsDone(ScheduledAction $action)
     {
       $action->setDone();
-      $this->entityManager->flush($action);
+      $this->entityManager->flush();
     }
 
     public function markAsInvalid(ScheduledAction $action)
     {
       $action->setInvalid();
-      $this->entityManager->flush($action);
+      $this->entityManager->flush();
     }
 
     /**
@@ -127,7 +127,7 @@ class ScheduleActionService
       $dql = 'UPDATE scheduled_action SET hostname = ?, updated_at = ?
               WHERE id IN (SELECT id FROM scheduled_action WHERE (hostname IS NULL OR updated_at < ?) AND status = ? ORDER BY created_at ASC LIMIT ?)';
 
-      return $this->entityManager->getConnection()->executeUpdate($dql, [
+      return $this->entityManager->getConnection()->executeStatement($dql, [
         $hostname,
         $date->format('Y-m-d H:i:s'),
         $oneHourOlder->format('Y-m-d H:i:s'),

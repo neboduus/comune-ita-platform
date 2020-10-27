@@ -2,18 +2,23 @@
 
 namespace App\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class SendPraticaToGiscomCommand extends ContainerAwareCommand
+class SendPraticaToGiscomCommand extends Command
 {
-  /**
-   * @var SymfonyStyle
-   */
-  private $io;
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -30,7 +35,7 @@ class SendPraticaToGiscomCommand extends ContainerAwareCommand
     $question = new Question('Inserisci id della pratica: ', '');
     $applicationId = $helper->ask($input, $output, $question);
 
-    $repository = $this->getContainer()->get('doctrine')->getRepository('App:Pratica');
+    $repository = $this->entityManager->getRepository('App:Pratica');
 
     $application = $repository->find($applicationId);
 
@@ -45,8 +50,12 @@ class SendPraticaToGiscomCommand extends ContainerAwareCommand
     $status = $response->getStatusCode();
     if ($status == 201 || $status == 204) {
       $output->writeln('La pratica è stata inviata correttamente');
+
+      return 0;
     } else {
       dump($response);
+
+      return 1;
     }
   }
 }

@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\DematerializedFormPratica;
 use App\Entity\GiscomPratica;
+use App\Event\ProtocollaAllegatiIntegrazioneSuccessEvent;
 use App\Event\ProtocollaPraticaSuccessEvent;
 use App\Form\Scia\SciaPraticaEdiliziaFlow;
 use App\Protocollo\ProtocolloEvents;
@@ -50,9 +51,9 @@ class GiscomSendPraticaListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return[
-            ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS => ['onPraticaProtocollata'],
-            ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS => ['onPraticaConIntegrazioniProtocollata'],
-            ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_OPERATORE_SUCCESS => ['onPraticaConAllegatiOperatoreProtocollata']
+            ProtocollaPraticaSuccessEvent::class => ['onPraticaProtocollata'],
+            ProtocollaAllegatiIntegrazioneSuccessEvent::class => ['onPraticaConIntegrazioniProtocollata'],
+            ProtocollaAllegatiOperatoreSuccessEvent::class => ['onPraticaConAllegatiOperatoreProtocollata']
         ];
     }
 

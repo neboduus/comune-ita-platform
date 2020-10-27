@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalendarsBackOffice implements BackOfficeInterface
 {
@@ -158,7 +158,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       }
 
       $this->em->persist($meeting);
-      $this->em->flush($meeting);
+      $this->em->flush();
 
       return $meeting;
     } catch (\Exception $exception) {

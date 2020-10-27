@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +51,7 @@ class PrintController extends AbstractController
    * @ParamConverter("pratica", class="App:Pratica")
    * @param Pratica $pratica
    *
-   * @return array
+   * @return Response
    */
   public function printPraticaAction(Request $request, Pratica $pratica)
   {
@@ -128,7 +128,7 @@ class PrintController extends AbstractController
    * @ParamConverter("service", class="App:Servizio")
    * @param Servizio $service
    *
-   * @return array
+   * @return Response
    */
   public function printServiceAction(Request $request, Servizio $service)
   {
@@ -188,7 +188,7 @@ class PrintController extends AbstractController
    * @ParamConverter("service", class="App:Servizio")
    * @param Servizio $service
    *
-   * @return array
+   * @return Response
    */
   public function previewServiceAction(Request $request, Servizio $service)
   {

@@ -189,7 +189,7 @@ class SecurityController extends AbstractController
     }
 
     return $this->render(
-      'security/reset-password-confirm.html.twig',
+      'Security/reset-password-confirm.html.twig',
       array(
         'user' => $this->getUser(),
         'form' => $form->createView(),
@@ -240,7 +240,7 @@ class SecurityController extends AbstractController
     }
 
     return $this->render(
-      'security/reset-password-confirm.html.twig',
+      'Security/reset-password-confirm.html.twig',
       ['form' => $form->createView()]
     );
 
