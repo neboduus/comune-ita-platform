@@ -138,22 +138,21 @@ class PraticaStatusService
 
         $this->entityManager->refresh($pratica);
 
-        $this->dispatcher->dispatch(
-          PraticaEvents::ON_STATUS_CHANGE,
-          new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus)
-        );
-
-        $this->entityManager->commit();
-
         $this->logger->info(
           LogConstants::PRATICA_CHANGED_STATUS,
           [
             'pratica' => $pratica->getId(),
             'before_status' => $beforeStatusIdentifier,
             'after_status' => $afterStatusIdentifier,
-
           ]
         );
+
+        $this->dispatcher->dispatch(
+          new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus)
+        );
+
+        $this->entityManager->commit();
+
       } catch (\Exception $e) {
         $this->entityManager->rollback();
 

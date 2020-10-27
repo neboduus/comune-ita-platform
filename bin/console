@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+use App\InstancesProvider;
 use App\Kernel;
 use App\InstanceKernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -43,14 +44,13 @@ if ($_SERVER['APP_DEBUG']) {
 }
 
 if (!empty($instance)) {
-  $instances = Yaml::parse(file_get_contents(__DIR__.'/../config/instances_dev.yml'));
-  $instanceParams = $instances['instances'];
-  if (!isset($instanceParams[$instance])) {
+  $instanceProvider = InstancesProvider::factory();
+  if (!$instanceProvider->hasInstance($instance)) {
     throw new Exception("Instance $instance not found");
   }
   $kernel = new InstanceKernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
   $kernel->setIdentifier($instance);
-  $kernel->setInstanceParameters($instanceParams[$instance]);
+  $kernel->setInstanceParameters($instanceProvider->getInstance($instance));
 } else {
   $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 }

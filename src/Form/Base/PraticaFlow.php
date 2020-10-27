@@ -16,7 +16,10 @@ use App\Services\PraticaStatusService;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
@@ -48,6 +51,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
   protected $em;
 
+  protected $security;
+
   /**
    * PraticaFlow constructor.
    * @param LoggerInterface $logger
@@ -58,6 +63,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
    * @param $prefix
    * @param SchemaFactoryInterface $formIOFactory
    * @param EntityManagerInterface $em
+   * @param Security $security
    *
    */
   public function __construct(
@@ -68,7 +74,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     DematerializedFormAllegatiAttacherService $dematerializer,
     $prefix,
     SchemaFactoryInterface $formIOFactory,
-    EntityManagerInterface $em
+    EntityManagerInterface $em,
+    Security $security
   )
   {
     $this->logger = $logger;
@@ -79,6 +86,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $this->prefix = $prefix;
     $this->formIOFactory = $formIOFactory;
     $this->em = $em;
+    $this->security = $security;
   }
 
   public function getFormOptions($step, array $options = array())

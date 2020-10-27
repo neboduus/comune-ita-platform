@@ -11,6 +11,7 @@ use App\Form\Base\SelectPaymentGatewayType;
 use App\Form\Base\SelezionaEnteType;
 use App\Form\Base\SummaryType;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class FormIOFlow extends PraticaFlow
 {
@@ -96,7 +97,8 @@ class FormIOFlow extends PraticaFlow
       );
     } else {
       // Step conferma
-      if ($pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS) {
+      if ($pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS
+        || $this->security->getUser() instanceof UserInterface) {
         $steps[] = array(
           'label' => 'steps.common.conferma.label',
         );

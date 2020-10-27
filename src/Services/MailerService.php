@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Swift_Message;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class MailerService
@@ -232,7 +232,7 @@ class MailerService
     ];
 
     $textHtml = $this->templating->render(
-      'Emails/User:feedback_message.html.twig',
+      'Emails/User/feedback_message.html.twig',
       array(
         'pratica' => $pratica,
         'placeholder' => $placeholders,
@@ -300,7 +300,7 @@ class MailerService
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(
-          'Emails/User:pratica_status_change.html.twig',
+          'Emails/User/pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
             'user_name'    => $pratica->getUser()->getFullName(),
@@ -310,7 +310,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'Emails/User:pratica_status_change.txt.twig',
+          'Emails/User/pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
             'user_name'    => $pratica->getUser()->getFullName(),
@@ -359,7 +359,7 @@ class MailerService
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(
-          'Emails/Operatore:pratica_status_change.html.twig',
+          'Emails/Operatore/pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
             'user_name' => $operatore->getFullName(),
@@ -369,7 +369,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'Emails/Operatore:pratica_status_change.txt.twig',
+          'Emails/Operatore/pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
             'user_name' => $operatore->getFullName(),
@@ -415,7 +415,7 @@ class MailerService
           ->setTo($toAddress, $toName)
           ->setBody(
             $this->templating->render(
-              'Emails/General:message.html.twig',
+              'Emails/General/message.html.twig',
               array(
                 'message' => $message,
                 'ente' => $ente,
@@ -426,7 +426,7 @@ class MailerService
           )
           ->addPart(
             $this->templating->render(
-              'Emails/General:message.txt.twig',
+              'Emails/General/message.txt.twig',
               array(
                 'message' => $message,
                 'ente' => $ente,
@@ -510,7 +510,7 @@ class MailerService
       ->setBcc($operatoreUser->getEmail(), $operatoreUser->getFullName())
       ->setBody(
         $this->templating->render(
-          'Emails/Subscriber:subscriber_message.html.twig',
+          'Emails/Subscriber/subscriber_message.html.twig',
           array(
             'message' => $subscriberMessage->getMessage(),
           )
@@ -519,7 +519,7 @@ class MailerService
       )
       ->addPart(
         $this->templating->render(
-          'Emails/Subscriber:subscriber_message.txt.twig',
+          'Emails/Subscriber/subscriber_message.txt.twig',
           array(
             'message' => $subscriberMessage->getMessage(),
           )

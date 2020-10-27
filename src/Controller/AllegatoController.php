@@ -17,13 +17,11 @@ use App\Entity\User;
 use App\Form\Base\AllegatoType;
 use App\Form\Extension\TestiAccompagnatoriProcedura;
 use App\Logging\LogConstants;
+use App\Services\InstanceService;
 use App\Services\ModuloPdfBuilderService;
 use Doctrine\ORM\Query;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
@@ -32,13 +30,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Mapping\PropertyMapping;
@@ -75,6 +72,12 @@ class AllegatoController extends Controller
   /** @var PropertyMappingFactory */
   private $propertyMappingFactory;
 
+  /** @var InstanceService */
+  private $instanceService;
+
+  /** @var SessionInterface */
+  private $session;
+
   /**
    * AllegatoController constructor.
    * @param TranslatorInterface $translator
@@ -84,6 +87,8 @@ class AllegatoController extends Controller
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param DirectoryNamerInterface $directoryNamer
    * @param PropertyMappingFactory $propertyMappingFactory
+   * @param InstanceService $instanceService
+   * @param SessionInterface $session
    */
   public function __construct(
     TranslatorInterface $translator,
@@ -92,7 +97,9 @@ class AllegatoController extends Controller
     ValidatorInterface $validator,
     ModuloPdfBuilderService $moduloPdfBuilderService,
     DirectoryNamerInterface $directoryNamer,
-    PropertyMappingFactory $propertyMappingFactory
+    PropertyMappingFactory $propertyMappingFactory,
+    InstanceService $instanceService,
+    SessionInterface $session
   ) {
     $this->translator = $translator;
     $this->router = $router;
@@ -101,6 +108,7 @@ class AllegatoController extends Controller
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->directoryNamer = $directoryNamer;
     $this->propertyMappingFactory = $propertyMappingFactory;
+    $this->instanceService = $instanceService;
   }
 
   /**
@@ -115,7 +123,7 @@ class AllegatoController extends Controller
     $form = $this->createForm(
       AllegatoType::class,
       $allegato,
-      ['helper' => new TestiAccompagnatoriProcedura($this->translator)]
+      ['helper' => new TestiAccompagnatoriProcedura($this->translator, $this->instanceService->getPrefix())]
     );
     $form->add($this->translator->trans('salva'), SubmitType::class);
 
@@ -146,9 +154,8 @@ class AllegatoController extends Controller
   public function uploadAllegatoAction(Request $request)
   {
     $em = $this->getDoctrine()->getManager();
-    $session = $this->get('session');
-    if (!$session->isStarted()) {
-      $session->start();
+    if (!$this->session->isStarted()) {
+      $this->session->start();
     }
 
     switch ($request->getMethod()) {
@@ -157,7 +164,7 @@ class AllegatoController extends Controller
         $fileName = str_replace('/', '', $request->get('form'));
         $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
-          if ($file->getHash() == hash('sha256', $session->getId())) {
+          if ($file->getHash() == hash('sha256', $this->session->getId())) {
             return $this->createBinaryResponseForAllegato($file);
           } else {
             return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $file]);
@@ -198,7 +205,7 @@ class AllegatoController extends Controller
           if ($user instanceof CPSUser || $user instanceof User) {
             $allegato->setOwner($user);
           }
-          $allegato->setHash(hash('sha256', $session->getId()));
+          $allegato->setHash(hash('sha256', $this->session->getId()));
           $em->persist($allegato);
           $em->flush();
 
@@ -221,7 +228,7 @@ class AllegatoController extends Controller
         $file = $em->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
-          if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $session->getId())) {
+          if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $this->session->getId())) {
             return new Response('', Response::HTTP_FORBIDDEN);
           }
 
@@ -232,7 +239,7 @@ class AllegatoController extends Controller
             $em->persist($item);
           }
           $em->remove($file);
-          $em->flush();;
+          $em->flush();
 
           return new Response('', Response::HTTP_OK);
 
@@ -250,8 +257,7 @@ class AllegatoController extends Controller
   /**
    * TODO: TestMe
    * @param Request $request
-   * @Route("/pratiche/allegati/upload/scia/{id}",name="allegati_scia_create_cpsuser")
-   * @Method("POST")
+   * @Route("/pratiche/allegati/upload/scia/{id}",name="allegati_scia_create_cpsuser", methods={"POST"})
    * @return mixed
    * @throws \Exception
    */
@@ -352,7 +358,6 @@ class AllegatoController extends Controller
   {
 
     $user = $this->getUser();
-    $session = $this->get('session');
     $canDownload = $allegato->getOwner() === $user;
     if (!$canDownload) {
       $pratica = $allegato->getPratiche()->first();
@@ -363,9 +368,9 @@ class AllegatoController extends Controller
               $user->getCodiceFiscale(),
               $relatedCFs
             ) || $pratica->getUser() == $user);
-        } elseif ($session->isStarted() && $session->has(Pratica::HASH_SESSION_KEY)) {
+        } elseif ($this->session->isStarted() && $this->session->has(Pratica::HASH_SESSION_KEY)) {
           $canDownload = $pratica->isValidHash(
-            $session->get(Pratica::HASH_SESSION_KEY),
+            $this->session->get(Pratica::HASH_SESSION_KEY),
             $this->getParameter('hash_validity')
           );
         }
@@ -389,8 +394,7 @@ class AllegatoController extends Controller
 
   /**
    * @param Request $request
-   * @Route("/operatori/allegati/upload/{id}",name="allegati_upload_operatore")
-   * @Method("POST")
+   * @Route("/operatori/allegati/upload/{id}",name="allegati_upload_operatore", methods={"POST"})
    * @return mixed
    */
   public function operatoreAllegatoUploadAction(Request $request, Pratica $pratica)
@@ -453,8 +457,7 @@ class AllegatoController extends Controller
 
   /**
    * @param Request $request
-   * @Route("/pratiche/allegati/message/upload/{id}",name="cps_user_allegato_messaggio_upload")
-   * @Method("POST")
+   * @Route("/pratiche/allegati/message/upload/{id}",name="cps_user_allegato_messaggio_upload", methods={"POST"})
    * @return mixed
    */
   public function cpsUserAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
@@ -513,8 +516,7 @@ class AllegatoController extends Controller
 
   /**
    * @param Request $request
-   * @Route("/operatori/allegati/message/upload/{id}",name="operatore_allegato_messaggio_upload")
-   * @Method("POST")
+   * @Route("/operatori/allegati/message/upload/{id}",name="operatore_allegato_messaggio_upload", methods={"POST"})
    * @return mixed
    */
   public function operatoreAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
@@ -717,8 +719,7 @@ class AllegatoController extends Controller
   /**
    * @param Request $request
    * @param Allegato $allegato
-   * @Route("/pratiche/allegati/{allegato}/delete",name="allegati_delete_cpsuser")
-   * @Method("DELETE")
+   * @Route("/pratiche/allegati/{allegato}/delete",name="allegati_delete_cpsuser", methods={"DELETE"})
    * @return RedirectResponse
    */
   public function cpsUserDeleteAllegatoAction(Request $request, Allegato $allegato)
@@ -731,7 +732,7 @@ class AllegatoController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->remove($allegato);
         $em->flush();
-        $this->get('session')->getFlashBag()
+        $this->session->getFlashBag()
           ->add('info', $this->translator->trans('allegato.cancellato'));
         $this->logger->info(
           LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA,

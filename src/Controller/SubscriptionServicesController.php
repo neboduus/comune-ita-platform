@@ -9,21 +9,24 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\MapColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Omines\DataTablesBundle\DataTableFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 /**
  * Class SubscriptionServicesController
  */
 class SubscriptionServicesController extends Controller
 {
-  use DataTablesTrait;
+  private $dataTableFactory;
+
+  public function __construct(DataTableFactory $dataTableFactory)
+  {
+    $this->dataTableFactory = $dataTableFactory;
+  }
 
   /**
    * Lists all SubscriptionService entities.
@@ -42,7 +45,7 @@ class SubscriptionServicesController extends Controller
     $items = $em->getRepository('App:SubscriptionService')->findAll();
 
 
-    $table = $this->createDataTable()
+    $table = $this->dataTableFactory->create()
       ->add(
         'name',
         TextColumn::class,
@@ -144,10 +147,9 @@ class SubscriptionServicesController extends Controller
 
   /**
    * Creates a new SubscriptionService entity.
-   * @Route("/operatori/subscription-service/new", name="operatori_subscription-service_new")
-   * @Method({"GET", "POST"})
+   * @Route("/operatori/subscription-service/new", name="operatori_subscription-service_new", methods={"GET", "POST"})
    * @param Request $request the request
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response
    */
   public function newSubscriptionServiceAction(Request $request)
   {
@@ -185,8 +187,7 @@ class SubscriptionServicesController extends Controller
 
   /**
    * Deletes a SubscriptionService entity.
-   * @Route("/operatori/subscription-service/{id}/delete", name="operatori_subscription-service_delete")
-   * @Method("GET")
+   * @Route("/operatori/subscription-service/{id}/delete", name="operatori_subscription-service_delete", methods={"GET"})
    * @param Request $request the request
    * @param SubscriptionService $subscriptionService The SubscriptionService entity
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
@@ -218,7 +219,7 @@ class SubscriptionServicesController extends Controller
    * @param Request $request the request
    * @param SubscriptionService $subscriptionService The SubscriptionService entity
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response
    */
   public function editSubscriptionServiceAction(Request $request, SubscriptionService $subscriptionService)
   {
@@ -254,8 +255,7 @@ class SubscriptionServicesController extends Controller
 
   /**
    * Finds and displays a SubscriptionService entity.
-   * @Route("/operatori/subscription-service/{subscriptionService}", name="operatori_subscription-service_show")
-   * @Method("GET")
+   * @Route("/operatori/subscription-service/{subscriptionService}", name="operatori_subscription-service_show", methods={"GET"})
    */
   public function showSubscriptionServiceAction(Request $request, SubscriptionService $subscriptionService)
   {

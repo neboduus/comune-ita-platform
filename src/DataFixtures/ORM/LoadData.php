@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\ORM;
 
+use App\DataFixtures\GoogleSpreadsheetTrait;
 use App\Entity\AsiloNido;
 use App\Entity\Categoria;
 use App\Entity\Ente;
@@ -10,20 +11,12 @@ use App\Entity\PaymentGateway;
 use App\Entity\Servizio;
 use App\Entity\TerminiUtilizzo;
 use App\Services\InstanceService;
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\FixtureInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Google\Spreadsheet\DefaultServiceRequest;
-use Google\Spreadsheet\ServiceRequestFactory;
-use Google\Spreadsheet\SpreadsheetService;
 
-class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
+class LoadData extends Fixture
 {
-  const PUBLIC_SPREADSHEETS_URL = 'https://docs.google.com/spreadsheets/d/1mbGZN9OIjfsrrjVbs2QB1DjzzMoCPT6MD5cPTJS4308/edit#gid=0';
-
-  const PUBLIC_SPREADSHEETS_ID = '1mbGZN9OIjfsrrjVbs2QB1DjzzMoCPT6MD5cPTJS4308';
+  use GoogleSpreadsheetTrait;
 
   private $counters = [
     'servizi' => [
@@ -44,25 +37,12 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     ],
   ];
 
-  /** @var  ContainerInterface */
-  private $container;
-
   /** @var InstanceService */
   private $instanceService;
 
-  /**
-   * LoadData constructor.
-   * @param InstanceService $instanceService
-   */
   public function __construct(InstanceService $instanceService)
   {
     $this->instanceService = $instanceService;
-  }
-
-
-  public function setContainer(ContainerInterface $container = null)
-  {
-    $this->container = $container;
   }
 
   public function load(ObjectManager $manager)
@@ -73,14 +53,12 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     $this->loadServizi($manager);
     $this->loadTerminiUtilizzo($manager);
     $this->loadPaymentGateways($manager);
-
   }
 
   public function loadAsili(ObjectManager $manager)
   {
-    $data = $this->getData('Asili');
+    $data = $this->getGoogleSpreadsheetData('Asili');
     foreach ($data as $item) {
-
       $orari = explode('##', $item['orari']);
       $orari = array_map('trim', $orari);
 
@@ -94,43 +72,14 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     }
   }
 
-  private function getData($worksheetTitle)
-  {
-    $serviceRequest = new DefaultServiceRequest("");
-    ServiceRequestFactory::setInstance($serviceRequest);
-
-    $spreadsheetService = new SpreadsheetService();
-    $worksheetFeed = $spreadsheetService->getPublicSpreadsheet(self::PUBLIC_SPREADSHEETS_ID);
-    $worksheet = $worksheetFeed->getByTitle($worksheetTitle);
-
-    $data = $worksheet->getCsv();
-
-    $dataArray = str_getcsv($data, "\r\n");
-    foreach ($dataArray as &$row) {
-      $row = str_getcsv($row, ",");
-    }
-
-    array_walk(
-      $dataArray,
-      function (&$a) use ($dataArray) {
-        $a = array_map('trim', $a);
-        $a = array_combine($dataArray[0], $a);
-      }
-    );
-    array_shift($dataArray); # remove column header
-
-    return $dataArray;
-  }
-
   public function loadEnti(ObjectManager $manager)
   {
-    $data = $this->getData('Enti');
+    $data = $this->getGoogleSpreadsheetData('Enti');
     $entiRepo = $manager->getRepository('App:Ente');
 
     foreach ($data as $item) {
-
-      if ($this->container->hasParameter('codice_meccanografico') &&
-        $item['codice'] != $this->container->getParameter('codice_meccanografico')) {
+      if ($this->instanceService->getCurrentInstance() &&
+        $item['codice'] != $this->instanceService->getCurrentInstance()->getCodiceMeccanografico()) {
         continue;
       }
 
@@ -163,7 +112,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
 
   public function loadCategories(ObjectManager $manager)
   {
-    $data = $this->getData('Categorie');
+    $data = $this->getGoogleSpreadsheetData('Categorie');
     $categoryRepo = $manager->getRepository('App:Categoria');
     foreach ($data as $item) {
       $category = $categoryRepo->findOneByTreeId($item['tree_id']);
@@ -179,7 +128,6 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
 
         $category->setParentId(($parent ? $parent->getId() : null));
         $manager->persist($category);
-
       } else {
         $this->counters['categorie']['updated']++;
       }
@@ -188,25 +136,21 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     }
   }
 
-  /**
-   * @param ObjectManager $manager
-   */
   public function loadServizi(ObjectManager $manager)
   {
-
     $ente = $this->instanceService->getCurrentInstance();
     if (!$ente instanceof Ente) {
       return;
     }
 
-    $data = $this->getData('Servizi');
+    $data = $this->getGoogleSpreadsheetData('Servizi');
     $serviziRepo = $manager->getRepository('App:Servizio');
     $categoryRepo = $manager->getRepository('App:Categoria');
     foreach ($data as $item) {
       $codiciMeccanograficiEnti = explode('##', $item['codici_enti']);
 
-      if ($this->container->hasParameter('codice_meccanografico') &&
-        !in_array($this->container->getParameter('codice_meccanografico'), $codiciMeccanograficiEnti)) {
+      if ($this->instanceService->getCurrentInstance() &&
+        !in_array($this->instanceService->getCurrentInstance()->getCodiceMeccanografico(), $codiciMeccanograficiEnti)) {
         continue;
       }
 
@@ -238,7 +182,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
       $enti = $manager->getRepository('App:Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
       foreach ($enti as $ente) {
         $erogatore = new Erogatore();
-        $erogatore->setName('Erogatore di '.$servizio->getName().' per '.$ente->getName());
+        $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
         $erogatore->addEnte($ente);
         $manager->persist($erogatore);
         $servizio->activateForErogatore($erogatore);
@@ -248,12 +192,22 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     }
   }
 
-  /**
-   * @param ObjectManager $manager
-   */
+  public function loadTerminiUtilizzo(ObjectManager $manager)
+  {
+    $data = $this->getGoogleSpreadsheetData('TerminiUtilizzo');
+    foreach ($data as $item) {
+      $terminiUtilizzo = (new TerminiUtilizzo())
+        ->setName($item['name'])
+        ->setText($item['text'])
+        ->setMandatory(true);
+      $manager->persist($terminiUtilizzo);
+      $manager->flush();
+    }
+  }
+
   public function loadPaymentGateways(ObjectManager $manager)
   {
-    $data = $this->getData('PaymentGateways');
+    $data = $this->getGoogleSpreadsheetData('PaymentGateways');
     $gatewayRepo = $manager->getRepository('App:PaymentGateway');
     foreach ($data as $item) {
       $gateway = $gatewayRepo->findOneByName($item['name']);
@@ -271,20 +225,6 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
       } else {
         $this->counters['payment_gateways']['updated']++;
       }
-      $manager->flush();
-    }
-  }
-
-
-  public function loadTerminiUtilizzo(ObjectManager $manager)
-  {
-    $data = $this->getData('TerminiUtilizzo');
-    foreach ($data as $item) {
-      $terminiUtilizzo = (new TerminiUtilizzo())
-        ->setName($item['name'])
-        ->setText($item['text'])
-        ->setMandatory(true);
-      $manager->persist($terminiUtilizzo);
       $manager->flush();
     }
   }

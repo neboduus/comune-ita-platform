@@ -445,7 +445,7 @@ class Ente
   }
 
   /**
-   * @return Collection
+   * @return array
    */
   public function getGateways()
   {
@@ -457,7 +457,7 @@ class Ente
   }
 
   /**
-   * @param Collection $gateways
+   * @param array $gateways
    * @return $this
    */
   public function setGateways($gateways)

@@ -5,14 +5,12 @@ namespace App\Controller\Rest;
 use App\Entity\SubscriptionService;
 use App\Entity\Subscription;
 use App\Services\InstanceService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -395,7 +393,6 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="subscription-services")
    *
-   * @Method("DELETE")
    * @param $id
    * @return View
    */
@@ -552,7 +549,6 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * @param $subscription_service_id
    * @param $id
    *
-   * @Method("DELETE")
    * @return View
    */
   public function deleteSubscriptionAction($subscription_service_id, $id)

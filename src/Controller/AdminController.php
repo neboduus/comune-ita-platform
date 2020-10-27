@@ -23,11 +23,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Omines\DataTablesBundle\DataTableFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -39,8 +37,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class AdmninController
@@ -48,8 +45,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class AdminController extends Controller
 {
-  use DataTablesTrait;
-
   /** @var InstanceService */
   private $instanceService;
 
@@ -74,6 +69,8 @@ class AdminController extends Controller
   /** @var RouterInterface */
   private $router;
 
+  private $dataTableFactory;
+
   /**
    * AdminController constructor.
    * @param InstanceService $instanceService
@@ -84,6 +81,7 @@ class AdminController extends Controller
    * @param SchemaFactoryInterface $schemaFactory
    * @param MailerService $mailer
    * @param RouterInterface $router
+   * @param DataTableFactory $dataTableFactory
    */
   public function __construct(
     InstanceService $instanceService,
@@ -93,7 +91,8 @@ class AdminController extends Controller
     ServiceFlow $serviceFlow,
     SchemaFactoryInterface $schemaFactory,
     MailerService $mailer,
-    RouterInterface $router
+    RouterInterface $router,
+    DataTableFactory $dataTableFactory
   ) {
     $this->instanceService = $instanceService;
     $this->formServer = $formServer;
@@ -103,8 +102,8 @@ class AdminController extends Controller
     $this->schemaFactory = $schemaFactory;
     $this->mailer = $mailer;
     $this->router = $router;
+    $this->dataTableFactory = $dataTableFactory;
   }
-
 
   /**
    * @Route("/", name="admin_index")
@@ -154,8 +153,8 @@ class AdminController extends Controller
 
   /**
    * Lists all operatoreUser entities.
-   * @Route("/operatore", name="admin_operatore_index")
-   * @Method("GET")
+   * @Route("/operatore", name="admin_operatore_index", methods={"GET"})
+   * @return Response
    */
   public function indexOperatoreAction()
   {
@@ -173,8 +172,7 @@ class AdminController extends Controller
 
   /**
    * Creates a new operatoreUser entity.
-   * @Route("/operatore/new", name="admin_operatore_new")
-   * @Method({"GET", "POST"})
+   * @Route("/operatore/new", name="admin_operatore_new", methods={"GET", "POST"})
    * @param Request $request
    * @return Response|RedirectResponse
    */
@@ -258,8 +256,7 @@ class AdminController extends Controller
 
   /**
    * Displays a form to edit an existing operatoreUser entity.
-   * @Route("/operatore/{id}/edit", name="admin_operatore_edit")
-   * @Method({"GET", "POST"})
+   * @Route("/operatore/{id}/edit", name="admin_operatore_edit", methods={"GET", "POST"})
    */
   public function editOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
@@ -284,8 +281,7 @@ class AdminController extends Controller
 
   /**
    * Send password reset hash to user.
-   * @Route("/operatore/{id}/resetpassword", name="admin_operatore_reset_password")
-   * @Method({"GET", "POST"})
+   * @Route("/operatore/{id}/resetpassword", name="admin_operatore_reset_password", methods={"GET", "POST"})
    */
   public function resetPasswordOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
@@ -320,8 +316,7 @@ class AdminController extends Controller
 
   /**
    * Deletes a operatoreUser entity.
-   * @Route("/operatore/{id}/delete", name="admin_operatore_delete")
-   * @Method({"GET", "POST", "DELETE"})
+   * @Route("/operatore/{id}/delete", name="admin_operatore_delete", methods={"GET", "POST", "DELETE"})
    */
   public function deleteOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
@@ -343,12 +338,11 @@ class AdminController extends Controller
 
   /**
    * Lists all operatoreLogs entities.
-   * @Route("/logs", name="admin_logs_index")
-   * @Method({"GET", "POST"})
+   * @Route("/logs", name="admin_logs_index", methods={"GET", "POST"})
    */
   public function indexLogsAction(Request $request)
   {
-    $table = $this->createDataTable()
+    $table = $this->dataTableFactory->create()
       ->add('type', TextColumn::class, ['label' => 'Evento'])
       ->add('eventTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'd-m-Y H:i', 'searchable' => false])
       ->add('user', TextColumn::class, ['label' => 'Utente'])
@@ -378,8 +372,7 @@ class AdminController extends Controller
 
   /**
    * Lists all operatoreUser entities.
-   * @Route("/servizio", name="admin_servizio_index")
-   * @Method("GET")
+   * @Route("/servizio", name="admin_servizio_index", methods={"GET"})
    */
   public function indexServizioAction()
   {
@@ -415,8 +408,7 @@ class AdminController extends Controller
 
   /**
    * Lists all operatoreUser entities.
-   * @Route("/servizio/list", name="admin_servizio_list")
-   * @Method("GET")
+   * @Route("/servizio/list", name="admin_servizio_list", methods={"GET"})
    */
   public function listServizioAction()
   {
@@ -664,8 +656,7 @@ class AdminController extends Controller
 
   /**
    * Creates a new Service entity.
-   * @Route("/servizio/new", name="admin_service_new")
-   * @Method({"GET", "POST"})
+   * @Route("/servizio/new", name="admin_service_new", methods={"GET", "POST"})
    * @param Request $request
    * @return RedirectResponse|Response|null
    */
@@ -737,8 +728,7 @@ class AdminController extends Controller
 
   /**
    * Deletes a service entity.
-   * @Route("/servizio/{id}/delete", name="admin_servizio_delete")
-   * @Method("GET")
+   * @Route("/servizio/{id}/delete", name="admin_servizio_delete", methods={"GET"})
    */
   public
   function deleteServiceAction(

@@ -9,17 +9,13 @@ use App\Services\MailerService;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Omines\DataTablesBundle\DataTableFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SubscriberController extends AbstractController
 {
-  use DataTablesTrait;
-
   /**
    * @var MailerService
    */
@@ -27,9 +23,12 @@ class SubscriberController extends AbstractController
 
   private $defaultSender;
 
-  public function __construct(MailerService $mailer, $defaultSender)
+  private $dataTableFactory;
+
+  public function __construct(MailerService $mailer, DataTableFactory $dataTableFactory, $defaultSender)
   {
     $this->mailer = $mailer;
+    $this->dataTableFactory = $dataTableFactory;
     $this->defaultSender = $defaultSender;
   }
 
@@ -78,7 +77,7 @@ class SubscriberController extends AbstractController
     }
 
     // Initializa datatable with previously created array data
-    $table = $this->createDataTable()
+    $table = $this->dataTableFactory->create()
       ->add(
         'subscription_service_name',
         TextColumn::class,

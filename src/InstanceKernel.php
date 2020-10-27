@@ -2,14 +2,19 @@
 
 namespace App;
 
-use App\Form\PraticaFlowRegistry;
-use App\Handlers\Servizio\ServizioHandlerRegistry;
-use App\Protocollo\ProtocolloHandlerRegistry;
+use App\BackOffice\BackOfficeInterface;
+use App\DependencyInjection\Compiler\BackOfficePass;
+use App\DependencyInjection\Compiler\PaymentGatewayPass;
+use App\DependencyInjection\Compiler\PraticaFlowPass;
+use App\DependencyInjection\Compiler\ProtocolloHandlerPass;
+use App\DependencyInjection\Compiler\SchedulableActionPass;
+use App\DependencyInjection\Compiler\ServizioHandlerPass;
+use App\Payment\PaymentDataInterface;
+use App\Protocollo\ProtocolloHandlerInterface;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
@@ -95,7 +100,6 @@ class InstanceKernel extends BaseKernel
     $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
 
     $this->loadInstance($container, $loader);
-    $this->loadRedistry($container);
   }
 
   protected function configureRoutes(RouteCollectionBuilder $routes): void
@@ -106,7 +110,6 @@ class InstanceKernel extends BaseKernel
     $routes->import($confDir.'/{routes}/*'.self::CONFIG_EXTS, '/', 'glob');
     $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
   }
-
 
   protected function loadInstance(ContainerBuilder $container, LoaderInterface $loader)
   {
@@ -128,57 +131,26 @@ class InstanceKernel extends BaseKernel
         }
       }
     );
-
   }
 
-  protected function loadRedistry(ContainerBuilder $container)
+  protected function build(ContainerBuilder $container)
   {
+    $container->registerForAutoconfiguration(BackOfficeInterface::class)
+      ->addTag('ocsdc.backoffice');
+    $container->addCompilerPass(new BackOfficePass('ocsdc.backoffice'));
 
-    if ($container->has(ServizioHandlerRegistry::class)) {
-      $definition = $container->findDefinition(ServizioHandlerRegistry::class);
-      $taggedServices = $container->findTaggedServiceIds('ocsdc.servizio.handler');
-      foreach ($taggedServices as $id => $tags) {
-        foreach ($tags as $attributes) {
-          if (isset($attributes['alias'])) {
-            $definition->addMethodCall(
-              'registerHandler',
-              [
-                new Reference($id),
-                $attributes['alias'],
-              ]
-            );
-            break;
-          }
-        }
-      }
-    }
+    $container->registerForAutoconfiguration(PaymentDataInterface::class)
+      ->addTag('ocsdc.payment_gateway');
+    $container->addCompilerPass(new PaymentGatewayPass('ocsdc.payment_gateway'));
 
-    if ($container->has(PraticaFlowRegistry::class)) {
-      $definition = $container->findDefinition(PraticaFlowRegistry::class);
-      $taggedServices = $container->findTaggedServiceIds('ocsdc.pratica.flow');
-      foreach ($taggedServices as $id => $tags) {
-        $alias = null;
-        foreach ($tags as $attributes) {
-          if (isset($attributes['alias']) && !$alias) {
-            $alias = $attributes['alias'];
-          }
-        }
-        $definition->addMethodCall('registerFlow', [new Reference($id), $alias]);
-      }
-    }
+    $container->registerForAutoconfiguration(ProtocolloHandlerInterface::class)
+      ->addTag('app.protocollo.handler');
+    $container->addCompilerPass(new ProtocolloHandlerPass('ocsdc.protocollo.handler'));
 
-    /*if ($container->has(ProtocolloHandlerRegistry::class)) {
-      $definition = $container->findDefinition(ProtocolloHandlerRegistry::class);
-      $taggedServices = $container->findTaggedServiceIds('ocsdc.protocollo.handler');
-      foreach ($taggedServices as $id => $tags) {
-        $alias = null;
-        foreach ($tags as $attributes) {
-          if (isset($attributes['alias']) && !$alias) {
-            $alias = $attributes['alias'];
-          }
-        }
-        $definition->addMethodCall('registerHandler', [new Reference($id), $alias]);
-      }
-    }*/
+    $container->addCompilerPass(new PraticaFlowPass('ocsdc.pratica.flow'));
+
+    $container->addCompilerPass(new ServizioHandlerPass('ocsdc.servizio.handler'));
+
+    $container->addCompilerPass(new SchedulableActionPass('ocsdc.schedule_action_handler'));
   }
 }

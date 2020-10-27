@@ -3,39 +3,21 @@
 namespace App\Controller\Rest;
 
 use App\Entity\Categoria;
-use App\Entity\Ente;
-use App\Entity\OperatoreUser;
-use App\Entity\Pratica;
-use App\Entity\PraticaRepository;
 use App\Entity\ServiceGroup;
-use App\Logging\LogConstants;
-use App\Model\PaymentParameters;
-use App\Model\FlowStep;
-use App\Model\AdditionalData;
 use App\Entity\Servizio;
 use App\Dto\Service;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * Class ServicesAPIController
@@ -471,8 +453,6 @@ class ServicesAPIController extends AbstractFOSRestController
    *     description="The resource was deleted successfully."
    * )
    * @SWG\Tag(name="services")
-   *
-   * @Method("DELETE")
    */
   public function deleteAction($id)
   {

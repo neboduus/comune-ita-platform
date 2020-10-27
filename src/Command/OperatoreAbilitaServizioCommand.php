@@ -4,14 +4,13 @@ namespace App\Command;
 
 use App\Entity\OperatoreUser;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Cache\Exception\InvalidArgumentException;
+use Exception;
+use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class OperatoreAbilitaServizio
@@ -89,8 +88,13 @@ class OperatoreAbilitaServizioCommand extends Command
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         $output->writeln('Ok: utente '.$user->getUsername().' abilitato per il servizio '.$servizio->getName());
-      } catch (\Exception $e) {
+
+        return 0;
+
+      } catch (Exception $e) {
         $output->writeln('Errore: '.$e->getMessage());
+
+        return 1;
       }
 
     } else {
@@ -105,11 +109,14 @@ class OperatoreAbilitaServizioCommand extends Command
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         $output->writeln('Ok: utente '.$user->getUsername().' abilitato per tutti i servizi');
-      } catch (\Exception $e) {
-        $output->writeln('Errore: '.$e->getMessage());
-      }
 
+        return 0;
+
+      } catch (Exception $e) {
+        $output->writeln('Errore: '.$e->getMessage());
+
+        return 1;
+      }
     }
   }
-
 }

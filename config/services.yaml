@@ -139,8 +139,7 @@ services:
     arguments:
       $defaultSender: '%default_from_email_address%'
 
-  ocsdc.meeting_eventlistener:
-    class: App\EventListener\MeetingLifeCycleListener
+  App\EventListener\MeetingLifeCycleListener:
     tags:
       - { name: doctrine.event_listener, event: postPersist, connection: default }
       - { name: doctrine.event_listener, event: preUpdate, connection: default }
@@ -238,10 +237,6 @@ services:
     public: true
     tags: [ 'app.backoffice' ]
 
-  App\Services\BackOfficeCollection:
-    arguments:
-      - !tagged app.backoffice
-
   ocsdc.backoffices: '@App\Services\BackOfficeCollection'
 
   App\Controller\DocumentController:
@@ -259,6 +254,9 @@ services:
     autowire: true
 
   Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
+
+  App\Services\DirectoryNamerService:
+    public: true
 
   ocsdc.cps.userprovider:
     class: App\Services\CPSUserProvider
@@ -280,8 +278,7 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -10 }
 
-  ocsdc.cps.complete_profile_listener:
-    class: App\EventListener\CompleteProfileListener
+  App\EventListener\CompleteProfileListener:
     arguments: [ "@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%" ]
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -100 }
@@ -320,157 +317,132 @@ services:
       $wkhtmltopdfService: "%wkhtmltopdf_service%"
       $dateTimeFormat: "%ocsdc_default_datetime_format%"
       $printablePassword: "%ez_password%"
+    tags:
+      - { name: 'ocsdc.schedule_action_handler', alias: 'ocsdc.modulo_pdf_builder' }
 
 
   ocsdc.modulo_pdf_builder: '@App\Services\ModuloPdfBuilderService'
 
-  ocsdc.protocollo.client: "@eight_points_guzzle.client.protocollo_cct"
-
-  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
-  #ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.config"
-
-  App\Protocollo\ProtocolloHandlerRegistry:
-    autowire: true
-
-  ocsdc.protocollo.handlers.config:
-    class: App\Protocollo\ConfigProtocolloHandler
-    public: false
-    arguments:
-      - '@App\Protocollo\ProtocolloHandlerRegistry'
-      - '%protocollo%'
-
-  ocsdc.protocollo.handlers.dummy:
-    class: App\Protocollo\DummyProtocolloHandler
+  App\Protocollo\DummyProtocolloHandler:
     public: false
     tags:
       - { name: ocsdc.protocollo.handler, alias: dummy }
 
-
-  ocsdc.protocollo.handlers.pec:
-    class: App\Protocollo\PecProtocolloHandler
+  App\Protocollo\PecProtocolloHandler:
     public: false
     arguments:
-      - "%pec_mailer_host%"
-      - "%pec_mailer_port%"
-      - "%pec_mailer_user%"
-      - "%pec_mailer_password%"
-      - "%pec_delivery_address%"
-      - "@translator"
-      - "@templating"
-      - "@logger"
+      $host: "%pec_mailer_host%"
+      $port: "%pec_mailer_port%"
+      $user: "%pec_mailer_user%"
+      $password: "%pec_mailer_password%"
+      $sender: "%pec_delivery_address%"
     tags:
       - { name: ocsdc.protocollo.handler, alias: pec }
 
-
-  ocsdc.protocollo.handlers.pitre:
-    class: App\Protocollo\PiTreProtocolloHandler
+  App\Protocollo\PiTreProtocolloHandler:
     arguments: [ "@ocsdc.protocollo.client", "%prefix%" ]
     public: false
     tags:
       - { name: ocsdc.protocollo.handler, alias: pitre }
 
-  ocsdc.protocollo.handlers.infor:
-    class: App\Protocollo\InforProtocolloHandler
+  App\Protocollo\InforProtocolloHandler:
     autowire: true
     #        arguments: ["@doctrine.orm.entity_manager",'@logger', '@ocsdc.allegati.directory_namer',  '@vich_uploader.property_mapping_factory' ]
     public: false
     tags:
       - { name: ocsdc.protocollo.handler, alias: infor }
 
+  App\Protocollo\ProtocolloHandlerRegistry:
+    autowire: true
+
+  App\Protocollo\ConfigProtocolloHandler:
+    public: false
+    arguments:
+      $handlerAlias: "%protocollo%"
+
   App\Services\DelayedProtocolloService:
     arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
+    tags:
+      - { name: 'ocsdc.schedule_action_handler', alias: 'ocsdc.protocollo' }
 
   App\Services\ProtocolloService:
     arguments: [ "@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher" ]
 
-
   ocsdc.protocollo: '@App\Services\DelayedProtocolloService'
   ocsdc.protocollo_direct: '@App\Services\ProtocolloService'
+  ocsdc.protocollo.client: "@eight_points_guzzle.client.protocollo_cct"
+  ocsdc.protocollo.handler: '@App\Protocollo\ConfigProtocolloHandler'
 
-  ocsdc.pratica_listeners.createpdf:
-    class: App\EventListener\CreatePdfPraticaListener
+  App\EventListener\CreatePdfPraticaListener:
     arguments: [ "@ocsdc.modulo_pdf_builder", "@logger" ]
     tags:
-      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 10 }
+      - { name: kernel.event_listener, method: onStatusChange, priority: 10 }
 
-  ocsdc.pratica_listeners.sendmail:
-    class: App\EventListener\SendMailPraticaListener
+  App\EventListener\SendMailPraticaListener:
     arguments:
       $defaultSender: '%default_from_email_address%'
     tags:
-      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 20 }
+      - { name: kernel.event_listener, method: onStatusChange, priority: 20 }
 
-  ocsdc.pratica_listeners.backoffice:
-    class: App\EventListener\BackOfficePraticaListener
-    arguments: [ "@service_container", "@logger" ]
+  App\EventListener\BackOfficePraticaListener:
+    arguments: [ "@ocsdc.backoffices", "@logger" ]
     tags:
-      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 30 }
+      - { name: kernel.event_listener, method: onStatusChange, priority: 30 }
 
-  ocsdc.pratica_listeners.protocollo:
-    class: App\EventListener\ProtocollaPraticaListener
+  App\EventListener\ProtocollaPraticaListener:
     arguments: [ "@ocsdc.protocollo", "@ocsdc.pratica_status_service","@logger" ]
     tags:
-      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 100 }
+      - { name: kernel.event_listener, method: onStatusChange, priority: 100 }
 
   ocsdc.form.flow.storage_key_generator:
     class: App\Form\UserSessionStorageKeyGenerator
 
-  ocsdc.form.type.choose_allegato:
-    class: App\Form\Base\ChooseAllegatoType
+  App\Form\Base\ChooseAllegatoType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.upload_allegato:
-    class: App\Form\Base\UploadAllegatoType
+  App\Form\Base\UploadAllegatoType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.signed_allegato:
-    class: App\Form\Operatore\Base\SignedAllegatoType
+  App\Form\Operatore\Base\SignedAllegatoType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.scia_edilizia_modulo_scia_pratica_edilizia_type:
-    class: App\Form\Scia\PraticaEdiliziaModuloSciaType
+  App\Form\Scia\PraticaEdiliziaModuloSciaType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.scia_edilizia_allegati_modulo_scia_pratica_edilizia_type:
-    class: App\Form\Scia\PraticaEdiliziaAllegatiModuloSciaType
+  App\Form\Scia\PraticaEdiliziaAllegatiModuloSciaType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.scia_ediliza_soggetti_type:
-    class: App\Form\Scia\PraticaEdiliziaSoggettiType
+  App\Form\Scia\PraticaEdiliziaSoggettiType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.scia_edilizia_allegati_tecnici_type:
-    class: App\Form\Scia\PraticaEdiliziaAllegatiTecniciType
+  App\Form\Scia\PraticaEdiliziaAllegatiTecniciType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.scia_edilizia_ulteriori_allegati_tecnici_type:
-    class: App\Form\Scia\PraticaEdiliziaUlterioriAllegatiTecniciType
+  App\Form\Scia\PraticaEdiliziaUlterioriAllegatiTecniciType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.scia_edilizia_provvedimenti_type:
-    class: App\Form\Scia\PraticaEdiliziaProvvedimentiType
+  App\Form\Scia\PraticaEdiliziaProvvedimentiType:
     arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
     tags:
       - { name: form.type }
 
-  ocsdc.form.type.select_payment_gateway_type:
-    class: App\Form\Base\SelectPaymentGatewayType
+  App\Form\Base\SelectPaymentGatewayType:
     autowire: true
     tags:
       - { name: form.type }
@@ -533,8 +505,6 @@ services:
 
   ocsdc.form.type.payment_gateway_type: '@App\Form\Base\PaymentGatewayType'
 
-  ocsdc.form_flow_registry: '@App\Form\PraticaFlowRegistry'
-
   App\Form\PraticaFlowRegistry:
     autowire: true
 
@@ -552,53 +522,48 @@ services:
       - "%prefix%"
       - "@formio.factory"
       - "@doctrine.orm.entity_manager"
+      - "@security.helper"
 
   App\Form\Extension\TestiAccompagnatoriProcedura:
     arguments:
       $prefix: "%prefix%"
 
-  ocsdc.form.flow.asilonido:
-    class: App\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
+  App\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.asilonido }
 
-  ocsdc.form.flow.autoletturaacqua:
-    class: App\Form\AutoletturaAcqua\AutoletturaAcquaFlow
+  App\Form\AutoletturaAcqua\AutoletturaAcquaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.autoletturaacqua }
 
-  ocsdc.form.flow.iscrizioneregistroassociazioni:
-    class: App\Form\IscrizioneRegistroAssociazioni\IscrizioneRegistroAssociazioniFlow
+  App\Form\IscrizioneRegistroAssociazioni\IscrizioneRegistroAssociazioniFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.iscrizioneregistroassociazioni }
 
-  ocsdc.form.flow.contributopannolini:
-    class: App\Form\ContributoPannolini\ContributoPannoliniFlow
+  App\Form\ContributoPannolini\ContributoPannoliniFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.contributopannolini }
 
-  ocsdc.form.flow.cambioresidenza:
-    class: App\Form\CambioResidenza\CambioResidenzaFlow
+  App\Form\CambioResidenza\CambioResidenzaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.cambioresidenza }
 
-  ocsdc.form.flow.allacciamentoacquedotto:
-    class: App\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow
+  App\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
@@ -606,72 +571,63 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.allacciamentoacquedotto }
 
-  ocsdc.form.flow.certificatonascita:
-    class: App\Form\CertificatoNascita\CertificatoNascitaFlow
+  App\Form\CertificatoNascita\CertificatoNascitaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatonascita }
 
-  ocsdc.form.flow.estrattonascita:
-    class: App\Form\EstrattoNascita\EstrattoNascitaFlow
+  App\Form\EstrattoNascita\EstrattoNascitaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattonascita }
 
-  ocsdc.form.flow.attonascita:
-    class: App\Form\AttoNascita\AttoNascitaFlow
+  App\Form\AttoNascita\AttoNascitaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attonascita }
 
-  ocsdc.form.flow.certificatomorte:
-    class: App\Form\CertificatoMorte\CertificatoMorteFlow
+  App\Form\CertificatoMorte\CertificatoMorteFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatomorte }
 
-  ocsdc.form.flow.estrattomorte:
-    class: App\Form\EstrattoMorte\EstrattoMorteFlow
+  App\Form\EstrattoMorte\EstrattoMorteFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomorte }
 
-  ocsdc.form.flow.attomorte:
-    class: App\Form\AttoMorte\AttoMorteFlow
+  App\Form\AttoMorte\AttoMorteFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attomorte }
 
-  ocsdc.form.flow.certificatomatrimonio:
-    class: App\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow
+  App\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatomatrimonio }
 
-  ocsdc.form.flow.estrattomatrimonio:
-    class: App\Form\EstrattoMatrimonio\EstrattoMatrimonioFlow
+  App\Form\EstrattoMatrimonio\EstrattoMatrimonioFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomatrimonio }
 
-  ocsdc.form.flow.attomatrimonio:
-    class: App\Form\AttoMatrimonio\AttoMatrimonioFlow
+  App\Form\AttoMatrimonio\AttoMatrimonioFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
@@ -687,32 +643,28 @@ services:
   #            - { name: app.pratica.flow, alias: ocsdc.form.flow.nullaostamatrimonio }
 
 
-  ocsdc.form.flow.attestazioneanagrafica:
-    class: App\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow
+  App\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attestazioneanagrafica }
 
-  ocsdc.form.flow.listeelettorali:
-    class: App\Form\ListeElettorali\ListeElettoraliFlow
+  App\Form\ListeElettorali\ListeElettoraliFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.listeelettorali }
 
-  ocsdc.form.flow.statofamiglia:
-    class: App\Form\StatoFamiglia\StatoFamigliaFlow
+  App\Form\StatoFamiglia\StatoFamigliaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.statofamiglia }
 
-  ocsdc.form.flow.formio:
-    class: App\Form\FormIO\FormIOFlow
+  App\Form\FormIO\FormIOFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
@@ -728,41 +680,47 @@ services:
     parent: craue.form.flow
     arguments: [ "@logger","@translator" ]
 
-  ocsdc.form.flow.standardoperatore:
-    class: App\Form\Operatore\Standard\StandardOperatoreFlow
+  App\Form\Operatore\Standard\StandardOperatoreFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.praticaoperatore
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.operatore.standardoperatore }
 
-  ocsdc.form.flow.operatore.standardallegatonofirma:
-    class: App\Form\Operatore\Standard\StandardAllegatoNoFirmaFlow
+  App\Form\Operatore\Standard\StandardAllegatoNoFirmaFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.praticaoperatore
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.operatore.standardallegatonofirma }
 
-  ocsdc.form.flow.certificatonascitaoperatore:
-    class: App\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow
+  App\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.praticaoperatore
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatonascitaoperatore }
 
-  ocsdc.form.flow.attestazioneanagraficaoperatore:
-    class: App\Form\Operatore\AttestazioneAnagrafica\AttestazioneAnagraficaOperatoreFlow
+  App\Form\Operatore\AttestazioneAnagrafica\AttestazioneAnagraficaOperatoreFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.praticaoperatore
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.operatore.attestazioneanagraficaoperatore }
 
-  ocsdc.form.flow.listeelettoralioperatore:
-    class: App\Form\Operatore\ListeElettorali\ListeElettoraliOperatoreFlow
+  App\Form\Operatore\ListeElettorali\ListeElettoraliOperatoreFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.praticaoperatore
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.operatore.listeelettoralioperatore }
 
-  ocsdc.form.flow.statofamigliaoperatore:
-    class: App\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow
+  App\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.praticaoperatore
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.operatore.statofamigliaoperatore }
 
   # Flow service servizio
   App\Form\Admin\ServiceFlow:
@@ -794,14 +752,12 @@ services:
 
   ocsdc.pratica_status_service: '@App\Services\PraticaStatusService'
 
-  ocsdc.protocollo_success_events_subscriber:
-    class: App\EventListener\ProtocolloSuccessSubscriber
+  App\EventListener\ProtocolloSuccessSubscriber:
     arguments: [ "@ocsdc.pratica_status_service", "@logger" ]
     tags:
       - { name: kernel.event_subscriber }
 
-  ocsdc.user_security_subscriber:
-    class: App\EventListener\UserSecuritySubscriber
+  App\EventListener\UserSecuritySubscriber:
     arguments: ["@router" ]
     tags:
       - { name: kernel.event_subscriber }
@@ -820,8 +776,7 @@ services:
     class: App\Services\VersionService
     autowire: true
 
-  ocsdc.form.flow.occupazionesuolopubblico:
-    class: App\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
+  App\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
@@ -835,8 +790,7 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.scia_pratica_edilizia }
 
-  ocsdc.form.flow.contributoassociazioni:
-    class: App\Form\ContributoAssociazioni\ContributoAssociazioniFlow
+  App\Form\ContributoAssociazioni\ContributoAssociazioniFlow:
     autowire: false
     autoconfigure: false
     parent: ocsdc.form.flow.pratica
@@ -889,11 +843,9 @@ services:
     autowire: false
     autoconfigure: false
     tags:
-      - { name: 'app.schedule_action_handler', alias: 'ocsdc.giscom_api.adapter' }
+      - { name: 'ocsdc.schedule_action_handler', alias: 'ocsdc.giscom_api.adapter' }
 
   App\Services\GiscomAPIAdapterServiceInterface: '@App\Services\DelayedGiscomAPIAdapterService'
-
-  #ocsdc.giscom_api.adapter: "@ocsdc.giscom_api.adapter_delayed"
 
   ocsdc.allegati.dematerialized_attacher:
     class: App\Services\DematerializedFormAllegatiAttacherService
@@ -919,8 +871,7 @@ services:
     tags:
       - { name: 'ocsdc.status_mapper' }
 
-  ocsdc.pratica_integration_service:
-    class: App\Services\PraticaIntegrationService
+  App\Services\PraticaIntegrationService:
     arguments:
       - '@doctrine.orm.entity_manager'
       - '@logger'
@@ -940,15 +891,14 @@ services:
 
   App\Handlers\Servizio\DefaultHandler:
     arguments:
-      $formServerPublicUrl: formserver_public_url
+      $formServerPublicUrl: "%formserver_public_url%"
     tags:
       - { name: ocsdc.servizio.handler, alias: default }
 
-  ocsdc.handlers.servizio.imis:
-    class: App\Handlers\Servizio\ImisHandler
+  App\Handlers\Servizio\ImisHandler:
     arguments: [ "@security.token_storage", "@logger", "@router" ]
     tags:
-      - { name: ocsdc.servizio.handler, alias: ocsdc.servizio.handler }
+      - { name: ocsdc.servizio.handler, alias: ocsdc.servizio.imis }
 
   http.client:
     class: Symfony\Component\HttpClient\CurlHttpClient
@@ -1003,3 +953,12 @@ services:
     class: App\Form\DataManager
     public: false
     arguments: [ "@craue.form.flow.storage", "@security.token_storage", "@session" ]
+
+  App\Command\ScheduledActionCommand:
+    $host: "%ocsdc_host%"
+    $scheme: "%ocsdc_scheme%"
+
+  App\Command\SecureUserCommand:
+    $host: "%ocsdc_host%"
+    $scheme: "%ocsdc_scheme%"
+    $inactiveUserLifeTime: "%InactiveUserLifeTime%"

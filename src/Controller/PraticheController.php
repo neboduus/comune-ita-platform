@@ -31,7 +31,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -44,7 +44,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class PraticheController
@@ -271,16 +271,16 @@ class PraticheController extends AbstractController
     }
 
     $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
-    /*try {
+    try {
       $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
     } catch (ForbiddenAccessException $e) {
       $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
       return $this->redirectToRoute('pratiche');
-    }*/
+    }
 
     $user = $this->getUser();
-    //$this->checkUserCanAccessPratica($pratica, $user);
+    $this->checkUserCanAccessPratica($pratica, $user);
 
     /** @var PraticaFlow $praticaFlowService */
     $praticaFlowService = $praticaFlowRegistry->getByName($pratica->getServizio()->getPraticaFlowServiceName());
@@ -450,7 +450,7 @@ class PraticheController extends AbstractController
     $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
       && $pratica->getUser()->getId() == $user->getId();
     if ($canCompile) {
-      $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+      $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
       try {
         $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
       } catch (ForbiddenAccessException $e) {

@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\BackOffice\BackOfficeInterface;
 use App\Entity\DematerializedFormPratica;
 use App\Event\PraticaOnChangeStatusEvent;
+use App\Services\BackOfficeCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Psr\Log\LoggerInterface;
 
@@ -12,18 +13,18 @@ class BackOfficePraticaListener
 {
 
   /**
-   * @var Container
+   * @var BackOfficeCollection
    */
-  private $container;
+  private $backOfficeCollection;
 
   /**
    * @var LoggerInterface
    */
   private $logger;
 
-  public function __construct(Container $container,  LoggerInterface $logger)
+  public function __construct(BackOfficeCollection $backOfficeCollection,  LoggerInterface $logger)
   {
-    $this->container = $container;
+    $this->backOfficeCollection = $backOfficeCollection;
     $this->logger = $logger;
   }
 
@@ -36,8 +37,12 @@ class BackOfficePraticaListener
     if (!empty($integrations) && array_key_exists($event->getNewStateIdentifier(), $integrations) && $pratica instanceof DematerializedFormPratica) {
 
       /** @var BackOfficeInterface $backOfficeHandler */
-      $backOfficeHandler = $this->container->get($integrations[$event->getNewStateIdentifier()]);
-      $backOfficeHandler->execute($pratica);
+      $backOfficeHandler = $this->backOfficeCollection->getBackOffice($integrations[$event->getNewStateIdentifier()]);
+      if ($backOfficeHandler instanceof BackOfficeInterface) {
+        $backOfficeHandler->execute($pratica);
+      } else {
+        $this->logger->critical('Backoffice ' . $integrations[$event->getNewStateIdentifier()] . ' not loaded');
+      }
     }
   }
 }

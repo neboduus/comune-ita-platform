@@ -11,7 +11,6 @@ use App\Services\MeetingService;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use ICal\ICal;
@@ -21,13 +20,10 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Omines\DataTablesBundle\DataTableFactory;
 use Omines\DataTablesBundle\DataTable;
-use Omines\DataTablesBundle\DataTableState;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -35,15 +31,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class CalendarsController
  */
 class CalendarsController extends Controller
 {
-  use DataTablesTrait;
-
   /** @var EntityManagerInterface */
   private $em;
 
@@ -65,18 +59,22 @@ class CalendarsController extends Controller
    */
   private $JWTTokenManager;
 
+  private $dataTableFactory;
+
   public function __construct(
     TranslatorInterface $translator,
     EntityManagerInterface $em,
     InstanceService $is,
     MeetingService $meetingService,
-    JWTTokenManagerInterface $JWTTokenManager
+    JWTTokenManagerInterface $JWTTokenManager,
+    DataTableFactory $dataTableFactory
   ) {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
     $this->JWTTokenManager = $JWTTokenManager;
+    $this->dataTableFactory = $dataTableFactory;
   }
 
   /**
@@ -107,7 +105,7 @@ class CalendarsController extends Controller
       );
     }
 
-    $table = $this->createDataTable()
+    $table = $this->dataTableFactory->create()
       ->add(
         'title',
         TextColumn::class,
@@ -196,10 +194,9 @@ class CalendarsController extends Controller
 
   /**
    * Creates a new Calendar entity.
-   * @Route("/operatori/calendars/new", name="operatori_calendar_new")
-   * @Method({"GET", "POST"})
+   * @Route("/operatori/calendars/new", name="operatori_calendar_new", methods={"GET", "POST"})
    * @param Request $request the request
-   * @return array|RedirectResponse
+   * @return Response
    * @throws \Exception
    */
   public function newCalendarAction(Request $request)
@@ -251,8 +248,7 @@ class CalendarsController extends Controller
 
   /**
    * Deletes a Calendar entity.
-   * @Route("/operatori/calendars/{id}/delete", name="operatori_calendar_delete")
-   * @Method("GET")
+   * @Route("/operatori/calendars/{id}/delete", name="operatori_calendar_delete", methods={"GET"})
    * @param Request $request the request
    * @param Calendar $calendar The calendar entity
    * @return RedirectResponse
@@ -301,7 +297,7 @@ class CalendarsController extends Controller
    * @param Request $request the request
    * @param Calendar $calendar The Calendar entity
    *
-   * @return array|RedirectResponse
+   * @return Response
    */
   public function editCalendarAction(Request $request, Calendar $calendar)
   {
@@ -333,7 +329,7 @@ class CalendarsController extends Controller
             $openingHour->setCalendar($calendar);
             $em->persist($openingHour);
           } else {
-            $editIds[$openingHour->getId()] = $openingHour;
+            $editIds[(string)$openingHour->getId()] = $openingHour;
           }
         }
         $toDelete = array_diff_key($storedIds, $editIds);
@@ -391,7 +387,7 @@ class CalendarsController extends Controller
       Meeting::STATUS_CANCELLED => 'Annullato',
     ];
 
-    $table = $this->createDataTable()
+    $table = $this->dataTableFactory->create()
       ->add('fromTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'Y-m-d', 'searchable' => false])
       ->add(
         'id',

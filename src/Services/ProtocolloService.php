@@ -10,8 +10,10 @@ use App\Entity\Pratica;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\RispostaIntegrazioneRepository;
+use App\Event\ProtocollaAllegatiIntegrazioneSuccessEvent;
 use App\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 use App\Event\ProtocollaPraticaSuccessEvent;
+use App\Event\ProtocollaRichiesteIntegrazioneSuccessEvent;
 use App\Protocollo\Exception\AlreadySentException;
 use App\Protocollo\Exception\AlreadyUploadException;
 use App\Protocollo\Exception\IncompleteExecutionException;
@@ -136,7 +138,6 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
     if ($dispatchSuccess) {
       $this->dispatcher->dispatch(
-        ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS,
         new ProtocollaPraticaSuccessEvent($pratica)
       );
     } else {
@@ -174,8 +175,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       $this->entityManager->flush();
     }
     $this->dispatcher->dispatch(
-      ProtocolloEvents::ON_PROTOCOLLA_RICHIESTE_INTEGRAZIONE_SUCCESS,
-      new ProtocollaPraticaSuccessEvent($pratica)
+      new ProtocollaRichiesteIntegrazioneSuccessEvent($pratica)
     );
   }
 
@@ -270,7 +270,9 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
       $this->entityManager->flush();
 
-      $this->dispatcher->dispatch(ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS, new ProtocollaPraticaSuccessEvent($pratica));
+      $this->dispatcher->dispatch(
+        new ProtocollaAllegatiIntegrazioneSuccessEvent($pratica)
+      );
     } else {
       throw new IncompleteExecutionException();
     }
@@ -310,7 +312,6 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     $this->entityManager->flush();
 
     $this->dispatcher->dispatch(
-      ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_OPERATORE_SUCCESS,
       new ProtocollaAllegatiOperatoreSuccessEvent($pratica)
     );
   }

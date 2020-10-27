@@ -23,7 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use TheCodingMachine\Gotenberg\Client;
 
 use TheCodingMachine\Gotenberg\ClientException;
@@ -378,7 +378,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest)
   {
-    $html = $this->templating->render('App:Pratiche:pdf/parts/integration.html.twig', [
+    $html = $this->templating->render('Pratiche/pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'user' => $pratica->getUser(),
@@ -419,7 +419,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     /** @var Integrazione[] $integrations */
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
 
-    $html = $this->templating->render('App:Pratiche:pdf/parts/answer_integration.html.twig', [
+    $html = $this->templating->render('Pratiche/pdf/parts/answer_integration.html.twig', [
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'integrazioni' => $integrations,
@@ -540,7 +540,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForClass(Pratica $pratica, $className)
   {
-    $html = $this->templating->render('App:Pratiche:pdf/' . $className . '.html.twig', [
+    $html = $this->templating->render('Pratiche/pdf/' . $className . '.html.twig', [
       'pratica' => $pratica,
       'user' => $pratica->getUser(),
     ]);

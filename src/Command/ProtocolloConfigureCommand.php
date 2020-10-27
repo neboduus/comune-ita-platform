@@ -6,15 +6,15 @@ use App\Entity\Ente;
 use App\Entity\Servizio;
 use App\Protocollo\PiTreProtocolloParameters;
 use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Cache\Exception\InvalidArgumentException;
+use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 
-class ProtocolloConfigureCommand extends ContainerAwareCommand
+class ProtocolloConfigureCommand extends Command
 {
   /**
    * @var EntityManager
@@ -26,6 +26,16 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
    */
   private $io;
 
+  /**
+   * AdministratorCreateCommand constructor.
+   * @param EntityManagerInterface $entityManager
+   */
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->em = $entityManager;
+    parent::__construct();
+  }
+
   protected function configure()
   {
     $this
@@ -35,12 +45,62 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    $this->em = $this->getContainer()->get('doctrine')->getManager();
     $this->io = new SymfonyStyle($input, $output);
-
     $ente = $this->chooseEnte();
     $this->showEnteCurrentParameters($ente);
     $this->configureEnte($ente);
+
+    return 0;
+  }
+
+  /**
+   * @return Ente
+   */
+  private function chooseEnte()
+  {
+    $enti = [];
+    foreach ($this->getEnti() as $entiEntity) {
+      $enti[] = $entiEntity->getName();
+    }
+    $enteName = $this->io->choice('Seleziona l\'ente da configurare', $enti);
+    $ente = $this->em->getRepository('App:Ente')->findOneByName($enteName);
+    if (!$ente) {
+      throw new InvalidArgumentException("Ente $enteName non trovato");
+    }
+
+    return $ente;
+  }
+
+  /**
+   * @return Ente[]
+   */
+  private function getEnti()
+  {
+    $repo = $this->em->getRepository('App:Ente');
+
+    return $repo->findAll();
+  }
+
+  private function showEnteCurrentParameters(Ente $ente)
+  {
+    $this->io->title("Valori correnti per ente {$ente->getName()}");
+    $headers = array_merge(['', 'Servizio'], PiTreProtocolloParameters::getEnteParametersKeys());
+    $rows = [];
+    foreach ($this->getServizi() as $index => $servizio) {
+      $parameters = new PiTreProtocolloParameters((array)$ente->getProtocolloParametersPerServizio($servizio));
+      $rows[] = array_merge([$index, $servizio->getName()], $parameters->all());
+    }
+    $this->io->table($headers, $rows);
+  }
+
+  /**
+   * @return Servizio[]
+   */
+  private function getServizi()
+  {
+    $repo = $this->em->getRepository('App:Servizio');
+
+    return $repo->findAll();
   }
 
   private function configureEnte(Ente $ente)
@@ -74,24 +134,6 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
   }
 
   /**
-   * @return Ente
-   */
-  private function chooseEnte()
-  {
-    $enti = [];
-    foreach ($this->getEnti() as $entiEntity) {
-      $enti[] = $entiEntity->getName();
-    }
-    $enteName = $this->io->choice('Seleziona l\'ente da configurare', $enti);
-    $ente = $this->em->getRepository('App:Ente')->findOneByName($enteName);
-    if (!$ente) {
-      throw new InvalidArgumentException("Ente $enteName non trovato");
-    }
-
-    return $ente;
-  }
-
-  /**
    * @return Servizio
    */
   private function chooseServizio()
@@ -101,9 +143,7 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
       $servizi[(string)$servizioEntity->getSlug()] = $servizioEntity->getName();
     }
 
-    $servizioName = $this->io->choice('Seleziona il servizio da configurare', $servizi);
-
-    return $servizioName;
+    return $this->io->choice('Seleziona il servizio da configurare', $servizi);
   }
 
   private function storeData(Ente $ente, Servizio $servizio)
@@ -127,7 +167,7 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
     }
 
     $ente->setProtocolloParametersPerServizio($data, $servizio);
-    $this->em->flush($ente);
+    $this->em->flush();
   }
 
   private function storeAllServicesData(Ente $ente)
@@ -150,39 +190,6 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
     foreach ($this->getServizi() as $servizio) {
       $ente->setProtocolloParametersPerServizio($data, $servizio);
     }
-    $this->em->flush($ente);
-  }
-
-
-  /**
-   * @return Servizio[]
-   */
-  private function getServizi()
-  {
-    $repo = $this->em->getRepository('App:Servizio');
-
-    return $repo->findAll();
-  }
-
-  /**
-   * @return Ente[]
-   */
-  private function getEnti()
-  {
-    $repo = $this->em->getRepository('App:Ente');
-
-    return $repo->findAll();
-  }
-
-  private function showEnteCurrentParameters(Ente $ente)
-  {
-    $this->io->title("Valori correnti per ente {$ente->getName()}");
-    $headers = array_merge(['', 'Servizio'], PiTreProtocolloParameters::getEnteParametersKeys());
-    $rows = [];
-    foreach ($this->getServizi() as $index => $servizio) {
-      $parameters = new PiTreProtocolloParameters((array)$ente->getProtocolloParametersPerServizio($servizio));
-      $rows[] = array_merge([$index, $servizio->getName()], $parameters->all());
-    }
-    $this->io->table($headers, $rows);
+    $this->em->flush();
   }
 }

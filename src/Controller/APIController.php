@@ -1,20 +1,17 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Ente;
 use App\Entity\Pratica;
-use App\Entity\PraticaRepository;
 use App\Entity\Servizio;
 use App\Services\InstanceService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 
 /**
@@ -87,8 +84,7 @@ class APIController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica")
-     * @Method({"POST"})
+     * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica", methods={"POST"})
      * @param Request $request
      * @param Pratica $pratica
      * @return Response
@@ -106,8 +102,7 @@ class APIController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica")
-     * @Method({"GET"})
+     * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica", methods={"GET"})
      * @param Request $request
      * @param Pratica $pratica
      * @return Response
@@ -119,7 +114,7 @@ class APIController extends AbstractFOSRestController
             return new Response(null, Response::HTTP_NOT_FOUND);
         }
 
-        return new Response($pratica->getUserCompilationNotes());
+        return new Response(json_encode($pratica->getUserCompilationNotes()));
     }
 
     /**
@@ -152,10 +147,9 @@ class APIController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/servizioTexts/{servizio}/{ente}/{step}", name="ez_api_testi_custom_servizio_ente")
+     * @Route("/servizioTexts/{servizio}/{ente}/{step}", name="ez_api_testi_custom_servizio_ente", methods={"POST"})
      * @ParamConverter("servizio", options={"mapping": {"servizio": "slug"}})
      * @ParamConverter("ente", options={"mapping": {"ente": "codiceMeccanografico"}})
-     * @Method({"POST"})
      * @param Request  $request
      * @param Servizio $servizio
      * @param Ente     $ente

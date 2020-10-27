@@ -77,7 +77,6 @@ class OperatoreCreateCommand extends Command
     }
 
     try {
-
       $user = (new OperatoreUser())
         ->setUsername($username)
         ->setEmail($email)
@@ -96,9 +95,12 @@ class OperatoreCreateCommand extends Command
       $this->entityManager->flush();
 
       $output->writeln('Ok: generato nuovo operatore');
+
+      return 0;
     } catch (\Exception $e) {
-      $output->writeln('Errore: '.$e->getMessage());
+      $output->writeln('Errore: ' . $e->getMessage());
+
+      return 1;
     }
   }
-
 }

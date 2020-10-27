@@ -5,10 +5,12 @@ namespace App\Form\Base;
 use App\Entity\Pratica;
 use App\Form\Extension\TestiAccompagnatoriProcedura;
 use App\Payment\Gateway\MyPay;
+use App\Payment\PaymentGatewayRegistry;
 use App\Services\MyPayService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,16 +22,16 @@ class PaymentGatewayType extends AbstractType
   /** @var EntityManagerInterface  */
   private $em;
 
-  /** @var ContainerInterface  */
-  private $container;
+  /** @var PaymentGatewayRegistry  */
+  private $paymentGatewayRegistry;
 
   /** @var MyPayService */
   private $myPayService;
 
-  public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, MyPayService $myPayService)
+  public function __construct(EntityManagerInterface $entityManager, PaymentGatewayRegistry $paymentGatewayRegistry, MyPayService $myPayService)
   {
     $this->em = $entityManager;
-    $this->container = $container;
+    $this->paymentGatewayRegistry = $paymentGatewayRegistry;
     $this->myPayService = $myPayService;
   }
 
@@ -70,7 +72,10 @@ class PaymentGatewayType extends AbstractType
         );
     }
 
-    $builder->addEventSubscriber($this->container->get($gatewayClassHandler));
+    $paymentData = $this->paymentGatewayRegistry->get($gatewayClassHandler);
+    if ($paymentData instanceof EventSubscriberInterface) {
+      $builder->addEventSubscriber($paymentData);
+    }
   }
 
   public function getBlockPrefix()

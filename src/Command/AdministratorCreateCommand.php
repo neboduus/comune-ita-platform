@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\AdminUser;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,7 +60,6 @@ class AdministratorCreateCommand extends Command
     $question = new Question('Inserisci la password ', 'mariorossi');
     $password = $helper->ask($input, $output, $question);
 
-
     try {
       $user = (new AdminUser())
         ->setUsername($username)
@@ -78,8 +78,13 @@ class AdministratorCreateCommand extends Command
       $this->entityManager->flush();
 
       $output->writeln('Ok: generato nuovo admin');
-    } catch (\Exception $e) {
+
+      return 0;
+
+    } catch (Exception $e) {
       $output->writeln('Errore: '.$e->getMessage());
+
+      return 1;
     }
   }
 

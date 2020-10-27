@@ -2,67 +2,79 @@
 
 namespace App\Command;
 
-use App\App;
 use App\Entity\OperatoreUser;
-
-use App\ScheduledAction\ScheduledActionHandlerInterface;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Routing\RouterInterface;
 
-
-class SecureUserCommand extends ContainerAwareCommand
+class SecureUserCommand extends Command
 {
-    protected function configure()
-    {
-        $this
-            ->setName('ocsdc:user-secure:execute')
-            ->setDescription('Execute security actions for user class');
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  private $logger;
+
+  private $router;
+
+  private $scheme;
+
+  private $host;
+
+  private $inactiveUserLifeTime;
+
+  public function __construct(
+    EntityManagerInterface $entityManager,
+    LoggerInterface $logger,
+    RouterInterface $router,
+    string $scheme,
+    string $host,
+    $inactiveUserLifeTime
+  )
+  {
+    $this->entityManager = $entityManager;
+    $this->logger = $logger;
+    $this->router = $router;
+    $this->scheme = $scheme;
+    $this->host = $host;
+    $this->inactiveUserLifeTime = (int)$inactiveUserLifeTime;
+
+    parent::__construct();
+  }
+
+  protected function configure()
+  {
+    $this
+      ->setName('ocsdc:user-secure:execute')
+      ->setDescription('Execute security actions for user class');
+  }
+
+  protected function execute(InputInterface $input, OutputInterface $output)
+  {
+    $context = $this->router->getContext();
+    $context->setHost($this->host);
+    $context->setScheme($this->scheme);
+    $this->logger->info('Starting a scheduled action');
+
+    $interval = (new \DateTime())->sub(new \DateInterval('P' . $this->inactiveUserLifeTime . 'D'));
+
+    // Operatori da disabilitare
+    $operators = $this->entityManager->getRepository(OperatoreUser::class)
+      ->createQueryBuilder('o')
+      ->where('o.enabled = true')
+      ->andWhere('o.lastChangePassword > :interval')
+      ->setParameter('interval', $interval)
+      ->getQuery()->getResult();
+
+    /** @var OperatoreUser $operator */
+    foreach ($operators as $operator) {
+      $operator->setEnabled(false);
+      $this->entityManager->persist($operator);
+      $this->entityManager->flush();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $context = $this->getContainer()->get('router')->getContext();
-        $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-        $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
-        $this->getContainer()->get('logger')->info('Starting a scheduled action');
-
-        $passwordLifeTime = $this->getContainer()->getParameter('PasswordLifeTime');
-        $inactiveUserLifeTime = $this->getContainer()->getParameter('InactiveUserLifeTime');
-
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        //$repo = $em->getRepository('App::Operatore');
-        //$operatori = $repo->findBy();
-
-
-        // Operatori da disabilitare
-        $operators = $em
-            ->createQuery("SELECT * FROM utente WHERE type  = 'operatore' AND enabled = true AND last_change_password  < NOW() - INTERVAL '".$inactiveUserLifeTime." days'")
-            ->getResult();
-
-        /** @var OperatoreUser $operator */
-        foreach ($operators as $operator) {
-            $operator->setEnabled(false);
-            $em->persist($operator);
-            $em->flush();
-
-        }
-        unset($operators);
-
-        // Operatori da modficare la password
-        /*$operators = $em
-            ->createQuery("SELECT * FROM utente WHERE type  = 'operatore' AND enabled = true last_change_password  < NOW() - INTERVAL '".$passwordLifeTime." days'")
-            ->getResult();*/
-
-        /** @var OperatoreUser $operator */
-        /*foreach ($operators as $operator) {
-            $operator->setLastChangePassword(new \DateTime());
-            $operator->setPassword($operator->getPassword().time());
-            $em->persist($operator);
-            $em->flush();
-        }
-        unset($operators);*/
-
-    }
+    return 0;
+  }
 }
