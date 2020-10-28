@@ -61,4 +61,5 @@ RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
 COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
 
-RUN bin/console cache:warmup
+# Todo: da errore di memoria verificare
+#RUN bin/console cache:warmup
