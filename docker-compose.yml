@@ -18,7 +18,7 @@ services:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     environment:
       PHP_FPM_CLEAR_ENV: 'no'
-      ENV: DEMO
+      ENV: PROD
       APP_ENV: $SYMFONY_ENV
       PREFIX: $PREFIX
       DB_DRIVER: $DB_DRIVER
