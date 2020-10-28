@@ -19,7 +19,7 @@ USER root
 
 WORKDIR /var/www/html
 
-RUN composer global require hirak/prestissimo
+#RUN composer global require hirak/prestissimo
 
 COPY ./composer.json ./composer.lock ./
 
