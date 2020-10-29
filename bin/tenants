@@ -1,16 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env php
+<?php
+use App\InstancesProvider;
+use Symfony\Component\Console\Input\ArgvInput;
 
-readonly env=${SYMFONY_ENV:-prod}
+set_time_limit(0);
+require dirname(__DIR__).'/vendor/autoload.php';
 
-if [[ ! -d app/config ]]; then
-  echo "Error, the script must be executed from root app dir"
-  exit 1
-fi
+$input = new ArgvInput();
+if (null !== $env = $input->getParameterOption(['--env', '-e'], 'prod', true)) {
+  putenv('APP_ENV='.$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $env);
+}
 
-readonly tenants=$(ls -1d app/config/*/ | egrep -v '(bundles|common)' | cut -d'/' -f 3)
-
-for tenant in $tenants; do
-  if [[ -f app/config/${tenant}/config_${env}.yml ]]; then
-     echo $tenant
-  fi
-done
+$instanceProvider = InstancesProvider::factory();
+foreach ($instanceProvider->getInstances() as $identifier => $instance){
+  echo $identifier . PHP_EOL;
+}
