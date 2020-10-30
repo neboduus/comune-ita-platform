@@ -69,6 +69,7 @@ services:
       JWT_PASSPHRASE: $JWT_PASSPHRASE
       TOKEN_TTL: $TOKEN_TTL
       HASH_VALIDITY: $HASH_VALIDITY
+      INACTIVE_USER_LIFE_TIME: $INACTIVE_USER_LIFE_TIME
     volumes:
       - "uploads:/var/www/html/var/uploads"
 
