@@ -19,8 +19,6 @@ USER root
 
 WORKDIR /var/www/html
 
-RUN composer global require hirak/prestissimo
-
 COPY ./composer.json ./composer.lock ./
 
 # app dir is required for classmaps entry in composer.json
