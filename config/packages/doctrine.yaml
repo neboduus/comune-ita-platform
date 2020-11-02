@@ -1,10 +1,13 @@
 doctrine:
   dbal:
-    #postgres://$DB_USER:$DB_PASSWORD@$DB_HOST/$DB_NAME?server_version=10
-    url: '%env(resolve:DATABASE_URL)%'
-    #url: '%database_driver%://%database_user%:%database_password%@%database_host%/%database_name%?server_version=10'
+    driver: 'pdo_pgsql'
+    server_version: '10.6'
+    host: '%database_host%'
+    port: '%database_port%'
+    dbname: '%database_name%'
+    user: '%database_user%'
+    password: '%database_password%'
     charset: UTF8
-
   orm:
     auto_generate_proxy_classes: true
     naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
