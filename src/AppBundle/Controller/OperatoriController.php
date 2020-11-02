@@ -472,7 +472,7 @@ class OperatoriController extends Controller
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
       $applicationArray['is_payment_required'] = !empty($s->getPaymentData());
       $applicationArray['payment_complete'] = $s->getStatus() == Pratica::STATUS_PAYMENT_ERROR || $s->getStatus() <= Pratica::STATUS_PAYMENT_OUTCOME_PENDING ? false : true;
-      $applicationArray['idp'] = $s->getUser()->getIdp();
+      $applicationArray['idp'] = $s->getAuthenticationData()->getAuthenticationMethod() ? $s->getAuthenticationData()->getAuthenticationMethod() : $s->getUser()->getIdp();
       $applicantUser = $s->getUser();
       $codiceFiscale = $applicantUser instanceof CPSUser ? $applicantUser->getCodiceFiscale() : '';
       $codiceFiscaleParts = explode('-', $codiceFiscale);

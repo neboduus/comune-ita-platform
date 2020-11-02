@@ -1,10 +1,19 @@
+{# @var pratica \AppBundle\Entity\Pratica #}
 {# @var user \AppBundle\Entity\CPSUser #}
 <p class="page-break-before">{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
 <table style="font-size: 8pt;table-layout: fixed; background-color: #e3e3e3; border: 1px solid #ccc" class="table autenticazione">
-  {% for key, value in user.getSecurityFields %}
-  <tr>
-    <td width="30%">{{ key }}</td>
-    <td style="word-break: break-word;overflow-wrap: break-word;">{{ value }}</td>
-  </tr>
-  {% endfor %}
+  {% if pratica.authenticationData|length > 0 %}
+    {% set securityFields = pratica.authenticationData %}
+  {% else %}
+    {% set securityFields = user.getSecurityFields %}
+  {% endif %}
+
+  {% if securityFields|length %}
+    {% for key, value in securityFields %}
+      <tr>
+        <td width="30%">{{ key }}</td>
+        <td style="word-break: break-word;overflow-wrap: break-word;">{{ value }}</td>
+      </tr>
+    {% endfor %}
+  {% endif %}
 </table>

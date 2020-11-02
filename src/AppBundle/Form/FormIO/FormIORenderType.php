@@ -12,6 +12,7 @@ use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\FormIO\Schema;
 use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Services\FormServerApiAdapterService;
+use AppBundle\Services\UserSessionService;
 use AppBundle\Validator\Constraints\ExpressionBasedFormIOConstraint;
 use AppBundle\Validator\Constraints\ServerSideFormIOConstraint;
 use Doctrine\ORM\EntityManager;
@@ -62,6 +63,11 @@ class FormIORenderType extends AbstractType
    */
   private $session;
 
+  /**
+   * @var UserSessionService
+   */
+  private $userSessionService;
+
   private static $applicantUserMap = [
     'applicant.completename.name' => 'getNome',
     'applicant.completename.surname' => 'getCognome',
@@ -89,13 +95,21 @@ class FormIORenderType extends AbstractType
    * @param LoggerInterface $logger
    * @param SessionInterface $session
    */
-  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService, SchemaFactoryInterface $schemaFactory, LoggerInterface $logger, SessionInterface $session)
+  public function __construct(
+    EntityManagerInterface $entityManager,
+    FormServerApiAdapterService $formServerService,
+    SchemaFactoryInterface $schemaFactory,
+    LoggerInterface $logger,
+    SessionInterface $session,
+    UserSessionService $userSessionService
+  )
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
     $this->schemaFactory = $schemaFactory;
     $this->logger = $logger;
     $this->session = $session;
+    $this->userSessionService = $userSessionService;
   }
 
   /**
@@ -235,7 +249,9 @@ class FormIORenderType extends AbstractType
 
     if (!$user instanceof CPSUser) {
       $user = $this->checkUser($pratica->getDematerializedForms());
-      $pratica->setUser($user);
+      $pratica->setUser($user)
+        ->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($user))
+        ->setSessionData($this->userSessionService->getCurrentUserSessionData($user));
       $this->em->persist($pratica);
 
       $attachments = $pratica->getAllegati();

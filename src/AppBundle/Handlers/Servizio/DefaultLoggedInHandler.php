@@ -72,6 +72,8 @@ class DefaultLoggedInHandler extends DefaultHandler
     $pratica
       ->setServizio($servizio)
       ->setUser($user)
+      ->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($user))
+      ->setSessionData($this->userSessionService->getCurrentUserSessionData($user))
       ->setStatus(Pratica::STATUS_DRAFT);
 
     $repo = $this->em->getRepository('AppBundle:Pratica');

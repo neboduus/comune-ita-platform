@@ -13,6 +13,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\DematerializedFormAllegatiAttacherService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
+use AppBundle\Services\UserSessionService;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -61,6 +62,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
   protected $em;
 
+  protected $userSessionService;
+
   /**
    * PraticaFlow constructor.
    * @param LoggerInterface $logger
@@ -71,6 +74,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
    * @param $prefix
    * @param SchemaFactoryInterface $formIOFactory
    * @param EntityManagerInterface $em
+   * @param UserSessionService $userSessionService
    *
    */
   public function __construct(
@@ -81,7 +85,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     DematerializedFormAllegatiAttacherService $dematerializer,
     $prefix,
     SchemaFactoryInterface $formIOFactory,
-    EntityManagerInterface $em
+    EntityManagerInterface $em,
+    UserSessionService $userSessionService
   )
   {
     $this->logger = $logger;
@@ -92,6 +97,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $this->prefix = $prefix;
     $this->formIOFactory = $formIOFactory;
     $this->em = $em;
+    $this->userSessionService = $userSessionService;
   }
 
   public function getFormOptions($step, array $options = array())
@@ -148,6 +154,9 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     }
     /** @var PraticaRepository $repo */
     $repo = $this->em->getRepository(Pratica::class);
+
+    $pratica->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($pratica->getUser()))
+      ->setSessionData($this->userSessionService->getCurrentUserSessionData($pratica->getUser()));
 
     // Per non sovrascrivere comportamento in formio flow
     if ($pratica->getFolderId() == null) {
