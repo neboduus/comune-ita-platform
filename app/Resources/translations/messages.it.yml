@@ -1746,6 +1746,7 @@ protocollo:
         send_applcation: 'Acquisita nuova pratica per il servizio: %name%'
         send_integration: 'Acquisita integrazione per la pratica: %name%'
         send_result: 'Acquisita risposta per la pratica: %name%'
+  receiver: 'Email pec del ricevente'
 
 gateway:
   bollo:
