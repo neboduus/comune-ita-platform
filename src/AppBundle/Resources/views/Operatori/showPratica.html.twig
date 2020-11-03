@@ -16,8 +16,8 @@
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js"></script>
-  <script src="//unpkg.com/element-ui/lib/index.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
+  <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
   <script src="//unpkg.com/axios/dist/axios.min.js"></script>
 
   {% if feature('feature_application_detail') %}
@@ -32,7 +32,7 @@
         });
     </script>
   {% endif %}
-  {% if outcomeForm.vars.helper.vueApp and pratica.operatore == user %}
+  {% if outcomeForm.vars.helper.vueApp and pratica.operatore == user and pratica.canBeAssigned %}
       <script src="{{ asset('bundles/app/js/components/' ~ outcomeForm.vars.helper.vueApp ~ '.js') }}"></script>
       <script>
           let vueBundledData = {{ outcomeForm.vars.helper.vueBundledData|raw }};
