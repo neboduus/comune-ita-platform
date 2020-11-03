@@ -181,10 +181,13 @@
             {% if utils %}
               {% for item in utils %}
                 <li class="list-inline-item">
-                  <a class="nav-link " href="{{ item.url }}" title="Link a Dataset">{{ item.text }}</a>
+                  <a class="nav-link " href="{{ item.url }}" title="Link a {{ item.text }}">{{ item.text }}</a>
                 </li>
               {% endfor %}
             {% endif %}
+            <li class="list-inline-item">
+              <a class="nav-link" href="{{ path('app.swagger_ui') }}">Api</a>
+            </li>
           </ul>
         </div>
         <div class="col-2">
