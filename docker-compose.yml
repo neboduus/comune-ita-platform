@@ -114,7 +114,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   mongo:
-    image: mongo
+    image: mongo:4.2.2
     restart: unless-stopped
     volumes:
       - 'mongo:/data'

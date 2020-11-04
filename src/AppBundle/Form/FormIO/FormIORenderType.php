@@ -7,16 +7,18 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
-use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\FormIO\Schema;
 use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\UserSessionService;
 use AppBundle\Validator\Constraints\ExpressionBasedFormIOConstraint;
-use AppBundle\Validator\Constraints\ServerSideFormIOConstraint;
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -28,6 +30,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
+use function json_encode;
 
 
 class FormIORenderType extends AbstractType
@@ -52,7 +55,6 @@ class FormIORenderType extends AbstractType
    */
   private $schemaFactory;
 
-
   /**
    * @var LoggerInterface
    */
@@ -67,6 +69,12 @@ class FormIORenderType extends AbstractType
    * @var UserSessionService
    */
   private $userSessionService;
+
+  private $genericViolationMessage = "Il form non sembra essere compilato correttamente";
+
+  private $paymentViolationMessage = "Si è verificato un problema con i dati del pagamento, impossibile inviare la pratica";
+
+  private $constraintGroups = ['flow_formIO_step1', 'flow_FormIOAnonymous_step1', 'Default'];
 
   private static $applicantUserMap = [
     'applicant.completename.name' => 'getNome',
@@ -94,6 +102,7 @@ class FormIORenderType extends AbstractType
    * @param SchemaFactoryInterface $schemaFactory
    * @param LoggerInterface $logger
    * @param SessionInterface $session
+   * @param UserSessionService $userSessionService
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -135,23 +144,19 @@ class FormIORenderType extends AbstractType
 
     $notEmptyConstraint = new NotEqualTo([
       'value' => '[]',
-      'groups' => ['flow_formIO_step1', 'Default']
+      'groups' => $this->constraintGroups,
     ]);
-    $notEmptyConstraint->message = "Il form non sembra essere compilato correttamente";
+    $notEmptyConstraint->message = $this->genericViolationMessage;
 
     $notNullConstraint = new NotEqualTo([
       'value' => '',
-      'groups' => ['flow_formIO_step1', 'Default']
+      'groups' => $this->constraintGroups,
     ]);
-    $notNullConstraint->message = "Il form non sembra essere compilato correttamente";
-
-    $serverSideCheckConstraint = new ServerSideFormIOConstraint([
-      'formIOId' => $formID,
-      'validateFields' => array_keys(self::$applicantUserMap),
-    ]);
+    $notNullConstraint->message = $this->genericViolationMessage;
 
     $expressionBasedConstraint = new ExpressionBasedFormIOConstraint([
-      'service' => $pratica->getServizio()
+      'service' => $pratica->getServizio(),
+      'groups' => $this->constraintGroups,
     ]);
 
     $builder
@@ -175,7 +180,6 @@ class FormIORenderType extends AbstractType
             $notEmptyConstraint,
             $notNullConstraint,
             $expressionBasedConstraint,
-            //$serverSideCheckConstraint, //@todo
           ],
         ]
       )
@@ -190,36 +194,46 @@ class FormIORenderType extends AbstractType
 
   /**
    * @param FormEvent $event
-   * @throws \Doctrine\ORM\ORMException
+   * @throws ORMException
    */
   public function onPreSubmit(FormEvent $event)
   {
     /** @var Pratica|DematerializedFormPratica $pratica */
     $pratica = $event->getForm()->getData();
-    $compiledData = $flattenedData = array();
+
+    $compiledData = [];
+    $flattenedData = [];
+    $flattenedSchema = $this->arrayFlat($this->schema, true);
 
     if (isset($event->getData()['dematerialized_forms'])) {
-      $data = json_decode($event->getData()['dematerialized_forms'], true);
-      $flattenedData = $this->arrayFlat((array)$data);
-      $compiledData = $data;
+      $compiledData = (array)json_decode($event->getData()['dematerialized_forms'], true);
+      $flattenedData = $this->arrayFlat($compiledData);
     }
 
-    if ($pratica->getServizio()->isPaymentRequired() && !$this->isPaymentValid($data)) {
+    if ($pratica->getServizio()->isPaymentRequired() && !$this->isPaymentValid($compiledData)) {
       $event->getForm()->addError(
-        new FormError('Si è verificato un problema con i dati del pagamento, impossibile inviare la pratica.')
+        new FormError($this->paymentViolationMessage)
       );
     }
 
-    $pratica->setDematerializedForms(
-      array(
-        'data' => $compiledData,
-        'flattened' => $flattenedData,
-        'schema' => $this->arrayFlat($this->schema, true)
-      )
-    );
+    if (empty($compiledData)){
+      $event->getForm()->addError(new FormError($this->genericViolationMessage));
+    }
 
-    // Associo gli allegati alla pratica
+    $pratica->setDematerializedForms([
+      'data' => $compiledData,
+      'flattened' => $flattenedData,
+      'schema' => $flattenedSchema
+    ]);
+
     foreach ($flattenedData as $key => $value) {
+      // Controlla che il dato sia coerente con lo schema
+      if (!isset($flattenedSchema[$key.'.type'])){
+        $event->getForm()->addError(new FormError($this->genericViolationMessage));
+        break;
+      }
+
+      // Associa gli allegati alla pratica
       if (isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
         foreach ($value as $file) {
           $id = $file['data']['id'];
@@ -239,6 +253,8 @@ class FormIORenderType extends AbstractType
 
   /**
    * @param FormEvent $event
+   * @throws ORMException
+   * @throws OptimisticLockException
    */
   public function onPostSubmit(FormEvent $event)
   {
@@ -267,20 +283,18 @@ class FormIORenderType extends AbstractType
     }
   }
 
-
   /**
    * @param array $data
    * @return CPSUser
-   * @throws \Exception
+   * @throws ORMException
    */
   private function checkUser(array $data): CPSUser
   {
-
     $cf = isset($data['flattened']['applicant.data.fiscal_code.data.fiscal_code']) ? $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] : false;
 
     $birthDay = null;
     if (isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl'])) {
-      $birthDay = \DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
+      $birthDay = DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
     }
     $sessionString = md5($this->session->getId()) . '-' . time();
     $user = new CPSUser();
@@ -310,7 +324,6 @@ class FormIORenderType extends AbstractType
     return $user;
   }
 
-
   /**
    * @param FormIO $pratica
    * @return false|string
@@ -327,9 +340,9 @@ class FormIORenderType extends AbstractType
       $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
       $cpsUserData = ['data' => $this->getMappedFormDataWithUserData($schema, $user)];
 
-      return \json_encode($cpsUserData);
+      return json_encode($cpsUserData);
     }
-    return \json_encode($data);
+    return json_encode($data);
   }
 
   /**
@@ -347,9 +360,9 @@ class FormIORenderType extends AbstractType
             $component = $schema->getComponent($schemaFlatName);
             $value = $user->{$userMethod}();
             // se il campo è datatime popola con iso8601 altrimenti testo
-            if ($value instanceof \DateTime) {
+            if ($value instanceof DateTime) {
               if ($component['form_type'] == DateTimeType::class) {
-                $value = $value->format(\DateTime::ISO8601);
+                $value = $value->format(DateTime::ISO8601);
               } else {
                 $value = $value->format('d/m/Y');
               }
@@ -369,7 +382,7 @@ class FormIORenderType extends AbstractType
               $data->set($schemaFlatName, $value);
             }
           }
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
           $this->logger->error($e->getMessage());
         }
       }
@@ -379,7 +392,8 @@ class FormIORenderType extends AbstractType
   }
 
   /**
-   * @param array
+   * @param $array
+   * @param bool $isSchema
    * @param string $prefix
    * @return array
    */
