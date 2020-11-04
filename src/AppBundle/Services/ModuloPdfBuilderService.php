@@ -18,8 +18,14 @@ use AppBundle\Entity\RispostaOperatoreDTO;
 use AppBundle\Entity\Ritiro;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
+use AppBundle\Model\FeedbackMessage;
+use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
@@ -136,14 +142,14 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return RispostaOperatore
-   * @throws \Exception
+   * @throws Exception
    */
   public function createUnsignedResponseForPratica(Pratica $pratica)
   {
     $unsignedResponse = new RispostaOperatore();
     $this->createAllegatoInstance($pratica, $unsignedResponse);
     $servizioName = $pratica->getServizio()->getName();
-    $now = new \DateTime();
+    $now = new DateTime();
     $now->setTimestamp(time());
     $unsignedResponse->setOriginalFilename("Servizio {$servizioName} " . $now->format('Ymdhi'));
     $unsignedResponse->setDescription(
@@ -163,14 +169,14 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return RispostaOperatore
-   * @throws \Exception
+   * @throws Exception
    */
   public function createSignedResponseForPratica(Pratica $pratica)
   {
     $signedResponse = new RispostaOperatore();
     $this->createAllegatoInstance($pratica, $signedResponse);
     $servizioName = $pratica->getServizio()->getName();
-    $now = new \DateTime();
+    $now = new DateTime();
     $now->setTimestamp(time());
     $signedResponse->setOriginalFilename("Servizio {$servizioName} " . $now->format('Ymdhi'));
     $signedResponse->setDescription(
@@ -189,14 +195,14 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return Ritiro
-   * @throws \Exception
+   * @throws Exception
    */
   public function createWithdrawForPratica(Pratica $pratica)
   {
     $withdrawAttachment = new Ritiro();
     $this->createAllegatoInstance($pratica, $withdrawAttachment);
     $servizioName = $pratica->getServizio()->getName();
-    $now = new \DateTime();
+    $now = new DateTime();
     $now->setTimestamp(time());
     $withdrawAttachment->setOriginalFilename("Ritiro servizio {$servizioName} " . $now->format('Ymdhi'));
     $withdrawAttachment->setDescription("Ritiro servizio {$servizioName} " . $now->format('Ymdhi'));
@@ -209,14 +215,14 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return ModuloCompilato
-   * @throws \Exception
+   * @throws Exception
    */
   public function createForPratica(Pratica $pratica)
   {
     $moduloCompilato = new ModuloCompilato();
     $this->createAllegatoInstance($pratica, $moduloCompilato);
     $servizioName = $pratica->getServizio()->getName();
-    $now = new \DateTime();
+    $now = new DateTime();
     $now->setTimestamp($pratica->getSubmissionTime());
     $moduloCompilato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi'));
     $moduloCompilato->setDescription(
@@ -236,7 +242,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return ModuloCompilato
-   * @throws \Exception
+   * @throws Exception
    */
   public function showForPratica(Pratica $pratica)
   {
@@ -254,7 +260,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
 
     $servizioName = $pratica->getServizio()->getName();
-    $now = new \DateTime();
+    $now = new DateTime();
     $now->setTimestamp($pratica->getSubmissionTime());
     $allegato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi'));
 
@@ -267,7 +273,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param RichiestaIntegrazioneDTO $integrationRequest
    *
    * @return RichiestaIntegrazione
-   * @throws \Exception
+   * @throws Exception
    */
   public function creaModuloProtocollabilePerRichiestaIntegrazione(
     Pratica $pratica,
@@ -308,7 +314,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return RispostaIntegrazione
-   * @throws \Exception
+   * @throws Exception
    */
   public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica)
   {
@@ -340,7 +346,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    * @param RispostaOperatoreDTO $rispostaOperatore
    * @return RispostaOperatore|null
-   * @throws \Exception
+   * @throws Exception
    */
   public function creaRispostaOperatore(Pratica $pratica, RispostaOperatoreDTO $rispostaOperatore)
   {
@@ -353,7 +359,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $fileName = uniqid() . '.p7m';
 
       $response->setOwner($pratica->getUser());
-      $response->setOriginalFilename((new \DateTime())->format('Ymdhi'));
+      $response->setOriginalFilename((new DateTime())->format('Ymdhi'));
       $response->setDescription($rispostaOperatore->getMessage() ?? '');
 
       $destinationDirectory = $this->getDestinationDirectoryFromContext($response);
@@ -384,25 +390,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       'user' => $pratica->getUser(),
     ]);
 
-    $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
-
-    try {
-      $index = DocumentFactory::makeFromString('index.html', $html);
-
-      $request = new HTMLRequest($index);
-      $request->setPaperSize(GotembergRequest::A4);
-      $request->setMargins(GotembergRequest::NO_MARGINS);
-      $response =  $client->post($request);
-      $fileStream = $response->getBody();
-      return $fileStream->getContents();
-
-    } catch (RequestException $e) {
-      # this exception is thrown if given paper size or margins are not correct.
-    } catch (ClientException $e) {
-      # this exception is thrown by the client if the API has returned a code != 200.
-    } catch (\Exception $e) {
-
-    }
+    return $this->generatePdf($html);
   }
 
   /**
@@ -426,25 +414,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       'user' => $pratica->getUser(),
     ]);
 
-    $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
-
-    try {
-      $index = DocumentFactory::makeFromString('index.html', $html);
-
-      $request = new HTMLRequest($index);
-      $request->setPaperSize(GotembergRequest::A4);
-      $request->setMargins(GotembergRequest::NO_MARGINS);
-      $response =  $client->post($request);
-      $fileStream = $response->getBody();
-      return $fileStream->getContents();
-
-    } catch (RequestException $e) {
-      # this exception is thrown if given paper size or margins are not correct.
-    } catch (ClientException $e) {
-      # this exception is thrown by the client if the API has returned a code != 200.
-    } catch (\Exception $e) {
-
-    }
+    return $this->generatePdf($html);
   }
 
   /**
@@ -453,12 +423,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @return string
    * @throws ClientException
    * @throws RequestException
-   * @throws \ReflectionException
+   * @throws ReflectionException
    */
   private function renderForPratica(Pratica $pratica)
   {
 
-    $className = (new \ReflectionClass($pratica))->getShortName();
+    $className = (new ReflectionClass($pratica))->getShortName();
     if ($className == 'FormIO') {
       return $this->generatePdfUsingGotemberg( $pratica );
     } else {
@@ -470,23 +440,51 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param Pratica $pratica
    *
    * @return string
-   * @throws \ReflectionException
    */
   public function renderForResponse(Pratica $pratica)
   {
-    $className = (new \ReflectionClass(RispostaOperatore::class))->getShortName();
-    return $this->renderForClass($pratica, $className);
+    // Risposta Operatore di default
+    $html = $this->templating->render('AppBundle:Pratiche:pdf/RispostaOperatore.html.twig', [
+      'pratica' => $pratica,
+      'user' => $pratica->getUser(),
+    ]);
+
+    $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
+    $status = $pratica->getEsito() ? Pratica::STATUS_COMPLETE : Pratica::STATUS_CANCELLED;
+    if (isset($feedbackMessages[$status])) {
+      /** @var FeedbackMessage $feedbackMessage */
+      $feedbackMessage = $feedbackMessages[$status];
+      $placeholders = [
+        '%pratica_id%' => $pratica->getId(),
+        '%servizio%' => $pratica->getServizio()->getName(),
+        '%protocollo%' => $pratica->getNumeroProtocollo(),
+        '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
+        '%user_name%' => $pratica->getUser()->getFullName(),
+        '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
+      ];
+
+      $html = $this->templating->render(
+        'AppBundle:Pratiche:pdf/RispostaOperatoreCustom.html.twig',
+        array(
+          'pratica' => $pratica,
+          'placeholder' => $placeholders,
+          'text' => strtr($feedbackMessage['message'], $placeholders),
+        )
+      );
+    }
+
+    return $this->generatePdf($html);
+
   }
 
   /**
    * @param Pratica $pratica
    *
    * @return string
-   * @throws \ReflectionException
    */
   public function renderForWithdraw(Pratica $pratica)
   {
-    $className = (new \ReflectionClass(Ritiro::class))->getShortName();
+    $className = (new ReflectionClass(Ritiro::class))->getShortName();
     return $this->renderForClass($pratica, $className);
   }
 
@@ -497,18 +495,18 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function getDestinationDirectoryFromContext(Allegato $moduloCompilato)
   {
-    /** @var PropertyMapping $mapping */
     $mapping = $this->propertyMappingFactory->fromObject($moduloCompilato)[0];
     $path = $this->directoryNamer->directoryName($moduloCompilato, $mapping);
-    $destinationDirectory = $mapping->getUploadDestination() . '/' . $path;
 
-    return $destinationDirectory;
+    return $mapping->getUploadDestination() . '/' . $path;
   }
 
   /**
    * @param Pratica $pratica
-   * @param $allegato
-   * @throws \ReflectionException
+   * @param Allegato $allegato
+   * @throws ClientException
+   * @throws RequestException
+   * @throws ReflectionException
    */
   private function createAllegatoInstance(Pratica $pratica, Allegato $allegato)
   {
@@ -545,6 +543,15 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       'user' => $pratica->getUser(),
     ]);
 
+    return $this->generatePdf($html);
+  }
+
+  /**
+   * @param $html
+   * @return string
+   */
+  private function generatePdf($html)
+  {
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
 
     try {
@@ -559,13 +566,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     } catch (RequestException $e) {
       # this exception is thrown if given paper size or margins are not correct.
-
     } catch (ClientException $e) {
       # this exception is thrown by the client if the API has returned a code != 200.
-
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
 
     }
+    return '';
   }
 
   /**
@@ -612,7 +618,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica|GiscomPratica $pratica
-   * @throws \AppBundle\ScheduledAction\Exception\AlreadyScheduledException
+   * @throws AlreadyScheduledException
    */
   public function createForPraticaAsync(Pratica $pratica)
   {
@@ -627,7 +633,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param ScheduledAction $action
-   * @throws \Exception
+   * @throws Exception
    */
   public function executeScheduledAction(ScheduledAction $action)
   {
@@ -636,7 +642,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       /** @var Pratica $pratica */
       $pratica = $this->em->getRepository('AppBundle:Pratica')->find($params['pratica']);
       if (!$pratica instanceof Pratica) {
-        throw new \Exception('Not found application with id: ' . $params['pratica']);
+        throw new Exception('Not found application with id: ' . $params['pratica']);
       }
       $pdf = $this->createForPratica($pratica);
       $pratica->addModuloCompilato($pdf);

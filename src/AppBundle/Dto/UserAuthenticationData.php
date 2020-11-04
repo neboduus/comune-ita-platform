@@ -49,7 +49,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @return string
    */
-  public function getAuthenticationMethod(): string
+  public function getAuthenticationMethod(): ?string
   {
     return $this->authenticationMethod;
   }

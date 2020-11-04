@@ -778,7 +778,7 @@ class OperatoriController extends Controller
 
     $outcome = (new ApplicationOutcome())->setApplicationId($pratica->getId());
     $outcomeForm = $this->createForm(ApplicationOutcomeType::class, $outcome)->handleRequest($request);
-    if ($outcomeForm->isSubmitted()) {
+    if ($outcomeForm->isSubmitted() && $outcomeForm->isValid()) {
 
       $allegatoOperatoreRepository = $this->getDoctrine()->getRepository(AllegatoOperatore::class);
 
@@ -800,6 +800,7 @@ class OperatoriController extends Controller
       try {
         $this->completePraticaFlow($pratica);
       } catch (\Exception $e) {
+        $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
         $this->addFlash('error', $e->getMessage());
       }
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
