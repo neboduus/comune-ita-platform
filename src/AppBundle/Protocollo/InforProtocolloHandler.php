@@ -3,9 +3,11 @@
 namespace AppBundle\Protocollo;
 
 use AppBundle\Entity\AllegatoInterface;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\IscrizioneRegistroAssociazioni;
 use AppBundle\Entity\OccupazioneSuoloPubblico;
 use AppBundle\Entity\Pratica;
+use AppBundle\Model\DefaultProtocolSettings;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
 use Psr\Log\LoggerInterface;
@@ -65,6 +67,8 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   private $logger;
   private $directoryNamer;
   private $propertyMappingFactory;
+
+  private $tempPemFile = false;
 
   public function __construct(EntityManagerInterface $em, LoggerInterface $logger, DirectoryNamerInterface $dn, PropertyMappingFactory $pmf)
   {
@@ -155,7 +159,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $protocollaArrivo->addChild('web:oggetto', $this->retrieveOggettoFromPratica($pratica), 'web');
 
     $request = trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
-    $response = $this->sendRequest(self::ACTION_INSERISCI_ARRIVO, $request, $parameters['infor_wsUrl']);
+    $response = $this->sendRequest(self::ACTION_INSERISCI_ARRIVO, $request, $parameters['infor_wsUrl'], $pratica->getEnte());
 
     $pratica->setNumeroProtocollo($response);
   }
@@ -171,7 +175,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     $request = $this->createSendAllegatoRequestBody($pratica->getNumeroProtocollo(), $allegato, $parameters);
 
-    $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl']);
+    $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl'], $pratica->getEnte());
 
     $pratica->addNumeroDiProtocollo([
       'id' => $allegato->getId(),
@@ -188,7 +192,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   {
     $parameters = $this->retrieveProtocolloParametersForEnteAndServizio($pratica);
     $request = $this->createSendAllegatoRequestBody($pratica->getNumeroProtocollo(), $allegato, $parameters);
-    $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl']);
+    $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl'], $pratica->getEnte());
 
     $pratica->addNumeroDiProtocollo([
       'id' => $allegato->getId(),
@@ -235,7 +239,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     $protocollaPartenza->addChild('web:oggetto', $this->retrieveOggettoRispostaFromPratica($pratica), 'web');
     $request = trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
-    $response = $this->sendRequest(self::ACTION_INSERISCI_PARTENZA, $request, $parameters['infor_wsUrl']);
+    $response = $this->sendRequest(self::ACTION_INSERISCI_PARTENZA, $request, $parameters['infor_wsUrl'], $pratica->getEnte());
     $risposta->setNumeroProtocollo($response);
     $this->em->persist($risposta);
     $this->em->flush();
@@ -254,7 +258,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     $request = $this->createSendAllegatoRequestBody($risposta->getNumeroProtocollo(), $allegato, $parameters);
 
-    $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl']);
+    $response = $this->sendRequest(self::ACTION_ALLEGA_DOCUMENTO, $request, $parameters['infor_wsUrl'], $pratica->getEnte());
 
     $risposta->addNumeroDiProtocollo([
       'id' => $allegato->getId(),
@@ -262,7 +266,15 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     ]);
   }
 
-  private function sendRequest($action, $request, $url)
+  /**
+   * @param $action
+   * @param $request
+   * @param $url
+   * @param Ente|null $ente
+   * @return string
+   * @throws \Exception
+   */
+  private function sendRequest($action, $request, $url, Ente $ente = null)
   {
     $header = array(
       'Content-type: text/xml;charset="utf-8"',
@@ -283,13 +295,29 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-    $this->logger->notice('Sending request to Infor', [$action, $request]);
 
+    if ($ente != null && $ente->getDefaultProtocolSettings() != null) {
+      $settings = DefaultProtocolSettings::fromArray($ente->getDefaultProtocolSettings());
+      if ( $settings->getCertificate() != null && $settings->getCertificatePassword() != null ) {
+
+        if (!$this->tempPemFile) {
+          $this->tempPemFile = tmpfile();
+          fwrite($this->tempPemFile, $settings->getCertificate());
+        }
+        $tempPemPath = stream_get_meta_data($this->tempPemFile);
+        $tempPemPath = $tempPemPath['uri'];
+        curl_setopt($ch, CURLOPT_SSLCERT, $tempPemPath);
+        curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $settings->getCertificatePassword());
+      }
+    }
+
+    $this->logger->notice('Sending request to Infor', [$action, $request]);
     $ch_result = curl_exec($ch);
     $status = curl_getinfo($ch);
 
     if ($status['http_code'] == 403 || $status['http_code'] == 500 ) {
       $message = 'Infor protocol error: ' . $status['http_code'] . 'Request: '  . $request;
+      $this->logger->error($message);
       throw new \Exception($message);
     }
 
