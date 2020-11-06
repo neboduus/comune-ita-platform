@@ -228,7 +228,7 @@ class FormIORenderType extends AbstractType
 
     foreach ($flattenedData as $key => $value) {
       // Controlla che il dato sia coerente con lo schema
-      if (!isset($flattenedSchema[$key.'.type'])){
+      if ($key != 'submit' && !isset($flattenedSchema[$key.'.type'])){
         $event->getForm()->addError(new FormError($this->genericViolationMessage));
         break;
       }
