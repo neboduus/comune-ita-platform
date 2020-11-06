@@ -47,16 +47,33 @@ class UserController extends Controller
   /** @var RemoteContentProviderServiceInterface */
   private $remoteContentProviderService;
 
+  /** @var Serializer */
+  private $serializer;
+
+  /** @var SchemaFactory */
+  private $schemaFactory;
+
   /**
    * UserController constructor.
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
+   * @param RemoteContentProviderServiceInterface $remoteContentProviderService
+   * @param Serializer $serializer
+   * @param SchemaFactory $schemaFactory
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RemoteContentProviderServiceInterface $remoteContentProviderService)
+  public function __construct(
+    TranslatorInterface $translator,
+    LoggerInterface $logger,
+    RemoteContentProviderServiceInterface $remoteContentProviderService,
+    Serializer $serializer,
+    SchemaFactory $schemaFactory
+  )
   {
     $this->logger = $logger;
     $this->translator = $translator;
     $this->remoteContentProviderService = $remoteContentProviderService;
+    $this->serializer = $serializer;
+    $this->schemaFactory = $schemaFactory;
   }
 
 
@@ -341,11 +358,9 @@ class UserController extends Controller
    * @Route("/applications", name="user_applications_json")
    * @param Request $request
    *
-   * @param Serializer $serializer
-   * @param SchemaFactory $schemaFactory
    * @return JsonResponse
    */
-  public function applicationsAction(Request $request, Serializer $serializer, SchemaFactory $schemaFactory)
+  public function applicationsAction(Request $request)
   {
     $result = [];
 
@@ -406,9 +421,9 @@ class UserController extends Controller
 
       foreach ($data as $s) {
         $application = Application::fromEntity($s, '', false);
-        $applicationArray = json_decode($serializer->serialize($application, 'json'), true);
+        $applicationArray = json_decode($this->serializer->serialize($application, 'json'), true);
         if ($s instanceof FormIO){
-          $schema = $schemaFactory->createFromFormId($s->getServizio()->getFormIoId());
+          $schema = $this->schemaFactory->createFromFormId($s->getServizio()->getFormIoId());
           if ($schema->hasComponents()) {
             $dematerialized = $s->getDematerializedForms();
             if (isset($dematerialized['data'])) {
