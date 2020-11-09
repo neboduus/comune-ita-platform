@@ -133,7 +133,7 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
    */
   public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
   {
-    $this->userSessionService->createCurrentUserSessionData(
+    $this->userSessionService->storeCurrentUserSessionData(
       $token->getUser(),
       $this->getRequestDataToStoreInUserSession($request),
       $this->getUserAuthenticationData($request, $token->getUser())
