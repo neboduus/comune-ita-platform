@@ -1,9 +1,6 @@
 import './core'
 require("../css/app.scss");
 
-
-require("../css/app.scss");
-
 $(document).ready(function ($) {
 
   $('.select_tabs').on('change', function (e) {

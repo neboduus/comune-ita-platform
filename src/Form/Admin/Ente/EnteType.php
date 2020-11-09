@@ -3,7 +3,6 @@
 
 namespace App\Form\Admin\Ente;
 
-
 use App\BackOffice\BackOfficeInterface;
 use App\Entity\Ente;
 use App\Entity\Servizio;
@@ -11,6 +10,7 @@ use App\Form\Base\BlockQuoteType;
 use App\Model\Gateway;
 use App\Payment\PaymentGatewayRegistry;
 use App\Services\BackOfficeCollection;
+use App\Model\DefaultProtocolSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
@@ -56,6 +56,11 @@ class EnteType extends AbstractType
       'enabled' => 1
     ]);
 
+    $settings = new DefaultProtocolSettings();
+    if ($ente->getDefaultProtocolSettings() != null) {
+      $settings = DefaultProtocolSettings::fromArray($ente->getDefaultProtocolSettings());
+    }
+
     $gateways = [];
     foreach ($availableGateways as $g) {
       $gateways[$g->getName()] = $g->getIdentifier();
@@ -75,11 +80,6 @@ class EnteType extends AbstractType
       }
     }
 
-    /*$backOffices = [
-      'Aggiungi iscrizione' => "App\BackOffice\SubcriptionsBackOffice",
-      'Prenota appuntamento' => "App\BackOffice\CalendarsBackOffice"
-    ];*/
-
     $backOfficesData = [];
     /** @var BackOfficeInterface $b */
     foreach ($this->backOfficeCollection->getBackOffices() as $b) {
@@ -90,12 +90,13 @@ class EnteType extends AbstractType
       ->add('codice_meccanografico', TextType::class)
       ->add('site_url', TextType::class)
       ->add('codice_amministrativo', TextType::class)
-      ->add('meta', TextareaType::class, ['required' => false]);
-
-    /*$builder->add('backoffice_integration_enabled', CheckboxType::class, [
-      'label' => 'Abilita integrazione con i backoffice',
-      'required' => false
-    ]);*/
+      ->add('meta', TextareaType::class, ['required' => false])
+      ->add(DefaultProtocolSettings::key, DefaultProtocolSettingsType::class, [
+        'label' => 'Impostazioni di default per il protocollo',
+        'mapped' => false,
+        'data' => $settings
+      ])
+    ;
 
     if ( !empty($backOfficesData)) {
       $builder->add('backoffice_enabled_integrations', ChoiceType::class, [
@@ -116,6 +117,8 @@ class EnteType extends AbstractType
       'required' => false,
       'label' => 'Seleziona i metodi di pagamento disponibili per l\'ente',
     ]);
+
+
 
     foreach ($availableGateways as $g) {
       $paymentGateway = $this->paymentGatewayRegistry->get($g->getFcqn());
@@ -142,7 +145,6 @@ class EnteType extends AbstractType
             ]
           );
         }
-
         $builder->add($gatewaySubform);
       }
     }
@@ -157,6 +159,10 @@ class EnteType extends AbstractType
     /** @var Ente $ente */
     $ente = $event->getForm()->getData();
     $data = $event->getData();
+
+    if (isset($data[DefaultProtocolSettings::key])) {
+      $ente->setDefaultProtocolSettings($data[DefaultProtocolSettings::key]);
+    }
 
     $gateways = [];
     if (isset($data['gateways']) && !empty($data['gateways'])) {

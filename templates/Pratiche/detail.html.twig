@@ -11,9 +11,10 @@
 {% block javascripts %}
   {{ encore_entry_script_tags('compile') }}
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
-  <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
-  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
+    <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
     <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
     {% if user.idp != 'anonymous' and pratica.operatore %}
     <script type="application/javascript">
@@ -31,6 +32,7 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
   <script type='text/javascript'>
       window.onload = function () {
           Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {

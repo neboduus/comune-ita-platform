@@ -46,7 +46,8 @@
 
 {{ include('Pratiche/pdf/parts/data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
 
-{{ include('Pratiche/pdf/parts/dati_autenticazione.html.twig', {'user': user}) }}
+
+{{ include('Pratiche/pdf/parts/dati_autenticazione.html.twig', {'pratica':pratica,  'user': user}) }}
 {{ include('Pratiche/pdf/parts/footer.html.twig') }}
 </body>
 </html>

@@ -2,15 +2,20 @@
 
 namespace App\Security;
 
+use AppBundle\Dto\UserAuthenticationData;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Services\UserSessionService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class OpenLoginAuthenticator extends AbstractAuthenticator
 {
-  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute)
+  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute, UserSessionService $userSessionService)
   {
     $this->urlGenerator = $urlGenerator;
     $this->loginRoute = $loginRoute;
+    $this->userSessionService = $userSessionService;
   }
 
   protected function getLoginRouteSupported()
@@ -149,5 +154,20 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
     }
 
     return $data;
+  }
+
+  protected function getRequestDataToStoreInUserSession(Request $request)
+  {
+    return $request->headers->all();
+  }
+
+  protected function getUserAuthenticationData(Request $request, UserInterface $user)
+  {
+    return UserAuthenticationData::fromArray([
+      'authenticationMethod' => CPSUser::IDP_SPID,
+      'sessionId' => $request->headers->get('x-forwarded-user-session'),
+      'spidCode' => $request->headers->get('x-forwarded-user-spidcode'),
+      'spidLevel' => $request->headers->get('x-forwarded-user-spid-level'),
+    ]);
   }
 }

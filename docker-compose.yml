@@ -90,7 +90,7 @@ services:
       traefik.enable: true
 
       traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
-      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address"
+      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"
       traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
 
       traefik.http.routers.apache-auth.entrypoints: web
@@ -121,7 +121,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   mongo:
-    image: mongo
+    image: mongo:4.2.2
     restart: unless-stopped
     volumes:
       - 'mongo:/data'
@@ -164,7 +164,7 @@ services:
       MAXIMUM_WAIT_DELAY: "30"
 
   openlogin:
-    image: registry.gitlab.com/opencontent/traefik-spid-auth:1.0.1
+    image: registry.gitlab.com/opencontent/traefik-spid-auth:1.1.0
     restart: unless-stopped
     environment:
       SYNFONY_ENV: dev
@@ -172,6 +172,12 @@ services:
       SP_ENTITYID: 'http://auth.localtest.me/'
       SP_SINGLELOGOUT: 'http://auth.localtest.me/slo'
       SP_ACS: 'http://auth.localtest.me/acs'
+      SP_ORG_NAME: 'Ambiente di sviluppo di OpenLogin'
+      SP_ORG_DISPLAY_NAME: 'Opencontent Scarl'
+      SP_CONTACT_IPA_CODE: 'opncnt_1'
+      SP_CONTACT_EMAIL: 'info@opencontent.it'
+      SP_CONTACT_PHONE: '00390461917437'
+      SPID_LEVEL: 2
       TEST_SPID_IDP: 'enabled'
       TEST_SPID_IDP_ID: 'http://spid.localtest.me/'
       TEST_SPID_IDP_NAME: 'Test IdP'

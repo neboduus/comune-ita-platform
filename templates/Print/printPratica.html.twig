@@ -121,13 +121,20 @@
 
     {{ include('Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
 
-    {# @var user \App\Entity\CPSUser #}
-    {% if user is defined  and user.getSecurityFields %}
+    {% set securityFields = [] %}
+    {% if pratica.authenticationData|length > 0 %}
+      {% set securityFields = pratica.authenticationData %}
+    {% elseif user is defined  and user.getSecurityFields %}
+      {% set securityFields = user.getSecurityFields %}
+    {% endif %}
+
+    {# @var user \AppBundle\Entity\CPSUser #}
+    {% if securityFields|length %}
       <div class="row" style="padding-top: 40px">
         <div class="col-12">
           <p>{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
         </div>
-        {% for key, value in user.getSecurityFields %}
+        {% for key, value in securityFields %}
         <div class="col-md-3">
           <p><strong>{{ key }}</strong></p>
         </div>

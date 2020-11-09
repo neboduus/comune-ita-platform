@@ -16,6 +16,8 @@ use App\Services\GiscomAPIAdapterService;
 use App\Services\GiscomAPIMapperService;
 use App\Services\PraticaIntegrationService;
 use App\Services\PraticaStatusService;
+
+use App\Services\UserSessionService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as Controller;
@@ -67,6 +69,9 @@ class GiscomAPIController extends Controller
   /** @var DelayedGiscomAPIAdapterService */
   private $delayedGiscomAPIAdapterService;
 
+  /** @var UserSessionService  */
+  private $userSessionService;
+
   /**
    * GiscomAPIController constructor.
    * @param LoggerInterface $logger
@@ -84,7 +89,8 @@ class GiscomAPIController extends Controller
     PraticaIntegrationService $integrationService,
     GiscomAPIMapperService $mapper,
     GiscomAPIAdapterService $giscomAPIAdapterService,
-    DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService
+    DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService,
+    UserSessionService $userSessionService
   ) {
     $this->logger = $logger;
     $this->statusService = $statusService;
@@ -93,6 +99,7 @@ class GiscomAPIController extends Controller
     $this->mapper = $mapper;
     $this->giscomAPIAdapterService = $giscomAPIAdapterService;
     $this->delayedGiscomAPIAdapterService = $delayedGiscomAPIAdapterService;
+    $this->userSessionService = $userSessionService;
   }
 
   /**
@@ -195,6 +202,8 @@ class GiscomAPIController extends Controller
 
       $pratica
         ->setUser($user)
+        ->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($user))
+        ->setSessionData($this->userSessionService->getCurrentUserSessionData($user))
         ->setEnte($ente)
         ->setServizio($servizio)
         ->setStatus(Pratica::STATUS_PENDING);

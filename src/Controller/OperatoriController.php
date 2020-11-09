@@ -28,6 +28,7 @@ use App\Services\MessagesAdapterService;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -480,14 +481,12 @@ class OperatoriController extends Controller
       //load Application Dto without file collection to reduce the number of db queries
       $application = Application::fromEntity($s, '', false);
       $applicationArray = json_decode($this->serializer->serialize($application, 'json'), true);
-      $minimunStatusForAssign = $s->getServizio()->isProtocolRequired(
-      ) ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
+      $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
       $applicationArray['is_protocollo_required'] = $s->getServizio()->isProtocolRequired();
       $applicationArray['is_payment_required'] = !empty($s->getPaymentData());
-      $applicationArray['payment_complete'] = $s->getStatus() == Pratica::STATUS_PAYMENT_ERROR || $s->getStatus(
-      ) <= Pratica::STATUS_PAYMENT_OUTCOME_PENDING ? false : true;
-      $applicationArray['idp'] = $s->getUser()->getIdp();
+      $applicationArray['payment_complete'] = $s->getStatus() == Pratica::STATUS_PAYMENT_ERROR || $s->getStatus() <= Pratica::STATUS_PAYMENT_OUTCOME_PENDING ? false : true;
+      $applicationArray['idp'] = $s->getAuthenticationData()->getAuthenticationMethod() ? $s->getAuthenticationData()->getAuthenticationMethod() : $s->getUser()->getIdp();
       $applicantUser = $s->getUser();
       $codiceFiscale = $applicantUser instanceof CPSUser ? $applicantUser->getCodiceFiscale() : '';
       $codiceFiscaleParts = explode('-', $codiceFiscale);
@@ -524,6 +523,7 @@ class OperatoriController extends Controller
   /**
    * @Route("/usage",name="operatori_usage")
    * @return Response
+   * @throws Exception
    */
   public function usageAction()
   {
@@ -844,7 +844,7 @@ class OperatoriController extends Controller
 
     $outcome = (new ApplicationOutcome())->setApplicationId($pratica->getId());
     $outcomeForm = $this->createForm(ApplicationOutcomeType::class, $outcome)->handleRequest($request);
-    if ($outcomeForm->isSubmitted()) {
+    if ($outcomeForm->isSubmitted() && $outcomeForm->isValid()) {
 
       $allegatoOperatoreRepository = $this->getDoctrine()->getRepository(AllegatoOperatore::class);
 
@@ -866,6 +866,7 @@ class OperatoriController extends Controller
       try {
         $this->completePraticaFlow($pratica);
       } catch (\Exception $e) {
+        $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
         $this->addFlash('error', $e->getMessage());
       }
 

@@ -474,40 +474,9 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   private function processForm(Request $request, FormInterface $form)
   {
-    $data = $this->normalizeData(json_decode($request->getContent(), true));
+    $data = Service::normalizeData(json_decode($request->getContent(), true));
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  public function normalizeData($data)
-  {
-    // Todo: find better way
-    if (isset($data['flow_steps']) && count($data['flow_steps']) > 0) {
-      $temp = [];
-      foreach ($data['flow_steps'] as $f) {
-        $f['parameters'] = \json_encode($f['parameters']);
-        $temp[]= $f;
-      }
-      $data['flow_steps'] = $temp;
-    }
-
-    // Todo: find better way
-    if ( isset($data['payment_parameters']['gateways']) && count($data['payment_parameters']['gateways']) > 0 ) {
-      $sanitizedGateways = [];
-      foreach ($data['payment_parameters']['gateways'] as $gateway) {
-        $parameters = \json_encode($gateway['parameters']);
-        $gateway['parameters'] = $parameters;
-        $sanitizedGateways [$gateway['identifier']]= $gateway;
-      }
-      $data['payment_parameters']['gateways'] = $sanitizedGateways;
-    }
-
-    // Todo: find better way
-    if (isset($data['protocollo_parameters'])) {
-      $data['protocollo_parameters'] = \json_encode($data['protocollo_parameters']);
-    }
-
-    return $data;
   }
 
   /**

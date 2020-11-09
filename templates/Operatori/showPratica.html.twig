@@ -1,6 +1,6 @@
 {% extends 'Default/index.html.twig' %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags('compile') }}
+  {{ encore_entry_link_tags('operator-show-application') }}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
         integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
         crossorigin="anonymous"/>
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block javascripts %}
-  {{ encore_entry_script_tags('compile') }}
+  {{ encore_entry_script_tags('operator-show-application') }}
 
   <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -23,68 +23,68 @@
   {% if feature('feature_application_detail') %}
     <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
     <script>
-        let vueBundledDataMessage = {
-            "attachments": [],
-            "upload_url": "{{ path('operatore_allegato_messaggio_upload', {'id': pratica.id }) }}"
-        };
-        new Vue({
-            el: "#vueApp2"
-        });
+      let vueBundledDataMessage = {
+        "attachments": [],
+        "upload_url": "{{ path('operatore_allegato_messaggio_upload', {'id': pratica.id }) }}"
+      };
+      new Vue({
+        el: "#vueApp2"
+      });
     </script>
   {% endif %}
   {% if outcomeForm.vars.helper.vueApp and pratica.operatore == user and pratica.canBeAssigned %}
     <script src="{{ asset('bundles/app/js/components/' ~ outcomeForm.vars.helper.vueApp ~ '.js') }}"></script>
-      <script>
-          let vueBundledData = {{ outcomeForm.vars.helper.vueBundledData|raw }};
-          new Vue({
-              el: "#vueApp"
-          });
-      </script>
+    <script>
+      let vueBundledData = {{ outcomeForm.vars.helper.vueBundledData|raw }};
+      new Vue({
+        el: "#vueApp"
+      });
+    </script>
   {% endif %}
 
   <script>
-      $(document).ready(function () {
-          $('#modal_approve').on('click', function () {
-              $('#outcome_outcome_0').prop('checked', true);
-              $('#modalTitle').html('Approva pratica');
-              $('#email_text').show();
-          });
-          $('#modal_refuse').on('click', function () {
-              $('#outcome_outcome_1').prop('checked', true);
-              $('#modalTitle').html('Rigetta pratica');
-              $('#email_text').hide();
-          });
-      })
+    $(document).ready(function () {
+      $('#modal_approve').on('click', function () {
+        $('#outcome_outcome_0').prop('checked', true);
+        $('#modalTitle').html('Approva pratica');
+        $('#email_text').show();
+      });
+      $('#modal_refuse').on('click', function () {
+        $('#outcome_outcome_1').prop('checked', true);
+        $('#modalTitle').html('Rigetta pratica');
+        $('#email_text').hide();
+      });
+    })
   </script>
 
   <script type='text/javascript'>
-      window.onload = function () {
-          Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
-              readOnly: true,
-              noAlerts: true,
-              language: 'it',
-              i18n: formIoI18n
-          }).then(function (form) {
-              form.submission = {
-                  data: $('#formio_summary').data('submission')
-              };
+    window.onload = function () {
+      Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
+        readOnly: true,
+        noAlerts: true,
+        language: 'it',
+        i18n: formIoI18n
+      }).then(function (form) {
+        form.submission = {
+          data: $('#formio_summary').data('submission')
+        };
 
-              let delay = 3;
-              form.formReady.then(() => {
-                  const disableFileLink = function () {
-                      if (delay === 0) {
-                          $('.formio-component-file a').each(function () {
-                              $(this).parent().html($(this).html());
-                          });
-                      } else {
-                          delay--;
-                          setTimeout(disableFileLink, 500);
-                      }
-                  };
-                  disableFileLink();
+        let delay = 3;
+        form.formReady.then(() => {
+          const disableFileLink = function () {
+            if (delay === 0) {
+              $('.formio-component-file a').each(function () {
+                $(this).parent().html($(this).html());
               });
-          });
-      };
+            } else {
+              delay--;
+              setTimeout(disableFileLink, 500);
+            }
+          };
+          disableFileLink();
+        });
+      });
+    };
   </script>
 {% endblock %}
 
@@ -103,7 +103,7 @@
             {% if pratica.user.idp != "anonymous" %}
               <span data-toggle="tooltip" title="Identità del cittadino verificata">
                 <svg class="icon icon-success"><use
-                          xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+                    xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
               </span>
             {% endif %}
           </h4>
@@ -163,25 +163,56 @@
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
         <div class="row pl-4">
           <div class="col-5">
-            {% if pratica.moduliCompilati|length > 0 %}
-              <a class="btn btn-outline-secondary"
-                 href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
+            <div class="dropdown">
+              <a class="btn btn-sm btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownDownload"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <svg class="icon icon-sm">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
                 </svg>
-                {{ 'operatori.scarica' | trans }}
+                Scarica
               </a>
-            {% else %}
-              <button class="btn btn-outline-secondary" disabled>
-                <svg class="icon icon-sm">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-                </svg>
-                {{ 'operatori.scarica' | trans }}
-              </button>
-            {% endif %}
+              <div class="dropdown-menu" aria-labelledby="dropdownDownload">
+                <div class="link-list-wrapper">
+                  <ul class="link-list">
+                    <li>
+                      {% if pratica.moduliCompilati|length > 0 %}
+                        <a class="list-item"
+                           href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
+                          <svg class="icon icon-sm">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                          </svg>
+                          {{ 'operatori.scarica' | trans }}
+                        </a>
+                      {% else %}
+                        <a class="list-item disabled" href="#">
+                          <svg class="icon icon-sm">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                          </svg>
+                          {{ 'operatori.scarica' | trans }}
+                        </a>
+                      {% endif %}
+                    </li>
+                    {% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
+                      {% if pratica.rispostaOperatore %}
+                        <li>
+                          <a class="list-item"
+                             href="{{ path('risposta_download_operatore', {'allegato': pratica.rispostaOperatore.id}) }}">
+                            <svg class="icon icon-sm">
+                              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+                            </svg>
+                            {{ 'operatori.scarica_risposta_firmata'|trans }}
+                          </a>
+                        </li>
+                      {% endif %}
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
           </div>
           <div class="col-7">
-            <a class="btn btn-outline-secondary" href="mailto:{{ pratica.user.emailContatto }}">
+            <a id="write-to-citizen" class="btn btn-sm btn-outline-secondary" href="#">
               <svg class="icon icon-sm">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
               </svg>
@@ -189,10 +220,12 @@
             </a>
           </div>
         </div>
+
         {% if pratica.operatore and pratica.operatore == user and pratica.isInFinalStates and pratica.servizio.allowReopening %}
           <div class="row my-4 pl-4">
             <div class="col-12">
-              <a class="btn btn-warning btn-toolbar" href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
+              <a class="btn btn-outline-warning btn-toolbar"
+                 href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
                 <svg class="icon icon-white icon-sm">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
                 </svg>
@@ -210,7 +243,8 @@
             </div>
             <div class="col-12 pb-3">
               <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
-              <span class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
+              <span
+                class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
             </div>
             {% if  pratica.numeroProtocollo %}
               <div class="col-12 pb-3">

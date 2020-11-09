@@ -215,6 +215,9 @@ services:
   App\Services\MyPayService:
     autowire: true
 
+  App\Services\UserSessionService:
+    autowire: true
+
   App\Services\InstanceService:
     arguments: [ "@doctrine", "%prefix%" ]
     public: true
@@ -264,11 +267,11 @@ services:
 
   ocsdc.pat.authenticator:
     class: App\Security\PatAuthenticator
-    arguments: [ "@router", "%shibbolet_server_varnames%", "%login_route%" ]
+    arguments: [ "@router", "%shibbolet_server_varnames%", "%login_route%", '@App\Services\UserSessionService' ]
 
   ocsdc.openlogin.authenticator:
     class: App\Security\OpenLoginAuthenticator
-    arguments: [ "@router", "%login_route%" ]
+    arguments: [ "@router", "%login_route%", '@App\Services\UserSessionService' ]
 
   ocsdc.cps.token_authenticator:
     class: App\Security\CPSAuthenticator

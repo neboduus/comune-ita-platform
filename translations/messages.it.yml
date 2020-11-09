@@ -558,7 +558,7 @@ operatori:
     feedback_inviato: "Il messaggio verrà recapitato a breve all'indirizzo %email%. Una eventuale risposta del cittadino comparirà in questa stessa pagina"
   suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
   login: "Accedi"
-  scarica: 'Scarica'
+  scarica: 'File di richiesta'
   info: "Info"
   iter_completato: "La richiesta è stata <strong>%statusName%</strong> il %data% alle ore %ore%"
   pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
@@ -584,7 +584,7 @@ operatori:
   scarica_modulo_compilato: 'Scarica il modulo compilato'
   scarica_richiesta_protocollata: 'Scarica la richiesta protocollata'
   scarica_ricevuta: 'Scarica la ricevuta'
-  scarica_risposta_firmata: 'Scarica il file di risposta'
+  scarica_risposta_firmata: 'File di risposta'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
     approva_o_rigetta:
@@ -1746,6 +1746,7 @@ protocollo:
         send_applcation: 'Acquisita nuova pratica per il servizio: %name%'
         send_integration: 'Acquisita integrazione per la pratica: %name%'
         send_result: 'Acquisita risposta per la pratica: %name%'
+  receiver: 'Email pec del ricevente'
 
 gateway:
   bollo:

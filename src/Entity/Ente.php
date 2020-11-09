@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Model\DefaultProtocolSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -287,6 +288,33 @@ class Ente
       $this->protocolloParameters = new ArrayCollection(unserialize($this->protocolloParameters));
     }
   }
+
+  /**
+   * @param Servizio $servizio
+   * @return mixed
+   */
+  public function getDefaultProtocolSettings()
+  {
+    $this->parseProtocolloParameters();
+    if ($this->protocolloParameters->containsKey(DefaultProtocolSettings::key)) {
+      return $this->protocolloParameters->get(DefaultProtocolSettings::key);
+    }
+
+    return null;
+  }
+
+  /**
+   * @param $settings
+   * @return Ente
+   */
+  public function setDefaultProtocolSettings($settings)
+  {
+    $this->parseProtocolloParameters();
+    $this->protocolloParameters->set(DefaultProtocolSettings::key, $settings);
+
+    return $this;
+  }
+
 
   /**
    * @return string

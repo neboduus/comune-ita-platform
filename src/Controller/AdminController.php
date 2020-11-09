@@ -436,11 +436,10 @@ class AdminController extends Controller
   /**
    * @Route("/servizio/import", name="admin_servizio_import")
    * @param Request $request
-   * @param ServicesAPIController $serviceApi
    * @return array|RedirectResponse
    * @throws GuzzleException
    */
-  public function importServizioAction(Request $request, ServicesAPIController $serviceApi)
+  public function importServizioAction(Request $request)
   {
     $em = $this->getDoctrine()->getManager();
     $ente = $this->instanceService->getCurrentInstance();
@@ -464,7 +463,7 @@ class AdminController extends Controller
         $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
         unset($responseBody['id'], $responseBody['slug']);
 
-        $data = $serviceApi->normalizeData($responseBody);
+        $data = Service::normalizeData($responseBody);
         $form->submit($data, true);
 
         if ($form->isSubmitted() && !$form->isValid()) {

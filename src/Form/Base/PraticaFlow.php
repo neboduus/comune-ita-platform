@@ -13,6 +13,7 @@ use App\Logging\LogConstants;
 use App\Services\DematerializedFormAllegatiAttacherService;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
+use App\Services\UserSessionService;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -51,7 +52,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
   protected $em;
 
-  protected $security;
+  protected $userSessionService;
 
   /**
    * PraticaFlow constructor.
@@ -63,7 +64,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
    * @param $prefix
    * @param SchemaFactoryInterface $formIOFactory
    * @param EntityManagerInterface $em
-   * @param Security $security
+   * @param UserSessionService $userSessionService
    *
    */
   public function __construct(
@@ -75,7 +76,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $prefix,
     SchemaFactoryInterface $formIOFactory,
     EntityManagerInterface $em,
-    Security $security
+    UserSessionService $userSessionService
   )
   {
     $this->logger = $logger;
@@ -86,7 +87,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $this->prefix = $prefix;
     $this->formIOFactory = $formIOFactory;
     $this->em = $em;
-    $this->security = $security;
+    $this->userSessionService = $userSessionService;
   }
 
   public function getFormOptions($step, array $options = array())
@@ -144,6 +145,9 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     /** @var PraticaRepository $repo */
     $repo = $this->em->getRepository(Pratica::class);
 
+    $pratica->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($pratica->getUser()))
+      ->setSessionData($this->userSessionService->getCurrentUserSessionData($pratica->getUser()));
+
     // Per non sovrascrivere comportamento in formio flow
     if ($pratica->getFolderId() == null) {
       $pratica->setServiceGroup($pratica->getServizio()->getServiceGroup());
@@ -194,6 +198,5 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
   {
     $this->paymentRequired = $paymentRequired;
   }
-
 
 }
