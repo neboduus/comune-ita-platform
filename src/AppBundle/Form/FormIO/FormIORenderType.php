@@ -217,6 +217,7 @@ class FormIORenderType extends AbstractType
     }
 
     if (empty($compiledData)){
+      $this->logger->error("Form data is empty", ['pratica' => $pratica->getId()]);
       $event->getForm()->addError(new FormError($this->genericViolationMessage));
     }
 
@@ -229,6 +230,7 @@ class FormIORenderType extends AbstractType
     foreach ($flattenedData as $key => $value) {
       // Controlla che il dato sia coerente con lo schema
       if ($key != 'submit' && !isset($flattenedSchema[$key.'.type'])){
+        $this->logger->error("$key data not found in schema", ['pratica' => $pratica->getId()]);
         $event->getForm()->addError(new FormError($this->genericViolationMessage));
         break;
       }
