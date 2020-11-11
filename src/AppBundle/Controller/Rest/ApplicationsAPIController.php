@@ -194,7 +194,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $repoApplications = $this->em->getRepository(Pratica::class);
     $query = $repoApplications->createQueryBuilder('a')
-      ->select('count(a.id)');
+      ->select('count(a.id)')
+      ->where('a.status != :status')
+      ->setParameter('status', Pratica::STATUS_DRAFT);
 
     $criteria = [];
     if ($service instanceof Servizio) {
@@ -246,6 +248,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $order = $orderParameter ? $orderParameter : "creationTime";
     $sort = $sortParameter ? $sortParameter : "ASC";
     try {
+      $statuses = Pratica::getStatuses();
+      unset($statuses[Pratica::STATUS_DRAFT]);
+      $criteria['status'] = array_keys($statuses);
       $applications = $repoApplications->findBy($criteria, [$order => $sort], $limit, $offset);
       foreach ($applications as $s) {
         $result ['data'][] = Application::fromEntity($s, $this->baseUrl.'/'.$s->getId(), true, $version);
