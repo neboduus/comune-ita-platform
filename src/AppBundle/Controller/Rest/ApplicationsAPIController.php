@@ -25,6 +25,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
@@ -193,6 +196,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $repoApplications = $this->em->getRepository(Pratica::class);
+    /** @var QueryBuilder  $query */
     $query = $repoApplications->createQueryBuilder('a')
       ->select('count(a.id)')
       ->where('a.status != :status')
@@ -201,16 +205,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $criteria = [];
     if ($service instanceof Servizio) {
       $query
-        ->where('a.servizio = :serviceId')
+        ->andWhere('a.servizio = :serviceId')
         ->setParameter('serviceId', $service->getId());
 
       $criteria = ['servizio' => $service->getId()];
     }
 
-    $count = $query
-      ->getQuery()
-      ->getSingleScalarResult();
-
+    try {
+      $count = $query
+        ->getQuery()
+        ->getSingleScalarResult();
+    } catch (NoResultException $e) {
+      $count = 0;
+    } catch (NonUniqueResultException $e) {
+      return $this->view($e->getMessage(), Response::HTTP_I_AM_A_TEAPOT);
+    }
 
     $result = [];
     $result['meta']['count'] = $count;
