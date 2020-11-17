@@ -221,6 +221,24 @@ class FormIORenderType extends AbstractType
       $event->getForm()->addError(new FormError($this->genericViolationMessage));
     }
 
+    // Check sulla presenza del codice fiscale (per pratiche vuote)
+    if (!isset($flattenedData['applicant.data.fiscal_code.data.fiscal_code'])) {
+      $this->logger->error("Dematerialized form not well formed", [
+        'pratica' => $pratica->getId()
+      ]);
+      $event->getForm()->addError(new FormError($this->genericViolationMessage));
+    }
+
+    // Check su cnformità codice fiscale
+    if ($pratica->getUser() instanceof CPSUser && strcasecmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
+      $this->logger->error("Fiscal code Mismatch", [
+        'pratica' => $pratica->getId(),
+        'cps' => $pratica->getUser()->getCodiceFiscale(),
+        'form' => $flattenedData['applicant.data.fiscal_code.data.fiscal_code']]
+      );
+      $event->getForm()->addError(new FormError('Il codice fiscale inserito non è conforme con quello resitutito dal sistema di autenticazione.'));
+    }
+
     $pratica->setDematerializedForms([
       'data' => $compiledData,
       'flattened' => $flattenedData,
@@ -228,13 +246,6 @@ class FormIORenderType extends AbstractType
     ]);
 
     foreach ($flattenedData as $key => $value) {
-      // Controlla che il dato sia coerente con lo schema
-      if ($key != 'submit' && !isset($flattenedSchema[$key.'.type'])){
-        $this->logger->error("$key data not found in schema", ['pratica' => $pratica->getId()]);
-        $event->getForm()->addError(new FormError($this->genericViolationMessage));
-        break;
-      }
-
       // Associa gli allegati alla pratica
       if (isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
         foreach ($value as $file) {
