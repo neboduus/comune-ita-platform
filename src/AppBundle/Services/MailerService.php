@@ -12,8 +12,11 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
 use AppBundle\Model\FeedbackMessage;
+use AppBundle\Model\FeedbackMessagesSettings;
+use AppBundle\Model\Mailer;
 use AppBundle\Model\SubscriberMessage;
 use Psr\Log\LoggerInterface;
+use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
@@ -104,6 +107,9 @@ class MailerService
         $this->logger->error('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
     }
+
+    // Invio via pec
+    $this->dispatchPecEmail($pratica, $CPSUsermessage);
 
     /**
      *Todo: se la pratica è in stato submitted (ancora non ha associato un operatore)
@@ -434,6 +440,50 @@ class MailerService
     }
 
     return $sentAmount;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param \Swift_Message $message
+   */
+  public function dispatchPecEmail(Pratica $pratica, \Swift_Message $message)
+  {
+    /** @var FeedbackMessagesSettings $feedbackMessageSettings */
+    $feedbackMessageSettings = $pratica->getServizio()->getFeedbackMessagesSettings();
+    if ( $feedbackMessageSettings != null && $feedbackMessageSettings->getPecMailer() != 'disabled') {
+        try {
+          /** @var Mailer $instanceMailer */
+          $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer()) ;
+
+          $transport = (new \Swift_SmtpTransport($instanceMailer->getHost(), $instanceMailer->getPort()))
+            ->setUsername($instanceMailer->getUser())
+            ->setPassword($instanceMailer->getPassword())
+            ->setEncryption($instanceMailer->getEncription());
+
+          // Create the Mailer using your created Transport
+          $pecMailer = new Swift_Mailer($transport);
+
+          // Recupero indirizzo email da campo segnalato in pec_receiver
+          if (!isset($pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()])) {
+            $this->logger->error('Error in dispatchPecEmail: emprty pec receiver field');
+            return;
+          }
+          $receiver = $pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()];
+          if (!$this->isValidEmail($receiver)) {
+            $this->logger->error('Error in dispatchPecEmail: pec receiver is not a valid email ' . $receiver);
+            return;
+          }
+          $message->setTo($receiver);
+          $message->setFrom($instanceMailer->getSender());
+          $failed = [];
+          $pecMailer->send($message, $failed);
+          if (count($failed) > 0){
+            throw new \Exception(implode(',', $failed));
+          }
+        } catch (\Exception $e){
+          $this->logger->error('Error in dispatchPecEmail: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        }
+    }
   }
 
   /**

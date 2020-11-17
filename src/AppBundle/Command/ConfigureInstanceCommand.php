@@ -8,6 +8,7 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\PaymentGateway;
 use AppBundle\Model\Gateway;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,9 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ConfigureInstanceCommand extends ContainerAwareCommand
 {
 
-  /**
-   * @var
-   */
+  /** @var */
   private $symfonyStyle;
 
   protected function configure()
@@ -85,8 +84,6 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     $manager->persist($ente);
     $manager->flush();
 
-    $loader = new LoadData();
-    $loader->setContainer($this->getContainer());
     $loader->loadCategories($manager);
     $loader->loadServizi($manager);
     $loader->loadTerminiUtilizzo($manager);

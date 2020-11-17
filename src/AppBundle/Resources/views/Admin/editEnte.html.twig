@@ -17,18 +17,171 @@
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         <div class="alert alert-info">
           <div class="row">
-            <div class="col-4"><p>Tipologia di login:</p></div>
-            <div class="col-8"><p><strong>{{ ('login_type.'~login_route)|trans }}</strong></p></div>
-            <div class="col-4"><p>Protocollo:</p></div>
-            <div class="col-8"><p><strong>{{ protocollo_handler.name }}</strong></p></div>
+            <div class="col-6">
+              <p>Tipologia di login: <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
+            </div>
+            <div class="col-3">
+              <p>Protocollo: <strong>{{ protocollo_handler.name }}</strong></p>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         {{ form_start(form) }}
-        {{ form_widget(form) }}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item"><a class="nav-link active" id="default-settings-tab" data-toggle="tab"
+                                  href="#default-settings" role="tab" aria-controls="default-settings-tab"
+                                  aria-selected="true">Impostazioni base</a></li>
+          <li class="nav-item"><a class="nav-link" id="protocol-tab" data-toggle="tab" href="#protocol" role="tab"
+                                  aria-controls="protocol-tab" aria-selected="false">Protocollo</a></li>
+          <li class="nav-item"><a class="nav-link" id="mailers-tab" data-toggle="tab" href="#mailers" role="tab"
+                                  aria-controls="mailers-tab" aria-selected="false">Mailers</a></li>
+          <li class="nav-item"><a class="nav-link" id="meta-tab" data-toggle="tab" href="#meta" role="tab"
+                                  aria-controls="meta-tab" aria-selected="false">Meta</a></li>
+          <li class="nav-item"><a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
+                                  aria-controls="payments-tab" aria-selected="false">Pagamenti</a></li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane p-2 fade show active" id="default-settings" role="tabpanel"
+               aria-labelledby="default-settings-tab">
+            {{ form_row(form.codice_meccanografico) }}
+            {{ form_row(form.site_url) }}
+            {{ form_row(form.codice_amministrativo) }}
+            {{ form_row(form.backoffice_enabled_integrations) }}
+          </div>
+          <div class="tab-pane p-2 fade" id="protocol" role="tabpanel" aria-labelledby="protocol-tab">
+            {{ form_row(form.default_settings) }}
+          </div>
+          <div class="tab-pane px-2 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
+            <div id="current-mailers" data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}" data-widget-counter="{{ form.mailers|length }}">
+              {% if form.mailers|length > 0 %}
+                {% for m in form.mailers %}
+                  <div class="js-mailer-item shadow px-3 my-4">
+                    <div id="mailer-item">
+                      <div class="row">
+                        <div class="col-3">
+                          {{ form_row(m.title, {'attr': {'readonly': 'readonly'}}) }}
+                        </div>
+                        <div class="col-3">
+                          {{ form_row(m.host) }}
+                        </div>
+                        <div class="col-3">
+                          {{ form_row(m.port) }}
+                        </div>
+                        <div class="col-3">
+                          {{ form_row(m.user) }}
+                        </div>
+                        <div class="col-3">
+                          {{ form_row(m.password) }}
+                        </div>
+                        <div class="col-3">
+                          {{ form_row(m.encription) }}
+                        </div>
+                        <div class="col-3">
+                          {{ form_row(m.sender) }}
+                        </div>
+                        <div class="col-3">
+                          <div class="form-group">
+                            <label>&nbsp;</label>
+                            <a class="btn btn-danger btn-block btn-xs js-remove-mailer" href="#">
+                              <svg class="icon icon-sm icon-white d-md-none">
+                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                              </svg>
+                              <span class="d-none d-md-block">Elimina</span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="clearfix mb-4"></div>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-info" id="no-mailers"><i class="fa fa-info-circle"></i> Non sono ancora stati impostati
+                  mailer per l'ente</p>
+              {% endif %}
+            </div>
+            <div class="row">
+              <div class="col-9"></div>
+              <div class="col-3">
+                <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">Aggiungi mailer</button>
+              </div>
+            </div>
+
+          </div>
+          <div class="tab-pane p-2 fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
+            {{ form_row(form.meta) }}
+          </div>
+          <div class="tab-pane p-2 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+            {{ form_rest(form) }}
+          </div>
+        </div>
+        <hr>
+        <div class="form-group">
+          <button type="submit" id="ente_save" class="btn-primary btn">Salva</button>
+        </div>
         {{ form_end(form) }}
       </div>
     </div>
   </section>
+
+  <script type="text/html" id="mailer-item-template">
+    <div id="mailer-item">
+      <div class="row">
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___title" class="required">Titolo</label>
+            <input type="text" id="mailers___name___title" name="ente[mailers][__name__][title]" required="required" class="form-control" />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___host" class="required">Host</label>
+            <input type="text" id="mailers___name___host" name="ente[mailers][__name__][host]" required="required" class="form-control" />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___port" class="required">Porta</label>
+            <input type="text" id="mailers___name___port" name="ente[mailers][__name__][port]" required="required" class="form-control" />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___user" class="required">User</label>
+            <input type="text" id="mailers___name___user" name="ente[mailers][__name__][user]" required="required" class="form-control" />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___password" class="required">Password</label>
+            <input type="text" id="mailers___name___password" name="ente[mailers][__name__][password]" required="required" class="form-control" />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___encription" class="required">Encription</label>
+            <input type="text" id="mailers___name___encription" name="ente[mailers][__name__][encription]" required="required" class="form-control" />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___sender" class="required">Sender</label>
+            <input type="email" id="mailers___name___sender" name="ente[mailers][__name__][sender]" required="required" class="form-control" />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <a class="btn btn-danger btn-block btn-xs js-remove-mailer" href="#">
+              <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+              <span class="d-none d-md-block">Elimina</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
 {% endblock %}
+
+

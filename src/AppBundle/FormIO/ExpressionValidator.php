@@ -125,6 +125,7 @@ class ExpressionValidator
     };
 
     $expressionLanguage = new ExpressionLanguage();
+
     try {
       $evaluation = $expressionLanguage->evaluate(
         $expression,
@@ -133,6 +134,7 @@ class ExpressionValidator
           'submission' => $submission,
         ]
       );
+
       $this->logger->info(__METHOD__ . ' return ' . var_export($evaluation, true), ['expression' => $expression, 'submission' => $submission]);
     } catch (\Throwable $e) {
       $evaluation = false;

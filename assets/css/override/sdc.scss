@@ -269,3 +269,12 @@ form[name="upload_allegato_operatore"] {
     display: block !important;
   }
 }
+
+#mailer-item {
+  label {
+    margin: 0 !important;
+  }
+  .form-group {
+    margin: 0 !important;
+  }
+}

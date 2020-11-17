@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use App\Entity\PostalAddress;
 use AppBundle\Model\FeedbackMessage;
+use AppBundle\Model\FeedbackMessagesSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Model\PaymentParameters;
@@ -993,11 +994,24 @@ class Servizio
   public function setFeedbackMessages(array $feedbackMessages)
   {
     $messages = [];
-    /** @var FeedbackMessage $feedbackMessage */
-    foreach ($feedbackMessages as $feedbackMessage) {
+    foreach ($feedbackMessages as $k => $feedbackMessage) {
       $messages [$feedbackMessage->getTrigger()] = $feedbackMessage;
     }
     $this->feedbackMessages = $messages;
+  }
+
+  public function getFeedbackMessagesSettings()
+  {
+    if (isset($this->additionalData[FeedbackMessagesSettings::KEY])) {
+      return FeedbackMessagesSettings::fromArray($this->additionalData[FeedbackMessagesSettings::KEY]);
+    }
+    return null;
+  }
+
+  public function setFeedbackMessagesSettings( $settings )
+  {
+    $this->additionalData[FeedbackMessagesSettings::KEY] =  $settings;
+    return $this;
   }
 
   /**
