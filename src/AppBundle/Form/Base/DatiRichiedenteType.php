@@ -56,7 +56,7 @@ class DatiRichiedenteType extends AbstractType
                     $opts['disabled'] = $user->getTelefono() == null ? false : true;
                     break;
                 case 'richiedente_cap':
-                    $type = IntegerType::class;
+                    $type = TextType::class;
                     break;
                 case 'richiedente_email':
                     $type = EmailType::class;
