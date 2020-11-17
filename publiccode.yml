@@ -97,7 +97,7 @@ maintenance:
       affiliation: Opencontent SCARL
       email: gabriele.francescotto@opencontent.it
 legal:
-  license: GPL-3.0-only
+  license: AGPL-3.0-or-later
   mainCopyrightOwner: Opencontent scarl
   repoOwner: Opencontent scarl
 intendedAudience:
