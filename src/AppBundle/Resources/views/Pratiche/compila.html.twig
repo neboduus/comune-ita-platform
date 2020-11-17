@@ -234,7 +234,7 @@
 
         <div id="formio" class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
 
-        <div id="formio-custom-errors" class="formio-error-wrapper p-3 mb-2" style="display: none"></div>
+        <div id="formio-custom-errors" class="alert alert-danger" style="display: none"></div>
 
         {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
           <div class="mt-5">

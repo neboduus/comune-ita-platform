@@ -260,10 +260,8 @@ class PraticheAnonimeController extends Controller
     $validator = $this->expressionValidator;
 
     $errors = $validator->validateData(
-      $servizio->getFormIoId(),
-      $request->getContent(),
-      $servizio->getPostSubmitValidationExpression(),
-      $servizio->getPostSubmitValidationMessage()
+      $servizio,
+      $request->getContent()
     );
 
     $response = ['status' => 'OK', 'errors' => null];
