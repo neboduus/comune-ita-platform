@@ -143,7 +143,7 @@ class FormIOTemplateType extends AbstractType
     $service->setFinalIndications($ServiceToClone->getFinalIndications() ?? '');
     $service->setCoverage($ServiceToClone->getCoverage() ?? '');
     $service->setHandler($ServiceToClone->getHandler() ?? 'default');
-    $service->setServiceGroup($ServiceToClone->getServiceGroup() ?? []);
+    $service->setServiceGroup($ServiceToClone->getServiceGroup() ?? null);
     $service->setAccessLevel($ServiceToClone->getAccessLevel() ?? Servizio::ACCESS_LEVEL_SPID_L2);
     $service->setLoginSuggested($ServiceToClone->isLoginSuggested() ?? false);
     $service->setSticky($ServiceToClone->isSticky() ?? false);
