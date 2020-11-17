@@ -2,7 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Model\DateTimeInterval;
 use AppBundle\Model\DefaultProtocolSettings;
+use AppBundle\Model\Mailer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -117,7 +119,7 @@ class Ente
   /**
    * @var array
    *
-   * @ORM\Column(type="json_array", nullable=true)
+   * @ORM\Column(type="json", nullable=true)
    */
   private $gateways;
 
@@ -126,6 +128,13 @@ class Ente
    * @ORM\Column(type="json", nullable=true)
    */
   private $backofficeEnabledIntegrations;
+
+  /**
+   * @var Mailer[]
+   *
+   * @ORM\Column(type="json", nullable=true)
+   */
+  private $mailers;
 
   /**
    * Ente constructor.
@@ -138,6 +147,7 @@ class Ente
     $this->operatori = new ArrayCollection();
     $this->gateways = [];
     $this->backofficeEnabledIntegrations = new ArrayCollection();
+    $this->mailers = new ArrayCollection();
   }
 
   /**
@@ -296,8 +306,8 @@ class Ente
   public function getDefaultProtocolSettings()
   {
     $this->parseProtocolloParameters();
-    if ($this->protocolloParameters->containsKey(DefaultProtocolSettings::key)) {
-      return $this->protocolloParameters->get(DefaultProtocolSettings::key);
+    if ($this->protocolloParameters->containsKey(DefaultProtocolSettings::KEY)) {
+      return $this->protocolloParameters->get(DefaultProtocolSettings::KEY);
     }
 
     return null;
@@ -310,7 +320,7 @@ class Ente
   public function setDefaultProtocolSettings($settings)
   {
     $this->parseProtocolloParameters();
-    $this->protocolloParameters->set(DefaultProtocolSettings::key, $settings);
+    $this->protocolloParameters->set(DefaultProtocolSettings::KEY, $settings);
 
     return $this;
   }
@@ -512,4 +522,44 @@ class Ente
     return $this;
   }
 
+  /**
+   * @return Mailer[]|null
+   */
+  public function getMailers()
+  {
+    if ($this->mailers != null) {
+      $mailers = [];
+      foreach ($this->mailers as $k => $data) {
+        $mailers[$k] = Mailer::fromArray($data);
+      }
+      return $mailers;
+    }
+    return null;
+  }
+
+  /**
+   * @return Mailer|null
+   */
+  public function getMailer($identifier)
+  {
+    if (isset($this->mailers[$identifier])) {
+      return Mailer::fromArray($this->mailers[$identifier]);
+    }
+    return null;
+  }
+
+  /**
+   * @param ArrayCollection $mailers
+   * @return $this
+   */
+  public function setMailers($mailers)
+  {
+    $tmp = [];
+    /** @var Mailer $m */
+    foreach ($mailers as $m) {
+      $tmp[\md5($m->getTitle())] = $m;
+    }
+    $this->mailers = $tmp;
+    return $this;
+  }
 }

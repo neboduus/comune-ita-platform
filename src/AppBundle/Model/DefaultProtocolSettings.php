@@ -6,7 +6,7 @@ namespace AppBundle\Model;
 
 class DefaultProtocolSettings
 {
-  const key = 'default_settings';
+  const KEY = 'default_settings';
 
   /** @var string */
   private $certificate;
