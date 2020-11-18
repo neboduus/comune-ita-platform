@@ -230,14 +230,14 @@ class FormIORenderType extends AbstractType
     }
 
     // Check su cnformità codice fiscale
-    if ($pratica->getUser() instanceof CPSUser && strcasecmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
+    /*if ($pratica->getUser() instanceof CPSUser && strcasecmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
       $this->logger->error("Fiscal code Mismatch", [
         'pratica' => $pratica->getId(),
         'cps' => $pratica->getUser()->getCodiceFiscale(),
         'form' => $flattenedData['applicant.data.fiscal_code.data.fiscal_code']]
       );
       $event->getForm()->addError(new FormError('Il codice fiscale inserito non è conforme con quello resitutito dal sistema di autenticazione.'));
-    }
+    }*/
 
     $pratica->setDematerializedForms([
       'data' => $compiledData,
