@@ -109,7 +109,9 @@ class MailerService
     }
 
     // Invio via pec
-    $this->dispatchPecEmail($pratica, $CPSUsermessage);
+    if ($CPSUsermessage instanceof \Swift_Message) {
+      $this->dispatchPecEmail($pratica, $CPSUsermessage);
+    }
 
     /**
      *Todo: se la pratica è in stato submitted (ancora non ha associato un operatore)
