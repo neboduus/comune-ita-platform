@@ -187,17 +187,16 @@ class PraticheAnonimeController extends Controller
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
-   * @param PraticaStatusService $statusService
    * @param $hash
    * @return Response
    */
-  public function paymentCallbackAction(Request $request, Pratica $pratica, PraticaStatusService $statusService, $hash)
+  public function paymentCallbackAction(Request $request, Pratica $pratica, $hash)
   {
     if ($pratica->isValidHash($hash, $this->hashValidity)) {
       $outcome = $request->get('esito');
 
       if ($outcome == 'OK') {
-        $statusService->setNewStatus(
+        $this->statusService->setNewStatus(
           $pratica,
           Pratica::STATUS_PAYMENT_OUTCOME_PENDING
         );

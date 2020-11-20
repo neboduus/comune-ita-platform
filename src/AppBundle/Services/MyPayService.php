@@ -210,7 +210,7 @@ class MyPayService
         $temp['codCapitolo'] = $v['codCapitolo'];
         $temp['codUfficio'] = $v['codUfficio'];
         $temp['accertamento']['importo'] = $v['importo'];
-        if (isset($v['codAccertamento'])) {
+        if (isset($v['codAccertamento']) && !empty($v['codAccertamento'])) {
           $temp['accertamento']['codAccertamento'] = $v['codAccertamento'];
         }
         $request['bilancio'][]= $temp;
