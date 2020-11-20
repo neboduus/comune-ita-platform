@@ -580,7 +580,6 @@ class PraticheController extends Controller
    * @param Request $request
    * @param Pratica $pratica
    *
-   * @param PraticaStatusService $praticaStatusService
    * @return array|RedirectResponse
    * @throws \Exception
    */
