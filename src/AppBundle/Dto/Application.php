@@ -5,25 +5,12 @@ namespace AppBundle\Dto;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ModuloCompilato;
-use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
-use AppBundle\Mapper\Giscom\File;
-use AppBundle\Mapper\Giscom\FileCollection;
 use AppBundle\Payment\PaymentDataInterface;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\PersistentCollection;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use phpDocumentor\Reflection\Types\Collection;
-use phpDocumentor\Reflection\Types\Self_;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Validator\Constraints as Assert;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Gedmo\Mapping\Annotation as Gedmo;
-use JMS\Serializer\Annotation\AccessorOrder;
 
 class Application
 {
@@ -251,6 +238,12 @@ class Application
    */
   private $statusName;
 
+  /**
+   * @var array
+   * @SWG\Property(property="authentication", type="object", description="User authentication data")
+   * @Groups({"read"})
+   */
+  private $authentication;
 
   /**
    * @return mixed
@@ -684,6 +677,21 @@ class Application
     $this->statusName = $statusName;
   }
 
+  /**
+   * @return array
+   */
+  public function getAuthentication()
+  {
+    return $this->authentication;
+  }
+
+  /**
+   * @param array $authentication
+   */
+  public function setAuthentication($authentication)
+  {
+    $this->authentication = $authentication;
+  }
 
   /**
    * @param Pratica $pratica
@@ -769,6 +777,11 @@ class Application
     $dto->paymentData = self::preparePaymentData($pratica);
     $dto->status = $pratica->getStatus();
     $dto->statusName = strtolower($pratica->getStatusName());
+
+    $dto->authentication = ($pratica->getAuthenticationData()->getAuthenticationMethod() ?
+      $pratica->getAuthenticationData() :
+      UserAuthenticationData::fromArray(['authenticationMethod' => $pratica->getUser()->getIdp()]));
+
 
     return $dto;
   }
