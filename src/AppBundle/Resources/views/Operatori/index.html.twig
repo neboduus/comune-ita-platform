@@ -64,6 +64,16 @@
     .icon.icon-light{
       fill: rgba(0, 0, 0, .5)!important;
     }
+    #filter_query_by_chosen a.chosen-single{
+      border-right-width: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+    }
+    #filter-query{
+      border-left-width: 0 !important;
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
   </style>
 {% endblock %}
 
@@ -843,16 +853,16 @@
           </div>
         </div>
         <div class="col-12 col-sm-6 col-lg-4 mb-5 mb-md-0">
-          <div class="bootstrap-select-wrapper filter-query">
+          <div class="label-sm-wrapper filter-query">
             <label for="filter-query-by">Cerca per</label>
             <div class="input-group">
-              <select class="form-control" id="filter-query-by" name="query-by">
+              <select class="form-control filter-select form-control-chosen" id="filter-query-by" name="query-by">
                 <option value="2">Nome utente</option>
                 <option value="1">Codice fiscale</option>
                 <option value="3">ID Pratica</option>
               </select>
               <div class="input-group-append">
-                <input type="text" class="form-control" name="query" id="filter-query" placeholder="Testo da cercare">
+                <input type="text" class="chosen-input" name="query" id="filter-query" placeholder="Testo da cercare">
               </div>
             </div>
           </div>

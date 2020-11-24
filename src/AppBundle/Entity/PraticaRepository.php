@@ -253,7 +253,7 @@ class PraticaRepository extends EntityRepository
 
   }
 
-  public function findStatesPraticheByOperatore(OperatoreUser $user, $filters, $limit, $offset)
+  public function findStatesPraticheByOperatore(OperatoreUser $user, $filters = [])
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
     if (empty($serviziAbilitati)) {
@@ -263,7 +263,7 @@ class PraticaRepository extends EntityRepository
     $qb = $this->getPraticheByOperatoreQueryBuilder($filters, $user, null, 'DISTINCT pratica.status');
     $qb->addOrderBy('pratica.status', 'asc');
 
-    $result =  $qb->setFirstResult($offset)->setMaxResults($limit)->getQuery()->execute();
+    $result =  $qb->getQuery()->execute();
     $states = [];
     $states[] = ['id' => '', 'name' => 'Tutti'];
     foreach ($result as $s) {
