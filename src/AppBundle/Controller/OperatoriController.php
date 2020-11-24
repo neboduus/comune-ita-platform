@@ -416,7 +416,9 @@ class OperatoriController extends Controller
       $count = $praticaRepository->countPraticheByOperatore($user, $parameters);
       /** @var Pratica[] $data */
       $data = $praticaRepository->findPraticheByOperatore($user, $parameters, $limit, $offset);
-      $tempStates = $praticaRepository->findStatesPraticheByOperatore($user, $parameters, $limit, $offset);
+      $tempParameters = $parameters;
+      unset($tempParameters['stato']);
+      $tempStates = $praticaRepository->findStatesPraticheByOperatore($user, $tempParameters);
       foreach ($tempStates as $state) {
         $state['name'] = $this->translator->trans($state['name']);
         $filters['states'][] = $state;
