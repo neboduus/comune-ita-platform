@@ -11,6 +11,7 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
+use AppBundle\Exception\MessageDisabledException;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
 use AppBundle\Model\Mailer;
@@ -103,6 +104,8 @@ class MailerService
         $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
         $sentAmount += $this->send($CPSUsermessage);
         $pratica->setLatestCPSCommunicationTimestamp(time());
+      } catch (MessageDisabledException $e){
+        $this->logger->info('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       } catch (\Exception $e){
         $this->logger->error('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
@@ -199,6 +202,7 @@ class MailerService
    * @param Pratica $pratica
    * @param $fromAddress
    * @return \Swift_Message
+   * @throws MessageDisabledException
    * @throws \Twig\Error\Error
    */
   private function setupCPSUserMessage(Pratica $pratica, $fromAddress)
@@ -217,7 +221,7 @@ class MailerService
     /** @var FeedbackMessage $feedbackMessage */
     $feedbackMessage = $feedbackMessages[$pratica->getStatus()];
     if (!$feedbackMessage['isActive']){
-      throw new \Exception('Message for '.$pratica->getStatus().' is not active');
+      throw new MessageDisabledException('Message for '.$pratica->getStatus().' is not active');
     }
 
     $placeholders = [
