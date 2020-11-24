@@ -815,7 +815,7 @@ services:
       - "@ocsdc.modulo_pdf_builder"
 
   AppBundle\Services\FormServerApiAdapterService:
-    arguments: [ "%formserver_private_url%", "@logger" ]
+    arguments: [ "%formserver_private_url%", "%formserver_public_url%", "@logger" ]
 
   ocsdc.formserver: '@AppBundle\Services\FormServerApiAdapterService'
 

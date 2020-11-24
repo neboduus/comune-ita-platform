@@ -17,4 +17,10 @@ interface FormIOSchemaProviderInterface
    * @return string
    */
   public function getFormServerUrl();
+
+  /**
+   * @return string
+   */
+  public function getFormServerPublicUrl();
+
 }

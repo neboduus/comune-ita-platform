@@ -89,7 +89,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $result = [];
     $services = $this->getDoctrine()->getRepository('AppBundle:Servizio')->findAll();
     foreach ($services as $s) {
-      $result []= Service::fromEntity($s);
+      $result []= Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
     }
 
     return $this->view($result, Response::HTTP_OK);
@@ -123,7 +123,7 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      return $this->view(Service::fromEntity($result), Response::HTTP_OK);
+      return $this->view(Service::fromEntity($result, $this->formServerApiAdapterService->getFormServerPublicUrl()), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
