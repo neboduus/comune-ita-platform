@@ -196,7 +196,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $repoApplications = $this->em->getRepository(Pratica::class);
-    /** @var QueryBuilder  $query */
+    /** @var QueryBuilder $query */
     $query = $repoApplications->createQueryBuilder('a')
       ->select('count(a.id)')
       ->where('a.status != :status')
@@ -453,12 +453,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $paymentData = $application->getPaymentData();
-    $serializer = SerializerBuilder::create()->build();
-    $paymentData['outcome'] = $serializer->toArray($paymentOutcome);
-    $application->setPaymentData($paymentData);
-
     try {
+
+
+      $paymentData = $application->getPaymentData();
+      $serializer = SerializerBuilder::create()->build();
+      $paymentData['outcome'] = $serializer->toArray($paymentOutcome);
+      $application->setPaymentData($paymentData);
       $this->em->persist($application);
       $this->em->flush();
 
