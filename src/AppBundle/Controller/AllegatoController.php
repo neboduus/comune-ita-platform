@@ -592,7 +592,7 @@ class AllegatoController extends Controller
     );
 
     foreach ($pratiche as $pratica) {
-      if ($pratica->getOperatore() === $user) {
+      if (in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
         $becauseOfPratiche[] = $pratica->getId();
         $isOperatoreAmongstTheAllowedOnes = true;
       }
@@ -612,7 +612,7 @@ class AllegatoController extends Controller
       return $this->createBinaryResponseForAllegato($allegato);
     }
     $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
-    throw new NotFoundHttpException(); //security by obscurity
+    throw new UnauthorizedHttpException();
   }
 
   /**

@@ -99,6 +99,7 @@ class MailerService
       return $sentAmount;
     }
 
+    $CPSUsermessage = null;
     if ($this->CPSUserHasValidContactEmail($pratica->getUser()) && ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))) {
       try {
         $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
@@ -460,6 +461,10 @@ class MailerService
         try {
           /** @var Mailer $instanceMailer */
           $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer()) ;
+
+          if (!$instanceMailer instanceof Mailer) {
+            throw new \Exception('There are no mailers on instance');
+          }
 
           $transport = (new \Swift_SmtpTransport($instanceMailer->getHost(), $instanceMailer->getPort()))
             ->setUsername($instanceMailer->getUser())
