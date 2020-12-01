@@ -201,5 +201,9 @@ display: none;
 
   }
 }
+//Fix resize label in tabs
+.tab-content .form-group label{
+  width: auto !important;
+}
 
 

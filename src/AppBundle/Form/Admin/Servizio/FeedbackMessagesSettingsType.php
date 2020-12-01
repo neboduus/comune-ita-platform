@@ -22,12 +22,12 @@ class FeedbackMessagesSettingsType extends AbstractType
 
     $builder
       ->add('pec_mailer', ChoiceType::class, [
-        'label' => 'Servizio di invio PEC',
+        'label' => 'Servizio di invio messaggi',
         'choices' => $options['mailers'],
       ])
       ->add('pec_receiver', ChoiceType::class, [
         'required' => false,
-        'label' => "Specificare il campo del form dove è inserita l'email pec",
+        'label' => "Specificare il campo del form dove è inserita l'email del destinatario",
         'choices' => $options['components'],
       ]);
   }

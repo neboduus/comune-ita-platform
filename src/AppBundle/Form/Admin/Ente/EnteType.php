@@ -86,7 +86,9 @@ class EnteType extends AbstractType
 
     $builder
       ->add('codice_meccanografico', TextType::class)
-      ->add('site_url', TextType::class)
+      ->add('site_url', TextType::class, [
+        'label' => 'Link sul titolo di ogni pagina'
+      ])
       ->add('codice_amministrativo', TextType::class)
       ->add('meta', TextareaType::class, ['required' => false])
       ->add(DefaultProtocolSettings::KEY, DefaultProtocolSettingsType::class, [

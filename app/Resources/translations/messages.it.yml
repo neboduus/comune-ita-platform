@@ -1841,6 +1841,14 @@ meetings:
     cancel_success: 'Appuntamento annullato con successo'
 
 backoffice:
+  entity:
+    mailers: 'Invio messaggi'
+    meta: 'Aspetto grafico'
+    setting: 'Ente'
+    title: 'Nome'
+    host: 'Indirizzo del server'
+    encription: 'Encryption'
+    sender: 'Mittente'
   integration:
     missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
     or: 'Oppure'
@@ -1858,7 +1866,7 @@ backoffice:
 
 login_type:
   none: 'Nessuno'
-  login_pat: 'Spid PAD'
+  login_pat: 'Spid PAT'
   login_open: 'Openlogin'
 
 
