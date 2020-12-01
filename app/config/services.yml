@@ -159,6 +159,14 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Rest\Transition\OutcomeFormType:
+    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
+  AppBundle\Services\Manager\PraticaManager:
+    autowire: true
+
   AppBundle\Services\MyPayService:
     autowire: true
 

@@ -7,6 +7,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Payment\PaymentDataInterface;
+use AppBundle\Services\PraticaStatusService;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
@@ -244,6 +245,13 @@ class Application
    * @Groups({"read"})
    */
   private $authentication;
+
+  /**
+   * @Serializer\Type("array")
+   * @SWG\Property(description="Applications links")
+   * @Groups({"read"})
+   */
+  private $links;
 
   /**
    * @return mixed
@@ -694,6 +702,22 @@ class Application
   }
 
   /**
+   * @return mixed
+   */
+  public function getLinks()
+  {
+    return $this->links;
+  }
+
+  /**
+   * @param mixed $links
+   */
+  public function setLinks($links): void
+  {
+    $this->links = $links;
+  }
+
+  /**
    * @param Pratica $pratica
    * @param string $attachmentEndpointUrl
    * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
@@ -782,6 +806,7 @@ class Application
       $pratica->getAuthenticationData() :
       UserAuthenticationData::fromArray(['authenticationMethod' => $pratica->getUser()->getIdp()]));
 
+    $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl));
 
     return $dto;
   }
@@ -966,5 +991,32 @@ class Application
       return $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
     }
     return [];
+  }
+
+
+  /**
+   * @param Pratica $pratica
+   * @param string $baseUrl
+   * @return array
+   */
+  public static function getAvailableTransitions(Pratica $pratica, $baseUrl = '')
+  {
+    $availableTransitions = [];
+    if (isset(PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()])) {
+      $availableTransitions = PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()];
+      foreach ($availableTransitions as $k => $v) {
+        // todo: fare refactoring completo della classe e generare con router
+        $availableTransitions[$k]['url'] = $baseUrl . '/transiction/' . $v['action'];
+
+        if ($v['action'] == 'register' && !$pratica->getServizio()->isProtocolRequired()) {
+          unset($availableTransitions[$k]);
+        }
+
+        if ($v['action'] == 'withdraw' && !$pratica->getServizio()->isAllowReopening()) {
+          unset($availableTransitions[$k]);
+        }
+      }
+    }
+    return $availableTransitions;
   }
 }
