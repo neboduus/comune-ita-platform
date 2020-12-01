@@ -52,7 +52,26 @@ $(document).ready(function () {
     $(this).closest('.js-mailer-item').remove();
 
     if ($('.js-mailer-item').length === 0) {
-      $('#current-mailers').append('<p class="text-info" id="no-mailers"><i class="fa fa-info-circle"></i> Non sono ancora stati impostati mailer per l\'ente</p>');
+      $('#current-mailers').append('<p class="text-info" id="no-mailers"><i class="fa fa-info-circle"></i> Non sono ancora stati impostati mailer per l\'ente, i messaggi verranno inviati via e-mail dall\'indirizzo di default del sistema</p>');
     }
   });
+
+    let url = location.href.replace(/\/$/, "");
+
+    if (location.hash) {
+      const hash = url.split("#");
+      $('#myTab a[href="#'+hash[1]+'"]').tab("show");
+      url = location.href.replace(/\/#/, "#");
+      history.replaceState(null, null, url);
+      setTimeout(() => {
+        $(window).scrollTop(0);
+      }, 400);
+    }
+
+    $('a[data-toggle="tab"]').on("click", function() {
+      let newUrl;
+      const hash = $(this).attr("href");
+        newUrl = url.split("#")[0] + hash;
+      history.replaceState(null, null, newUrl);
+    });
 });
