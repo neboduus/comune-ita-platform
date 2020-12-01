@@ -23,6 +23,7 @@ use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
+use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\MessagesAdapterService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
@@ -101,9 +102,9 @@ class OperatoriController extends Controller
    */
   private $moduloPdfBuilderService;
   /**
-   * @var MessagesAdapterService
+   * @var PraticaManager
    */
-  private $messagesAdapterService;
+  private $praticaManager;
 
   /**
    * OperatoriController constructor.
@@ -118,7 +119,7 @@ class OperatoriController extends Controller
    * @param RouterInterface $router
    * @param MailerService $mailerService
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
-   * @param MessagesAdapterService $messagesAdapterService
+   * @param PraticaManager $praticaManager
    */
   public function __construct(
     SchemaFactory $schemaFactory,
@@ -132,7 +133,7 @@ class OperatoriController extends Controller
     RouterInterface $router,
     MailerService $mailerService,
     ModuloPdfBuilderService $moduloPdfBuilderService,
-    MessagesAdapterService $messagesAdapterService
+    PraticaManager $praticaManager
   )
   {
     $this->schemaFactory = $schemaFactory;
@@ -146,7 +147,7 @@ class OperatoriController extends Controller
     $this->router = $router;
     $this->mailerService = $mailerService;
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
-    $this->messagesAdapterService = $messagesAdapterService;
+    $this->praticaManager = $praticaManager;
   }
 
 
@@ -319,7 +320,6 @@ class OperatoriController extends Controller
   /**
    * @Route("/pratiche/calculate",name="operatori_index_calculate")
    * @param Request $request
-   * @param SchemaFactory $schemaFactory
    * @return JsonResponse
    */
   public function indexCalculateAction(Request $request)
@@ -557,7 +557,6 @@ class OperatoriController extends Controller
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($user, $pratica);
-    $threads = $this->createThreadElementsForOperatoreAndPratica($user, $pratica);
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
@@ -574,8 +573,7 @@ class OperatoriController extends Controller
     return [
       'pratica' => $pratica,
       'allegati' => $allegati,
-      'user' => $user,
-      'threads' => $threads,
+      'user' => $user
     ];
   }
 
@@ -601,34 +599,7 @@ class OperatoriController extends Controller
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     try {
-      if ($pratica->getOperatore() !== null) {
-        throw new BadRequestHttpException(
-          "La pratica è già assegnata a {$pratica->getOperatore()->getFullName()}"
-        );
-      }
-
-      if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
-        throw new BadRequestHttpException("La pratica non ha ancora un numero di protocollo");
-      }
-
-      $pratica->setOperatore($user);
-      $statusChange = new StatusChange();
-      $statusChange->setEvento('Presa in carico');
-      $statusChange->setOperatore($user->getFullName());
-      $statusChange->setMessage('Pratica presa in carico da ' . $user->getFullName());
-      $this->praticaStatusService->setNewStatus(
-        $pratica,
-        Pratica::STATUS_PENDING,
-        $statusChange
-      );
-
-      $this->logger->info(
-        LogConstants::PRATICA_ASSIGNED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-        ]
-      );
+      $this->praticaManager->assign($pratica, $user);
     } catch (\Exception $e) {
       $this->addFlash('error', $e->getMessage());
     }
@@ -800,7 +771,7 @@ class OperatoriController extends Controller
       }
 
       try {
-        $this->completePraticaFlow($pratica);
+        $this->praticaManager->finalize($pratica, $user);
       } catch (\Exception $e) {
         $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
         $this->addFlash('error', $e->getMessage());
@@ -808,7 +779,6 @@ class OperatoriController extends Controller
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
-    $threads = $this->createThreadElementsForOperatoreAndPratica($user, $pratica);
     /** @var PraticaRepository $repository */
     $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
@@ -837,7 +807,6 @@ class OperatoriController extends Controller
       'outcomeForm' => $outcomeForm->createView(),
       'pratica' => $pratica,
       'user' => $this->getUser(),
-      'threads' => $threads,
       'fiscal_code' => $fiscalCode,
       'sent_email' => $sentEmail,
       'formserver_url' => $this->getParameter('formserver_public_url'),
@@ -959,7 +928,7 @@ class OperatoriController extends Controller
       } else {
 
         try {
-          $this->completePraticaFlow($pratica);
+          $this->praticaManager->finalize($pratica, $user);
         } catch (\Exception $e) {
           $this->addFlash('error', $e->getMessage());
         }
@@ -1148,115 +1117,6 @@ class OperatoriController extends Controller
     if ($user->getEnte() != $operatore->getEnte()) {
       throw new UnauthorizedHttpException("User can not read operatore {$operatore->getId()}");
     }
-  }
-
-  /**
-   * @param Pratica $pratica
-   * @throws \Exception
-   */
-  private function completePraticaFlow(Pratica $pratica)
-  {
-    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE
-      || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE
-      || $pratica->getStatus() == Pratica::STATUS_CANCELLED
-      || $pratica->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
-      throw new BadRequestHttpException('La pratica è già stata elaborata');
-    }
-
-    if ($pratica->getRispostaOperatore() == null) {
-      $signedResponse = $this->moduloPdfBuilderService->createSignedResponseForPratica($pratica);
-      $pratica->addRispostaOperatore($signedResponse);
-    }
-
-    $protocolloIsRequired = $pratica->getServizio()->isProtocolRequired();
-
-    $user = $this->getUser();
-    $statusChange = new StatusChange();
-    $statusChange->setOperatore($user->getFullName());
-
-    if ($pratica->getEsito()) {
-
-
-      $statusChange->setEvento('Approvazione pratica');
-      $statusChange->setMessage('Pratica approvata da ' . $user->getFullName());
-
-      if ($protocolloIsRequired) {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
-          $statusChange
-        );
-      } else {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_COMPLETE,
-          $statusChange
-        );
-      }
-
-      $this->logger->info(
-        LogConstants::PRATICA_APPROVED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-        ]
-      );
-    } else {
-
-      $statusChange->setEvento('Rifiuto pratica');
-      $statusChange->setMessage('Pratica rifiutata da ' . $user->getFullName());
-
-      if ($protocolloIsRequired) {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
-          $statusChange
-        );
-      } else {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_CANCELLED,
-          $statusChange
-        );
-      }
-
-      $this->logger->info(
-        LogConstants::PRATICA_CANCELLED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-        ]
-      );
-    }
-  }
-
-  /**
-   * @param OperatoreUser $operatore
-   * @param Pratica $pratica
-   *
-   * @return array
-   */
-  private function createThreadElementsForOperatoreAndPratica(OperatoreUser $operatore, Pratica $pratica)
-  {
-    $messagesAdapterService = $this->messagesAdapterService;
-    $threadId = $pratica->getUser()->getId() . '~' . $operatore->getId();
-    $form = $this->createForm(
-      MessageType::class,
-      ['thread_id' => $threadId, 'sender_id' => $operatore->getId()],
-      [
-        'action' => $this->router->generate('messages_controller_enqueue_for_operatore', ['threadId' => $threadId]),
-        'method' => 'PUT',
-      ]
-    );
-
-    $threads[] = [
-      'threadId' => $threadId,
-      'title' => $pratica->getUser()->getFullName(),
-      'messages' => $messagesAdapterService->getDecoratedMessagesForThread($threadId, $operatore),
-      'form' => $form->createView(),
-    ];
-
-    return $threads;
   }
 
 

@@ -193,11 +193,11 @@ fos_rest:
 nelmio_api_doc:
   documentation:
     info:
-      x-api-id: "sdc-api-2-1-0"
+      x-api-id: "sdc-api-2-2-0"
       x-audience: "external-public"
       title: "SDC Api Definition"
       description: ""
-      version: "2.1.0"
+      version: "2.2.0"
       contact:
         name: "Opencontent S.c.a.r.l"
         email: "support@opencontent.it"
