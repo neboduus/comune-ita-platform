@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-11-24'
-softwareVersion: 1.6.15
+releaseDate: '2020-12-01'
+softwareVersion: 1.6.16
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
