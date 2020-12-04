@@ -51,6 +51,11 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     $this->container = $container;
   }
 
+  public function getContainer()
+  {
+    return $this->container;
+  }
+
   public function load(ObjectManager $manager)
   {
     $this->loadAsili($manager);

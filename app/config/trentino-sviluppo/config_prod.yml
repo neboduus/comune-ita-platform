@@ -9,10 +9,9 @@ imports:
 
 
 parameters:
-    prefix: comune-di-vicopisano
-    codice_meccanografico: L850
-    database_name: sdc_vicopisano
-    login_route: none
+    prefix: trentino-sviluppo
+    codice_meccanografico: TNSV
+    database_name: sdc_trentinosviluppo
 
 framework:
     router:
