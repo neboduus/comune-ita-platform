@@ -833,7 +833,6 @@ class OperatoriController extends Controller
         $statusChange = new StatusChange();
         $statusChange->setEvento('Riapertura pratica');
         $statusChange->setOperatore($user->getFullName());
-        $statusChange->setMessage('Pratica riaperta da ' . $user->getFullName());
 
         $this->praticaStatusService->setNewStatus(
           $pratica,

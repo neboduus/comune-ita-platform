@@ -101,7 +101,6 @@ class PraticaManager
     $statusChange = new StatusChange();
     $statusChange->setEvento('Presa in carico');
     $statusChange->setOperatore($user->getFullName());
-    $statusChange->setMessage('Pratica presa in carico da ' . $user->getFullName());
     $this->praticaStatusService->setNewStatus(
       $pratica,
       Pratica::STATUS_PENDING,
@@ -143,7 +142,7 @@ class PraticaManager
 
     if ($pratica->getEsito()) {
       $statusChange->setEvento('Approvazione pratica');
-      $statusChange->setMessage('Pratica approvata da ' . $user->getFullName());
+      $statusChange->setOperatore($user->getFullName());
 
       if ($protocolloIsRequired) {
         $this->praticaStatusService->setNewStatus(
@@ -169,7 +168,7 @@ class PraticaManager
     } else {
 
       $statusChange->setEvento('Rifiuto pratica');
-      $statusChange->setMessage('Pratica rifiutata da ' . $user->getFullName());
+      $statusChange->setOperatore($user->getFullName());
 
       if ($protocolloIsRequired) {
         $this->praticaStatusService->setNewStatus(
