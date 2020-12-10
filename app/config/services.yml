@@ -53,6 +53,9 @@ services:
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\MessagesAPIController:
+    autowire: true
+
   AppBundle\Controller\AdminController:
     autowire: true
 
