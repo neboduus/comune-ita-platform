@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-12-14'
-softwareVersion: 1.6.19
+releaseDate: '2020-12-16'
+softwareVersion: 1.6.20
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -71,6 +71,8 @@ usedBy:
   - Provincia autonoma di Trento (TN)
   - Comune di Niscemi (CL)
   - Comune di Preganziol (TV)
+  - Comune di Castelnuovo (TN)
+  - Comune di Mezzolomabardo (TN)
 roadmap: https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/ROADMAP.md
 categories:
   - communications
