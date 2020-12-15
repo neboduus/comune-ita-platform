@@ -158,7 +158,7 @@ class Message
    */
   public function setMessage($message)
   {
-    $this->message = $message;
+    $this->message = strip_tags($message, '<p><a><b><i><u><ul><ol><li><br>');
 
     return $this;
   }

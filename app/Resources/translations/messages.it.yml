@@ -207,9 +207,9 @@ pratica:
     stato_9000: 'Rifiutata'
     stato_20000: 'Ritirata'
 
-    stato_4100: 'Richiesta integrazioni (in attesa di protocollazione)'
+    stato_4100: 'Richiesta integrazioni'
     stato_4200: 'In attesa di integrazioni'
-    stato_4300: 'Integrazioni in attesa di protocollazione'
+    stato_4300: 'Integrazioni inviate'
     stato_4400: 'Integrazioni protocollate'
     stato_4500: 'Presa in carico in seguito a integrazioni'
 
@@ -249,7 +249,7 @@ STATUS_PAYMENT_PENDING: 'In attesa di pagamento'
 STATUS_PAYMENT_OUTCOME_PENDING: "In attesa dell'esito di pagamento"
 STATUS_PAYMENT_SUCCESS: "Pagamento avvenuto con successo"
 STATUS_PAYMENT_ERROR: "Pagamento rifiutato"
-STATUS_REQUEST_INTEGRATION: 'Richiesta integrazioni (in attesa di protocollazione)'
+STATUS_REQUEST_INTEGRATION: 'Richiesta integrazioni'
 STATUS_DRAFT_FOR_INTEGRATION: 'In attesa di integrazioni'
 STATUS_SUBMITTED_AFTER_INTEGRATION: 'Integrazioni in attesa di protocollazione'
 STATUS_REGISTERED_AFTER_INTEGRATION: 'Integrazioni protocollate'
@@ -514,7 +514,8 @@ operatori:
   elabora: 'Elabora'
   scrivi_al_cittadino: "Scrivi al cittadino"
   riapri_pratica: "Riapri pratica"
-  richiedi_intergrazioni: 'Richiedi intergrazioni'
+  richiedi_intergrazioni: 'Richiedi intergrazione'
+  richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"
   modulo: 'Modulo'
   allegati: 'Allegati'
   note_interne: 'Note interne'

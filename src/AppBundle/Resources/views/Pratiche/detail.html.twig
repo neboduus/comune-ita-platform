@@ -1,6 +1,6 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags('compile') }}
+  {{ encore_entry_link_tags('user-show-application') }}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
         integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
         crossorigin="anonymous"/>
@@ -9,7 +9,9 @@
 {% endblock %}
 
 {% block javascripts %}
-  {{ encore_entry_script_tags('compile') }}
+  {{ encore_entry_script_tags('user-show-application') }}
+
+  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
     <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
@@ -26,27 +28,6 @@
         });
     </script>
     {% endif %}
-
-  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-          crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
-  <script type='text/javascript'>
-      window.onload = function () {
-          Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
-              readOnly: true,
-              noAlerts: true,
-              language: 'it',
-              i18n: formIoI18n
-          }).then(function (form) {
-              form.submission = {
-                  data: $('#formio_summary').data('submission')
-              };
-          });
-      };
-  </script>
-
 {% endblock %}
 
 {% block main_content %}
@@ -110,7 +91,15 @@
             </div>
           </div>
         {% endif %}
-
+        {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') %}
+          <div class="alert alert-warning">
+            <h5>È stata richiesta un'integrazione</h5>
+            <p>{{ pratica.richiestaDiIntegrazioneAttiva.description | raw }}</p>
+            <p class="text-right">
+              <button id="answer-integration" type="button" class="btn btn-sm">Integra la pratica</button>
+            </p>
+          </div>
+        {% endif %}
         {{ include('@App/Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}
       </div>
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">

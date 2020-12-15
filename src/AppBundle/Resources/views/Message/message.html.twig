@@ -1,0 +1,89 @@
+{% set class = message.visibility == 'internal' ? 'internal' : message.author == user ? 'mine' : 'others' %}
+<li class="mb-4 message">
+  <div class="rounded p-3 shadow {{ class }}">
+    <div class="message-header">
+      <span class="avatar">
+        <svg class="icon icon-secondary">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+        </svg>
+      </span>
+      <span class="mx-2 text-secondary">
+        <b>{{ message.author.fullName }}</b>
+        {% if message.visibility == 'internal' %}
+          <small> {{ 'operatori.messaggi.ha_aggiunto_nota_privata' | trans }}</small>
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="message-body">
+      <small>{{ message.message | raw }}</small>
+      {% if message.author != pratica.user %}
+        <img class="d-none" src="{{ path('track_message', {'id':message.id}) }}">
+      {% endif %}
+    </div>
+
+    {% if message.attachments|length > 0 %}
+      <div class="mb-2">
+        {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
+        {% for attachment in message.attachments %}
+          <a class="mr-3" href="{{ path(download_allegato_path, {'allegato': attachment.id}) }}">
+            <small><i class="fa fa-file mr-2"></i> {{ attachment.description }}</small>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-12 text-right">
+        <a data-toggle="collapse"
+           data-target="#info_{{ message.id }}" aria-expanded="false"
+           aria-controls="info_{{ message.id }}" role="button">
+          <svg class="icon icon-xs">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
+          </svg>
+        </a>
+        <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
+          {% if not message.sentAt %}
+            <i class="fa fa-check text-100 mx-1"
+               title="Messaggio creato il {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></i>
+          {% elseif not message.readAt %}
+            <i class="fas fa-check-double text-100 mx-1"
+               title="Messaggio consegnato il {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></i>
+          {% else %}
+            <i class="fas fa-check-double mx-1" style="color: dodgerblue"
+               title="Messaggio letto il {{ message.readAt | date(ocsdc_default_datetime_format) }}"></i>
+          {% endif %}
+        </small>
+      </div>
+    </div>
+
+    <div id="info_{{ message.id }}" class="collapse mt-1">
+      <div class="row">
+        <div class="col-6">
+          <small class="font-weight-bold">Inviato:</small>
+        </div>
+        <div class="col-6 text-right">
+          <small>
+            {% if message.sentAt %}
+              {{ message.sentAt |date(ocsdc_default_datetime_format) }}
+            {% else %}
+              --
+            {% endif %}
+          </small>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <small class="font-weight-bold">Letto:</small>
+        </div>
+        <div class="col-6 text-right">
+          <small>{% if message.readAt %}
+              {{ message.readAt |date(ocsdc_default_datetime_format) }}
+            {% else %}
+              --
+            {% endif %}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>

@@ -96,12 +96,14 @@ class PraticaStatusService
       [Pratica::STATUS_SUBMITTED => Pratica::STATUS_PENDING],
 
       [Pratica::STATUS_REGISTERED => Pratica::STATUS_PENDING],
+      [Pratica::STATUS_PENDING => Pratica::STATUS_PENDING],
       [Pratica::STATUS_PENDING => Pratica::STATUS_REQUEST_INTEGRATION],
 
       [Pratica::STATUS_REQUEST_INTEGRATION => Pratica::STATUS_DRAFT_FOR_INTEGRATION],
       [Pratica::STATUS_DRAFT_FOR_INTEGRATION => Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION],
 
       [Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION => Pratica::STATUS_REGISTERED_AFTER_INTEGRATION],
+      [Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION => Pratica::STATUS_PENDING_AFTER_INTEGRATION],
       [Pratica::STATUS_REGISTERED_AFTER_INTEGRATION => Pratica::STATUS_PENDING_AFTER_INTEGRATION],
       [Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION => Pratica::STATUS_PENDING],
       [Pratica::STATUS_PENDING_AFTER_INTEGRATION => Pratica::STATUS_PENDING],
@@ -200,7 +202,6 @@ class PraticaStatusService
         );
       } catch (\Exception $e) {
         $this->entityManager->rollback();
-
         $this->logger->info(
           LogConstants::PRATICA_CHANGED_STATUS_FAILED,
           [

@@ -13,6 +13,7 @@ use AppBundle\Entity\Message;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Form\Base\MessageType;
@@ -23,8 +24,8 @@ use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
+use AppBundle\Services\Manager\MessageManager;
 use AppBundle\Services\Manager\PraticaManager;
-use AppBundle\Services\MessagesAdapterService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
@@ -57,6 +58,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * Class OperatoriController
@@ -106,6 +109,9 @@ class OperatoriController extends Controller
    */
   private $praticaManager;
 
+  /** @var MessageManager */
+  private $messageManager;
+
   /**
    * OperatoriController constructor.
    * @param SchemaFactory $schemaFactory
@@ -120,6 +126,7 @@ class OperatoriController extends Controller
    * @param MailerService $mailerService
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaManager $praticaManager
+   * @param MessageManager $messageManager
    */
   public function __construct(
     SchemaFactory $schemaFactory,
@@ -133,7 +140,8 @@ class OperatoriController extends Controller
     RouterInterface $router,
     MailerService $mailerService,
     ModuloPdfBuilderService $moduloPdfBuilderService,
-    PraticaManager $praticaManager
+    PraticaManager $praticaManager,
+    MessageManager $messageManager
   )
   {
     $this->schemaFactory = $schemaFactory;
@@ -148,6 +156,7 @@ class OperatoriController extends Controller
     $this->mailerService = $mailerService;
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->praticaManager = $praticaManager;
+    $this->messageManager = $messageManager;
   }
 
 
@@ -679,7 +688,8 @@ class OperatoriController extends Controller
         $visibility = $messageForm->getClickedButton()->getName();
 
         // Funzionalità non disponibile agli utenti anonimi
-        if ($pratica->getUser()->getIdp() == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
+        $authData = $pratica->getAuthenticationData();
+        if (isset($authData['authenticationMethod']) && $authData['authenticationMethod'] == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
           $messageForm->addError(new FormError($translator->trans('operatori.messaggi.non_disponibile_anonimo')));
         }
 
@@ -715,19 +725,7 @@ class OperatoriController extends Controller
 
           // Todo: rendere asincrono l'invio delle email
           if ($visibility == Message::VISIBILITY_APPLICANT) {
-            $defaultSender = $this->getParameter('default_from_email_address');
-            $instance = $this->instanceService->getCurrentInstance();
-            $userReceiver = $message->getApplication()->getUser();
-            $subject = $translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
-            $mess = $translator->trans('pratica.messaggi.messaggio', [
-              '%message%' => $message->getMessage(),
-              '%link%' => $this->router->generate('track_message', ['id' => $message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id=' . $message->getId()]);
-            $this->mailerService->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
-
-            $this->addFlash('info', $translator->trans('operatori.messaggi.feedback_inviato', ['%email%' =>$message->getApplication()->getUser()->getEmailContatto() ]));
-            $message->setSentAt(time());
-            $em->persist($message);
-            $em->flush();
+            $this->messageManager->dispatchMailForMessage($message, true);
           }
 
           return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
@@ -779,6 +777,34 @@ class OperatoriController extends Controller
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
+    // Integration request
+    $integrationRequestform = $this->createFormBuilder(null)
+      ->add('message', TextareaType::class, [
+        'required' => true,
+        'data' => $this->translator->trans('operatori.richiedi_integrazioni_tpl', [
+          '%user_name%' => $pratica->getUser()->getFullName(),
+          '%servizio%' => $pratica->getServizio()->getName(),
+          ]
+        ),
+        'constraints' => [new NotBlank(), new NotNull()]
+      ])
+      ->getForm();
+
+    $integrationRequestform->handleRequest($request);
+    if ($integrationRequestform->isSubmitted() && $integrationRequestform->isValid()) {
+
+      $data = $integrationRequestform->getData();
+      try {
+        $this->praticaManager->requestIntegration($pratica, $this->getUser(), $data['message']);
+        $this->addFlash('success', 'Integrazione richiesta correttamente.');
+      } catch (\Exception $e) {
+        $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        $this->addFlash('error', $e->getMessage());
+      }
+
+      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+    }
+
     /** @var PraticaRepository $repository */
     $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
@@ -805,6 +831,7 @@ class OperatoriController extends Controller
       'messageAttachments' => $attachments,
       'messageForm' => $messageForm->createView(),
       'outcomeForm' => $outcomeForm->createView(),
+      'integration_request_form' => $integrationRequestform->createView(),
       'pratica' => $pratica,
       'user' => $this->getUser(),
       'fiscal_code' => $fiscalCode,
@@ -845,6 +872,30 @@ class OperatoriController extends Controller
       }
     } else {
       $this->addFlash('error', 'La pratica non può essere riaperta.');
+    }
+    return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+  }
+
+  /**
+   * @Route("/{pratica}/acceptIntegration",name="operatori_accept_integration")
+   * @param Pratica|DematerializedFormPratica $pratica
+   * @return array|RedirectResponse
+   */
+  public function acceptIntegrationAction(Pratica $pratica)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+    if ($pratica->getStatus() === Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+      try {
+        $this->praticaManager->acceptIntegration($pratica, $this->getUser());
+
+        $this->addFlash('success', 'Integrazione accettata correttamente');
+      } catch (\Exception $e) {
+        $this->addFlash('error', 'Si è veritifcato un errore duranre la fase di accettazione');
+      }
+    } else {
+      $this->addFlash('error', 'La pratica non si trova nello corretto');
     }
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
   }

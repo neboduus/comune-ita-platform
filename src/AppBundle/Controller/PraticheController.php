@@ -440,12 +440,11 @@ class PraticheController extends Controller
     /** @var CPSUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
-    $tab = $request->query->get('tab');
+    $tab = $request->query->get('tab', false);
 
     $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 
-    $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
-      && $pratica->getUser()->getId() == $user->getId();
+    $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT) && $pratica->getUser()->getId() == $user->getId();
     if ($canCompile) {
       $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
       try {

@@ -1,25 +1,46 @@
 {% if pratica.canBeAssigned %}
   <div class="row mb-5">
     {% if not pratica.servizio.praticaFlowOperatoreServiceName or pratica.servizio.praticaFlowOperatoreServiceName == 'ocsdc.form.flow.standardoperatore' %}
-      {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
-      <div class="col-6 d-flex justify-content-center">
-        <button class="btn btn-secondary" id="modal_refuse" data-toggle="modal"
-                data-target=".bd-example-modal-lg">
-          <svg class="icon icon-light">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
-          </svg>
-          {{ 'operatori.rigetta' | trans }}
-        </button>
-      </div>
-      <div class="col-6 d-flex justify-content-center">
-        <button class="btn btn-primary" id="modal_approve" data-toggle="modal"
-                data-target=".bd-example-modal-lg">
-          <svg class="icon icon-light">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
-          </svg>
-          {{ 'operatori.approva' | trans }}
-        </button>
-      </div>
+
+      {% if  pratica.status == constant('STATUS_DRAFT_FOR_INTEGRATION', pratica)  %}
+        <div class="col d-flex justify-content-center">
+          <a href="{{ path('operatori_accept_integration', {'pratica': pratica}) }}" class="btn btn-primary">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+            </svg>
+            Risolvi richiesta integrazione
+          </a>
+        </div>
+      {% else %}
+        {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
+        <div class="col d-flex justify-content-center">
+          <button class="btn btn-outline-secondary" id="modal_refuse" data-toggle="modal"
+                  data-target=".bd-example-modal-lg">
+            <svg class="icon icon-danger">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+            </svg>{{ 'operatori.rigetta' | trans }}
+          </button>
+        </div>
+
+        {% if  pratica.status == constant('STATUS_PENDING', pratica)  %}
+          <div class="col d-flex justify-content-center">
+            <button class="btn btn-outline-secondary" id="modal-integration" data-toggle="modal" data-target="#integration-request-modal">
+              <svg class="icon icon-warning">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-comment"></use>
+              </svg>{{ 'operatori.richiedi_intergrazioni' | trans }}</button>
+          </div>
+        {% endif %}
+
+        <div class="col d-flex justify-content-center">
+          <button class="btn btn-primary" id="modal_approve" data-toggle="modal"
+                  data-target=".bd-example-modal-lg">
+            <svg class="icon icon-light">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+            </svg>{{ 'operatori.approva' | trans }}</button>
+        </div>
+      {% endif %}
+
+
     {% else %}
       <div class="col-6 d-flex justify-content-center">
         <a href="{{ path('operatori_elabora_pratica', {'pratica': pratica}) }}" class="btn btn-secondary">
