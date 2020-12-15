@@ -110,18 +110,14 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel"
        aria-labelledby="messaggi-tab">
-    <div class="m-3">
-      {% if feature('feature_application_detail') %}
-        {{ include('AppBundle:Operatori/parts:messaggi.html.twig', {'pratica':pratica}) }}
-      {% else %}
-        {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
-      {% endif %}
-    </div>
+    {% if feature('feature_application_detail') %}
+      {{ include('AppBundle:Operatori/parts:messaggi.html.twig', {'pratica':pratica}) }}
+    {% else %}
+      {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+    {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
        aria-labelledby="pagamento-tab">
-    <div class="m-3">
-      {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
-    </div>
+    {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
   </div>
 </div>

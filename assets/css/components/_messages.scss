@@ -1,0 +1,32 @@
+
+.message {
+
+  .message-body {
+    margin-top: .8rem;
+  }
+
+  .mine {
+    margin-left: 20%;
+    .message-header {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+
+    .message-body {
+      text-align: right;
+    }
+  }
+
+  .others {
+    background-color: #f0f8ff;
+    margin-right: 20%;
+
+    .avatar {
+      background-color: #fff;
+    }
+  }
+
+  .internal {
+    background-color: #ffebcd;
+  }
+}

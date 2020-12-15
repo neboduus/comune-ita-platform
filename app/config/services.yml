@@ -170,6 +170,11 @@ services:
   AppBundle\Services\Manager\PraticaManager:
     autowire: true
 
+  AppBundle\Services\Manager\MessageManager:
+    autowire: true
+    arguments:
+      $defaultSender: "%default_from_email_address%"
+
   AppBundle\Services\MyPayService:
     autowire: true
 

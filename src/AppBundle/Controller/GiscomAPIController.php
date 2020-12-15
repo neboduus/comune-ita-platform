@@ -437,15 +437,6 @@ class GiscomAPIController extends Controller
     );
 
     $richiestaIntegrazione = new RichiestaIntegrazioneDTO($payload, null, $message);
-
-    /*$statusChange = new StatusChange([
-        'evento' => $this->statusMapper->map(GiscomStatusMapper::GISCOM_STATUS_RICHIESTA_INTEGRAZIONI),
-        'responsabile' => 'Giscom',
-        'operatore' => 'Giscom',
-        'struttura' => 'Giscom',
-        'timestamp' => time(),
-    ]);*/
-
     $this->integrationService->requestIntegration($pratica, $richiestaIntegrazione);
 
     return new Response(null, 201);

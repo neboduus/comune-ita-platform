@@ -4,8 +4,11 @@
 namespace AppBundle\Services\Manager;
 
 
+use AppBundle\Entity\IntegrabileInterface;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Entity\User;
 use AppBundle\Logging\LogConstants;
@@ -15,6 +18,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 class PraticaManager
 {
@@ -34,20 +39,37 @@ class PraticaManager
    * @var EntityManagerInterface
    */
   private $entityManager;
+  /**
+   * @var RouterInterface
+   */
+  private $router;
+
+  /** @var MessageManager */
+  private $messageManager;
 
   /**
    * PraticaManagerService constructor.
    * @param EntityManagerInterface $entityManager
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaStatusService $praticaStatusService
+   * @param RouterInterface $router
    * @param LoggerInterface $logger
+   * @param MessageManager $messageManager
    */
-  public function __construct(EntityManagerInterface $entityManager, ModuloPdfBuilderService $moduloPdfBuilderService, PraticaStatusService $praticaStatusService, LoggerInterface $logger)
-  {
+  public function __construct(
+    EntityManagerInterface $entityManager,
+    ModuloPdfBuilderService $moduloPdfBuilderService,
+    PraticaStatusService $praticaStatusService,
+    RouterInterface $router,
+    LoggerInterface $logger,
+    MessageManager $messageManager
+  ) {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->praticaStatusService = $praticaStatusService;
     $this->logger = $logger;
     $this->entityManager = $entityManager;
+    $this->router = $router;
+    $this->messageManager = $messageManager;
   }
 
   /**
@@ -192,5 +214,51 @@ class PraticaManager
         ]
       );
     }
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param RichiestaIntegrazioneDTO $integration
+   */
+  public function requestIntegration(Pratica $pratica, User $user, string $text)
+  {
+    // todo: verificare se va creato solo il messaggio o anche la richiesta di integrazione, per ora creo entrambi
+    $richiestaIntegrazione = new RichiestaIntegrazioneDTO([], null, $text);
+    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
+    $integration = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRichiestaIntegrazione(
+      $pratica,
+      $richiestaIntegrazione
+    );
+    $pratica->addRichiestaIntegrazione($integration);
+
+    $message = new Message();
+    $message->setApplication($pratica);
+    $message->setProtocolRequired(false);
+    $message->setVisibility(Message::VISIBILITY_APPLICANT);
+    $message->setMessage($text);
+    $message->setAuthor($user);
+    $this->entityManager->persist($message);
+    $this->entityManager->persist($pratica);
+    $this->entityManager->flush();
+
+    $this->messageManager->dispatchMailForMessage($message, false);
+
+
+    $statusChange = new StatusChange();
+    $statusChange->setOperatore($user->getFullName());
+    $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION, $statusChange);
+  }
+
+  /**
+   * @param Pratica $pratica
+   */
+  public function acceptIntegration(Pratica $pratica, User $user)
+  {
+    // Creo il file principale per le integrazioni
+    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica);
+    $pratica->addAllegato($integrationsAnswer);
+    $statusChange = new StatusChange();
+    $statusChange->setOperatore($user->getFullName());
+    $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION, $statusChange);
   }
 }

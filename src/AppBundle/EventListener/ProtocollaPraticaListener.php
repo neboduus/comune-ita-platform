@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Pratica;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Services\PraticaStatusService;
@@ -75,7 +76,8 @@ class ProtocollaPraticaListener
           }
 
           if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
-            $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
+            $pratica->getRichiestaDiIntegrazioneAttiva()->markAsDone();
+            $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING);
             return;
           }
 

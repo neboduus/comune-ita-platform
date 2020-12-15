@@ -23,40 +23,31 @@ window.onload = function () {
     form.submission = {
       data: $('#formio_summary').data('submission')
     };
-
-    let delay = 3;
-    form.formReady.then(() => {
-      const disableFileLink = function () {
-        if (delay === 0) {
-          $('.formio-component-file a').each(function () {
-            $(this).parent().html($(this).html());
-          });
-        } else {
-          delay--;
-          setTimeout(disableFileLink, 500);
-        }
-      };
-      disableFileLink();
-    });
   });
 };
 
 $(document).ready(function () {
+  if ($('#answer-integration').length > 0) {
+    $('#answer-integration').click(function (e) {
+      e.preventDefault();
+      $('#messaggi-tab').trigger('click');
+      $('#messaggi-tab').on('shown.bs.tab', function (e){
+        $('html, body').animate({ scrollTop: $('form').offset().top }, 800);
+      });
+    })
+  }
 
-  $('#modal_approve').on('click', function () {
-    $('#outcome_outcome_0').prop('checked', true);
-    $('#modalTitle').html('Approva pratica');
-    $('#email_text').show();
-  });
+  if ($('#message_applicant').length > 0) {
+    $('#message_applicant').click(function (e) {
+      e.preventDefault();
+      if ( $('.summernote').summernote('isEmpty') ) {
+        alert('Attenzione! non puoi inviare un messaggio vuoto.');
+        return false;
+      }
+      return confirm("Sei sicuro di voler procedere? Se decidi di continuare verrà inviata un email all\'operatore che ha in carico la tua pratica");
+    })
+  }
 
-  $('#modal_refuse').on('click', function () {
-    $('#outcome_outcome_1').prop('checked', true);
-    $('#modalTitle').html('Rigetta pratica');
-    $('#email_text').hide();
-  });
 
-  $('#write-to-citizen').click(function (e) {
-    e.preventDefault();
-    $('#messaggi-tab').tab('show');
-  })
+
 });

@@ -7,6 +7,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
@@ -96,6 +97,10 @@ class MailerService
   {
     $sentAmount = 0;
     if (in_array($pratica->getStatus(), $this->blacklistedStates)) {
+      return $sentAmount;
+    }
+
+    if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION && !$pratica instanceof GiscomPratica) {
       return $sentAmount;
     }
 
@@ -458,42 +463,42 @@ class MailerService
     /** @var FeedbackMessagesSettings $feedbackMessageSettings */
     $feedbackMessageSettings = $pratica->getServizio()->getFeedbackMessagesSettings();
     if ( $feedbackMessageSettings != null && $feedbackMessageSettings->getPecMailer() != 'disabled') {
-        try {
-          /** @var Mailer $instanceMailer */
-          $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer()) ;
+      try {
+        /** @var Mailer $instanceMailer */
+        $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer()) ;
 
-          if (!$instanceMailer instanceof Mailer) {
-            throw new \Exception('There are no mailers on instance');
-          }
-
-          $transport = (new \Swift_SmtpTransport($instanceMailer->getHost(), $instanceMailer->getPort()))
-            ->setUsername($instanceMailer->getUser())
-            ->setPassword($instanceMailer->getPassword())
-            ->setEncryption($instanceMailer->getEncription());
-
-          // Create the Mailer using your created Transport
-          $pecMailer = new Swift_Mailer($transport);
-
-          // Recupero indirizzo email da campo segnalato in pec_receiver
-          if (!isset($pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()])) {
-            $this->logger->error('Error in dispatchPecEmail: emprty pec receiver field');
-            return;
-          }
-          $receiver = $pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()];
-          if (!$this->isValidEmail($receiver)) {
-            $this->logger->error('Error in dispatchPecEmail: pec receiver is not a valid email ' . $receiver);
-            return;
-          }
-          $message->setTo($receiver);
-          $message->setFrom($instanceMailer->getSender());
-          $failed = [];
-          $pecMailer->send($message, $failed);
-          if (count($failed) > 0){
-            throw new \Exception(implode(',', $failed));
-          }
-        } catch (\Exception $e){
-          $this->logger->error('Error in dispatchPecEmail: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        if (!$instanceMailer instanceof Mailer) {
+          throw new \Exception('There are no mailers on instance');
         }
+
+        $transport = (new \Swift_SmtpTransport($instanceMailer->getHost(), $instanceMailer->getPort()))
+          ->setUsername($instanceMailer->getUser())
+          ->setPassword($instanceMailer->getPassword())
+          ->setEncryption($instanceMailer->getEncription());
+
+        // Create the Mailer using your created Transport
+        $pecMailer = new Swift_Mailer($transport);
+
+        // Recupero indirizzo email da campo segnalato in pec_receiver
+        if (!isset($pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()])) {
+          $this->logger->error('Error in dispatchPecEmail: emprty pec receiver field');
+          return;
+        }
+        $receiver = $pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()];
+        if (!$this->isValidEmail($receiver)) {
+          $this->logger->error('Error in dispatchPecEmail: pec receiver is not a valid email ' . $receiver);
+          return;
+        }
+        $message->setTo($receiver);
+        $message->setFrom($instanceMailer->getSender());
+        $failed = [];
+        $pecMailer->send($message, $failed);
+        if (count($failed) > 0){
+          throw new \Exception(implode(',', $failed));
+        }
+      } catch (\Exception $e){
+        $this->logger->error('Error in dispatchPecEmail: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+      }
     }
   }
 
@@ -585,6 +590,8 @@ class MailerService
 
     return $emailMessage;
   }
+
+
 
   /**
    * @param \Swift_Message $message
