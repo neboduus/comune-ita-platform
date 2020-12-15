@@ -4,7 +4,9 @@ namespace AppBundle\Controller\Rest;
 
 
 use AppBundle\Dto\Application;
+use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\AllegatoOperatore;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
@@ -238,6 +240,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
+    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $allowedServices = $this->getAllowedServices();
+
+    if (empty($allowedServices)) {
+      return $this->view(["You are not allowed to view applications"], Response::HTTP_FORBIDDEN);
+    }
+
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
     if ($serviceParameter) {
       $queryParameters['service'] = $serviceParameter;
@@ -249,11 +258,15 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['sort'] = $sortParameter;
     }
 
-    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
-    $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
+    if ($serviceParameter) {
+      $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
+      if (!$service instanceof Servizio) {
+        return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
+      }
 
-    if ($serviceParameter && !$service) {
-      return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
+      if (!in_array($service->getId(), $allowedServices)) {
+        return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
+      }
     }
 
     $repoApplications = $this->em->getRepository(Pratica::class);
@@ -263,14 +276,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       ->where('a.status != :status')
       ->setParameter('status', Pratica::STATUS_DRAFT);
 
-    $criteria = [];
-    if ($service instanceof Servizio) {
-      $query
-        ->andWhere('a.servizio = :serviceId')
-        ->setParameter('serviceId', $service->getId());
+    $query
+      ->andWhere('a.servizio IN (:serviceId)')
+      ->setParameter('serviceId', $allowedServices);
+    $criteria = ['servizio' => $allowedServices];
 
-      $criteria = ['servizio' => $service->getId()];
-    }
 
     try {
       $count = $query
@@ -313,7 +323,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
         UrlGeneratorInterface::ABSOLUTE_URL
       );
     }
-
 
     $order = $orderParameter ? $orderParameter : "creationTime";
     $sort = $sortParameter ? $sortParameter : "ASC";
@@ -367,10 +376,17 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
+
+      $allowedServices = $this->getAllowedServices();
+      if (!in_array($result->getServizio()->getId(), $allowedServices)) {
+        return $this->view(["You are not allowed to view this application"], Response::HTTP_FORBIDDEN);
+      }
+
       $data = Application::fromEntity($result, $this->baseUrl.'/'.$result->getId(), true, $version);
 
       return $this->view($data, Response::HTTP_OK);
@@ -828,16 +844,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       $form = $this->createFormBuilder(null, ['allow_extra_fields' => true,'csrf_protection' => false])
         ->add('protocol_folder_number', TextType::class, [
-          'constraints' => [new NotBlank(), new NotNull()
-          ]
+          'constraints' => [new NotBlank(), new NotNull(),
+          ],
         ])
         ->add('protocol_number', TextType::class, [
-          'constraints' => [new NotBlank(), new NotNull()
-          ]
+          'constraints' => [new NotBlank(), new NotNull(),
+          ],
         ])
         ->add('protocol_document_id', TextType::class, [
-          'constraints' => [new NotBlank(), new NotNull()
-          ]
+          'constraints' => [new NotBlank(), new NotNull(),
+          ],
         ])
         ->getForm();
       $this->processForm($request, $form);
@@ -1115,5 +1131,25 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     return $errors;
+  }
+
+  /**
+   * @return array
+   */
+  private function getAllowedServices(): array
+  {
+    $user = $this->getUser();
+    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $allowedServices = [];
+    if ($user instanceof OperatoreUser) {
+      $allowedServices = $user->getServiziAbilitati()->toArray();
+    } elseif ($user instanceof AdminUser) {
+      $services = $repositoryService->findAll();
+      /** @var Servizio $service */
+      foreach ($services as $service) {
+        $allowedServices []= $service->getId();
+      }
+    }
+    return $allowedServices;
   }
 }
