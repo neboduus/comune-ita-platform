@@ -517,11 +517,19 @@ operatori:
   richiedi_intergrazioni: 'Richiedi intergrazione'
   richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"
   modulo: 'Modulo'
+  protocollo_arrivo: 'Arrivo'
+  protocollo_partenza: 'Partenza'
+  numero_fascicolo: 'Numero di fascicolo'
+  numero_protocollo: 'Numero di protocollo'
+  id_documento: 'Identificativo documento'
+  esito: 'Esito'
   allegati: 'Allegati'
   note_interne: 'Note interne'
   importo: "Importo"
   pagamento: 'Pagamento'
+  protocollo: 'Protocollo'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
+  protocollo_non_previsto: 'Per questa pratica non è prevista la protocollazione'
   gateway: "Metodo di pagamento"
   anagrafica_pagatore: "Anagrafica pagatore"
   email_pagatore: "Email pagatore"
@@ -565,6 +573,7 @@ operatori:
   pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo"
+  documenti: "Documenti"
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"
   inviata_il_alle: "Inviata il %data% alle ore %ore%"
@@ -1717,6 +1726,8 @@ steps:
 
 
 protocollo:
+
+
   recipientIDArray: 'Destinatari documenti (recipientIDArray)'
   recipientTypeIDArray: 'Tipologia di destinatari documenti (recipientTypeIDArray)'
   codeNodeClassification: 'Ramo Titolario (codeNodeClassification)'
