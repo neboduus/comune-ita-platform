@@ -825,6 +825,32 @@ class OperatoriController extends Controller
 
     $sentEmail = $this->getFeedbackMessage($pratica);
 
+    $moduleProtocols = [];
+    $outcomeProtocols = [];
+
+    foreach ($pratica->getNumeriProtocollo() as $protocollo) {
+      $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      if ($allegato instanceof Allegato) {
+        $moduleProtocols[] = [
+          'allegato' => $allegato,
+          'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
+          'protocollo' => $protocollo->protocollo,
+        ];
+      }
+    }
+    if ($pratica->getRispostaOperatore()) {
+      foreach ($pratica->getRispostaOperatore()->getNumeriProtocollo() as $protocollo) {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+        if ($allegato instanceof Allegato) {
+          $outcomeProtocols[] = [
+            'allegato' => $allegato,
+            'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
+            'protocollo' => $protocollo->protocollo,
+          ];
+        }
+      }
+    }
+
     return [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
@@ -837,7 +863,9 @@ class OperatoriController extends Controller
       'fiscal_code' => $fiscalCode,
       'sent_email' => $sentEmail,
       'formserver_url' => $this->getParameter('formserver_public_url'),
-      'tab' => $tab
+      'tab' => $tab,
+      'module_protocols' => $moduleProtocols,
+      'outcome_protocols' => $outcomeProtocols
     ];
   }
 
