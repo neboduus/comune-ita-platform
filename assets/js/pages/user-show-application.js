@@ -39,7 +39,7 @@ $(document).ready(function () {
 
   if ($('#message_applicant').length > 0) {
     $('#message_applicant').click(function (e) {
-      e.preventDefault();
+      //e.preventDefault();
       if ( $('.summernote').summernote('isEmpty') ) {
         alert('Attenzione! non puoi inviare un messaggio vuoto.');
         return false;

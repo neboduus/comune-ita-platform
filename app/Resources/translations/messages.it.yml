@@ -208,8 +208,10 @@ pratica:
     stato_20000: 'Ritirata'
 
     stato_4100: 'Richiesta integrazioni'
+    stato_4100_legacy: 'Richiesta integrazioni (in attesa di protocollazione)'
     stato_4200: 'In attesa di integrazioni'
-    stato_4300: 'Integrazioni inviate'
+    stato_4300: 'Integrazioni concluse'
+    stato_4300_legacy: 'Integrazioni in attesa di protocollazione'
     stato_4400: 'Integrazioni protocollate'
     stato_4500: 'Presa in carico in seguito a integrazioni'
 
@@ -514,7 +516,8 @@ operatori:
   elabora: 'Elabora'
   scrivi_al_cittadino: "Scrivi al cittadino"
   riapri_pratica: "Riapri pratica"
-  richiedi_intergrazioni: 'Richiedi intergrazione'
+  richiedi_intergrazioni: 'Richiedi intergrazioni'
+  chiudi_richiesta_integrazione: 'Chiudi richiesta integrazioni'
   richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"
   modulo: 'Modulo'
   protocollo_arrivo: 'Arrivo'
