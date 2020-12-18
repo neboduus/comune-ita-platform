@@ -32,13 +32,15 @@
         </div>
 
         {% if  pratica.status == constant('STATUS_PENDING', pratica) %}
-          <div class="col d-flex justify-content-center">
-            <button class="btn btn-outline-secondary" id="modal-integration" data-toggle="modal"
-                    data-target="#integration-request-modal">
-              <svg class="icon icon-warning">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-comment"></use>
-              </svg>{{ 'operatori.richiedi_intergrazioni' | trans }}</button>
-          </div>
+          {% if feature('feature_integration_request') %}
+            <div class="col d-flex justify-content-center">
+              <button class="btn btn-outline-secondary" id="modal-integration" data-toggle="modal"
+                      data-target="#integration-request-modal">
+                <svg class="icon icon-warning">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-comment"></use>
+                </svg>{{ 'operatori.richiedi_intergrazioni' | trans }}</button>
+            </div>
+          {% endif %}
         {% endif %}
 
         <div class="col d-flex justify-content-center">
