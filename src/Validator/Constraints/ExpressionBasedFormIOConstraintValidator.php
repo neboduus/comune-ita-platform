@@ -23,10 +23,8 @@ class ExpressionBasedFormIOConstraintValidator extends ConstraintValidator
     }
 
     $errors = $this->validator->validateData(
-      $constraint->service->getFormIoId(),
-      $value,
-      $constraint->service->getPostSubmitValidationExpression(),
-      $constraint->service->getPostSubmitValidationMessage()
+      $constraint->service,
+      $value
     );
 
     if (!empty($errors)) {

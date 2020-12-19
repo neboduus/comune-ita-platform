@@ -133,7 +133,6 @@ class AdminController extends Controller
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
       $ente = $form->getData();
-
       $entityManager->persist($ente);
       $entityManager->flush();
 

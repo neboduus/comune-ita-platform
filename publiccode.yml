@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2020-11-06'
-softwareVersion: 1.6.9
+releaseDate: '2020-11-20'
+softwareVersion: 1.6.14
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -97,7 +97,7 @@ maintenance:
       affiliation: Opencontent SCARL
       email: gabriele.francescotto@opencontent.it
 legal:
-  license: GPL-3.0-only
+  license: AGPL-3.0-or-later
   mainCopyrightOwner: Opencontent scarl
   repoOwner: Opencontent scarl
 intendedAudience:

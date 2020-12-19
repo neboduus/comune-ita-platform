@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -91,7 +92,7 @@ class EnteType extends AbstractType
       ->add('site_url', TextType::class)
       ->add('codice_amministrativo', TextType::class)
       ->add('meta', TextareaType::class, ['required' => false])
-      ->add(DefaultProtocolSettings::key, DefaultProtocolSettingsType::class, [
+      ->add(DefaultProtocolSettings::KEY, DefaultProtocolSettingsType::class, [
         'label' => 'Impostazioni di default per il protocollo',
         'mapped' => false,
         'data' => $settings
@@ -149,7 +150,11 @@ class EnteType extends AbstractType
       }
     }
 
-    $builder->add('save', SubmitType::class, ['label' => 'Salva']);
+    $builder->add('mailers', CollectionType::class, [
+      'entry_type' => MailerType::class,
+      'allow_add' => true,
+      'allow_delete' => true
+    ]);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
@@ -160,8 +165,13 @@ class EnteType extends AbstractType
     $ente = $event->getForm()->getData();
     $data = $event->getData();
 
-    if (isset($data[DefaultProtocolSettings::key])) {
-      $ente->setDefaultProtocolSettings($data[DefaultProtocolSettings::key]);
+    if (!isset($data['mailers'])) {
+      $data['mailers'] = null;
+      $event->setData($data);
+    }
+
+    if (isset($data[DefaultProtocolSettings::KEY])) {
+      $ente->setDefaultProtocolSettings($data[DefaultProtocolSettings::KEY]);
     }
 
     $gateways = [];

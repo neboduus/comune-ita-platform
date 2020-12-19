@@ -27,8 +27,8 @@ class ServiceFlow extends FormFlow
 
   const STEP_FORM_TEMPLATE = 1;
   const STEP_GENERAL_DATA = 2;
-  const STEP_FEEDBACK_MESSAGES_DATA = 3;
-  const STEP_FORM_FIELDS = 4;
+  const STEP_FORM_FIELDS = 3;
+  const STEP_FEEDBACK_MESSAGES_DATA = 4;
   const STEP_PAYMENT_DATA = 5;
   const STEP_INTEGRATIONS_DATA = 6;
   const STEP_PROTOCOL_DATA = 7;
@@ -86,11 +86,6 @@ class ServiceFlow extends FormFlow
       'form_type' => GeneralDataType::class
     );
 
-    $steps[self::STEP_FEEDBACK_MESSAGES_DATA] = array(
-      'label' => 'Messaggi',
-      'form_type' => FeedbackMessagesDataType::class
-    );
-
     // Mostro lo step per la configurazione di formio solo se necessario
     if ($this->getFormData()->getPraticaFCQN() == '\App\Entity\FormIO') {
 
@@ -99,6 +94,11 @@ class ServiceFlow extends FormFlow
         'form_type' => FormIOBuilderRenderType::class,
       );
     }
+
+    $steps[self::STEP_FEEDBACK_MESSAGES_DATA] = array(
+      'label' => 'Messaggi',
+      'form_type' => FeedbackMessagesDataType::class
+    );
 
     $steps[self::STEP_PAYMENT_DATA] = array(
       'label' => 'Dati pagamento',

@@ -200,17 +200,16 @@ class PraticheAnonimeController extends Controller
    * @ParamConverter("pratica", class="App:Pratica")
    * @param Request $request
    * @param Pratica $pratica
-   * @param PraticaStatusService $statusService
    * @param $hash
    * @return Response
    */
-  public function paymentCallbackAction(Request $request, Pratica $pratica, PraticaStatusService $statusService, $hash)
+  public function paymentCallbackAction(Request $request, Pratica $pratica, $hash)
   {
     if ($pratica->isValidHash($hash, $this->hashValidity)) {
       $outcome = $request->get('esito');
 
       if ($outcome == 'OK') {
-        $statusService->setNewStatus(
+        $this->statusService->setNewStatus(
           $pratica,
           Pratica::STATUS_PAYMENT_OUTCOME_PENDING
         );
@@ -273,10 +272,8 @@ class PraticheAnonimeController extends Controller
     $validator = $this->expressionValidator;
 
     $errors = $validator->validateData(
-      $servizio->getFormIoId(),
-      $request->getContent(),
-      $servizio->getPostSubmitValidationExpression(),
-      $servizio->getPostSubmitValidationMessage()
+      $servizio,
+      $request->getContent()
     );
 
     $response = ['status' => 'OK', 'errors' => null];

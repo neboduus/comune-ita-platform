@@ -12,6 +12,8 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 class ExpressionValidator
 {
+  const UNIQUE_ID_FIELD_NAME = 'unique_id';
+
   /**
    * @var FormFactory
    */
@@ -36,17 +38,15 @@ class ExpressionValidator
   }
 
   /**
-   * @param string $formIOId
+   * @param Servizio $servizio
    * @param string $value
-   * @param string $expression
-   * @param string $message
    * @return string[]
    */
-  public function validateData($formIOId, $value, $expression, $message)
+  public function validateData(Servizio $servizio, $value)
   {
-    if (empty($expression)) {
-      return [];
-    }
+    $formIOId = $servizio->getFormIoId();
+    $expression = $servizio->getPostSubmitValidationExpression();
+    $message = $servizio->getPostSubmitValidationMessage();
 
     $value = json_decode($value, true);
 
@@ -55,8 +55,23 @@ class ExpressionValidator
     }
 
     $schema = $this->schemaFactory->createFromFormId($formIOId);
-    $submission = $schema->getDataBuilder()->setDataFromArray($value)->toFullFilledFlatArray();
+    if (empty($expression) && $schema->hasComponent(self::UNIQUE_ID_FIELD_NAME)) {
+      $uniqueFieldName = self::UNIQUE_ID_FIELD_NAME;
+      $expression = "applications.count({
+        service: ['{$servizio->getSlug()}'],
+        data: {'{$uniqueFieldName}': submission['{$uniqueFieldName}']},
+        status: ['1900','2000','3000', '4000','6000','7000']
+      }) == 0";
+      if (empty($message)){
+        $message = "Non è possibile inviare la pratica: è già stata presentata una richiesta per questo servizio";
+      }
+    }
 
+    if (empty($expression)) {
+      return [];
+    }
+
+    $submission = $schema->getDataBuilder()->setDataFromArray($value)->toFullFilledFlatArray();
     $applications = new class($this->entityManager) {
 
       private $entityManager;
@@ -123,8 +138,8 @@ class ExpressionValidator
           ->getQuery()->execute();
       }
     };
-
     $expressionLanguage = new ExpressionLanguage();
+
     try {
       $evaluation = $expressionLanguage->evaluate(
         $expression,
@@ -133,6 +148,7 @@ class ExpressionValidator
           'submission' => $submission,
         ]
       );
+
       $this->logger->info(__METHOD__ . ' return ' . var_export($evaluation, true), ['expression' => $expression, 'submission' => $submission]);
     } catch (\Throwable $e) {
       $evaluation = false;

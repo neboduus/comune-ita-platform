@@ -7,6 +7,7 @@ use App\Entity\CPSUser;
 use App\Entity\User;
 use App\Entity\UserSession;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,14 +24,18 @@ class UserSessionService
 
   private $currentUserSessionData;
 
+  private $logger;
+
   public function __construct(
     SessionInterface $session,
-    EntityManagerInterface $entityManager
+    EntityManagerInterface $entityManager,
+    LoggerInterface $logger
   ) {
     $this->session = $session;
     $this->entityManager = $entityManager;
     $this->repository = $this->entityManager->getRepository(UserSession::class);
     $this->request = Request::createFromGlobals();
+    $this->logger = $logger;
   }
 
   public function getCurrentUserAuthenticationData(User $currentUser = null)
@@ -59,7 +64,8 @@ class UserSessionService
   public function createCurrentUserSessionData(
     UserInterface $currentUser,
     array $sessionData = [],
-    UserAuthenticationData $authenticationData = null
+    UserAuthenticationData $authenticationData = null,
+    $store = false
   ) {
     $userSession = new UserSession();
     $userSession->setUserId($currentUser->getId());
@@ -71,14 +77,25 @@ class UserSessionService
       $authenticationData = UserAuthenticationData::fromArray(['authenticationMethod' => CPSUser::IDP_NONE,]);
     }
     $userSession->setAuthenticationData($authenticationData);
-
+    $this->logger->info('Create UserSession data', ['user' => $currentUser, 'data' => $userSession]);
     $this->entityManager->persist($userSession);
-    $this->entityManager->flush();
+
+    if ($store) {
+      $this->entityManager->flush();
+    }
 
     $this->currentUserSessionData = $userSession;
     $this->session->set('sdc_user_session_data', $userSession->getId());
 
     return true;
+  }
+
+  public function storeCurrentUserSessionData(
+    UserInterface $currentUser,
+    array $sessionData = [],
+    UserAuthenticationData $authenticationData = null
+  ) {
+    return $this->createCurrentUserSessionData($currentUser, $sessionData, $authenticationData, true);
   }
 
 }

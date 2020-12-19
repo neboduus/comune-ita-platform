@@ -5,7 +5,6 @@ namespace App\Controller\Rest;
 
 use App\Dto\Application;
 use App\Dto\Message;
-use App\Entity\Allegato;
 use App\Entity\AllegatoMessaggio;
 use App\Entity\Pratica;
 use App\Entity\Message as MessageEntity;
@@ -20,10 +19,12 @@ use App\Services\PraticaStatusService;
 use App\Utils\UploadedBase64File;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -181,22 +182,30 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $repoApplications = $this->em->getRepository(Pratica::class);
+    /** @var QueryBuilder  $query */
     $query = $repoApplications->createQueryBuilder('a')
-      ->select('count(a.id)');
+      ->select('count(a.id)')
+      ->where('a.status != :status')
+      ->setParameter('status', Pratica::STATUS_DRAFT);
 
     $criteria = [];
     if ($service instanceof Servizio) {
       $query
-        ->where('a.servizio = :serviceId')
+        ->andWhere('a.servizio = :serviceId')
         ->setParameter('serviceId', $service->getId());
 
       $criteria = ['servizio' => $service->getId()];
     }
 
-    $count = $query
-      ->getQuery()
-      ->getSingleScalarResult();
-
+    try {
+      $count = $query
+        ->getQuery()
+        ->getSingleScalarResult();
+    } catch (NoResultException $e) {
+      $count = 0;
+    } catch (NonUniqueResultException $e) {
+      return $this->view($e->getMessage(), Response::HTTP_I_AM_A_TEAPOT);
+    }
 
     $result = [];
     $result['meta']['count'] = $count;
@@ -234,6 +243,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $order = $orderParameter ? $orderParameter : "creationTime";
     $sort = $sortParameter ? $sortParameter : "ASC";
     try {
+      $statuses = Pratica::getStatuses();
+      unset($statuses[Pratica::STATUS_DRAFT]);
+      $criteria['status'] = array_keys($statuses);
       $applications = $repoApplications->findBy($criteria, [$order => $sort], $limit, $offset);
       foreach ($applications as $s) {
         $result ['data'][] = Application::fromEntity($s, $this->baseUrl.'/'.$s->getId(), true, $version);

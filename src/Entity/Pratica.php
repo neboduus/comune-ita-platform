@@ -350,7 +350,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   /**
    * @var string
-   * @ORM\Column(type="integer", nullable=true)
+   * @ORM\Column(type="string", length=10, nullable=true)
    */
   private $richiedenteCapResidenza;
 
