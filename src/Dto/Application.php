@@ -1,7 +1,6 @@
 <?php
 
 
-<<<<<<< HEAD:src/Dto/Application.php
 namespace App\Dto;
 
 use App\Entity\Allegato;
@@ -11,15 +10,7 @@ use App\Entity\Pratica;
 use App\Mapper\Giscom\File;
 use App\Mapper\Giscom\FileCollection;
 use App\Payment\PaymentDataInterface;
-=======
-namespace AppBundle\Dto;
-
-use AppBundle\Entity\Allegato;
-use AppBundle\Entity\ModuloCompilato;
-use AppBundle\Entity\Pratica;
-use AppBundle\Payment\PaymentDataInterface;
-use AppBundle\Services\PraticaStatusService;
->>>>>>> 81f833ba20bde6076cf859da7e6166cb2b94a96e:src/AppBundle/Dto/Application.php
+use App\Services\PraticaStatusService;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;

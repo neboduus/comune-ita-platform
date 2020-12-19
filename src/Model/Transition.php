@@ -1,11 +1,11 @@
 <?php
 
 
-namespace AppBundle\Model;
+namespace App\Model;
 
 
-use AppBundle\Entity\StatusChange;
-use AppBundle\Entity\User;
+use App\Entity\StatusChange;
+use App\Entity\User;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Swagger\Annotations as SWG;

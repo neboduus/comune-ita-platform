@@ -175,7 +175,7 @@ services:
     tags:
       - { name: form.type }
 
-  AppBundle\Form\Rest\Transition\OutcomeFormType:
+  App\Form\Rest\Transition\OutcomeFormType:
     arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
     tags:
       - { name: form.type }
@@ -971,7 +971,7 @@ services:
     $scheme: "%ocsdc_scheme%"
     $inactiveUserLifeTime: "%InactiveUserLifeTime%"
 
-  AppBundle\Services\Manager\MessageManager:
+  App\Services\Manager\MessageManager:
     autowire: true
     arguments:
       $defaultSender: "%default_from_email_address%"

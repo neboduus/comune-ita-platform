@@ -1,11 +1,11 @@
 <?php
 
-namespace AppBundle\Form\Rest\Transition;
+namespace App\Form\Rest\Transition;
 
 
-use AppBundle\Dto\Message;
-use AppBundle\Entity\Servizio;
-use AppBundle\Form\Rest\FileType;
+use App\Dto\Message;
+use App\Entity\Servizio;
+use App\Form\Rest\FileType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

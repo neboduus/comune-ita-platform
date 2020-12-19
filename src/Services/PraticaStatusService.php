@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Controller\Rest\ApplicationsAPIController;
 use App\Entity\Pratica;
 use App\Entity\StatusChange;
 use App\Event\PraticaOnChangeStatusEvent;

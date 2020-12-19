@@ -1,12 +1,12 @@
 <?php
 
 
-namespace AppBundle\Services\Manager;
+namespace App\Services\Manager;
 
 
-use AppBundle\Entity\Message;
-use AppBundle\Services\InstanceService;
-use AppBundle\Services\MailerService;
+use App\Entity\Message;
+use App\Services\InstanceService;
+use App\Services\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

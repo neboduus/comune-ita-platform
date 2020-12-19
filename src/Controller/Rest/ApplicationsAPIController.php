@@ -235,7 +235,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
-    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $repositoryService = $this->em->getRepository('App:Servizio');
     $allowedServices = $this->getAllowedServices();
 
     if (empty($allowedServices)) {
@@ -370,7 +370,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {
@@ -416,7 +416,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function getApplicationHistoryAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
@@ -756,7 +756,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationTransitionAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -822,7 +822,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   {
 
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -916,7 +916,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationTransitionAssignAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -983,7 +983,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationTransitionOutcomeAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -993,7 +993,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         'message' => null,
         'attachments' => null,
       ];
-      $form = $this->createForm('AppBundle\Form\Rest\Transition\OutcomeFormType', $defaultData);
+      $form = $this->createForm('App\Form\Rest\Transition\OutcomeFormType', $defaultData);
       $this->processForm($request, $form);
       if ($form->isSubmitted() && !$form->isValid()) {
         $errors = $this->getErrorsFromForm($form);
@@ -1067,7 +1067,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationTransitionWithDrawAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $repository = $this->em->getRepository('App:Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -1137,7 +1137,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   private function getAllowedServices(): array
   {
     $user = $this->getUser();
-    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $repositoryService = $this->em->getRepository('App:Servizio');
     $allowedServices = [];
     if ($user instanceof OperatoreUser) {
       $allowedServices = $user->getServiziAbilitati()->toArray();

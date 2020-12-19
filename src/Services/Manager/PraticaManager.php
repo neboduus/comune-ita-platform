@@ -1,19 +1,19 @@
 <?php
 
 
-namespace AppBundle\Services\Manager;
+namespace App\Services\Manager;
 
 
-use AppBundle\Entity\IntegrabileInterface;
-use AppBundle\Entity\Message;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\PraticaRepository;
-use AppBundle\Entity\RichiestaIntegrazioneDTO;
-use AppBundle\Entity\StatusChange;
-use AppBundle\Entity\User;
-use AppBundle\Logging\LogConstants;
-use AppBundle\Services\ModuloPdfBuilderService;
-use AppBundle\Services\PraticaStatusService;
+use App\Entity\IntegrabileInterface;
+use App\Entity\Message;
+use App\Entity\Pratica;
+use App\Entity\PraticaRepository;
+use App\Entity\RichiestaIntegrazioneDTO;
+use App\Entity\StatusChange;
+use App\Entity\User;
+use App\Logging\LogConstants;
+use App\Services\ModuloPdfBuilderService;
+use App\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;

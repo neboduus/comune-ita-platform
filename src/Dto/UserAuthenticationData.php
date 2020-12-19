@@ -10,7 +10,7 @@ use JMS\Serializer\Annotation\Expose;
 
 /**
  * Class UserAuthenticationData
- * @package AppBundle\Dto
+ * @package App\Dto
  * @ExclusionPolicy("all")
  */
 class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Countable, \Iterator

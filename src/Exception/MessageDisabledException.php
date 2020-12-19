@@ -1,7 +1,7 @@
 <?php
 
 
-namespace AppBundle\Exception;
+namespace App\Exception;
 
 use Exception;
 

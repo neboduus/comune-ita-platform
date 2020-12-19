@@ -42,7 +42,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class MessagesAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
- * @package AppBundle\Controller
+ * @package App\Controller
  * @Route("/applications")
  */
 class MessagesAPIController extends AbstractFOSRestController
@@ -112,7 +112,7 @@ class MessagesAPIController extends AbstractFOSRestController
   public function messagesAction($id)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
     /** @var Pratica $result */
     $result = $repository->find($id);
     if ($result === null) {
@@ -156,7 +156,7 @@ class MessagesAPIController extends AbstractFOSRestController
   public function messageAction($messageId)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Message');
+    $repository = $this->getDoctrine()->getRepository('App:Message');
     /** @var MessageEntity $result */
     $result = $repository->find($messageId);
     if ($result === null) {
@@ -210,7 +210,7 @@ class MessagesAPIController extends AbstractFOSRestController
   public function postMessageAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App:Pratica');
 
     /** @var Pratica $application */
     $application = $repository->find($id);
@@ -224,7 +224,7 @@ class MessagesAPIController extends AbstractFOSRestController
     $message->setAuthor($user);
     $message->setCreatedAt(new \DateTime());
 
-    $form = $this->createForm('AppBundle\Form\Rest\MessageFormType', $message);
+    $form = $this->createForm('App\Form\Rest\MessageFormType', $message);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
@@ -326,7 +326,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
     $allowedPatchFields = ['sent_at', 'read_at', 'clicked_at', 'protocolled_at', 'protocol_number'];
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Message');
+    $repository = $this->getDoctrine()->getRepository('App:Message');
     $messageEntity = $repository->find($messageId);
     if (!$messageEntity) {
       return $this->view("Message not found", Response::HTTP_NOT_FOUND);
@@ -349,7 +349,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
     $message = Message::fromEntity($messageEntity, $this->baseUrl.'/'.$messageEntity->getId());
 
-    $form = $this->createForm('AppBundle\Form\Rest\MessageFormType', $message);
+    $form = $this->createForm('App\Form\Rest\MessageFormType', $message);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -406,7 +406,7 @@ class MessagesAPIController extends AbstractFOSRestController
   public function messageAttachmentAction($attachmentId)
   {
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Allegato');
+    $repository = $this->getDoctrine()->getRepository('App:Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);

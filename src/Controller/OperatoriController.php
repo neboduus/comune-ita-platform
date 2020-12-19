@@ -875,7 +875,7 @@ class OperatoriController extends Controller
     $outcomeProtocols = [];
 
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      $allegato = $this->entityManager->getRepository('App:Allegato')->find($protocollo->id);
       if ($allegato instanceof Allegato) {
         $moduleProtocols[] = [
           'allegato' => $allegato,
@@ -886,7 +886,7 @@ class OperatoriController extends Controller
     }
     if ($pratica->getRispostaOperatore()) {
       foreach ($pratica->getRispostaOperatore()->getNumeriProtocollo() as $protocollo) {
-        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+        $allegato = $this->entityManager->getRepository('App:Allegato')->find($protocollo->id);
         if ($allegato instanceof Allegato) {
           $outcomeProtocols[] = [
             'allegato' => $allegato,
