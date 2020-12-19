@@ -37,7 +37,7 @@ class DefaultHandler extends AbstractServizioHandler
    */
   protected $session;
 
-  /** @var EngineInterface */
+  /** @var Environment */
   protected $templating;
 
   protected $formServerPublicUrl;
@@ -55,7 +55,7 @@ class DefaultHandler extends AbstractServizioHandler
    * @param EntityManagerInterface $em
    * @param PraticaFlowRegistry $flowRegistry
    * @param SessionInterface $session
-   * @param EngineInterface $templating
+   * @param Environment $templating
    * @param $formServerPublicUrl
    * @param UserSessionService $userSessionService
    */
@@ -66,7 +66,7 @@ class DefaultHandler extends AbstractServizioHandler
     EntityManagerInterface $em,
     PraticaFlowRegistry $flowRegistry,
     SessionInterface $session,
-    EngineInterface $templating,
+    Environment $templating,
     $formServerPublicUrl,
     UserSessionService $userSessionService
   ) {

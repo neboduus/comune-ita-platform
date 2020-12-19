@@ -1,11 +1,11 @@
 <?php
 
 
-namespace AppBundle\Form\Admin\Ente;
+namespace App\Form\Admin\Ente;
 
 
-use AppBundle\Model\DefaultProtocolSettings;
-use AppBundle\Model\Mailer;
+use App\Model\DefaultProtocolSettings;
+use App\Model\Mailer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;

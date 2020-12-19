@@ -12,7 +12,7 @@ use Ramsey\Uuid\UuidInterface;
  * Class UserSession
  * @ORM\Entity
  * @ORM\Table(name="sessioni_utente")
- * @package AppBundle\Entity
+ * @package App\Entity
  */
 class UserSession
 {

@@ -2,9 +2,9 @@
 
 namespace App\Security;
 
-use AppBundle\Dto\UserAuthenticationData;
-use AppBundle\Entity\CPSUser;
-use AppBundle\Services\UserSessionService;
+use App\Dto\UserAuthenticationData;
+use App\Entity\CPSUser;
+use App\Services\UserSessionService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;

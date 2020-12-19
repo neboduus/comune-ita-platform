@@ -154,7 +154,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $authenticationData;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\UserSession")
+   * @ORM\ManyToOne(targetEntity="App\Entity\UserSession")
    * @ORM\JoinColumn(name="session_data_id", referencedColumnName="id", nullable=true)
    */
   private $sessionData;

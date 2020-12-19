@@ -445,7 +445,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   public function renderForResponse(Pratica $pratica)
   {
     // Risposta Operatore di default
-    $html = $this->templating->render('AppBundle:Pratiche:pdf/RispostaOperatore.html.twig', [
+    $html = $this->templating->render('Pratiche:pdf/RispostaOperatore.html.twig', [
       'pratica' => $pratica,
       'user' => $pratica->getUser(),
     ]);
@@ -465,7 +465,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       ];
 
       $html = $this->templating->render(
-        'AppBundle:Pratiche:pdf/RispostaOperatoreCustom.html.twig',
+        'Pratiche:pdf/RispostaOperatoreCustom.html.twig',
         array(
           'pratica' => $pratica,
           'placeholder' => $placeholders,

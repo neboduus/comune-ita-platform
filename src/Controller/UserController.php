@@ -18,6 +18,7 @@ use App\Services\CPSUserProvider;
 use App\Services\RemoteContentProviderServiceInterface;
 use DateTime;
 use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -50,7 +51,7 @@ class UserController extends AbstractController
   /** @var RemoteContentProviderServiceInterface */
   private $remoteContentProviderService;
 
-  /** @var Serializer */
+  /** @var SerializerInterface */
   private $serializer;
 
   /** @var SchemaFactory */
@@ -61,14 +62,14 @@ class UserController extends AbstractController
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param RemoteContentProviderServiceInterface $remoteContentProviderService
-   * @param Serializer $serializer
+   * @param SerializerInterface $serializer
    * @param SchemaFactory $schemaFactory
    */
   public function __construct(
     TranslatorInterface $translator,
     LoggerInterface $logger,
     RemoteContentProviderServiceInterface $remoteContentProviderService,
-    Serializer $serializer,
+    SerializerInterface $serializer,
     SchemaFactory $schemaFactory
   )
   {

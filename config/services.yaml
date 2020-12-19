@@ -525,7 +525,7 @@ services:
       - "%prefix%"
       - "@formio.factory"
       - "@doctrine.orm.entity_manager"
-      - "@security.helper"
+      - '@App\Services\UserSessionService'
 
   App\Form\Extension\TestiAccompagnatoriProcedura:
     arguments:
