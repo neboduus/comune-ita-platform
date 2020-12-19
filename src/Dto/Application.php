@@ -1,6 +1,7 @@
 <?php
 
 
+<<<<<<< HEAD:src/Dto/Application.php
 namespace App\Dto;
 
 use App\Entity\Allegato;
@@ -10,20 +11,19 @@ use App\Entity\Pratica;
 use App\Mapper\Giscom\File;
 use App\Mapper\Giscom\FileCollection;
 use App\Payment\PaymentDataInterface;
+=======
+namespace AppBundle\Dto;
+
+use AppBundle\Entity\Allegato;
+use AppBundle\Entity\ModuloCompilato;
+use AppBundle\Entity\Pratica;
+use AppBundle\Payment\PaymentDataInterface;
+use AppBundle\Services\PraticaStatusService;
+>>>>>>> 81f833ba20bde6076cf859da7e6166cb2b94a96e:src/AppBundle/Dto/Application.php
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\PersistentCollection;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use phpDocumentor\Reflection\Types\Collection;
-use phpDocumentor\Reflection\Types\Self_;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Validator\Constraints as Assert;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Gedmo\Mapping\Annotation as Gedmo;
-use JMS\Serializer\Annotation\AccessorOrder;
 
 class Application
 {
@@ -251,6 +251,19 @@ class Application
    */
   private $statusName;
 
+  /**
+   * @var array
+   * @SWG\Property(property="authentication", type="object", description="User authentication data")
+   * @Groups({"read"})
+   */
+  private $authentication;
+
+  /**
+   * @Serializer\Type("array")
+   * @SWG\Property(description="Applications links")
+   * @Groups({"read"})
+   */
+  private $links;
 
   /**
    * @return mixed
@@ -684,6 +697,37 @@ class Application
     $this->statusName = $statusName;
   }
 
+  /**
+   * @return array
+   */
+  public function getAuthentication()
+  {
+    return $this->authentication;
+  }
+
+  /**
+   * @param array $authentication
+   */
+  public function setAuthentication($authentication)
+  {
+    $this->authentication = $authentication;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getLinks()
+  {
+    return $this->links;
+  }
+
+  /**
+   * @param mixed $links
+   */
+  public function setLinks($links): void
+  {
+    $this->links = $links;
+  }
 
   /**
    * @param Pratica $pratica
@@ -769,6 +813,12 @@ class Application
     $dto->paymentData = self::preparePaymentData($pratica);
     $dto->status = $pratica->getStatus();
     $dto->statusName = strtolower($pratica->getStatusName());
+
+    $dto->authentication = ($pratica->getAuthenticationData()->getAuthenticationMethod() ?
+      $pratica->getAuthenticationData() :
+      UserAuthenticationData::fromArray(['authenticationMethod' => $pratica->getUser()->getIdp()]));
+
+    $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl));
 
     return $dto;
   }
@@ -953,5 +1003,32 @@ class Application
       return $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
     }
     return [];
+  }
+
+
+  /**
+   * @param Pratica $pratica
+   * @param string $baseUrl
+   * @return array
+   */
+  public static function getAvailableTransitions(Pratica $pratica, $baseUrl = '')
+  {
+    $availableTransitions = [];
+    if (isset(PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()])) {
+      $availableTransitions = PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()];
+      foreach ($availableTransitions as $k => $v) {
+        // todo: fare refactoring completo della classe e generare con router
+        $availableTransitions[$k]['url'] = $baseUrl . '/transiction/' . $v['action'];
+
+        if ($v['action'] == 'register' && !$pratica->getServizio()->isProtocolRequired()) {
+          unset($availableTransitions[$k]);
+        }
+
+        if ($v['action'] == 'withdraw' && !$pratica->getServizio()->isAllowReopening()) {
+          unset($availableTransitions[$k]);
+        }
+      }
+    }
+    return $availableTransitions;
   }
 }

@@ -32,6 +32,11 @@
        aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
       {{ 'operatori.pagamento' | trans }}
     </a>
+    <a class="nav-item nav-link {% if tab == 'protocollo' %} active {% endif %}" id="protocollo-tab" data-toggle="tab"
+       href="#protocollo" role="tab"
+       aria-controls="protocollo" aria-selected="{{ tab and tab == 'protocollo' }}">
+      {{ 'operatori.protocollo' | trans }}
+    </a>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -110,18 +115,20 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel"
        aria-labelledby="messaggi-tab">
-    <div class="m-3">
-      {% if feature('feature_application_detail') %}
-        {{ include('Operatori/parts/messaggi.html.twig', {'pratica':pratica}) }}
-      {% else %}
-        {{ include('Operatori/parts/commenti.html.twig', {'pratica':pratica}) }}
-      {% endif %}
-    </div>
+    {% if feature('feature_application_detail') %}
+      {{ include('Operatori/parts:messaggi.html.twig', {'pratica':pratica}) }}
+    {% else %}
+      {{ include('Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+    {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
        aria-labelledby="pagamento-tab">
+    {{ include('Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
+  </div>
+  <div class="tab-pane py-4 fade {% if tab == 'protocollo' %} show active {% endif %}" id="protocollo" role="tabpanel"
+       aria-labelledby="protocollo-tab">
     <div class="m-3">
-      {{ include('Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
+      {{ include('Operatori/parts:dati_protocollo.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
 </div>

@@ -13,6 +13,7 @@ use App\Entity\Message;
 use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
+use App\Entity\RichiestaIntegrazioneDTO;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
 use App\Form\Base\MessageType;
@@ -24,7 +25,8 @@ use App\FormIO\SchemaFactory;
 use App\Logging\LogConstants;
 use App\Services\InstanceService;
 use App\Services\MailerService;
-use App\Services\MessagesAdapterService;
+use App\Services\Manager\MessageManager;
+use App\Services\Manager\PraticaManager;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
@@ -56,6 +58,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * Class OperatoriController
@@ -97,8 +101,13 @@ class OperatoriController extends Controller
   /** @var ModuloPdfBuilderService */
   private $moduloPdfBuilderService;
 
-  /** @var MessagesAdapterService */
-  private $messagesAdapterService;
+  /**
+   * @var PraticaManager
+   */
+  private $praticaManager;
+
+  /** @var MessageManager */
+  private $messageManager;
 
   /** @var PraticaFlowRegistry */
   private $praticaFlowRegistry;
@@ -116,8 +125,8 @@ class OperatoriController extends Controller
    * @param RouterInterface $router
    * @param MailerService $mailerService
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
-   * @param MessagesAdapterService $messagesAdapterService
-   * @param PraticaFlowRegistry $praticaFlowRegistry
+   * @param PraticaManager $praticaManager
+   * @param MessageManager $messageManager
    */
   public function __construct(
     SchemaFactory $schemaFactory,
@@ -131,9 +140,10 @@ class OperatoriController extends Controller
     RouterInterface $router,
     MailerService $mailerService,
     ModuloPdfBuilderService $moduloPdfBuilderService,
-    MessagesAdapterService $messagesAdapterService,
-    PraticaFlowRegistry $praticaFlowRegistry
-  ) {
+    PraticaManager $praticaManager,
+    MessageManager $messageManager
+  )
+  {
     $this->schemaFactory = $schemaFactory;
     $this->serializer = $serializer;
     $this->translator = $translator;
@@ -145,8 +155,8 @@ class OperatoriController extends Controller
     $this->router = $router;
     $this->mailerService = $mailerService;
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
-    $this->messagesAdapterService = $messagesAdapterService;
-    $this->praticaFlowRegistry = $praticaFlowRegistry;
+    $this->praticaManager = $praticaManager;
+    $this->messageManager = $messageManager;
   }
 
 
@@ -327,7 +337,6 @@ class OperatoriController extends Controller
   /**
    * @Route("/pratiche/calculate",name="operatori_index_calculate")
    * @param Request $request
-   * @param SchemaFactory $schemaFactory
    * @return JsonResponse
    */
   public function indexCalculateAction(Request $request)
@@ -430,7 +439,9 @@ class OperatoriController extends Controller
       $count = $praticaRepository->countPraticheByOperatore($user, $parameters);
       /** @var Pratica[] $data */
       $data = $praticaRepository->findPraticheByOperatore($user, $parameters, $limit, $offset);
-      $tempStates = $praticaRepository->findStatesPraticheByOperatore($user, $parameters, $limit, $offset);
+      $tempParameters = $parameters;
+      unset($tempParameters['stato']);
+      $tempStates = $praticaRepository->findStatesPraticheByOperatore($user, $tempParameters);
       foreach ($tempStates as $state) {
         $state['name'] = $this->translator->trans($state['name']);
         $filters['states'][] = $state;
@@ -574,7 +585,6 @@ class OperatoriController extends Controller
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($user, $pratica);
-    $threads = $this->createThreadElementsForOperatoreAndPratica($user, $pratica);
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
@@ -594,7 +604,6 @@ class OperatoriController extends Controller
         'pratica' => $pratica,
         'allegati' => $allegati,
         'user' => $user,
-        'threads' => $threads,
       ]
     );
   }
@@ -623,34 +632,7 @@ class OperatoriController extends Controller
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     try {
-      if ($pratica->getOperatore() !== null) {
-        throw new BadRequestHttpException(
-          "La pratica è già assegnata a {$pratica->getOperatore()->getFullName()}"
-        );
-      }
-
-      if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
-        throw new BadRequestHttpException("La pratica non ha ancora un numero di protocollo");
-      }
-
-      $pratica->setOperatore($user);
-      $statusChange = new StatusChange();
-      $statusChange->setEvento('Presa in carico');
-      $statusChange->setOperatore($user->getFullName());
-      $statusChange->setMessage('Pratica presa in carico da '.$user->getFullName());
-      $this->praticaStatusService->setNewStatus(
-        $pratica,
-        Pratica::STATUS_PENDING,
-        $statusChange
-      );
-
-      $this->logger->info(
-        LogConstants::PRATICA_ASSIGNED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-        ]
-      );
+      $this->praticaManager->assign($pratica, $user);
     } catch (\Exception $e) {
       $this->addFlash('error', $e->getMessage());
     }
@@ -732,7 +714,8 @@ class OperatoriController extends Controller
         $visibility = $messageForm->getClickedButton()->getName();
 
         // Funzionalità non disponibile agli utenti anonimi
-        if ($pratica->getUser()->getIdp() == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
+        $authData = $pratica->getAuthenticationData();
+        if (isset($authData['authenticationMethod']) && $authData['authenticationMethod'] == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
           $messageForm->addError(new FormError($translator->trans('operatori.messaggi.non_disponibile_anonimo')));
         }
 
@@ -784,42 +767,7 @@ class OperatoriController extends Controller
 
           // Todo: rendere asincrono l'invio delle email
           if ($visibility == Message::VISIBILITY_APPLICANT) {
-            $defaultSender = $this->getParameter('default_from_email_address');
-            $instance = $this->instanceService->getCurrentInstance();
-            $userReceiver = $message->getApplication()->getUser();
-            $subject = $translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
-            $mess = $translator->trans(
-              'pratica.messaggi.messaggio',
-              [
-                '%message%' => $message->getMessage(),
-                '%link%' => $this->router->generate(
-                    'track_message',
-                    ['id' => $message->getId()],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                  ).'?id='.$message->getId(),
-              ]
-            );
-            $this->mailerService->dispatchMail(
-              $defaultSender,
-              $instance->getName(),
-              $userReceiver->getEmailContatto(),
-              $userReceiver->getFullName(),
-              $mess,
-              $subject,
-              $instance,
-              $message->getCallToAction()
-            );
-
-            $this->addFlash(
-              'info',
-              $translator->trans(
-                'operatori.messaggi.feedback_inviato',
-                ['%email%' => $message->getApplication()->getUser()->getEmailContatto()]
-              )
-            );
-            $message->setSentAt(time());
-            $em->persist($message);
-            $em->flush();
+            $this->messageManager->dispatchMailForMessage($message, true);
           }
 
           return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
@@ -864,7 +812,7 @@ class OperatoriController extends Controller
       }
 
       try {
-        $this->completePraticaFlow($pratica);
+        $this->praticaManager->finalize($pratica, $user);
       } catch (\Exception $e) {
         $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
         $this->addFlash('error', $e->getMessage());
@@ -873,7 +821,34 @@ class OperatoriController extends Controller
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
-    $threads = $this->createThreadElementsForOperatoreAndPratica($user, $pratica);
+    // Integration request
+    $integrationRequestform = $this->createFormBuilder(null)
+      ->add('message', TextareaType::class, [
+        'required' => true,
+        'data' => $this->translator->trans('operatori.richiedi_integrazioni_tpl', [
+          '%user_name%' => $pratica->getUser()->getFullName(),
+          '%servizio%' => $pratica->getServizio()->getName(),
+          ]
+        ),
+        'constraints' => [new NotBlank(), new NotNull()]
+      ])
+      ->getForm();
+
+    $integrationRequestform->handleRequest($request);
+    if ($integrationRequestform->isSubmitted() && $integrationRequestform->isValid()) {
+
+      $data = $integrationRequestform->getData();
+      try {
+        $this->praticaManager->requestIntegration($pratica, $this->getUser(), $data['message']);
+        $this->addFlash('success', 'Integrazione richiesta correttamente.');
+      } catch (\Exception $e) {
+        $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+        $this->addFlash('error', $e->getMessage());
+      }
+
+      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+    }
+
     /** @var PraticaRepository $repository */
     $repository = $this->getDoctrine()->getRepository('App:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
@@ -896,6 +871,32 @@ class OperatoriController extends Controller
 
     $sentEmail = $this->getFeedbackMessage($pratica);
 
+    $moduleProtocols = [];
+    $outcomeProtocols = [];
+
+    foreach ($pratica->getNumeriProtocollo() as $protocollo) {
+      $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      if ($allegato instanceof Allegato) {
+        $moduleProtocols[] = [
+          'allegato' => $allegato,
+          'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
+          'protocollo' => $protocollo->protocollo,
+        ];
+      }
+    }
+    if ($pratica->getRispostaOperatore()) {
+      foreach ($pratica->getRispostaOperatore()->getNumeriProtocollo() as $protocollo) {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+        if ($allegato instanceof Allegato) {
+          $outcomeProtocols[] = [
+            'allegato' => $allegato,
+            'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
+            'protocollo' => $protocollo->protocollo,
+          ];
+        }
+      }
+    }
+
     return $this->render(
       'Operatori/showPratica.html.twig',
       [
@@ -904,13 +905,15 @@ class OperatoriController extends Controller
         'messageAttachments' => $attachments,
         'messageForm' => $messageForm->createView(),
         'outcomeForm' => $outcomeForm->createView(),
+        'integration_request_form' => $integrationRequestform->createView(),
         'pratica' => $pratica,
         'user' => $this->getUser(),
-        'threads' => $threads,
         'fiscal_code' => $fiscalCode,
         'sent_email' => $sentEmail,
         'formserver_url' => $this->getParameter('formserver_public_url'),
         'tab' => $tab,
+        'module_protocols' => $moduleProtocols,
+        'outcome_protocols' => $outcomeProtocols
       ]
     );
   }
@@ -934,8 +937,6 @@ class OperatoriController extends Controller
         $statusChange = new StatusChange();
         $statusChange->setEvento('Riapertura pratica');
         $statusChange->setOperatore($user->getFullName());
-        $statusChange->setMessage('Pratica riaperta da '.$user->getFullName());
-
         $this->praticaStatusService->setNewStatus(
           $pratica,
           Pratica::STATUS_PENDING,
@@ -949,6 +950,30 @@ class OperatoriController extends Controller
       $this->addFlash('error', 'La pratica non può essere riaperta.');
     }
 
+    return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+  }
+
+  /**
+   * @Route("/{pratica}/acceptIntegration",name="operatori_accept_integration")
+   * @param Pratica|DematerializedFormPratica $pratica
+   * @return array|RedirectResponse
+   */
+  public function acceptIntegrationAction(Pratica $pratica)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+    if ($pratica->getStatus() === Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+      try {
+        $this->praticaManager->acceptIntegration($pratica, $this->getUser());
+
+        $this->addFlash('success', 'Integrazione accettata correttamente');
+      } catch (\Exception $e) {
+        $this->addFlash('error', 'Si è veritifcato un errore duranre la fase di accettazione');
+      }
+    } else {
+      $this->addFlash('error', 'La pratica non si trova nello corretto');
+    }
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
   }
 
@@ -1032,7 +1057,7 @@ class OperatoriController extends Controller
       } else {
 
         try {
-          $this->completePraticaFlow($pratica);
+          $this->praticaManager->finalize($pratica, $user);
         } catch (\Exception $e) {
           $this->addFlash('error', $e->getMessage());
         }
@@ -1243,116 +1268,6 @@ class OperatoriController extends Controller
       throw new UnauthorizedHttpException("User can not read operatore {$operatore->getId()}");
     }
   }
-
-  /**
-   * @param Pratica $pratica
-   * @throws \Exception
-   */
-  private function completePraticaFlow(Pratica $pratica)
-  {
-    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE
-      || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE
-      || $pratica->getStatus() == Pratica::STATUS_CANCELLED
-      || $pratica->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
-      throw new BadRequestHttpException('La pratica è già stata elaborata');
-    }
-
-    if ($pratica->getRispostaOperatore() == null) {
-      $signedResponse = $this->moduloPdfBuilderService->createSignedResponseForPratica($pratica);
-      $pratica->addRispostaOperatore($signedResponse);
-    }
-
-    $protocolloIsRequired = $pratica->getServizio()->isProtocolRequired();
-
-    $user = $this->getUser();
-    $statusChange = new StatusChange();
-    $statusChange->setOperatore($user->getFullName());
-
-    if ($pratica->getEsito()) {
-
-
-      $statusChange->setEvento('Approvazione pratica');
-      $statusChange->setMessage('Pratica approvata da '.$user->getFullName());
-
-      if ($protocolloIsRequired) {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
-          $statusChange
-        );
-      } else {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_COMPLETE,
-          $statusChange
-        );
-      }
-
-      $this->logger->info(
-        LogConstants::PRATICA_APPROVED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-        ]
-      );
-    } else {
-
-      $statusChange->setEvento('Rifiuto pratica');
-      $statusChange->setMessage('Pratica rifiutata da '.$user->getFullName());
-
-      if ($protocolloIsRequired) {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
-          $statusChange
-        );
-      } else {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_CANCELLED,
-          $statusChange
-        );
-      }
-
-      $this->logger->info(
-        LogConstants::PRATICA_CANCELLED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-        ]
-      );
-    }
-  }
-
-  /**
-   * @param OperatoreUser $operatore
-   * @param Pratica $pratica
-   *
-   * @return array
-   */
-  private function createThreadElementsForOperatoreAndPratica(OperatoreUser $operatore, Pratica $pratica)
-  {
-    $messagesAdapterService = $this->messagesAdapterService;
-    $threadId = $pratica->getUser()->getId().'~'.$operatore->getId();
-    $form = $this->createForm(
-      MessageType::class,
-      ['thread_id' => $threadId, 'sender_id' => $operatore->getId()],
-      [
-        'action' => $this->router->generate('messages_controller_enqueue_for_operatore', ['threadId' => $threadId]),
-        'method' => 'PUT',
-      ]
-    );
-
-    $threads[] = [
-      'threadId' => $threadId,
-      'title' => $pratica->getUser()->getFullName(),
-      'messages' => $messagesAdapterService->getDecoratedMessagesForThread($threadId, $operatore),
-      'form' => $form->createView(),
-    ];
-
-    return $threads;
-  }
-
 
   private function populateSelectStatusServicesPratiche()
   {

@@ -10,3 +10,7 @@ flagception:
     feature_application_detail:
       default: false
       env: FEATURE_APPLICATION_DETAIL
+    feature_integration_request:
+      default: false
+      env: FEATURE_INTEGRATION_REQUEST
+

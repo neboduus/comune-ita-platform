@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-
 use App\Entity\AllegatoOperatore;
 use App\Entity\CPSUser;
 use App\Entity\Ente;
+use App\Entity\GiscomPratica;
 use App\Entity\ModuloCompilato;
 use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
 use App\Entity\Subscriber;
+use App\Exception\MessageDisabledException;
 use App\Model\FeedbackMessage;
 use App\Model\FeedbackMessagesSettings;
 use App\Model\Mailer;
@@ -107,12 +108,19 @@ class MailerService
       return $sentAmount;
     }
 
+    if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION && !$pratica instanceof GiscomPratica) {
+      return $sentAmount;
+    }
+
+    $CPSUsermessage = null;
     if ($this->CPSUserHasValidContactEmail($pratica->getUser()) && ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))) {
       try {
         $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
         $sentAmount += $this->send($CPSUsermessage);
         $pratica->setLatestCPSCommunicationTimestamp(time());
-      } catch (Exception $e){
+      } catch (MessageDisabledException $e){
+        $this->logger->info('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+      } catch (\Exception $e){
         $this->logger->error('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
     }
@@ -207,7 +215,8 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return Swift_Message
+   * @return \Swift_Message
+   * @throws MessageDisabledException
    * @throws \Twig\Error\Error
    */
   private function setupCPSUserMessage(Pratica $pratica, $fromAddress)
@@ -226,7 +235,7 @@ class MailerService
     /** @var FeedbackMessage $feedbackMessage */
     $feedbackMessage = $feedbackMessages[$pratica->getStatus()];
     if (!$feedbackMessage['isActive']){
-      throw new Exception('Message for '.$pratica->getStatus().' is not active');
+      throw new MessageDisabledException('Message for '.$pratica->getStatus().' is not active');
     }
 
     $placeholders = [
@@ -462,38 +471,42 @@ class MailerService
     /** @var FeedbackMessagesSettings $feedbackMessageSettings */
     $feedbackMessageSettings = $pratica->getServizio()->getFeedbackMessagesSettings();
     if ( $feedbackMessageSettings != null && $feedbackMessageSettings->getPecMailer() != 'disabled') {
-        try {
-          /** @var Mailer $instanceMailer */
-          $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer()) ;
+      try {
+        /** @var Mailer $instanceMailer */
+        $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer()) ;
 
-          $transport = (new \Swift_SmtpTransport($instanceMailer->getHost(), $instanceMailer->getPort()))
-            ->setUsername($instanceMailer->getUser())
-            ->setPassword($instanceMailer->getPassword())
-            ->setEncryption($instanceMailer->getEncription());
-
-          // Create the Mailer using your created Transport
-          $pecMailer = new Swift_Mailer($transport);
-
-          // Recupero indirizzo email da campo segnalato in pec_receiver
-          if (!isset($pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()])) {
-            $this->logger->error('Error in dispatchPecEmail: emprty pec receiver field');
-            return;
-          }
-          $receiver = $pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()];
-          if (!$this->isValidEmail($receiver)) {
-            $this->logger->error('Error in dispatchPecEmail: pec receiver is not a valid email ' . $receiver);
-            return;
-          }
-          $message->setTo($receiver);
-          $message->setFrom($instanceMailer->getSender());
-          $failed = [];
-          $pecMailer->send($message, $failed);
-          if (count($failed) > 0){
-            throw new \Exception(implode(',', $failed));
-          }
-        } catch (\Exception $e){
-          $this->logger->error('Error in dispatchPecEmail: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        if (!$instanceMailer instanceof Mailer) {
+          throw new \Exception('There are no mailers on instance');
         }
+
+        $transport = (new \Swift_SmtpTransport($instanceMailer->getHost(), $instanceMailer->getPort()))
+          ->setUsername($instanceMailer->getUser())
+          ->setPassword($instanceMailer->getPassword())
+          ->setEncryption($instanceMailer->getEncription());
+
+        // Create the Mailer using your created Transport
+        $pecMailer = new Swift_Mailer($transport);
+
+        // Recupero indirizzo email da campo segnalato in pec_receiver
+        if (!isset($pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()])) {
+          $this->logger->error('Error in dispatchPecEmail: emprty pec receiver field');
+          return;
+        }
+        $receiver = $pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()];
+        if (!$this->isValidEmail($receiver)) {
+          $this->logger->error('Error in dispatchPecEmail: pec receiver is not a valid email ' . $receiver);
+          return;
+        }
+        $message->setTo($receiver);
+        $message->setFrom($instanceMailer->getSender());
+        $failed = [];
+        $pecMailer->send($message, $failed);
+        if (count($failed) > 0){
+          throw new \Exception(implode(',', $failed));
+        }
+      } catch (\Exception $e){
+        $this->logger->error('Error in dispatchPecEmail: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+      }
     }
   }
 
@@ -585,6 +598,8 @@ class MailerService
 
     return $emailMessage;
   }
+
+
 
   /**
    * @param Swift_Message $message

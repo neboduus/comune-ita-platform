@@ -676,7 +676,7 @@ class Service
    * @param Servizio $servizio
    * @return Service
    */
-  public static function fromEntity(Servizio $servizio)
+  public static function fromEntity(Servizio $servizio, $formServerUrl)
   {
     $dto = new self();
     $dto->id = $servizio->getId();
@@ -693,7 +693,7 @@ class Service
     $dto->compilationInfo = $servizio->getCompilationInfo() ?? '';
     $dto->finalIndications = $servizio->getFinalIndications() ?? '';
     $dto->coverage = $servizio->getCoverage();
-    $dto->flowSteps = $servizio->getFlowSteps();
+    $dto->flowSteps = self::prepareFlowSteps($servizio->getFlowSteps(), $formServerUrl);
     $dto->setProtocolRequired($servizio->isProtocolRequired());
     $dto->protocolloParameters = [];
     $dto->paymentRequired = $servizio->isPaymentRequired();
@@ -802,6 +802,17 @@ class Service
       $data['protocollo_parameters'] = \json_encode($data['protocollo_parameters']);
     }
     return $data;
+  }
+
+
+  public static function prepareFlowSteps( $flowSteps, $formServerUrl ) {
+    if (empty($flowSteps)) {
+      return $flowSteps;
+    }
+    foreach ($flowSteps as $k => $v) {
+      $flowSteps[$k]['parameters']['url'] = $formServerUrl . '/form/';
+    }
+    return $flowSteps;
   }
 
 }

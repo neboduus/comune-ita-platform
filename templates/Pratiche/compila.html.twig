@@ -79,26 +79,8 @@
             showCancel: false
           }
         }).then(function (form) {
-          let delay = 3;
           form.formReady.then(() => {
-            const disableApplicant = function () {
-              if (delay === 0) {
-                $('.formio-component-applicant input').each(function (k) {
-                  if ($(this).prop("type") === "radio") {
-                    let name = $(this).prop('name');
-                    if ($(this).prop("checked")) {
-                      $("input[name='" + name + "']").attr('disabled', 'disabled');
-                    }
-                  } else if ($(this).val()) {
-                    $(this).attr('disabled', 'disabled');
-                  }
-                });
-              } else {
-                delay--;
-                setTimeout(disableApplicant, 1000); // check again in a second
-              }
-            };
-            disableApplicant();
+            setTimeout(disableApplicant, 1000);
           });
 
           if (form.hasOwnProperty('wizard')) {
@@ -116,6 +98,10 @@
 
           form.on('nextPage', function () {
             document.getElementById("formio").scrollIntoView();
+          });
+
+          form.on('prevPage', function () {
+            setTimeout(disableApplicant, 1000);
           });
 
             $('.btn-wizard-nav-cancel').on('click', function (e) {
@@ -153,6 +139,20 @@
           });
         });
       }
+
+      //Funzione per rendere il form Applicant readOnly
+      const disableApplicant = function () {
+          $('.formio-component-applicant input').each(function (k) {
+            if ($(this).prop("type") === "radio") {
+              let name = $(this).prop('name');
+              if ($(this).prop("checked")) {
+                $("input[name='" + name + "']").attr('disabled', 'disabled');
+              }
+            } else if ($(this).val()) {
+              $(this).attr('disabled', 'disabled');
+            }
+          });
+        }
     });
   </script>
 

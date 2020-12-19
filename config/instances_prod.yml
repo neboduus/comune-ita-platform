@@ -98,6 +98,15 @@ paths:
   - uri: stanzadelcittadino.localtest.me
     path: provincia-autonoma-di-trento
     instance: provincia-autonoma-di-trento
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-monopoli
+    instance: comune-di-monopoli
+  - uri: stanzadelcittadino.localtest.me
+    path: comune-di-seriate
+    instance: comune-di-seriate
+  - uri: stanzadelcittadino.localtest.me
+    path: trentino-sviluppo
+    instance: trentino-sviluppo
 
 instances:
   comune-di-bugliano:
@@ -210,6 +219,7 @@ instances:
     codice_meccanografico: L850
     database_name: sdc_vicopisano
     protocollo: pec
+    login_route: none
   fondazione-edmund-mach:
     codice_meccanografico: fem
     database_name: sdc_fem
@@ -221,4 +231,18 @@ instances:
   provincia-autonoma-di-trento:
     codice_meccanografico: p_TN
     database_name: sdc_provinciatrento
+    protocollo: pec
+  comune-di-monopoli:
+    codice_meccanografico: F376
+    database_name: sdc_monopoli
+    protocollo: pec
+    login_route: none
+  comune-di-seriate:
+    codice_meccanografico: I628
+    database_name: sdc_seriate
+    protocollo: pec
+    login_route: none
+  trentino-sviluppo:
+    codice_meccanografico: TNSV
+    database_name: sdc_trentinosviluppo
     protocollo: pec

@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -462,9 +463,9 @@ class AllegatoController extends Controller
    */
   public function cpsUserAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
   {
-    if ($pratica->getStatus() !== Pratica::STATUS_PENDING && $pratica->getStatus(
-      ) !== Pratica::STATUS_PENDING_AFTER_INTEGRATION) {
-      return new JsonResponse("Pratica {$pratica->getId()} is not pending", Response::HTTP_BAD_REQUEST);
+
+    if (! in_array($pratica->getStatus(), [Pratica::STATUS_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PENDING_AFTER_INTEGRATION])){
+      return new JsonResponse("Lo pratica con id: {$pratica->getId()} si trova in uno stato in cui non possono essere allegati file", Response::HTTP_BAD_REQUEST);
     }
 
     /** @var CPSUser $user */
@@ -521,9 +522,9 @@ class AllegatoController extends Controller
    */
   public function operatoreAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
   {
-    if ($pratica->getStatus() !== Pratica::STATUS_PENDING && $pratica->getStatus(
-      ) !== Pratica::STATUS_PENDING_AFTER_INTEGRATION) {
-      return new JsonResponse("Pratica {$pratica->getId()} is not pending", Response::HTTP_BAD_REQUEST);
+
+    if (! in_array($pratica->getStatus(), [Pratica::STATUS_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PENDING_AFTER_INTEGRATION])){
+      return new JsonResponse("Lo pratica con id: {$pratica->getId()} si trova in uno stato in cui non possono essere allegati file", Response::HTTP_BAD_REQUEST);
     }
 
     /** @var OperatoreUser $user */
@@ -631,7 +632,7 @@ class AllegatoController extends Controller
     );
 
     foreach ($pratiche as $pratica) {
-      if ($pratica->getOperatore() === $user) {
+      if (in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
         $becauseOfPratiche[] = $pratica->getId();
         $isOperatoreAmongstTheAllowedOnes = true;
       }
@@ -651,7 +652,7 @@ class AllegatoController extends Controller
       return $this->createBinaryResponseForAllegato($allegato);
     }
     $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
-    throw new NotFoundHttpException(); //security by obscurity
+    throw new UnauthorizedHttpException();
   }
 
   /**

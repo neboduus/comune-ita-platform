@@ -439,6 +439,32 @@ class Meeting
     return $this->status;
   }
 
+  public function getStatusName()
+  {
+    switch ($this->status) {
+      case 0:
+        return 'In attesa di conferma';
+        break;
+      case 1:
+        return 'Approvato';
+        break;
+      case 2:
+        return 'Rifiutato';
+        break;
+      case 3:
+        return 'Assente';
+        break;
+      case 4:
+        return 'Concluso';
+        break;
+      case 5:
+        return 'Annullato';
+        break;
+      default:
+        return 'Errore';
+    }
+  }
+
   /**
    * Set status
    *

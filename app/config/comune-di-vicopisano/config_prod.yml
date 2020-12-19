@@ -12,6 +12,7 @@ parameters:
     prefix: comune-di-vicopisano
     codice_meccanografico: L850
     database_name: sdc_vicopisano
+    login_route: none
 
 framework:
     router:

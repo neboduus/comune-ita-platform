@@ -31,6 +31,7 @@ Encore
   .addEntry('outdated-browser-rework', './assets/js/outdated-browser-rework.js')
   .addEntry('edit-operator', './assets/js/edit-operator')
   .addEntry('operator-show-application', './assets/js/pages/operator-show-application')
+  .addEntry('user-show-application', './assets/js/pages/user-show-application')
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()

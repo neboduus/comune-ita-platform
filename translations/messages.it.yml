@@ -207,9 +207,11 @@ pratica:
     stato_9000: 'Rifiutata'
     stato_20000: 'Ritirata'
 
-    stato_4100: 'Richiesta integrazioni (in attesa di protocollazione)'
+    stato_4100: 'Richiesta integrazioni'
+    stato_4100_legacy: 'Richiesta integrazioni (in attesa di protocollazione)'
     stato_4200: 'In attesa di integrazioni'
-    stato_4300: 'Integrazioni in attesa di protocollazione'
+    stato_4300: 'Integrazioni concluse'
+    stato_4300_legacy: 'Integrazioni in attesa di protocollazione'
     stato_4400: 'Integrazioni protocollate'
     stato_4500: 'Presa in carico in seguito a integrazioni'
 
@@ -249,7 +251,7 @@ STATUS_PAYMENT_PENDING: 'In attesa di pagamento'
 STATUS_PAYMENT_OUTCOME_PENDING: "In attesa dell'esito di pagamento"
 STATUS_PAYMENT_SUCCESS: "Pagamento avvenuto con successo"
 STATUS_PAYMENT_ERROR: "Pagamento rifiutato"
-STATUS_REQUEST_INTEGRATION: 'Richiesta integrazioni (in attesa di protocollazione)'
+STATUS_REQUEST_INTEGRATION: 'Richiesta integrazioni'
 STATUS_DRAFT_FOR_INTEGRATION: 'In attesa di integrazioni'
 STATUS_SUBMITTED_AFTER_INTEGRATION: 'Integrazioni in attesa di protocollazione'
 STATUS_REGISTERED_AFTER_INTEGRATION: 'Integrazioni protocollate'
@@ -515,12 +517,22 @@ operatori:
   scrivi_al_cittadino: "Scrivi al cittadino"
   riapri_pratica: "Riapri pratica"
   richiedi_intergrazioni: 'Richiedi intergrazioni'
+  chiudi_richiesta_integrazione: 'Chiudi richiesta integrazioni'
+  richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"
   modulo: 'Modulo'
+  protocollo_arrivo: 'Arrivo'
+  protocollo_partenza: 'Partenza'
+  numero_fascicolo: 'Numero di fascicolo'
+  numero_protocollo: 'Numero di protocollo'
+  id_documento: 'Identificativo documento'
+  esito: 'Esito'
   allegati: 'Allegati'
   note_interne: 'Note interne'
   importo: "Importo"
   pagamento: 'Pagamento'
+  protocollo: 'Protocollo'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
+  protocollo_non_previsto: 'Per questa pratica non è prevista la protocollazione'
   gateway: "Metodo di pagamento"
   anagrafica_pagatore: "Anagrafica pagatore"
   email_pagatore: "Email pagatore"
@@ -564,6 +576,7 @@ operatori:
   pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo"
+  documenti: "Documenti"
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"
   inviata_il_alle: "Inviata il %data% alle ore %ore%"
@@ -1716,6 +1729,8 @@ steps:
 
 
 protocollo:
+
+
   recipientIDArray: 'Destinatari documenti (recipientIDArray)'
   recipientTypeIDArray: 'Tipologia di destinatari documenti (recipientTypeIDArray)'
   codeNodeClassification: 'Ramo Titolario (codeNodeClassification)'
@@ -1841,6 +1856,14 @@ meetings:
     cancel_success: 'Appuntamento annullato con successo'
 
 backoffice:
+  entity:
+    mailers: 'Invio messaggi'
+    meta: 'Aspetto grafico'
+    setting: 'Ente'
+    title: 'Nome'
+    host: 'Indirizzo del server'
+    encription: 'Encryption'
+    sender: 'Mittente'
   integration:
     missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
     or: 'Oppure'
@@ -1858,7 +1881,7 @@ backoffice:
 
 login_type:
   none: 'Nessuno'
-  login_pat: 'Spid PAD'
+  login_pat: 'Spid PAT'
   login_open: 'Openlogin'
 
 

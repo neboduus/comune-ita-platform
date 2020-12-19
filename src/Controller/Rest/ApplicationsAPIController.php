@@ -1,46 +1,62 @@
 <?php
 
-
 namespace App\Controller\Rest;
 
 use App\Dto\Application;
-use App\Dto\Message;
-use App\Entity\AllegatoMessaggio;
+use App\Entity\AdminUser;
+use App\Entity\AllegatoOperatore;
+use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
-use App\Entity\Message as MessageEntity;
 use App\Entity\RispostaOperatore;
 use App\Entity\Servizio;
+use App\Form\Base\AllegatoType;
 use App\Model\PaymentOutcome;
 use App\Model\MetaPagedList;
 use App\Model\LinksPagedList;
+use App\Model\Transition;
+use App\Model\File as FileModel;
 use App\Services\InstanceService;
+use App\Services\Manager\PraticaManager;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use App\Utils\UploadedBase64File;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectRepository;
+
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use League\Csv\Exception;
 use Psr\Log\LoggerInterface;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * Class ServicesAPIController
- * @property EntityManagerInterface em
- * @property InstanceService is
  * @package App\Controller
  * @Route("/applications")
  */
@@ -49,10 +65,47 @@ class ApplicationsAPIController extends AbstractFOSRestController
   /** @var EntityManagerInterface  */
   private $em;
 
-  /** @var InstanceService  */
-  private $is;
+  const TRANSITION_SUBMIT = [
+    'action' => 'submit',
+    'description' => 'Submit Application',
+  ];
 
-  /**  @var */
+  const TRANSITION_REGISTER = [
+    'action' => 'register',
+    'description' => 'Register Application',
+  ];
+
+  const TRANSITION_ASSIGN = [
+    'action' => 'assign',
+    'description' => 'Assign Application',
+  ];
+
+  const TRANSITION_REQUEST_INTEGRATION = [
+    'action' => 'request-integration',
+    'description' => 'Request integration',
+  ];
+
+  const TRANSITION_ACCEPT_INTEGRATION = [
+    'action' => 'accept-integration',
+    'description' => 'Accept integration',
+  ];
+
+  const TRANSITION_ACCEPT = [
+    'action' => 'accept',
+    'description' => 'Accept Application',
+  ];
+
+  const TRANSITION_REJECT = [
+    'action' => 'reject',
+    'description' => 'Reject Application',
+  ];
+
+  const TRANSITION_WITHDRAW = [
+    'action' => 'withdraw',
+    'description' => 'Withdraw Application',
+  ];
+
+  /** @var PraticaStatusService */
   private $statusService;
 
   /** @var ModuloPdfBuilderService */
@@ -65,21 +118,40 @@ class ApplicationsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   protected $logger;
 
+  /** @var TranslatorInterface */
+  private $translator;
+  /**
+   * @var PraticaManager
+   */
+  private $praticaManager;
+
+  /**
+   * ApplicationsAPIController constructor.
+   * @param EntityManagerInterface $em
+   * @param PraticaStatusService $statusService
+   * @param ModuloPdfBuilderService $pdfBuilder
+   * @param UrlGeneratorInterface $router
+   * @param LoggerInterface $logger
+   * @param TranslatorInterface $translator
+   * @param PraticaManager $praticaManager
+   */
   public function __construct(
     EntityManagerInterface $em,
-    InstanceService $is,
     PraticaStatusService $statusService,
     ModuloPdfBuilderService $pdfBuilder,
     UrlGeneratorInterface $router,
-    LoggerInterface $logger
+    LoggerInterface $logger,
+    TranslatorInterface $translator,
+    PraticaManager $praticaManager
   ) {
     $this->em = $em;
-    $this->is = $is;
     $this->statusService = $statusService;
     $this->pdfBuilder = $pdfBuilder;
     $this->router = $router;
     $this->baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
     $this->logger = $logger;
+    $this->translator = $translator;
+    $this->praticaManager = $praticaManager;
   }
 
   /**
@@ -163,6 +235,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
+    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $allowedServices = $this->getAllowedServices();
+
+    if (empty($allowedServices)) {
+      return $this->view(["You are not allowed to view applications"], Response::HTTP_FORBIDDEN);
+    }
+
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
     if ($serviceParameter) {
       $queryParameters['service'] = $serviceParameter;
@@ -174,28 +253,29 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['sort'] = $sortParameter;
     }
 
-    $repositoryService = $this->em->getRepository('App:Servizio');
-    $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
+    if ($serviceParameter) {
+      $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
+      if (!$service instanceof Servizio) {
+        return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
+      }
 
-    if ($serviceParameter && !$service) {
-      return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
+      if (!in_array($service->getId(), $allowedServices)) {
+        return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
+      }
     }
 
     $repoApplications = $this->em->getRepository(Pratica::class);
-    /** @var QueryBuilder  $query */
+    /** @var QueryBuilder $query */
     $query = $repoApplications->createQueryBuilder('a')
       ->select('count(a.id)')
       ->where('a.status != :status')
       ->setParameter('status', Pratica::STATUS_DRAFT);
 
-    $criteria = [];
-    if ($service instanceof Servizio) {
-      $query
-        ->andWhere('a.servizio = :serviceId')
-        ->setParameter('serviceId', $service->getId());
+    $query
+      ->andWhere('a.servizio IN (:serviceId)')
+      ->setParameter('serviceId', $allowedServices);
+    $criteria = ['servizio' => $allowedServices];
 
-      $criteria = ['servizio' => $service->getId()];
-    }
 
     try {
       $count = $query
@@ -239,7 +319,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
       );
     }
 
-
     $order = $orderParameter ? $orderParameter : "creationTime";
     $sort = $sortParameter ? $sortParameter : "ASC";
     try {
@@ -252,7 +331,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
 
       return $this->view($result, Response::HTTP_OK);
-    } catch (Exception $exception) {
+    } catch (\Exception $exception) {
       return $this->view($exception->getMessage(), Response::HTTP_BAD_REQUEST);
     }
   }
@@ -291,15 +370,61 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
+
+      $allowedServices = $this->getAllowedServices();
+      if (!in_array($result->getServizio()->getId(), $allowedServices)) {
+        return $this->view(["You are not allowed to view this application"], Response::HTTP_FORBIDDEN);
+      }
+
       $data = Application::fromEntity($result, $this->baseUrl.'/'.$result->getId(), true, $version);
 
       return $this->view($data, Response::HTTP_OK);
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
+      return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Retreive application history
+   * @Rest\Get("/{id}/history", name="application_api_get_history")
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retreive application history",
+   *     @SWG\Schema(
+   *         type="array",
+   *         @SWG\Items(ref=@Model(type=Transition::class))
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function getApplicationHistoryAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $result = $repository->find($id);
+      if ($result === null) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+      $data = $result->getHistory();
+
+      return $this->view($data, Response::HTTP_OK);
+    } catch (\Exception $e) {
       return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
     }
   }
@@ -320,7 +445,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param $id
-   * @return Response|View
+   * @return BinaryFileResponse|View
    */
   public function attachmentAction($id, $attachmentId)
   {
@@ -441,12 +566,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $paymentData = $application->getPaymentData();
-    $serializer = SerializerBuilder::create()->build();
-    $paymentData['outcome'] = $serializer->toArray($paymentOutcome);
-    $application->setPaymentData($paymentData);
-
     try {
+
+
+      $paymentData = $application->getPaymentData();
+      $serializer = SerializerBuilder::create()->build();
+      $paymentData['outcome'] = $serializer->toArray($paymentOutcome);
+      $application->setPaymentData($paymentData);
       $this->em->persist($application);
       $this->em->flush();
 
@@ -461,7 +587,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_ERROR);
       }
 
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
 
       $data = [
         'type' => 'error',
@@ -583,7 +709,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $this->em->persist($application);
       $this->em->flush();
 
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
 
       $data = [
         'type' => 'error',
@@ -601,89 +727,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive Applications messages
-   * @Rest\Get("/{id}/messages", name="application_api_messages_get")
-   *
-   * @SWG\Response(
-   *     response=200,
-   *     description="Retrieve list of messages for the application",
-   *     @SWG\Schema(
-   *         type="array",
-   *         @SWG\Items(ref=@Model(type=Message::class, groups={"read"}))
-   *     )
-   * )
-   *
-   * @SWG\Response(
-   *     response=404,
-   *     description="Applcaitons not found"
-   * )
-   * @SWG\Tag(name="applications")
-   *
-   * @param $id
-   * @return View
-   */
-  public function messagesAction($id)
-  {
-
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
-    /** @var Pratica $result */
-    $result = $repository->find($id);
-    if ($result === null) {
-      return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
-    }
-
-    $messages = [];
-    /** @var MessageEntity $m */
-    foreach ($result->getMessages() as $m) {
-      if ($m->getVisibility() != MessageEntity::VISIBILITY_INTERNAL) {
-        $messages [] = Message::fromEntity($m, $this->baseUrl.'/'.$result->getId());
-      }
-    }
-
-    return $this->view($messages, Response::HTTP_OK);
-  }
-
-
-  /**
-   * Retreive Application message
-   * @Rest\Get("/{id}/messages/{messageId}", name="application_api_message_get")
-   *
-   * @SWG\Response(
-   *     response=200,
-   *     description="Retrieve a message of the application",
-   *     @SWG\Schema(
-   *         type="array",
-   *         @SWG\Items(ref=@Model(type=Message::class, groups={"read"}))
-   *     )
-   * )
-   *
-   * @SWG\Response(
-   *     response=404,
-   *     description="Message not found"
-   * )
-   * @SWG\Tag(name="applications")
-   *
-   * @param $messageId
-   * @return View
-   */
-  public function messageAction($messageId)
-  {
-
-    $repository = $this->getDoctrine()->getRepository('App:Message');
-    /** @var MessageEntity $result */
-    $result = $repository->find($messageId);
-    if ($result === null) {
-      return $this->view(["Message not found"], Response::HTTP_NOT_FOUND);
-    }
-
-    $message [] = Message::fromEntity($result, $this->baseUrl.'/'.$result->getId());
-
-    return $this->view($message, Response::HTTP_OK);
-  }
-
-  /**
-   * Create a Message
-   * @Rest\Post("/{id}/messages",name="application_message_api_post")
+   * Submit an application
+   * @Rest\Post("/{id}/transition/submit", name="application_api_post_transition_submit")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -693,26 +738,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
-   * @SWG\Parameter(
-   *     name="Message",
-   *     in="body",
-   *     type="json",
-   *     description="The message to create",
-   *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Message::class, groups={"write"})
-   *     )
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
    * )
    *
    * @SWG\Response(
-   *     response=201,
-   *     description="Message created"
-   * )
-   *
-   * @SWG\Response(
-   *     response=400,
-   *     description="Bad request"
+   *     response=404,
+   *     description="Application not found"
    * )
    * @SWG\Tag(name="applications")
    *
@@ -720,77 +753,33 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postMessageAction($id, Request $request)
+  public function postApplicationTransitionAction($id, Request $request)
   {
-
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
-
-    /** @var Pratica $application */
-    $application = $repository->find($id);
-    if ($application === null) {
-      return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
-    }
-
-    $message = new Message();
-    $message->setApplication($application);
-    $user = $this->getUser();
-    $message->setAuthor($user);
-    $message->setCreatedAt(new \DateTime());
-
-    $form = $this->createForm('App\Form\Rest\MessageFormType', $message);
-    $this->processForm($request, $form);
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
-      $data = [
-        'type' => 'validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors,
-      ];
-
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-
     try {
-      $messageEntity = $message->toEntity();
-      foreach ($message->getAttachments() as $attachment) {
-        $base64Content = $attachment->getFile();
-        $file = new UploadedBase64File($base64Content, $attachment->getMimeType());
-        $allegato = new AllegatoMessaggio();
-        $allegato->addMessage($messageEntity);
-        $allegato->setFile($file);
-        $allegato->setOwner($application->getUser());
-        $allegato->setDescription('Allegato senza descrizione');
-        $allegato->setOriginalFilename($attachment->getName());
-        $this->em->persist($allegato);
-        $messageEntity->addAttachment($allegato);
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
       }
+      $this->praticaManager->finalizeSubmission($application);
 
-      $this->em->persist($messageEntity);
-      $this->em->flush();
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process',
+        'title' => 'There was an error during transition process',
         'description' => $e->getMessage(),
       ];
-      $this->logger->error(
-        $e->getMessage(),
-        ['request' => $request]
-      );
+      $this->logger->error($e->getMessage(), ['request' => $request]);
 
-      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    return $this->view(
-      Message::fromEntity($messageEntity, $this->baseUrl.'/'.$messageEntity->getId()),
-      Response::HTTP_CREATED
-    );
+    return $this->view([], Response::HTTP_NO_CONTENT);
   }
 
-
   /**
-   * Patch an application message
-   * @Rest\Patch("/{id}/messages/{messageId}",name="application_message_api_patch")
+   * Register an Application
+   * @Rest\Post("/{id}/transition/register", name="application_api_post_transition_register")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -800,144 +789,306 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="Message",
+   *     in="body",
+   *     type="json",
+   *     description="The transition to create",
+   *     required=true,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="protocol_folder_number", type="string", description="Protocol folder number"),
+   *        @SWG\Property(property="protocol_number", type="string", description="Protocol number"),
+   *        @SWG\Property(property="protocol_document_id", type="string", description="Protocol document id")
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function postApplicationTransitionRegisterAction($id, Request $request)
+  {
+
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
+      }
+
+      if (!empty($application->getNumeroProtocollo())) {
+        return $this->view("Application already has a protocol number", Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      if (!$application->getServizio()->isProtocolRequired()) {
+        return $this->view("Application does not need to be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      if ($application->getType() !== Pratica::TYPE_FORMIO) {
+        return $this->view("Application can not be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      $form = $this->createFormBuilder(null, ['allow_extra_fields' => true,'csrf_protection' => false])
+        ->add('protocol_folder_number', TextType::class, [
+          'constraints' => [new NotBlank(), new NotNull(),
+          ],
+        ])
+        ->add('protocol_number', TextType::class, [
+          'constraints' => [new NotBlank(), new NotNull(),
+          ],
+        ])
+        ->add('protocol_document_id', TextType::class, [
+          'constraints' => [new NotBlank(), new NotNull(),
+          ],
+        ])
+        ->getForm();
+      $this->processForm($request, $form);
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = $this->getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = $form->getData();
+      $application->setNumeroFascicolo($data['protocol_folder_number']);
+      $application->setNumeroProtocollo($data['protocol_number']);
+      $application->setIdDocumentoProtocollo($data['protocol_document_id']);
+      $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
+  }
+
+  /**
+   * Assign an operator to an Application
+   * @Rest\Post("/{id}/transition/assign", name="application_api_post_transition_assign")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function postApplicationTransitionAssignAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
+      }
+
+      $this->praticaManager->assign($application, $this->getUser());
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
+  }
+
+  /**
+   * Answer to an application
+   * @Rest\Post("/{id}/transition/accept", name="application_api_post_transition_accept")
+   * @Rest\Post("/{id}/transition/reject", name="application_api_post_transition_reject")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
    *
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
    *     type="json",
-   *     description="The message to create",
+   *     description="The transition to create",
    *     required=true,
    *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Message::class, groups={"write"})
+   *        type="object",
+   *        @SWG\Property(property="message", type="string", description="Application outcome"),
+   *        @SWG\Property(property="attachments", type="array", @SWG\Items(ref=@Model(type=FileModel::class)))
    *     )
    * )
    *
-   * @SWG\Response(
-   *     response=200,
-   *     description="Patch a message"
-   * )
    *
    * @SWG\Response(
-   *     response=400,
-   *     description="Bad request"
+   *     response=204,
+   *     description="Updated"
    * )
    *
    * @SWG\Response(
    *     response=404,
-   *     description="Not found"
+   *     description="Application not found"
    * )
    * @SWG\Tag(name="applications")
    *
    * @param $id
-   * @param $messageId
    * @param Request $request
    * @return View
    */
-  public function patchMessageAction($id, $messageId, Request $request)
+  public function postApplicationTransitionOutcomeAction($id, Request $request)
   {
-
-    $allowedPatchFields = ['sent_at', 'read_at', 'clicked_at', 'protocolled_at', 'protocol_number'];
-
-    $repository = $this->getDoctrine()->getRepository('App:Message');
-    $messageEntity = $repository->find($messageId);
-    if (!$messageEntity) {
-      return $this->view("Message not found", Response::HTTP_NOT_FOUND);
-    }
-
-    $user = $this->getUser();
-    if ($messageEntity->getAuthor() != $user) {
-      return $this->view("You can't update messages of other users", Response::HTTP_FORBIDDEN);
-    }
-
-    if ($messageEntity->getProtocolNumber() != null) {
-      return $this->view("Message has been protocolled, you can't update it!", Response::HTTP_FORBIDDEN);
-    }
-
-    foreach ($request->request->all() as $k => $item) {
-      if (!in_array($k, $allowedPatchFields)) {
-        $request->request->remove($k);
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
       }
-    }
 
-    $message = Message::fromEntity($messageEntity, $this->baseUrl.'/'.$messageEntity->getId());
-
-    $form = $this->createForm('App\Form\Rest\MessageFormType', $message);
-    $this->processForm($request, $form);
-
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
-      $data = [
-        'type' => 'validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors,
+      $defaultData = [
+        'message' => null,
+        'attachments' => null,
       ];
+      $form = $this->createForm('AppBundle\Form\Rest\Transition\OutcomeFormType', $defaultData);
+      $this->processForm($request, $form);
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = $this->getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = $form->getData();
+      $application->setEsito($request->get('_route') == 'application_api_post_transition_accept');
+      $application->setMotivazioneEsito($data['message']);
+
+      foreach ($data['attachments'] as $attachment) {
+        $base64Content = $attachment->getFile();
+        $file = new UploadedBase64File($base64Content, $attachment->getMimeType());
+        $allegato = new AllegatoOperatore();
+        $allegato->setFile($file);
+        $allegato->setOwner($application->getUser());
+        $allegato->setDescription('Risposta Operatore');
+        $allegato->setOriginalFilename($attachment->getName());
+        $this->em->persist($allegato);
+        $application->addAllegatoOperatore($allegato);
+      }
+      $this->praticaManager->finalize($application, $this->getUser());
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
 
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $messageEntity = $message->toEntity($messageEntity);
-    try {
-      $this->em->persist($messageEntity);
-      $this->em->flush();
-    } catch (Exception $e) {
-
-      $data = [
-        'type' => 'error',
-        'title' => 'There was an error during save process',
-      ];
-      $this->logger->error(
-        $e->getMessage(),
-        ['request' => $request]
-      );
-
-      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-
-    return $this->view("Message Patched Successfully", Response::HTTP_OK);
+    return $this->view([], Response::HTTP_NO_CONTENT);
   }
 
-
   /**
-   * Retreive a message applications attachment
-   * @Rest\Get("/{id}/messages/{messageId}/attachments/{attachmentId}", name="message_api_attachment_get")
+   * Withdraw an application
+   * @Rest\Post("/{id}/transition/withdraw", name="application_api_post_transition_withdraw")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
    *
    * @SWG\Response(
-   *     response=200,
-   *     description="Retreive attachment file",
+   *     response=204,
+   *     description="Updated"
    * )
    *
    * @SWG\Response(
    *     response=404,
-   *     description="Attachment not found"
+   *     description="Application not found"
    * )
    * @SWG\Tag(name="applications")
    *
-   * @param $attachmentId
-   * @return View|Response
+   * @param $id
+   * @param Request $request
+   * @return View
    */
-  public function messageAttachmentAction($attachmentId)
+  public function postApplicationTransitionWithDrawAction($id, Request $request)
   {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
+      }
 
-    $repository = $this->getDoctrine()->getRepository('App:Allegato');
-    $result = $repository->find($attachmentId);
-    if ($result === null) {
-      return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
+      if ($application->getUser()->getId() != $this->getUser()->getId()) {
+        throw new Exception('You are not allowed to operate on this application');
+      }
+      $this->statusService->setNewStatus($application, Pratica::STATUS_WITHDRAW);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    /** @var File $file */
-    $file = $result->getFile();
-    $fileContent = file_get_contents($file->getPathname());
-    $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
-    $response = new Response($fileContent);
-    $disposition = $response->headers->makeDisposition(
-      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-      $filename
-    );
-
-    $response->headers->set('Content-Disposition', $disposition);
-
-    return $response;
+    return $this->view([], Response::HTTP_NO_CONTENT);
   }
 
   /**
@@ -978,5 +1129,25 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     return $errors;
+  }
+
+  /**
+   * @return array
+   */
+  private function getAllowedServices(): array
+  {
+    $user = $this->getUser();
+    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $allowedServices = [];
+    if ($user instanceof OperatoreUser) {
+      $allowedServices = $user->getServiziAbilitati()->toArray();
+    } elseif ($user instanceof AdminUser) {
+      $services = $repositoryService->findAll();
+      /** @var Servizio $service */
+      foreach ($services as $service) {
+        $allowedServices []= $service->getId();
+      }
+    }
+    return $allowedServices;
   }
 }

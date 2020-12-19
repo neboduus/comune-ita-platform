@@ -10,7 +10,10 @@
           {% if pratica.paymentType.name == "MyPay" %}
             <tr>
               <td><b>{{ 'operatori.importo'|trans }}</b></td>
-              <td>{{ pratica.paymentData.payment_amount }} €</td>
+              <td>
+                {% if pratica.paymentData.payment_amount is defined %}{{ pratica.paymentData.payment_amount }} €{% endif %}
+              </td>
+
             </tr>
             {% if pratica.paymentData.request is defined %}
               <tr>
@@ -37,10 +40,6 @@
                 <td><code>{{ pratica.paymentData.request.causaleVersamento }}</code></td>
               </tr>
               <tr>
-                <td><b>{{ 'operatori.data_esecuzione_pagamento'|trans }}</b></td>
-                <td>{{ pratica.paymentData.request.dataEsecuzionePagamento }}</td>
-              </tr>
-              <tr>
                 <td><b>{{ 'operatori.iud'|trans }}</b></td>
                 <td><code>{{ pratica.paymentData.request.identificativoUnivocoDovuto }}</code></td>
               </tr>
@@ -59,6 +58,12 @@
                 <tr>
                   <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
                   <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
+                </tr>
+                <tr>
+                  <td><b>{{ 'operatori.data_esecuzione_pagamento'|trans }}</b></td>
+                  <td>
+                    {{ pratica.paymentData.outcome.data.datiPagamento.datiSingoloPagamento.dataEsitoSingoloPagamento | date(ocsdc_default_date_format) }}
+                  </td>
                 </tr>
                 <tr>
                   <td class="text-center border-0" colspan="2">

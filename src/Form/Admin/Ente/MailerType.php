@@ -7,9 +7,9 @@ namespace App\Form\Admin\Ente;
 use App\Model\DefaultProtocolSettings;
 use App\Model\Mailer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,16 +23,17 @@ class MailerType extends AbstractType
   {
     $builder
       ->add('title', TextType::class, [
-        'label' => 'Titolo',
+        'label' => 'backoffice.entity.title',
         'required' => true
       ])
       ->add('host', TextType::class, [
-        'label' => 'Host',
+        'label' => 'backoffice.entity.host',
         'required' => true
       ])
-      ->add('port', TextType::class, [
+      ->add('port', IntegerType::class, [
         'label' => 'Port',
-        'required' => true
+        'required' => true,
+        'attr' => array('min' => 1, 'max' => 65535)
       ])
       ->add('user', TextType::class, [
         'label' => 'User',
@@ -42,12 +43,18 @@ class MailerType extends AbstractType
         'label' => 'Password',
         'required' => true
       ])
-      ->add('encription', TextType::class, [
-        'label' => 'Encription',
-        'required' => true
+      ->add('encription', ChoiceType::class, [
+        'label' => 'backoffice.entity.encription',
+        'required' => true,
+        'choices' => [
+          'SSL' => 'SSl',
+          'TLS' => 'TLS',
+          'STARTTLS' => 'STARTTLS',
+        ],
+
       ])
       ->add('sender', EmailType::class, [
-        'label' => 'Sender',
+        'label' =>  'backoffice.entity.sender' ,
         'required' => true
       ])
     ;

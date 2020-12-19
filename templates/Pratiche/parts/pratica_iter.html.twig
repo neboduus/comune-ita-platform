@@ -34,6 +34,12 @@
                               {{ 'operatori.attesa_ricevuta'|trans }}
                           {% elseif change[0] == 2000 and pratica.status == 2000 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
                             {{ 'pratica.in_attesa_protocollo'| trans }}
+                          {% elseif change[0] == 4300 %}
+                            {% if pratica.type == 'form_io'  %}
+                              {{ ('pratica.dettaglio.stato_'~change[0] )| trans }}
+                            {% else %}
+                              {{ ('pratica.dettaglio.stato_'~change[0]~'_legacy')| trans }}
+                            {% endif %}
                           {% else %}
                               {{ ('pratica.dettaglio.stato_'~change[0])| trans }}
                           {% endif %}

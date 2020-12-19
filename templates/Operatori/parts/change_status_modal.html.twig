@@ -5,14 +5,16 @@
   }
 </style>
 
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="p-4">
         <div class="row">
           <div class="col-lg-12 px-lg-4 py-lg-2">
             <h1 id="modalTitle"></h1>
-            <p>Verrà inviata una comunicazione email all’indirizzo dell’utente <a href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
+            <p>Verrà inviato un messaggio all’indirizzo dell’utente <a
+                href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
           </div>
         </div>
         <div class="row">
@@ -20,33 +22,73 @@
             {{ form_start(outcomeForm) }}
             <div class="d-none">{{ form_row(outcomeForm.outcome) }}</div>
             {{ form_row(outcomeForm.message) }}
-            <small class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.esito_help' | trans }}</small>
+            <small
+              class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.esito_help' | trans }}</small>
             <div class="form-group">
               <label>{{ 'operatori.flow.approva_o_rigetta.motivazione.allega_label' | trans }}</label>
               {{ form_row(outcomeForm.attachments) }}
             </div>
             <div id="vueApp" class="px-2">
               {% if outcomeForm.vars.helper.vueApp %}
-                <{{ outcomeForm.vars.helper.vueApp }} id="upload_outcome_attachment"></{{ outcomeForm.vars.helper.vueApp }}>
-              {% endif %}
-              <small class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.allega_help' | trans }}</small>
+              <{{ outcomeForm.vars.helper.vueApp }} id="upload_outcome_attachment">
+            </{{ outcomeForm.vars.helper.vueApp }}>
+            {% endif %}
+            <small
+              class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.allega_help' | trans }}</small>
+          </div>
+          <div class="row justify-content-between mt-3">
+            <div class="col-auto align-self-center">
+              <strong>
+                <svg class="icon icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
+                </svg>
+                Una volta elaborata la pratica non sarà più possibile effettuare modifiche
+              </strong>
             </div>
-            <div class="row justify-content-between mt-3">
-              <div class="col-auto align-self-center">
-                <strong>
-                  <svg class="icon icon-sm">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
-                  </svg>
-                  Una volta elaborata la pratica non sarà più possibile effettuare modifiche
-                </strong>
-              </div>
-              <div class="col-auto">
-                <button type="submit" class="btn btn-primary float-right">{{ 'messaggi.invia' | trans }}</button>
-              </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary float-right">{{ 'messaggi.invia' | trans }}</button>
             </div>
-            {{ form_rest(outcomeForm) }}
+          </div>
+          {{ form_rest(outcomeForm) }}
 
-            {{ form_end(outcomeForm) }}
+          {{ form_end(outcomeForm) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="integration-request-modal" tabindex="-1" role="dialog"
+     aria-labelledby="IntegrationRequestModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="p-4">
+        <div class="row">
+          <div class="col-lg-12 px-lg-4 py-lg-2">
+            <h1>Richiedi integrazione</h1>
+            <p>Verrà inviato un messaggio all’indirizzo dell’utente <a
+                href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12 px-lg-4 py-lg-2">
+            {{ form_start(integration_request_form) }}
+            {{ form_row(integration_request_form.message) }}
+            <small class="form-text text-muted mb-3">
+              Utilizza questo campo per motivare la richiesta di integrazione.<br />
+              Una volta inviato l'utente riceverà un messaggio con il testo specificato, sarà possibile verificare eventuali
+              risposte nella sezione messaggi.
+            </small>
+
+            <div class="row justify-content-between mt-3">
+              <div class="col-auto">
+                <button type="submit" class="btn btn-primary float-right">Invia richiesta integrazione</button>
+              </div>
+            </div>
+            {{ form_rest(integration_request_form) }}
+
+            {{ form_end(integration_request_form) }}
           </div>
         </div>
       </div>

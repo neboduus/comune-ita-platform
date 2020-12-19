@@ -3,6 +3,9 @@
 
 namespace App\Entity;
 
+use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
+
 /**
  * Class StatusChange
  */
@@ -18,26 +21,24 @@ class StatusChange
   /**
    * StatusChange constructor.
    * @param array $data
-   * @throws \Exception
    */
   public function __construct($data = [])
   {
-    /**
-     * Since GISCOM uses different codes we have to map them here
-     * We look for the giscom mapping and fallback to the raw value if none is found
-     */
+
     $this->evento = $data['evento'] ?? null;
     $this->operatore = $data['operatore'] ?? null;
     $this->responsabile = $data['responsabile'] ?? null;
     $this->struttura = $data['struttura'] ?? null;
     $this->timestamp = $data['timestamp'] ?? $data['time'] ?? null;
-    /**
-     * Giscom is asking for SDC to relay the error message to the user
-     */
+
     $this->message = $data['message'] ?? null;
 
     if (!is_int($this->timestamp)) {
-      $date = new \DateTime($this->timestamp, new \DateTimeZone('Europe/Rome'));
+      try {
+        $date = new \DateTime($this->timestamp, new \DateTimeZone('Europe/Rome'));
+      } catch (\Exception $e) {
+        $date = new \DateTime();
+      }
       $this->timestamp = $date->getTimestamp();
     }
   }

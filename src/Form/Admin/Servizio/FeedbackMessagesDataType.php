@@ -69,7 +69,7 @@ class FeedbackMessagesDataType extends AbstractType
     if (!empty($service->getEnte()->getMailers())) {
       // Ricavo i mailer disponibili dall'istanza
       $mailers = [
-        'Disabilitato' => 'disabled',
+        'Default del sistema' => 'disabled',
       ];
       /** @var Mailer $mailer */
       foreach ($service->getEnte()->getMailers() as $mailer) {

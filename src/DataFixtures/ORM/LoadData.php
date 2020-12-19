@@ -45,6 +45,11 @@ class LoadData extends Fixture
     $this->instanceService = $instanceService;
   }
 
+  public function getContainer()
+  {
+    return $this->container;
+  }
+
   public function load(ObjectManager $manager)
   {
     $this->loadAsili($manager);

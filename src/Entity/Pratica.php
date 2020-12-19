@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Dto\UserAuthenticationData;
+use App\Model\Transition;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -645,6 +646,19 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     }
 
     return null;
+  }
+
+  public function getStatusNameByCode($code)
+  {
+    $class = new \ReflectionClass(__CLASS__);
+    $constants = $class->getConstants();
+
+    foreach ($constants as $name => $value) {
+      if ($value == $code) {
+        return $name;
+      }
+    }
+    return '';
   }
 
   public static function getStatuses()
@@ -2049,5 +2063,29 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       }
     }
     return $answers;
+  }
+
+  public function getHistory()
+  {
+
+    $history = [];
+    foreach ($this->getStoricoStati() as $k => $v) {
+      foreach ($v as $change) {
+        $transition = new Transition();
+        $transition->setStatusCode($change[0]);
+        $transition->setStatusName($this->getStatusNameByCode($change[0]));
+        if (isset($change[1]['message']) && !empty($change[1]['message'])) {
+          $transition->setMessage($change[1]['message']);
+        }
+        try {
+          $date = new \DateTime();
+          $date->setTimestamp($k);
+          $transition->setDate($date);
+        } catch (\Exception $e) {}
+        $transition->setDate($date);
+        $history[]= $transition;
+      }
+    }
+    return $history;
   }
 }

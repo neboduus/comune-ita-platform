@@ -53,6 +53,9 @@ services:
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\MessagesAPIController:
+    autowire: true
+
   AppBundle\Controller\AdminController:
     autowire: true
 
@@ -158,6 +161,19 @@ services:
     arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
     tags:
       - { name: form.type }
+
+  AppBundle\Form\Rest\Transition\OutcomeFormType:
+    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
+  AppBundle\Services\Manager\PraticaManager:
+    autowire: true
+
+  AppBundle\Services\Manager\MessageManager:
+    autowire: true
+    arguments:
+      $defaultSender: "%default_from_email_address%"
 
   AppBundle\Services\MyPayService:
     autowire: true
@@ -815,7 +831,7 @@ services:
       - "@ocsdc.modulo_pdf_builder"
 
   AppBundle\Services\FormServerApiAdapterService:
-    arguments: [ "%formserver_private_url%", "@logger" ]
+    arguments: [ "%formserver_private_url%", "%formserver_public_url%", "@logger" ]
 
   ocsdc.formserver: '@AppBundle\Services\FormServerApiAdapterService'
 

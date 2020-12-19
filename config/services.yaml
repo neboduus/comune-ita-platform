@@ -175,6 +175,10 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Rest\Transition\OutcomeFormType:
+    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
 
   App\Form\Scia\PraticaEdiliziaVincoliType:
     autowire: true
@@ -884,6 +888,7 @@ services:
   App\Services\FormServerApiAdapterService:
     arguments:
       $formServerUrl: "%formserver_private_url%"
+      $formServerPublicUrl: "%formserver_public_url%"
 
   ocsdc.formserver: '@App\Services\FormServerApiAdapterService'
 
@@ -965,3 +970,9 @@ services:
     $host: "%ocsdc_host%"
     $scheme: "%ocsdc_scheme%"
     $inactiveUserLifeTime: "%InactiveUserLifeTime%"
+
+  AppBundle\Services\Manager\MessageManager:
+    autowire: true
+    arguments:
+      $defaultSender: "%default_from_email_address%"
+

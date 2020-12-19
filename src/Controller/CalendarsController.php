@@ -16,9 +16,6 @@ use Doctrine\ORM\QueryBuilder;
 use ICal\ICal;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
-use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
-use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\DataTableFactory;
 use Omines\DataTablesBundle\DataTable;
@@ -387,114 +384,15 @@ class CalendarsController extends Controller
       Meeting::STATUS_CANCELLED => 'Annullato',
     ];
 
-    $table = $this->dataTableFactory->create()
-      ->add('fromTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'Y-m-d', 'searchable' => false])
-      ->add(
-        'id',
-        TextColumn::class,
-        [
-          'label' => 'Orario',
-          'searchable' => false,
-          'render' => function ($value, $meeting) {
-            return sprintf('%s - %s', $meeting->getFromTime()->format('H:i'), $meeting->getToTime()->format('H:i'));
-          },
-        ]
-      )
-      ->add(
-        'user',
-        TextColumn::class,
-        [
-          'label' => 'Utente',
-          'field' => 'user.nome',
-          'searchable' => true,
-          'render' => function ($value, $meeting) {
-            if ($meeting->getUser()->getFullName() !== ' ') {
-              return $meeting->getUser()->getFullName();
-            } else {
-              return 'Utente Anonimo';
-            }
-          },
-        ]
-      )
-      ->add(
-        'cognome',
-        TextColumn::class,
-        ['label' => 'Utente', 'field' => 'user.cognome', 'searchable' => true, 'visible' => false]
-      )
-      ->add(
-        'email',
-        TextColumn::class,
-        [
-          'label' => 'Email',
-          'searchable' => true,
-          'render' => function ($value, $meeting) {
-            return $value ? sprintf(
-              '<a href="mailto:%s"><div class="text-truncate">%s</div></a>',
-              $value,
-              $value
-            ) : '---';
-          },
-        ]
-      )
-      ->add(
-        'fiscalCode',
-        TextColumn::class,
-        [
-          'label' => 'Codice fiscale',
-          'searchable' => true,
-          'render' => function ($value, $meeting) {
-            if ($meeting->getFiscalCode()) {
-              return $meeting->getFiscalCode();
-            } else {
-              return '---';
-            }
-          },
-        ]
-      )
-      ->add(
-        'phoneNumber',
-        TextColumn::class,
-        [
-          'label' => 'Recapito',
-          'render' => function ($value, $meeting) {
-            return $value ? $value : '---';
-          },
-        ]
-      )
-      ->add('rescheduled', NumberColumn::class, ['label' => 'Rinvii'])
-      ->add(
-        'status',
-        TextColumn::class,
-        [
-          'label' => 'Stato',
-          'searchable' => false,
-          'render' => function ($value, $calendar) {
-            return $this->getStatusAsString($value);
-          },
-        ]
-      )
-      ->addOrderBy('fromTime', DataTable::SORT_DESCENDING)
-      ->addOrderBy('id', DataTable::SORT_ASCENDING)
-      ->createAdapter(
-        ORMAdapter::class,
-        [
-          'entity' => Meeting::class,
-          'query' => function (QueryBuilder $builder) use ($calendar) {
-            $builder
-              ->select('meeting', 'user')
-              ->from(Meeting::class, 'meeting')
-              ->leftJoin('meeting.user', 'user')
-              ->leftJoin('meeting.calendar', 'calendar')
-              ->where('meeting.calendar = :calendar')
-              ->setParameter('calendar', $calendar);
-          },
-        ]
-      )
-      ->handleRequest($request);
-
-    if ($table->isCallback()) {
-      return $table->getResponse();
-    }
+    $em = $this->getDoctrine()->getManager();
+    $table = $em->createQueryBuilder()
+      ->select('meeting', 'user')
+      ->from(Meeting::class, 'meeting')
+      ->leftJoin('meeting.user', 'user')
+      ->leftJoin('meeting.calendar', 'calendar')
+      ->where('meeting.calendar = :calendar')
+      ->setParameter('calendar', $calendar)
+      ->getQuery()->getResult();
 
     $deleteForm = $this->createDeleteForm($calendar);
 
@@ -846,31 +744,6 @@ class CalendarsController extends Controller
     );
   }
 
-  function getStatusAsString(int $status)
-  {
-    switch ($status) {
-      case 0:
-        return 'In attesa di conferma';
-        break;
-      case 1:
-        return 'Approvato';
-        break;
-      case 2:
-        return 'Rifiutato';
-        break;
-      case 3:
-        return 'Assente';
-        break;
-      case 4:
-        return 'Concluso';
-        break;
-      case 5:
-        return 'Annullato';
-        break;
-      default:
-        return 'Errore';
-    }
-  }
 
   private function canUserAccessCalendar(Calendar $calendar)
   {

@@ -17,6 +17,8 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
 
   protected $formServerUrl = '';
 
+  protected $formServerPublicUrl;
+
   /**
    * @var LoggerInterface
    */
@@ -24,9 +26,10 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
 
   private static $cache = [];
 
-  public function __construct($formServerUrl, LoggerInterface $logger)
+  public function __construct($formServerUrl, $formServerPublicUrl, LoggerInterface $logger)
   {
     $this->formServerUrl = $formServerUrl;
+    $this->formServerPublicUrl = $formServerPublicUrl;
     $this->logger = $logger;
   }
 
@@ -36,6 +39,14 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
   public function getFormServerUrl()
   {
     return $this->formServerUrl;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFormServerPublicUrl()
+  {
+    return $this->formServerPublicUrl;
   }
 
   /**
