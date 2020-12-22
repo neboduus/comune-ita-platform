@@ -30,7 +30,8 @@
     "axios": "0.20.0",
     "highcharts": "8.1.0",
     "lodash": "4.17.15",
-    "outdated-browser-rework": "2.10.0"
+    "outdated-browser-rework": "2.10.0",
+    "summernote-cleaner": "^1.0.0"
   },
   "version": "1.6.0"
 }

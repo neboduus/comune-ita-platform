@@ -1,3 +1,5 @@
+import {TextEditor} from "./utils/TextEditor";
+
 require("bootstrap-italia");
 require("../css/app.scss");
 require("jquery"); // Load jQuery as a module
@@ -7,14 +9,7 @@ require("summernote/dist/summernote-bs4.css");
 
 $(document).ready(function () {
 
-  $('textarea').summernote({
-    toolbar: [
-      ['style', ['style']],
-      ['para', ['ul', 'ol', 'paragraph']],
-      ['insert', ['link']],
-      ['view', ['codeview']],
-    ]
-  });
+  TextEditor.init()
 
   $('.add-another-payment-widget').click(function (e) {
     let list = $($(this).attr('data-list-selector'));

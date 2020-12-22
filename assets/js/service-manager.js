@@ -1,11 +1,14 @@
 import './core'
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
-require("summernote");
-
+import 'summernote';
+import 'summernote/dist/summernote-bs4.css';
+import 'summernote-cleaner';
 import Calendar from './Calendar';
 import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
 import 'formiojs'
+import {TextEditor} from "./utils/TextEditor";
+
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('pagebreak', PageBreak);
@@ -17,8 +20,6 @@ $(document).ready(function () {
   const scheduledFrom = $('#general_data_scheduled_from').parent();
   const scheduledTo = $('#general_data_scheduled_to').parent();
   const hideScheduler = function () {
-
-    console.log(serviceStatus.val());
 
     if (serviceStatus.val() === '4') {
       scheduledFrom.show();
@@ -91,43 +92,36 @@ $(document).ready(function () {
 
   if ($("#general_data_flow_service_step").length /*|| $("#feedback_messages_data_flow_service_step").length*/) {
     const limitChars = 2000;
-    $('textarea').summernote({
-      toolbar: [
-        ['style', ['bold', 'italic', 'underline', 'clear']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['insert', ['link']],
-        ['view', ['codeview']],
-      ],
-      callbacks: {
-        onInit: function() {
-          let chars = $(this).parent().find(".note-editable").text();
-          let totalChars = chars.length;
+    TextEditor.init({
+      onInit: function () {
+        let chars = $(this).parent().find(".note-editable").text();
+        let totalChars = chars.length;
 
-          $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di '+limitChars+' caratteri (<span class="total-chars">'+ totalChars +'</span> / <span class="max-chars"> '+limitChars+'</span>)</small>')
-        },
-        /*onKeydown: function() {
-          let chars = $(this).parent().find(".note-editable").text();
-          let totalChars = chars.length;
+        $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di ' + limitChars + ' caratteri (<span class="total-chars">' + totalChars + '</span> / <span class="max-chars"> ' + limitChars + '</span>)</small>')
+      },
+      /*onKeydown: function() {
+        let chars = $(this).parent().find(".note-editable").text();
+        let totalChars = chars.length;
 
-          //Check and Limit Charaters
-          if(totalChars >= limitChars){
-            return false;
-          }
-        },*/
-        onChange: function() {
-          let chars = $(this).parent().find(".note-editable").text();
-          let totalChars = chars.length;
+        //Check and Limit Charaters
+        if(totalChars >= limitChars){
+          return false;
+        }
+      },*/
+      onChange: function () {
+        let chars = $(this).parent().find(".note-editable").text();
+        let totalChars = chars.length;
 
-          //Update value
-          $(this).parent().find(".total-chars").text(totalChars);
+        //Update value
+        $(this).parent().find(".total-chars").text(totalChars);
 
-          //Check and Limit Charaters
-          if(totalChars >= limitChars){
-            return false;
-          }
+
+        //Check and Limit Charaters
+        if (totalChars >= limitChars) {
+          return false;
         }
       }
-    });
+    })
   }
 
   if ( $("#feedback_messages_data_flow_service_step").length ) {
@@ -156,9 +150,7 @@ $(document).ready(function () {
   if ($("#formio_builder_render_form_id").length) {
 
     const saveForm = function( saveUrl, targetUrl, type){
-      console.log(saveUrl);
       let schema = $("#formio_builder_render_form_schema").val();
-      console.log(schema);
       $.ajax( saveUrl,
         {
           dataType: 'json', // type of response data
@@ -174,7 +166,6 @@ $(document).ready(function () {
                 window.open( targetUrl, '_blank');
               }
             } else {
-              console.log(data);
               alert('Si è verificato un errore durante il salvataggio.')
             }
           },
@@ -193,7 +184,6 @@ $(document).ready(function () {
     });
 
     const storeSchema = function( schema ) {
-      //console.log(schema);
       $("#formio_builder_render_form_schema").val(schema);
     };
 
