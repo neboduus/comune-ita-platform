@@ -65,6 +65,20 @@ services:
       PHP_DATE_TIMEZONE: 'Europe/Rome'
     volumes:
       - "uploads:/var/www/html/var/uploads"
+    labels:
+      traefik.enable: true
+
+      traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
+      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"
+      traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
+
+      traefik.http.routers.phpfpm-auth.entrypoints: web
+      traefik.http.routers.phpfpm-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && PathPrefix(`/[^/]+/auth/login-open`)"
+      traefik.http.routers.phpfpm-auth.middlewares: "spid-auth"
+
+      traefik.http.routers.phpfpm.entrypoints: web
+      traefik.http.routers.phpfpm.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+
 
   apache:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:master
@@ -81,17 +95,8 @@ services:
       - "443:443"
     labels:
       traefik.enable: true
-
-      traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
-      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"
-      traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
-
-      traefik.http.routers.apache-auth.entrypoints: web
-      traefik.http.routers.apache-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/comune-di-bugliano/auth/login-open`)"
-      traefik.http.routers.apache-auth.middlewares: "spid-auth"
-
       traefik.http.routers.apache.entrypoints: web
-      traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+      traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`) && PathPrefix(`/[^/]+/auth/login-apache`)"
 
   traefik:
     image: 'traefik:2.0'

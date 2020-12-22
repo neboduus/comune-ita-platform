@@ -60,3 +60,12 @@ RUN composer run-script post-docker-install-cmd
 COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
 
 RUN bin/console cache:warmup
+
+COPY --from=abiosoft/caddy:1.0.3-php /usr/bin/caddy /usr/bin/caddy
+COPY Caddyfile /etc/Caddyfile
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+HEALTHCHECK --interval=30s --timeout=2s --start-period=2s --retries=2 \
+        CMD wget -q --spider http://0.0.0.0:2015/health
+
+ENTRYPOINT /docker-entrypoint.sh

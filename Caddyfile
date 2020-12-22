@@ -1,0 +1,38 @@
+0.0.0.0
+browse
+root /var/www/html/web
+
+fastcgi / 127.0.0.1:9000 php {
+  index app.php
+}
+
+# This rewrite is to prevent access to dot files and folders such
+# as .htaccess, .git, etc.
+rewrite {
+  if {path} starts_with .
+  if {path} not_starts_with .well-known
+  to error/index.html
+}
+
+# Main rewrite to route non-existent files to index.php file.
+rewrite {
+  if {file} not favicon.ico
+  to {path} /app.php?{query}
+}
+
+# Security-HTTP-Header to reduce exposure to drive-by downloads 
+# and the risks of clever-named user uploaded content that could be 
+# treated as a different content-type (e.g. as executable).
+header / {
+  X-Content-Type-Options nosniff
+}
+
+# Compress the transmitted data
+gzip
+
+log stdout
+errors stdout
+on startup php-fpm7 --nodaemonize
+
+
+
