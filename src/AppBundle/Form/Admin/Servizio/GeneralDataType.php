@@ -37,6 +37,13 @@ class GeneralDataType extends AbstractType
       'Cie' => Servizio::ACCESS_LEVEL_CIE,
     ];
 
+    $legacyAccessLevels = [
+      'Social' => Servizio::ACCESS_LEVEL_SOCIAL,
+      'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
+      'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
+      'Cie' => Servizio::ACCESS_LEVEL_CIE,
+    ];
+
     $workflows = [
       'Approvazione' => Servizio::WORKFLOW_APPROVAL,
       'Inoltro' => Servizio::WORKFLOW_FORWARD
@@ -129,7 +136,7 @@ class GeneralDataType extends AbstractType
       ])
       ->add('access_level', ChoiceType::class, [
         'label' => 'Livello di accesso al servizio',
-        'choices' => $accessLevels
+        'choices' => $servizio->getPraticaFlowServiceName() == 'ocsdc.form.flow.formio' ? $accessLevels : $legacyAccessLevels
       ])
       ->add('login_suggested', CheckboxType::class, [
         'label' => 'Suggerisci il Login per l\'autocompletamento?',
