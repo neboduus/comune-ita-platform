@@ -5,6 +5,7 @@ namespace AppBundle\Handlers\Servizio;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
+use AppBundle\Utils\BrowserParser;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,9 +29,16 @@ class ImisHandler extends AbstractServizioHandler
 
   private $pwd = '55234512A$';
 
-  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
+  /**
+   * ImisHandler constructor.
+   * @param TokenStorage $tokenStorage
+   * @param LoggerInterface $logger
+   * @param UrlGeneratorInterface $router
+   * @param BrowserParser $browserParser
+   */
+  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router, BrowserParser $browserParser)
   {
-    parent::__construct($tokenStorage, $logger, $router);
+    parent::__construct($tokenStorage, $logger, $router, $browserParser);
     $this->setCallToActionText('servizio.imis.download_pdf_imis');
   }
 

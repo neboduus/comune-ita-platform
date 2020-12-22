@@ -106,6 +106,7 @@ parameters:
     sentry_dsn: '%env(SENTRY_DSN)%'
     login_route: '%env(LOGIN_ROUTE)%' #name of the route
     single_logout_url: '%env(SINGLE_LOGOUT_URL)%'
+    browsers_restrictions: '%env(BROWSERS_RESTRICTIONS)%'
     #Default fallback if env not set
     env(PREFIX): ''
     env(DB_DRIVER): 'pdo_pgsql'
@@ -186,3 +187,5 @@ parameters:
     env(SENTRY_DSN): ''
     env(LOGIN_ROUTE): 'login_pat' #name of the route
     env(SINGLE_LOGOUT_URL): '/Shibboleth.sso/Logout'
+    env(BROWSERS_RESTRICTIONS): null
+

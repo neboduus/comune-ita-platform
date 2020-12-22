@@ -157,6 +157,17 @@ Mediante specifiche variabili d'ambiente è possibile abilitare o disabilitare f
    sostituisce l'interfaccia di dettaglio ad uso del cittadino, migliorandone la user experience.
    Consente inoltre lo scambio di messaggi tra operatore e cittadino.
 
+## Restrizioni di accesso ai servizi
+
+Mediante la variabile d'ambiente `BROWSERS_RESTRICTIONS` è possibile limitare l'accesso di una specifica versione di un browser ai servizi.
+
+La sintassi della variabile è cosi definita:  `nome browser,operatore logico, versione|nome browser,operatore logico, versione`
+
+Es. `Maxthon,<,4.0.5`
+
+Il componente utilizzato è https://github.com/WhichBrowser/Parser-PHP al quale si rimanda per uteriori informazioni.
+
+
 
 ## Project status
 
