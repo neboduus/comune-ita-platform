@@ -12,6 +12,7 @@ use AppBundle\Services\ProtocolloService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -47,37 +48,72 @@ class ProtocolDataType extends AbstractType
 
     $currentServiceParameters = $service->getProtocolloParameters();
 
+    $builder
+      ->add('protocol_required', CheckboxType::class, [
+        'label' => 'Protocollazione richiesta?',
+        'required' => false
+      ]);
     if ($configParameters) {
       $builder
         ->add('parameters_needed', BlockQuoteType::class, [
           'label' => 'Inserisci qui i parametri di configurazione del protocollo'
         ]);
+      $attr = $service->isProtocolRequired() ? ['class' => 'protocollo_params'] : ['disabled' => 'disabled', 'class' => 'protocollo_params'];
       foreach ($configParameters as $key => $param) {
         if (is_array($param)) {
+          // First step to migration
+          if (isset($param['type'])) {
+            switch ($param['type']) {
+              case 'bool':
+                $builder
+                  ->add($key, CheckboxType::class, [
+                    'label' => 'protocollo.' . $key,
+                    'data' => isset($currentServiceParameters[$key]) ? boolval($currentServiceParameters[$key]) : false,
+                    'mapped' => false,
+                    'required' => false,
+                    'attr' => $attr
+                  ]);
+                break;
+              default:
+                $builder
+                  ->add($key, TextType::class, [
+                      'label' => 'protocollo.' . $key,
+                      'data' => isset($currentServiceParameters[$key]) ? $currentServiceParameters[$key] : '',
+                      'mapped' => false,
+                      'required' => true,
+                      'attr' => $attr
+                    ]
+                  );
+                break;
+            }
+          } else {
+            $paramForm = $builder->create( $key,FormType::class, [
+              'mapped' => false,
+              'label_attr' => ['class' => 'pb-4'],
+            ]);
 
-          $paramForm = $builder->create( $key,FormType::class, [
-            'mapped' => false,
-            'label_attr' => ['class' => 'pb-4'],
-          ]);
-
-          foreach ($param as $subparam) {
-            $paramForm
-              ->add($subparam, TextType::class, [
-                  'label' => 'protocollo.' . $key . '.' . $subparam,
-                  'data' => isset($currentServiceParameters[$key][$subparam]) ? $currentServiceParameters[$key][$subparam] : '',
-                  'mapped' => false,
-                  'required' => true
-                ]
-              );
+            foreach ($param as $subparam) {
+              $paramForm
+                ->add($subparam, TextType::class, [
+                    'label' => 'protocollo.' . $key . '.' . $subparam,
+                    'data' => isset($currentServiceParameters[$key][$subparam]) ? $currentServiceParameters[$key][$subparam] : '',
+                    'mapped' => false,
+                    'required' => true,
+                    'attr' => $attr
+                  ]
+                );
+            }
+            $builder->add($paramForm);
           }
-          $builder->add($paramForm);
+
         } else {
           $builder
             ->add($param, TextType::class, [
                 'label' => 'protocollo.' . $param,
                 'data' => isset($currentServiceParameters[$param]) ? $currentServiceParameters[$param] : '',
                 'mapped' => false,
-                'required' => true
+                'required' => true,
+                'attr' => $attr
               ]
             );
         }

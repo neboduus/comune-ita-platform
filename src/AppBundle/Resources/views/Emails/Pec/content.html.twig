@@ -9,6 +9,8 @@
           <p>{{ 'protocollo.pec.email.abstract.send_applcation'|trans({'%name%' : pratica.servizio.name})|striptags }}</p>
         {% elseif type == 'send_integration' %}
           <p>{{ 'protocollo.pec.email.abstract.send_integration'|trans({'%name%' : pratica.id})|striptags }}</p>
+        {% elseif type == 'send_attachment' %}
+          <p>{{ 'protocollo.pec.email.abstract.send_attachment'|trans({'%name%' : pratica.id})|striptags }}</p>
         {% else %}
           <p>{{ 'protocollo.pec.email.abstract.send_result'|trans({'%name%' : pratica.id})|striptags }}</p>
         {% endif %}

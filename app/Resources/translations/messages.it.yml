@@ -1760,8 +1760,10 @@ protocollo:
       abstract:
         send_applcation: 'Acquisita nuova pratica per il servizio: %name%'
         send_integration: 'Acquisita integrazione per la pratica: %name%'
+        send_attachment: 'Acquisito allegato per la pratica: %name%'
         send_result: 'Acquisita risposta per la pratica: %name%'
   receiver: 'Email pec del ricevente'
+  send_attachment: 'Inviare allegati tramite email?'
 
 gateway:
   bollo:

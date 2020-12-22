@@ -93,10 +93,6 @@ class GeneralDataType extends AbstractType
         'label' => 'In evidenza?',
         'required' => false
       ])
-      ->add('protocol_required', CheckboxType::class, [
-        'label' => 'Protocollazione richiesta?',
-        'required' => false
-      ])
       ->add('status', ChoiceType::class, [
         'label' => 'Stato',
         'choices' => $statuses

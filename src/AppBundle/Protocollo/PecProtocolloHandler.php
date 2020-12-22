@@ -6,6 +6,7 @@ namespace AppBundle\Protocollo;
 
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Services\MailerService;
 use Hoa\Event\Exception;
@@ -21,6 +22,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
   const TYPE_SEND_APPLICATION = 'send_applcation';
   const TYPE_SEND_INTEGRATION = 'send_integration';
+  const TYPE_SEND_ATTACHMENT = 'send_attachment';
   const TYPE_SEND_RESULT      = 'send_result';
 
 
@@ -106,6 +108,9 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       'password'
     );*/
     return array(
+      'send_attachment' => [
+        'type' => 'bool',
+      ],
       'receiver'
     );
   }
@@ -199,7 +204,34 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    */
   public function sendAllegatoToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
+
+    $parameters = $pratica->getServizio()->getProtocolloParameters();
+
+    if (!isset($parameters['send_attachment']) || !$parameters['send_attachment']) {
+      return;
+    }
+
+    // Avoid duplicate email
+    if ($allegato->getType() == ModuloCompilato::TYPE_DEFAULT) {
+      return;
+    }
+
     // Note: Not used in this handler
+    $this->checkParameters($parameters);
+    $message = $this->setupMessage($pratica, $this->sender, $parameters['receiver'], self::TYPE_SEND_ATTACHMENT);
+
+    $message->attach(\Swift_Attachment::fromPath($allegato->getFile()->getPathname()));
+    $result = $this->mailer->send($message);
+
+    if (!$result) {
+      throw new \Exception("Error sendAllegatoToProtocollo application: " . $pratica->getId() . " attachment: " . $allegato->getId());
+    }
+
+    $allegato->setNumeroProtocollo($message->getId());
+    $pratica->addNumeroDiProtocollo([
+      'id' => $allegato->getId(),
+      'protocollo' => $message->getId(),
+    ]);
   }
 
   /**
@@ -232,8 +264,16 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   {
     $ente = $pratica->getEnte();
     $praticaIdParts = explode('-', $pratica->getId());
+
+    $subject = $pratica->getServizio()->getName() . ' - ' . $pratica->getUser()->getFullName() . ' ('. end($praticaIdParts) .')';
+
+    if ($type == self::TYPE_SEND_ATTACHMENT) {
+      $subject .= ' - allegato';
+    }
+
+
     $message = \Swift_Message::newInstance()
-      ->setSubject($pratica->getServizio()->getName() . ' - ' . $pratica->getUser()->getFullName() . ' ('. end($praticaIdParts) .')')
+      ->setSubject($subject)
       ->setFrom($sender, 'Stanza del Cittadino')
       ->setTo($receiver, $ente->getName())
       ->setBody(
@@ -266,10 +306,8 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    */
   private function checkParameters($parameters)
   {
-    foreach ($this->getConfigParameters() as $parameter) {
-      if ( !isset($parameters[$parameter])) {
-        throw new \Exception("Missing required field: " . $parameter);
-      }
+    if ( !isset($parameters['receiver'])) {
+      throw new \Exception("Missing required field: receiver");
     }
   }
 }

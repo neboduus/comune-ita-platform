@@ -18,8 +18,6 @@ $(document).ready(function () {
   const scheduledTo = $('#general_data_scheduled_to').parent();
   const hideScheduler = function () {
 
-    console.log(serviceStatus.val());
-
     if (serviceStatus.val() === '4') {
       scheduledFrom.show();
       scheduledTo.show();
@@ -325,6 +323,17 @@ $(document).ready(function () {
         $('#integrations_data_action').attr('disabled', 'disabled');
       } else {
         $('#integrations_data_action').removeAttr('disabled');
+      }
+    })
+  }
+
+  // Protocol data
+  if ($('#protocol_data_flow_service_step').length) {
+    $('#protocol_data_protocol_required').change(function () {
+      if(this.checked) {
+        $('.protocollo_params').removeAttr('disabled');
+      } else {
+        $('.protocollo_params').attr('disabled', 'disabled');
       }
     })
   }
