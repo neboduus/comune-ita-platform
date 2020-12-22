@@ -72,6 +72,8 @@ class FormIORenderType extends AbstractType
 
   private $genericViolationMessage = "Il form non sembra essere compilato correttamente";
 
+  private $attachmentsViolationMessage = "Si è verificato un problema durante il salvataggio degli allegati, si prega di ricompilare la domanda e ripetere l'invio.";
+
   private $paymentViolationMessage = "Si è verificato un problema con i dati del pagamento, impossibile inviare la pratica";
 
   private $constraintGroups = ['flow_formIO_step1', 'flow_FormIOAnonymous_step1', 'Default'];
@@ -254,6 +256,9 @@ class FormIORenderType extends AbstractType
           if ($attachment instanceof Allegato) {
             $attachments[] = $id;
             $pratica->addAllegato($attachment);
+          } else {
+            $this->logger->error("The file present in form schema doesn't exist in database", ['pratica' => $pratica->getId(), 'allegato' => $id]);
+            $event->getForm()->addError(new FormError($this->attachmentsViolationMessage));
           }
         }
       }
