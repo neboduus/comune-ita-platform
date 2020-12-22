@@ -32,7 +32,7 @@ gzip
 
 log stdout
 errors stdout
-on startup php-fpm7 --nodaemonize
+on startup php-fpm --nodaemonize
 
 
 
