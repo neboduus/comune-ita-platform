@@ -63,6 +63,7 @@ servizio:
   sospeso: 'Al momento il servizio non è attivo'
   schedulato: 'Il servizio è attivo dal %from% al %to%'
   accedi_al_servizio: 'Accedi al servizio %name%'
+  browser_restricted: "Il sistema ha rilevato l'utilizzo di un browser non supportato o datato, la preghiamo di riprovare ad accedere con un browser aggiornato."
   attivo_per: "Servizio attivo per:"
   servizi_area_title: '%area%'
   vai: "Vai al servizio"

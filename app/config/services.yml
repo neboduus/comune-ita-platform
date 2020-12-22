@@ -850,12 +850,13 @@ services:
       - "@templating"
       - "%formserver_public_url%"
       - '@AppBundle\Services\UserSessionService'
+      - '@AppBundle\Utils\BrowserParser'
     tags:
       - { name: ocsdc.servizio.handler, alias: default }
 
   ocsdc.handlers.servizio.imis:
     class: AppBundle\Handlers\Servizio\ImisHandler
-    arguments: [ "@security.token_storage", "@logger", "@router" ]
+    arguments: [ "@security.token_storage", "@logger", "@router", '@AppBundle\Utils\BrowserParser' ]
     tags:
       - { name: ocsdc.servizio.handler, alias: ocsdc.servizio.handler }
 
@@ -905,3 +906,6 @@ services:
 
   AppBundle\Services\UserSessionService:
     autowire: true
+
+  AppBundle\Utils\BrowserParser:
+    arguments: ['%browsers_restrictions%']

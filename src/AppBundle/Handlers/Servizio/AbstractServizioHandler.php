@@ -6,10 +6,12 @@ namespace AppBundle\Handlers\Servizio;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
+use AppBundle\Utils\BrowserParser;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\User\UserInterface;
+use WhichBrowser\Parser;
 
 abstract class AbstractServizioHandler implements ServizioHandlerInterface
 {
@@ -32,12 +34,24 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
    * @var UrlGeneratorInterface
    */
   protected $router;
+  /**
+   * @var BrowserParser
+   */
+  private $browserParser;
 
-  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
+  /**
+   * AbstractServizioHandler constructor.
+   * @param TokenStorage $tokenStorage
+   * @param LoggerInterface $logger
+   * @param UrlGeneratorInterface $router
+   * @param BrowserParser $browserParser
+   */
+  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router, BrowserParser $browserParser)
   {
     $this->tokenStorage = $tokenStorage;
     $this->logger = $logger;
     $this->router = $router;
+    $this->browserParser = $browserParser;
   }
 
   /**
@@ -108,6 +122,12 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
         throw new ForbiddenAccessException('servizio.schedulato', ['%from%' => $servizio->getScheduledFrom()->format($format), '%to%' => $servizio->getScheduledTo()->format($format)]);
       }
     }
+
+    // Check Browser
+    if ($this->browserParser->isBrowserRestricted()) {
+      throw new ForbiddenAccessException('servizio.browser_restricted');
+    }
+
 
     // il servizio ha un servizio parent? controlla le pratiche di $this->getUser() per $servizio->getParent() (o getParents()??)
 

@@ -7,6 +7,7 @@ use AppBundle\Entity\Ente;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\PraticaFlowRegistry;
 use AppBundle\Services\UserSessionService;
+use AppBundle\Utils\BrowserParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,31 +20,37 @@ class DefaultHandler extends AbstractServizioHandler
 {
   protected $errorMessage = "Errore inatteso: contattare il supporto";
 
-  /**
-   * @var $em EntityManagerInterface
-   */
+  /** @var $em EntityManagerInterface */
   protected $em;
 
-  /**
-   * @var PraticaFlowRegistry
-   */
+  /** @var PraticaFlowRegistry */
   protected $flowRegistry;
 
-  /**
-   * @var SessionInterface
-   */
+  /** @var SessionInterface */
   protected $session;
 
   /** @var EngineInterface */
   protected $templating;
 
+  /** @var string */
   protected $formServerPublicUrl;
 
-  /**
-   * @var UserSessionService
-   */
+  /** @var UserSessionService */
   protected $userSessionService;
 
+  /**
+   * DefaultHandler constructor.
+   * @param TokenStorage $tokenStorage
+   * @param LoggerInterface $logger
+   * @param UrlGeneratorInterface $router
+   * @param EntityManagerInterface $em
+   * @param PraticaFlowRegistry $flowRegistry
+   * @param SessionInterface $session
+   * @param EngineInterface $templating
+   * @param $formServerPublicUrl
+   * @param UserSessionService $userSessionService
+   * @param BrowserParser $browserParser
+   */
   public function __construct(
     TokenStorage $tokenStorage,
     LoggerInterface $logger,
@@ -53,7 +60,8 @@ class DefaultHandler extends AbstractServizioHandler
     SessionInterface $session,
     EngineInterface $templating,
     $formServerPublicUrl,
-    UserSessionService $userSessionService
+    UserSessionService $userSessionService,
+    BrowserParser $browserParser
   ) {
     $this->em = $em;
     $this->flowRegistry = $flowRegistry;
@@ -62,7 +70,7 @@ class DefaultHandler extends AbstractServizioHandler
     $this->formServerPublicUrl = $formServerPublicUrl;
     $this->userSessionService = $userSessionService;
 
-    parent::__construct($tokenStorage, $logger, $router);
+    parent::__construct($tokenStorage, $logger, $router, $browserParser);
   }
 
   /**
