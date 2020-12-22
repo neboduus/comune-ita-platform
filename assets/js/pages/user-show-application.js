@@ -1,6 +1,5 @@
 import '../../css/app.scss';
 import '../core';
-import '../utils/TextEditor';
 
 
 import Calendar from '../Calendar';
@@ -8,6 +7,7 @@ import PageBreak from '../PageBreak';
 import FinancialReport from "../FinancialReport";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
+import {TextEditor} from "../utils/TextEditor";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('pagebreak', PageBreak);
@@ -48,6 +48,7 @@ $(document).ready(function () {
     })
   }
 
-
+  //Init TextArea
+  TextEditor.init();
 
 });

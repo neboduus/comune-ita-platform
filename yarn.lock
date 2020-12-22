@@ -8319,10 +8319,22 @@ stylehacks@^4.0.0:
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
 
+summernote-cleaner@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/summernote-cleaner/-/summernote-cleaner-1.0.0.tgz#bfe39376e177a48e61f0922a37b24e270054c2a9"
+  integrity sha1-v+OTduF3pI5h8JIqN7JOJwBUwqk=
+  dependencies:
+    summernote "^0.8.2"
+
 summernote@0.8.12:
   version "0.8.12"
   resolved "https://registry.yarnpkg.com/summernote/-/summernote-0.8.12.tgz#563502ed882abde9daab9db1e7eba330d37ac020"
   integrity sha512-RVEJoIyztwPpopTwZvjag1WOvbmhUGFe6Mc9RADzzcX1ogG8pIXCB88icu/vjNYihITrzj2zZsoFMcDRHSlhEA==
+
+summernote@^0.8.2:
+  version "0.8.18"
+  resolved "https://registry.yarnpkg.com/summernote/-/summernote-0.8.18.tgz#be5c368b1c92de8a05039a9976157bdea7aae386"
+  integrity sha512-VlwBaNm9vSYMYXvO2f3UCUmY0Gm8jxLcBn+D08aX3pKs4x2vAoyQ4DcDQ6D+PchQiLrf86AGQVfVu56F4aP3ug==
 
 supports-color@6.1.0, supports-color@^6.1.0:
   version "6.1.0"
