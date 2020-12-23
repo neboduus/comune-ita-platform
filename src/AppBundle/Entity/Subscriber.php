@@ -197,6 +197,8 @@ class Subscriber
         return $this;
     }
 
+
+
     public function getAddress(): ?string
     {
         return $this->address;
@@ -255,5 +257,10 @@ class Subscriber
         $this->email = $email;
 
         return $this;
+    }
+
+    public function getCompleteName(): ?string
+    {
+      return $this->name . ' ' . $this->surname;
     }
 }

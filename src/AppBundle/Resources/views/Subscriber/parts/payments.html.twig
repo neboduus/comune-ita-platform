@@ -1,0 +1,66 @@
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+<script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
+
+<script>
+    $(function () {
+        $('#payments_table').initDataTables({{ datatable_settings(datatable) }}, {
+            dom: 'fBrtip',
+            searching: true,
+            orderable: true,
+            paging: true,
+            pagingType: 'simple_numbers',
+            "language": {
+                "sEmptyTable": "Nessun dato presente nella tabella",
+                "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
+                "sInfoEmpty": "Vista da 0 a 0 di 0 elementi",
+                "sInfoFiltered": "(filtrati da _MAX_ elementi totali)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "Visualizza _MENU_ elementi",
+                "sLoadingRecords": "Caricamento...",
+                "sProcessing": '<div class="progress-spinner progress-spinner-double progress-spinner-active">\n' +
+                    '        <div class="progress-spinner-inner"></div>\n' +
+                    '        <div class="progress-spinner-inner"></div>\n' +
+                    '        <span class="sr-only">Caricamento...</span>\n' +
+                    '      </div>',
+                "sSearch": "Ricerca",
+                "sZeroRecords": "La ricerca non ha portato alcun risultato.",
+                "oPaginate": {
+                    "sFirst": "Inizio",
+                    "sPrevious": "Precedente",
+                    "sNext": "Successivo",
+                    "sLast": "Fine"
+                },
+                "oAria": {
+                    "sSortAscending": ": attiva per ordinare la colonna in ordine crescente",
+                    "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+                }
+            },
+            "serverSide": true,
+            initComplete: function () {
+                // Add data-title attribute
+                $('#payments_table thead tr th').each(function (index, element) {
+                    index += 1;
+                    $('tr td:nth-child(' + index + ')').attr('data-title', element.innerHTML);
+                });
+
+                // Use bootstrap buttons for pagination
+                $('a.paginate_button').addClass('btn');
+                // Add margin bottom to datatables info
+                $('#dt_info').css('margin-bottom', '0.85em')
+            }
+        }).then(function (dt) {})
+    });
+</script>
+
+<div class="mt-4">
+  <h3>Pagamenti</h3>
+</div>
+<div class="col-lg-12 px-lg-4 py-lg-2 my-4">
+  <div id="no-more-tables" class="table-striped">
+    <div id="payments_table"></div>
+  </div>
+</div>

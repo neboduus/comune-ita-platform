@@ -45,4 +45,14 @@ $(document).ready(function () {
     }
 
   });
+
+  $('.copy').click(function (e) {
+    e.preventDefault();
+    let button = $(this);
+    let temp = $("<input>");
+    $("body").append(temp);
+    temp.val(button.data('copy')).select();
+    document.execCommand("copy");
+    temp.remove();
+  })
 });

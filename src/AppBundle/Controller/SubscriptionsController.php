@@ -4,11 +4,17 @@
 namespace AppBundle\Controller;
 
 use AppBundle\BackOffice\SubcriptionsBackOffice;
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Subscription;
+use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
 
 use AppBundle\Entity\User;
-use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use AppBundle\Services\ModuloPdfBuilderService;
+use Doctrine\DBAL\Driver\Exception;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -16,36 +22,53 @@ use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
  * Class SubscriptionsController
- * @package AppBundle\Controller
- * @Route("/operatori/subscriptions")
  */
 class SubscriptionsController extends Controller
 {
   use DataTablesTrait;
-  private $subscriptionsBackOffice;
 
-  public function __construct(SubcriptionsBackOffice $subscriptionsBackOffice)
+  private $subscriptionsBackOffice;
+  /**
+   * @var EntityManager
+   */
+  private $entityManager;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+  /**
+   * @var ModuloPdfBuilderService
+   */
+  private $pdfBuilderService;
+
+  public function __construct(EntityManager $entityManager, ModuloPdfBuilderService $pdfBuilderService, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
+    $this->entityManager = $entityManager;
+    $this->translator = $translator;
+    $this->pdfBuilderService = $pdfBuilderService;
   }
 
   /**
    * Lists all subscriptions entities.
    * @Template()
-   * @Route("/{subscriptionService}", name="operatori_subscriptions")
+   * @Route("/operatori/subscriptions/{subscriptionService}", name="operatori_subscriptions")
    */
   public function showSubscriptionsAction(Request $request, SubscriptionService $subscriptionService)
   {
-    /** @var User $user */
+    /** @var OperatoreUser $user */
     $user = $this->getUser();
 
     $table = $this->createDataTable()
@@ -96,7 +119,7 @@ class SubscriptionsController extends Controller
 
   /**
    * @param Request $request
-   * @Route("/{subscriptionService}/upload",name="operatori_importa_csv_iscrizioni")
+   * @Route("/operatori/subscriptions/{subscriptionService}/upload",name="operatori_importa_csv_iscrizioni")
    * @Method("POST")
    * @return mixed
    * @throws \Exception
@@ -168,7 +191,7 @@ class SubscriptionsController extends Controller
    * @Method("GET")
    * @param Request $request the request
    * @param Subscription $subscription The Subscription entity
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   * @return RedirectResponse
    */
   public function deleteSubscriptionAction(Request $request, Subscription $subscription)
   {
@@ -208,5 +231,355 @@ class SubscriptionsController extends Controller
       fclose($handle);
     }
     return $data;
+  }
+
+  /**
+   * @Route("/subscriptions/", name="subscriptions_list_cpsuser")
+   * @Template()
+   * @return array
+   */
+  public function cpsUserListSubscriptionAction(): array
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+
+    $userSubscriptions = $this->entityManager->createQueryBuilder()
+      ->select('subscription')
+      ->from(Subscription::class, 'subscription')
+      ->join('subscription.subscriber', 'subscriber')
+      ->where('subscriber.fiscal_code = :fiscal_code')
+      ->setParameter('fiscal_code', $user->getCodiceFiscale())
+      ->getQuery()->getResult();
+
+    try {
+      // Get shared subscriptions
+      $sql = 'SELECT DISTINCT subscription.id from subscription where (related_cfs)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\'';
+      $stmt = $this->entityManager->getConnection()->prepare($sql);
+      $stmt->execute();
+      $sharedIds = $stmt->fetchAll();
+    } catch (Exception | \Doctrine\DBAL\Exception $e) {
+      $sharedIds = [];
+    }
+
+    foreach ($sharedIds as $id) {
+      $userSubscriptions[] = $this->entityManager->getRepository('AppBundle:Subscription')->find($id);
+    }
+
+    return [
+      'subscriptions' => $userSubscriptions,
+      'user' => $user
+    ];
+  }
+
+  /**
+   * @Route("/subscriptions/{subscriptionId}", name="subscription_show_cpsuser")
+   * @Template()
+   * @param Request $request
+   * @param $subscriptionId
+   * @return array|Response
+   */
+  public function cpsUserShowSubscriptionAction(Request $request, $subscriptionId)
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+    $subscription = $this->entityManager->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+    if (!$subscription) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
+      return $this->redirectToRoute('subscriptions_list_cpsuser');
+    }
+
+    if (!$this->canUserAccessSubscription($subscription)) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.accesso_negato'));
+      return $this->redirectToRoute('subscriptions_list_cpsuser');
+    }
+
+    return [
+      'subscription' => $subscription,
+      'user' => $user
+    ];
+  }
+
+  /**
+   * @Route("/subscriptions/{subscriptionId}/payment/{subscriptionPaymentId}", name="subscription_payment_show_cpsuser")
+   * @Template()
+   * @param Request $request
+   * @param $subscriptionId
+   * @param $subscriptionPaymentId
+   * @return array|Response
+   */
+  public function cpsUserShowSubscriptionPaymentAction(Request $request, $subscriptionId, $subscriptionPaymentId)
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+    $subscriptionPayment = $this->entityManager->getRepository('AppBundle:SubscriptionPayment')->find($subscriptionPaymentId);
+
+    if (!$subscriptionPayment or $subscriptionPayment->getSubscription()->getId() !== $subscriptionId) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_pagamento'));
+      return $this->redirectToRoute('subscription_show_cpsuser', ["subscriptionId" => $subscriptionId]);
+    }
+
+
+    if (!$this->canUserAccessSubscription($subscriptionPayment->getSubscription())) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.accesso_negato'));
+      return $this->redirectToRoute('subscriptions_list_cpsuser');
+    }
+
+    return [
+      'payment' => $subscriptionPayment,
+      'user' => $user
+    ];
+  }
+
+  /**
+   * @param Request $request
+   * @param $subscriptionId
+   * @param $subscriptionPaymentId
+   * @return Response
+   * @Route("/subscriptions/{subscriptionId}/certificate/{subscriptionPaymentId}", name="payment_certificate_download_cpsuser")
+   */
+  public function cpsUserPaymentCertificareDownloadAction(Request $request, $subscriptionId, $subscriptionPaymentId): Response
+  {
+    /** @var SubscriptionPayment $subscriptionPayment */
+    $subscriptionPayment = $this->entityManager->getRepository('AppBundle:SubscriptionPayment')->find($subscriptionPaymentId);
+
+    if (!$subscriptionPayment or $subscriptionPayment->getSubscription()->getId() !== $subscriptionId) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_pagamento'));
+      return $this->redirectToRoute('subscription_show_cpsuser', ["subscriptionId" => $subscriptionId]);
+    }
+
+    if (!$this->canUserAccessSubscription($subscriptionPayment->getSubscription())) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.accesso_negato'));
+      return $this->redirectToRoute('subscriptions_list_cpsuser');
+    }
+
+    return $this->createBinaryResponseForCertificate($subscriptionPayment);
+  }
+
+  /**
+   * @param Request $request
+   * @param $subscriptionId
+   * @param $subscriptionPaymentId
+   * @return Response
+   * @Route("/operatori/{subscriptionId}/certificate/{subscriptionPaymentId}", name="payment_certificate_download_operatore")
+   */
+  public function operatorePaymentCertificareDownloadAction(Request $request, $subscriptionId, $subscriptionPaymentId): Response
+  {
+    /** @var SubscriptionPayment $subscriptionPayment */
+    $subscriptionPayment = $this->entityManager->getRepository('AppBundle:SubscriptionPayment')->find($subscriptionPaymentId);
+
+    if (!$subscriptionPayment or $subscriptionPayment->getSubscription()->getId() !== $subscriptionId) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_pagamento'));
+      return $this->redirectToRoute('operatori_subscriptions');
+    }
+
+    return $this->createBinaryResponseForCertificate($subscriptionPayment);
+  }
+
+
+  /**
+   * @param SubscriptionPayment $subscriptionPayment
+   * @return Response
+   */
+  private function createBinaryResponseForCertificate(SubscriptionPayment $subscriptionPayment): Response
+  {
+    $fileContent = $this->pdfBuilderService->renderForSubscriptionPayment($subscriptionPayment);
+
+    // Provide a name for your file with extension
+    $filename = $subscriptionPayment->getId() . '.pdf';
+    $response = new Response($fileContent);
+    $disposition = $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $filename
+    );
+    $response->headers->set('Content-Disposition', $disposition);
+    return $response;
+  }
+
+  /**
+   * @param Request $request
+   * @param $subscriptionId
+   * @param $fiscalCode
+   * @return Response|void
+   * @Route("/operatori/{subscriptionId}/unshare/{fiscalCode}", name="unshare_subscription_operatore")
+   */
+  public function operatoreUnshareSubscriptionAction(Request $request, $subscriptionId, $fiscalCode): Response
+  {
+
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+
+    $subscription = $this->entityManager->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+    if (!$subscription) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
+      return $this->redirectToRoute('operatori_subscriptions');
+    }
+
+    $subscription = $subscription->removeRelatedCf($fiscalCode);
+    try {
+      $this->entityManager->persist($subscription);
+      $this->entityManager->flush();
+    } catch (ORMException $e) {
+      $this->addFlash('danger', $this->translator->trans('iscrizioni.errore_salvataggio'));
+    }
+
+    return $this->redirectToRoute('operatori_subscriber_show', [
+        'subscriber' => $subscription->getSubscriber()->getId(),
+        'tab' => 'subscriptions',
+        'show_subscription' => $subscriptionId]
+    );
+  }
+
+  /**
+   * @param Request $request
+   * @param $subscriptionId
+   * @param $fiscalCode
+   * @return Response|void
+   * @Route("/subscriptions/{subscriptionId}/unshare/{fiscalCode}", name="unshare_subscription_cpsuser")
+   */
+  public function cpsUserUnshareSubscriptionAction(Request $request, $subscriptionId, $fiscalCode): Response
+  {
+
+    /** @var Subscription $subscription */
+    $subscription = $this->entityManager->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+    if (!$subscription) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
+      return $this->redirectToRoute('subscriptions_list_cpsuser');
+    }
+
+    if (!$this->canUserEditSubscription($subscription)) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.modifica_negata'));
+      return $this->redirectToRoute('subscription_show_cpsuser', ['subscriptionId' => $subscriptionId]);
+    }
+
+    $subscription = $subscription->removeRelatedCf($fiscalCode);
+    try {
+      $this->entityManager->persist($subscription);
+      $this->entityManager->flush();
+    } catch (ORMException $e) {
+      $this->addFlash('danger', $this->translator->trans('iscrizioni.errore_salvataggio'));
+    }
+
+    return $this->redirectToRoute('subscription_show_cpsuser', [
+      'subscriptionId' => $subscriptionId
+    ]);
+  }
+
+
+  /**
+   * @param Request $request
+   * @param $subscriptionId
+   * @return Response|void
+   * @Method("POST")
+   * @Route("/operatori/{subscriptionId}/share", name="subscription_share_operatore")
+   */
+  public function operatoreShareSubscriptionAction(Request $request, $subscriptionId): Response
+  {
+    $subscription = $this->entityManager->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+    if (!$subscription) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
+      return $this->redirectToRoute('operatori_subscriptions');
+    }
+
+    $shares = explode(',', str_replace(' ', '', $request->get("shares")));
+    foreach ($shares as $fiscalCode) {
+      if (strlen($fiscalCode) !== 16) {
+        $this->addFlash('warning', $this->translator->trans('iscrizioni.cf_non_valido', ["%fiscal_code%" => $fiscalCode]));
+      } else {
+        $subscription = $subscription->addRelatedCf($fiscalCode);
+      }
+    }
+
+    try {
+      $this->entityManager->persist($subscription);
+      $this->entityManager->flush();
+    } catch (ORMException $e) {
+      $this->addFlash('danger', $this->translator->trans('iscrizioni.errore_salvataggio'));
+    }
+
+    return $this->redirectToRoute('operatori_subscriber_show', [
+      'subscriber' => $subscription->getSubscriber()->getId(),
+      'tab' => 'subscriptions',
+      'show_subscription' => $subscriptionId
+    ]);
+  }
+
+  /**
+   * @param Request $request
+   * @param $subscriptionId
+   * @return Response|void
+   * @Method("POST")
+   * @Route("/subscriptions/{subscriptionId}/share", name="subscription_share_cpsuser")
+   */
+  public function cpsUserShareSubscriptionAction(Request $request, $subscriptionId): Response
+  {
+    /** @var Subscription $subscription */
+    $subscription = $this->entityManager->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+    if (!$subscription) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
+      return $this->redirectToRoute('subscriptions_list_cpsuser');
+    }
+
+    if (!$this->canUserEditSubscription($subscription)) {
+      $this->addFlash('warning', $this->translator->trans('iscrizioni.modifica_negata'));
+      return $this->redirectToRoute('subscription_show_cpsuser', ['subscriptionId' => $subscriptionId]);
+    }
+
+    $shares = explode(',', str_replace(' ', '', $request->get("shares")));
+    foreach ($shares as $fiscalCode) {
+      if (strlen($fiscalCode) !== 16) {
+        $this->addFlash('warning', $this->translator->trans('iscrizioni.cf_non_valido', ["%fiscal_code%" => $fiscalCode]));
+      } else {
+        $subscription = $subscription->addRelatedCf($fiscalCode);
+      }
+    }
+
+    try {
+      $this->entityManager->persist($subscription);
+      $this->entityManager->flush();
+    } catch (ORMException $e) {
+      $this->addFlash('danger', $this->translator->trans('iscrizioni.errore_salvataggio'));
+    }
+
+    return $this->redirectToRoute('subscription_show_cpsuser', [
+      'subscriptionId' => $subscriptionId
+    ]);
+  }
+
+
+  /**
+   * @param Subscription $subscription
+   * @return bool
+   */
+  private function canUserAccessSubscription(Subscription $subscription): bool
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+
+    if ($subscription->getSubscriber()->getFiscalCode() !== $user->getCodiceFiscale() and !in_array($user->getCodiceFiscale(), $subscription->getRelatedCFs())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * @param Subscription $subscription
+   * @return bool
+   */
+  private function canUserEditSubscription(Subscription $subscription): bool
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+
+    if ($subscription->getSubscriber()->getFiscalCode() !== $user->getCodiceFiscale()) {
+      return false;
+    }
+
+    return true;
   }
 }

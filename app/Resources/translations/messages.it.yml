@@ -44,6 +44,7 @@ nav:
   profilo: 'Il mio profilo'
   allegati: 'I miei allegati'
   documenti: 'I miei documenti'
+  iscrizioni: 'Le mie iscrizioni'
   informativa_privacy: 'Informativa per il trattamento dati personali'
   operatori:
     panello_controllo: "Elenco pratiche"
@@ -259,6 +260,48 @@ STATUS_REGISTERED_AFTER_INTEGRATION: 'Integrazioni protocollate'
 STATUS_PENDING_AFTER_INTEGRATION: 'Presa in carico in seguito a integrazioni'
 STATUS_PROCESSING: 'In elaborazione'
 STATUS_WITHDRAW: 'Ritirata'
+
+iscrizioni:
+  iscrizioni: "Iscrizioni"
+  le_mie_iscrizioni: "Le mie iscrizioni"
+  iscrizioni_delegate: "Iscrizioni a cui ho accesso"
+  no_iscrizioni: "Non sono presenti iscrizioni"
+  no_pagamenti: "Non sono presenti pagamenti relativi a questa iscrizione"
+  no_iscrizione: "L'iscrizione cercata non esiste oppure è stata cancellata"
+  no_pagamento: "Il pagamento cercato non esiste oppure è stato cancellato"
+  accesso_negato: "Non hai i permessi necessari per visualizzare questa iscrizione"
+  modifica_negata: "Non hai i permessi necessari per modificare questa iscrizione"
+  torna_alle_iscrizioni: "Torna alle iscrizioni"
+  torna_all_iscrizione: "Torna all'iscrizione"
+  condividi: "Condividi"
+  condividi_con: "Condividi con"
+  condividi_iscrizione: "Condividi iscrizione"
+  descrizione_condividi: "Per condividere le informazioni di questa iscrizione con altre persone, indicare i codici fiscali nello spazio sovrastante"
+  cf_non_valido: "Il codice fiscale %fiscal_code% non risulta essere un codice fiscale valido"
+  pagamenti: "Pagamenti"
+  pagamento:
+    importo: "Importo"
+    data_esecuzione: "Data di esecuzione"
+    riferimento_pratica: "Riferimento pratica"
+    beneficiario: "Beneficiario"
+    cf_beneficiario: "Codice fiscale del beneficiario"
+  certificato_pagamento:
+    testo: "Su richiesta dell'interessato, visti gli atti d'ufficio, si dichiara che lo studente/la
+                                         studentessa <b>%completeName%</b>, nato/a a <b>%placeOfBirth%</b> il <b>%dateOfBirth%</b>
+                                         C.F. <b>%fiscalCode%</b> nell'anno %paymentYear% ha
+                                         sostenuto la seguente spesa:"
+    importo: "Euro <b>%amount%</b> quale %name%"
+  data_iscrizione: "Data di iscrizione"
+  num_condivisioni: "%num% condivisioni"
+  condivisioni: "Condivisioni"
+  no_condivisioni: "Questa iscrizione non è condivisa con nessuno"
+  quota_iscrizione:
+    nome: "Quota di iscrizione - %subscription_name% - %subscriber_completename% %subscriber_fiscal_code%"
+    descrizione: "Quota di iscrizione"
+  status_0: "Sospeso"
+  status_1: "Attivo"
+  status_2: "Non attivo"
+  errore_salvataggio: "Si è verificato un errore durante il salvataggio dell'iscrizione"
 
 documenti:
   i_miei_documenti: "I miei documenti"

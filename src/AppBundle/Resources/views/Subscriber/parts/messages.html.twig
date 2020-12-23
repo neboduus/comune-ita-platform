@@ -1,0 +1,14 @@
+<div class="mt-4">
+  <h3>Messaggi</h3>
+</div>
+<div class="my-4">
+  {{ form_start(form) }}
+  {{ form_errors(form) }}
+  {{ form_row(form.subject) }}
+  {{ form_row(form.message) }}
+  {{ form_row(form.autoSend) }}
+  <div class="row">
+    <input class="btn btn-primary mr-1" type="submit" value="Invia"/>
+  </div>
+  {{ form_end(form) }}
+</div>
