@@ -1,0 +1,143 @@
+<div class="mt-4">
+  <h3>Iscrizioni</h3>
+</div>
+<div class="my-4">
+  <div class="collapse-div" role="tablist">
+    {% for subscription in subscriber.subscriptions %}
+    <div class="collapse-header" id="{{ subscription.subscriptionService.code }}">
+      <button data-toggle="collapse" data-target="#collapse_{{ subscription.subscriptionService.code }}"
+              aria-expanded="false"
+              aria-controls="collapse_{{ subscription.subscriptionService.code }}">
+        <div class="row">
+          <div class="col-8">{{ subscription.subscriptionService.name }}</div>
+          <div class="col-4">
+            <div class="chip chip-primary float-right">
+              <span class="chip-label"><b>{{ ('iscrizioni.status_'~subscription.subscriptionService.status)| trans }}</b></span>
+            </div>
+          </div>
+        </div>
+      </button>
+    </div>
+    <div id="collapse_{{ subscription.subscriptionService.code }}" class="collapse {% if show_subscription is defined and show_subscription == subscription.id %} show {% endif %}" role="tabpanel"
+         aria-labelledby="{{ subscription.subscriptionService.code }}">
+      <div class="collapse-body mx-4">
+        <div class="mt-3">
+          <div><b>{{ 'iscrizioni.data_iscrizione' | trans }}</b></div>
+          <div class="mt-3">
+            <svg class="icon icon-sm mx-2">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+            </svg>
+            {{ subscription.createdAt | date(ocsdc_slim_datetime_format) }}</div>
+        </div>
+        <div class="mt-3">
+          <div>
+            <b>{{ 'iscrizioni.condivisioni' | trans }}</b>
+            <a data-toggle="modal" data-target="#{{ subscription.subscriptionService.code }}_modal">
+              <svg class="icon icon-sm mx-2 icon-300">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+              </svg>
+            </a>
+            <!-- Modal -->
+            <div class="modal fade" tabindex="-1" role="dialog" id="{{ subscription.subscriptionService.code }}_modal">
+              <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <svg class="icon">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-share"></use>
+                    </svg>
+                    <h5 class="modal-title align-self-center">{{ 'iscrizioni.condividi_iscrizione' | trans }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                      <svg class="icon">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="{{ path('subscription_share_operatore', {'subscriptionId': subscription.id }) }}" method="post">
+                        <label class="font-weight-semibold" for="shares">{{ 'iscrizioni.condividi_con' | trans }}</label>
+                        <div class="form-group">
+                          <input type="text" class="form-control" id="shares" name="shares" placeholder="Inserisci una lista di codici fiscali separati da virgola" required>
+                        </div>
+                      <input class="btn btn-primary btn-sm float-right" type="submit" value="{{ 'iscrizioni.condividi' | trans }}">
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <span class="small font-italic text-300">{{ 'iscrizioni.descrizione_condividi' | trans }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3">
+            {% if subscription.relatedCfs is empty %}
+              <p class="font-italic">{{ 'iscrizioni.no_condivisioni' | trans }}</p>
+            {% else %}
+              <ul class="list-unstyled">
+                {% for fiscalCode in subscription.relatedCfs %}
+                  <li>
+                    <svg class="icon icon-sm mx-2">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+                    </svg>
+                    {{ fiscalCode }}
+                    <a
+                      href="{{ path('unshare_subscription_operatore', {'subscriptionId': subscription.id, 'fiscalCode': fiscalCode}) }}">
+                      <svg class="icon icon-sm mx-2 icon-danger">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                      </svg>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+          <div class="mt-3">
+          <div><b>{{ 'iscrizioni.pagamenti' | trans }}</b></div>
+          <div class="mt-3">
+            {% if subscription.subscriptionPayments is empty %}
+              <p class="font-italic mt-3">{{ 'iscrizioni.no_pagamenti' | trans }}</p>
+            {% else %}
+              <table id="payments_table" class="table table-hover mt-3">
+                {% for payment in subscription.subscriptionPayments %}
+                  <tr>
+                    <td class="align-middle">
+                      <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica alla quale è associato il pagamento" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{payment.externalKey}}">
+                        <svg class="icon">
+                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
+                        </svg>
+                      </button>
+                    </td>
+                    <td class="align-middle">
+                      <a class="text-decoration-none text-black"
+                         href="{{ path('payment_certificate_download_operatore', {"subscriptionId": subscription.id, "subscriptionPaymentId": payment.id }) }}">
+                        {{ payment.name }}
+                      </a>
+                    </td>
+                    <td class="d-none d-none d-lg-table-cell align-middle">
+                      <code>{{ payment.amount }} €</code>
+                    </td>
+                    <td class="d-none d-none d-lg-table-cell align-middle">
+                      {{ payment.paymentDate | date(ocsdc_default_date_format) }}
+                    </td>
+                    <td class="d-none d-none d-lg-table-cell align-middle">
+                      <div class="float-right">
+                        <a id="downloadCertificate"
+                           href="{{ path('payment_certificate_download_operatore', {"subscriptionId": subscription.id, "subscriptionPaymentId": payment.id }) }}"
+                           download>
+                          <svg class="icon icon-primary">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                          </svg>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </table>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>

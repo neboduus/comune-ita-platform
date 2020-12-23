@@ -42,6 +42,9 @@ class SubscriberController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
+    $tab = $request->query->get('tab');
+    $showSubscription = $request->query->get('show_subscription');
+
     $tableData = [];
     $subscriptionServices = [];
 
@@ -92,9 +95,9 @@ class SubscriberController extends Controller
         return sprintf('<span>%s €</span>', number_format ( $value, 2 ));
       }])
       ->add('payment_date', DateTimeColumn::class, ['label' => 'Scadenza', 'format' => 'd/m/Y', 'searchable' => false, 'orderable' => true])
-      ->add('stato', TextColumn::class, ['label' => 'Stato', 'searchable' => false, 'orderable' => true, 'render' => function ($value, $subscription) {
+      /*->add('stato', TextColumn::class, ['label' => 'Stato', 'searchable' => false, 'orderable' => true, 'render' => function ($value, $subscription) {
         return sprintf('<svg class="icon icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>');
-      }])
+      }])*/
       ->createAdapter(ArrayAdapter::class, $tableData)
       ->handleRequest($request);
 
@@ -105,10 +108,10 @@ class SubscriberController extends Controller
     // Message
     $subscriberMessage = new SubscriberMessage();
     $subscriberMessage->setSubscriber($subscriber);
-    $form = $this->createForm('AppBundle\Form\SubscriberMessageType', $subscriberMessage);
-    $form->handleRequest($request);
+    $messageForm = $this->createForm('AppBundle\Form\SubscriberMessageType', $subscriberMessage);
+    $messageForm->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
+    if ($messageForm->isSubmitted() && $messageForm->isValid()) {
       $this->mailer->dispatchMailForSubscriber($subscriberMessage, $this->defaultSender, $this->getUser());
       $this->addFlash('feedback', 'Messaggio inviato');
 
@@ -118,8 +121,10 @@ class SubscriberController extends Controller
     return array(
       'user' => $user,
       'subscriber' => $subscriber,
+      'tab'=> $tab,
+      'show_subscription' => $showSubscription,
       'datatable' => $table,
-      'form' => $form->createView(),
+      'message_form' => $messageForm->createView(),
     );
   }
 }

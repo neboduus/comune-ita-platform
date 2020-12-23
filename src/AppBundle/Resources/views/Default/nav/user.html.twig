@@ -1,3 +1,4 @@
+{% set ente = instance_service.getCurrentInstance() %}
 
 {% if is_granted('ROLE_OPERATORE') %}
   <div class="bg-100 pt-3 pb-3">
@@ -125,6 +126,13 @@
                     {{ 'nav.documenti'|trans }}
                   </a>
                 </li>
+                {% if 'operatori_subscription-service_index' in ente.backofficeEnabledIntegrations %}
+                  <li class="nav-item {% if 'iscrizioni' in app.request.pathInfo %} active {% endif %}">
+                    <a class="nav-link " href="{{ path('subscriptions_list_cpsuser') }}">
+                      {{ 'nav.iscrizioni'|trans }}
+                    </a>
+                  </li>
+                {% endif %}
               {% endif %}
             </ul>
           </div>

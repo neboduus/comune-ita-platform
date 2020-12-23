@@ -18,6 +18,7 @@ use AppBundle\Entity\RispostaOperatoreDTO;
 use AppBundle\Entity\Ritiro;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
@@ -629,6 +630,21 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       self::SCHEDULED_CREATE_FOR_PRATICA,
       $params
     );
+  }
+
+  /**
+   * @param SubscriptionPayment $payment
+   *
+   * @return string
+   */
+  public function renderForSubscriptionPayment(SubscriptionPayment $payment)
+  {
+    // Certificato di default
+    $html = $this->templating->render('AppBundle:Subscriptions/pdf:Payment.html.twig', [
+      "payment"=>$payment,
+    ]);
+
+    return $this->generatePdf($html);
   }
 
   /**

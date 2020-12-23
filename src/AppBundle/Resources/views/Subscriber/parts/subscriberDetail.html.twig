@@ -1,0 +1,29 @@
+<div class="mt-4">
+  <h3>Anagrafica</h3>
+</div>
+<div class="my-4">
+  <div class="row">
+    <span class="col-4"><b>Nome e Cognome</b></span><span
+            class="col-8">{{ subscriber.name }} {{ subscriber.surname }}</span>
+  </div>
+  <div class="row">
+    <span class="col-4"><b>Data di nascita</b></span><span
+            class="col-8">{{ subscriber.dateOfBirth | date('d/m/Y') }}</span>
+  </div>
+  <div class="row">
+    <span class="col-4"><b>Luogo di nascita</b></span><span
+            class="col-8">{{ subscriber.placeOfBirth }}</span>
+  </div>
+  <div class="row">
+    <span class="col-4"><b>Residenza</b></span><span
+            class="col-8">{{ subscriber.address }}, {{ subscriber.houseNumber }}<br> {{ subscriber.postalCode }} - {{ subscriber.municipality }}</span>
+  </div>
+  <div class="row">
+    <span class="col-4"><b>Codice fiscale</b></span><span
+            class="col-8">{{ subscriber.fiscalCode }}</span>
+  </div>
+  <div class="row">
+    <span class="col-4"><b>Indirizzo e-mail</b></span><span
+            class="col-8">{{ subscriber.email }}</span>
+  </div>
+</div>

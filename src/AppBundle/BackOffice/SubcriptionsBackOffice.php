@@ -7,6 +7,7 @@ namespace AppBundle\BackOffice;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
+use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
@@ -18,6 +19,8 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
   const PATH = 'operatori_subscription-service_index';
 
+  const APPLICANT_SUBSCRIPTION = 'applicant_subscription';
+  const SUBSCRIBER_SUBSCRIPTION = 'subscriber_subscription';
 
   /**
    * @var LoggerInterface
@@ -49,7 +52,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
   );
 
   private $required_fields = [
-    'subscriber_subscription' => array(
+    self::SUBSCRIBER_SUBSCRIPTION => array(
       "subscriber.data.completename.data.name",
       "subscriber.data.completename.data.surname",
       "subscriber.data.Born.data.natoAIl",
@@ -62,7 +65,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       "subscriber.data.email_address",
       "code"
     ),
-    'applicant_subscription' => array(
+    self::APPLICANT_SUBSCRIPTION => array(
       "applicant.data.completename.data.name",
       "applicant.data.completename.data.surname",
       "applicant.data.Born.data.natoAIl",
@@ -122,6 +125,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
   public function execute($data)
   {
+    $originalData = clone $data;
     $requiredHeaders = $this->getRequiredHeaders();
     $requiredFields = $this->getRequiredFields();
     sort($requiredHeaders);
@@ -148,6 +152,11 @@ class SubcriptionsBackOffice implements BackOfficeInterface
           $keys = explode('.', $field);
           $key = end($keys);
           $fixedData[$key] = $subscriptionData[$field];
+        }
+        $fixedData["related_cfs"] = [];
+        if ($integrationType == self::SUBSCRIBER_SUBSCRIPTION) {
+          // Set applicant fiscal code as share set
+          $fixedData["related_cfs"][] = $subscriptionData["applicant.data.fiscal_code.data.fiscal_code"];
         }
       } else {
         return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
@@ -212,6 +221,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       $subscription = new Subscription();
       $subscription->setSubscriptionService($subscriptionService);
       $subscription->setSubscriber($subscriber);
+      $subscription->setRelatedCFs($fixedData["related_cfs"]);
 
       $this->em->persist($subscription);
       $this->em->flush();
@@ -219,6 +229,27 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       // update number of subscriptions
       $subscriptionService->addSubscription($subscription);
       $this->em->persist($subscriptionService);
+
+      // Add subscription Payment
+
+      if ($originalData instanceof Pratica && $originalData->getPaymentData()) {
+        $subscriptionPayment = new SubscriptionPayment();
+        $subscriptionPayment->setName($this->translator->trans('iscrizioni.quota_iscrizione.nome', [
+          '%subscription_name%' => strtoupper($subscriptionService->getName()),
+          "%subscriber_completename%" => strtoupper($subscriber->getCompleteName()),
+          "%subscriber_fiscal_code%" => strtoupper($subscriber->getFiscalCode())
+        ]));
+        $subscriptionPayment->setDescription($this->translator->trans("iscrizioni.quota_iscrizione.descrizione"));
+        $subscriptionPayment->setAmount((float)$originalData->getPaymentData()['payment_amount']);
+        $subscriptionPayment->setExternalKey($originalData->getId());
+        $subscriptionPayment->setSubscription($subscription);
+        if ($originalData->getPaymentType()->getName() == "MyPay" and $originalData->getPaymentData()["outcome"]) {
+          $subscriptionPayment->setPaymentDate((new DateTime($originalData->getPaymentData()["outcome"]["data"]["datiPagamento"]["datiSingoloPagamento"]["dataEsitoSingoloPagamento"])));
+        }
+
+        $this->em->persist($subscriptionPayment);
+        $this->em->flush();
+      }
 
       return $subscription;
     } catch (\Exception $exception) {

@@ -1,0 +1,49 @@
+<html>
+<head>
+  {{ include('AppBundle:Subscriptions/pdf/parts:style.html.twig') }}
+</head>
+<body>
+{% set ente = instance_service.getCurrentInstance() %}
+
+<main class="container-fluid" style="padding: 40px">
+  <div class="row">
+    <div class="col-12 text-center">
+      {% if ente %}
+        <img class="logo" src="{{ absolute_url(asset('bundles/app/images/logo-' ~ ente.slug ~ '.png')) }}" alt="{{ ente.name }}"/>
+        <h2 class="ente">{{ ente.name }}</h2>
+      {% endif %}
+    </div>
+  </div>
+
+
+  <div class="chiede center_title">
+    <span class="text-uppercase">DICHIARAZIONE</span>
+  </div>
+
+  <div class="richiesta">
+    <p>
+      {{ "iscrizioni.certificato_pagamento.testo" | trans({
+        "%completeName%": payment.subscription.subscriber.completeName | upper,
+        "%placeOfBirth%": payment.subscription.subscriber.placeOfBirth | upper,
+        "%dateOfBirth%": payment.subscription.subscriber.dateOfBirth | date(ocsdc_default_date_format),
+        "%fiscalCode%": payment.subscription.subscriber.fiscalCode | upper,
+        "%paymentYear%": payment.paymentDate | date('Y')
+      }) | raw }}
+    </p>
+    <ul>
+      <li>
+        {{ "iscrizioni.certificato_pagamento.importo" | trans({
+          "%amount%": payment.amount,
+          "%name%": payment.name
+        }) | raw}}
+      </li>
+    </ul>
+  </div>
+
+  <div class="data">
+    <p>{{ 'pratica.pdf.luogo'|trans()|raw }} {{ 'now' |date("d/m/Y") }}</p>
+  </div>
+</main>
+
+</body>
+</html>
