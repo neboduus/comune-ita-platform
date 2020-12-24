@@ -267,6 +267,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if (!in_array($service->getId(), $allowedServices)) {
         return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
       }
+
+      $allowedServices = [$service->getId()];
     }
 
     $repoApplications = $this->em->getRepository(Pratica::class);
