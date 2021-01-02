@@ -984,7 +984,7 @@ class Servizio
   /**
    * @return FeedbackMessage[]
    */
-  public function getFeedbackMessages(): ?array
+  public function getFeedbackMessages()
   {
     return $this->feedbackMessages;
   }

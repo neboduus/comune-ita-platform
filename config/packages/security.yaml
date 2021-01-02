@@ -94,19 +94,16 @@ security:
           - App\Security\LoginFormAuthenticator
 
     giscom_api:
-      logout_on_user_change: true
       pattern: ^/%prefix%/api/v\d+\.\d+/giscom/pratica/.*/.*
       http_basic:
         provider: in_memory
 
     ez_api:
-      logout_on_user_change: true
       pattern: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*
       http_basic:
         provider: in_memory
 
     print:
-      logout_on_user_change: true
       pattern: ^/%prefix%/print/pratica/.*
       http_basic:
         provider: in_memory
