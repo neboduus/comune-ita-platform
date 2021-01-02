@@ -19,6 +19,8 @@ USER root
 
 WORKDIR /var/www/html
 
+COPY ./composer.json ./composer.lock ./
+
 # app dir is required for classmaps entry in composer.json
 COPY app ./app
 
