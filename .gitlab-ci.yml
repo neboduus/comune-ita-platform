@@ -153,7 +153,9 @@ push_apache_latest:
 unit:
   stage: test
   allow_failure: true
+  image: wodby/php:7.3
   before_script:
+    - composer install --no-progress --no-suggest --no-scripts --no-interaction --quiet
     - php vendor/bin/simple-phpunit install
   cache:
     key:
