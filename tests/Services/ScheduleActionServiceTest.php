@@ -20,7 +20,8 @@ class ScheduleActionServiceTest extends AbstractAppTestCase
     public function testAppendAction()
     {
         $service = static::$container->get('ocsdc.schedule_action_service');
-        $service->appendAction('test', 'test', 'test');
+        $prefix = time();
+        $service->appendAction($prefix.'test', $prefix.'test', $prefix.'test');
 
         $items = $this->em->getRepository(ScheduledAction::class)->findAll();
         $this->assertEquals(count($items), 1);

@@ -52,6 +52,7 @@
   },
   "require-dev": {
     "asimlqt/php-google-spreadsheet-client": "3.0.2",
+    "dama/doctrine-test-bundle": "^6.5",
     "escapestudios/symfony2-coding-standard": "2.11.0",
     "phpspec/phpspec": "*",
     "phpstan/phpstan": "^0.12.50",

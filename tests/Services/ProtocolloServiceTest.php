@@ -7,6 +7,7 @@ use App\Entity\Pratica;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\ScheduledAction;
 use App\Entity\User;
+use App\Protocollo\Exception\AlreadySentException;
 use App\Protocollo\InforProtocolloHandler;
 use App\Protocollo\PiTreProtocolloHandler;
 use App\Services\ProtocolloService;
@@ -138,10 +139,11 @@ class ProtocolloServiceTest extends AbstractAppTestCase
 
   /**
    * @test
-   * @expectedException \App\Protocollo\Exception\AlreadySentException
+   *
    */
   public function testProtocolloServiceCanNotSendPraticaWithNumeroProtocollo()
   {
+    $this->expectException(AlreadySentException::class);
     $protocollo = $this->getMockProtocollo();
     $user = $this->createCPSUser();
     $pratica = $this->createSubmittedPraticaForUser($user);
@@ -149,19 +151,6 @@ class ProtocolloServiceTest extends AbstractAppTestCase
 
     $protocollo->protocollaPratica($pratica);
   }
-
-//    /**
-//     * @test
-//     * @expectedException \App\Protocollo\Exception\InvalidStatusException
-//     */
-//    public function testProtocolloServiceCanNotSendPraticaNotSubmitted()
-//    {
-//        $protocollo = $this->getMockProtocollo();
-//        $user = $this->createCPSUser();
-//        $pratica = $this->createPratica($user);
-//
-//        $protocollo->protocollaPratica($pratica);
-//    }
 
   /**
    * @test

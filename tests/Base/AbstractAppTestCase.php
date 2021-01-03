@@ -22,6 +22,8 @@ use App\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
 use App\Services\CPSUserProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use EightPoints\Bundle\GuzzleBundle\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Monolog\Logger;
@@ -42,7 +44,9 @@ abstract class AbstractAppTestCase extends WebTestCase
   const OTHER_USER_ALLEGATO_DESCRIPTION = 'other';
   const CURRENT_USER_ALLEGATO_DESCRIPTION_PREFIX = 'description_';
 
-  private $userProvider;
+  protected $userProvider;
+
+  protected $em;
 
   /**
    * @inheritdoc
@@ -51,7 +55,22 @@ abstract class AbstractAppTestCase extends WebTestCase
   {
     parent::setUp();
     static::bootKernel();
-    $this->userProvider = static::$container->get('ocsdc.cps.userprovider');
+    $this->userProvider = $this->getMockBuilder(CPSUserProvider::class)->disableOriginalConstructor()->getMock();
+    $this->userProvider
+      ->expects($this->any())
+      ->method('provideUser')
+      ->will($this->returnValue(new User()));
+
+    //$this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+    $this->em = $this->createMock(EntityManagerInterface::class);
+    /*$this->em
+      ->expects($this->any())
+      ->method('persist')
+      ->will($this->returnValue(true));
+    $this->em
+      ->expects($this->any())
+      ->method('flush')
+      ->will($this->returnValue(true));*/
   }
 
   protected function getCPSUserData()
@@ -115,7 +134,6 @@ abstract class AbstractAppTestCase extends WebTestCase
     if ($additionalRole) {
       $user->addRole($additionalRole);
     }
-
     return $user;
   }
 
@@ -433,7 +451,6 @@ abstract class AbstractAppTestCase extends WebTestCase
       $allegato->setFilename('somefile.txt');
       $allegato->setOriginalFilename('somefile.txt');
       $allegato->setFile(new File(__DIR__.'/somefile.txt'));
-      $this->em->persist($allegato);
       $allegati[] = $allegato;
     }
 
@@ -444,7 +461,6 @@ abstract class AbstractAppTestCase extends WebTestCase
     $allegato->setFilename('somefile.txt');
     $allegato->setOriginalFilename('somefile.txt');
     $allegato->setFile(new File(__DIR__.'/somefile.txt'));
-
 
     return $allegati;
   }
@@ -516,6 +532,10 @@ abstract class AbstractAppTestCase extends WebTestCase
     $pratica->setEnte($ente);
     $moduloCompilato = static::$container->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
     $pratica->addModuloCompilato($moduloCompilato);
+    $pratica->addNumeroDiProtocollo([
+      'id' => $moduloCompilato->getId(),
+      'protocollo' => 'protocollo_modulo_compilato',
+    ]);
 
     return $pratica;
   }

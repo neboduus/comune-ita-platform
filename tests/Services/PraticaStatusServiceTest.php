@@ -16,9 +16,9 @@ class PraticaStatusServiceTest extends AbstractAppTestCase
     $user = $this->createCPSUser();
     $pratica = $this->createPratica($user);
     $service = $this->getMockPraticaStatusService();
-    $service->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+    $service->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMIT);
 
-    $this->assertEquals(Pratica::STATUS_SUBMITTED, $pratica->getStatus());
+    $this->assertEquals(Pratica::STATUS_PRE_SUBMIT, $pratica->getStatus());
   }
 
   public function testPraticaStatusServiceCanStoreAMessageComingFromTheStatusChange()
@@ -36,9 +36,10 @@ class PraticaStatusServiceTest extends AbstractAppTestCase
         'timestamp' => time(),
       ]
     );
-    $service = $this->getMockPraticaStatusService(3);
+    $service = $this->getMockPraticaStatusService(4);
+    $service->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMIT);
     $service->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
-    $service->setNewStatus($pratica, Pratica::STATUS_REGISTERED);
+    $service->setNewStatus($pratica, Pratica::STATUS_PENDING);
     $service->setNewStatus($pratica, Pratica::STATUS_CANCELLED, $statusChange);
 
     $this->assertEquals(Pratica::STATUS_CANCELLED, $pratica->getStatus());
