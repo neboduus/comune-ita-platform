@@ -96,6 +96,7 @@ class CalendarsController extends Controller
 
     $table = $this->createDataTable()
       ->add('title', TextColumn::class, ['label' => 'Titolo', 'propertyPath' => 'Titolo', 'render' => function ($value, $calendar) {
+        /** @var Calendar $cal */
         $cal = $this->em->getRepository('AppBundle:Calendar')->find($calendar['id']);
         $canAccess = $this->canUserAccessCalendar($cal);
 
@@ -165,9 +166,6 @@ class CalendarsController extends Controller
       $em = $this->getDoctrine()->getManager();
 
       try {
-        if (!$calendar->getIsModerated()) {
-          $calendar->setModerators([]);
-        }
         $em->persist($calendar);
 
         foreach ($calendar->getOpeningHours() as $openingHour) {
@@ -283,10 +281,6 @@ class CalendarsController extends Controller
 
         foreach ($toDelete as $deleteId => $openingHour) {
           $em->remove($openingHour);
-        }
-        if (!$calendar->getIsModerated()) {
-          // remove moderators
-          $calendar->setModerators([]);
         }
         $em->persist($calendar);
         $em->flush();
@@ -633,7 +627,7 @@ class CalendarsController extends Controller
   private function canUserAccessCalendar(Calendar $calendar)
   {
     $user = $this->getUser();
-    if ($user instanceof AdminUser || $calendar->getOwner() == $user || ($calendar->getIsModerated() && $calendar->getModerators()->contains($user))) {
+    if ($user instanceof AdminUser || $calendar->getOwner() == $user || $calendar->getModerators()->contains($user)) {
       return true;
     }
     return false;

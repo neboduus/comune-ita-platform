@@ -1823,6 +1823,7 @@ gateway:
 
 calendars:
   new: "Crea nuovo calendario"
+  moderators: "Coordinatori"
   rolling_days:
     label: "Disponibilità per le prenotazioni"
     text_before: "E' possibile prenotare in anticipo fino a"

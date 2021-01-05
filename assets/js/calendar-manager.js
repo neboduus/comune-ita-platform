@@ -6,21 +6,6 @@ require("summernote/dist/summernote-bs4.css");
 
 $(document).ready(function () {
 
-  var moderated = $('#appbundle_calendar_is_moderated');
-  if (moderated.prop('checked')) {
-    $('#moderators').closest('div').show();
-  } else {
-    $('#moderators').closest('div').hide();
-  }
-
-  moderated.change( function(){
-    if (moderated.prop('checked')) {
-      $('#moderators').closest('div').show();
-    } else {
-      $('#moderators').closest('div').hide();
-    }
-  });
-
   $('textarea').summernote({
     toolbar: [
       ['style', ['style']],

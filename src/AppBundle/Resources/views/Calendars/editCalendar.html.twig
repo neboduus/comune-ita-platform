@@ -37,7 +37,8 @@
         {{ form_row(form.owner) }}
         {{ form_row(form.is_moderated) }}
 
-        <div  class="hidden" id="moderators" {% if not calendar.isModerated %}{% endif %}>
+        <div class="form-group">
+          <label>{{ 'calendars.moderators' | trans() }}</label>
           {{ form_row(form.moderators) }}
         </div>
 

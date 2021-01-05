@@ -98,7 +98,7 @@ class CalendarBackofficeType extends AbstractType
       ])
       ->add('moderators', EntityType::class, [
         'class' => OperatoreUser::class,
-        'label' => 'Moderatori',
+        'label' => false,
         'expanded' => true,
         'multiple' => true,
       ])
