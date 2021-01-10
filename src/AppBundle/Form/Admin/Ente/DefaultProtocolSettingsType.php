@@ -22,10 +22,15 @@ class DefaultProtocolSettingsType extends AbstractType
         'label' => 'Certificato',
         'required' => false
       ])
+      ->add('certificateKey', TextareaType::class, [
+        'label' => 'Chiave certificato',
+        'required' => false
+      ])
       ->add('certificatePassword', TextType::class, [
         'label' => 'Password certificato',
         'required' => false
-      ]);
+      ])
+    ;
   }
 
   /**

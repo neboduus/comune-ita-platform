@@ -69,6 +69,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   private $propertyMappingFactory;
 
   private $tempPemFile = false;
+  private $tempKeyFile = false;
 
   public function __construct(EntityManagerInterface $em, LoggerInterface $logger, DirectoryNamerInterface $dn, PropertyMappingFactory $pmf)
   {
@@ -298,8 +299,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     if ($ente != null && $ente->getDefaultProtocolSettings() != null) {
       $settings = DefaultProtocolSettings::fromArray($ente->getDefaultProtocolSettings());
-      if ( $settings->getCertificate() != null && $settings->getCertificatePassword() != null ) {
-
+      if ( $settings->getCertificate() != null ) {
         if (!$this->tempPemFile) {
           $this->tempPemFile = tmpfile();
           fwrite($this->tempPemFile, $settings->getCertificate());
@@ -307,6 +307,20 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
         $tempPemPath = stream_get_meta_data($this->tempPemFile);
         $tempPemPath = $tempPemPath['uri'];
         curl_setopt($ch, CURLOPT_SSLCERT, $tempPemPath);
+      }
+
+      // Modifica temporanea
+      if ( $settings->getCertificateKey() != null ) {
+        if (!$this->tempKeyFile) {
+          $this->tempKeyFile = tmpfile();
+          fwrite($this->tempKeyFile, $settings->getCertificateKey());
+        }
+        $tempKeyPath = stream_get_meta_data($this->tempKeyFile);
+        $tempKeyPath = $tempKeyPath['uri'];
+        curl_setopt($ch, CURLOPT_SSLKEY, $tempKeyPath);
+      }
+
+      if ( $settings->getCertificatePassword() != null ) {
         curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $settings->getCertificatePassword());
       }
     }

@@ -12,6 +12,9 @@ class DefaultProtocolSettings
   private $certificate;
 
   /** @var string */
+  private $certificateKey;
+
+  /** @var string */
   private $certificatePassword;
 
   /**
@@ -28,6 +31,22 @@ class DefaultProtocolSettings
   public function setCertificate(?string $certificate): void
   {
     $this->certificate = $certificate;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCertificateKey(): ?string
+  {
+    return $this->certificateKey;
+  }
+
+  /**
+   * @param string $certificateKey
+   */
+  public function setCertificateKey(?string $certificateKey): void
+  {
+    $this->certificateKey = $certificateKey;
   }
 
   /**
@@ -50,6 +69,7 @@ class DefaultProtocolSettings
   {
     $settings = new DefaultProtocolSettings();
     $settings->setCertificate( $data['certificate'] ?? null);
+    $settings->setCertificateKey( $data['certificateKey'] ?? null);
     $settings->setCertificatePassword( $data['certificatePassword'] ?? null);
 
     return $settings;
