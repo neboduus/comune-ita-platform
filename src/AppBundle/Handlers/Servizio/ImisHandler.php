@@ -34,11 +34,10 @@ class ImisHandler extends AbstractServizioHandler
    * @param TokenStorage $tokenStorage
    * @param LoggerInterface $logger
    * @param UrlGeneratorInterface $router
-   * @param BrowserParser $browserParser
    */
-  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router, BrowserParser $browserParser)
+  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
   {
-    parent::__construct($tokenStorage, $logger, $router, $browserParser);
+    parent::__construct($tokenStorage, $logger, $router);
     $this->setCallToActionText('servizio.imis.download_pdf_imis');
   }
 

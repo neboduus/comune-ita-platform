@@ -22,7 +22,7 @@ class BrowserParser
      $restrictions = explode('|', $browserRestriction);
      if (!empty($restrictions)) {
        foreach ($restrictions as $restriction) {
-         $browserRestriction []= explode(',', $restriction);
+         $this->browserRestriction []= explode(',', $restriction);
        }
      }
   }

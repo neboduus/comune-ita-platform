@@ -34,24 +34,19 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
    * @var UrlGeneratorInterface
    */
   protected $router;
-  /**
-   * @var BrowserParser
-   */
-  private $browserParser;
+
 
   /**
    * AbstractServizioHandler constructor.
    * @param TokenStorage $tokenStorage
    * @param LoggerInterface $logger
    * @param UrlGeneratorInterface $router
-   * @param BrowserParser $browserParser
    */
-  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router, BrowserParser $browserParser)
+  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
   {
     $this->tokenStorage = $tokenStorage;
     $this->logger = $logger;
     $this->router = $router;
-    $this->browserParser = $browserParser;
   }
 
   /**
@@ -121,11 +116,6 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
       if ($now > $servizio->getScheduledTo()){
         throw new ForbiddenAccessException('servizio.schedulato', ['%from%' => $servizio->getScheduledFrom()->format($format), '%to%' => $servizio->getScheduledTo()->format($format)]);
       }
-    }
-
-    // Check Browser
-    if ($this->browserParser->isBrowserRestricted()) {
-      throw new ForbiddenAccessException('servizio.browser_restricted');
     }
 
 

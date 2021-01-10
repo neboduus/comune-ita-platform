@@ -38,6 +38,9 @@ class DefaultHandler extends AbstractServizioHandler
   /** @var UserSessionService */
   protected $userSessionService;
 
+  /** @var  */
+  protected $browserRestrictions;
+
   /**
    * DefaultHandler constructor.
    * @param TokenStorage $tokenStorage
@@ -49,7 +52,7 @@ class DefaultHandler extends AbstractServizioHandler
    * @param EngineInterface $templating
    * @param $formServerPublicUrl
    * @param UserSessionService $userSessionService
-   * @param BrowserParser $browserParser
+   * @param $browserRestrictions
    */
   public function __construct(
     TokenStorage $tokenStorage,
@@ -61,7 +64,7 @@ class DefaultHandler extends AbstractServizioHandler
     EngineInterface $templating,
     $formServerPublicUrl,
     UserSessionService $userSessionService,
-    BrowserParser $browserParser
+    $browserRestrictions
   ) {
     $this->em = $em;
     $this->flowRegistry = $flowRegistry;
@@ -69,9 +72,25 @@ class DefaultHandler extends AbstractServizioHandler
     $this->templating = $templating;
     $this->formServerPublicUrl = $formServerPublicUrl;
     $this->userSessionService = $userSessionService;
+    $this->browserRestrictions = $browserRestrictions;
 
-    parent::__construct($tokenStorage, $logger, $router, $browserParser);
+    parent::__construct($tokenStorage, $logger, $router);
+
   }
+
+  public function canAccess(Servizio $servizio, Ente $ente)
+  {
+    parent::canAccess($servizio, $ente);
+
+    // Check Browser
+    if ($this->browserRestrictions != null) {
+      $browserParser = new BrowserParser($this->browserRestrictions);
+      if ($browserParser->isBrowserRestricted()) {
+        throw new ForbiddenAccessException('servizio.browser_restricted');
+      }
+    }
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -92,7 +111,8 @@ class DefaultHandler extends AbstractServizioHandler
         $this->session,
         $this->templating,
         $this->formServerPublicUrl,
-        $this->userSessionService
+        $this->userSessionService,
+        $this->browserRestrictions
       ))->execute($servizio, $ente);
 
     } else {
@@ -114,7 +134,8 @@ class DefaultHandler extends AbstractServizioHandler
         $this->session,
         $this->templating,
         $this->formServerPublicUrl,
-        $this->userSessionService
+        $this->userSessionService,
+        $this->browserRestrictions
       ))->execute($servizio, $ente);
     }
   }
