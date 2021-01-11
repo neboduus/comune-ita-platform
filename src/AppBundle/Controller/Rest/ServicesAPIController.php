@@ -87,7 +87,9 @@ class ServicesAPIController extends AbstractFOSRestController
   public function getServicesAction()
   {
     $result = [];
-    $services = $this->getDoctrine()->getRepository('AppBundle:Servizio')->findAll();
+    $repoServices = $this->em->getRepository(Servizio::class);
+    $criteria['status'] = Servizio::PUBLIC_STATUSES;
+    $services = $repoServices->findBy($criteria);
     foreach ($services as $s) {
       $result []= Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
     }
@@ -120,7 +122,11 @@ class ServicesAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
       $result = $repository->find($id);
       if ($result === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+      }
+
+      if ( $result->getStatus() == Servizio::STATUS_CANCELLED) {
+        return $this->view(["You are not allowed to see this service"], Response::HTTP_FORBIDDEN);
       }
 
       return $this->view(Service::fromEntity($result, $this->formServerApiAdapterService->getFormServerPublicUrl()), Response::HTTP_OK);
