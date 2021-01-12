@@ -592,6 +592,8 @@ operatori:
   allegati_messaggi: 'Documenti allegati nei messaggi'
   messaggi:
     titolo: 'Messaggi'
+    emails: 'Recapitato a'
+    no_emails_info: 'Informazione non disponibile'
     testo_messaggio: 'Testo del messaggio'
     no_attachments: 'Non sono presenti allegati a questa pratica'
     anonymous: 'Questa funzionalità non è disponibile agli utenti anonimi'

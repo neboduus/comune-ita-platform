@@ -82,6 +82,7 @@ class MessageManager
     $this->mailerService->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
     $message->setSentAt(time());
+    $message->setEmails([$userReceiver->getEmailContatto()]);
     $this->entityManager->persist($message);
     $this->entityManager->flush();
     if ($addFlash) {
