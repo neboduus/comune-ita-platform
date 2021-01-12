@@ -84,6 +84,26 @@
             {% endif %}</small>
         </div>
       </div>
+      {% if message.author != pratica.user %}
+        <div class="row">
+          <div class="col-6">
+            <small class="font-weight-bold">{{ 'operatori.messaggi.emails' | trans }}</small>
+          </div>
+          <div class="col-6 text-right">
+            <small>
+              {% if message.emails and message.emails > 0 %}
+                <ul class="list-unstyled">
+                  {% for email in message.emails %}
+                    <li><a href="mailto:{{ email }}">{{ email }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <i>{{ 'operatori.messaggi.no_emails_info' | trans }}</i>
+              {% endif %}
+            </small>
+          </div>
+        </div>
+      {% endif %}
     </div>
   </div>
 </li>

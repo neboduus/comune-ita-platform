@@ -49,6 +49,12 @@ class Message
   private $visibility;
 
   /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var $emails array
+   */
+  private $emails;
+
+  /**
    * @ORM\Column(type="integer", name="created_at", nullable=false)
    */
   private $createdAt;
@@ -219,6 +225,22 @@ class Message
   public function setVisibility($visibility)
   {
     $this->visibility = $visibility;
+
+    return $this;
+  }
+
+  public function getEmails(): ?array
+  {
+    return $this->emails;
+  }
+
+  /**
+   * @param array $emails
+   * @return $this
+   */
+  public function setEmails(array $emails): Message
+  {
+    $this->emails = $emails;
 
     return $this;
   }

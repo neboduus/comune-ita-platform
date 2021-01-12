@@ -62,6 +62,13 @@ class Message
   private $visibility;
 
   /**
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="List of emails the message was sent to")
+   * @Groups({"read", "write"})
+   */
+  private $emails;
+
+  /**
    * @var DateTime
    * @Serializer\Type("DateTime")
    * @SWG\Property(description="Created at date time")
@@ -204,6 +211,19 @@ class Message
     $this->visibility = $visibility;
   }
 
+  public function getEmails(): ?array
+  {
+    return $this->emails;
+  }
+
+  /**
+   * @param array $emails
+   */
+  public function setEmails(array $emails)
+  {
+    $this->emails = $emails;
+  }
+
   /**
    * @return mixed
    */
@@ -344,6 +364,7 @@ class Message
     $dto->author = $message->getAuthor()->getId();
     $dto->application = $message->getApplication()->getId();
     $dto->visibility = $message->getVisibility();
+    $dto->emails = $message->getEmails() ?? [];
 
     $dto->createdAt = self::dateTimeFromTimestamp($message->getCreatedAt());
     $dto->sentAt = self::dateTimeFromTimestamp($message->getSentAt());
@@ -380,6 +401,7 @@ class Message
       $entity->setApplication($this->getApplication());
     }
     $entity->setVisibility($this->getVisibility());
+    $entity->setEmails($this->getEmails());
     if ($this->getCreatedAt() instanceof DateTime) {
       $entity->setCreatedAt($this->getCreatedAt()->getTimestamp());
     }
