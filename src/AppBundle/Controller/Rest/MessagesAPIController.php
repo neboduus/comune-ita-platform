@@ -246,7 +246,7 @@ class MessagesAPIController extends AbstractFOSRestController
         $allegato->addMessage($messageEntity);
         $allegato->setFile($file);
         $allegato->setOwner($application->getUser());
-        $allegato->setDescription('Allegato senza descrizione');
+        $allegato->setDescription('Allegato');
         $allegato->setOriginalFilename($attachment->getName());
         $this->em->persist($allegato);
         $messageEntity->addAttachment($allegato);

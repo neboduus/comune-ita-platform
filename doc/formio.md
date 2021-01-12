@@ -13,7 +13,7 @@ Per poter inserire un pagamneto in un form va inserito un campo di tipo text e r
 
 ### Compomenti nascosti
 
-E'possibile nascondere un componente nell'anteprima e dalla stampa del form aggiungendo la classe css `d-preview-none`; durante la 
+E'possibile nascondere un componente nell'anteprima e dalla stampa del form aggiungendo la classe css `d-preview-none`; durante la
 compilazione del form il componente resterà visibile.
 
 ### Select popolato via API
@@ -34,6 +34,9 @@ Il componente per l'upload del file è utilizzabile cone le seguenti impostazion
 *  Storage va impostato a `Url`
 *  Va specificata un url così composto `https://{host}/{instance}/allegati`
    Es.`http://stanzadelcittadino.it/comune-di-bugliano/allegati`
+
+Se viene specificando in fase di impostazione il tipo di file (tab file del componente upload), questo valore viene
+utilizzato come descrizione del file
 
 ### Bilancio
 Il componente bilancio serve per poter dividere l'ammontare dei pagamenti in sottovoci.
@@ -138,14 +141,14 @@ Oppure nel caso di iscrizione per conto di altri:
 NOTE
 
 Il sistema consente un'unica iscrizione per corso, è dunque necessario bloccare iscrizioni duplicate
-durante la compilazione del modulo. A questo scopo è sufficiente effettuare una richiesta all'endpoint 
-`https://{host}/{instance}/subscriptions/availability?code={code}&cf={fiscal_code}` 
-dove 
+durante la compilazione del modulo. A questo scopo è sufficiente effettuare una richiesta all'endpoint
+`https://{host}/{instance}/subscriptions/availability?code={code}&cf={fiscal_code}`
+dove
 
 * `code` è il codice del corso per il quale si vuole verificare l'esistenza di duplicati;
 * `fiscal_code` è il codice fiscale del cittadino che si desidera iscrivere (nota distinzione `applicant` e `subscriber` descritta nel paragrafo precedente)
 
-La chiamata restituisce 400/406/200 a seconda della disponibilità dell'iscrizione. 
+La chiamata restituisce 400/406/200 a seconda della disponibilità dell'iscrizione.
 
 Si rimanda alla validazione descritta nel paragrafo "Fascicoli".
 
