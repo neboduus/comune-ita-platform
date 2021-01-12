@@ -134,3 +134,4 @@ parameters:
     sentry_dsn: ''
     login_route: 'login_pat' #name of the route
     single_logout_url: '/Shibboleth.sso/Logout'
+    browsers_restrictions: null

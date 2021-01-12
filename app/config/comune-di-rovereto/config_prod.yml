@@ -23,4 +23,4 @@ twig:
         endpoint_prefix: '%prefix%'
 
 services:
-    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.pec"
+    ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.infor"
