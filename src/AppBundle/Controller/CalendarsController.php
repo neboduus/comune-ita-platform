@@ -471,8 +471,15 @@ class CalendarsController extends Controller
 
     }
 
-    $minDate = min(array_map(function($item) { return blockMinutesRound($item['start'],false); }, $events));
-    $maxDate = max(array_map(function($item) { return blockMinutesRound($item['end'],true); }, $events));
+    if (count($events) > 0) {
+      $minDate = min(array_map(function($item) { return blockMinutesRound($item['start'],false); }, $events));
+      $maxDate = max(array_map(function($item) { return blockMinutesRound($item['end'],true); }, $events));
+    } else {
+      # Default values for empty events array
+      $minDate = Calendar::MIN_DATE;
+      $maxDate = Calendar::MAX_DATE;
+      $minDuration = Calendar::SLOT_DURATION;
+    }
 
     // Check permissions if calendar is moderated
     if (!$calendar->getIsModerated() || ($this->getUser() == $calendar->getOwner() || $calendar->getModerators()->contains($this->getUser())))

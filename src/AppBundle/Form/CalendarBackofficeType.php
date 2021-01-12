@@ -46,11 +46,6 @@ class CalendarBackofficeType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $minimumSchedulingNotices = [
-      'Un\'ora prima' => 1, 'Due ore prima' => 2, 'Quattro ore prima' => 4, 'Otto ore prima' => 8,
-      'Un giorno prima' => 24, 'Due giorni prima' => 48, 'Tre giorni prima' => 72, 'Una settimana prima' => 168
-    ];
-
     $owners = $this->em
       ->createQuery(
         "SELECT user
@@ -78,7 +73,7 @@ class CalendarBackofficeType extends AbstractType
       ])
       ->add('minimum_scheduling_notice', ChoiceType::class, [
         'required' => true,
-        'choices' => $minimumSchedulingNotices,
+        'choices' => Calendar::MINIMUM_SCHEDULING_NOTICES_OPTIONS,
         'label' => 'Preavviso minimo per una prenotazione',
       ])
       ->add('allow_cancel_days', NumberType::class, [

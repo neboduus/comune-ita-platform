@@ -24,6 +24,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Calendar
 {
+  // Default minimum and maximum time range for calendar view
+  const MIN_DATE = '07:00';
+  const MAX_DATE = '18:00';
+  const SLOT_DURATION = 30;
+
+  const MINIMUM_SCHEDULING_NOTICES_OPTIONS = [
+    'Nessuno' => 0,
+    'Un\'ora prima' => 1,
+    'Due ore prima' => 2,
+    'Quattro ore prima' => 4,
+    'Otto ore prima' => 8,
+    'Un giorno prima' => 24,
+    'Due giorni prima' => 48,
+    'Tre giorni prima' => 72,
+    'Una settimana prima' => 168
+  ];
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
