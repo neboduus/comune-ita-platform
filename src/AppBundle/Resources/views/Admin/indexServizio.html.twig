@@ -65,14 +65,16 @@
                          data-content="Copia l'URL pubblico del servizio.">
                         Url pubblico
                       </a>
-                      <a class="dropdown-item clone" href="#"
-                         data-url="{{ absolute_url(path('service_api_get', { 'id': item.id })) }}"
-                         data-container="body" data-toggle="popover" data-trigger="hover"
-                         data-placement="right"
-                         data-html="true" title="Url servizio"
-                         data-content="Copia l'URL ed incollala nel form Importa servizio da remoto.">
-                        Url Api
-                      </a>
+                      {% if item.status != constant('STATUS_CANCELLED', item) %}
+                        <a class="dropdown-item clone" href="#"
+                           data-url="{{ absolute_url(path('service_api_get', { 'id': item.id })) }}"
+                           data-container="body" data-toggle="popover" data-trigger="hover"
+                           data-placement="right"
+                           data-html="true" title="Url servizio"
+                           data-content="Copia l'URL ed incollala nel form Importa servizio da remoto.">
+                          Url Api
+                        </a>
+                      {% endif %}
                     </div>
                   </div>
                 </td>
