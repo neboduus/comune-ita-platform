@@ -498,7 +498,7 @@ class PraticheController extends Controller
         $this->mailer->dispatchMail($defaultSender, $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
         $message->setSentAt(time());
-        $message->setEmails([$userReceiver->getEmail()]);
+        $message->setEmail($userReceiver->getEmail());
         $em->persist($message);
         $em->flush();
       }
