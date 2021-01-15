@@ -91,14 +91,10 @@
           </div>
           <div class="col-6 text-right">
             <small>
-              {% if message.emails and message.emails > 0 %}
-                <ul class="list-unstyled">
-                  {% for email in message.emails %}
-                    <li><a href="mailto:{{ email }}">{{ email }}</a></li>
-                  {% endfor %}
-                </ul>
+              {% if message.email %}
+                <a href="mailto:{{ message.email }}">{{ message.email }}</a>
               {% else %}
-                <i>{{ 'operatori.messaggi.no_emails_info' | trans }}</i>
+                {{ 'operatori.messaggi.no_emails_info' | trans }}
               {% endif %}
             </small>
           </div>
