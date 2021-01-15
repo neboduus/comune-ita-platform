@@ -60,3 +60,4 @@ RUN composer run-script post-docker-install-cmd
 COPY compose_conf/php/init*.sh /docker-entrypoint-init.d/
 
 RUN bin/console cache:warmup
+
