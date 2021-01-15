@@ -35,8 +35,11 @@ Request::setTrustedProxies(
 
 $identifier = '';
 
+
+//var_dump($_SERVER);
+
 // Todo: find better way
-if ($request->server->has('PATH_INFO')) {
+if ($request->server->has('PATH_INFO') && !empty($_SERVER['PATH_INFO'])) {
     $pathArray = explode('/',$request->server->get('PATH_INFO'));
     $identifier = $pathArray[1];
 } elseif ($request->server->has('REQUEST_URI')) {

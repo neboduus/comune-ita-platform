@@ -1,0 +1,9 @@
+ARG php_image
+FROM ${php_image} as php
+
+FROM caddy:2
+
+COPY Caddyfile /etc/caddy/Caddyfile
+
+COPY --from=php /var/www/html/web /srv
+

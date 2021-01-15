@@ -1,0 +1,18 @@
+:80
+
+respond /health status 200
+root * /srv
+
+file_server browse
+metrics /metrics
+
+log {
+  format console
+}
+php_fastcgi * php:9000 {
+  split .php
+  index app.php
+  root /var/www/html/web
+}
+file_server
+
