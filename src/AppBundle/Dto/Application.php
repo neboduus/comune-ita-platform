@@ -908,6 +908,7 @@ class Application
       $temp['name'] = $f['name'];
       $temp['url'] = $attachmentEndpointUrl . '/attachments/' .  $id;
       $temp['originalName'] = $f['originalName'];
+      $temp['description'] = isset($f['fileType']) ? $f['fileType'] : Allegato::DEFAULT_DESCRIPTION;
       $result[]=$temp;
     }
     return $result;
@@ -919,6 +920,7 @@ class Application
     $temp['name'] = $file->getName();
     $temp['url'] = $attachmentEndpointUrl . '/attachments/' .  $file->getId();
     $temp['originalName'] = $file->getFilename();
+    $temp['description'] = $file->getDescription() ?? Allegato::DEFAULT_DESCRIPTION;
     $temp['created_at'] = $file->getCreatedAt();
 
     return $temp;

@@ -178,7 +178,7 @@ class AllegatoController extends Controller
 
           $allegato = new Allegato();
           $allegato->setFile($uploadedFile);
-          $description = $request->get('description') ?? 'Allegato';
+          $description = $request->get('description') ?? Allegato::DEFAULT_DESCRIPTION;
           $allegato->setDescription($description);
           $allegato->setOriginalFilename($request->get('name'));
           $user  = $this->getUser();
@@ -288,7 +288,7 @@ class AllegatoController extends Controller
     $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
     $allegato->setFile($uploadedFile);
 
-    $description = $request->get('description') ?? 'Allegato';
+    $description = $request->get('description') ?? Allegato::DEFAULT_DESCRIPTION;
     $allegato->setDescription($description);
 
     $allegato->setOwner($this->getUser());

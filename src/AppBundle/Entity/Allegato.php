@@ -34,6 +34,7 @@ class Allegato implements AllegatoInterface
   use TimestampableEntity;
 
   const TYPE_DEFAULT = 'default';
+  const DEFAULT_DESCRIPTION = 'Allegato';
 
   /**
    * @var string
