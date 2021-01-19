@@ -329,7 +329,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $ch_result = curl_exec($ch);
     $status = curl_getinfo($ch);
 
-    if ($status['http_code'] == 403 || $status['http_code'] == 500 ) {
+    if ( !in_array($status['http_code'], [200, 201, 202, 203, 204] )) {
       $message = 'Infor protocol error: ' . $status['http_code'] . 'Request: '  . $request;
       $this->logger->error($message);
       throw new \Exception($message);
@@ -353,8 +353,9 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     $esito = $dom->getElementsByTagName('esito')->item(0)->nodeValue;
 
-    if ($esito === 'KO') {
-      $message = 'Infor protocol refused to protocol pratica: ' . $response;
+    if ($esito !== 'OK') {
+      $message = 'Infor protocol rsponse error: ' . $response;
+      $this->logger->error($message);
       throw new \Exception($message);
     }
 
