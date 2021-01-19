@@ -96,7 +96,7 @@ class FormIOFlow extends PraticaFlow
       );
     } else {
       // Step conferma
-      if ($pratica->getServizio()->getAccessLevel() > Servizio::ACCESS_LEVEL_ANONYMOUS) {
+      if ($pratica->getUser() != null) {
         $steps[] = array(
           'label' => 'steps.common.conferma.label',
         );
