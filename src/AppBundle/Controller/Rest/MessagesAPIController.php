@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Rest;
 
 
 use AppBundle\Dto\Message;
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Message as MessageEntity;
@@ -246,7 +247,7 @@ class MessagesAPIController extends AbstractFOSRestController
         $allegato->addMessage($messageEntity);
         $allegato->setFile($file);
         $allegato->setOwner($application->getUser());
-        $allegato->setDescription('Allegato');
+        $allegato->setDescription(Allegato::DEFAULT_DESCRIPTION);
         $allegato->setOriginalFilename($attachment->getName());
         $this->em->persist($allegato);
         $messageEntity->addAttachment($allegato);
