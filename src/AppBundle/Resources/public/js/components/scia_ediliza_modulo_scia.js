@@ -60,6 +60,11 @@ Vue.component('scia_ediliza_modulo_scia', {
         return false;
       }
 
+      if (file.size / 1024 / 1024 > 15) {
+        this.$message.error('Attenzione: non è possibile caricare file con una dimensione maggiore di 15Mb.');
+        return false;
+      }
+
       const isP7m = (file.type === 'application/pkcs7-mime' || file.type === 'application/pkcs7' || file.type === '');
       if (!isP7m) {
         this.$message.error('Attenzione: Sono permessi solo file di tipo p7m!!!');
