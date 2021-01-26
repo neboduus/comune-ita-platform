@@ -266,7 +266,7 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view(Service::fromEntity($service), Response::HTTP_CREATED);
+    return $this->view(Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl()), Response::HTTP_CREATED);
   }
 
   /**
@@ -418,12 +418,13 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     $em = $this->getDoctrine()->getManager();
     $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    /** @var Servizio $service */
     $service = $repository->find($id);
 
     if (!$service) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
-    $serviceDto = Service::fromEntity($service);
+    $serviceDto = Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
     $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
 

@@ -6,6 +6,7 @@ namespace AppBundle\Services\Manager;
 
 use AppBundle\Entity\Message;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\IOService;
 use AppBundle\Services\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -34,6 +35,7 @@ class MessageManager
   private  $flashBag;
 
   private $defaultSender;
+  private $ioService;
 
 
   /**
@@ -43,6 +45,7 @@ class MessageManager
    * @param InstanceService $instanceService
    * @param RouterInterface $router
    * @param MailerService $mailerService
+   * @param IOService $ioService
    * @param FlashBagInterface $flashBag
    * @param string $defaultSender
    */
@@ -52,6 +55,7 @@ class MessageManager
     InstanceService $instanceService,
     RouterInterface $router,
     MailerService $mailerService,
+    IOService $ioService,
     FlashBagInterface $flashBag,
     string $defaultSender
   )
@@ -61,6 +65,7 @@ class MessageManager
     $this->instanceService = $instanceService;
     $this->router = $router;
     $this->mailerService = $mailerService;
+    $this->ioService = $ioService;
     $this->flashBag = $flashBag;
     $this->defaultSender = $defaultSender;
   }
@@ -71,15 +76,27 @@ class MessageManager
    */
   public function dispatchMailForMessage(Message $message, $addFlash = false)
   {
-    $defaultSender = $this->defaultSender;
-    $instance = $this->instanceService->getCurrentInstance();
-    $userReceiver = $message->getApplication()->getUser();
+    $sentAmount = 0;
+
     $subject = $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]);
     $mess = $this->translator->trans('pratica.messaggi.messaggio', [
       '%message%' => $message->getMessage(),
       '%link%' => $this->router->generate('track_message', ['id' => $message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id=' . $message->getId()
     ]);
-    $this->mailerService->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+    $defaultSender = $this->defaultSender;
+    $instance = $this->instanceService->getCurrentInstance();
+    $userReceiver = $message->getApplication()->getUser();
+
+    if ($message->getApplication()->getServizio()->isIOEnabled()) {
+      $sentAmount += $this->ioService->sendMessageForPratica(
+        $message->getApplication(),
+        $mess,
+        $subject
+      );
+    }
+    if ($sentAmount == 0) {
+      $this->mailerService->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+    }
 
     $message->setSentAt(time());
     $message->setEmail($userReceiver->getEmailContatto());

@@ -1,5 +1,4 @@
 import './core'
-require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 import 'summernote';
 import 'summernote/dist/summernote-bs4.css';
 import 'summernote-cleaner';
@@ -8,6 +7,8 @@ import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
 import 'formiojs'
 import {TextEditor} from "./utils/TextEditor";
+
+require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 
 
 Formio.registerComponent('calendar', Calendar);
@@ -330,4 +331,70 @@ $(document).ready(function () {
     })
   }
 
+  // IO config
+  if ($('#io_integration_data_flow_service_step').length) {
+    let service_id = $('#io_integration_data_io_service_parameters_IOserviceId');
+    let primary_key = $('#io_integration_data_io_service_parameters_primaryKey');
+    let secondary_key = $('#io_integration_data_io_service_parameters_secondaryKey');
+
+    if (service_id.val() && primary_key.val() && secondary_key.val()) {
+      switchTest(true)
+    } else {
+      switchTest(false)
+    }
+
+    $('#form_io_send_test').click(function (){
+      $("#error_messages").empty();
+      let url = $("#form_io_send_test").data("url")
+      $.ajax({
+        url: url,
+        type: "POST",
+        data: {
+          "service_id": service_id.val(),
+          "primary_key": primary_key.val(),
+          "secondary_key": secondary_key.val(),
+          "fiscal_code": $('#form_io_send_test_fiscal_code').val()
+        },
+        success: function(data) {
+          $("#error_messages").append("<p class='text-success'><i class='fa fa-check-circle mr-2'></i>La notifica è stata inviata con successo (identificativo " + data.id + ")</p>");
+        },
+        error: function(data) {
+          $("#error_messages").append(
+              "<p class='text-danger'><i class='fa fa-exclamation-circle mr-2'></i>la notifica NON è stata inviata a causa dell'errore:<ul class='list-unstyled text-danger'><li>" + data.responseJSON.error + "</li></ul></p>"
+          );
+        }
+      });
+    })
+
+    service_id.change(function(){
+      if (!service_id.val()) {
+        switchTest(false)
+      } else if (secondary_key.val() && primary_key.val()) {
+        switchTest(true)
+      }
+    })
+    primary_key.change(function(){
+      if (!primary_key.val()) {
+        switchTest(false)
+      }
+      else if (service_id.val() && secondary_key.val()) {
+        switchTest(true)
+      }
+    })
+    secondary_key.change(function(){
+      if (!secondary_key.val()) {
+        switchTest(false)
+      } else if (service_id.val() && primary_key.val()) {
+        switchTest(true)
+      }
+    })
+  }
+
+  function switchTest(enabled) {
+    if (enabled) {
+      $("#io_test").show();
+    } else {
+      $("#io_test").hide();
+    }
+  }
 });

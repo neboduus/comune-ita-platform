@@ -4,6 +4,20 @@ require("jquery"); // Load jQuery as a module
 
 $(document).ready(function () {
 
+  var io_checkbok = $('#ente_io_enabled');
+  if (io_checkbok.prop('checked')) {
+    $('#io_helper').show();
+  } else {
+    $('#io_helper').hide();
+  }
+
+  io_checkbok.change( function(){
+    if (io_checkbok.prop('checked')) {
+      $('#io_helper').show();
+    } else {
+      $('#io_helper').hide();
+    }
+  });
 
   $('#ente_gateways').find('input[type="checkbox"]').each(function () {
     if (this.checked) {

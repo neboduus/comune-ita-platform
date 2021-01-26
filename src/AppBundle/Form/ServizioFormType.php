@@ -70,6 +70,9 @@ class ServizioFormType extends AbstractType
       ->add('payment_parameters', PaymentParametersType::class, [
         'data_class' => null
       ])
+      ->add('io_parameters', IOServiceParametersType::class, [
+        'data_class' => null
+      ])
       ->add('sticky')
       ->add('status')
       ->add('access_level')

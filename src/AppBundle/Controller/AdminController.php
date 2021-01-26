@@ -15,6 +15,7 @@ use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\IOService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
@@ -27,6 +28,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -36,6 +38,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 
@@ -64,6 +67,14 @@ class AdminController extends Controller
 
   /** @var SchemaFactoryInterface */
   private $schemaFactory;
+  /**
+   * @var IOService
+   */
+  private $ioService;
+  /**
+   * @var RouterInterface
+   */
+  private $router;
 
   /**
    * AdminController constructor.
@@ -80,7 +91,9 @@ class AdminController extends Controller
     TokenGeneratorInterface $tokenGenerator,
     TranslatorInterface $translator,
     ServiceFlow $serviceFlow,
-    SchemaFactoryInterface $schemaFactory
+    SchemaFactoryInterface $schemaFactory,
+    IOService $ioService,
+    RouterInterface $router
   )
   {
     $this->instanceService = $instanceService;
@@ -89,6 +102,8 @@ class AdminController extends Controller
     $this->translator = $translator;
     $this->serviceFlow = $serviceFlow;
     $this->schemaFactory = $schemaFactory;
+    $this->ioService = $ioService;
+    $this->router = $router;
   }
 
 
@@ -516,6 +531,7 @@ class AdminController extends Controller
 
     return [
       'form' => $form->createView(),
+      //'test_form' => $testForm->getForm()->createView(),
       'servizio' => $flowService->getFormData(),
       'flow' => $flowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
@@ -711,6 +727,34 @@ class AdminController extends Controller
       }
     }
     return $errors;
+  }
+
+  /**
+   * @Route("/io-test", name="test_io")
+   * @Method({"POST"})
+   * @param Request $request
+   *
+   * @return array|JsonResponse
+   */
+  public function testIo(Request $request)
+  {
+    $serviceId=$request->get('service_id');
+    $primaryKey=$request->get('primary_key');
+    $secondaryKey=$request->get('secondary_key');
+    $fiscalCode=$request->get('fiscal_code');
+
+    if (!($serviceId && $primaryKey && $secondaryKey && $fiscalCode)) {
+      return new JsonResponse(
+        ["error" => $this->translator->trans('app_io.errore.parametro_mancante')],
+        Response::HTTP_BAD_REQUEST);
+    }
+
+    $response = $this->ioService->test($serviceId, $primaryKey, $secondaryKey, $fiscalCode);
+    if (key_exists('error', $response)) {
+      return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+    } else {
+      return new JsonResponse($response, Response::HTTP_OK);
+    }
   }
 
 }

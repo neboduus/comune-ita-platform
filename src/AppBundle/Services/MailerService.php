@@ -35,6 +35,11 @@ class MailerService
   private $mailer;
 
   /**
+   * @var IOService
+   */
+  private $ioService;
+
+  /**
    * @var TranslatorInterface $translator
    */
   private $translator;
@@ -75,8 +80,10 @@ class MailerService
    * @param TwigEngine $templating
    * @param RegistryInterface $doctrine
    * @param LoggerInterface $logger
+   * @param UrlGeneratorInterface $router
+   * @param IOService $ioService
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, UrlGeneratorInterface $router)
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, UrlGeneratorInterface $router, IOService $ioService)
   {
     $this->mailer = $mailer;
     $this->translator = $translator;
@@ -84,6 +91,7 @@ class MailerService
     $this->doctrine = $doctrine;
     $this->logger = $logger;
     $this->router = $router;
+    $this->ioService = $ioService;
   }
 
   /**
@@ -107,9 +115,20 @@ class MailerService
     $CPSUsermessage = null;
     if ($this->CPSUserHasValidContactEmail($pratica->getUser()) && ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))) {
       try {
-        $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
-        $sentAmount += $this->send($CPSUsermessage);
-        $pratica->setLatestCPSCommunicationTimestamp(time());
+        if ($pratica->getServizio()->isIOEnabled()) {
+          $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress, true);
+          $sentAmount += $this->ioService->sendMessageForPratica(
+            $pratica,
+            $CPSUsermessage,
+            $this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]
+            )
+          );
+        }
+        if ($sentAmount == 0) {
+          $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
+          $sentAmount += $this->send($CPSUsermessage);
+          $pratica->setLatestCPSCommunicationTimestamp(time());
+        }
       } catch (MessageDisabledException $e){
         $this->logger->info('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       } catch (\Exception $e){
@@ -207,11 +226,11 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return \Swift_Message
+   * @return string|\Swift_Message
    * @throws MessageDisabledException
    * @throws \Twig\Error\Error
    */
-  private function setupCPSUserMessage(Pratica $pratica, $fromAddress)
+  private function setupCPSUserMessage(Pratica $pratica, $fromAddress, $textOnly=false)
   {
     $toEmail = $pratica->getUser()->getEmailContatto();
     $toName = $pratica->getUser()->getFullName();
@@ -238,6 +257,10 @@ class MailerService
       '%user_name%' => $pratica->getUser()->getFullName(),
       '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
     ];
+
+    if ($textOnly) {
+      return strtr($feedbackMessage['message'], $placeholders);
+    }
 
     $textHtml = $this->templating->render(
       'AppBundle:Emails/User:feedback_message.html.twig',

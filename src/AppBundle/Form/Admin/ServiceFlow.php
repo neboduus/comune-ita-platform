@@ -9,10 +9,12 @@ use AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType;
 use AppBundle\Form\Admin\Servizio\FormIOTemplateType;
 use AppBundle\Form\Admin\Servizio\GeneralDataType;
 use AppBundle\Form\Admin\Servizio\IntegrationsDataType;
+use AppBundle\Form\Admin\Servizio\IOIntegrationDataType;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Form\Admin\Servizio\ProtocolDataType;
 use AppBundle\Form\Base\SelezionaEnteType;
 use AppBundle\Form\Base\SpecificaDelegaType;
+use AppBundle\Form\IOServiceParametersType;
 use AppBundle\Form\Operatore\Base\ApprovaORigettaType;
 use AppBundle\Form\Operatore\Base\UploadAllegatoOperatoreType;
 use AppBundle\Logging\LogConstants;
@@ -29,9 +31,10 @@ class ServiceFlow extends FormFlow
   const STEP_GENERAL_DATA = 2;
   const STEP_FORM_FIELDS = 3;
   const STEP_FEEDBACK_MESSAGES_DATA = 4;
-  const STEP_PAYMENT_DATA = 5;
-  const STEP_INTEGRATIONS_DATA = 6;
-  const STEP_PROTOCOL_DATA = 7;
+  const STEP_IO = 5;
+  const STEP_PAYMENT_DATA = 6;
+  const STEP_INTEGRATIONS_DATA = 7;
+  const STEP_PROTOCOL_DATA = 8;
 
   /**
    * @var LoggerInterface
@@ -59,6 +62,16 @@ class ServiceFlow extends FormFlow
 
   protected function loadStepsConfig()
   {
+    $steps[self::STEP_IO] = array(
+      'label' => 'App IO',
+      'form_type' => IOIntegrationDataType::class,
+      'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
+        /** @var Servizio $service */
+        $service = $flow->getFormData();
+        return !$service->getEnte()->isIOEnabled();
+      }
+    );
+
     // Mostro lo step per la configurazione di formio solo se necessario
     if ($this->getFormData()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
       $steps[self::STEP_FORM_TEMPLATE] = array(

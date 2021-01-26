@@ -50,6 +50,11 @@
             {{ form_row(form.default_settings) }}
           </div>
           <div class="tab-pane px-2 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
+            <div class="mt-4" id="app_io">
+                {{ form_row(form.io_enabled) }}
+              <p class="text-info" id="io_helper"><i class="fa fa-info-circle"></i> {{ 'app_io.admin_helper' | trans }}</p>
+            </div>
+            <hr>
             <div id="current-mailers" data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}" data-widget-counter="{{ form.mailers|length }}">
               {% if form.mailers|length > 0 %}
                 {% for m in form.mailers %}

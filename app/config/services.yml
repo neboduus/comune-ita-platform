@@ -287,8 +287,7 @@ services:
 
   ocsdc.mailer:
     class: AppBundle\Services\MailerService
-    arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', '@router' ]
-
+    arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', '@router', "@ocsdc.io_service" ]
 
   AppBundle\Services\ModuloPdfBuilderService:
     arguments:
@@ -304,6 +303,12 @@ services:
       - "%ez_password%"
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.schedule_action_service"
+
+  ocsdc.io_service:
+    class: AppBundle\Services\IOService
+    autowire: true
+    arguments:
+      - "%io_api_url%"
 
   ocsdc.modulo_pdf_builder: '@AppBundle\Services\ModuloPdfBuilderService'
 
