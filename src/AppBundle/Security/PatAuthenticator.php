@@ -17,6 +17,8 @@ class PatAuthenticator extends AbstractAuthenticator
    * OpenLoginAuthenticator constructor.
    * @param UrlGeneratorInterface $urlGenerator
    * @param array $shibboletServerVarNames
+   * @param $loginRoute
+   * @param UserSessionService $userSessionService
    */
   public function __construct(
     UrlGeneratorInterface $urlGenerator,
@@ -99,6 +101,9 @@ class PatAuthenticator extends AbstractAuthenticator
         'authenticationMethod' => CPSUser::IDP_SPID,
         'sessionId' => $request->server->get($this->shibboletServerVarNames['shibSessionId']),
         'spidCode' => $request->server->get($this->shibboletServerVarNames['spidCode']),
+        'instant' => $request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']),
+        'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
+        'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel']),
       ];
     } else {
       $data = [
@@ -109,6 +114,7 @@ class PatAuthenticator extends AbstractAuthenticator
         'certificate' => $request->server->get($this->shibboletServerVarNames['x509certificate_base64']),
         'instant' => $request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']),
         'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
+        'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel']),
       ];
     }
 

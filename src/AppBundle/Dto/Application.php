@@ -806,8 +806,16 @@ class Application
       $pratica->getAuthenticationData() :
       UserAuthenticationData::fromArray(['authenticationMethod' => $pratica->getUser()->getIdp()]));
 
-    $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl));
+    // Fix for empty values
+    $sessionData = $pratica->getSessionData()->getSessionData();
+    if (empty($dto->authentication->key('sessionIndex')) && isset($sessionData['shibSessionIndex'])) {
+      $dto->authentication->offsetSet('sessionIndex', $sessionData['shibSessionIndex']);
+    }
+    if (empty($dto->authentication->key('instant')) && isset($sessionData['shibAuthenticationIstant'])) {
+      $dto->authentication->offsetSet('instant', $sessionData['shibAuthenticationIstant']);
+    }
 
+    $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl));
     return $dto;
   }
 
