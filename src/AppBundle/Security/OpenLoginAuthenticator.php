@@ -163,11 +163,15 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
 
   protected function getUserAuthenticationData(Request $request, UserInterface $user)
   {
+
+    $dateTimeObject = new \DateTime();
     return UserAuthenticationData::fromArray([
       'authenticationMethod' => CPSUser::IDP_SPID,
       'sessionId' => $request->headers->get('x-forwarded-user-session'),
       'spidCode' => $request->headers->get('x-forwarded-user-spidcode'),
       'spidLevel' => $request->headers->get('x-forwarded-user-spid-level'),
+      'instant' => $dateTimeObject->format(DATE_ISO8601),
+      'sessionIndex' => $request->headers->get('x-forwarded-user-session'),
     ]);
   }
 }

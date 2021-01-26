@@ -142,7 +142,8 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
 
   public function offsetSet($offset, $value)
   {
-    throw new \BadMethodCallException("UserAuthenticationData direct value assignment not allowed");
+    $this->data[$offset] = $value;
+    //throw new \BadMethodCallException("UserAuthenticationData direct value assignment not allowed");
   }
 
   public function offsetUnset($offset)
