@@ -137,6 +137,12 @@ class Ente
   private $mailers;
 
   /**
+   * @var bool
+   * @ORM\Column(name="io_enabled", type="boolean", nullable=true)
+   */
+  private $IOEnabled;
+
+  /**
    * Ente constructor.
    */
   public function __construct()
@@ -148,6 +154,7 @@ class Ente
     $this->gateways = [];
     $this->backofficeEnabledIntegrations = new ArrayCollection();
     $this->mailers = new ArrayCollection();
+    $this->setIOEnabled(false);
   }
 
   /**
@@ -561,5 +568,21 @@ class Ente
     }
     $this->mailers = $tmp;
     return $this;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isIOEnabled(): ?bool
+  {
+    return $this->IOEnabled;
+  }
+
+  /**
+   * @param bool $IOEnabled
+   */
+  public function setIOEnabled(?bool $IOEnabled)
+  {
+    $this->IOEnabled = $IOEnabled;
   }
 }

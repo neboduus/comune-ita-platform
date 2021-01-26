@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use App\Entity\PostalAddress;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
+use AppBundle\Model\IOServiceParameters;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Model\PaymentParameters;
@@ -317,6 +318,13 @@ class Servizio
    * @SWG\Property(description="Service workflow type, accepts values: 0 - Approval, 1 - Forward")
    */
   private $workflow;
+
+  /**
+   * @var array
+   * @ORM\Column(name="io_service_parameters", type="json", nullable=true)
+   * @SWG\Property(property="io_service_parameters", description="List of parameters required for integration with the io app", type="object", ref=@Model(type=IOServiceParameters::class))
+   */
+  private $IOServiceParameters;
 
   /**
    * Servizio constructor.
@@ -1128,4 +1136,27 @@ class Servizio
     $this->workflow = $workflow;
   }
 
+
+  public function getIOServiceParameters(): ?array
+  {
+    return $this->IOServiceParameters;
+  }
+
+  /**
+   * @param $IOParameters
+   * @return $this
+   */
+  public function setIOServiceParameters($IOParameters): Servizio
+  {
+    $this->IOServiceParameters = $IOParameters;
+    return $this;
+  }
+
+  public function isIOEnabled(): bool
+  {
+    $parameters = $this->getIOServiceParameters();
+    if (!$parameters || !($parameters['IOserviceId'] && $parameters['primaryKey'] && $parameters['secondaryKey'])) return false;
+
+    return true;
+  }
 }

@@ -1775,8 +1775,6 @@ steps:
 
 
 protocollo:
-
-
   recipientIDArray: 'Destinatari documenti (recipientIDArray)'
   recipientTypeIDArray: 'Tipologia di destinatari documenti (recipientTypeIDArray)'
   codeNodeClassification: 'Ramo Titolario (codeNodeClassification)'
@@ -1933,4 +1931,17 @@ login_type:
   login_pat: 'Spid PAT'
   login_open: 'Openlogin'
 
-
+app_io:
+  service_id: 'Identificativo servizio'
+  primary_key: 'Chiave primaria'
+  secondary_key: 'Chiave secondaria'
+  test:
+    codice_fiscale: "Codice fiscale a cui inviare la notifica"
+    label: 'Test configurazione'
+    helper: "Utilizza questa sezione per verificare la correttezza della configurazione inviando una notifica sull'applicazione IO del cittadino identificato dal codice fiscale inserito di seguito"
+    subject: 'Verifica configurazione Stanza del Cittadino'
+    markdown: "Ricevi questa notifica poichè il tuo profilo è stato utilizzato per verificare la corretta configurazione dei parametri
+              necessari all'integrazione con l'<b>App IO</b> all'interno della <b>Stanza del cittadino</b>"
+  errore:
+    parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b>, <b>Chiave secondaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
+  admin_helper: "Per poter utilizzare questa integrazione è necessario configurare ogni servizio per il quale si desidera attivare le notifiche "

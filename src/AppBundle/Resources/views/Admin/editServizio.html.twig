@@ -84,6 +84,21 @@
 
           {{ form_rest(form) }}
 
+          {% if flow.currentStepLabel == 'App IO' %}
+          <div id="io_test" class="clearfix bg-light px-3 py-5">
+            <p class="text-info" id="io_helper"><i class="fa fa-info-circle mr-2"></i>{{ 'app_io.test.helper' | trans }}</p>
+            <div class="form-group">
+              <label for="form_io_send_test_fiscal_code">{{ 'app_io.test.codice_fiscale' | trans }}</label>
+              <input type="text" id="form_io_send_test_fiscal_code" name="form[test_fiscal_code]" class="form-control">
+            </div>
+            <div id="error_messages"></div>
+            <div class="form-group">
+              <button type="button" id="form_io_send_test" name="form[test]" class="btn-primary float-right btn" data-url="{{ path('test_io') }}">
+                {{ 'app_io.test.label' | trans }}
+              </button>
+            </div>
+          </div>
+          {% endif %}
         </div>
 
         <div class="row d-none">
