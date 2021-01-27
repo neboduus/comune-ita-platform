@@ -49,66 +49,74 @@
             <hr>
             {{ form_row(form.default_settings) }}
           </div>
+          {# Mailers #}
           <div class="tab-pane px-2 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
-            <div class="mt-4" id="app_io">
-                {{ form_row(form.io_enabled) }}
-              <p class="text-info" id="io_helper"><i class="fa fa-info-circle"></i> {{ 'app_io.admin_helper' | trans }}</p>
+            <div class="form-group mt-3" id="app_io">
+              {{ form_widget(form.io_enabled) }}
+              <span class="text-info px-2" id="io_helper"><i class="fa fa-info-circle"></i> {{ 'app_io.admin_helper' | trans }}</span>
             </div>
             <hr>
-            <div id="current-mailers" data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}" data-widget-counter="{{ form.mailers|length }}">
-              {% if form.mailers|length > 0 %}
-                {% for m in form.mailers %}
-                  <div class="js-mailer-item shadow px-3 my-4">
-                    <div id="mailer-item">
-                      <div class="row">
-                        <div class="col-3">
-                          {{ form_row(m.title, {'attr': {'readonly': 'readonly'}}) }}
-                        </div>
-                        <div class="col-3">
-                          {{ form_row(m.host) }}
-                        </div>
-                        <div class="col-3">
-                          {{ form_row(m.port) }}
-                        </div>
-                        <div class="col-3">
-                          {{ form_row(m.user) }}
-                        </div>
-                        <div class="col-3">
-                          {{ form_row(m.password) }}
-                        </div>
-                        <div class="col-3">
-                          {{ form_row(m.encription) }}
-                        </div>
-                        <div class="col-3">
-                          {{ form_row(m.sender) }}
-                        </div>
-                        <div class="col-3">
-                          <div class="form-group">
-                            <label>&nbsp;</label>
-                            <a class="btn btn-danger btn-block btn-xs js-remove-mailer" href="#">
-                              <svg class="icon icon-sm icon-white d-md-none">
-                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
-                              </svg>
-                              <span class="d-none d-md-block">Elimina</span>
-                            </a>
+            <div class="form-group">
+              <label>Configurazione mailers</label>
+              <div id="current-mailers" data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}" data-widget-counter="{{ form.mailers|length }}">
+                {% if form.mailers|length > 0 %}
+                  {% for m in form.mailers %}
+                    <div class="js-mailer-item shadow px-3 my-4">
+                      <div id="mailer-item">
+                        <div class="row">
+                          <div class="col-3">
+                            {{ form_row(m.title, {'attr': {'readonly': 'readonly'}}) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.host) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.port) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.user) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.password) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.encription) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.sender) }}
+                          </div>
+                          <div class="col-3">
+                            <div class="form-group">
+                              <label>&nbsp;</label>
+                              <a class="btn btn-danger btn-block btn-xs js-remove-mailer" href="#">
+                                <svg class="icon icon-sm icon-white d-md-none">
+                                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                                </svg>
+                                <span class="d-none d-md-block">Elimina</span>
+                              </a>
+                            </div>
                           </div>
                         </div>
+                        <div class="clearfix mb-4"></div>
                       </div>
-                      <div class="clearfix mb-4"></div>
                     </div>
-                  </div>
-                {% endfor %}
-              {% else %}
-                <p class="text-info" id="no-mailers"><i class="fa fa-info-circle"></i> Non sono ancora stati impostati
-                  mailer per l'ente, i messaggi verranno inviati via e-mail dall'indirizzo di default dal sistema </p>
-              {% endif %}
-            </div>
-            <div class="row">
-              <div class="col-9"></div>
-              <div class="col-3">
-                <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">Aggiungi mailer</button>
+                  {% endfor %}
+                {% else %}
+                  <p class="text-info px-2" id="no-mailers">
+                    <i class="fa fa-info-circle"></i>
+                    Non sono ancora stati impostati mailer per l'ente, i messaggi verranno inviati via e-mail dall'indirizzo di default dal sistema
+                  </p>
+                {% endif %}
+              </div>
+              <div class="row mt-4">
+                <div class="col-9"></div>
+                <div class="col-3">
+                  <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">Aggiungi mailer</button>
+                </div>
               </div>
             </div>
+
+
 
           </div>
           <div class="tab-pane p-2 fade" id="options" role="tabpanel" aria-labelledby="options-tab">
