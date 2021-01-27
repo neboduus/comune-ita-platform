@@ -3,12 +3,9 @@
 {% set ente = instance_service.getCurrentInstance() %}
 
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('compile') }}
   <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
-
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
   <style>
     .callout .body p {
       font-family: "Titillium Web", Geneva, Tahoma, sans-serif !important;
@@ -17,6 +14,7 @@
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('compile') }}
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
@@ -60,7 +58,6 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/formiojs@4.7.8/dist/formio.full.min.js"></script>
   <script>
     $(document).ready(function () {
       let formIoIdInput = $('#formio_render_form_id');
@@ -116,7 +113,7 @@
           form.on('submit', function (submission) {
             let submitButton = $('#formio button');
             submitButton.hide();
-            $('<a href="#" id="loading-button" class="btn btn-secondary"><i class="fa fa-refresh fa-spin"></i> Attendere...</a>').insertAfter(submitButton.last());
+            $('<a href="#" id="loading-button" class="btn btn-secondary"><i class="fas fa-sync fa-spin"></i> Attendere...</a>').insertAfter(submitButton.last());
             customErrorContainer.empty().hide();
             axios.post('{{ path( 'formio_validate', {'servizio': pratica.servizio.slug}) }}', JSON.stringify(submission.data))
               .then(function (reponse) {
