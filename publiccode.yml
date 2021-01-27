@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-releaseDate: '2021-01-19'
-softwareVersion: 1.6.28
+releaseDate: '2021-01-27'
+softwareVersion: 1.6.29
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -75,6 +75,7 @@ usedBy:
   - Comune di Mezzolomabardo (TN)
   - Comune di Seriate (BG)
   - Comune di Monopoli (BA)
+  - Comune di Verbania (VB)
 roadmap: https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/ROADMAP.md
 categories:
   - communications
