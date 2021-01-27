@@ -27,7 +27,9 @@
     "webpack-notifier": "1.8.0"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.2",
     "axios": "0.20.0",
+    "element-ui": "1.4.13",
     "highcharts": "8.1.0",
     "lodash": "4.17.15",
     "outdated-browser-rework": "2.10.0",

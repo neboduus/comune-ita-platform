@@ -1,13 +1,12 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('compile') }}
-
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('compile') }}
 
   <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
@@ -68,7 +67,7 @@
                 <p>
                   <a class="btn btn-success btn-lg" style="margin-bottom: 30px" data-action="edit_draft"
                      href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                    <i class="fa fa-arrow-circle-o-right"></i>
+                    <i class="far fa-arrow-alt-circle-right"></i>
                     {{ 'pratica.vai_alla_pratica'|trans }}
                   </a>
                 </p>

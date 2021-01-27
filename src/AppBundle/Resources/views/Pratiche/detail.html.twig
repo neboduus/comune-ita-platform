@@ -1,14 +1,12 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('user-show-application') }}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
-        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
-        crossorigin="anonymous"/>
-
   <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('user-show-application') }}
 
   <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
@@ -65,9 +63,9 @@
                     <div class="row my-3">
                       <div class="col-2">
                         {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
-                          <i class="fa fa-2x fa-file-pdf-o"></i>
+                          <i class="fas fa-file-pdf"></i>
                         {% else %}
-                          <i class="fa fa-2x fa-file-o"></i>
+                          <i class="fas fa-file-pdf"></i>
                         {% endif %}
                       </div>
                       <div class="col-6 text-truncate">
@@ -127,7 +125,7 @@
               {% if can_compile %}
                 <a class="btn btn-success" data-action="edit_draft"
                    href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                  <i class="fa fa-arrow-circle-o-right"></i>
+                  <i class="fas fa-arrow-alt-circle-right"></i>
                   {{ 'pratica.vai_alla_pratica'|trans }}
                 </a>
               {% endif %}
