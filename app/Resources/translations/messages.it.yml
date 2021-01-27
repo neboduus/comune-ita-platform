@@ -1937,7 +1937,7 @@ app_io:
   secondary_key: 'Chiave secondaria'
   test:
     codice_fiscale: "Codice fiscale a cui inviare la notifica"
-    label: 'Test configurazione'
+    label: 'Test invio'
     helper: "Utilizza questa sezione per verificare la correttezza della configurazione inviando una notifica sull'applicazione IO del cittadino identificato dal codice fiscale inserito di seguito"
     subject: 'Verifica configurazione Stanza del Cittadino'
     markdown: "Ricevi questa notifica poichè il tuo profilo è stato utilizzato per verificare la corretta configurazione dei parametri

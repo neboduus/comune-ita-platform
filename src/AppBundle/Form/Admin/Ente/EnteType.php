@@ -149,10 +149,12 @@ class EnteType extends AbstractType
     }
 
     $builder->add('io_enabled', CheckboxType::class, [
-      'label' => 'Abilita App IO?'
+      'label' => 'Abilita App IO?',
+      'required' => false
     ]);
 
     $builder->add('mailers', CollectionType::class, [
+      'label' => false,
       'entry_type' => MailerType::class,
       'allow_add' => true,
       'allow_delete' => true

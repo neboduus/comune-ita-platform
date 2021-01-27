@@ -14,26 +14,12 @@ services:
       - ./compose_conf/postgres:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data/pgdata
 
-  postgres-init:
-    image: postgres:10
-    environment:
-      PGPASSWORD: $DB_ROOT_PASSWORD
-      PGHOST: postgres
-      PGDATABASE: sdc_multi
-    user: postgres 
-    command: bash -c "
-      psql -c 'CREATE DATABASE sdc_vallelaghi;' &&
-      psql -c 'GRANT ALL PRIVILEGES ON DATABASE sdc_vallelaghi TO $DB_USER;' &&
-      echo 'Done'
-      "
-
-
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     build: .
     environment:
       PHP_FPM_CLEAR_ENV: 'no'
-      ENV: DEV  
+      ENV: DEV
       SYMFONY_ENV: $SYMFONY_ENV
       PREFIX: $PREFIX
       DB_DRIVER: $DB_DRIVER
@@ -87,14 +73,14 @@ services:
       - "uploads:/srv/uploads"
     depends_on:
       - php
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.caddy
       args:
         php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     labels:
       traefik.enable: true
-      traefik.http.services.caddy.loadbalancer.server.port: 80 
+      traefik.http.services.caddy.loadbalancer.server.port: 80
 
       traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
       traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"
