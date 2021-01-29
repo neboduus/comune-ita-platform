@@ -6,6 +6,7 @@ namespace AppBundle\Dto;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\UserSession;
 use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\PraticaStatusService;
 use DateTime;
@@ -807,13 +808,16 @@ class Application
       UserAuthenticationData::fromArray(['authenticationMethod' => $pratica->getUser()->getIdp()]));
 
     // Fix for empty values
-    $sessionData = $pratica->getSessionData()->getSessionData();
-    if (empty($dto->authentication->key('sessionIndex')) && isset($sessionData['shibSessionIndex'])) {
-      $dto->authentication->offsetSet('sessionIndex', $sessionData['shibSessionIndex']);
+    if ($pratica->getSessionData() instanceof UserSession) {
+      $sessionData = $pratica->getSessionData()->getSessionData();
+      if (empty($dto->authentication->offsetGet('sessionIndex')) && isset($sessionData['shibSessionIndex'])) {
+        $dto->authentication->offsetSet('sessionIndex', $sessionData['shibSessionIndex']);
+      }
+      if (empty($dto->authentication->offsetGet('instant')) && isset($sessionData['shibAuthenticationIstant'])) {
+        $dto->authentication->offsetSet('instant', $sessionData['shibAuthenticationIstant']);
+      }
     }
-    if (empty($dto->authentication->key('instant')) && isset($sessionData['shibAuthenticationIstant'])) {
-      $dto->authentication->offsetSet('instant', $sessionData['shibAuthenticationIstant']);
-    }
+
 
     $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl));
     return $dto;
