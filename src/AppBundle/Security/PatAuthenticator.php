@@ -96,6 +96,7 @@ class PatAuthenticator extends AbstractAuthenticator
 
   protected function getUserAuthenticationData(Request $request, UserInterface $user)
   {
+
     if ($request->server->has($this->shibboletServerVarNames['spidCode'])) {
       $data = [
         'authenticationMethod' => CPSUser::IDP_SPID,
