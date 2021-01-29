@@ -12,6 +12,9 @@ parameters:
     prefix: comune-di-tavagnacco
     codice_meccanografico: L065
     database_name: sdc_tavagnacco
+    login_route: login_open
+    single_logout_url: 'https://login.comune.tavagnacco.ud.it/slo?redirect=https://www2.stanzadelcittadino.it/comune-di-tavagnacco/'
+
 
 framework:
     router:
