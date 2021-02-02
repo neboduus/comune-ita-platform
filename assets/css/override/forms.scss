@@ -222,6 +222,19 @@ textarea {
   .formio-component {
     margin-bottom: 1.3rem;
   }
+  .formio-component.formio-hidden {
+    margin-bottom:0;
+  }
+  table {
+    .formio-component{
+      margin-bottom:0;
+    }
+  }
+  .formio-component-columns.formio-component-label-hidden{
+    margin-bottom:0;
+  }
+
+
   .form-group {
     padding-bottom: inherit;
   }
