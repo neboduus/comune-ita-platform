@@ -539,6 +539,11 @@ user:
     salva_informazioni_profilo: 'Salva informazioni profilo'
     salva: 'Salva'
 
+admin:
+  usage:
+    user_title: 'Numero utenti'
+    active_user_title: 'Numero utenti attivi'
+
 operatori:
   allega_risposta_firmata: 'Allega la risposta firmata'
   vai_al_dettaglio: 'Vedi dettaglio'

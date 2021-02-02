@@ -6,6 +6,7 @@ use AppBundle\Controller\Rest\ServicesAPIController;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\AuditLog;
 use AppBundle\Entity\Categoria;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
@@ -15,9 +16,12 @@ use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
+use Doctrine\DBAL\DBALException;
 use AppBundle\Services\IOService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\FetchMode;
+use Doctrine\ORM\EntityManager;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
 use GuzzleHttp\Client;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
@@ -220,7 +224,7 @@ class AdminController extends Controller
       $serviziAbilitati = $this->getDoctrine()
         ->getRepository(Servizio::class)
         ->findBy(['id' => $operatoreUser->getServiziAbilitati()->toArray()]);
-    }else{
+    } else {
       $serviziAbilitati = [];
     }
 
@@ -446,7 +450,7 @@ class AdminController extends Controller
         $em->flush();
 
         if (!empty($service->getFormIoId())) {
-          $response = $this->formServer->cloneFormFromRemote( $service, $remoteUrl .'/form');
+          $response = $this->formServer->cloneFormFromRemote($service, $remoteUrl . '/form');
           if ($response['status'] == 'success') {
             $formId = $response['form_id'];
             $flowStep = new FlowStep();
@@ -499,20 +503,19 @@ class AdminController extends Controller
     $form = $flowService->createForm();
     if ($flowService->isValid($form)) {
 
-        $flowService->saveCurrentStepData($form);
+      $flowService->saveCurrentStepData($form);
 
-        if ($flowService->nextStep()) {
-          try {
-            $this->getDoctrine()->getManager()->flush();
-          }catch (UniqueConstraintViolationException $e){
-            $this->addFlash('error', 'Controlla se esiste un servizio con lo stesso nome e di aver inserito correttamente tutti i campi obbligatori');
-            $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
-            return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId()]);
-          }
-          catch (\Exception $e) {
-            $this->addFlash('error', 'Si è verificato un errore, contatta il supporto tecnico');
-            return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
-          }
+      if ($flowService->nextStep()) {
+        try {
+          $this->getDoctrine()->getManager()->flush();
+        } catch (UniqueConstraintViolationException $e) {
+          $this->addFlash('error', 'Controlla se esiste un servizio con lo stesso nome e di aver inserito correttamente tutti i campi obbligatori');
+          $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
+          return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId()]);
+        } catch (\Exception $e) {
+          $this->addFlash('error', 'Si è verificato un errore, contatta il supporto tecnico');
+          return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
+        }
         $form = $flowService->createForm();
       } else {
 
@@ -739,10 +742,10 @@ class AdminController extends Controller
    */
   public function testIo(Request $request)
   {
-    $serviceId=$request->get('service_id');
-    $primaryKey=$request->get('primary_key');
-    $secondaryKey=$request->get('secondary_key');
-    $fiscalCode=$request->get('fiscal_code');
+    $serviceId = $request->get('service_id');
+    $primaryKey = $request->get('primary_key');
+    $secondaryKey = $request->get('secondary_key');
+    $fiscalCode = $request->get('fiscal_code');
 
     if (!($serviceId && $primaryKey && $secondaryKey && $fiscalCode)) {
       return new JsonResponse(
@@ -756,6 +759,120 @@ class AdminController extends Controller
     } else {
       return new JsonResponse($response, Response::HTTP_OK);
     }
+  }
+
+
+  /**
+   * @Route("/usage",name="admin_usage")
+   * @Template()
+   * @return array
+   */
+  public function usageAction()
+  {
+
+    $sql = "SELECT distinct(extract(year from u.created_at)) as year, count(distinct u.id) as count
+            FROM utente AS u WHERE u.type = 'cps' and u.created_at IS NOT NULL GROUP BY 1 ORDER BY year ";
+
+    /** @var EntityManager $em */
+    $em = $this->getDoctrine()->getManager();
+    try {
+      $stmt = $em->getConnection()->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+    } catch (DBALException $e) {
+      $this->logger->error($e->getMessage());
+      $result = [];
+    }
+
+    return array(
+      'all_user' => $result,
+      'user' => $this->getUser(),
+    );
+  }
+
+  /**
+   * @Route("/usage/metriche", name="admin_metriche")
+   * @Method("GET")
+   * @param Request $request
+   * @return Response
+   */
+  public function metricheAction(Request $request)
+  {
+    $status = $request->get('status');
+    $services = $request->get('services');
+    $year = (int)$request->get('time');
+
+    //Minutes for 6 Months
+    $time = 2592000;
+    $timeDiff = "- " . ($time / 60 / 24) . " days";
+
+    $timeZone = date_default_timezone_get();
+
+    $calculateInterval = date('Y-m-d H:i:s', strtotime($timeDiff));
+
+    //TODO create filter bu type authentication
+   /* $where = '';
+    if ($services && $services != 'all') {
+      $where .= " AND p.authentication_data = ?";
+    }*/
+    $isUserActive = "";
+    if ($status && $status != 'all') {
+      $isUserActive .= " LEFT JOIN pratica AS p ON p.user_id = u.id where TO_TIMESTAMP(p.creation_time) AT TIME ZONE '" . $timeZone . "' >= '" . $calculateInterval . "'" . "and p.creation_time IS NOT NULL";
+    }
+
+    $slqGrouped = "u.type = 'cps' and u.created_at IS NOT NULL GROUP BY 1,2";
+    $where = $isUserActive != '' ? ' and ' : ' where ';
+
+    $sql = "SELECT to_char(u.created_at,'month') AS month, extract(year from u.created_at) as year, count(DISTINCT u.id) as count
+            FROM utente AS u " .
+      $isUserActive .
+      $where . $slqGrouped;
+
+    /** @var EntityManager $em */
+    $em = $this->getDoctrine()->getManager();
+    try {
+
+      $stmt = $em->getConnection()->executeQuery($sql);
+      $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+    } catch (DBALException $e) {
+      $this->logger->error($e->getMessage());
+      $result = [];
+    }
+
+    $series = array(
+      array(
+        'name' => 'Utenti registrati',
+        'data' => array_fill(0, 12, 0)
+
+      ));
+
+    $resultByYear = array_filter($result, function ($obj) use ($year) {
+      if (count($obj) > 0) {
+        if ($obj['year'] == $year) return true;
+      }
+      return false;
+    });
+
+    $listMonths = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+    foreach ($listMonths as $key=>$value){
+      foreach ($resultByYear as $r) {
+        if (trim($r['month']) == $value) {
+          $series[0]['name'] = 'Utenti registrasti';
+          $series[0]['data'][$key] = [$r['count']];
+        }
+        if ($status && $status != 'all') {
+          if (trim($r['month']) == $value) {
+            $series[1]['name'] = 'Utenti attivi negli ultimi 6 mesi';
+            $series[1]['data'][$key] = [$r['count']];
+          }
+        }
+      }
+    }
+
+    $data['series'] = $series;
+    return new Response(json_encode($data), 200);
+
   }
 
 }
