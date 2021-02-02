@@ -160,6 +160,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   /**
    * List all Applications
+   *
    * @Rest\Get("", name="applications_api_list")
    *
    * @SWG\Parameter(

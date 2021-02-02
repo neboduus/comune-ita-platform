@@ -13,7 +13,12 @@ use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use AppBundle\Utils\UploadedBase64File;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Model\MetaPagedList;
+use AppBundle\Model\LinksPagedList;
 
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\QueryBuilder;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use League\Csv\Exception;
@@ -44,7 +49,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @property EntityManagerInterface em
  * @property InstanceService is
  * @package AppBundle\Controller
- * @Route("/applications")
+ *
  */
 class MessagesAPIController extends AbstractFOSRestController
 {
@@ -90,7 +95,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
   /**
    * Retreive Applications messages
-   * @Rest\Get("/{id}/messages", name="application_api_messages_get")
+   * @Rest\Get("/applications/{id}/messages", name="application_api_messages_get")
    *
    * @SWG\Response(
    *     response=200,
@@ -131,10 +136,156 @@ class MessagesAPIController extends AbstractFOSRestController
     return $this->view($messages, Response::HTTP_OK);
   }
 
+  /**
+   * Retreive Applications messages
+   * @Rest\Get("/v2/applications/{id}/messages", name="v2_application_api_messages_get")
+   *
+   * @SWG\Parameter(
+   *      name="Authorization",
+   *      in="header",
+   *      description="The authentication Bearer",
+   *      required=false,
+   *      type="string"
+   *  )
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. From version 2 list of messages are paginated"
+   *  )
+   * @SWG\Parameter(
+   *      name="offset",
+   *      in="query",
+   *      type="integer",
+   *      required=false,
+   *      description="Offset of the query"
+   *  )
+   * @SWG\Parameter(
+   *      name="limit",
+   *      in="query",
+   *      type="integer",
+   *      required=false,
+   *      description="Limit of the query",
+   *      maximum="100"
+   *  )
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retrieve list of messages for the application",
+   *     @SWG\Schema(
+   *         type="object",
+   *         @SWG\Property(property="meta", type="object", ref=@Model(type=MetaPagedList::class)),
+   *         @SWG\Property(property="links", type="object", ref=@Model(type=LinksPagedList::class)),
+   *         @SWG\Property(property="data", type="array", @SWG\Items(ref=@Model(type=Message::class, groups={"read"})))
+   *     )
+   * )
+   *
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Applcaitons not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function messagesActionV2($id, Request $request)
+  {
+
+    $offset = intval($request->get('offset', 0));
+    $limit = intval($request->get('limit', 10));
+
+    if ($limit > 100) {
+      return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
+    }
+
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    /** @var Pratica $result */
+    $application = $repository->find($id);
+    if ($application === null) {
+      return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    $queryParameters = ['offset' => $offset, 'limit' => $limit];
+
+    $repoMessages = $this->em->getRepository(MessageEntity::class);
+    /** @var QueryBuilder $query */
+    $query = $repoMessages->createQueryBuilder('m')
+      ->select('count(m.id)')
+      ->where('m.application = :application')
+      ->setParameter('application', $application);
+
+    $criteria = ['application' => $application];
+
+    try {
+      $count = $query
+        ->getQuery()
+        ->getSingleScalarResult();
+    } catch (NoResultException $e) {
+      $count = 0;
+    } catch (NonUniqueResultException $e) {
+      return $this->view($e->getMessage(), Response::HTTP_I_AM_A_TEAPOT);
+    }
+
+    if ( $count == 0 ) {
+      return $this->view(["Messages not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    $parameters = array_merge(['id' => $id], $queryParameters);
+
+    $result = [];
+    $result['meta']['count'] = $count;
+    $result['meta']['parameter']['offset'] = $offset;
+    $result['meta']['parameter']['limit'] = $limit;
+
+    $result['links']['self'] = $this->generateUrl(
+      'v2_application_api_messages_get_v2',
+      $parameters,
+      UrlGeneratorInterface::ABSOLUTE_URL
+    );
+    $result['links']['prev'] = null;
+    $result['links']['next'] = null;
+    $result ['data'] = [];
+
+    if ($offset != 0) {
+      $parameters['offset'] = $offset - $limit;
+      $result['links']['prev'] = $this->generateUrl(
+        'v2_application_api_messages_get_v2',
+        $parameters,
+        UrlGeneratorInterface::ABSOLUTE_URL
+      );
+    }
+
+    if ($offset + $limit < $count) {
+      $parameters['offset'] = $offset + $limit;
+      $result['links']['next'] = $this->generateUrl(
+        'v2_application_api_messages_get_v2',
+        $parameters,
+        UrlGeneratorInterface::ABSOLUTE_URL
+      );
+    }
+
+    $order = "createdAt";
+    $sort = "ASC";
+    try {
+      $messages = $repoMessages->findBy($criteria, [$order => $sort], $limit, $offset);
+      foreach ($messages as $m) {
+        $result ['data'][] = Message::fromEntity($m, $this->baseUrl.'/'.$application->getId());
+      }
+
+      return $this->view($result, Response::HTTP_OK);
+    } catch (\Exception $exception) {
+      return $this->view($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+    }
+  }
+
 
   /**
    * Retreive Application message
-   * @Rest\Get("/{id}/messages/{messageId}", name="application_api_message_get")
+   * @Rest\Get("/applications/{id}/messages/{messageId}", name="application_api_message_get")
    *
    * @SWG\Response(
    *     response=200,
@@ -171,7 +322,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
   /**
    * Create a Message
-   * @Rest\Post("/{id}/messages",name="application_message_api_post")
+   * @Rest\Post("/applications/{id}/messages",name="application_message_api_post")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -278,7 +429,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
   /**
    * Patch an application message
-   * @Rest\Patch("/{id}/messages/{messageId}",name="application_message_api_patch")
+   * @Rest\Patch("/applications/{id}/messages/{messageId}",name="application_message_api_patch")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -388,7 +539,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
   /**
    * Retreive a message applications attachment
-   * @Rest\Get("/{id}/messages/{messageId}/attachments/{attachmentId}", name="message_api_attachment_get")
+   * @Rest\Get("/applications/{id}/messages/{messageId}/attachments/{attachmentId}", name="message_api_attachment_get")
    *
    * @SWG\Response(
    *     response=200,
