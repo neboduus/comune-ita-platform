@@ -164,7 +164,7 @@ class MessagesAPIController extends AbstractFOSRestController
       return $this->view(["Message not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $message [] = Message::fromEntity($result, $this->baseUrl.'/'.$result->getId());
+    $message= Message::fromEntity($result, $this->baseUrl.'/'.$result->getId());
 
     return $this->view($message, Response::HTTP_OK);
   }
