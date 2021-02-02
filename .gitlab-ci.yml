@@ -16,6 +16,8 @@ variables:
   PHP_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/app:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
   APACHE_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/apache"
   APACHE_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/apache:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
+  CADDY_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/caddy"
+  CADDY_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/caddy:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
 
 
 ###################################################################################################################
@@ -43,6 +45,18 @@ build_apache:
     - docker pull $APACHE_IMAGE_NAME:latest || true
     - docker pull $APACHE_IMAGE_TMP 2> /dev/null || docker build --file Dockerfile.apache --pull --cache-from $APACHE_IMAGE_NAME:latest --build-arg php_image=$PHP_IMAGE_TMP -t $APACHE_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 .
     - docker push $APACHE_IMAGE_TMP
+  only:
+    - branches
+    - tags
+
+build_caddy:
+  stage: build_apache
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker pull $CADDY_IMAGE_NAME:latest || true
+    - docker pull $CADDY_IMAGE_TMP 2> /dev/null || docker build --file Dockerfile.caddy --pull --cache-from $CADDY_IMAGE_NAME:latest --build-arg php_image=$PHP_IMAGE_TMP -t $CADDY_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 .
+    - docker push $CADDY_IMAGE_TMP
   only:
     - branches
     - tags
@@ -128,6 +142,47 @@ push_apache_latest:
     - docker push "$APACHE_IMAGE_NAME:latest"
   only:
     - master
+
+###################################################################################################################
+#
+# Push CADDY image with defintive name
+#
+
+push_caddy_branch:
+  stage: push
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker pull $CADDY_IMAGE_TMP
+    - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+    - docker push "$CADDY_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+  only:
+    - branches
+  except:
+    - master
+
+push_caddy_tag:
+  stage: push
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker pull $CADDY_IMAGE_TMP
+    - docker tag $CADDY_IMAGE_TMP "$APACHE_IMAGE_NAME:$CI_COMMIT_TAG"
+    - docker push "$CADDY_IMAGE_NAME:$CI_COMMIT_TAG"
+  only:
+    - tags
+
+push_caddy_latest:
+  stage: push
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker pull $CADDY_IMAGE_TMP
+    - docker tag $CADDY_IMAGE_TMP "$APACHE_IMAGE_NAME:latest"
+    - docker push "$CADDY_IMAGE_NAME:latest"
+  only:
+    - master
+
 
 
 ###################################################################################################################
