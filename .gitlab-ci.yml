@@ -50,7 +50,7 @@ build_apache:
 
 ###################################################################################################################
 #
-# Push PHP image with defintive name 
+# Push PHP image with defintive name
 #
 
 push_php_branch:
@@ -91,7 +91,7 @@ push_php_latest:
 
 ###################################################################################################################
 #
-# Push Apache image with defintive name 
+# Push Apache image with defintive name
 #
 
 push_apache_branch:
@@ -157,7 +157,7 @@ php-qa-tools:
     # commands are executed with a path like: /builds/LzfeuYfm/0/opencontent/stanzadelcittadino
     # to have reports uploaded to gitlab the runners must have /builds path shared
     # ->  https://gitlab.com/gitlab-org/gitlab-foss/-/issues/41227
-    - docker run -t --rm -u "$UID" -v "$(pwd):/app" eko3alpha/docker-phpqa --tools phpmetrics,phploc,phpcs,php-cs-fixer,phpmd,pdepend,parallel-lint --report offline --ignoredDirs vendor,build,migrations,test --buildDir /app/reports 
+    - docker run -t --rm -u "$UID" -v "$(pwd):/app" eko3alpha/docker-phpqa --tools phpmetrics,phploc,phpcs,php-cs-fixer,phpmd,pdepend,parallel-lint --report offline --ignoredDirs vendor,build,migrations,test --buildDir /app/reports
   artifacts:
     name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
     paths:
@@ -173,8 +173,7 @@ security_composer_checker:
   stage: test
   image: umutphp/php-docker-images-for-ci:7.3
   script:
-    - security-checker security:check composer.lock
-
+    - local-php-security-checker --path=./composer.lock
 
 #dummy_protocol:
 #  stage: test
