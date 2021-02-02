@@ -4,7 +4,7 @@ respond /health status 200
 root * /srv
 
 file_server browse
-metrics /metrics
+metrics /caddy-metrics
 
 log {
   format console
