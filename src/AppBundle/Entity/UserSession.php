@@ -122,7 +122,10 @@ class UserSession
    */
   public function getAuthenticationData()
   {
-    $data = (array)json_decode($this->authenticationData, true);
+    $data = $this->authenticationData;
+    if (is_string($data)) {
+      $data = (array)json_decode($data, true);
+    }
 
     return UserAuthenticationData::fromArray($data);
   }
@@ -132,7 +135,7 @@ class UserSession
    */
   public function setAuthenticationData(UserAuthenticationData $authenticationData)
   {
-    $this->authenticationData = json_encode($authenticationData);
+    $this->authenticationData = $authenticationData;
   }
 
   /**
