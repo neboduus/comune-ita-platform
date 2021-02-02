@@ -29,9 +29,9 @@ fos_password:
     prefix: "/%prefix%/operatori/profile"
 
 app.swagger_ui:
-    path: "/%prefix%/api/doc"
+    path: "/%prefix%/api/doc/{area}"
     methods: GET
-    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui, area: default }
 
 app.swagger:
     path: "/%prefix%/api/doc.json"

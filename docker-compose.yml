@@ -64,6 +64,7 @@ services:
       RECAPTCHA_SECRET: $RECAPTCHA_SECRET
       SENTRY_DSN: $SENTRY_DSN
       PHP_DATE_TIMEZONE: 'Europe/Rome'
+      PASSWORD_LIFE_TIME: $PASSWORD_LIFE_TIME
     volumes:
       - "uploads:/var/www/html/var/uploads"
 
