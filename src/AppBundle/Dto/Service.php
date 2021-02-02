@@ -8,6 +8,7 @@ use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;
 use AppBundle\Model\PaymentParameters;
 use AppBundle\Model\FlowStep;
+use AppBundle\Model\IOServiceParameters;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -216,6 +217,13 @@ class Service
    * @SWG\Property(description="If selected, service's applications can be reopend")
    */
   private $workflow;
+
+  /**
+   * @var array
+   * @SWG\Property(property="io_parameters", description="Io parameters", type="object", ref=@Model(type=IOServiceParameters::class))
+   * @Serializer\Exclude()
+   */
+  private $ioParameters;
 
   /**
    * @return mixed
@@ -669,6 +677,22 @@ class Service
   public function setWorkflow(int $workflow)
   {
     $this->workflow = $workflow;
+  }
+
+  /**
+   * @return array
+   */
+  public function getIoParameters(): ?array
+  {
+    return $this->ioParameters;
+  }
+
+  /**
+   * @param array $ioParameters
+   */
+  public function setIoParameters(?array $ioParameters): void
+  {
+    $this->ioParameters = $ioParameters;
   }
 
 
