@@ -83,7 +83,6 @@ function filterData(){
     .then(function (response) {
       if (response.status === 200) {
         if(response.data.series){
-          console.log(response.data.series)
           chart.update({
             series: response.data.series
           },true,true)
