@@ -127,7 +127,7 @@ class UserSession
       $data = (array)json_decode($data, true);
     }
 
-    return UserAuthenticationData::fromArray($data);
+    return UserAuthenticationData::fromArray((array)$data);
   }
 
   /**

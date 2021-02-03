@@ -553,7 +553,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       $data = (array)json_decode($data, true);
     }
 
-    return UserAuthenticationData::fromArray($data);
+    return UserAuthenticationData::fromArray((array)$data);
   }
 
   /**
