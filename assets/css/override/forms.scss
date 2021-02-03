@@ -239,6 +239,10 @@ textarea {
     padding-bottom: inherit;
   }
 
+  .form-check-inline{
+    margin-top: .5rem;
+  }
+
   .form-check.checkbox{
     padding-left: 0;
     + .form-text.text-muted{
@@ -266,6 +270,12 @@ textarea {
     }
     .form-check-inline{
       padding-left: 1rem;
+    }
+  }
+  .formio-read-only {
+    .form-group.formio-hidden{
+      padding-bottom: 0;
+      margin-bottom: 0;
     }
   }
 }

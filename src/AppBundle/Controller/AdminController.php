@@ -843,8 +843,12 @@ class AdminController extends Controller
       array(
         'name' => 'Utenti registrati',
         'data' => array_fill(0, 12, 0)
-
-      ));
+      ),
+      array(
+        'name' => 'Utenti attivi negli ultimi 6 mesi',
+        'data' => array_fill(0, 12, 0)
+      )
+    );
 
     $resultByYear = array_filter($result, function ($obj) use ($year) {
       if (count($obj) > 0) {
