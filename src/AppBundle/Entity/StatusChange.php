@@ -17,6 +17,7 @@ class StatusChange
   private $responsabile;
   private $struttura;
   private $message;
+  private $messageId;
 
   /**
    * StatusChange constructor.
@@ -32,6 +33,7 @@ class StatusChange
     $this->timestamp = $data['timestamp'] ?? $data['time'] ?? null;
 
     $this->message = $data['message'] ?? null;
+    $this->message = $data['message_id'] ?? null;
 
     if (!is_int($this->timestamp)) {
       try {
@@ -139,6 +141,22 @@ class StatusChange
     $this->message = $message;
   }
 
+  /**
+   * @return mixed
+   */
+  public function getMessageId()
+  {
+    return $this->messageId;
+  }
+
+  /**
+   * @param mixed $messageId
+   */
+  public function setMessageId($messageId)
+  {
+    $this->messageId = $messageId;
+  }
+
 
   /**
    * @return string
@@ -162,6 +180,7 @@ class StatusChange
       'struttura' => $this->struttura,
       'timestamp' => $this->timestamp,
       'message' => $this->message,
+      'message_id' => $this->messageId
     ];
   }
 }

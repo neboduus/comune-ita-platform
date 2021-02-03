@@ -24,6 +24,11 @@ class FeedbackMessage implements \JsonSerializable
   private $message;
 
   /**
+   * @var
+   */
+  private $subject;
+
+  /**
    * @var boolean
    */
   private $isActive;
@@ -74,6 +79,22 @@ class FeedbackMessage implements \JsonSerializable
   public function setMessage($message)
   {
     $this->message = $message;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getSubject()
+  {
+    return $this->subject;
+  }
+
+  /**
+   * @param mixed $subject
+   */
+  public function setSubject($subject)
+  {
+    $this->subject = $subject;
   }
 
   /**

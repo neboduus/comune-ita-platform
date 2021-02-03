@@ -4,7 +4,6 @@
 namespace AppBundle\Services\Manager;
 
 
-use AppBundle\Entity\IntegrabileInterface;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
@@ -18,8 +17,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PraticaManager
 {
@@ -48,10 +47,16 @@ class PraticaManager
   private $messageManager;
 
   /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  /**
    * PraticaManagerService constructor.
    * @param EntityManagerInterface $entityManager
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaStatusService $praticaStatusService
+   * @param TranslatorInterface $translator
    * @param RouterInterface $router
    * @param LoggerInterface $logger
    * @param MessageManager $messageManager
@@ -60,16 +65,19 @@ class PraticaManager
     EntityManagerInterface $entityManager,
     ModuloPdfBuilderService $moduloPdfBuilderService,
     PraticaStatusService $praticaStatusService,
+    TranslatorInterface $translator,
     RouterInterface $router,
     LoggerInterface $logger,
     MessageManager $messageManager
-  ) {
+  )
+  {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->praticaStatusService = $praticaStatusService;
     $this->logger = $logger;
     $this->entityManager = $entityManager;
     $this->router = $router;
     $this->messageManager = $messageManager;
+    $this->translator = $translator;
   }
 
   /**
@@ -236,6 +244,7 @@ class PraticaManager
     $message->setProtocolRequired(false);
     $message->setVisibility(Message::VISIBILITY_APPLICANT);
     $message->setMessage($text);
+    $message->setSubject($this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]));
     $message->setAuthor($user);
     $this->entityManager->persist($message);
     $this->entityManager->persist($pratica);
@@ -246,11 +255,14 @@ class PraticaManager
 
     $statusChange = new StatusChange();
     $statusChange->setOperatore($user->getFullName());
+    $statusChange->setMessageId($message->getId());
     $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION, $statusChange);
   }
 
   /**
    * @param Pratica $pratica
+   * @param User $user
+   * @throws Exception
    */
   public function acceptIntegration(Pratica $pratica, User $user)
   {
@@ -260,5 +272,27 @@ class PraticaManager
     $statusChange = new StatusChange();
     $statusChange->setOperatore($user->getFullName());
     $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION, $statusChange);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param string $text
+   * @param string $subject
+   * @return Message
+   */
+  public function generateStatusMessage(Pratica $pratica, string $text, string $subject): Message
+  {
+    $message = new Message();
+    $message->setApplication($pratica);
+    $message->setProtocolRequired(false);
+    $message->setVisibility(Message::VISIBILITY_APPLICANT);
+    $message->setMessage($text);
+    $message->setSubject($subject);
+
+    $this->entityManager->persist($message);
+    $this->entityManager->persist($pratica);
+    $this->entityManager->flush();
+
+    return $message;
   }
 }

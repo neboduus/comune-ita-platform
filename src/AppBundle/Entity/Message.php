@@ -32,8 +32,13 @@ class Message
   private $message;
 
   /**
+   * @ORM\Column(type="string", nullable=true)
+   */
+  private $subject;
+
+  /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-   * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+   * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
    */
   private $author;
 
@@ -164,6 +169,26 @@ class Message
   public function setMessage($message)
   {
     $this->message = strip_tags($message, '<p><a><b><i><u><ul><ol><li><br>');
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSubject()
+  {
+    return $this->subject;
+  }
+
+  /**
+   * @param string $subject
+   *
+   * @return $this
+   */
+  public function setSubject($subject)
+  {
+    $this->subject = $subject;
 
     return $this;
   }

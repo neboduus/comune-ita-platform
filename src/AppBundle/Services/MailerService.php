@@ -250,6 +250,7 @@ class MailerService
     }
 
     $placeholders = [
+      '%id%' => $pratica->getId(),
       '%pratica_id%' => $pratica->getId(),
       '%servizio%' => $pratica->getServizio()->getName(),
       '%protocollo%' => $pratica->getNumeroProtocollo(),
@@ -260,6 +261,12 @@ class MailerService
 
     if ($textOnly) {
       return strtr($feedbackMessage['message'], $placeholders);
+    }
+
+    if (isset($feedbackMessage['subject']) && !empty($feedbackMessage['subject'])) {
+      $subject = strip_tags(strtr($feedbackMessage['subject'], $placeholders));
+    } else {
+      $subject = $this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]);
     }
 
     $textHtml = $this->templating->render(
@@ -273,7 +280,7 @@ class MailerService
     $textPlain = strip_tags($textHtml);
 
     $message = \Swift_Message::newInstance()
-      ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
+      ->setSubject($subject)
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
       ->setBody($textHtml, 'text/html')
