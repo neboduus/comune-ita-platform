@@ -15,7 +15,6 @@ use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use \AppBundle\Entity\Message as MessageEntity;
-use function GuzzleHttp\Psr7\_parse_request_uri;
 
 class Message
 {
@@ -31,10 +30,17 @@ class Message
    * @Assert\NotBlank(message="Message is mandatory")
    * @Assert\NotNull(message="Message is mandatory")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Service's description, accepts html tags")
+   * @SWG\Property(description="Message, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $message;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Message subject")
+   * @Groups({"read", "write"})
+   */
+  private $subject;
 
   /**
    * @Assert\NotBlank(message="Author is mandatory")
@@ -161,6 +167,22 @@ class Message
   public function setMessage($message): void
   {
     $this->message = $message;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getSubject()
+  {
+    return $this->subject;
+  }
+
+  /**
+   * @param mixed $subject
+   */
+  public function setSubject($subject): void
+  {
+    $this->subject = $subject;
   }
 
   /**
@@ -361,7 +383,8 @@ class Message
     $dto = new self();
     $dto->id = $message->getId();
     $dto->message = $message->getMessage();
-    $dto->author = $message->getAuthor()->getId();
+    $dto->subject = $message->getSubject();
+    $dto->author = $message->getAuthor() ? $message->getAuthor()->getId() : null;
     $dto->application = $message->getApplication()->getId();
     $dto->visibility = $message->getVisibility();
     $dto->email = $message->getEmail();
@@ -394,6 +417,7 @@ class Message
     }
 
     $entity->setMessage($this->getMessage());
+    $entity->setSubject($this->getSubject());
     if ($this->getAuthor() instanceof \AppBundle\Entity\User) {
       $entity->setAuthor($this->getAuthor());
     }

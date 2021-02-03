@@ -43,6 +43,14 @@ class Transition
   private $message;
 
   /**
+   * @var User
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Status Message Id")
+   * @Groups({"read"})
+   */
+  private $messageId;
+
+  /**
    * @Serializer\Type("DateTime")
    * @SWG\Property(description="Transition date time", type="string")
    * @Groups({"read"})
@@ -104,6 +112,22 @@ class Transition
   public function setUser($user): void
   {
     $this->user = $user;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getMessageId()
+  {
+    return $this->messageId;
+  }
+
+  /**
+   * @param mixed $messageId
+   */
+  public function setMessageId($messageId): void
+  {
+    $this->messageId = $messageId;
   }
 
   /**

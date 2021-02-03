@@ -2076,9 +2076,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       foreach ($v as $change) {
         $transition = new Transition();
         $transition->setStatusCode($change[0]);
-        $transition->setStatusName($this->getStatusNameByCode($change[0]));
+        $transition->setStatusName(strtolower($this->getStatusNameByCode($change[0])));
         if (isset($change[1]['message']) && !empty($change[1]['message'])) {
           $transition->setMessage($change[1]['message']);
+        }
+        if (isset($change[1]['message_id']) && !empty($change[1]['message_id'])) {
+          $transition->setMessageId($change[1]['message_id']);
         }
         try {
           $date = new \DateTime();

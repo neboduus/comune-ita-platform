@@ -102,6 +102,7 @@ class FeedbackMessagesDataType extends AbstractType
       $temp = new FeedbackMessage();
       $temp->setName($v);
       $temp->setTrigger($k);
+      $temp->setSubject(isset($tempMessage['subject']) ? $tempMessage['subject'] : $this->translator->trans('pratica.email.status_change.subject'));
       $temp->setMessage(
         isset($tempMessage['message']) ? $tempMessage['message'] : $this->translator->trans('messages.pratica.status.'.$k)
       );

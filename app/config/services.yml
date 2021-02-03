@@ -366,6 +366,12 @@ services:
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 20 }
 
+  ocsdc.pratica_listeners.statusmessage:
+    class: AppBundle\EventListener\StatusMessagePraticaListener
+    autowire: true
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 21 }
+
   ocsdc.pratica_listeners.backoffice:
     class: AppBundle\EventListener\BackOfficePraticaListener
     arguments: [ "@service_container", "@logger" ]
