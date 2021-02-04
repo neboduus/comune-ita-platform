@@ -149,14 +149,15 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     $soggetti = $protocollaArrivo->addChild('web:soggetti', null, 'web');
     $soggetto = $soggetti->addChild('web:soggetto', null, 'web');
-    $soggetto->addChild('web:denominazione', $pratica->getRichiedenteCognome() . ' ' . $pratica->getRichiedenteNome() . ' ' . $pratica->getRichiedenteCodiceFiscale(), 'web');
 
-    if ($pratica->getRichiedenteEmail()) {
-      $soggetto->addChild('web:indirizzo', $pratica->getRichiedenteEmail(), 'web');
+    $user = $pratica->getUser();
+    $soggetto->addChild('web:denominazione', $user->getFullName() . ' ' . substr(trim($user->getCodiceFiscale()), 0, 16), 'web');
+
+    if ($user->getEmail()) {
+      $soggetto->addChild('web:indirizzo', $user->getEmail(), 'web');
     }
 
     $this->createSmistamentoNode($protocollaArrivo, $parameters['arrivo']);
-
     $protocollaArrivo->addChild('web:oggetto', $this->retrieveOggettoFromPratica($pratica), 'web');
 
     $request = trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
@@ -231,8 +232,10 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $protocollaPartenza = $richiesta->addChild('web:protocollaPartenza', null, 'web');
     $soggetti = $protocollaPartenza->addChild('web:soggetti', null, 'web');
     $soggetto = $soggetti->addChild('web:soggetto', null, 'web');
-    $soggetto->addChild('web:denominazione', $pratica->getRichiedenteCognome() . ' ' . $pratica->getRichiedenteNome() . ' ' . $pratica->getRichiedenteCodiceFiscale(), 'web');
-    $soggetto->addChild('web:indirizzo', $pratica->getRichiedenteEmail() || $pratica->getRichiedenteEmail(), 'web');
+
+    $user = $pratica->getUser();
+    $soggetto->addChild('web:denominazione', $user->getFullName() . ' ' . substr(trim($user->getCodiceFiscale()), 0, 16), 'web');
+    $soggetto->addChild('web:indirizzo', $user->getEmail(), 'web');
 
     $this->createClassificazioneNode($protocollaPartenza, $parameters['risposta']);
     $this->createAltriDatiNode($protocollaPartenza, $parameters['risposta']);
@@ -331,8 +334,8 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
     if ( !in_array($status['http_code'], [200, 201, 202, 203, 204] )) {
       $message = 'Infor protocol error: ' . $status['http_code'] . 'Request: '  . $request;
-      $this->logger->error($message);
-      throw new \Exception($message);
+      $this->logger->error($ch_result);
+      throw new \Exception($ch_result);
     }
 
     $this->logger->notice('Got response from InforProtocol', [$ch_result]);
@@ -380,8 +383,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     }
 
     return "STANZA DEL CITTADINO: " . $pratica->getServizio()->getName() .
-      " " . $pratica->getRichiedenteCognome() .
-      " " . $pratica->getRichiedenteNome();
+      " " . $pratica->getUser()->getFullName();
   }
 
   private function retrieveOggettoRispostaFromPratica(Pratica $pratica): string
@@ -392,8 +394,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     }
 
     return "STANZA DEL CITTADINO : rifiuto  " . $pratica->getServizio()->getName() .
-      " " . $pratica->getRichiedenteCognome() .
-      " " . $pratica->getRichiedenteNome();
+      " " . $pratica->getUser()->getFullName();
   }
 
   private function retrieveProtocolloParametersForEnteAndServizio(Pratica $pratica): array
