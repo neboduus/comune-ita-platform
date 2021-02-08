@@ -102,7 +102,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         );
       } catch (GuzzleException $e) {
         $this->logger->error(
-          "Errore inviando l'allegato al protocollo",
+          "Errore inviando l'allegato al protocollo " . $e->getMessage(),
           ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]
         );
         $dispatchSuccess = false;
@@ -127,7 +127,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         );
       } catch (GuzzleException $e) {
         $this->logger->error(
-          "Errore inviando l'allegato al protocollo",
+          "Errore inviando l'allegato al protocollo " . $e->getMessage(),
           ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]
         );
         $dispatchSuccess = false;
@@ -254,7 +254,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         );
       } catch (GuzzleException $e) {
         $this->logger->error(
-          "Errore inviando l'allegato al protocollo",
+          "Errore inviando l'allegato al protocollo " . $e->getMessage(),
           ['integrazione' => $allegato->getId(), 'pratica' => $pratica->getId()]
         );
         $dispatchSuccess = false;

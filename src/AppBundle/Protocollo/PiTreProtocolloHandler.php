@@ -8,6 +8,7 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaIntegrazione;
 use AppBundle\Protocollo\Exception\ResponseErrorException;
+use Doctrine\Common\Collections\ArrayCollection;
 use GuzzleHttp\Client;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -172,6 +173,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       ]);
 
     } else {
+      $parameters->setFile('Removed file content for easy debug');
       throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
     }
   }
@@ -513,7 +515,18 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $parameters->setInstance($this->instance);
     }
 
-    $parameters->setDocumentId($rispostaIntegrazione->getIdDocumentoProtocollo());
+    $documentId = $rispostaIntegrazione->getIdDocumentoProtocollo();
+    if (empty($documentId)) {
+      /** @var ArrayCollection $numeriProtocollo */
+      $numeriProtocollo = $pratica->getNumeriProtocollo();
+      foreach ($numeriProtocollo as $item) {
+        if ($item->id == $rispostaIntegrazione->getId()) {
+          $documentId = $item->protocollo;
+        }
+      }
+    }
+
+    $parameters->setDocumentId($documentId);
     $path = $integrazione->getFile()->getPathname();
     $parameters->setFileName($integrazione->getFile()->getFilename());
     $fileContent = base64_encode(file_get_contents($path));
