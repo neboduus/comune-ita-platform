@@ -84,7 +84,11 @@ class StatusMessagePraticaListener
     $generateMessage = false;
 
 
-    if (!isset($feedbackMessages[$newStatus]) && $newStatus!==Pratica::STATUS_PENDING) {
+    if (!isset($feedbackMessages[$newStatus])) {
+      if ($newStatus == Pratica::STATUS_PENDING) {
+        // Do not generate default pending message if not enabled
+        return;
+      }
       // Default status message if no feedback message is set
       $message = $defaultMessage;
       $subject = $defaultSubject;

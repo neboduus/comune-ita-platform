@@ -5,6 +5,7 @@ namespace AppBundle\Dto;
 
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\Pratica;
 use AppBundle\Model\File;
 use DateTime;
@@ -43,8 +44,6 @@ class Message
   private $subject;
 
   /**
-   * @Assert\NotBlank(message="Author is mandatory")
-   * @Assert\NotNull(message="Author is mandatory")
    * @Serializer\Type("string")
    * @SWG\Property(description="Author of the message (uuid)")
    * @Groups({"read"})
@@ -443,6 +442,21 @@ class Message
     }
     $entity->setProtocolRequired($this->isProtocolRequired());
     $entity->setProtocolNumber($this->getProtocolNumber());
+
+    // Update attachment protocol data
+    if ($entity->getProtocolNumber()) {
+      foreach ($entity->getAttachments() as $attachment) {
+        /** @var AllegatoMessaggio $attachment */
+        if (!$attachment->getNumeroProtocollo()) {
+          $attachment->setNumeroProtocollo($entity->getProtocolNumber());
+          $attachment->addNumeroDiProtocollo([
+            "id" => null,
+            "protocollo" => $entity->getProtocolNumber()
+          ]);
+        }
+      }
+    }
+
 
     return $entity;
   }
