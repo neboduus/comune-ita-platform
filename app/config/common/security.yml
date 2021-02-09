@@ -55,7 +55,7 @@ security:
           - lexik_jwt_authentication.jwt_token_authenticator
 
     api_secure:
-      pattern: /%prefix%/api/(folders|documents|users|meetings|applications)
+      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|tenants)
       stateless: true
       provider: fos_userbundle
       guard:

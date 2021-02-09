@@ -56,6 +56,9 @@ services:
   AppBundle\Controller\Rest\MessagesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\TenantAPIController:
+    autowire: true
+
   AppBundle\Controller\AdminController:
     autowire: true
 
@@ -489,6 +492,11 @@ services:
       - { name: form.type }
 
   AppBundle\Form\Admin\Ente\EnteType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\TenantType:
     autowire: true
     tags:
       - { name: form.type }
