@@ -262,7 +262,7 @@ class Message
    * @param string $email
    * @return $this
    */
-  public function setEmail(string $email): Message
+  public function setEmail(?string $email): Message
   {
     $this->email = $email;
 

@@ -6,6 +6,7 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Dto\Message;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoMessaggio;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Message as MessageEntity;
 use AppBundle\Services\InstanceService;
@@ -485,8 +486,16 @@ class MessagesAPIController extends AbstractFOSRestController
     }
 
     $user = $this->getUser();
-    if ($messageEntity->getAuthor() != $user) {
-      return $this->view("You can't update messages of other users", Response::HTTP_FORBIDDEN);
+
+    if ($user instanceof OperatoreUser) {
+      /** @var  OperatoreUser $user */
+
+      $enabledServices = $user->getServiziAbilitati();
+      $serviceId = $messageEntity->getApplication()->getServizio()->getId();
+
+      if (!$enabledServices->contains($serviceId)) {
+        return $this->view("You can't update messages of this service", Response::HTTP_FORBIDDEN);
+      }
     }
 
     if ($messageEntity->getProtocolNumber() != null) {

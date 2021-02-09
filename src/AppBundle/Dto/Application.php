@@ -792,7 +792,6 @@ class Application
       $dto->outcomeProtocolNumber = $pratica->getRispostaOperatore()->getNumeroProtocollo();
       $dto->outcomeProtocolDocumentId = $pratica->getRispostaOperatore()->getIdDocumentoProtocollo();
       $dto->outcomeProtocolNumbers = $pratica->getRispostaOperatore()->getNumeriProtocollo()->toArray();
-
     }
 
     //$dto->outcomeMotivation = $pratica->getMotivazioneEsito();
@@ -823,7 +822,7 @@ class Application
     return $dto;
   }
 
-  public static function decorateDematerializedForms( $data, $attachmentEndpointUrl = '')
+  public static function decorateDematerializedForms($data, $attachmentEndpointUrl = '')
   {
     if (!isset($data['flattened'])) {
       return $data;
@@ -842,7 +841,7 @@ class Application
     return $decoratedData;
   }
 
-  public static function decorateDematerializedFormsV2( $data, $attachmentEndpointUrl = '')
+  public static function decorateDematerializedFormsV2($data, $attachmentEndpointUrl = '')
   {
 
     if (!isset($data['flattened'])) {
@@ -855,15 +854,15 @@ class Application
     $multiArray = array();
 
     foreach ($keys as $path) {
-      $parts       = explode('.', trim($path, '.'));
-      $section     = &$multiArray;
+      $parts = explode('.', trim($path, '.'));
+      $section = &$multiArray;
       $sectionName = '';
 
       $partsCount = count($parts);
       $counter = 0;
 
       foreach ($parts as $part) {
-        $counter ++;
+        $counter++;
         $sectionName = $part;
 
         // Salto data
@@ -893,35 +892,35 @@ class Application
     return $multiArray;
   }
 
-  public static function isUploadField ($schema, $field)
+  public static function isUploadField($schema, $field)
   {
-    return (isset($schema[$field. '.type']) && $schema[$field. '.type'] == 'file');
+    return (isset($schema[$field . '.type']) && $schema[$field . '.type'] == 'file');
   }
 
-  public static function prepareFileCollection( $collection, $attachmentEndpointUrl = '')
+  public static function prepareFileCollection($collection, $attachmentEndpointUrl = '')
   {
     $files = [];
-    if ( $collection == null) {
+    if ($collection == null) {
       return $files;
     }
     /** @var Allegato $c */
     foreach ($collection as $c) {
-      $files[]= self::prepareFile($c, $attachmentEndpointUrl);
+      $files[] = self::prepareFile($c, $attachmentEndpointUrl);
     }
     return $files;
   }
 
-  public static function prepareFormioFile( $files, $attachmentEndpointUrl = '' )
+  public static function prepareFormioFile($files, $attachmentEndpointUrl = '')
   {
-    $result=[];
+    $result = [];
     foreach ($files as $f) {
       $id = $f['data']['id'];
       $temp['id'] = $id;
       $temp['name'] = $f['name'];
-      $temp['url'] = $attachmentEndpointUrl . '/attachments/' .  $id;
+      $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $id;
       $temp['originalName'] = $f['originalName'];
       $temp['description'] = isset($f['fileType']) ? $f['fileType'] : Allegato::DEFAULT_DESCRIPTION;
-      $result[]=$temp;
+      $result[] = $temp;
     }
     return $result;
   }
@@ -930,7 +929,7 @@ class Application
   {
     $temp['id'] = $file->getId();
     $temp['name'] = $file->getName();
-    $temp['url'] = $attachmentEndpointUrl . '/attachments/' .  $file->getId();
+    $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $file->getId();
     $temp['originalName'] = $file->getFilename();
     $temp['description'] = $file->getDescription() ?? Allegato::DEFAULT_DESCRIPTION;
     $temp['created_at'] = $file->getCreatedAt();
@@ -968,34 +967,68 @@ class Application
       $entity = new Pratica();
     }
 
-    # Protocollo modulo compilato
+    # Main document
     $entity->setNumeroProtocollo($this->getProtocolNumber());
     $entity->setNumeroFascicolo($this->getProtocolFolderNumber());
     $entity->setIdDocumentoProtocollo($this->getProtocolDocumentId());
 
-    $entity->addNumeroDiProtocollo([
-      'id' => $this->getProtocolDocumentId(),
-      'protocollo' => $this->getProtocolNumber(),
-    ]);
+    $applicationAttachments = array_merge($entity->getModuliCompilati()->getValues(), $entity->getAllegati()->getValues());
 
-    # Protocollo risposta operatore
+    foreach ($applicationAttachments as $attachment) {
+      $numeroDiProtocollo = [
+        'id' => $attachment->getId(),
+        'protocollo' => $this->getProtocolNumber(),
+      ];
+
+      if (!$this->inProtocolNumbers($numeroDiProtocollo, $entity->getNumeriProtocollo())) {
+        $entity->addNumeroDiProtocollo($numeroDiProtocollo);
+      }
+    }
+
+
+    # Outcome document
     $rispostaOperatore = $entity->getRispostaOperatore();
-    if ($rispostaOperatore) {
+    if ($rispostaOperatore && $this->getOutcomeProtocolNumber()) {
       $rispostaOperatore->setNumeroProtocollo($this->getOutcomeProtocolNumber());
       $rispostaOperatore->setIdDocumentoProtocollo($this->getOutcomeProtocolDocumentId());
-      $rispostaOperatore->addNumeroDiProtocollo([
-        'id' => $this->getOutcomeProtocolDocumentId(),
-        'protocollo' => $this->getOutcomeProtocolNumber(),
-      ]);
+
+      $outcomeAttachments = array_merge([$entity->getRispostaOperatore()], $entity->getAllegatiOperatore()->getValues());
+
+      foreach ($outcomeAttachments as $attachment) {
+        $numeroDiProtocollo = [
+          'id' => $attachment->getId(),
+          'protocollo' => $this->getOutcomeProtocolNumber(),
+        ];
+
+        if (!$this->inProtocolNumbers($numeroDiProtocollo, $rispostaOperatore->getNumeriProtocollo())) {
+          $rispostaOperatore->addNumeroDiProtocollo($numeroDiProtocollo);
+        }
+      }
     }
+
     return $entity;
+  }
+
+
+  private function inProtocolNumbers($needle, $protocolNumbers)
+  {
+    $found = false;
+
+    foreach ($protocolNumbers as $protocolNumber) {
+      $protocolNumber = json_decode(json_encode($protocolNumber), true);
+      if ($protocolNumber["id"] == $needle["id"] && $protocolNumber["protocollo"] == $needle["protocollo"]) {
+        $found = true;
+      }
+    }
+    return $found;
   }
 
   /**
    * @param Pratica $pratica
    * @return mixed
    */
-  public static function preparePaymentData( $pratica ) {
+  public static function preparePaymentData($pratica)
+  {
     if (!empty($pratica->getPaymentData())) {
       $gateway = $pratica->getPaymentType();
       /** @var PaymentDataInterface $gatewayClassHandler */

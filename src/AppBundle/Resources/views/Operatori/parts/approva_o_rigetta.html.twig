@@ -82,7 +82,7 @@
       | raw }}
     </p>
     {% if pratica.motivazioneEsito %}
-      <p class="mb-0 p-2 bg-light">{{ pratica.motivazioneEsito }}</p>
+      <p class="mb-0 p-2 bg-light">{{ pratica.motivazioneEsito | striptags }}</p>
     {% endif %}
     {% if pratica.allegatiOperatore|length > 0 %}
       <p class="mb-0 px-2 pb-2 bg-light">

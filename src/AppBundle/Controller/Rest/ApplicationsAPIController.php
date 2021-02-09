@@ -672,10 +672,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view("Application isn't in correct state", Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    if (!$application->getServizio()->isProtocolRequired()) {
-      return $this->view("Application does not need to be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
-
     if ($application->getType() !== Pratica::TYPE_FORMIO) {
       return $this->view("Application can not be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
     }
@@ -696,7 +692,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     try {
-      if (!$application->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_SUBMITTED) {
+      if (!$application->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_SUBMITTED && $application->getServizio()->isProtocolRequired()) {
+        // Update application status if protocol is enabled and application is submitted
         $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);
       }
       $rispostaOperatore = $application->getRispostaOperatore();
