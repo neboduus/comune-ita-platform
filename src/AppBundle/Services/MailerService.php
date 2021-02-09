@@ -129,9 +129,9 @@ class MailerService
           $sentAmount += $this->send($CPSUsermessage);
           $pratica->setLatestCPSCommunicationTimestamp(time());
         }
-      } catch (MessageDisabledException $e){
+      } catch (MessageDisabledException $e) {
         $this->logger->info('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
-      } catch (\Exception $e){
+      } catch (\Exception $e) {
         $this->logger->error('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
     }
@@ -149,7 +149,7 @@ class MailerService
 
     if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED || $pratica->getStatus() == Pratica::STATUS_REGISTERED) {
 
-      $sql = "SELECT id from utente where servizi_abilitati like '%".$pratica->getServizio()->getId()."%'";
+      $sql = "SELECT id from utente where servizi_abilitati like '%" . $pratica->getServizio()->getId() . "%'";
       $stmt = $this->doctrine->getManager()->getConnection()->prepare($sql);
       $stmt->execute();
       $result = $stmt->fetchAll();
@@ -166,7 +166,7 @@ class MailerService
           try {
             $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $operatore);
             $sentAmount += $this->send($operatoreUserMessage);
-          } catch (\Exception $e){
+          } catch (\Exception $e) {
             $this->logger->error('Error in dispatchMailForPratica (All operators): Email: ' . $operatore->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
           }
         }
@@ -179,7 +179,7 @@ class MailerService
           $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
           $sentAmount += $this->send($operatoreUserMessage);
           $pratica->setLatestOperatoreCommunicationTimestamp(time());
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
           $this->logger->error('Error in dispatchMailForPratica (Assigned operator): Email: ' . $pratica->getOperatore()->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
         }
       }
@@ -197,7 +197,7 @@ class MailerService
   {
     $failed = [];
     $count = $this->mailer->send($message, $failed);
-    if (count($failed) > 0){
+    if (count($failed) > 0) {
       throw new \Exception(implode(',', $failed));
     }
     return $count;
@@ -230,7 +230,7 @@ class MailerService
    * @throws MessageDisabledException
    * @throws \Twig\Error\Error
    */
-  private function setupCPSUserMessage(Pratica $pratica, $fromAddress, $textOnly=false)
+  private function setupCPSUserMessage(Pratica $pratica, $fromAddress, $textOnly = false)
   {
     $toEmail = $pratica->getUser()->getEmailContatto();
     $toName = $pratica->getUser()->getFullName();
@@ -239,15 +239,17 @@ class MailerService
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
     $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
-    if (!isset($feedbackMessages[$pratica->getStatus()])){
+    if (!isset($feedbackMessages[$pratica->getStatus()])) {
       return $this->setupCPSUserMessageFallback($pratica, $fromAddress);
     }
 
     /** @var FeedbackMessage $feedbackMessage */
     $feedbackMessage = $feedbackMessages[$pratica->getStatus()];
-    if (!$feedbackMessage['isActive']){
-      throw new MessageDisabledException('Message for '.$pratica->getStatus().' is not active');
+    if (!$feedbackMessage['isActive']) {
+      throw new MessageDisabledException('Message for ' . $pratica->getStatus() . ' is not active');
     }
+
+    $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
 
     $placeholders = [
       '%id%' => $pratica->getId(),
@@ -257,6 +259,10 @@ class MailerService
       '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
       '%user_name%' => $pratica->getUser()->getFullName(),
       '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
+      '%data_acquisizione%' => $submissionTime ? $this->translator->trans('email.pratica.data_acquisizione', [
+        '%date%' => $submissionTime->format('d/m/Y'),
+        '%hour%' => $submissionTime->format('H:i:s')
+      ]) : ""
     ];
 
     if ($textOnly) {
@@ -332,6 +338,9 @@ class MailerService
     $ente = $pratica->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
+    $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
+
+
     $message = \Swift_Message::newInstance()
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
@@ -341,7 +350,11 @@ class MailerService
           'AppBundle:Emails/User:pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
-            'user_name'    => $pratica->getUser()->getFullName(),
+            'user_name' => $pratica->getUser()->getFullName(),
+            'data_acquisizione' => $submissionTime ? $this->translator->trans('email.pratica.data_acquisizione', [
+              '%date%' => $submissionTime->format('d/m/Y'),
+              '%hour%' => $submissionTime->format('H:i:s')
+            ]) : ""
           )
         ),
         'text/html'
@@ -351,14 +364,18 @@ class MailerService
           'AppBundle:Emails/User:pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
-            'user_name'    => $pratica->getUser()->getFullName(),
+            'user_name' => $pratica->getUser()->getFullName(),
+            'data_acquisizione' => $submissionTime ? $this->translator->trans('email.pratica.data_acquisizione', [
+              '%date%' => $submissionTime->format('d/m/Y'),
+              '%hour%' => $submissionTime->format('H:i:s')
+            ]) : ""
           )
         ),
         'text/plain'
       );
     // Send attachment to user if status is submitted
     if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
-      if ($pratica->getModuliCompilati()->count() > 0 ) {
+      if ($pratica->getModuliCompilati()->count() > 0) {
         $moduloCompilato = $pratica->getModuliCompilati()->first();
         if (is_file($moduloCompilato->getFile()->getPathname())) {
           $message->attach(\Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname()));
@@ -474,7 +491,7 @@ class MailerService
           );
         $this->addCustomHeadersToMessage($emailMessage);
         $sentAmount += $this->send($emailMessage);
-      } catch (\Exception $e){
+      } catch (\Exception $e) {
         $this->logger->error('Error in dispatchMail: Email: ' . $toAddress . ' - ' . $e->getMessage());
       }
     } else {
@@ -492,10 +509,10 @@ class MailerService
   {
     /** @var FeedbackMessagesSettings $feedbackMessageSettings */
     $feedbackMessageSettings = $pratica->getServizio()->getFeedbackMessagesSettings();
-    if ( $feedbackMessageSettings != null && $feedbackMessageSettings->getPecMailer() != 'disabled') {
+    if ($feedbackMessageSettings != null && $feedbackMessageSettings->getPecMailer() != 'disabled') {
       try {
         /** @var Mailer $instanceMailer */
-        $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer()) ;
+        $instanceMailer = $pratica->getServizio()->getEnte()->getMailer($feedbackMessageSettings->getPecMailer());
 
         if (!$instanceMailer instanceof Mailer) {
           throw new \Exception('There are no mailers on instance');
@@ -523,10 +540,10 @@ class MailerService
         $message->setFrom($instanceMailer->getSender());
         $failed = [];
         $pecMailer->send($message, $failed);
-        if (count($failed) > 0){
+        if (count($failed) > 0) {
           throw new \Exception(implode(',', $failed));
         }
-      } catch (\Exception $e){
+      } catch (\Exception $e) {
         $this->logger->error('Error in dispatchPecEmail: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
     }
@@ -555,7 +572,7 @@ class MailerService
       try {
         $message = $this->setupSubscriberMessage($subscriberMessage, $fromAddress, $operatore);
         $sentAmount += $this->send($message);
-      } catch (\Exception $e){
+      } catch (\Exception $e) {
         $this->logger->error('Error in dispatchMailForSubscriber: Email: ' . $subscriberMessage->getSubscriber()->getEmail() . ' - ' . $e->getMessage());
       }
     }
@@ -620,7 +637,6 @@ class MailerService
 
     return $emailMessage;
   }
-
 
 
   /**

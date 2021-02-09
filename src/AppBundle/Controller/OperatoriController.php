@@ -942,13 +942,20 @@ class OperatoriController extends Controller
 
       $router = $this->router;
       $translator = $this->translator;
+
+      $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
+
       $placeholders = [
         '%pratica_id%' => $pratica->getId(),
         '%servizio%' => $pratica->getServizio()->getName(),
         '%protocollo%' => $pratica->getNumeroProtocollo(),
         '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $translator->trans('messages.pratica.no_reason'),
         '%user_name%' => $pratica->getUser()->getFullName(),
-        '%indirizzo%' => $router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL)
+        '%indirizzo%' => $router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
+        '%data_acquisizione%' => $submissionTime ? $this->translator->trans('email.pratica.data_acquisizione', [
+          '%date%'=>$submissionTime->format('d/m/Y'),
+          '%hour%'=>$submissionTime->format('H:i:s')
+        ]) : ""
       ];
 
       if (isset($feedbackMessages[$status])) {
