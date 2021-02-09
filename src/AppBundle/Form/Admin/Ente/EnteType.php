@@ -90,7 +90,7 @@ class EnteType extends AbstractType
         'label' => 'Link sul titolo di ogni pagina'
       ])
       ->add('codice_amministrativo', TextType::class)
-      ->add('meta', TextareaType::class, ['required' => false])
+      ->add('meta', TextareaType::class, ['required' => false, 'empty_data'=>""])
       ->add(DefaultProtocolSettings::KEY, DefaultProtocolSettingsType::class, [
         'label' => 'Impostazioni di default per il protocollo',
         'mapped' => false,
