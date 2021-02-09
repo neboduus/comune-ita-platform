@@ -5,7 +5,7 @@
 publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
-url: 'https://gitlab.com/opencontent/stanzadelcittadino'
+url: 'https://link.opencontent.it/sdc-home'
 releaseDate: '2021-02-05'
 softwareVersion: 1.6.33
 developmentStatus: stable
@@ -76,7 +76,7 @@ usedBy:
   - Comune di Seriate (BG)
   - Comune di Monopoli (BA)
   - Comune di Verbania (VB)
-roadmap: https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/ROADMAP.md
+roadmap: https://link.opencontent.it/sdc-roadmap
 categories:
   - communications
   - crm
@@ -126,8 +126,8 @@ it:
 description:
   it:
     genericName: ' L’area personale del cittadino'
-    apiDocumentation: 'https://stanzadelcittadino.it/comune-di-ala/api/doc'
-    documentation: 'https://manuale-stanza-del-cittadino.readthedocs.io/it/latest/'
+    apiDocumentation: 'https://link.opencontent.it/sdc-apidoc'
+    documentation: 'https://link.opencontent.it/sdc-manuale'
     shortDescription: >-
       Creazione moduli compilabili online e pratiche digitali con
       backoffice per gli operatori. Gestione Appuntamenti presso gli uffici o
