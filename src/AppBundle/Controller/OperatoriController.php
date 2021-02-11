@@ -944,18 +944,19 @@ class OperatoriController extends Controller
       $translator = $this->translator;
 
       $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
+      $protocolTime = $pratica->getProtocolTime() ? (new \DateTime())->setTimestamp($pratica->getProtocolTime()) : null;
 
       $placeholders = [
         '%pratica_id%' => $pratica->getId(),
         '%servizio%' => $pratica->getServizio()->getName(),
-        '%protocollo%' => $pratica->getNumeroProtocollo(),
+        '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : $translator->trans('email.pratica.no_info'),
         '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $translator->trans('messages.pratica.no_reason'),
         '%user_name%' => $pratica->getUser()->getFullName(),
         '%indirizzo%' => $router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
-        '%data_acquisizione%' => $submissionTime ? $this->translator->trans('email.pratica.data_acquisizione', [
-          '%date%'=>$submissionTime->format('d/m/Y'),
-          '%hour%'=>$submissionTime->format('H:i:s')
-        ]) : ""
+        '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : $translator->trans('email.pratica.no_info'),
+        '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : $translator->trans('email.pratica.no_info'),
+        '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : $translator->trans('email.pratica.no_info'),
+        '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : $translator->trans('email.pratica.no_info')
       ];
 
       if (isset($feedbackMessages[$status])) {

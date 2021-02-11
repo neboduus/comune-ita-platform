@@ -1,5 +1,5 @@
 {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
-{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione})|striptags }}
+{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo})|striptags }}
 {% if pratica.getEsito() and not pratica.getEsito() is null %}
   {% if not pratica.getMotivazioneEsito() is empty %}
     Con la seguente motivazione:

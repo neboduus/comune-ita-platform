@@ -40,6 +40,14 @@
                             <div class="font-weight-semibold">{{ 'operatori.numero_protocollo' | trans }}</div>
                             <div><span class="badge badge-light text-decoration-none">{{ pratica.numeroProtocollo }}</span></div>
                         </div>
+                        {% if pratica.protocolTime %}
+                            <div class="d-flex justify-content-between my-2">
+                                <div class="font-weight-semibold">{{ 'operatori.data_protocollo' | trans }}</div>
+                                <div>
+                                    {{ pratica.protocolTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.protocolTime|date(ocsdc_default_time_format) }}
+                                </div>
+                            </div>
+                        {% endif %}
                         {% if module_protocols | length > 0 %}
                             <div class="my-2">
                                 <div class="font-weight-semibold">{{ 'operatori.allegati' | trans }}</div>
@@ -110,6 +118,14 @@
                                                         <div class="font-weight-semibold">{{ 'operatori.numero_protocollo' | trans }}</div>
                                                         <div><span class="badge badge-light text-decoration-none">{{ message.protocolNumber }}</span></div>
                                                     </div>
+                                                    {% if message.protocolledAt %}
+                                                        <div class="d-flex justify-content-between my-2">
+                                                            <div class="font-weight-semibold">{{ 'operatori.data_protocollo' | trans }}</div>
+                                                            <div>
+                                                                {{ message.protocolledAt|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ message.protocolledAt|date(ocsdc_default_time_format) }}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
                                                     {% if message.attachments | length > 0 %}
                                                         <div>
                                                             <div class="font-weight-semibold">{{ 'operatori.allegati' | trans }}</div>
@@ -163,6 +179,14 @@
                                     <div class="font-weight-semibold">{{ 'operatori.numero_protocollo' | trans }}</div>
                                     <div><span class="badge badge-light text-decoration-none">{{ pratica.rispostaOperatore.numeroProtocollo }}</span></div>
                                 </div>
+                                {% if pratica.rispostaOperatore.protocolTime %}
+                                    <div class="d-flex justify-content-between my-2">
+                                        <div class="font-weight-semibold">{{ 'operatori.data_protocollo' | trans }}</div>
+                                        <div>
+                                            {{ pratica.rispostaOperatore.protocolTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.rispostaOperatore.protocolTime|date(ocsdc_default_time_format) }}
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 {% if outcome_protocols | length > 0 %}
                                     <div class="my-2">
                                         <div class="font-weight-semibold">{{ 'operatori.allegati' | trans }}</div>

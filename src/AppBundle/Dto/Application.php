@@ -158,6 +158,20 @@ class Application
   private $protocolNumbers;
 
   /**
+   * @Serializer\Type("int")
+   * @SWG\Property(description="Protocol time", type="int")
+   * @Groups({"read"})
+   */
+  private $protocolTime;
+
+  /**
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Protocol date time", type="dateTime")
+   * @Groups({"read", "write"})
+   */
+  private $protocolledAt;
+
+  /**
    * @var bool
    * @Serializer\Type("boolean")
    * @SWG\Property(description="If selected the service will be shown at the top of the page")
@@ -209,6 +223,20 @@ class Application
    * @Groups({"read"})
    */
   private $outcomeProtocolNumbers;
+
+  /**
+   * @Serializer\Type("int")
+   * @SWG\Property(description="Outcome protocol time", type="int")
+   * @Groups({"read"})
+   */
+  private $outcomeProtocolTime;
+
+  /**
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Outcome protocol date time", type="dateTime")
+   * @Groups({"read", "write"})
+   */
+  private $outcomeProtocolledAt;
 
 
   /**
@@ -511,6 +539,38 @@ class Application
   }
 
   /**
+   * @return int
+   */
+  public function getProtocolTime()
+  {
+    return $this->protocolTime;
+  }
+
+  /**
+   * @param int $protocolTime
+   */
+  public function setProtocolTime($protocolTime)
+  {
+    $this->protocolTime = $protocolTime;
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getProtocolledAt()
+  {
+    return $this->protocolledAt;
+  }
+
+  /**
+   * @param DateTime $protocolledAt
+   */
+  public function setProtocolledAt(DateTime $protocolledAt)
+  {
+    $this->protocolledAt = $protocolledAt;
+  }
+
+  /**
    * @return bool
    */
   public function isOutcome(): bool
@@ -620,6 +680,38 @@ class Application
   public function setOutcomeProtocolNumbers(array $outcomeProtocolNumbers)
   {
     $this->outcomeProtocolNumbers = $outcomeProtocolNumbers;
+  }
+
+  /**
+   * @return int
+   */
+  public function getOutcomeProtocolTime()
+  {
+    return $this->outcomeProtocolTime;
+  }
+
+  /**
+   * @param int $outcomeProtocolTime
+   */
+  public function setOutcomeProtocolTime($outcomeProtocolTime)
+  {
+    $this->outcomeProtocolTime = $outcomeProtocolTime;
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getOutcomeProtocolledAt()
+  {
+    return $this->outcomeProtocolledAt;
+  }
+
+  /**
+   * @param DateTime $outcomeProtocolledAt
+   */
+  public function setOutcomeProtocolledAt(DateTime $outcomeProtocolledAt)
+  {
+    $this->outcomeProtocolledAt = $outcomeProtocolledAt;
   }
 
   /**
@@ -786,12 +878,32 @@ class Application
     $dto->protocolNumber = $pratica->getNumeroProtocollo();
     $dto->protocolDocumentId = $pratica->getIdDocumentoProtocollo();
     $dto->protocolNumbers = $pratica->getNumeriProtocollo()->toArray();
+
+    if ($pratica->getProtocolTime()) {
+      $dto->protocolTime = $pratica->getProtocolTime();
+      try {
+        $date = new \DateTime();
+        $dto->protocolledAt = $date->setTimestamp($pratica->getProtocolTime());
+      } catch (\Exception $e) {
+        $dto->protocolledAt = $pratica->getProtocolTime();
+      }
+    }
+
     $dto->outcome = $pratica->getEsito();
 
     if ($pratica->getRispostaOperatore()) {
       $dto->outcomeProtocolNumber = $pratica->getRispostaOperatore()->getNumeroProtocollo();
       $dto->outcomeProtocolDocumentId = $pratica->getRispostaOperatore()->getIdDocumentoProtocollo();
       $dto->outcomeProtocolNumbers = $pratica->getRispostaOperatore()->getNumeriProtocollo()->toArray();
+      if ($pratica->getRispostaOperatore()->getProtocolTime()) {
+        $dto->outcomeProtocolTime = $pratica->getRispostaOperatore()->getProtocolTime();
+        try {
+          $date = new \DateTime();
+          $dto->outcomeProtocolledAt = $date->setTimestamp($pratica->getRispostaOperatore()->getProtocolTime());
+        } catch (\Exception $e) {
+          $dto->outcomeProtocolledAt = $pratica->getRispostaOperatore()->getProtocolTime();
+        }
+      }
     }
 
     //$dto->outcomeMotivation = $pratica->getMotivazioneEsito();
@@ -971,10 +1083,16 @@ class Application
     $entity->setNumeroProtocollo($this->getProtocolNumber());
     $entity->setNumeroFascicolo($this->getProtocolFolderNumber());
     $entity->setIdDocumentoProtocollo($this->getProtocolDocumentId());
+    if ($this->getProtocolledAt()) {
+      $entity->setProtocolTime($this->getProtocolledAt()->getTimestamp());
+    }
 
     $applicationAttachments = array_merge($entity->getModuliCompilati()->getValues(), $entity->getAllegati()->getValues());
 
     foreach ($applicationAttachments as $attachment) {
+      if ($this->getProtocolledAt()) {
+        $attachment->setProtocolTime($this->getProtocolledAt()->getTimestamp());
+      }
       $numeroDiProtocollo = [
         'id' => $attachment->getId(),
         'protocollo' => $this->getProtocolNumber(),
@@ -991,10 +1109,16 @@ class Application
     if ($rispostaOperatore && $this->getOutcomeProtocolNumber()) {
       $rispostaOperatore->setNumeroProtocollo($this->getOutcomeProtocolNumber());
       $rispostaOperatore->setIdDocumentoProtocollo($this->getOutcomeProtocolDocumentId());
+      if ($this->getOutcomeProtocolledAt()) {
+        $rispostaOperatore->setProtocolTime($this->getOutcomeProtocolledAt()->getTimestamp());
+      }
 
       $outcomeAttachments = array_merge([$entity->getRispostaOperatore()], $entity->getAllegatiOperatore()->getValues());
 
       foreach ($outcomeAttachments as $attachment) {
+        if ($this->getOutcomeProtocolledAt()) {
+          $attachment->setProtocolTime($this->getOutcomeProtocolledAt()->getTimestamp());
+        }
         $numeroDiProtocollo = [
           'id' => $attachment->getId(),
           'protocollo' => $this->getOutcomeProtocolNumber(),
