@@ -25,7 +25,8 @@
 
     <div class="message-body">
       <small>{{ message.message | raw }}</small>
-      {% if message.author != pratica.user %}
+      {# Show pixel if user is the applicant and different from message author, or if user is the operator and message author is the applicant #}
+      {% if (user == pratica.user and message.author != user) or (user == pratica.operatore and message.author == pratica.user) %}
         <img class="d-none" src="{{ path('track_message', {'id':message.id}) }}">
       {% endif %}
     </div>
@@ -51,15 +52,15 @@
           </svg>
         </a>
         <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
-          {% if not message.sentAt %}
-            <i class="fa fa-check text-100 mx-1"
-               title="Messaggio creato il {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></i>
-          {% elseif not message.readAt %}
-            <i class="fas fa-check-double text-100 mx-1"
-               title="Messaggio consegnato il {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></i>
-          {% else %}
+          {% if message.readAt %}
             <i class="fas fa-check-double mx-1" style="color: dodgerblue"
                title="Messaggio letto il {{ message.readAt | date(ocsdc_default_datetime_format) }}"></i>
+          {% elseif message.sentAt %}
+            <i class="fa fa-check text-100 mx-1"
+               title="Messaggio creato il {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></i>
+          {% else %}
+            <i class="fas fa-check-double text-100 mx-1"
+               title="Messaggio consegnato il {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></i>
           {% endif %}
         </small>
       </div>
