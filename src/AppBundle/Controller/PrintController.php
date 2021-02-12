@@ -87,7 +87,7 @@ class PrintController extends Controller
   }
 
   /**
-   * @Route("/{pratica}/show", name="print_pratiche_show")
+   * @Route("/pratica/{pratica}/show", name="print_pratiche_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @param Request $request
    * @param Pratica $pratica
