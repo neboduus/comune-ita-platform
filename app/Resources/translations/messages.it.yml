@@ -575,6 +575,7 @@ operatori:
   numero_fascicolo: 'Numero di fascicolo'
   numero_protocollo: 'Numero di protocollo'
   id_documento: 'Identificativo documento'
+  data_protocollo: 'Data di protocollazione'
   esito: 'Esito'
   allegati: 'Allegati'
   note_interne: 'Note interne'
@@ -703,7 +704,7 @@ email:
     link_download: 'Può scaricare i documenti  da lei richiesti al seguente '
     link_txt: 'Per ulteriori dettagli visiti il seguente link: '
     link_download_txt: 'Per ulteriori dettagli visiti il seguente link: '
-    data_acquisizione: '%date% alle ore %hour%'
+    no_info: '<i>informazione non disponibile</i>'
     user:
       status:
         pre.submit: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."

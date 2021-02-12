@@ -85,6 +85,11 @@ class Allegato implements AllegatoInterface
   private $idDocumentoProtocollo;
 
   /**
+   * @ORM\Column(type="integer", name="protocol_time", nullable=true)
+   */
+  private $protocolTime;
+
+  /**
    * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="allegati")
    * @var ArrayCollection
    */
@@ -226,6 +231,26 @@ class Allegato implements AllegatoInterface
   public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
   {
     $this->idDocumentoProtocollo = $idDocumentoProtocollo;
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getProtocolTime()
+  {
+    return $this->protocolTime;
+  }
+
+  /**
+   * @param integer $time
+   *
+   * @return $this
+   */
+  public function setProtocolTime($time)
+  {
+    $this->protocolTime = $time;
+
     return $this;
   }
 

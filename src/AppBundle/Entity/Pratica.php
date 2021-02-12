@@ -273,6 +273,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $numeriProtocollo;
 
   /**
+   * @ORM\Column(type="integer", name="protocol_time", nullable=true)
+   */
+  private $protocolTime;
+
+  /**
    * @var string
    * @ORM\Column(type="text", nullable=true)
    */
@@ -877,6 +882,26 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setNumeriProtocollo($numeriProtocollo)
   {
     $this->numeriProtocollo = $numeriProtocollo;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getProtocolTime()
+  {
+    return $this->protocolTime;
+  }
+
+  /**
+   * @param integer $time
+   *
+   * @return $this
+   */
+  public function setProtocolTime($time)
+  {
+    $this->protocolTime = $time;
+
+    return $this;
   }
 
   /**
