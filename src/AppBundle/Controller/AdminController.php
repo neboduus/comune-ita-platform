@@ -496,6 +496,8 @@ class AdminController extends Controller
   public function editServizioAction(Servizio $servizio)
   {
     $user = $this->getUser();
+    $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId(), false);
+
     $flowService = $this->serviceFlow;
     $flowService->setInstanceKey($user->getId());
     $flowService->bind($servizio);
@@ -537,6 +539,7 @@ class AdminController extends Controller
       'form' => $form->createView(),
       //'test_form' => $testForm->getForm()->createView(),
       'servizio' => $flowService->getFormData(),
+      'schema' => $schema,
       'flow' => $flowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'user' => $user

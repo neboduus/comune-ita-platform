@@ -69,21 +69,7 @@ class StatusMessagePraticaListener
       return;
     }
 
-    $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
-    $protocolTime = $pratica->getProtocolTime() ? (new \DateTime())->setTimestamp($pratica->getProtocolTime()) : null;
-
-    $placeholders = [
-      '%pratica_id%' => $pratica->getId(),
-      '%servizio%' => $pratica->getServizio()->getName(),
-      '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : $this->translator->trans('email.pratica.no_info'),
-      '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
-      '%user_name%' => $pratica->getUser()->getFullName(),
-      '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
-      '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : $this->translator->trans('email.pratica.no_info'),
-      '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : $this->translator->trans('email.pratica.no_info'),
-      '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : $this->translator->trans('email.pratica.no_info'),
-      '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : $this->translator->trans('email.pratica.no_info')
-    ];
+    $placeholders = $this->praticaManager->getPlaceholders($pratica);
 
     $defaultMessage = $this->translator->trans('messages.pratica.status.' . $newStatus, $placeholders);
     $defaultSubject = $this->translator->trans($this->translator->trans('pratica.email.status_change.subject', $placeholders));

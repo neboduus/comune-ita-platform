@@ -31,10 +31,10 @@ class FeedbackMessageType extends AbstractType
       ->add('trigger', HiddenType::class)
       ->add('subject', TextType::class, [
         'required'=> true,
-        'label' => "Oggetto (placeholder disponibili: %pratica_id%, %servizio%, %data_acquisizione%, %ora_acquisizione%, %protocollo%, %data_protocollo%, %ora_protocollo%, %messaggio_personale%, %user_name%, %indirizzo%)"
+        'label' => "Oggetto (placeholder disponibili: %pratica_id%, %servizio%, %data_corrente%, %data_acquisizione%, %ora_acquisizione%, %protocollo%, %data_protocollo%, %ora_protocollo%, %messaggio_personale%, %user_name%, %indirizzo%)"
       ])
       ->add('message', TextareaType::class, [
-        'label' => "Messaggio (placeholder disponibili: %pratica_id%, %servizio%, %data_acquisizione%, %ora_acquisizione%, %protocollo%, %data_protocollo%, %ora_protocollo%, %messaggio_personale%, %user_name%, %indirizzo%)"
+        'label' => "Messaggio (placeholder disponibili: %pratica_id%, %servizio%,  %data_corrente%, %data_acquisizione%, %ora_acquisizione%, %protocollo%, %data_protocollo%, %ora_protocollo%, %messaggio_personale%, %user_name%, %indirizzo%)"
       ]);
   }
 
