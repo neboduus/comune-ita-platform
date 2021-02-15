@@ -4,6 +4,7 @@
 namespace AppBundle\Services\Manager;
 
 
+use AppBundle\Dto\Application;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
@@ -17,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -294,5 +296,34 @@ class PraticaManager
     $this->entityManager->flush();
 
     return $message;
+  }
+
+  public function getPlaceholders (Pratica  $pratica) {
+    $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
+    $protocolTime = $pratica->getProtocolTime() ? (new \DateTime())->setTimestamp($pratica->getProtocolTime()) : null;
+
+    $placeholders = [
+      '%id%' => $pratica->getId(),
+      '%pratica_id%' => $pratica->getId(),
+      '%servizio%' => $pratica->getServizio()->getName(),
+      '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : $this->translator->trans('email.pratica.no_info'),
+      '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
+      '%user_name%' => $pratica->getUser()->getFullName(),
+      '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
+      '%data_corrente%' => (new \DateTime())->format('d/m/Y'),
+      '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : $this->translator->trans('email.pratica.no_info'),
+      '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : $this->translator->trans('email.pratica.no_info'),
+      '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : $this->translator->trans('email.pratica.no_info'),
+      '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : $this->translator->trans('email.pratica.no_info')
+    ];
+
+    $dataPlaceholders = [];
+    foreach (Application::decorateDematerializedForms($pratica->getDematerializedForms()) as $key => $value) {
+      if (!is_array($value)) {
+        $dataPlaceholders["%".$key."%"] = $value;
+      }
+    }
+
+    return array_merge($placeholders, $dataPlaceholders);
   }
 }

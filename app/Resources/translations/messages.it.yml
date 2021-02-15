@@ -59,6 +59,8 @@ terms:
 servizio:
   crea: 'Crea nuovo servizio'
   modifica: 'Modifica %name%'
+  placeholder_disponibili: 'Placeholder disponibili nel modulo'
+  placeholder_disponibili_descrizione: "E' possibile utilizzare le informazioni compilate dall'utente utilizzando i placeholders di seguito elencati"
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Al momento il servizio non è attivo'

@@ -940,24 +940,7 @@ class OperatoriController extends Controller
       $status = $pratica->getEsito() ? Pratica::STATUS_COMPLETE : Pratica::STATUS_CANCELLED;
       $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
 
-      $router = $this->router;
-      $translator = $this->translator;
-
-      $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
-      $protocolTime = $pratica->getProtocolTime() ? (new \DateTime())->setTimestamp($pratica->getProtocolTime()) : null;
-
-      $placeholders = [
-        '%pratica_id%' => $pratica->getId(),
-        '%servizio%' => $pratica->getServizio()->getName(),
-        '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : $translator->trans('email.pratica.no_info'),
-        '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $translator->trans('messages.pratica.no_reason'),
-        '%user_name%' => $pratica->getUser()->getFullName(),
-        '%indirizzo%' => $router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
-        '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : $translator->trans('email.pratica.no_info'),
-        '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : $translator->trans('email.pratica.no_info'),
-        '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : $translator->trans('email.pratica.no_info'),
-        '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : $translator->trans('email.pratica.no_info')
-      ];
+      $placeholders = $this->praticaManager->getPlaceholders($pratica);
 
       if (isset($feedbackMessages[$status])) {
         $feedbackMessage = strtr($feedbackMessages[$status]['message'], $placeholders);
