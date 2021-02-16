@@ -87,7 +87,7 @@ class FeedbackMessagesDataType extends AbstractType
       $schema = $this->schemaFactory->createFromFormId($service->getFormIoId());
       /** @var SchemaComponent $component */
       foreach ($schema->getComponents() as $component) {
-        if ($component->getType() == 'text') {
+        if ($component->getType() == 'text' || $component->getType() == 'email') {
           $components[$component->getLabel()] = $component->getName();
         }
       }

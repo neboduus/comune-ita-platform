@@ -54,7 +54,7 @@ class SchemaFactory implements SchemaFactoryInterface
 
     $cacheId = $this->provider->getFormServerUrl().$formIOId;
 
-    if ($this->useCache && $this->hasCache($cacheId)) {
+    if ($this->useCache && $forceCache && $this->hasCache($cacheId)) {
       return $this->getCache($cacheId);
     }
 

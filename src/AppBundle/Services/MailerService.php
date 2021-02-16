@@ -18,6 +18,7 @@ use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
 use AppBundle\Model\Mailer;
 use AppBundle\Model\SubscriberMessage;
+use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Model\Transition;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
@@ -284,9 +285,10 @@ class MailerService
     ];
 
     $dataPlaceholders = [];
-    foreach (Application::decorateDematerializedForms($pratica->getDematerializedForms()) as $key => $value) {
+    $submission = PraticaManager::getFlattenedSubmission($pratica);
+    foreach ($submission as $key => $value) {
       if (!is_array($value)) {
-        $dataPlaceholders["%".$key."%"] = $value;
+        $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? $this->translator->trans('email.pratica.no_info') : $value;
       }
     }
 
@@ -549,12 +551,14 @@ class MailerService
         // Create the Mailer using your created Transport
         $pecMailer = new Swift_Mailer($transport);
 
+        $submission = PraticaManager::getFlattenedSubmission($pratica);
         // Recupero indirizzo email da campo segnalato in pec_receiver
-        if (!isset($pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()])) {
+        if (!isset($submission[$feedbackMessageSettings->getPecReceiver()])) {
           $this->logger->error('Error in dispatchPecEmail: emprty pec receiver field');
           return;
         }
-        $receiver = $pratica->getDematerializedForms()['flattened'][$feedbackMessageSettings->getPecReceiver()];
+        $receiver = $submission[$feedbackMessageSettings->getPecReceiver()];
+
         if (!$this->isValidEmail($receiver)) {
           $this->logger->error('Error in dispatchPecEmail: pec receiver is not a valid email ' . $receiver);
           return;

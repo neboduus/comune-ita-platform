@@ -23,6 +23,7 @@ use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
+use AppBundle\Services\Manager\PraticaManager;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -475,9 +476,10 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       ];
 
       $dataPlaceholders = [];
-      foreach (Application::decorateDematerializedForms($pratica->getDematerializedForms()) as $key => $value) {
+      $submission = PraticaManager::getFlattenedSubmission($pratica);
+      foreach ($submission as $key => $value) {
         if (!is_array($value)) {
-          $dataPlaceholders["%".$key."%"] = $value;
+          $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? $this->translator->trans('email.pratica.no_info') : $value;
         }
       }
 
