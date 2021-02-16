@@ -1,7 +1,4 @@
 import './core'
-import 'summernote';
-import 'summernote/dist/summernote-bs4.css';
-import 'summernote-cleaner';
 import Calendar from './Calendar';
 import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
@@ -16,7 +13,6 @@ Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
 $(document).ready(function () {
-
   const serviceStatus = $('#general_data_status');
   const scheduledFrom = $('#general_data_scheduled_from').parent();
   const scheduledTo = $('#general_data_scheduled_to').parent();
