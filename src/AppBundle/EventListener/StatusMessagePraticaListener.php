@@ -5,6 +5,7 @@ namespace AppBundle\EventListener;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
+use AppBundle\Model\Transition;
 use AppBundle\Services\Manager\PraticaManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
@@ -49,6 +50,10 @@ class StatusMessagePraticaListener
     Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
   ];
 
+  private $blacklistedSDuplicatetates = [
+    Pratica::STATUS_PENDING
+  ];
+
   public function __construct(EntityManager $entityManager, PraticaManager $praticaManager, UrlGeneratorInterface $router, TranslatorInterface $translator, LoggerInterface $logger)
   {
     $this->entityManager = $entityManager;
@@ -67,6 +72,16 @@ class StatusMessagePraticaListener
 
     if (in_array($newStatus, $this->blacklistedStates)) {
       return;
+    }
+
+    if (in_array($pratica->getStatus(), $this->blacklistedSDuplicatetates)) {
+      // Check if current status exists in application history more than once
+      foreach ($pratica->getHistory() as $item) {
+        /** @var Transition $item */
+        if ($item->getStatusCode() == $pratica->getStatus() && $item->getDate()->getTimestamp() !== $pratica->getLatestStatusChangeTimestamp()) {
+          return;
+        }
+      }
     }
 
     $placeholders = $this->praticaManager->getPlaceholders($pratica);
