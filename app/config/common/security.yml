@@ -125,6 +125,7 @@ security:
     - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
     - { path: ^/%prefix%/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_USER }
+    - { path: ^/%prefix%/api/session-auth, role: ROLE_USER }
     - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_USER }
 
     - { path: ^/%prefix%/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
