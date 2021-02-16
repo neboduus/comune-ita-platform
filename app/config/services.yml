@@ -29,6 +29,9 @@ services:
   AppBundle\Controller\Rest\ServicesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\SessionAuthAPIController:
+    autowire: true
+
   AppBundle\Controller\Rest\ServicesGroupAPIController:
     autowire: true
 
