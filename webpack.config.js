@@ -58,13 +58,14 @@ Encore
   // uncomment if you use Sass/SCSS files
   .enableSassLoader()
 
-
   // uncomment if you're having problems with a jQuery plugin
   .autoProvidejQuery()
-  .addPlugin(new CopyWebpackPlugin([
-    {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../bootstrap-italia/dist/fonts/'},
-    {from: './node_modules/bootstrap-italia/dist/svg/', to: '../bootstrap-italia/dist/svg/'}
-  ]))
+  .addPlugin(new CopyWebpackPlugin({
+    patterns: [
+      {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../bootstrap-italia/dist/fonts/'},
+      {from: './node_modules/bootstrap-italia/dist/svg/', to: '../bootstrap-italia/dist/svg/'}
+    ]
+  }))
 ;
 
 
