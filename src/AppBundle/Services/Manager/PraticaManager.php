@@ -318,12 +318,38 @@ class PraticaManager
     ];
 
     $dataPlaceholders = [];
-    foreach (Application::decorateDematerializedForms($pratica->getDematerializedForms()) as $key => $value) {
+    $submission = PraticaManager::getFlattenedSubmission($pratica);
+    foreach ($submission as $key => $value) {
       if (!is_array($value)) {
-        $dataPlaceholders["%".$key."%"] = $value;
+        $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? $this->translator->trans('email.pratica.no_info') : $value;
       }
     }
 
     return array_merge($placeholders, $dataPlaceholders);
+  }
+
+  public static function getFlattenedSubmission(Pratica $pratica) {
+    $data = $pratica->getDematerializedForms();
+
+    if (!isset($data['flattened'])) {
+      return $data;
+    }
+
+    $decoratedData = $data['flattened'];
+    $submission = array();
+
+    foreach (array_keys($decoratedData) as $path) {
+      $parts = explode('.', trim($path, '.'));
+      $key = null;
+      foreach ($parts as $part) {
+        // Salto data
+        if ($part === 'data') {
+          continue;
+        }
+        $key = join(".", array_filter(array($key, $part)));
+      }
+      $submission[$key] = $decoratedData[$path];
+    }
+    return $submission;
   }
 }
