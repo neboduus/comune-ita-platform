@@ -18,6 +18,7 @@ use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
 use AppBundle\Model\Mailer;
 use AppBundle\Model\SubscriberMessage;
+use AppBundle\Model\Transition;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -74,6 +75,10 @@ class MailerService
     Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
   ];
 
+  private $blacklistedSDuplicatetates = [
+    Pratica::STATUS_PENDING
+  ];
+
   /**
    * MailerService constructor.
    * @param \Swift_Mailer $mailer
@@ -107,6 +112,16 @@ class MailerService
     $sentAmount = 0;
     if (in_array($pratica->getStatus(), $this->blacklistedStates)) {
       return $sentAmount;
+    }
+
+    if (in_array($pratica->getStatus(), $this->blacklistedSDuplicatetates)) {
+      // Check if current status exists in application history more than once
+      foreach ($pratica->getHistory() as $item) {
+        /** @var Transition $item */
+        if ($item->getStatusCode() == $pratica->getStatus() && $item->getDate()->getTimestamp() !== $pratica->getLatestStatusChangeTimestamp()) {
+          return $sentAmount;
+        }
+      }
     }
 
     if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION && !$pratica instanceof GiscomPratica) {
