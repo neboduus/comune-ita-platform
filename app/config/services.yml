@@ -185,7 +185,7 @@ services:
     autowire: true
 
   AppBundle\Services\InstanceService:
-    arguments: [ "@doctrine", "%prefix%" ]
+    arguments: [ "@doctrine", "%instance%" ]
 
   AppBundle\Payment\Gateway\Bollo:
     autowire: true
@@ -320,11 +320,23 @@ services:
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
 
-  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.dummy"
+  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.config"
+
+  AppBundle\Protocollo\ProtocolloHandlerRegistry:
+    autowire: true
+
+  ocsdc.protocollo.handlers.config:
+    class: AppBundle\Protocollo\ConfigProtocolloHandler
+    public: false
+    arguments:
+      - '@AppBundle\Protocollo\ProtocolloHandlerRegistry'
+      - '%protocollo%'
 
   ocsdc.protocollo.handlers.dummy:
     class: AppBundle\Protocollo\DummyProtocolloHandler
     public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: dummy }
 
   ocsdc.protocollo.handlers.pec:
     class: AppBundle\Protocollo\PecProtocolloHandler
@@ -338,18 +350,24 @@ services:
       - "@translator"
       - "@templating"
       - "@logger"
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: pec }
 
 
   ocsdc.protocollo.handlers.pitre:
     class: AppBundle\Protocollo\PiTreProtocolloHandler
     arguments: [ "@ocsdc.protocollo.client", "%prefix%" ]
     public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: pitre }
 
   ocsdc.protocollo.handlers.infor:
     class: AppBundle\Protocollo\InforProtocolloHandler
     autowire: true
     #        arguments: ["@doctrine.orm.entity_manager",'@logger', '@ocsdc.allegati.directory_namer',  '@vich_uploader.property_mapping_factory' ]
     public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: infor }
 
   AppBundle\Services\DelayedProtocolloService:
     arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]

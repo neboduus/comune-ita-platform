@@ -1,5 +1,7 @@
 parameters:
     prefix: '%env(PREFIX)%'
+    instance: ''
+    protocollo: ''
     database_driver: '%env(DB_DRIVER)%'
     database_host: '%env(DB_HOST)%'
     database_port: '%env(DB_PORT)%'

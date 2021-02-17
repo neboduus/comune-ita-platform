@@ -3,74 +3,81 @@
 {% block title %}Stanza del cittadino{% endblock %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('app') }}
+  {{ encore_entry_link_tags('app') }}
 
 {% endblock %}
 
 {% block header %}
 
-    <header class="it-header-wrapper it-header-sticky">
-        <div class="it-header-slim-wrapper">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="it-header-slim-wrapper-content"></div>
-                    </div>
-                </div>
-            </div>
+  <header class="it-header-wrapper it-header-sticky">
+    <div class="it-header-slim-wrapper">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="it-header-slim-wrapper-content"></div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div class="it-nav-wrapper">
-            <div class="it-header-center-wrapper">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="it-header-center-content-wrapper">
-                                <div class="it-brand-wrapper">
-                                    <a href="{{ path('home') }}">
-                                        <img class="icon" src="{{ asset('bundles/app/images/logo-stanza.png') }}"
-                                             alt="{{ 'title'|trans }}"/>
-                                        <div class="it-brand-text">
-                                            <h2 class="no_toc">{{ 'title'|trans }}</h2>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="it-right-zone">
-                                    <div class="it-socials d-none d-md-flex"></div>
-                                    <div class="it-search-wrapper"></div>
-                                </div>
-                            </div>
-                        </div>
+    <div class="it-nav-wrapper">
+      <div class="it-header-center-wrapper">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <div class="it-header-center-content-wrapper">
+                <div class="it-brand-wrapper">
+                  <a href="{{ path('home') }}">
+                    <img class="icon" src="{{ asset('bundles/app/images/logo-stanza.png') }}"
+                         alt="{{ 'title'|trans }}"/>
+                    <div class="it-brand-text">
+                      <h2 class="no_toc">{{ 'title'|trans }}</h2>
                     </div>
+                  </a>
                 </div>
+                <div class="it-right-zone">
+                  <div class="it-socials d-none d-md-flex"></div>
+                  <div class="it-search-wrapper"></div>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </header>
+      </div>
+    </div>
+  </header>
 {% endblock %}
 
 {% block content_container %}
-    <main>
-        <div class="container my-4">
-            <div class="card-wrapper card-column">
-            {% for ente in enti %}
-                <div class="card card-teaser rounded shadow">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            <a href="/{{ ente.slug }}">{{ ente.name }}</a>
-                        </h4>
-                        <div class="card-text">
-                            <p>Entra nella stanza del cittadino del {{ ente.name }}</p>
-                        </div>
+  <main>
+    <div class="container my-4">
+      <div class="row">
+        {% for ente in enti %}
+          <div class="col-12 col-md-6 mb-2">
+            <div class="card card-teaser rounded shadow h-100">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-10">
+                    <h4 class="card-title">
+                      <a href="/{{ ente.slug }}">{{ ente.name }}</a>
+                    </h4>
+                    <div class="card-text">
+                      <p>Entra nella stanza del cittadino del {{ ente.name }}</p>
                     </div>
-                    <div class="avatar size-xl">
-                        <img src="{{ asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') }}" alt="{{ 'title'|trans }}">
-                    </div>
+                  </div>
+                  <div class="col-2">
+                    <svg class="icon icon-xl icon-primary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pa"></use>
+                    </svg>
+                  </div>
                 </div>
-            {% endfor %}
-
+              </div>
             </div>
-        </div>
-    </main>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </main>
 {% endblock %}
 
 {% block footer %}
@@ -78,5 +85,5 @@
 
 {% block javascripts %}
 
-    {{ encore_entry_script_tags('app') }}
+  {{ encore_entry_script_tags('app') }}
 {% endblock %}

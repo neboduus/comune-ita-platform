@@ -1,7 +1,9 @@
 <?php
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Debug\Debug;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Yaml\Yaml;
 
 // If you don't want to setup permissions the proper way, just uncomment the following PHP line
 // read http://symfony.com/doc/current/book/installation.html#checking-symfony-application-configuration-and-setup
@@ -27,25 +29,12 @@ Debug::enable();
 $request = Request::createFromGlobals();
 
 Request::setTrustedProxies(
-  // trust *all* requests
+// trust *all* requests
   ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'],
   // if you're using ELB, otherwise use a constant from above
   Request::HEADER_X_FORWARDED_ALL
 );
 
-$identifier = '';
-
-
-//var_dump($_SERVER);
-
-// Todo: find better way
-if ($request->server->has('PATH_INFO') && !empty($_SERVER['PATH_INFO'])) {
-    $pathArray = explode('/',$request->server->get('PATH_INFO'));
-    $identifier = $pathArray[1];
-} elseif ($request->server->has('REQUEST_URI')) {
-    $pathArray = explode('/',$request->server->get('REQUEST_URI'));
-    $identifier = $pathArray[1];
-}
 
 // Load environment from server variables, default is prod
 $env = 'prod';
@@ -57,11 +46,28 @@ if ($request->server->has('SYMFONY_ENV') && in_array($request->server->get('SYMF
   }
 }
 
-if ( !empty($identifier) && file_exists( __DIR__.'/../app/config/' .$identifier ) ) {
-    $kernel = new InstanceKernel($env, $debug);
-    $kernel->setIdentifier($identifier);
+$currentInstance = false;
+$instances = Yaml::parse(file_get_contents(__DIR__.'/../app/instances_'.$env.'.yml'));
+$instanceParams = $instances['instances'];
+
+
+$host = $request->getHost();
+$pathInfoParts = explode('/', trim($request->getPathInfo(), '/'));
+$path = isset($pathInfoParts[0]) ? $pathInfoParts[0] : null;
+
+$instance = false;
+if (isset($instanceParams[$host . '/' . $path])) {
+  $instance = $instanceParams[$host . '/' . $path];
+}
+
+if ($instance) {
+  $instance['ocsdc_host'] = $host;
+  $instance['prefix'] = $path;
+  $kernel = new InstanceKernel($env, $debug);
+  $kernel->setIdentifier($instance['identifier']);
+  $kernel->setInstanceParameters($instance);
 } else {
-    $kernel = new AppKernel($env, $debug);
+  $kernel = new AppKernel($env, $debug);
 }
 
 $response = $kernel->handle($request);

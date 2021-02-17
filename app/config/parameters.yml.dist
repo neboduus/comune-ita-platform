@@ -3,6 +3,8 @@
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
     prefix: ''
+    instance: ''
+    protocollo: ''
     database_driver:   pdo_pgsql
     database_host:     127.0.0.1
     database_port:     ~

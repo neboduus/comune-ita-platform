@@ -11,6 +11,7 @@ use AppBundle\Entity\ServizioRepository;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -29,6 +30,9 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class ServiziController extends Controller
 {
+  /** @var InstanceService */
+  private $instanceService;
+
   /**
    * @var LoggerInterface
    */
@@ -40,13 +44,15 @@ class ServiziController extends Controller
 
   /**
    * ServiziController constructor.
+   * @param InstanceService $instanceService
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, LoggerInterface $logger)
   {
-    $this->logger = $logger;
+    $this->instanceService = $instanceService;
     $this->translator = $translator;
+    $this->logger = $logger;
   }
 
 
@@ -168,15 +174,7 @@ class ServiziController extends Controller
       ->getQuery()->execute();
 
     $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
-    $ente = $this->getDoctrine()
-      ->getRepository('AppBundle:Ente')
-      ->findOneBy(
-        [
-          'slug' => $this->container->hasParameter('prefix') ? $this->container->getParameter(
-            'prefix'
-          ) : $request->query->get(PraticheController::ENTE_SLUG_QUERY_PARAMETER, null),
-        ]
-      );
+    $ente = $this->instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {
       $this->logger->info(

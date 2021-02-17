@@ -5,6 +5,7 @@
 {% set contacts = ente.getMetaAsArray('contacts') %}
 {% set social = ente.getMetaAsArray('social') %}
 {% set utils = ente.getMetaAsArray('utils') %}
+{% set logo = ente.getMetaAsArray('logo') %}
 
 <footer class="it-footer">
   <div class="it-footer-main">
@@ -14,8 +15,11 @@
           <div class="col-sm-12">
             <div class="it-brand-wrapper">
               <a href="{{ ente.siteUrl }}">
-                <img class="icon" src="{{ asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') }}"
-                     alt="{{ ente.name }}"/>
+                {% if logo is defined and logo is not empty %}
+                  <img class="icon" src="{{ logo }}" alt="{{ ente.name }}"/>
+                {% else %}
+                  <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ ente.name }}"/>
+                {% endif %}
                 <div class="it-brand-text">
                   {% if ente %}
                     <h2 class="no_toc">{{ ente.name }}</h2>

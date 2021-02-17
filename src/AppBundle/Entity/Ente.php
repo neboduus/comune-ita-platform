@@ -199,6 +199,16 @@ class Ente
   }
 
   /**
+   * @param string $slug
+   */
+  public function setSlug(string $slug)
+  {
+    $this->slug = $slug;
+
+    return $this;
+  }
+
+  /**
    * @return Collection
    */
   public function getAsili()
