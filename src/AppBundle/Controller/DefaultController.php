@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\ServiziController;
+use AppBundle\InstancesProvider;
+use AppBundle\Services\InstanceService;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
@@ -39,22 +42,44 @@ class DefaultController extends Controller
   /** @var TranslatorInterface */
   private $translator;
 
+  /** @var InstanceService */
+  private $instanceService;
+
   /**
    * DefaultController constructor.
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   * @param InstanceService $instanceService
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, InstanceService $instanceService)
   {
     $this->logger = $logger;
     $this->translator = $translator;
+    $this->instanceService = $instanceService;
   }
 
 
-  /**
-   * @Template()
-   * @return array()
-   */
   public function commonAction()
   {
+
+    if ($this->instanceService->hasInstance()) {
+      return $this->forward(ServiziController::class . '::serviziAction');
+    } else {
+
+      foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance){
+        $indentifierParts = explode('/', $identifier);
+        $enti[] = [
+          'name' => isset($instance['name']) ? $instance['name'] : ucwords(str_replace('-', ' ', $indentifierParts[1])),
+          'slug' => $indentifierParts[1]
+        ];
+      }
+
+      return $this->render(
+        '@App/Default/common.html.twig',
+        ['enti' => $enti]
+      );
+    }
+
     return array('enti' => $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll());
   }
 

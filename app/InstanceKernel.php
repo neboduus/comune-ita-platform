@@ -2,15 +2,28 @@
 
 use AppBundle\Form\PraticaFlowRegistry;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
+use AppBundle\Protocollo\ProtocolloHandlerRegistry;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Kernel;
 
+
 class InstanceKernel extends Kernel implements CompilerPassInterface
 {
+  const DEFAULT_PREFIX = 'sdc';
+
+  /**
+   * @var string
+   */
   protected $identifier;
+
+  /**
+   * @var array
+   */
+  protected $instanceParameters;
 
   public function registerBundles()
   {
@@ -60,7 +73,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
   }
 
   /**
-   * @return mixed
+   * @return string
    */
   public function getIdentifier()
   {
@@ -68,7 +81,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
   }
 
   /**
-   * @param mixed $identifier
+   * @param string $identifier
    */
   public function setIdentifier($identifier)
   {
@@ -80,14 +93,53 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
     return dirname(__DIR__).'/var/logs/'.$this->getIdentifier().'/'.$this->getEnvironment();
   }
 
+  protected function getContainerClass()
+  {
+    return parent::getContainerClass() . '_' . md5(json_encode($this->getInstanceParameters()));
+  }
+
   public function registerContainerConfiguration(LoaderInterface $loader)
   {
-    $loader->load($this->getRootDir().'/config/'.$this->getIdentifier().'/config_'.$this->getEnvironment().'.yml');
+    $loader->load($this->getRootDir().'/config/common/config_'.$this->getEnvironment().'.yml');
+
+    $instanceParameters = $this->getInstanceParameters();
+    $instanceParameters['instance'] = $this->getIdentifier();
+    $instanceParameters['prefix'] = $this->getIdentifier();
+    if (!isset($instanceParameters['prefix']) || empty($instanceParameters['prefix'])) {
+      $instanceParameters['prefix'] = self::DEFAULT_PREFIX;
+    }
+
+    $loader->load(
+      function (ContainerBuilder $container) use ($instanceParameters) {
+        if (!\is_array($instanceParameters)) {
+          throw new InvalidArgumentException('The "parameters" key should contain an array. Check your YAML syntax.');
+        }
+        foreach ($instanceParameters as $key => $value) {
+          $container->setParameter($key, $value);
+        }
+      }
+    );
   }
 
   public function getRootDir()
   {
     return __DIR__;
+  }
+
+  /**
+   * @return array
+   */
+  public function getInstanceParameters()
+  {
+    return $this->instanceParameters;
+  }
+
+  /**
+   * @param array $instanceParameters
+   */
+  public function setInstanceParameters(array $instanceParameters)
+  {
+    $this->instanceParameters = $instanceParameters;
   }
 
   public function process(ContainerBuilder $container)
@@ -114,7 +166,6 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
     if ($container->has(PraticaFlowRegistry::class)) {
       $definition = $container->findDefinition(PraticaFlowRegistry::class);
       $taggedServices = $container->findTaggedServiceIds('ocsdc.pratica.flow');
-
       foreach ($taggedServices as $id => $tags) {
         $alias = null;
         foreach ($tags as $attributes) {
@@ -123,6 +174,20 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
           }
         }
         $definition->addMethodCall('registerFlow', [new Reference($id), $alias]);
+      }
+    }
+
+    if ($container->has(ProtocolloHandlerRegistry::class)) {
+      $definition = $container->findDefinition(ProtocolloHandlerRegistry::class);
+      $taggedServices = $container->findTaggedServiceIds('ocsdc.protocollo.handler');
+      foreach ($taggedServices as $id => $tags) {
+        $alias = null;
+        foreach ($tags as $attributes) {
+          if (isset($attributes['alias']) && !$alias) {
+            $alias = $attributes['alias'];
+          }
+        }
+        $definition->addMethodCall('registerHandler', [new Reference($id), $alias]);
       }
     }
   }

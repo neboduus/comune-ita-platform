@@ -53,8 +53,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 class PraticheController extends Controller
 {
 
-  const ENTE_SLUG_QUERY_PARAMETER = 'ente';
-
   /** @var InstanceService */
   private $instanceService;
 

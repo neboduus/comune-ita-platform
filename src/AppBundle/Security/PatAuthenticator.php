@@ -103,7 +103,7 @@ class PatAuthenticator extends AbstractAuthenticator
         'spidCode' => $request->server->get($this->shibboletServerVarNames['spidCode']),
         'instant' => $request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']),
         'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
-        'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel']),
+        'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel'] ?? ''),
       ];
     } else {
       $data = [
