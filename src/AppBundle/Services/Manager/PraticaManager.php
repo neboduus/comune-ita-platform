@@ -4,7 +4,6 @@
 namespace AppBundle\Services\Manager;
 
 
-use AppBundle\Dto\Application;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
@@ -329,7 +328,7 @@ class PraticaManager
   }
 
   public static function getFlattenedSubmission(Pratica $pratica) {
-    $data = $pratica->getDematerializedForms();
+    $data = is_callable([$pratica, 'getDematerializedForms']) ? $pratica->getDematerializedForms() : [];
 
     if (!isset($data['flattened'])) {
       return $data;
