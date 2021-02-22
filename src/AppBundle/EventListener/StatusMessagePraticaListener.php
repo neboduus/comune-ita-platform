@@ -87,7 +87,7 @@ class StatusMessagePraticaListener
     $placeholders = $this->praticaManager->getPlaceholders($pratica);
 
     $defaultMessage = $this->translator->trans('messages.pratica.status.' . $newStatus, $placeholders);
-    $defaultSubject = $this->translator->trans($this->translator->trans('pratica.email.status_change.subject', $placeholders));
+    $defaultSubject = $this->translator->trans('pratica.email.status_change.subject', $placeholders);
     $generateMessage = false;
 
 
