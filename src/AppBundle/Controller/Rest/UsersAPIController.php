@@ -3,8 +3,8 @@
 namespace AppBundle\Controller\Rest;
 
 use AppBundle\Dto\User;
+use AppBundle\Security\Voters\UserVoter;
 use AppBundle\Services\InstanceService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -76,12 +76,20 @@ class UsersAPIController extends AbstractFOSRestController
    *         @SWG\Items(ref=@Model(type=User::class))
    *     )
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="users")
    * @param Request $request
    * @return View
    */
   public function getUsersAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     $result = [];
     $cf = $request->query->get('cf');
 
@@ -123,6 +131,11 @@ class UsersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="User not found"
    * )
@@ -137,15 +150,17 @@ class UsersAPIController extends AbstractFOSRestController
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
       $result = $repository->find($id);
-
-      if ($result === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
-      }
-
-      return $this->view(User::fromEntity($result), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    if ($result === null) {
+      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+    }
+
+    $this->denyAccessUnlessGranted(UserVoter::VIEW, $result);
+
+    return $this->view(User::fromEntity($result), Response::HTTP_OK);
   }
 
   /**
@@ -181,6 +196,12 @@ class UsersAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="users")
    *
    * @param Request $request
@@ -188,6 +209,8 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function postUserAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+
     $userDto = new User();
     $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
@@ -266,6 +289,11 @@ class UsersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -283,6 +311,9 @@ class UsersAPIController extends AbstractFOSRestController
     if (!$user) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
+
     $userDto = new User();
     $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
@@ -354,6 +385,11 @@ class UsersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -372,6 +408,9 @@ class UsersAPIController extends AbstractFOSRestController
     if (!$user) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
+
     $userDto = User::fromEntity($user);
     $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
     $this->processForm($request, $form);
@@ -415,6 +454,12 @@ class UsersAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="users")
    *
    * @Method("DELETE")
@@ -423,6 +468,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
     $user = $this->getDoctrine()->getRepository('AppBundle:CPSUser')->find($id);
     if ($user) {
       // debated point: should we 404 on an unknown nickname?

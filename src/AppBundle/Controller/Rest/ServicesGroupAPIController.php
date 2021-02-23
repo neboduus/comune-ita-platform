@@ -148,6 +148,12 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="services-groups")
    *
    * @param Request $request
@@ -155,6 +161,8 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    */
   public function postServiceAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     $serviceGroup = new ServiceGroup();
     $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
     $this->processForm($request, $form);
@@ -236,6 +244,11 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -246,6 +259,8 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    */
   public function putServiceAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
     $serviceGroup = $repository->find($id);
 
@@ -322,6 +337,11 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -332,6 +352,8 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    */
   public function patchServiceAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     $em = $this->getDoctrine()->getManager();
     $repository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
     $serviceGroup = $repository->find($id);
@@ -380,12 +402,20 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="services-groups")
    *
    * @Method("DELETE")
    */
   public function deleteAction($id)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     $service = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup')->find($id);
     if ($service) {
       // debated point: should we 404 on an unknown nickname?

@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
+use AppBundle\Security\Voters\MeetingVoter;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,10 +67,18 @@ class MeetingsAPIController extends AbstractFOSRestController
    *         @SWG\Items(ref=@Model(type=Meeting::class))
    *     )
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="meetings")
    */
   public function getMeetingsAction()
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     /** @var User $user */
     $user = $this->getUser();
 
@@ -106,6 +115,11 @@ class MeetingsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Meeting not found"
    * )
@@ -138,6 +152,9 @@ class MeetingsAPIController extends AbstractFOSRestController
 
       if ($result) {
         $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result['id']);
+
+        $this->denyAccessUnlessGranted(MeetingVoter::VIEW, $meeting);
+
         return $this->view($meeting, Response::HTTP_OK);
       }
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -312,6 +329,11 @@ class MeetingsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -325,6 +347,9 @@ class MeetingsAPIController extends AbstractFOSRestController
   {
     $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
     $meeting = $repository->find($id);
+
+    $this->denyAccessUnlessGranted(MeetingVoter::EDIT, $meeting);
+
     $oldMeeting = clone $meeting;
 
     if (!$meeting) {
@@ -408,6 +433,11 @@ class MeetingsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -427,6 +457,9 @@ class MeetingsAPIController extends AbstractFOSRestController
     if (!$meeting) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(MeetingVoter::EDIT, $meeting);
+
     $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
 
@@ -487,6 +520,12 @@ class MeetingsAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="meetings")
    *
    * @Method("DELETE")
@@ -497,6 +536,7 @@ class MeetingsAPIController extends AbstractFOSRestController
   {
     $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($id);
     if ($meeting) {
+      $this->denyAccessUnlessGranted(MeetingVoter::DELETE, $meeting);
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter

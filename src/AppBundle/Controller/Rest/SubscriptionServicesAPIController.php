@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\Subscription;
+use AppBundle\Security\Voters\SubscriptionVoter;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -160,6 +161,12 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="subscription-services")
    *
    * @param Request $request
@@ -168,6 +175,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function postSubscriptionServiceAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+
     $subscriptionService = new SubscriptionService();
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
@@ -238,6 +247,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -249,6 +263,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function putSubscriptionServiceAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+
     $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
     $subscriptionService = $repository->find($id);
 
@@ -325,6 +341,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -337,6 +358,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function patchSubscriptionServiceAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
     $subscriptionService = $repository->find($id);
@@ -393,6 +415,12 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="subscription-services")
    *
    * @Method("DELETE")
@@ -401,6 +429,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+
     $subscriptionService = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->find($id);
     if ($subscriptionService) {
       // debated point: should we 404 on an unknown nickname?
@@ -465,6 +495,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Subscriptions not found"
    * )
@@ -475,6 +510,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function getSubscriptionsAction($subscription_service_id)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
       $subscriptionService = $repository->find($subscription_service_id);
@@ -506,6 +543,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Subscription not found"
    * )
@@ -521,14 +563,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
-
-      if ($subscription === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
-      }
-      return $this->view($subscription, Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+    if ($subscription === null) {
+      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+    }
+    $this->denyAccessUnlessGranted(SubscriptionVoter::VIEW, $subscription);
+    return $this->view($subscription, Response::HTTP_OK);
   }
 
   /**
@@ -547,6 +589,12 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="subscriptions")
    *
    * @param $subscription_service_id
@@ -557,6 +605,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteSubscriptionAction($subscription_service_id, $id)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+
     $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     if ($subscription) {
@@ -603,6 +653,12 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="subscriptions")
    *
    * @param Request $request
@@ -611,6 +667,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function postSubscriptionAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+
     $subscription = new Subscription();
     $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
@@ -700,6 +758,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -719,6 +782,9 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     if (!$subscription) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(SubscriptionVoter::EDIT, $subscription);
+
     $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 
@@ -787,6 +853,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -807,6 +878,9 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     if (!$subscription) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(SubscriptionVoter::EDIT, $subscription);
+
     $form = $this->createForm('AppBundle\Form\SubscriptionType', $subscription);
     $this->processForm($request, $form);
 

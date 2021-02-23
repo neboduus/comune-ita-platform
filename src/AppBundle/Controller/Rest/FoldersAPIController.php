@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Folder;
+use AppBundle\Security\Voters\FolderVoter;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -81,12 +82,20 @@ class FoldersAPIController extends AbstractFOSRestController
    *         @SWG\Items(ref=@Model(type=Folder::class))
    *     )
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="folders")
    * @param Request $request
    * @return View
    */
   public function getFoldersAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     $cf = $request->query->get('cf');
     $title = $request->query->get('title');
 
@@ -131,6 +140,11 @@ class FoldersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Folder not found"
    * )
@@ -148,6 +162,7 @@ class FoldersAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
+      $this->denyAccessUnlessGranted(FolderVoter::VIEW, $folder);
       return $this->view($folder, Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -187,6 +202,12 @@ class FoldersAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="folders")
    *
    * @param Request $request
@@ -195,6 +216,7 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function postFolderAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
     $folder = new Folder();
     $folder->setTenant($this->is->getCurrentInstance());
 
@@ -265,6 +287,11 @@ class FoldersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -282,6 +309,8 @@ class FoldersAPIController extends AbstractFOSRestController
     if (!$folder) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(FolderVoter::EDIT, $folder);
 
     $form = $this->createForm('AppBundle\Form\FolderType', $folder);
     $this->processForm($request, $form);
@@ -352,6 +381,11 @@ class FoldersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -371,6 +405,8 @@ class FoldersAPIController extends AbstractFOSRestController
     if (!$folder) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+    $this->denyAccessUnlessGranted(FolderVoter::EDIT, $folder);
+
     $form = $this->createForm('AppBundle\Form\FolderType', $folder);
     $this->processForm($request, $form);
 
@@ -420,6 +456,12 @@ class FoldersAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="folders")
    *
    * @Method("DELETE")
@@ -430,6 +472,7 @@ class FoldersAPIController extends AbstractFOSRestController
   {
     $folder = $this->getDoctrine()->getRepository('AppBundle:Folder')->find($id);
     if ($folder) {
+      $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter

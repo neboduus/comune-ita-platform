@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Rest;
 
 use AppBundle\Dto\Tenant;
-use AppBundle\Entity\AdminUser;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -87,6 +86,11 @@ class TenantAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -98,11 +102,7 @@ class TenantAPIController extends AbstractFOSRestController
    */
   public function putTenantAction($identifier, Request $request)
   {
-    $user = $this->getUser();
-
-    if (!$user instanceof AdminUser) {
-      return $this->view("Unauthorized", Response::HTTP_UNAUTHORIZED);
-    }
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     $tenant = $this->is->getCurrentInstance();
     if (!$tenant || ($tenant->getSlug() !== $identifier)) {
@@ -179,8 +179,8 @@ class TenantAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
-   *     response=401,
-   *     description="Unauthorized"
+   *     response=403,
+   *     description="Access denied"
    * )
    *
    * @SWG\Response(
@@ -195,11 +195,7 @@ class TenantAPIController extends AbstractFOSRestController
    */
   public function patchTenantAction($identifier, Request $request)
   {
-    $user = $this->getUser();
-
-    if (!$user instanceof AdminUser) {
-      return $this->view("Unauthorized", Response::HTTP_UNAUTHORIZED);
-    }
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     $tenant = $this->is->getCurrentInstance();
 

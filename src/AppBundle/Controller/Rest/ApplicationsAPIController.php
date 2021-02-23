@@ -16,6 +16,7 @@ use AppBundle\Model\MetaPagedList;
 use AppBundle\Model\LinksPagedList;
 use AppBundle\Model\Transition;
 use AppBundle\Model\File as FileModel;
+use AppBundle\Security\Voters\ApplicationVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
@@ -224,11 +225,19 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *         @SWG\Property(property="data", type="array", @SWG\Items(ref=@Model(type=Application::class, groups={"read"})))
    *     )
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="applications")
    */
 
   public function getApplicationsAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     $offset = intval($request->get('offset', 0));
     $limit = intval($request->get('limit', 10));
     $version = intval($request->get('version', 1));
@@ -364,6 +373,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Application not found"
    * )
@@ -384,6 +398,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
+
+      $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
 
       $allowedServices = $this->getAllowedServices();
       if (!in_array($result->getServizio()->getId(), $allowedServices)) {
@@ -412,6 +428,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Application not found"
    * )
@@ -429,6 +450,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
+      $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
+
       $data = $result->getHistory();
 
       return $this->view($data, Response::HTTP_OK);
@@ -444,6 +467,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive attachment file",
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
    * )
    *
    * @SWG\Response(
@@ -464,6 +492,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
     }
     $pratica = $this->em->getRepository('AppBundle:Pratica')->find($id);
+
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
 
     if ($result->getType() === RispostaOperatore::TYPE_DEFAULT) {
       $fileContent = $this->pdfBuilder->renderForResponse($pratica);
@@ -527,6 +557,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -549,6 +584,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if (!$application) {
       return $this->view("Application not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $application);
 
     if (!in_array(
       $application->getStatus(),
@@ -646,6 +683,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -664,6 +706,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if (!$application) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
 
     if (in_array(
       $application->getStatus(),
@@ -747,6 +791,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Application not found"
    * )
@@ -764,6 +813,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($application === null) {
         throw new Exception('Application not found');
       }
+      $this->denyAccessUnlessGranted(ApplicationVoter::SUBMIT, $application);
       $this->praticaManager->finalizeSubmission($application);
 
     } catch (\Exception $e) {
@@ -812,6 +862,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Application not found"
    * )
@@ -829,6 +884,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($application === null) {
         throw new Exception('Application not found');
       }
+      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
 
       if (!empty($application->getNumeroProtocollo())) {
         return $this->view("Application already has a protocol number", Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -906,6 +962,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Application not found"
    * )
@@ -923,6 +984,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($application === null) {
         throw new Exception('Application not found');
       }
+      $this->denyAccessUnlessGranted(ApplicationVoter::ASSIGN, $application);
 
       $this->praticaManager->assign($application, $this->getUser());
 
@@ -973,6 +1035,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Application not found"
    * )
@@ -990,6 +1057,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($application === null) {
         throw new Exception('Application not found');
       }
+      $this->denyAccessUnlessGranted(ApplicationVoter::ACCEPT_OR_REJECT, $application);
 
       $defaultData = [
         'message' => null,
@@ -1057,6 +1125,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Application not found"
    * )
@@ -1074,6 +1147,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($application === null) {
         throw new Exception('Application not found');
       }
+
+      $this->denyAccessUnlessGranted(ApplicationVoter::WITHDRAW, $application);
 
       if ($application->getUser()->getId() != $this->getUser()->getId()) {
         throw new Exception('You are not allowed to operate on this application');

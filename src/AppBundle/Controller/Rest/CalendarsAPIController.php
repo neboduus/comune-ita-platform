@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
+use AppBundle\Security\Voters\CalendarVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MeetingService;
 use DateInterval;
@@ -302,6 +303,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="calendars")
    *
    * @param Request $request
@@ -310,6 +317,8 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function postCalendarAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     $calendar = new Calendar();
 
     $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
@@ -381,6 +390,11 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -398,6 +412,9 @@ class CalendarsAPIController extends AbstractFOSRestController
     if (!$calendar) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $calendar);
+
     $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
 
@@ -467,6 +484,11 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -485,6 +507,9 @@ class CalendarsAPIController extends AbstractFOSRestController
     if (!$calendar) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $calendar);
+
     $form = $this->createForm('AppBundle\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
 
@@ -534,6 +559,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="calendars")
    *
    * @Method("DELETE")
@@ -544,6 +575,8 @@ class CalendarsAPIController extends AbstractFOSRestController
   {
     $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->find($id);
     if ($calendar) {
+      $this->denyAccessUnlessGranted(CalendarVoter::DELETE, $calendar);
+
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter
@@ -683,6 +716,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="opening hours")
    *
    * @param $calendar_id
@@ -696,6 +735,8 @@ class CalendarsAPIController extends AbstractFOSRestController
     $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
     if ($openingHour) {
+      $this->denyAccessUnlessGranted(CalendarVoter::DELETE, $openingHour->getCalendar());
+
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter
@@ -740,6 +781,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="opening hours")
    *
    * @param $calendar_id
@@ -755,6 +802,8 @@ class CalendarsAPIController extends AbstractFOSRestController
     if (!$calendar) {
       return $this->view('Calendar not found', Response::HTTP_BAD_REQUEST);
     }
+    $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $calendar);
+
     $openingHour = new OpeningHour();
     $openingHour->setCalendar($calendar);
     $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
@@ -823,6 +872,11 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -842,6 +896,9 @@ class CalendarsAPIController extends AbstractFOSRestController
     if (!$openingHour) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $openingHour->getCalendar());
+
     $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
@@ -910,6 +967,11 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -932,6 +994,9 @@ class CalendarsAPIController extends AbstractFOSRestController
     if (!$openingHour) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $openingHour->getCalendar());
+
     $form = $this->createForm('AppBundle\Form\OpeningHourType', $openingHour);
     $this->processForm($request, $form);
 
