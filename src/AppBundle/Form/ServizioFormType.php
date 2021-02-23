@@ -71,6 +71,7 @@ class ServizioFormType extends AbstractType
         'data_class' => null
       ])
       ->add('io_parameters', IOServiceParametersType::class, [
+        'required' => false,
         'data_class' => null
       ])
       ->add('sticky')

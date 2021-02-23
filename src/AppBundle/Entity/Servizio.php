@@ -865,7 +865,6 @@ class Servizio
    */
   public function getFlowSteps()
   {
-
     $flowSteps = [];
     if ( count($this->flowSteps) > 0) {
       /*return array_map(function ($flowSteps) {
@@ -874,10 +873,17 @@ class Servizio
       }, $this->flowSteps->toArray());*/
       foreach ($this->flowSteps as $v) {
         if (is_string($v) ) {
-          $flowSteps[] = json_decode($v, true);
-        } else {
-          $flowSteps[] = $v;
+          $v = json_decode($v, true);
         }
+        $flowStep = new FlowStep();
+        $flowStep->setIdentifier($v["identifier"]);
+        $flowStep->setTitle($v["title"]);
+        $flowStep->setType($v["type"]);
+        $flowStep->setDescription($v["description"]);
+        $flowStep->setGuide($v["guide"]);
+        $flowStep->setParameters($v["parameters"]);
+
+        $flowSteps[] = $flowStep;
       }
     }
     return $flowSteps;
@@ -904,8 +910,9 @@ class Servizio
     $flowsteps = $this->getFlowSteps();
     if (!empty($flowsteps)) {
       foreach ($flowsteps as $f) {
-        if ($f['type'] == 'formio' && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
+        $parameters = $f->getParameters();
+        if ($f->getType() == 'formio' && isset($parameters['formio_id']) && !empty($parameters['formio_id'])) {
+          $formID = $parameters['formio_id'];
           break;
         }
       }

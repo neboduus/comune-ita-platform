@@ -48,10 +48,10 @@ class ServicesAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  /** @var EntityManagerInterface  */
+  /** @var EntityManagerInterface */
   private $em;
 
-  /** @var InstanceService  */
+  /** @var InstanceService */
   private $is;
 
   /** @var LoggerInterface */
@@ -91,7 +91,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $criteria['status'] = Servizio::PUBLIC_STATUSES;
     $services = $repoServices->findBy($criteria);
     foreach ($services as $s) {
-      $result []= Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
+      $result [] = Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
     }
 
     return $this->view($result, Response::HTTP_OK);
@@ -125,7 +125,7 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
-      if ( $result->getStatus() == Servizio::STATUS_CANCELLED) {
+      if ($result->getStatus() == Servizio::STATUS_CANCELLED) {
         return $this->view(["You are not allowed to see this service"], Response::HTTP_FORBIDDEN);
       }
 
@@ -329,42 +329,42 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
-    /*try {*/
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    $service = $repository->find($id);
-
-    if (!$service) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
-    }
-    //$serviceDto = Service::fromEntity($service);
-    $serviceDto = new Service();
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
-    $this->processForm($request, $form);
-
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
-      $data = [
-        'type' => 'put_validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors
-      ];
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-
-    $em = $this->getDoctrine()->getManager();
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-    if ($category instanceof Categoria) {
-      $serviceDto->setTopics($category);
-    }
-
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-    if ($serviceGroup instanceof ServiceGroup) {
-      $serviceDto->setServiceGroup($serviceGroup);
-    }
-
-    $service = $serviceDto->toEntity($service);
-
     try {
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      $service = $repository->find($id);
+
+      if (!$service) {
+        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      }
+      //$serviceDto = Service::fromEntity($service);
+      $serviceDto = new Service();
+      $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = $this->getErrorsFromForm($form);
+        $data = [
+          'type' => 'put_validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors
+        ];
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $em = $this->getDoctrine()->getManager();
+      $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+      if ($category instanceof Categoria) {
+        $serviceDto->setTopics($category);
+      }
+
+      $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
+      if ($serviceGroup instanceof ServiceGroup) {
+        $serviceDto->setServiceGroup($serviceGroup);
+      }
+
+      $service = $serviceDto->toEntity($service);
+
+
       $em->persist($service);
       $em->flush();
     } catch (\Exception $e) {
@@ -438,45 +438,44 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
-    $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    /** @var Servizio $service */
-    $service = $repository->find($id);
-
-    if (!$service) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
-    }
-    $serviceDto = Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
-    $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
-    $this->processForm($request, $form);
-
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
-      $data = [
-        'type' => 'validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors
-      ];
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-    if ($category instanceof Categoria) {
-      $serviceDto->setTopics($category);
-    }
-
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-    if ($serviceGroup instanceof ServiceGroup) {
-      $serviceDto->setServiceGroup($serviceGroup);
-    }
-
-    $service = $serviceDto->toEntity($service);
-
     try {
+      $em = $this->getDoctrine()->getManager();
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      /** @var Servizio $service */
+      $service = $repository->find($id);
+
+      if (!$service) {
+        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      }
+      $serviceDto = Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
+      $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = $this->getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors
+        ];
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+      if ($category instanceof Categoria) {
+        $serviceDto->setTopics($category);
+      }
+
+      $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
+      if ($serviceGroup instanceof ServiceGroup) {
+        $serviceDto->setServiceGroup($serviceGroup);
+      }
+
+      $service = $serviceDto->toEntity($service);
+
       $em->persist($service);
       $em->flush();
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process'
