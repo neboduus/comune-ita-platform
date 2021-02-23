@@ -30,10 +30,9 @@
     "@fortawesome/fontawesome-free": "^5.15.2",
     "axios": "0.21.1",
     "element-ui": "2.15.0",
-    "highcharts": "9.0.0",
+    "highcharts": "9.0.1",
     "lodash": "4.17.20",
-    "outdated-browser-rework": "3.0.1",
-    "summernote-cleaner": "^1.0.0"
+    "outdated-browser-rework": "3.0.1"
   },
   "version": "1.6.0"
 }
