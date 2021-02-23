@@ -43,14 +43,10 @@
             {{ form_row(form.codice_amministrativo) }}
           </div>
           <div class="tab-pane p-2 fade" id="protocol" role="tabpanel" aria-labelledby="protocol-tab">
-           <div class="mt-3">
-             <p>Nome Protocollo: <strong>{{ protocollo_handler.name }}</strong></p>
-           </div>
-            <hr>
             {{ form_row(form.default_settings) }}
           </div>
           {# Mailers #}
-          <div class="tab-pane px-2 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
+          <div class="tab-pane p-2 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
             <div class="form-group mt-3" id="app_io">
               {{ form_widget(form.io_enabled) }}
               <span class="text-info px-2" id="io_helper"><i class="fa fa-info-circle"></i> {{ 'app_io.admin_helper' | trans }}</span>

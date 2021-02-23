@@ -78,7 +78,7 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     $this->adminPassword = $input->getOption('admin_password');
 
     if (!empty($this->name) && !empty($this->codeAdm) && !empty($this->siteUrl) && !empty($this->adminEmail) && !empty($this->adminUsername)) {
-       $this->isInteractive = false;
+      $this->isInteractive = false;
     }
 
     $this->entityManager = $this->getContainer()->get('doctrine')->getManager();

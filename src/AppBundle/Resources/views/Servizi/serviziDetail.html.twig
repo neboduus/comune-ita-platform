@@ -24,17 +24,10 @@
         {% endif %}
 
         {% if servizio.coverage %}
-          {% if servizio.coverage is not iterable %}
-            {% set coverage = servizio.coverage|split(',') %}
-          {% elseif servizio.coverage[0] is defined %}
-            {% set coverage = servizio.coverage[0]|split(',') %}
-          {% else %}
-            {% set coverage = null %}
-          {% endif %}
-          {% if coverage %}
+          {% if servizio.coverage|length > 0 %}
           <article class="mb-3">
             <h5>Copertura geografica</h5>
-            {% for c in coverage %}
+            {% for c in servizio.coverage %}
               <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary"><span
                   class="chip-label">{{ c }}</span></div>
             {% endfor %}

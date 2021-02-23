@@ -40,20 +40,19 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
 
     $ente = $this->chooseEnte();
     $this->showEnteCurrentParameters($ente);
+    $this->showServicesCurrentParameters($ente);
     $this->configureEnte($ente);
   }
 
   private function configureEnte(Ente $ente)
   {
-    $servizio = $this->chooseServizio();
+    $choice = $this->chooseServizio();
 
-    if ($servizio != '*' && $servizio != 'Tutti') {
-      if ($servizio) {
-        $servizio = $this->em->getRepository('AppBundle:Servizio')->findOneByName($servizio);
-      }
+    if ($choice != '*' && $choice != 'Tutti') {
+      $servizio = $this->em->getRepository('AppBundle:Servizio')->findOneByName($choice);
 
       if (!$servizio) {
-        $servizio = $this->em->getRepository('AppBundle:Servizio')->findOneBySlug($servizio);
+        $servizio = $this->em->getRepository('AppBundle:Servizio')->findOneBySlug($choice);
       }
 
       if (!$servizio) {
@@ -67,6 +66,7 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
     }
 
     $this->showEnteCurrentParameters($ente);
+    $this->showServicesCurrentParameters($ente);
 
     if ($this->io->confirm('Continuo?')) {
       $this->configureEnte($ente);
@@ -98,11 +98,10 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
   {
     $servizi = ['*' => 'Tutti'];
     foreach ($this->getServizi() as $servizioEntity) {
-      $servizi[(string)$servizioEntity->getSlug()] = $servizioEntity->getName();
+      $servizi[$servizioEntity->getSlug()] = $servizioEntity->getName();
     }
 
     $servizioName = $this->io->choice('Seleziona il servizio da configurare', $servizi);
-
     return $servizioName;
   }
 
@@ -116,9 +115,10 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
       'codeNodeClassification' => 1,
       'codeAdm' => 'CCT_CAL',
       'trasmissionIDArray' => 'CCT_CAL',
-      'instance' => 'treville-test'
+      'instance' => 'bugliano-test'
     ];
-    $currentParameters = new PiTreProtocolloParameters((array)$ente->getProtocolloParametersPerServizio($servizio));
+    //$currentParameters = new PiTreProtocolloParameters((array)$ente->getProtocolloParametersPerServizio($servizio));
+    $currentParameters = new PiTreProtocolloParameters((array)$servizio->getProtocolloParameters());
 
     foreach ($keys as $key => $default) {
       // Se è già stato impostato un valore per il parametro corrente lo suggersico altrimenti suggerisco il default
@@ -126,8 +126,15 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
       $data[$key] = $this->io->ask("Inserisci $key", $suggestion);
     }
 
-    $ente->setProtocolloParametersPerServizio($data, $servizio);
-    $this->em->flush($ente);
+    $data['protocol_required'] = 1;
+    $data['protocol_handler'] = 'pitre';
+
+    //$ente->setProtocolloParametersPerServizio($data, $servizio);
+    $servizio->setProtocolRequired(true);
+    $servizio->setProtocolHandler('pitre');
+    $servizio->setProtocolloParameters($data);
+    $this->em->persist($servizio);
+    $this->em->flush();
   }
 
   private function storeAllServicesData(Ente $ente)
@@ -140,17 +147,23 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
       'codeNodeClassification' => 1,
       'codeAdm' => 'CCT_CAL',
       'trasmissionIDArray' => 'CCT_CAL',
-      'instance' => 'treville-test'
+      'instance' => 'bugliano-test'
     ];
 
     foreach ($keys as $key => $default) {
       $data[$key] = $this->io->ask("Inserisci $key", $default);
     }
+    $data['protocol_required'] = 1;
+    $data['protocol_handler'] = 'pitre';
 
     foreach ($this->getServizi() as $servizio) {
-      $ente->setProtocolloParametersPerServizio($data, $servizio);
+      //$ente->setProtocolloParametersPerServizio($data, $servizio);
+      $servizio->setProtocolRequired(true);
+      $servizio->setProtocolHandler('pitre');
+      $servizio->setProtocolloParameters($data);
+      $this->em->persist($servizio);
     }
-    $this->em->flush($ente);
+    $this->em->flush();
   }
 
 
@@ -181,8 +194,26 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
     $rows = [];
     foreach ($this->getServizi() as $index => $servizio) {
       $parameters = new PiTreProtocolloParameters((array)$ente->getProtocolloParametersPerServizio($servizio));
+      $parameters->remove('protocol_required');
+      $parameters->remove('protocol_handler');
       $rows[] = array_merge([$index, $servizio->getName()], $parameters->all());
     }
     $this->io->table($headers, $rows);
   }
+
+
+  private function showServicesCurrentParameters(Ente $ente)
+  {
+    $this->io->title("Valori correnti per servizi ({$ente->getName()})");
+    $headers = array_merge(['', 'Servizio'], PiTreProtocolloParameters::getEnteParametersKeys());
+    $rows = [];
+    foreach ($this->getServizi() as $index => $servizio) {
+      $parameters = new PiTreProtocolloParameters((array)$servizio->getProtocolloParameters());
+      $parameters->remove('protocol_required');
+      $parameters->remove('protocol_handler');
+      $rows[] = array_merge([$index, $servizio->getName()], $parameters->all());
+    }
+    $this->io->table($headers, $rows);
+  }
+
 }

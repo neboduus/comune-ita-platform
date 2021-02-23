@@ -326,7 +326,7 @@ services:
 
   ocsdc.protocollo.client: "@guzzle.client.protocollo_cct"
 
-  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.config"
+  ocsdc.protocollo.handler: "@ocsdc.protocollo.handlers.bypratica"
 
   AppBundle\Protocollo\ProtocolloHandlerRegistry:
     autowire: true
@@ -337,6 +337,13 @@ services:
     arguments:
       - '@AppBundle\Protocollo\ProtocolloHandlerRegistry'
       - '%protocollo%'
+
+  ocsdc.protocollo.handlers.bypratica:
+    class: AppBundle\Protocollo\ByPraticaProtocolloHandler
+    public: false
+    arguments:
+      - '@AppBundle\Protocollo\ProtocolloHandlerRegistry'
+
 
   ocsdc.protocollo.handlers.dummy:
     class: AppBundle\Protocollo\DummyProtocolloHandler

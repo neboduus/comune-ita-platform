@@ -138,6 +138,13 @@ class Service
   private $protocolRequired;
 
   /**
+   * @var string
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Protocol handler type")
+   */
+  private $protocolHandler;
+
+  /**
    * @var array
    * @SWG\Property(property="protocollo_parameters", description="Service's parameters for tenant's register"))
    * @Serializer\Type("array<string, string>")
@@ -483,6 +490,22 @@ class Service
   }
 
   /**
+   * @return string
+   */
+  public function getProtocolHandler()
+  {
+    return $this->protocolHandler;
+  }
+
+  /**
+   * @param string $protocolHandler
+   */
+  public function setProtocolHandler($protocolHandler)
+  {
+    $this->protocolHandler = $protocolHandler;
+  }
+
+  /**
    * @return array
    */
   public function getProtocolloParameters()
@@ -721,6 +744,7 @@ class Service
     $dto->setProtocolRequired($servizio->isProtocolRequired());
     $dto->protocolloParameters = [];
     $dto->paymentRequired = $servizio->isPaymentRequired();
+    $dto->protocolHandler = $servizio->getProtocolHandler();
     $dto->paymentParameters = [];
     $dto->sticky = $servizio->isSticky();
     $dto->status = $servizio->getStatus();
@@ -763,6 +787,7 @@ class Service
     $entity->setCoverage(implode(',', (array)$this->coverage)); //@TODO
     $entity->setFlowSteps($this->flowSteps);
     $entity->setProtocolRequired($this->isProtocolRequired());
+    $entity->setProtocolHandler($this->getProtocolHandler());
     $entity->setProtocolloParameters($this->protocolloParameters);
     $entity->setPaymentRequired($this->paymentRequired);
     $entity->setPaymentParameters($this->paymentParameters);

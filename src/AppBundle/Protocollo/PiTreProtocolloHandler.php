@@ -4,9 +4,11 @@ namespace AppBundle\Protocollo;
 
 use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\Ente;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaIntegrazione;
+use AppBundle\Entity\Servizio;
 use AppBundle\Protocollo\Exception\ResponseErrorException;
 use GuzzleHttp\Client;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -258,7 +260,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
-    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = $this->getServizioParameters($servizio, $ente);
     $parameters = new PiTreProtocolloParameters($parameters);
 
 
@@ -317,7 +319,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
-    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = $this->getServizioParameters($servizio, $ente);
     $parameters = new PiTreProtocolloParameters($parameters);
 
     if (!$parameters->getInstance()) {
@@ -373,7 +375,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
-    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = $this->getServizioParameters($servizio, $ente);
     $parameters = new PiTreProtocolloParameters($parameters);
 
     if (!$parameters->getInstance()) {
@@ -413,7 +415,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
-    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = $this->getServizioParameters($servizio, $ente);
     $parameters = new PiTreProtocolloParameters($parameters);
 
     if (!$parameters->getInstance()) {
@@ -459,7 +461,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
-    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = $this->getServizioParameters($servizio, $ente);
     $parameters = new PiTreProtocolloParameters($parameters);
 
     if (!$parameters->getInstance()) {
@@ -506,7 +508,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
-    $parameters = (array)$ente->getProtocolloParametersPerServizio($servizio);
+    $parameters = $this->getServizioParameters($servizio, $ente);
     $parameters = new PiTreProtocolloParameters($parameters);
 
     if (!$parameters->getInstance()) {
@@ -522,6 +524,16 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     $parameters->setAttachmentDescription($integrazione->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
     return $parameters;
+  }
+
+  private function getServizioParameters(Servizio $servizio, Ente $ente)
+  {
+    if (!empty($servizio->getProtocolloParameters())) {
+      dump((array)$servizio->getProtocolloParameters());
+      return (array)$servizio->getProtocolloParameters();
+    }
+
+    return (array)$ente->getProtocolloParametersPerServizio($servizio);
   }
 
 }

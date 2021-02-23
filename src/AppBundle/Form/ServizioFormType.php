@@ -34,10 +34,6 @@ class ServizioFormType extends AbstractType
         'class' => 'AppBundle\Entity\Ente',
         'choice_label' => 'name',
       ])
-      /*->add('topics', EntityType::class, [
-        'class' => 'AppBundle\Entity\Categoria',
-        'choice_label' => 'name',
-      ])*/
       ->add('topics')
       ->add('description')
       ->add('howto')
@@ -65,7 +61,8 @@ class ServizioFormType extends AbstractType
         "label" => false
       ])
       ->add('protocol_required')
-      ->add('protocollo_parameters')
+      ->add('protocol_handler')
+      ->add('protocollo_parameters', TextareaType::class, ['empty_data' => ''])
       ->add('payment_required', CheckboxType::class)
       ->add('payment_parameters', PaymentParametersType::class, [
         'data_class' => null

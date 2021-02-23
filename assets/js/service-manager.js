@@ -325,7 +325,26 @@ $(document).ready(function () {
         $('.protocollo_params').attr('disabled', 'disabled');
       }
     })
+
+    let protocolHandler = $('#protocol_data_protocol_handler');
+    let setupProtocolSettings = function (){
+      $('.protocollo_params').each(function( i, e ) {
+        let element = $(e);
+        if(element.hasClass(protocolHandler.val())) {
+          element.closest('div').removeClass('d-none');
+          element.removeAttr('disabled');
+        } else {
+          element.closest('div').addClass('d-none');
+          element.attr('disabled', 'disabled');
+        }
+      });
+    }
+    setupProtocolSettings();
+    protocolHandler.change(function () {
+      setupProtocolSettings();
+    });
   }
+
 
   // IO config
   if ($('#io_integration_data_flow_service_step').length) {
