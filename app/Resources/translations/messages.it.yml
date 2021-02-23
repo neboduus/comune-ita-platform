@@ -1797,18 +1797,18 @@ protocollo:
   infor_wsdl: 'Url wsdl'
   infor_wsUrl: 'Url ws'
   arrivo:
-    tipo_documento: 'Tipo documento'
-    tramite: 'Tramite'
-    smistamento: 'Smistamento'
-    classifica: 'Classifica'
-    fascicolo: 'Fascicolo'
+    tipo_documento: 'Tipo documento (Arrivo)'
+    tramite: 'Tramite (Arrivo)'
+    smistamento: 'Smistamento (Arrivo)'
+    classifica: 'Classifica (Arrivo)'
+    fascicolo: 'Fascicolo (Arrivo)'
   risposta:
-    mittente_interno: 'Mittente interno'
-    tipo_documento: 'Tipo documento'
-    tramite: 'Tramite'
-    smistamento: 'Smistamento'
-    classifica: 'Classifica'
-    fascicolo: 'Fascicolo'
+    mittente_interno: 'Mittente interno (Risposta)'
+    tipo_documento: 'Tipo documento (Risposta)'
+    tramite: 'Tramite (Risposta)'
+    smistamento: 'Smistamento (Risposta)'
+    classifica: 'Classifica (Risposta)'
+    fascicolo: 'Fascicolo (Risposta)'
   pec:
     email:
       abstract:

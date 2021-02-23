@@ -401,6 +401,9 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   {
     $ente = $pratica->getEnte();
     $servizio = $pratica->getServizio();
+    if (!empty($servizio->getProtocolloParameters())) {
+      return (array)$servizio->getProtocolloParameters();
+    }
     return (array)$ente->getProtocolloParametersPerServizio($servizio);
   }
 

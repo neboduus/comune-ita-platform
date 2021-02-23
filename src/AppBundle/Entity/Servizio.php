@@ -266,6 +266,13 @@ class Servizio
   private $protocolRequired;
 
   /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true)
+   * @SWG\Property(description="Service protocol handler: dummy, pec, pitre, infor")
+   */
+  private $protocolHandler;
+
+  /**
    * @var FeedbackMessage[]
    * @ORM\Column(type="json", nullable=true)
    * @SWG\Property(description="Service feedback messages")
@@ -728,7 +735,7 @@ class Servizio
    * @param array $protocolloParameters
    * @return $this;
    */
-  public function setProtocolloParameters(array $protocolloParameters): Servizio
+  public function setProtocolloParameters($protocolloParameters): Servizio
   {
     $this->protocolloParameters = $protocolloParameters;
     return $this;
@@ -849,7 +856,11 @@ class Servizio
    */
   public function getCoverage()
   {
-    return $this->coverage;
+    if (is_array($this->coverage)) {
+      return $this->coverage;
+    } else {
+      return explode(',', $this->coverage);
+    }
   }
 
   /**
@@ -995,6 +1006,22 @@ class Servizio
   public function setProtocolRequired(?bool $protocolRequired)
   {
     $this->protocolRequired = $protocolRequired;
+  }
+
+  /**
+   * @return string
+   */
+  public function getProtocolHandler(): ?string
+  {
+    return $this->protocolHandler;
+  }
+
+  /**
+   * @param string $protocolHandler
+   */
+  public function setProtocolHandler(?string $protocolHandler): void
+  {
+    $this->protocolHandler = $protocolHandler;
   }
 
   /**

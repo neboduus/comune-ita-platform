@@ -14,6 +14,7 @@ use AppBundle\Model\FlowStep;
 use AppBundle\Model\AdditionalData;
 use AppBundle\Entity\Servizio;
 use AppBundle\Dto\Service;
+use AppBundle\Protocollo\ProtocolloHandlerRegistry;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -60,13 +61,32 @@ class ServicesAPIController extends AbstractFOSRestController
    * @var FormServerApiAdapterService
    */
   private $formServerApiAdapterService;
+  /**
+   * @var ProtocolloHandlerRegistry
+   */
+  private $handlerRegistry;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, FormServerApiAdapterService $formServerApiAdapterService)
+  private $handlerList = [];
+
+  /**
+   * ServicesAPIController constructor.
+   * @param EntityManagerInterface $em
+   * @param InstanceService $is
+   * @param LoggerInterface $logger
+   * @param FormServerApiAdapterService $formServerApiAdapterService
+   * @param ProtocolloHandlerRegistry $handlerRegistry
+   */
+  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, FormServerApiAdapterService $formServerApiAdapterService, ProtocolloHandlerRegistry $handlerRegistry)
   {
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
     $this->formServerApiAdapterService = $formServerApiAdapterService;
+    $this->handlerRegistry = $handlerRegistry;
+
+    foreach ($this->handlerRegistry->getAvailableHandlers() as $alias => $handler){
+      $this->handlerList[] = $alias;
+    }
   }
 
 
@@ -224,6 +244,10 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
+    if (!$this->checkProtocolHandler($request)) {
+      return $this->view("Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList), Response::HTTP_BAD_REQUEST);
+    }
+
     $serviceDto = new Service();
     $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
@@ -330,6 +354,11 @@ class ServicesAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     try {
+
+      if (!$this->checkProtocolHandler($request)) {
+        return $this->view("Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList), Response::HTTP_BAD_REQUEST);
+      }
+
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
       $service = $repository->find($id);
 
@@ -439,6 +468,11 @@ class ServicesAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     try {
+
+      if (!$this->checkProtocolHandler($request)) {
+        return $this->view("Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList), Response::HTTP_BAD_REQUEST);
+      }
+
       $em = $this->getDoctrine()->getManager();
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
       /** @var Servizio $service */
@@ -553,5 +587,13 @@ class ServicesAPIController extends AbstractFOSRestController
       }
     }
     return $errors;
+  }
+
+  private function checkProtocolHandler(Request $request)
+  {
+    if ($request->get('protocol_handler') && !in_array($request->get('protocol_handler'), $this->handlerList)) {
+      return false;
+    }
+    return true;
   }
 }
