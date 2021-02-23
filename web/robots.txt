@@ -3,6 +3,7 @@
 
 User-agent: *
 Disallow:/*/pratiche
+Disallow:/*/documenti
 Disallow:/*/profile
 Disallow:/*/user
 Disallow:/*/operatori
