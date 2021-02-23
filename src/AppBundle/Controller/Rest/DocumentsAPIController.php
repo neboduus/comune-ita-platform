@@ -6,6 +6,7 @@ use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Document;
 use AppBundle\Entity\OperatoreUser;
+use AppBundle\Security\Voters\DocumentVoter;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -101,12 +102,20 @@ class DocumentsAPIController extends AbstractFOSRestController
    *         @SWG\Items(ref=@Model(type=Document::class))
    *     )
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="documents")
    * @param Request $request
    * @return View
    */
   public function getDocumentsAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     $cf = $request->query->get('cf');
     $title = $request->query->get('title');
     $folderTitle = $request->query->get('folder-title');
@@ -162,6 +171,11 @@ class DocumentsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Document not found"
    * )
@@ -178,6 +192,8 @@ class DocumentsAPIController extends AbstractFOSRestController
       if ($document === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
+
+      $this->denyAccessUnlessGranted(DocumentVoter::VIEW, $document);
 
       return $this->view($document, Response::HTTP_OK);
     } catch (\Exception $e) {
@@ -219,6 +235,12 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="documents")
    *
    * @param Request $request
@@ -227,6 +249,8 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function postDocumentAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     $document = new Document();
     $document->setTenant($this->is->getCurrentInstance());
     $document->setDownloadLink($this->generateUrl('document_download', ['id' => $document->getId()], UrlGeneratorInterface::ABSOLUTE_URL));
@@ -308,6 +332,11 @@ class DocumentsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -324,6 +353,8 @@ class DocumentsAPIController extends AbstractFOSRestController
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(DocumentVoter::EDIT, $document);
 
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
@@ -394,6 +425,11 @@ class DocumentsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -411,6 +447,8 @@ class DocumentsAPIController extends AbstractFOSRestController
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
+    $this->denyAccessUnlessGranted(DocumentVoter::EDIT, $document);
+
     $form = $this->createForm('AppBundle\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
 
@@ -460,6 +498,12 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="documents")
    *
    * @Method("DELETE")
@@ -468,6 +512,8 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function deleteDocumentAction($id)
   {
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+
     $document = $this->getDoctrine()->getRepository('AppBundle:Document')->find($id);
     if ($document) {
       // debated point: should we 404 on an unknown nickname?
@@ -499,6 +545,11 @@ class DocumentsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Document not found"
    * )
@@ -510,6 +561,8 @@ class DocumentsAPIController extends AbstractFOSRestController
   public function downloadDocumentAction($id)
   {
     $document = $this->em->getRepository('AppBundle:Document')->find($id);
+
+    $this->denyAccessUnlessGranted(DocumentVoter::VIEW, $document);
 
     if (!$document) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);

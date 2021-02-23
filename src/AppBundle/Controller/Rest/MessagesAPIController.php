@@ -9,6 +9,8 @@ use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Message as MessageEntity;
+use AppBundle\Security\Voters\ApplicationVoter;
+use AppBundle\Security\Voters\MessageVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
@@ -108,6 +110,11 @@ class MessagesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Applcaitons not found"
    * )
@@ -125,6 +132,8 @@ class MessagesAPIController extends AbstractFOSRestController
     if ($result === null) {
       return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
 
     $messages = [];
     /** @var MessageEntity $m */
@@ -182,6 +191,10 @@ class MessagesAPIController extends AbstractFOSRestController
    *     )
    * )
    *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
    *
    * @SWG\Response(
    *     response=404,
@@ -209,6 +222,7 @@ class MessagesAPIController extends AbstractFOSRestController
     if ($application === null) {
       return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
     }
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
 
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
 
@@ -298,6 +312,11 @@ class MessagesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Message not found"
    * )
@@ -315,6 +334,8 @@ class MessagesAPIController extends AbstractFOSRestController
     if ($result === null) {
       return $this->view(["Message not found"], Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(MessageVoter::VIEW, $result);
 
     $message= Message::fromEntity($result, $this->baseUrl.'/'.$result->getId());
 
@@ -354,6 +375,12 @@ class MessagesAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="applications")
    *
    * @param $id
@@ -370,6 +397,8 @@ class MessagesAPIController extends AbstractFOSRestController
     if ($application === null) {
       return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $application);
 
     $message = new Message();
     $message->setApplication($application);
@@ -464,6 +493,11 @@ class MessagesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -484,6 +518,8 @@ class MessagesAPIController extends AbstractFOSRestController
     if (!$messageEntity) {
       return $this->view("Message not found", Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(MessageVoter::EDIT, $messageEntity);
 
     $user = $this->getUser();
 
@@ -561,13 +597,20 @@ class MessagesAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="applications")
    *
+   * @param $messageId
    * @param $attachmentId
    * @return View|Response
    */
-  public function messageAttachmentAction($attachmentId)
+  public function messageAttachmentAction($messageId, $attachmentId)
   {
+    $message = $this->em->getRepository('AppBundle:Message')->find($messageId);
+    if ($message === null) {
+      return $this->view(["Message not found"], Response::HTTP_NOT_FOUND);
+    }
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Allegato');
+    $this->denyAccessUnlessGranted(MessageVoter::VIEW, $message);
+
+    $repository = $this->em->getRepository('AppBundle:Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);

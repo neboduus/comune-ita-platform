@@ -946,3 +946,51 @@ services:
 
   AppBundle\Services\UserSessionService:
     autowire: true
+
+  security.access.users_voter:
+    class: AppBundle\Security\Voters\UserVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.subscription_voter:
+    class: AppBundle\Security\Voters\SubscriptionVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.message_voter:
+    class: AppBundle\Security\Voters\MessageVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.application_voter:
+    class: AppBundle\Security\Voters\ApplicationVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.folder_voter:
+    class: AppBundle\Security\Voters\FolderVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.document_voter:
+    class: AppBundle\Security\Voters\DocumentVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.calendar_voter:
+    class: AppBundle\Security\Voters\CalendarVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.meeting_voter:
+    class: AppBundle\Security\Voters\MeetingVoter
+    autowire: true
+    tags:
+      - { name: security.voter }

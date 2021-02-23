@@ -209,6 +209,12 @@ class ServicesAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="services")
    *
    * @param Request $request
@@ -216,6 +222,8 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   public function postServiceAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     $serviceDto = new Service();
     $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
     $this->processForm($request, $form);
@@ -304,6 +312,11 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -314,6 +327,8 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   public function putServiceAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     /*try {*/
     $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $service = $repository->find($id);
@@ -406,6 +421,11 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
@@ -416,6 +436,8 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   public function patchServiceAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     $em = $this->getDoctrine()->getManager();
     $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     /** @var Servizio $service */
@@ -477,12 +499,20 @@ class ServicesAPIController extends AbstractFOSRestController
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
    * @SWG\Tag(name="services")
    *
    * @Method("DELETE")
    */
   public function deleteAction($id)
   {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
     $service = $this->getDoctrine()->getRepository('AppBundle:Servizio')->find($id);
     if ($service) {
       // debated point: should we 404 on an unknown nickname?

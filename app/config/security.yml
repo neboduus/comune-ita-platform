@@ -23,3 +23,6 @@ security:
 
     access_control:
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+    access_decision_manager:
+        strategy: unanimous
+        allow_if_all_abstain: false
