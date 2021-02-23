@@ -50,7 +50,7 @@ class TenantAPIController extends AbstractFOSRestController
 
   /**
    * Edit Tenant
-   * @Rest\Put("/{id}", name="tenant_api_put")
+   * @Rest\Put("/{identifier}", name="tenant_api_put")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -81,6 +81,10 @@ class TenantAPIController extends AbstractFOSRestController
    *     response=400,
    *     description="Bad request"
    * )
+   * @SWG\Response(
+   *     response=401,
+   *     description="Unauthorized"
+   * )
    *
    * @SWG\Response(
    *     response=404,
@@ -88,11 +92,11 @@ class TenantAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="Tenants")
    *
-   * @param $id
+   * @param $identifier
    * @param Request $request
    * @return View
    */
-  public function putTenantAction($id, Request $request)
+  public function putTenantAction($identifier, Request $request)
   {
     $user = $this->getUser();
 
@@ -100,9 +104,8 @@ class TenantAPIController extends AbstractFOSRestController
       return $this->view("Unauthorized", Response::HTTP_UNAUTHORIZED);
     }
 
-    $tenant = $this->em->getRepository('AppBundle:Ente')->find($id);
-
-    if (!$tenant) {
+    $tenant = $this->is->getCurrentInstance();
+    if (!$tenant || ($tenant->getSlug() !== $identifier)) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
@@ -143,7 +146,7 @@ class TenantAPIController extends AbstractFOSRestController
 
   /**
    * Patch a Tenant
-   * @Rest\Patch("/{id}", name="tenant_api_patch")
+   * @Rest\Patch("/{identifier}", name="tenant_api_patch")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -157,7 +160,7 @@ class TenantAPIController extends AbstractFOSRestController
    *     name="Tenant",
    *     in="body",
    *     type="json",
-   *     description="The tenant to patch",
+   *     description="The tenant to edit",
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
@@ -176,16 +179,21 @@ class TenantAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Response(
+   *     response=401,
+   *     description="Unauthorized"
+   * )
+   *
+   * @SWG\Response(
    *     response=404,
    *     description="Not found"
    * )
    * @SWG\Tag(name="Tenants")
    *
-   * @param $id
+   * @param $identifier
    * @param Request $request
    * @return View
    */
-  public function patchTenantAction($id, Request $request)
+  public function patchTenantAction($identifier, Request $request)
   {
     $user = $this->getUser();
 
@@ -193,9 +201,9 @@ class TenantAPIController extends AbstractFOSRestController
       return $this->view("Unauthorized", Response::HTTP_UNAUTHORIZED);
     }
 
-    $tenant = $this->em->getRepository('AppBundle:Ente')->find($id);
+    $tenant = $this->is->getCurrentInstance();
 
-    if (!$tenant) {
+    if (!$tenant || ($tenant->getSlug() !== $identifier)) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
     }
 
