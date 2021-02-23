@@ -87,7 +87,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
   /**
    * @param string $title
    */
-  public function setTitle(string $title)
+  public function setTitle(?string $title)
   {
     $this->title = $title;
     return $this;
@@ -104,7 +104,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
   /**
    * @param string $description
    */
-  public function setDescription(string $description)
+  public function setDescription(?string $description)
   {
     $this->description = $description;
     return $this;
@@ -121,7 +121,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
   /**
    * @param string $guide
    */
-  public function setGuide(string $guide)
+  public function setGuide(?string $guide)
   {
     $this->guide = $guide;
     return $this;
@@ -138,7 +138,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
   /**
    * @param string $type
    */
-  public function setType(string $type)
+  public function setType(?string $type)
   {
     $this->type = $type;
     return $this;
@@ -167,7 +167,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
    * @param string $parameter
    * @return array|mixed|null
    */
-  public function getParameter(string $parameter)
+  public function getParameter(?string $parameter)
   {
     if (isset($this->parameters[$parameter])) {
       return $this->parameters[$parameter];
@@ -182,6 +182,10 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
    */
   public function addParameter($key, $value)
   {
+    if (is_string($this->parameters)) {
+      $this->parameters = json_decode($this->parameters, true);
+    }
+
     $this->parameters[$key] = $value;
     return $this;
   }

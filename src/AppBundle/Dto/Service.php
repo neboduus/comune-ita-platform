@@ -761,16 +761,6 @@ class Service
     $entity->setCompilationInfo($this->compilationInfo ?? '');
     $entity->setFinalIndications($this->finalIndications ?? '');
     $entity->setCoverage(implode(',', (array)$this->coverage)); //@TODO
-
-    if (count($this->flowSteps) > 0) {
-      $temp = [];
-      foreach ($this->flowSteps as $f) {
-        // Fixme
-        $f->setParameters(\json_decode($f->getParameters(), true));
-        $temp[]= $f;
-      }
-      $this->flowSteps = $temp;
-    }
     $entity->setFlowSteps($this->flowSteps);
     $entity->setProtocolRequired($this->isProtocolRequired());
     $entity->setProtocolloParameters($this->protocolloParameters);
@@ -782,6 +772,7 @@ class Service
     $entity->setLoginSuggested($this->loginSuggested);
     $entity->setScheduledFrom($this->scheduledFrom);
     $entity->setScheduledTo($this->scheduledTo);
+    $entity->setIOServiceParameters($this->ioParameters);
 
     // Avoid validation error on patch
     if ($this->serviceGroup instanceof ServiceGroup) {
@@ -833,8 +824,8 @@ class Service
     if (empty($flowSteps)) {
       return $flowSteps;
     }
-    foreach ($flowSteps as $k => $v) {
-      $flowSteps[$k]['parameters']['url'] = $formServerUrl . '/form/';
+    foreach ($flowSteps as $flowStep) {
+      $flowStep->addParameter("url", $formServerUrl . '/form/');
     }
     return $flowSteps;
   }
