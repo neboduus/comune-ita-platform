@@ -23,6 +23,12 @@ services:
     arguments:
       [ '@ocsdc.meeting_service' ]
 
+  ocsdc.jwt_created_listener:
+    class: AppBundle\EventListener\JWTCreatedListener
+    arguments: [ '@request_stack' ]
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
   AppBundle\Controller\APIController:
     arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service']
 
