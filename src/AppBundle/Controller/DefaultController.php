@@ -278,16 +278,15 @@ class DefaultController extends Controller
 
     $scheme = $request->isSecure() ? 'https' : 'http';
 
-    /** @var Ente[] $enti */
-    $enti = $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll();
-    foreach ($enti as $ente) {
+    foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance){
+      $indentifierParts = explode('/', $identifier);
       $result[] = [
         "targets" => [$hostname],
         "labels" => [
           "job" => $hostname,
           "env" => $env,
           "__scheme__" => $scheme,
-          "__metrics_path__" => "/".$ente->getSlug()."/metrics",
+          "__metrics_path__" => "/". $indentifierParts[1] ."/metrics",
         ],
       ];
     }
