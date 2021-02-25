@@ -71,6 +71,13 @@ class Tenant
    */
   private $gateways;
 
+  /**
+   * @Serializer\Type("array")
+   * @SWG\Property(property="backoffice_enabled_integrations", description="List of backoffices, available options are 'operatori_subscription-service_index', 'operatori_calendars_index'", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
+   */
+  private $backofficeEnabledIntegrations;
+
 
   /**
    * @return mixed
@@ -191,6 +198,24 @@ class Tenant
   }
 
   /**
+   * @return array
+   */
+  public function getBackofficeEnabledIntegrations()
+  {
+    return $this->backofficeEnabledIntegrations;
+  }
+
+  /**
+   * @param array $backofficeEnabledIntegrations
+   * @return $this
+   */
+  public function setBackofficeEnabledIntegrations($backofficeEnabledIntegrations)
+  {
+    $this->backofficeEnabledIntegrations = $backofficeEnabledIntegrations;
+    return $this;
+  }
+
+  /**
    * @param TenantEntity $tenant
    * @return Tenant
    */
@@ -204,6 +229,7 @@ class Tenant
     $dto->meta = $tenant->getMeta();
     $dto->ioEnabled = $tenant->isIOEnabled();
     $dto->gateways = [];
+    $dto->backofficeEnabledIntegrations = $tenant->getBackofficeEnabledIntegrations();
 
     foreach ($tenant->getGateways() as $gateway) {
       $g = new Gateway();
@@ -231,6 +257,7 @@ class Tenant
     $entity->setMeta($this->meta);
     $entity->setIOEnabled($this->ioEnabled);
     $entity->setGateways($this->gateways);
+    $entity->setBackofficeEnabledIntegrations($this->backofficeEnabledIntegrations);
 
     return $entity;
   }
