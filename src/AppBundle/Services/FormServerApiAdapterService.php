@@ -312,8 +312,9 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     $flowsteps = $service->getFlowSteps();
     if (!empty($flowsteps)) {
       foreach ($flowsteps as $f) {
-        if (isset($f['type']) && $f['type'] == 'formio' && isset($f['parameters']['formio_id']) && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
+        $parameters = $f->getParameters();
+        if ($f->getType() == 'formio' && isset($parameters['formio_id']) && !empty($parameters['formio_id'])) {
+          $formID = $parameters['formio_id'];
           break;
         }
       }
@@ -420,8 +421,9 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     $flowsteps = $service->getFlowSteps();
     if (!empty($flowsteps)) {
       foreach ($flowsteps as $f) {
-        if (isset($f['type']) && $f['type'] == 'formio' && isset($f['parameters']['formio_id']) && $f['parameters']['formio_id'] && !empty($f['parameters']['formio_id'])) {
-          $formID = $f['parameters']['formio_id'];
+        $parameters = $f->getParameters();
+        if ($f->getType() == 'formio' && isset($parameters['formio_id']) && !empty($parameters['formio_id'])) {
+          $formID = $parameters['formio_id'];
           break;
         }
       }
