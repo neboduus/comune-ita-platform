@@ -141,11 +141,10 @@ class MailerService
             )
           );
         }
-        if ($sentAmount == 0) {
-          $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
-          $sentAmount += $this->send($CPSUsermessage);
-          $pratica->setLatestCPSCommunicationTimestamp(time());
-        }
+
+        $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress);
+        $sentAmount += $this->send($CPSUsermessage);
+        $pratica->setLatestCPSCommunicationTimestamp(time());
       } catch (MessageDisabledException $e) {
         $this->logger->info('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       } catch (\Exception $e) {
