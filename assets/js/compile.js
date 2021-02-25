@@ -56,6 +56,8 @@ import FinancialReport from "./FinancialReport";
 import {Formio} from "formiojs";
 import 'formiojs/dist/formio.form.min.css'
 require('@fortawesome/fontawesome-free/css/all.min.css')
+//overwrite fortawesome 5 - form.io
+require("../js/Formio/overwrite/iconClass");
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('pagebreak', PageBreak);
