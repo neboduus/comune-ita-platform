@@ -46,7 +46,8 @@ class SendPraticaToGiscomCommand extends ContainerAwareCommand
     if ($status == 201 || $status == 204) {
       $output->writeln('La pratica è stata inviata correttamente');
     } else {
-      dump($response);
+      $output->writeln("Errore durante l'invio della pratica");
+      $output->writeln($response->getBody());
     }
   }
 }
