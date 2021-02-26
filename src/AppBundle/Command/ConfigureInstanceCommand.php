@@ -170,7 +170,7 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     $this->entityManager->persist($ente);
     $this->entityManager->flush();
 
-    if ($instanceExists) {
+    if (!$instanceExists) {
       $loader->loadCategories($this->entityManager);
       $loader->loadTerminiUtilizzo($this->entityManager);
     }
