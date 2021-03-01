@@ -167,7 +167,7 @@ push_caddy_tag:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $CADDY_IMAGE_TMP
-    - docker tag $CADDY_IMAGE_TMP "$APACHE_IMAGE_NAME:$CI_COMMIT_TAG"
+    - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:$CI_COMMIT_TAG"
     - docker push "$CADDY_IMAGE_NAME:$CI_COMMIT_TAG"
   only:
     - tags
@@ -178,7 +178,7 @@ push_caddy_latest:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $CADDY_IMAGE_TMP
-    - docker tag $CADDY_IMAGE_TMP "$APACHE_IMAGE_NAME:latest"
+    - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:latest"
     - docker push "$CADDY_IMAGE_NAME:latest"
   only:
     - master
