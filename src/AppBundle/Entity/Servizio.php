@@ -922,6 +922,9 @@ class Servizio
     if (!empty($flowsteps)) {
       foreach ($flowsteps as $f) {
         $parameters = $f->getParameters();
+        if (!is_array($parameters)) {
+          $parameters = \json_decode($parameters, true);
+        }
         if ($f->getType() == 'formio' && isset($parameters['formio_id']) && !empty($parameters['formio_id'])) {
           $formID = $parameters['formio_id'];
           break;

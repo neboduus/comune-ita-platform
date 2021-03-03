@@ -9,5 +9,3 @@ if [[ $ENABLE_MIGRATIONS == 'true' ]]; then
   done
 
 fi
-
-

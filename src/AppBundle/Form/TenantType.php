@@ -2,10 +2,13 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Dto\Tenant;
 use AppBundle\Model\Gateway;
+use AppBundle\Services\BackOfficeCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,8 +19,25 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TenantType extends AbstractType
 {
+
+  /**
+   * @var BackOfficeCollection
+   */
+  private $backOfficeCollection;
+
+  public function __construct(BackOfficeCollection $backOffices)
+  {
+    $this->backOfficeCollection = $backOffices;
+  }
+
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+    $backOfficesData = [];
+    /** @var BackOfficeInterface $b */
+    foreach ($this->backOfficeCollection->getBackOffices() as $b) {
+      $backOfficesData[$b->getName()] = $b->getPath();
+    }
+
     $builder
       ->add('mechanographic_code', TextType::class, ['label' => false])
       ->add('administrative_code', TextType::class, ['label' => false])
@@ -29,6 +49,14 @@ class TenantType extends AbstractType
         'allow_add' => true,
         'allow_delete' => true
       ]);
+
+    if ( !empty($backOfficesData)) {
+      $builder->add('backoffice_enabled_integrations', ChoiceType::class, [
+        'choices' => $backOfficesData,
+        'multiple' => true,
+        'required' => false,
+      ]);
+    }
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
