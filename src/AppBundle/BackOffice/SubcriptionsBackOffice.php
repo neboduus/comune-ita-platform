@@ -15,7 +15,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class SubcriptionsBackOffice implements BackOfficeInterface
 {
-  const NAME = 'Iscrizione ai corsi';
+  const NAME = 'Servizi a sottoscrizione';
 
   const PATH = 'operatori_subscription-service_index';
 
