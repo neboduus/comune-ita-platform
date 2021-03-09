@@ -9,6 +9,7 @@ use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Prometheus\CollectorRegistry;
 use Prometheus\Exception\MetricNotFoundException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 
@@ -27,14 +28,20 @@ class ApplicationMetrics  implements MetricsGeneratorInterface
    * @var EntityManagerInterface
    */
   private $entityManager;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
   /**
    * ApplicationMetrics constructor.
    * @param EntityManagerInterface $entityManager
+   * @param LoggerInterface $logger
    */
-  public function __construct(EntityManagerInterface $entityManager)
+  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
   {
     $this->entityManager = $entityManager;
+    $this->logger = $logger;
   }
 
   /**
@@ -65,15 +72,6 @@ class ApplicationMetrics  implements MetricsGeneratorInterface
 
     try {
       foreach ($metrics as $m) {
-        $name = str_replace('-', '_', 'applications' . $m['servizio']) . '_' . $m['status'];
-        /*$gauge = $this->collectionRegistry->registerGauge(
-          $this->namespace,
-          $name,
-          'applications A summary of the application count',
-          ['tenant', 'service', 'status', 'category']
-        );
-        $gauge->set($m['count'], [$m['servizio'], $m['status'], $m['ente'], $m['categoria']]);*/
-
         $counter = $this->collectionRegistry->getOrRegisterCounter(
           $this->namespace,
           'applications',
@@ -86,7 +84,7 @@ class ApplicationMetrics  implements MetricsGeneratorInterface
 
       }
     } catch (\Exception $e) {
-      dump($e);
+      $this->logger->error($e->getMessage());
     }
 
   }
