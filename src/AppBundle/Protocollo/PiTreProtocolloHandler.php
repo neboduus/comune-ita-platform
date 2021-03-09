@@ -529,7 +529,6 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   private function getServizioParameters(Servizio $servizio, Ente $ente)
   {
     if (!empty($servizio->getProtocolloParameters())) {
-      dump((array)$servizio->getProtocolloParameters());
       return (array)$servizio->getProtocolloParameters();
     }
 
