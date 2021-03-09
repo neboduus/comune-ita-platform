@@ -47,19 +47,18 @@ class PatAuthenticator extends AbstractAuthenticator
    * @param Request $request
    * @return bool
    *
-   * Check if at least one shibboleth parameter is present
+   * Check if at least one among spidcode or all x509 certificate shibboleth parameters are present
    */
   private function checkShibbolethUserData(Request $request)
   {
-    $userDataKeys = array_flip($this->shibboletServerVarNames);
-    $serverProps = $request->server->all();
-    foreach ($userDataKeys as $shibbKey => $ourKey) {
-      if (isset($serverProps[$shibbKey])) {
-        return true;
-      }
+    if (!$request->server->get($this->shibboletServerVarNames['spidCode']) && !(
+        $request->server->get($this->shibboletServerVarNames['x509certificate_issuerdn']) &&
+        $request->server->get($this->shibboletServerVarNames['x509certificate_subjectdn']) &&
+        $request->server->get($this->shibboletServerVarNames['x509certificate_base64'])
+      )) {
+      return false;
     }
-
-    return false;
+    return true;
   }
 
   protected function getLoginRouteSupported()
