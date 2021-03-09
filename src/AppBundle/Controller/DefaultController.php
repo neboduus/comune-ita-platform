@@ -13,6 +13,7 @@ use AppBundle\Entity\TerminiUtilizzo;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Security\AbstractAuthenticator;
 use AppBundle\Security\LogoutSuccessHandler;
+use Artprima\PrometheusMetricsBundle\Metrics\Renderer;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -44,18 +45,24 @@ class DefaultController extends Controller
 
   /** @var InstanceService */
   private $instanceService;
+  /**
+   * @var Renderer
+   */
+  private $metricsRenderer;
 
   /**
    * DefaultController constructor.
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param InstanceService $instanceService
+   * @param Renderer $metricsRenderer
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, InstanceService $instanceService)
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, InstanceService $instanceService, Renderer $metricsRenderer)
   {
     $this->logger = $logger;
     $this->translator = $translator;
     $this->instanceService = $instanceService;
+    $this->metricsRenderer = $metricsRenderer;
   }
 
 
@@ -246,25 +253,12 @@ class DefaultController extends Controller
 
   /**
    * @Route("/metrics", name="sdc_metrics")
-   * @Template()
    *
    * @return Response
    */
-  public function metricsAction(Request $request)
+  public function metricsAction()
   {
-    /** @var PraticaRepository $praticaRepository */
-    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
-    $metrics = $praticaRepository->getMetrics();
-
-    $request->setRequestFormat('text');
-    $response = new Response();
-
-    return $this->render(
-      '@App/Default/metrics.html.twig',
-      [
-        'metrics' => $metrics,
-      ]
-    );
+    return $this->metricsRenderer->renderResponse();
   }
 
   /**

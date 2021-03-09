@@ -260,3 +260,10 @@ flagception:
     feature_integration_request:
       default: false
       env: FEATURE_INTEGRATION_REQUEST
+
+# Prometheus
+artprima_prometheus_metrics:
+  # namespace is used to prefix the prometheus metrics
+  namespace: sdc
+  # metrics backend type
+  type: in_memory # possible values: in_memory, apcu, redis
