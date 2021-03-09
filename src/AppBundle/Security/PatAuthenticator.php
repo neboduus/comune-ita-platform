@@ -34,6 +34,9 @@ class PatAuthenticator extends AbstractAuthenticator
 
   public function supports(Request $request)
   {
+    dump($_SERVER);
+    exit;
+
     try {
       $this->checkLoginRoute();
     } catch (\Exception $e) {
