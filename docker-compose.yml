@@ -65,6 +65,7 @@ services:
       SENTRY_DSN: $SENTRY_DSN
       PHP_DATE_TIMEZONE: 'Europe/Rome'
       PASSWORD_LIFE_TIME: $PASSWORD_LIFE_TIME
+      SINGLE_LOGOUT_URL: $SINGLE_LOGOUT_URL
     volumes:
       - "uploads:/var/www/html/var/uploads"
 

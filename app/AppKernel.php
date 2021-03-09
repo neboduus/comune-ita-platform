@@ -33,6 +33,7 @@ class AppKernel extends Kernel
       new Sentry\SentryBundle\SentryBundle(),
       new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
       new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
+      new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new AppBundle\AppBundle(),
     ];
 
