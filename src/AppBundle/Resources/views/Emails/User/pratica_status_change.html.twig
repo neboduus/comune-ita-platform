@@ -10,10 +10,17 @@
         </p>
         <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo, '%data_corrente%':data_corrente })|raw }}</p>
 
+        {% if pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) and pratica.servizio.isPaymentDeferred %}
+          <p>
+            {{ 'email.pratica.payment_link'|trans() }}<br />
+            <a href="{{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}">{{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}</a>
+          </p>
+        {% endif %}
+
         {% if not pratica.getMotivazioneEsito() is empty and not pratica.getEsito() is null %}
           <p>
             Con la seguente motivazione:<br>
-            {{ pratica.getMotivazioneEsito() }}
+            {{ pratica.getMotivazioneEsito()|raw }}
           </p>
         {% endif %}
         <p>

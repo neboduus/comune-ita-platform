@@ -270,21 +270,33 @@ $(document).ready(function () {
   // Step Payment data
   if ($("#payment_data_flow_service_step").length) {
 
-    if (!$('#payment_data_payment_required').prop('checked')) {
+    const paymentRequiredField = $('#payment_data_payment_required');
+
+    let paymentTypeHelp = function (type) {
+      $("#payment-type-help").remove();
+      if (type == 1) {
+        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento immediato viene richiesto dopo aver confermato la volontà di inviare una pratica, se non effettuato la pratica resta in stato "da pagare", è visibile agli operatori ma non può esere presa in carico.</small>');
+      } else if (type == 2) {
+        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento posticipato viene richiesto dopo aver inviato la pratica, gli operatori potranno approvare la pratica e solo dopo l\'approvazione sarà richiesto un pagamento.</small>');
+      }
+    };
+
+    if (!paymentRequiredField.val()) {
       $('#payment_data_total_amounts').attr('disabled', 'disabled');
       $('#payment_data_gateways').find('input[type="checkbox"]').attr('disabled', 'disabled');
     }
+    paymentTypeHelp(paymentRequiredField.val());
 
-    $('#payment_data_payment_required').change(function() {
-      if(this.checked) {
-        $('#payment_data_total_amounts').removeAttr('disabled');
-        $('#payment_data_gateways').find('input[type="checkbox"]').removeAttr('disabled');
-      } else {
+    paymentRequiredField.change(function() {
+      if($(this).val() == 0) {
         $('#payment_data_total_amounts').attr('disabled', 'disabled');
         $('#payment_data_gateways').find('input[type="checkbox"]').attr('disabled', 'disabled');
+      } else {
+        $('#payment_data_total_amounts').removeAttr('disabled');
+        $('#payment_data_gateways').find('input[type="checkbox"]').removeAttr('disabled');
       }
+      paymentTypeHelp($(this).val());
     });
-
 
     $('#payment_data_gateways').find('input[type="checkbox"]').each(function(){
       if(this.checked) {
@@ -292,7 +304,6 @@ $(document).ready(function () {
         $('#payment_data_' + $(this).val()).find('input').attr('required', 'required');
       }
     });
-
 
     $('#payment_data_gateways').find('input[type="checkbox"]').change(function() {
       if(this.checked) {
@@ -305,7 +316,7 @@ $(document).ready(function () {
     })
   }
 
-  // Step Payment data
+  // Step Integrations data
   if ($("#integrations_data_flow_service_step").length) {
     $('#integrations_data_trigger').change(function() {
       if ($(this).val() == '0') {
