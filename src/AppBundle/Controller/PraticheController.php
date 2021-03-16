@@ -431,6 +431,10 @@ class PraticheController extends Controller
   {
     $translator = $this->translator;
 
+    if ($pratica instanceof GiscomPratica) {
+      return $this->redirectToRoute('pratiche_show', ['pratica' => $pratica]);
+    }
+
     if (!$this->featureManager->isActive('feature_application_detail')) {
       return $this->redirectToRoute('pratiche_show', ['pratica' => $pratica]);
     }

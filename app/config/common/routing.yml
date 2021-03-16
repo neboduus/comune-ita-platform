@@ -38,3 +38,7 @@ app.swagger:
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.swagger }
 
+app_metrics:
+  path: "/%prefix%/"
+  controller: AppBundle\Controller\DefaultController::metricsAction
+

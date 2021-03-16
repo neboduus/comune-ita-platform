@@ -3,6 +3,7 @@
 namespace AppBundle\Protocollo;
 
 use AppBundle\Entity\AllegatoInterface;
+use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Pratica;
 
 class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface
@@ -22,24 +23,12 @@ class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface
    */
   private function getHandler(Pratica $pratica)
   {
-    // Per migrazione sofg, rimuovere appena eseguiti script
-    $giscomSlugs = [
-      'autorizzazione-paesaggistica-sindaco',
-      'comunicazione-inizio-lavori',
-      'comunicazione-inizio-lavori-asseverata',
-      'comunicazione-opere-libere',
-      'dichiarazione-ultimazione-lavori',
-      'domanda-permesso-di-costruire',
-      'domanda-permesso-di-costruire-in-sanatoria',
-      'scia-pratica-edilizia',
-      'segnalazione-certificata-di-agibilita',
-      's-c-i-a-pratica-edilizia'
-    ];
-
-    if (in_array($pratica->getServizio()->getSlug(), $giscomSlugs)) {
+    // Per migrazione soft, rimuovere appena eseguiti script
+    if ($pratica instanceof GiscomPratica) {
       $this->currentHandler = $this->registry->getByName('pitre');
       return $this->currentHandler;
     }
+    
     $this->currentHandler = $this->registry->getByName($pratica->getServizio()->getProtocolHandler());
     return $this->currentHandler;
   }

@@ -53,6 +53,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
       new Sentry\SentryBundle\SentryBundle(),
       new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
       new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
+      new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new AppBundle\AppBundle(),
     ];
 
