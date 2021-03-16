@@ -27,17 +27,26 @@ class BackOfficePraticaListener
     $this->logger = $logger;
   }
 
+  /**
+   * @param PraticaOnChangeStatusEvent $event
+   * @throws \Exception
+   */
   public function onStatusChange(PraticaOnChangeStatusEvent $event)
   {
     $pratica = $event->getPratica();
     $service = $pratica->getServizio();
     $integrations = $service->getIntegrations();
 
-    if (!empty($integrations) && array_key_exists($event->getNewStateIdentifier(), $integrations) && $pratica instanceof DematerializedFormPratica) {
+    if (!empty($integrations) && $pratica instanceof DematerializedFormPratica) {
 
-      /** @var BackOfficeInterface $backOfficeHandler */
-      $backOfficeHandler = $this->container->get($integrations[$event->getNewStateIdentifier()]);
-      $backOfficeHandler->execute($pratica);
+      foreach ($integrations as $integration) {
+        /** @var BackOfficeInterface $backOfficeHandler */
+        $backOfficeHandler = $this->container->get($integration);
+        $result = $backOfficeHandler->execute($pratica);
+        if (is_array($result) && isset($result["error"])) {
+          throw new \Exception($result["error"]);
+        }
+      }
     }
   }
 }

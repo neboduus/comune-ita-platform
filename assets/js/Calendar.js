@@ -11,6 +11,7 @@ export default class FormioCalendar extends Base {
     this.slot = false;
     this.container = false;
     this.calendar = null;
+    this.meeting = null;
     this.loaderTpl = '<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span></div>';
   }
 
@@ -53,7 +54,7 @@ export default class FormioCalendar extends Base {
     // Calling super.render will wrap it html as a component.
     return super.render(`<div id="calendar-container-${this.id}" class="slot-calendar d-print-none d-preview-calendar-none"><div class="row"><div class="col-12 col-md-6"><h6>${this.component.label}</h6>
 <div class="date-picker"></div></div><div class="col-12 col-md-6"><div class="row" id="slot-picker"></div></div></div></div>${content}
-<div id="date-picker-print" class="d-print-block d-preview-calendar"></div>`);
+<div id="date-picker-print" class="mt-3 d-print-block d-preview-calendar"></div>`);
   }
 
   /**
@@ -107,10 +108,17 @@ export default class FormioCalendar extends Base {
               firstDay: 1,
               dateFormat: 'dd-mm-yy',
               onSelect: function(dateText) {
+                if (dateText !== self.date) {
+                  // If date changed, reset slot choice
+                  self.slot = false;
+                  self.updateValue();
+                }
                 self.date = dateText;
                 self.getDaySlots();
-                var slotText = self.slot ? ' alle ore '+ self.slot : '';
+
+                let slotText = self.slot ? ' alle ore '+ self.slot : '';
                 $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' '+ slotText)
+
               },
               beforeShowDay: function(date){
                 var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
@@ -153,7 +161,12 @@ export default class FormioCalendar extends Base {
    * @returns {String}
    */
   getValue() {
-    return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId +')';
+    if (!(this.date && this.slot)) {
+      // Unset value (needed for calendars with 'required' option"
+      return null;
+    }
+    let meeting_id = this.meeting ? this.meeting : "";
+    return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId + '#' + meeting_id + ')';
   }
 
   /**
@@ -166,10 +179,13 @@ export default class FormioCalendar extends Base {
     if (!value) {
       return;
     }
-
     let explodedValue = value.replace(")", "").replace(' (', " @ ").replace(/\//g, "-").split(" @ ");
+    let explodedCalendar = explodedValue[2].split("#");
     this.date = explodedValue[0];
     this.slot = explodedValue[1];
+    this.calendar = explodedCalendar[0];
+    this.meeting = explodedCalendar[1];
+
     if(this.date && this.slot){
       $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ this.date +' alle ore '+ this.slot)
     }
@@ -185,7 +201,12 @@ export default class FormioCalendar extends Base {
         parsedDate = moment(self.date, 'DD-MM-YYYY');
 
     this.container.find('#slot-picker').html(html);
-    $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities/' + parsedDate.format('YYYY-MM-DD'),
+    let url = location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities/' + parsedDate.format('YYYY-MM-DD');
+    if (self.meeting) {
+      // Exclude saved meeting from unavailabilities
+      url = `${url}?exclude=${self.meeting}`
+    }
+    $.ajax(url,
       {
         dataType: 'json', // type of response data
         beforeSend: function(){
@@ -210,7 +231,7 @@ export default class FormioCalendar extends Base {
               }
 
               let key = element.start_time + '-' + element.end_time;
-              if (key == self.slot) {
+              if (key === self.slot) {
                   cssClass = cssClass + ' active';
               }
 
@@ -224,9 +245,11 @@ export default class FormioCalendar extends Base {
               $('.btn-ora.active').removeClass('active');
               $(this).addClass('active');
               self.slot = $(this).data('slot');
-              self.updateValue();
+
+              self.createOrUpdateMeeting();
+              self.updateValue()
+
               $('#date-picker-print').addClass('d-preview-calendar-none');
-              $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' alle ore '+ self.slot)
             })
           }
 
@@ -243,5 +266,32 @@ export default class FormioCalendar extends Base {
       });
   }
 
+  createOrUpdateMeeting(){
+    let self = this,
+        location = window.location,
+        explodedPath = location.pathname.split("/");
 
+    $.ajax(location.origin + '/' + explodedPath[1] + '/meetings/new-draft',
+        {
+          method: "POST",
+          data: {"date": self.date, "slot": self.slot, "calendar":this.component.calendarId, "meeting": self.meeting},
+          dataType: 'json', // type of response data
+          success: function (data, status, xhr) {   // success callback function
+            self.meeting = data;
+            self.updateValue();
+          },
+          error: function (jqXhr, textStatus, errorMessage) { // error callback
+            alert("Si è verificato un errore, si prega di riprovare");
+            // Reinitialize
+            self.slot = null;
+            self.meeting = null;
+            self.updateValue();
+            self.getDaySlots();
+          },
+          complete: function () {
+              let slotText = self.slot ? ' alle ore '+ self.slot : '';
+              $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> '+ self.date +' '+ slotText)
+          }
+        });
+  }
 }

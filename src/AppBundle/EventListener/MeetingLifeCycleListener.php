@@ -34,7 +34,7 @@ class MeetingLifeCycleListener
   public function postPersist(LifecycleEventArgs $args)
   {
     $meeting = $args->getObject();
-    if ($meeting instanceof Meeting) {
+    if ($meeting instanceof Meeting && $meeting->getStatus() !== Meeting::STATUS_DRAFT) {
       $this->meetingService->sendEmailNewMeeting($meeting);
     }
   }
@@ -47,8 +47,13 @@ class MeetingLifeCycleListener
   public function preUpdate(PreUpdateEventArgs $args)
   {
     $meeting = $args->getObject();
-    if ($meeting instanceof Meeting) {
-      $this->meetingService->sendEmailUpdatedMeeting($meeting, $args->getEntityChangeSet());
+    if ($meeting instanceof Meeting && $meeting->getStatus() !== Meeting::STATUS_DRAFT) {
+      $changeSet = $args->getEntityChangeSet();
+      if (key_exists('status', $changeSet) && $changeSet['status'][0] == Meeting::STATUS_DRAFT && in_array($meeting->getStatus(), [Meeting::STATUS_PENDING, Meeting::STATUS_APPROVED])) {
+        $this->meetingService->sendEmailNewMeeting($meeting);
+      } else {
+        $this->meetingService->sendEmailUpdatedMeeting($meeting, $args->getEntityChangeSet());
+      }
     }
   }
 

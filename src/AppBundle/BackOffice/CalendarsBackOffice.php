@@ -4,13 +4,13 @@
 namespace AppBundle\BackOffice;
 
 
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
+use AppBundle\Entity\Pratica;
 use AppBundle\Services\InstanceService;
-use AppBundle\Services\MailerService;
 use AppBundle\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class CalendarsBackOffice implements BackOfficeInterface
@@ -47,6 +47,11 @@ class CalendarsBackOffice implements BackOfficeInterface
     )
   ];
 
+  private $allowedActivationPoints = [
+    Pratica::STATUS_PRE_SUBMIT,
+    Pratica::STATUS_SUBMITTED
+  ];
+
   /**
    * @var LoggerInterface
    */
@@ -78,87 +83,55 @@ class CalendarsBackOffice implements BackOfficeInterface
 
   public function execute($data)
   {
-    $meetingData = $data->getDematerializedForms();
-    unset($meetingData['flattened']['submit']);
-    $meetingData = $meetingData['flattened'];
-    ksort($meetingData);
-    $requiredFields = $this->getRequiredFields();
+    if ($data instanceof Pratica && is_callable([$data, 'getDematerializedForms'])) {
+      $status = $data->getStatus();
+      $integrations = $data->getServizio()->getIntegrations();
 
-    // Check among all possible integrations which one to use
-    $integrationType = null;
-    foreach ($requiredFields as $type => $fields) {
-      sort($fields);
-      if (!$integrationType && array_values(array_intersect(array_keys($meetingData), array_values($fields))) == array_values($fields)) {
-        // Integration type found: no previous integration found
-        $integrationType = $type;
+      if (isset($integrations[$status]) && $integrations[$status] == get_class($this)) {
+        return $this->createMeetingFromPratica($data);
+      } else {
+        // Extract meeting id from calendar string
+        preg_match_all("/\(([^\)]*)\)/", $data->getDematerializedForms()['flattened']['calendar'], $matches);
+        $meetingId = trim(explode("#", $matches[1][0])[1]);
+        $meeting = $meetingId ? $this->em->getRepository('AppBundle:Meeting')->find($meetingId) : null;
+
+        if (!$meeting) {
+          // Meeting not found, can't update
+          return [];
+        }
+
+        switch ($status) {
+          case Pratica::STATUS_WITHDRAW:
+            // Cancel meeting
+            $meeting->setStatus(Meeting::STATUS_CANCELLED);
+            break;
+          case Pratica::STATUS_PAYMENT_PENDING:
+            // Increment draft duration
+            $currentExpiration = clone $meeting->getDraftExpiration() ?? new \DateTime();
+            $meeting->setDraftExpiration($currentExpiration->modify("+ {$meeting->getCalendar()->getDraftsDurationIncrement()} seconds"));
+          break;
+          case Pratica::STATUS_PAYMENT_ERROR:
+          case Pratica::STATUS_CANCELLED:
+            // Refuse meeting
+            $meeting->setStatus(Meeting::STATUS_REFUSED);
+            break;
+          default:
+            // do nothing
+        }
+        try {
+          $this->em->persist($meeting);
+          $this->em->flush();
+          return $meeting;
+        } catch (\Exception $e) {
+          $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
+          return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
+        }
       }
     }
-    if (!$integrationType) {
-      $this->logger->error($this->translator->trans('backoffice.integration.fields_error'));
-      return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
-    }
-
-    // Check contacts. At least one among tel, cell, email is required
-    if (!$meetingData['applicant.data.email_address'] &&
-      !$meetingData['applicant.data.phone_number'] && !$meetingData['applicant.data.cell_number']) {
-      $this->logger->error($this->translator->trans('backoffice.integration.calendars.missing_contacts'));
-      return ['error' => $this->translator->trans('backoffice.integration.calendars.missing_contacts')];
-    }
-    preg_match_all("/\(([^\)]*)\)/", $meetingData['calendar'], $matches);
-
-    $repo = $this->em->getRepository('AppBundle:Calendar');
-    $calendar = $repo->findOneBy(['id' => $matches[1]]);
-    if (!$calendar) {
-      $this->logger->error($this->translator->trans('backoffice.integration.calendars.calendar_error', ['calendar_id' => $matches[1]]));
-      return ['error' => $this->translator->trans('backoffice.integration.calendars.calendar_error', ['calendar_id' => $matches[1]])];
-    }
-    // Get start-end datetime
-    $tmp = explode('@', $meetingData['calendar']);
-    $date = trim($tmp[0]);
-    $time = $tmp[1];
-    $time = trim(explode('(', $time)[0]);
-    $tmp = explode('-', $time);
-    $startTime = trim($tmp[0]);
-    $endTime = trim($tmp[1]);
-    $start = \DateTime::createFromFormat('d/m/Y:H:i', $date . ':' . $startTime);
-    $end = \DateTime::createFromFormat('d/m/Y:H:i', $date . ':' . $endTime);
-
-    try {
-
-      $meeting = new Meeting();
-      $meeting->setCalendar($calendar);
-      $meeting->setEmail($meetingData['applicant.data.email_address']);
-      $meeting->setName($data->getUser()->getFullName());
-      if (isset($meetingData['applicant.data.phone_number'])) {
-        $meeting->setPhoneNumber($meetingData['applicant.data.phone_number']);
-      } else if (isset($meetingData['applicant.data.cell_number'])) {
-        $meeting->setPhoneNumber($meetingData['applicant.data.cell_number']);
-      }
-      $meeting->setFiscalCode($meetingData['applicant.data.fiscal_code.data.fiscal_code']);
-      $meeting->setUser($data->getUser());
-      $meeting->setUserMessage($meetingData['user_message']);
-      $meeting->setFromTime($start);
-      $meeting->setToTime($end);
-
-      if (!$this->meetingService->isSlotAvailable($meeting) || !$this->meetingService->isSlotValid($meeting)) {
-        // Send email
-        $this->meetingService->sendEmailUnavailableMeeting($meeting);
-        $this->logger->error($this->translator->trans('backoffice.integration.calendars.invalid_slot'));
-        return ['error' => $this->translator->trans('backoffice.integration.calendars.invalid_slot')];
-
-      }
-
-      $this->em->persist($meeting);
-      $this->em->flush($meeting);
-
-      return $meeting;
-    } catch (\Exception $exception) {
-      $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
-      return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
-    }
+    return [];
   }
 
-  public function checkRequiredFields($schema)
+  public function checkRequiredFields($schema): ?array
   {
     $errors = [];
     foreach ($this->getRequiredFields() as $key => $requiredFields) {
@@ -172,5 +145,132 @@ class CalendarsBackOffice implements BackOfficeInterface
       }
     }
     return $errors;
+  }
+
+  public function getAllowedActivationPoints()
+  {
+    return $this->allowedActivationPoints;
+  }
+
+  private function createMeetingFromPratica(Pratica $pratica)
+  {
+    $data = $pratica->getDematerializedForms();
+    unset($data['flattened']['submit']);
+    $submission = $data['flattened'];
+    ksort($submission);
+
+    // Check among all possible integrations which one to use
+    $integrationType = $this->getIntegrationType($submission);
+
+    if (!$integrationType) {
+      // Meeting data is not suitable for integration
+      $this->logger->error($this->translator->trans('backoffice.integration.fields_error'));
+      return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
+    }
+
+    $meetingData = $this->getMeetingData($submission, $pratica->getUser());
+
+    // Check contacts. At least one among tel and email is required
+    if (!($meetingData['phone_number'] || $meetingData['email'])) {
+      $this->logger->error($this->translator->trans('backoffice.integration.calendars.missing_contacts'));
+      return ['error' => $this->translator->trans('backoffice.integration.calendars.missing_contacts')];
+    }
+
+
+    $calendar = $meetingData['calendar'] ? $this->em->getRepository('AppBundle:Calendar')->find($meetingData['calendar']) : null;
+    if (!$calendar) {
+      $this->logger->error($this->translator->trans(
+        'backoffice.integration.calendars.calendar_error',
+        ['calendar_id' => $meetingData['calendar']]
+      ));
+      return ['error' => $this->translator->trans(
+        'backoffice.integration.calendars.calendar_error',
+        ['calendar_id' => $meetingData['calendar']]
+      )];
+    }
+
+    try {
+      $meeting = $meetingData['meeting_id'] ? $this->em->getRepository('AppBundle:Meeting')->find($meetingData['meeting_id']) : null;
+      if (!$meeting) {
+        $meeting = new Meeting();
+      }
+
+      $meeting->setEmail($meetingData['email']);
+      $meeting->setName($meetingData['name']);
+      $meeting->setPhoneNumber($meetingData['phone_number']);
+      $meeting->setFiscalCode($meetingData['fiscal_code']);
+      $meeting->setUser($meetingData['user']);
+      $meeting->setUserMessage($meetingData['user_message']);
+      $meeting->setFromTime($meetingData['from_time']);
+      $meeting->setToTime($meetingData['to_time']);
+      $meeting->setCalendar($calendar);
+
+      if (!$this->meetingService->isSlotAvailable($meeting) || !$this->meetingService->isSlotValid($meeting)) {
+        // Send email
+        $this->meetingService->sendEmailUnavailableMeeting($meeting);
+        $this->logger->error($this->translator->trans('backoffice.integration.calendars.invalid_slot'));
+        return ['error' => $this->translator->trans('backoffice.integration.calendars.invalid_slot')];
+      }
+
+      $this->em->persist($meeting);
+      $this->em->flush();
+
+      return $meeting;
+    } catch (\Exception $exception) {
+      $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
+      return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
+    }
+  }
+
+  private function getIntegrationType($data): ?string
+  {
+    $integrationType = null;
+    foreach ($this->getRequiredFields() as $type => $fields) {
+      sort($fields);
+      if (!$integrationType && array_values(array_intersect(array_keys($data), array_values($fields))) == array_values($fields)) {
+        // Integration type found: no previous integration found
+        $integrationType = $type;
+      }
+    }
+    return $integrationType;
+  }
+
+  private function getMeetingData($submission, CPSUser $user)
+  {
+    // Get start-end datetime
+    $tmp = explode('@', $submission['calendar']);
+    $date = trim($tmp[0]);
+    $time = $tmp[1];
+    $time = trim(explode('(', $time)[0]);
+    $tmp = explode('-', $time);
+    $startTime = trim($tmp[0]);
+    $endTime = trim($tmp[1]);
+    $start = \DateTime::createFromFormat('d/m/Y:H:i', $date . ':' . $startTime);
+    $end = \DateTime::createFromFormat('d/m/Y:H:i', $date . ':' . $endTime);
+
+    // Extract meeting id from calendar string
+    preg_match_all("/\(([^\)]*)\)/", $submission['calendar'], $matches);
+    $meetingData = explode("#", $matches[1][0]);
+
+    $meeting = [
+      "email" => $submission['applicant.data.email_address'],
+      "name" => $user->getFullName(),
+      "phone_number" => null,
+      "fiscal_code" => $submission['applicant.data.fiscal_code.data.fiscal_code'],
+      "user" => $user,
+      "user_message" => $submission['user_message'],
+      "from_time" => $start,
+      "to_time" => $end,
+      "calendar" => trim($meetingData[0]),
+      "meeting_id" => trim($meetingData[1]),
+    ];
+
+    if (isset($submission['applicant.data.phone_number'])) {
+      $meeting["phone_number"] = $submission['applicant.data.phone_number'];
+    } else if (isset($meetingData['applicant.data.cell_number'])) {
+      $meeting["phone_number"] = $submission['applicant.data.cell_number'];
+    }
+
+    return $meeting;
   }
 }

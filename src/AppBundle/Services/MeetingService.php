@@ -491,7 +491,7 @@ class MeetingService
         $ente->getName(),
         $meeting->getEmail(),
         $meeting->getName(),
-        $userMessage,
+        $userMessage ?? $this->translator->trans('meetings.no_info'),
         $this->translator->trans('meetings.email.edit_meeting.subject'),
         $ente,
         []
@@ -586,7 +586,7 @@ class MeetingService
     }
   }
 
-  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false) {
+  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null) {
     /** @var OpeningHour[] $openingHours */
     $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $calendar]);
 
@@ -595,7 +595,7 @@ class MeetingService
 
     $slots = array();
 
-    $_meetings = $this->entityManager->createQueryBuilder()
+    $builder = $this->entityManager->createQueryBuilder()
       ->select('count(meeting.fromTime) as count', 'meeting.fromTime as start_time', 'meeting.toTime as end_time')
       ->from('AppBundle:Meeting', 'meeting')
       ->where('meeting.calendar = :calendar')
@@ -608,8 +608,14 @@ class MeetingService
       ->setParameter('calendar', $calendar)
       ->setParameter('startDate', $start)
       ->setParameter('endDate', $end)
-      ->groupBy('meeting.fromTime', 'meeting.toTime')
-      ->getQuery()->getResult();
+      ->groupBy('meeting.fromTime', 'meeting.toTime');
+
+      if ($excludedMeeting) {
+        $builder
+          ->andWhere('meeting.id != :exluded_id')
+          ->setParameter('exluded_id', $excludedMeeting);
+      }
+    $_meetings = $builder->getQuery()->getResult();
 
     // Set meetings key (Format: start_time-end_time-count)
     $meetings = [];
