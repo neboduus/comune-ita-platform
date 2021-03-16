@@ -126,6 +126,12 @@ class IntegrationsDataType extends AbstractType
       /** @var BackOfficeInterface $backOfficeHandler */
       $backOfficeHandler = $this->container->get($data['action']);
 
+      if (isset($data["action"]) && !in_array($data["trigger"], $backOfficeHandler->getAllowedActivationPoints())) {
+        $event->getForm()->addError(
+          new FormError($this->translator->trans('backoffice.integration.invalid_activation_point')),
+        );
+      }
+
       $flatSchema = $this->arrayFlat($formSchema['schema']);
 
       $errors = $backOfficeHandler->checkRequiredFields($flatSchema);

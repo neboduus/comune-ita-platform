@@ -1861,6 +1861,8 @@ meetings:
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
   no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
+  default_draft_message: "Appuntamento in bozza"
+  no_info: "<i>Informazione non disponibile</i>"
   email:
     operatori:
       meeting_cancelled:
@@ -1924,6 +1926,7 @@ backoffice:
   integration:
     missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
     or: 'Oppure'
+    invalid_activation_point: 'Il punto di attivazione selezionato non è disponibile per questa azione'
     fields_error: 'I campi richiesti non coincidono'
     calendars:
       missing_contacts: "E' necessario fornire almeno un recapito"

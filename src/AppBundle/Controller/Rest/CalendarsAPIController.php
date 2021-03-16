@@ -219,6 +219,14 @@ class CalendarsAPIController extends AbstractFOSRestController
    *  )
    *
    * @SWG\Parameter(
+   *      name="exclude",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Ignore given meeting availability"
+   *  )
+   *
+   * @SWG\Parameter(
    *      name="available",
    *      in="query",
    *      type="string",
@@ -246,6 +254,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   {
     $allAvailabilities = strtolower($request->get('all') == 'true') ? true : false;
     $excludeUnavailable = $request->get('available');
+    $excludedMeeting = $request->query->get('exclude');
 
     try {
       $inputDate = new DateTime($date);
@@ -261,7 +270,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable));
+      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable), $excludedMeeting);
 
       return $this->view(array_values($slots), Response::HTTP_OK);
     } catch (\Exception $e) {

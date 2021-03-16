@@ -80,6 +80,16 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     )
   ];
 
+  private $allowedActivationPoints = [
+    Pratica::STATUS_PAYMENT_SUCCESS,
+    Pratica::STATUS_PRE_SUBMIT,
+    Pratica::STATUS_SUBMITTED,
+    Pratica::STATUS_REGISTERED,
+    Pratica::STATUS_PENDING,
+    Pratica::STATUS_COMPLETE,
+    Pratica::STATUS_CANCELLED
+  ];
+
   public function __construct(LoggerInterface $logger, TranslatorInterface $translator, EntityManager $em)
   {
     $this->logger = $logger;
@@ -125,7 +135,24 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
   public function execute($data)
   {
-    $originalData = clone $data;
+    if ($data instanceof Pratica && is_callable([$data, 'getDematerializedForms'])) {
+      $status = $data->getStatus();
+      $integrations = $data->getServizio()->getIntegrations();
+
+      if (isset($integrations[$status]) && $integrations[$status] == get_class($this)) {
+        return $this->createSubscription($data);
+      }
+    } else {
+      // Csv import
+      return $this->createSubscription($data);
+    }
+    return [];
+  }
+
+
+  public function createSubscription($data)
+  {
+    $originalData = is_array($data) ? $data : clone $data;
     $requiredHeaders = $this->getRequiredHeaders();
     $requiredFields = $this->getRequiredFields();
     sort($requiredHeaders);
@@ -221,7 +248,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       $subscription = new Subscription();
       $subscription->setSubscriptionService($subscriptionService);
       $subscription->setSubscriber($subscriber);
-      $subscription->setRelatedCFs($fixedData["related_cfs"]);
+      $subscription->setRelatedCFs(isset($fixedData["related_cfs"]) ? $fixedData["related_cfs"] : []);
 
       $this->em->persist($subscription);
       $this->em->flush();
@@ -256,5 +283,9 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       $this->logger->error($exception->getMessage() . ' on subscription');
       return ['error' => $this->translator->trans('backoffice.integration.subscriptions.save_subscription_error', ['user' => $subscriber->getFiscalCode()])];
     }
+  }
+
+  public function getAllowedActivationPoints() {
+    return $this->allowedActivationPoints;
   }
 }

@@ -4,10 +4,12 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\Calendar;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MeetingService;
+use AppBundle\Services\ScheduleActionService;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -24,6 +26,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,14 +58,19 @@ class CalendarsController extends Controller
    * @var JWTTokenManagerInterface
    */
   private $JWTTokenManager;
+  /**
+   * @var ScheduleActionService
+   */
+  private $scheduledActionsService;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
+  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager, ScheduleActionService $scheduleActionService)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
     $this->JWTTokenManager = $JWTTokenManager;
+    $this->scheduledActionsService = $scheduleActionService;
   }
 
   /**
@@ -331,7 +339,9 @@ class CalendarsController extends Controller
       ->leftJoin('meeting.user', 'user')
       ->leftJoin('meeting.calendar', 'calendar')
       ->where('meeting.calendar = :calendar')
+      ->andWhere('meeting.status != :draft')
       ->setParameter('calendar', $calendar)
+      ->setParameter('draft', Meeting::STATUS_DRAFT)
       ->getQuery()->getResult();
 
     $deleteForm = $this->createDeleteForm($calendar);
@@ -351,11 +361,6 @@ class CalendarsController extends Controller
     $events = [];
     // meetings
     foreach ($meetings as $meeting) {
-      if (!$calendar->getIsModerated()) {
-        $color = '#003882';
-        $borderColor = '#003882';
-        $textColor = 'var(--white)';
-      } else {
         switch ($meeting->getStatus()) {
           case 0: // STATUS_PENDING
             $color = 'var(--white)';
@@ -387,15 +392,19 @@ class CalendarsController extends Controller
             $borderColor = 'var(--warning)';
             $textColor = 'var(--white)';
             break;
+          case 6: // STATUS_DRAFT
+            $color = 'var(--light)';
+            $borderColor = 'var(--light)';
+            $textColor = 'var(--dark)';
+            break;
           default:
             $color = 'var(--blue)';
             $borderColor = 'var(--blue)';
             $textColor = 'var(--white)';
-        }
       }
       $events[] = [
         'id' => $meeting->getId(),
-        'title' => $meeting->getName() ? $meeting->getName() : 'Nome non fornito',
+        'title' => $meeting->getName() ? $meeting->getName() : ($meeting->getStatus() == Meeting::STATUS_DRAFT ? "Bozza" :'Nome non fornito'),
         'name' => $meeting->getName(),
         'start' => $meeting->getFromTime()->format('c'),
         'end' => $meeting->getToTime()->format('c'),
@@ -458,13 +467,14 @@ class CalendarsController extends Controller
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 
-    function blockMinutesRound($time, $calculateHour, $minutes = '30', $format = "H:i") {
+    function blockMinutesRound($time, $calculateHour, $minutes = '30', $format = "H:i")
+    {
       $seconds = strtotime($time);
       $hour = intval(date("H", $seconds));
-      if($calculateHour && $hour < 19){
+      if ($calculateHour && $hour < 19) {
         $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60) + ((20 - $hour) * 3600);
         return date($format, $rounded);
-      }else{
+      } else {
         $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60);
         return date($format, $rounded);
       }
@@ -472,8 +482,12 @@ class CalendarsController extends Controller
     }
 
     if (count($events) > 0) {
-      $minDate = min(array_map(function($item) { return blockMinutesRound($item['start'],false); }, $events));
-      $maxDate = max(array_map(function($item) { return blockMinutesRound($item['end'],true); }, $events));
+      $minDate = min(array_map(function ($item) {
+        return blockMinutesRound($item['start'], false);
+      }, $events));
+      $maxDate = max(array_map(function ($item) {
+        return blockMinutesRound($item['end'], true);
+      }, $events));
     } else {
       # Default values for empty events array
       $minDate = Calendar::MIN_DATE;
@@ -489,7 +503,7 @@ class CalendarsController extends Controller
     $jwt = $this->JWTTokenManager->create($this->getUser());
 
     return array(
-      'user'=>$user,
+      'user' => $user,
       'calendar' => $calendar,
       'canEdit' => $canEdit,
       'delete_form' => $deleteForm->createView(),
@@ -499,7 +513,7 @@ class CalendarsController extends Controller
       'datatable' => $table,
       'token' => $jwt,
       'rangeTimeEvent' => array(
-        'min'=> $minDate,
+        'min' => $minDate,
         'max' => $maxDate
       )
     );
@@ -628,6 +642,79 @@ class CalendarsController extends Controller
       'form' => $form->createView(),
       'meeting' => $meeting
     );
+  }
+
+
+  /**
+   * Creates a draft meeting.
+   * @Route("/meetings/new-draft", name="meetings_create_draft")
+   * @Method({"POST"})
+   * @param Request $request the request
+   * @return Response
+   * @throws \Exception
+   */
+  public function newDraftAction(Request $request)
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+    $date = $request->get('date');
+    $slot = $request->get('slot');
+    $calendarId = $request->get('calendar');
+    $meetingId = $request->get('meeting');
+
+    if (!($date && $slot && $calendarId)) {
+      return new JsonResponse([
+        "error" => "Missing date or slot value"
+      ], Response::HTTP_BAD_REQUEST);
+    }
+
+    $calendar = $this->em->getRepository('AppBundle:Calendar')->find($calendarId);
+    if (!$calendar) {
+      return new JsonResponse([
+        "error" => "Calendar " . $calendarId . " not found"
+      ], Response::HTTP_NOT_FOUND);
+    }
+
+    $meeting = $meetingId ? $this->em->getRepository('AppBundle:Meeting')->find($meetingId) : null;
+
+    $slot = explode('-', $slot);
+    $fromTime = new DateTime($date . $slot[0]);
+    $toTime = new DateTime($date . $slot[1]);
+
+    if (!$meeting) {
+      $meeting = new Meeting();
+    } else {
+      $meeting = $this->em->getRepository('AppBundle:Meeting')->find($meetingId);
+    }
+
+    if ($user)
+      $meeting->setUser($user);
+    $meeting->setFromTime($fromTime);
+    $meeting->setToTime($toTime);
+    $meeting->setCalendar($calendar);
+    $meeting->setUserMessage($this->translator->trans('meetings.default_draft_message'));
+    $meeting->setStatus(Meeting::STATUS_DRAFT);
+    $meeting->setDraftExpiration(new \DateTime('+' . $calendar->getDraftsDuration() . 'seconds'));
+
+    try {
+      if ($this->meetingService->isSlotValid($meeting) && $this->meetingService->isSlotAvailable($meeting)) {
+        $this->em->persist($meeting);
+        $this->em->flush();
+      } else {
+        $this->em->remove($meeting);
+        $this->em->flush();
+
+        return new JsonResponse([
+          "error" => "Slot not valid or not available"
+        ], Response::HTTP_BAD_REQUEST);
+
+      }
+      return new JsonResponse($meeting->getId(), Response::HTTP_OK);
+    } catch (\Exception $exception) {
+      return new JsonResponse([
+        "error" => $exception->getMessage()
+      ], Response::HTTP_BAD_REQUEST);
+    }
   }
 
 
