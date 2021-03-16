@@ -194,6 +194,9 @@ class ServiziController extends Controller
       $denyAccessMessage = $this->translator->trans($e->getMessage(), $e->getParameters());
     }
 
+
+
+
     return [
       'user' => $user,
       'servizio' => $servizio,

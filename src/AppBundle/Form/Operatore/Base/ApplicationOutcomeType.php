@@ -4,18 +4,46 @@ namespace AppBundle\Form\Operatore\Base;
 
 use AppBundle\Dto\ApplicationOutcome;
 use AppBundle\Entity\Pratica;
+use AppBundle\Form\Admin\Servizio\PaymentDataType;
+use AppBundle\Services\FormServerApiAdapterService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ApplicationOutcomeType extends AbstractType
 {
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
+
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerService;
+
+  /**
+   * ApplicationOutcomeType constructor.
+   * @param EntityManagerInterface $entityManager
+   * @param FormServerApiAdapterService $formServerService
+   */
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+  }
+
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     /** @var ApplicationOutcome $outcome */
     $outcome = $builder->getData();
+
+    $repo = $this->entityManager->getRepository('AppBundle:Pratica');
+    /** @var Pratica $application */
+    $application = $repo->find($outcome->getApplicationId());
 
     $helper = $options["helper"];
     $helper->setGuideText('operatori.flow.approva_o_rigetta.guida_alla_compilazione', true);
@@ -54,6 +82,14 @@ class ApplicationOutcomeType extends AbstractType
         "required" => false,
       ]
     );
+
+    if ($application->getServizio()->isPaymentDeferred()) {
+      $builder->add(PaymentDataType::PAYMENT_AMOUNT, MoneyType::class, [
+        'required' => false,
+        'data' => $application->getPaymentAmount(),
+        'label' => 'Importo da pagare'
+      ]);
+    }
   }
 
   public function getBlockPrefix()

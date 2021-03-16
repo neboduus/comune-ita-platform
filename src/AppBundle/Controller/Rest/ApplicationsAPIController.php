@@ -579,6 +579,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationPaymentAction($id, Request $request)
   {
     $repository = $this->em->getRepository('AppBundle:Pratica');
+    /** @var Pratica $application */
     $application = $repository->find($id);
 
     if (!$application) {
@@ -622,9 +623,18 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($paymentOutcome->getStatus() == 'OK') {
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_SUCCESS);
 
-        // Invio la pratica
-        $application->setSubmissionTime(time());
-        $this->statusService->setNewStatus($application, Pratica::STATUS_PRE_SUBMIT);
+        // Se la pratica ha già un esito significa che è una pratiaca con servizio differito
+        if ($application->getEsito()) {
+          if ($application->getServizio()->isProtocolRequired()) {
+            $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);
+          } else {
+            $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
+          }
+        } else {
+          // Invio la pratica
+          $application->setSubmissionTime(time());
+          $this->statusService->setNewStatus($application, Pratica::STATUS_PRE_SUBMIT);
+        }
 
       } else {
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_ERROR);

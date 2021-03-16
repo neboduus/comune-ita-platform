@@ -47,12 +47,20 @@ $(document).ready(function () {
     $('#outcome_outcome_0').prop('checked', true);
     $('#modalTitle').html('Approva pratica');
     $('#email_text').show();
+    if ($('#outcome_payment_amount').length > 0) {
+      $('#outcome_payment_amount').closest('.form-group').removeClass('d-none');
+      $('#outcome_payment_amount').attr('required', 'required');
+    }
   });
 
   $('#modal_refuse').on('click', function () {
     $('#outcome_outcome_1').prop('checked', true);
     $('#modalTitle').html('Rigetta pratica');
     $('#email_text').hide();
+    if ($('#outcome_payment_amount').length > 0) {
+      $('#outcome_payment_amount').closest('.form-group').addClass('d-none');
+      $('#outcome_payment_amount').removeAttr('required');
+    }
   });
 
   $('#write-to-citizen').click(function (e) {

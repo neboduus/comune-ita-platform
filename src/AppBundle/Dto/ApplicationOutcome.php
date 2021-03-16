@@ -27,6 +27,11 @@ class ApplicationOutcome
   private $attachments;
 
   /**
+   * @var float
+   */
+  private $paymentAmount;
+
+  /**
    * @return string
    */
   public function getApplicationId()
@@ -102,5 +107,20 @@ class ApplicationOutcome
     return $this;
   }
 
+  /**
+   * @return float
+   */
+  public function getPaymentAmount(): ?float
+  {
+    return $this->paymentAmount;
+  }
+
+  /**
+   * @param float $paymentAmount
+   */
+  public function setPaymentAmount(?float $paymentAmount): void
+  {
+    $this->paymentAmount = $paymentAmount;
+  }
 
 }

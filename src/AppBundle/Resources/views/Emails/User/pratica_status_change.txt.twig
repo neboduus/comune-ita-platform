@@ -1,5 +1,11 @@
 {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
 {{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo, '%data_corrente%':data_corrente })|striptags }}
+
+{% if pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) and pratica.servizio.isPaymentDeferred %}
+  {{ 'email.pratica.payment_link'|trans() }}
+  {{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}
+{% endif %}
+
 {% if pratica.getEsito() and not pratica.getEsito() is null %}
   {% if not pratica.getMotivazioneEsito() is empty %}
     Con la seguente motivazione:
