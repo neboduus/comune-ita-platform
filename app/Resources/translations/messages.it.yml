@@ -661,7 +661,7 @@ operatori:
       motivazione:
         esito_label: "Messaggio personale"
         esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al/il cittadino"
-        payment_amount_help: "L'importo se già presente è stato calcolato dal modulo o dalle impostazioni del servizio. Si può inserire un importo diverso se necessario, impostando il valore 0 l'utente sarà esentato dal pagamento e la pratica verrà direttamente approvata."
+        payment_amount_help: "L'importo se già presente è stato calcolato nel modulo o dalle impostazioni del servizio. Si può inserire un importo diverso se necessario, impostando il valore 0 l'utente sarà esentato dal pagamento e la pratica verrà direttamente approvata."
         allega_label: "Documenti allegati"
         allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
     upload_risposta_firmata:

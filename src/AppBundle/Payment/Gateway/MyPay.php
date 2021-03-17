@@ -235,9 +235,11 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
   private function generatePaymentButtons( Pratica $pratica, $url )
   {
 
+    $urlAvviso = htmlspecialchars_decode($url['urlFileAvviso']);
+
     $buttons = '<div class="row mt-5"><div class="col-sm-4"><strong>'.$this->translator->trans('pratica.numero').'</strong></div><div class="col-sm-8 d-inline-flex"><code>'.$pratica->getId().'</code></div></div>';
     $buttons .= "<p class='mt-5'>".$this->translator->trans('gateway.mypay.redirect_text')."</p><div class='text-center mt-5'><a href='{$url['url']}' class='btn btn-lg btn-primary'>".$this->translator->trans('gateway.mypay.redirect_button')."</a></div>";
-    $buttons .= "<p class='mt-5'>".$this->translator->trans('gateway.mypay.download_text')."</p><div class='text-center mt-5'><a href='{$url['urlFileAvviso']}' class='btn btn-lg btn-secondary'>".$this->translator->trans('gateway.mypay.download_button')."</a></div>";
+    $buttons .= "<p class='mt-5'>".$this->translator->trans('gateway.mypay.download_text')."</p><div class='text-center mt-5'><a href='{$urlAvviso}' class='btn btn-lg btn-secondary'>".$this->translator->trans('gateway.mypay.download_button')."</a></div>";
     return $buttons;
   }
 }

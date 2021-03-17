@@ -275,9 +275,9 @@ $(document).ready(function () {
     let paymentTypeHelp = function (type) {
       $("#payment-type-help").remove();
       if (type == 1) {
-        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento immediato viene richiesto dopo aver confermato la volontà di inviare una pratica, se non effettuato la pratica resta in stato "da pagare", è visibile agli operatori ma non può esere presa in carico.</small>');
+        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento immediato viene richiesto dopo aver confermato la volontà di inviare una pratica, se non effettuato la pratica resta in stato "da pagare", è visibile agli operatori ma non può essere presa in carico.</small>');
       } else if (type == 2) {
-        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento posticipato viene richiesto dopo aver inviato la pratica, gli operatori potranno approvare la pratica e solo dopo l\'approvazione sarà richiesto un pagamento.</small>');
+        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento posticipato viene richiesto dopo aver inviato la pratica, gli operatori potranno approvare la pratica impostando un importo da pagare. Solo dopo l\'approvazione sarà richiesto il pagamento.</small>');
       }
     };
 

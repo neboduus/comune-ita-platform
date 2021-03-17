@@ -450,9 +450,9 @@ class FormIORenderType extends AbstractType
    */
   private function isPaymentValid($data)
   {
-    if (!isset($data['payment_amount'])) {
+    /*if (!isset($data['payment_amount'])) {
       return false;
-    }
+    }*/
 
     if (isset($data['payment_financial_report'])) {
       $financialReport = 0;
