@@ -256,7 +256,7 @@ class MailerService
 
     $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
     if (!isset($feedbackMessages[$pratica->getStatus()])) {
-      return $this->setupCPSUserMessageFallback($pratica, $fromAddress);
+      return $this->setupCPSUserMessageFallback($pratica, $fromAddress, $textOnly);
     }
 
     /** @var FeedbackMessage $feedbackMessage */
@@ -358,7 +358,7 @@ class MailerService
    * @return \Swift_Message
    * @throws \Twig\Error\Error
    */
-  private function setupCPSUserMessageFallback(Pratica $pratica, $fromAddress)
+  private function setupCPSUserMessageFallback(Pratica $pratica, $fromAddress, $textOnly=false)
   {
     $toEmail = $pratica->getUser()->getEmailContatto();
     $toName = $pratica->getUser()->getFullName();
@@ -378,6 +378,13 @@ class MailerService
       'ora_protocollo' => $protocolTime ? $protocolTime->format('H:i:s') : $this->translator->trans('email.pratica.no_info'),
       'data_corrente' => (new \DateTime())->format('d/m/Y'),
     );
+
+    if ($textOnly) {
+      return $this->templating->render(
+        'AppBundle:Emails/User:pratica_status_change.txt.twig',
+        $placeholders
+      );
+    }
 
     $message = \Swift_Message::newInstance()
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
