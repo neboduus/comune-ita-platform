@@ -80,6 +80,16 @@ class CalendarBackofficeType extends AbstractType
         'required' => true,
         'label' => false,
       ])
+      ->add('drafts_duration', NumberType::class, [
+        'required' => false,
+        'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
+        'label' => "Durata massima delle bozze (in secondi)",
+      ])
+      ->add('drafts_duration_increment', NumberType::class, [
+        'required' => false,
+        'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
+        'label' => "Incremento della durata massima delle bozze (in secondi)",
+      ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
         'label' => 'Richiede moderazione?',

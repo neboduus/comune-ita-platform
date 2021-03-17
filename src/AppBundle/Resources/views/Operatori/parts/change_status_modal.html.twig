@@ -33,8 +33,11 @@
               <{{ outcomeForm.vars.helper.vueApp }} id="upload_outcome_attachment">
             </{{ outcomeForm.vars.helper.vueApp }}>
             {% endif %}
-            <small
-              class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.allega_help' | trans }}</small>
+            <small class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.allega_help' | trans }}</small>
+            {% if outcomeForm.payment_amount is defined  %}
+              {{ form_row(outcomeForm.payment_amount) }}
+              <small class="form-text text-muted mb-3">{{ 'operatori.flow.approva_o_rigetta.motivazione.payment_amount_help' | trans }}</small>
+            {% endif %}
           </div>
           <div class="row justify-content-between mt-3">
             <div class="col-auto align-self-center">

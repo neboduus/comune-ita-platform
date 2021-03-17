@@ -157,7 +157,8 @@ class ProtocolDataType extends AbstractType
     $service = $event->getForm()->getData();
     $data = $event->getData();
 
-    if ($data['protocol_required'] && empty($data['protocol_handler'])) {
+
+    if (isset($data['protocol_required']) && !empty($data['protocol_required']) && empty($data['protocol_handler'])) {
       $event->getForm()->addError(
         new FormError('Devi selezionare almeno un tipo di protocollo per abilitare la protocollazione!')
       );

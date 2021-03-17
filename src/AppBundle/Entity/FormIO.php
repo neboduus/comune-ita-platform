@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -44,6 +45,28 @@ class FormIO extends Pratica implements DematerializedFormPratica
     $this->dematerializedForms = $dematerializedForms;
 
     return $this;
+  }
+
+  public function getPaymentAmount()
+  {
+    // Recupero l'importo dal form
+    if (isset($this->dematerializedForm['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && $this->dematerializedForm['flattened'][PaymentDataType::PAYMENT_AMOUNT]) {
+      return str_replace(',', '.', $this->fields[PaymentDataType::PAYMENT_AMOUNT]);
+    }
+    // Recupero l'importo dal servizio
+    if (isset($this->getServizio()->getPaymentParameters()['total_amounts'])) {
+      return str_replace(',', '.', $this->getServizio()->getPaymentParameters()['total_amounts']);
+    }
+
+    return 0;
+  }
+
+  public function setPaymentAmount($amount)
+  {
+    $dematerializedForms = $this->dematerializedForms;
+    $dematerializedForms['data'][PaymentDataType::PAYMENT_AMOUNT] = $amount;
+    $dematerializedForms['flattened'][PaymentDataType::PAYMENT_AMOUNT] = $amount;
+    $this->dematerializedForms = $dematerializedForms;
   }
 
   public function getType(): string

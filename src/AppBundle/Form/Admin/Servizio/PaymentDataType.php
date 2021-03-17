@@ -55,6 +55,13 @@ class PaymentDataType extends AbstractType
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+
+    $paymentsType = [
+      'Non richiesto' => Servizio::PAYMENT_NOT_REQUIRED,
+      'Immediato' => Servizio::PAYMENT_REQUIRED,
+      'Posticipato' => Servizio::PAYMENT_DEFERRED
+    ];
+
     /** @var Servizio $service */
     $service = $builder->getData();
     $result = $this->formServerService->getForm($service->getFormIoId());
@@ -91,7 +98,10 @@ class PaymentDataType extends AbstractType
       $gatewaysChoice[$g->getName()] = $g->getIdentifier();
     }
 
-    $paymentRequired = $service->isPaymentRequired() || isset($this->fields[PaymentDataType::PAYMENT_AMOUNT]);
+    $paymentRequired = $service->getPaymentRequired();
+    if ($paymentRequired == Servizio::PAYMENT_NOT_REQUIRED && $paymentRequired) {
+      $paymentRequired = Servizio::PAYMENT_REQUIRED;
+    }
     $paymentAmount = 0;
     $fromForm = false;
     if (isset($this->fields[PaymentDataType::PAYMENT_AMOUNT]) && $this->fields[PaymentDataType::PAYMENT_AMOUNT]) {
@@ -102,9 +112,10 @@ class PaymentDataType extends AbstractType
     }
 
     $builder
-      ->add('payment_required', CheckboxType::class, [
-        'required' => false,
-        'data' => $paymentRequired
+      ->add('payment_required', ChoiceType::class, [
+        'label' => 'Tipologia di Pagamento',
+        'data' => $paymentRequired,
+        'choices' => $paymentsType
       ])
       ->add('total_amounts', MoneyType::class, [
         'mapped' => false,
@@ -164,7 +175,8 @@ class PaymentDataType extends AbstractType
       $this->em->persist($service);
       $this->em->flush($service);
 
-      if ($data['total_amounts'] <= 0) {
+      // Se è impostata la tipologia di pagamento istantaneo ma ho speciicato un valore <= 0 restituisco un errore
+      if ($data['payment_required'] == Servizio::PAYMENT_REQUIRED && $data['total_amounts'] <= 0) {
         $event->getForm()->addError(
           new FormError('Devi inserire un costo maggiore di zero')
         );
@@ -181,7 +193,6 @@ class PaymentDataType extends AbstractType
         foreach ($data['gateways'] as $g) {
           $gateway = new Gateway();
           $gateway->setIdentifier($g);
-
           if (isset($data[$g])) {
             $gateway->setParameters($data[$g]);
           } else {

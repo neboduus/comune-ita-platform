@@ -83,7 +83,7 @@ $(document).ready(function () {
     editable: true,
     eventDurationEditable: false,
     eventDrop: function (info) {
-      if (!info.event.extendedProps.uid) {
+      if (!info.event.extendedProps.uid && info.event.extendedProps.status !== 6) {
         compileModal(info);
         $("#edit_alert").show();
       } else {
@@ -91,7 +91,7 @@ $(document).ready(function () {
       }
     },
     eventClick: function (info) {
-      if (info.event.id) compileModal(info);
+      if (info.event.id && info.event.extendedProps.status !== 6) compileModal(info);
       else if (info.event.title === 'Apertura') newModal(info)
     }
   });
@@ -279,6 +279,8 @@ function getStatus(status) {
       return 'Concluso';
     case 5:
       return 'Annullato';
+    case 6:
+      return 'Bozza';
     default:
       return 'Errore';
   }

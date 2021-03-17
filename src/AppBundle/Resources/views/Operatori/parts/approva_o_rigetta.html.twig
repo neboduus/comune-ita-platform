@@ -2,7 +2,6 @@
   <div class="row mb-5">
     {% if not pratica.servizio.praticaFlowOperatoreServiceName or pratica.servizio.praticaFlowOperatoreServiceName == 'ocsdc.form.flow.standardoperatore' %}
 
-
       {% if  pratica.status == constant('STATUS_REQUEST_INTEGRATION', pratica) %}
         <div class="col d-flex justify-content-center">
           <p>Richiesta integrazioni in attesa di protocollazione</p>
@@ -20,7 +19,7 @@
             {{ 'operatori.chiudi_richiesta_integrazione' | trans }}
           </a>
         </div>
-      {% else %}
+      {% elseif pratica.status == constant('STATUS_PENDING', pratica) %}
         {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
         <div class="col d-flex justify-content-center">
           <button class="btn btn-outline-secondary" id="modal_refuse" data-toggle="modal"
@@ -31,16 +30,14 @@
           </button>
         </div>
 
-        {% if  pratica.status == constant('STATUS_PENDING', pratica) %}
-          {% if feature('feature_integration_request') %}
-            <div class="col d-flex justify-content-center">
-              <button class="btn btn-outline-secondary" id="modal-integration" data-toggle="modal"
-                      data-target="#integration-request-modal">
-                <svg class="icon icon-warning">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-comment"></use>
-                </svg>{{ 'operatori.richiedi_intergrazioni' | trans }}</button>
-            </div>
-          {% endif %}
+        {% if feature('feature_integration_request') %}
+          <div class="col d-flex justify-content-center">
+            <button class="btn btn-outline-secondary" id="modal-integration" data-toggle="modal"
+                    data-target="#integration-request-modal">
+              <svg class="icon icon-warning">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-comment"></use>
+              </svg>{{ 'operatori.richiedi_intergrazioni' | trans }}</button>
+          </div>
         {% endif %}
 
         <div class="col d-flex justify-content-center">

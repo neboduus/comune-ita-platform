@@ -133,6 +133,11 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Operatore\Base\ApplicationOutcomeType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\OccupazioneSuoloPubblico\ImportoType:
     autowire: true
     tags:

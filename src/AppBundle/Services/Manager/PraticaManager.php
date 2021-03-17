@@ -174,19 +174,28 @@ class PraticaManager
     if ($pratica->getEsito()) {
       $statusChange->setEvento('Approvazione pratica');
       $statusChange->setOperatore($user->getFullName());
+      if ($pratica->getServizio()->isPaymentDeferred() && $pratica->getPaymentAmount() > 0) {
+        $this->praticaStatusService->setNewStatus(
+          $pratica,
+          Pratica::STATUS_PAYMENT_PENDING,
+          $statusChange
+        );
+      }  else {
 
-      if ($protocolloIsRequired) {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
-          $statusChange
-        );
-      } else {
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_COMPLETE,
-          $statusChange
-        );
+        if ($protocolloIsRequired) {
+          $this->praticaStatusService->setNewStatus(
+            $pratica,
+            Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE,
+            $statusChange
+          );
+        } else {
+          $this->praticaStatusService->setNewStatus(
+            $pratica,
+            Pratica::STATUS_COMPLETE,
+            $statusChange
+          );
+        }
+
       }
 
       $this->logger->info(

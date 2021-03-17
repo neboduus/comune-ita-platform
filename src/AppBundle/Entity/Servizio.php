@@ -34,6 +34,10 @@ class Servizio
   const STATUS_PRIVATE = 3;
   const STATUS_SCHEDULED = 4;
 
+  const PAYMENT_NOT_REQUIRED = 0;
+  const PAYMENT_REQUIRED = 1;
+  const PAYMENT_DEFERRED = 2;
+
   const PUBLIC_STATUSES = [Servizio::STATUS_AVAILABLE, Servizio::STATUS_SUSPENDED, Servizio::STATUS_SCHEDULED];
 
   const ACCESS_LEVEL_ANONYMOUS = 0;
@@ -201,9 +205,8 @@ class Servizio
   private $protocolloParameters;
 
   /**
-   * @var bool
-   * @ORM\Column(type="boolean", nullable=true)
-   * @SWG\Property(description="Set true if a payment is required")
+   * @ORM\Column(type="integer", nullable=true, options={"default":"0"})
+   * @SWG\Property(description="Accepts values: 0 - Not required, 1 - Required, 2 - Deferred")
    */
   private $paymentRequired;
 
@@ -620,19 +623,26 @@ class Servizio
     return $this;
   }
 
-  /**
-   * @return bool
-   */
-  public function isPaymentRequired()
+  public function isPaymentRequired(): bool
+  {
+    return $this->paymentRequired === self::PAYMENT_REQUIRED;
+  }
+
+  public function isPaymentDeferred(): bool
+  {
+    return $this->paymentRequired === self::PAYMENT_DEFERRED;
+  }
+
+  public function getPaymentRequired()
   {
     return $this->paymentRequired;
   }
 
   /**
-   * @param bool $paymentRequired
+   * @param $paymentRequired
    * @return $this;
    */
-  public function setPaymentRequired(bool $paymentRequired)
+  public function setPaymentRequired($paymentRequired)
   {
     $this->paymentRequired = $paymentRequired;
     return $this;
@@ -857,9 +867,9 @@ class Servizio
   public function getCoverage()
   {
     if (is_array($this->coverage)) {
-      return $this->coverage;
+      return array_filter($this->coverage);
     } else {
-      return explode(',', $this->coverage);
+      return array_filter(explode(',', $this->coverage));
     }
   }
 

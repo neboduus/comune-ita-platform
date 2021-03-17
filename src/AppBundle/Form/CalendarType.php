@@ -45,27 +45,39 @@ class CalendarType extends AbstractType
     $builder
       ->add('title', TextType::class, [
         'required' => true,
-        'label' => 'Titolo del calendario'
+        'label' => false
       ])
       ->add('contact_email', EmailType::class, [
         'required' => false,
-        'label' => 'Email di contatto'
+        'label' => false
       ])
       ->add('rolling_days', NumberType::class, [
-        'required' => true,
-        'label' => 'Massino numero di giorni entro il quale è possibile prenotare'
+        'required' => false,
+        'empty_data' => Calendar::DEFAULT_ROLLING_DAYS,
+        'label' => false
       ])
       ->add('minimum_scheduling_notice', ChoiceType::class, [
-        'required' => true,
+        'required' => false,
         'choices' => Calendar::MINIMUM_SCHEDULING_NOTICES_OPTIONS,
-        'label' => 'Minumo numero di ore entro il quale è possibile prenotare',
+        'label' => false
       ])
       ->add('allow_cancel_days', NumberType::class, [
-        'required' => true,
-        'label' => 'Numero minimo di giorni entro il quale è cancellare l\'appuntamento'
+        'required' => false,
+        'empty_data' => Calendar::DEFAULT_CANCEL_DAYS,
+        'label' => false
+      ])
+      ->add('drafts_duration', NumberType::class, [
+        'required' => false,
+        'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
+        'label' => false
+      ])
+      ->add('drafts_duration_increment', NumberType::class, [
+        'required' => false,
+        'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
+        'label' => false
       ])
       ->add('is_moderated', CheckboxType::class, [
-        'required' => true,
+        'required' => false,
         'label' => 'Richiede moderazione?'
       ])
       ->add('owner', ChoiceType::class, [
@@ -73,7 +85,7 @@ class CalendarType extends AbstractType
         'required' => true,
         'choice_label' => 'username',
         'choice_value' => 'id',
-        'label' => 'Proprietario'
+        'label' => false
       ])
       ->add('moderators', EntityType::class, [
         'class' => OperatoreUser::class,
@@ -83,17 +95,17 @@ class CalendarType extends AbstractType
       ])
       ->add('closing_periods', CollectionType::class, [
         'required' => false,
-        'label' => 'Periodi di chiusura',
+        'label' => false,
         'entry_type' => DateTimeIntervalType::class,
         'allow_add' => true
       ])
       ->add('location', TextareaType::class, [
         'required' => true,
-        'label' => 'Luogo dell\'appuntamento'
+        'label' =>false
       ])
       ->add('external_calendars', CollectionType::class, [
         'required' => false,
-        'label' => 'Calendari esterni',
+        'label' => false,
         'entry_type' => ExternalCalendarType::class,
         'allow_add' => true
       ]);

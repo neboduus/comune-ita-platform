@@ -206,7 +206,7 @@ pratica:
     stato_4000: 'Presa in carico'
     stato_5000: 'In elaborazione'
     stato_6000: 'Elaborata (in attesa di protocollazione del documento di esito)'
-    stato_7000: 'Iter completato'
+    stato_7000: 'Accettata'
     stato_8000: 'Rifiutata (in attesa di protocollazione del documento di esito)'
     stato_9000: 'Rifiutata'
     stato_20000: 'Ritirata'
@@ -661,6 +661,7 @@ operatori:
       motivazione:
         esito_label: "Messaggio personale"
         esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al/il cittadino"
+        payment_amount_help: "L'importo se già presente è stato calcolato dal modulo o dalle impostazioni del servizio. Si può inserire un importo diverso se necessario, impostando il valore 0 l'utente sarà esentato dal pagamento e la pratica verrà direttamente approvata."
         allega_label: "Documenti allegati"
         allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
     upload_risposta_firmata:
@@ -702,6 +703,7 @@ email:
   pratica:
     dear: 'Gentile <strong>%user_name%</strong>,'
     thanks: 'La ringraziamo per la collaborazione.'
+    payment_link: 'Puoi procedere al pagamento visitando il seguente link:'
     link: 'Per ulteriori dettagli visiti il seguente '
     link_download: 'Può scaricare i documenti  da lei richiesti al seguente '
     link_txt: 'Per ulteriori dettagli visiti il seguente link: '
@@ -736,6 +738,12 @@ email:
         complete: "hai accettato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
         complete.waitallegatioperatore: "la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi documenti allegati."
         pending: "hai preso in carico la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
+        payment:
+          pending: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
+          success: "il pagamento per la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è avvenuto con successo"
+          error: "c'è stato un errore durante il pagamento per la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
+          outcome:
+            pending: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento"
         draft: ''
 
 messages:
@@ -1861,6 +1869,8 @@ meetings:
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
   no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
+  default_draft_message: "Appuntamento in bozza"
+  no_info: "<i>Informazione non disponibile</i>"
   email:
     operatori:
       meeting_cancelled:
@@ -1924,6 +1934,7 @@ backoffice:
   integration:
     missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
     or: 'Oppure'
+    invalid_activation_point: 'Il punto di attivazione selezionato non è disponibile per questa azione'
     fields_error: 'I campi richiesti non coincidono'
     calendars:
       missing_contacts: "E' necessario fornire almeno un recapito"

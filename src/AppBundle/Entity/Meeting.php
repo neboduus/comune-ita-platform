@@ -30,6 +30,7 @@ class Meeting
   const STATUS_MISSED = 3;
   const STATUS_DONE = 4;
   const STATUS_CANCELLED = 5;
+  const STATUS_DRAFT = 6;
 
   /**
    * @ORM\Column(type="guid")
@@ -153,6 +154,14 @@ class Meeting
    * @Serializer\Exclude()
    */
   private $cancelLink;
+
+  /**
+   * @var \DateTime
+   *
+   * @ORM\Column(name="draft_expiration", type="datetime", nullable=true)
+   * @SWG\Property(description="Meeting draft expiration time")
+   */
+  private $draftExpiration;
 
   /**
    * @ORM\Column(type="datetime")
@@ -460,6 +469,9 @@ class Meeting
       case 5:
         return 'Annullato';
         break;
+      case 6:
+        return 'Bozza';
+        break;
       default:
         return 'Errore';
     }
@@ -575,6 +587,31 @@ class Meeting
     return $this->cancelLink;
   }
 
+
+  /**
+   * Set draftExpiration.
+   *
+   * @param \DateTime $draftExpiration
+   *
+   * @return Meeting
+   */
+  public function setDraftExpiration(DateTime $draftExpiration): Meeting
+  {
+    $this->draftExpiration = $draftExpiration;
+
+    return $this;
+  }
+
+  /**
+   * Get draftExpiration.
+   *
+   * @return \DateTime
+   */
+  public function getDraftExpiration()
+  {
+    return $this->draftExpiration;
+  }
+
   /**
    * Get createdAt.
    *
@@ -648,10 +685,13 @@ class Meeting
  * @ORM\PreUpdate
  * @param PreUpdateEventArgs $event
  */
-  public
-  function preUpdate(PreUpdateEventArgs $event)
+  public function preUpdate(PreUpdateEventArgs $event)
   {
-    if ($event->hasChangedField('fromTime') && $event->hasChangedField('toTime')) {
+    if ($this->getStatus() == Meeting::STATUS_DRAFT || $event->hasChangedField('status') && $event->getOldValue('status') == Meeting::STATUS_DRAFT) {
+      // Do not update rescheduled field for draft meetings
+      return;
+    }
+    if ($this->getStatus() !== Meeting::STATUS_DRAFT && $event->hasChangedField('fromTime') && $event->hasChangedField('toTime')) {
       $this->setRescheduled($this->rescheduled + 1);
     }
   }

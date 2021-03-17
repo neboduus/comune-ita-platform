@@ -29,6 +29,10 @@ class Calendar
   const MAX_DATE = '18:00';
   const SLOT_DURATION = 30;
 
+  const DEFAULT_DRAFT_DURATION = 600;
+  const DEFAULT_ROLLING_DAYS = 30;
+  const DEFAULT_CANCEL_DAYS = 3;
+
   const MINIMUM_SCHEDULING_NOTICES_OPTIONS = [
     'Nessuno' => 0,
     'Un\'ora prima' => 1,
@@ -84,6 +88,23 @@ class Calendar
    * @SWG\Property(description="Calendar's rolling days", type="integer")
    */
   private $rollingDays;
+
+  /**
+   * @var int
+   *
+   * @ORM\Column(name="drafts_duration", type="integer", nullable=true)
+   * @SWG\Property(description="Calendar draft meetings duration", type="integer")
+   */
+  private $draftsDuration;
+
+
+  /**
+   * @var int
+   *
+   * @ORM\Column(name="drafts_duration_increment", type="integer", nullable=true)
+   * @SWG\Property(description="Calendar draft meetings duration increment", type="integer")
+   */
+  private $draftsDurationIncrement;
 
   /**
    * @var int
@@ -174,8 +195,10 @@ class Calendar
       $this->openingHours = new ArrayCollection();
       $this->closingPeriods = new ArrayCollection();
       $this->externalCalendars = new ArrayCollection();
-      $this->allowCancelDays = 3;
-      $this->rollingDays = 30;
+      $this->allowCancelDays = self::DEFAULT_CANCEL_DAYS;
+      $this->rollingDays = self::DEFAULT_ROLLING_DAYS;
+      $this->draftsDuration = self::DEFAULT_DRAFT_DURATION;
+      $this->draftsDurationIncrement = self::DEFAULT_DRAFT_DURATION;
     }
   }
 
@@ -317,6 +340,54 @@ class Calendar
   public function getMinimumSchedulingNotice()
   {
     return $this->minimumSchedulingNotice;
+  }
+
+  /**
+   * Set drafts duration.
+   *
+   * @param int $draftsDuration
+   *
+   * @return Calendar
+   */
+  public function setDraftsDuration($draftsDuration)
+  {
+    $this->draftsDuration = $draftsDuration;
+
+    return $this;
+  }
+
+  /**
+   * Get drafts duration.
+   *
+   * @return int
+   */
+  public function getDraftsDuration()
+  {
+    return $this->draftsDuration ?? self::DEFAULT_DRAFT_DURATION;
+  }
+
+  /**
+   * Set drafts duration increment.
+   *
+   * @param int $draftsDurationIncrement
+   *
+   * @return Calendar
+   */
+  public function setDraftsDurationIncrement($draftsDurationIncrement)
+  {
+    $this->draftsDurationIncrement = $draftsDurationIncrement;
+
+    return $this;
+  }
+
+  /**
+   * Get drafts duration increment.
+   *
+   * @return int
+   */
+  public function getDraftsDurationIncrement()
+  {
+    return $this->draftsDurationIncrement ?? self::DEFAULT_DRAFT_DURATION;
   }
 
   /**

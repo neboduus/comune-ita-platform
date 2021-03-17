@@ -768,6 +768,10 @@ class OperatoriController extends Controller
         }
       }
 
+      if ($pratica->getServizio()->isPaymentDeferred()) {
+        $pratica->setPaymentAmount($outcome->getPaymentAmount());
+      }
+
       try {
         $this->praticaManager->finalize($pratica, $user);
       } catch (\Exception $e) {
