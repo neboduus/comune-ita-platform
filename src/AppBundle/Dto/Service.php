@@ -152,9 +152,9 @@ class Service
   private $protocolloParameters;
 
   /**
-   * @var bool
-   * @Serializer\Type("boolean")
-   * @SWG\Property(description="Set true if a payment is required")
+   * @var integer
+   * @Serializer\Type("integer")
+   * @SWG\Property(description="Accepts values: 0 - Not Rquired, 1 - Immediate, 2 - Referred")
    */
   private $paymentRequired;
 
@@ -529,13 +529,21 @@ class Service
    */
   public function isPaymentRequired()
   {
+    return $this->paymentRequired === Servizio::PAYMENT_REQUIRED;
+  }
+
+  /**
+   * @return bool
+   */
+  public function getPaymentRequired()
+  {
     return $this->paymentRequired;
   }
 
   /**
-   * @param bool $paymentRequired
+   * @param $paymentRequired
    */
-  public function setPaymentRequired(bool $paymentRequired)
+  public function setPaymentRequired($paymentRequired)
   {
     $this->paymentRequired = $paymentRequired;
   }
@@ -743,7 +751,7 @@ class Service
     $dto->flowSteps = self::prepareFlowSteps($servizio->getFlowSteps(), $formServerUrl);
     $dto->setProtocolRequired($servizio->isProtocolRequired());
     $dto->protocolloParameters = [];
-    $dto->paymentRequired = $servizio->isPaymentRequired();
+    $dto->paymentRequired = $servizio->getPaymentRequired();
     $dto->protocolHandler = $servizio->getProtocolHandler();
     $dto->paymentParameters = [];
     $dto->sticky = $servizio->isSticky();
