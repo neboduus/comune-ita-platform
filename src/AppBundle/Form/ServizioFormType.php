@@ -63,7 +63,7 @@ class ServizioFormType extends AbstractType
       ->add('protocol_required')
       ->add('protocol_handler')
       ->add('protocollo_parameters', TextareaType::class, ['empty_data' => ''])
-      ->add('payment_required', CheckboxType::class)
+      ->add('payment_required')
       ->add('payment_parameters', PaymentParametersType::class, [
         'data_class' => null
       ])

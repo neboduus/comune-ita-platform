@@ -30,6 +30,7 @@
            data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
            data-submission="{% if pratica.dematerializedForms.data is defined %}{{ pratica.dematerializedForms.data | json_encode }}{% else %}[]{% endif %}">
       </div>
+
       <script type='text/javascript'>
         window.onload = function () {
           Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {

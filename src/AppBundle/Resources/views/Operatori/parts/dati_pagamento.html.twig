@@ -7,7 +7,7 @@
             <td><b>{{ 'operatori.gateway'|trans }}</b></td>
             <td>{{ pratica.paymentType }}</td>
           </tr>
-          {% if pratica.paymentType.name == "MyPay" %}
+          {% if pratica.paymentType.identifier == "MyPay" %}
             <tr>
               <td><b>{{ 'operatori.importo'|trans }}</b></td>
               <td>{{ pratica.paymentData.payment_amount }} €</td>
@@ -75,7 +75,7 @@
                   </tr>
               {% endif %}
             {% endif %}
-          {% else %}
+          {% else if pratica.paymentType.identifier == "bollo"%}
             {% set paymentData = pratica.paymentData | json_decode %}
             <tr>
               <td><b>{{ 'gateway.bollo.identifier'|trans }}</b></td>

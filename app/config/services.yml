@@ -483,6 +483,12 @@ services:
     tags:
       - { name: form.type }
 
+  ocsdc.form.type.summary_type:
+    class: AppBundle\Form\Base\SummaryType
+    autowire: true
+    tags:
+      - { name: form.type }
+
   ocsdc.form.type.select_payment_gateway_type:
     class: AppBundle\Form\Base\SelectPaymentGatewayType
     autowire: true

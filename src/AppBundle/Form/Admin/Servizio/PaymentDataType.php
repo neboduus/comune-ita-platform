@@ -105,9 +105,11 @@ class PaymentDataType extends AbstractType
     $paymentAmount = 0;
     $fromForm = false;
     if (isset($this->fields[PaymentDataType::PAYMENT_AMOUNT]) && $this->fields[PaymentDataType::PAYMENT_AMOUNT]) {
-      $paymentAmount = str_replace(',', '.', $this->fields[PaymentDataType::PAYMENT_AMOUNT]);
+      //$paymentAmount = str_replace(',', '.', $this->fields[PaymentDataType::PAYMENT_AMOUNT]);
       $fromForm = true;
-    } elseif (isset($paymentParameters['total_amounts']) && $paymentParameters['total_amounts']) {
+    }
+
+    if (isset($paymentParameters['total_amounts']) && $paymentParameters['total_amounts']) {
       $paymentAmount = str_replace(',', '.', $paymentParameters['total_amounts']);
     }
 
@@ -120,8 +122,8 @@ class PaymentDataType extends AbstractType
       ->add('total_amounts', MoneyType::class, [
         'mapped' => false,
         'required' => false,
-        'data' => $paymentAmount,
-        'label' => 'Importo' . ($fromForm? ' (Ereditato dal form)' : ''),
+        'data' => $fromForm ? 0 : $paymentAmount,
+        'label' => 'Importo' . ($fromForm? " (L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')" : ''),
         'attr' => ($fromForm ? ['readonly' => 'readonly'] : [])
       ])
       ->add('gateways', ChoiceType::class, [
