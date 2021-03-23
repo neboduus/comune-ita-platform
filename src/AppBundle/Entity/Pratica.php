@@ -1916,7 +1916,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function getPaymentDataArray()
   {
-    return \json_decode($this->getPaymentData());
+    if (is_string($this->getPaymentData())) {
+      return \json_decode($this->getPaymentData());
+    } elseif (is_array($this->getPaymentData())) {
+      return $this->getPaymentData();
+    }
   }
 
   /**
