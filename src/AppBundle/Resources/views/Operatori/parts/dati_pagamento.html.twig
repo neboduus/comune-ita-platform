@@ -75,7 +75,7 @@
                   </tr>
               {% endif %}
             {% endif %}
-          {% else if pratica.paymentType.identifier == "bollo"%}
+          {% elseif pratica.paymentType.identifier == "bollo" %}
             {% set paymentData = pratica.paymentData | json_decode %}
             <tr>
               <td><b>{{ 'gateway.bollo.identifier'|trans }}</b></td>
