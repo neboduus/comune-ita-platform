@@ -12,7 +12,7 @@
             <div class="col-12">
               <div class="timeline-element">
                 <div class="it-pin-wrapper it-evidence">
-                  {% if (change[0] == 1900 and pratica.status == 1900) or (change[0] == 2000 and pratica.status == 2000 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) %}
+                  {% if (change[0] == 1900 and pratica.status == 1900) or (change[0] == 2000 and pratica.status == 2000 and pratica.servizio.isProtocolRequired) %}
                     <div class="pin-icon in-progress">
                       <i class="fa fa-refresh fa-spin fa-fw"></i>
                     </div>

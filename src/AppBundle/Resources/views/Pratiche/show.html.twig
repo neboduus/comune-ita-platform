@@ -14,7 +14,7 @@
           integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
           crossorigin="anonymous"></script>
 
-  {% if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo ) %}
+  {% if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired) %}
   <script>
     $(document).ready(function() {
       setInterval(function() {
