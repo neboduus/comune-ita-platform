@@ -218,7 +218,9 @@ $(document).ready(function () {
             form: true,
             calendar: true,
             file: true,
-            financial_report: true
+            financial_report: true,
+            address:true,
+            survey:true
           }
         },
         customLayout: {
@@ -230,7 +232,11 @@ $(document).ready(function () {
             columns: true,
             pagebreak: true,
             table: true,
-            datagrid:true
+            datagrid:true,
+            well:true,
+            panel:true,
+            editgrid:true,
+            fieldset: true
           }
         },
       },
