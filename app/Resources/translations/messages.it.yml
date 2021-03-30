@@ -101,6 +101,19 @@ gruppo_di_servizi:
   servizio_rimosso: 'Servizo rimosso correttamente'
   errore_rimozione: 'Impossibile rimovere il servizio'
 
+webhook:
+  nome: 'Nome'
+  endpoint: 'Endpoint'
+  method: 'Method'
+  trigger: 'Attivatore'
+  filters: 'Filtri'
+  create: 'Crea Webhook'
+  edit: 'Modifica'
+  back_to_list: 'Torna alla lista'
+  no_services: 'Nessun servizio specificato'
+  active: 'Attivo'
+  not_Active: 'Non attivo'
+
 pratica:
   guida_utente: 'Guida'
   email:

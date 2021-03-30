@@ -23,19 +23,23 @@
           <li class="nav-item"><a class="nav-link" id="protocol-tab" data-toggle="tab" href="#protocol" role="tab"
                                   aria-controls="protocol-tab" aria-selected="false">Protocollo</a></li>
           <li class="nav-item"><a class="nav-link" id="mailers-tab" data-toggle="tab" href="#mailers" role="tab"
-                                  aria-controls="mailers-tab" aria-selected="false">{{ 'backoffice.entity.mailers'|trans }}</a></li>
+                                  aria-controls="mailers-tab"
+                                  aria-selected="false">{{ 'backoffice.entity.mailers'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="meta-tab" data-toggle="tab" href="#meta" role="tab"
-                                  aria-controls="meta-tab" aria-selected="false">{{ 'backoffice.entity.meta'|trans }}</a></li>
+                                  aria-controls="meta-tab"
+                                  aria-selected="false">{{ 'backoffice.entity.meta'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
                                   aria-controls="payments-tab" aria-selected="false">Pagamenti</a></li>
           <li class="nav-item"><a class="nav-link" id="options-tab" data-toggle="tab" href="#options" role="tab"
                                   aria-controls="options-tab" aria-selected="false">Opzioni</a></li>
+          <li class="nav-item"><a class="nav-link" id="webhooks-tab" data-toggle="tab" href="#webhooks" role="tab"
+                                  aria-controls="options-tab" aria-selected="false">Webhooks</a></li>
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane p-2 fade show active" id="default-settings" role="tabpanel"
                aria-labelledby="default-settings-tab">
             <div class="mt-3">
-            <p>Tipologia di login: <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
+              <p>Tipologia di login: <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
             </div>
             <hr>
             {{ form_row(form.codice_meccanografico) }}
@@ -49,12 +53,15 @@
           <div class="tab-pane p-2 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
             <div class="form-group mt-3" id="app_io">
               {{ form_widget(form.io_enabled) }}
-              <span class="text-info px-2" id="io_helper"><i class="fa fa-info-circle"></i> {{ 'app_io.admin_helper' | trans }}</span>
+              <span class="text-info px-2" id="io_helper"><i
+                  class="fa fa-info-circle"></i> {{ 'app_io.admin_helper' | trans }}</span>
             </div>
             <hr>
             <div class="form-group">
               <label>Configurazione mailers</label>
-              <div id="current-mailers" data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}" data-widget-counter="{{ form.mailers|length }}">
+              <div id="current-mailers"
+                   data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}"
+                   data-widget-counter="{{ form.mailers|length }}">
                 {% if form.mailers|length > 0 %}
                   {% for m in form.mailers %}
                     <div class="js-mailer-item shadow px-3 my-4">
@@ -100,30 +107,73 @@
                 {% else %}
                   <p class="text-info px-2" id="no-mailers">
                     <i class="fa fa-info-circle"></i>
-                    Non sono ancora stati impostati mailer per l'ente, i messaggi verranno inviati via e-mail dall'indirizzo di default dal sistema
+                    Non sono ancora stati impostati mailer per l'ente, i messaggi verranno inviati via e-mail
+                    dall'indirizzo di default dal sistema
                   </p>
                 {% endif %}
               </div>
               <div class="row mt-4">
                 <div class="col-9"></div>
                 <div class="col-3">
-                  <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">Aggiungi mailer</button>
+                  <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">Aggiungi mailer
+                  </button>
                 </div>
               </div>
             </div>
-
-
-
           </div>
+
           <div class="tab-pane p-2 fade" id="options" role="tabpanel" aria-labelledby="options-tab">
             {{ form_row(form.backoffice_enabled_integrations) }}
           </div>
+
           <div class="tab-pane p-2 fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
             {{ form_row(form.meta) }}
           </div>
+
+          <div class="tab-pane p-2 fade" id="webhooks" role="tabpanel" aria-labelledby="webhooks-tab">
+            <div class="form-group">
+              <table class="table table-sm table-striped mt-3">
+                <thead>
+                <tr>
+                  <th>{{ 'webhook.nome' | trans() }}</th>
+                  <th>{{ 'webhook.endpoint' | trans() }}</th>
+                  <th>{{ 'webhook.method' | trans() }}</th>
+                  <th>{{ 'webhook.trigger' | trans() }}</th>
+                  <th>{{ 'webhook.filters' | trans() }}</th>
+                  <th>{{ 'webhook.active' | trans() }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in ente.webhooks %}
+                  <tr>
+                    <td data-title="Nome">
+                      <a href="{{ path('admin_webhook_edit', { 'id': item.id }) }}">{{ item.title }}</a>
+                    </td>
+                    <td>{{ item.endpoint|raw }}</td>
+                    <td>{{ item.method }}</td>
+                    <td>{{ statuses[item.trigger] }}</td>
+                    <td>
+                      {% if item.filters|length > 0 %}
+                        {% for f in item.filters %}
+                          {{ services[f] }}
+                        {% endfor %}
+                      {% else %}
+                        {{ 'webhook.no_service' | trans() }}
+                      {% endif %}
+                    </td>
+                    <td>{{ (item.active) ? 'webhook.active'|trans() : 'webhook.not_active'|trans() }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
           <div class="tab-pane p-2 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
             {{ form_rest(form) }}
           </div>
+
 
         </div>
         <hr>
@@ -142,37 +192,43 @@
         <div class="col-3">
           <div class="form-group">
             <label for="mailers___name___title" class="required">{{ 'backoffice.entity.title'|trans }}</label>
-            <input type="text" id="mailers___name___title" name="ente[mailers][__name__][title]" required="required" class="form-control" />
+            <input type="text" id="mailers___name___title" name="ente[mailers][__name__][title]" required="required"
+                   class="form-control"/>
           </div>
         </div>
         <div class="col-3">
           <div class="form-group">
             <label for="mailers___name___host" class="required">{{ 'backoffice.entity.host'|trans }}</label>
-            <input type="text" id="mailers___name___host" name="ente[mailers][__name__][host]" required="required" class="form-control" />
+            <input type="text" id="mailers___name___host" name="ente[mailers][__name__][host]" required="required"
+                   class="form-control"/>
           </div>
         </div>
         <div class="col-3">
           <div class="form-group">
             <label for="mailers___name___port" class="required">Porta</label>
-            <input type="number" id="mailers___name___port" name="ente[mailers][__name__][port]" required="required" class="form-control" value="587" min="1" max="65535"/>
+            <input type="number" id="mailers___name___port" name="ente[mailers][__name__][port]" required="required"
+                   class="form-control" value="587" min="1" max="65535"/>
           </div>
         </div>
         <div class="col-3">
           <div class="form-group">
             <label for="mailers___name___user" class="required">User</label>
-            <input type="text" id="mailers___name___user" name="ente[mailers][__name__][user]" required="required" class="form-control" />
+            <input type="text" id="mailers___name___user" name="ente[mailers][__name__][user]" required="required"
+                   class="form-control"/>
           </div>
         </div>
         <div class="col-3">
           <div class="form-group">
             <label for="mailers___name___password" class="required">Password</label>
-            <input type="text" id="mailers___name___password" name="ente[mailers][__name__][password]" required="required" class="form-control" />
+            <input type="text" id="mailers___name___password" name="ente[mailers][__name__][password]"
+                   required="required" class="form-control"/>
           </div>
         </div>
         <div class="col-3">
           <div class="form-group">
             <label for="mailers___name___encription" class="required">{{ 'backoffice.entity.encription'|trans }}</label>
-            <select id="mailers___name___encription" name="ente[mailers][__name__][encription]" required="required" class="form-control" >
+            <select id="mailers___name___encription" name="ente[mailers][__name__][encription]" required="required"
+                    class="form-control">
               <option value="SSL">SSL</option>
               <option value="TLS">TLS</option>
               <option value="STARTTLS">STARTTLS</option>
@@ -182,14 +238,17 @@
         <div class="col-3">
           <div class="form-group">
             <label for="mailers___name___sender" class="required">{{ 'backoffice.entity.sender'|trans }}</label>
-            <input type="email" id="mailers___name___sender" name="ente[mailers][__name__][sender]" required="required" class="form-control" />
+            <input type="email" id="mailers___name___sender" name="ente[mailers][__name__][sender]" required="required"
+                   class="form-control"/>
           </div>
         </div>
         <div class="col-3">
           <div class="form-group">
             <label>&nbsp;</label>
             <a class="btn btn-danger btn-block btn-xs js-remove-mailer" href="#">
-              <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
+              <svg class="icon icon-sm icon-white d-md-none">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+              </svg>
               <span class="d-none d-md-block">Elimina</span>
             </a>
           </div>

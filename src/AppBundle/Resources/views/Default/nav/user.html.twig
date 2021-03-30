@@ -74,6 +74,12 @@
                   Gruppo di servizi
                 </a>
               </li>
+              <li class="nav-item {% if 'webhook' in app.request.pathInfo %} active {% endif %}">
+                <a class="nav-link "
+                   href="{{ path('admin_webhook_index') }}">
+                  Webhook
+                </a>
+              </li>
               <li class="nav-item {% if 'logs' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_logs_index') }}">
