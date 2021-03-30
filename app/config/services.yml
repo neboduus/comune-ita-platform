@@ -71,6 +71,9 @@ services:
   AppBundle\Controller\AdminController:
     autowire: true
 
+  AppBundle\Controller\Admin\WebhookController:
+    autowire: true
+
   AppBundle\Controller\PraticheController:
     autowire: true
 
@@ -321,6 +324,10 @@ services:
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.schedule_action_service"
 
+  ocsdc.webhook_service:
+    class: AppBundle\Services\WebhookService
+    autowire: true
+
   ocsdc.io_service:
     class: AppBundle\Services\IOService
     autowire: true
@@ -426,6 +433,12 @@ services:
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 100 }
 
+  ocsdc.pratica_listeners.webhook:
+    class: AppBundle\EventListener\WebhookApplicationListener
+    autowire: true
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 110 }
+
   ocsdc.form.flow.storage_key_generator:
     class: AppBundle\Form\UserSessionStorageKeyGenerator
 
@@ -501,6 +514,11 @@ services:
       - { name: form.type }
 
   AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\Admin\Ente\WebhookType:
     autowire: true
     tags:
       - { name: form.type }

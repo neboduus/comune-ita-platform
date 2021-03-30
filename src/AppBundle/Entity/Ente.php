@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Model\DateTimeInterval;
 use AppBundle\Model\DefaultProtocolSettings;
 use AppBundle\Model\Mailer;
+use AppBundle\Model\Webhook;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -143,6 +144,13 @@ class Ente
   private $IOEnabled;
 
   /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Webhook", mappedBy="ente")
+   * @var Collection;
+   * @Serializer\Exclude()
+   */
+  private $webhooks;
+
+  /**
    * Ente constructor.
    */
   public function __construct()
@@ -154,6 +162,7 @@ class Ente
     $this->gateways = [];
     $this->backofficeEnabledIntegrations = new ArrayCollection();
     $this->mailers = new ArrayCollection();
+    $this->webhooks = new ArrayCollection();
     $this->setIOEnabled(false);
   }
 
@@ -578,6 +587,22 @@ class Ente
     }
     $this->mailers = $tmp;
     return $this;
+  }
+
+  /**
+   * @return Collection
+   */
+  public function getWebhooks(): Collection
+  {
+    return $this->webhooks;
+  }
+
+  /**
+   * @param Collection $webhooks
+   */
+  public function setWebhooks(Collection $webhooks): void
+  {
+    $this->webhooks = $webhooks;
   }
 
   /**

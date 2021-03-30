@@ -11,6 +11,7 @@ use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\Webhook;
 use AppBundle\Form\Admin\ServiceFlow;
 use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
@@ -132,6 +133,14 @@ class AdminController extends Controller
    */
   public function editEnteAction(Request $request)
   {
+
+    $servizi = $this->instanceService->getServices();
+    $services = [];
+    $services ['all'] = 'Tutti';
+    foreach ($servizi as $s) {
+      $services[$s->getId()] = $s->getName();
+    }
+
     $entityManager = $this->getDoctrine()->getManager();
     $ente = $this->instanceService->getCurrentInstance();
     $form = $this->createForm('AppBundle\Form\Admin\Ente\EnteType', $ente);
@@ -148,6 +157,8 @@ class AdminController extends Controller
     return array(
       'user' => $this->getUser(),
       'ente' => $ente,
+      'statuses' => Webhook::TRIGGERS,
+      'services' => $services,
       'form' => $form->createView()
     );
   }

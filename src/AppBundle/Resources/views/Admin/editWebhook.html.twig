@@ -1,0 +1,41 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h2>{{ 'webhook.edit' | trans() }} {% if item.title %}- {{ item.title }}{% endif %}</h2>
+      </div>
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <div class="row">
+          <div class="col-md-6 py-lg-2 text-md-right order-md-2">
+            {% if test is defined %}
+              <div class="form-group">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                      <svg class="icon icon-sm icon-secondary">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-settings"></use>
+                      </svg>
+                    </div>
+                  </div>
+                  <input type="text" class="form-control" placeholder="Inserisci Id pratica" name="application_id" {% if application_id is defined %}value="{{ application_id }}" {% endif %}>
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" name="test" type="submit" value="Test">Test</button>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <div class="col-md-6 py-lg-2 text-left  order-md-1">
+            <input class="btn btn-primary mr-1" type="submit" value="Salva"/>
+            <a class="btn btn-100 mr-1" href="{{ path('admin_webhook_index') }}">{{ 'webhook.back_to_list' | trans() }}</a>
+          </div>
+        </div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -13,7 +13,7 @@ RUN yarn encore production
 RUN ls -l web
 
 # prepare the vendor dir for symfony
-FROM wodby/php:7.3-dev-macos-4.12.12 as builder
+FROM wodby/php:7.3-dev-macos-4.21.0 as builder
 
 USER root
 
@@ -27,7 +27,7 @@ COPY app ./app
 RUN composer install --no-scripts --prefer-dist --no-suggest
 
 # prepare the final image
-FROM wodby/php:7.3-dev-macos-4.12.12
+FROM wodby/php:7.3-dev-macos-4.21.0
 
 COPY --from=builder /var/www/html/vendor /var/www/html/vendor
 

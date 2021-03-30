@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use App\Entity\PostalAddress;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
 use AppBundle\Model\IOServiceParameters;
