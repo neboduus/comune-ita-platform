@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Rest;
 
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\Subscription;
 use AppBundle\Security\Voters\SubscriptionVoter;
@@ -54,6 +55,22 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * List all SubscriptionService
    * @Rest\Get("", name="subscription-services_api_list")
    *
+   * @SWG\Parameter(
+   *      name="available",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="Filter results by subscription services availability. Availability is computed on service status, subscriptions due date and subscriptions limit"
+   *  )
+   *
+   * @SWG\Parameter(
+   *      name="tags",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Filter results by subscription services tags (Comma separated values)"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of SubscriptionServices",
@@ -80,6 +97,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         ->where('t1.subscriptionEnd >= :now')
         ->andWhere('t1.status = 1')
         ->setParameter('now', new \DateTime())
+        ->orderBy('t1.name', "ASC")
         ->getQuery()->getResult();
     } else {
       $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
