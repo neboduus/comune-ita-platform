@@ -14,6 +14,7 @@ class ApplicationType extends AbstractType
   {
     $builder
       ->add('protocol_folder_number', TextType::class, ['label'=>false])
+      ->add('protocol_folder_code', TextType::class, ['label'=>false])
       ->add('protocol_number', TextType::class, ['label'=>false])
       ->add('protocol_document_id', TextType::class, ['label'=>false])
       ->add('protocolled_at', DateTimeType::class, [

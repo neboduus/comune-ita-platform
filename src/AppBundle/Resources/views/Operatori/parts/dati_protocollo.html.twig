@@ -4,7 +4,11 @@
     {% if pratica.numeroProtocollo %}
         <div>
             <div>
-                <h5 class="primary">{{ 'operatori.fascicolo' | trans }} <code>{{ pratica.numeroFascicolo }}</code></h5>
+                <h5 class="primary">
+                    {{ 'operatori.fascicolo' | trans }} <code>{{ pratica.numeroFascicolo }}</code>
+                    {% if pratica.codiceFascicolo %}<span class="badge badge-light text-decoration-none">{{ pratica.codiceFascicolo }}</span>
+                    {% endif %}
+                </h5>
             </div>
         </div>
         <div class="mt-5">

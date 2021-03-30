@@ -137,6 +137,13 @@ class Application
 
   /**
    * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's protocol folder code")
+   * @Groups({"read", "write"})
+   */
+  private $protocolFolderCode;
+
+  /**
+   * @Serializer\Type("string")
    * @SWG\Property(description="Applications's protocol number")
    * @Groups({"read", "write"})
    */
@@ -488,6 +495,22 @@ class Application
   public function setProtocolFolderNumber($protocolFolderNumber)
   {
     $this->protocolFolderNumber = $protocolFolderNumber;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getProtocolFolderCode()
+  {
+    return $this->protocolFolderCode;
+  }
+
+  /**
+   * @param mixed $protocolFolderCode
+   */
+  public function setProtocolFolderCode($protocolFolderCode)
+  {
+    $this->protocolFolderCode = $protocolFolderCode;
   }
 
   /**
@@ -875,6 +898,7 @@ class Application
     }
 
     $dto->protocolFolderNumber = $pratica->getNumeroFascicolo();
+    $dto->protocolFolderCode = $pratica->getCodiceFascicolo();
     $dto->protocolNumber = $pratica->getNumeroProtocollo();
     $dto->protocolDocumentId = $pratica->getIdDocumentoProtocollo();
     $dto->protocolNumbers = $pratica->getNumeriProtocollo()->toArray();
@@ -1082,6 +1106,7 @@ class Application
     # Main document
     $entity->setNumeroProtocollo($this->getProtocolNumber());
     $entity->setNumeroFascicolo($this->getProtocolFolderNumber());
+    $entity->setCodiceFascicolo($this->getProtocolFolderCode());
     $entity->setIdDocumentoProtocollo($this->getProtocolDocumentId());
     if ($this->getProtocolledAt()) {
       $entity->setProtocolTime($this->getProtocolledAt()->getTimestamp());

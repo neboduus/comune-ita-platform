@@ -258,6 +258,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    * @ORM\Column(type="string", nullable=true)
    * @var string
    */
+  private $codiceFascicolo;
+
+  /**
+   * @ORM\Column(type="string", nullable=true)
+   * @var string
+   */
   private $numeroProtocollo;
 
   /**
@@ -504,6 +510,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->creationTime = time();
     $this->type = self::TYPE_DEFAULT;
     $this->numeroFascicolo = null;
+    $this->codiceFascicolo = null;
     $this->numeriProtocollo = new ArrayCollection();
     $this->allegati = new ArrayCollection();
     $this->moduliCompilati = new ArrayCollection();
@@ -522,6 +529,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->id = Uuid::uuid4();
     $this->numeroProtocollo = null;
     $this->numeroFascicolo = null;
+    $this->codiceFascicolo = null;
     $this->idDocumentoProtocollo = null;
     $this->numeriProtocollo = new ArrayCollection();
     $this->moduliCompilati = new ArrayCollection();
@@ -838,6 +846,26 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setNumeroFascicolo($numeroFascicolo)
   {
     $this->numeroFascicolo = $numeroFascicolo;
+
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getCodiceFascicolo()
+  {
+    return $this->codiceFascicolo;
+  }
+
+  /**
+   * @param string $codiceFascicolo
+   *
+   * @return $this
+   */
+  public function setCodiceFascicolo($codiceFascicolo)
+  {
+    $this->codiceFascicolo = $codiceFascicolo;
 
     return $this;
   }
