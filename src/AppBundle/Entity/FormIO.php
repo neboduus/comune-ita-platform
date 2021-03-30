@@ -49,9 +49,10 @@ class FormIO extends Pratica implements DematerializedFormPratica
 
   public function getPaymentAmount()
   {
+
     // Recupero l'importo dal form
-    if (isset($this->dematerializedForm['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && $this->dematerializedForm['flattened'][PaymentDataType::PAYMENT_AMOUNT]) {
-      return str_replace(',', '.', $this->fields[PaymentDataType::PAYMENT_AMOUNT]);
+    if (isset($this->dematerializedForms['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && $this->dematerializedForms['flattened'][PaymentDataType::PAYMENT_AMOUNT]) {
+      return str_replace(',', '.', $this->dematerializedForms['flattened'][PaymentDataType::PAYMENT_AMOUNT]);
     }
     // Recupero l'importo dal servizio
     if (isset($this->getServizio()->getPaymentParameters()['total_amounts'])) {

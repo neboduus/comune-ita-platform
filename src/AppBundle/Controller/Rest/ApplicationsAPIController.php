@@ -623,7 +623,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($paymentOutcome->getStatus() == 'OK') {
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_SUCCESS);
 
-        // Se la pratica ha già un esito significa che è una pratiaca con servizio differito
+        // Se la pratica ha già un esito significa che è una pratica con pagamento differito
         if ($application->getEsito()) {
           if ($application->getServizio()->isProtocolRequired()) {
             $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);

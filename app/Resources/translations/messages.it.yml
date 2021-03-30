@@ -1257,7 +1257,7 @@ steps:
       label: 'Modulo Domanda'
       title: 'Modulo principale della domanda'
       guida_alla_compilazione: 'Allega il modulo della domanda correttamente compilato'
-      description: '<p><em>Prima di firmare digitalmente il modulo compilato è necessario eseguire il blocco del contenuto del file PDF.<br/>Tale operazione può essere eseguita nativamente mediante "Adobe Acrobat Pro" selezionare il comando "Protezione" e la voce "Limita apertura e modifica" Si aprirà la finestra "protezione password - impostazioni".<br />Tramite questa finestra impostare "Compilazione campi modulo" nella modalità "Non consentito/a".</em></p><p><em>In alternativa applicare la protezione ad un file PDF già compilato mediante il <a href="http://www.geopartner.it/download/PDFPeO.zip">software "PDFPeO"</a>.</em></p>'
+      description: '<p><em>Prima di firmare digitalmente il modulo compilato è necessario eseguire il blocco del contenuto del file PDF.<br/>Tale operazione può essere eseguita nativamente mediante "Adobe Acrobat Pro" selezionare il comando "Protezione" e la voce "Limita apertura e modifica" Si aprirà la finestra "protezione password - impostazioni".<br />Tramite questa finestra impostare "Compilazione campi modulo" nella modalità "Non consentito/a".</em></p><p><em>In alternativa applicare la protezione ad un file PDF già compilato mediante il <a href="http://www.giscom.it/download/PDFPeO.zip">software "PDFPeO"</a>.</em></p>'
 
     allegati_modulo_scia:
       label: 'Allegati alla domanda'
