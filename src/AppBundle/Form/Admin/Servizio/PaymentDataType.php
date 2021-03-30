@@ -124,7 +124,7 @@ class PaymentDataType extends AbstractType
         'required' => false,
         'data' => $fromForm ? 0 : $paymentAmount,
         'label' => 'Importo' . ($fromForm? " (L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')" : ''),
-        'attr' => ($fromForm ? ['readonly' => 'readonly'] : [])
+        'attr' => (($fromForm && $paymentAmount > 0) ? ['readonly' => 'readonly'] : [])
       ])
       ->add('gateways', ChoiceType::class, [
         'data' => $selectedGatewaysIentifiers,
