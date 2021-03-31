@@ -68,6 +68,14 @@ services:
       PASSWORD_LIFE_TIME: $PASSWORD_LIFE_TIME
       SINGLE_LOGOUT_URL: $SINGLE_LOGOUT_URL
       IO_API_URL: $IO_API_URL
+
+      # Your Queue-it customer ID
+      #QUEUEIT_CUSTOMER_ID: 'xxx'
+      # Your 72 char secret key as specified in Go Queue-it self-service platform
+      #QUEUEIT_SECRET: 'xxx'
+      # Absolute path of Queue-it configuration json file @see https://github.com/queueit/KnownUser.V3.PHP/blob/master/Documentation/README.md
+      #QUEUEIT_CONFIG_FILE: '/var/www/html/opencontent_knownuser_integration_config.json'
+
     volumes:
       - "uploads:/var/www/html/var/uploads"
 
