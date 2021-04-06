@@ -623,7 +623,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($paymentOutcome->getStatus() == 'OK') {
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_SUCCESS);
 
-        // Se la pratica ha già un esito significa che è una pratiaca con servizio differito
+        // Se la pratica ha già un esito significa che è una pratica con pagamento differito
         if ($application->getEsito()) {
           if ($application->getServizio()->isProtocolRequired()) {
             $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);
@@ -861,6 +861,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     @SWG\Schema(
    *        type="object",
    *        @SWG\Property(property="protocol_folder_number", type="string", description="Protocol folder number"),
+   *        @SWG\Property(property="protocol_folder_code", type="string", description="Protocol folder code"),
    *        @SWG\Property(property="protocol_number", type="string", description="Protocol number"),
    *        @SWG\Property(property="protocol_document_id", type="string", description="Protocol document id")
    *     )
@@ -913,6 +914,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
           'constraints' => [new NotBlank(), new NotNull(),
           ],
         ])
+        ->add('protocol_folder_code', TextType::class)
         ->add('protocol_number', TextType::class, [
           'constraints' => [new NotBlank(), new NotNull(),
           ],
@@ -936,6 +938,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       $data = $form->getData();
       $application->setNumeroFascicolo($data['protocol_folder_number']);
+      $application->setCodiceFascicolo($data['protocol_folder_code']);
       $application->setNumeroProtocollo($data['protocol_number']);
       $application->setIdDocumentoProtocollo($data['protocol_document_id']);
       $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);

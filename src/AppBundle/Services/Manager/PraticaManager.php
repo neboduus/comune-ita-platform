@@ -174,6 +174,7 @@ class PraticaManager
     if ($pratica->getEsito()) {
       $statusChange->setEvento('Approvazione pratica');
       $statusChange->setOperatore($user->getFullName());
+
       if ($pratica->getServizio()->isPaymentDeferred() && $pratica->getPaymentAmount() > 0) {
         $this->praticaStatusService->setNewStatus(
           $pratica,

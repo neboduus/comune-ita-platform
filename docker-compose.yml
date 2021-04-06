@@ -17,6 +17,7 @@ services:
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     build: .
+    stop_grace_period: 90s
     environment:
       PHP_FPM_CLEAR_ENV: 'no'
       ENV: DEV
@@ -66,6 +67,7 @@ services:
       PHP_DATE_TIMEZONE: 'Europe/Rome'
       PASSWORD_LIFE_TIME: $PASSWORD_LIFE_TIME
       SINGLE_LOGOUT_URL: $SINGLE_LOGOUT_URL
+      IO_API_URL: $IO_API_URL
     volumes:
       - "uploads:/var/www/html/var/uploads"
 

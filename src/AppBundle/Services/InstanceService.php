@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Servizio;
 use RuntimeException;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -49,5 +50,19 @@ class InstanceService
     }
 
     return $ente;
+  }
+
+  /**
+   * @return array
+   */
+  public function getServices(): array
+  {
+    $erogatori = $this->getCurrentInstance()->getErogatori()->toArray();
+    $services = [];
+    foreach($erogatori as $erogatore) {
+      $serviziErogati = $erogatore->getServizi()->toArray();
+      $services = array_merge($services, $serviziErogati);
+    }
+    return $services;
   }
 }
