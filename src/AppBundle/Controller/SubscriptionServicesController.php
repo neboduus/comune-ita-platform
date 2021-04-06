@@ -64,7 +64,7 @@ class SubscriptionServicesController extends Controller
       }])
       ->add('beginDate', DateTimeColumn::class, ['label' => 'Data di inizio', 'format' => 'd/m/Y', 'searchable' => false])
       ->add('endDate', DateTimeColumn::class, ['label' => 'Data di fine', 'format' => 'd/m/Y', 'searchable' => false])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $subscriptionService) {
+      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable'=>false, 'render' => function ($value, $subscriptionService) {
         return sprintf('
         <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
         <a class="btn btn-warning btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s">Modifica</a>
