@@ -121,7 +121,7 @@ class CalendarsController extends Controller
           return sprintf('<span class="badge badge-outline-secondary"><svg class="icon icon-sm icon-secondary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use></svg>Non richiede moderazione</span>');
         }
       }])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'render' => function ($value, $calendar) {
+      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable'=>false, 'render' => function ($value, $calendar) {
         $cal = $this->em->getRepository('AppBundle:Calendar')->find($value);
         $canAccess = $this->canUserAccessCalendar($cal);
         return sprintf('
