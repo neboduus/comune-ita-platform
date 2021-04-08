@@ -53,8 +53,11 @@ if ($queueItCustomerId !== false) {
   try {
     $response = null;
     $result = KnownUser::validateRequestByIntegrationConfig(
-      $currentUrlWithoutQueueItToken, $queueItToken, $queueItConfig, $queueItCustomerId, $queueItToken
+      $currentUrlWithoutQueueItToken, $queueItToken, $queueItConfig, $queueItCustomerId, $queueItSecretKey
     );
+    if ($result->actionType) {
+      error_log("[QUEUEIT] Result $result->actionName $result->actionType in $fullUrl request");
+    }
     if ($result->doRedirect()) {
       if (!$result->isAjaxResult) {
         //Send the user to the queue - either because hash was missing or because is was invalid
