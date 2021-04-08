@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Controller\Rest\ServicesAPIController;
+use AppBundle\DataTable\ScheduledActionTableType;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\AuditLog;
 use AppBundle\Entity\Categoria;
@@ -10,6 +11,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\Webhook;
 use AppBundle\Form\Admin\ServiceFlow;
@@ -29,6 +31,7 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Omines\DataTablesBundle\DataTableFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -80,6 +83,10 @@ class AdminController extends Controller
    * @var RouterInterface
    */
   private $router;
+  /**
+   * @var DataTableFactory
+   */
+  private $dataTableFactory;
 
   /**
    * AdminController constructor.
@@ -89,6 +96,9 @@ class AdminController extends Controller
    * @param TranslatorInterface $translator
    * @param ServiceFlow $serviceFlow
    * @param SchemaFactoryInterface $schemaFactory
+   * @param IOService $ioService
+   * @param RouterInterface $router
+   * @param DataTableFactory $dataTableFactory
    */
   public function __construct(
     InstanceService $instanceService,
@@ -98,7 +108,8 @@ class AdminController extends Controller
     ServiceFlow $serviceFlow,
     SchemaFactoryInterface $schemaFactory,
     IOService $ioService,
-    RouterInterface $router
+    RouterInterface $router,
+    DataTableFactory $dataTableFactory
   )
   {
     $this->instanceService = $instanceService;
@@ -109,6 +120,7 @@ class AdminController extends Controller
     $this->schemaFactory = $schemaFactory;
     $this->ioService = $ioService;
     $this->router = $router;
+    $this->dataTableFactory = $dataTableFactory;
   }
 
 
@@ -338,6 +350,27 @@ class AdminController extends Controller
       'user' => $this->getUser(),
       'datatable' => $table
     );
+  }
+
+  /**
+   * Lists all scheduled actions entities.
+   * @Route("/scheduled-actions", name="admin_scheduled_actions_index")
+   * @Method({"GET", "POST"})
+   */
+  public function indexScheduledActionsAction(Request $request)
+  {
+
+    $table = $this->dataTableFactory->createFromType(ScheduledActionTableType::class)->handleRequest($request);
+
+    if ($table->isCallback()) {
+      return $table->getResponse();
+    }
+
+    return $this->render( '@App/Admin/indexScheduledActions.html.twig', [
+      'user'  => $this->getUser(),
+      'datatable' => $table
+    ]);
+
   }
 
 
