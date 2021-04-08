@@ -78,6 +78,15 @@ class ScheduleActionService
       $this->entityManager->flush($action);
     }
 
+    public function removeHostAndSaveLog(ScheduledAction $action, $message)
+    {
+      $action->setHostname(null);
+      $action->setLog($message);
+      $action->incRetry();
+      $this->entityManager->persist($action);
+      $this->entityManager->flush($action);
+    }
+
     /**
      * @param string $hostname
      * @return \AppBundle\Entity\ScheduledAction[]
@@ -125,15 +134,17 @@ class ScheduleActionService
       $oneHourOlder = new \DateTime('-'. $minutes . ' minutes', new \DateTimeZone(date_default_timezone_get()));
 
       $dql = 'UPDATE scheduled_action SET hostname = ?, updated_at = ?
-              WHERE id IN (SELECT id FROM scheduled_action WHERE (hostname IS NULL OR updated_at < ?) AND status = ? ORDER BY created_at ASC LIMIT ?)';
+              WHERE id IN (SELECT id FROM scheduled_action WHERE (hostname IS NULL OR updated_at < ?) AND status = ? ORDER BY updated_at ASC LIMIT ?)';
 
-      return $this->entityManager->getConnection()->executeUpdate($dql, [
+      return $this->entityManager->getConnection()->executeStatement($dql, [
         $hostname,
         $date->format('Y-m-d H:i:s'),
         $oneHourOlder->format('Y-m-d H:i:s'),
         (int)$status,
         (int)$count
       ]);
+
+
     }
 
     /**

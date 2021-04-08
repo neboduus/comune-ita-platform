@@ -1,0 +1,9 @@
+<button class="btn btn-link btn-xs p0" type="button" data-toggle="popover" title="Id azione" data-content="{{ row.id }}">
+  <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
+</button>
+
+{% if row.status == 1 and row.log %}
+  <button class="btn btn-link btn-xs p0" type="button" data-toggle="popover" title="Log azione" data-content="{{ row.log }}">
+    <svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-error"></use></svg>
+  </button>
+{% endif %}
