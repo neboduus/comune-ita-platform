@@ -1,0 +1,8 @@
+FROM registry.gitlab.com/opencontent/stanzadelcittadino/app:master as php-fpm
+
+FROM phppm/nginx
+
+COPY --from=php-fpm /var/www/html /var/www
+
+CMD [ "--debug=1", "--app-env=dev", "--static-directory=web/" ]
+

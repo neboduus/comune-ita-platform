@@ -14,6 +14,15 @@ services:
       - ./compose_conf/postgres:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data/pgdata
 
+  pm: 
+    image: supersdc
+    build:
+      context: .
+      dockerfile: Dockerfile.php-pm
+    ports:
+      - 8081:80
+
+
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     build: .
