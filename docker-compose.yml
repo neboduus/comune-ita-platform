@@ -68,6 +68,7 @@ services:
       PASSWORD_LIFE_TIME: $PASSWORD_LIFE_TIME
       SINGLE_LOGOUT_URL: $SINGLE_LOGOUT_URL
       IO_API_URL: $IO_API_URL
+      CACHE_MAX_AGE: $CACHE_MAX_AGE
 
       # Your Queue-it customer ID
       #QUEUEIT_CUSTOMER_ID: 'xxx'
