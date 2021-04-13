@@ -10,6 +10,7 @@ use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -83,7 +84,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     Pratica::STATUS_COMPLETE
   ];
 
-  public function __construct(LoggerInterface $logger, TranslatorInterface $translator, EntityManager $em)
+  public function __construct(LoggerInterface $logger, TranslatorInterface $translator, EntityManagerInterface $em)
   {
     $this->logger = $logger;
     $this->translator = $translator;

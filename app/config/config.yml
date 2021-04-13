@@ -13,31 +13,31 @@ parameters:
   locale: it
 
 framework:
-    default_locale: it
-    #esi:             ~
-    translator:      ~
-    secret:          "%secret%"
-    router:
-        resource: "%kernel.root_dir%/config/routing.yml"
-        strict_requirements: ~
-    form:            ~
-    csrf_protection: ~
-    validation:      { enable_annotations: true }
-    #serializer:      { enable_annotations: true }
-    templating:
-        engines: ['twig']
-    trusted_hosts:   ~
-    session:
-        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-        handler_id:  null
-        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
-        cookie_path: "/%prefix%"
-    fragments:       ~
-    http_method_override: true
-    assets: ~
-    request:
-      formats:
-        text: ['text/plain']
+  default_locale: it
+  #esi:             ~
+  translator:      ~
+  secret:          "%secret%"
+  router:
+    resource: "%kernel.root_dir%/config/routing.yml"
+    strict_requirements: ~
+  form:            ~
+  csrf_protection: ~
+  validation:      { enable_annotations: true }
+  #serializer:      { enable_annotations: true }
+  templating:
+    engines: ['twig']
+  trusted_hosts:   ~
+  session:
+    # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+    handler_id:  null
+    save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+    cookie_path: "/%prefix%"
+  fragments:       ~
+  http_method_override: true
+  assets: ~
+  request:
+    formats:
+      text: ['text/plain']
 
 # Fos User Configuration
 fos_user:
@@ -80,30 +80,51 @@ twig:
 # Doctrine Configuration
 doctrine:
   dbal:
-    driver: "%database_driver%"
-    host: "%database_host%"
-    port: "%database_port%"
-    dbname: "%database_name%"
-    user: "%database_user%"
-    password: "%database_password%"
-    charset: UTF8
-    # if using pdo_sqlite as your database driver:
-    #   1. add the path in parameters.yml
-    #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-    #   2. Uncomment database_path in parameters.yml.dist
-    #   3. Uncomment next line:
-    #     path:     "%database_path%"
+    default_connection: default
+    connections:
+      default:
+        driver: "%database_driver%"
+        host: "%database_host%"
+        port: "%database_port%"
+        dbname: "%database_name%"
+        user: "%database_user%"
+        password: "%database_password%"
+        charset: UTF8
+        # if using pdo_sqlite as your database driver:
+        #   1. add the path in parameters.yml
+        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
+        #   2. Uncomment database_path in parameters.yml.dist
+        #   3. Uncomment next line:
+        #     path:     "%database_path%"
 
-    #TODO: find a way to mask this from migrations, but let dbal see it
-    #schema_filter: ~^(?!craue_form_flow_storage)~
+        #TODO: find a way to mask this from migrations, but let dbal see it
+        #schema_filter: ~^(?!craue_form_flow_storage)~
+      i18n:
+        driver: "%database_driver%"
+        host: "%database_host%"
+        port: "%database_port%"
+        dbname: "sdc_i18n"
+        user: "%database_user%"
+        password: "%database_password%"
+        charset: UTF8
   orm:
     auto_generate_proxy_classes: "%kernel.debug%"
-    naming_strategy: doctrine.orm.naming_strategy.underscore
-    auto_mapping: true
-    dql:
-      string_functions:
-        FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
-        JSON_FIELD: AppBundle\Doctrine\JsonFieldParser
+    default_entity_manager: default
+    entity_managers:
+      default:
+        connection: default
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        dql:
+          string_functions:
+            FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
+            JSON_FIELD: AppBundle\Doctrine\JsonFieldParser
+      i18n:
+        connection: i18n
+        mappings:
+          LexikTranslationBundle: ~
+
+
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -267,3 +288,18 @@ artprima_prometheus_metrics:
   namespace: sdc
   # metrics backend type
   type: in_memory # possible values: in_memory, apcu, redis
+
+# Lexik translation
+lexik_translation:
+  fallback_locale: [it]         # (required) default locale(s) to use
+  managed_locales: [it, de] # (required) locales that the bundle has to manage
+  storage:
+    type: orm                  # orm | mongodb | propel
+    object_manager: i18n
+  exporter:
+    use_yml_tree: true
+  dev_tools:
+    enable: false
+    create_missing: false
+    file_format: yml
+

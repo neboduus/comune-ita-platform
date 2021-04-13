@@ -14,6 +14,7 @@ use AppBundle\Entity\User;
 use AppBundle\Services\ModuloPdfBuilderService;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
@@ -53,7 +54,7 @@ class SubscriptionsController extends Controller
    */
   private $pdfBuilderService;
 
-  public function __construct(EntityManager $entityManager, ModuloPdfBuilderService $pdfBuilderService, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice)
+  public function __construct(EntityManagerInterface $entityManager, ModuloPdfBuilderService $pdfBuilderService, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
     $this->entityManager = $entityManager;

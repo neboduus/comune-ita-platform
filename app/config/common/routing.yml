@@ -42,3 +42,7 @@ app_metrics:
   path: "/%prefix%/"
   controller: AppBundle\Controller\DefaultController::metricsAction
 
+lexik_translation_edition:
+    resource: "@LexikTranslationBundle/Resources/config/routing.yml"
+    prefix:   "/%prefix%/grid"
+

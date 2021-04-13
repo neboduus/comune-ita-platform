@@ -8,6 +8,7 @@ use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Model\Transition;
 use AppBundle\Services\Manager\PraticaManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -54,7 +55,7 @@ class StatusMessagePraticaListener
     Pratica::STATUS_PENDING
   ];
 
-  public function __construct(EntityManager $entityManager, PraticaManager $praticaManager, UrlGeneratorInterface $router, TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(EntityManagerInterface $entityManager, PraticaManager $praticaManager, UrlGeneratorInterface $router, TranslatorInterface $translator, LoggerInterface $logger)
   {
     $this->entityManager = $entityManager;
     $this->praticaManager = $praticaManager;

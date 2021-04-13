@@ -34,6 +34,7 @@ class AppKernel extends Kernel
       new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
       new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
       new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
+      new Lexik\Bundle\TranslationBundle\LexikTranslationBundle(),
       new AppBundle\AppBundle(),
     ];
 
