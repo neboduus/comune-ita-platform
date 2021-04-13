@@ -268,6 +268,12 @@ services:
     class: AppBundle\Security\CPSAuthenticator
     arguments: [ "%shibbolet_server_varnames%",'@Symfony\Component\Security\Core\Security' ]
 
+  ocsdc.cache_listener:
+    class: AppBundle\EventListener\ResponseListener
+    arguments: ["%cache_max_age%"]
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, priority: -5000 }
+
   ocsdc.cps.terms_acceptance_listener:
     class: AppBundle\EventListener\TermsAcceptListener
     arguments: [ "@router", "@security.token_storage", "@ocsdc.cps.terms_acceptance_checker" ]

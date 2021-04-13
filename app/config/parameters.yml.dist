@@ -138,3 +138,4 @@ parameters:
     single_logout_url: '/Shibboleth.sso/Logout'
     browsers_restrictions: null
     io_api_url: 'https://api.io.italia.it/api/v1'
+    cache_max_age: '0'

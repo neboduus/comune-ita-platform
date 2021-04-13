@@ -110,6 +110,7 @@ parameters:
     single_logout_url: '%env(SINGLE_LOGOUT_URL)%'
     browsers_restrictions: '%env(BROWSERS_RESTRICTIONS)%'
     io_api_url: '%env(IO_API_URL)%'
+    cache_max_age: '%env(CACHE_MAX_AGE)%'
 
     #Default fallback if env not set
     env(PREFIX): ''
@@ -193,4 +194,5 @@ parameters:
     env(SINGLE_LOGOUT_URL): '/Shibboleth.sso/Logout'
     env(BROWSERS_RESTRICTIONS): null
     env(IO_API_URL): 'https://api.io.italia.it/api/v1'
+    env(CACHE_MAX_AGE): '0'
 
