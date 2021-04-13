@@ -56,6 +56,7 @@ parameters:
     logs_path: '%env(LOGS_PATH)%'
     formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
     formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'
+    formserver_admin_url: '%env(FORMSERVER_ADMIN_URL)%'
     hash_validity: '%env(HASH_VALIDITY)%'
     allowed_extensions:
       - doc: application/msword
@@ -150,7 +151,8 @@ parameters:
     env(INACTIVE_USER_LIFE_TIME): '545'
     env(LOGS_PATH): '%kernel.logs_dir%/%kernel.environment%.log'
     env(FORMSERVER_PRIVATE_URL): 'http//formserver'
-    env(FORMSERVER_PUBLIC_URL): 'https://formserver.ship.opencontent.io'
+    env(FORMSERVER_PUBLIC_URL): 'http://formserver.localtest.me'
+    env(FORMSERVER_ADMIN_URL): 'http://formserver.localtest.me'
     env(HASH_VALIDITY): '1'
     env(TOKEN_TTL): '3600'
     env(RECAPTCHA_KEY): ''

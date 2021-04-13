@@ -585,7 +585,7 @@ class AdminController extends Controller
       'servizio' => $flowService->getFormData(),
       'schema' => $schema,
       'flow' => $flowService,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
       'user' => $user
     ];
   }
@@ -704,7 +704,7 @@ class AdminController extends Controller
       'form' => $form->createView(),
       'servizio' => $flowService->getFormData(),
       'flow' => $flowService,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
       'user' => $user
     ]);
 

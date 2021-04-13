@@ -136,7 +136,7 @@ class PrintController extends Controller
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
     return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
       'form' => $form->createView(),
       'pratica' => $pratica
     ];
@@ -194,7 +194,7 @@ class PrintController extends Controller
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
     return [
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
       'form' => $form->createView(),
       'pratica' => $pratica
     ];
