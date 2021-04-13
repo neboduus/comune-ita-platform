@@ -187,7 +187,8 @@ services:
     tags:
       - { name: form.type }
 
-  AppBundle\Services\Manager\PraticaManager:
+  ocsdc.pratica_manager:
+    class: AppBundle\Services\Manager\PraticaManager
     autowire: true
 
   AppBundle\Services\Manager\MessageManager:
@@ -222,6 +223,11 @@ services:
       - '@ocsdc.meeting_service'
       - "@translator"
       - "@logger"
+    public: true
+    tags: [ 'app.backoffice' ]
+
+  AppBundle\BackOffice\SubcriptionPaymentsBackOffice:
+    autowire: true
     public: true
     tags: [ 'app.backoffice' ]
 
@@ -570,6 +576,11 @@ services:
       - { name: form.type }
 
   AppBundle\Form\OperatoreUserType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\SubscriptionPaymentType:
     autowire: true
     tags:
       - { name: form.type }

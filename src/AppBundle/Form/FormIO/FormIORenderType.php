@@ -358,10 +358,12 @@ class FormIORenderType extends AbstractType
     $user = $pratica->getUser();
 
     // Precompilo i campi dell'applicant solo se user è un CPSUser
-    if (empty($data) && $user instanceof CPSUser) {
+    if ($user instanceof CPSUser) {
       $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
-      $cpsUserData = ['data' => $this->getMappedFormDataWithUserData($schema, $user)];
-
+        $cpsUserData["data"] = array_merge(
+          isset($data["data"]) ? $data["data"] : [],
+          $this->getMappedFormDataWithUserData($schema, $user)
+        );
       return json_encode($cpsUserData);
     }
     return json_encode($data);
