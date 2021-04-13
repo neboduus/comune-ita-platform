@@ -59,11 +59,25 @@ class ScheduledAction
     private $hostname;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $log;
+
+    /**
      * @var int
      *
      * @ORM\Column(type="integer", nullable=true, options={"default":"1"})
      */
     private $status;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"default":"0"})
+     */
+    private $retry;
 
     public function __construct()
     {
@@ -73,6 +87,12 @@ class ScheduledAction
         $this->createdAt = new \DateTime('now', new \DateTimeZone(date_default_timezone_get()));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone(date_default_timezone_get()));
         $this->status = self::STATUS_PENDING;
+    }
+
+
+    public function getId()
+    {
+      return $this->id;
     }
 
     /**
@@ -138,7 +158,7 @@ class ScheduledAction
     /**
      * @return string
      */
-    public function getHostname(): string
+    public function getHostname(): ?string
     {
       return $this->hostname;
     }
@@ -146,9 +166,25 @@ class ScheduledAction
     /**
      * @param string $hostname
      */
-    public function setHostname(string $hostname): void
+    public function setHostname(?string $hostname): void
     {
       $this->hostname = $hostname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLog(): ?string
+    {
+      return $this->log;
+    }
+
+    /**
+     * @param string $log
+     */
+    public function setLog(?string $log): void
+    {
+      $this->log = $log;
     }
 
     /**
@@ -165,6 +201,30 @@ class ScheduledAction
     public function setStatus(int $status): void
     {
       $this->status = $status;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRetry(): int
+    {
+      return $this->retry;
+    }
+
+    /**
+     * @param int $retry
+     */
+    public function setRetry(int $retry): void
+    {
+      $this->retry = $retry;
+    }
+
+   /**
+    * @param int $retry
+    */
+    public function incRetry(): void
+    {
+      $this->retry++;
     }
 
     public function setDone()

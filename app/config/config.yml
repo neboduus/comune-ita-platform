@@ -161,7 +161,7 @@ datatables:
   # Default parameters to be passed to the template
   template_parameters:
     # Default class attribute to apply to the root table elements
-    className: 'table table-condensed'
+    className: 'table table-sm table-striped'
     # If and where to enable the DataTables Filter module
     columnFilter: null # One of "thead"; "tfoot"; "both"; null
   # Default translation domain to be used

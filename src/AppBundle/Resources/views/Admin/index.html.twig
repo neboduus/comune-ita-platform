@@ -63,13 +63,69 @@
           <div class="card-body">
             <div class="top-icon">
               <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chart-line"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_usage') }}">
+              <h5 class="card-title">Statistiche</h5>
+            </a>
+            <p class="card-text">Visualizza le statistiche</p>
+          </div>
+        </div>
+
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_service_group_index') }}">
+              <h5 class="card-title">Gruppo di servizi</h5>
+            </a>
+            <p class="card-text">Gestione dei gruppi di servizi</p>
+          </div>
+        </div>
+
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-plug"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_webhook_index') }}">
+              <h5 class="card-title">Webhook</h5>
+            </a>
+            <p class="card-text">Gestione dei webhook</p>
+          </div>
+        </div>
+
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use>
+              </svg>
+            </div>
+            <a href="{{ path('admin_scheduled_actions_index') }}">
+              <h5 class="card-title">Azioni programmate</h5>
+            </a>
+            <p class="card-text">Visualizza azioni programmate</p>
+          </div>
+        </div>
+
+        <div class="card card-teaser rounded shadow">
+          <div class="card-body">
+            <div class="top-icon">
+              <svg class="icon">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
               </svg>
             </div>
             <a href="{{ path('admin_logs_index') }}">
               <h5 class="card-title">Logs</h5>
             </a>
-            <p class="card-text">Logs di sistema</p>
+            <p class="card-text">Logs sicurezza</p>
           </div>
         </div>
       </div>

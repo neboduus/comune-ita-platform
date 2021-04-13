@@ -773,6 +773,11 @@ services:
     tags:
       - { name: twig.extension }
 
+  ocsdc.twig.unserialize:
+    class: AppBundle\Twig\Unserialize
+    tags:
+      - { name: twig.extension }
+
   ocsdc.twig.htmlspecialchars_decode:
     class: AppBundle\Twig\HtmlSpecialCharsDecode
     tags:

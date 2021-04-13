@@ -1,0 +1,5 @@
+
+{% for k, v in row.params|unserialize %}
+  <strong>{{ k }}</strong>: {{ v }}<br />
+{% endfor %}
+

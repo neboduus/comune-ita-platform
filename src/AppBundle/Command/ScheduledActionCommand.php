@@ -72,10 +72,10 @@ class ScheduledActionCommand extends ContainerAwareCommand
           try {
             $service->executeScheduledAction($action);
             $scheduleActionService->markAsDone($action);
-          } catch (\Exception $e) {
-            $logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
-          } catch (\ErrorException $e) {
-            $logger->error($e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine());
+          } catch (\Throwable $e) {
+            $message = $e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine();
+            $logger->error($message);
+            $scheduleActionService->removeHostAndSaveLog($action, $message);
           }
         } else {
           $logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
