@@ -1,76 +1,161 @@
 <label style="font-weight: 600; padding: 0 0.5rem;">Pagamenti</label>
 <fieldset class="bg-light p-3 mb-3">
-  <div id="payments"
-       data-prototype='
+    <div id="payments"
+         data-prototype='
              <div id="appbundle_subscriptionservice_subscription_payments___name__">
-               <div class="row">
-                 <div class="col-5">
-                   <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscription_payments___name___date" class="required">Data</label>
-                     <input type="date" id="appbundle_subscriptionservice_subscription_payments___name___date" name="appbundle_subscriptionservice[subscription_payments][__name__][date]" required="required" class="form-control" />
-                   </div>
-                 </div>
-                 <div class="col-5">
-                    <div class="form-group">
-                     <label for="appbundle_subscriptionservice_subscription_payments___name___amount" class="required">Importo</label>
-                     <div class="input-group">
-                       <input type="text" id="appbundle_subscriptionservice_subscription_payments___name___amount" name="appbundle_subscriptionservice[subscription_payments][__name__][amount]" required="required" class="form-control" />
-                       <div class="input-group-append">
-                         <span class="input-group-text"> €</span>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-                 <div class="col-2">
-                <div class="form-row">
-                  <div class="form-group">
-                    <label>&nbsp;</label>
-                    <a class="btn btn-danger btn-xs js-remove-payment" href="#">
-                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
-                      <span class="d-none d-md-block">Elimina pagamento</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-               </div>
-             </div>
-             <div class="clearfix mb-4"></div>'
-       data-widget-payment="{{ '<div class="js-payment-item"></div>'|e }}"
-       data-widget-counter="{{ form.subscription_payments|length }}">
-    {% if form.subscription_payments|length > 0 %}
-      {% for payment in form.subscription_payments %}
-        <div class="js-payment-item">
-          <div id="appbundle_subscriptionservice_subscription_payments___name__">
-            <div class="row">
-              <div class="col-5">
-                {{ form_row(payment.date) }}
-              </div>
-              <div class="col-5">
-                {{ form_row(payment.amount) }}
-              </div>
-              <div class="col-2">
-                <div class="form-row">
-                  <div class="form-group">
-                    <label>&nbsp;</label>
-                    <a class="btn btn-danger btn-xs js-remove-payment" href="#">
-                      <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
-                      <span class="d-none d-md-block">Elimina pagamento</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group">
+                <label for="appbundle_subscriptionservice_subscription_payments___name___date"
+                       class="required">{{ 'backoffice.integration.subscription_service.payment.due_date' | trans }}</label>
+                <input type="date" id="appbundle_subscriptionservice_subscription_payments___name___date"
+                       name="appbundle_subscriptionservice[subscription_payments][__name__][date]" required="required"
+                       class="form-control"/>
             </div>
-            <div class="clearfix mb-4"></div>
-          </div>
         </div>
-      {% endfor %}
-    {% else %}
-      <div class="alert alert-info" id="no-payments">Non sono presenti pagamenti</div>
-    {% endif %}
-  </div>
-  <button type="button"
-          class="add-another-payment-widget btn btn-xs btn-primary"
-          data-list-selector="#payments">Aggiungi pagamento
-  </button>
+        <div class="col-6">
+            <div class="form-group">
+                <label for="appbundle_subscriptionservice_subscription_payments___name___amount" class="required">{{ 'backoffice.integration.subscription_service.payment.amount' | trans }}</label>
+                <div class="input-group">
+                    <input type="text" id="appbundle_subscriptionservice_subscription_payments___name___amount"
+                           name="appbundle_subscriptionservice[subscription_payments][__name__][amount]"
+                           required="required" class="form-control"/>
+                    <div class="input-group-append">
+                        <span class="input-group-text"> €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <label for="appbundle_subscriptionservice_subscription_payments___name___payment_identifier"
+                       class="required">{{ 'backoffice.integration.subscription_service.payment.identifier' | trans }}</label>
+                <div class="input-group">
+                    <input type="text" id="appbundle_subscriptionservice_subscription_payments___name___payment_identifier"
+                           name="appbundle_subscriptionservice[subscription_payments][__name__][payment_identifier]"
+                           required="required" class="form-control"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <label for="appbundle_subscriptionservice_subscription_payments___name___payment_reason"
+                       class="required">{{ 'backoffice.integration.subscription_service.payment.reason' | trans }}</label>
+                <div class="input-group">
+                    <input type="text" id="appbundle_subscriptionservice_subscription_payments___name___payment_reason"
+                           name="appbundle_subscriptionservice[subscription_payments][__name__][payment_reason]"
+                           required="required" class="form-control"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <label for="appbundle_subscriptionservice_subscription_payments___name___payment_service"
+                       class="required">{{ 'backoffice.integration.subscription_service.payment.service_id' | trans }}</label>
+                <div class="input-group">
+                    <input type="text" id="appbundle_subscriptionservice_subscription_payments___name___payment_service"
+                           name="appbundle_subscriptionservice[subscription_payments][__name__][payment_service]"
+                           required="required" class="form-control"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+         <div class="col-12">
+            <div class="form-group">
+            <label for="appbundle_subscriptionservice_subscription_payments___name___meta"
+                       class="required">{{ 'backoffice.integration.subscription_service.payment.meta' | trans }}</label>
+                <div class="input-group">
+                    <textarea id="appbundle_subscriptionservice_subscription_payments___name___meta"
+                           name="appbundle_subscriptionservice[subscription_payments][__name__][meta]"
+                           required="required" class="form-control"></textarea>
+            </div>
+            </div>
+         </div>
+    </div>
+    <div class="row">
+     <div class="col-10">
+     </div>
+        <div class="col-2">
+            <div class="form-row">
+                <div class="form-group">
+                    <a class="btn btn-danger btn-xs js-remove-payment" href="#">
+                        <svg class="icon icon-sm icon-white d-md-none">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                        </svg>
+                        <span class="d-none d-md-block">{{ 'backoffice.integration.subscription_service.payment.remove' | trans }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+             <div class="clearfix mb-4"></div>'
+         data-widget-payment="{{ '<div class="js-payment-item"></div>'|e }}"
+         data-widget-counter="{{ form.subscription_payments|length }}">
+        {% if form.subscription_payments|length > 0 %}
+            {% for payment in form.subscription_payments %}
+                <div class="js-payment-item">
+                    <div id="appbundle_subscriptionservice_subscription_payments___name__">
+                        <div class="row">
+                            <div class="col-6">
+                                {{ form_row(payment.date) }}
+                            </div>
+                            <div class="col-6">
+                                {{ form_row(payment.amount) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                {{ form_row(payment.payment_identifier) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                {{ form_row(payment.payment_reason) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                {{ form_row(payment.payment_service) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                {{ form_row(payment.meta) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10"></div>
+                            <div class="col-2">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <a class="btn btn-danger btn-xs js-remove-payment" href="#">
+                                            <svg class="icon icon-sm icon-white d-md-none">
+                                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                                            </svg>
+                                            <span class="d-none d-md-block">{{ 'backoffice.integration.subscription_service.payment.remove' | trans }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix mb-4"></div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info" id="no-payments">{{ 'backoffice.integration.subscription_service.payment.no_payments' | trans }}</div>
+        {% endif %}
+    </div>
+    <button type="button"
+            class="add-another-payment-widget btn btn-xs btn-primary"
+            data-list-selector="#payments">{{ 'backoffice.integration.subscription_service.payment.add' | trans }}
+    </button>
 </fieldset>
-

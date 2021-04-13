@@ -266,12 +266,16 @@ class SubcriptionsBackOffice implements BackOfficeInterface
           "%subscriber_completename%" => strtoupper($subscriber->getCompleteName()),
           "%subscriber_fiscal_code%" => strtoupper($subscriber->getFiscalCode())
         ]));
+
+        $paymentAmount = isset($originalData->getPaymentData()['payment_amount']) ? (float)$originalData->getPaymentData()['payment_amount'] : (isset($subscriptionData["payment_amount"]) ? (float)$subscriptionData["payment_amount"] : null);
         $subscriptionPayment->setDescription($this->translator->trans("iscrizioni.quota_iscrizione.descrizione"));
-        $subscriptionPayment->setAmount((float)$originalData->getPaymentData()['payment_amount']);
+        $subscriptionPayment->setAmount($paymentAmount);
         $subscriptionPayment->setExternalKey($originalData->getId());
         $subscriptionPayment->setSubscription($subscription);
-        if ($originalData->getPaymentType()->getName() == "MyPay" and $originalData->getPaymentData()["outcome"]) {
+        if ($originalData->getPaymentType()->getIdentifier() == "mypay" and $originalData->getPaymentData()["outcome"]) {
           $subscriptionPayment->setPaymentDate((new DateTime($originalData->getPaymentData()["outcome"]["data"]["datiPagamento"]["datiSingoloPagamento"]["dataEsitoSingoloPagamento"])));
+        } elseif ($originalData->getPaymentType()->getIdentifier() == "bollo") {
+          $subscriptionPayment->setPaymentDate((new DateTime($originalData->getPaymentDataArray()->bollo_data_emissione)));
         }
 
         $this->em->persist($subscriptionPayment);

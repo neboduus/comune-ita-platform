@@ -4,13 +4,18 @@
 namespace AppBundle\Services\Manager;
 
 
+use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
+use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Entity\User;
+use AppBundle\Form\FormIO\FormIORenderType;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,6 +44,11 @@ class PraticaManager
    * @var EntityManagerInterface
    */
   private $entityManager;
+
+  /**
+   * @var InstanceService
+   */
+  private $is;
   /**
    * @var RouterInterface
    */
@@ -64,6 +74,7 @@ class PraticaManager
    */
   public function __construct(
     EntityManagerInterface $entityManager,
+    InstanceService $instanceService,
     ModuloPdfBuilderService $moduloPdfBuilderService,
     PraticaStatusService $praticaStatusService,
     TranslatorInterface $translator,
@@ -76,6 +87,7 @@ class PraticaManager
     $this->praticaStatusService = $praticaStatusService;
     $this->logger = $logger;
     $this->entityManager = $entityManager;
+    $this->is = $instanceService;
     $this->router = $router;
     $this->messageManager = $messageManager;
     $this->translator = $translator;
@@ -360,5 +372,20 @@ class PraticaManager
       $submission[$key] = $decoratedData[$path];
     }
     return $submission;
+  }
+
+  public function createDraftApplication(Servizio $servizio, CPSUser $user, array $additionalDematerializedData) {
+    $pratica = new FormIO();
+    $pratica->setUser($user);
+    $pratica->setServizio($servizio);
+    $pratica->setStatus(Pratica::STATUS_DRAFT);
+    $pratica->setEnte($this->is->getCurrentInstance());
+
+    $pratica->setDematerializedForms(["data" => $additionalDematerializedData]);
+
+    $this->entityManager->persist($pratica);
+    $this->entityManager->flush();
+
+    return $pratica;
   }
 }
