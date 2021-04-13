@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Rest;
 
+use AppBundle\Dto\Service;
 use AppBundle\Dto\Tenant;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -244,8 +245,7 @@ class TenantAPIController extends AbstractFOSRestController
    */
   private function processForm(Request $request, FormInterface $form)
   {
-    $data = json_decode($request->getContent(), true);
-
+    $data = Tenant::normalizeData(json_decode($request->getContent(), true));
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
   }
