@@ -327,22 +327,22 @@ class PraticaManager
       '%id%' => $pratica->getId(),
       '%pratica_id%' => $pratica->getId(),
       '%servizio%' => $pratica->getServizio()->getName(),
-      '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : $this->translator->trans('email.pratica.no_info'),
+      '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
       '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
       '%user_name%' => $pratica->getUser()->getFullName(),
       '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
       '%data_corrente%' => (new \DateTime())->format('d/m/Y'),
-      '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : $this->translator->trans('email.pratica.no_info'),
-      '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : $this->translator->trans('email.pratica.no_info'),
-      '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : $this->translator->trans('email.pratica.no_info'),
-      '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : $this->translator->trans('email.pratica.no_info')
+      '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : "",
+      '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : "",
+      '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : "",
+      '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : ""
     ];
 
     $dataPlaceholders = [];
     $submission = PraticaManager::getFlattenedSubmission($pratica);
     foreach ($submission as $key => $value) {
       if (!is_array($value)) {
-        $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? $this->translator->trans('email.pratica.no_info') : $value;
+        $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? "" : $value;
       }
     }
 
