@@ -351,7 +351,7 @@ class Allegato implements AllegatoInterface
 
   public function getName()
   {
-    return $this->getDescription() . ' ' . ' ' . $this->getOriginalFilename();
+    return $this->getOriginalFilename();
   }
 
   function __toString()
