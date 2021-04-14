@@ -71,7 +71,8 @@
     "whichbrowser/parser": "^2.0",
     "league/html-to-markdown": "^4.10",
     "artprima/prometheus-metrics-bundle": "1.1.1",
-    "queueit/knownuserv3": "^3.6"
+    "queueit/knownuserv3": "^3.6",
+    "cron/cron-bundle": "^2.6"
   },
   "require-dev": {
     "sensio/generator-bundle": "3.1.7",

@@ -35,6 +35,7 @@ class AppKernel extends Kernel
       new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
       new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new AppBundle\AppBundle(),
+      new Cron\CronBundle\CronCronBundle()
     ];
 
     if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

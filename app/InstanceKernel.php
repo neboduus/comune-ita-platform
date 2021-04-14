@@ -55,6 +55,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
       new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
       new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new AppBundle\AppBundle(),
+      new Cron\CronBundle\CronCronBundle()
     ];
 
     if ($this->debug) {
