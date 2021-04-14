@@ -58,9 +58,8 @@ class ServiziController extends Controller
 
   /**
    * @Route("/", name="servizi_list")
-   * @Template()
    * @param Request $request
-   * @return array
+   * @return Response
    */
   public function serviziAction(Request $request)
   {
@@ -108,11 +107,13 @@ class ServiziController extends Controller
 
     ksort($services);
 
-    return [
+    $response =  $this->render( '@App/Servizi/servizi.html.twig', [
       'sticky_services' => $sticky,
       'servizi' => $services,
       'user' => $this->getUser()
-    ];
+    ]);
+
+    return $response;
   }
 
   /**
@@ -141,11 +142,10 @@ class ServiziController extends Controller
 
   /**
    * @Route("/{slug}", name="servizi_show")
-   * @Template()
    * @param string $slug
    * @param Request $request
    *
-   * @return array
+   * @return Response
    */
   public function serviziDetailAction($slug, Request $request)
   {
@@ -195,25 +195,25 @@ class ServiziController extends Controller
     }
 
 
-
-
-    return [
+    $response =  $this->render( '@App/Servizi/serviziDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio,
       'servizi_area' => $serviziArea,
       'handler' => $handler,
       'can_access' => $canAccess,
       'deny_access_message' => $denyAccessMessage,
-    ];
+    ]);
+
+    return $response;
+
   }
 
   /**
    * @Route("/gruppo/{slug}", name="service_group_show")
-   * @Template()
    * @param string $slug
    * @param Request $request
    *
-   * @return array
+   * @return Response
    */
   public function serviceGroupDetailAction($slug, Request $request)
   {
@@ -226,10 +226,12 @@ class ServiziController extends Controller
       throw new NotFoundHttpException("ServiceGroup $slug not found");
     }
 
-    return [
+    $response =  $this->render( '@App/Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio
-    ];
+    ]);
+
+    return $response;
   }
 
   /**

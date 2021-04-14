@@ -262,4 +262,28 @@ class Tenant
     return $entity;
   }
 
+  /**
+   * @param $data
+   * @return mixed
+   */
+  public static function normalizeData($data)
+  {
+
+    // Todo: find better way
+    if (isset($data['gateways']) && count($data['gateways']) > 0) {
+      $temp = [];
+      foreach ($data['gateways'] as $f) {
+        $f['parameters'] = \json_encode($f['parameters']);
+        $temp[]= $f;
+      }
+      $data['gateways'] = $temp;
+    }
+
+    // Todo: find better way
+    if (isset($data['meta'])) {
+      $data['meta'] = \json_encode($data['meta']);
+    }
+    return $data;
+  }
+
 }

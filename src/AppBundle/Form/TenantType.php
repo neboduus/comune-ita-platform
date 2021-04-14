@@ -68,7 +68,7 @@ class TenantType extends AbstractType
     $data = $event->getData();
 
     $gateways = [];
-    if (isset($data['gateways']) && !empty($data['gateways'])) {
+    if (isset($data['gateways'])) {
       foreach ($data['gateways'] as $g) {
         $gateway = new Gateway();
 
@@ -76,8 +76,8 @@ class TenantType extends AbstractType
         $gateway->setParameters($g["parameters"]);
         $gateways[$g["identifier"]] = $gateway;
       }
+      $ente->setGateways($gateways);
     }
-    $ente->setGateways($gateways);
   }
 
   public function configureOptions(OptionsResolver $resolver)

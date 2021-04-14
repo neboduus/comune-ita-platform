@@ -866,7 +866,7 @@ class OperatoriController extends Controller
       'user' => $this->getUser(),
       'fiscal_code' => $fiscalCode,
       'sent_email' => $sentEmail,
-      'formserver_url' => $this->getParameter('formserver_public_url'),
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
       'tab' => $tab,
       'module_protocols' => $moduleProtocols,
       'outcome_protocols' => $outcomeProtocols

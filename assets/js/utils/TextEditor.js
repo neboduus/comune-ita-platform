@@ -28,7 +28,7 @@ export class TextEditor {
       }
       return output;
     }
-    $('textarea').summernote({
+    $('textarea:not(.simple)').summernote({
       toolbar: [
         ['style', ['bold', 'italic', 'underline', 'clear']],
         ['para', ['ul', 'ol']],

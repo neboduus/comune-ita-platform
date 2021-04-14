@@ -293,7 +293,21 @@ iscrizioni:
   condividi_iscrizione: "Condividi iscrizione"
   descrizione_condividi: "Per condividere le informazioni di questa iscrizione con altre persone, indicare i codici fiscali nello spazio sovrastante"
   cf_non_valido: "Il codice fiscale %fiscal_code% non risulta essere un codice fiscale valido"
+  data_inizio: "Data di inizio"
+  data_fine: "Data di fine"
   pagamenti: "Pagamenti"
+  nome: "Nome"
+  codice: "Codice"
+  descrizione: "Descrizione"
+  data_inizio_iscrizioni: "Data di inizio iscrizioni"
+  data_fine_iscrizioni: "Data di fine iscrizioni"
+  quota: "Quota di iscrizione"
+  limite: "Limite di iscritti"
+  messaggio_iscrizione: "Messaggio di iscrizione"
+  messaggio_inizio: "Messaggio di inizio"
+  messaggio_fine: "Messaggio di fine"
+  stato: "Stato del servizio"
+  tags: "Tags"
   pagamento:
     importo: "Importo"
     data_esecuzione: "Data di esecuzione"
@@ -1960,9 +1974,33 @@ backoffice:
       invalid_slot: 'Lo slot selezionato non è valido oppure non è disponibile'
     subscriptions:
       subscription_service_error: 'Non esiste un servizio con codice code'
+      subscriber_error: 'Non esiste un iscritto con codice fiscale %fiscal_code%'
+      subscription_error: 'Non esiste un iscritto con codice fiscale %fiscal_code% per il servizio %code%'
       limit_error: 'Limite massimo di iscrizioni raggiunto. Utente user non iscritto al corso code'
       save_subscriber_error: 'Si è verificato un errore durante il salvataggio dell utente user'
       save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
+    subscription_service:
+      payment:
+        due_date: "Data di scadenza del pagamento"
+        amount: "Importo del pagamento"
+        reason: "Causale di pagamento"
+        identifier: "Identificativo del pagamento"
+        service_id: "Identificativo del servizio utilizzato per il pagamento"
+        meta: "Metadati utili alla compilazione del servizio"
+        remove: "Elimina pagamento"
+        add: "Aggiungi pagamento"
+        no_payments: "Non sono presenti pagamenti"
+      invalid_service: "L'identificativo %service_id% non è è valido"
+      invalid_meta: "Meta non corretto: il valore inserito deve essere un json valido"
+      no_service: "L'identificativo %service_id% non corrisponde ad un servizio esistente"
+      duplicate_identifier: 'Identificativo %identifier% duplicato non ammesso per il pagamento impostato per il giorno %date% con causale "%payment_reason%"'
+      no_payment: "Il pagamento non è disponibile per il servizio %service_name%"
+      no_integration: "L'integrazione con il backoffice 'Pagamenti per servizi a sottoscizione' non è abilitata per il servizio %service_name%"
+      invalid_date: "Il formato della data %date% non è corretto"
+      identifier_change_not_allowed: "Non è possibile modificare l'identificativo di pagamento '%payment_identifier%': sono già state create delle pratiche per questo pagamento "
+      messages:
+        new_draft: "Gentile <b>%user_name%</b><br/>Ricevi questo messaggio perchè sei iscritto/a oppure delegato/a a <b>%subscription_service%</b>. La informiamo che c'è una nuova attività pendente che richiede la Sua attenzione: %service%.<br>Usi il pulsante che segue per accedere alla pratica oppure visiti la sezione <i>Le mie pratiche</i>"
+        new_draft_subject: "Nuova pratica in bozza"
 
 login_type:
   none: 'Nessuno'

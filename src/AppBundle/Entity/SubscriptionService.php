@@ -554,11 +554,18 @@ class SubscriptionService
   public function getSubscriptionPayments()
   {
     $subscriptionPayments = [];
+
     foreach ($this->subscriptionPayments as $subscriptionPayment) {
       $payment = new SubscriptionPayment();
       if (is_array($subscriptionPayment)) {
         $payment->setDate(new \DateTime($subscriptionPayment['date']));
         $payment->setAmount($subscriptionPayment['amount']);
+        $payment->setPaymentReason(isset($subscriptionPayment['payment_reason']) ? $subscriptionPayment['payment_reason'] : "");
+        $payment->setPaymentIdentifier(isset($subscriptionPayment['payment_identifier']) ? $subscriptionPayment['payment_identifier'] : "");
+        $payment->setPaymentService(isset($subscriptionPayment['payment_service']) ? $subscriptionPayment['payment_service'] : "");
+        $payment->setMeta(isset($subscriptionPayment['meta']) ? $subscriptionPayment['meta'] : "");
+        $payment->setSubscriptionServiceCode($this->code);
+
         $subscriptionPayments[] = $payment;
       } else {
         $subscriptionPayments[] = $payment;

@@ -76,8 +76,9 @@ parameters:
     PasswordLifeTime: 30
     InactiveUserLifeTime: 60
 
-    formserver_private_url: 'https://formserver.opencontent.it'
-    formserver_public_url: 'https://formserver.opencontent.it'
+    formserver_private_url: 'http://formserver.localtest.me'
+    formserver_public_url: 'http://formserver.localtest.me'
+    formserver_public_url: 'http://formserver.localtest.me'
 
     allowed_extensions:
       - doc: application/msword
@@ -138,3 +139,4 @@ parameters:
     single_logout_url: '/Shibboleth.sso/Logout'
     browsers_restrictions: null
     io_api_url: 'https://api.io.italia.it/api/v1'
+    cache_max_age: '0'

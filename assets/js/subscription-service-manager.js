@@ -9,6 +9,16 @@ $(document).ready(function () {
 
   TextEditor.init()
 
+  var prev_code;
+  $('.code_edit').focus(function() {
+    prev_code = $(this).val();
+  }).change(function () {
+   if (!confirm("Modificare il codice del servizio a sottoscrizione potrebbe causare errori oppure pratiche di pagamento duplicate qualora siano configurati dei pagamenti schedulati. Si raccomanda di non modificare questo valore in prossimità della scadenza di un pagamento. Sei sicuro di voler procedere?")) {
+     $(this).val(prev_code);
+     return false;
+   }
+  })
+
   $('.add-another-payment-widget').click(function (e) {
     let list = $($(this).attr('data-list-selector'));
     // Try to find the counter of the list or use the length of the list

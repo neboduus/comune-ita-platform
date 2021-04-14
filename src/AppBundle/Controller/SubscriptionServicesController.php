@@ -226,4 +226,13 @@ class SubscriptionServicesController extends Controller
       ->setMethod('DELETE')
       ->getForm();
   }
+
+  /**
+   * Redirect to SubscriptionService.
+   * @Route("/operatori/subscription-service-payments", name="operatori_subscription-service_payments_index")
+   */
+  public function indexSubscriptionServicePaymentsAction(Request $request)
+  {
+    return $this->redirectToRoute('operatori_subscription-service_index');
+  }
 }

@@ -56,6 +56,7 @@ parameters:
     logs_path: '%env(LOGS_PATH)%'
     formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
     formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'
+    formserver_admin_url: '%env(FORMSERVER_ADMIN_URL)%'
     hash_validity: '%env(HASH_VALIDITY)%'
     allowed_extensions:
       - doc: application/msword
@@ -110,6 +111,7 @@ parameters:
     single_logout_url: '%env(SINGLE_LOGOUT_URL)%'
     browsers_restrictions: '%env(BROWSERS_RESTRICTIONS)%'
     io_api_url: '%env(IO_API_URL)%'
+    cache_max_age: '%env(CACHE_MAX_AGE)%'
 
     #Default fallback if env not set
     env(PREFIX): ''
@@ -149,7 +151,8 @@ parameters:
     env(INACTIVE_USER_LIFE_TIME): '545'
     env(LOGS_PATH): '%kernel.logs_dir%/%kernel.environment%.log'
     env(FORMSERVER_PRIVATE_URL): 'http//formserver'
-    env(FORMSERVER_PUBLIC_URL): 'https://formserver.ship.opencontent.io'
+    env(FORMSERVER_PUBLIC_URL): 'http://formserver.localtest.me'
+    env(FORMSERVER_ADMIN_URL): 'http://formserver.localtest.me'
     env(HASH_VALIDITY): '1'
     env(TOKEN_TTL): '3600'
     env(RECAPTCHA_KEY): ''
@@ -193,4 +196,5 @@ parameters:
     env(SINGLE_LOGOUT_URL): '/Shibboleth.sso/Logout'
     env(BROWSERS_RESTRICTIONS): null
     env(IO_API_URL): 'https://api.io.italia.it/api/v1'
+    env(CACHE_MAX_AGE): '0'
 
