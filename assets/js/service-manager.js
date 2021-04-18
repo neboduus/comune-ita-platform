@@ -232,7 +232,18 @@ $(document).ready(function () {
             columns: true,
             pagebreak: true,
             table: true,
-            datagrid:true,
+            datagrid: {
+              title: 'Datagrid',
+              key: 'Datagrid',
+              icon: 'th',
+              schema: {
+                label: 'Datagrid',
+                type: 'datagrid',
+                key: 'datagrid',
+                input: true,
+                customDefaultValue: "value = [{}]",
+              }
+            },
             well:true,
             panel:true,
             editgrid:true,
