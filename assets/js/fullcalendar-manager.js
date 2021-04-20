@@ -91,7 +91,9 @@ $(document).ready(function () {
       }
     },
     eventClick: function (info) {
-      if (info.event.id && info.event.extendedProps.status !== 6) compileModal(info);
+      if (info.event.extendedProps.status === 6) {
+        deleteDraftModal(info)
+      } else if (info.event.id) compileModal(info);
       else if (info.event.title === 'Apertura') newModal(info)
     }
   });
@@ -219,6 +221,25 @@ function newModal(info) {
   $('#modalNewStatus').html(1);
   $('#modalNew').modal('show');
 
+}
+
+/**
+ * Delefe draft modal
+ * @param info: event
+ */
+function deleteDraftModal(info) {
+  $('#modalDraftId').html(info.event.id);
+
+  let date = new Date(info.event.extendedProps.draftExpireTime).toISOString().slice(0, 10);
+  let time = new Date(info.event.extendedProps.draftExpireTime).toISOString().slice(11, 16);
+  $('#modalDraftExpireTime').html(date);
+  $('#modalDraftExpireDate').html(time);
+
+  let description = $('#modalDraftDescription').html()
+  description = description.replace("%expire_time%", time).replace("%expire_date%", date)
+  $('#modalDraftDescription').html(description)
+
+  $('#modalDeleteDraft').modal('show');
 }
 
 /**

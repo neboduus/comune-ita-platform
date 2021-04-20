@@ -30,6 +30,7 @@ class Calendar
   const SLOT_DURATION = 30;
 
   const DEFAULT_DRAFT_DURATION = 600;
+  const DEFAULT_DRAFT_INCREMENT = 5*24*60*60;
   const DEFAULT_ROLLING_DAYS = 30;
   const DEFAULT_CANCEL_DAYS = 3;
 
@@ -93,7 +94,7 @@ class Calendar
    * @var int
    *
    * @ORM\Column(name="drafts_duration", type="integer", nullable=true)
-   * @SWG\Property(description="Calendar draft meetings duration", type="integer")
+   * @SWG\Property(description="Calendar draft meetings duration (minutes)", type="integer")
    */
   private $draftsDuration;
 
@@ -102,7 +103,7 @@ class Calendar
    * @var int
    *
    * @ORM\Column(name="drafts_duration_increment", type="integer", nullable=true)
-   * @SWG\Property(description="Calendar draft meetings duration increment", type="integer")
+   * @SWG\Property(description="Calendar draft meetings duration increment (days)", type="integer")
    */
   private $draftsDurationIncrement;
 
@@ -198,7 +199,7 @@ class Calendar
       $this->allowCancelDays = self::DEFAULT_CANCEL_DAYS;
       $this->rollingDays = self::DEFAULT_ROLLING_DAYS;
       $this->draftsDuration = self::DEFAULT_DRAFT_DURATION;
-      $this->draftsDurationIncrement = self::DEFAULT_DRAFT_DURATION;
+      $this->draftsDurationIncrement = self::DEFAULT_DRAFT_INCREMENT;
     }
   }
 

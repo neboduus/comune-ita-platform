@@ -58,19 +58,14 @@ class CalendarsController extends Controller
    * @var JWTTokenManagerInterface
    */
   private $JWTTokenManager;
-  /**
-   * @var ScheduleActionService
-   */
-  private $scheduledActionsService;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager, ScheduleActionService $scheduleActionService)
+  public function __construct(TranslatorInterface $translator, EntityManager $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
     $this->JWTTokenManager = $JWTTokenManager;
-    $this->scheduledActionsService = $scheduleActionService;
   }
 
   /**
@@ -416,6 +411,7 @@ class CalendarsController extends Controller
         'color' => $color,
         'textColor' => $textColor,
         'status' => $meeting->getStatus(),
+        'draftExpireTime' => $meeting->getDraftExpiration() ? $meeting->getDraftExpiration()->format('c') : null,
         'rescheduled' => $meeting->getRescheduled(),
       ];
     }
@@ -709,7 +705,7 @@ class CalendarsController extends Controller
         ], Response::HTTP_BAD_REQUEST);
 
       }
-      return new JsonResponse($meeting->getId(), Response::HTTP_OK);
+      return new JsonResponse(["id" => $meeting->getId(), "expiration_time" => $meeting->getDraftExpiration()->format('Y-m-d H:i')], Response::HTTP_OK);
     } catch (\Exception $exception) {
       return new JsonResponse([
         "error" => $exception->getMessage()

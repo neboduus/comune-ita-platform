@@ -49,7 +49,8 @@ class CalendarsBackOffice implements BackOfficeInterface
 
   private $allowedActivationPoints = [
     Pratica::STATUS_PRE_SUBMIT,
-    Pratica::STATUS_SUBMITTED
+    Pratica::STATUS_SUBMITTED,
+    Pratica::STATUS_PAYMENT_SUCCESS
   ];
 
   /**

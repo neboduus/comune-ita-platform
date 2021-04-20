@@ -1,0 +1,30 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="modalDeleteDraft">
+  <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button id="modalClose" class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <svg class="icon">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-title mx-4">
+        <h5>{{ 'meetings.delete_draft.label' | trans}}</h5>
+      </div>
+      <div class="modal-body">
+        <div id="modalDraftId" class="d-none"></div>
+        <p id="modalDraftDescription">{{ "meetings.delete_draft.description" | trans() | raw}}</p>
+        <div class="modal-footer my-3 d-flex justify-content-between">
+          <ul id="modalDeleteDraftError" class="text-danger list-unstyled"></ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <ul id="modalError" class="text-danger list-unstyled"></ul>
+        <button id="modalApprove" data-url='{{ path("meetings_api_delete", {'id': 'meeting_id'}) }}'
+                class="btn btn-danger btn-sm mr-3" type="button" onclick="deleteEvent(this.id)">
+          {{ "meetings.delete_draft.delete" | trans }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
