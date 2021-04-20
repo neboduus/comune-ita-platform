@@ -1,5 +1,5 @@
 {% extends '@App/Default/index.html.twig' %}
-
+{% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
   {{ parent() }}
   {{ encore_entry_link_tags('compile') }}

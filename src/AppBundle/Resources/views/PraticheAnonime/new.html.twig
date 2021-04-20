@@ -1,5 +1,5 @@
 {% extends '@App/Default/index.html.twig' %}
-
+{% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
 {% set ente = instance_service.getCurrentInstance() %}
 
 {% block stylesheets %}
