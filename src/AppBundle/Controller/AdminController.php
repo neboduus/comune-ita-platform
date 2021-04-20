@@ -794,7 +794,7 @@ class AdminController extends Controller
     $secondaryKey = $request->get('secondary_key');
     $fiscalCode = $request->get('fiscal_code');
 
-    if (!($serviceId && $primaryKey && $secondaryKey && $fiscalCode)) {
+    if (!($serviceId && $primaryKey && $fiscalCode)) {
       return new JsonResponse(
         ["error" => $this->translator->trans('app_io.errore.parametro_mancante')],
         Response::HTTP_BAD_REQUEST);

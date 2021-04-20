@@ -2038,5 +2038,5 @@ app_io:
     markdown: "Ricevi questa notifica poichè il tuo profilo è stato utilizzato per verificare la corretta configurazione dei parametri
               necessari all'integrazione con l'<b>App IO</b> all'interno della <b>Stanza del cittadino</b>"
   errore:
-    parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b>, <b>Chiave secondaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
+    parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
   admin_helper: "Per poter utilizzare questa integrazione è necessario configurare ogni servizio per il quale si desidera attivare le notifiche "
