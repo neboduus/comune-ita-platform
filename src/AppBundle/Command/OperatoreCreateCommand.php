@@ -86,7 +86,9 @@ class OperatoreCreateCommand extends ContainerAwareCommand
       ->setNome($nome)
       ->setEnte($ente)
       ->setCognome($cognome)
-      ->setEnabled(true);
+      ->setEnabled(true)
+      ->setPassword($password)
+      ->setLastChangePassword(new \DateTime());
 
     try {
       $um->updateUser($user);
