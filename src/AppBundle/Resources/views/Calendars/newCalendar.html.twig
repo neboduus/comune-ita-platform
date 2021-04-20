@@ -56,11 +56,17 @@
         {{ form_row(form.minimum_scheduling_notice) }}
 
         <div class="row">
-          <div class="col-6">
-            {{ form_row(form.drafts_duration) }}
+          <div class="form-group">
+            {{ form_label(form.drafts_duration) }}
+            {{ form_widget(form.drafts_duration) }}
+            <p class="text-secondary mt-2">{{ 'calendars.drafts_duration.description' | trans() }}</p>
           </div>
-          <div class="col-6">
-            {{ form_row(form.drafts_duration_increment) }}
+        </div>
+        <div class="row">
+          <div class="form-group">
+            {{ form_label(form.drafts_duration_increment) }}
+            {{ form_widget(form.drafts_duration_increment) }}
+            <p class="text-secondary mt-2">{{ 'calendars.drafts_duration_increment.description' | trans() }}</p>
           </div>
         </div>
 

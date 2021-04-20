@@ -7,6 +7,7 @@ use AppBundle\Entity\OperatoreUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -69,12 +70,12 @@ class CalendarType extends AbstractType
       ->add('drafts_duration', NumberType::class, [
         'required' => false,
         'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
-        'label' => false
+        'label' => false,
       ])
       ->add('drafts_duration_increment', NumberType::class, [
         'required' => false,
-        'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
-        'label' => false
+        'empty_data' => Calendar::DEFAULT_DRAFT_INCREMENT,
+        'label' => false,
       ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
@@ -109,6 +110,19 @@ class CalendarType extends AbstractType
         'entry_type' => ExternalCalendarType::class,
         'allow_add' => true
       ]);
+
+    $builder->addViewTransformer(new CallbackTransformer(
+      function ($original) {
+        $original->setDraftsDuration($original->getDraftsDuration()/60);
+        $original->setDraftsDurationIncrement($original->getDraftsDurationIncrement()/(24*60*60));
+        return $original;
+      },
+      function ($submitted) {
+        $submitted->setDraftsDuration((int)$submitted->getDraftsDuration()*60);
+        $submitted->setDraftsDurationIncrement((int)$submitted->getDraftsDurationIncrement()*(24*60*60));
+        return clone $submitted;
+      }
+    ));
   }
 
   /**

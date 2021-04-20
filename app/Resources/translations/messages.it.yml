@@ -1859,6 +1859,19 @@ gateway:
 calendars:
   new: "Crea nuovo calendario"
   moderators: "Coordinatori"
+  title: "Titolo del calendario"
+  identifier: "Identificativo calendario (Calendar ID)"
+  contact_email: "Email di contatto"
+  minimum_scheduling_notice: "Preavviso minimo per una prenotazione"
+  is_moderated: "Richiede moderazione?"
+  owner: "Proprietario"
+  location: "Luogo dell'appuntamento"
+  drafts_duration_increment:
+    label: "Estensione massima della bozza (in giorni)"
+    description: "Se una prenotazione prevede un pagamento la conferma della bozza avviene solo a pagamento avvenuto. Questo parametro determina quanto tempo massimo ha il cittadino per completare il pagamento."
+  drafts_duration:
+    label: "Durata di un appuntamento in bozza (in minuti)"
+    description: "Tempo per il quale uno slot viene riservato in attesa della conferma da parte dell'utente. Lo slot viene riservato quando viene scelto dal cittadino facendo click sullo slot e viene confermato quando invia la richiesta. Se l'appuntamento non viene confermato entro questo tempo, lo slot torna libero."
   rolling_days:
     label: "Disponibilità per le prenotazioni"
     text_before: "E' possibile prenotare in anticipo fino a"
@@ -1888,6 +1901,12 @@ meetings:
   no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
   default_draft_message: "Appuntamento in bozza"
   no_info: "<i>Informazione non disponibile</i>"
+  delete_draft:
+    label: "Annulla appuntamento riservato"
+    description: "Questo appuntamento è stato riservato tramite la compilazione di un servizio di prenotazione: se non confermato dall'utente verrà eliminato automaticamente alle ore %expire_time% del giorno %expire_date%.
+                  <br>L'eliminazione forzata della bozza renderà l'intervallo di nuovo disponibile e il cittadino che ha riservato l'appuntamento potrebbe dover richiedere un nuovo appuntamento.
+                  <br><br>. Sei sicuro di voler procedere con la rimozione forzata della bozza?"
+    delete: "Elimina bozza"
   email:
     operatori:
       meeting_cancelled:

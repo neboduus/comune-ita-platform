@@ -10,9 +10,9 @@ use AppBundle\Entity\OpeningHour;
 use DateInterval;
 use DatePeriod;
 use DateTime;
-use DateTimeZone;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -49,7 +49,8 @@ class MeetingService
     InstanceService $instanceService,
     MailerService $mailer, $defaultSender,
     TranslatorInterface $translator,
-    UrlGeneratorInterface $router)
+    UrlGeneratorInterface $router
+  )
   {
     $this->entityManager = $entityManager;
     $this->instanceService = $instanceService;
@@ -171,7 +172,7 @@ class MeetingService
           'date' => $date->format('Y-m-d'),
           'start_time' => $_begin->format('H:i'),
           'end_time' => $_end->format('H:i'),
-          'slots_available' =>  $openingHour->getMeetingQueue()
+          'slots_available' => $openingHour->getMeetingQueue()
         ];
       }
     }
@@ -586,12 +587,13 @@ class MeetingService
     }
   }
 
-  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null) {
+  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null)
+  {
     /** @var OpeningHour[] $openingHours */
     $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $calendar]);
 
-    $start = clone($date)->setTime(0, 0, 0);
-    $end = clone($date)->setTime(23, 59, 59);
+    $start = clone ($date)->setTime(0, 0, 0);
+    $end = clone ($date)->setTime(23, 59, 59);
 
     $slots = array();
 
@@ -601,8 +603,8 @@ class MeetingService
       ->where('meeting.calendar = :calendar')
       ->andWhere('meeting.fromTime >= :startDate')
       ->andWhere('meeting.toTime < :endDate')
-      ->andWhere ('meeting.status != :refused')
-      ->andWhere ('meeting.status != :cancelled')
+      ->andWhere('meeting.status != :refused')
+      ->andWhere('meeting.status != :cancelled')
       ->setParameter('refused', Meeting::STATUS_REFUSED)
       ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
       ->setParameter('calendar', $calendar)
@@ -610,11 +612,11 @@ class MeetingService
       ->setParameter('endDate', $end)
       ->groupBy('meeting.fromTime', 'meeting.toTime');
 
-      if ($excludedMeeting) {
-        $builder
-          ->andWhere('meeting.id != :exluded_id')
-          ->setParameter('exluded_id', $excludedMeeting);
-      }
+    if ($excludedMeeting) {
+      $builder
+        ->andWhere('meeting.id != :exluded_id')
+        ->setParameter('exluded_id', $excludedMeeting);
+    }
     $_meetings = $builder->getQuery()->getResult();
 
     // Set meetings key (Format: start_time-end_time-count)

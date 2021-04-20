@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -57,15 +58,15 @@ class CalendarBackofficeType extends AbstractType
     $builder
       ->add('title', TextType::class, [
         'required' => true,
-        'label' => 'Titolo del calendario'
+        'label' => 'calendars.title'
       ])
       ->add('id', TextType::class, [
-        'label' => 'Identificativo calendario (Calendar ID)',
+        'label' => 'calendars.identifier',
         'disabled' => true,
       ])
       ->add('contact_email', EmailType::class, [
         'required' => false,
-        'label' => 'Email di contatto'
+        'label' => 'calendars.contact_email'
       ])
       ->add('rolling_days', NumberType::class, [
         'required' => true,
@@ -74,7 +75,7 @@ class CalendarBackofficeType extends AbstractType
       ->add('minimum_scheduling_notice', ChoiceType::class, [
         'required' => true,
         'choices' => Calendar::MINIMUM_SCHEDULING_NOTICES_OPTIONS,
-        'label' => 'Preavviso minimo per una prenotazione',
+        'label' => 'calendars.minimum_scheduling_notice',
       ])
       ->add('allow_cancel_days', NumberType::class, [
         'required' => true,
@@ -83,23 +84,23 @@ class CalendarBackofficeType extends AbstractType
       ->add('drafts_duration', NumberType::class, [
         'required' => false,
         'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
-        'label' => "Durata massima delle bozze (in secondi)",
+        'label' => "calendars.drafts_duration.label",
       ])
       ->add('drafts_duration_increment', NumberType::class, [
         'required' => false,
-        'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
-        'label' => "Incremento della durata massima delle bozze (in secondi)",
+        'empty_data' => Calendar::DEFAULT_DRAFT_INCREMENT,
+        'label' => "calendars.drafts_duration_increment.label",
       ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
-        'label' => 'Richiede moderazione?',
+        'label' => 'calendars.is_moderated',
       ])
       ->add('owner', ChoiceType::class, [
         'choices' => $owners,
         'required' => true,
         'choice_label' => 'username',
         'choice_value' => 'id',
-        'label' => 'Proprietario'
+        'label' => 'calendars.owner'
       ])
       ->add('moderators', EntityType::class, [
         'class' => OperatoreUser::class,
@@ -126,7 +127,7 @@ class CalendarBackofficeType extends AbstractType
       ])
       ->add('location', TextareaType::class, [
         'required' => true,
-        'label' => 'Luogo dell\'appuntamento'
+        'label' => 'calendars.location'
       ])
       ->add('external_calendars', CollectionType::class, [
         'label' => false,
@@ -137,6 +138,19 @@ class CalendarBackofficeType extends AbstractType
         'allow_delete' => true
       ])
       ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+
+    $builder->addViewTransformer(new CallbackTransformer(
+      function ($original) {
+        $original->setDraftsDuration($original->getDraftsDuration()/60);
+        $original->setDraftsDurationIncrement($original->getDraftsDurationIncrement()/(24*60*60));
+        return $original;
+      },
+      function ($submitted) {
+        $submitted->setDraftsDuration((int)$submitted->getDraftsDuration()*60);
+        $submitted->setDraftsDurationIncrement((int)$submitted->getDraftsDurationIncrement()*(24*60*60));
+        return clone $submitted;
+      }
+    ));
   }
 
   public function onPreSubmit(FormEvent $event)

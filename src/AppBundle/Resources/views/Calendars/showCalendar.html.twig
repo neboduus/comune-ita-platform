@@ -118,6 +118,43 @@
     });
   }
 
+
+  /**
+   * Deletes meeting by API request
+   * @param btnId: button id to retrieve data
+   */
+  function deleteEvent(btnId) {
+      let id = $('#modalDraftId').html();
+
+      let url = $(`#${btnId}`).attr('data-url');
+      let token = $('#hidden').attr('data-token');
+      url = url.replace("meeting_id", id);
+      $.ajax({
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+          },
+          url: url,
+          type: 'DELETE',
+          success: function (response, textStatus, jqXhr) {
+              location.reload();
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+              let errorMessage = ''
+              if ( jqXHR.responseJSON.errors) {
+                  jqXHR.responseJSON.errors.forEach(function (error) {
+                      errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
+                  })
+              } else {
+                  // Errore generico
+                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante l\'eliminazione dell\'appuntamento</li>`
+              }
+              $('#modalDraftError').html(errorMessage);
+          },
+      });
+  }
+
   /**
    * Creates a meeting by API request
    * @param btnId: button id to retrieve data
