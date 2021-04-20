@@ -217,7 +217,21 @@ $(document).ready(function () {
             hidden: true,
             form: true,
             calendar: true,
-            file: true,
+            file: {
+              title: 'File',
+              key: 'file',
+              icon: 'file',
+              schema: {
+                label: 'File',
+                type: 'file',
+                key: 'file',
+                input: true,
+                storage: "url",
+                fileMinSize: "1KB",
+                fileMaxSize: "10MB",
+                url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] +"/allegati",
+              }
+            },
             financial_report: true,
             address:true,
             survey:true
