@@ -369,7 +369,7 @@ $(document).ready(function () {
     let primary_key = $('#io_integration_data_io_service_parameters_primaryKey');
     let secondary_key = $('#io_integration_data_io_service_parameters_secondaryKey');
 
-    if (service_id.val() && primary_key.val() && secondary_key.val()) {
+    if (service_id.val() && primary_key.val()) {
       switchTest(true)
     } else {
       switchTest(false)
@@ -401,7 +401,7 @@ $(document).ready(function () {
     service_id.change(function(){
       if (!service_id.val()) {
         switchTest(false)
-      } else if (secondary_key.val() && primary_key.val()) {
+      } else if (primary_key.val()) {
         switchTest(true)
       }
     })
@@ -409,14 +409,7 @@ $(document).ready(function () {
       if (!primary_key.val()) {
         switchTest(false)
       }
-      else if (service_id.val() && secondary_key.val()) {
-        switchTest(true)
-      }
-    })
-    secondary_key.change(function(){
-      if (!secondary_key.val()) {
-        switchTest(false)
-      } else if (service_id.val() && primary_key.val()) {
+      else if (service_id.val()) {
         switchTest(true)
       }
     })
