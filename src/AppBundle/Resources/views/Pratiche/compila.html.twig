@@ -135,6 +135,7 @@
               });
           });
         });
+        autoCloseAlert(customErrorContainer)
       }
 
       //Funzione per rendere il form Applicant readOnly
@@ -151,6 +152,17 @@
           });
         }
     });
+
+    function autoCloseAlert(customErrorContainer){
+      if(customErrorContainer && customErrorContainer.length > 0){
+        customErrorContainer.each(function() {
+          var time_period = customErrorContainer.attr('auto-close');
+          setTimeout(function() {
+            customErrorContainer.empty().hide();
+          }, time_period);
+        });
+      }
+    }
   </script>
 
 {% endblock %}
@@ -231,7 +243,11 @@
 
         <div id="formio" class="formio-front" data-formserver_url="{{ formserver_url }}"></div>
 
-        <div id="formio-custom-errors" class="alert alert-danger" style="display: none"></div>
+        <div id="formio-custom-errors" class="alert alert-danger alert-dismissible" style="display: none" role="alert" auto-close="5000">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
 
         {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
           <div class="mt-5">
