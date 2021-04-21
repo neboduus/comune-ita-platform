@@ -85,6 +85,7 @@ class ServizioFormType extends AbstractType
       ])
       ->add('service_group')
       ->add('allow_reopening')
+      ->add('allow_withdraw')
       ->add('workflow')
     ;
   }

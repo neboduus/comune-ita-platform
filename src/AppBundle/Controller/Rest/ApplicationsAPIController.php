@@ -6,10 +6,12 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Dto\Application;
 use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\AllegatoOperatore;
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\User;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Model\PaymentOutcome;
 use AppBundle\Model\MetaPagedList;
@@ -1163,10 +1165,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       $this->denyAccessUnlessGranted(ApplicationVoter::WITHDRAW, $application);
 
-      if ($application->getUser()->getId() != $this->getUser()->getId()) {
-        throw new Exception('You are not allowed to operate on this application');
-      }
-      $this->statusService->setNewStatus($application, Pratica::STATUS_WITHDRAW);
+      $this->praticaManager->withdrawApplication($application, $this->getUser());
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',

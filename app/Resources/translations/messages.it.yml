@@ -122,7 +122,7 @@ pratica:
   iter: 'Iter della pratica'
   tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
-  ritira_la_pratica: 'Ritira la pratica'
+  ritira_la_pratica: 'Annulla la richiesta'
   nuova_pratica: 'Nuova pratica: %name%'
   integrazione_pratica: 'Integrazione pratica: %name%'
   integrazione_pratica_description: "Sono state richieste alcuni integrazioni per la pratica che hai inviato: correggi tutti i campi esposti contrasseganti dall'asterisco (*)"
@@ -190,6 +190,7 @@ pratica:
     richiedente.email: 'Email'
     nucleo_familiare: 'Nucleo familiare'
     compilazione: 'Compilazione'
+    ritiro: 'La richiesta numero %id% del servizio %servizio% è stata ritirata da %user_name%'
     esito:
       accettata: 'La richiesta è stata <strong>accettata</strong>'
       rifiutata: 'La richiesta è stata <strong>rifiutata</strong>'

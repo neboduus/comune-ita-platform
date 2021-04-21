@@ -218,6 +218,14 @@ class Service
    */
   private $allowReopening;
 
+
+  /**
+   * @var bool
+   * @Serializer\Type("boolean")
+   * @SWG\Property(description="If selected, service's applications can be withdraw")
+   */
+  private $allowWithdraw;
+
   /**
    * @var integer
    * @Serializer\Type("integer")
@@ -694,6 +702,23 @@ class Service
     $this->allowReopening = $allowReopening;
   }
 
+
+  /**
+   * @return bool
+   */
+  public function isAllowWithdraw(): ?bool
+  {
+    return $this->allowWithdraw;
+  }
+
+  /**
+   * @param bool $allowWithdraw
+   */
+  public function setAllowWithdraw(?bool $allowWithdraw)
+  {
+    $this->allowWithdraw = $allowWithdraw;
+  }
+
   /**
    * @return int
    */
@@ -762,6 +787,7 @@ class Service
     $dto->scheduledTo = $servizio->getScheduledTo();
     $dto->serviceGroup = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null;
     $dto->allowReopening = $servizio->isAllowReopening();
+    $dto->allowWithdraw = $servizio->isAllowWithdraw();
     $dto->workflow = $servizio->getWorkflow();
 
     return $dto;
@@ -813,6 +839,7 @@ class Service
     }
 
     $entity->setAllowReopening($this->allowReopening);
+    $entity->setAllowWithdraw($this->allowWithdraw);
     $entity->setWorkflow($this->workflow);
 
     return $entity;

@@ -20,6 +20,7 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\CallToAction;
+use AppBundle\Security\Voters\ApplicationVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
 use AppBundle\Services\ModuloPdfBuilderService;
@@ -354,16 +355,6 @@ class PraticheController extends Controller
   }
 
   /**
-   * @param Pratica $pratica
-   * @param CPSUser $user
-   * @return bool
-   */
-  private function userCanWithdrawPratica(Pratica $pratica, User $user)
-  {
-    return $pratica->getStatus() == Pratica::STATUS_SUBMITTED && empty($pratica->getPaymentData()) && !$pratica->getServizio()->isProtocolRequired() && $pratica->getUser()->getId() == $user->getId();
-  }
-
-  /**
    * @Route("/{pratica}", name="pratiche_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
    * @Template()
@@ -395,7 +386,7 @@ class PraticheController extends Controller
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'can_compile' => $canCompile,
-      'can_withdraw' => $this->userCanWithdrawPratica($pratica, $user)
+      'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica)
       //'threads' => $thread,
     ];
 
@@ -522,7 +513,7 @@ class PraticheController extends Controller
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'can_compile' => $canCompile,
-      'can_withdraw' => $this->userCanWithdrawPratica($pratica, $user)
+      'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica)
       //'threads' => $thread,
     ];
 

@@ -322,6 +322,13 @@ class Servizio
   private $allowReopening;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true, options={"default":"1"})
+   * @SWG\Property(description="If selected, service's applications can be withdraw")
+   */
+  private $allowWithdraw;
+
+  /**
    * @var integer
    * @ORM\Column(type="integer", nullable=true, options={"default":"0"})
    * @SWG\Property(description="Service workflow type, accepts values: 0 - Approval, 1 - Forward")
@@ -353,6 +360,7 @@ class Servizio
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
     $this->setLoginSuggested(false);
     $this->setProtocolRequired(true);
+    $this->setAllowWithdraw(true);
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
   }
 
@@ -1164,6 +1172,22 @@ class Servizio
   public function setAllowReopening(?bool $allowReopening)
   {
     $this->allowReopening = $allowReopening;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isAllowWithdraw(): ?bool
+  {
+    return $this->allowWithdraw;
+  }
+
+  /**
+   * @param bool $allowWithdraw
+   */
+  public function setAllowWithdraw(?bool $allowWithdraw)
+  {
+    $this->allowWithdraw = $allowWithdraw;
   }
 
   /**

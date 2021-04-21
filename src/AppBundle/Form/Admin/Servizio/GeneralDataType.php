@@ -151,7 +151,10 @@ class GeneralDataType extends AbstractType
       ->add('allow_reopening', CheckboxType::class, [
         'label' => 'Consenti di riprendere in carico le pratiche accettate o rifiutate',
         'required' => false,
-
+      ])
+      ->add('allow_withdraw', CheckboxType::class, [
+        'label' => 'Consenti al cittadino di annullare la presentazione della pratica',
+        'required' => false,
       ])
       ->add('workflow', ChoiceType::class, [
         'label' => 'Flusso di lavoro',
