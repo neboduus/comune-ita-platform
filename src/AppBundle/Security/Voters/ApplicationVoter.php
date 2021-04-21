@@ -6,6 +6,7 @@ namespace AppBundle\Security\Voters;
 
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -142,6 +143,10 @@ class ApplicationVoter extends Voter
 
   private function canWithdraw(Pratica $pratica, User $user)
   {
-    return $user->getId() === $pratica->getUser()->getId();
+    // se il servizio ha un workflow di tipo inoltro e la pratica è stata "inoltrata" NON deve comparire il pulsante ritira.
+    if ($pratica->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD && $pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
+      return false;
+    }
+    return $pratica->getStatus() == Pratica::STATUS_SUBMITTED && empty($pratica->getPaymentData()) && $pratica->getServizio()->isAllowWithdraw() && !$pratica->getServizio()->isProtocolRequired() && $pratica->getUser()->getId() == $user->getId();
   }
 }

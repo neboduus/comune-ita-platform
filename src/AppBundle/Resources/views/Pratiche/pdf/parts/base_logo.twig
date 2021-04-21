@@ -1,0 +1,22 @@
+<html>
+<head>
+    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+{% set ente = instance_service.getCurrentInstance() %}
+
+<main class="container-fluid" style="padding: 40px">
+    <div class="row">
+        <div class="col-12 text-center">
+            {% if ente %}
+                <img class="logo" src="{{ absolute_url(asset('bundles/app/images/logo-' ~ ente.slug ~ '.png')) }}" alt="{{ ente.name }}"/>
+                <h2 class="ente">{{ ente.name }}</h2>
+            {% endif %}
+        </div>
+    </div>
+
+    {% block pdf_content %}{% endblock %}
+</main>
+
+</body>
+</html>

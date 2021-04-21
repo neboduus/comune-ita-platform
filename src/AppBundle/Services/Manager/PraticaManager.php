@@ -249,6 +249,38 @@ class PraticaManager
 
   /**
    * @param Pratica $pratica
+   * @param User $user
+   * @throws Exception
+   */
+  public function withdrawApplication(Pratica $pratica, User $user)
+  {
+    if ($pratica->getStatus() == Pratica::STATUS_WITHDRAW) {
+      throw new BadRequestHttpException('La pratica è già stata elaborata');
+    }
+
+    if ($pratica->getWithdrawAttachment() == null) {
+      $withdrawAttachment = $this->moduloPdfBuilderService->createWithdrawForPratica($pratica);
+      $pratica->addAllegato($withdrawAttachment);
+    }
+
+    $statusChange = new StatusChange();
+    $this->praticaStatusService->setNewStatus(
+      $pratica,
+      Pratica::STATUS_WITHDRAW,
+      $statusChange
+    );
+
+      $this->logger->info(
+        LogConstants::PRATICA_WITHDRAW,
+        [
+          'pratica' => $pratica->getId(),
+          'user' => $pratica->getUser()->getId(),
+        ]
+      );
+  }
+
+  /**
+   * @param Pratica $pratica
    * @param RichiestaIntegrazioneDTO $integration
    */
   public function requestIntegration(Pratica $pratica, User $user, string $text)
