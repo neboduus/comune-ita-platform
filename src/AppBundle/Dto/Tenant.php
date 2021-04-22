@@ -274,7 +274,7 @@ class Tenant
       $temp = [];
       foreach ($data['gateways'] as $f) {
         $f['parameters'] = \json_encode($f['parameters']);
-        $temp[]= $f;
+        $temp[$f['identifier']]= $f;
       }
       $data['gateways'] = $temp;
     }
