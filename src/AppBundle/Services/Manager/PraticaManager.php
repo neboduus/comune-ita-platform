@@ -413,7 +413,54 @@ class PraticaManager
     $pratica->setStatus(Pratica::STATUS_DRAFT);
     $pratica->setEnte($this->is->getCurrentInstance());
 
-    $pratica->setDematerializedForms(["data" => $additionalDematerializedData]);
+    $cpsUserData = [
+      'applicant' => [
+        'data' => [
+          'completename' => [
+            'data' => [
+              'name' => $user->getNome(),
+              'surname' => $user->getCognome()
+            ]
+          ],
+          'gender' => [
+            'data' => [
+              'gender' => $user->getSessoAsString()
+            ]
+          ],
+          'Born' => [
+            'data' => [
+              'natoAIl' => $user->getDataNascita()->format('d/m/Y'),
+              'place_of_birth' => $user->getLuogoNascita()
+            ]
+          ],
+          'fiscal_code' => [
+            'data' => [
+              'fiscal_code' => $user->getCodiceFiscale(),
+            ]
+          ],
+          'address' => [
+            'data' => [
+              'address' => $user->getIndirizzoResidenza(),
+              'house_number' => '',
+              'municipality' => $user->getCittaResidenza(),
+              'postal_code' => $user->getCapResidenza(),
+              'county' => $user->getProvinciaResidenza(),
+            ]
+          ],
+          'email_address' => $user->getEmail(),
+          'email_repeat' => $user->getEmail(),
+          'cell_number' => $user->getCellulare(),
+          'phone_number' => $user->getTelefono(),
+        ]
+      ],
+      'cell_number' => $user->getCellulare(),
+      'phone_number' => $user->getTelefono()
+    ];
+
+    $pratica->setDematerializedForms(["data" => array_merge(
+      $additionalDematerializedData,
+      $cpsUserData
+    )]);
 
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
