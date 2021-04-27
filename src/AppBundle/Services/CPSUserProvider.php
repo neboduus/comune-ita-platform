@@ -380,9 +380,10 @@ class CPSUserProvider implements UserProviderInterface
 
   public function userHasEnoughData(CPSUser $user)
   {
+
     //Regex per controllo fake email utente
     $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
-    return $user->getNome() !== null
+    $result =  $user->getNome() !== null
       && $user->getCognome() !== null
       && $user->getCodiceFiscale() !== null
       && $user->getDataNascita() !== null
@@ -398,7 +399,15 @@ class CPSUserProvider implements UserProviderInterface
       && $user->getCellulare() !== null
       && $user->getEmail() !== null
       && !in_array($user->getEmail(), self::EMAIL_BLACKLIST)
-      && !preg_match($regex, $user->getEmail());
+      && !preg_match($regex, $user->getEmail())
+      && $this->isEmailValid($user->getEmail());
+
+      return $result;
+  }
+
+  public function isEmailValid($email)
+  {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
   }
 
 }
