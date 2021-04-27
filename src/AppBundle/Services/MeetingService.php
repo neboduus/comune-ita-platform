@@ -639,7 +639,9 @@ class MeetingService
       if (array_key_exists($key, $meetings)) {
         $slots[$key]['availability'] = $meetings[$key]['count'] >= $slots[$key]['slots_available'] ? false : true;
         $slots[$key]['slots_available'] = max($slots[$key]['slots_available'] - $meetings[$key]['count'], 0);
-
+        if ($slots[$key]['availability'] == true) {
+          $availableSlots[$key] = $slots[$key];
+        }
       } else {
         if ($all) {
           $noticeInterval = new DateInterval('PT0H');
