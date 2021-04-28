@@ -54,7 +54,8 @@ class CompleteProfileListener
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
             $currentRouteQuery = $event->getRequest()->query->all();
-            if ($this->userProvider->userHasEnoughData($user) == false
+
+            if (!$this->userProvider->userHasEnoughData($user)
                 && $currentRoute !== ''
                 && $currentRoute !== 'user_profile'
                 && $currentRoute !== 'terms_accept'
