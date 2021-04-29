@@ -552,8 +552,7 @@ class PraticheController extends Controller
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
-    if ($this->userCanWithdrawPratica($pratica, $user)) {
-
+    if ($this->isGranted( ApplicationVoter::WITHDRAW, $pratica)) {
       $withdrawAttachment = $this->pdfBuilderService->createWithdrawForPratica($pratica);
       $pratica->addAllegato($withdrawAttachment);
       $this->praticaStatusService->setNewStatus(
