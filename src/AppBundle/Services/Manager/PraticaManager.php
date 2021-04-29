@@ -382,7 +382,7 @@ class PraticaManager
   }
 
   public static function getFlattenedSubmission(Pratica $pratica) {
-    $data = is_callable([$pratica, 'getDematerializedForms']) ? $pratica->getDematerializedForms() : [];
+    $data = ($pratica instanceof FormIO) ? $pratica->getDematerializedForms() : [];
 
     if (!isset($data['flattened'])) {
       return $data;
