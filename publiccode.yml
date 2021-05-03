@@ -6,8 +6,8 @@ publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: 'https://link.opencontent.it/sdc-home'
-releaseDate: '2021-04-29'
-softwareVersion: 1.6.51
+releaseDate: '2021-05-03'
+softwareVersion: 1.6.52
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
