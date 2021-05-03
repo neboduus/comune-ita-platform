@@ -141,13 +141,15 @@
       //Funzione per rendere il form Applicant readOnly
       const disableApplicant = function () {
           $('.formio-component-applicant input').each(function (k) {
-            if ($(this).prop("type") === "radio") {
-              let name = $(this).prop('name');
-              if ($(this).prop("checked")) {
-                $("input[name='" + name + "']").attr('disabled', 'disabled');
+            if($(this).closest(".formio-component-address").length <= 0) {
+              if ($(this).prop("type") === "radio") {
+                let name = $(this).prop('name');
+                if ($(this).prop("checked")) {
+                  $("input[name='" + name + "']").attr('disabled', 'disabled');
+                }
+              } else if ($(this).val()) {
+                $(this).attr('disabled', 'disabled');
               }
-            } else if ($(this).val()) {
-              $(this).attr('disabled', 'disabled');
             }
           });
         }
