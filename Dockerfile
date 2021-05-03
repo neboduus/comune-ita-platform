@@ -30,6 +30,8 @@ RUN composer install --no-scripts --prefer-dist --no-suggest
 FROM wodby/php:7.3
 
 USER root
+RUN apk add --no-cache jq httpie
+
 # allow php to terminate gracefully during deployments
 # https://www.goetas.com/blog/traps-on-the-way-of-blue-green-deployments/
 RUN sed -i 's/;process_control_timeout = 0/process_control_timeout = 1m/' /usr/local/etc/php-fpm.conf
