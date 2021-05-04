@@ -191,6 +191,10 @@ services:
     class: AppBundle\Services\Manager\PraticaManager
     autowire: true
 
+  ocsdc.backoffice_manager:
+    class: AppBundle\Services\Manager\BackofficeManager
+    autowire: true
+
   AppBundle\Services\Manager\MessageManager:
     autowire: true
     arguments:
@@ -561,6 +565,11 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\IntegrationsType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\Admin\Servizio\ProtocolDataType:
     autowire: true
     tags:
@@ -766,6 +775,11 @@ services:
   AppBundle\Form\Admin\ServiceFlow:
     parent: craue.form.flow
     arguments: [ "@logger","@translator" ]
+
+  AppBundle\Form\ServizioFormType:
+    autowire: true
+    tags:
+      - { name: form.type }
 
   ocsdc.comunweb_content_provider:
     class: AppBundle\Services\ComunwebContentProviderService

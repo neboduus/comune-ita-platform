@@ -15,6 +15,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class CalendarsBackOffice implements BackOfficeInterface
 {
+  const IDENTIFIER = 'calendars';
+
   const NAME = 'Prenotazione appuntamenti';
 
   const PATH = 'operatori_calendars_index';
@@ -65,6 +67,12 @@ class CalendarsBackOffice implements BackOfficeInterface
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
+  }
+
+
+  public function getIdentifier()
+  {
+    return self::IDENTIFIER;
   }
 
   public function getName()
