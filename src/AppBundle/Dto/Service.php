@@ -9,12 +9,12 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Model\PaymentParameters;
 use AppBundle\Model\FlowStep;
 use AppBundle\Model\IOServiceParameters;
+use AppBundle\Services\Manager\BackofficeManager;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Gedmo\Mapping\Annotation as Gedmo;
-use JMS\Serializer\Annotation\AccessorOrder;
 
 class Service
 {
@@ -164,6 +164,13 @@ class Service
    * @Serializer\Type("array")
    */
   private $paymentParameters;
+
+  /**
+   * @var array
+   * @SWG\Property(property="integrations", description="Service's backoffice integration")
+   * @Serializer\Type("array")
+   */
+  private $integrations;
 
 
   /**
@@ -573,6 +580,22 @@ class Service
   }
 
   /**
+   * @return array
+   */
+  public function getIntegrations()
+  {
+    return $this->integrations;
+  }
+
+  /**
+   * @param array $integrations
+   */
+  public function setIntegrations($integrations)
+  {
+    $this->integrations = $integrations;
+  }
+
+  /**
    * @return bool
    */
   public function isSticky()
@@ -779,6 +802,7 @@ class Service
     $dto->paymentRequired = $servizio->getPaymentRequired();
     $dto->protocolHandler = $servizio->getProtocolHandler();
     $dto->paymentParameters = [];
+    $dto->integrations = self::decorateIntegrationsData($servizio->getIntegrations());
     $dto->sticky = $servizio->isSticky();
     $dto->status = $servizio->getStatus();
     $dto->accessLevel = $servizio->getAccessLevel();
@@ -825,6 +849,7 @@ class Service
     $entity->setProtocolloParameters($this->protocolloParameters);
     $entity->setPaymentRequired($this->paymentRequired);
     $entity->setPaymentParameters($this->paymentParameters);
+    $entity->setIntegrations(self::normalizeIntegrationsData($this->integrations));
     $entity->setSticky($this->sticky);
     $entity->setStatus($this->status);
     $entity->setAccessLevel($this->getAccessLevel());
@@ -888,6 +913,25 @@ class Service
       $flowStep->addParameter("url", $formServerUrl . '/form/');
     }
     return $flowSteps;
+  }
+
+  public static function decorateIntegrationsData($integrations) {
+    $data = [];
+    foreach ($integrations as $status => $className) {
+
+      $data["trigger"] = $status;
+      $data["action"] = (new \ReflectionClass($className))->getConstant("IDENTIFIER");
+    }
+    return $data;
+  }
+
+  public static function normalizeIntegrationsData($integrations) {
+
+    if (isset($integrations['trigger']) && $integrations['trigger']) {
+      return [$integrations['trigger'] => BackofficeManager::getBackofficeClassByIdentifier($integrations['action'])];
+    } else {
+      return null;
+    }
   }
 
 }

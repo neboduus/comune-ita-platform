@@ -15,6 +15,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class SubcriptionsBackOffice implements BackOfficeInterface
 {
+  const IDENTIFIER = "subscriptions";
+
   const NAME = 'Servizi a sottoscrizione';
 
   const PATH = 'operatori_subscription-service_index';
@@ -95,6 +97,11 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     $this->logger = $logger;
     $this->translator = $translator;
     $this->em = $em;
+  }
+
+  public function getIdentifier()
+  {
+    return self::IDENTIFIER;
   }
 
   public function getName()

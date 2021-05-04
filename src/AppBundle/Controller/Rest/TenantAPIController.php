@@ -211,7 +211,7 @@ class TenantAPIController extends AbstractFOSRestController
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = $this->getErrorsFromForm($form);
       $data = [
-        'type' => 'put_validation_error',
+        'type' => 'patch_validation_error',
         'title' => 'There was a validation error',
         'errors' => $errors
       ];

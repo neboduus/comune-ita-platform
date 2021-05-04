@@ -61,16 +61,7 @@ class IntegrationsDataType extends AbstractType
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $statuses = [
-      'Nessuna integrazione prevista' => 0,
-      'Pratica pagata' => Pratica::STATUS_PAYMENT_SUCCESS,
-      'Pratica inviata' => Pratica::STATUS_PRE_SUBMIT,
-      'Pratica acquisita' => Pratica::STATUS_SUBMITTED,
-      'Pratica protocollata' => Pratica::STATUS_REGISTERED,
-      'Pratica presa in carico' => Pratica::STATUS_PENDING,
-      'Pratica accettata' => Pratica::STATUS_COMPLETE,
-      'Pratica rifiutata' => Pratica::STATUS_CANCELLED
-    ];
+    $statuses = BackOfficeInterface::INTEGRATION_STATUSES;
 
     /** @var Servizio $service */
     $service = $builder->getData();

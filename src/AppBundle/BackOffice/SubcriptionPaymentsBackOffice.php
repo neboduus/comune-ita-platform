@@ -5,7 +5,6 @@ namespace AppBundle\BackOffice;
 
 
 use AppBundle\Entity\Pratica;
-use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
@@ -15,6 +14,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class SubcriptionPaymentsBackOffice implements BackOfficeInterface
 {
+  const IDENTIFIER = "subscription_payments";
+
   const NAME = 'Pagamenti per servizi a sottoscizione';
 
   const PATH = 'operatori_subscription-service_payments_index';
@@ -88,6 +89,11 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     $this->logger = $logger;
     $this->translator = $translator;
     $this->em = $em;
+  }
+
+  public function getIdentifier()
+  {
+    return self::IDENTIFIER;
   }
 
   public function getName()

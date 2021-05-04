@@ -1986,6 +1986,7 @@ backoffice:
     missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
     or: 'Oppure'
     invalid_activation_point: 'Il punto di attivazione selezionato non è disponibile per questa azione'
+    invalid_action: "L'azione selezionata non è disponibile"
     fields_error: 'I campi richiesti non coincidono'
     calendars:
       missing_contacts: "E' necessario fornire almeno un recapito"

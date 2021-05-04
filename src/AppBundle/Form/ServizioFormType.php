@@ -2,26 +2,52 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\AppBundle;
-use AppBundle\Entity\Categoria;
-use AppBundle\Entity\Servizio;
+use AppBundle\Dto\Service;
 use AppBundle\Services\FormServerApiAdapterService;
-use Doctrine\ORM\EntityManager;
+use AppBundle\Services\Manager\BackofficeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ServizioFormType extends AbstractType
 {
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerService;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+  /**
+   * @var BackofficeManager
+   */
+  private $backOfficeManager;
+
+  /**
+   * @var Container
+   */
+  private $container;
+
+  public function __construct(Container $container, TranslatorInterface $translator, EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService, BackofficeManager $backOfficeManager)
+  {
+    $this->container = $container;
+    $this->formServerService = $formServerService;
+    $this->translator = $translator;
+    $this->backOfficeManager = $backOfficeManager;
+  }
+
   /**
    * @param FormBuilderInterface $builder
    * @param array $options
@@ -67,6 +93,7 @@ class ServizioFormType extends AbstractType
       ->add('payment_parameters', PaymentParametersType::class, [
         'data_class' => null
       ])
+      ->add('integrations', IntegrationsType::class)
       ->add('io_parameters', IOServiceParametersType::class, [
         'required' => false,
         'data_class' => null
@@ -86,8 +113,79 @@ class ServizioFormType extends AbstractType
       ->add('service_group')
       ->add('allow_reopening')
       ->add('allow_withdraw')
-      ->add('workflow')
-    ;
+      ->add('workflow');
+
+    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+  }
+
+  public function onPreSubmit(FormEvent $event)
+  {
+    /** @var Service $service */
+    $service = $event->getForm()->getData();
+    $data = $event->getData();
+
+    if (isset($data['integrations']['trigger']) && $data['integrations']['trigger']) {
+      $service->setIntegrations($data['integrations']);
+      $event->getForm()->setData($service);
+
+      // Retrieve backoffice instance
+      $backOfficeClassName = BackofficeManager::getBackofficeClassByIdentifier($data["integrations"]["action"]);
+      if (!$backOfficeClassName) {
+        return $event->getForm()->addError(
+          new FormError($this->translator->trans('backoffice.integration.invalid_action')),
+        );
+      }
+      $backOfficeHandler = $this->container->get($backOfficeClassName);
+
+      $formSchema = $this->formServerService->getFormSchema($this->formServerService->getFormIdFromService($service->toEntity()));
+
+      if (isset($backOfficeClassName) && !in_array($data["integrations"]["trigger"], $backOfficeHandler->getAllowedActivationPoints())) {
+        $event->getForm()->addError(
+          new FormError($this->translator->trans('backoffice.integration.invalid_activation_point')),
+        );
+      }
+
+      // Check whether form schema match integration required fields
+      $flatSchema = $this->arrayFlat($formSchema['schema']);
+
+      $errors = $backOfficeHandler->checkRequiredFields($flatSchema);
+      if ($errors) {
+        foreach ($errors as $type => $integrationType) {
+          foreach ($integrationType as $key => $error) {
+            $event->getForm()->addError(
+              new FormError($error)
+            );
+          }
+          if (array_key_last($errors) != $type)
+            $event->getForm()->addError(
+              new FormError($this->translator->trans('backoffice.integration.or')),
+            );
+        }
+      }
+    } else {
+      // No integration needed
+      $service->setIntegrations(null);
+      $event->getForm()->setData($service);
+    }
+  }
+
+
+  private function arrayFlat($array, $prefix = '')
+  {
+    $result = array();
+    foreach ($array as $key => $value) {
+      if ($key == 'metadata' || $key == 'state') {
+        continue;
+      }
+      $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
+
+      if (is_array($value)) {
+        $result = array_merge($result, $this->arrayFlat($value, $new_key));
+      } else {
+        $result[$new_key] = $value;
+      }
+    }
+    return $result;
   }
 
   /**
