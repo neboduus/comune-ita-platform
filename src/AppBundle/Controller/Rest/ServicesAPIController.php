@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
@@ -279,13 +280,22 @@ class ServicesAPIController extends AbstractFOSRestController
     $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
 
     // Imposto l'ente in base all'istanza
-    $service->setEnte($this->is->getCurrentInstance());
+    $ente = $this->is->getCurrentInstance();
+    $service->setEnte($ente);
+
+    // Erogatore
+    $erogatore = new Erogatore();
+    $erogatore->setName('Erogatore di ' . $service->getName() . ' per ' . $ente->getName());
+    $erogatore->addEnte($ente);
+    $em->persist($erogatore);
+    $service->activateForErogatore($erogatore);
+    $em->persist($service);
+    $em->flush();
 
     try {
       $em->persist($service);
       $em->flush();
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',

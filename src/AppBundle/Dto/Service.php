@@ -917,8 +917,11 @@ class Service
 
   public static function decorateIntegrationsData($integrations) {
     $data = [];
-    foreach ($integrations as $status => $className) {
+    if (empty($integrations)) {
+      return $data;
+    }
 
+    foreach ($integrations as $status => $className) {
       $data["trigger"] = $status;
       $data["action"] = (new \ReflectionClass($className))->getConstant("IDENTIFIER");
     }
@@ -926,7 +929,6 @@ class Service
   }
 
   public static function normalizeIntegrationsData($integrations) {
-
     if (isset($integrations['trigger']) && $integrations['trigger']) {
       return [$integrations['trigger'] => BackofficeManager::getBackofficeClassByIdentifier($integrations['action'])];
     } else {
