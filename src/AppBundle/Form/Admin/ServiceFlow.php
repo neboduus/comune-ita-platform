@@ -78,19 +78,9 @@ class ServiceFlow extends FormFlow
         'label' => 'Template del form',
         'form_type' => FormIOTemplateType::class,
         'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
+          /** @var Servizio $service */
           $service = $flow->getFormData();
-          $flowsteps = $service->getFlowSteps();
-          $additionalData = $service->getAdditionalData();
-          if (!empty($flowsteps)) {
-            foreach ($flowsteps as $f) {
-              $parameters = $f->getParameters();
-              if ($f->getType() == 'formio' && isset($parameters['formio_id']) && !empty($parameters['formio_id'])) {
-                return true;
-              }
-            }
-          }
-          // Retrocompatibilità
-          return isset($additionalData['formio_id']) ? true : false;
+          return !empty($service->getFormIoId());
         }
       );
     }

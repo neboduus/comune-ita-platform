@@ -127,41 +127,7 @@ class ServizioFormType extends AbstractType
     if (isset($data['integrations']['trigger']) && $data['integrations']['trigger']) {
       $service->setIntegrations($data['integrations']);
       $event->getForm()->setData($service);
-
-      // Retrieve backoffice instance
-      $backOfficeClassName = BackofficeManager::getBackofficeClassByIdentifier($data["integrations"]["action"]);
-      if (!$backOfficeClassName) {
-        return $event->getForm()->addError(
-          new FormError($this->translator->trans('backoffice.integration.invalid_action')),
-        );
-      }
-      $backOfficeHandler = $this->container->get($backOfficeClassName);
-
-      $formSchema = $this->formServerService->getFormSchema($this->formServerService->getFormIdFromService($service->toEntity()));
-
-      if (isset($backOfficeClassName) && !in_array($data["integrations"]["trigger"], $backOfficeHandler->getAllowedActivationPoints())) {
-        $event->getForm()->addError(
-          new FormError($this->translator->trans('backoffice.integration.invalid_activation_point')),
-        );
-      }
-
-      // Check whether form schema match integration required fields
-      $flatSchema = $this->arrayFlat($formSchema['schema']);
-
-      $errors = $backOfficeHandler->checkRequiredFields($flatSchema);
-      if ($errors) {
-        foreach ($errors as $type => $integrationType) {
-          foreach ($integrationType as $key => $error) {
-            $event->getForm()->addError(
-              new FormError($error)
-            );
-          }
-          if (array_key_last($errors) != $type)
-            $event->getForm()->addError(
-              new FormError($this->translator->trans('backoffice.integration.or')),
-            );
-        }
-      }
+      
     } else {
       // No integration needed
       $service->setIntegrations(null);
