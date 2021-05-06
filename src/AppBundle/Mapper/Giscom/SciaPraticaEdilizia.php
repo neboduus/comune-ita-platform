@@ -106,9 +106,9 @@ class SciaPraticaEdilizia implements HashableInterface
     $this->moduloCompilato = new ModuloCompilato($data['moduloCompilato'] ?? null);
     $this->moduloDomanda = new ModuloDomanda($data['moduloDomanda'] ?? null);
     $this->elencoAllegatiAllaDomanda = new ElencoAllegatiAllaDomanda($data['elencoAllegatiAllaDomanda'] ?? null, $this->tipo);
-    $this->elencoSoggettiAventiTitolo = new ElencoSoggettiAventiTitolo($data['elencoSoggettiAventiTitolo'] ?? []);
-    $this->elencoAllegatiTecnici = new ElencoAllegatiTecnici($data['elencoAllegatiTecnici'] ?? [], $this->tipo);
-    $this->vincoli = new Vincoli($data['vincoli'] ?? [], $this->tipo);
+    $this->elencoSoggettiAventiTitolo = new ElencoSoggettiAventiTitolo($data['elencoSoggettiAventiTitolo'] ?? null);
+    $this->elencoAllegatiTecnici = new ElencoAllegatiTecnici($data['elencoAllegatiTecnici'] ?? null, $this->tipo);
+    $this->vincoli = new Vincoli($data['vincoli'] ?? null, $this->tipo);
     $this->tipoIntervento = $data['tipoIntervento'] ?? null;
     $this->protocolliAllegati = [];
     $this->meta = [];
