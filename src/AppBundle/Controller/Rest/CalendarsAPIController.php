@@ -2,16 +2,14 @@
 
 namespace AppBundle\Controller\Rest;
 
+use AppBundle\BackOffice\CalendarsBackOffice;
 use AppBundle\Entity\Calendar;
-use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
+use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\CalendarVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MeetingService;
-use DateInterval;
 use DateTime;
-use DateTimeZone;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -72,8 +70,13 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarsAction()
   {
-    $calendars = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findAll();
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
 
+    $calendars = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findAll();
     return $this->view($calendars, Response::HTTP_OK);
   }
 
@@ -98,6 +101,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarAction($id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
       $result = $repository->find($id);
@@ -156,6 +165,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarAvailabilitiesAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $startDate = $request->query->get('from_time');
     $endDate = $request->query->get('to_time');
     try {
@@ -252,6 +267,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getCalendarAvailabilitiesByDateAction($id, $date, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $allAvailabilities = strtolower($request->get('all') == 'true') ? true : false;
     $excludeUnavailable = $request->get('available');
     $excludedMeeting = $request->query->get('exclude');
@@ -326,6 +347,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function postCalendarAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
 
     $calendar = new Calendar();
@@ -415,6 +442,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function putCalendarAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
     $calendar = $repository->find($id);
 
@@ -509,6 +542,11 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function patchCalendarAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
 
     $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
     $calendar = $repository->find($id);
@@ -582,6 +620,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->find($id);
     if ($calendar) {
       $this->denyAccessUnlessGranted(CalendarVoter::DELETE, $calendar);
@@ -658,6 +702,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getOpeningHoursAction($calendar_id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
       $calendar = $repository->find($calendar_id);
@@ -696,6 +746,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function getOpeningHourAction($calendar_id, $id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
       $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
@@ -741,6 +797,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function deleteOpeningHourAction($calendar_id, $id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
     if ($openingHour) {
@@ -807,6 +869,12 @@ class CalendarsAPIController extends AbstractFOSRestController
 
   public function postOpeningHourAction($calendar_id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $calendar = $this->em->getRepository('AppBundle:Calendar')->find($calendar_id);
     if (!$calendar) {
       return $this->view('Calendar not found', Response::HTTP_BAD_REQUEST);
@@ -899,6 +967,12 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function putOpeningHourAction($calendar_id, $id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
@@ -994,6 +1068,11 @@ class CalendarsAPIController extends AbstractFOSRestController
    */
   public function patchOpeningHourAction($calendar_id, $id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
 
     $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);

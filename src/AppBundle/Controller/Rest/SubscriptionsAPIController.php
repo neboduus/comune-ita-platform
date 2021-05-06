@@ -4,6 +4,8 @@
 namespace AppBundle\Controller\Rest;
 
 
+use AppBundle\BackOffice\SubcriptionsBackOffice;
+use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -61,6 +63,12 @@ class SubscriptionsAPIController extends AbstractFOSRestController
    */
   public function getSubscriptionAvailabilityAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $fiscalCode = $request->query->get('cf');
     $code = $request->query->get('code');
 

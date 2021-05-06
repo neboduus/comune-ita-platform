@@ -2,12 +2,12 @@
 
 namespace AppBundle\Controller\Rest;
 
-use AppBundle\Entity\Pratica;
+use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\Subscription;
+use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\SubscriptionVoter;
 use AppBundle\Services\InstanceService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
@@ -83,6 +83,12 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function getSubscriptionServicesAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $results = [];
     $tags = array_filter(explode(',', $request->query->get('tags')));
     sort($tags);
@@ -134,6 +140,12 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function getSubscriptionServiceAction($id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
       $result = $repository->find($id);
@@ -193,6 +205,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function postSubscriptionServiceAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     $subscriptionService = new SubscriptionService();
@@ -281,6 +298,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function putSubscriptionServiceAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
@@ -447,6 +469,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     $subscriptionService = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->find($id);
@@ -528,6 +555,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function getSubscriptionsAction($subscription_service_id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     try {
@@ -578,6 +610,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function getSubscriptionAction($subscription_service_id, $id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     try {
       $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
@@ -623,6 +660,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function deleteSubscriptionAction($subscription_service_id, $id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
@@ -685,6 +727,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function postSubscriptionAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     $subscription = new Subscription();
@@ -794,6 +841,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function putSubscriptionAction($subscription_service_id, $id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
@@ -889,7 +941,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    */
   public function patchSubscriptionAction($subscription_service_id, $id, Request $request)
   {
-
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
     $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 

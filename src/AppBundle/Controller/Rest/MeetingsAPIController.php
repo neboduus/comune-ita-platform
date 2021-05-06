@@ -2,12 +2,13 @@
 
 namespace AppBundle\Controller\Rest;
 
+use AppBundle\BackOffice\CalendarsBackOffice;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
+use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\MeetingVoter;
 use AppBundle\Services\InstanceService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -77,6 +78,12 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function getMeetingsAction()
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
 
     /** @var User $user */
@@ -130,6 +137,12 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function getMeetingAction($id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     try {
       /** @var User $user */
       $user = $this->getUser();
@@ -204,6 +217,12 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function postMeetingAction(Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $meeting = new Meeting();
 
     $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
@@ -345,6 +364,12 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function putMeetingAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
     $meeting = $repository->find($id);
 
@@ -449,6 +474,11 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function patchMeetingAction($id, Request $request)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
 
     $repository = $this->getDoctrine()->getRepository('AppBundle:Meeting');
     $meeting = $repository->find($id);
@@ -534,6 +564,12 @@ class MeetingsAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      CalendarsBackOffice::PATH,
+      CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
     $meeting = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($id);
     if ($meeting) {
       $this->denyAccessUnlessGranted(MeetingVoter::DELETE, $meeting);
