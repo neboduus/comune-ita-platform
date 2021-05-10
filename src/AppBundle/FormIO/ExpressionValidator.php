@@ -55,12 +55,13 @@ class ExpressionValidator
     }
 
     $schema = $this->schemaFactory->createFromFormId($formIOId);
+
     if (empty($expression) && $schema->hasComponent(self::UNIQUE_ID_FIELD_NAME)) {
       $uniqueFieldName = self::UNIQUE_ID_FIELD_NAME;
       $expression = "applications.count({
         service: ['{$servizio->getSlug()}'],
         data: {'{$uniqueFieldName}': submission['{$uniqueFieldName}']},
-        status: ['1900','2000','3000', '4000','6000','7000']
+        status: ['1000','1530','8000', '9000','20000']
       }) == 0";
       if (empty($message)){
         $message = "Non è possibile inviare la pratica: è già stata presentata una richiesta per questo servizio";
@@ -88,7 +89,7 @@ class ExpressionValidator
           ->from(FormIO::class, 'pratica');
 
         if (!empty($parameters['status'])) {
-          $qb->andWhere('pratica.status IN (:status)')
+          $qb->andWhere('pratica.status NOT IN (:status)')
             ->setParameter('status', (array)$parameters['status']);
         }
 
