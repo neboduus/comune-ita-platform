@@ -69,12 +69,12 @@ class CalendarType extends AbstractType
       ])
       ->add('drafts_duration', NumberType::class, [
         'required' => false,
-        'empty_data' => Calendar::DEFAULT_DRAFT_DURATION,
+        'empty_data' => strval(Calendar::DEFAULT_DRAFT_DURATION/(60)),
         'label' => false,
       ])
       ->add('drafts_duration_increment', NumberType::class, [
         'required' => false,
-        'empty_data' => Calendar::DEFAULT_DRAFT_INCREMENT,
+        'empty_data' => strval(Calendar::DEFAULT_DRAFT_INCREMENT/(24*60*60)),
         'label' => false,
       ])
       ->add('is_moderated', CheckboxType::class, [
