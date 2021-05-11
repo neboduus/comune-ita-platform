@@ -79,8 +79,7 @@ class ApplicationMetrics  implements MetricsGeneratorInterface
           ['tenant', 'service', 'status', 'category']
         );
 
-        //$counter->inc(['all']);
-        $counter->incBy($m['count'], [$m['servizio'], $m['status'], $m['ente'], $m['categoria']]);
+        $counter->incBy($m['count'], [$m['ente'], $m['servizio'], $m['status'], $m['categoria']]);
 
       }
     } catch (\Exception $e) {
