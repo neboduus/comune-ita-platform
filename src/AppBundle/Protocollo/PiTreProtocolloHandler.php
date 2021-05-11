@@ -253,6 +253,12 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     }
   }
 
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface|null $allegato
+   * @return PiTreProtocolloParameters
+   * @throws \Exception
+   */
   private function getParameters(Pratica $pratica, AllegatoInterface $allegato = null)
   {
     $ente = $pratica->getEnte();
@@ -269,6 +275,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     }
 
     if ($allegato instanceof AllegatoInterface) {
+
+      $this->checkFileSize($pratica, $allegato);
+
       $parameters->setDocumentId($pratica->getIdDocumentoProtocollo());
       //$parameters->setFilePath($allegato->getFile()->getPathname());
       $path = $allegato->getFile()->getPathname();
@@ -287,8 +296,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 
       /** @var ModuloCompilato $moduloCompilato */
       $moduloCompilato = $pratica->getModuliCompilati()->first();
-      $parameters->setProjectDescription($pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
+      $this->checkFileSize($pratica, $moduloCompilato);
+
+      $parameters->setProjectDescription($pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
       $parameters->setDocumentObj($object);
       $parameters->setDocumentDescription($moduloCompilato->getDescription());
 
@@ -298,10 +309,8 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $fileContent = base64_encode(file_get_contents($path));
       $parameters->setFile($fileContent);
       $parameters->setChecksum(md5($fileContent));
-
       $parameters->setCreateProject(true);
       $parameters->setDocumentType("A");
-
       $parameters->setSenderName($user->getNome());
       $parameters->setSenderSurname($user->getCognome());
       $parameters->setSenderCf($user->getCodiceFiscale());
@@ -327,6 +336,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     }
 
     if ($allegato instanceof AllegatoInterface) {
+
+      $this->checkFileSize($pratica, $allegato);
+
       $parameters->setDocumentId($risposta->getIdDocumentoProtocollo());
       //$parameters->setFilePath($allegato->getFile()->getPathname());
       $path = $allegato->getFile()->getPathname();
@@ -337,6 +349,8 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
 
       $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
     } else {
+
+      $this->checkFileSize($pratica, $risposta);
 
       $object = $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale();
       if ($pratica->getOggetto() != null && !empty($pratica->getOggetto())) {
@@ -366,10 +380,18 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     return $parameters;
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return PiTreProtocolloParameters
+   * @throws \Exception
+   */
   private function getRititroParameters(Pratica $pratica)
   {
 
     $ritiro = $pratica->getWithdrawAttachment();
+
+    $this->checkFileSize($pratica, $ritiro);
+
     $ente = $pratica->getEnte();
     $servizio = $pratica->getServizio();
     /** @var CPSUser $user */
@@ -408,8 +430,17 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     return $parameters;
   }
 
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $richiesta
+   * @return PiTreProtocolloParameters
+   * @throws \Exception
+   */
   private function getRichiestaIntegrazioneParameters(Pratica $pratica, AllegatoInterface $richiesta)
   {
+
+    $this->checkFileSize($pratica, $richiesta);
+
     $ente = $pratica->getEnte();
     $servizio = $pratica->getServizio();
     /** @var CPSUser $user */
@@ -453,9 +484,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
    * @return PiTreProtocolloParameters
+   * @throws \Exception
    */
   private function getRispostaIntegrazioneParameters(Pratica $pratica, AllegatoInterface $allegato)
   {
+
+    $this->checkFileSize($pratica, $allegato);
+
     $ente = $pratica->getEnte();
     $servizio = $pratica->getServizio();
     /** @var CPSUser $user */
@@ -500,9 +535,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
    * @param RispostaIntegrazione $rispostaIntegrazione
    * @param AllegatoInterface $integrazione
    * @return PiTreProtocolloParameters
+   * @throws \Exception
    */
   private function getIntegrazioneParameters(Pratica $pratica, RispostaIntegrazione $rispostaIntegrazione,  AllegatoInterface $integrazione)
   {
+
+    $this->checkFileSize($pratica, $integrazione);
+
     $ente = $pratica->getEnte();
     $servizio = $pratica->getServizio();
     /** @var CPSUser $user */
@@ -526,6 +565,11 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     return $parameters;
   }
 
+  /**
+   * @param Servizio $servizio
+   * @param Ente $ente
+   * @return array
+   */
   private function getServizioParameters(Servizio $servizio, Ente $ente)
   {
     if (!empty($servizio->getProtocolloParameters())) {
@@ -533,6 +577,18 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     }
 
     return (array)$ente->getProtocolloParametersPerServizio($servizio);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   * @throws \Exception
+   */
+  private function checkFileSize(Pratica $pratica, AllegatoInterface $allegato)
+  {
+    if ($allegato->getFile()->getSize() <= 0) {
+      throw new \Exception('File size error - application: ' .  $pratica->getId() . ' - attachment: ' . $allegato->getId());
+    }
   }
 
 }
