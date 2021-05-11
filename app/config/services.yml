@@ -1036,6 +1036,12 @@ services:
     tags:
       - { name: security.voter }
 
+  security.access.backoffices_voter:
+    class: AppBundle\Security\Voters\BackofficeVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
   security.access.subscription_voter:
     class: AppBundle\Security\Voters\SubscriptionVoter
     autowire: true
