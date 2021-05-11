@@ -95,6 +95,7 @@ class Calendar
    *
    * @ORM\Column(name="drafts_duration", type="integer", nullable=true)
    * @SWG\Property(description="Calendar draft meetings duration (minutes)", type="integer")
+   * @Serializer\Exclude()
    */
   private $draftsDuration;
 
@@ -104,6 +105,7 @@ class Calendar
    *
    * @ORM\Column(name="drafts_duration_increment", type="integer", nullable=true)
    * @SWG\Property(description="Calendar draft meetings duration increment (days)", type="integer")
+   * @Serializer\Exclude()
    */
   private $draftsDurationIncrement;
 
@@ -373,7 +375,7 @@ class Calendar
    */
   public function getDraftsDuration()
   {
-    return $this->draftsDuration ?? self::DEFAULT_DRAFT_DURATION;
+    return $this->draftsDuration;
   }
 
   /**
@@ -397,7 +399,7 @@ class Calendar
    */
   public function getDraftsDurationIncrement()
   {
-    return $this->draftsDurationIncrement ?? self::DEFAULT_DRAFT_DURATION;
+    return $this->draftsDurationIncrement;
   }
 
   /**
@@ -703,6 +705,27 @@ class Calendar
     $this->updatedAt = $updated_at;
 
     return $this;
+  }
+
+
+  /**
+   * @Serializer\VirtualProperty(name="drafts_duration")
+   * @Serializer\Type("int")
+   * @Serializer\SerializedName("drafts_duration")
+   */
+  public function getDraftDurationInMinutes()
+  {
+    return $this->getDraftsDuration() / (60);
+  }
+
+  /**
+   * @Serializer\VirtualProperty(name="drafts_duration_increment")
+   * @Serializer\Type("int")
+   * @Serializer\SerializedName("drafts_duration_increment")
+   */
+  public function getDraftDurationIncrementInDays()
+  {
+    return $this->getDraftsDurationIncrement() / (24*60*60);
   }
 
   /**
