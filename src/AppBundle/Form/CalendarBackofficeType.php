@@ -91,6 +91,10 @@ class CalendarBackofficeType extends AbstractType
         'empty_data' => Calendar::DEFAULT_DRAFT_INCREMENT,
         'label' => "calendars.drafts_duration_increment.label",
       ])
+      ->add('allow_overlaps', CheckboxType::class, [
+        'required' => false,
+        'label' => 'calendars.allow_overlaps',
+      ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
         'label' => 'calendars.is_moderated',
@@ -141,13 +145,13 @@ class CalendarBackofficeType extends AbstractType
 
     $builder->addViewTransformer(new CallbackTransformer(
       function ($original) {
-        $original->setDraftsDuration($original->getDraftsDuration()/60);
-        $original->setDraftsDurationIncrement($original->getDraftsDurationIncrement()/(24*60*60));
+        $original->setDraftsDuration($original->getDraftsDuration() / 60);
+        $original->setDraftsDurationIncrement($original->getDraftsDurationIncrement() / (24 * 60 * 60));
         return $original;
       },
       function ($submitted) {
-        $submitted->setDraftsDuration((int)$submitted->getDraftsDuration()*60);
-        $submitted->setDraftsDurationIncrement((int)$submitted->getDraftsDurationIncrement()*(24*60*60));
+        $submitted->setDraftsDuration((int)$submitted->getDraftsDuration() * 60);
+        $submitted->setDraftsDurationIncrement((int)$submitted->getDraftsDurationIncrement() * (24 * 60 * 60));
         return clone $submitted;
       }
     ));
@@ -160,43 +164,47 @@ class CalendarBackofficeType extends AbstractType
      */
     $calendar = $event->getForm()->getData();
 
+    if (!isset($event->getData()["allow_overlaps"])) {
+      $calendar->setAllowOverlaps(false);
+      $openingHours = isset($event->getData()['opening_hours']) ? $event->getData()['opening_hours'] : [];
 
-    $openingHours = isset($event->getData()['opening_hours']) ? $event->getData()['opening_hours'] : [];
+      // Check if opening hours overlaps
+      foreach ($openingHours as $index1 => $openingHour1) {
+        foreach ($openingHours as $index2 => $openingHour2) {
+          // Skip opening hours already analyzed
+          if ($index2 > $index1) {
+            $isDatesOverlapped = $openingHour1['start_date'] <= $openingHour2['end_date'] && $openingHour1['end_date'] >= $openingHour2['start_date'];
+            $isTimesOverlapped = $openingHour1['begin_hour'] <= $openingHour2['end_hour'] && $openingHour1['end_hour'] >= $openingHour2['begin_hour'];
+            $weekDaysOverlapped = array_intersect($openingHour1['days_of_week'], $openingHour2['days_of_week']);
 
-    // Check if opening hours overlaps
-    foreach ($openingHours as $index1 => $openingHour1) {
-      foreach ($openingHours as $index2 => $openingHour2) {
-        // Skip opening hours already analyzed
-        if ($index2 > $index1) {
-          $isDatesOverlapped = $openingHour1['start_date'] <= $openingHour2['end_date'] && $openingHour1['end_date'] >= $openingHour2['start_date'];
-          $isTimesOverlapped = $openingHour1['begin_hour'] <= $openingHour2['end_hour'] && $openingHour1['end_hour'] >= $openingHour2['begin_hour'];
-          $weekDaysOverlapped = array_intersect($openingHour1['days_of_week'], $openingHour2['days_of_week']);
+            if ($isTimesOverlapped && $isDatesOverlapped && !empty($weekDaysOverlapped)) {
+              // translate overlapped week days
+              $days = array_map(function ($day) {
+                return $this->translator->trans('calendars.opening_hours.weeks.week_day_' . $day);
+              }, $weekDaysOverlapped);
 
-          if ($isTimesOverlapped && $isDatesOverlapped && !empty($weekDaysOverlapped)) {
-            // translate overlapped week days
-            $days = array_map(function ($day) {
-              return $this->translator->trans('calendars.opening_hours.weeks.week_day_' . $day);
-            }, $weekDaysOverlapped);
+              // Concatenation
+              $daysStr = join(
+                ' e ',
+                array_filter(
+                  array_merge(array(join(', ', array_slice($days, 0, -1))),
+                    array_slice($days, -1)), 'strlen'));
 
-            // Concatenation
-            $daysStr = join(
-              ' e ',
-              array_filter(
-                array_merge(array(join(', ', array_slice($days, 0, -1))),
-                  array_slice($days, -1)), 'strlen'));
-
-            $event->getForm()->addError(new FormError(
-              $this->translator->trans('calendars.opening_hours.error.overlap', [
-                '%behinHour1%' => $openingHour1['begin_hour'],
-                '%endHour1%' => $openingHour1['end_hour'],
-                '%behinHour2%' => $openingHour2['begin_hour'],
-                '%endHour2%' => $openingHour2['end_hour'],
-                '%days%' => $daysStr
-              ]))
-            );
+              $event->getForm()->addError(new FormError(
+                  $this->translator->trans('calendars.opening_hours.error.overlap', [
+                    '%behinHour1%' => $openingHour1['begin_hour'],
+                    '%endHour1%' => $openingHour1['end_hour'],
+                    '%behinHour2%' => $openingHour2['begin_hour'],
+                    '%endHour2%' => $openingHour2['end_hour'],
+                    '%days%' => $daysStr
+                  ]))
+              );
+            }
           }
         }
       }
+    } else {
+      $calendar->setAllowOverlaps(true);
     }
   }
 

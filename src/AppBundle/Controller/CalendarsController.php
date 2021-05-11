@@ -655,6 +655,7 @@ class CalendarsController extends Controller
     $user = $this->getUser();
     $date = $request->get('date');
     $slot = $request->get('slot');
+    $openingHourId = $request->get('opening_hour');
     $calendarId = $request->get('calendar');
     $meetingId = $request->get('meeting');
 
@@ -668,6 +669,13 @@ class CalendarsController extends Controller
     if (!$calendar) {
       return new JsonResponse([
         "error" => "Calendar " . $calendarId . " not found"
+      ], Response::HTTP_NOT_FOUND);
+    }
+
+    $openingHour = $this->em->getRepository('AppBundle:OpeningHour')->find($openingHourId);
+    if (!$openingHour) {
+      return new JsonResponse([
+        "error" => "Opening hour " . $openingHourId . " not found"
       ], Response::HTTP_NOT_FOUND);
     }
 
@@ -688,6 +696,7 @@ class CalendarsController extends Controller
     $meeting->setFromTime($fromTime);
     $meeting->setToTime($toTime);
     $meeting->setCalendar($calendar);
+    $meeting->setOpeningHour($openingHour);
     $meeting->setUserMessage($this->translator->trans('meetings.default_draft_message'));
     $meeting->setStatus(Meeting::STATUS_DRAFT);
     $meeting->setDraftExpiration(new \DateTime('+' . $calendar->getDraftsDuration() . 'seconds'));

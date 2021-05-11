@@ -2,16 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use DateInterval;
-use DatePeriod;
 use DateTime;
-use DateTimeZone;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\ORMException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Swagger\Annotations as SWG;
@@ -28,6 +22,25 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class OpeningHour
 {
+  const WEEKDAYS = [
+    'calendars.opening_hours.weeks.week_day_1' => 1,
+    'calendars.opening_hours.weeks.week_day_2' => 2,
+    'calendars.opening_hours.weeks.week_day_3' => 3,
+    'calendars.opening_hours.weeks.week_day_4' => 4,
+    'calendars.opening_hours.weeks.week_day_5' => 5,
+    'calendars.opening_hours.weeks.week_day_6' => 6,
+    'calendars.opening_hours.weeks.week_day_7' => 7
+  ];
+  const WEEKDAYS_SHORT = [
+    'Lu' => 1,
+    'Ma' => 2,
+    'Me' => 3,
+    'Gio' => 4,
+    'Ve' => 5,
+    'Sa' => 6,
+    'Do' => 7
+  ];
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
@@ -89,6 +102,14 @@ class OpeningHour
    * @Serializer\Type("DateTime<'H:i'>")
    */
   private $endHour;
+
+  /**
+   * @var bool
+   *
+   * @ORM\Column(name="is_moderated", type="boolean", options={"default" : 0})
+   * @SWG\Property(description="Calendar's moderation mode", type="boolean")
+   */
+  private $isModerated;
 
   /**
    * @var int
@@ -301,6 +322,30 @@ class OpeningHour
   }
 
   /**
+   * Set isModerated.
+   *
+   * @param bool $isModerated
+   *
+   * @return OpeningHour
+   */
+  public function setIsModerated($isModerated)
+  {
+    $this->isModerated = $isModerated;
+
+    return $this;
+  }
+
+  /**
+   * Get isModerated.
+   *
+   * @return bool
+   */
+  public function getIsModerated()
+  {
+    return $this->isModerated;
+  }
+
+  /**
    * Set meetingMinutes.
    *
    * @param int $meetingMinutes
@@ -486,5 +531,19 @@ class OpeningHour
   public function __toString()
   {
     return (string)$this->getId();
+  }
+
+  /**
+   * @Serializer\VirtualProperty(name="name")
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("name")
+   *
+   */
+  public function getName(): string
+  {
+    $name = implode(', ', $this->daysOfWeek);
+    $name = str_replace($this->daysOfWeek, array_flip(self::WEEKDAYS_SHORT), $name);
+    $name = $name . ' | ' . $this->getBeginHour()->format('H:i') . ' - ' . $this->getEndHour()->format('H:i');
+    return $name;
   }
 }

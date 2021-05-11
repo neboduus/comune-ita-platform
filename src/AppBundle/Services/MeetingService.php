@@ -69,16 +69,14 @@ class MeetingService
   public function isSlotAvailable(Meeting $meeting)
   {
     // Retrieve all meetings in the same time slot
+
     $meetings = $this->entityManager->createQueryBuilder()
-      ->select('openingHour.meetingQueue', 'count(meeting.fromTime) as meetingCount')
+      ->select('count(meeting.fromTime) as meetingCount')
       ->from('AppBundle:Meeting', 'meeting')
       ->leftJoin('meeting.calendar', 'calendar')
-      ->leftJoin('calendar.openingHours', 'openingHour')
       ->where('meeting.calendar = :calendar')
-      ->andWhere('meeting.fromTime = :fromTime')
-      ->andWhere('meeting.toTime = :toTime')
-      ->andWhere('openingHour.beginHour <= :fromTime')
-      ->andWhere('openingHour.endHour >= :toTime')
+      ->andWhere('meeting.fromTime >= :fromTime')
+      ->andWhere('meeting.toTime <= :toTime')
       ->andWhere('meeting.id != :id')
       ->andWhere('meeting.status != :refused')
       ->andWhere('meeting.status != :cancelled')
@@ -88,10 +86,10 @@ class MeetingService
       ->setParameter('id', $meeting->getId())
       ->setParameter('refused', Meeting::STATUS_REFUSED)
       ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
-      ->groupBy('meeting.fromTime', 'meeting.toTime', 'openingHour.meetingQueue')
+      ->groupBy('meeting.fromTime', 'meeting.toTime')
       ->getQuery()->getResult();
 
-    if (!empty($meetings) && $meetings[0]['meetingCount'] >= $meetings[0]['meetingQueue']) {
+    if (!empty($meetings) && $meetings[0]['meetingCount'] >= $meeting->getOpeningHour()->getMeetingQueue()) {
       return false;
     }
     return true;
@@ -172,7 +170,8 @@ class MeetingService
           'date' => $date->format('Y-m-d'),
           'start_time' => $_begin->format('H:i'),
           'end_time' => $_end->format('H:i'),
-          'slots_available' => $openingHour->getMeetingQueue()
+          'slots_available' => $openingHour->getMeetingQueue(),
+          'opening_hour' =>$openingHour->getId()
         ];
       }
     }
@@ -250,7 +249,6 @@ class MeetingService
       foreach ($this->explodeMeetings($openingHour, new DateTime($date)) as $slot) {
         $now = (new DateTime())->format('Y-m-d:H:i');
         $startTime = (\DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time']))->format('Y-m-d:H:i');
-
         if ($startTime > $now) {
           $start = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time'])->format('c');
           $end = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['end_time'])->format('c');
@@ -587,10 +585,22 @@ class MeetingService
     }
   }
 
-  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null)
+  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
   {
     /** @var OpeningHour[] $openingHours */
-    $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $calendar]);
+    if ($selectedOpeningHours) {
+      foreach ($selectedOpeningHours as $selectedOpeningHour) {
+        $openingHour = $this->entityManager->getRepository('AppBundle:OpeningHour')->findOneBy([
+          'calendar'=>$calendar,
+          'id'=>$selectedOpeningHour
+        ]);
+        if ($openingHour) {
+          $openingHours[] = $openingHour;
+        }
+      }
+    } else {
+      $openingHours = $calendar->getOpeningHours();
+    }
 
     $start = clone ($date)->setTime(0, 0, 0);
     $end = clone ($date)->setTime(23, 59, 59);
@@ -636,30 +646,81 @@ class MeetingService
     $availableSlots = [];
     // Set availability of slots
     foreach ($slots as $key => $day) {
-      if (array_key_exists($key, $meetings)) {
-        $slots[$key]['availability'] = $meetings[$key]['count'] >= $slots[$key]['slots_available'] ? false : true;
-        $slots[$key]['slots_available'] = max($slots[$key]['slots_available'] - $meetings[$key]['count'], 0);
-        if ($slots[$key]['availability'] == true) {
-          $availableSlots[$key] = $slots[$key];
+      $totalSlotsAvailable = $slots[$key]['slots_available'];
+      $slotsUnavailable = 0;
+
+      // Todo: trovare un modo migliore
+      foreach ($meetings as $meeting) {
+        // Check availabilities on booked meetings
+        $bookedStartTime = $meeting["start_time"];
+        $bookedEndTime = $meeting["end_time"];
+        $slotStartTime = new DateTime($day["date"] . ' ' . $day["start_time"]);
+        $slotEndTime = new DateTime($day["date"] . ' ' . $day["end_time"]);
+        if(array_key_exists($key, $meetings)) {
+          $totalSlotsAvailable = $totalSlotsAvailable - $meetings[$key]['count'];
+        }else if ($bookedEndTime > $slotStartTime && $bookedStartTime < $slotEndTime) {
+          $slotsUnavailable = max($slotsUnavailable, $meeting['count'], 0);
         }
+      }
+      $slots[$key]['availability'] = $slotsUnavailable >= $totalSlotsAvailable ? false : true;
+      $slots[$key]['slots_available'] = max($totalSlotsAvailable - $slotsUnavailable, 0);
+
+      if ($all) {
+        $noticeInterval = new DateInterval('PT0H');
       } else {
-        if ($all) {
-          $noticeInterval = new DateInterval('PT0H');
-        } else {
-          $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
-        }
-        $now = (new DateTime())->add($noticeInterval)->format('Y-m-d:H:i');
-        $start = (\DateTime::createFromFormat('Y-m-d:H:i', $day['date'] . ':' . $day['start_time']))->format('Y-m-d:H:i');
-        if ($start <= $now)
-          $slots[$key] = $slots[$key] + ['availability' => false];
-        else
-          $slots[$key] = $slots[$key] + ['availability' => true];
-        if ($slots[$key]['availability'] == true) {
-          $availableSlots[$key] = $slots[$key];
-        }
+        $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
+      }
+      $now = (new DateTime())->add($noticeInterval)->format('Y-m-d:H:i');
+      $start = (\DateTime::createFromFormat('Y-m-d:H:i', $day['date'] . ':' . $day['start_time']))->format('Y-m-d:H:i');
+
+      if ($start <= $now)
+        $slots[$key]['availability'] = false;
+      else
+        $slots[$key]['availability'] = true;
+      if ($slots[$key]['availability'] == true) {
+        $availableSlots[$key] = $slots[$key];
       }
     }
     if ($exludeUnavailable) return $availableSlots;
-    else return $slots;
+    else return empty($availableSlots) ? [] :$slots;
+  }
+
+  public function getOpeningHoursOverlaps(Calendar $calendar, $selectedOpeningHours = []) {
+
+    $overlaps = [];
+    /** @var OpeningHour[] $openingHours */
+    $openingHours = [];
+
+    if ($selectedOpeningHours) {
+      foreach ($selectedOpeningHours as $selectedOpeningHour) {
+        $openingHour = $this->entityManager->getRepository('AppBundle:OpeningHour')->findOneBy([
+          'calendar'=>$calendar,
+          'id'=>$selectedOpeningHour
+        ]);
+        if ($openingHour) {
+          $openingHours[] = $openingHour;
+        }
+      }
+    } else {
+      $openingHours = $calendar->getOpeningHours();
+    }
+
+    foreach ($openingHours as $index1 => $openingHour1) {
+      foreach ($openingHours as $index2 => $openingHour2) {
+        if ($index2 > $index1) {
+          // Skip opening hours already analyzed
+          $isDatesOverlapped = $openingHour1->getStartDate() <= $openingHour2->getEndDate() && $openingHour1->getEndDate() >= $openingHour2->getStartDate();
+          $isTimesOverlapped = $openingHour1->getBeginHour() <= $openingHour2->getEndHour() && $openingHour1->getEndHour() >= $openingHour2->getBeginHour();
+          $weekDaysOverlapped = array_intersect($openingHour1->getDaysOfWeek(), $openingHour2->getDaysOfWeek());
+
+          if ($isTimesOverlapped && $isDatesOverlapped && !empty($weekDaysOverlapped)) {
+            $overlaps[$openingHour1->getId()] = $openingHour1;
+            $overlaps[$openingHour2->getId()] = $openingHour2;
+          }
+        }
+      }
+    }
+
+    return array_values($overlaps);
   }
 }

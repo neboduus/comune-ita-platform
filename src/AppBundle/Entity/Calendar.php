@@ -123,6 +123,15 @@ class Calendar
    */
   private $allowCancelDays;
 
+
+  /**
+   * @var bool
+   *
+   * @ORM\Column(name="allow_overlaps", type="boolean", options={"default" : 0})
+   * @SWG\Property(description="Allow calendar's opening hours overlaps", type="boolean")
+   */
+  private $allowOverlaps;
+
   /**
    * @var bool
    *
@@ -440,6 +449,29 @@ class Calendar
   }
 
   /**
+   * Set allowOverlaps.
+   *
+   * @param bool $allowOperlaps
+   *
+   * @return Calendar
+   */
+  public function setAllowOverlaps($allowOperlaps)
+  {
+    $this->allowOverlaps = $allowOperlaps;
+    return $this;
+  }
+
+  /**
+   * Get allowOperlaps.
+   *
+   * @return bool
+   */
+  public function isAllowOverlaps()
+  {
+    return $this->allowOverlaps ?? false;
+  }
+
+  /**
    * @return Collection
    */
   public function getModerators()
@@ -523,16 +555,20 @@ class Calendar
 
   /**
    * @Serializer\VirtualProperty(name="opening_hours")
-   * @Serializer\Type("array<string>")
+   * @Serializer\Type("array<array>")
    * @Serializer\SerializedName("opening_hours")
    */
-  public function getOpeningHourIds(): array
+  public function getOpeningHoursList(): array
   {
-    $ids = [];
+    $openingHours = [];
     foreach ($this->openingHours as $openingHour) {
-      $ids[] = $openingHour->getId();
+      if ($openingHour->getEndDate() > new DateTime()) {
+        $openingHours[] = ["id" => $openingHour->getId(),
+          "name" => $openingHour->getName()
+        ];
+      }
     }
-    return $ids;
+    return $openingHours;
   }
 
   /**

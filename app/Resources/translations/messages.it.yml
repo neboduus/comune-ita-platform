@@ -1879,6 +1879,7 @@ calendars:
   contact_email: "Email di contatto"
   minimum_scheduling_notice: "Preavviso minimo per una prenotazione"
   is_moderated: "Richiede moderazione?"
+  allow_overlaps: "Consenti la sovrapposizione degli orari di apertura?"
   owner: "Proprietario"
   location: "Luogo dell'appuntamento"
   drafts_duration_increment:
@@ -1904,6 +1905,14 @@ calendars:
       week_day_5: "Venerdì"
       week_day_6: "Sabato"
       week_day_7: "Domenica"
+    short_weeks:
+      week_day_1: "Lu"
+      week_day_2: "Ma"
+      week_day_3: "Me"
+      week_day_4: "Gio"
+      week_day_5: "Ve"
+      week_day_6: "Sa"
+      week_day_7: "Do"
     error:
       overlap: "L'orario di apertura %behinHour1%-%endHour1% si sovrappone con l'orario %behinHour2%-%endHour2% nei giorni %days%"
       cannot_change: 'Non è possibile modificare la durata o l intervallo tra i meeting fintanto che

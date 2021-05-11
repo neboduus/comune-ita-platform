@@ -117,8 +117,7 @@ class Meeting
   /**
    * @var string
    *
-   * @ORM\Column(name="user_message", type="text")
-   * @Assert\NotBlank(message="Questo campo è obbligatorio (userMessage)")
+   * @ORM\Column(name="user_message", type="text", nullable=true)
    * @SWG\Property(description="Meeting's User Message", type="string")
    */
   private $userMessage;
@@ -253,6 +252,10 @@ class Meeting
   public function setOpeningHour(?OpeningHour $openingHour): self
   {
     $this->openingHour = $openingHour;
+    if ($this->openingHour->getIsModerated() || $this->calendar->getIsModerated())
+      $this->setStatus(self::STATUS_PENDING);
+    else
+      $this->setStatus(self::STATUS_APPROVED);
 
     return $this;
   }
