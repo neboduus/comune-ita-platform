@@ -112,6 +112,9 @@ parameters:
     browsers_restrictions: '%env(BROWSERS_RESTRICTIONS)%'
     io_api_url: '%env(IO_API_URL)%'
     cache_max_age: '%env(CACHE_MAX_AGE)%'
+    metrics_redis_host: '%env(METRICS_REDIS_HOST)%'
+    metrics_redis_port: 6379 #se passato con variabile da errore sul tipo, risolto in sf4
+    metrics_redis_password: '%env(METRICS_REDIS_PASSWORD)%'
 
     #Default fallback if env not set
     env(PREFIX): ''
@@ -197,4 +200,7 @@ parameters:
     env(BROWSERS_RESTRICTIONS): null
     env(IO_API_URL): 'https://api.io.italia.it/api/v1'
     env(CACHE_MAX_AGE): '0'
+    env(METRICS_REDIS_HOST): 'redis'
+    env(METRICS_REDIS_PORT): 6379
+    env(METRICS_REDIS_PASSWORD): ~
 

@@ -29,6 +29,12 @@ class ScheduledActionCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
     $hostname = gethostname();
+
+    $instance = $input->getOption('instance');
+    if (empty($instance)) {
+      $instance = 'default';
+    }
+
     $logger = $this->getContainer()->get('logger');
 
     $context = $this->getContainer()->get('router')->getContext();
@@ -64,6 +70,7 @@ class ScheduledActionCommand extends ContainerAwareCommand
     $count = count($actions);
     $logger->info("Execute $count actions for host $hostname");
 
+    $metrics = $this->getContainer()->get('AppBundle\Services\Metrics\ScheduledActionMetrics');
     foreach ($actions as $action) {
       try {
         $service = $this->getContainer()->get($action->getService());
@@ -72,18 +79,22 @@ class ScheduledActionCommand extends ContainerAwareCommand
           try {
             $service->executeScheduledAction($action);
             $scheduleActionService->markAsDone($action);
+            $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'success');
           } catch (\Throwable $e) {
             $message = $e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine();
             $logger->error($message);
             $scheduleActionService->removeHostAndSaveLog($action, $message);
+            $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'error');
           }
         } else {
           $logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
           $scheduleActionService->markAsInvalid($action);
+          $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
         }
       } catch (ServiceNotFoundException $e) {
         $logger->error($e->getMessage());
         $scheduleActionService->markAsInvalid($action);
+        $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
       }
     }
 

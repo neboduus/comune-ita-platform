@@ -1030,6 +1030,11 @@ services:
     tags:
       - { name: prometheus_metrics_bundle.metrics_generator }
 
+  AppBundle\Services\Metrics\ScheduledActionMetrics:
+    autowire: true
+    tags:
+      - { name: prometheus_metrics_bundle.metrics_generator }
+
   security.access.users_voter:
     class: AppBundle\Security\Voters\UserVoter
     autowire: true
