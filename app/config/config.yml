@@ -266,4 +266,11 @@ artprima_prometheus_metrics:
   # namespace is used to prefix the prometheus metrics
   namespace: sdc
   # metrics backend type
-  type: in_memory # possible values: in_memory, apcu, redis
+  type: redis # possible values: in_memory, apcu, redis
+  redis:
+    host: "%metrics_redis_host%"
+    port: "%metrics_redis_port%"
+    timeout: 0.1
+    read_timeout: 10
+    persistent_connections: false
+    password: "%metrics_redis_password%"

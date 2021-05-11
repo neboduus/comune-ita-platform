@@ -70,6 +70,9 @@ services:
       SINGLE_LOGOUT_URL: $SINGLE_LOGOUT_URL
       IO_API_URL: $IO_API_URL
       CACHE_MAX_AGE: $CACHE_MAX_AGE
+      METRICS_REDIS_HOST: $METRICS_REDIS_HOST
+      METRICS_REDIS_PORT: $METRICS_REDIS_PORT
+      METRICS_REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
 
       # Your Queue-it customer ID
       #QUEUEIT_CUSTOMER_ID: 'xxx'
@@ -248,6 +251,11 @@ services:
       traefik.http.routers.idp-http.entrypoints: web
     links:
       - "openlogin:auth.localtest.me"
+
+  redis:
+    image: wodby/redis:5-3.7.6
+    environment:
+      REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
 
 volumes:
   pgdata:
