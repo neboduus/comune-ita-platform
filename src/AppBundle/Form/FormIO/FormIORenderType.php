@@ -247,6 +247,7 @@ class FormIORenderType extends AbstractType
       'schema' => $flattenedSchema
     ]);
 
+    $attachments = [];
     foreach ($flattenedData as $key => $value) {
       // Associa gli allegati alla pratica
       if (isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
@@ -266,6 +267,12 @@ class FormIORenderType extends AbstractType
           }
         }
       }
+    }
+
+    // Verifico che il numero degli allegati associati alla pratica sia uguale a quello passato nel form
+    if ($pratica->getAllegati()->count() != count($attachments)) {
+      $this->logger->error("The number of files in form data is not equal to those linked to the application", ['pratica' => $pratica->getId()]);
+      $event->getForm()->addError(new FormError($this->attachmentsViolationMessage));
     }
 
     if ($pratica->getUser() instanceof CPSUser) {
