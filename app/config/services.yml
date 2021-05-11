@@ -339,6 +339,7 @@ services:
       - "%ez_password%"
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.schedule_action_service"
+      - "@logger"
 
   ocsdc.webhook_service:
     class: AppBundle\Services\WebhookService

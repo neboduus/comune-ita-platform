@@ -27,6 +27,8 @@ use AppBundle\Services\Manager\PraticaManager;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -112,6 +114,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private $scheduleActionService;
 
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
   public function __construct(
     Filesystem $filesystem,
     EntityManagerInterface $em,
@@ -124,7 +131,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     UrlGeneratorInterface $router,
     string $printablePassword,
     PraticaStatusService $statusService,
-    ScheduleActionService $scheduleActionService
+    ScheduleActionService $scheduleActionService,
+    LoggerInterface $logger
   )
   {
     $this->filesystem = $filesystem;
@@ -139,6 +147,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $this->printablePassword = $printablePassword;
     $this->statusService = $statusService;
     $this->scheduleActionService = $scheduleActionService;
+    $this->logger = $logger;
   }
 
   /**
@@ -577,6 +586,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
 
     try {
+
       $index = DocumentFactory::makeFromString('index.html', $html);
 
       $request = new HTMLRequest($index);
@@ -588,12 +598,16 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     } catch (RequestException $e) {
       # this exception is thrown if given paper size or margins are not correct.
+      $this->logger->error($e->getMessage());
+      return $e->getMessage();
     } catch (ClientException $e) {
       # this exception is thrown by the client if the API has returned a code != 200.
+      $this->logger->error($e->getMessage());
+      return $e->getMessage();
     } catch (Exception $e) {
-
+      $this->logger->error($e->getMessage());
+      return $e->getMessage();
     }
-    return '';
   }
 
   /**
