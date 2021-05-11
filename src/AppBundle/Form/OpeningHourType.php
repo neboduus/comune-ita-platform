@@ -9,9 +9,11 @@ use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -49,8 +51,6 @@ class OpeningHourType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $weekdays = ['Lunedì' => 1, 'Martedì' => 2, 'Mercoledì' => 3, 'Giovedì' => 4, 'Venerdì' => 5, 'Sabato' => 6, 'Domenica' => 7];
-
     $builder
       ->add('start_date', DateType::class, [
         'widget' => 'single_text',
@@ -65,7 +65,7 @@ class OpeningHourType extends AbstractType
       ->add('days_of_week', ChoiceType::class, [
         'label' => 'Giorni della settimana',
         'required' => false,
-        'choices' => $weekdays,
+        'choices' => OpeningHour::WEEKDAYS,
         'multiple' => true,
         'expanded' => true,
       ])
@@ -78,6 +78,10 @@ class OpeningHourType extends AbstractType
         'widget' => 'single_text',
         'required' => true,
         'label' => 'Orario di chiusura'
+      ])
+      ->add('is_moderated', CheckboxType::class, [
+        'required' => false,
+        'label' => 'calendars.is_moderated',
       ])
       ->add('meeting_minutes', IntegerType::class, [
         'required' => true,

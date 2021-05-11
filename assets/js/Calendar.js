@@ -13,6 +13,7 @@ export default class FormioCalendar extends Base {
         this.calendar = null;
         this.meeting = null;
         this.meeting_expiration_time = null;
+        this.opening_hour = null;
         this.loaderTpl = '<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span></div>';
     }
 
@@ -73,6 +74,8 @@ export default class FormioCalendar extends Base {
 
         let self = this,
             calendarID = this.component.calendarId,
+            selectOpeningHours = this.component.select_opening_hours,
+            openingHours = this.component.select_opening_hours ? this.component.opening_hours : null,
             location = window.location,
             html = '',
             explodedPath = location.pathname.split("/");
@@ -96,7 +99,11 @@ export default class FormioCalendar extends Base {
 
 
         if (calendarID !== '' && calendarID != null) {
-            $.ajax(location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities',
+            let url = location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities';
+            if (selectOpeningHours) {
+                url = url + '?opening_hours='+openingHours.join();
+            }
+            $.ajax(url,
                 {
                     dataType: 'json', // type of response data
                     beforeSend: function () {
@@ -112,6 +119,7 @@ export default class FormioCalendar extends Base {
                                 if (dateText !== self.date) {
                                     // If date changed, reset slot choice
                                     self.slot = false;
+                                    self.opening_hour = false;
                                     self.updateValue();
                                 }
                                 self.date = dateText;
@@ -196,6 +204,7 @@ export default class FormioCalendar extends Base {
         this.calendar = explodedCalendar[0];
         this.meeting = explodedCalendar[1];
         this.meeting_expiration_time = null;
+        this.opening_hour = null;
 
         if (this.date && this.slot) {
             $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> ' + this.date + ' alle ore ' + this.slot)
@@ -210,6 +219,8 @@ export default class FormioCalendar extends Base {
     getDaySlots() {
         let self = this,
             calendarID = this.component.calendarId,
+            selectOpeningHours = this.component.select_opening_hours,
+            openingHours = this.component.select_opening_hours ? this.component.opening_hours : null,
             html = '',
             location = window.location,
             explodedPath = location.pathname.split("/"),
@@ -217,10 +228,22 @@ export default class FormioCalendar extends Base {
 
         this.container.find('#slot-picker').html(html);
         let url = location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities/' + parsedDate.format('YYYY-MM-DD');
+
+        let queryParameters = []
         if (self.meeting) {
             // Exclude saved meeting from unavailabilities
-            url = `${url}?exclude=${self.meeting}`
+            queryParameters.push(`exclude=${self.meeting}`)
         }
+        if (selectOpeningHours) {
+            // Select specific opening hours
+            queryParameters.push('opening_hours='+openingHours.join())
+        }
+
+        if (queryParameters) {
+            url = url + '?'+ queryParameters.join('&');
+        }
+
+
         $.ajax(url,
             {
                 dataType: 'json', // type of response data
@@ -249,8 +272,9 @@ export default class FormioCalendar extends Base {
                             if (key === self.slot) {
                                 cssClass = cssClass + ' active';
                             }
+                            let op_hour = element.opening_hour;
 
-                            html = html.concat('<div class="col-6"><button type="button" data-slot="' + key + '" class="btn btn-ora p-0 ' + cssClass + '">' + key + '</button></div>');
+                            html = html.concat('<div class="col-6"><button type="button" data-slot="' + key + '" data-opening_hour="' + op_hour + '" class="btn btn-ora p-0 ' + cssClass + '">' + key + '</button></div>');
 
                         });
                         self.container.find('#slot-picker').html('<div class="col-12"><h6>Orari disponibili il ' + self.date + '</h6></div>' + html);
@@ -260,6 +284,7 @@ export default class FormioCalendar extends Base {
                             $('.btn-ora.active').removeClass('active');
                             $(this).addClass('active');
                             self.slot = $(this).data('slot');
+                            self.opening_hour = $(this).data('opening_hour');
 
                             self.createOrUpdateMeeting();
                             self.updateValue()
@@ -293,6 +318,7 @@ export default class FormioCalendar extends Base {
                     "date": self.date,
                     "slot": self.slot,
                     "calendar": this.component.calendarId,
+                    "opening_hour": self.opening_hour,
                     "meeting": self.meeting
                 },
                 dataType: 'json', // type of response data

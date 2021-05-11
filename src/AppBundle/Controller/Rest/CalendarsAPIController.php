@@ -3,15 +3,11 @@
 namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Calendar;
-use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
 use AppBundle\Security\Voters\CalendarVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MeetingService;
-use DateInterval;
 use DateTime;
-use DateTimeZone;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -144,6 +140,14 @@ class CalendarsAPIController extends AbstractFOSRestController
    *      description="Get availabilities to given date"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="opening_hours",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get availabilities related to selected opening hours"
+   *  )
+   *
    * @SWG\Response(
    *     response=404,
    *     description="Calendar not found"
@@ -158,12 +162,21 @@ class CalendarsAPIController extends AbstractFOSRestController
   {
     $startDate = $request->query->get('from_time');
     $endDate = $request->query->get('to_time');
+    $selectedOpeningHours = $request->query->get('opening_hours');
+    if ($selectedOpeningHours) {
+      $selectedOpeningHours = explode(',', $selectedOpeningHours);
+    }
     try {
-      /** @var OpeningHour[] $openingHours */
-      $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
       $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($calendar === null) {
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      }
+
+      /** @var OpeningHour[] $openingHours */
+      if ($selectedOpeningHours) {
+        $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id, 'id' => $selectedOpeningHours]);
+      } else {
+        $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
       }
 
       // Compute availabilities
@@ -174,7 +187,7 @@ class CalendarsAPIController extends AbstractFOSRestController
           $availabilities = array_merge($availabilities, $this->meetingService->explodeDays($openingHour, false, $startDate, $endDate));
         } else {
           // default: compute availabilities on rolling days
-          $availabilities = array_merge($availabilities, $this->meetingService->explodeDays($openingHour));
+          $availabilities = array_merge($availabilities, $this->meetingService->explodeDays($openingHour, false));
         }
       }
       // sort and remove duplicates
@@ -234,6 +247,14 @@ class CalendarsAPIController extends AbstractFOSRestController
    *      description="Get only available slots"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="opening_hours",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get availabilities related to selected opening hours"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retreive Calendar's availabilities per date",
@@ -256,6 +277,16 @@ class CalendarsAPIController extends AbstractFOSRestController
     $excludeUnavailable = $request->get('available');
     $excludedMeeting = $request->query->get('exclude');
 
+    $selectedOpeningHours = $request->query->get('opening_hours');
+    if ($selectedOpeningHours) {
+      $selectedOpeningHours = explode(',', $selectedOpeningHours);
+    }
+
+    $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
+    if ($calendar === null) {
+      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+    }
+
     try {
       $inputDate = new DateTime($date);
     } catch (\Exception $e) {
@@ -270,8 +301,14 @@ class CalendarsAPIController extends AbstractFOSRestController
         return $this->view("Object not found", Response::HTTP_NOT_FOUND);
       }
 
-      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable), $excludedMeeting);
-
+      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable), $excludedMeeting, $selectedOpeningHours);
+      if ($selectedOpeningHours) {
+        foreach ($slots as $key => $slot) {
+          if (!in_array($slot["opening_hour"], $selectedOpeningHours)) {
+            unset($slots[$key]);
+          }
+        }
+      }
       return $this->view(array_values($slots), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view("Object not found", Response::HTTP_NOT_FOUND);
@@ -1037,5 +1074,57 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     return $this->view("Object Patched Successfully", Response::HTTP_OK);
+  }
+
+  /**
+   * Retreive a Calendar opening hours overlaps
+   * @Rest\Get("/{id}/overlaps", name="calendar-overlaps_api_get")
+   *
+   *
+   *
+   * @SWG\Parameter(
+   *      name="opening_hours",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Get overlaps related to selected opening hours"
+   *  )
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retreive Calendar's opening hours overlaps",
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Calendar not found"
+   * )
+   * @SWG\Tag(name="calendars")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function getCalendarOverlapsAction($id, Request $request)
+  {
+    $selectedOpeningHours = $request->query->get('opening_hours');
+    if ($selectedOpeningHours) {
+      $selectedOpeningHours = explode(',', $selectedOpeningHours);
+    }
+
+    try {
+      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
+      if ( $calendar === null) {
+        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      }
+
+      $overlaps = $this->meetingService->getOpeningHoursOverlaps($calendar, $selectedOpeningHours);
+      return $this->view([
+        "overlaps" => $overlaps,
+        "count"=>count($overlaps)
+      ], Response::HTTP_OK);
+    } catch (\Exception $e) {
+      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+    }
   }
 }

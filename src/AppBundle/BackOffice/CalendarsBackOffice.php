@@ -44,7 +44,6 @@ class CalendarsBackOffice implements BackOfficeInterface
     'applicant_meeting' => array(
       "applicant.data.completename.data.name",
       "applicant.data.completename.data.surname",
-      "user_message",
       "calendar"
     )
   ];
@@ -209,7 +208,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       $meeting->setPhoneNumber($meetingData['phone_number']);
       $meeting->setFiscalCode($meetingData['fiscal_code']);
       $meeting->setUser($meetingData['user']);
-      $meeting->setUserMessage($meetingData['user_message']);
+      $meeting->setUserMessage(isset($meetingData['user_message']) ? $meetingData['user_message'] : null);
       $meeting->setFromTime($meetingData['from_time']);
       $meeting->setToTime($meetingData['to_time']);
       $meeting->setCalendar($calendar);
@@ -226,6 +225,7 @@ class CalendarsBackOffice implements BackOfficeInterface
 
       return $meeting;
     } catch (\Exception $exception) {
+      dump($exception); exit();
       $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
       return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
     }
@@ -267,7 +267,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       "phone_number" => null,
       "fiscal_code" => $submission['applicant.data.fiscal_code.data.fiscal_code'],
       "user" => $user,
-      "user_message" => $submission['user_message'],
+      "user_message" => isset($submission['user_message']) ? $submission['user_message'] : null,
       "from_time" => $start,
       "to_time" => $end,
       "calendar" => trim($meetingData[0]),

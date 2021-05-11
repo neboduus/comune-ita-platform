@@ -46,6 +46,14 @@
                 </div>
               </div>
             </fieldset>
+            <div class="col-12">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input type="checkbox" id="appbundle_calendar_opening_hours___name___is_moderated" name="appbundle_calendar[opening_hours][__name__][is_moderated]" class="form-check-input">
+                    <label class="form-check-label" for="appbundle_calendar_opening_hours___name___is_moderated">Richiede moderazione?</label>
+                  </div>
+                </div>
+              </div>
             <div class="row">
               <div class="col-6">
                 <div class="form-group"><label for="appbundle_calendar_opening_hours___name___meeting_queue" class="required active" style="transition: none;">Numero di meeting paralleli</label><input type="text" id="appbundle_calendar_opening_hours___name___meeting_queue" name="appbundle_calendar[opening_hours][__name__][meeting_queue]" value="1" required="required" class="form-control"></div>
@@ -86,6 +94,11 @@
               </div>
             </div>
             {{ form_row(opening_hour.days_of_week) }}
+            <div class="row">
+              <div class="col-12">
+                {{ form_row(opening_hour.is_moderated) }}
+              </div>
+            </div>
             <div class="row">
               <div class="col-6">
                 {{ form_row(opening_hour.meeting_queue) }}

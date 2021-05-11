@@ -77,6 +77,10 @@ class CalendarType extends AbstractType
         'empty_data' => Calendar::DEFAULT_DRAFT_INCREMENT,
         'label' => false,
       ])
+      ->add('allow_overlaps', CheckboxType::class, [
+        'required' => false,
+        'label' => 'calendars.allow_overlaps',
+      ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
         'label' => 'Richiede moderazione?'
