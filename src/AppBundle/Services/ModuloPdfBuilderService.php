@@ -569,6 +569,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForClass(Pratica $pratica, $className)
   {
+    dump($pratica->getDematerializedForms());
     $html = $this->templating->render('AppBundle:Pratiche:pdf/' . $className . '.html.twig', [
       'pratica' => $pratica,
       'user' => $pratica->getUser(),

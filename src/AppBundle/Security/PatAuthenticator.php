@@ -4,7 +4,10 @@ namespace AppBundle\Security;
 
 use AppBundle\Dto\UserAuthenticationData;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Services\InstanceService;
+use AppBundle\Services\Metrics\UserMetrics;
 use AppBundle\Services\UserSessionService;
+use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -14,22 +17,38 @@ class PatAuthenticator extends AbstractAuthenticator
   private $shibboletServerVarNames;
 
   /**
+   * @var InstanceService
+   */
+  private $instanceService;
+
+  /**
+   * @var UserMetrics
+   */
+  private $userMetrics;
+
+  /**
    * OpenLoginAuthenticator constructor.
    * @param UrlGeneratorInterface $urlGenerator
    * @param array $shibboletServerVarNames
    * @param $loginRoute
    * @param UserSessionService $userSessionService
+   * @param InstanceService $instanceService
+   * @param MetricsGeneratorInterface $userMetrics
    */
   public function __construct(
     UrlGeneratorInterface $urlGenerator,
     $shibboletServerVarNames,
     $loginRoute,
-    UserSessionService $userSessionService
+    UserSessionService $userSessionService,
+    InstanceService $instanceService,
+    MetricsGeneratorInterface $userMetrics
   ) {
     $this->urlGenerator = $urlGenerator;
     $this->shibboletServerVarNames = $shibboletServerVarNames;
     $this->loginRoute = $loginRoute;
     $this->userSessionService = $userSessionService;
+    $this->userMetrics = $userMetrics;
+    $this->instanceService = $instanceService;
   }
 
   public function supports(Request $request)
@@ -116,6 +135,8 @@ class PatAuthenticator extends AbstractAuthenticator
         'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel']),
       ];
     }
+
+    $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
 
     return UserAuthenticationData::fromArray($data);
   }
