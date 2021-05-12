@@ -45,25 +45,17 @@ class BackofficeVoter extends Voter
 
   protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
   {
-    $user = $token->getUser();
-
-    if (!$user instanceof User) {
-      // the user must be logged in; if not, deny access
-      return false;
-    }
-
-    // you know $subject is a Calendar object, thanks to `supports()`
     $backOfficePath = $subject;
 
     switch ($attribute) {
       case self::VIEW:
-        return $this->canView($backOfficePath, $user);
+        return $this->canView($backOfficePath);
     }
 
     throw new \LogicException('This code should not be reached!');
   }
 
-  private function canView(string $backOfficePath, User $user)
+  private function canView(string $backOfficePath)
   {
     if (in_array($backOfficePath, $this->is->getCurrentInstance()->getBackofficeEnabledIntegrations())) {
       return true;
