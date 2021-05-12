@@ -22,7 +22,9 @@ class ScheduledActionCommand extends ContainerAwareCommand
       ->addOption('count', 'c', InputOption::VALUE_REQUIRED, 'Inserisci il numero di azioni da prenotare, default 5')
       ->addOption('hostname', 'f', InputOption::VALUE_OPTIONAL, 'Inserisci hostname per forzare l\'esecuzione da altro host')
       ->addOption('old-reservation-minutes', 'o', InputOption::VALUE_OPTIONAL,
-        'Esgue le azioni non ancora eseguite ma già riservate con data di modifica inferiore ad adesso meno i minuti che inserisci, default 60 minuti')
+        'Esegue le azioni non ancora eseguite ma già riservate con data di modifica inferiore ad adesso meno i minuti che inserisci, default 60 minuti')
+      ->addOption('max-retry', 'm', InputOption::VALUE_OPTIONAL,
+        'Numero massimo di ripetizioni per un\'azione, default 10')
       ->setDescription('Execute all scheduled actions');
   }
 
@@ -58,15 +60,21 @@ class ScheduledActionCommand extends ContainerAwareCommand
       $oldReservationMinutes = 60;
     }
 
+    $maxRetry = (int)$input->getOption('max-retry');
+    if (!$maxRetry) {
+      $maxRetry = 10;
+    }
+
     if (!$forceHostname) {
       $logger->info("Try to reserve $count actions for host $hostname");
-      $scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes);
+      $scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes, $maxRetry);
     } else {
       $hostname = $forceHostname;
       $logger->info("Force execution for host $hostname");
     }
 
     $actions = $scheduleActionService->getPendingActions($hostname);
+
     $count = count($actions);
     $logger->info("Execute $count actions for host $hostname");
 
