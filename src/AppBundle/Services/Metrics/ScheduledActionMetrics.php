@@ -48,8 +48,8 @@ class ScheduledActionMetrics  implements MetricsGeneratorInterface
     return $this->collectionRegistry->getOrRegisterCounter(
       $this->namespace,
       'scheduled_actions',
-      'A summary of the succes scheduled actions',
-      [ScheduledActionMetrics::PREFIX . ScheduledActionMetrics::PREFIX . '_tenant', ScheduledActionMetrics::PREFIX . '_service', ScheduledActionMetrics::PREFIX . '_type', ScheduledActionMetrics::PREFIX . '_status']
+      'A summary of the scheduled actions',
+      [self::PREFIX . self::PREFIX . '_tenant', self::PREFIX . '_service', self::PREFIX . '_type', self::PREFIX . '_status']
     );
   }
 

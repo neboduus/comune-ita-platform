@@ -4,18 +4,39 @@ namespace AppBundle\Security;
 
 use AppBundle\Dto\UserAuthenticationData;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Services\InstanceService;
 use AppBundle\Services\UserSessionService;
+use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class OpenLoginAuthenticator extends AbstractAuthenticator
 {
-  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute, UserSessionService $userSessionService)
+  /**
+   * @var InstanceService
+   */
+  private $instanceService;
+  /**
+   * @var MetricsGeneratorInterface
+   */
+  private $userMetrics;
+
+  /**
+   * OpenLoginAuthenticator constructor.
+   * @param UrlGeneratorInterface $urlGenerator
+   * @param $loginRoute
+   * @param UserSessionService $userSessionService
+   * @param InstanceService $instanceService
+   * @param MetricsGeneratorInterface $userMetrics
+   */
+  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute, UserSessionService $userSessionService, InstanceService $instanceService, MetricsGeneratorInterface $userMetrics)
   {
     $this->urlGenerator = $urlGenerator;
     $this->loginRoute = $loginRoute;
     $this->userSessionService = $userSessionService;
+    $this->instanceService = $instanceService;
+    $this->userMetrics = $userMetrics;
   }
 
   protected function getLoginRouteSupported()
@@ -165,13 +186,16 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
   {
 
     $dateTimeObject = new \DateTime();
-    return UserAuthenticationData::fromArray([
+    $data = [
       'authenticationMethod' => CPSUser::IDP_SPID,
       'sessionId' => $request->headers->get('x-forwarded-user-session'),
       'spidCode' => $request->headers->get('x-forwarded-user-spidcode'),
       'spidLevel' => $request->headers->get('x-forwarded-user-spid-level'),
       'instant' => $dateTimeObject->format(DATE_ISO8601),
       'sessionIndex' => $request->headers->get('x-forwarded-user-session'),
-    ]);
+    ];
+
+    $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-open', $data['authenticationMethod'], $data['spidLevel']);
+    return UserAuthenticationData::fromArray($data);
   }
 }

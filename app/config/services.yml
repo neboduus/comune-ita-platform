@@ -262,11 +262,22 @@ services:
 
   ocsdc.pat.authenticator:
     class: AppBundle\Security\PatAuthenticator
-    arguments: ["@router", "%shibbolet_server_varnames%", "%login_route%", '@AppBundle\Services\UserSessionService']
+    arguments:
+      - "@router"
+      - "%shibbolet_server_varnames%"
+      - "%login_route%"
+      - '@AppBundle\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@AppBundle\Services\Metrics\UserMetrics'
 
   ocsdc.openlogin.authenticator:
     class: AppBundle\Security\OpenLoginAuthenticator
-    arguments: ["@router", "%login_route%", '@AppBundle\Services\UserSessionService']
+    arguments:
+      - "@router"
+      - "%login_route%"
+      - '@AppBundle\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@AppBundle\Services\Metrics\UserMetrics'
 
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator
@@ -834,7 +845,7 @@ services:
 
   ocsdc.user_security_subscriber:
     class: AppBundle\EventListener\UserSecuritySubscriber
-    arguments: [ "@fos_user.user_manager", "@router" ]
+    autowire: true
     tags:
       - { name: kernel.event_subscriber }
 
@@ -1032,6 +1043,11 @@ services:
       - { name: prometheus_metrics_bundle.metrics_generator }
 
   AppBundle\Services\Metrics\ScheduledActionMetrics:
+    autowire: true
+    tags:
+      - { name: prometheus_metrics_bundle.metrics_generator }
+
+  AppBundle\Services\Metrics\UserMetrics:
     autowire: true
     tags:
       - { name: prometheus_metrics_bundle.metrics_generator }
