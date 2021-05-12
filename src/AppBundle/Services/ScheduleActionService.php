@@ -96,7 +96,7 @@ class ScheduleActionService
       return $this->entityRepository->findBy([
         'hostname' => $hostname,
         'status' => ScheduledAction::STATUS_PENDING,
-      ], ['createdAt' => 'ASC']);
+      ], ['updatedAt' => 'DESC']);
     }
 
     /**
@@ -120,27 +120,29 @@ class ScheduleActionService
         ->getResult();
     }
 
-    /**
-     * @param $hostname
-     * @param $count
-     * @param $minutes
-     * @return int
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function reserveActions($hostname, $count, $minutes)
+  /**
+   * @param $hostname
+   * @param $count
+   * @param $minutes
+   * @param $maxRetry
+   * @return int
+   * @throws \Doctrine\DBAL\Exception
+   */
+    public function reserveActions($hostname, $count, $minutes, $maxRetry)
     {
       $status = ScheduledAction::STATUS_PENDING;
       $date = new \DateTime('now', new \DateTimeZone(date_default_timezone_get()));
       $oneHourOlder = new \DateTime('-'. $minutes . ' minutes', new \DateTimeZone(date_default_timezone_get()));
 
       $dql = 'UPDATE scheduled_action SET hostname = ?, updated_at = ?
-              WHERE id IN (SELECT id FROM scheduled_action WHERE (hostname IS NULL OR updated_at < ?) AND status = ? ORDER BY updated_at ASC LIMIT ?)';
+              WHERE id IN (SELECT id FROM scheduled_action WHERE (hostname IS NULL OR updated_at < ?) AND status = ? and (retry IS NULL OR retry < ?) ORDER BY updated_at ASC LIMIT ?)';
 
       return $this->entityManager->getConnection()->executeStatement($dql, [
         $hostname,
         $date->format('Y-m-d H:i:s'),
         $oneHourOlder->format('Y-m-d H:i:s'),
         (int)$status,
+        (int)$maxRetry,
         (int)$count
       ]);
 
