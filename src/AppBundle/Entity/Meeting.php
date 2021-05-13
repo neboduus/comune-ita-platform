@@ -215,10 +215,6 @@ class Meeting
   public function setCalendar(?Calendar $calendar): self
   {
     $this->calendar = $calendar;
-    if ($this->calendar->getIsModerated())
-      $this->setStatus(self::STATUS_PENDING);
-    else
-      $this->setStatus(self::STATUS_APPROVED);
 
     return $this;
   }
@@ -252,10 +248,6 @@ class Meeting
   public function setOpeningHour(?OpeningHour $openingHour): self
   {
     $this->openingHour = $openingHour;
-    if ($this->openingHour->getIsModerated() || $this->calendar->getIsModerated())
-      $this->setStatus(self::STATUS_PENDING);
-    else
-      $this->setStatus(self::STATUS_APPROVED);
 
     return $this;
   }

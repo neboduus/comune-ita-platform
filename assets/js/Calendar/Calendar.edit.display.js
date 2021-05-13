@@ -90,9 +90,9 @@ var _default = [{
       }
   },
   {
-    "label": "Api Url",
-    "redrawOn": "data",
-    "calculateValue": "if (data.calendarId) {\n" +
+    label: "Api Url",
+    redrawOn: "data",
+    calculateValue: "if (data.calendarId) {\n" +
         "  let url = data.url + '/api/calendars/' + data.calendarId + '/overlaps';\n" +
         "  if (data.select_opening_hours && data.opening_hours.length > 0) {\n" +
         "    let qs = \"?opening_hours=\" + data.opening_hours.join();\n" +
@@ -100,10 +100,10 @@ var _default = [{
         "  }\n" +
         "  if (data.api_url !== url) value = url;\n" +
         "} else {url = ''}",
-    "key": "api_url",
-    "type": "textfield",
-    "input": true,
-    "weight": 1
+    key: "api_url",
+    type: "hidden",
+    input: true,
+    weight: 1
   },
   {
     label: "Sovrapposizioni",
