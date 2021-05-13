@@ -62,6 +62,8 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
    */
   private function checkHeaderUserData(Request $request)
   {
+    $this->hydrateHeaderUserDataIfNeeded($request);
+
     $fields = [
       self::KEY_PARAMETER_NAME,
       'cognome',
@@ -76,6 +78,18 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
     }
 
     return true;
+  }
+
+  private function hydrateHeaderUserDataIfNeeded(Request $request)
+  {
+    $user = $request->headers->get('x-forwarded-user');
+    $userDecoded = base64_decode($user);
+    if (base64_encode($userDecoded) === $user){
+      $data = (array)json_decode($userDecoded, true);
+      foreach ($data as $key => $value){
+        $request->headers->set('x-forwarded-user-'. $key, $value);
+      }
+    }
   }
 
   private function getHeaderValue(Request $request, $field)
