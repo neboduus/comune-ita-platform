@@ -125,7 +125,8 @@ class MeetingService
 
         if (array_key_exists($slotKey, $slots)) {
           $isValidSlot = true;
-          $meeting->setOpeningHour($openingHour);
+          if (!$meeting->getOpeningHour())
+            $meeting->setOpeningHour($openingHour);
         }
       }
     }
@@ -675,8 +676,7 @@ class MeetingService
 
       if ($start <= $now)
         $slots[$key]['availability'] = false;
-      else
-        $slots[$key]['availability'] = true;
+
       if ($slots[$key]['availability'] == true) {
         $availableSlots[$key] = $slots[$key];
       }

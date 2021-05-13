@@ -220,6 +220,11 @@ class CalendarsBackOffice implements BackOfficeInterface
         return ['error' => $this->translator->trans('backoffice.integration.calendars.invalid_slot')];
       }
 
+      if ($meeting->getOpeningHour()->getIsModerated() || $meeting->getCalendar()->getIsModerated())
+        $meeting->setStatus(Meeting::STATUS_PENDING);
+      else
+        $meeting->setStatus(Meeting::STATUS_APPROVED);
+
       $this->em->persist($meeting);
       $this->em->flush();
 
