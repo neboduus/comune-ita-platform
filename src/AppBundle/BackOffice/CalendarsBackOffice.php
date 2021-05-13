@@ -230,7 +230,6 @@ class CalendarsBackOffice implements BackOfficeInterface
 
       return $meeting;
     } catch (\Exception $exception) {
-      dump($exception); exit();
       $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
       return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
     }
