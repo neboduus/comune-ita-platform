@@ -663,7 +663,7 @@ operatori:
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"
   inviata_il_alle: "Inviata il %data% alle ore %ore%"
-  recaptcha: 'Per inviare la richiesta fai cllck su "Non sono un robot" e successivamente sul pulsante "Invia".'
+  recaptcha: 'Per inviare la richiesta fai click su "Non sono un robot" e successivamente sul pulsante "Invia".'
   scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
   attesa_ricevuta: 'In attesa di generazione della ricevuta'
   attesa_modulo_compilato: 'In attesa di generazione del modulo compilato'
