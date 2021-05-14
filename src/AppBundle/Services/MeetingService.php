@@ -682,7 +682,7 @@ class MeetingService
       }
     }
     if ($exludeUnavailable) return $availableSlots;
-    else return empty($availableSlots) ? [] :$slots;
+    else return $slots;
   }
 
   public function getOpeningHoursOverlaps(Calendar $calendar, $selectedOpeningHours = []) {
