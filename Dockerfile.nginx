@@ -1,0 +1,7 @@
+ARG php_image
+FROM ${php_image} as php
+
+FROM wodby/nginx:1.19-5.14.0 
+
+COPY --from=php /var/www/html/web /var/www/html
+
