@@ -273,5 +273,5 @@ artprima_prometheus_metrics:
     port: "%metrics_redis_port%"
     timeout: 0.1
     read_timeout: 10
-    persistent_connections: false
+    persistent_connections: true
     password: "%metrics_redis_password%"
