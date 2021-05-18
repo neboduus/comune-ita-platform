@@ -136,7 +136,12 @@ class PatAuthenticator extends AbstractAuthenticator
       ];
     }
 
-    $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
+    try {
+      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
+    } catch (\Exception $e) {
+      // todo: add logger
+    }
+
 
     return UserAuthenticationData::fromArray($data);
   }
