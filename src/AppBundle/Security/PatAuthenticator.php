@@ -135,13 +135,7 @@ class PatAuthenticator extends AbstractAuthenticator
         'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel']),
       ];
     }
-
-    try {
-      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
-    } catch (\Exception $e) {
-      // todo: add logger
-    }
-
+    $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
 
     return UserAuthenticationData::fromArray($data);
   }
