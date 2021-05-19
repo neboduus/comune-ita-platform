@@ -265,7 +265,7 @@ flagception:
 artprima_prometheus_metrics:
   # namespace is used to prefix the prometheus metrics
   namespace: sdc
-  ignored_routes: [prometheus, sdc_metrics, _wdt]
+  ignored_routes: [prometheus, _wdt]
   # metrics backend type
   type: in_memory # possible values: in_memory, apcu, redis --> Incompatible use of dynamic environment variables "METRICS_TYPE" found in parameters.
   redis:
