@@ -267,7 +267,7 @@ artprima_prometheus_metrics:
   namespace: sdc
   ignored_routes: [prometheus, sdc_metrics, _wdt]
   # metrics backend type
-  type: redis # possible values: in_memory, apcu, redis
+  type: in_memory # possible values: in_memory, apcu, redis --> Incompatible use of dynamic environment variables "METRICS_TYPE" found in parameters.
   redis:
     host: "%metrics_redis_host%"
     port: "%metrics_redis_port%"

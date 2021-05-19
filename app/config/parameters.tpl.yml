@@ -201,7 +201,7 @@ parameters:
     env(BROWSERS_RESTRICTIONS): null
     env(IO_API_URL): 'https://api.io.italia.it/api/v1'
     env(CACHE_MAX_AGE): '0'
-    env(METRICS_TYPE): 'redis'
+    env(METRICS_TYPE): 'in_memory'
     env(METRICS_REDIS_HOST): 'redis'
     env(METRICS_REDIS_PORT): 6379
     env(METRICS_REDIS_PASSWORD): ~

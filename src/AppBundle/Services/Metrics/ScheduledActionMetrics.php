@@ -5,13 +5,19 @@ namespace AppBundle\Services\Metrics;
 
 use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Prometheus\CollectorRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 
-class ScheduledActionMetrics  implements MetricsGeneratorInterface
+class ScheduledActionMetrics implements MetricsGeneratorInterface
 {
 
   private const PREFIX = 'scheduled_actions';
+
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
   /**
    * @var string
@@ -22,6 +28,15 @@ class ScheduledActionMetrics  implements MetricsGeneratorInterface
    * @var CollectorRegistry
    */
   private $collectionRegistry;
+
+  /**
+   * ApplicationMetrics constructor.
+   * @param LoggerInterface $logger
+   */
+  public function __construct(LoggerInterface $logger)
+  {
+    $this->logger = $logger;
+  }
 
   /**
    * @param string $namespace
@@ -35,12 +50,20 @@ class ScheduledActionMetrics  implements MetricsGeneratorInterface
 
   public function collectRequest(GetResponseEvent $event)
   {
-    $this->registerCounter();
+    try {
+      $this->registerCounter();
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
+    }
   }
 
   public function collectResponse(PostResponseEvent $event)
   {
-    $this->registerCounter();
+    try {
+      $this->registerCounter();
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
+    }
   }
 
   private function registerCounter()
@@ -49,13 +72,17 @@ class ScheduledActionMetrics  implements MetricsGeneratorInterface
       $this->namespace,
       'scheduled_actions',
       'A summary of the scheduled actions',
-      [self::PREFIX . self::PREFIX . '_tenant', self::PREFIX . '_service', self::PREFIX . '_type', self::PREFIX . '_status']
+      [self::PREFIX.'_tenant', self::PREFIX.'_service', self::PREFIX.'_type', self::PREFIX.'_status']
     );
   }
 
   public function incScheduledAction($tenant, $service, $type, $status): void
   {
-    $counter = $this->registerCounter();
-    $counter->inc([$tenant, $service, $type, $status]);
+    try {
+      $counter = $this->registerCounter();
+      $counter->inc([$tenant, $service, $type, $status]);
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
+    }
   }
 }
