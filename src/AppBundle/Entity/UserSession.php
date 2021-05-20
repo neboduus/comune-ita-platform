@@ -51,7 +51,7 @@ class UserSession
   /**
    * @var string
    *
-   * @ORM\Column(type="string")
+   * @ORM\Column(type="text")
    */
   private $environment;
 
