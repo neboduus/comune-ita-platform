@@ -57,13 +57,15 @@
                 {% if ente %}
                   <a href="{{ ente.siteUrl }}">
                     {% set logo = ente.getMetaAsArray('logo') %}
+                    {% set customName = ente.getMetaAsArray('name') %}
+                    {% set enteName = customName != '' ? customName :  ente.name %}
                     {% if logo is defined and logo is not empty %}
-                      <img class="icon" src="{{ logo }}" alt="{{ ente.name }}"/>
+                      <img class="icon" src="{{ logo }}" alt="{{ enteName }}"/>
                     {% else %}
-                      <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ ente.name }}"/>
+                      <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ enteName }}"/>
                     {% endif %}
                     <div class="it-brand-text">
-                      <h2 class="no_toc">{{ ente.name }}</h2>
+                      <h2 class="no_toc">{{ enteName }}</h2>
                     </div>
                   </a>
                 {% endif %}

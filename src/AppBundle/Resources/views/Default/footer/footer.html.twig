@@ -6,6 +6,8 @@
 {% set social = ente.getMetaAsArray('social') %}
 {% set utils = ente.getMetaAsArray('utils') %}
 {% set logo = ente.getMetaAsArray('logo') %}
+{% set customName = ente.getMetaAsArray('name') %}
+{% set enteName = customName != '' ? customName :  ente.name %}
 
 <footer class="it-footer">
   <div class="it-footer-main">
@@ -16,13 +18,13 @@
             <div class="it-brand-wrapper">
               <a href="{{ ente.siteUrl }}">
                 {% if logo is defined and logo is not empty %}
-                  <img class="icon" src="{{ logo }}" alt="{{ ente.name }}"/>
+                  <img class="icon" src="{{ logo }}" alt="{{ enteName }}"/>
                 {% else %}
-                  <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ ente.name }}"/>
+                  <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ enteName }}"/>
                 {% endif %}
                 <div class="it-brand-text">
                   {% if ente %}
-                    <h2 class="no_toc">{{ ente.name }}</h2>
+                    <h2 class="no_toc">{{ enteName }}</h2>
                     {#<h3 class="no_toc d-none d-md-block">
                         Servizi online per i cittadini
                     </h3>#}
@@ -205,7 +207,7 @@
     </div>
   </div>
   <div class="container text-secondary x-small mt-1 mb-1 text-right">
-    © {{ 'now' | date('Y') }} {{ ente.name }}
+    © {{ 'now' | date('Y') }} {{ enteName }}
     powered by <a href="https://gitlab.com/opencontent/stanzadelcittadino">Stanza del Cittadino {{ version }}</a>
   </div>
 </footer>
