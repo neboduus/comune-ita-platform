@@ -21,7 +21,7 @@ $(document).ready(function () {
   $("#modalNewOpeningHour, #modalNewDate").change(function () {
     $("#modalNewSlot").val('');
     $("#no_slots_new_alert").hide();
-    getSlots($("#modalNewDate").val(), null, $("#modalNewOpeningHour").val(),function(slot) {
+    getSlots($("#modalNewDate").val(), null, $("#modalNewOpeningHour").val(), null,function(slot) {
       if (slot) {
         $("#modalNewSlot").val(slot)
       } else {
@@ -34,7 +34,7 @@ $(document).ready(function () {
   $("#modalOpeningHour, #modalDate").change(function () {
     $("#modalSlot").val('');
     $("#no_slots_edit_alert").hide();
-    getSlots($("#modalDate").val(), null,   $("#modalOpeningHour").val(),function(slot) {
+    getSlots($("#modalDate").val(), null,   $("#modalOpeningHour").val(), $("#modalId").html(),function(slot) {
       if (slot) {
         $("#no_slots_edit_alert").hide();
         $("#modalSlot").val(slot)
@@ -153,10 +153,9 @@ function compileModal(info) {
   let start = new Date(info.event.start).toISOString().slice(11, 16);
 
   // Populate modal
-
-  $('#modalDate').val(date);
-  $('#modalOpeningHour').val("").change();
   $('#modalId').html(info.event.id);
+  $('#modalDate').val(date);
+  $('#modalOpeningHour').val(info.event.extendedProps.opening_hour).change();
   $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name || 'Nome non fornito'}`);
   $('#modalDescription').val(info.event.extendedProps.description);
   $('#modalVideoconferenceLink').val(info.event.extendedProps.videoconferenceLink);
@@ -236,9 +235,10 @@ function deleteDraftModal(info) {
  * @param date
  * @param start
  * @param opening_hour
+ * @param exclude_id
  * @param callback
  */
-function getSlots(date, start, opening_hour, callback) {
+function getSlots(date, start, opening_hour, exclude_id, callback) {
   $('#modalError').html('');
   let calendar = $('#hidden').attr('data-calendar');
   let slot;
@@ -249,6 +249,10 @@ function getSlots(date, start, opening_hour, callback) {
 
   if (opening_hour){
     url = url + '&opening_hours=' + opening_hour;
+  }
+
+  if (exclude_id){
+    url = url + '&exclude=' + exclude_id;
   }
 
   $.ajax({
