@@ -110,29 +110,41 @@ class MeetingService
         return false;
     }
 
-    $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $meeting->getCalendar()]);
-    // Check if given date and given slot is correct
-    $isValidDate = false;
-    $isValidSlot = false;
-    foreach ($openingHours as $openingHour) {
-      $dates = $this->explodeDays($openingHour, true);
-      $meetingDate = $meeting->getFromTime()->format('Y-m-d');
-      if (in_array($meetingDate, $dates)) {
-        $isValidDate = true;
-        $slots = $this->explodeMeetings($openingHour, $meeting->getFromTime());
-        $meetingEnd = clone $meeting->getToTime();
-        $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i');
-
-        if (array_key_exists($slotKey, $slots)) {
-          $isValidSlot = true;
-          if (!$meeting->getOpeningHour())
+    if ($meeting->getCalendar()->isAllowOverlaps()) {
+      if ($meeting->getOpeningHour() && $this->isOpeningHourValidForMeeting($meeting, $meeting->getOpeningHour())) {
+        return true;
+      }
+    } else {
+      if ($meeting->getOpeningHour() && $this->isOpeningHourValidForMeeting($meeting, $meeting->getOpeningHour())) {
+        return true;
+      } else {
+        foreach ($meeting->getCalendar()->getOpeningHours() as $openingHour) {
+          if ($this->isOpeningHourValidForMeeting($meeting, $openingHour)) {
             $meeting->setOpeningHour($openingHour);
+            return true;
+          }
         }
       }
     }
-    if (!$isValidDate || !$isValidSlot)
+    return false;
+  }
+
+  private function isOpeningHourValidForMeeting(Meeting $meeting, OpeningHour $openingHour) {
+    $dates = $this->explodeDays($openingHour, true);
+    $meetingDate = $meeting->getFromTime()->format('Y-m-d');
+    // Date not available for opening hour
+    if (!in_array($meetingDate, $dates))
       return false;
-    return true;
+
+    $slots = $this->explodeMeetings($openingHour, $meeting->getFromTime());
+    $meetingEnd = clone $meeting->getToTime();
+    $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i');
+
+    if (array_key_exists($slotKey, $slots)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -722,5 +734,20 @@ class MeetingService
     }
 
     return array_values($overlaps);
+  }
+
+  public function getMeetingErrors(Meeting $meeting) {
+    $errors = [];
+    if ($meeting->getCalendar()->isAllowOverlaps() && !$meeting->getOpeningHour()) {
+      $errors[] = $this->translator->trans('meetings.error.no_opening_hour_with_overlaps');
+    } else {
+      if (!$this->isSlotValid($meeting)) {
+        $errors[] = $this->translator->trans('meetings.error.slot_invalid');
+      }
+      if ($meeting->getStatus() !== Meeting::STATUS_REFUSED && $meeting->getStatus() !== Meeting::STATUS_CANCELLED && !$this->isSlotAvailable($meeting)) {
+        $errors[] = $this->translator->trans('meetings.error.slot_unavailable');
+      }
+    }
+    return $errors;
   }
 }

@@ -14,6 +14,23 @@
       <div class="modal-body">
         <div id="modalId" class="d-none"></div>
         <div id="modalStatus" class="d-none"></div>
+        <div class="row mt-3 {% if not calendar.allowOverlaps %} d-none {% endif %}">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <select id="modalOpeningHour" class="selectpicker">
+              {% for opening_hour in calendar.openingHours %}
+                <option value="{{opening_hour.id}}">{{opening_hour.name}}</option>
+              {% endfor %}
+              {% if not calendar.allowOverlaps %}
+                <option value="" selected>Tutti</option>
+              {% endif %}
+            </select>
+          </div>
+        </div>
         <div class="row mt-3">
           <div class="col-1">
             <svg class="icon">

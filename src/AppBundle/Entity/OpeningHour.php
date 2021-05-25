@@ -48,6 +48,15 @@ class OpeningHour
    */
   private $id;
 
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="name", type="string", length=255, nullable=true)
+   * @SWG\Property(description="Opening hour's name", type="string")
+   */
+  private $name;
+
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Calendar", inversedBy="openingHours")
    * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -176,6 +185,26 @@ class OpeningHour
   public function getId()
   {
     return $this->id;
+  }
+
+  /**
+   * Set name.
+   * @param string $name
+   * @return OpeningHour
+   */
+  public function setName(string $name)
+  {
+    $this->name = $name;
+    return $this;
+  }
+
+  /**
+   * Get name.
+   * @return string
+   */
+  public function getName()
+  {
+    return $this->name ?? $this->getDefaultName();
   }
 
   /**
@@ -530,20 +559,22 @@ class OpeningHour
    */
   public function __toString()
   {
-    return (string)$this->getId();
+    return (string)$this->getName();
   }
 
+
   /**
-   * @Serializer\VirtualProperty(name="name")
-   * @Serializer\Type("string")
-   * @Serializer\SerializedName("name")
-   *
+   * Get default name based on opening hour interval and days
+   * @return string
    */
-  public function getName(): string
+  public function getDefaultName(): string
   {
-    $name = implode(', ', $this->daysOfWeek);
-    $name = str_replace($this->daysOfWeek, array_flip(self::WEEKDAYS_SHORT), $name);
-    $name = $name . ' | ' . $this->getBeginHour()->format('H:i') . ' - ' . $this->getEndHour()->format('H:i');
+    $name = "";
+    if ($this->daysOfWeek && $this->beginHour  && $this->endHour) {
+      $name = implode(', ', $this->daysOfWeek ?? []);
+      $name = str_replace($this->daysOfWeek, array_flip(self::WEEKDAYS_SHORT), $name);
+      $name = $name . ' | ' . $this->getBeginHour()->format('H:i') . ' - ' . $this->getEndHour()->format('H:i');
+    }
     return $name;
   }
 }

@@ -52,6 +52,10 @@ class OpeningHourType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $builder
+      ->add('name', TextType::class, [
+        'required' => true,
+        'label' => 'Nome'
+      ])
       ->add('start_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,

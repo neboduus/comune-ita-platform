@@ -62,6 +62,11 @@ class MeetingType extends AbstractType
         'required' => false,
         'label' => 'User'
       ])
+      ->add('opening_hour', EntityType::class, [
+        'class' => 'AppBundle\Entity\OpeningHour',
+        'required' => false,
+        'label' => 'Orario di apertura'
+      ])
       ->add('email', EmailType::class, [
         'required' => false,
         'label' => 'Email'
@@ -108,15 +113,9 @@ class MeetingType extends AbstractType
   {
     /** @var Meeting $meeting */
     $meeting = $event->getForm()->getData();
-
-    // Don't check slot availability if meeting is cancelled or refused
-    if ($meeting->getStatus() !== Meeting::STATUS_REFUSED && $meeting->getStatus() !== Meeting::STATUS_CANCELLED) {
-      if (!$this->meetingService->isSlotAvailable($meeting))
-        $event->getForm()->addError(new FormError($this->translator->trans('meetings.error.slot_unavailable')));
+    foreach ($this->meetingService->getMeetingErrors($meeting) as $error) {
+      $event->getForm()->addError(new FormError($error));
     }
-
-    if (!$this->meetingService->isSlotValid($meeting))
-      $event->getForm()->addError(new FormError($this->translator->trans('meetings.error.slot_invalid')));
   }
 
   public function configureOptions(OptionsResolver $resolver)
