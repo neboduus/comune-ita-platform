@@ -1,6 +1,11 @@
 {% extends '@App/Default/printable.html.twig' %}
 
 {% set ente = instance_service.getCurrentInstance() %}
+{% set customName = ente.getMetaAsArray('name') %}
+{% set enteName = customName != '' ? customName :  ente.name %}
+{% set logoMeta = ente.getMetaAsArray('logo') %}
+{% set logo = logoMeta != '' ? logoMeta :  asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') %}
+
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
@@ -47,8 +52,8 @@
     <div class="row">
       <div class="col-12 text-center">
         {% if ente %}
-          <img class="logo" src="{{ asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') }}" alt="{{ ente.name }}"/>
-          <h2 class="ente">{{ ente.name }}</h2>
+          <img class="logo" src="{{ logo }}" alt="{{ enteName }}"/>
+          <h2 class="ente">{{ enteName }}</h2>
         {% endif %}
       </div>
     </div>
