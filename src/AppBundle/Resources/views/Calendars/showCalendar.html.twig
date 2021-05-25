@@ -87,6 +87,7 @@
       phone_number: $('#modalPhone').val(),
       user_message: $('#modalDescription').val(),
       videoconference_link: $('#modalVideoconferenceLink').val(),
+      opening_hour: $('#modalOpeningHour').val()
     };
     let url = $(`#${btnId}`).attr('data-url');
     let token = $('#hidden').attr('data-token');
@@ -179,7 +180,8 @@
       email: $('#modalNewEmail').val(),
       name: $('#modalNewName').val(),
       phone_number: $('#modalNewPhone').val(),
-      calendar: calendar
+      calendar: calendar,
+      opening_hour: $('#modalNewOpeningHour').val()
     };
 
     let url = $(`#${btnId}`).attr('data-url');

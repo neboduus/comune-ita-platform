@@ -16,12 +16,25 @@ $(document).ready(function () {
   });
 
   // Calculate slots when date changes
-  // Edit modal
-  $("#modalDate").change(function () {
-    console.log('changes');
+
+  // NEW MODAL
+  $("#modalNewOpeningHour, #modalNewDate").change(function () {
+    $("#modalNewSlot").val('');
+    $("#no_slots_new_alert").hide();
+    getSlots($("#modalNewDate").val(), null, $("#modalNewOpeningHour").val(),function(slot) {
+      if (slot) {
+        $("#modalNewSlot").val(slot)
+      } else {
+        $("#no_slots_new_alert").show();
+      }
+    })
+  });
+
+  // EDIT MODAL
+  $("#modalOpeningHour, #modalDate").change(function () {
     $("#modalSlot").val('');
-    $("#edit_alert").show();
-    getSlots(this.value, null, function(slot) {
+    $("#no_slots_edit_alert").hide();
+    getSlots($("#modalDate").val(), null,   $("#modalOpeningHour").val(),function(slot) {
       if (slot) {
         $("#no_slots_edit_alert").hide();
         $("#modalSlot").val(slot)
@@ -31,18 +44,6 @@ $(document).ready(function () {
     })
   });
 
-  // new modal
-  $("#modalNewDate").change(function () {
-    $("#modalNewSlot").val('');
-    getSlots(this.value, null, function(slot) {
-      if (slot) {
-        $("#no_slots_new_alert").hide();
-        $("#modalNewSlot").val(slot)
-      } else {
-        $("#no_slots_new_alert").show();
-      }
-    })
-  });
 
   // Fullcalendar initialization
   var calendarEl = document.getElementById('fullcalendar');
@@ -95,7 +96,11 @@ $(document).ready(function () {
         deleteDraftModal(info)
       } else if (info.event.id) compileModal(info);
       else if (info.event.title === 'Apertura') newModal(info)
-    }
+    },
+    dateClick: function(info) {
+      if (info.view.type === 'dayGridMonth')
+        this.changeView("timeGridDay", info.dateStr)
+    },
   });
 
   calendar.render();
@@ -149,17 +154,8 @@ function compileModal(info) {
 
   // Populate modal
 
-  // Populate datalist
-  getSlots(date,  start, function (slot) {
-    if (slot) {
-      $("#no_slots_edit_alert").hide();
-      $("#modalSlot").val(slot)
-    } else {
-      $("#no_slots_edit_alert").show();
-    }
-  });
-
   $('#modalDate').val(date);
+  $('#modalOpeningHour').val("").change();
   $('#modalId').html(info.event.id);
   $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name || 'Nome non fornito'}`);
   $('#modalDescription').val(info.event.extendedProps.description);
@@ -210,17 +206,10 @@ function compileModal(info) {
  */
 function newModal(info) {
   let date = new Date(info.event.start).toISOString().slice(0, 10);
-  let start = new Date(info.event.start).toISOString().slice(11, 16);
-
-  // Populate datalist
-  getSlots(date,start, function (slot) {
-    $('#modalNewSlot').val(slot);
-  });
 
   $('#modalNewDate').val(date);
   $('#modalNewStatus').html(1);
   $('#modalNew').modal('show');
-
 }
 
 /**
@@ -246,15 +235,21 @@ function deleteDraftModal(info) {
  * Retrieves slots for selected date
  * @param date
  * @param start
+ * @param opening_hour
  * @param callback
  */
-function getSlots(date, start, callback) {
+function getSlots(date, start, opening_hour, callback) {
+  $('#modalError').html('');
   let calendar = $('#hidden').attr('data-calendar');
   let slot;
 
   let url = $('#hidden').attr('data-url');
   url = url.replace("calendar_id", calendar).replace("date", date);
   url = url + '?all=true';
+
+  if (opening_hour){
+    url = url + '&opening_hours=' + opening_hour;
+  }
 
   $.ajax({
     headers: {

@@ -1897,6 +1897,7 @@ calendars:
     text_before: "E' possibile disdire fino a "
     text_after: "giorni prima dell'appuntamento"
   opening_hours:
+    name_helper: "Suggerimento: utilizza questo campo per distinguere facilmente l'orario di apertura"
     weeks:
       week_day_1: "Lunedì"
       week_day_2: "Martedì"
@@ -1922,6 +1923,7 @@ meetings:
   error:
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
+    no_opening_hour_with_overlaps: "L'orario di apertura è obbligatorio se il calendario prevede sovrapposizioni"
   no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
   default_draft_message: "Appuntamento in bozza"
   no_info: "<i>Informazione non disponibile</i>"
