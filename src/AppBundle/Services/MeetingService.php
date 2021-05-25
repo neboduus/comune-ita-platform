@@ -293,7 +293,7 @@ class MeetingService
     $hour = $meeting->getFromTime()->format('H:i');
     $contact = $calendar->getContactEmail();
 
-    if ($calendar->getIsModerated() && $status == Meeting::STATUS_PENDING) {
+    if (($calendar->getIsModerated() || $meeting->getOpeningHour()->getIsModerated()) && $status == Meeting::STATUS_PENDING) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.pending');
     } else if ($status == Meeting::STATUS_APPROVED) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.approved',
@@ -360,7 +360,7 @@ class MeetingService
     }
 
     // Send email for each moderator
-    if ($calendar->getIsModerated()) {
+    if ($calendar->getIsModerated() || $meeting->getOpeningHour()->getIsModerated()) {
       foreach ($calendar->getModerators() as $moderator) {
         $this->mailer->dispatchMail(
           $this->defaultSender,
