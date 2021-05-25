@@ -184,7 +184,8 @@ export default class FormioCalendar extends Base {
             return null;
         }
         let meeting_id = this.meeting ? this.meeting : "";
-        return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId + '#' + meeting_id + ')';
+        let opening_hour = this.opening_hour ? this.opening_hour : "";
+        return this.date.replace(/-/g, "/") + ' @ ' + this.slot + ' (' + this.component.calendarId + '#' + meeting_id + '#' + opening_hour +')';
     }
 
     /**
@@ -204,7 +205,7 @@ export default class FormioCalendar extends Base {
         this.calendar = explodedCalendar[0];
         this.meeting = explodedCalendar[1];
         this.meeting_expiration_time = null;
-        this.opening_hour = null;
+        this.opening_hour = explodedCalendar.length === 3 ? explodedCalendar[2] : "";
 
         if (this.date && this.slot) {
             $('#date-picker-print').html('<b>Giorno selezionato per l\'appuntamento: </b> ' + this.date + ' alle ore ' + this.slot)
