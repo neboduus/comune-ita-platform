@@ -74,6 +74,9 @@ services:
   AppBundle\Controller\Admin\WebhookController:
     autowire: true
 
+  AppBundle\Controller\Admin\ServiceGroupController:
+    autowire: true
+
   AppBundle\Controller\PraticheController:
     autowire: true
 
