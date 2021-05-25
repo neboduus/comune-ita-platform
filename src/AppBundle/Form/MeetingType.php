@@ -67,6 +67,11 @@ class MeetingType extends AbstractType
         'required' => false,
         'label' => 'meetings.labels.opening_hour'
       ])
+      ->add('opening_hour', EntityType::class, [
+        'class' => 'AppBundle\Entity\OpeningHour',
+        'required' => false,
+        'label' => 'Orario di apertura'
+      ])
       ->add('email', EmailType::class, [
         'required' => false,
         'label' => 'meetings.labels.email'
