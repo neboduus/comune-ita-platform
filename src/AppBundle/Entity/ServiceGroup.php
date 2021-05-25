@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Ramsey\Uuid\Uuid;
 use Swagger\Annotations as SWG;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -70,6 +71,7 @@ class ServiceGroup
 
   /**
    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Servizio", mappedBy="serviceGroup", cascade={"persist"})
+   * @OrderBy({"name" = "ASC"})
    * @Serializer\Exclude()
    */
   private $services;
@@ -232,7 +234,9 @@ class ServiceGroup
         }
       }
     }
+
     return $result;
+
   }
 
   /**
@@ -254,7 +258,9 @@ class ServiceGroup
         }
       }
     }
+
     return $result;
+
   }
 
   public function isPrivate() {

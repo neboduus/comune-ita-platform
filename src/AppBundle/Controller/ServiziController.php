@@ -233,28 +233,5 @@ class ServiziController extends Controller
 
     return $response;
   }
-
-  /**
-   * Removes a Service from a Service Group.
-   * @Route("/{id}/remove_group", name="admin_service_remove_group")
-   * @param Request $request
-   * @param Servizio $service
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
-   */
-  public function removeServiceFromGroup(Request $request, Servizio $service)
-  {
-    $serviceGroup = $service->getServiceGroup();
-    try {
-      $em = $this->getDoctrine()->getManager();
-      $service->setServiceGroup(null);
-      $em->persist($service);
-      $em->flush();
-      $this->addFlash('feedback', $this->translator->trans('gruppo_di_servizi.servizio_rimosso'));
-      return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
-
-    } catch (\Exception $exception) {
-      $this->addFlash('warning', $this->translator->trans('gruppo_di_servizi.errore_rimozione'));
-      return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
-    }
-  }
+  
 }
