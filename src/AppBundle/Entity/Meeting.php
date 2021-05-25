@@ -19,7 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="meeting")
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
  */
 class Meeting
 {
@@ -652,43 +651,6 @@ class Meeting
     $this->updatedAt = $updated_at;
 
     return $this;
-  }
-
-  /**
-   * Set createdAt and UpdatedAt
-   *
-   * @ORM\PrePersist
-   * @ORM\PreUpdate
-   * @param LifecycleEventArgs $args
-   * @throws \Exception
-   */
-  public function initMeeting(LifecycleEventArgs $args): void
-  {
-    $dateTimeNow = new DateTime('now');
-
-    $this->setUpdatedAt($dateTimeNow);
-
-    if ($this->getCreatedAt() === null) {
-      $this->setRescheduled(0);
-      $this->setCreatedAt($dateTimeNow);
-  }
-}
-
-/**
- * Increment rescheduled
- *
- * @ORM\PreUpdate
- * @param PreUpdateEventArgs $event
- */
-  public function preUpdate(PreUpdateEventArgs $event)
-  {
-    if ($this->getStatus() == Meeting::STATUS_DRAFT || $event->hasChangedField('status') && $event->getOldValue('status') == Meeting::STATUS_DRAFT) {
-      // Do not update rescheduled field for draft meetings
-      return;
-    }
-    if ($this->getStatus() !== Meeting::STATUS_DRAFT && $event->hasChangedField('fromTime') && $event->hasChangedField('toTime')) {
-      $this->setRescheduled($this->rescheduled + 1);
-    }
   }
 }
 

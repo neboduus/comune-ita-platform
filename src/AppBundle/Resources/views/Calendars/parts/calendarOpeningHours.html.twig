@@ -4,6 +4,13 @@
        data-prototype='
           <div id="appbundle_calendar_opening_hours___name__">
             <div class="row">
+              <div class="col-12 form-group">
+                <label for="appbundle_calendar_opening_hours___name___name" class="required active">Nome</label>
+                <input type="text" id="appbundle_calendar_opening_hours___name___name" name="appbundle_calendar[opening_hours][__name__][name]" required="required" class="form-control">
+                <span class="text-info px-2" id="io_helper"><i class="fa fa-info-circle"></i>{{ 'calendars.opening_hours.name_helper' | trans }}</span>
+              </div>
+            </div>
+            <div class="row">
                 <div class="col-6">
                   <div class="form-group"><label for="appbundle_calendar_opening_hours___name___start_date" class="required">Data di inizio</label><input type="date" id="appbundle_calendar_opening_hours___name___start_date" name="appbundle_calendar[opening_hours][__name__][start_date]"  value="{{ "now"|date('Y-m-d')}}" required="required" class="form-control"></div>
                   <div class="form-group"><label for="appbundle_calendar_opening_hours___name___begin_hour" class="required">Orario di apertura</label><input type="time" id="appbundle_calendar_opening_hours___name___begin_hour" name="appbundle_calendar[opening_hours][__name__][begin_hour]" required="required" class="form-control"></div>
@@ -83,6 +90,13 @@
       {% for opening_hour in form.opening_hours %}
         <div class="js-opening_hour-item">
           <div id="appbundle_calendar_opening_hours___name__">
+            <div class="row">
+              <div class="form-group col-12">
+                {{ form_label(opening_hour.name) }}
+                {{ form_widget(opening_hour.name) }}
+                <span class="text-info px-2"><i class="fa fa-info-circle"></i> {{ 'calendars.opening_hours.name_helper' | trans }}</span>
+              </div>
+            </div>
             <div class="row">
               <div class="col-6">
                 {{ form_row(opening_hour.start_date) }}
