@@ -9,7 +9,7 @@
         </button>
       </div>
       <div class="modal-title mx-4">
-        <input id="modalNewName" type="text" placeholder="Nome e cognome">
+        <input id="modalNewName" type="text" placeholder="{{ 'meetings.labels.complete_name' | trans }}">
       </div>
       <div class="modal-body">
         <div id="modalId" class="d-none"></div>
@@ -42,7 +42,7 @@
           </div>
           <div class="col-1"></div>
           <div class="col-3">
-            <input type="text" id="modalNewSlot" list="slots" class="custom-select custom-select-sm" onclick="this.value = ''" placeholder="Seleziona orario">
+            <input type="text" id="modalNewSlot" list="slots" class="custom-select custom-select-sm" onclick="this.value = ''" placeholder="{{ 'meetings.labels.select_slot' |  trans}}">
             <datalist id="slots"></datalist>
           </div>
         </div>
@@ -60,7 +60,7 @@
             </svg>
           </div>
           <div class="col-10">
-            <textarea style="border: none" id="modalNewDescription" placeholder="Oggetto... (creato dall'ufficio)"></textarea>
+            <textarea style="border: none" id="modalNewDescription" placeholder="{{ 'meetings.labels.backoffice_user_message' | trans }}"></textarea>
           </div>
         </div>
         <div class="row mt-3">
@@ -70,7 +70,7 @@
             </svg>
           </div>
           <div class="col-10">
-            <input type="url" id="modalNewVideoconferenceLink" placeholder="Link videoconferenza">
+            <input type="url" id="modalNewVideoconferenceLink" placeholder="{{ 'meetings.labels.videoconference_link' | trans }}">
           </div>
         </div>
         <div class="row mt-3">
@@ -80,7 +80,7 @@
             </svg>
           </div>
           <div class="col-6">
-            <input type="text" id="modalNewFiscalCode" class="col-10" placeholder="Codice fiscale">
+            <input type="text" id="modalNewFiscalCode" class="col-10" placeholder="{{ 'meetings.labels.fiscal_code' | trans }}">
           </div>
         </div>
         <div class="row mt-3">
@@ -90,7 +90,7 @@
             </svg>
           </div>
           <div class="col-6">
-            <input type="text" id="modalNewPhone" class="col-10" placeholder="Recapito telefonico">
+            <input type="text" id="modalNewPhone" class="col-10" placeholder="{{ 'meetings.labels.phone_number' | trans }}">
           </div>
         </div>
         <div class="row mt-3">
@@ -100,13 +100,13 @@
             </svg>
           </div>
           <div class="col-6">
-            <input type="email" id="modalNewEmail" class="col-10" placeholder="Indirizzo Email">
+            <input type="email" id="modalNewEmail" class="col-10" placeholder="{{ 'meetings.labels.email' | trans }}">
           </div>
         </div>
       </div>
       <div class="modal-footer my-3 d-flex justify-content-between" >
         <ul id="modalNewError" class="text-danger list-unstyled"></ul>
-        <button id="modalCreate" class="btn btn-primary btn-sm" data-url='{{ path("meetings_api_post") }}' type="button" onclick="createMeeting(this.id, '{{ calendar.id }}')">Crea</button>
+        <button id="modalCreate" class="btn btn-primary btn-sm" data-url='{{ path("meetings_api_post") }}' type="button" onclick="createMeeting(this.id, '{{ calendar.id }}')">{{ "meetings.create" | trans }}</button>
       </div>
     </div>
   </div>
