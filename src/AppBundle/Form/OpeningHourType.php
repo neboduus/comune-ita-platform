@@ -59,15 +59,15 @@ class OpeningHourType extends AbstractType
       ->add('start_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'Data di inizio'
+        'label' => 'calendars.opening_hours.start_date'
       ])
       ->add('end_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'Data di fine'
+        'label' => 'calendars.opening_hours.end_date'
       ])
       ->add('days_of_week', ChoiceType::class, [
-        'label' => 'Giorni della settimana',
+        'label' => 'calendars.opening_hours.days_of_week',
         'required' => false,
         'choices' => OpeningHour::WEEKDAYS,
         'multiple' => true,
@@ -76,28 +76,28 @@ class OpeningHourType extends AbstractType
       ->add('begin_hour', TimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'Orario di apertura'
+        'label' => 'calendars.opening_hours.begin_hour'
       ])
       ->add('end_hour', TimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'Orario di chiusura'
+        'label' => 'calendars.opening_hours.end_hour'
       ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
-        'label' => 'calendars.is_moderated',
+        'label' => 'calendars.opening_hours.is_moderated',
       ])
       ->add('meeting_minutes', IntegerType::class, [
         'required' => true,
-        'label' => 'Durata del meeting',
+        'label' => 'calendars.opening_hours.meeting_minutes',
       ])
       ->add('interval_minutes', IntegerType::class, [
         'required' => true,
-        'label' => 'Intervallo tra i meeting',
+        'label' => 'calendars.opening_hours.interval_minutes',
       ])
       ->add('meeting_queue', IntegerType::class, [
         'required' => true,
-        'label' => 'Numero di meeting paralleli',
+        'label' => 'calendars.opening_hours.meeting_queue',
       ])
       ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
   }
