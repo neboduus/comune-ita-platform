@@ -155,7 +155,7 @@ function compileModal(info) {
   // Populate modal
   $('#modalId').html(info.event.id);
   $('#modalDate').val(date);
-  $('#modalOpeningHour').val(info.event.extendedProps.opening_hour).change();
+  $('#modalOpeningHour').val(info.event.extendedProps.opening_hour);
   $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name || 'Nome non fornito'}`);
   $('#modalDescription').val(info.event.extendedProps.description);
   $('#modalVideoconferenceLink').val(info.event.extendedProps.videoconferenceLink);
@@ -195,7 +195,19 @@ function compileModal(info) {
   }
 
   $('#modalError').html('');
-  $('#modalCenter').modal('show');
+
+  $("#modalSlot").val('');
+  $("#no_slots_edit_alert").hide();
+  getSlots($("#modalDate").val(), start, $("#modalOpeningHour").val(), $("#modalId").html(),function(slot) {
+    if (slot) {
+      $("#no_slots_edit_alert").hide();
+      $("#modalSlot").val(slot)
+    } else {
+      $("#no_slots_edit_alert").show();
+    }
+    $('#modalCenter').modal('show');
+  })
+
   $('#modalClose').click(info.revert)
 }
 
@@ -205,10 +217,21 @@ function compileModal(info) {
  */
 function newModal(info) {
   let date = new Date(info.event.start).toISOString().slice(0, 10);
+  let start = new Date(info.event.start).toISOString().slice(11, 16);
 
   $('#modalNewDate').val(date);
   $('#modalNewStatus').html(1);
-  $('#modalNew').modal('show');
+
+  $("#modalNewSlot").val('');
+  $("#no_slots_new_alert").hide();
+  getSlots($("#modalNewDate").val(), start,   $("#modalNewOpeningHour").val(), null,function(slot) {
+    if (slot) {
+      $("#modalNewSlot").val(slot)
+    } else {
+      $("#no_slots_new_alert").show();
+    }
+    $('#modalNew').modal('show');
+  })
 }
 
 /**

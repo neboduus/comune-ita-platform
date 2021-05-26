@@ -625,7 +625,7 @@ class MeetingService
       ->from('AppBundle:Meeting', 'meeting')
       ->where('meeting.calendar = :calendar')
       ->andWhere('meeting.fromTime >= :startDate')
-      ->andWhere('meeting.toTime < :endDate')
+      ->andWhere('meeting.toTime <= :endDate')
       ->andWhere('meeting.status != :refused')
       ->andWhere('meeting.status != :cancelled')
       ->setParameter('refused', Meeting::STATUS_REFUSED)
@@ -661,20 +661,23 @@ class MeetingService
     foreach ($slots as $key => $day) {
       $totalSlotsAvailable = $slots[$key]['slots_available'];
       $slotsUnavailable = 0;
+      if(array_key_exists($key, $meetings)) {
+        $totalSlotsAvailable = $totalSlotsAvailable - $meetings[$key]['count'];
+      } else {
+        // Todo: trovare un modo migliore
+        foreach ($meetings as $asd => $meeting) {
+          // Check availabilities on booked meetings
+          $bookedStartTime = $meeting["start_time"];
+          $bookedEndTime = $meeting["end_time"];
+          $slotStartTime = new DateTime($day["date"] . ' ' . $day["start_time"]);
+          $slotEndTime = new DateTime($day["date"] . ' ' . $day["end_time"]);
 
-      // Todo: trovare un modo migliore
-      foreach ($meetings as $meeting) {
-        // Check availabilities on booked meetings
-        $bookedStartTime = $meeting["start_time"];
-        $bookedEndTime = $meeting["end_time"];
-        $slotStartTime = new DateTime($day["date"] . ' ' . $day["start_time"]);
-        $slotEndTime = new DateTime($day["date"] . ' ' . $day["end_time"]);
-        if(array_key_exists($key, $meetings)) {
-          $totalSlotsAvailable = $totalSlotsAvailable - $meetings[$key]['count'];
-        }else if ($bookedEndTime > $slotStartTime && $bookedStartTime < $slotEndTime) {
-          $slotsUnavailable = max($slotsUnavailable, $meeting['count'], 0);
+          if ($bookedEndTime > $slotStartTime && $bookedStartTime < $slotEndTime) {
+            $slotsUnavailable = max($slotsUnavailable, $meeting['count'], 0);
+          }
         }
       }
+
       $slots[$key]['availability'] = $slotsUnavailable >= $totalSlotsAvailable ? false : true;
       $slots[$key]['slots_available'] = max($totalSlotsAvailable - $slotsUnavailable, 0);
 
