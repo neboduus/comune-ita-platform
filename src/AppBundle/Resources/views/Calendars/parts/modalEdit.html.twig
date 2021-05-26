@@ -50,14 +50,13 @@
         <div id="no_slots_edit_alert" class="row mt-3">
           <div class="col-1"></div>
           <div class="col-10">
-            <small class="text-danger">Non ci sono orari disponibili alla data e all'ora selezionata</small>
+            <small class="text-danger">{{ 'meetings.error.no_slots_available' | trans }}</small>
           </div>
         </div>
         <div id="edit_alert" class="row mt-3">
           <div class="col-1"></div>
           <div class="col-10">
-            <small><b>Attenzione</b>: la modifica della data comporterà l'invio di una
-              notifica al cittadino e la conferma automatica dell'appuntamento</small>
+            <small><b>{{ "meetings.warning" | trans }}</b>: {{ "meetings.notification_alert_confirm" | trans }}</small>
           </div>
         </div>
         <br>
@@ -136,8 +135,7 @@
                     class="btn btn-warning btn-sm mr-3" type="button" onclick="editEvent(this.id,5)">
               Annulla
             </button>
-            <p class="mt-4"><small><b>Attenzione</b>: la modifica dello stato comporterà l'invio di una notifica al
-                cittadino</small></p>
+            <p class="mt-4"><small><b>{{ "meetings.warning" | trans }}</b>: {{ "meetings.notification_alert" | trans }}</p>
           </div>
         </div>
       </div>

@@ -1920,7 +1920,12 @@ calendars:
                      esistono dei meeting gia fissati. Le consigliamo di creare un orario di apertura a partire dalla prima data disponibile (next_availability)'
 
 meetings:
+  all: "Tutti"
+  warning: "Attenzione"
+  notification_alert: "la modifica dello stato comporterà l'invio di una notifica al cittadino"
+  notification_alert_confirm: "la modifica della data comporterà l'invio di una notifica al cittadino e la conferma automatica dell'appuntamento"
   error:
+    no_slots_available: "Non ci sono orari disponibili alla data e all'ora selezionata"
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
     no_opening_hour_with_overlaps: "L'orario di apertura è obbligatorio se il calendario prevede sovrapposizioni"
