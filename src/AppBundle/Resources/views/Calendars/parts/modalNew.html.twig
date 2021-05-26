@@ -26,7 +26,7 @@
                 <option value="{{opening_hour.id}}">{{opening_hour.name}}</option>
               {% endfor %}
               {% if not calendar.allowOverlaps %}
-                <option value="" selected>Tutti</option>
+                <option value="" selected>{{ "meetings.all" | trans() }}</option>
               {% endif %}
             </select>
           </div>
@@ -49,7 +49,7 @@
         <div id="no_slots_new_alert" class="row mt-3">
           <div class="col-1"></div>
           <div class="col-10">
-            <small class="text-danger">Non ci sono orari disponibili alla data e all'ora selezionata</small>
+            <small class="text-danger">{{ 'meetings.error.no_slots_available' | trans }}</small>
           </div>
         </div>
         <br>
