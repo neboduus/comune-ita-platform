@@ -54,57 +54,57 @@ class MeetingType extends AbstractType
     $builder
       ->add('calendar', EntityType::class, [
         'class' => Calendar::class,
-        'label' => 'Calendario',
+        'label' => 'meetings.labels.calendar',
         'required' => true,
       ])
       ->add('user', EntityType::class, [
         'class' => 'AppBundle\Entity\CPSUser',
         'required' => false,
-        'label' => 'User'
+        'label' => 'meetings.labels.user'
       ])
       ->add('opening_hour', EntityType::class, [
         'class' => 'AppBundle\Entity\OpeningHour',
         'required' => false,
-        'label' => 'Orario di apertura'
+        'label' => 'meetings.labels.opening_hour'
       ])
       ->add('email', EmailType::class, [
         'required' => false,
-        'label' => 'Email'
+        'label' => 'meetings.labels.email'
       ])
       ->add('fiscal_code', TextType::class, [
         'required' => false,
-        'label' => 'Codice fiscale'
+        'label' => 'meetings.labels.fiscal_code'
       ])
       ->add('name', TextType::class, [
         'required' => false,
-        'label' => 'Nome'
+        'label' => 'meetings.labels.name'
       ])
       ->add('phone_number', TelType::class, [
         'required' => false,
-        'label' => 'Numero di telefono'
+        'label' => 'meetings.labels.phone_number'
       ])
       ->add('from_time', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'Orario di inizio'
+        'label' => 'meetings.labels.from_time'
       ])
       ->add('to_time', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'Orario di fine'
+        'label' => 'meetings.labels.to_time'
       ])
       ->add('status', ChoiceType::class, [
-        'label' => 'Stato',
+        'label' => 'meetings.labels.status',
         'required' => true,
         'choices' => $statuses
       ])
       ->add('user_message', TextareaType::class, [
         'required' => false,
-        'label' => 'Messaggio'
+        'label' => 'meetings.labels.user_message'
       ])
       ->add('videoconference_link', UrlType::class, [
         'required' => false,
-        'label' => 'Link videoconferenza'
+        'label' => 'meetings.labels.videoconference_link'
       ])
       ->addEventListener(FormEvents::SUBMIT, array($this, 'onSubmit'));
   }

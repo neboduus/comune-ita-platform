@@ -1897,7 +1897,21 @@ calendars:
     text_before: "E' possibile disdire fino a "
     text_after: "giorni prima dell'appuntamento"
   opening_hours:
+    name: "Nome"
     name_helper: "Suggerimento: utilizza questo campo per distinguere facilmente l'orario di apertura"
+    start_date: "Data di inizio"
+    end_date: "Data di fine"
+    days_of_week: "Giorni della settimana"
+    begin_hour: "Orario di apertura"
+    end_hour: "Orario di chiusura"
+    is_moderated: "Richiede moderazione?"
+    meeting_minutes: "Durata del meeting"
+    interval_minutes: "Intervallo tra i meeting"
+    meeting_queue: "Numero di meeting paralleli"
+    add: "Aggiungi orario di apertura"
+    remove: "Elimina apertura"
+    no_opening_hours: "Non sono presenti orari di apertura"
+    opening_hours: "Orari di apertura"
     weeks:
       week_day_1: "Lunedì"
       week_day_2: "Martedì"
@@ -1920,6 +1934,19 @@ calendars:
                      esistono dei meeting gia fissati. Le consigliamo di creare un orario di apertura a partire dalla prima data disponibile (next_availability)'
 
 meetings:
+  labels:
+    calendar: "Calendario"
+    user: "Utente"
+    opening_hour: "Orario di apertura"
+    email: "Email"
+    fiscal_code: "Codice fiscale"
+    name: "Nome"
+    phone_number: "Numero di telefono"
+    from_time: "Orario di inizio"
+    to_time: "Orario di fine"
+    status: "Stato"
+    user_message: "Messaggio"
+    videoconference_link: "Link videoconferenza"
   all: "Tutti"
   warning: "Attenzione"
   notification_alert: "la modifica dello stato comporterà l'invio di una notifica al cittadino"
