@@ -143,7 +143,7 @@
       <div class="modal-footer my-3 d-flex justify-content-between" >
         <ul id="modalError" class="text-danger list-unstyled"></ul>
         <button id="modalSave" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                class="btn btn-primary btn-sm" type="button" onclick="editEvent(this.id)">Salva</button>
+                class="btn btn-primary btn-sm" type="button" onclick="editEvent(this.id)">{{ "meetings.save" | trans }}</button>
       </div>
     </div>
   </div>
