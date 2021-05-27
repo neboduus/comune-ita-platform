@@ -45,8 +45,16 @@ security:
         success_handler: lexik_jwt_authentication.handler.authentication_success
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+    api_secure:
+      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|tenants|subscription-services\/.{36}\/subscriptions)
+      stateless: true
+      provider: fos_userbundle
+      guard:
+        authenticators:
+          - lexik_jwt_authentication.jwt_token_authenticator
+
     api:
-      pattern: /%prefix%/api/(services|services-groups|calendars|status)
+      pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services)
       methods: [ POST, PUT, PATCH, DELETE ]
       stateless: true
       provider: fos_userbundle
@@ -54,13 +62,6 @@ security:
         authenticators:
           - lexik_jwt_authentication.jwt_token_authenticator
 
-    api_secure:
-      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|tenants)
-      stateless: true
-      provider: fos_userbundle
-      guard:
-        authenticators:
-          - lexik_jwt_authentication.jwt_token_authenticator
 
     operatori:
       logout_on_user_change: true

@@ -4,8 +4,6 @@
 namespace AppBundle\Security\Voters;
 
 
-use AppBundle\BackOffice\BackOfficeInterface;
-use AppBundle\Entity\User;
 use AppBundle\Services\InstanceService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
