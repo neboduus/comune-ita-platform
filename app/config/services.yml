@@ -425,6 +425,13 @@ services:
     tags:
       - { name: ocsdc.protocollo.handler, alias: infor }
 
+  ocsdc.protocollo.handlers.sipal:
+    class: AppBundle\Protocollo\SipalProtocolloHandler
+    autowire: true
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: sipal }
+
   AppBundle\Services\DelayedProtocolloService:
     arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
 

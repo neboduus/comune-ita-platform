@@ -1858,6 +1858,13 @@ protocollo:
         send_result: 'Acquisita risposta per la pratica: %name%'
   receiver: 'Email pec del ricevente'
   send_attachment: 'Inviare allegati tramite email?'
+  sipal_wsUrl: 'Url ws'
+  sipal_username: 'Username'
+  sipal_token: 'Token'
+  sipal_registro: 'Registro'
+  sipal_classificazione: 'Classificazione'
+  sipal_destinatario_interno: 'Destinatario interno'
+
 
 gateway:
   bollo:
