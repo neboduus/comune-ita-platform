@@ -4,6 +4,7 @@
 namespace AppBundle\BackOffice;
 
 
+use AppBundle\Entity\Calendar;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\Pratica;
@@ -116,7 +117,7 @@ class CalendarsBackOffice implements BackOfficeInterface
           case Pratica::STATUS_PAYMENT_PENDING:
             // Increment draft duration
             $currentExpiration = clone $meeting->getDraftExpiration() ?? new \DateTime();
-            $meeting->setDraftExpiration($currentExpiration->modify("+ {$meeting->getCalendar()->getDraftsDurationIncrement()} seconds"));
+            $meeting->setDraftExpiration($currentExpiration->modify('+' . ($meeting->getCalendar()->getDraftsDurationIncrement() ?? Calendar::DEFAULT_DRAFT_INCREMENT) . 'seconds'));
           break;
           case Pratica::STATUS_PAYMENT_ERROR:
           case Pratica::STATUS_CANCELLED:
