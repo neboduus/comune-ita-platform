@@ -699,7 +699,7 @@ class CalendarsController extends Controller
     $meeting->setOpeningHour($openingHour);
     $meeting->setUserMessage($this->translator->trans('meetings.default_draft_message'));
     $meeting->setStatus(Meeting::STATUS_DRAFT);
-    $meeting->setDraftExpiration(new \DateTime('+' . $calendar->getDraftsDuration() . 'seconds'));
+    $meeting->setDraftExpiration(new \DateTime('+' . ($calendar->getDraftsDuration() ?? Calendar::DEFAULT_DRAFT_DURATION) . 'seconds'));
 
     try {
       if ($this->meetingService->isSlotValid($meeting) && $this->meetingService->isSlotAvailable($meeting)) {

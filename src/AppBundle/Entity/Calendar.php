@@ -93,8 +93,9 @@ class Calendar
   /**
    * @var int
    *
-   * @ORM\Column(name="drafts_duration", type="integer", nullable=true)
+   * @ORM\Column(name="drafts_duration", type="integer", nullable=false)
    * @SWG\Property(description="Calendar draft meetings duration (minutes)", type="integer")
+   * @Assert\GreaterThan(0, message="La durata delle bozza deve avere un valore positivo")
    * @Serializer\Exclude()
    */
   private $draftsDuration;
@@ -104,6 +105,7 @@ class Calendar
    * @var int
    *
    * @ORM\Column(name="drafts_duration_increment", type="integer", nullable=true)
+   * @Assert\GreaterThanOrEqual (0, message="La durata dell'incremento della bozza deve avere un valore positivo")
    * @SWG\Property(description="Calendar draft meetings duration increment (days)", type="integer")
    * @Serializer\Exclude()
    */
