@@ -8,17 +8,16 @@
     </a>
     <div class="collapse" id="legend">
       <div class='my-legend shadow p-4 float-right'>
-        <div class='legend-title'>Legenda stato evento</div>
+        <div class='legend-title'>{{ 'meetings.legend.title' | trans }}</div>
         <div class='legend-scale'>
           <ul class='legend-labels'>
-            <li><span style='background:var(--indigo);'></span>Confermato / Non richiede moderazione</li>
-            <li><span style='background:var(--success);border: 1px solid var(--success);'></span>In attesa di conferma
-            </li>
-            <li><span style='background:var(--danger);'></span>Assente</li>
-            <li><span style='background:var(--secondary);'></span>Svolto</li>
-            <li><span style='background:var(--200);'></span>Chiusura</li>
-            <li><span style='background:#0073e670;'></span>Disponibilità</li>
-            <li><span style='background:var(--light);'></span>Bozza</li>
+            <li><span style='background:var(--indigo);'></span>{{ 'meetings.legend.approved' | trans }}</li>
+            <li><span style='background:var(--success);border: 1px solid var(--success);'></span>{{ 'meetings.legend.pending' | trans }}</li>
+            <li><span style='background:var(--danger);'></span>{{ 'meetings.legend.missed' | trans }}</li>
+            <li><span style='background:var(--secondary);'></span>{{ 'meetings.legend.done' | trans }}</li>
+            <li><span style='background:var(--200);'></span>{{ 'meetings.legend.closure' | trans }}</li>
+            <li><span style='background:#0073e670;'></span>{{ 'meetings.legend.availability' | trans }}</li>
+            <li><span style='background:var(--light);'></span>{{ 'meetings.legend.draft' | trans }}</li>
           </ul>
         </div>
       </div>

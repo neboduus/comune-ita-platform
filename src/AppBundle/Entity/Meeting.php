@@ -6,7 +6,6 @@ use DateTime;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\ORMException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Swagger\Annotations as SWG;
@@ -19,7 +18,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="meeting")
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
  */
 class Meeting
 {
@@ -121,6 +119,14 @@ class Meeting
    * @SWG\Property(description="Meeting's User Message", type="string")
    */
   private $userMessage;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="motivation_outcome", type="text", nullable=true)
+   * @SWG\Property(description="Meeting's Operator Message", type="string")
+   */
+  private $motivationOutcome;
 
   /**
    * @var string
@@ -511,13 +517,37 @@ class Meeting
   }
 
   /**
+   * Set motivationOutcome.
+   *
+   * @param string $motivationOutcome
+   *
+   * @return Meeting
+   */
+  public function setMotivationOutcome($motivationOutcome)
+  {
+    $this->motivationOutcome = $motivationOutcome;
+
+    return $this;
+  }
+
+  /**
+   * Get motivationOutcome.
+   *
+   * @return string
+   */
+  public function getMotivationOutcome()
+  {
+    return $this->motivationOutcome;
+  }
+
+  /**
    * Set videoconferenceLink.
    *
    * @param string $videoconferenceLink
    *
    * @return Meeting
    */
-  public function setvideoconferenceLink($videoconferenceLink)
+  public function setideoconferenceLink($videoconferenceLink)
   {
     $this->videoconferenceLink = $videoconferenceLink;
 
@@ -652,43 +682,6 @@ class Meeting
     $this->updatedAt = $updated_at;
 
     return $this;
-  }
-
-  /**
-   * Set createdAt and UpdatedAt
-   *
-   * @ORM\PrePersist
-   * @ORM\PreUpdate
-   * @param LifecycleEventArgs $args
-   * @throws \Exception
-   */
-  public function initMeeting(LifecycleEventArgs $args): void
-  {
-    $dateTimeNow = new DateTime('now');
-
-    $this->setUpdatedAt($dateTimeNow);
-
-    if ($this->getCreatedAt() === null) {
-      $this->setRescheduled(0);
-      $this->setCreatedAt($dateTimeNow);
-  }
-}
-
-/**
- * Increment rescheduled
- *
- * @ORM\PreUpdate
- * @param PreUpdateEventArgs $event
- */
-  public function preUpdate(PreUpdateEventArgs $event)
-  {
-    if ($this->getStatus() == Meeting::STATUS_DRAFT || $event->hasChangedField('status') && $event->getOldValue('status') == Meeting::STATUS_DRAFT) {
-      // Do not update rescheduled field for draft meetings
-      return;
-    }
-    if ($this->getStatus() !== Meeting::STATUS_DRAFT && $event->hasChangedField('fromTime') && $event->hasChangedField('toTime')) {
-      $this->setRescheduled($this->rescheduled + 1);
-    }
   }
 }
 

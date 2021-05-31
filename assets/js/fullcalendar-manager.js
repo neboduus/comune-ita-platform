@@ -11,17 +11,31 @@ $(document).ready(function () {
   $("#modalRefuse").hide();
   $("#modalMissed").hide();
   $("#modalComplete").hide();
+  $("#modalStatusHelper").hide();
   $("#modalSlot").click(function () {
     $("#edit_alert").show();
   });
 
   // Calculate slots when date changes
-  // Edit modal
-  $("#modalDate").change(function () {
-    console.log('changes');
+
+  // NEW MODAL
+  $("#modalNewOpeningHour, #modalNewDate").change(function () {
+    $("#modalNewSlot").val('');
+    $("#no_slots_new_alert").hide();
+    getSlots($("#modalNewDate").val(), null, $("#modalNewOpeningHour").val(), null,function(slot) {
+      if (slot) {
+        $("#modalNewSlot").val(slot)
+      } else {
+        $("#no_slots_new_alert").show();
+      }
+    })
+  });
+
+  // EDIT MODAL
+  $("#modalOpeningHour, #modalDate").change(function () {
     $("#modalSlot").val('');
-    $("#edit_alert").show();
-    getSlots(this.value, null, function(slot) {
+    $("#no_slots_edit_alert").hide();
+    getSlots($("#modalDate").val(), null,   $("#modalOpeningHour").val(), $("#modalId").html(),function(slot) {
       if (slot) {
         $("#no_slots_edit_alert").hide();
         $("#modalSlot").val(slot)
@@ -31,18 +45,6 @@ $(document).ready(function () {
     })
   });
 
-  // new modal
-  $("#modalNewDate").change(function () {
-    $("#modalNewSlot").val('');
-    getSlots(this.value, null, function(slot) {
-      if (slot) {
-        $("#no_slots_new_alert").hide();
-        $("#modalNewSlot").val(slot)
-      } else {
-        $("#no_slots_new_alert").show();
-      }
-    })
-  });
 
   // Fullcalendar initialization
   var calendarEl = document.getElementById('fullcalendar');
@@ -95,7 +97,11 @@ $(document).ready(function () {
         deleteDraftModal(info)
       } else if (info.event.id) compileModal(info);
       else if (info.event.title === 'Apertura') newModal(info)
-    }
+    },
+    dateClick: function(info) {
+      if (info.view.type === 'dayGridMonth')
+        this.changeView("timeGridDay", info.dateStr)
+    },
   });
 
   calendar.render();
@@ -142,27 +148,19 @@ function compileModal(info) {
   $("#modalMissed").hide();
   $("#modalCancel").hide();
   $("#modalComplete").hide();
+  $("#modalStatusHelper").hide();
   $("#modalReschedule").hide();
 
   let date = new Date(info.event.start).toISOString().slice(0, 10);
   let start = new Date(info.event.start).toISOString().slice(11, 16);
 
   // Populate modal
-
-  // Populate datalist
-  getSlots(date,  start, function (slot) {
-    if (slot) {
-      $("#no_slots_edit_alert").hide();
-      $("#modalSlot").val(slot)
-    } else {
-      $("#no_slots_edit_alert").show();
-    }
-  });
-
-  $('#modalDate').val(date);
   $('#modalId').html(info.event.id);
+  $('#modalDate').val(date);
+  $('#modalOpeningHour').val(info.event.extendedProps.opening_hour);
   $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name || 'Nome non fornito'}`);
   $('#modalDescription').val(info.event.extendedProps.description);
+  $('#modalMotivationOutcome').val(info.event.extendedProps.motivation_outcome);
   $('#modalVideoconferenceLink').val(info.event.extendedProps.videoconferenceLink);
   $('#modalPhone').val(info.event.extendedProps.phoneNumber);
   $('#modalEmail').val(info.event.extendedProps.email);
@@ -184,6 +182,7 @@ function compileModal(info) {
       $('#modalComplete').show();
       $('#modalMissed').show();
       $('#modalCancel').show();
+      $("#modalStatusHelper").show();
       break;
     case '2': //Rifiutato
       $('#modalApprove').show();
@@ -200,7 +199,19 @@ function compileModal(info) {
   }
 
   $('#modalError').html('');
-  $('#modalCenter').modal('show');
+
+  $("#modalSlot").val('');
+  $("#no_slots_edit_alert").hide();
+  getSlots($("#modalDate").val(), start, $("#modalOpeningHour").val(), $("#modalId").html(),function(slot) {
+    if (slot) {
+      $("#no_slots_edit_alert").hide();
+      $("#modalSlot").val(slot)
+    } else {
+      $("#no_slots_edit_alert").show();
+    }
+    $('#modalCenter').modal('show');
+  })
+
   $('#modalClose').click(info.revert)
 }
 
@@ -212,15 +223,19 @@ function newModal(info) {
   let date = new Date(info.event.start).toISOString().slice(0, 10);
   let start = new Date(info.event.start).toISOString().slice(11, 16);
 
-  // Populate datalist
-  getSlots(date,start, function (slot) {
-    $('#modalNewSlot').val(slot);
-  });
-
   $('#modalNewDate').val(date);
   $('#modalNewStatus').html(1);
-  $('#modalNew').modal('show');
 
+  $("#modalNewSlot").val('');
+  $("#no_slots_new_alert").hide();
+  getSlots($("#modalNewDate").val(), start,   $("#modalNewOpeningHour").val(), null,function(slot) {
+    if (slot) {
+      $("#modalNewSlot").val(slot)
+    } else {
+      $("#no_slots_new_alert").show();
+    }
+    $('#modalNew').modal('show');
+  })
 }
 
 /**
@@ -246,15 +261,26 @@ function deleteDraftModal(info) {
  * Retrieves slots for selected date
  * @param date
  * @param start
+ * @param opening_hour
+ * @param exclude_id
  * @param callback
  */
-function getSlots(date, start, callback) {
+function getSlots(date, start, opening_hour, exclude_id, callback) {
+  $('#modalError').html('');
   let calendar = $('#hidden').attr('data-calendar');
   let slot;
 
   let url = $('#hidden').attr('data-url');
   url = url.replace("calendar_id", calendar).replace("date", date);
   url = url + '?all=true';
+
+  if (opening_hour){
+    url = url + '&opening_hours=' + opening_hour;
+  }
+
+  if (exclude_id){
+    url = url + '&exclude=' + exclude_id;
+  }
 
   $.ajax({
     headers: {

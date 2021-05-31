@@ -86,7 +86,9 @@
       email: $('#modalEmail').val(),
       phone_number: $('#modalPhone').val(),
       user_message: $('#modalDescription').val(),
+      motivation_outcome: $('#modalMotivationOutcome').val(),
       videoconference_link: $('#modalVideoconferenceLink').val(),
+      opening_hour: $('#modalOpeningHour').val()
     };
     let url = $(`#${btnId}`).attr('data-url');
     let token = $('#hidden').attr('data-token');
@@ -174,12 +176,14 @@
       from_time: new Date(`${date}T${start}`).toISOString(),
       to_time: new Date(`${date}T${end}`).toISOString(),
       user_message: $('#modalNewDescription').val(),
+      motivation_outcome: $('#modalNewMotivationOutcome').val(),
       fiscal_code: $('#modalNewFiscalCode').val(),
       videoconference_link: $('#modalNewVideoconferenceLink').val(),
       email: $('#modalNewEmail').val(),
       name: $('#modalNewName').val(),
       phone_number: $('#modalNewPhone').val(),
-      calendar: calendar
+      calendar: calendar,
+      opening_hour: $('#modalNewOpeningHour').val()
     };
 
     let url = $(`#${btnId}`).attr('data-url');

@@ -204,6 +204,8 @@ class CalendarsBackOffice implements BackOfficeInterface
         $meeting = new Meeting();
       }
 
+      $openingHour = $meetingData['opening_hour'] ? $this->em->getRepository('AppBundle:OpeningHour')->find($meetingData['opening_hour']) : null;
+
       $meeting->setEmail($meetingData['email']);
       $meeting->setName($meetingData['name']);
       $meeting->setPhoneNumber($meetingData['phone_number']);
@@ -213,8 +215,10 @@ class CalendarsBackOffice implements BackOfficeInterface
       $meeting->setFromTime($meetingData['from_time']);
       $meeting->setToTime($meetingData['to_time']);
       $meeting->setCalendar($calendar);
+      if($openingHour)
+        $meeting->setOpeningHour($openingHour);
 
-      if (!$this->meetingService->isSlotAvailable($meeting) || !$this->meetingService->isSlotValid($meeting)) {
+      if (!empty($this->meetingService->getMeetingErrors($meeting))) {
         // Send email
         $this->meetingService->sendEmailUnavailableMeeting($meeting);
         $this->logger->error($this->translator->trans('backoffice.integration.calendars.invalid_slot'));
@@ -277,6 +281,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       "to_time" => $end,
       "calendar" => trim($meetingData[0]),
       "meeting_id" => trim($meetingData[1]),
+      "opening_hour" => isset($meetingData[2]) ? trim($meetingData[2]) : null
     ];
 
     if (isset($submission['applicant.data.phone_number'])) {
