@@ -1,16 +1,23 @@
-<label style="font-weight: 600; padding: 0 0.5rem;">Orari di apertura</label>
+<label style="font-weight: 600; padding: 0 0.5rem;">{{ "calendars.opening_hours.opening_hours" | trans }}</label>
 <fieldset class="bg-light p-3 mb-3">
   <div id="opening_hours"
        data-prototype='
           <div id="appbundle_calendar_opening_hours___name__">
             <div class="row">
+              <div class="col-12 form-group">
+                <label for="appbundle_calendar_opening_hours___name___name" class="required active">{{ 'calendars.opening_hours.name' | trans }}</label>
+                <input type="text" id="appbundle_calendar_opening_hours___name___name" name="appbundle_calendar[opening_hours][__name__][name]" required="required" class="form-control">
+                <span class="text-info px-2" id="io_helper"><i class="fa fa-info-circle"></i>{{ 'calendars.opening_hours.name_helper' | trans }}</span>
+              </div>
+            </div>
+            <div class="row">
                 <div class="col-6">
-                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___start_date" class="required">Data di inizio</label><input type="date" id="appbundle_calendar_opening_hours___name___start_date" name="appbundle_calendar[opening_hours][__name__][start_date]"  value="{{ "now"|date('Y-m-d')}}" required="required" class="form-control"></div>
-                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___begin_hour" class="required">Orario di apertura</label><input type="time" id="appbundle_calendar_opening_hours___name___begin_hour" name="appbundle_calendar[opening_hours][__name__][begin_hour]" required="required" class="form-control"></div>
+                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___start_date" class="required">{{ 'calendars.opening_hours.start_date' | trans }}</label><input type="date" id="appbundle_calendar_opening_hours___name___start_date" name="appbundle_calendar[opening_hours][__name__][start_date]"  value="{{ "now"|date('Y-m-d')}}" required="required" class="form-control"></div>
+                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___begin_hour" class="required">{{ 'calendars.opening_hours.begin_hour' | trans }}</label><input type="time" id="appbundle_calendar_opening_hours___name___begin_hour" name="appbundle_calendar[opening_hours][__name__][begin_hour]" required="required" class="form-control"></div>
                 </div>
                 <div class="col-6">
-                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___end_date" class="required">Data di fine</label><input type="date" id="appbundle_calendar_opening_hours___name___end_date" name="appbundle_calendar[opening_hours][__name__][end_date]" value="{{ "last day of december" |date('Y-m-d')}}" required="required" class="form-control"></div>
-                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___end_hour" class="required">Orario di chiusura</label><input type="time" id="appbundle_calendar_opening_hours___name___end_hour" name="appbundle_calendar[opening_hours][__name__][end_hour]" required="required" class="form-control"></div>
+                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___end_date" class="required">{{ 'calendars.opening_hours.end_date' | trans }}</label><input type="date" id="appbundle_calendar_opening_hours___name___end_date" name="appbundle_calendar[opening_hours][__name__][end_date]" value="{{ "last day of december" |date('Y-m-d')}}" required="required" class="form-control"></div>
+                  <div class="form-group"><label for="appbundle_calendar_opening_hours___name___end_hour" class="required">{{ 'calendars.opening_hours.end_hour' | trans }}</label><input type="time" id="appbundle_calendar_opening_hours___name___end_hour" name="appbundle_calendar[opening_hours][__name__][end_hour]" required="required" class="form-control"></div>
                 </div>
             </div>
             <fieldset class="form-group">
@@ -18,31 +25,31 @@
               <div id="appbundle_calendar_opening_hours___name___days_of_week">
                 <div class="form-check">
                   <input type="checkbox" id="appbundle_calendar_opening_hours___name___days_of_week_0" name="appbundle_calendar[opening_hours][__name__][days_of_week][]" class="form-check-input" value="1">
-                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_0">Lunedì</label>
+                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_0">{{ 'calendars.opening_hours.weeks.week_day_1' | trans }}</label>
                 </div>
                 <div class="form-check">
                   <input type="checkbox" id="appbundle_calendar_opening_hours___name___days_of_week_1" name="appbundle_calendar[opening_hours][__name__][days_of_week][]" class="form-check-input" value="2">
-                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_1">Martedì</label>
+                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_1">{{ 'calendars.opening_hours.weeks.week_day_2' | trans }}</label>
                 </div>
                 <div class="form-check">
                   <input type="checkbox" id="appbundle_calendar_opening_hours___name___days_of_week_2" name="appbundle_calendar[opening_hours][__name__][days_of_week][]" class="form-check-input" value="3">
-                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_2">Mercoledì</label>
+                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_2">{{ 'calendars.opening_hours.weeks.week_day_3' | trans }}</label>
                 </div>
                 <div class="form-check">
                   <input type="checkbox" id="appbundle_calendar_opening_hours___name___days_of_week_3" name="appbundle_calendar[opening_hours][__name__][days_of_week][]" class="form-check-input" value="4">
-                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_3">Giovedì</label>
+                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_3">{{ 'calendars.opening_hours.weeks.week_day_4' | trans }}</label>
                 </div>
                 <div class="form-check">
                   <input type="checkbox" id="appbundle_calendar_opening_hours___name___days_of_week_4" name="appbundle_calendar[opening_hours][__name__][days_of_week][]" class="form-check-input" value="5">
-                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_4">Venerdì</label>
+                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_4">{{ 'calendars.opening_hours.weeks.week_day_5' | trans }}</label>
                 </div>
                 <div class="form-check">
                   <input type="checkbox" id="appbundle_calendar_opening_hours___name___days_of_week_5" name="appbundle_calendar[opening_hours][__name__][days_of_week][]" class="form-check-input" value="6">
-                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_5">Sabato</label>
+                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_5">{{ 'calendars.opening_hours.weeks.week_day_6' | trans }}</label>
                 </div>
                 <div class="form-check">
                   <input type="checkbox" id="appbundle_calendar_opening_hours___name___days_of_week_6" name="appbundle_calendar[opening_hours][__name__][days_of_week][]" class="form-check-input" value="7">
-                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_6">Domenica</label>
+                  <label class="form-check-label" for="appbundle_calendar_opening_hours___name___days_of_week_6">{{ 'calendars.opening_hours.weeks.week_day_7' | trans }}</label>
                 </div>
               </div>
             </fieldset>
@@ -50,21 +57,21 @@
                 <div class="form-group">
                   <div class="form-check">
                     <input type="checkbox" id="appbundle_calendar_opening_hours___name___is_moderated" name="appbundle_calendar[opening_hours][__name__][is_moderated]" class="form-check-input">
-                    <label class="form-check-label" for="appbundle_calendar_opening_hours___name___is_moderated">Richiede moderazione?</label>
+                    <label class="form-check-label" for="appbundle_calendar_opening_hours___name___is_moderated">{{ 'calendars.opening_hours.is_moderated' | trans }}</label>
                   </div>
                 </div>
               </div>
             <div class="row">
               <div class="col-6">
-                <div class="form-group"><label for="appbundle_calendar_opening_hours___name___meeting_queue" class="required active" style="transition: none;">Numero di meeting paralleli</label><input type="text" id="appbundle_calendar_opening_hours___name___meeting_queue" name="appbundle_calendar[opening_hours][__name__][meeting_queue]" value="1" required="required" class="form-control"></div>
+                <div class="form-group"><label for="appbundle_calendar_opening_hours___name___meeting_queue" class="required active" style="transition: none;">{{ 'calendars.opening_hours.meeting_queue' | trans }}</label><input type="text" id="appbundle_calendar_opening_hours___name___meeting_queue" name="appbundle_calendar[opening_hours][__name__][meeting_queue]" value="1" required="required" class="form-control"></div>
               </div>
             </div>
             <div class="row">
               <div class="col-6">
-                <div class="form-group"><label for="appbundle_calendar_opening_hours___name___meeting_minutes" class="required active" style="transition: none;">Durata del meeting</label><input type="text" id="appbundle_calendar_opening_hours___name___meeting_minutes" name="appbundle_calendar[opening_hours][__name__][meeting_minutes]" value="30" required="required" class="form-control"></div>
+                <div class="form-group"><label for="appbundle_calendar_opening_hours___name___meeting_minutes" class="required active" style="transition: none;">{{ 'calendars.opening_hours.meeting_minutes' | trans }}</label><input type="text" id="appbundle_calendar_opening_hours___name___meeting_minutes" name="appbundle_calendar[opening_hours][__name__][meeting_minutes]" value="30" required="required" class="form-control"></div>
               </div>
               <div class="col-6">
-                <div class="form-group"><label for="appbundle_calendar_opening_hours___name___interval_minutes" class="required active" style="transition: none;">Intervallo tra i meeting</label><input type="text" id="appbundle_calendar_opening_hours___name___interval_minutes" name="appbundle_calendar[opening_hours][__name__][interval_minutes]" value="0" required="required" class="form-control"></div>
+                <div class="form-group"><label for="appbundle_calendar_opening_hours___name___interval_minutes" class="required active" style="transition: none;">{{ 'calendars.opening_hours.interval_minutes' | trans }}</label><input type="text" id="appbundle_calendar_opening_hours___name___interval_minutes" name="appbundle_calendar[opening_hours][__name__][interval_minutes]" value="0" required="required" class="form-control"></div>
               </div>
             </div>
             <div class="form-row float-right">
@@ -83,6 +90,13 @@
       {% for opening_hour in form.opening_hours %}
         <div class="js-opening_hour-item">
           <div id="appbundle_calendar_opening_hours___name__">
+            <div class="row">
+              <div class="form-group col-12">
+                {{ form_label(opening_hour.name) }}
+                {{ form_widget(opening_hour.name) }}
+                <span class="text-info px-2"><i class="fa fa-info-circle"></i> {{ 'calendars.opening_hours.name_helper' | trans }}</span>
+              </div>
+            </div>
             <div class="row">
               <div class="col-6">
                 {{ form_row(opening_hour.start_date) }}
@@ -118,7 +132,7 @@
                   <svg class="icon icon-sm icon-white">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
                   </svg>
-                  <span>Elimina apertura</span>
+                  <span>{{ "calendars.opening_hours.remove" | trans }}</span>
                 </a>
               </div>
             </div>
@@ -127,13 +141,13 @@
         </div>
       {% endfor %}
     {% else %}
-      <div class="alert alert-info" id="no-opening_hours">Non sono presenti orari di apertura</div>
+      <div class="alert alert-info" id="no-opening_hours">{{ "calendars.opening_hours.no_opening_hours" | trans }}</div>
     {% endif %}
   </div>
   <button type="button"
           class="add-another-opening_hour-widget btn btn-xs btn-primary"
           class="add-another-opening_hour-widget btn btn-xs btn-primary"
-          data-list-selector="#opening_hours">Aggiungi orario di apertura
+          data-list-selector="#opening_hours">{{ "calendars.opening_hours.add" | trans }}
   </button>
 </fieldset>
 

@@ -14,6 +14,23 @@
       <div class="modal-body">
         <div id="modalId" class="d-none"></div>
         <div id="modalStatus" class="d-none"></div>
+        <div class="row mt-3 {% if not calendar.allowOverlaps %} d-none {% endif %}">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <select id="modalOpeningHour" class="selectpicker">
+              {% for opening_hour in calendar.openingHours %}
+                <option value="{{opening_hour.id}}">{{opening_hour.name}}</option>
+              {% endfor %}
+              {% if not calendar.allowOverlaps %}
+                <option value="" selected>{{ "meetings.modal.all" | trans() }}</option>
+              {% endif %}
+            </select>
+          </div>
+        </div>
         <div class="row mt-3">
           <div class="col-1">
             <svg class="icon">
@@ -26,21 +43,20 @@
           <div class="col-1"></div>
           <div class="col-auto">
             <input type="text" id="modalSlot" list="slots" class="custom-select custom-select-sm"
-                   onclick="this.value = ''" placeholder="Seleziona orario">
+                   onclick="this.value = ''" placeholder="{{ "meetings.labels.select_slot" | trans() }}">
             <datalist id="slots"></datalist>
           </div>
         </div>
         <div id="no_slots_edit_alert" class="row mt-3">
           <div class="col-1"></div>
           <div class="col-10">
-            <small class="text-danger">Non ci sono orari disponibili alla data selezionata</small>
+            <small class="text-danger">{{ 'meetings.error.no_slots_available' | trans }}</small>
           </div>
         </div>
         <div id="edit_alert" class="row mt-3">
           <div class="col-1"></div>
           <div class="col-10">
-            <small><b>Attenzione</b>: la modifica della data comporterà l'invio di una
-              notifica al cittadino e la conferma automatica dell'appuntamento</small>
+            <small><b>{{ "meetings.modal.warning" | trans }}</b>: {{ "meetings.modal.notification_alert_confirm" | trans }}</small>
           </div>
         </div>
         <br>
@@ -61,7 +77,7 @@
             </svg>
           </div>
           <div class="col-10">
-            <input type="url" id="modalVideoconferenceLink" placeholder="Link videoconferenza">
+            <input type="url" id="modalVideoconferenceLink" placeholder="{{ "meetings.labels.videoconference_link" | trans() }}">
           </div>
         </div>
         <div class="row mt-3">
@@ -71,7 +87,7 @@
             </svg>
           </div>
           <div class="col-6">
-            <input type="tel" id="modalPhone" class="col-10" placeholder="Recapito telefonico">
+            <input type="tel" id="modalPhone" class="col-10" placeholder="{{ "meetings.labels.phone_number" | trans() }}">
           </div>
         </div>
         <div class="row mt-3">
@@ -81,7 +97,7 @@
             </svg>
           </div>
           <div class="col-6">
-            <input type="email" id="modalEmail" class="col-10" placeholder="Indirizzo Email">
+            <input type="email" id="modalEmail" class="col-10" placeholder="{{ "meetings.labels.email" | trans() }}">
           </div>
         </div>
         <div id="modalReschedule" class="row mt-3">
@@ -92,6 +108,17 @@
           </div>
           <div class="col-10" id="modalRescheduleText"></div>
         </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-comment"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <p class="mb-3 small">{{ 'meetings.modal.motivation_outcome_helper' | trans }}</p>
+            <textarea style="border: none" id="modalMotivationOutcome" ></textarea>
+          </div>
+        </div>
         <div class="row mt-4">
           <div class="col-1">
             <svg class="icon">
@@ -99,28 +126,27 @@
             </svg>
           </div>
           <div class="col-10">
+            <p id="modalStatusHelper" class="mb-3 small">{{ 'meetings.modal.status_change_helper' | trans }}</p>
             <button id="modalApprove" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-success btn-sm mr-3" type="button" onclick="editEvent(this.id, 1)">
-              Conferma
+                    class="btn btn-success btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_1' | trans | escape('js') }}')) editEvent(this.id, 1)">
+            {{ "meetings.modal.confirm" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use></svg>
             </button>
             <button id="modalRefuse" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-danger btn-sm mr-3" type="button" onclick="editEvent(this.id,2)">
-              Rifiuta
+                    class="btn btn-danger btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_2' | trans | escape('js') }}')) editEvent(this.id,2)">
+              {{ "meetings.modal.refuse" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use></svg>
             </button>
             <button id="modalComplete" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-secondary btn-sm mr-3" type="button" onclick="editEvent(this.id,4)">
-              Completa
+                    class="btn btn-success btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_4' | trans | escape('js') }}')) editEvent(this.id,4)">
+              {{ "meetings.modal.done" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use></svg>
             </button>
             <button id="modalMissed" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-danger btn-sm mr-3" type="button" onclick="editEvent(this.id,3)">
-              Assente
+                    class="btn btn-danger btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_3' | trans | escape('js') }}')) editEvent(this.id,3)">
+              {{ "meetings.modal.absent" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use></svg>
             </button>
             <button id="modalCancel" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-warning btn-sm mr-3" type="button" onclick="editEvent(this.id,5)">
-              Annulla
+                    class="btn btn-warning btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_5' | trans | escape('js') }}')) editEvent(this.id,5)">
+              {{ "meetings.modal.cancel" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
             </button>
-            <p class="mt-4"><small><b>Attenzione</b>: la modifica dello stato comporterà l'invio di una notifica al
-                cittadino</small></p>
           </div>
         </div>
       </div>
@@ -128,7 +154,7 @@
       <div class="modal-footer my-3 d-flex justify-content-between" >
         <ul id="modalError" class="text-danger list-unstyled"></ul>
         <button id="modalSave" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                class="btn btn-primary btn-sm" type="button" onclick="editEvent(this.id)">Salva</button>
+                class="btn btn-primary btn-sm" type="button" onclick="editEvent(this.id)">{{ "meetings.modal.save" | trans }}</button>
       </div>
     </div>
   </div>

@@ -110,29 +110,41 @@ class MeetingService
         return false;
     }
 
-    $openingHours = $this->entityManager->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $meeting->getCalendar()]);
-    // Check if given date and given slot is correct
-    $isValidDate = false;
-    $isValidSlot = false;
-    foreach ($openingHours as $openingHour) {
-      $dates = $this->explodeDays($openingHour, true);
-      $meetingDate = $meeting->getFromTime()->format('Y-m-d');
-      if (in_array($meetingDate, $dates)) {
-        $isValidDate = true;
-        $slots = $this->explodeMeetings($openingHour, $meeting->getFromTime());
-        $meetingEnd = clone $meeting->getToTime();
-        $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i');
-
-        if (array_key_exists($slotKey, $slots)) {
-          $isValidSlot = true;
-          if (!$meeting->getOpeningHour())
+    if ($meeting->getCalendar()->isAllowOverlaps()) {
+      if ($meeting->getOpeningHour() && $this->isOpeningHourValidForMeeting($meeting, $meeting->getOpeningHour())) {
+        return true;
+      }
+    } else {
+      if ($meeting->getOpeningHour() && $this->isOpeningHourValidForMeeting($meeting, $meeting->getOpeningHour())) {
+        return true;
+      } else {
+        foreach ($meeting->getCalendar()->getOpeningHours() as $openingHour) {
+          if ($this->isOpeningHourValidForMeeting($meeting, $openingHour)) {
             $meeting->setOpeningHour($openingHour);
+            return true;
+          }
         }
       }
     }
-    if (!$isValidDate || !$isValidSlot)
+    return false;
+  }
+
+  private function isOpeningHourValidForMeeting(Meeting $meeting, OpeningHour $openingHour) {
+    $dates = $this->explodeDays($openingHour, true);
+    $meetingDate = $meeting->getFromTime()->format('Y-m-d');
+    // Date not available for opening hour
+    if (!in_array($meetingDate, $dates))
       return false;
-    return true;
+
+    $slots = $this->explodeMeetings($openingHour, $meeting->getFromTime());
+    $meetingEnd = clone $meeting->getToTime();
+    $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i');
+
+    if (array_key_exists($slotKey, $slots)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -281,7 +293,7 @@ class MeetingService
     $hour = $meeting->getFromTime()->format('H:i');
     $contact = $calendar->getContactEmail();
 
-    if ($calendar->getIsModerated() && $status == Meeting::STATUS_PENDING) {
+    if (($calendar->getIsModerated() || $meeting->getOpeningHour()->getIsModerated()) && $status == Meeting::STATUS_PENDING) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.pending');
     } else if ($status == Meeting::STATUS_APPROVED) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.approved',
@@ -290,8 +302,15 @@ class MeetingService
           'date' => $date,
           'location' => $calendar->getLocation()
         ]);
+
+      if ($meeting->getMotivationOutcome()) {
+        $userMessage = $userMessage . $this->translator->trans('meetings.email.motivation_outcome', [
+            '%motivation_outcome%' => $meeting->getMotivationOutcome()
+          ]);
+      }
+
       if ($meeting->getvideoconferenceLink()) {
-        $userMessage = $userMessage . $this->translator->trans('meetings.email.meeting_link', [
+        $userMessage = $userMessage . $this->translator->trans('meetings.email.meeting_link.new', [
             'videoconference_link' => $meeting->getvideoconferenceLink()
           ]);
       }
@@ -333,6 +352,12 @@ class MeetingService
       'user_message' => $meeting->getUserMessage()
     ]);
 
+    if ($meeting->getUserMessage()) {
+      $operatoreMessage = $operatoreMessage . $this->translator->trans('meetings.email.operatori.new_meeting.reason', [
+          '%user_message%' => $meeting->getUserMessage()
+        ]);
+    }
+
     // Send mail to calendar's contact
     if ($calendar->getContactEmail()) {
       $this->mailer->dispatchMail(
@@ -348,7 +373,7 @@ class MeetingService
     }
 
     // Send email for each moderator
-    if ($calendar->getIsModerated()) {
+    if ($calendar->getIsModerated() || $meeting->getOpeningHour()->getIsModerated()) {
       foreach ($calendar->getModerators() as $moderator) {
         $this->mailer->dispatchMail(
           $this->defaultSender,
@@ -408,6 +433,7 @@ class MeetingService
      * L'app.to è stato approvato
      */
 
+    $userMessage = '';
 
     if ($statusChanged && $status == Meeting::STATUS_REFUSED) {
       // Meeting has been refused. Date change does not matter
@@ -459,6 +485,11 @@ class MeetingService
 
     } else return;
 
+    if ($meeting->getMotivationOutcome()) {
+      $userMessage = $userMessage . $this->translator->trans('meetings.email.motivation_outcome', [
+          '%motivation_outcome%' => $meeting->getMotivationOutcome()
+        ]);
+    }
 
     // Add link for cancel meeting if meeting has status approved
     if ($status == Meeting::STATUS_APPROVED) {
@@ -542,6 +573,12 @@ class MeetingService
       'hour' => $meeting->getFromTime()->format('H:i')
     ]);
 
+    if ($meeting->getMotivationOutcome()) {
+      $message = $message . $this->translator->trans('meetings.email.motivation_outcome', [
+          '%motivation_outcome%' => $meeting->getMotivationOutcome()
+        ]);
+    }
+
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
         $this->defaultSender,
@@ -613,7 +650,7 @@ class MeetingService
       ->from('AppBundle:Meeting', 'meeting')
       ->where('meeting.calendar = :calendar')
       ->andWhere('meeting.fromTime >= :startDate')
-      ->andWhere('meeting.toTime < :endDate')
+      ->andWhere('meeting.toTime <= :endDate')
       ->andWhere('meeting.status != :refused')
       ->andWhere('meeting.status != :cancelled')
       ->setParameter('refused', Meeting::STATUS_REFUSED)
@@ -649,20 +686,23 @@ class MeetingService
     foreach ($slots as $key => $day) {
       $totalSlotsAvailable = $slots[$key]['slots_available'];
       $slotsUnavailable = 0;
+      if(array_key_exists($key, $meetings)) {
+        $totalSlotsAvailable = $totalSlotsAvailable - $meetings[$key]['count'];
+      } else {
+        // Todo: trovare un modo migliore
+        foreach ($meetings as $asd => $meeting) {
+          // Check availabilities on booked meetings
+          $bookedStartTime = $meeting["start_time"];
+          $bookedEndTime = $meeting["end_time"];
+          $slotStartTime = new DateTime($day["date"] . ' ' . $day["start_time"]);
+          $slotEndTime = new DateTime($day["date"] . ' ' . $day["end_time"]);
 
-      // Todo: trovare un modo migliore
-      foreach ($meetings as $meeting) {
-        // Check availabilities on booked meetings
-        $bookedStartTime = $meeting["start_time"];
-        $bookedEndTime = $meeting["end_time"];
-        $slotStartTime = new DateTime($day["date"] . ' ' . $day["start_time"]);
-        $slotEndTime = new DateTime($day["date"] . ' ' . $day["end_time"]);
-        if(array_key_exists($key, $meetings)) {
-          $totalSlotsAvailable = $totalSlotsAvailable - $meetings[$key]['count'];
-        }else if ($bookedEndTime > $slotStartTime && $bookedStartTime < $slotEndTime) {
-          $slotsUnavailable = max($slotsUnavailable, $meeting['count'], 0);
+          if ($bookedEndTime > $slotStartTime && $bookedStartTime < $slotEndTime) {
+            $slotsUnavailable = max($slotsUnavailable, $meeting['count'], 0);
+          }
         }
       }
+
       $slots[$key]['availability'] = $slotsUnavailable >= $totalSlotsAvailable ? false : true;
       $slots[$key]['slots_available'] = max($totalSlotsAvailable - $slotsUnavailable, 0);
 
@@ -722,5 +762,20 @@ class MeetingService
     }
 
     return array_values($overlaps);
+  }
+
+  public function getMeetingErrors(Meeting $meeting) {
+    $errors = [];
+    if ($meeting->getCalendar()->isAllowOverlaps() && !$meeting->getOpeningHour()) {
+      $errors[] = $this->translator->trans('meetings.error.no_opening_hour_with_overlaps');
+    } else {
+      if (!$this->isSlotValid($meeting)) {
+        $errors[] = $this->translator->trans('meetings.error.slot_invalid');
+      }
+      if ($meeting->getStatus() !== Meeting::STATUS_REFUSED && $meeting->getStatus() !== Meeting::STATUS_CANCELLED && !$this->isSlotAvailable($meeting)) {
+        $errors[] = $this->translator->trans('meetings.error.slot_unavailable');
+      }
+    }
+    return $errors;
   }
 }

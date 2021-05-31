@@ -1904,6 +1904,21 @@ calendars:
     text_before: "E' possibile disdire fino a "
     text_after: "giorni prima dell'appuntamento"
   opening_hours:
+    name: "Nome"
+    name_helper: "Suggerimento: utilizza questo campo per distinguere facilmente l'orario di apertura"
+    start_date: "Data di inizio"
+    end_date: "Data di fine"
+    days_of_week: "Giorni della settimana"
+    begin_hour: "Orario di apertura"
+    end_hour: "Orario di chiusura"
+    is_moderated: "Richiede moderazione?"
+    meeting_minutes: "Durata del meeting"
+    interval_minutes: "Intervallo tra i meeting"
+    meeting_queue: "Numero di meeting paralleli"
+    add: "Aggiungi orario di apertura"
+    remove: "Elimina apertura"
+    no_opening_hours: "Non sono presenti orari di apertura"
+    opening_hours: "Orari di apertura"
     weeks:
       week_day_1: "Lunedì"
       week_day_2: "Martedì"
@@ -1926,9 +1941,57 @@ calendars:
                      esistono dei meeting gia fissati. Le consigliamo di creare un orario di apertura a partire dalla prima data disponibile (next_availability)'
 
 meetings:
+  labels:
+    calendar: "Calendario"
+    user: "Utente"
+    opening_hour: "Orario di apertura"
+    email: "Indirizzo Email"
+    fiscal_code: "Codice fiscale"
+    name: "Nome"
+    phone_number: "Recapito telefonico"
+    from_time: "Orario di inizio"
+    to_time: "Orario di fine"
+    status: "Stato"
+    user_message: "Messaggio"
+    motivation_outcome: "Motivazione esito"
+    videoconference_link: "Link videoconferenza"
+    complete_name: "Nome e cognome"
+    backoffice_user_message: "Oggetto... (creato dall'ufficio)"
+    select_slot: "Seleziona orario"
   error:
+    no_slots_available: "Non ci sono orari disponibili alla data e all'ora selezionata"
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
+    no_opening_hour_with_overlaps: "L'orario di apertura è obbligatorio se il calendario prevede sovrapposizioni"
+  legend:
+    title: "Legenda stato appuntamenti"
+    approved: "Confermato / Non richiede moderazione"
+    pending: "In attesa di conferma"
+    missed: "Non avvenuto / Assente"
+    done: "Avvenuto"
+    closure: "Chiusura"
+    availability: "Disponibilità"
+    draft: "Bozza"
+  modal:
+    create: "Crea"
+    save: "Salva"
+    confirm: "Conferma"
+    refuse: "Rifiuta"
+    done: "Avvenuto"
+    absent: "Non avvenuto"
+    cancel: "Annulla"
+    all: "Tutti"
+    warning: "Attenzione"
+    notification_alert: "la modifica dello stato comporterà l'invio di una notifica al cittadino"
+    notification_alert_confirm: "la modifica della data comporterà l'invio di una notifica al cittadino e la conferma automatica dell'appuntamento"
+    motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullameto dell'appuntamento"
+    status_change_helper: "E' possibile registrare se l'appuntamento è avvenuto come previsto"
+    confirm_edit:
+      status_1: "L'approvazione dell'appuntamento comporterà l'invio di una notifica al cittadino. Sei sicuro di voler procedere?"
+      status_2: "Il rifiuto dell'appuntamento comporterà l'invio di una notifica al cittadino. Sei sicuro di voler procedere?"
+      status_4: "L'appuntamento verrà marcato come completato, NON verrà inviata una notifica al cittadino. Sei sicuro di voler procedere?"
+      status_3: "L'appuntamento verrà marcato come NON completato, NON verrà inviata una notifica al cittadino. Sei sicuro di voler procedere?"
+      status_5: "L'annullamento dell'appuntamento comporterà l'invio di una notifica al cittadino. Sei sicuro di voler procedere?"
   no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
   default_draft_message: "Appuntamento in bozza"
   no_info: "<i>Informazione non disponibile</i>"
@@ -1948,16 +2011,15 @@ meetings:
         message: "<p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>approvato</b><p>"
       new_meeting:
         subject: 'Nuovo appuntamento'
-        message: '<p>Nuova richiesta di appuntamento a nome di <b>name</b> per il giorno <b>date</b> alle ore <b>hour</b>.<p>
-                  <p>Motivazione: <b>user_message</b></p>'
+        message: '<p>Nuova richiesta di appuntamento a nome di <b>name</b> per il giorno <b>date</b> alle ore <b>hour</b>.</p>'
+        reason: "<p>Motivo dell'appuntamento: %user_message%</p>"
         approve_link: '<br><p>Clicca sul seguente link per approvare: <a href="approve_link"><b>Approva</b></a></p>'
     new_meeting:
       pending: '<p>La informiamo che la sua richiesta è stata <b>presa in carico</b>.</p><p>Riceverà un email di conferma non appena la sua richiesta verrà confermata.</p>'
       approved: '<p>La informiamo che la sua richiesta è stata <b>confermata</b>.</p><p>La invitiamo a presentarsi alle ore <b>hour</b> del giorno <b>date</b> presso <b>location</b></p>'
       subject: 'Richiesta prenotazione appuntamento'
     edit_meeting:
-      refused: '<p>Siamo spiacenti di informarla che non è stato possibile accogliere la Sua richiesta di appuntamento per il giorno <b>date</b></p><br>
-              <p>Per maggiori informazioni può contattarci al seguente indirizzo email<a href="email_address"><b>email_address</b></a></p>'
+      refused: '<p>Siamo spiacenti di informarla che non è stato possibile accogliere la Sua richiesta di appuntamento per il giorno <b>date</b></p><br>'
       rescheduled: "<p>La informiamo che l'appuntamento del giorno <b>old_date</b> è stato <b>spostato</b> alle ore <b>hour</b> del giorno <b>new_date</b> presso <b>location</b></p><br>"
       rescheduled_and_approved: '<p>Purtroppo non è stato possibile confermare il suo appuntamento nella data e orario richiesti, sarà possibile riceverla
                                 alle ore <b>hour</b> del giorno date presso <b>location</b></p>'
@@ -1981,6 +2043,7 @@ meetings:
                  all&apos;indirizzo <a href="mailto:email_address"><b>email_address</b></a></i></p>'
     info_without_contact: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
                      nel caso tu non abbia fatto nessuna richiesta di questo tipo ti preghiamo di ignorare questo messaggio</i></p>'
+    motivation_outcome: '<p>%motivation_outcome%</p>'
     meeting_link:
       message: '<p>Qualora non fosse possibile presentarsi fisicamente all&apos;appuntamento la invitiamo a partecipare collegandosi al seguente indirizzo: <a href="videoconference_link"><b>videoconference_link</b></a><p>'
       changed: '<p>La informiamo che è stato modificato l&apos;indirizzo della videoconferenza. Il nuovo indirizzo è il seguente: <a href="videoconference_link"><b>videoconference_link</b></a></p>'
