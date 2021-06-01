@@ -31,7 +31,7 @@
     {% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
       <div id="formio_summary" class="formio-front formio-summary"
            data-formserver_url="{{ formserver_url }}"
-           data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
+           data-form_id="{{ pratica.servizio.getFormIoId }}"
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
