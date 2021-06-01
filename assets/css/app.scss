@@ -203,8 +203,16 @@ display: none;
   }
 }
 //Fix resize label in tabs
-.tab-content .form-group label{
+.tab-content .form-group label {
   width: auto !important;
+}
+
+.truncate-wrapper {
+  max-width: 100%;
+  .chip-label{
+    height: auto !important;
+    transform: none !important;
+  }
 }
 
 

@@ -49,14 +49,18 @@
 {% block main_content %}
   <section id="intro" class="container px-4 my-4">
     <div class="row">
-      <div class="col-lg-12 px-lg-4 py-lg-2">
-        <div class="chip chip-primary chip-lg">
-          <span class="chip-label">{{ pratica.servizio.name }}</span>
+      <div class="col col-lg-9 px-lg-4 py-lg-2">
+        <div class="chip chip-primary chip-lg truncate-wrapper w-100">
+          <span class="chip-label text-truncate"> {{ pratica.servizio.name}}</span>
         </div>
+      </div>
+      <div class="col px-lg-4 py-lg-2  mt-2 mt-sm-0">
         <span class="h4 primary-color">[{{ pratica.statusName | trans }}]</span>
+      </div>
+      <div class="col-12 px-lg-4 py-lg-2">
         <div class="my-2">
           <h3 class="d-inline">{{ pratica.user.fullName }}</h3>
-          <h4 class="d-inline pl-3">
+          <h4 class="d-inline pl-md-3">
             {{ fiscal_code }}
             {% if pratica.user.idp != "anonymous" %}
               <span data-toggle="tooltip" title="Identità del cittadino verificata">
