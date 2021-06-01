@@ -623,7 +623,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
-    $request->setMargins(GotembergRequest::NO_MARGINS);
+    $request->setMargins([1,0,0,0]);
     $request->setWaitDelay(5);
     $request->addRemoteURLHTTPHeader('Authorization', 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword])));
     $response =  $client->post($request);
@@ -644,7 +644,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
-    $request->setMargins(GotembergRequest::NO_MARGINS);
+    $request->setMargins([1,0,0,0]);
     $request->setWaitDelay(5);
     $response =  $client->post($request);
     $fileStream = $response->getBody();
