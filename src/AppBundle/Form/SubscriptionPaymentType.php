@@ -119,7 +119,7 @@ class SubscriptionPaymentType extends AbstractType
     }
 
     // If identifier has been changed check that there are no applications
-    if ($data['payment_identifier'] !== $subscriptionPayment->getPaymentIdentifier()) {
+    if ($subscriptionPayment && $data['payment_identifier'] !== $subscriptionPayment->getPaymentIdentifier()) {
       $uniqueIdLike = trim($subscriptionPayment->getPaymentIdentifier() . '_' . $subscriptionPayment->getSubscriptionServiceCode() . '_%');
       $sql = "select id from pratica where servizio_id = '" . $service->getId() . "' and dematerialized_forms->'data'->>'unique_id' LIKE '" . $uniqueIdLike . "'";
       $stmt = $this->em->getConnection()->prepare($sql);

@@ -133,22 +133,24 @@ class SubscriptionServiceType extends AbstractType
     $identifiers = [];
 
     // Check duplicates payment identifiers
-    foreach ($data['subscription_payments'] as $subscriptionPayment) {
-      if (!in_array($subscriptionPayment['payment_identifier'], $identifiers)) {
-        $identifiers[] = $subscriptionPayment['payment_identifier'];
-      } else {
-        try {
-          $event->getForm()->addError(
-            new FormError($this->translator->trans('backoffice.integration.subscription_service.duplicate_identifier', [
-              "%identifier%" => $subscriptionPayment['payment_identifier'],
-              "%date%" => (new \DateTime($subscriptionPayment['date']))->format('d/m/Y'),
-              "%payment_reason%" => $subscriptionPayment['payment_reason']
-            ]))
-          );
-        } catch (\Exception $e) {
-          new FormError($this->translator->trans('backoffice.integration.subscription_service.invalid_date', [
-            "%date%" => $subscriptionPayment['date']
-          ]));
+    if (isset($data['subscription_payments'])) {
+      foreach ($data['subscription_payments'] as $subscriptionPayment) {
+        if (!in_array($subscriptionPayment['payment_identifier'], $identifiers)) {
+          $identifiers[] = $subscriptionPayment['payment_identifier'];
+        } else {
+          try {
+            $event->getForm()->addError(
+              new FormError($this->translator->trans('backoffice.integration.subscription_service.duplicate_identifier', [
+                "%identifier%" => $subscriptionPayment['payment_identifier'],
+                "%date%" => (new \DateTime($subscriptionPayment['date']))->format('d/m/Y'),
+                "%payment_reason%" => $subscriptionPayment['payment_reason']
+              ]))
+            );
+          } catch (\Exception $e) {
+            new FormError($this->translator->trans('backoffice.integration.subscription_service.invalid_date', [
+              "%date%" => $subscriptionPayment['date']
+            ]));
+          }
         }
       }
     }
