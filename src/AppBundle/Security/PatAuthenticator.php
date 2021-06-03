@@ -70,15 +70,18 @@ class PatAuthenticator extends AbstractAuthenticator
    */
   private function checkShibbolethUserData(Request $request)
   {
+
     if (!$request->server->get($this->shibboletServerVarNames['spidCode']) &&
-        !$request->server->get($this->shibboletServerVarNames['shibSessionId']) &&
-        !$request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']) &&
-        !$request->server->get($this->shibboletServerVarNames['shibSessionIndex']) &&
       !(
         $request->server->get($this->shibboletServerVarNames['x509certificate_issuerdn']) &&
         $request->server->get($this->shibboletServerVarNames['x509certificate_subjectdn']) &&
         $request->server->get($this->shibboletServerVarNames['x509certificate_base64'])
-      )) {
+      )
+      ||
+      !$request->server->get($this->shibboletServerVarNames['shibSessionId']) ||
+      !$request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']) ||
+      !$request->server->get($this->shibboletServerVarNames['shibSessionIndex'])
+    ) {
       return false;
     }
     return true;
@@ -126,7 +129,10 @@ class PatAuthenticator extends AbstractAuthenticator
   {
     $data = [];
     // Spid
-    if ($request->server->has($this->shibboletServerVarNames['spidCode'])) {
+    if (
+      $request->server->has($this->shibboletServerVarNames['spidCode']) &&
+      !empty($request->server->has($this->shibboletServerVarNames['spidCode']))
+    ) {
       $data = [
         'authenticationMethod' => CPSUser::IDP_SPID,
         'sessionId' => $request->server->get($this->shibboletServerVarNames['shibSessionId']),
@@ -135,13 +141,19 @@ class PatAuthenticator extends AbstractAuthenticator
         'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
         'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel'] ?? ''),
       ];
+
+      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
+      return UserAuthenticationData::fromArray($data);
     }
 
     // Cps
     if (
       $request->server->get($this->shibboletServerVarNames['x509certificate_issuerdn']) &&
+      !empty($request->server->get($this->shibboletServerVarNames['x509certificate_issuerdn'])) &&
       $request->server->get($this->shibboletServerVarNames['x509certificate_subjectdn']) &&
-      $request->server->get($this->shibboletServerVarNames['x509certificate_base64'])
+      !empty($request->server->get($this->shibboletServerVarNames['x509certificate_subjectdn'])) &&
+      $request->server->get($this->shibboletServerVarNames['x509certificate_base64']) &&
+      !empty($request->server->get($this->shibboletServerVarNames['x509certificate_base64']))
     ) {
       $data = [
         'authenticationMethod' => CPSUser::IDP_CPS_OR_CNS,
@@ -150,17 +162,13 @@ class PatAuthenticator extends AbstractAuthenticator
         'certificateSubject' => $request->server->get($this->shibboletServerVarNames['x509certificate_subjectdn']),
         'certificate' => $request->server->get($this->shibboletServerVarNames['x509certificate_base64']),
         'instant' => $request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']),
-        'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
-        'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel']),
+        'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex'])
       ];
+
+      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], '');
+      return UserAuthenticationData::fromArray($data);
     }
 
-    if (empty($data)) {
-      throw new \Exception('PatAuthenticator: empty data');
-    }
-
-    $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
-
-    return UserAuthenticationData::fromArray($data);
+    throw new \Exception('PatAuthenticator:getUserAuthenticationData - insufficient authentication data');
   }
 }
