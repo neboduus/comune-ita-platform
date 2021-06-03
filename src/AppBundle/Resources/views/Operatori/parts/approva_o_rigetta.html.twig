@@ -70,7 +70,7 @@
     {% endif %}
   </div>
 {% else %}
-  <div class=" alert alert-info mb-5">
+  <div class=" alert alert-info mb-4">
     <p>
       {{ 'operatori.iter_completato' | trans({
         '%statusName%': pratica.statusName | trans,
@@ -91,12 +91,5 @@
         {% endfor %}
       </p>
     {% endif %}
-    <p class="py-2 mb-0">
-      <button class="btn btn-xs btn-outline-secondary" data-toggle="collapse" data-target="#collapseEmail"
-              aria-expanded="false" aria-controls="collapseEmail"><i class="fa fa-paper-plane-o"></i> Visualizza la
-        notifica inviata all'utente
-      </button>
-    </p>
-    <div class="collapse" id="collapseEmail">{{ sent_email|raw }}</div>
   </div>
 {% endif %}

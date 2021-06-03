@@ -827,8 +827,6 @@ class OperatoriController extends Controller
       $fiscalCode = $applicant->getCodiceFiscale();
     }
 
-    $sentEmail = $this->getFeedbackMessage($pratica);
-
     $moduleProtocols = [];
     $outcomeProtocols = [];
 
@@ -865,7 +863,6 @@ class OperatoriController extends Controller
       'pratica' => $pratica,
       'user' => $this->getUser(),
       'fiscal_code' => $fiscalCode,
-      'sent_email' => $sentEmail,
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'tab' => $tab,
       'module_protocols' => $moduleProtocols,
@@ -930,27 +927,6 @@ class OperatoriController extends Controller
       $this->addFlash('error', 'La pratica non si trova nello corretto');
     }
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-  }
-
-  /**
-   * @param Pratica $pratica
-   * @return string
-   */
-  private function getFeedbackMessage(Pratica $pratica)
-  {
-    $feedbackMessage = '';
-
-    if ($pratica->getEsito() !== null) {
-      $status = $pratica->getEsito() ? Pratica::STATUS_COMPLETE : Pratica::STATUS_CANCELLED;
-      $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
-
-      $placeholders = $this->praticaManager->getPlaceholders($pratica);
-
-      if (isset($feedbackMessages[$status])) {
-        $feedbackMessage = strtr($feedbackMessages[$status]['message'], $placeholders);
-      }
-    }
-    return $feedbackMessage;
   }
 
   /**

@@ -49,12 +49,10 @@
 {% block main_content %}
   <section id="intro" class="container px-4 my-4">
     <div class="row">
-      <div class="col col-lg-9 px-lg-4 py-lg-2">
-        <div class="chip chip-primary chip-lg truncate-wrapper w-100">
+      <div class="col px-lg-4 py-lg-2">
+        <div class="chip chip-primary chip-lg truncate-wrapper">
           <span class="chip-label text-truncate"> {{ pratica.servizio.name}}</span>
         </div>
-      </div>
-      <div class="col px-lg-4 py-lg-2  mt-2 mt-sm-0">
         <span class="h4 primary-color">[{{ pratica.statusName | trans }}]</span>
       </div>
       <div class="col-12 px-lg-4 py-lg-2">
@@ -77,6 +75,21 @@
         {% if pratica.operatore %}
           {% if pratica.operatore == user %}
             {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
+
+            {% if pratica.isInFinalStates and pratica.servizio.allowReopening %}
+              <div class="row mb-3">
+                <div class="col d-flex justify-content-center">
+                  <a class="btn btn-outline-warning"
+                     href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
+                    <svg class="icon icon-warning icon-sm">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                    </svg>
+                    {{ 'operatori.riapri_pratica' | trans }}
+                  </a>
+                </div>
+              </div>
+            {% endif %}
+
           {% else %}
             {{ include('@App/Operatori/parts/riassegna.html.twig') }}
           {% endif %}
@@ -182,20 +195,6 @@
             </a>
           </div>
         </div>
-
-        {% if pratica.operatore and pratica.operatore == user and pratica.isInFinalStates and pratica.servizio.allowReopening %}
-          <div class="row my-4 pl-4">
-            <div class="col-12">
-              <a class="btn btn-outline-warning btn-toolbar"
-                 href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
-                <svg class="icon icon-white icon-sm">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
-                </svg>
-                {{ 'operatori.riapri_pratica' | trans }}
-              </a>
-            </div>
-          </div>
-        {% endif %}
 
         <div class="row my-4 pl-4">
           {% if pratica.type == 'form_io' %}
