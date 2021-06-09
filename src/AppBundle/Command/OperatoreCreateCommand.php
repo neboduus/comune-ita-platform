@@ -72,7 +72,6 @@ class OperatoreCreateCommand extends ContainerAwareCommand
     }
 
     $um = $this->getContainer()->get('fos_user.user_manager');
-
     $userRepo = $em->getRepository('AppBundle:OperatoreUser');
     $user = $userRepo->findOneByUsername($username);
 

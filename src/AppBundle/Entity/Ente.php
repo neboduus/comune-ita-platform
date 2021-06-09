@@ -70,6 +70,13 @@ class Ente
 
   /**
    * @var ArrayCollection
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\AdminUser", mappedBy="ente", fetch="EAGER")
+   * @Serializer\Exclude()
+   */
+  private $administrators;
+
+  /**
+   * @var ArrayCollection
    * @ORM\Column(type="text")
    */
   private $protocolloParameters;
@@ -159,6 +166,7 @@ class Ente
     $this->asili = new ArrayCollection();
     $this->protocolloParameters = new ArrayCollection();
     $this->operatori = new ArrayCollection();
+    $this->administrators = new ArrayCollection();
     $this->gateways = [];
     $this->backofficeEnabledIntegrations = new ArrayCollection();
     $this->mailers = new ArrayCollection();
@@ -378,6 +386,14 @@ class Ente
   public function getOperatori(): Collection
   {
     return $this->operatori;
+  }
+
+  /**
+   * @return Collection
+   */
+  public function getAdministrators(): Collection
+  {
+    return $this->administrators;
   }
 
   /**
