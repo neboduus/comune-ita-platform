@@ -3,6 +3,8 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\Servizio;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,6 +24,7 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
       ->setName('ocsdc:abilita-operatore-per-servizio')
       ->setDescription("Abilita l'operatore passato per i servizi")
       ->addOption('username', null, InputOption::VALUE_OPTIONAL, 'Username')
+      ->addOption('services', null, InputOption::VALUE_OPTIONAL, 'Lista degli slug dei servizi separata da |')
       ->addOption('all', null, InputOption::VALUE_NONE, "Abilita l'utente per tutti i servizi presenti");
   }
 
@@ -41,7 +44,9 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
       $username = $helper->ask($input, $output, $question);
     }
 
+    /** @var EntityManagerInterface $em */
     $em = $this->getContainer()->get('doctrine')->getManager();
+
     $operatoriRepo = $em->getRepository('AppBundle:OperatoreUser');
     /** @var OperatoreUser $user */
     $user = $operatoriRepo->findOneByUsername($username);
@@ -65,15 +70,12 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
       }
     }
 
-    if ($input->getOption('all')) {
-      $servizioId = '*';
-    } else {
+    $serviziRepo = $em->getRepository('AppBundle:Servizio');
+
+    if (empty($input->getOption('all')) && empty($input->getOption('services'))) {
+
       $question = new ChoiceQuestion('Seleziona il servizio da abilitare', $serviziNames);
       $servizioId = $helper->ask($input, $output, $question);
-    }
-
-    $serviziRepo = $em->getRepository('AppBundle:Servizio');
-    if ($servizioId != '*') {
       if (!$serviziRepo->find($servizioId)) {
         throw new InvalidArgumentException('Servizio '.$servizioId.' non trovato');
       }
@@ -84,31 +86,43 @@ class OperatoreAbilitaServizioCommand extends ContainerAwareCommand
       }
       $serviziAbilitati->add($servizio->getId());
       $user->setServiziAbilitati($serviziAbilitati);
-      $um = $this->getContainer()->get('fos_user.user_manager');
-
-      try {
-        $um->updateUser($user);
-        $output->writeln('Ok: utente '.$user->getUsername().' abilitato per il servizio '.$servizio->getName());
-      } catch (\Exception $e) {
-        $output->writeln('Errore: '.$e->getMessage());
-      }
 
     } else {
-      foreach ($servizi as $servizio) {
-        if (!$serviziAbilitati->contains($servizio->getId())) {
-          $serviziAbilitati->add($servizio->getId());
-        }
-      }
-      $user->setServiziAbilitati($serviziAbilitati);
-      $um = $this->getContainer()->get('fos_user.user_manager');
+      if ($input->getOption('all')) {
 
-      try {
-        $um->updateUser($user);
-        $output->writeln('Ok: utente '.$user->getUsername().' abilitato per tutti i servizi');
-      } catch (\Exception $e) {
-        $output->writeln('Errore: '.$e->getMessage());
+        foreach ($servizi as $servizio) {
+          if (!$serviziAbilitati->contains($servizio->getId())) {
+            $serviziAbilitati->add($servizio->getId());
+          }
+        }
+        $user->setServiziAbilitati($serviziAbilitati);
+
+      } elseif ($input->getOption('services')) {
+
+        $services = explode('|', $input->getOption('services'));
+        foreach ($services as $serviceSlug) {
+          $servizio = $serviziRepo->findOneBy(['slug' => $serviceSlug]);
+          if (! $servizio instanceof Servizio) {
+            throw new InvalidArgumentException($serviceSlug . ' non è un servizio presente su questa istanza.');
+          }
+          if (!$serviziAbilitati->contains($servizio->getId())) {
+            $serviziAbilitati->add($servizio->getId());
+          }
+        }
+
+        $user->setServiziAbilitati($serviziAbilitati);
       }
     }
+
+    $um = $this->getContainer()->get('fos_user.user_manager');
+    try {
+      $um->updateUser($user);
+      $output->writeln('Ok: utente '.$user->getUsername().' aggiornato correttamente');
+    } catch (\Exception $e) {
+      $output->writeln('Errore: '.$e->getMessage());
+    }
+
+
   }
 
 }
