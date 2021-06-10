@@ -401,7 +401,7 @@ class CalendarsController extends Controller
         'id' => $meeting->getId(),
         'title' => $meeting->getName() ? $meeting->getName() : ($meeting->getStatus() == Meeting::STATUS_DRAFT ? "Bozza" :'Nome non fornito'),
         'name' => $meeting->getName(),
-        'opening_hour' => $meeting->getOpeningHour()->getId(),
+        'opening_hour' => $meeting->getOpeningHour() ? $meeting->getOpeningHour()->getId() : null,
         'start' => $meeting->getFromTime()->format('c'),
         'end' => $meeting->getToTime()->format('c'),
         'description' => $meeting->getUserMessage(),
