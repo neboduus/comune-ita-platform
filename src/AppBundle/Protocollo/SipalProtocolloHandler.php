@@ -28,24 +28,11 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   const ACTION_ADD_PROTOCOLLO = 'addProtocollo';
   const ACTION_ADD_ALLEGATO = 'addAllegato';
 
-  private $em;
   private $logger;
-  private $directoryNamer;
-  private $propertyMappingFactory;
 
-  private $tempPemFile = false;
-  private $tempKeyFile = false;
-
-  public function __construct(
-    EntityManagerInterface $em,
-    LoggerInterface $logger,
-    DirectoryNamerInterface $dn,
-    PropertyMappingFactory $pmf
-  ) {
-    $this->directoryNamer = $dn;
-    $this->em = $em;
+  public function __construct(LoggerInterface $logger)
+  {
     $this->logger = $logger;
-    $this->propertyMappingFactory = $pmf;
   }
 
   public function getName()
@@ -57,8 +44,27 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   {
     return array(
       'sipal_wsUrl',
+      'sipal_proxy_host' => [
+        'type' => 'text',
+        'required' => false,
+      ],
+      'sipal_proxy_port' => [
+        'type' => 'text',
+        'required' => false,
+      ],
+      'sipal_proxy_login' => [
+        'type' => 'text',
+        'required' => false,
+      ],
+      'sipal_proxy_password' => [
+        'type' => 'text',
+        'required' => false,
+      ],
       'sipal_username',
-      'sipal_token',
+      'sipal_token' => [
+        'type' => 'text',
+        'required' => false,
+      ],
       'sipal_registro',
       'sipal_classificazione',
       'sipal_destinatario_interno',
@@ -73,11 +79,6 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   public function sendPraticaToProtocollo(Pratica $pratica)
   {
     $parameters = $this->retrieveProtocolloParametersForEnteAndServizio($pratica);
-
-    $wsUrl = $parameters['sipal_wsUrl'];
-    if (strpos($wsUrl, '?wsdl') === false) {
-      $wsUrl .= '?wsdl';
-    }
 
     $user = $pratica->getUser();
     $content = "<![CDATA[<datiin>
@@ -104,14 +105,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     $request = trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
     $request = str_replace('[%content%]', $content, $request);
 
-    $options = array(
-      'location'      => $wsUrl,
-      'keep_alive'    => true,
-      'trace'         => true,
-      'cache_wsdl'    => WSDL_CACHE_NONE
-    );
-
-    $soapClient = new SoapClient($wsUrl, $options);
+    $soapClient = $this->initSoapClient($parameters);
     $soapRequest = new SoapVar($request, XSD_ANYXML);
     $result = $soapClient->addProtocollo($soapRequest);
 
@@ -126,11 +120,6 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     } else {
       throw new \Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', messaggio: ' . (string) $soap->esitomsg);
     }
-
-    /*echo  (string) $datiOut->numeroprotocollo;
-    echo  (string) $datiOut->anno;
-    echo  (string) $datiOut->idprotocollo;*/
-
   }
 
   /**
@@ -141,10 +130,6 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   public function sendAllegatoToProtocollo(Pratica $pratica, AllegatoInterface $allegato): void
   {
     $parameters = $this->retrieveProtocolloParametersForEnteAndServizio($pratica);
-    $wsUrl = $parameters['sipal_wsUrl'];
-    if (strpos($wsUrl, '?wsdl') === false) {
-      $wsUrl .= '?wsdl';
-    }
 
     $protocol = $pratica->getNumeroProtocollo();
     $protocolParts = explode('/', $protocol);
@@ -179,14 +164,8 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     $request = trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
     $request = str_replace('[%content%]', $content, $request);
 
-    $options = array(
-      'location'      => $wsUrl,
-      'keep_alive'    => true,
-      'trace'         => true,
-      'cache_wsdl'    => WSDL_CACHE_NONE
-    );
+    $soapClient = $this->initSoapClient($parameters);
 
-    $soapClient = new SoapClient($wsUrl, $options);
     $soapRequest = new SoapVar($request, XSD_ANYXML);
     $result = $soapClient->addAllegato($soapRequest);
 
@@ -223,17 +202,14 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
    * @param AllegatoInterface $allegato
    * @throws \Exception
    */
-  public function sendIntegrazioneToProtocollo(
-    Pratica $pratica,
-    AllegatoInterface $rispostaIntegrazione,
-    AllegatoInterface $allegato
-  ) {
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
+  {
     $this->sendAllegatoToProtocollo($pratica, $allegato);
   }
 
-
   /**
    * @param Pratica $pratica
+   * @throws \Exception
    */
   public function sendRispostaToProtocollo(Pratica $pratica)
   {
@@ -241,23 +217,40 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     $this->sendAllegatoToProtocollo($pratica, $risposta);
   }
 
+  /**
+   * @param Pratica $pratica
+   * @throws \Exception
+   */
   public function sendRitiroToProtocollo(Pratica $pratica)
   {
     $withdrawAttachment = $pratica->getWithdrawAttachment();
     $this->sendAllegatoToProtocollo($pratica, $withdrawAttachment);
   }
 
-
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   * @throws \Exception
+   */
   public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     $this->sendAllegatoToProtocollo($pratica, $allegato);
   }
 
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $allegato
+   * @throws \Exception
+   */
   public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     $this->sendAllegatoToProtocollo($pratica, $allegato);
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return array
+   */
   private function retrieveProtocolloParametersForEnteAndServizio(Pratica $pratica): array
   {
     $ente = $pratica->getEnte();
@@ -269,10 +262,55 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     return (array)$ente->getProtocolloParametersPerServizio($servizio);
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return string
+   */
   private function retrieveOggettoFromPratica(Pratica $pratica): string
   {
     return $pratica->getServizio()->getName() . " - " . $pratica->getUser()->getFullName();
   }
 
+  /**
+   * @param $pratica
+   * @return SoapClient
+   * @throws \SoapFault
+   */
+  private function initSoapClient($parameters)
+  {
+
+    $wsUrl = $parameters['sipal_wsUrl'];
+    if (strpos($wsUrl, '?wsdl') === false) {
+      $wsUrl .= '?wsdl';
+    }
+
+    $options = array(
+      'location'      => $wsUrl,
+      'keep_alive'    => true,
+      'trace'         => true,
+      'cache_wsdl'    => WSDL_CACHE_NONE,
+      'stream_context' => stream_context_create(
+        [
+          'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+          ]
+        ]
+      )
+    );
+
+    if (!empty($parameters['sipal_proxy_host']) && !empty($parameters['sipal_proxy_port'])) {
+      $options['proxy_host'] = $parameters['sipal_proxy_host'];
+      $options['proxy_port'] = $parameters['sipal_proxy_port'];
+    }
+
+    if (!empty($parameters['sipal_proxy_login']) && !empty($parameters['sipal_proxy_password'])) {
+      $options['proxy_login'] = $parameters['sipal_proxy_login'];
+      $options['proxy_password'] = $parameters['sipal_proxy_password'];
+    }
+
+    return new SoapClient($wsUrl, $options);
+
+  }
 
 }

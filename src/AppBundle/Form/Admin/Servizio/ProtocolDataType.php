@@ -110,7 +110,7 @@ class ProtocolDataType extends AbstractType
                       'label' => 'protocollo.' . $key,
                       'data' => isset($currentServiceParameters[$key]) ? $currentServiceParameters[$key] : '',
                       'mapped' => false,
-                      'required' => true,
+                      'required' => $param['required'] ?? true,
                       'attr' => $attr
                     ]
                   );
@@ -163,20 +163,6 @@ class ProtocolDataType extends AbstractType
         new FormError('Devi selezionare almeno un tipo di protocollo per abilitare la protocollazione!')
       );
     }
-
-    /*$configParameters = $this->protocolloService->getHandler()->getConfigParameters();
-    $parameters = [];
-
-    if ($configParameters) {
-      foreach ($configParameters as $param) {
-        if (!isset($data[$param]) || empty($data[$param])) {
-          $event->getForm()->addError(
-            new FormError('Tutti i parametri sono obbligatori')
-          );
-        }
-        $parameters[$param] = $data[$param];
-      }
-    }*/
 
     $service->setProtocolloParameters($data);
     $this->em->persist($service);
