@@ -148,17 +148,17 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
     // Request
     if (isset($data['request'])) {
       $result['status'] = PaymentDataInterface::STATUS_PAYMENT_PROCESSING;
-      $paymentDate = $data['request']['dataEsecuzionePagamento'];
+      $paymentExpireDate = $data['request']['dataEsecuzionePagamento'];
       try {
         $date = new \DateTime($data['request']['dataEsecuzionePagamento']);
-        $paymentDate = $date->format(\DateTime::W3C);
+        $paymentExpireDate = $date->format(\DateTime::W3C);
       } catch (\Exception $e) {
         // Do nothing
       }
 
       $result['iud'] = $data['request']['identificativoUnivocoDovuto'];
       $result['reason'] = $data['request']['causaleVersamento'];
-      $result['paid_at'] = $paymentDate;
+      $result['expire_at'] = $paymentExpireDate;
     }
 
     // Response
@@ -168,11 +168,22 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
 
     // Result
     if (isset($data['outcome'])) {
+      $paymentDate = null;
       if ($data['outcome']['status'] == 'OK') {
         $result['status'] = PaymentDataInterface::STATUS_PAYMENT_PAID;
+        if (isset($data['outcome']["data"]["datiPagamento"]["datiSingoloPagamento"]["dataEsitoSingoloPagamento"])) {
+          $paymentDate = $data['outcome']["data"]["datiPagamento"]["datiSingoloPagamento"]["dataEsitoSingoloPagamento"];
+          try {
+            $date = new \DateTime($paymentDate);
+            $paymentDate = $date->format(\DateTime::W3C);
+          } catch (\Exception $e) {
+            // Do nothing
+          }
+        }
       } else {
         $result['status'] = PaymentDataInterface::STATUS_PAYMENT_FAILED;
       }
+      $result['paid_at'] = $paymentDate;
       $result['mypay_status_code'] = $data['outcome']['status_code'];
       $result['mypay_status_message'] = $data['outcome']['status_message'];
     }
