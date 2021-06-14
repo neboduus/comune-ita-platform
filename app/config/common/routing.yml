@@ -1,32 +1,52 @@
-app:
-    resource: '@AppBundle/Controller/'
-    type:     annotation
-    prefix:   "/%prefix%"
-
 api_auth:
-    path: "/%prefix%/api/auth"
-    methods:  [POST]
+  path: "/%prefix%/api/auth"
+  methods:  [POST]
 
 rest:
-    resource: '@AppBundle/Controller/Rest/'
-    type: annotation
-    prefix: "/%prefix%/api"
+  resource: '@AppBundle/Controller/Rest/'
+  type: annotation
+  prefix: "/%prefix%/api"
+
+app:
+    resource: '@AppBundle/Controller/Ui/'
+    type:     annotation
+    prefix:   "/%prefix%/{_locale}"
+    requirements:
+      _locale: '%app_locales%'
+    defaults:
+      _locale: '%locale%'
 
 fos_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
-    prefix: "/%prefix%/operatori"
+    prefix: "/%prefix%/{_locale}/operatori"
+    requirements:
+      _locale: '%app_locales%'
+    defaults:
+      _locale: '%locale%'
 
 fos_profile:
     resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
-    prefix: "/%prefix%/operatori/profile"
+    prefix: "/%prefix%/{_locale}/operatori/profile"
+    requirements:
+      _locale: '%app_locales%'
+    defaults:
+      _locale: '%locale%'
 
 fos_resetting:
     resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
-    prefix: "/%prefix%/operatori/resetting"
+    prefix: "/%prefix%/{_locale}/operatori/resetting"
+    requirements:
+      _locale: '%app_locales%'
+    defaults:
+      _locale: '%locale%'
 
 fos_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
-    prefix: "/%prefix%/operatori/profile"
+    prefix: "/%prefix%/{_locale}/operatori/profile"
+    requirements:
+      _locale: '%app_locales%'
+    defaults:
+      _locale: '%locale%'
 
 app.swagger_ui:
     path: "/%prefix%/api/doc/{area}"
@@ -39,6 +59,6 @@ app.swagger:
     defaults: { _controller: nelmio_api_doc.controller.swagger }
 
 app_metrics:
-  path: "/%prefix%/"
+  path: "/%prefix%/metrics"
   controller: AppBundle\Controller\DefaultController::metricsAction
 

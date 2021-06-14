@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\Http\TransparentPixelResponse;
 use Doctrine\ORM\EntityManagerInterface;

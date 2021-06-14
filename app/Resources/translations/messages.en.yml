@@ -1,0 +1,2043 @@
+title: 'Stanza del cittadino'
+claim: 'Servizi on-line del %ente_name%'
+intro: '<p><span>Attraverso "La Stanza del Cittadino" potrai accedere con pochi click a tutti i servizi messi a disposizione dei cittadini.<br />In caso di primo accesso ti verrà chiesto di confermare i tuoi dati prima di usufruire del servizio.</span></p>'
+salva: 'Salva'
+elimina: 'Elimina'
+reply: 'Rispondi'
+view: 'Visualizza'
+terms_do_il_consenso: "ho letto l'informativa"
+accedi_al_servizio: 'Accedi al servizio %name%'
+registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
+servizi_pending: 'Servizi con pratiche inviate'
+esplora_i_servizi: 'Esplora i servizi'
+servizi_primo_piano: 'Servizi in primo piano'
+tutti_i_servizi: 'Tutti i servizi'
+lista_pratiche: 'Le mie pratiche'
+bozze_servizio: 'Pratiche in bozza per il servizio'
+msg_bozze_servizio: 'Attenzione, ci sono delle pratiche in compilazione per il servizio selezionato.'
+lista_pratiche_bozza: 'Pratica in bozza'
+pratica_ricevuta: 'La richiesta è stata trasmessa. Grazie per la collaborazione'
+welcome: 'F: Benvenuta,|M: Benvenuto,'
+completa_profilo: "Verifica che l'email sia corretta, completa e conferma i dati del tuo profilo"
+aggiorna_profilo: "I tuoi dati sono stati aggiornati correttamente."
+error_back_to_home: "Torna alla Home"
+error_support: "Contatta il supporto tecnico"
+error_message: "Ooops!"
+error_message_detail: "Qualcosa non ha funzionato"
+error_message_403: "403 | Accesso negato"
+error_message_detail_403: "Noi hai i permessi per accedere a quest'area"
+error_message_404: "404 | Pagina non trovata"
+error_message_detail_404: "La pagina che cercavi potrebbe essere stata rimossa, aver cambiato indirizzo o  essere temporaneamente non disponibile"
+visualizza_colonne: "Visualizza colonne"
+visualizza_griglia: "Visualizza griglia"
+profilo_utente: "Profilo utente"
+operatore: "Operatore"
+credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del %ente_name%"
+powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
+fake_email_message: 'Per proseguire è necessario aggiornare la tua email'
+
+nav:
+  home: 'Homepage'
+  dashboard: 'Dashboard'
+  servizi: 'Services'
+  pratiche: 'Applications'
+  profilo: 'Profile'
+  allegati: 'Attachments'
+  documenti: 'Documents'
+  iscrizioni: 'Subscriptions'
+  informativa_privacy: 'Informativa per il trattamento dati personali'
+  operatori:
+    panello_controllo: "Elenco pratiche"
+    lista_operatori: 'Gestisci operatori comune'
+    accesso_operatori: 'Accesso operatori'
+    protocollo: 'Configurazione di Protocollo'
+    usage: 'Statistiche'
+
+terms:
+  title: 'Accettazione termini di utilizzo'
+
+servizio:
+  crea: 'Crea nuovo servizio'
+  modifica: 'Modifica %name%'
+  placeholder_disponibili: 'Placeholder disponibili nel modulo'
+  placeholder_disponibili_descrizione: "E' possibile utilizzare le informazioni compilate dall'utente utilizzando i placeholders di seguito elencati"
+  enti_coinvolti: 'Servizio disponibile per'
+  cancellato: 'Il servizio è stato cancellato'
+  sospeso: 'Al momento il servizio non è attivo'
+  schedulato: 'Il servizio è attivo dal %from% al %to%'
+  accedi_al_servizio: 'Accedi al servizio %name%'
+  browser_restricted: "Il sistema ha rilevato l'utilizzo di un browser non supportato o datato, la preghiamo di riprovare ad accedere con un browser aggiornato."
+  attivo_per: "Servizio attivo per:"
+  servizi_area_title: '%area%'
+  vai: "Vai al servizio"
+  torna: "Torna al servizio"
+  il_servizio: 'Il servizio'
+  area_tematica: 'Area tematica'
+  imis:
+    download_pdf_imis: 'Esegui il download del pdf %name%'
+  statutes:
+    pubblicato: 'Pubblicato'
+    privato: 'Privato'
+    bozza: 'Bozza'
+    sospeso: 'Sospeso'
+    schedulato: 'Programmato'
+
+gruppo_di_servizi:
+  gruppo_di_servizi: 'Gruppo di servizi'
+  nome: 'Nome'
+  descrizione: 'Descrizione'
+  url: 'Url'
+  protocollazione_fascicoli: 'Protocollazione in fascicoli'
+  azioni: 'Azioni'
+  modifica: 'Modifica'
+  rimuovi: 'Rimuovi'
+  elimina: 'Elimina'
+  crea: 'Crea nuovo gruppo di servizi'
+  attivata: 'Attivata'
+  disattivata: 'Disattivata'
+  servizi: 'Servizi facenti parte del gruppo'
+  nessun_servizio: 'Non sono presenti servizi in questo gruppo'
+  torna_alla_lista: 'Torna alla lista'
+  servizio_rimosso: 'Servizo rimosso correttamente'
+  errore_rimozione: 'Impossibile rimovere il servizio'
+
+webhook:
+  nome: 'Nome'
+  endpoint: 'Endpoint'
+  method: 'Method'
+  trigger: 'Attivatore'
+  filters: 'Filtri'
+  create: 'Crea Webhook'
+  edit: 'Modifica'
+  back_to_list: 'Torna alla lista'
+  no_services: 'Nessun servizio specificato'
+  active: 'Attivo'
+  not_Active: 'Non attivo'
+
+pratica:
+  guida_utente: 'Guida'
+  email:
+    status_change:
+      subject: 'La richiesta n. %id% è stata aggiornata'
+  iter: 'Iter della pratica'
+  tooltip_durata_iter: "Durata iter: circa"
+  vai_alla_pratica: 'Vai alla pratica'
+  ritira_la_pratica: 'Annulla la richiesta'
+  nuova_pratica: 'Nuova pratica: %name%'
+  integrazione_pratica: 'Integrazione pratica: %name%'
+  integrazione_pratica_description: "Sono state richieste alcuni integrazioni per la pratica che hai inviato: correggi tutti i campi esposti contrasseganti dall'asterisco (*)"
+  passo_uno_di_tanti: 'Passo %current% di %total%'
+  riprendi_pratica: "Riprendi compilazione"
+  empty: 'Non sono presenti pratiche a tuo nome.'
+  protocollo: 'Protocollo'
+  numero: 'Numero richiesta'
+  in_attesa_protocollo: 'In attesa di protocollazione'
+  protocollo_non_richiesto: '(non necessario)'
+  richiedente: 'Richiedente'
+  servizio: 'Servizio'
+  categoria: 'Categoria'
+  data_di_compilazione: 'Data di compilazione'
+  data_di_creazione: 'Data di creazione'
+  data_di_presentazione: 'Data di presentazione'
+  stato: 'Stato'
+  operatore: 'Operatore'
+  nessun_allegato: 'Non sono presenti allegati.'
+  aggiungi_allegato: 'Aggiungi allegato'
+  aggiungi_componente_nucleo_familiare: 'Aggiungi componente nucleo familiare'
+  cancella_elemento: 'Cancella elemento'
+  nucleoFamiliare: 'Composizione del nucleo familiare'
+  pagamento: 'Pagamento'
+  non_specificato: 'Non specificato'
+  nessun_file_specificato: 'Nessun file specificato'
+  pdf:
+    dati_autenticazione: '<strong>Informazioni tecniche</strong> <small>(Dati generati automaticamente dalla Stanza del Cittadino</small>)'
+    spett_le: 'Spett.le'
+    oggetto: 'Oggetto:'
+    il_sottoscritto: 'Il/La sottoscritto/a'
+    nato_il: 'nato/a il'
+    nato_a: 'a'
+    nazionalita: 'Nazionalita'
+    codice_ficale: 'Codice fiscale'
+    residente_in: 'Residente in'
+    telefono: 'Recapito telefonico'
+    email: 'Recapito email'
+    chiede: 'chiede'
+    comunica: 'comunica'
+    dichiara: 'dichiara'
+    allega: 'allega'
+    dichiarazione_composizione_nucleo_familiare: 'che il proprio nucleo familiare &egrave; cos&igrave; composto:'
+    composizione_nucleo_familiare:
+      nome_e_cognome: 'Nome e cognome'
+      rapporto_parentela: 'Rapporto di parentela'
+      codice_fiscale: 'Codice fiscale'
+    dichiarazione_allegati: 'di allegare i seguenti documenti:'
+    dichiarazione_cambiamenti: 'di informare tempestivamente il %comune% di mutamenti significativi nelle situazioni familiari ed economiche della famiglia'
+    dichiarazione_cambiamenti_detail: "Il dichiarante &egrave; consapevole che in caso di dichiarazione mendace sar&agrave; punito ai sensi del Codice Penale secondo quanto prescritto dall'art. 76 del D.P.R. 445/2000 e che, inoltre, qualora dal controllo effettuato emerga la non veridicit&agrave; del contenuto di taluna delle dichiarazioni rese, decadr&agrave; dai benefici conseguenti al provvedimento eventualmente emanato sulla base della dichiarazione non veritiera (art. 75 D.P.R. 445/2000).Il dichiarante &egrave; informato ed autorizza la raccolta dei dati per l'emanazione del provvedimento amministrativo ai sensi dell'art. 13 del D. Lgs. 196/2003."
+    luogo: 'L&igrave;'
+    riferimento_sdc: 'Riferimento in Stanza del cittadino:'
+  dettaglio:
+    data_ora_presentazione: 'Richiesta presentata il'
+    alle: 'alle'
+    stato: 'Stato corrente'
+    servizio: 'Servizio'
+    ente: 'Ente'
+    oggetto: 'Oggetto'
+    richiedente: 'Richiedente'
+    richiedente.nato_a: 'Luogo di nascita'
+    richiedente.nato_il: 'Data di nascita'
+    richiedente.residente_a: 'Richiedente'
+    richiedente.telefono: 'Telefono'
+    richiedente.email: 'Email'
+    nucleo_familiare: 'Nucleo familiare'
+    compilazione: 'Compilazione'
+    ritiro: 'La richiesta numero %id% del servizio %servizio% è stata ritirata da %user_name%'
+    esito:
+      accettata: 'La richiesta è stata <strong>accettata</strong>'
+      rifiutata: 'La richiesta è stata <strong>rifiutata</strong>'
+    componente_nucleo_familiare:
+      cognome: 'Cognome'
+      nome: 'Nome'
+      codice_fiscale: 'Codice fiscale'
+      abbr_codice_fiscale: 'CF'
+      rapporto_di_parentela: 'Rapporto di parentela'
+      abbr_rapporto_di_parentela: 'Parentela'
+    allegati: 'File allegati'
+    richiesta_integrazioni: 'Richiesta integrazioni'
+    risposte_integrazioni: 'Risposte integrazioni'
+    allegato:
+      file: 'Nome del file'
+      descrizione: 'Descrizione'
+      pratiche_list_intro: 'Allegato alle pratiche:'
+    modulocompilato: ''
+    stato_1000: 'Bozza'
+    stato_1500: 'In attesa di pagamento'
+    stato_1510: "In attesa dell'esito di pagamento"
+    stato_1520: "Pagamento avvenuto con successo"
+    stato_1530: "Pagamento rifiutato"
+    stato_1900: "Inviata"
+    stato_2000: 'Acquisita'
+    stato_3000: 'Protocollata'
+    stato_4000: 'Presa in carico'
+    stato_5000: 'In elaborazione'
+    stato_6000: 'Elaborata (in attesa di protocollazione del documento di esito)'
+    stato_7000: 'Accettata'
+    stato_8000: 'Rifiutata (in attesa di protocollazione del documento di esito)'
+    stato_9000: 'Rifiutata'
+    stato_20000: 'Ritirata'
+
+    stato_4100: 'Richiesta integrazioni'
+    stato_4100_legacy: 'Richiesta integrazioni (in attesa di protocollazione)'
+    stato_4200: 'In attesa di integrazioni'
+    stato_4300: 'Integrazioni concluse'
+    stato_4300_legacy: 'Integrazioni in attesa di protocollazione'
+    stato_4400: 'Integrazioni protocollate'
+    stato_4500: 'Presa in carico in seguito a integrazioni'
+
+    delega:
+      titolo: 'Delega'
+      ruolo: 'In qualità di'
+      dati_soggetto: 'Dati del soggetto per cui si richiede il certificato'
+      nome: 'Nome'
+      cf: 'Codice Fiscale'
+      data_nascita: 'Data di nascita'
+      indirizzo: 'Indirizzo'
+  messaggi:
+    oggetto: 'Nuovo messaggio richiesta numero %pratica%'
+    messaggio: '%message% <img src="%link%">'
+
+
+  modulo:
+    descrizione: 'Modulo nomeservizio compilato il datacompilazione'
+    descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
+  appunti_compilazione:
+    titolo: 'Aggiungi note'
+    sottotitolo: 'Questa descrizione può essere vista solo da te e ti servirà per riconoscere la pratica più agevolmente'
+    placeholder: 'Inserisci una descrizione breve'
+  noteDiCompilazione: 'Note'
+  le_tue_note: 'Le tue note'
+
+STATUS_CANCELLED: 'Rifiutata'
+STATUS_DRAFT: 'Bozza'
+STATUS_PRE_SUBMIT: 'Inviata'
+STATUS_SUBMITTED: 'Acquisita'
+STATUS_COMPLETE: 'Accettata'
+STATUS_REGISTERED: 'Protocollata'
+STATUS_PENDING: 'In carico'
+STATUS_COMPLETE_WAITALLEGATIOPERATORE: 'Accettata (in attesa di protocollazione del documento di esito)'
+STATUS_CANCELLED_WAITALLEGATIOPERATORE: 'Rifiutata (in attesa di protocollazione del documento di esito)'
+STATUS_PAYMENT_PENDING: 'In attesa di pagamento'
+STATUS_PAYMENT_OUTCOME_PENDING: "In attesa dell'esito di pagamento"
+STATUS_PAYMENT_SUCCESS: "Pagamento avvenuto con successo"
+STATUS_PAYMENT_ERROR: "Pagamento rifiutato"
+STATUS_REQUEST_INTEGRATION: 'Richiesta integrazioni'
+STATUS_DRAFT_FOR_INTEGRATION: 'In attesa di integrazioni'
+STATUS_SUBMITTED_AFTER_INTEGRATION: 'Integrazioni in attesa di protocollazione'
+STATUS_REGISTERED_AFTER_INTEGRATION: 'Integrazioni protocollate'
+STATUS_PENDING_AFTER_INTEGRATION: 'Presa in carico in seguito a integrazioni'
+STATUS_PROCESSING: 'In elaborazione'
+STATUS_WITHDRAW: 'Ritirata'
+
+iscrizioni:
+  iscrizioni: "Iscrizioni"
+  le_mie_iscrizioni: "Le mie iscrizioni"
+  iscrizioni_delegate: "Iscrizioni a cui ho accesso"
+  no_iscrizioni: "Non sono presenti iscrizioni"
+  no_pagamenti: "Non sono presenti pagamenti relativi a questa iscrizione"
+  no_iscrizione: "L'iscrizione cercata non esiste oppure è stata cancellata"
+  no_pagamento: "Il pagamento cercato non esiste oppure è stato cancellato"
+  accesso_negato: "Non hai i permessi necessari per visualizzare questa iscrizione"
+  modifica_negata: "Non hai i permessi necessari per modificare questa iscrizione"
+  torna_alle_iscrizioni: "Torna alle iscrizioni"
+  torna_all_iscrizione: "Torna all'iscrizione"
+  condividi: "Condividi"
+  condividi_con: "Condividi con"
+  condividi_iscrizione: "Condividi iscrizione"
+  descrizione_condividi: "Per condividere le informazioni di questa iscrizione con altre persone, indicare i codici fiscali nello spazio sovrastante"
+  cf_non_valido: "Il codice fiscale %fiscal_code% non risulta essere un codice fiscale valido"
+  data_inizio: "Data di inizio"
+  data_fine: "Data di fine"
+  pagamenti: "Pagamenti"
+  nome: "Nome"
+  codice: "Codice"
+  descrizione: "Descrizione"
+  data_inizio_iscrizioni: "Data di inizio iscrizioni"
+  data_fine_iscrizioni: "Data di fine iscrizioni"
+  quota: "Quota di iscrizione"
+  limite: "Limite di iscritti"
+  messaggio_iscrizione: "Messaggio di iscrizione"
+  messaggio_inizio: "Messaggio di inizio"
+  messaggio_fine: "Messaggio di fine"
+  stato: "Stato del servizio"
+  tags: "Tags"
+  pagamento:
+    importo: "Importo"
+    data_esecuzione: "Data di esecuzione"
+    riferimento_pratica: "Riferimento pratica"
+    beneficiario: "Beneficiario"
+    cf_beneficiario: "Codice fiscale del beneficiario"
+  certificato_pagamento:
+    testo: "Su richiesta dell'interessato, visti gli atti d'ufficio, si dichiara che lo studente/la
+                                         studentessa <b>%completeName%</b>, nato/a a <b>%placeOfBirth%</b> il <b>%dateOfBirth%</b>
+                                         C.F. <b>%fiscalCode%</b> nell'anno %paymentYear% ha
+                                         sostenuto la seguente spesa:"
+    importo: "Euro <b>%amount%</b> quale %name%"
+  data_iscrizione: "Data di iscrizione"
+  num_condivisioni: "%num% condivisioni"
+  condivisioni: "Condivisioni"
+  no_condivisioni: "Questa iscrizione non è condivisa con nessuno"
+  quota_iscrizione:
+    nome: "Quota di iscrizione - %subscription_name% - %subscriber_completename% %subscriber_fiscal_code%"
+    descrizione: "Quota di iscrizione"
+  status_0: "Sospeso"
+  status_1: "Attivo"
+  status_2: "Non attivo"
+  errore_salvataggio: "Si è verificato un errore durante il salvataggio dell'iscrizione"
+
+documenti:
+  i_miei_documenti: "I miei documenti"
+  no_documenti: "Non sono presenti documenti"
+  no_folder: "La cartella cercata non esiste oppure è stata eliminata"
+  no_document: "Il documento cercato non esiste oppure è stata eliminato"
+  no_document_permissions: "Non hai i permessi necessari per visualizzare questo documento"
+  document_search_error: "Si è verificato un errore durante la ricerca dei documenti"
+  torna_alla_cartella: "Torna alla cartella"
+  torna_alle_cartelle: "Torna alle cartelle"
+  documento:
+    nome: "Nome documento"
+    data_creazione: "Data di creazione"
+    validità: "Validità"
+    disponibilità: "Disponibilità"
+    disponibile_fino_a: "Il documento sarà disponibile online fino al <b>%expire_at%</b>"
+    valido_da_a: "Il documento è <b>valido</b> dal <b>%validity_begin%</b> al <b>%validity_end%</b>"
+    scaduto: "il documento è <b>scaduto</b> il <b>%validity_end%</b>"
+    rinnova: ", è possibile rinnovarlo accedendo ai servizi di seguito elencati"
+    data_scadenza: "Data di scadenza"
+    servizi_correlati: "Servizi correlati"
+    no_servizi_correlati: "Non ci sono servizi correlati a questo documento"
+  cartella:
+    nome: "Nome cartella"
+    data_creazione: "Data di creazione"
+    servizi_correlati: "Servizi correlati"
+    no_documenti: "Non sono presenti documenti in questa cartella"
+    no_servizi_correlati: "Non ci sono servizi correlati a questa cartella"
+
+iscrizione_asilo_nido:
+  dettaglio:
+    struttura: 'Struttura'
+    orario: 'Orario'
+    periodo: 'Periodo'
+    bambino: 'Bambino'
+    nato_a: 'nato a'
+    nato_il: 'il'
+  pdf:
+    ammissione_nido: "l'ammissione all'asilo nido"
+    del_bambino: 'del bambino/a'
+    orario: 'Orario prescelto'
+    periodo: 'Periodo di iscrizione'
+    periodo_da: 'dal'
+    periodo_a: 'al'
+
+
+contributo_pannolini:
+  pdf:
+    rimborso: "Il rimborso per la spesa sostenuta nell'acquisto dei pannolini di tipo "
+    per_il_bambino: 'per il bambino'
+    che_venga_rimborsato: 'Il rimborso andrà effettuato sul seguente conto bancario: '
+    intestato_a: 'intestato a'
+  dettaglio:
+    acquisto: 'Dettaglio acquisto'
+    nome_punto_vendita: 'Punto Vendita'
+    data_acquisto: 'Data Acquisto'
+    totale_spesa: 'Totale spesa (€)'
+    conto_corrente: 'Conto Corrente'
+    iban: 'IBAN'
+    intestatario_conto: 'Intestato A'
+    tipo_pannolini: 'Tipo Pannolini'
+    tipo_pannolino:
+      1: 'Lavabile'
+      2: 'BioPannolino'
+
+autolettura_acqua:
+  dettaglio:
+    intestatario: "Dati dell'intestatario del contratto"
+    intestatario_codice_utente: "Codice utente"
+    intestatario_nome_completo: "Nome e cognome"
+    intestatario_indirizzo_completo: "Indirizzo"
+    intestatario_telefono: "Telefono"
+    intestatario_email: "Email"
+    contatore: "Dati del contatore"
+    contatore_numero: "Numero"
+    contatore_uso: "Tipo di utilizzo"
+    contatore_unita_immobiliari: "Unità immobiliari"
+    lettura: "Dati della lettura"
+    lettura_metri_cubi: "Metri cubi"
+    lettura_data: "Data"
+    note: "Comunicazioni"
+  pdf:
+    lettura_contatore: "L'autolettura del contatore numero"
+    di_uso: "di uso"
+    per_unita_immobiliari: "per numero di unità immobiliari"
+    intestato_a: "Intestato a"
+    lettura_metri_cubi: "Metri cubi"
+    lettura_in_data: "In data"
+    comunica_inoltre: "Comunica inoltre"
+
+cambio_residenza:
+  aggiungi_persona_residente: "Aggiungi persona"
+  pdf:
+    comune: ' - comune '
+    stato: ' - stato '
+    rischi: "Consapevole delle responsabilità penali per le dichiarazioni mendaci ai sensi degli art. 75 e 76 DPR 445/2000 che prevedono la decadenza dai benefici e l’obbligo di denuncia all’autorità competente."
+    trasferimento: "Di aver trasferito la dimora abituale al seguente indirizzo"
+    familiari: "Che nell’abitazione sita al nuovo indirizzo si sono trasferiti anche i familiari di seguito specificati"
+    iscritti: "Che nell’abitazione sita al nuovo indirizzo sono già iscritte le seguenti persone"
+    accertamento_dati: "Di aver rilasciato le seguenti informazioni per l'accertamento dei dati"
+    occupazione:
+      proprietario: "Di essere proprietario dell'abitazione:"
+      locazione: "Di essere intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+      locazione_erp: "Di essere intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+      comodato: "Di essere comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+      usufruttuario: "Di essere usufruttuario"
+      autocertificazione: "Di occupare legittimamente l'abitazione in base all' autocertificazione del proprietario dell'appartamento"
+
+allacciamento_acquedotto:
+  pdf:
+    chiede: "L’autorizzazione ad effettuare l’allacciamento all’acquedotto comunale, secondo le modalità fissate nel regolamento vigente"
+
+attestazione_anagrafica:
+  pdf:
+    richiesta: "Il rilascio di attestazione di iscrizione Anagrafica"
+
+certificato_nascita:
+  pdf:
+    richiesta: "Il rilascio del certificato di nascita"
+
+atto_nascita:
+  pdf:
+    richiesta: "La copia integrale dell'atto di nascita"
+
+certificato_morte:
+  pdf:
+    richiesta: "Il rilascio del certificato di morte"
+
+atto_morte:
+  pdf:
+    richiesta: "La copia integrale dell'atto di morte"
+
+estratto_morte:
+  pdf:
+    richiesta: "L'estratto dell'atto di morte"
+
+certificato_matrimonio:
+  pdf:
+    richiesta: "Il rilascio del certificato di matrimonio"
+
+estratto_matrimonio:
+  pdf:
+    richiesta: "L'estratto dell'atto di matrimonio"
+
+atto_matrimonio:
+  pdf:
+    richiesta: "La copia integrale dell'atto di matrimonio"
+
+stato_famiglia:
+  pdf:
+    richiesta: "Il rilascio del certificato dello stato di famiglia"
+
+occupazione_suolo_pubblico:
+  pdf:
+    richiesta: "il rilascio delle sottoelencate autorizzazioni necessarie per lo svolgimento della manifestazione/evento
+                denominata/o: %nomeIniziativa%"
+
+contributo_associazioni:
+  pdf:
+    richiesta: "L'erogazione del contributo per la seguente associazione ed attività:"
+
+iscrizione_registro_associazioni:
+  pdf:
+    richiesta: "che l'Associazione %associazione% venga iscritta nell'Albo delle Associazioni di questo Comune. Al fine di consentire l'istruttoria della richiesta allega i seguenti documenti, se non già in possesso dell’Amministrazione comunale:<br>• ELENCO DELLE CARICHE SOCIALI E RELATIVI NOMINATIVI<br/>• copia dello STATUTO o ATTO COSTITUTIVO, avente data certa, da cui risulti l'eleggibilità delle cariche, la volontarietà dell'adesione e del recesso dei membri, l'assenza di fini di lucro e la compatibilità dello scopo sociale con le finalità generali e gli obiettivi stabiliti dallo statuto comunale)<br>• attribuzione codice fiscale da parte dell’Agenzia delle Entrate<br>• (opzionalmente) logo in formato jpeg"
+
+liste_elettorali:
+  pdf:
+    richiesta: "Di essere inserito nell'Albo delle persone idonee all'ufficio di presidenza e all'ufficio di scrutatore presso i seggi elettorali"
+
+scia_pratica_edilizia:
+  pdf:
+    segnala: "segnala l'inizio dell'attività edilizia sotto descritta"
+
+certificato_anagrafico:
+  pdf:
+    dichiara: "DICHIARA inoltre di essere a conoscenza che l'eventuale utilizzo della certificazione richiesta in esenzione da bollo per usi per i quali è viceversa prescritto l'assolvimento dell'imposta, comporta responsabilità patrimoniale e amministrativa, consistente nel pagamento dell'imposta e delle relative sanzioni previste dalla Legge.<br />DICHIARA altresì di essere a conoscenza che, ai sensi dell'art. 76 D.P.R. 28/12/2000 n° 445, le dichiarazioni mendaci, la falsità negli atti e l'uso di atti falsi sono puniti ai sensi del codice penale e delle Leggi speciali in materia."
+
+errori:
+  allegato:
+    tipo_non_valido: "L'allegato %s è di un tipo non supportato"
+
+user:
+  dashboard:
+    title: 'La mia stanza'
+    pratiche_draft: 'In bozza'
+    pratiche_pending: 'Inviate'
+    pratiche_processing: 'In elaborazione'
+    pratiche_completed: 'Accettate'
+    pratiche_cancelled: 'Rifiutate'
+    pratiche_related: 'Aperte per mio conto'
+    pratiche_integration: 'Da integrare'
+    pratiche_withdrawn: 'Ritirate'
+    vai_al_dettaglio: 'Dettaglio'
+    avvisi_notizie: 'Avvisi / Notizie'
+    scadenze: 'Scadenze'
+    servizi_primo_piano: 'Servizi in primo piano'
+    ultime_pratiche: "Pratiche recenti"
+    vedi_tutte: "(vedi tutte)"
+    nuovi_documenti: "Nuovi documenti!"
+    nuovi_documenti_messaggio: "Sono stati pubblicati nuovi documenti!"
+
+  profile:
+    title: 'Profilo utente'
+    dati_personali: 'Dati personali'
+    info_da_sdc: 'Informazioni da sistema di autenticazione'
+    dati_da_cps_guida: 'Queste informazioni sono state ricavate dalla carta provinciale dei servizi con cui ti sei autenticato e non possono essere modificate in questa applicazione'
+    nome: 'Nome'
+    cognome: 'Cognome'
+    sesso: 'Sesso'
+    codice_fiscale: 'Codice fiscale'
+    telefono: 'Numero di telefono'
+    email: 'Indirizzo email'
+    data_nascita: 'Data di nascita'
+    luogo_nascita: 'Luogo di nascita'
+    provincia_nascita: 'Provincia di nascita'
+    stato_nascita: 'Stato di nascita'
+    contatti_per_sdc: 'Contatti'
+    contatti_per_sdc_guida: 'Il sistema utilizzerà questi dati per precompilare le tue pratiche ed inviarti notifiche e segnalazioni.'
+    cellulare: 'Numero di telefono cellulare'
+    indirizzo: 'Indirizzo'
+    citta: 'Città'
+    cap: 'Cap'
+    provincia: 'Provincia'
+    stato: 'Stato'
+    residenza: 'Residenza'
+    domicilio: 'Domicilio'
+    carta_identita: "Carta d'identità"
+    numero: 'Numero'
+    comune_rilascio: 'Rilasciata dal Comune di'
+    data_rilascio: 'Data di rilascio'
+    data_scadenza: 'Data di scadenza'
+    copia_domicilio: "Copia da domicilio"
+    copia_residenza: "Copia da residenza"
+    salva_informazioni_contatto: 'Salva informazioni contatto'
+    salva_informazioni_profilo: 'Salva informazioni profilo'
+    salva: 'Salva'
+
+admin:
+  usage:
+    user_title: 'Numero utenti'
+    active_user_title: 'Numero utenti attivi'
+
+operatori:
+  allega_risposta_firmata: 'Allega la risposta firmata'
+  vai_al_dettaglio: 'Vedi dettaglio'
+  prendi_in_carico_pratica: 'Prendi in carico'
+  subentra: 'Subentra a %completename%'
+  sicuro_di_prendere_in_carico_la_pratica: 'Confermi la presa in carico della pratica %name%?'
+  si: 'Sì, sono sicuro'
+  no: "No, annulla l'operazione"
+  pratiche_mie: 'Pratiche da gestire'
+  pratiche_libere: 'Pratiche da assegnare'
+  pratiche_concluse: 'Pratiche concluse'
+  pratiche_ente: "Tutte le pratiche dell'ente"
+  torna_alle_pratiche: "Torna all'elenco pratiche"
+  gestione_pratica: "Gestione pratica"
+  allega: 'Allega'
+  approva: 'Approva'
+  rifiuta: 'Rifiuta'
+  rigetta: 'Rigetta'
+  elabora: 'Elabora'
+  scrivi_al_cittadino: "Scrivi al cittadino"
+  riapri_pratica: "Riapri pratica"
+  richiedi_intergrazioni: 'Richiedi intergrazioni'
+  chiudi_richiesta_integrazione: 'Chiudi richiesta integrazioni'
+  richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"
+  modulo: 'Modulo'
+  richiesta: 'Richiesta'
+  protocollo_arrivo: 'Arrivo'
+  protocollo_partenza: 'Partenza'
+  numero_fascicolo: 'Numero di fascicolo'
+  numero_protocollo: 'Numero di protocollo'
+  id_documento: 'Identificativo documento'
+  data_protocollo: 'Data di protocollazione'
+  esito: 'Esito'
+  allegati: 'Allegati'
+  note_interne: 'Note interne'
+  importo: "Importo"
+  pagamento: 'Pagamento'
+  protocollo: 'Protocollo'
+  pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
+  protocollo_non_previsto: 'Per questa pratica non è prevista la protocollazione'
+  gateway: "Metodo di pagamento"
+  anagrafica_pagatore: "Anagrafica pagatore"
+  email_pagatore: "Email pagatore"
+  causale: "Causale versamento"
+  iud: "IUD"
+  iuv: "IUV"
+  data_esecuzione_pagamento: "Data di esecuzione"
+  esito_pagamento: "Esito"
+  data_ora_ricevuta: "Data e ora ricevuta"
+  commenti_e_modifiche: 'Commenti'
+  aggiungi_commento: 'Aggiungi commento'
+  allegati_modulo: 'Documenti allegati al modulo'
+  allegati_messaggi: 'Documenti allegati nei messaggi'
+  messaggi:
+    titolo: 'Messaggi'
+    emails: 'Recapitato a'
+    no_emails_info: 'Informazione non disponibile'
+    testo_messaggio: 'Testo del messaggio'
+    no_attachments: 'Non sono presenti allegati a questa pratica'
+    anonymous: 'Questa funzionalità non è disponibile agli utenti anonimi'
+    no_operator: 'Non è possibile inviare o ricevere messaggi finchè la pratica non viene presa in carico da un operatore'
+    allega_label: "Documenti allegati"
+    allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
+    aggiungi_nota_privata: 'Aggiungi nota interna'
+    invia: 'Invia messaggio'
+    non_disponibile_anonimo: 'Funzionalità non dispobibile per gli utenti anonimi'
+    prendi_in_carico_per_abilitare: 'Prendi in carico la pratica per abilitare questa funzionalità'
+    pubblico: 'Invia messaggio pubblico al cittadino'
+    privato: 'Una nota interna non sarà visibile al cittadino'
+    ha_aggiunto_nota_privata: 'ha aggiunto una nota interna'
+    info: 'info'
+    letto: 'Letto'
+    inviato: 'Inviato'
+    creato_il: 'Messaggio creato il %data%'
+    consegnato_il: 'Messaggio inviato il %data%'
+    letto_il: 'Messaggio letto il %data%'
+    feedback_inviato: "Il messaggio verrà recapitato a breve all'indirizzo %email%. Una eventuale risposta del cittadino comparirà in questa stessa pagina"
+  suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
+  login: "Accedi"
+  scarica: 'File di richiesta'
+  info: "Info"
+  iter_completato: "La richiesta è stata <strong>%statusName%</strong> il %data% alle ore %ore%"
+  pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
+  pratica_correlata: "Pratica correlata"
+  fascicolo: "Fascicolo numero"
+  documenti: "Documenti"
+  no_pratica_correlata: "Nessuna pratica correlata"
+  ultime_pratiche: "Ultime pratiche inviate dall'utente"
+  inviata_il_alle: "Inviata il %data% alle ore %ore%"
+  recaptcha: 'Per inviare la richiesta fai cllck su "Non sono un robot" e successivamente sul pulsante "Invia".'
+  scarica_ricevuta_provvisoria: 'Scarica la richiesta inviata alla protocollazione'
+  attesa_ricevuta: 'In attesa di generazione della ricevuta'
+  attesa_modulo_compilato: 'In attesa di generazione del modulo compilato'
+  attesa_modulo_compilato_info: 'Stiamo generando il modulo compilato in PDF da inviare al protocollo'
+  attesa_modulo_protocollato: 'In attesa di protocollazione'
+  attesa_pagamento: 'In attesa di pagamento'
+  attesa_protocollo_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma."
+  attesa_ricevuta_info: "Stiamo generando una ricevuta PDF da scaricare ed eventualmente stampare. Per ottenerla attendi su questa pagina."
+  controlla_richiesta_protocollata_loggato: "Puoi controllare l’avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <i>Le mie pratiche</i>."
+  controlla_richiesta_protocollata_anonimo: "Puoi controllare l’avvenuta protocollazione ricaricando la pagina."
+  controlla_ricevuta_loggato: "La ricevuta resterà disponibile nella tua area personale in <i>Le mie pratiche</i>."
+  controlla_ricevuta_anonimo: ""
+  scarica_ricevuta_provvisoria_info: "<strong>Attenzione:</strong> Il documento compilato con i dati della richiesta e tutti gli eventuali allegati inseriti sono stati inviati al sistema di protocollo comunale.<br /> Non appena i documenti saranno protocollati, riceverai una comunicazione email di conferma.<br /> Puoi controllare l'avvenuta protocollazione ricaricando la pagina o accedendo alla pratica dal menu <em>Le mie pratiche</em>."
+  scarica_modulo_compilato: 'Scarica il modulo compilato'
+  scarica_richiesta_protocollata: 'Scarica la richiesta protocollata'
+  scarica_ricevuta: 'Scarica la ricevuta'
+  scarica_risposta_firmata: 'File di risposta'
+  torna_alla_lista_operatori: 'Torna alla lista operatori'
+  flow:
+    approva_o_rigetta:
+      guida_alla_compilazione: 'Esprimi un esito sulla pratica ed eventualmente una motivazione'
+      esito_label: 'Approva o rifiuta la pratica'
+      motivazione:
+        esito_label: "Messaggio personale"
+        esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al/il cittadino"
+        payment_amount_help: "L'importo se già presente è stato calcolato nel modulo o dalle impostazioni del servizio. Si può inserire un importo diverso se necessario, impostando il valore 0 l'utente sarà esentato dal pagamento e la pratica verrà direttamente approvata."
+        allega_label: "Documenti allegati"
+        allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
+    upload_risposta_firmata:
+      testo_descrittivo: 'Scarica la risposta dal seguente <strong><a href="%link_download_risposta%">link</a></strong> e ricaricala firmata digitalmente <hr/>'
+      guida_alla_compilazione: 'Scarica la risposta da firmare digitalmente'
+      allega_risposta_firmata: 'Allega la risposta firmata digitalmente'
+    allega_documentazione_richiesta: 'Allega documentazione richiesta'
+    concludi: 'Concludi elaborazione'
+  profile:
+    title: 'Profilo operatore'
+    nome: 'Nome'
+    cognome: 'Cognome'
+    email: 'Email'
+    ente: 'Ente'
+    ambito: 'Ambito'
+    salva_modifiche: 'Salva modifiche'
+  usage:
+    title: 'Metriche di utilizzo'
+    service_title: 'Servizi attivi'
+    pratiche_title: 'Pratiche per anno'
+
+allegato:
+  nome_file: 'Nome del file'
+  descrizione_file: 'Descrizione del file'
+  scarica_allegato: 'Scarica file'
+  scarica_allegato_bozza: 'Scarica il file'
+  scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'
+  scarica_allegato_richiesta_integrazione: "Scarica file contenente la richiesta  d'integrazione"
+  crea_allegato: 'Carica un allegato'
+  non_supportato: 'Il file che stai cecando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
+  guida_alla_compilazione:
+    crea: 'Seleziona il file da caricare, deve essere una immagine (png bmp gif jpg) o un file pdf. Dai al fle una descrizione che ti aiuti a identificarlo'
+  non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'
+  aggiungi: 'Aggiungi un allegato'
+  cancellato: 'Allegato cancellato correttamente'
+
+email:
+  detail_link: 'link'
+  pratica:
+    dear: 'Gentile <strong>%user_name%</strong>,'
+    thanks: 'La ringraziamo per la collaborazione.'
+    payment_link: 'Puoi procedere al pagamento visitando il seguente link:'
+    link: 'Per ulteriori dettagli visiti il seguente '
+    link_download: 'Può scaricare i documenti  da lei richiesti al seguente '
+    link_txt: 'Per ulteriori dettagli visiti il seguente link: '
+    link_download_txt: 'Per ulteriori dettagli visiti il seguente link: '
+    no_info: '<i>informazione non disponibile</i>'
+    user:
+      status:
+        pre.submit: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."
+        submitted: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta. In allegato il modulo da lei compilato.<br /><strong>Attenzione:</strong> questa è la ricevuta di presentazione della richiesta, NON è l'esito della domanda; le trasmetteremo un messaggio di accettazione o di rifiuto in una comunicazione e-mail successiva"
+        registered: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta."
+        cancelled: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>'
+        complete: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata, il numero di richiesta è <strong>%pratica_id%</strong>'
+        complete.waitallegatioperatore: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi documenti allegati.'
+        pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
+        draft: ''
+        draft.for.integration: "le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
+        submitted.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+        registered.after.integration: "le comunichiamo che l'integrazione alla sua richiesta con protocollo <strong>%protocollo%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della richiesta."
+        pending.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
+        withdraw: "le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+        payment:
+          pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
+          success: "le comunichiamo che il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong> è avvenuto con successo"
+          error: "le comunichiamo che c'è stato un errore durante il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong>"
+          outcome:
+            pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento"
+    operatore:
+      status:
+        submitted: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
+        registered: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata. Il numero di protocollo è <strong>%protocollo%</strong>."
+        cancelled: "hai rifiutato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
+        complete: "hai accettato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
+        complete.waitallegatioperatore: "la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi documenti allegati."
+        pending: "hai preso in carico la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
+        payment:
+          pending: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
+          success: "il pagamento per la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è avvenuto con successo"
+          error: "c'è stato un errore durante il pagamento per la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
+          outcome:
+            pending: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento"
+        draft: ''
+
+messages:
+  pratica:
+    status:
+      1900: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      1500: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di pagamento, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      1510: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      1520: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong> è avvenuto con successo, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      1530: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che c'è stato un errore durante il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong>, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      2000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta. In allegato il modulo da Lei compilato.<br /><strong>Attenzione:</strong> questa è la ricevuta di presentazione della richiesta, NON è l'esito della domanda; Le trasmetteremo un messaggio di accettazione o di rifiuto in una comunicazione e-mail successiva.<br />La ringraziamo per la collaborazione."
+      3000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata, il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta.<br />La ringraziamo per la collaborazione."
+      4000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore.<br />La ringraziamo per la collaborazione.'
+      5000: ''
+      6000: ''
+      7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
+      8000: ''
+      9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
+      20000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+    no_reason: '<i>Nessun messaggio specificato</i>'
+messaggi:
+  messaggio: 'Messaggio'
+  invia: 'Invia'
+chat:
+  loading: ' Recupero dei messaggi in corso'
+  title:
+    user: 'Hai bisogno di aiuto?'
+    operatore: 'Filo diretto'
+  io:
+    chat_name: 'Io'
+
+
+steps:
+
+  common:
+    inserisci_importo:
+      label: "Inserisci l'importo"
+    seleziona_gateway_pagament:
+      title: "Selezione del metodo di pagamento"
+      guida_alla_compilazione: "Seleziona il metodo di pagamento che intendi utilizzare"
+
+    seleziona_ente:
+      label: "Ente"
+      title: 'Selezione del comune di riferimento'
+      guida_alla_compilazione: "Seleziona dal menu a tendina l'ente a cui inviare la richiesta"
+
+    accettazione_istruzioni:
+      label: 'Istruzioni'
+      title: 'Istruzioni sulla procedura'
+      guida_alla_compilazione: 'Leggi e accetta le istruzioni di compilazione'
+      accetto_istruzioni: 'Ok mi è chiaro'
+
+    dati_richiedente:
+      label: 'Richiedente'
+      title: 'Dati del richiedente'
+      guida_alla_compilazione: 'I dati del richiedente sono modificabili dalla <a href="/user/profile">pagina dedicata al <u>tuo profilo</u></a>'
+      richiedente_nome: 'Nome'
+      richiedente_cognome: 'Cognome'
+      richiedente_codice_fiscale: 'Codice Fiscale'
+      richiedente_luogo_nascita: 'Luogo di nascita'
+      richiedente_data_nascita: 'Data di nascita'
+      richiedente_indirizzo_residenza: 'Indirizzo'
+      richiedente_cap_residenza: 'CAP'
+      richiedente_citta_residenza: 'Città'
+      richiedente_telefono: 'Telefono'
+      richiedente_email: 'Email'
+
+    conferma:
+      label: 'Controllo e conferma'
+      title: 'Controllo e conferma'
+      sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
+      si: 'Sì, sono sicuro'
+      no: 'No'
+      payment_help_text_top: 'Verifica i dati inseriti prima di passare al metodo di pagamento'
+      help_text_top: "Scorri l'anteprima verificando che tutti i dati siano corretti e fai click su Invia alla fine della pagina"
+      help_text_bottom: 'Per inviare la richiesta, premere il pulsante "Invia"'
+
+    nucleo_familiare:
+      label: 'Nucleo familiare'
+      title: 'Composizione del nucleo familiare'
+      guida_alla_compilazione: 'Inserisci i componenti del nucleo familiare'
+
+    carica_allegati:
+      label: 'Allegati'
+      title: 'Caricamento degli allegati'
+      guida_alla_compilazione: "Inserisci gli allegati"
+
+    org_richiedente:
+      label: 'Organizzazione richiedente'
+      title: 'Organizzazione richiedente'
+      ruolo_utente: 'In qualità di '
+      ragione_sociale: 'Ragione sociale'
+      cf: 'Codice fiscale'
+      piva: 'Partita Iva'
+      indirizzo: 'Indirizzo'
+      civico: 'Numero civico'
+      cap: 'Cap'
+      comune: 'Comune'
+      provincia: 'Provincia'
+      email: 'Indirizzo Email'
+      tel: 'Numero di telefono'
+
+      nome_associazione: "Nome dell'associazione"
+      natura_giuridica: "Natura giuridica"
+      sito: "Sito"
+      pagina_social: "Pagina social"
+      e_mail: "email"
+      numero_iscritti: "Numero di iscritti"
+      modalita_di_adesione: "Modalità di adesione (come si diventa soci)"
+      attivita: "Attività (indicare in modo sintetico le attività principali)"
+      obiettivi: "Obiettivi"
+      sede_legale: "Sede legale"
+      sede_operativa: "Sede operativa"
+      contatti: "Contatti"
+
+      allegato_statuto: "Statuto"
+      allegato_attribuzione_cf: "Attribuzione del Codice Fiscale"
+      allegato_cariche_sociali: "elenco delle Cariche sociali"
+      allegato_logo: "Logo"
+
+
+    dati_conto_corrente:
+      label: 'Dati Conto Corrente'
+      title: 'Dati Conto Corrente'
+      iban: 'Codice Iban'
+      intestatario: 'Intestatario conto'
+      guida_alla_compilazione: 'Inserisci i dati del conto corrente'
+
+    select_payment_gateway:
+      label: 'Seleziona metodo di pagamento'
+      title: 'Seleziona metodo di pagamento'
+      guida_alla_compilazione: 'Utilizza il menù a tendina per selezionare il metodo di pagamento desiderato'
+
+    payment_gateway:
+      label: 'Pagamento'
+      title: 'Pagamento'
+
+    delega:
+      label: 'Delega'
+      title: 'Delega'
+      guida_alla_compilazione: 'Specifica se hai una delega.'
+      has_delega: 'Hai una delega?'
+      tipi:
+        delegato: 'delegato dal / la Sig. / Sig.ra'
+        incaricato: 'incaricato dallo studio'
+        altro: 'altro'
+
+    specifica_delega:
+      label: 'Specifica delega'
+      title: 'Specifica delega'
+      guida_alla_compilazione: "Se la richiesta del certificato è riferita ad un'altra persona è necessario indicare le generalità."
+      tipi:
+        delegato: 'delegato dal / la Sig. / Sig.ra'
+        incaricato: 'incaricato dallo studio'
+        altro: 'altro'
+      type_text: 'Specificare nome Studio / Altro'
+      nome_soggetto_certificato: 'Nome e cognome della persona per cui si richiede il certificato'
+      related_cfs: 'Codice Fiscale della persona per cui si richiede il certificato'
+      data_nascita_soggetto_certificato: 'Data di nascita della persona per cui si richiede il certificato'
+      required_field_error: 'Se hai selezionato "incaricato dallo studio" o "altro" nel campo "In qualità di" devi riempire anche il campo "Specificare nome Studio / Altro"'
+
+    certificato_anagrafico:
+      label: 'Tipologia ed uso'
+      tipologia_certificato: 'Tipologia certificato'
+      tipologie:
+        semplice: 'semplice'
+        genitori: 'con paternità e maternità'
+        internazionale: 'su modello internazionale'
+      uso: 'Per il seguente uso'
+      CertificatoNascita:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: 'Il certificato di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore'
+        guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      EstrattoNascita:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "L'estratto di nascita con paternità e maternità può essere richiesto esclusivamente, dal titolare o dal padre o dalla madre o dal tutore."
+        guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      AttoMorte:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specifica dettagliata dell'uso del certificato"
+        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      EstrattoMorte:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specifica dettagliata dell'uso del certificato"
+        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      CertificatoMatrimonio:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specificare tipologia di certificato"
+        guida_alla_compilazione: "Specificare tipologia di certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      EstrattoMatrimonio:
+        label: 'Tipologia ed uso'
+        title: 'Tipologia ed uso'
+        description: "Specificare tipologia di certificato"
+        guida_alla_compilazione: "Specificare tipologia di certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+      AttoMatrimonio:
+        label: 'Tipologia ed uso'
+        title: "Tipologia ed uso"
+        description: "Specifica dettagliata dell'uso del certificato"
+        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
+        tipologia_certificato: 'Tipologia certificato'
+        uso: "Precisare la motivata richiesta"
+
+    uso:
+      label: 'Tipologia ed uso'
+      title: 'Tipologia ed uso'
+      description: 'Specifica uso per il certificato'
+      guida_alla_compilazione: 'Specifica uso per il certificato'
+      uso: 'Specifica uso per il certificato'
+
+  allacciamento_acquedotto:
+    dati_immobile:
+      label: 'Immobile'
+      title: "Dati dell'immobile"
+      guida_alla_compilazione: "Inserire i dati dell'immobile e a che titolo viene fatta la richiesta"
+      datiImmobile: "Dati dell'immobile"
+      qualifica: "Qualifica del richiedente"
+      provincia: "Provincia"
+      comune: "Comune"
+      indirizzo: "Indirizzo"
+      numero_civico: "Numero civico"
+      cap: "CAP"
+      scala: "Scala"
+      piano: "Piano"
+      interno: "Interno"
+      catasto_categoria: "Categoria catastale"
+      catasto_codice_comune: "Codice catastale del comune"
+      catasto_foglio: "Foglio"
+      catasto_sezione: "Sezione"
+      catasto_mappale: "Particella Mappale"
+      catasto_subalterno: "Subalterno"
+
+    dati_intervento:
+      label: 'Intervento'
+      title: "Tipologia di intervento"
+      guida_alla_compilazione: "Inserire i dati dell'intervento"
+      tipo_intervento: "Tipologia di intervento"
+      tipo_allaccio: "Tipologia di allaccio"
+      tipo_uso: "Tipologia d'utilizzo"
+      diametro_rete_interna: "Diametro rete interna"
+
+    dati_contatto:
+      label: 'Contatti'
+      title: 'Contatti'
+      guida_alla_compilazione: "Specificare indirizzo per comunicazioni e rimborsi"
+      use_alternate: "Utilizza i segenti dati"
+      indirizzo: "Indirizzo"
+      numero_civico: "Numero civico"
+      cap: "CAP"
+      comune: "Comune"
+
+  autolettura_acqua:
+    dati_intestatario:
+      label: 'Intestatario'
+      title: "Dati dell'intestatario del contratto"
+      guida_alla_compilazione: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
+      intestatario_codice_utente: "Codice utenza"
+      intestatario_nome: "Nome"
+      intestatario_cognome: "Cognome"
+      intestatario_indirizzo: "Indirizzo"
+      intestatario_cap: "CAP"
+      intestatario_citta: "Città"
+      intestatario_telefono: "Recapito telefonico per eventuali comunicazioni"
+      intestatario_email: "Recapito email per eventuali comunicazioni"
+
+    dati_contatore:
+      label: "Contatore"
+      title: "Contatore"
+      guida_alla_compilazione: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
+      contatore_numero: "Numero (da leggere sulla ghiera d'ottone del contatore)"
+      contatore_uso: "Tipologia di utilizzo del contatore"
+      contatore_unita_immobiliari: "Numero di unità immobiliari (appartamenti, negozi, uffici, ...) serviti dal contatore"
+
+    dati_lettura:
+      label: "Lettura"
+      title: "Dati della lettura"
+      guida_alla_compilazione: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
+      lettura_metri_cubi: "Lettura dei metri cubi"
+      lettura_data: "Data della rilevazione"
+
+    note:
+      label: "Altre comunicazioni"
+      title: "Altre comunicazioni"
+      guida_alla_compilazione: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
+
+  cambio_residenza:
+
+    dichiarazione_provenienza:
+      label: "Provenienza"
+      title: "Dichiarazione della provenienza"
+      guida_alla_compilazione: "Dichiarazione della provenienza: da un altro comune, dall'estero o dallo stesso comune"
+      comune: "Dichiarazione di cambiamento di abitazione nell’ambito dello stesso comune"
+      altro_comune: "Dichiarazione di residenza con provenienza da altro comune"
+      estero: "Dichiarazione di residenza con provenienza dall’estero"
+      aire: "Dichiarazione di residenza di cittadini italiani iscritti all’AIRE (Anagrafe degli italiani residenti all’estero) con provenienza dall’estero"
+      altro: "Dichiarazione di residenza per altro motivo"
+
+    dichiarazione_provenienza_dettaglio:
+      label: 'Provenienza (dettaglio)'
+      title: "Dettagli provenienza"
+      guida_alla_compilazione:
+        nessun_allegato: "Per il tipo di provenienza selezionato non sono necessarie altre informazioni"
+        altro_comune: "Indicare il comune di provenienza"
+        stato_estero: "Indicare lo Stato estero di provenienza"
+        aire: "Indicare lo Stato estero e il comune AIRE di provenienza"
+        altro_motivo: "Specificare il motivo"
+
+    dati_residenza:
+      label: "Residenza"
+      title: "Dati residenza"
+      guida_alla_compilazione: "Specifica il nuovo indirizzo di residenza"
+      provincia: "Provincia"
+      comune: "Comune"
+      indirizzo: "Via/Piazza"
+      numero_civico: "Numero civico"
+      scala: "Scala"
+      piano: "Piano"
+      interno: "Interno"
+
+    attualmente_residenti:
+      label: "Residenti"
+      title: "Persone già iscritte nella nuova abitazione"
+      guida_alla_compilazione: "Inserisci le eventuali persone già residenti nell'abitazione per la quale chiedi la residenza"
+
+    tipologia_occupazione:
+      label: "Tipologia"
+      title: "Tipologia di occupazione"
+      guida_alla_compilazione: "Dichiarazione riguardante la tipologia di occupazione della nuova residenza"
+      proprietario: "Proprietario dell'abitazione"
+      locazione: "Intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+      locazione_erp: "Intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+      comodato: "Comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+      usufruttuario: "Usufruttuario"
+      autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+
+    tipologia_occupazione_dettaglio:
+      label: "Tipologia (dettaglio)"
+      title: "Dettagli della tipologia di occupazione"
+      guida_alla_compilazione:
+        proprietario: "Specifica i valori catastali dell'abitazione di proprietà"
+        locazione: "Specifica i dettagli del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
+        locazione_erp: "Allega il contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
+        comodato: "Specifica i dettagli del contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
+        usufruttuario: "Indicare dati utili a consentirne la verifica"
+        autocertificazione: "Allega l'autocertificazione del proprietario dell'appartamento"
+      proprietario:
+        catasto_sezione: "Sezione"
+        catasto_foglio: "Foglio"
+        catasto_particella: "Particella/Mappale"
+        catasto_subalterno: "Subalterno"
+      contratto:
+        agenzia: "Indirizzo agenzia entrate"
+        numero: "Numero contratto"
+        data: "Data di stipula del contratto"
+      verbale_consegna: "Scansione del contratto o del verbale di consegna dell'immobile"
+      usufruttuario_info: "Titolo costitutivo"
+      autocertificazione: "Autocertificazione del proprietario dell'appartamento"
+
+    informazioni_accertamento:
+      label: "Accertamento"
+      title: "Informazioni per accertamento dei dati"
+      guida_alla_compilazione: "Segnalare eventuali giorni ed orari di preferenza per la verifica delle autorità giudiziarie"
+
+  contributo_pannolini:
+    dati_bambino:
+      label: 'Dati del bambino'
+      title: 'Dati del bambino'
+      guida_alla_compilazione: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
+      nome: 'Nome'
+      cognome: 'Cognome'
+      luogo_nascita: 'Luogo di nascita'
+      data_nascita: 'Data di nascita'
+
+    dati_acquisto:
+      label: "Dati dell'Acquisto"
+      title: "Dati dell'Acquisto"
+      guida_alla_compilazione: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello passaggio successivo'
+      tipo_pannolini: 'Tipo dei pannolini acquistati'
+      punto_vendita: 'Nome del punto vendita'
+      data_acquisto: 'Data di acquisto'
+      totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
+
+    dati_conto_corrente:
+      label: 'Dati Conto Corrente'
+      title: 'Dati Conto Corrente'
+      guida_alla_compilazione: 'Inserisci i dati del conto corrente'
+
+  iscrizione_asilo_nido:
+    seleziona_nido:
+      label: 'Struttura'
+      title: 'Selezione della struttura'
+      guida_alla_compilazione: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
+
+    accettazione_utilizzo:
+      label: 'Accettazione'
+      title: 'Termini di fruizione della struttura'
+      guida_alla_compilazione: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
+      accetto_utilizzo: 'Ho letto i termini di fruizione della struttura'
+
+    seleziona_orari:
+      label: 'Orari e periodo'
+      title: 'Selezione degli orari e del periodo di iscrizione'
+      guida_alla_compilazione: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
+      seleziona_orario: 'Orario prescelto'
+      periodo_iscrizione_da: 'Periodo iscrizione da'
+      periodo_iscrizione_a: 'Periodo iscrizione a'
+      error: "La data di fine iscrizione deve essere maggiore di quella d'inizio"
+
+    dati_bambino:
+      label: 'Dati del bambino'
+      title: 'Dati del bambino'
+      guida_alla_compilazione: 'Inserisci i dati del bambino che intendi iscrivere'
+      nome: 'Nome'
+      cognome: 'Cognome'
+      luogo_nascita: 'Luogo di nascita'
+      data_nascita: 'Data di nascita'
+
+    allega_attestazione_icef:
+      label: 'Attestazione ICEF'
+      title: 'Attestazione ICEF per i servizi alla prima infanzia'
+      guida_alla_compilazione: "Allega l'attestazione ICEF per i servizi alla prima infanzia (in mancanza dell’attestazione verranno applicate le tariffe massime. L’eventuale tariffa agevolata sarà applicata dal primo giorno del mese successivo a quello di presentazione dell’attestazione al Comune)"
+
+  occupazione_suolo_pubblico:
+    nomeIniziativa: 'Nome Manifestazione/Evento'
+    guida_alla_compilazione: 'Inserisci i campi richiesti. I campi marcati con un asterisco (*) sono obbligatori'
+    allegati:
+      label: 'Allegati'
+      guida_alla_compilazione: 'Carica gli allegati richiesti (in formato PDF)'
+    org_richiedente:
+      label: 'Organizzazione richiedente'
+      title: 'Organizzazione richiedente'
+      ruolo_utente: 'Il sottoscritto in qualità di'
+      ragione_sociale: 'Ragione sociale associazione'
+      indirizzo: 'Indirizzo'
+      civico: 'Numero civico'
+      cap: 'Cap'
+      comune: 'Comune'
+      provincia: 'Provincia'
+
+
+    occupazione:
+      nomeIniziativa: 'Nome Manifestazione/Evento'
+      label: 'Luogo occupazione'
+      title: 'Luogo occupazione e Nome Manifestazione/Evento'
+      indirizzo: 'Indirizzo'
+      civico: 'Numero civico'
+      lunghezza: 'Lunghezza in cm'
+      larghezza: 'Larghezza in cm'
+      metri_quadri: 'Metri quadrati'
+      motivazione: 'Motivazione'
+
+    tipologia_occupazione:
+      label: 'Tipologia occupazione'
+      title: 'Tipologia occupazione'
+      tipologia: 'Tipologia'
+
+    tempo_occupazione:
+      label: 'Tempo di occupazione'
+      title: 'Tempo di occupazione'
+      inizio_giorno: 'Giorno inizio occupazione'
+      inizio_ora: 'Ora inizio occupazione'
+      fine_giorno: 'Giorno fine occupazione'
+      fine_ora: 'Ora fine occupazione'
+      error: 'Selezionare un giorno di inizio precedente a quello di fine'
+    importo:
+      guida_alla_compilazione: "Inserisci l'importo corretto per la pratica.<br/>Trovi le istruzioni per il calcolo a questo indirizzo: <a href='http://www.comune.rovereto.tn.it/istruzioni-per-calcolo-importi'>Comune di Rovereto - Istruzioni per il calcolo degli importi</a>"
+
+  contributo_associazioni:
+    tipologia_attivita:
+      label: 'Tipologia attività'
+      title: 'Tipologia attività'
+      tipologia: 'Selezionare il tipo di attività'
+      commerciale: 'Svolge attività commerciale'
+      non_commerciale: 'Non svolge attività commerciale (art. 108 del Testo Unico delle Imposte sui redditi)'
+      guida_alla_compilazione: "Seleziona la tipologia di attività che l'organizzazione svolge"
+
+    contributo:
+      label: 'Uso del contributo'
+      title: 'Uso del contributo'
+      tipologia_contributo: 'Tipologia contributo'
+      beni_strumentali: 'Acquisto di beni strumentali'
+      fini_istituzionali_commerciali: 'Attività per il perseguimento di fini istituzionali a carattere commerciale'
+      fini_istituzionali_non_commerciali: 'Attività per il perseguimento di fini istituzionali non a carattere commerciale'
+      manifestazione_istituzionale_non_commerciale: 'Manifestazione rientrante nell’attività istituzionale non a carattere commerciale'
+      commerciale: 'Attività a carattere commerciale'
+      descrizione: 'Descrizione'
+      anno: 'Anno di attività'
+      guida_alla_compilazione: "Selezionare il tipo di contributo ed inserire descrizione ed anno dell'attività per cui si fa domanda"
+
+  scia:
+    error:
+      allegato_richiesto: "Allegare almeno un file nel campo %field%"
+
+    modulo_default:
+      label: 'Modulo Domanda'
+      title: 'Modulo principale della domanda'
+      guida_alla_compilazione: 'Allega il modulo della domanda correttamente compilato'
+      description: '<p><em>Prima di firmare digitalmente il modulo compilato è necessario eseguire il blocco del contenuto del file PDF.<br/>Tale operazione può essere eseguita nativamente mediante "Adobe Acrobat Pro" selezionare il comando "Protezione" e la voce "Limita apertura e modifica" Si aprirà la finestra "protezione password - impostazioni".<br />Tramite questa finestra impostare "Compilazione campi modulo" nella modalità "Non consentito/a".</em></p><p><em>In alternativa applicare la protezione ad un file PDF già compilato mediante il <a href="http://www.giscom.it/download/PDFPeO.zip">software "PDFPeO"</a>.</em></p>'
+
+    allegati_modulo_scia:
+      label: 'Allegati alla domanda'
+      title: 'Documentazione allegata alla domanda'
+      guida_alla_compilazione: 'Allega tutti i documenti elencati'
+      files:
+        DOM_DELEGA:
+          title: Delega
+          description: Procura/Delega a presentare la pratica
+        DOM_PRIVACY:
+          title: Privacy
+          description: Informativa sul trattamento dei dati personali
+        DOM_ISPAT:
+          title: Modelli ISPAT
+          description: Modelli statistici ISPAT
+        DOM_CI:
+          title: "Documenti d'identità"
+          description: "Copia fotostatica di valido documento d'identità degli aventi titolo alla presentazione S.C.I.A, del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+        DOM_CF:
+          title: "Codici fiscali o partite IVA"
+          description: "Fotocopia codice fiscale o partita IVA del richiedente e del tecnico progettista (compresi gli eventuali sottoscrittori del modello Allegato A)."
+        DOM_EDIFICI-STORICI:
+          title: ''
+          description: Documentazione fotografica con l'indicazione degli interventi previsti per la tutela e la valorizzazione degni edifici soggetti alla disciplina degli insediamenti storici o del patrimonio edilizio tradizionale montano.
+        DOM_OBBLIGHI_SICUREZZA:
+          title: ''
+          description: Obblighi in materia di sicurezza nei luoghi di lavoro di cui al d.lgs n. 81/2008
+        DOM_DOC_DIRITTI_SEGRETERIA:
+          title: ''
+          description: 'Ricevuta attestante il pagamento dei diritti di segreteria'
+        DOM_DOC_PAGAMENTO_CONTRIBUTO:
+          title: ''
+          description: Documentazione attestante il pagamento del contributo di costruzione
+        DOM_PROGETTO_OPERE:
+          title: ''
+          description: Progetto delle opere di urbanizzazione
+        DOM_CONDOMINIO:
+          title: ''
+          description: Atto di assenso del condominio e pertanto si allega il verbale di assemblea
+
+    soggetti:
+      label: 'Soggetti aventi titolo'
+      title: 'Elenco dei soggetti aventi titolo come richiesto nel modulo A della domanda S.C.I.A.'
+      guida_alla_compilazione: 'Allega il/i modulo/i A correttamente compilato/i'
+    allegati_tecnici:
+      label: 'Allegati tecnici  (A)'
+      title: 'Attestazione tipologia di intervento e allegati di Documentazione tecnica'
+      guida_alla_compilazione: "Documentazione tecnica di progetto <strong>essenziale ai fini dell'ammissibilità</strong> da produrre, in funzione della tipologia dell'intervento in progetto e in coerenza con il quadro sinottico parte integrante del presente allegato, in forma cartacea in <strong>duplice copia</strong> e su idoneo supporto informatico con possibilità di stampa e riproduzione in <strong>copia singola</strong>.<br/>Barrare gli elaborati oggetto di presentazione.<br/>Per le varianti va operato riferimento esclusivamente ai contenuti della variante stessa.<br/><strong>I punti contrassegnati con l'asterisco(<span style='color: red'>*</span>) sono obbligatori.</strong>"
+      tipo_intervento_label: 'Tipologia di intervento'
+      tipi_intervento:
+        default: "Standard"
+        manutenzione_straordinaria: Manutenzione Straordinaria
+        ristrutturazione_edilizia: Ristrutturazione Edilizia
+        restauro_e_risanamento_conservativo: Restauro e Risanamento Conservativo
+        ristrutturazione_urbanistica: Ristrutturazione Urbanistica
+        altro_tipo: Altro tipo
+      files:
+        TEC_ELABORATI_VINCOLI:
+          title: ''
+          description: 'Elaborati relativi ai vincoli e ai dati urbanistici e catastali'
+        TEC_DOC_FOTOGRAFICA:
+          title: ''
+          description:    Documentazione fotografica dello stato di fatto
+        TEC_RELAZIONE_TECNICA:
+          title: ''
+          description:    Relazione tecnica
+        TEC_PLANIMETRIE:
+          title: ''
+          description:    Planimetrie
+        TEC_SEZ_ALTIMETRICHE:
+          title: ''
+          description:    Sezioni altimetriche con raffronto
+        TEC_PIANTE:
+          title: ''
+          description:    Piante
+        TEC_SEZIONI:
+          title: ''
+          description:    Sezioni
+        TEC_PROSPETTI:
+          title: ''
+          description:    Prospetti
+        TEC_TECNICA_COSTR:
+          title: ''
+          description:    Documentazione tecnica necessaria alla determinazione del contributo di costruzione
+        TEC_SPAZI_PARCHEGGIO:
+          title: ''
+          description:    Spazi di parcheggio
+        TEC_BARRIERE_ARCHITETTONICHE:
+          title: ''
+          description:    Elaborati relativi al superamento delle barriere architettoniche
+        TEC_RELAZIONE_GEOLOGICA:
+          title: ''
+          description:    Perizia, studio o relazione geologica di fattibilità dell’intervento
+        TEC_STUDIO_COMPATIBILITA:
+          title: ''
+          description:    Studio di compatibilità
+        TEC_RELAZIONE_ENERGETICA:
+          title: ''
+          description:    Relazione energetica
+        TEC_RISULTATI_ANALISI:
+          title: ''
+          description:    Risultati delle analisi ambientali sulla qualità dei terreni
+        TEC_COMUNICAZIONI_MATERIA:
+          title: ''
+          description: 'Comunicazioni in materia di gestione delle terre e rocce da scavo'
+        TEC_PIANO_LAVORO:
+          title: ''
+          description:    Piano di lavoro di demolizione o rimozione dell'amianto
+        TEC_IMP-ELET:
+          title: ''
+          description:    Schema del progetto degli impianti tecnologici di produzione, trasformazione, trasporto, distribuzione, utilizzazione dell'energia elettrica
+        TEC_IMP-SCAR:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di protezione contro le scariche atmosferiche
+        TEC_IMP-RADIO:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici radiotelevisivi, antenne ed elettronici in genere
+        TEC_IMP-CLIMA:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di riscaldamento, di climatizzazione, di condizionamento e di refrigerazione di qualsiasi natura o specie, comprese le opere di evacuazione dei prodotti della combustione e delle condense, e di ventilazione ed aerazione dei locali
+        TEC_IMP-IDRIC:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici idrici e sanitari di qualsiasi natura o specie
+        TEC_IMP-GAS:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici per la distribuzione e l'utilizzazione di gas di qualsiasi tipo, comprese le opere di evacuazione dei prodotti della combustione e ventilazione ed aerazione dei locali
+        TEC_IMP-ELEV:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di sollevamento di persone o di cose per mezzo di ascensori, di montacarichi, di scale mobili e simili
+        TEC_IMP-INCEN:
+          title: ''
+          description:    schema del progetto degli impianti tecnologici di protezione incendio
+        TEC_RETI_SCARIC:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi scarichi acque nere e bianche
+        TEC_RETI_RIFIU:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi spazi di raccolta dei rifiuti solidi urbani
+        TEC_RETI_ACQ:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di acqua
+        TEC_RETI_ELET:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di energia elettrica
+        TEC_RETI_GAS:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore dei servizi fornitura di calore, gas, ecc.
+        TEC_RETI_ALTRO:
+          title: ''
+          description:    planimetria delle reti ed eventuale documentazione del soggetto gestore di altri servizi
+        TEC_COLLEGAMENTO_FIBRA:
+          title: ''
+          description:    collegamenti in fibra ottica
+        TEC_DOTAZIONI_RICARICA:
+          title: ''
+          description:    dotazioni per la ricarica dei veicoli elettrici
+        TEC_RELAZIONE_ACUSTICHE:
+          title: ''
+          description:    relazione sulle caratteristiche acustiche
+        TEC_DOC_IMPATTO_ACUSTICO:
+          title: ''
+          description:    documentazione di impatto acustico
+        TEC_DOC_CLIMA_ACUSTICO:
+          title: ''
+          description:    documentazione di valutazione previsionale di clima acustico
+        OP_DOC_FOTOGRAFICA:
+          title: ''
+          description:    documentazione fotografica
+        OP_PLANIMETRIA:
+          title: ''
+          description:    elaborati progettuali a firma di un tecnico abilitato, che rappresenti lo stato di raffronto nel caso di interventi di manutenzione straordinaria che comportano la modifica dell'impianto distributivo interno; e relativa attestazione ai sensi dell'art. 15, comma 2, della l.p. n. 15/2015 in merito alla corrispondenza dei contenuti del progetto rispetto alle disposizioni vigenti e la corrispondenza dei relativi contenuti rispetto a studi o perizie allegate, quali parti integranti al progetto.
+        OP_PLANIMETRIA_CILA:
+          title: ''
+          description:    elaborati progettuali rappresentativi dell'intervento.
+        OP_ATTESTAZIONE:
+          title: ''
+          description:    attestazione di un tecnico abilitato che dimostri l’irrilevanza strutturale.
+        OP_ELABORATO_PROGETTUALE:
+          title: ''
+          description:    elaborato/i progettuale/i relativo/i agli impianti di cui al d.m. 37/2008.
+        OP_RELAZIONE_DITTA:
+          title: ''
+          description:    relazione della ditta/tecnico attestante i requisiti di prestazione energetica (nel caso in cui gli interventi ricadano nell'articolo 4, del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e ss.mm).
+        OP_RELAZIONE_ENERGETICA:
+          title: ''
+          description:    relazione energetica (allegati dm. 26 giugno 2009 schemi e modalità di riferimento per la compilazione della relazione tecnica di progetto ai fini dell’applicazione delle prescrizioni e dei requisiti minimi di prestazione energetica negli edifici) nel caso in cui gli interventi ricadano nell'articolo 4, commi 3, 4 o 5 del d. p . p . 13 luglio 2009, n. 1 1-13/leg. e s.m.i
+        OP_RELAZIONE_TECNICA:
+          title: ''
+          description:    relazione tecnica descrittiva delle opere , della loro funzione temporanea e improrogabile, dei tempi previsti di utilizzazione e delle modalità di rimozione e rimessa in pristino dei luoghi ed elaborati cartografici relativi al manufatto o alle opere.
+        OP_CATASTO:
+          title: ''
+          description:    denuncia di variazione catastale comprensiva delle planimetrie e visure catastali o le planimetrie catastali firmate dal tecnico abilitato unitamente alla ricevuta di deposito della richiesta di accatastamento dell'immobile.
+        OP_NOTIFICA:
+          title: ''
+          description:    documentazione necessaria per la notifica, il cui contenuto sarà riprodotto su apposita tabella esposta in cantiere per tutta la durata dei lavori, in luogo visibile dall'esterno.
+        OP_ALTRO:
+          title: ''
+          description:    altra documentazione tecnica
+        DUL_NUM_CIVICA:
+          title: ''
+          description:    nota di assegnazione o aggiornamento di numerazione civica rilasciata dagli uffici comunali competenti
+        DUL_COPERTURE:
+          title: ''
+          description:    ai sensi dell'art. 91 ter della l.p. 22/91 e dell'art. 4 del d.p.p. 25 febbraio 2008, n.7-114/leg, la documentazione sulla prevenzione dei rischi di infortunio a seguito di cadute dall'alto nei lavori di manutenzione ordinarie delle coperture
+        DUL_CONF_IMPIANTI:
+          title: ''
+          description:    modello “deposito dichiarazioni di conformità degli impianti” - va allegata copia della ricevuta di avvenuto deposito delle dichiarazioni di conformità relative a tutti gli impianti installati e/o modificati, come previsto dal d.m. 37/2008
+        DUL_CERT_ENERGETICA:
+          title: ''
+          description:    attestato di prestazione certificazione energetica ai sensi dell'art. 6, comma 5 2, del d.p.p. 11-13/leg. del 13 luglio 2009 e della d.g.p. 163/2017 3110/2009 unitamente all'asseverazione del direttore lavori ai sensi dell'art. 8, comma2, del d.lgs. n. 192/2005
+        DUL_ASSEVERA:
+          title: ''
+          description:    asseverazione del direttore lavori ai sensi dell'art. 8, comma 2, del d. lgs. n. 192/2005, in merito alla “conformità delle opere realizzate rispetto al progetto ed alle sue eventuali varianti ed alla relazione tecnica di cui al comma 1 del medesimo articolo” (quando è soggetto diverso dal tecnico abilitato sottoscrittore del presente modello
+        DUL_CERT_STATICO:
+          title: ''
+          description:    copia del certificato di collaudo statico e di conformità alle norme antisismiche ove richiesto.
+        DUL_ANTINCENDIO:
+          title: ''
+          description:    copia della ricevuta dell'avvenuta presentazione della dichiarazione che costituisce ai soli fini antincendio, autorizzazione provvisoria all'esercizio dell'attività (ai sensi dell'art. 3, comma 5, del d.p.r. 37/1998) ovvero copia del certificato di prevenzione antincendi ove necessario (legge 966/1965).
+        DUL_CATASTO:
+          title: ''
+          description:    planimetrie e visure catastali oppure planimetrie catastali firmate dal tecnico abilitato e ricevuta di deposito della richiesta di accatastamento dell'immobile.
+        DUL_PLANIMETRIE:
+          title: ''
+          description:    planimetrie fine lavori parziale
+        DUL_TULPS:
+          title: ''
+          description:    autorizzazione ai sensi del tulps per locali destinati a esercizi pubblici.
+        AMB_PRECETTIVI:
+          title: ''
+          description:    indicazione dei contenuti precettivi della disciplina paesaggistica vigente nell'area
+        AMB_DESCRIZIONE:
+          title: ''
+          description:    descrizione dello stato attuale dell'area interessata dall'intervento
+        AMB_CONFORMITA:
+          title: ''
+          description:    attestazione di conformità del progetto alle specifiche prescrizioni d'uso dei beni paesaggisticia, se esistenti
+        AMB_COMPATIBILITA:
+          title: ''
+          description:    descrizione della compatibilità del progetto stesso con i valori paesaggistici che qualificano il contenuto di riferimento
+        AMB_MISURE:
+          title: ''
+          description: Indicazione di eventuali misure di inserimento paesaggistico se previste
+
+    vincoli:
+      label: Vincoli
+      title: Vincoli e relativi provvedimenti
+      guida_alla_compilazione: Vincoli e relativi provvedimenti
+      files:
+        VIN_TUTELA_PAESAGGISTICA:
+          title: ''
+          description:    autorizzazione per la tutela paesaggistica di cui alla l.p. n. 15/2015
+        VIN_BENI_CULTURALI:
+          title: ''
+          description:    autorizzazioni relative ai beni culturali di cui al d.lgs. n. 42/2004
+        VIN_IMPATTO_AMBIENTALE:
+          title: ''
+          description:    adempimenti in materia di valutazione di impatto ambientale
+        VIN_VALUTAZIONE_INCIDENZA:
+          title: ''
+          description:    valutazione di incidenza per interventi che interessano le zone speciali di conservazione o altre aree protette di cui alla l.p. 11/2007
+        VIN_AREE:
+          title: ''
+          description: agricole	autorizzazione per interventi nelle aree agricole del pup
+        VIN_UTILIZZO_ACQUE_PUBBLICHE:
+          title: ''
+          description:    autorizzazione al fine della compatibilità con riferimento al piano generale di utilizzazione delle acque pubbliche (pguap) della provincia autonoma di trento. sono asseverati gli elaborati nei casi di cui all'articolo 15, comma 3 della l.p. n. 15/2015
+        VIN_VINCOLO_IDROGEOLOGICO:
+          title: ''
+          description:    autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. n. 11/2007
+        VIN_TUTELA_ACQUE_PUBBLICHE:
+          title: ''
+          description:    autorizzazione/concessione di cui alla l.p. n. 18/1976 ai fini della tutela delle acque pubbliche
+        VIN_TUTELA_AMBIENTI_INQUINAMENTO:
+          title: ''
+          description:    provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti dagli inquinamenti
+        VIN_TULP:
+          title: ''
+          description:    provvedimenti di cui al tulp in materia di tutela dell'ambiente dagli inquinamenti
+        VIN_LIMITI_ELETTROMAGNETICI:
+          title: ''
+          description:    documentazione relativa all'avvenuta determinazione delle fasce di rispetto degli elettrodotti e alla verifica del rispetto dei limiti di esposizione ai relativi campi elettromagnetici
+        VIN_FASCE_RISPETTO_STRADALE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto stradale
+        VIN_FASCE_RISPETTO_FERROVIARIE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto ferroviarie
+        VIN_FASCE_RISPETTO_AEROPORTUALE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto aeroportuali (avvenuta trasmissione del progetto agli enti competenti al controllo, gestione e sicurezza della navigazione)
+        VIN_FASCE_RISPETTO_CIMITERIALE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto cimiteriale
+        VIN_FASCE_RISPETTO_DEPURATORE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto dei depuratori
+        VIN_FASCE_RISPETTO_INCIDENTE:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di aree di danno da incidente
+        VIN_FASCE_RISPETTO_ALTRO:
+          title: ''
+          description:    parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di altro tipo
+        VIN_IMPIANTI:
+          title: ''
+          description:  telecomunicazioni	autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+        VIN_PREVENZIONE_INCENDI:
+          title: ''
+          description:    parere di prevenzione incendi per attività soggetti ai sensi del dpr 151/2001
+        VIN_TULPS_ESERCIZI_PUBBLICI:
+          title: ''
+          description:    autorizzazione ai sensi del tulps per locali destinati esercizi pubblici
+        VIN_VISTO_CORRISPONDENZA:
+          title: ''
+          description:    visto di corrispondenza ai sensi della l.p. n. 7/2002
+        VIN_IMPIANTI_ILLUMINAZIONE_ESTERNA:
+          title: ''
+          description:    autorizzazione per impianti di illuminazione esterna di cui al d.p.p. n. 2-34/2010
+        VIN_VERBALE_ASSEMBLEA:
+          title: ''
+          description:    si allega il verbale di assemblea
+        VIN_ASSENSO_COMPROPRIETARI:
+          title: ''
+          description:    atto di assenso dei comproprietari, che si allega
+        VIN_ALTRO:
+          title: ''
+          description:    ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari
+        VIN_ALTRO_AMBIENTI:
+          title: ''
+          description: Altri provvedimenti di cui alle disposizioni vigenti in materia di tutela degli ambienti per gli inquinamenti
+        VIN_IMPIANTI_TELECOMUNICAZIONI:
+          title: ''
+          description: Autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+        VIN_AREE_AGRICOLE:
+          title: ''
+          description: Autorizzazione per interventi nelle aree agricole del PUP
+
+    provvedimenti:
+      label: 'Provvedimenti'
+      title: 'Provvedimenti (elencati in Allegato C della domanda S.C.I.A.)'
+      guida_alla_compilazione: "Provvedimenti (elencati in Allegato C della domanda S.C.I.A.) da allegare se necessario"
+      files:
+        PROV_PC-PAE:
+          title: "a) autorizzazione per la tutela paesaggistica di cui alla l.p. 1/2008"
+          description: ""
+        PROV_PC-CUL:
+          title: "b) autorizzazioni relative ai beni culturali di cui agli artt. 21 e 22 del d.lgs. 42/2004"
+          description: ""
+        PROV_AR-VIA:
+          title: "c) adempimenti di cui alla l.p. 28/1988 \"Disciplina della valutazione dell'impatto ambientale e ulteriori norme di tutela dell'ambiente\""
+          description: ""
+        PROV_AR-VI:
+          title: "d) valutazione di incidenza (V.I.) per interventi ricadenti all'interno di Siti di Interesse Comunitario (S.I.C.) o Zone di Protezione Speciale (Z.P.S.) ex art. 25 delle norme di attuazione del PUP"
+          description: ""
+        PROV_AR-PGUAP:
+          title: "e) provvedimenti di cui agli artt. 16 e 17 delle relative norme di attuazione del Piano Generale di Utilizzazione delle Acque Pubbliche (PGUAP) della Provincia autonoma di Trento"
+          description: ""
+        PROV_AR-VINIDRO:
+          title: "f) autorizzazione ai fini del vincolo idrogeologico di cui alla l.p. 11/2007 e relativo regolamento di attuazione"
+          description: ""
+        PROV_AR-ACQP:
+          title: "g) autorizzazione/concessione P.A.T. - Servizio Bacini Montani ai fini della tutela delle acque pubbliche nel caso in cui gli interventi interessino fasce di rispetto regolate dalla l.p. 18/1976 \"Norme in materia di acque pubbliche, opere idauliche e relativi servizi provinciali\" anche ai sensi della l.p. 11/2007"
+          description: ""
+        PROV_AR-ELETTR:
+          title: "h) documentazione relativa all'avvenuta determinazione delle fasce di rispetto per gli elettrodotti e la verifica del rispetto dei limiti di esposizione ai relativi campi elettrici e magnetici"
+          description: ""
+        PROV_AR-RADIO:
+          title: "i) autorizzazione del Comitato istituito presso l'Agenzia provinciale per la protezione dell'ambiente per la realizzazione di impianti di telecomunicazione, ai sensi della l.p. 9/1997 \"Individuazione dei siti per la localizzazione di impianti di radiodiffusione\""
+          description: ""
+        PROV_AR-INQ:
+          title: "j) provvedimenti di cui al T.U.L.P. in materia di tutela dell'ambiente degli inquinamenti - D.P.G.P. n. 1-41/Leg. del 1987 e D.L. 209/1997 e 152/2006"
+          description: ""
+        PROV_AR-SOIS:
+          title: "k) parere P.A.T. - Servizio Opere Igientico-Sanitarie qualora previsto da specifiche normative di settore"
+          description: ""
+        PROV_AR-APSS:
+          title: "l) parere Azienda Provinciale per i Servizi Sanitari qualora previsto da specifiche normative di settore"
+          description: ""
+        PROV_AR-ILLU:
+          title: "m) autorizzazione del Comune per la realizzazione di impianti di illuminazione esterna, ai sensi del D.P.P. n. 2-34/Leg. del 2010 in materia di inquinamento luminoso"
+          description: ""
+        PROV_FRT_FASC-VIA:
+          title: "o.a) Fasce di rispetto e trasporti: viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
+          description: ""
+        PROV_FRT_FASC-PC:
+          title: "o.b) Fasce di rispetto e trasporti: passi carrai"
+          description: ""
+        PROV_FRT_FASC-FER:
+          title: "o.c) Fasce di rispetto e trasporti: interventi entro fasce di rispetto ferroviarie"
+          description: ""
+        PROV_FRT_FASC-CIM:
+          title: "o.d) Fasce di rispetto e trasporti: interventi entro fasce di rispetto cimiteriali"
+          description: ""
+        PROV_FRT_FASC-ISO:
+          title: "o.e) Fasce di rispetto e trasporti: interventi entro le fasce di rispetto di aree di isodanno"
+          description: ""
+        PROV_FRT_FASC-LE:
+          title: "o.f) Fasce di rispetto e trasporti: autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
+          description: ""
+        PROV_FRT_FASC-DEP:
+          title: "o.g) Fasce di rispetto e trasporti: autorizzazione per interventi entro fasce di rispetto di depuratori"
+          description: ""
+        PROV_FRT_FASC-AER:
+          title: "o.h) Fasce di rispetto e trasporti: avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
+          description: ""
+        PROV_FRT_FASC-ALTRO:
+          title: "o.i) Fasce di rispetto e trasporti: altro"
+          description: ""
+        PROV_AGR_SA:
+          title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 'Pianificazione urbanistica e governo del territorio'"
+          description: ""
+        PROV_AGR_TUR:
+          title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, 'Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori'"
+          description: ""
+        PROV_AGR_ALB:
+          title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
+          description: ""
+        PROV_AGR_MANU:
+          title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
+          description: ""
+        PROV_PUP_INC:
+          title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
+          description: ""
+        PROV_PUP_TULPS:
+          title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
+          description: ""
+        PROV_PUP_GEO:
+          title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
+          description: ""
+        PROV_PUP_ALB:
+          title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, 'Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica'"
+          description: ""
+        PROV_PUP_RIFU:
+          title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, 'Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate'"
+          description: ""
+        PROV_PUP_ALTRO:
+          title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
+          description: ""
+        FRT_FASC-VIA:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a viabilità, interventi entro le fasce di rispetto di competenza di enti proprietari delle strade"
+          description: ""
+        FRT_FASC-PC:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a passi carrai"
+          description: ""
+        FRT_FASC-FER:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro fasce di rispetto ferroviarie"
+          description: ""
+        FRT_FASC-CIM:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto cimiteriali"
+          description: ""
+        FRT_FASC-ISO:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a interventi entro le fasce di rispetto di aree di isodanno"
+          description: ""
+        FRT_FASC-LE:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi in prossimità di linee elettriche secondo la normativa di settore"
+          description: ""
+        FRT_FASC-DEP:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a autorizzazione per interventi entro fasce di rispetto di depuratori"
+          description: ""
+        FRT_FASC-AER:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a avvenuta trasmissione del progetto agli Enti competenti al controllo, gestione e sicurezza della navigazione aerea (Aeronautica Militare, Comando RSC Trentino Alto Adige, ENAC, ENAV)"
+          description: ""
+        FRT_FASC-ALTRO:
+          title: "o) con riferimento alle fasce di rispetto che generano vincoli di natura urbanistico-edilizia (es: stradali, cimiteriali, depuratori, ferrovie, laghi, corsi d'acqua, elettrodotti, etc.) nonché agli adempimenti nei confronti dei soggetti preposti alla gestione e/o al controllo si allega documentazione relativa a altro"
+          description: ""
+        AGR_SA:
+          title: "p) autorizzazione del Servizio provinciale competente in materia di strutture agricole e del Comitato per gli interventi nelle aree agricole di cui all'art. 62, comma 9, della l.p. 1/2008 \"Pianificazione urbanistica e governo del territorio\""
+          description: ""
+        AGR_TUR:
+          title: "q) iscrizione del richiedente all'Elenco Provinciale degli idonei all'esercizio dell'attività agrituristica ai sensi della l.p. 10/2001, \"Disciplina dell'agriturismo, delle strade del vino e delle strade dei sapori\""
+          description: ""
+        AGR_ALB:
+          title: "r) iscrizione all'Albo delle Imprese Agricole (sez. I e II) del richiedente nel caso in cui gli interventi possano essere realizzati solo da imprenditori agricoli"
+          description: ""
+        AGR_MANU:
+          title: "s) dichiarazione di conformità per i manufatti di limitate dimensioni ai sensi della delibera di G.P. 398/2010"
+          description: ""
+        PUP_INC:
+          title: "t) parere di prevenzione incendi per attività soggette ai sensi del D.P.R. 151/2011"
+          description: ""
+        PUP_TULPS:
+          title: "u) autorizzazione P.A.T. - Servizio Polizia Amministrativa, nel caso di locali destinati al pubblico spettacolo e/o impianti sportivi ai sensi del Testo unico delle leggi di P.S. (TULPS)"
+          description: ""
+        PUP_GEO:
+          title: "v) esame preventivo del Servizio Geologico provinciale ai sensi dell'art. 48, comma 1, delle norme di attuazione del PUP, approvato con l.p. 5/2008"
+          description: ""
+        PUP_ALB:
+          title: "w) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi con destinazione alberghiera ai sensi della l.p. 7/2002, \"Disciplina degli esercizi alberghieri ed extra-alberghieri e promozione della qualità della ricettività turistica\""
+          description: ""
+        PUP_RIFU:
+          title: "x) visto di corrispondenza P.A.T. - Servizio Turismo per gli interventi relativi a rifugi, bivacchi e tracciati alpini ai sensi della l.p. 8/1993, \"Orientamento dei rifugi alpini, bivacchi, sentieri e vie ferrate\""
+          description: ""
+        PUP_ALTRO:
+          title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
+          description: ""
+
+  atto_nascita:
+    dati_atto:
+      title: 'Dati atto'
+      label: 'Dati atto'
+      guida_alla_compilazione: "Se altra persona diversa dal richiedente, indicare i dati completi della persona cui si riferisce l'atto"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+  certificato_morte:
+    dati_atto:
+      title: 'Dati identificativi deceduto'
+      label: 'Dati deceduto'
+      guida_alla_compilazione: "Indicare i dati completi del defunto"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      data_morte_soggetto_certificato: "Data del decesso"
+
+  atto_morte:
+    dati_atto:
+      title: "Dati completi della persona cui si riferisce l'atto"
+      label: 'Dati deceduto'
+      guida_alla_compilazione: "Indicare i dati completi del defunto"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+  certificato_matrimonio:
+    dati_atto:
+      title: "Dati identificativi dello sposo o della sposa"
+      label: 'Dati identificativi dello sposo o della sposa'
+      guida_alla_compilazione: "Indicare i dati identificativi dello sposo o della sposa"
+      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
+      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
+      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
+
+  iscrizione_registro_associazioni:
+    allegati:
+      label: Allegati
+      guida_alla_compilazione: Carica gli allegati richiesti. Il logo deve essere in formato jpeg, i documenti in formato PDF
+
+
+protocollo:
+  recipientIDArray: 'Destinatari documenti (recipientIDArray)'
+  recipientTypeIDArray: 'Tipologia di destinatari documenti (recipientTypeIDArray)'
+  codeNodeClassification: 'Ramo Titolario (codeNodeClassification)'
+  codeAdm: 'Codice amministrazione su PiTre (codeADM)'
+  trasmissionIDArray: 'Competenti (TransmissionIDArray)'
+  instance: 'Codice itstanza su PiTre Wrapper'
+  infor_username: 'Username'
+  infor_denominazione: 'Denominazione'
+  infor_email: 'Email'
+  infor_wsdl: 'Url wsdl'
+  infor_wsUrl: 'Url ws'
+  arrivo:
+    tipo_documento: 'Tipo documento (Arrivo)'
+    tramite: 'Tramite (Arrivo)'
+    smistamento: 'Smistamento (Arrivo)'
+    classifica: 'Classifica (Arrivo)'
+    fascicolo: 'Fascicolo (Arrivo)'
+  risposta:
+    mittente_interno: 'Mittente interno (Risposta)'
+    tipo_documento: 'Tipo documento (Risposta)'
+    tramite: 'Tramite (Risposta)'
+    smistamento: 'Smistamento (Risposta)'
+    classifica: 'Classifica (Risposta)'
+    fascicolo: 'Fascicolo (Risposta)'
+  pec:
+    email:
+      abstract:
+        send_applcation: 'Acquisita nuova pratica per il servizio: %name%'
+        send_integration: 'Acquisita integrazione per la pratica: %name%'
+        send_attachment: 'Acquisito allegato per la pratica: %name%'
+        send_result: 'Acquisita risposta per la pratica: %name%'
+  receiver: 'Email pec del ricevente'
+  send_attachment: 'Inviare allegati tramite email?'
+
+gateway:
+  bollo:
+    identifier: 'Identificatore'
+    data: 'Data emissione'
+    ora: 'Ora emissione'
+  mypay:
+    redirect_button: "Paga adesso online"
+    redirect_text: "Usa il pulsante che segue per pagare online sul sito di MyPay/PagoPA.<br />A pagamento effettuato tornerai su questo sito per la conferma che la tua pratica è stata inoltrata correttamente all'Ente."
+    download_button: "Scarica avviso di pagamento"
+    download_receipt_button: "Scarica ricevuta di pagamento"
+    download_text: "Usa il pulsante che segue per scaricare il documento PDF (Avviso di Pagamento) che potrai pagare presso un ufficio postale, un ATM Bancario, ricevitoria Sisal, l'App IO o Satispay."
+
+calendars:
+  new: "Crea nuovo calendario"
+  moderators: "Coordinatori"
+  title: "Titolo del calendario"
+  identifier: "Identificativo calendario (Calendar ID)"
+  contact_email: "Email di contatto"
+  minimum_scheduling_notice: "Preavviso minimo per una prenotazione"
+  is_moderated: "Richiede moderazione?"
+  owner: "Proprietario"
+  location: "Luogo dell'appuntamento"
+  drafts_duration_increment:
+    label: "Estensione massima della bozza (in giorni)"
+    description: "Se una prenotazione prevede un pagamento la conferma della bozza avviene solo a pagamento avvenuto. Questo parametro determina quanto tempo massimo ha il cittadino per completare il pagamento."
+  drafts_duration:
+    label: "Durata di un appuntamento in bozza (in minuti)"
+    description: "Tempo per il quale uno slot viene riservato in attesa della conferma da parte dell'utente. Lo slot viene riservato quando viene scelto dal cittadino facendo click sullo slot e viene confermato quando invia la richiesta. Se l'appuntamento non viene confermato entro questo tempo, lo slot torna libero."
+  rolling_days:
+    label: "Disponibilità per le prenotazioni"
+    text_before: "E' possibile prenotare in anticipo fino a"
+    text_after: "giorni a partire da oggi"
+  allow_cancel_days:
+    label: "Preavviso minimo per una prenotazione"
+    text_before: "E' possibile disdire fino a "
+    text_after: "giorni prima dell'appuntamento"
+  opening_hours:
+    weeks:
+      week_day_1: "Lunedì"
+      week_day_2: "Martedì"
+      week_day_3: "Mercoledì"
+      week_day_4: "Giovedì"
+      week_day_5: "Venerdì"
+      week_day_6: "Sabato"
+      week_day_7: "Domenica"
+    error:
+      overlap: "L'orario di apertura %behinHour1%-%endHour1% si sovrappone con l'orario %behinHour2%-%endHour2% nei giorni %days%"
+      cannot_change: 'Non è possibile modificare la durata o l intervallo tra i meeting fintanto che
+                     esistono dei meeting gia fissati. Le consigliamo di creare un orario di apertura a partire dalla prima data disponibile (next_availability)'
+
+meetings:
+  error:
+    slot_unavailable: "L'intervallo selezionato non è disponibile"
+    slot_invalid: "L'intervallo selezionato non è valido"
+  no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
+  default_draft_message: "Appuntamento in bozza"
+  no_info: "<i>Informazione non disponibile</i>"
+  delete_draft:
+    label: "Annulla appuntamento riservato"
+    description: "Questo appuntamento è stato riservato tramite la compilazione di un servizio di prenotazione: se non confermato dall'utente verrà eliminato automaticamente alle ore %expire_time% del giorno %expire_date%.
+                  <br>L'eliminazione forzata della bozza renderà l'intervallo di nuovo disponibile e il cittadino che ha riservato l'appuntamento potrebbe dover richiedere un nuovo appuntamento.
+                  <br><br>. Sei sicuro di voler procedere con la rimozione forzata della bozza?"
+    delete: "Elimina bozza"
+  email:
+    operatori:
+      meeting_cancelled:
+        subject: 'Annullamento appuntamento'
+        message: "<p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b><p>"
+      meeting_approved:
+        subject: 'Approvazione appuntamento'
+        message: "<p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>approvato</b><p>"
+      new_meeting:
+        subject: 'Nuovo appuntamento'
+        message: '<p>Nuova richiesta di appuntamento a nome di <b>name</b> per il giorno <b>date</b> alle ore <b>hour</b>.<p>
+                  <p>Motivazione: <b>user_message</b></p>'
+        approve_link: '<br><p>Clicca sul seguente link per approvare: <a href="approve_link"><b>Approva</b></a></p>'
+    new_meeting:
+      pending: '<p>La informiamo che la sua richiesta è stata <b>presa in carico</b>.</p><p>Riceverà un email di conferma non appena la sua richiesta verrà confermata.</p>'
+      approved: '<p>La informiamo che la sua richiesta è stata <b>confermata</b>.</p><p>La invitiamo a presentarsi alle ore <b>hour</b> del giorno <b>date</b> presso <b>location</b></p>'
+      subject: 'Richiesta prenotazione appuntamento'
+    edit_meeting:
+      refused: '<p>Siamo spiacenti di informarla che non è stato possibile accogliere la Sua richiesta di appuntamento per il giorno <b>date</b></p><br>
+              <p>Per maggiori informazioni può contattarci al seguente indirizzo email<a href="email_address"><b>email_address</b></a></p>'
+      rescheduled: "<p>La informiamo che l'appuntamento del giorno <b>old_date</b> è stato <b>spostato</b> alle ore <b>hour</b> del giorno <b>new_date</b> presso <b>location</b></p><br>"
+      rescheduled_and_approved: '<p>Purtroppo non è stato possibile confermare il suo appuntamento nella data e orario richiesti, sarà possibile riceverla
+                                alle ore <b>hour</b> del giorno date presso <b>location</b></p>'
+      approved: '<p>La informiamo che la sua richiesta è stata <b>confermata</b>.</p>
+                <p>La invitiamo a presentarsi alle ore <b>hour</b> del giorno <b>date</b> presso <b>location</b></p>'
+      cancelled: "<p>La informiamo che l'appuntamento previsto per il giorno <b>date</b> alle ore <b>hour</b> e stato <b>annullato</b><p>"
+      subject: 'Aggiornamenti richiesta appuntamento'
+    delete_meeting:
+      delete: '<p>La informiamo che il suo appuntamento previsto per il giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b></p>'
+      subject: 'Cancellazione appuntamento'
+    invalid_meeting:
+      invalid: "<p>Siamo spiacenti di informarLa che non è stato possibile prenotare l'appuntamento da Lei richiesto per il giorno <b>date</b> alle ore <b>hour</b> in quanto l'orario
+                selezionato non ci risulta essere disponibile.</p>"
+      subject: "Appuntamento non valido"
+    cancel_with_contact: '<br><p>Nel caso non le sia possibile essere presente all&apos;appuntamento proposto la preghiamo di annullare l&apos;appuntamento
+            mediante <a href="cancel_link"><b>questo link</b></a> oppure contattarci all&apos;indirizzo <a href="mailto:email_address"><b>email_address</b></a></p>'
+    cancel_without_contact: '<br><p>Nel caso non le sia possibile essere presente all&apos;appuntamento proposto la preghiamo di annullare l&apos;appuntamento
+                mediante <a href="cancel_link"><b>questo link</b></a></p>'
+    info_with_contact: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
+                 nel caso tu non abbia fatto nessuna richiesta di questo tipo ti preghiamo di ignorare questo messaggio o segnalarlo
+                 all&apos;indirizzo <a href="mailto:email_address"><b>email_address</b></a></i></p>'
+    info_without_contact: '<br><p><i>Ricevi questo messaggio perché il tuo indirizzo di email è stato usato per richiedere un appuntamento presso ente,
+                     nel caso tu non abbia fatto nessuna richiesta di questo tipo ti preghiamo di ignorare questo messaggio</i></p>'
+    meeting_link:
+      message: '<p>Qualora non fosse possibile presentarsi fisicamente all&apos;appuntamento la invitiamo a partecipare collegandosi al seguente indirizzo: <a href="videoconference_link"><b>videoconference_link</b></a><p>'
+      changed: '<p>La informiamo che è stato modificato l&apos;indirizzo della videoconferenza. Il nuovo indirizzo è il seguente: <a href="videoconference_link"><b>videoconference_link</b></a></p>'
+      new: '<p>La informiamo che è qualora non fosse possibile presentarsi fisicamente all appuntamento la invitiamo a partecipare collegandosi al seguente indirizzo: <a href="videoconference_link"><b>videoconference_link</b></a></p>'
+      removed: '<p>La informiamo che non è piu possibile partecipare remotamente all&apos;appuntamento utilizzando il link precedentemente fornitole<p>'
+    success: 'Una notifica è stata inviata al cittadino con successo'
+    cancel_success: 'Appuntamento annullato con successo'
+
+backoffice:
+  entity:
+    mailers: 'Invio messaggi'
+    meta: 'Aspetto grafico'
+    setting: 'Ente'
+    title: 'Nome'
+    host: 'Indirizzo del server'
+    encription: 'Encryption'
+    sender: 'Mittente'
+  integration:
+    missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
+    or: 'Oppure'
+    invalid_activation_point: 'Il punto di attivazione selezionato non è disponibile per questa azione'
+    fields_error: 'I campi richiesti non coincidono'
+    calendars:
+      missing_contacts: "E' necessario fornire almeno un recapito"
+      calendar_error: 'Non esiste un calendario con id calendar_id'
+      save_meeting_error: 'Si è verificato un errore durante il salvataggio della prenotazione'
+      invalid_slot: 'Lo slot selezionato non è valido oppure non è disponibile'
+    subscriptions:
+      subscription_service_error: 'Non esiste un servizio con codice code'
+      subscriber_error: 'Non esiste un iscritto con codice fiscale %fiscal_code%'
+      subscription_error: 'Non esiste un iscritto con codice fiscale %fiscal_code% per il servizio %code%'
+      limit_error: 'Limite massimo di iscrizioni raggiunto. Utente user non iscritto al corso code'
+      save_subscriber_error: 'Si è verificato un errore durante il salvataggio dell utente user'
+      save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
+    subscription_service:
+      payment:
+        due_date: "Data di scadenza del pagamento"
+        amount: "Importo del pagamento"
+        reason: "Causale di pagamento"
+        identifier: "Identificativo del pagamento"
+        service_id: "Identificativo del servizio utilizzato per il pagamento"
+        meta: "Metadati utili alla compilazione del servizio"
+        remove: "Elimina pagamento"
+        add: "Aggiungi pagamento"
+        no_payments: "Non sono presenti pagamenti"
+      invalid_service: "L'identificativo %service_id% non è è valido"
+      invalid_meta: "Meta non corretto: il valore inserito deve essere un json valido"
+      no_service: "L'identificativo %service_id% non corrisponde ad un servizio esistente"
+      duplicate_identifier: 'Identificativo %identifier% duplicato non ammesso per il pagamento impostato per il giorno %date% con causale "%payment_reason%"'
+      no_payment: "Il pagamento non è disponibile per il servizio %service_name%"
+      no_integration: "L'integrazione con il backoffice 'Pagamenti per servizi a sottoscizione' non è abilitata per il servizio %service_name%"
+      invalid_date: "Il formato della data %date% non è corretto"
+      identifier_change_not_allowed: "Non è possibile modificare l'identificativo di pagamento '%payment_identifier%': sono già state create delle pratiche per questo pagamento "
+      messages:
+        new_draft: "Gentile <b>%user_name%</b><br/>Ricevi questo messaggio perchè sei iscritto/a oppure delegato/a a <b>%subscription_service%</b>. La informiamo che c'è una nuova attività pendente che richiede la Sua attenzione: %service%.<br>Usi il pulsante che segue per accedere alla pratica oppure visiti la sezione <i>Le mie pratiche</i>"
+        new_draft_subject: "Nuova pratica in bozza"
+
+login_type:
+  none: 'Nessuno'
+  login_pat: 'Spid PAT'
+  login_open: 'Openlogin'
+
+app_io:
+  service_id: 'Identificativo servizio'
+  primary_key: 'Chiave primaria'
+  secondary_key: 'Chiave secondaria'
+  test:
+    codice_fiscale: "Codice fiscale a cui inviare la notifica"
+    label: 'Test invio'
+    helper: "Utilizza questa sezione per verificare la correttezza della configurazione inviando una notifica sull'applicazione IO del cittadino identificato dal codice fiscale inserito di seguito"
+    subject: 'Verifica configurazione Stanza del Cittadino'
+    markdown: "Ricevi questa notifica poichè il tuo profilo è stato utilizzato per verificare la corretta configurazione dei parametri
+              necessari all'integrazione con l'<b>App IO</b> all'interno della <b>Stanza del cittadino</b>"
+  errore:
+    parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
+  admin_helper: "Per poter utilizzare questa integrazione è necessario configurare ogni servizio per il quale si desidera attivare le notifiche "

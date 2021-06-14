@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller\Admin;
+namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;

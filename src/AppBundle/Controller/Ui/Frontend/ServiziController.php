@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 
 use AppBundle\Entity\Ente;
@@ -233,5 +233,5 @@ class ServiziController extends Controller
 
     return $response;
   }
-  
+
 }

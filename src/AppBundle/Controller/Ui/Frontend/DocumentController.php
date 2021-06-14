@@ -1,7 +1,7 @@
 <?php
 
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 
 use AppBundle\Logging\LogConstants;
@@ -47,7 +47,6 @@ class DocumentController extends Controller
 
   /**
    * @Route("/", name="folders_list_cpsuser")
-   * @Template()
    */
   public function cpsUserListFoldersAction()
   {
@@ -65,15 +64,14 @@ class DocumentController extends Controller
       $folders[] = $this->em->getRepository('AppBundle:Folder')->find($id);
     }
 
-    return [
+    return $this->render( '@App/Document/cpsUserListFolders.html.twig',  [
       'folders' => $folders,
       'user' => $this->getUser(),
-    ];
+    ]);
   }
 
   /**
    * @Route("/{folderId}", name="documenti_list_cpsuser")
-   * @Template()
    * @param Request $request
    * @param string $folderId
    * @return array|Response
@@ -107,16 +105,15 @@ class DocumentController extends Controller
         }
       }
 
-    return [
+    return $this->render( '@App/Document/cpsUserListDocuments.html.twig', [
       'documents' => $documents,
       'folder' => $folder,
       'user' => $user
-    ];
+    ]);
   }
 
   /**
    * @Route("/{folderId}/{documentId}", name="documento_show_cpsuser")
-   * @Template()
    * @param Request $request
    * @param string $folderId
    * @param string $documentId
@@ -137,10 +134,10 @@ class DocumentController extends Controller
     }
 
     if ($folder->getOwner() == $user->getCodiceFiscale() || in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
-      return [
+      return $this->render( '@App/Document/cpsUserShowDocumento.html.twig', [
         'document' => $document,
         'user' => $user,
-      ];
+      ]);
     } else {
       $this->addFlash('warning', $this->translator->trans('documenti.no_document_permissions'));
       return $this->redirectToRoute('documenti_list_cpsuser', ['folderId'=>$folderId]);

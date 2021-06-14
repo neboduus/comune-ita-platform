@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
@@ -27,7 +27,6 @@ class SubscriptionServicesController extends Controller
 
   /**
    * Lists all SubscriptionService entities.
-   * @Template()
    * @Route("/operatori/subscription-service", name="operatori_subscription-service_index")
    */
   public function indexSubscriptionServiceAction(Request $request)
@@ -85,17 +84,16 @@ class SubscriptionServicesController extends Controller
       return $table->getResponse();
     }
 
-    return array(
+    return $this->render( '@App/SubscriptionServices/indexSubscriptionService.html.twig', [
       'user' => $user,
       'items' => $items,
       'statuses' => $statuses,
       'datatable' => $table
-    );
+    ]);
   }
 
   /**
    * Creates a new SubscriptionService entity.
-   * @Template()
    * @Route("/operatori/subscription-service/new", name="operatori_subscription-service_new")
    * @Method({"GET", "POST"})
    * @param Request $request the request
@@ -124,11 +122,11 @@ class SubscriptionServicesController extends Controller
       }
     }
 
-    return array(
+    return $this->render( '@App/SubscriptionServices/newSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'form' => $form->createView(),
-    );
+    ]);
   }
 
   /**
@@ -159,7 +157,6 @@ class SubscriptionServicesController extends Controller
   /**
    * @Route("operatori/subscription-service/{subscriptionService}/edit", name="operatori_subscription-service_edit")
    * @ParamConverter("subscriptionService", class="AppBundle:SubscriptionService")
-   * @Template()
    * @param Request $request the request
    * @param SubscriptionService $subscriptionService The SubscriptionService entity
    *
@@ -187,15 +184,14 @@ class SubscriptionServicesController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/SubscriptionServices/editSubscriptionService.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
-    ];
+    ]);
   }
 
   /**
    * Finds and displays a SubscriptionService entity.
-   * @Template()
    * @Route("/operatori/subscription-service/{subscriptionService}", name="operatori_subscription-service_show")
    * @Method("GET")
    */
@@ -205,11 +201,11 @@ class SubscriptionServicesController extends Controller
     $user = $this->getUser();
 
     $deleteForm = $this->createDeleteForm($subscriptionService);
-    return array(
+    return $this->render( '@App/SubscriptionServices/showSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'delete_form' => $deleteForm->createView(),
-    );
+    ]);
   }
 
   /**

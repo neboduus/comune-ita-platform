@@ -1,9 +1,9 @@
 prometheus:
   path:     /prometheus.json
-  defaults: { _controller: AppBundle:Default:prometheus }
+  defaults: { _controller: AppBundle:Ui\Frontend\Default:prometheus }
 home:
   path:     /{path}
-  defaults: { _controller: AppBundle:Default:common, path: "" }
+  defaults: { _controller: AppBundle:Ui\Frontend\Default:common, path: "" }
   requirements:
     path: .*
 

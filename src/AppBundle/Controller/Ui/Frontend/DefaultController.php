@@ -1,8 +1,8 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
-use AppBundle\Controller\ServiziController;
+use AppBundle\Controller\Ui\Frontend\ServiziController;
 use AppBundle\InstancesProvider;
 use AppBundle\Services\InstanceService;
 use AppBundle\Entity\CPSUser;
@@ -66,6 +66,9 @@ class DefaultController extends Controller
   }
 
 
+  /**
+   * @return Response|null
+   */
   public function commonAction()
   {
 
@@ -86,23 +89,19 @@ class DefaultController extends Controller
         ['enti' => $enti]
       );
     }
-
-    return array('enti' => $this->getDoctrine()->getRepository('AppBundle:Ente')->findAll());
   }
 
   /**
    * @Route("/", name="home")
-   *
    * @return Response
    */
-  public function indexAction()
+  public function indexAction(Request $request)
   {
-    return $this->forward('AppBundle:Servizi:servizi');
+    return $this->forward('AppBundle:Ui\Frontend\Servizi:servizi');
   }
 
   /**
    * @Route("/privacy", name="privacy")
-   * @Template()
    */
   public function privacyAction()
   {
@@ -149,10 +148,9 @@ class DefaultController extends Controller
 
   /**
    * @Route("/terms_accept/", name="terms_accept")
-   * @Template()
    * @param Request $request
    *
-   * @return array
+   * @return Response
    */
   public function termsAcceptAction(Request $request)
   {
@@ -189,11 +187,11 @@ class DefaultController extends Controller
       $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
     }
 
-    return [
+    return $this->render( '@App/Default/termsAccept.html.twig', [
       'form' => $form->createView(),
       'terms' => $terms,
       'user' => $user,
-    ];
+    ]);
   }
 
   /**

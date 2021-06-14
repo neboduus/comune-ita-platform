@@ -312,7 +312,7 @@ export default class FormioCalendar extends Base {
             location = window.location,
             explodedPath = location.pathname.split("/");
 
-        $.ajax(location.origin + '/' + explodedPath[1] + '/meetings/new-draft',
+        $.ajax(location.origin + '/' + explodedPath[1] + '/' + explodedPath[2] + '/meetings/new-draft',
             {
                 method: "POST",
                 data: {

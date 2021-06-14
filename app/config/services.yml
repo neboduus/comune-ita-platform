@@ -4,6 +4,7 @@ parameters:
 #    parameter_name: value
 
 services:
+
   ocsdc.meeting_service:
     class: AppBundle\Services\MeetingService
     arguments:
@@ -29,7 +30,7 @@ services:
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
 
-  AppBundle\Controller\APIController:
+  AppBundle\Controller\Rest\APIController:
     arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service']
 
   AppBundle\Controller\Rest\ServicesAPIController:
@@ -47,10 +48,10 @@ services:
   AppBundle\Controller\Rest\UsersAPIController:
     autowire: true
 
-  AppBundle\Controller\MessagesController:
+  AppBundle\Controller\Ui\Frontend\MessagesController:
     autowire: true
 
-  AppBundle\Controller\UserController:
+  AppBundle\Controller\Ui\Frontend\UserController:
     autowire: true
 
   AppBundle\Controller\Rest\CalendarsAPIController:
@@ -68,34 +69,34 @@ services:
   AppBundle\Controller\Rest\TenantAPIController:
     autowire: true
 
-  AppBundle\Controller\AdminController:
+  AppBundle\Controller\Ui\Backend\AdminController:
     autowire: true
 
-  AppBundle\Controller\Admin\WebhookController:
+  AppBundle\Controller\Ui\Backend\WebhookController:
     autowire: true
 
-  AppBundle\Controller\Admin\ServiceGroupController:
+  AppBundle\Controller\Ui\Backend\ServiceGroupController:
     autowire: true
 
-  AppBundle\Controller\PraticheController:
+  AppBundle\Controller\Ui\Frontend\PraticheController:
     autowire: true
 
-  AppBundle\Controller\OperatoriController:
+  AppBundle\Controller\Ui\Backend\OperatoriController:
     autowire: true
 
-  AppBundle\Controller\DefaultController:
+  AppBundle\Controller\Ui\Frontend\DefaultController:
     autowire: true
 
-  AppBundle\Controller\AllegatoController:
+  AppBundle\Controller\Ui\Frontend\AllegatoController:
     autowire: true
 
-  AppBundle\Controller\ServiziController:
+  AppBundle\Controller\Ui\Frontend\ServiziController:
     autowire: true
 
-  AppBundle\Controller\PrintController:
+  AppBundle\Controller\Ui\Frontend\PrintController:
     autowire: true
 
-  AppBundle\Controller\GiscomAPIController:
+  AppBundle\Controller\Rest\GiscomAPIController:
     arguments:
       - '@logger'
       - '@ocsdc.pratica_status_service'
@@ -113,7 +114,7 @@ services:
     arguments:
       [ "@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service', '@logger' ]
 
-  AppBundle\Controller\PraticheAnonimeController:
+  AppBundle\Controller\Ui\Frontend\PraticheAnonimeController:
     arguments:
       - '@logger'
       - "@translator"
@@ -124,7 +125,7 @@ services:
       - '%hash_validity%'
       - "@formio.expression_validator"
 
-  AppBundle\Controller\TrackingController:
+  AppBundle\Controller\Ui\Frontend\TrackingController:
     autowire: true
 
   GuzzleHttp\Client: '@guzzle.client.mypay'
@@ -244,17 +245,17 @@ services:
 
   ocsdc.backoffices: '@AppBundle\Services\BackOfficeCollection'
 
-  AppBundle\Controller\DocumentController:
+  AppBundle\Controller\Ui\Frontend\DocumentController:
     arguments: [ "@translator", "@doctrine.orm.default_entity_manager", "@logger" ]
 
-  AppBundle\Controller\SubscriptionsController:
+  AppBundle\Controller\Ui\Frontend\SubscriptionsController:
     autowire: true
 
-  AppBundle\Controller\SubscriberController:
+  AppBundle\Controller\Ui\Backend\SubscriberController:
     autowire: true,
     arguments: [ "@ocsdc.mailer", "%default_from_email_address%", "@logger" ]
 
-  AppBundle\Controller\CalendarsController:
+  AppBundle\Controller\Ui\Backend\CalendarsController:
     autowire: true
 
   Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
@@ -291,6 +292,15 @@ services:
     arguments: ["%cache_max_age%"]
     tags:
       - { name: kernel.event_listener, event: kernel.response, priority: -10000 }
+
+  ocsdc.locale_rewrite_listener:
+    class: AppBundle\EventListener\LocaleRewriteListener
+    autowire: true
+    arguments:
+      $prefix: "%prefix%"
+      $defaultLocale: "%locale%"
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -200 }
 
   ocsdc.cps.terms_acceptance_listener:
     class: AppBundle\EventListener\TermsAcceptListener

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\CPSUser;
@@ -63,7 +63,6 @@ class SubscriptionsController extends Controller
 
   /**
    * Lists all subscriptions entities.
-   * @Template()
    * @Route("/operatori/subscriptions/{subscriptionService}", name="operatori_subscriptions")
    */
   public function showSubscriptionsAction(Request $request, SubscriptionService $subscriptionService)
@@ -111,10 +110,10 @@ class SubscriptionsController extends Controller
       return $table->getResponse();
     }
 
-    return array(
+    return $this->render( '@App/Subscriptions/showSubscriptions.html.twig', [
       'user' => $user,
       'datatable' => $table, 'subscriptionService' => $subscriptionService
-    );
+    ]);
   }
 
   /**
@@ -235,10 +234,9 @@ class SubscriptionsController extends Controller
 
   /**
    * @Route("/subscriptions/", name="subscriptions_list_cpsuser")
-   * @Template()
-   * @return array
+   * @return Response
    */
-  public function cpsUserListSubscriptionAction(): array
+  public function cpsUserListSubscriptionAction(): Response
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
@@ -265,18 +263,17 @@ class SubscriptionsController extends Controller
       $userSubscriptions[] = $this->entityManager->getRepository('AppBundle:Subscription')->find($id);
     }
 
-    return [
+    return $this->render( '@App/Subscriptions/cpsUserListSubscription.html.twig', [
       'subscriptions' => $userSubscriptions,
       'user' => $user
-    ];
+    ]);
   }
 
   /**
    * @Route("/subscriptions/{subscriptionId}", name="subscription_show_cpsuser")
-   * @Template()
    * @param Request $request
    * @param $subscriptionId
-   * @return array|Response
+   * @return RedirectResponse|Response|null
    */
   public function cpsUserShowSubscriptionAction(Request $request, $subscriptionId)
   {
@@ -294,19 +291,18 @@ class SubscriptionsController extends Controller
       return $this->redirectToRoute('subscriptions_list_cpsuser');
     }
 
-    return [
+    return $this->render( '@App/Subscriptions/cpsUserShowSubscription.html.twig', [
       'subscription' => $subscription,
       'user' => $user
-    ];
+    ]);
   }
 
   /**
    * @Route("/subscriptions/{subscriptionId}/payment/{subscriptionPaymentId}", name="subscription_payment_show_cpsuser")
-   * @Template()
    * @param Request $request
    * @param $subscriptionId
    * @param $subscriptionPaymentId
-   * @return array|Response
+   * @return RedirectResponse|Response|null
    */
   public function cpsUserShowSubscriptionPaymentAction(Request $request, $subscriptionId, $subscriptionPaymentId)
   {
@@ -325,10 +321,10 @@ class SubscriptionsController extends Controller
       return $this->redirectToRoute('subscriptions_list_cpsuser');
     }
 
-    return [
+    return $this->render( '@App/Subscriptions/cpsUserShowSubscriptionPayment.html.twig', [
       'payment' => $subscriptionPayment,
       'user' => $user
-    ];
+    ]);
   }
 
   /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\Dto\Application;
 use AppBundle\Entity\CPSUser;
@@ -79,9 +79,8 @@ class UserController extends Controller
 
   /**
    * @Route("/", name="user_dashboard")
-   * @Template()
    * @param Request $request
-   * @return array
+   * @return \Symfony\Component\HttpFoundation\Response
    */
   public function indexAction(Request $request)
   {
@@ -112,21 +111,20 @@ class UserController extends Controller
       $documents[] = $documentRepo->find($id);
     }
 
-    return array(
+    return $this->render( '@App/User/index.html.twig', [
       'user' => $user,
       'servizi' => $servizi,
       'pratiche' => $pratiche,
       'threads' => $threads,
       'documents' => $documents
-    );
+    ]);
   }
 
   /**
    * @Route("/profile", name="user_profile")
-   * @Template()
    * @param Request $request
    *
-   * @return array|RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\Response
    */
   public function profileAction(Request $request)
   {
@@ -155,10 +153,10 @@ class UserController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/User/profile.html.twig', [
       'form'      => $form->createView(),
       'user'      => $user,
-    ];
+    ]);
   }
 
   private function storeSdcUserData(CPSUser $user, array $data, LoggerInterface $logger)

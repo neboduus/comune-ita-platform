@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
@@ -148,7 +148,6 @@ class PraticheAnonimeController extends Controller
   /**
    * @Route("/{pratica}", name="pratiche_anonime_show")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
-   * @Template()
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -159,10 +158,10 @@ class PraticheAnonimeController extends Controller
   {
     if ($pratica->isValidHash($this->getHash($request), $this->hashValidity)) {
 
-      return [
+      return $this->render( '@App/PraticheAnonime/show.html.twig', [
         'pratica' => $pratica,
         'formserver_url' => $this->getParameter('formserver_public_url'),
-      ];
+      ]);
     }
 
     return new Response(null, Response::HTTP_FORBIDDEN);
