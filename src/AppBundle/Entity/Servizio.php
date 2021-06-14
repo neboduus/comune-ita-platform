@@ -58,6 +58,7 @@ class Servizio
   /**
    * @var string
    *
+   * @Gedmo\Translatable
    * @ORM\Column(type="string", length=255, unique=true)
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
@@ -341,6 +342,11 @@ class Servizio
    * @SWG\Property(property="io_service_parameters", description="List of parameters required for integration with the io app", type="object", ref=@Model(type=IOServiceParameters::class))
    */
   private $IOServiceParameters;
+
+  /**
+   * @Gedmo\Locale
+   */
+  private $locale;
 
   /**
    * Servizio constructor.

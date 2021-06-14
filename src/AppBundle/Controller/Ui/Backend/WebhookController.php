@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller\Admin;
+namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ServiceGroup;

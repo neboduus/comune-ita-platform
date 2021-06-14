@@ -66,7 +66,7 @@ security:
     operatori:
       logout_on_user_change: true
       anonymous: ~
-      pattern: ^/%prefix%/(operatori|admin)
+      pattern: ^/%prefix%/(%app_locales%)/(operatori|admin)
       form_login:
         check_path: fos_user_security_check
         login_path: fos_user_security_login
@@ -91,7 +91,7 @@ security:
 
     print:
       logout_on_user_change: true
-      pattern: ^/%prefix%/print/pratica/.*
+      pattern: ^/%prefix%/(%app_locales%)/print/pratica/.*
       http_basic:
         provider: in_memory
 
@@ -120,23 +120,23 @@ security:
     ROLE_OPERATORE: ROLE_USER
 
   access_control:
-    - { path: ^/%prefix%/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/%prefix%/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/(%app_locales%)/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/%prefix%/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
-    - { path: ^/%prefix%/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_USER }
+    - { path: ^/%prefix%/(%app_locales%)/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_USER }
     - { path: ^/%prefix%/api/session-auth, role: ROLE_USER }
     - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_USER }
 
-    - { path: ^/%prefix%/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori/profile/edit, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori/profile/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori/subscriptions, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori/subscription-service, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori/subscriber, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori/calendars, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/operatori, role: ROLE_OPERATORE }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/profile/edit, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/profile/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/subscriptions, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/subscription-service, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/subscriber, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/calendars, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori, role: ROLE_OPERATORE }
+    - { path: ^/%prefix%/(%app_locales%)/admin, role: ROLE_ADMIN }
     - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
     - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
-    - { path: ^/%prefix%/admin, role: ROLE_ADMIN }

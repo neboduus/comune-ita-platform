@@ -4,7 +4,6 @@ imports:
     - { resource: ../common/monolog.yml }
     - { resource: ../services.yml }
     - { resource: ../bundles/ }
-    - { resource: "@AppBundle/Resources/config/services.yml" }
     - { resource: ../config.yml }
 
 

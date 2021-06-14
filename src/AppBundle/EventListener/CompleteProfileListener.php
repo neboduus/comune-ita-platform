@@ -39,7 +39,6 @@ class CompleteProfileListener
      * @param CPSUserProvider $userProvider
      */
     public function __construct(Router $router, TokenStorage $tokenStorage, CPSUserProvider $userProvider, $passwordLifeTime)
-
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;

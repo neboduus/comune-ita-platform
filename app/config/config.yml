@@ -11,33 +11,36 @@
 parameters:
   #container.autowiring.strict_mode: true
   locale: it
+  app_locales: "it"
 
 framework:
-    default_locale: it
-    #esi:             ~
-    translator:      ~
-    secret:          "%secret%"
-    router:
-        resource: "%kernel.root_dir%/config/routing.yml"
-        strict_requirements: ~
-    form:            ~
-    csrf_protection: ~
-    validation:      { enable_annotations: true }
-    #serializer:      { enable_annotations: true }
-    templating:
-        engines: ['twig']
-    trusted_hosts:   ~
-    session:
-        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-        handler_id:  null
-        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
-        cookie_path: "/%prefix%"
-    fragments:       ~
-    http_method_override: true
-    assets: ~
-    request:
-      formats:
-        text: ['text/plain']
+  default_locale: "%locale%"
+  #esi:             ~
+  translator:
+    fallbacks:
+      - "%locale%"
+  secret: "%secret%"
+  router:
+    resource: "%kernel.root_dir%/config/routing.yml"
+    strict_requirements: ~
+  form: ~
+  csrf_protection: ~
+  validation: { enable_annotations: true }
+  #serializer:      { enable_annotations: true }
+  templating:
+    engines: [ 'twig' ]
+  trusted_hosts: ~
+  session:
+    # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+    handler_id: null
+    save_path: "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+    cookie_path: "/%prefix%"
+  fragments: ~
+  http_method_override: true
+  assets: ~
+  request:
+    formats:
+      text: [ 'text/plain' ]
 
 # Fos User Configuration
 fos_user:
@@ -75,6 +78,8 @@ twig:
     login_callout_texts: "%login_callout_texts%"
     login_route: "%login_route%"
     protocollo_handler: "@ocsdc.protocollo.handler"
+    app_locales: "%app_locales%"
+    prefix: "%prefix%"
 
 
 # Doctrine Configuration
@@ -104,6 +109,13 @@ doctrine:
       string_functions:
         FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
         JSON_FIELD: AppBundle\Doctrine\JsonFieldParser
+    mappings:
+      translatable:
+        type: annotation
+        is_bundle: false
+        prefix: Gedmo\Translatable\Entity
+        dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Entity"
+        alias: GedmoTranslatable
 
 # Swiftmailer Configuration
 swiftmailer:

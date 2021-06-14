@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Controller\Rest\ServicesAPIController;
 use AppBundle\DataTable\ScheduledActionTableType;
@@ -126,20 +126,18 @@ class AdminController extends Controller
 
   /**
    * @Route("/", name="admin_index")
-   * @Template()
    * @param Request $request
-   * @return array
+   * @return Response
    */
   public function indexAction(Request $request)
   {
-    return array(
+    return $this->render( '@App/Admin/index.html.twig', [
       'user' => $this->getUser()
-    );
+    ]);
   }
 
   /**
    * @Route("/ente", name="admin_edit_ente")
-   * @Template()
    * @param Request $request
    * @return array|RedirectResponse
    */
@@ -166,19 +164,18 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_edit_ente');
     }
 
-    return array(
+    return $this->render( '@App/Admin/editEnte.html.twig', [
       'user' => $this->getUser(),
       'ente' => $ente,
       'statuses' => Webhook::TRIGGERS,
       'services' => $services,
       'form' => $form->createView()
-    );
+    ]);
   }
 
 
   /**
    * Lists all operatoreUser entities.
-   * @Template()
    * @Route("/operatore", name="admin_operatore_index")
    * @Method("GET")
    */
@@ -188,19 +185,18 @@ class AdminController extends Controller
 
     $operatoreUsers = $em->getRepository('AppBundle:OperatoreUser')->findAll();
 
-    return array(
+    return $this->render( '@App/Admin/indexOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUsers' => $operatoreUsers,
-    );
+    ]);
   }
 
   /**
    * Creates a new operatoreUser entity.
-   * @Template()
    * @Route("/operatore/new", name="admin_operatore_new")
    * @Method({"GET", "POST"})
    * @param Request $request
-   * @return array|RedirectResponse
+   * @return Response
    */
   public function newOperatoreAction(Request $request)
   {
@@ -228,16 +224,15 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
-    return array(
+    return $this->render( '@App/Admin/newOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'form' => $form->createView(),
-    );
+    ]);
   }
 
   /**
    * Finds and displays a operatoreUser entity.
-   * @Template()
    * @Route("/operatore/{id}", name="admin_operatore_show")
    * @Method("GET")
    */
@@ -251,16 +246,15 @@ class AdminController extends Controller
       $serviziAbilitati = [];
     }
 
-    return array(
+    return $this->render( '@App/Admin/showOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'servizi_abilitati' => $serviziAbilitati
-    );
+    ]);
   }
 
   /**
    * Displays a form to edit an existing operatoreUser entity.
-   * @Template()
    * @Route("/operatore/{id}/edit", name="admin_operatore_edit")
    * @Method({"GET", "POST"})
    */
@@ -275,11 +269,11 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
     }
 
-    return array(
+    return $this->render( '@App/Admin/editOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'edit_form' => $editForm->createView()
-    );
+    ]);
   }
 
   /**
@@ -325,7 +319,6 @@ class AdminController extends Controller
 
   /**
    * Lists all operatoreLogs entities.
-   * @Template()
    * @Route("/logs", name="admin_logs_index")
    * @Method({"GET", "POST"})
    */
@@ -346,10 +339,10 @@ class AdminController extends Controller
       return $table->getResponse();
     }
 
-    return array(
+    return $this->render( '@App/Admin/indexLogs.html.twig', [
       'user' => $this->getUser(),
       'datatable' => $table
-    );
+    ]);
   }
 
   /**
@@ -375,8 +368,7 @@ class AdminController extends Controller
 
 
   /**
-   * Lists all operatoreUser entities.
-   * @Template()
+   * Lists all Services entities.
    * @Route("/servizio", name="admin_servizio_index")
    * @Method("GET")
    */
@@ -401,12 +393,12 @@ class AdminController extends Controller
     $em = $this->getDoctrine()->getManager();
     $items = $em->getRepository('AppBundle:Servizio')->findBy([], ['name' => 'ASC']);
 
-    return array(
+    return $this->render( '@App/Admin/indexServizio.html.twig', [
       'user' => $this->getUser(),
       'items' => $items,
       'statuses' => $statuses,
       'access_levels' => $accessLevels,
-    );
+    ]);
   }
 
   /**
@@ -532,10 +524,9 @@ class AdminController extends Controller
   /**
    * @Route("/servizio/{servizio}/edit", name="admin_servizio_edit")
    * @ParamConverter("servizio", class="AppBundle:Servizio")
-   * @Template()
    * @param Servizio $servizio
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response
    */
   public function editServizioAction(Servizio $servizio)
   {
@@ -579,7 +570,7 @@ class AdminController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/Admin/editServizio.html.twig', [
       'form' => $form->createView(),
       //'test_form' => $testForm->getForm()->createView(),
       'servizio' => $flowService->getFormData(),
@@ -587,17 +578,16 @@ class AdminController extends Controller
       'flow' => $flowService,
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'user' => $user
-    ];
+    ]);
   }
 
   /**
    * @Route("/servizio/{servizio}/custom-validation", name="admin_servizio_custom_validation")
    * @ParamConverter("servizio", class="AppBundle:Servizio")
-   * @Template()
    * @param Request $request
    * @param Servizio $servizio
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response
    */
   public function editCustomValidationServizioAction(Request $request, Servizio $servizio)
   {
@@ -631,13 +621,13 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
     }
 
-    return [
+    return $this->render( '@App/Admin/editCustomValidationServizio.html.twig', [
       'form' => $form->createView(),
       'servizio' => $servizio,
       'user' => $user,
       'schema' => $schema,
       'statuses' => Pratica::getStatuses()
-    ];
+    ]);
   }
 
   /**
@@ -811,8 +801,7 @@ class AdminController extends Controller
 
   /**
    * @Route("/usage",name="admin_usage")
-   * @Template()
-   * @return array
+   * @return Response
    */
   public function usageAction()
   {
@@ -831,10 +820,10 @@ class AdminController extends Controller
       $result = [];
     }
 
-    return array(
+    return $this->render( '@App/Admin/usage.html.twig', [
       'all_user' => $result,
       'user' => $this->getUser(),
-    );
+    ]);
   }
 
   /**

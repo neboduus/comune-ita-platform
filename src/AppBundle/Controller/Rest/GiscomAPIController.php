@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Ente;

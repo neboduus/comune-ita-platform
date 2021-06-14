@@ -6,6 +6,7 @@ instances:
     #single_logout_url: 'http://auth.localtest.me/slo?redirect=http://stanzadelcittadino.localtest.me/comune-di-bugliano/'
     protocollo: dummy
     identifier: comune-di-bugliano # Slug dell'instanza sul database
+    app_locales: "it|en|fr|de|es"
   stanzadelcittadino.localtest.me/comune-di-vallelaghi:
     codice_meccanografico: c_m362
     database_name: sdc_vallelaghi

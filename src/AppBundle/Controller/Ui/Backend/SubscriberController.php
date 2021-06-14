@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\User;
@@ -34,7 +34,6 @@ class SubscriberController extends Controller
 
   /**
    * Finds and displays a SubscriptionService entity.
-   * @Template()
    * @Route("/operatori/subscriber/{subscriber}", name="operatori_subscriber_show")
    */
   public function showSubscriberAction(Request $request, Subscriber $subscriber)
@@ -118,13 +117,13 @@ class SubscriberController extends Controller
       return $this->redirectToRoute('operatori_subscriber_show', ['subscriber' => $subscriber->getId()]);
     }
 
-    return array(
+    return $this->render( '@App/Subscriber/showSubscriber.html.twig', [
       'user' => $user,
       'subscriber' => $subscriber,
       'tab'=> $tab,
       'show_subscription' => $showSubscription,
       'datatable' => $table,
       'message_form' => $messageForm->createView(),
-    );
+    ]);
   }
 }

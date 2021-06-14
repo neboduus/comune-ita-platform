@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
@@ -48,10 +48,9 @@ class PrintController extends Controller
   /**
    * @Route("/pratica/{pratica}", name="print_pratiche")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
-   * @Template()
    * @param Pratica $pratica
    *
-   * @return array
+   * @return Response
    */
   public function printPraticaAction(Request $request, Pratica $pratica)
   {
@@ -76,13 +75,13 @@ class PrintController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/Print/printPratica.html.twig', [
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'form' => $form->createView(),
       'pratica' => $pratica,
       'user' => $user,
       'attachments' => $preparedAttachments
-    ];
+    ]);
 
   }
 
@@ -123,7 +122,6 @@ class PrintController extends Controller
   /**
    * @Route("/service/{service}", name="print_service")
    * @ParamConverter("service", class="AppBundle:Servizio")
-   * @Template()
    * @param Servizio $service
    *
    * @return array
@@ -135,11 +133,11 @@ class PrintController extends Controller
 
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
-    return [
+    return $this->render( '@App/Print/printService.html.twig', [
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'form' => $form->createView(),
       'pratica' => $pratica
-    ];
+    ]);
   }
 
   /**
@@ -181,10 +179,9 @@ class PrintController extends Controller
   /**
    * @Route("/service/{service}/preview", name="preview_service")
    * @ParamConverter("service", class="AppBundle:Servizio")
-   * @Template()
    * @param Servizio $service
    *
-   * @return array
+   * @return Response
    */
   public function previewServiceAction(Request $request, Servizio $service)
   {
@@ -193,11 +190,11 @@ class PrintController extends Controller
 
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
-    return [
+    return $this->render( '@App/Print/previewService.html.twig', [
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'form' => $form->createView(),
       'pratica' => $pratica
-    ];
+    ]);
   }
 
   /**

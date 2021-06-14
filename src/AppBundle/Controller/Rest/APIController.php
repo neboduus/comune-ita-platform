@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;

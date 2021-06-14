@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\Calendar;
@@ -9,7 +9,6 @@ use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MeetingService;
-use AppBundle\Services\ScheduleActionService;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -21,7 +20,6 @@ use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -70,7 +68,6 @@ class CalendarsController extends Controller
 
   /**
    * Lists all Calendars
-   * @Template()
    * @Route("/operatori/calendars", name="operatori_calendars_index")
    */
   public function indexCalendarsAction(Request $request)
@@ -140,19 +137,18 @@ class CalendarsController extends Controller
     if ($table->isCallback()) {
       return $table->getResponse();
     }
-    return array(
+    return $this->render( '@App/Calendars/indexCalendars.html.twig', [
       'user' => $user,
       'datatable' => $table
-    );
+    ]);
   }
 
   /**
    * Creates a new Calendar entity.
-   * @Template()
    * @Route("/operatori/calendars/new", name="operatori_calendar_new")
    * @Method({"GET", "POST"})
    * @param Request $request the request
-   * @return array|RedirectResponse
+   * @return Response
    * @throws \Exception
    */
   public function newCalendarAction(Request $request)
@@ -188,11 +184,11 @@ class CalendarsController extends Controller
       }
     }
 
-    return array(
+    return $this->render( '@App/Calendars/newCalendar.html.twig', [
       'user' => $user,
       'calendar' => $calendar,
       'form' => $form->createView(),
-    );
+    ]);
   }
 
   /**
@@ -242,11 +238,10 @@ class CalendarsController extends Controller
   /**
    * @Route("operatori/calendars/{calendar}/edit", name="operatori_calendar_edit")
    * @ParamConverter("calendar", class="AppBundle:Calendar")
-   * @Template()
    * @param Request $request the request
    * @param Calendar $calendar The Calendar entity
    *
-   * @return array|RedirectResponse
+   * @return Response
    */
   public function editCalendarAction(Request $request, Calendar $calendar)
   {
@@ -295,16 +290,15 @@ class CalendarsController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/Calendars/editCalendar.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
       'calendar' => $calendar
-    ];
+    ]);
   }
 
   /**
    * Finds and displays a Calendar entity.
-   * @Template()
    * @Route("/operatori/calendars/{calendar}", name="operatori_calendar_show")
    * @throws \Exception
    */
@@ -500,7 +494,7 @@ class CalendarsController extends Controller
 
     $jwt = $this->JWTTokenManager->create($this->getUser());
 
-    return array(
+    return $this->render( '@App/Calendars/showCalendar.html.twig', [
       'user' => $user,
       'calendar' => $calendar,
       'canEdit' => $canEdit,
@@ -510,17 +504,16 @@ class CalendarsController extends Controller
       'minDuration' => $minDuration,
       'datatable' => $table,
       'token' => $jwt,
-      'rangeTimeEvent' => array(
+      'rangeTimeEvent' => [
         'min' => $minDate,
         'max' => $maxDate
-      )
-    );
+      ]
+    ]);
   }
 
   /**
    * Cancels meeting
    * @Route("meetings/{meetingHash}/cancel", name="cancel_meeting")
-   * @Template()
    * @param Request $request the request
    * @param String $meetingHash The Meeting hash
    *
@@ -555,18 +548,17 @@ class CalendarsController extends Controller
         $this->addFlash('error', 'Si è verificato un errore durante l\'annullamento dell\'appuntamento' . $exception->getMessage());
       }
     }
-    return array(
+    return $this->render( '@App/Calendars/cancelMeeting.html.twig', [
       'form' => $form->createView(),
       'canCancel' => $canCancel,
       'meeting' => $meeting
-    );
+    ]);
 
   }
 
   /**
    * Approves meeting
    * @Route("operatori/meetings/{id}/approve", name="operatori_approve_meeting")
-   * @Template()
    * @param Request $request the request
    * @param Meeting $id The Meeting entity
    *
@@ -581,10 +573,10 @@ class CalendarsController extends Controller
       return new Response(null, Response::HTTP_NOT_FOUND);
 
     if ($meeting->getStatus() != Meeting::STATUS_PENDING) {
-      return array(
+      return $this->render( '@App/Calendars/editMeeting.html.twig', [
         'form' => null,
         'meeting' => $meeting
-      );
+      ]);
     }
 
     if (!$meeting->getEmail())
@@ -636,10 +628,10 @@ class CalendarsController extends Controller
         $this->addFlash('error', 'Si è verificato un errore durante la modifica dell\'appuntamento' . $exception->getMessage());
       }
     }
-    return array(
+    return $this->render( '@App/Calendars/editMeeting.html.twig', [
       'form' => $form->createView(),
       'meeting' => $meeting
-    );
+    ]);
   }
 
 

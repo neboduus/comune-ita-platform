@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Dto\Application;
 use AppBundle\Dto\ApplicationOutcome;
@@ -162,8 +162,7 @@ class OperatoriController extends Controller
 
   /**
    * @Route("/",name="operatori_index")
-   * @Template()
-   * @return array
+   * @return Response
    */
   public function indexAction()
   {
@@ -200,11 +199,11 @@ class OperatoriController extends Controller
       $stati[] = $state;
     }
 
-    return array(
+    return $this->render( '@App/Operatori/index.html.twig', [
       'servizi' => $result,
       'stati' => $stati,
       'user' => $this->getUser(),
-    );
+    ]);
   }
 
   /**
@@ -517,8 +516,7 @@ class OperatoriController extends Controller
 
   /**
    * @Route("/usage",name="operatori_usage")
-   * @Template()
-   * @return array
+   * @return Response
    */
   public function usageAction()
   {
@@ -545,20 +543,19 @@ class OperatoriController extends Controller
     }
 
     $statusServices = $this->populateSelectStatusServicesPratiche();
-    return array(
+    return $this->render( '@App/Operatori/usage.html.twig', [
       'servizi' => $servizi,
       'pratiche' => $result,
       'user' => $this->getUser(),
       'statusServices' => $statusServices
-    );
+    ]);
   }
 
   /**
    * @Route("/{pratica}/protocollo", name="operatori_pratiche_show_protocolli")
-   * @Template("@App/Operatori/showProtocolli.html.twig")
    * @param Pratica $pratica
    *
-   * @return array
+   * @return Response
    * @throws \Exception
    */
   public function showProtocolliAction(Pratica $pratica)
@@ -579,28 +576,29 @@ class OperatoriController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/Operatori/showProtocolli.html.twig', [
       'pratica' => $pratica,
       'allegati' => $allegati,
       'user' => $user
-    ];
+    ]);
   }
 
   /**
    * @Route("/parametri-protocollo", name="operatori_impostazioni_protocollo_list")
-   * @Template("@App/Operatori/impostazioniProtocollo.html.twig")
    * @return array
    */
   public function impostazioniProtocolloListAction()
   {
-    return array('parameters' => $this->instanceService->getCurrentInstance()->getProtocolloParameters());
+    return $this->render( '@App/Operatori/impostazioniProtocollo.html.twig', [
+      'parameters' => $this->instanceService->getCurrentInstance()->getProtocolloParameters()
+    ]);
   }
 
   /**
    * @Route("/{pratica}/autoassign",name="operatori_autoassing_pratica")
    * @param Pratica $pratica
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   * @return RedirectResponse
    * @throws \Exception
    */
   public function autoAssignPraticaAction(Pratica $pratica)
@@ -620,7 +618,7 @@ class OperatoriController extends Controller
    * @Route("/{pratica}/reassign",name="operatori_reassign_pratica")
    * @param Pratica $pratica
    *
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   * @return RedirectResponse
    * @throws \Exception
    */
   public function reassignPraticaAction(Pratica $pratica)
@@ -661,7 +659,6 @@ class OperatoriController extends Controller
 
   /**
    * @Route("/{pratica}/detail",name="operatori_show_pratica")
-   * @Template()
    * @param Pratica|DematerializedFormPratica $pratica
    * @param Request $request
    * @return array|RedirectResponse
@@ -853,7 +850,7 @@ class OperatoriController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/Operatori/showPratica.html.twig', [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
       'messageAttachments' => $attachments,
@@ -867,13 +864,13 @@ class OperatoriController extends Controller
       'tab' => $tab,
       'module_protocols' => $moduleProtocols,
       'outcome_protocols' => $outcomeProtocols
-    ];
+    ]);
   }
 
   /**
    * @Route("/{pratica}/reopen",name="operatori_show_reopen")
    * @param Pratica|DematerializedFormPratica $pratica
-   * @return array|RedirectResponse
+   * @return RedirectResponse
    */
   public function reopenPraticaAction(Pratica $pratica)
   {
@@ -931,10 +928,9 @@ class OperatoriController extends Controller
 
   /**
    * @Route("/{pratica}/elabora",name="operatori_elabora_pratica")
-   * @Template()
    * @param Pratica $pratica
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return array|RedirectResponse
    */
   public function elaboraPraticaAction(Pratica $pratica)
   {
@@ -989,12 +985,12 @@ class OperatoriController extends Controller
       }
     }
 
-    return [
+    return $this->render( '@App/Operatori/elaboraPratica.html.twig', [
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
       'user' => $user,
-    ];
+    ]);
   }
 
   /**
@@ -1029,7 +1025,6 @@ class OperatoriController extends Controller
   /**
    * @Route("/list",name="operatori_list_by_ente")
    * @Security("has_role('ROLE_OPERATORE_ADMIN')")
-   * @Template()
    * @return array
    */
   public function listOperatoriByEnteAction()
@@ -1040,16 +1035,15 @@ class OperatoriController extends Controller
         'ente' => $this->getUser()->getEnte(),
       ]
     );
-    return array(
+    return $this->render( '@App/Operatori/listOperatoriByEnte.html.twig', [
       'operatori' => $operatori,
       'user' => $this->getUser(),
-    );
+    ]);
   }
 
   /**
    * @Route("/detail/{operatore}",name="operatori_detail")
    * @Security("has_role('ROLE_OPERATORE_ADMIN')")
-   * @Template()
    * @param Request $request
    * @param OperatoreUser $operatore
    * @return array|RedirectResponse
@@ -1074,11 +1068,11 @@ class OperatoriController extends Controller
       return $this->redirectToRoute('operatori_detail', ['operatore' => $operatore->getId()]);
     }
 
-    return array(
+    return $this->render( '@App/Operatori/detailOperatore.html.twig.twig', [
       'operatore' => $operatore,
       'form' => $form->createView(),
       'user' => $this->getUser(),
-    );
+    ]);
   }
 
   /**
