@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Ui\Frontend;
 
+use AppBundle\DataTable\PraticaTableType;
+use AppBundle\DataTable\ScheduledActionTableType;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
@@ -26,7 +28,10 @@ use AppBundle\Services\MailerService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Flagception\Manager\FeatureManagerInterface;
+use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -54,6 +59,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 class PraticheController extends Controller
 {
 
+  use DataTablesTrait;
+
   /** @var InstanceService */
   private $instanceService;
 
@@ -80,6 +87,10 @@ class PraticheController extends Controller
 
   /** @var FeatureManagerInterface */
   private $featureManager;
+  /**
+   * @var DataTableFactory
+   */
+  private $dataTableFactory;
 
 
   /**
@@ -93,6 +104,7 @@ class PraticheController extends Controller
    * @param RouterInterface $router
    * @param MailerService $mailer
    * @param FeatureManagerInterface $featureManager
+   * @param DataTableFactory $dataTableFactory
    */
   public function __construct(
     InstanceService $instanceService,
@@ -103,7 +115,8 @@ class PraticheController extends Controller
     TranslatorInterface $translator,
     RouterInterface $router,
     MailerService $mailer,
-    FeatureManagerInterface $featureManager
+    FeatureManagerInterface $featureManager,
+    DataTableFactory $dataTableFactory
   )
   {
     $this->instanceService = $instanceService;
@@ -115,6 +128,7 @@ class PraticheController extends Controller
     $this->router = $router;
     $this->mailer = $mailer;
     $this->featureManager = $featureManager;
+    $this->dataTableFactory = $dataTableFactory;
   }
 
   /**
@@ -128,35 +142,123 @@ class PraticheController extends Controller
     $user = $this->getUser();
     /** @var PraticaRepository $repo */
     $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-    $pratiche = $repo->findBy(
-      array('user' => $user),
-      array('status' => 'DESC')
+    $pratiche = $repo->count(
+      array('user' => $user)
     );
+    $pratichePending = $repo->findEvidencePraticaForUser($user);
 
-    $praticheDraft = $repo->findDraftPraticaForUser($user);
-    $pratichePending = $repo->findPendingPraticaForUser($user);
-    //$praticheProcessing = $repo->findProcessingPraticaForUser($user);
-    $praticheCompleted = $repo->findCompletePraticaForUser($user);
-    $praticheCancelled = $repo->findCancelledPraticaForUser($user);
-    $praticheDraftForIntegration = $repo->findDraftForIntegrationPraticaForUser($user);
-    $praticheRelated = $repo->findRelatedPraticaForUser($user);
-    $praticheWithdrawn = $repo->findWithdrawnPraticaForUser($user);
+    if (empty($pratichePending)) {
+      $pratichePending = $repo->findPendingPraticaForUser($user);
+    }
 
+    $pending = [];
+    foreach ($pratichePending as $p) {
+      if (!isset($pending[$p->getServizio()->getSlug()])) {
+        $pending[$p->getServizio()->getSlug()]['name'] = $p->getServizio()->getName();
+        $pending[$p->getServizio()->getSlug()]['slug'] = $p->getServizio()->getSlug();
+        $pending[$p->getServizio()->getSlug()]['applications'][]= $p;
+      } else {
+        if (count($pending[$p->getServizio()->getSlug()]) < 7) {
+          $pending[$p->getServizio()->getSlug()]['applications'][]= $p;
+        }
+      }
+    }
 
     return $this->render( '@App/Pratiche/index.html.twig', [
       'user' => $user,
       'pratiche' => $pratiche,
       'title' => 'lista_pratiche',
-      'tab_pratiche' => array(
-        'draft' => $praticheDraft,
-        'pending' => $pratichePending,
-        //'processing' => $praticheProcessing,
-        'completed' => $praticheCompleted,
-        'integration' => $praticheDraftForIntegration,
-        'related' => $praticheRelated,
-        'cancelled' => $praticheCancelled,
-        'withdrawn' => $praticheWithdrawn
-      ),
+      'pending' => $pending,
+    ]);
+  }
+
+  /**
+   * @Route("/list", name="pratiche_list")
+   * @Method({"GET", "POST"})
+   * @param Request $request
+   * @return Response
+   */
+  public function listAction(Request $request)
+  {
+    /** @var CPSUser $user */
+    $user = $this->getUser();
+
+    /*$table = $this->dataTableFactory->createFromType(PraticaTableType::class)->handleRequest($request);
+
+    if ($table->isCallback()) {
+      return $table->getResponse();
+    }
+
+    return $this->render( '@App/Pratiche/list.html.twig', [
+      'user'  => $this->getUser(),
+      'title' => 'lista_pratiche',
+      'datatable' => $table
+    ])*/
+
+    $criteria = [
+      'user' => $user
+    ];
+    $serviceSlug = $request->query->get('service', false);
+    if ($serviceSlug) {
+      $serviceRepo = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      $service = $serviceRepo->findOneBy(['slug' => $serviceSlug]);
+      if ($service instanceof Servizio) {
+        $criteria ['servizio'] = $service;
+      }
+    }
+
+    /** @var PraticaRepository $repo */
+    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $pratiche = $repo->findBy(
+      $criteria,
+      ['latestStatusChangeTimestamp' => 'DESC',]
+    );
+
+    //$praticheDraft = $repo->findDraftPraticaForUser($user);
+    //$pratichePending = $repo->findPendingPraticaForUser($user);
+    //$praticheProcessing = $repo->findProcessingPraticaForUser($user);
+    //$praticheCompleted = $repo->findCompletePraticaForUser($user);
+    //$praticheCancelled = $repo->findCancelledPraticaForUser($user);
+    //$praticheDraftForIntegration = $repo->findDraftForIntegrationPraticaForUser($user);
+    //$praticheWithdrawn = $repo->findWithdrawnPraticaForUser($user);
+
+    $services = $applications = [];
+
+    /** @var Pratica $p */
+    foreach ($pratiche as $p) {
+
+      if (!isset($services[$p->getServizio()->getSlug()])) {
+        $services[$p->getServizio()->getSlug()] = $p->getServizio()->getName();
+      }
+
+      if ($p->getStatus() == Pratica::STATUS_DRAFT) {
+        $applications['draft'][]= $p;
+      } elseif (in_array($p->getStatus(), [
+          Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING, Pratica::STATUS_PENDING_AFTER_INTEGRATION,
+          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE, Pratica::STATUS_REQUEST_INTEGRATION, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE])) {
+        $applications['pending'][]= $p;
+      } elseif ($p->getStatus() == Pratica::STATUS_COMPLETE) {
+        $applications['completed'][]= $p;
+      } elseif ($p->getStatus() == Pratica::STATUS_CANCELLED) {
+        $applications['cancelled'][]= $p;
+      } elseif (in_array($p->getStatus(), [Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION])) {
+        $applications['integration'][]= $p;
+      } elseif ($p->getStatus() == Pratica::STATUS_WITHDRAW) {
+        $applications['withdrawn'][]= $p;
+      }
+    }
+
+    $praticheRelated = $repo->findRelatedPraticaForUser($user);
+    if (count($praticheRelated) > 0) {
+      $applications['related'] = $praticheRelated;
+    }
+
+    return $this->render( '@App/Pratiche/list.html.twig', [
+      'user' => $user,
+      'title' => 'lista_pratiche',
+      'tab_pratiche' => $applications,
+      'service_slug' => $serviceSlug,
+      'services' => $services
     ]);
   }
 
