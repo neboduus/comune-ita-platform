@@ -59,7 +59,7 @@ class LocaleRewriteListener
         $mathResult = $this->matcher->match($redirectUrl);
         $route = $mathResult['_route'];
         unset($mathResult['_route'], $mathResult['_controller']);
-        $event->setResponse(new RedirectResponse($this->router->generate($route, $mathResult)));
+        $event->setResponse(new RedirectResponse($this->router->generate($route, $mathResult), 307));
 
       } catch (\Exception $e) {
         // No log exception
