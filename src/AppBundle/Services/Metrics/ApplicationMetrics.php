@@ -72,15 +72,13 @@ class ApplicationMetrics  implements MetricsGeneratorInterface
 
     try {
       foreach ($metrics as $m) {
-        $counter = $this->collectionRegistry->getOrRegisterCounter(
-          $this->namespace,
+        $gauge = $this->collectionRegistry->getOrRegisterGauge($this->namespace,
           'applications',
           'applications A summary of the application count',
           ['tenant', 'service', 'status', 'category']
         );
 
-        $counter->incBy($m['count'], [$m['ente'], $m['servizio'], $m['status'], $m['categoria']]);
-
+        $gauge->incBy($m['count'], [$m['ente'], $m['servizio'], $m['status'], $m['categoria']]);
       }
     } catch (\Exception $e) {
       $this->logger->error($e->getMessage());
