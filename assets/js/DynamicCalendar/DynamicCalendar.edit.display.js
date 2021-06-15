@@ -43,7 +43,7 @@ var _default = [{
   dataSrc: 'url',
   defaultValue: '',
   data: {
-    url: location.origin + '/' + explodedPath[1] + '/api/calendars?type=time_fixed_slots'
+    url: location.origin + '/' + explodedPath[1] + '/api/calendars?type=time_variable_slots'
   },
   valueProperty: 'id',
   template: '<span>{{ item.title }}</span>',
@@ -83,11 +83,11 @@ var _default = [{
     valueProperty: 'id',
     template: '<span>{{ item.name }}</span>',
     selectValues: 'results',
-      "conditional": {
-          "show": true,
-          "when": "select_opening_hours",
-          "eq": "true"
-      }
+    "conditional": {
+      "show": true,
+      "when": "select_opening_hours",
+      "eq": "true"
+    }
   },
   {
     label: "Api Url",
@@ -156,6 +156,15 @@ var _default = [{
     type: "number",
     input: true,
     weight: 1,
+  }, {
+    label: "Precisione minima (minuti)",
+    defaultValue: 1,
+    required: true,
+    inputFormat: "plain",
+    key: "range_step",
+    type: "number",
+    input: true,
+    weight: 1
   }
 ];
 exports.default = _default;

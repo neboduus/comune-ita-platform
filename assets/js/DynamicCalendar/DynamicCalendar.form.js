@@ -9,7 +9,7 @@ exports.default = _default;
 
 var _Component = _interopRequireDefault(require("formiojs/components/_classes/component/Component.form"));
 
-var _CalendarEdit = _interopRequireDefault(require("./Calendar.edit.display"));
+var _DynamicCalendarEdit = _interopRequireDefault(require("./DynamicCalendar.edit.display"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20,7 +20,7 @@ function _default() {
 
   return _Component.default.apply(void 0, [[{
     key: 'display',
-    components: _CalendarEdit.default
+    components: _DynamicCalendarEdit.default
   }, {
     key: 'validation',
     components: {}

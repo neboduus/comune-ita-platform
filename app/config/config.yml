@@ -272,6 +272,9 @@ flagception:
     feature_integration_request:
       default: false
       env: FEATURE_INTEGRATION_REQUEST
+    feature_calendar_type:
+      default: false
+      env: FEATURE_CALENDAR_TYPE
 
 # Prometheus
 artprima_prometheus_metrics:

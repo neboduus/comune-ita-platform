@@ -1,5 +1,6 @@
 import './core'
 import Calendar from './Calendar';
+import DynamicCalendar from './DynamicCalendar';
 import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
 import 'formiojs'
@@ -9,6 +10,7 @@ require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as 
 
 
 Formio.registerComponent('calendar', Calendar);
+Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
@@ -217,6 +219,7 @@ $(document).ready(function () {
             hidden: true,
             form: true,
             calendar: true,
+            dynamic_calendar: true,
             file: {
               title: 'File',
               key: 'file',

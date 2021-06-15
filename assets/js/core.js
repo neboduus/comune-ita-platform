@@ -1,5 +1,6 @@
 require('jquery');
 require("summernote/dist/summernote-bs4.css")
+require("ion-rangeslider/css/ion.rangeSlider.css")
 require('bootstrap');
 require('bootstrap-select');
 require('svgxuse');

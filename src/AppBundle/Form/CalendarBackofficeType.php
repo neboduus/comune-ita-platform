@@ -6,6 +6,7 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\OperatoreUser;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Flagception\Manager\FeatureManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -21,25 +22,24 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class CalendarBackofficeType extends AbstractType
 {
-
-  /**
-   * @var TranslatorInterface $translator
-   */
-  private $translator;
 
   /**
    * @var EntityManager
    */
   private $em;
 
-  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+  /**
+   * @var FeatureManagerInterface
+   */
+  private $featureManager;
+
+  public function __construct(EntityManagerInterface $entityManager, FeatureManagerInterface $featureManager)
   {
     $this->em = $entityManager;
-    $this->translator = $translator;
+    $this->featureManager = $featureManager;
   }
 
   /**
@@ -142,6 +142,13 @@ class CalendarBackofficeType extends AbstractType
         'allow_delete' => true
       ])
       ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+
+    if ($this->featureManager->isActive('feature_calendar_type')) {
+      $builder->add('type', ChoiceType::class, [
+        'label' => 'calendars.type.label',
+        'choices' => Calendar::CALENDAR_TYPES
+      ]);
+    }
 
     $builder->addViewTransformer(new CallbackTransformer(
       function ($original) {

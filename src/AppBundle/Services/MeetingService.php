@@ -106,45 +106,55 @@ class MeetingService
   {
     // Retrieve all meetings in the same time slot
     foreach ($meeting->getCalendar()->getClosingPeriods() as $closingPeriod) {
-      if ($meeting->getToTime() >= $closingPeriod->getFromTime() && $meeting->getFromTime() <= $closingPeriod->getToTime())
+      if ($meeting->getFromTime() < $closingPeriod->getToTime() && $closingPeriod->getFromTime() < $meeting->getToTime()) {
+        // closure overlap
         return false;
+      }
     }
 
-    if ($meeting->getCalendar()->isAllowOverlaps()) {
-      if ($meeting->getOpeningHour() && $this->isOpeningHourValidForMeeting($meeting, $meeting->getOpeningHour())) {
-        return true;
+    if ($meeting->getOpeningHour() && $this->isOpeningHourValidForMeeting($meeting, $meeting->getOpeningHour())) {
+      // Min duration constraint
+      $duration = $this->getDifferenceInMinutes($meeting->getFromTime(), $meeting->getToTime());
+
+      if ($duration < $meeting->getOpeningHour()->getMeetingMinutes()) {
+        return false;
       }
-    } else {
-      if ($meeting->getOpeningHour() && $this->isOpeningHourValidForMeeting($meeting, $meeting->getOpeningHour())) {
-        return true;
-      } else {
-        foreach ($meeting->getCalendar()->getOpeningHours() as $openingHour) {
-          if ($this->isOpeningHourValidForMeeting($meeting, $openingHour)) {
-            $meeting->setOpeningHour($openingHour);
-            return true;
-          }
+      return true;
+    } else if (!$meeting->getCalendar()->isAllowOverlaps()) {
+      foreach ($meeting->getCalendar()->getOpeningHours() as $openingHour) {
+        if ($this->isOpeningHourValidForMeeting($meeting, $openingHour)) {
+          $meeting->setOpeningHour($openingHour);
+          return true;
         }
       }
     }
+
     return false;
   }
 
   private function isOpeningHourValidForMeeting(Meeting $meeting, OpeningHour $openingHour) {
     $dates = $this->explodeDays($openingHour, true);
     $meetingDate = $meeting->getFromTime()->format('Y-m-d');
+
     // Date not available for opening hour
     if (!in_array($meetingDate, $dates))
       return false;
 
-    $slots = $this->explodeMeetings($openingHour, $meeting->getFromTime());
-    $meetingEnd = clone $meeting->getToTime();
-    $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i');
-
-    if (array_key_exists($slotKey, $slots)) {
-      return true;
+    $isValid = false;
+    if ($meeting->getCalendar()->getType() === Calendar::TYPE_TIME_VARIABLE) {
+      if ($meeting->getFromTime()->format('H:i') >= $openingHour->getBeginHour()->format('H:i') && $meeting->getToTime()->format('H:i') <= $openingHour->getEndHour()->format('H:i')) {
+        $isValid = true;
+      }
     } else {
-      return false;
+      $slots = $this->explodeMeetings($openingHour, $meeting->getFromTime());
+      $meetingEnd = clone $meeting->getToTime();
+      $slotKey = $meeting->getFromTime()->format('H:i') . '-' . $meetingEnd->format('H:i');
+      if (array_key_exists($slotKey, $slots)) {
+        $isValid = true;
+      }
     }
+
+    return $isValid;
   }
 
   /**
@@ -623,7 +633,8 @@ class MeetingService
     }
   }
 
-  public function getAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
+
+  public function getSlottedAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
   {
     /** @var OpeningHour[] $openingHours */
     if ($selectedOpeningHours) {
@@ -725,7 +736,8 @@ class MeetingService
     else return $slots;
   }
 
-  public function getOpeningHoursOverlaps(Calendar $calendar, $selectedOpeningHours = []) {
+  public function getOpeningHoursOverlaps(Calendar $calendar, $selectedOpeningHours = [])
+  {
 
     $overlaps = [];
     /** @var OpeningHour[] $openingHours */
@@ -734,8 +746,8 @@ class MeetingService
     if ($selectedOpeningHours) {
       foreach ($selectedOpeningHours as $selectedOpeningHour) {
         $openingHour = $this->entityManager->getRepository('AppBundle:OpeningHour')->findOneBy([
-          'calendar'=>$calendar,
-          'id'=>$selectedOpeningHour
+          'calendar' => $calendar,
+          'id' => $selectedOpeningHour
         ]);
         if ($openingHour) {
           $openingHours[] = $openingHour;
@@ -760,9 +772,164 @@ class MeetingService
         }
       }
     }
-
     return array_values($overlaps);
   }
+
+  public function getVariableAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
+  {
+    /** @var OpeningHour[] $openingHours */
+    if ($selectedOpeningHours) {
+      foreach ($selectedOpeningHours as $selectedOpeningHour) {
+        $openingHour = $this->entityManager->getRepository('AppBundle:OpeningHour')->findOneBy([
+          'calendar'=>$calendar,
+          'id'=>$selectedOpeningHour
+        ]);
+        if ($openingHour) {
+          $openingHours[] = $openingHour;
+        }
+      }
+    } else {
+      $openingHours = $calendar->getOpeningHours();
+    }
+
+
+
+    $bookedMeetings=$this->getBookedSlotsByDate($date, $calendar, $excludedMeeting);
+
+    if ($all) {
+      $noticeInterval = new DateInterval('PT0H');
+    } else {
+      $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
+    }
+    $firstAvailableDate = (new DateTime())->add($noticeInterval);
+
+    $firstAvailableDate->setTime($firstAvailableDate->format("H"), $firstAvailableDate->format("i"), 0, 0);
+
+    $minute = ($firstAvailableDate->format("i")) % 5;
+    if($minute != 0) {
+      $firstAvailableDate->add(new DateInterval("PT".(5 - $minute)."M"));
+    }
+
+
+    $timeIntervals = [];
+    foreach ($openingHours as $openingHour) {
+      if (in_array($date->format('Y-m-d'), $this->explodeDays($openingHour, $all)) && $openingHour->getStartDate() <= $date && $openingHour->getEndDate() >= $date) {
+        $begin = (clone $date)->setTime($openingHour->getBeginHour()->format('H'), $openingHour->getBeginHour()->format('i'), 0, 0);
+        $end = (clone $date)->setTime($openingHour->getEndHour()->format('H'), $openingHour->getEndHour()->format('i'), 0, 0)->modify('+1minute');
+        foreach (new DatePeriod($begin, new DateInterval("PT1M"), $end) as $interval) {
+          $timeIntervals[$interval->format('H:i')] = [
+            "availabilities" => $interval >= $firstAvailableDate ? $openingHour->getMeetingQueue() : 0,
+            "opening_hour" => $openingHour,
+            "datetime" => $interval
+          ];
+        }
+      }
+    }
+
+    ksort($timeIntervals);
+
+    // Remove bookend meetings
+    foreach ($bookedMeetings as $bookedMeeting) {
+      foreach (new DatePeriod($bookedMeeting["start_time"], new DateInterval("PT1M"), $bookedMeeting["end_time"]->modify('+'.$bookedMeeting["interval_minutes"].'minutes')) as $interval) {
+        if(isset($timeIntervals[$interval->format('H:i')]))
+          $timeIntervals[$interval->format('H:i')]["availabilities"] = max($timeIntervals[$interval->format('H:i')]["availabilities"] - $bookedMeeting["count"], 0);
+      }
+    }
+
+    $firstTime = DateTime::createFromFormat('Y-m-d H:i', $date->format('Y-m-d') . ' ' . array_key_first($timeIntervals));
+    $endTime = DateTime::createFromFormat('Y-m-d H:i', $date->format('Y-m-d') . ' ' . array_key_last($timeIntervals));
+
+    foreach ($calendar->getClosingPeriods() as $closingPeriod) {
+      if ($closingPeriod->getFromTime() <= $endTime && $firstTime <= $closingPeriod->getToTime()) {
+        $closure = new DatePeriod(max($closingPeriod->getFromTime(), $firstTime), new DateInterval("PT1M"), min($closingPeriod->getToTime(), $endTime));
+        foreach ($closure as $closureInterval) {
+          if(isset($timeIntervals[$closureInterval->format("H:i")]))
+            $timeIntervals[$closureInterval->format("H:i")]["availabilities"] = 0;
+        }
+      }
+    }
+
+    $slots = array();
+    if (empty($timeIntervals))
+      return $slots;
+
+    $slotStart = array_key_first($timeIntervals);
+    $slotOpeningHour = $timeIntervals[$slotStart]["opening_hour"];
+    $slotAvailability = min($timeIntervals[$slotStart]["availabilities"], 1);
+    $slotEnd = $slotStart;
+    $duration = null;
+
+
+
+    foreach ($timeIntervals as $time => $interval) {
+      $tmpAvailability = min($interval["availabilities"], 1);
+      $tmpOpeningHour = $interval["opening_hour"];
+      $slotEnd = $slotOpeningHour === $tmpOpeningHour ? $time : $slotEnd;
+      if ($slotAvailability !== $tmpAvailability || $slotOpeningHour !== $tmpOpeningHour) {
+        $slots[$slotStart . '-' . $slotEnd] = [
+          "date" => $date->format('Y-m-d'),
+          "start_time" => $slotStart,
+          "end_time" => $slotEnd,
+          "slots_available" => $slotAvailability,
+          "availability" => $slotAvailability > 0 && $duration >= $slotOpeningHour->getMeetingMinutes(),
+          "opening_hour" => $slotOpeningHour->getId(),
+          "min_duration" => $slotOpeningHour->getMeetingMinutes(),
+        ];
+
+        $slotAvailability = $tmpAvailability;
+        $slotOpeningHour =  $tmpOpeningHour;
+        $slotStart = $time;
+
+      } else {
+        $slotEnd = $time;
+      }
+      $duration = $this->getDifferenceInMinutes($timeIntervals[$slotStart]["datetime"], $timeIntervals[$slotEnd]["datetime"]);
+    }
+
+    if ($slotStart !== $slotEnd) {
+      $slots[$slotStart . '-' . $slotEnd] = [
+        "date" => $date->format('Y-m-d'),
+        "start_time" => $slotStart,
+        "end_time" => $slotEnd,
+        "slots_available" => $slotAvailability,
+        "availability" => $slotAvailability > 0  && $duration >= $slotOpeningHour->getMeetingMinutes(),
+        "opening_hour" => $slotOpeningHour->getId(),
+        "min_duration" => $slotOpeningHour->getMeetingMinutes(),
+      ];
+    }
+
+    return $slots;
+  }
+
+  private function getBookedSlotsByDate($date, $calendar, $excludedMeeting=null) {
+    $start = clone ($date)->setTime(0, 0, 0);
+    $end = clone ($date)->setTime(23, 59, 59);
+
+    $builder = $this->entityManager->createQueryBuilder()
+      ->select('count(meeting.fromTime) as count', 'meeting.fromTime as start_time', 'meeting.toTime as end_time', 'opening_hour.intervalMinutes as interval_minutes')
+      ->from('AppBundle:Meeting', 'meeting')
+      ->join('meeting.openingHour', 'opening_hour')
+      ->where('meeting.calendar = :calendar')
+      ->andWhere('meeting.fromTime >= :startDate')
+      ->andWhere('meeting.toTime < :endDate')
+      ->andWhere('meeting.status != :refused')
+      ->andWhere('meeting.status != :cancelled')
+      ->setParameter('refused', Meeting::STATUS_REFUSED)
+      ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
+      ->setParameter('calendar', $calendar)
+      ->setParameter('startDate', $start)
+      ->setParameter('endDate', $end)
+      ->groupBy('meeting.fromTime', 'meeting.toTime', 'opening_hour.id');
+
+    if ($excludedMeeting) {
+      $builder
+        ->andWhere('meeting.id != :exluded_id')
+        ->setParameter('exluded_id', $excludedMeeting);
+    }
+    return $builder->getQuery()->getResult();
+  }
+
+
 
   public function getMeetingErrors(Meeting $meeting) {
     $errors = [];
@@ -777,5 +944,10 @@ class MeetingService
       }
     }
     return $errors;
+  }
+
+  private function getDifferenceInMinutes(DateTime $from, DateTime $to) {
+    $diff = $from->diff($to);
+    return ($diff->h * 60) + ($diff->i);
   }
 }

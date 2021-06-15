@@ -1810,7 +1810,7 @@ chalk@^4.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-"choices.js@github:formio/Choices#9.0.1":
+choices.js@formio/Choices#9.0.1:
   version "9.0.1"
   resolved "https://codeload.github.com/formio/Choices/tar.gz/a4395fc83724f161c4210390c963ac7800591ced"
   dependencies:
@@ -3627,6 +3627,11 @@ interpret@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-2.2.0.tgz#1a78a0b5965c40a5416d007ad6f50ad27c417df9"
   integrity sha512-Ju0Bz/cEia55xDwUWEa8+olFpCiQoypjnQySseKtmjNrnps3P+xfpUmGr90T7yjlVJmOtybRvPXhKMbHr+fWnw==
+
+ion-rangeslider@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/ion-rangeslider/-/ion-rangeslider-2.3.1.tgz#92ade52cb56fc30b9162d0483ff02b6f9ed237c2"
+  integrity sha512-6V+24FD13/feliI485gnRHZYD9Ev64M5NAFTxnVib516ATHa9PlXQrC+nOiPngouRYTCLPJyokAJEi3e1Umi5g==
 
 ip-regex@^4.0.0:
   version "4.3.0"
@@ -6328,7 +6333,7 @@ text-mask-addons@^3.8.0:
   resolved "https://registry.yarnpkg.com/text-mask-addons/-/text-mask-addons-3.8.0.tgz#17b61ef665a4f36811f2ea1f01a223b4be61ab26"
   integrity sha1-F7Ye9mWk82gR8uofAaIjtL5hqyY=
 
-"text-mask-all@github:formio/text-mask#master":
+text-mask-all@formio/text-mask#master:
   version "0.3.0"
   resolved "https://codeload.github.com/formio/text-mask/tar.gz/fb1c39e13dd7d42b6de6fad0478b83c766846950"
 
