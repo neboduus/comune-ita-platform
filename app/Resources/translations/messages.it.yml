@@ -2012,7 +2012,7 @@ meetings:
       new_meeting:
         subject: 'Nuovo appuntamento'
         message: '<p>Nuova richiesta di appuntamento a nome di <b>name</b> per il giorno <b>date</b> alle ore <b>hour</b>.</p>'
-        reason: "<p>Motivo dell'appuntamento: %user_message%</p>"
+        reason: "<p>Motivo dell'appuntamento:<br><b>%user_message%</b></p>"
         approve_link: '<br><p>Clicca sul seguente link per approvare: <a href="approve_link"><b>Approva</b></a></p>'
     new_meeting:
       pending: '<p>La informiamo che la sua richiesta è stata <b>presa in carico</b>.</p><p>Riceverà un email di conferma non appena la sua richiesta verrà confermata.</p>'
