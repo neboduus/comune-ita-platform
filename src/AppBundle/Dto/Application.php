@@ -41,11 +41,24 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's service (slug)")
+   * @SWG\Property(description="Applications's service slug")
    * @Groups({"read"})
    */
   private $service;
 
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's service ID")
+   * @Groups({"read"})
+   */
+  private $serviceId;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's service name")
+   * @Groups({"read"})
+   */
+  private $serviceName;
 
   /**
    * @Serializer\Type("string")
@@ -290,6 +303,20 @@ class Application
   private $links;
 
   /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Webhook event ID")
+   * @Groups({"webhook"})
+   */
+  private $eventId;
+
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Webhook event Version")
+   * @Groups({"webhook"})
+   */
+  private $eventVersion;
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -335,6 +362,38 @@ class Application
   public function setService($service)
   {
     $this->service = $service;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getServiceId()
+  {
+    return $this->serviceId;
+  }
+
+  /**
+   * @param mixed $serviceId
+   */
+  public function setServiceId($serviceId): void
+  {
+    $this->serviceId = $serviceId;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getServiceName()
+  {
+    return $this->serviceName;
+  }
+
+  /**
+   * @param mixed $serviceName
+   */
+  public function setServiceName($serviceName): void
+  {
+    $this->serviceName = $serviceName;
   }
 
   /**
@@ -834,6 +893,38 @@ class Application
   }
 
   /**
+   * @return mixed
+   */
+  public function getEventId()
+  {
+    return $this->eventId;
+  }
+
+  /**
+   * @param mixed $eventId
+   */
+  public function setEventId($eventId): void
+  {
+    $this->eventId = $eventId;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getEventVersion()
+  {
+    return $this->eventVersion;
+  }
+
+  /**
+   * @param mixed $eventVersion
+   */
+  public function setEventVersion($eventVersion): void
+  {
+    $this->eventVersion = $eventVersion;
+  }
+
+  /**
    * @param Pratica $pratica
    * @param string $attachmentEndpointUrl
    * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
@@ -848,6 +939,8 @@ class Application
     $dto->userName = $pratica->getUser()->getFullName();
     $dto->tenant = $pratica->getEnte()->getId();
     $dto->service = $pratica->getServizio()->getSlug();
+    $dto->serviceId = $pratica->getServizio()->getId();
+    $dto->serviceName = $pratica->getServizio()->getName();
     $dto->subject = $pratica->getOggetto();
 
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
