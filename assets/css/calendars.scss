@@ -71,3 +71,29 @@
     }
   }
 }
+
+
+.irs--flat .irs-handle>i:first-child {
+  background-color: #003882 !important;
+}
+.irs--flat .irs-bar {
+  height: 25px !important;
+  background-color: #003882 !important;
+}
+.irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single {
+  font-size: 15px !important;
+  font-family: 'Titillium Web', serif;
+  background-color: #003882 !important;
+}
+.irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before {
+  border-top-color: #003882 !important;
+}
+
+.irs--flat .irs-line {
+  height: 25px !important;
+}
+
+.irs--flat .irs-min, .irs--flat .irs-max {
+  font-size: 15px !important;
+  font-family: 'Titillium Web', serif;
+}

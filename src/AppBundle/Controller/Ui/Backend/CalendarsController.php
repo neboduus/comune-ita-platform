@@ -696,7 +696,8 @@ class CalendarsController extends Controller
     $meeting->setDraftExpiration(new \DateTime('+' . ($calendar->getDraftsDuration() ?? Calendar::DEFAULT_DRAFT_DURATION) . 'seconds'));
 
     try {
-      if ($this->meetingService->isSlotValid($meeting) && $this->meetingService->isSlotAvailable($meeting)) {
+      $errors = $this->meetingService->getMeetingErrors($meeting);
+      if (empty($errors)) {
         $this->em->persist($meeting);
         $this->em->flush();
       } else {
@@ -704,7 +705,7 @@ class CalendarsController extends Controller
         $this->em->flush();
 
         return new JsonResponse([
-          "error" => "Slot not valid or not available"
+          "errors" => $errors
         ], Response::HTTP_BAD_REQUEST);
 
       }

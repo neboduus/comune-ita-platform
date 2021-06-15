@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\OperatoreUser;
 use Doctrine\ORM\EntityManagerInterface;
+use Flagception\Manager\FeatureManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -24,10 +25,15 @@ class CalendarType extends AbstractType
    * @var EntityManagerInterface
    */
   private $em;
+  /**
+   * @var FeatureManagerInterface
+   */
+  private $featureManager;
 
-  public function __construct(EntityManagerInterface $entityManager)
+  public function __construct(EntityManagerInterface $entityManager, FeatureManagerInterface $featureManager)
   {
     $this->em = $entityManager;
+    $this->featureManager = $featureManager;
   }
 
   /**
@@ -114,6 +120,13 @@ class CalendarType extends AbstractType
         'entry_type' => ExternalCalendarType::class,
         'allow_add' => true
       ]);
+
+    if ($this->featureManager->isActive('feature_calendar_type')) {
+      $builder->add('type', ChoiceType::class, [
+        'label' => 'calendars.type.label',
+        'choices' => Calendar::CALENDAR_TYPES
+      ]);
+    }
 
     $builder->addViewTransformer(new CallbackTransformer(
       function ($original) {

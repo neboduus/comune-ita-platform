@@ -20,6 +20,9 @@
         {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_row(form.title) }}
+        {% if feature('feature_calendar_type') %}
+          {{ form_row(form.type) }}
+        {% endif %}
         <div class="d-none">{{ form_row(form.id) }}</div>
         {{ form_row(form.location) }}
         {{ form_row(form.contact_email) }}

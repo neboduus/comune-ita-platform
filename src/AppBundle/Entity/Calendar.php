@@ -34,6 +34,9 @@ class Calendar
   const DEFAULT_ROLLING_DAYS = 30;
   const DEFAULT_CANCEL_DAYS = 3;
 
+  const TYPE_TIME_FIXED = "time_fixed_slots";
+  const TYPE_TIME_VARIABLE = "time_variable_slots";
+
   const MINIMUM_SCHEDULING_NOTICES_OPTIONS = [
     'Nessuno' => 0,
     'Un\'ora prima' => 1,
@@ -45,6 +48,12 @@ class Calendar
     'Tre giorni prima' => 72,
     'Una settimana prima' => 168
   ];
+
+  const CALENDAR_TYPES = [
+    "calendars.type.time_fixed_slots" => self::TYPE_TIME_FIXED,
+    "calendars.type.time_variable_slots" => self::TYPE_TIME_VARIABLE
+  ];
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
@@ -69,6 +78,15 @@ class Calendar
    * @SWG\Property(description="Calendar's title", type="string")
    */
   private $title;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(name="type", type="string", length=255, options={"default" : Calendar::TYPE_TIME_FIXED})
+   * @Assert\Choice(choices=Calendar::CALENDAR_TYPES, message="Choose a valid type.")
+   * @SWG\Property(description="Calendar's slots type", type="string")
+   */
+  private $type = self::TYPE_TIME_FIXED;
 
   /**
    * @var string|null
@@ -205,6 +223,7 @@ class Calendar
   {
     if (!$this->id) {
       $this->id = Uuid::uuid4();
+      $this->type = self::TYPE_TIME_FIXED;
       $this->moderators = new ArrayCollection();
       $this->openingHours = new ArrayCollection();
       $this->closingPeriods = new ArrayCollection();
@@ -213,6 +232,7 @@ class Calendar
       $this->rollingDays = self::DEFAULT_ROLLING_DAYS;
       $this->draftsDuration = self::DEFAULT_DRAFT_DURATION;
       $this->draftsDurationIncrement = self::DEFAULT_DRAFT_INCREMENT;
+      $this->allowOverlaps = false;
     }
   }
 
@@ -248,6 +268,30 @@ class Calendar
   public function getTitle()
   {
     return $this->title;
+  }
+
+  /**
+   * Set type.
+   *
+   * @param string $type
+   *
+   * @return Calendar
+   */
+  public function setType($type)
+  {
+    $this->type = $type;
+
+    return $this;
+  }
+
+  /**
+   * Get title.
+   *
+   * @return string
+   */
+  public function getType()
+  {
+    return $this->type;
   }
 
   /**

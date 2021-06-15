@@ -47,10 +47,13 @@ require('bootstrap-italia/src/js/plugins/dimmer');
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 require("summernote");
 require("summernote/dist/summernote-bs4.css");
+require("ion-rangeslider");
+require("ion-rangeslider/css/ion.rangeSlider.css");
 require("../css/app.scss");
 
 
 import Calendar from './Calendar';
+import DynamicCalendar from './DynamicCalendar';
 import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
 import {Formio} from "formiojs";
@@ -58,6 +61,7 @@ import 'formiojs/dist/formio.form.min.css'
 
 
 Formio.registerComponent('calendar', Calendar);
+Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
