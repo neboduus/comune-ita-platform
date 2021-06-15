@@ -37,4 +37,12 @@
         {{- button.label | trans({}, 'CraueFormFlowBundle') -}}
         </button>
     {% endfor %}
+  {% if  flow.getCurrentStepNumber() == 3 %}
+  <a
+    data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}"
+     id="btn-draft"
+     class="btn btn-primary float-right">
+    {{ 'buttons.draft' | trans }}
+  </a>
+  {% endif %}
 </div>

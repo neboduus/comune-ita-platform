@@ -13,7 +13,6 @@
 {% endblock %}
 
 {% block main_content %}
-
   <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
@@ -32,7 +31,7 @@
     </div>
 
     <div class="row mb-4 mt-3">
-      <div class="col-lg-8 px-lg-4">
+      <div class="col-lg-6 px-lg-4">
         <h4>
           {{ flow.getCurrentStepNumber() }} / {{ flow.stepCount }}
           -
@@ -43,7 +42,7 @@
           {% endif %}
         </h4>
       </div>
-      <div id="preview" class="col-lg-4 px-lg-4 d-none">
+      <div id="preview" class="col-lg-6 px-lg-4 d-none">
         <a href="#" data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}"
            data-type="preview" data-target="{{ path('preview_service', {'service':servizio.id}) }}"
            class="btn btn-xs btn-outline-primary float-right preview">
@@ -61,6 +60,8 @@
           Stampa
         </a>
       </div>
+
+
     </div>
 
     <div class="row">
@@ -166,6 +167,12 @@
         </div>
       </div>
     </div>
+  </div>
+
+      <div data-delay="3000" class="notification with-icon success toast hide m-3 top-right-fix" role="alert" aria-labelledby="notify-title" id="notify">
+        <h5 id="notify-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+          Bozza salvata con successo
+        </h5>
   </div>
 
   {% verbatim %}

@@ -2129,3 +2129,6 @@ app_io:
   errore:
     parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
   admin_helper: "Per poter utilizzare questa integrazione è necessario configurare ogni servizio per il quale si desidera attivare le notifiche "
+
+buttons:
+  draft: 'Salva bozza'

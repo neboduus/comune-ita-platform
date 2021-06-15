@@ -215,4 +215,14 @@ display: none;
   }
 }
 
+.notification.top-right-fix {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  top: 0;
+  transform: translateX(0%);
+  bottom: auto;
+  right: 0;
+  z-index: 10;
+}
+
 

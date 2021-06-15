@@ -5,7 +5,6 @@ import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
 import 'formiojs'
 import {TextEditor} from "./utils/TextEditor";
-
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 
 
@@ -14,7 +13,9 @@ Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
+
 $(document).ready(function () {
+
   const serviceStatus = $('#general_data_status');
   const scheduledFrom = $('#general_data_scheduled_from').parent();
   const scheduledTo = $('#general_data_scheduled_to').parent();
@@ -161,6 +162,8 @@ $(document).ready(function () {
             if (data.status === 'success') {
               if (type === 'print') {
                 window.location.href = targetUrl;
+              } else if(type === 'draft'){
+                $('.toast').toast('show')
               } else {
                 window.open( targetUrl, '_blank');
               }
@@ -296,11 +299,8 @@ $(document).ready(function () {
       builder.on("removeComponent", function () {
         storeSchema(JSON.stringify(builder.schema));
       });
-
     });
-
   }
-
   // Step Payment data
   if ($("#payment_data_flow_service_step").length) {
 
@@ -449,5 +449,35 @@ $(document).ready(function () {
     } else {
       $("#io_test").hide();
     }
+  }
+
+  // Save form.io draft
+  if ($("#btn-draft").length) {
+    $("#btn-draft").on('click', function (e){
+      e.preventDefault();
+      let schema = $("#formio_builder_render_form_schema").val();
+      $.ajax( $(this).data('schema'),
+        {
+          dataType: 'json', // type of response data
+          method: 'POST',
+          data: {
+            schema: schema
+          },
+          success: function (data, status, xhr) {   // success callback function
+            if (data.status === 'success') {
+              $('.toast').toast('show')
+            }
+            else {
+              alert('Si è verificato un errore durante il salvataggio.')
+            }
+          },
+          error: function (jqXhr, textStatus, errorMessage) { // error callback
+            console.log(errorMessage);
+            alert('Si è verificato un errore durante il salvataggio.')
+          }
+        });
+    })
+
+
   }
 });
