@@ -1,0 +1,12 @@
+<a
+  href="{% if feature('feature_application_detail') %}{{ path('pratica_show_detail', {'pratica': row}) }}{% else %}{{ path('pratiche_show', {'pratica': row}) }}{% endif %}"
+  class="btn btn-primary btn-xs">
+  <i class="fa fa-eye" aria-hidden="true"></i> {{ 'user.dashboard.vai_al_dettaglio'|trans }}
+</a>
+{% if row.status == 1000 %}
+  <a href="{{ path('pratiche_delete', {'pratica': row}) }}"
+     class="btn btn-danger btn-xs"
+     onclick="return confirm('Vuoi veramente eliminare la pratica?');"><i
+      class="fa fa-trash" aria-hidden="true"></i>
+    Elimina</a>
+{% endif %}

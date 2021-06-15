@@ -8,6 +8,7 @@ use AppBundle\Services\JsonSelect;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityRepository;
+use PHPStan\Process\CpuCoreCounter;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -60,6 +61,7 @@ class PraticaRepository extends EntityRepository
         'user' => $user,
         'status' => [
           Pratica::STATUS_PRE_SUBMIT,
+          Pratica::STATUS_PAYMENT_PENDING,
           Pratica::STATUS_SUBMITTED,
           Pratica::STATUS_REGISTERED,
           Pratica::STATUS_PENDING,
@@ -74,6 +76,20 @@ class PraticaRepository extends EntityRepository
         'creationTime' => 'DESC',
       ]
     );
+  }
+
+  public function findEvidencePraticaForUser(CPSUser $user)
+  {
+    $timeDiff = "-7 days";
+    $qb = $this->createQueryBuilder('p')
+      ->where('p.status IN (:statues)')
+      ->setParameter('statues', [Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION])
+      ->orWhere('p.latestStatusChangeTimestamp >= (:timediff)')
+      //->setParameter('timezone', $timeZone)
+      ->setParameter('timediff', strtotime($timeDiff))
+      //->andWhere('s.sticky = false OR s.sticky IS NULL')
+      ->orderBy('p.latestStatusChangeTimestamp', 'DESC');
+    return $qb->getQuery()->getResult();
   }
 
   public function findProcessingPraticaForUser(CPSUser $user)

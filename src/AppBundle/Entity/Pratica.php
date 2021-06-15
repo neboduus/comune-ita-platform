@@ -1129,7 +1129,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function jsonToArray()
   {
-    $this->numeriProtocollo = new ArrayCollection(json_decode($this->numeriProtocollo));
+    if ($this->numeriProtocollo) {
+      $this->numeriProtocollo = new ArrayCollection(json_decode($this->numeriProtocollo));
+    } else {
+      $this->numeriProtocollo = new ArrayCollection();
+    }
   }
 
   /**
@@ -2127,7 +2131,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   public function getHistory()
   {
-
     $history = [];
     foreach ($this->getStoricoStati() as $k => $v) {
       foreach ($v as $change) {
@@ -2151,4 +2154,5 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     }
     return $history;
   }
+
 }
