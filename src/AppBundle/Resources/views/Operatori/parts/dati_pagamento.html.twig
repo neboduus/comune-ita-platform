@@ -56,14 +56,22 @@
                   <td><b>{{ 'operatori.esito_pagamento'|trans }}</b></td>
                   <td>{{ pratica.paymentData.outcome.status_message }}</td>
                 </tr>
-                <tr>
-                  <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
-                  <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
-                </tr>
+                {% if pratica.paymentData.outcome.data.dataOraMessaggioRicevuta is defined %}
+                  <tr>
+                    <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
+                    <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
+                  </tr>
+                {% endif %}
                 <tr>
                   <td class="text-center border-0" colspan="2">
                     <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
-                       class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_receipt_button'|trans }}</a>
+                       class='btn btn-lg btn-primary'>
+                      {% if pratica.paymentData.outcome.status == 'OK'%}
+                        {{ 'gateway.mypay.download_receipt_button'|trans }}
+                      {% else %}
+                        {{ 'gateway.mypay.download_button'|trans }}
+                      {% endif %}
+                    </a>
                   </td>
                 </tr>
                 {% else %}
