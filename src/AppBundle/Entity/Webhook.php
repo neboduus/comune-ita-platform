@@ -14,6 +14,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Webhook
 {
+
+  const VERSION = '1.0';
+
   const TRIGGERS = [
     'all' => 'Tutti',
     Pratica::STATUS_PAYMENT_SUCCESS => 'Pratica pagata',
