@@ -354,7 +354,7 @@ class MeetingService
 
     if ($meeting->getUserMessage()) {
       $operatoreMessage = $operatoreMessage . $this->translator->trans('meetings.email.operatori.new_meeting.reason', [
-          '%user_message%' => $meeting->getUserMessage()
+          '%user_message%' => nl2br($meeting->getUserMessage())
         ]);
     }
 
