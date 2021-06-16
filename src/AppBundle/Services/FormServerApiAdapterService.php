@@ -7,11 +7,13 @@ use AppBundle\Entity\Servizio;
 use AppBundle\FormIO\FormIOSchemaProviderInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use phpDocumentor\Reflection\Types\Self_;
 use Psr\Log\LoggerInterface;
 
 class FormServerApiAdapterService implements FormIOSchemaProviderInterface
 {
-  //const FORM_SERVER_URL = 'https://formserver.opencontent.it/';
+
+  const APPLICANT_FORM_SLUG = 'anagrafica';
 
   const STANDARD_ERROR = 'Si è verificato nella creazione del nuovo form, se il problema persiste contattare un amministratore.';
 
@@ -55,6 +57,34 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
    */
   public function createForm(Servizio $servizio)
   {
+
+    $component = array(
+      'label' => 'HTML',
+      'attrs' => array(array('attr' => '', 'value' => '',),),
+      'content' => 'Come primo componente ti raccomandiamo di inserire il sottoform <strong>Anagrafica</strong>, necessario per la corretta implementazione dei form dinamici.',
+      'refreshOnChange' => false,
+      'tableView' => false,
+      'key' => 'html',
+      'type' => 'htmlelement',
+      'input' => false,
+      'validate' => array('unique' => false, 'multiple' => false,),
+    );
+
+    $response = self::getFormBySlug(self::APPLICANT_FORM_SLUG);
+    if ($response['status'] == 'success') {
+      $component = array(
+        "label"=> "applicant",
+        "tableView"=> true,
+        "form"=> $response['form']['_id'],
+        "useOriginalRevision"=> false,
+        "reference"=> false,
+        "key"=> "applicant",
+        "type"=> "form",
+        "input"=> true,
+        "lazyLoad"=> true
+      );
+    }
+
     $schema = [
       'display' => 'wizard',
       'type' => 'form',
@@ -72,29 +102,7 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
             'input' => false,
             'components' =>
               array(
-                array(
-                  'label' => 'Avvertenza',
-                  'tag' => 'h6',
-                  'attrs' => array(array('attr' => '', 'value' => '',),),
-                  'content' => 'Benvenuto nella configurazione del tuo nuovo form!',
-                  'refreshOnChange' => false,
-                  'tableView' => false,
-                  'key' => 'avvertenza',
-                  'type' => 'htmlelement',
-                  'input' => false,
-                  'validate' => array('unique' => false, 'multiple' => false,),
-                ),
-                array(
-                  'label' => 'HTML',
-                  'attrs' => array(array('attr' => '', 'value' => '',),),
-                  'content' => 'Come primo componente ti raccomandiamo di inserire il sottoform <strong>Anagrafica</strong>, necessario per la corretta implementazione dei form dinamici.',
-                  'refreshOnChange' => false,
-                  'tableView' => false,
-                  'key' => 'html',
-                  'type' => 'htmlelement',
-                  'input' => false,
-                  'validate' => array('unique' => false, 'multiple' => false,),
-                ),
+                $component
               ),
             'key' => 'panel',
             'collapsed' => false,
@@ -303,6 +311,44 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     }
 
     return self::$cache[$this->formServerUrl.$formID];
+  }
+
+  public function getFormBySlug($slug)
+  {
+    if (!isset(self::$cache[$this->formServerUrl . $slug])) {
+      $client = new Client(['base_uri' => $this->formServerUrl]);
+      $request = new Request(
+        'GET',
+        $client->getConfig('base_uri') . '/' . $slug,
+        ['Content-Type' => 'application/json']
+      );
+
+      try {
+        $response = $client->send($request);
+
+        if ($response->getStatusCode() == 200) {
+          $responseBody = json_decode($response->getBody(), true);
+
+          self::$cache[$this->formServerUrl . $slug] = [
+            'status' => 'success',
+            'form' => $responseBody
+          ];
+        }else {
+          throw new \Exception("Unexpected status response");
+        }
+
+      } catch (\Throwable $e) {
+        $error = $e->getMessage();
+        $this->logger->error($e->getMessage());
+
+        return [
+          'status' => 'error',
+          'message' => $error
+        ];
+      }
+    }
+
+    return self::$cache[$this->formServerUrl . $slug];
   }
 
   public function deleteForm(Servizio $service)
