@@ -1887,6 +1887,10 @@ calendars:
   drafts_duration:
     label: "Durata di un appuntamento in bozza (in minuti)"
     description: "Tempo per il quale uno slot viene riservato in attesa della conferma da parte dell'utente. Lo slot viene riservato quando viene scelto dal cittadino facendo click sullo slot e viene confermato quando invia la richiesta. Se l'appuntamento non viene confermato entro questo tempo, lo slot torna libero."
+  type:
+    label: "Tipologia di appuntamento"
+    time_fixed_slots: "Appuntamenti a durata fissa"
+    time_variable_slots: "Appuntamenti a durata variabile"
   rolling_days:
     label: "Disponibilità per le prenotazioni"
     text_before: "E' possibile prenotare in anticipo fino a"
@@ -2041,3 +2045,11 @@ app_io:
   errore:
     parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
   admin_helper: "Per poter utilizzare questa integrazione è necessario configurare ogni servizio per il quale si desidera attivare le notifiche "
+
+ente:
+  linkable_application_meetings:
+    label: 'Abilita il collegamento tra pratiche e appuntamenti'
+    helper: "Abilitando quest'opzione sarà possibile visualizzare ed interagire con le prenotazioni collegate alla pratica nella sezione di dettaglio della pratica stessa"
+
+buttons:
+  draft: 'Salva bozza'

@@ -837,4 +837,30 @@ class PraticaRepository extends EntityRepository
     return $qb->getQuery()->getResult();
   }
 
+  public function findOrderedMeetings(Pratica $pratica) {
+    $qb = $this->getEntityManager()->createQueryBuilder()
+      ->select('meeting')
+      ->from('AppBundle:Meeting', 'meeting')
+      ->where('meeting.id IN (:meetings)')
+      ->setParameter(':meetings', $pratica->getMeetings())
+    ->orderBy('meeting.fromTime', 'desc');
+
+    return $qb->getQuery()->getResult();
+  }
+
+  public function findIncomingMeetings(Pratica $pratica) {
+    $qb = $this->getEntityManager()->createQueryBuilder()
+      ->select('meeting')
+      ->from('AppBundle:Meeting', 'meeting')
+      ->where('meeting.id IN (:meetings)')
+      ->andWhere('meeting.fromTime >= :now')
+      ->andWhere('meeting.status IN (:statuses)')
+      ->setParameter(':meetings', $pratica->getMeetings())
+      ->setParameter(':statuses', [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING])
+      ->setParameter(':now', new \DateTime())
+      ->orderBy('meeting.fromTime', 'desc');
+
+    return $qb->getQuery()->getResult();
+  }
+
 }

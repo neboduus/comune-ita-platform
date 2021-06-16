@@ -547,7 +547,7 @@ class Meeting
    *
    * @return Meeting
    */
-  public function setideoconferenceLink($videoconferenceLink)
+  public function setVideoconferenceLink($videoconferenceLink)
   {
     $this->videoconferenceLink = $videoconferenceLink;
 
@@ -559,7 +559,7 @@ class Meeting
    *
    * @return string
    */
-  public function getvideoconferenceLink()
+  public function getVideoconferenceLink()
   {
     return $this->videoconferenceLink;
   }

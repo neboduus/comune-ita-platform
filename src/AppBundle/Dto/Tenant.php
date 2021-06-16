@@ -4,6 +4,7 @@
 namespace AppBundle\Dto;
 
 
+use AppBundle\BackOffice\CalendarsBackOffice;
 use AppBundle\Entity\Ente as TenantEntity;
 use AppBundle\Model\Gateway;
 use JMS\Serializer\Annotation as Serializer;
@@ -77,6 +78,13 @@ class Tenant
    * @Groups({"read", "write"})
    */
   private $backofficeEnabledIntegrations;
+
+  /**
+   * @Serializer\Type("bool")
+   * @SWG\Property(description="Enable linkable application meetings")
+   * @Groups({"read", "write"})
+   */
+  private $linkableApplicationMeetings;
 
 
   /**
@@ -176,6 +184,22 @@ class Tenant
   }
 
   /**
+   * @return bool
+   */
+  public function isLinkableApplicationMeetings(): ?bool
+  {
+    return $this->linkableApplicationMeetings;
+  }
+
+  /**
+   * @param bool $linkableApplicationMeetings
+   */
+  public function setLinkableApplicationMeetings(?bool $linkableApplicationMeetings)
+  {
+    $this->linkableApplicationMeetings = $linkableApplicationMeetings;
+  }
+
+  /**
    * @return array
    */
   public function getGateways()
@@ -230,6 +254,7 @@ class Tenant
     $dto->ioEnabled = $tenant->isIOEnabled();
     $dto->gateways = [];
     $dto->backofficeEnabledIntegrations = $tenant->getBackofficeEnabledIntegrations();
+    $dto->linkableApplicationMeetings = $tenant->isLinkableApplicationMeetings();
 
     foreach ($tenant->getGateways() as $gateway) {
       $g = new Gateway();
@@ -258,6 +283,11 @@ class Tenant
     $entity->setIOEnabled($this->ioEnabled);
     $entity->setGateways($this->gateways);
     $entity->setBackofficeEnabledIntegrations($this->backofficeEnabledIntegrations);
+
+    if (!in_array(CalendarsBackOffice::PATH, $entity->getBackofficeEnabledIntegrations())) {
+      // disable if integration is not set
+      $entity->setLinkableApplicationMeetings(false);
+    }
 
     return $entity;
   }

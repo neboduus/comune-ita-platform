@@ -30,7 +30,7 @@
       {{ form_errors(messageForm) }}
       {{ form_row(messageForm.message, {'attr': {'class': 'summernote'}}) }}
 
-      <div {% if pratica.status < 4000 %} class="d-none" d-none {% endif %}>
+      <div {% if pratica.status < 4000 %} class="d-none" {% endif %}>
         <div class="form-group mb-0 pb-0">
           <label>{{ 'operatori.messaggi.allega_label' | trans }}</label>
           {{ form_row(messageForm.attachments) }}

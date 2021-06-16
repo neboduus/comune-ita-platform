@@ -4,6 +4,7 @@
 namespace AppBundle\Dto;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\Meeting;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\UserSession;
@@ -301,6 +302,14 @@ class Application
    * @Groups({"read"})
    */
   private $links;
+
+  /**
+   * @var Meeting[]
+   * @SWG\Property(property="meetings", description="Application linked meetings", type="array", @SWG\Items(type="string"))
+   * @Serializer\Type("array")
+   * @Groups({"read"})
+   */
+  private $meetings;
 
   /**
    * @Serializer\Type("string")
@@ -875,6 +884,21 @@ class Application
   {
     $this->authentication = $authentication;
   }
+  /**
+   * @return Meeting[]
+   */
+  public function getMeetings(): array
+  {
+    return $this->meetings;
+  }
+
+  /**
+   * @param Meeting[] $meetings
+   */
+  public function setMeetings(array $meetings)
+  {
+    $this->meetings = $meetings;
+  }
 
   /**
    * @return mixed
@@ -1030,6 +1054,7 @@ class Application
     $dto->paymentData = self::preparePaymentData($pratica);
     $dto->status = $pratica->getStatus();
     $dto->statusName = strtolower($pratica->getStatusName());
+    $dto->meetings = self::getLinkedMeetingsIds($pratica);
 
     $dto->authentication = ($pratica->getAuthenticationData()->getAuthenticationMethod() ?
       $pratica->getAuthenticationData() :
@@ -1307,5 +1332,13 @@ class Application
       }
     }
     return $availableTransitions;
+  }
+
+  public static function getLinkedMeetingsIds(Pratica $pratica) {
+    $meetings = [];
+    foreach ($pratica->getMeetings() as $meeting) {
+      $meetings[] = $meeting->getId();
+    }
+    return $meetings;
   }
 }

@@ -151,6 +151,12 @@ class Ente
   private $IOEnabled;
 
   /**
+   * @var bool
+   * @ORM\Column(name="linkable_application_meetings", type="boolean", options={"default" : 1})
+   */
+  private $linkableApplicationMeetings;
+
+  /**
    * @ORM\OneToMany(targetEntity="AppBundle\Entity\Webhook", mappedBy="ente")
    * @var Collection;
    * @Serializer\Exclude()
@@ -172,6 +178,7 @@ class Ente
     $this->mailers = new ArrayCollection();
     $this->webhooks = new ArrayCollection();
     $this->setIOEnabled(false);
+    $this->setLinkableApplicationMeetings(true);
   }
 
   /**
@@ -635,5 +642,21 @@ class Ente
   public function setIOEnabled(?bool $IOEnabled)
   {
     $this->IOEnabled = $IOEnabled;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isLinkableApplicationMeetings(): ?bool
+  {
+    return $this->linkableApplicationMeetings;
+  }
+
+  /**
+   * @param bool $linkableApplicationMeetings
+   */
+  public function setLinkableApplicationMeetings(?bool $linkableApplicationMeetings)
+  {
+    $this->linkableApplicationMeetings = $linkableApplicationMeetings;
   }
 }

@@ -55,7 +55,8 @@ class TenantType extends AbstractType
         'choices' => $backOfficesData,
         'multiple' => true,
         'required' => false,
-      ]);
+      ])
+        ->add('linkable_application_meetings', CheckboxType::class);
     }
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));

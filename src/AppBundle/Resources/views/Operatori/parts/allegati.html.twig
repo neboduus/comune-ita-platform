@@ -1,0 +1,112 @@
+<!-- MODULO COMPILATO -->
+{% if pratica.moduliCompilati|length > 0 %}
+    <h6 class="primary-color">{{ 'operatori.scarica' | trans }}</h6>
+    <div class="row align-items-center text-center mt-3 mb-5">
+        <div class="col-2">
+            <i class="fa fa-2x fa-file-pdf-o"></i>
+        </div>
+        <div class="col-6 text-truncate">
+            {{ pratica.moduliCompilati[0].originalFilename }}
+        </div>
+        <div class="col-2">
+            {{ pratica.moduliCompilati[0].getHumanReadableFileSize }}
+        </div>
+        <div class="col-2">
+            <a href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}" download>
+                <svg class="icon icon-primary">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                </svg>
+            </a>
+        </div>
+    </div>
+{% else %}
+    <a class="list-item disabled" href="#">
+        <svg class="icon icon-sm">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+        </svg>
+        {{ 'operatori.scarica' | trans }}
+    </a>
+{% endif %}
+
+    {# @var allegato \AppBundle\Entity\Allegato #}
+<!-- ALLEGATI PRATICA -->
+{% if pratica.allegati.count > 0 %}
+    <h6 class="primary-color">{{ 'operatori.allegati_modulo' | trans }}</h6>
+    {% for allegato in pratica.allegati %}
+        <div class="row align-items-center text-center mt-3 mb-5">
+            <div class="col-2">
+                {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
+                    <i class="fa fa-2x fa-file-pdf-o"></i>
+                {% else %}
+                    <i class="fa fa-2x fa-file-o"></i>
+                {% endif %}
+            </div>
+            <div class="col-6 text-truncate">
+                {{ allegato.originalFilename }}
+            </div>
+            <div class="col-2">
+                {{ allegato.getHumanReadableFileSize }}
+            </div>
+            <div class="col-2">
+                <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
+                    <svg class="icon icon-primary">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+<!-- ALLEGATI MESSAGGI -->
+{% if messageAttachments|length > 0 %}
+    <h6 class="primary-color">{{ 'operatori.allegati_messaggi' | trans }}</h6>
+    {% for allegato in messageAttachments %}
+        <div class="row align-items-center text-center mt-3 mb-5">
+            <div class="col-2">
+                {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
+                    <i class="fa fa-2x fa-file-pdf-o"></i>
+                {% else %}
+                    <i class="fa fa-2x fa-file-o"></i>
+                {% endif %}
+            </div>
+            <div class="col-6 text-truncate">
+                {{ allegato.originalFilename }}
+            </div>
+            <div class="col-2">
+                {{ allegato.getHumanReadableFileSize }}
+            </div>
+            <div class="col-2">
+                <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
+                    <svg class="icon icon-primary">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- RISPOSTA OPERATORE -->
+{% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
+    {% if pratica.rispostaOperatore %}
+        <h6 class="primary-color">{{ 'operatori.scarica_risposta_firmata'|trans }}</h6>
+        <div class="row align-items-center text-center mt-3 mb-5">
+            <div class="col-2">
+                <i class="fa fa-2x fa-file-pdf-o"></i>
+            </div>
+            <div class="col-6 text-truncate">
+                {{ pratica.rispostaOperatore.originalFilename }}
+            </div>
+            <div class="col-2">
+                {{ pratica.rispostaOperatore.getHumanReadableFileSize }}
+            </div>
+            <div class="col-2">
+                <a href="{{ path('risposta_download_operatore', {'allegato': pratica.rispostaOperatore.id}) }}" download>
+                    <svg class="icon icon-primary">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

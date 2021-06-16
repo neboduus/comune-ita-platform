@@ -1,5 +1,5 @@
 <nav>
-  <div class="nav nav-tabs auto" id="pratica-details" role="tablist">
+  <div class="nav nav-tabs auto nav-tabs-scroll" id="pratica-details" role="tablist">
     <a class="nav-item nav-link {% if not tab or tab == 'modulo' %} active {% endif %}" id="modulo-tab"
        data-toggle="tab" href="#modulo" role="tab"
        aria-controls="modulo" aria-selected="{{ not tab or tab == 'modulo' }}">
@@ -37,6 +37,13 @@
        aria-controls="protocollo" aria-selected="{{ tab and tab == 'protocollo' }}">
       {{ 'operatori.protocollo' | trans }}
     </a>
+    {% if ente.isLinkableApplicationMeetings %}
+      <a class="nav-item nav-link {% if tab == 'meetings' %} active {% endif %}" id="meetings-tab" data-toggle="tab"
+         href="#meetings" role="tab"
+         aria-controls="meetings" aria-selected="{{ tab and tab == 'meetings' }}">
+        {{ 'operatori.meetings' | trans }}
+      </a>
+    {% endif %}
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -54,64 +61,7 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati"
        role="tabpanel" aria-labelledby="allegati-tab">
-    {# @var allegato \AppBundle\Entity\Allegato #}
-    {% if pratica.allegati.count + messageAttachments|length  == 0 %}
-      <div class="font-italic text-center">{{ 'operatori.messaggi.no_attachments' | trans }}</div>
-    {% endif %}
-    {% if pratica.allegati.count > 0 %}
-      <h6 class="primary-color">{{ 'operatori.allegati_modulo' | trans }}</h6>
-      {% for allegato in pratica.allegati %}
-        <div class="row align-items-center text-center mt-3 mb-5">
-          <div class="col-2">
-            {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
-              <i class="fa fa-2x fa-file-pdf-o"></i>
-            {% else %}
-              <i class="fa fa-2x fa-file-o"></i>
-            {% endif %}
-          </div>
-          <div class="col-6 text-truncate">
-            {{ allegato.originalFilename }}
-          </div>
-          <div class="col-2">
-            {{ allegato.getHumanReadableFileSize }}
-          </div>
-          <div class="col-2">
-            <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
-              <svg class="icon icon-primary">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-              </svg>
-            </a>
-          </div>
-        </div>
-      {% endfor %}
-    {% endif %}
-    {% if messageAttachments|length > 0 %}
-      <h6 class="primary-color">{{ 'operatori.allegati_messaggi' | trans }}</h6>
-      {% for allegato in messageAttachments %}
-        <div class="row align-items-center text-center mt-3 mb-5">
-          <div class="col-2">
-            {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
-              <i class="fa fa-2x fa-file-pdf-o"></i>
-            {% else %}
-              <i class="fa fa-2x fa-file-o"></i>
-            {% endif %}
-          </div>
-          <div class="col-6 text-truncate">
-            {{ allegato.originalFilename }}
-          </div>
-          <div class="col-2">
-            {{ allegato.getHumanReadableFileSize }}
-          </div>
-          <div class="col-2">
-            <a href="{{ path('allegati_download_operatore', {'allegato': allegato}) }}" download>
-              <svg class="icon icon-primary">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-              </svg>
-            </a>
-          </div>
-        </div>
-      {% endfor %}
-    {% endif %}
+    {{ include('AppBundle:Operatori/parts:allegati.html.twig', {'pratica':pratica}) }}
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel"
        aria-labelledby="messaggi-tab">
@@ -131,4 +81,12 @@
       {{ include('AppBundle:Operatori/parts:dati_protocollo.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
+  {% if ente.isLinkableApplicationMeetings %}
+    <div class="tab-pane py-4 fade {% if tab == 'meetings' %} show active {% endif %}" id="meetings" role="tabpanel"
+         aria-labelledby="meetings-tab">
+      <div class="m-3">
+        {{ include('AppBundle:Operatori/parts:meetings.html.twig', {'pratica':pratica}) }}
+      </div>
+    </div>
+  {% endif %}
 </div>
