@@ -231,6 +231,9 @@ class CalendarsBackOffice implements BackOfficeInterface
         $meeting->setStatus(Meeting::STATUS_APPROVED);
 
       $this->em->persist($meeting);
+
+      $pratica->addMeeting($meeting);
+      $this->em->persist($meeting);
       $this->em->flush();
 
       return $meeting;

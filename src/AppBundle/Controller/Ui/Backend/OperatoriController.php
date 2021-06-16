@@ -13,10 +13,8 @@ use AppBundle\Entity\Message;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
-use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
-use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
@@ -34,6 +32,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
 use JMS\Serializer\Serializer;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -112,6 +111,9 @@ class OperatoriController extends Controller
   /** @var MessageManager */
   private $messageManager;
 
+  /** @var JWTTokenManagerInterface */
+  private $JWTTokenManager;
+
   /**
    * OperatoriController constructor.
    * @param SchemaFactory $schemaFactory
@@ -127,6 +129,7 @@ class OperatoriController extends Controller
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaManager $praticaManager
    * @param MessageManager $messageManager
+   * @param JWTTokenManagerInterface
    */
   public function __construct(
     SchemaFactory $schemaFactory,
@@ -141,7 +144,8 @@ class OperatoriController extends Controller
     MailerService $mailerService,
     ModuloPdfBuilderService $moduloPdfBuilderService,
     PraticaManager $praticaManager,
-    MessageManager $messageManager
+    MessageManager $messageManager,
+    JWTTokenManagerInterface $JWTTokenManager
   )
   {
     $this->schemaFactory = $schemaFactory;
@@ -157,6 +161,7 @@ class OperatoriController extends Controller
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->praticaManager = $praticaManager;
     $this->messageManager = $messageManager;
+    $this->JWTTokenManager = $JWTTokenManager;
   }
 
 
@@ -863,7 +868,10 @@ class OperatoriController extends Controller
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'tab' => $tab,
       'module_protocols' => $moduleProtocols,
-      'outcome_protocols' => $outcomeProtocols
+      'outcome_protocols' => $outcomeProtocols,
+      'token' => $this->JWTTokenManager->create($this->getUser()),
+      'meetings' => $repository->findOrderedMeetings($pratica),
+      'incoming_meetings' => $repository->findIncomingMeetings($pratica)
     ]);
   }
 

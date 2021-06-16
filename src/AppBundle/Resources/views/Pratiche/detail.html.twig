@@ -1,4 +1,6 @@
 {% extends '@App/Default/index.html.twig' %}
+{% set ente = instance_service.getCurrentInstance() %}
+
 {% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
   {{ parent() }}

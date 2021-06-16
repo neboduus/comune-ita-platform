@@ -610,7 +610,8 @@ class PraticheController extends Controller
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'can_compile' => $canCompile,
-      'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica)
+      'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica),
+      'meetings' => $repository->findOrderedMeetings($pratica),
       //'threads' => $thread,
     ];
 

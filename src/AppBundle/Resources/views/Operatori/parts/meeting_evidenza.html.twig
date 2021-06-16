@@ -1,0 +1,46 @@
+<div class="card-wrapper shadow">
+  {% for incoming_meeting in incoming_meetings %}
+    <div class="card card-teaser border-bottom-card">
+      <div class="card-body">
+        <div class="head-tags mb-2">
+          <span class="data text-monospace font-weight-semibold text-primary font-lg text-secondary">
+              {{ incoming_meeting.fromTime | date('d') }} {{ ('calendars.opening_hours.months.short.' ~ (incoming_meeting.fromTime | date('M'))) | trans }} {{ incoming_meeting.fromTime | date('Y') }}
+          </span>
+          <span class="data text-monospace">
+              {{ incoming_meeting.fromTime | date('H:i') }} - {{ incoming_meeting.toTime | date('H:i') }}
+          </span>
+        </div>
+        <h5 class="card-title">
+          <a href="{{ path('operatori_calendar_show', {'calendar': incoming_meeting.calendar.id}) }}">
+            {{ incoming_meeting.calendar.title }}
+          </a>
+          {% if incoming_meeting.videoconferenceLink %}
+            <a href="{{ incoming_meeting.videoconferenceLink }}" target="_blank">
+              <svg class="icon icon-sm icon-primary">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-video"></use>
+              </svg>
+            </a>
+          {% endif %}
+        </h5>
+        <div class="card-text">
+          {% if incoming_meeting.userMessage %}
+            {% if incoming_meeting.userMessage %}
+              <p class="my-2 font-italic">{{ incoming_meeting.userMessage }}</p>
+            {% else %}
+              <p class="font-italic text-secondary">{{ 'operatori.no_meeting_description' | trans }}</p>
+            {% endif %}
+          {% endif %}
+
+          {% if incoming_meeting.status == 0 %}
+            <small>
+              <svg class="icon icon-sm icon-warning">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
+              </svg>
+              {{ 'operatori.meeting_status.pending' | trans }}
+            </small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

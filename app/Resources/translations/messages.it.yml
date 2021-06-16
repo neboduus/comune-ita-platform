@@ -614,6 +614,20 @@ operatori:
   protocollo: 'Protocollo'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
   protocollo_non_previsto: 'Per questa pratica non è prevista la protocollazione'
+  meetings: 'Appuntamenti'
+  meetings_in_evidence: 'Appuntamenti in evidenza'
+  no_meetings: 'Non ci sono appuntamenti collegati a questa pratica'
+  no_meeting_description: 'Motivazione non fornita'
+  go_to_videoconference: 'Vai alla videoconferenza'
+  meeting_actions: 'Azioni'
+  meeting_status:
+    pending: 'In attesa di approvazione'
+    approved: 'Confermato'
+    refused: 'Rifiutato'
+    missed: 'Assente'
+    complete: 'Avvenuto'
+    cancelled: 'Annullato'
+    draft: 'Bozza'
   gateway: "Metodo di pagamento"
   anagrafica_pagatore: "Anagrafica pagatore"
   email_pagatore: "Email pagatore"
@@ -632,7 +646,7 @@ operatori:
     emails: 'Recapitato a'
     no_emails_info: 'Informazione non disponibile'
     testo_messaggio: 'Testo del messaggio'
-    no_attachments: 'Non sono presenti allegati a questa pratica'
+    no_attachments: 'Non sono presenti allegati collegati a questa pratica'
     anonymous: 'Questa funzionalità non è disponibile agli utenti anonimi'
     no_operator: 'Non è possibile inviare o ricevere messaggi finchè la pratica non viene presa in carico da un operatore'
     allega_label: "Documenti allegati"
@@ -1927,6 +1941,20 @@ calendars:
     remove: "Elimina apertura"
     no_opening_hours: "Non sono presenti orari di apertura"
     opening_hours: "Orari di apertura"
+    months:
+      short:
+        Jan: 'Gen'
+        Feb: 'Feb'
+        Mar: 'Mar'
+        Apr: 'Apr'
+        May: 'Mag'
+        Jun: 'Giu'
+        Jul: 'Lug'
+        Aug: 'Ago'
+        Sep: 'Set'
+        Oct: 'Ott'
+        Nov: 'Nov'
+        Dec: 'Dic'
     weeks:
       week_day_1: "Lunedì"
       week_day_2: "Martedì"
@@ -1994,6 +2022,7 @@ meetings:
     notification_alert_confirm: "la modifica della data comporterà l'invio di una notifica al cittadino e la conferma automatica dell'appuntamento"
     motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullameto dell'appuntamento"
     status_change_helper: "E' possibile registrare se l'appuntamento è avvenuto come previsto"
+    no_status_actions: "Non ci sono azioni disponibili per questo appuntamento"
     confirm_edit:
       status_1: "L'approvazione dell'appuntamento comporterà l'invio di una notifica al cittadino. Sei sicuro di voler procedere?"
       status_2: "Il rifiuto dell'appuntamento comporterà l'invio di una notifica al cittadino. Sei sicuro di voler procedere?"
@@ -2129,6 +2158,11 @@ app_io:
   errore:
     parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
   admin_helper: "Per poter utilizzare questa integrazione è necessario configurare ogni servizio per il quale si desidera attivare le notifiche "
+
+ente:
+  linkable_application_meetings:
+    label: 'Abilita il collegamento tra pratiche e appuntamenti'
+    helper: "Abilitando quest'opzione sarà possibile visualizzare ed interagire con le prenotazioni collegate alla pratica nella sezione di dettaglio della pratica stessa"
 
 buttons:
   draft: 'Salva bozza'

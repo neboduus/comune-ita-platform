@@ -500,6 +500,16 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $folderId;
 
   /**
+   * @ORM\ManyToMany (targetEntity="AppBundle\Entity\Meeting")
+   * @ORM\JoinTable(name="application_meetings",
+   *      joinColumns={@ORM\JoinColumn(name="application_id", referencedColumnName="id")},
+   *      inverseJoinColumns={@ORM\JoinColumn(name="meeting_id", referencedColumnName="id", unique=true)}
+   *      )
+   * @var ArrayCollection
+   */
+  private $meetings;
+
+  /**
    * Pratica constructor.
    */
   public function __construct()
@@ -522,6 +532,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->lastCompiledStep = 0;
     $this->richiesteIntegrazione = new ArrayCollection();
     $this->children = new ArrayCollection();
+    $this->meetings = new ArrayCollection();
   }
 
   public function __clone()
@@ -2155,4 +2166,32 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     return $history;
   }
 
+  /**
+   * @return Collection
+   */
+  public function getMeetings()
+  {
+    return $this->meetings;
+  }
+
+  /**
+   * @param ArrayCollection $meetings
+   *
+   * @return $this
+   */
+  public function setMeetings(ArrayCollection $meetings)
+  {
+    $this->meetings = $meetings;
+
+    return $this;
+  }
+
+  public function addMeeting(Meeting $meeting)
+  {
+    if (!$this->meetings->contains($meeting)) {
+      $this->meetings->add($meeting);
+    }
+
+    return $this;
+  }
 }

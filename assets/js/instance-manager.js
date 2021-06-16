@@ -4,6 +4,23 @@ require("jquery"); // Load jQuery as a module
 
 $(document).ready(function () {
 
+  var calendars_integration_checkbox = $('.operatori_calendars_index');
+  if (calendars_integration_checkbox.prop('checked')) {
+    $('#linkable_application_meetings').show();
+  } else {
+    $('#ente_linkable_application_meetings').prop("checked", false);
+    $('#linkable_application_meetings').hide();
+  }
+
+  calendars_integration_checkbox.change(function () {
+    if (calendars_integration_checkbox.prop('checked')) {
+      $('#linkable_application_meetings').show();
+    } else {
+      $('#ente_linkable_application_meetings').prop("checked", false);
+      $('#linkable_application_meetings').hide();
+    }
+  });
+
   var io_checkbok = $('#ente_io_enabled');
   if (io_checkbok.prop('checked')) {
     $('#io_helper').show();

@@ -105,7 +105,14 @@ class EnteType extends AbstractType
         'multiple' => true,
         'required' => false,
         'label' => 'Abilita integrazione con i backoffice',
-      ]);
+        'choice_attr' => function($backoffice) {
+          return ['class' => $backoffice ];
+        },
+      ])
+        ->add('linkable_application_meetings', CheckboxType::class, [
+          'label' => 'ente.linkable_application_meetings.label',
+          'required' => false
+        ]);
     }
 
     $builder->add('gateways', ChoiceType::class, [

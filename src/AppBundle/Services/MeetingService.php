@@ -319,9 +319,9 @@ class MeetingService
           ]);
       }
 
-      if ($meeting->getvideoconferenceLink()) {
+      if ($meeting->getVideoconferenceLink()) {
         $userMessage = $userMessage . $this->translator->trans('meetings.email.meeting_link.new', [
-            'videoconference_link' => $meeting->getvideoconferenceLink()
+            'videoconference_link' => $meeting->getVideoconferenceLink()
           ]);
       }
     } else return;
@@ -433,7 +433,7 @@ class MeetingService
     $hour = $meeting->getFromTime()->format('H:i');
     $location = $calendar->getLocation();
     $contact = $calendar->getContactEmail();
-    $link = $meeting->getvideoconferenceLink();
+    $link = $meeting->getVideoconferenceLink();
 
     /*
      * invio email se:

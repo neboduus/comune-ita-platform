@@ -1,244 +1,267 @@
 {% extends '@App/Default/index.html.twig' %}
-{% block stylesheets %}
-  {{ encore_entry_link_tags('operator-show-application') }}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
-        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
-        crossorigin="anonymous"/>
+{% set ente = instance_service.getCurrentInstance() %}
 
-  <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
+{% block stylesheets %}
+    {{ encore_entry_link_tags('operator-show-application') }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+          integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+          crossorigin="anonymous"/>
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
 {% endblock %}
 
 {% block javascripts %}
-  {{ encore_entry_script_tags('operator-show-application') }}
+    {{ encore_entry_script_tags('operator-show-application') }}
 
-  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-          crossorigin="anonymous"></script>
+    <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
-  <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
-  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
+    <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
 
-  {% if feature('feature_application_detail') %}
-    <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
-    <script>
-      let vueBundledDataMessage = {
-        "attachments": [],
-        "upload_url": "{{ path('operatore_allegato_messaggio_upload', {'id': pratica.id }) }}"
-      };
-      new Vue({
-        el: "#vueApp2"
-      });
-    </script>
-  {% endif %}
+    {% if feature('feature_application_detail') %}
+        <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
+        <script>
+            let vueBundledDataMessage = {
+                "attachments": [],
+                "upload_url": "{{ path('operatore_allegato_messaggio_upload', {'id': pratica.id }) }}"
+            };
+            new Vue({
+                el: "#vueApp2"
+            });
+        </script>
+    {% endif %}
 
-  {% if outcomeForm.vars.helper.vueApp and pratica.operatore == user and pratica.canBeAssigned %}
-    <script src="{{ asset('bundles/app/js/components/' ~ outcomeForm.vars.helper.vueApp ~ '.js') }}"></script>
-    <script>
-      let vueBundledData = {{ outcomeForm.vars.helper.vueBundledData|raw }};
-      new Vue({
-        el: "#vueApp"
-      });
-    </script>
-  {% endif %}
+    {% if outcomeForm.vars.helper.vueApp and pratica.operatore == user and pratica.canBeAssigned %}
+        <script src="{{ asset('bundles/app/js/components/' ~ outcomeForm.vars.helper.vueApp ~ '.js') }}"></script>
+        <script>
+            let vueBundledData = {{ outcomeForm.vars.helper.vueBundledData|raw }};
+            new Vue({
+                el: "#vueApp"
+            });
+        </script>
+    {% endif %}
+
+    {% if ente.isLinkableApplicationMeetings %}
+        <script>
+            function editMeetingStatus(btnId, changeStatus) {
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${$('#hidden').attr('data-token')}`
+                    },
+                    url: $(`#${btnId}`).attr('data-url'),
+                    type: 'PATCH',
+                    data: JSON.stringify({
+                        status: changeStatus,
+                    }),
+                    success: function (response, textStatus, jqXhr) {
+                        location.reload();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(`Si è verificato un errore durante il salvataggio dell\'appuntamento`);
+                    },
+                });
+            }
+        </script>
+    {% endif %}
 
 {% endblock %}
 
 
 {% block main_content %}
-  <section id="intro" class="container px-4 my-4">
-    <div class="row">
-      <div class="col px-lg-4 py-lg-2">
-        <div class="chip chip-primary chip-lg truncate-wrapper">
-          <span class="chip-label text-truncate"> {{ pratica.servizio.name}}</span>
-        </div>
-        <span class="h4 primary-color">[{{ pratica.statusName | trans }}]</span>
-      </div>
-      <div class="col-12 px-lg-4 py-lg-2">
-        <div class="my-2">
-          <h3 class="d-inline">{{ pratica.user.fullName }}</h3>
-          <h4 class="d-inline pl-md-3">
-            {{ fiscal_code }}
-            {% if pratica.user.idp != "anonymous" %}
-              <span data-toggle="tooltip" title="Identità del cittadino verificata">
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col px-lg-4 py-lg-2">
+                <div class="chip chip-primary chip-lg truncate-wrapper">
+                    <span class="chip-label text-truncate"> {{ pratica.servizio.name }}</span>
+                </div>
+                <span class="h4 primary-color">[{{ pratica.statusName | trans }}]</span>
+            </div>
+            <div class="col-12 px-lg-4 py-lg-2">
+                <div class="my-2">
+                    <h3 class="d-inline">{{ pratica.user.fullName }}</h3>
+                    <h4 class="d-inline pl-md-3">
+                        {{ fiscal_code }}
+                        {% if pratica.user.idp != "anonymous" %}
+                            <span data-toggle="tooltip" title="Identità del cittadino verificata">
                 <svg class="icon icon-success"><use
-                    xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
+                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
               </span>
-            {% endif %}
-          </h4>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-8 px-lg-4 py-lg-2">
-        {% if pratica.operatore %}
-          {% if pratica.operatore == user %}
-            {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
-
-            {% if pratica.isInFinalStates and pratica.servizio.allowReopening %}
-              <div class="row mb-3">
-                <div class="col d-flex justify-content-center">
-                  <a class="btn btn-outline-warning"
-                     href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
-                    <svg class="icon icon-warning icon-sm">
-                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
-                    </svg>
-                    {{ 'operatori.riapri_pratica' | trans }}
-                  </a>
+                        {% endif %}
+                    </h4>
                 </div>
-              </div>
-            {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 px-lg-4 py-lg-2">
+                {% if pratica.operatore %}
+                    {% if pratica.operatore == user %}
+                        {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
 
-          {% else %}
-            {{ include('@App/Operatori/parts/riassegna.html.twig') }}
-          {% endif %}
-        {% else %}
-          {% if pratica.status == 1900 %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.attesa_modulo_compilato'|trans }}
-              </div>
-            </div>
-          {% elseif pratica.status > 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.attesa_modulo_protocollato'|trans }}
-              </div>
-            </div>
-          {% elseif pratica.servizio.isPaymentRequired and pratica.status <= 1510 %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.attesa_pagamento'|trans }}
-              </div>
-            </div>
-          {% elseif pratica.status == 20000 %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.pratica_ritirata'|trans({
-                  '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),
-                  '%ore%': pratica.latestStatusChangeTimestamp | date('H:i:s')})| raw }}
-              </div>
-            </div>
-          {% else %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                <a class="btn btn-primary" href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
-                  <svg class="icon icon-light" href="#">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
-                  </svg>
-                  {{ 'operatori.prendi_in_carico_pratica' | trans }}
-                </a>
-              </div>
-            </div>
-          {% endif %}
-        {% endif %}
-        {{ include('@App/Operatori/parts/pratica_summary.html.twig') }}
-      </div>
-      <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
-        <div class="row pl-4">
-          <div class="col-5">
-            <div class="dropdown">
-              <a class="btn btn-sm btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownDownload"
-                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <svg class="icon icon-sm">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-                </svg>
-                Scarica
-              </a>
-              <div class="dropdown-menu" aria-labelledby="dropdownDownload">
-                <div class="link-list-wrapper">
-                  <ul class="link-list">
-                    <li>
-                      {% if pratica.moduliCompilati|length > 0 %}
-                        <a class="list-item"
-                           href="{{ path('allegati_download_operatore', {'allegato': pratica.moduliCompilati[0]}) }}">
-                          <svg class="icon icon-sm">
-                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-                          </svg>
-                          {{ 'operatori.scarica' | trans }}
-                        </a>
-                      {% else %}
-                        <a class="list-item disabled" href="#">
-                          <svg class="icon icon-sm">
-                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-                          </svg>
-                          {{ 'operatori.scarica' | trans }}
-                        </a>
-                      {% endif %}
-                    </li>
-                    {% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
-                      {% if pratica.rispostaOperatore %}
-                        <li>
-                          <a class="list-item"
-                             href="{{ path('risposta_download_operatore', {'allegato': pratica.rispostaOperatore.id}) }}">
-                            <svg class="icon icon-sm">
-                              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-                            </svg>
-                            {{ 'operatori.scarica_risposta_firmata'|trans }}
-                          </a>
-                        </li>
-                      {% endif %}
+                        {% if pratica.isInFinalStates and pratica.servizio.allowReopening %}
+                            <div class="row mb-3">
+                                <div class="col d-flex justify-content-center">
+                                    <a class="btn btn-outline-warning"
+                                       href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
+                                        <svg class="icon icon-warning icon-sm">
+                                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                                        </svg>
+                                        {{ 'operatori.riapri_pratica' | trans }}
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    {% else %}
+                        {{ include('@App/Operatori/parts/riassegna.html.twig') }}
                     {% endif %}
-                  </ul>
+                {% else %}
+                    {% if pratica.status == 1900 %}
+                        <div class="row mb-5">
+                            <div class="col-12 d-flex justify-content-center">
+                                {{ 'operatori.attesa_modulo_compilato'|trans }}
+                            </div>
+                        </div>
+                    {% elseif pratica.status > 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
+                        <div class="row mb-5">
+                            <div class="col-12 d-flex justify-content-center">
+                                {{ 'operatori.attesa_modulo_protocollato'|trans }}
+                            </div>
+                        </div>
+                    {% elseif pratica.servizio.isPaymentRequired and pratica.status <= 1510 %}
+                        <div class="row mb-5">
+                            <div class="col-12 d-flex justify-content-center">
+                                {{ 'operatori.attesa_pagamento'|trans }}
+                            </div>
+                        </div>
+                    {% elseif pratica.status == 20000 %}
+                        <div class="row mb-5">
+                            <div class="col-12 d-flex justify-content-center">
+                                {{ 'operatori.pratica_ritirata'|trans({
+                                    '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),
+                                    '%ore%': pratica.latestStatusChangeTimestamp | date('H:i:s')})| raw }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row mb-5">
+                            <div class="col-12 d-flex justify-content-center">
+                                <a class="btn btn-primary"
+                                   href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
+                                    <svg class="icon icon-light" href="#">
+                                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                                    </svg>
+                                    {{ 'operatori.prendi_in_carico_pratica' | trans }}
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                {{ include('@App/Operatori/parts/pratica_summary.html.twig') }}
+            </div>
+            <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
+                {% if ente.isLinkableApplicationMeetings and incoming_meetings | length > 0 %}
+                    <div class="row pl-4">
+                        <div id="accordion_meetings" class="collapse-div w-100 border-0" role="tablist">
+                            <div class="collapse-header" id="headingA1">
+                                <button data-toggle="collapse" data-target="#acc_meetings" aria-expanded="true"
+                                        aria-controls="acc_meetings">
+                                    {{ 'operatori.meetings_in_evidence' | trans }}
+                                </button>
+                            </div>
+                            <div id="acc_meetings" class="collapse show" role="tabpanel" aria-labelledby="headingA1"
+                                 data-parent="#accordion_meetings">
+                                <div class="collapse-body p-0">
+                                    {{ include('@App/Operatori/parts/meeting_evidenza.html.twig') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row my-4 pl-4">
+                    {% if pratica.type == 'form_io' %}
+                        <div class="col-12 pb-3">
+                            <h6>{{ 'pratica.numero' | trans }}:</h6>
+                            <code class="text-nowrap">{{ pratica.id }}</code>
+                        </div>
+                        <div class="col-12 pb-3">
+                            <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
+                            <span
+                                    class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
+                        </div>
+                        {% if  pratica.numeroProtocollo %}
+                            <div class="col-12 pb-3">
+                                <h6>{{ 'pratica.protocollo' | trans }}:</h6>
+                                <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    {% if  pratica.operatore %}
+                        <div class="col-12 pb-3">
+                            <h6>{{ 'pratica.operatore' | trans }}:</h6>
+                            <p class="m-0">{{ pratica.operatore.fullName }}</p>
+                        </div>
+                    {% endif %}
+                    {% if applications_in_folder|length > 0 %}
+                        <div class="col-12 pb-3">
+                            <div id="accordion_fascicolo" class="collapse-div w-100 border-0" role="tablist">
+                                <div class="collapse-header" id="heading_fascicolo">
+                                    <button data-toggle="collapse" data-target="#acc_fascicolo" aria-expanded="true"
+                                            aria-controls="acc_fascicolo">
+                                        {{ 'operatori.fascicolo' | trans }}
+                                    </button>
+                                </div>
+                                <div id="acc_fascicolo" class="collapse show" role="tabpanel"
+                                     aria-labelledby="heading_fascicolo" data-parent="#accordion_fascicolo">
+                                    <div class="collapse-body p-0">
+                                        {{ include('@App/Operatori/parts/fascicolo.html.twig') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if pratiche_recenti|length > 0 %}
+                        <div class="col-12 pb-3">
+                            <div id="accordion_recent_applications" class="collapse-div w-100 border-0" role="tablist">
+                                <div class="collapse-header" id="heading_recent_applications">
+                                    <button data-toggle="collapse" data-target="#acc_recent_applications"
+                                            aria-expanded="true" aria-controls="acc_recent_applications">
+                                        {{ 'operatori.ultime_pratiche' | trans }}
+                                    </button>
+                                </div>
+                                <div id="acc_recent_applications" class="collapse show" role="tabpanel"
+                                     aria-labelledby="heading_recent_applications"
+                                     data-parent="#accordion_recent_applications">
+                                    <div class="collapse-body p-0">
+                                        {{ include('@App/Operatori/parts/pratiche_recenti.html.twig') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="col-12 pb-3">
+                        <div id="accordion_iter" class="collapse-div w-100 border-0" role="tablist">
+                            <div class="collapse-header" id="heading_iter">
+                                <button data-toggle="collapse" data-target="#acc_iter" aria-expanded="true"
+                                        aria-controls="acc_iter">
+                                    {{ 'pratica.iter' | trans }}
+                                </button>
+                            </div>
+                            <div id="acc_iter" class="collapse show" role="tabpanel" aria-labelledby="heading_iter"
+                                 data-parent="#accordion_iter">
+                                <div class="collapse-body p-0">
+                                    {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-
-          </div>
-          <div class="col-7">
-            <a id="write-to-citizen" class="btn btn-sm btn-outline-secondary" href="#">
-              <svg class="icon icon-sm">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
-              </svg>
-              {{ 'operatori.scrivi_al_cittadino' | trans }}
-            </a>
-          </div>
         </div>
-
-        <div class="row my-4 pl-4">
-          {% if pratica.type == 'form_io' %}
-            <div class="col-12 pb-3">
-              <h6>{{ 'pratica.numero' | trans }}:</h6>
-              <code class="text-nowrap">{{ pratica.id }}</code>
-            </div>
-            <div class="col-12 pb-3">
-              <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
-              <span
-                class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
-            </div>
-            {% if  pratica.numeroProtocollo %}
-              <div class="col-12 pb-3">
-                <h6>{{ 'pratica.protocollo' | trans }}:</h6>
-                <code class="text-nowrap">{{ pratica.numeroProtocollo }}</code>
-              </div>
-            {% endif %}
-          {% endif %}
-          {% if  pratica.operatore %}
-            <div class="col-12 pb-3">
-              <h6>{{ 'pratica.operatore' | trans }}:</h6>
-              <p class="m-0">{{ pratica.operatore.fullName }}</p>
-            </div>
-          {% endif %}
-          {% if applications_in_folder|length > 0 %}
-            <div class="col-12 pb-3">
-              <h6>{{ 'operatori.fascicolo' | trans }}</h6>
-              {{ include('@App/Operatori/parts/fascicolo.html.twig') }}
-            </div>
-          {% endif %}
-          {% if pratiche_recenti|length > 0 %}
-            <div class="col-12 pb-3">
-              <h6>{{ 'operatori.ultime_pratiche' | trans }}</h6>
-              {{ include('@App/Operatori/parts/pratiche_recenti.html.twig') }}
-            </div>
-          {% endif %}
-          <div class="col-12 pb-3">
-            <h6>{{ 'pratica.iter' | trans }}</h6>
-            {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 {% endblock %}
 

@@ -23,6 +23,13 @@
        aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
       {{ 'operatori.pagamento' | trans }}
     </a>
+    {% if ente.isLinkableApplicationMeetings %}
+      <a class="nav-item nav-link {% if tab == 'meetings' %} active {% endif %}" id="meetings-tab" data-toggle="tab"
+         href="#meetings" role="tab"
+         aria-controls="meetings" aria-selected="{{ tab and tab == 'meetings' }}">
+        {{ 'operatori.meetings' | trans }}
+      </a>
+    {% endif %}
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -108,4 +115,12 @@
        aria-labelledby="pagamento-tab">
     {{ include('@App/Pratiche/summary/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
   </div>
+  {% if ente.isLinkableApplicationMeetings %}
+    <div class="tab-pane py-4 fade {% if tab == 'meetings' %} show active {% endif %}" id="meetings" role="tabpanel"
+         aria-labelledby="meetings-tab">
+      <div class="m-3">
+        {{ include('@App/Pratiche/summary/parts/meetings.html.twig', {'pratica':pratica}) }}
+      </div>
+    </div>
+  {% endif %}
 </div>

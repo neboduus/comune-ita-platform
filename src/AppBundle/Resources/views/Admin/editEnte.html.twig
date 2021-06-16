@@ -124,6 +124,10 @@
 
           <div class="tab-pane p-2 fade" id="options" role="tabpanel" aria-labelledby="options-tab">
             {{ form_row(form.backoffice_enabled_integrations) }}
+            <div id="linkable_application_meetings" class="form-group">
+              {{ form_widget(form.linkable_application_meetings) }}
+              <span class="text-info px-2"><i class="fa fa-info-circle"></i> {{ 'ente.linkable_application_meetings.helper' | trans }} </span>
+            </div>
           </div>
 
           <div class="tab-pane p-2 fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
