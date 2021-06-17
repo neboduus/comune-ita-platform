@@ -18,12 +18,6 @@ class RispostaIntegrazione extends Allegato
   const TYPE_DEFAULT = 'risposta_integrazione';
 
   /**
-   * @ORM\Column(type="string", nullable=true)
-   * @var string
-   */
-  private $idDocumentoProtocollo;
-
-  /**
    * @ORM\Column(type="json_array", options={"jsonb":true})
    * @var \JsonSerializable
    */
@@ -40,25 +34,6 @@ class RispostaIntegrazione extends Allegato
     parent::__construct();
     $this->type = self::TYPE_DEFAULT;
     $this->status = self::STATUS_PENDING;
-  }
-
-  /**
-   * @return string|null
-   */
-  public function getIdDocumentoProtocollo()
-  {
-    return $this->idDocumentoProtocollo;
-  }
-
-  /**
-   * @param string $idDocumentoProtocollo
-   * @return RispostaIntegrazione
-   */
-  public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
-  {
-    $this->idDocumentoProtocollo = $idDocumentoProtocollo;
-
-    return $this;
   }
 
   /**
