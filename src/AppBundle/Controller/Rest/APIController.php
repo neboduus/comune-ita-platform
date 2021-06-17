@@ -22,7 +22,7 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
  * @property EntityManager em
  * @property InstanceService is
  * @package AppBundle\Controller
- * @Route("/api/v1.0")
+ * @Route("/v1.0")
  */
 class APIController extends AbstractFOSRestController
 {

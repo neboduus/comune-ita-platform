@@ -63,6 +63,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
   protected $em;
 
   protected $userSessionService;
+  private $locale;
 
   /**
    * PraticaFlow constructor.
@@ -75,7 +76,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
    * @param SchemaFactoryInterface $formIOFactory
    * @param EntityManagerInterface $em
    * @param UserSessionService $userSessionService
-   *
+   * @param $locale
    */
   public function __construct(
     LoggerInterface $logger,
@@ -86,7 +87,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $prefix,
     SchemaFactoryInterface $formIOFactory,
     EntityManagerInterface $em,
-    UserSessionService $userSessionService
+    UserSessionService $userSessionService,
+    $locale
   )
   {
     $this->logger = $logger;
@@ -98,6 +100,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $this->formIOFactory = $formIOFactory;
     $this->em = $em;
     $this->userSessionService = $userSessionService;
+    $this->locale = $locale;
   }
 
   public function getFormOptions($step, array $options = array())
@@ -106,7 +109,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
     /** @var Pratica $pratica */
     $pratica = $this->getFormData();
-    $options["helper"] = new TestiAccompagnatoriProcedura($this->translator, $this->prefix);
+    $options["helper"] = new TestiAccompagnatoriProcedura($this->translator, $this->prefix . '/' . $this->locale);
 
     return $options;
   }

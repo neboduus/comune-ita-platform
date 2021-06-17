@@ -36,7 +36,7 @@ use Symfony\Component\VarDumper\VarDumper;
 /**
  * Class APIController
  * @package AppBundle\Controller
- * @Route("/api/v1.0")
+ * @Route("/v1.0")
  */
 class GiscomAPIController extends Controller
 {
