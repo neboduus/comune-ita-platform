@@ -81,14 +81,16 @@ class PraticaRepository extends EntityRepository
   public function findEvidencePraticaForUser(CPSUser $user)
   {
     $timeDiff = "-7 days";
-    $qb = $this->createQueryBuilder('p')
-      ->where('p.status IN (:statues)')
-      ->setParameter('statues', [Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION])
-      ->orWhere('p.latestStatusChangeTimestamp >= (:timediff)')
-      //->setParameter('timezone', $timeZone)
+    $qb = $this->createQueryBuilder('p');
+    $qb
+      ->where('p.user = :user')
+      ->andWhere('p.status IN (:statues)')
+      ->orWhere('p.latestStatusChangeTimestamp >= :timediff AND p.user = :user')
+      ->setParameter('user', $user->getId())
       ->setParameter('timediff', strtotime($timeDiff))
-      //->andWhere('s.sticky = false OR s.sticky IS NULL')
-      ->orderBy('p.latestStatusChangeTimestamp', 'DESC');
+      ->setParameter('statues', [Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION])
+      ->orderBy('p.status', 'ASC')
+      ->addOrderBy('p.latestStatusChangeTimestamp', 'DESC');
     return $qb->getQuery()->getResult();
   }
 
