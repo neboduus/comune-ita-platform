@@ -35,7 +35,7 @@
                                 <span style="flex:1">Pratica del {{ p.creationTime|date(ocsdc_default_date_format) }}</span>
                               </a>
                               {% if p.status == constant('STATUS_PAYMENT_PENDING', p) %}
-                                <small><span class="badge badge-info">Da pagare</span></small>
+                                <small><span class="badge badge-secondary">Da pagare</span></small>
                               {% elseif p.status == constant('STATUS_DRAFT_FOR_INTEGRATION', p) %}
                                 <small><span class="badge badge-warning">Da integrare</span></small>
                               {% elseif p.status == constant('STATUS_COMPLETE', p) %}
