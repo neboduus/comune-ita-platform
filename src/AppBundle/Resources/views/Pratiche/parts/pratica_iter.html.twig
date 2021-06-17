@@ -1,62 +1,21 @@
 {% set duration = pratica|iter_duration(app.request.locale) %}
-
-<div class="p-2 border pt-5 callout" style="background: #efefef">
-  <div class="callout-title border rounded py-1 px-2" >
-    {{ 'pratica.iter'|trans }}
-  </div>
-  <div class="body">
-    <div class="iter-timeline-wrapper pt-4{% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %} done{% endif %}">
-      <div class="row pt-0">
-        {% for timestamp, changes in pratica.storicoStati %}
-          {% for change in changes %}
-            <div class="col-12">
-              <div class="timeline-element">
-                <div class="it-pin-wrapper it-evidence">
-                  {% if (change[0] == 1900 and pratica.status == 1900) or (change[0] == 2000 and pratica.status == 2000 and pratica.servizio.isProtocolRequired) %}
-                    <div class="pin-icon in-progress">
-                      <i class="fa fa-refresh fa-spin fa-fw"></i>
-                    </div>
-                  {% else %}
-                    <div class="pin-icon">
-                      <svg class="icon">
-                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
-                      </svg>
-                    </div>
-                  {% endif %}
-                  <div class="pin-text"><span class="p-1">{{ timestamp|date(ocsdc_default_datetime_format) }}</span></div>
-                </div>
-                <div class="card-wrapper">
-                  <div class="card no-after" style="background: #efefef">
-                    <div class="card-body">
-                      <div class="category-top">
-                        <a class="text-decoration-none" href="#">
-                          {% if change[0] == 1900 and pratica.status == 1900 %}
-                              {{ 'operatori.attesa_ricevuta'|trans }}
-                          {% elseif change[0] == 2000 and pratica.status == 2000 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
-                            {{ 'pratica.in_attesa_protocollo'| trans }}
-                          {% elseif change[0] == 4300 %}
-                            {% if pratica.type == 'form_io'  %}
-                              {{ ('pratica.dettaglio.stato_'~change[0] )| trans }}
-                            {% else %}
-                              {{ ('pratica.dettaglio.stato_'~change[0]~'_legacy')| trans }}
-                            {% endif %}
-                          {% else %}
-                              {{ ('pratica.dettaglio.stato_'~change[0])| trans }}
-                          {% endif %}
-                        </a>
-                      </div>
-                      {% if change[1] is defined and change[1]['message'] is defined  and change[1]['message'] is not null %}
-                        <p class="card-text"><em>Motivo: {{ change[1]['message'] }}</em></p>
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
+ <div class="it-page-section anchor-offset">
+  <h6> {{ 'pratica.iter'|trans }} </h6>
+<div class="point-list-wrapper my-4">
+  {% for timestamp, changes in pratica.storicoStati %}
+    {% for change in changes %}
+      <div class="point-list">
+        <div class="point-list-aside point-list-primary">
+        </div>
+        <div class="point-list-content">
+          <div class="card card-teaser rounded p-2">
+            <div class="card-body">
+              <b>{{ ('pratica.dettaglio.stato_'~change[0])| trans }}</b>
+              <small class="d-block">il {{ timestamp|date('d/m/Y') }} alle {{ timestamp|date('H:i') }}</small>
             </div>
-          {% endfor %}
-        {% endfor %}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    {% endfor %}
+  {% endfor %}
 </div>
-<style>.iter-timeline-wrapper .row::after {bottom: 46px;}.iter-timeline-wrapper.done .row::after {bottom: 80px;}</style>
