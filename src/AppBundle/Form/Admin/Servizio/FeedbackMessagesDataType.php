@@ -66,6 +66,7 @@ class FeedbackMessagesDataType extends AbstractType
       Pratica::STATUS_COMPLETE => 'Iter completato',
       Pratica::STATUS_CANCELLED => 'Rifiutata',
       Pratica::STATUS_WITHDRAW => 'Ritirata',
+      Pratica::STATUS_DRAFT => 'Bozza',
     ];
 
     /** @var Servizio $service */
@@ -108,7 +109,7 @@ class FeedbackMessagesDataType extends AbstractType
       );
 
       $defaultIsActive = true;
-      if ($k == Pratica::STATUS_PENDING) {
+      if ($k == Pratica::STATUS_PENDING || $k == Pratica::STATUS_DRAFT) {
         $defaultIsActive = false;
       }
       $temp->setIsActive(
