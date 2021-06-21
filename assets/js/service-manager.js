@@ -16,6 +16,9 @@ Formio.registerComponent('financial_report', FinancialReport);
 
 $(document).ready(function () {
 
+  let draftMessage = $('#feedback_messages_data_feedback_messages_7_is_active');
+  draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
+
   const serviceStatus = $('#general_data_status');
   const scheduledFrom = $('#general_data_scheduled_from').parent();
   const scheduledTo = $('#general_data_scheduled_to').parent();
