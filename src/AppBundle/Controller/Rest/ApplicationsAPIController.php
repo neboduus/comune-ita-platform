@@ -7,18 +7,22 @@ use AppBundle\Dto\Application;
 use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
+use AppBundle\Entity\FormIO;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
+use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Model\PaymentOutcome;
 use AppBundle\Model\MetaPagedList;
 use AppBundle\Model\LinksPagedList;
 use AppBundle\Model\Transition;
 use AppBundle\Model\File as FileModel;
+use AppBundle\PraticaEvents;
 use AppBundle\Security\Voters\ApplicationVoter;
+use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
@@ -26,10 +30,12 @@ use AppBundle\Services\PraticaStatusService;
 use AppBundle\Utils\UploadedBase64File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -37,6 +43,7 @@ use League\Csv\Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
@@ -60,10 +67,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
- * Class ServicesAPIController
- * @property EntityManagerInterface em
- * @property InstanceService is
- * @package AppBundle\Controller
+ * Class ApplicationsAPIController
  * @Route("/applications")
  */
 class ApplicationsAPIController extends AbstractFOSRestController
@@ -109,6 +113,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
     'description' => 'Withdraw Application',
   ];
 
+  /** @var EntityManagerInterface */
+  private $em;
+
+  /** @var InstanceService */
+  private $is;
+
   /** @var PraticaStatusService */
   private $statusService;
 
@@ -128,6 +138,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @var PraticaManager
    */
   private $praticaManager;
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerService;
+  /**
+   * @var EventDispatcherInterface
+   */
+  private $dispatcher;
 
   /**
    * ApplicationsAPIController constructor.
@@ -139,6 +157,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param LoggerInterface $logger
    * @param TranslatorInterface $translator
    * @param PraticaManager $praticaManager
+   * @param FormServerApiAdapterService $formServerService
+   * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(
     EntityManagerInterface $em,
@@ -148,7 +168,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     UrlGeneratorInterface $router,
     LoggerInterface $logger,
     TranslatorInterface $translator,
-    PraticaManager $praticaManager
+    PraticaManager $praticaManager,
+    FormServerApiAdapterService $formServerService,
+    EventDispatcherInterface $dispatcher
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -159,6 +181,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->logger = $logger;
     $this->translator = $translator;
     $this->praticaManager = $praticaManager;
+    $this->formServerService = $formServerService;
+    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -238,7 +262,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   public function getApplicationsAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $offset = intval($request->get('offset', 0));
     $limit = intval($request->get('limit', 10));
@@ -417,6 +441,165 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
+   * Create an Application
+   * @Rest\Post(name="applications_api_post")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Application",
+   *     in="body",
+   *     type="json",
+   *     description="The application to create",
+   *     required=true,
+   *     @SWG\Schema(
+   *         type="object",
+   *         ref=@Model(type=Application::class, groups={"write"})
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=201,
+   *     description="Create an Application"
+   * )
+   *
+   * @SWG\Response(
+   *     response=400,
+   *     description="Bad request"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Tag(name="applications")
+   *
+   * @param Request $request
+   * @return \FOS\RestBundle\View\View
+   */
+  public function postApplicationAction(Request $request)
+  {
+    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+
+    $applicationDto = new Application();
+    $form = $this->createForm('AppBundle\Form\Rest\ApplicationFormType', $applicationDto);
+    $this->processForm($request, $form);
+
+    if ($form->isSubmitted() && !$form->isValid()) {
+      $errors = $this->getErrorsFromForm($form);
+      $data = [
+        'type' => 'validation_error',
+        'title' => 'There was a validation error',
+        'errors' => $errors,
+      ];
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    try {
+      $service = $this->em->getRepository('AppBundle:Servizio')->find($applicationDto->getService());
+      if (!$service instanceof Servizio) {
+        return $this->view(["Service not found"], Response::HTTP_BAD_REQUEST);
+      }
+    } catch (DriverException $e) {
+      return $this->view(["Service uuid is not formally correct"], Response::HTTP_BAD_REQUEST);
+    }
+
+    $schema = null;
+    $result = $this->formServerService->getFormSchema($service->getFormIoId());
+    if ($result['status'] == 'success') {
+      $schema = $result['schema'];
+    }
+
+    $flatSchema = $this->praticaManager->arrayFlat($schema, true);
+    $flatData = $this->praticaManager->arrayFlat($applicationDto->getData());
+
+    if (empty($applicationDto->getData())) {
+      return $this->view(["Empty application are not allowed"], Response::HTTP_BAD_REQUEST);
+    }
+
+    foreach ($flatData as $k => $v) {
+      if (!isset($flatSchema[$k . '.type'])) {
+        return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
+      }
+    }
+
+    $data = [
+      'data' => [],
+      'flattened' => [],
+      'schema' => $flatSchema,
+    ];
+
+    if (!empty($applicationDto->getData())) {
+      $data['data'] = $applicationDto->getData();
+      $data['flattened'] = $flatData;
+    }
+
+    try {
+      $user = $this->em->getRepository('AppBundle:CPSUser')->find($applicationDto->getUser());
+      if (!$user instanceof CPSUser) {
+        $user = $this->praticaManager->checkUser($data);
+      }
+    } catch (DriverException $e) {
+      $user = $this->praticaManager->checkUser($data);
+    } catch (ORMException $e) {
+      $user = $this->praticaManager->checkUser($data);
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
+      return $this->view(["Something is wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    try {
+
+      /** @var FormIO $pratica */
+      $pratica = $applicationDto->toEntity(new FormIO());
+      $pratica->setUser($user);
+      $pratica->setEnte($this->is->getCurrentInstance());
+      $pratica->setServizio($service);
+      $pratica->setStatus(Pratica::STATUS_DRAFT);
+      $pratica->setDematerializedForms($data);
+      $this->em->persist($pratica);
+      $this->em->flush();
+
+
+      if ($applicationDto->getStatus() == Pratica::STATUS_DRAFT) {
+        $this->dispatcher->dispatch(
+          PraticaEvents::ON_STATUS_CHANGE,
+          new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_DRAFT, 0)
+        );
+      } else {
+        $this->pdfBuilder->createForPraticaAsync($pratica, $applicationDto->getStatus());
+      }
+
+    } catch (\Exception $e) {
+
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    return $this->view(
+      Application::fromEntity($pratica, $this->baseUrl.'/'.$pratica->getId()),
+      Response::HTTP_CREATED
+    );
+  }
+
+  /**
    * Retreive application history
    * @Rest\Get("/{id}/history", name="application_api_get_history")
    *
@@ -483,7 +666,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param $id
-   * @return BinaryFileResponse|View
+   * @return Response
    */
   public function attachmentAction($id, $attachmentId)
   {
@@ -748,14 +931,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     try {
-      if (!$application->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_SUBMITTED && $application->getServizio()->isProtocolRequired()) {
+      if (!$application->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_SUBMITTED &&
+           $application->getServizio()->isProtocolRequired()) {
         // Update application status if protocol is enabled and application is submitted
         $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);
       }
       $rispostaOperatore = $application->getRispostaOperatore();
       if ($rispostaOperatore) {
-        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus(
-          ) == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
+        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
           $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
         }
         if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus(
@@ -769,7 +952,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $this->em->flush();
 
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -911,20 +1093,38 @@ class ApplicationsAPIController extends AbstractFOSRestController
         return $this->view("Application can not be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
-      $form = $this->createFormBuilder(null, ['allow_extra_fields' => true,'csrf_protection' => false])
-        ->add('protocol_folder_number', TextType::class, [
-          'constraints' => [new NotBlank(), new NotNull(),
-          ],
-        ])
+      $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
+        ->add(
+          'protocol_folder_number',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
         ->add('protocol_folder_code', TextType::class)
-        ->add('protocol_number', TextType::class, [
-          'constraints' => [new NotBlank(), new NotNull(),
-          ],
-        ])
-        ->add('protocol_document_id', TextType::class, [
-          'constraints' => [new NotBlank(), new NotNull(),
-          ],
-        ])
+        ->add(
+          'protocol_number',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
+        ->add(
+          'protocol_document_id',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
         ->getForm();
       $this->processForm($request, $form);
       if ($form->isSubmitted() && !$form->isValid()) {
@@ -1206,6 +1406,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   private function getErrorsFromForm(FormInterface $form)
   {
     $errors = array();
+
     foreach ($form->getErrors() as $error) {
       $errors[] = $error->getMessage();
     }
@@ -1234,9 +1435,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $services = $repositoryService->findAll();
       /** @var Servizio $service */
       foreach ($services as $service) {
-        $allowedServices []= $service->getId();
+        $allowedServices [] = $service->getId();
       }
     }
+
     return $allowedServices;
   }
 }

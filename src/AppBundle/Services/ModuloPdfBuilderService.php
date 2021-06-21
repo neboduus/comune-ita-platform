@@ -654,16 +654,23 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica|GiscomPratica $pratica
+   * @param bool $nextStatus
    * @throws AlreadyScheduledException
    */
-  public function createForPraticaAsync(Pratica $pratica)
+  public function createForPraticaAsync(Pratica $pratica, $nextStatus = false)
   {
-    $params = serialize(['pratica' => $pratica->getId(),]);
+    $params = [
+      'pratica' => $pratica->getId()
+    ];
+
+    if ($nextStatus) {
+      $params['next_status'] = $nextStatus;
+    }
 
     $this->scheduleActionService->appendAction(
       'ocsdc.modulo_pdf_builder',
       self::SCHEDULED_CREATE_FOR_PRATICA,
-      $params
+      serialize($params)
     );
   }
 
@@ -697,7 +704,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       }
       $pdf = $this->createForPratica($pratica);
       $pratica->addModuloCompilato($pdf);
-      $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+
+      if (isset($params['next_status']) && !empty($params['next_status'])) {
+        $this->statusService->setNewStatus($pratica, $params['next_status'], null, true);
+      } else {
+        $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+      }
     }
   }
 }

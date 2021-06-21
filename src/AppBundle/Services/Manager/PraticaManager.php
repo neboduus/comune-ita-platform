@@ -18,7 +18,11 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -28,6 +32,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class PraticaManager
 {
+  /**
+   * @var
+   */
+  private $schema = false;
+
   /**
    * @var ModuloPdfBuilderService
    */
@@ -466,5 +475,94 @@ class PraticaManager
     $this->entityManager->flush();
 
     return $pratica;
+  }
+
+  /**
+   * @param $array
+   * @param bool $isSchema
+   * @param string $prefix
+   * @return array
+   */
+  public function arrayFlat($array, $isSchema = false, $prefix = '')
+  {
+    $result = array();
+    foreach ($array as $key => $value) {
+
+      if ($key === 'metadata' || $key === 'state') {
+        continue;
+      }
+
+      $isFile = false;
+      if (!$isSchema && isset($this->schema[$key]['type']) &&
+        ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report')) {
+        $isFile = true;
+      }
+      $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
+
+      if (is_array($value) && !$isFile) {
+        $result = array_merge($result, $this->arrayFlat($value, $isSchema, $new_key));
+      } else {
+        $result[$new_key] = $value;
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * @param array $data
+   * @return CPSUser
+   */
+  public function checkUser(array $data): CPSUser
+  {
+    $cf = $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] ?? false;
+
+    $user = null;
+    if ($cf) {
+      //$userRepo = $this->entityManager->getRepository('AppBundle:CPSUser');
+      $qb = $this->entityManager->createQueryBuilder()
+        ->select('u')
+        ->from('AppBundle:CPSUser', 'u')
+        ->andWhere('UPPER(u.username) = :username')
+        ->setParameter('username', strtoupper($cf));
+      try {
+        $user = $qb->getQuery()->getSingleResult();
+      } catch (\Exception $e) {
+      }
+    }
+
+    if (!$user instanceof CPSUser) {
+      $birthDay = null;
+      if (isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl'])) {
+        $birthDay = DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
+      }
+      $user = new CPSUser();
+      $user
+        ->setUsername($cf)
+        ->setCodiceFiscale($cf)
+        ->setSessoAsString($data['flattened']['applicant.gender.gender'] ?? '')
+        ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
+        ->setCpsTelefono($data['flattened']['applicant.data.phone_number'] ?? '')
+        ->setEmail($data['flattened']['applicant.data.email_address'] ?? $user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN)
+        ->setEmailContatto(
+          $data['flattened']['applicant.data.email_address'] ?? $user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN
+        )
+        ->setNome($data['flattened']['applicant.data.completename.data.name'] ?? '')
+        ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
+        ->setDataNascita($birthDay)
+        ->setLuogoNascita(isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : '')
+        ->setSdcIndirizzoResidenza(isset($data['flattened']['applicant.data.address.data.address']) && !empty($data['flattened']['applicant.data.address.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : '')
+        ->setSdcCittaResidenza(isset($data['flattened']['applicant.data.address.data.municipality']) && !empty($data['flattened']['applicant.data.address.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : '')
+        ->setSdcCapResidenza(isset($data['flattened']['applicant.data.address.data.postal_code']) && !empty($data['flattened']['applicant.data.address.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : '')
+        ->setSdcProvinciaResidenza(isset($data['flattened']['applicant.data.address.data.county']) && !empty($data['flattened']['applicant.data.address.data.county']) ? $data['flattened']['applicant.data.address.data.county'] : '');
+
+      $user->addRole('ROLE_USER')
+        ->addRole('ROLE_CPS_USER')
+        ->setEnabled(true)
+        ->setPassword('');
+
+      $this->entityManager->persist($user);
+    }
+
+    return $user;
   }
 }

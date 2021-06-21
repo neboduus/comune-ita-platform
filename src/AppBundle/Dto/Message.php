@@ -39,7 +39,7 @@ class Message
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Message subject")
-   * @Groups({"read", "write"})
+   * @Groups({"read", "write"} )
    */
   private $subject;
 

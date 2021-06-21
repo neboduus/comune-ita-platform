@@ -25,6 +25,6 @@ final class Version20210427210606 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE TABLE craue_form_flow_storage (key VARCHAR(255) NOT NULL, value TEXT NOT NULL, PRIMARY KEY(key))');
+        $this->addSql('DROP TABLE ext_translations');
     }
 }

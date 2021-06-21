@@ -160,9 +160,10 @@ class PraticaStatusService
    * @param Pratica $pratica
    * @param $status
    * @param StatusChange|null $statusChange
+   * @param bool $force
    * @throws \Exception
    */
-  public function setNewStatus(Pratica $pratica, $status, StatusChange $statusChange = null)
+  public function setNewStatus(Pratica $pratica, $status, StatusChange $statusChange = null, $force = false)
   {
     $beforeStatus = $pratica->getStatus();
     $beforeStatusIdentifier = $pratica->getStatusName();
@@ -229,11 +230,11 @@ class PraticaStatusService
     return $this->validChangeStatusList;
   }
 
-  public function validateChangeStatus(Pratica $pratica, $afterStatus)
+  public function validateChangeStatus(Pratica $pratica, $afterStatus, $force = false)
   {
     $beforeStatus = $pratica->getStatus();
 
-    if ($beforeStatus == $afterStatus) {
+    if ($beforeStatus == $afterStatus || $force) {
       return true;
     }
 

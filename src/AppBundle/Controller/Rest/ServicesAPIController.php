@@ -23,6 +23,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -135,7 +136,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="services")
    *
    * @param $id
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function getServiceAction($id)
   {
@@ -172,7 +173,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="services")
    *
    * @param $id
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function getFormServiceAction($id)
   {
@@ -239,7 +240,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="services")
    *
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function postServiceAction(Request $request)
   {
@@ -357,7 +358,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="services")
    *
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function putServiceAction($id, Request $request)
   {
@@ -470,8 +471,9 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="services")
    *
+   * @param $id
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function patchServiceAction($id, Request $request)
   {
