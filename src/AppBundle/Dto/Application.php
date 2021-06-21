@@ -28,7 +28,7 @@ class Application
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's user (uuid)")
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $user;
 
@@ -44,6 +44,8 @@ class Application
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications's service slug")
    * @Groups({"read"})
+   * @SWG\Property(description="Applications's service (slug)")
+   * @Groups({"read", "write"})
    */
   private $service;
 
@@ -78,7 +80,7 @@ class Application
   /**
    * @var array
    * @SWG\Property(property="data", description="Applcation's data")
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    * @Serializer\Type("array")
    */
   private $data;
@@ -196,14 +198,14 @@ class Application
    * @var bool
    * @Serializer\Type("boolean")
    * @SWG\Property(description="If selected the service will be shown at the top of the page")
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $outcome;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Outocome motivation")
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $outcomeMotivation;
 
@@ -263,7 +265,7 @@ class Application
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Pyment gateway used")
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $paymentType;
 
@@ -271,14 +273,14 @@ class Application
    * @var array
    * @SWG\Property(property="payment_data", description="Payment data")
    * @Serializer\Type("array")
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $paymentData;
 
   /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Applications status")
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $status;
 
@@ -440,7 +442,7 @@ class Application
   /**
    * @return array
    */
-  public function getData(): array
+  public function getData(): ?array
   {
     return $this->data;
   }
@@ -448,9 +450,13 @@ class Application
   /**
    * @param array $data
    */
-  public function setData(array $data)
+  public function setData($data)
   {
-    $this->data = $data;
+    if (is_array($data)) {
+      $this->data = $data;
+    } elseif (is_string($data)) {
+      $this->data = json_decode($data, true);
+    }
   }
 
   /**
@@ -664,7 +670,7 @@ class Application
   /**
    * @return bool
    */
-  public function isOutcome(): bool
+  public function isOutcome(): ?bool
   {
     return $this->outcome;
   }
@@ -824,7 +830,7 @@ class Application
   /**
    * @return array
    */
-  public function getPaymentData(): array
+  public function getPaymentData(): ?array
   {
     return $this->paymentData;
   }
