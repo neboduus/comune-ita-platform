@@ -9,8 +9,6 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
-
-use AppBundle\Entity\User;
 use AppBundle\Services\ModuloPdfBuilderService;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManager;
@@ -27,7 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -186,7 +183,7 @@ class SubscriptionsController extends Controller
 
   /**
    * Deletes a Subscription entity.
-   * @Route("/operatori/subscription/{id}/delete", name="operatori_subscription_delete")
+   * @Route("/operatori/subscriptions/{id}/delete", name="operatori_subscription_delete")
    * @Method("GET")
    * @param Request $request the request
    * @param Subscription $subscription The Subscription entity
@@ -194,7 +191,6 @@ class SubscriptionsController extends Controller
    */
   public function deleteSubscriptionAction(Request $request, Subscription $subscription)
   {
-    $subscriber = $subscription->getSubscriber();
     try {
       $em = $this->getDoctrine()->getManager();
       $em->remove($subscription);
@@ -202,10 +198,10 @@ class SubscriptionsController extends Controller
 
       $this->addFlash('feedback', 'Sottoscrizione eliminata correttamente');
 
-      return $this->redirectToRoute('operatori_subscriber_show', ['subscriber' => $subscriber->getId()]);
+      return $this->redirectToRoute('operatori_subscriptions', ['subscriptionService' => $subscription->getSubscriptionService()->getId()]);
     } catch (\Exception $exception) {
       $this->addFlash('warning', 'Impossibile eliminare la sottoscrizione.');
-      return $this->redirectToRoute('operatori_subscriber_show', ['subscriber' => $subscriber->getId()]);
+      return $this->redirectToRoute('operatori_subscriptions', ['subscriptionService' => $subscription->getSubscriptionService()->getId()]);
     }
   }
 
