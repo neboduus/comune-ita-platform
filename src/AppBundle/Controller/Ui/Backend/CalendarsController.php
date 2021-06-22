@@ -21,9 +21,7 @@ use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -562,10 +560,9 @@ class CalendarsController extends Controller
    * @param Request $request the request
    * @param Meeting $id The Meeting entity
    *
-   * @param FormFactoryInterface $formFactory
    * @return array|RedirectResponse|Response
    */
-  public function editMeetingAction(Request $request, $id, FormFactoryInterface $formFactory)
+  public function editMeetingAction(Request $request, $id)
   {
     $em = $this->getDoctrine()->getManager();
     $meeting = $em->getRepository('AppBundle:Meeting')->find($id);
@@ -583,8 +580,7 @@ class CalendarsController extends Controller
       $this->addFlash('warning', $this->translator->trans('meetings.no_email_warning'));
 
 
-    $form = $formFactory
-      ->createNamedBuilder(null, FormType::class, null, array('csrf_protection' => false))
+    $form = $this->createFormBuilder(null, array('csrf_protection' => false))
       ->add('approve', SubmitType::class, [
         'label' => 'Conferma',
         'attr' => ['class' => 'btn btn-sm btn-success']
