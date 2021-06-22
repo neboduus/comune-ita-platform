@@ -136,6 +136,7 @@ security:
     - { path: ^/%prefix%/(%app_locales%)/operatori/subscription-service, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/(%app_locales%)/operatori/subscriber, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/(%app_locales%)/operatori/calendars, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/meetings, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/(%app_locales%)/operatori, role: ROLE_OPERATORE }
     - { path: ^/%prefix%/(%app_locales%)/admin, role: ROLE_ADMIN }
     - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }

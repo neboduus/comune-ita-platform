@@ -356,6 +356,7 @@ class MeetingService
     }
 
     $operatoreMessage = $this->translator->trans('meetings.email.operatori.new_meeting.message', [
+      '%calendar%' => $calendar->getTitle(),
       'date' => $date,
       'hour' => $hour,
       'name' => $meeting->getName(),
@@ -376,7 +377,9 @@ class MeetingService
         $calendar->getContactEmail(),
         'Contatto Calendario',
         $operatoreMessage,
-        $this->translator->trans('meetings.email.operatori.new_meeting.subject'),
+        $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
+          '%calendar%' => $calendar->getTitle()
+        ]),
         $ente,
         []
       );
@@ -398,7 +401,9 @@ class MeetingService
               ],
               UrlGeneratorInterface::ABSOLUTE_URL)
           ]),
-          $this->translator->trans('meetings.email.operatori.new_meeting.subject'),
+          $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
+            '%calendar%' => $calendar->getTitle(),
+          ]),
           $ente,
           []
         );
@@ -541,16 +546,22 @@ class MeetingService
 
     if ($statusChanged && $status == Meeting::STATUS_APPROVED) {
       $contactMessage = $this->translator->trans('meetings.email.operatori.meeting_approved.message', [
+        '%calendar%' => $calendar->getTitle(),
         'date' => $date,
         'hour' => $hour
       ]);
-      $subject = $this->translator->trans('meetings.email.operatori.meeting_approved.subject');
+      $subject = $this->translator->trans('meetings.email.operatori.meeting_approved.subject', [
+        '%calendar%' => $calendar->getTitle()
+      ]);
     } else if ($statusChanged && $status == Meeting::STATUS_CANCELLED) {
       $contactMessage = $this->translator->trans('meetings.email.operatori.meeting_cancelled.message', [
+        '%calendar%' => $calendar->getTitle(),
         'date' => $date,
         'hour' => $hour
       ]);
-      $subject = $this->translator->trans('meetings.email.operatori.meeting_cancelled.subject');
+      $subject = $this->translator->trans('meetings.email.operatori.meeting_cancelled.subject', [
+        '%calendar%' => $calendar->getTitle(),
+      ]);
     } else return;
 
     if ($calendar->getContactEmail()) {
