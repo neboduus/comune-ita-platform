@@ -56,6 +56,7 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
       ->addOption('admin_email', null, InputOption::VALUE_OPTIONAL, 'Email of the admin')
       ->addOption('admin_username', null, InputOption::VALUE_OPTIONAL, 'Username of the admin')
       ->addOption('admin_password', null, InputOption::VALUE_OPTIONAL, 'Username of the admin')
+      ->addOption('write_file', null, InputOption::VALUE_NONE, 'Write results file')
       ->setDescription("Initial settings of an instance");
   }
 
@@ -92,7 +93,7 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     }
 
     // Scrivo il csv risultante solo se ho dato il file come parametro
-    if (!$this->isInteractive) {
+    if ($input->getOption('write_file')) {
       $filesystem = new Filesystem();
       $file = $this->getContainer()->get('kernel')->getProjectDir() . '/var/uploads/instances-' . date('Ymd') . '.csv';
       if (!is_file($file)) {

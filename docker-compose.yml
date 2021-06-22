@@ -1,18 +1,23 @@
-version: "3"
+version: "3.7"
 
 services:
 
   postgres:
-    image: wodby/postgres:$POSTGRES_TAG
+    image: wodby/postgres:${POSTGRES_TAG:-10-1.6.0}
     stop_grace_period: 30s
     environment:
-      POSTGRES_PASSWORD: $DB_ROOT_PASSWORD
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-sdc}
+      POSTGRES_DB: sdc_multi
+      POSTGRES_USER: ${DB_USER:-sdc}
       PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-      - ./compose_conf/postgres:/docker-entrypoint-initdb.d
-      - pgdata:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --user sdc --dbname sdc_multi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    #volumes:
+      #- ./compose_conf/postgres:/docker-entrypoint-initdb.d
+      #- pgdata:/var/lib/postgresql/data/pgdata
 
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
@@ -20,60 +25,65 @@ services:
     stop_grace_period: 90s
     environment:
       PHP_FPM_CLEAR_ENV: 'no'
-      ENV: DEV
-      SYMFONY_ENV: $SYMFONY_ENV
-      PREFIX: $PREFIX
-      DB_DRIVER: $DB_DRIVER
-      DB_HOST: $DB_HOST
-      DB_PORT: $DB_PORT
-      DB_NAME: $DB_NAME
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      MAILER_TRANSPORT: $MAILER_TRANSPORT
-      MAILER_HOST: $MAILER_HOST
-      MAILER_USER: $MAILER_USER
-      MAILER_PASSWORD: $MAILER_PASSWORD
-      PEC_MAILER_TRANSPORT: $PEC_MAILER_TRANSPORT
-      PEC_MAILER_HOST: $PEC_MAILER_HOST
-      PEC_MAILER_USER: $PEC_MAILER_USER
-      PEC_MAILER_PASSWORD: $PEC_MAILER_PASSWORD
-      PEC_DELIVERY_ADDRESS: $PEC_DELIVERY_ADDRESS
-      SECRET: $SECRET
-      DEFAULT_FROM_EMAIL_ADDRESS: $DEFAULT_FROM_EMAIL_ADDRESS
-      WKHTMLBINARY: $WKHTMLBINARY
-      WKHTMLTOPDF_SERVICE: $WKHTMLTOPDF_SERVICE
-      EZ_PASSWORD: $EZ_PASSWORD
-      PITRE_ADAPTER_URL: $PITRE_ADAPTER_URL
-      HEADER_TOP_TITLE: $HEADER_TOP_TITLE
-      HEADER_TOP_LINK: $HEADER_TOP_LINK
-      FOOTER_CREDITS: $FOOTER_CREDITS
-      OCSDC_SCHEME: $OCSDC_SCHEME
-      OCSDC_HOST: $OCSDC_HOST
-      GISCOM_PASSWORD: $GISCOM_PASSWORD
-      GISCOM_ADAPTER_URL: $GISCOM_ADAPTER_URL
-      GISCOM_ADAPTER_USERNAME: $GISCOM_ADAPTER_USERNAME
-      GISCOM_ADAPTER_PASSWORD: $GISCOM_ADAPTER_PASSWORD
-      LOGS_PATH: $LOGS_PATH
-      MYPAY_ADAPTER_URL: $MYPAY_ADAPTER_URL
+      ENV: ${ENV:-DEV}
+      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      ENABLE_MIGRATIONS: 'true'
+      PREFIX: ${PREFIX:-}
+      DB_DRIVER: ${DB_DRIVER:-pdo_pgsql}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-sdc_multi}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      MAILER_TRANSPORT: ${MAILER_TRANSPORT:-sendmail}
+      MAILER_HOST: ${MAILER_HOST:-127.0.0.1}
+      MAILER_USER: ${MAILER_USER:-null}
+      MAILER_PASSWORD: ${MAILER_PASSWORD:-null}
+      PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
+      PEC_MAILER_HOST: ${PEC_MAILER_HOST:-smtp.pec.net}
+      PEC_MAILER_PORT: ${PEC_MAILER_PORT:-465}
+      PEC_MAILER_USER: ${PEC_MAILER_USER:-stanzadelcittadino@pec.net}
+      PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-WhoKnows}
+      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-:stanzadelcittadino@pec.net}
+      SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
+      DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-sdc@opencontent.it}
+      WKHTMLBINARY: ${WKHTMLBINARY:-wkhtmltopdf}
+      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-gotemberg}
+      EZ_PASSWORD: ${EZ_PASSWORD:-ez}
+      PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://localhost:8080/}
+      #HEADER_TOP_TITLE: $HEADER_TOP_TITLE
+      #HEADER_TOP_LINK: $HEADER_TOP_LINK
+      #FOOTER_CREDITS: $FOOTER_CREDITS
+      #OCSDC_SCHEME: $OCSDC_SCHEME
+      #OCSDC_HOST: $OCSDC_HOST
+      GISCOM_PASSWORD: ${GISCOM_PASSWORD:-giscom}
+      GISCOM_ADAPTER_URL: ${GISCOM_ADAPTER_URL:-https://www.giscom.cloud/WebAPI/}
+      GISCOM_ADAPTER_USERNAME: ${GISCOM_ADAPTER_USERNAME:-pippo}
+      GISCOM_ADAPTER_PASSWORD: ${GISCOM_ADAPTER_PASSWORD:-passw}
+      LOGS_PATH: ${LOGS_PATH:-php://stderr}
+      MYPAY_ADAPTER_URL: ${MYPAY_ADAPTER_URL:-http://localhost:3000}
       PHP_FPM_USER: wodby
       PHP_FPM_GROUP: wodby
       PHP_APCU_ENABLED: 0
       PHP_OPCACHE_ENABLE: 0
-      FORMSERVER_PRIVATE_URL: $FORMSERVER_PRIVATE_URL
-      FORMSERVER_PUBLIC_URL: $FORMSERVER_PUBLIC_URL
-      FORMSERVER_ADMIN_URL: $FORMSERVER_ADMIN_URL
-      RECAPTCHA_KEY: $RECAPTCHA_KEY
-      RECAPTCHA_SECRET: $RECAPTCHA_SECRET
-      SENTRY_DSN: $SENTRY_DSN
+      FORMSERVER_PRIVATE_URL: ${FORMSERVER_PRIVATE_URL:-http://formserver:8000}
+      FORMSERVER_PUBLIC_URL: ${FORMSERVER_PUBLIC_URL:-http://formserver.localtest.me:8000}
+      FORMSERVER_ADMIN_URL: ${FORMSERVER_ADMIN_URL:-http://formserver.localtest.me:8000}
+      RECAPTCHA_KEY: ${RECAPTCHA_KEY:-key}
+      RECAPTCHA_SECRET: ${RECAPTCHA_SECRET:-secret}
+      SENTRY_DSN: ${SENTRY_DSN:-}
       PHP_DATE_TIMEZONE: 'Europe/Rome'
-      PASSWORD_LIFE_TIME: $PASSWORD_LIFE_TIME
-      SINGLE_LOGOUT_URL: $SINGLE_LOGOUT_URL
-      IO_API_URL: $IO_API_URL
-      CACHE_MAX_AGE: $CACHE_MAX_AGE
-      METRICS_TYPE: $METRICS_TYPE
-      METRICS_REDIS_HOST: $METRICS_REDIS_HOST
-      METRICS_REDIS_PORT: $METRICS_REDIS_PORT
-      METRICS_REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
+      PASSWORD_LIFE_TIME: ${PASSWORD_LIFE_TIME:-999999}
+      HASH_VALIDITY: ${HASH_VALIDITY:-3}
+      TOKEN_TTL: ${TOKEN_TTL:-3600}
+      LOGIN_ROUTE: ${LOGIN_ROUTE:-login_open}
+      SINGLE_LOGOUT_URL: '/Shibboleth.sso/Logout'
+      IO_API_URL: ${IO_API_URL:-https://api.io.italia.it/api/v1}
+      CACHE_MAX_AGE: ${CACHE_MAX_AGE:-3600}
+      METRICS_TYPE: ${METRICS_TYPE:-in_memory}
+      METRICS_REDIS_HOST: ${METRICS_REDIS_HOST:-redis}
+      METRICS_REDIS_PORT: ${METRICS_REDIS_PORT:-6379}
+      METRICS_REDIS_PASSWORD: ${METRICS_REDIS_PASSWORD:-}
 
       # Your Queue-it customer ID
       #QUEUEIT_CUSTOMER_ID: 'xxx'
@@ -81,14 +91,13 @@ services:
       #QUEUEIT_SECRET: 'xxx'
       # Absolute path of Queue-it configuration json file @see https://github.com/queueit/KnownUser.V3.PHP/blob/master/Documentation/README.md
       #QUEUEIT_CONFIG_FILE: '/var/www/html/opencontent_knownuser_integration_config.json'
-
     volumes:
       - "uploads:/var/www/html/var/uploads"
 
   caddy:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/caddy:master
-    volumes:
-      - "uploads:/srv/uploads"
+    #volumes:
+    #  - "uploads:/srv/uploads"
     depends_on:
       - php
     build:
@@ -115,13 +124,18 @@ services:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:master
     depends_on:
       - php
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+      args:
+        php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     environment:
       WEB_DOCUMENT_ROOT: /var/www/html/web
       WEB_PHP_SOCKET: php:9000
-      ORGANIZATION: $ORGANIZATION
-      SERVER_NAME: $SERVER_NAME
-      ENTITY_ID: $ENTITY_ID
-      PROJECT_BASE_URL: $PROJECT_BASE_URL
+      ORGANIZATION: ${ORGANIZATION:-Comune di Qui}
+      SERVER_NAME: ${SERVER_NAME:-stanzadelcittadino.localtest.me}
+      ENTITY_ID: ${ENTITY_ID:-stanzadelcittadino.localtest.me}
+      PROJECT_BASE_URL: ${PROJECT_BASE_URL:-stanzadelcittadino.localtest.me}
     ports:
       - "443:443"
     labels:
@@ -144,7 +158,7 @@ services:
       traefik.http.routers.traefik.rule: 'Host(`localtest.me`)'
     ports:
       - '80:80'
-        # - '443:443'
+    #  - '443:443'
       - '8080:8080' # Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -152,20 +166,29 @@ services:
   mongo:
     image: mongo:4.2.2
     restart: unless-stopped
-    volumes:
-      - 'mongo:/data'
-      - './compose_conf/mongo/dump/:/dump/'
-      - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
+    #volumes:
+      #- 'mongo:/data/db'
+  #    - './compose_conf/mongo/dump/:/dump/'
+  #    - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   formserver:
     image: registry.gitlab.com/opencontent/formmanagerserver:1.0.7
     restart: unless-stopped
+    ports:
+      - '8000:8000'
     environment:
       DB_URL: mongodb://mongo:27017/formmanager
     depends_on:
       - mongo
     labels:
       traefik.enable: true
+      traefik.http.services.formserver.loadbalancer.server.port: 8000
       traefik.http.routers.formserver.entrypoints: web
       traefik.http.routers.formserver.rule: 'Host(`formserver.localtest.me`)'
 
@@ -226,7 +249,6 @@ services:
       COOKIE_LIFETIME_SECONDS: 20
     labels:
       traefik.enable: true
-      prometheus.disable: true
       traefik.http.services.openlogin.loadbalancer.server.port: 2015
       traefik.http.routers.openlogin-http.rule: Host(`auth.localtest.me`)
       traefik.http.routers.openlogin-http.entrypoints: web
@@ -246,7 +268,6 @@ services:
       FLASK_ENV: development
     labels:
       traefik.enable: true
-      #prometheus.disable: true
       traefik.http.services.idp.loadbalancer.server.port: 80
       traefik.http.routers.idp-http.rule: 'Host(`spid.localtest.me`)'
       traefik.http.routers.idp-http.entrypoints: web
@@ -258,7 +279,19 @@ services:
     environment:
       REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
 
+  pgweb:
+    image: sosedoff/pgweb
+    labels:
+      traefik.enable: true
+      #traefik.http.services.pgweb.loadbalancer.server.port: 80
+      traefik.http.routers.pgweb-http.rule: 'Host(`pgweb.localtest.me`)'
+      traefik.http.routers.pgweb-http.entrypoints: web
+    environment:
+      - DATABASE_URL=postgres://${DB_USER:-sdc}:${DB_PASSWORD:-sdc}@postgres:5432/${DB_NAME:-sdc_bugliano}?sslmode=disable
+    depends_on:
+      - postgres
+
 volumes:
-  pgdata:
+#  pgdata:
   uploads:
   mongo:

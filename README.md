@@ -51,14 +51,6 @@ La distribuzione di questi componenti avviene mediante immagini [Docker](https:/
 non si tratta di un requisito, i singoli applicativi possono essere installati anche in assenza di esso, su un
 qualunque server Linux.
 
-## Installazione
-
-I `Dockerfile` presenti nel repository principale e in quelli secondari possono essere utilizzati
-per dedurre quali sono i requisiti a livello di sistema operativo di ogni componente, per questo
-motivo non viene fornita documentazione in merito, ma in caso di necessità è possibile aprire una
-issue per richiedere chiarimenti. Si sconsiglia comunque il setup senza docker perché rende molto
-oneroso gli aggiornamenti.
-
 ## Utilizzo
 
 Oltre al cittadino che accede mediante SPID, posso accedere all'applicativo
@@ -115,30 +107,34 @@ Durante la build vengono inoltre effettuati:
 * il test di sicurezza dinamica Owasp, mediante il tool `ZAP`
 * il test della validità del `publiccode.yml` del repository
 
-## Deploy
+## Installazione
 
-Dal repository stesso è possibile fare il deploy di un *ambiente demo* del servizio. Per farlo
-è sufficiente utilizzare questo [docker-compose.yml](https://gitlab.com/opencontent/stanzadelcittadino/blob/docker-demo/docker-compose.yml)
-del progetto e configurare le variabili
-necessarie mediante un file `.env` (viene fornito un file `env.dist` come riferimento.
+### Con l'ausilio di docker
 
-E' possibile prelevare il singolo file dal repository e avviare i servizi a partire dalle immagini
-docker rilasciate, mendiante il comando:
-
-    docker-compose up -d
-
-In alternativa e' possibile fare il deploy di un *ambiente di sviluppo*, facendo il
-clone del repository ed effettuando la build localmente al proprio computer:
+Dal repository stesso è possibile fare il deploy di un *ambiente di sviluppo* del servizio. Per farlo è sufficiente fare il clone del repository sul proprio computer e utilizzare questo [docker-compose.yml](https://gitlab.com/opencontent/stanzadelcittadino/blob/master/docker-compose.yml) del progetto.
 
     git clone git@gitlab.com:opencontent/stanzadelcittadino.git
-    git checkout docker-demo
+    cd stanzadelcittadino
+    docker-compose up -d postgres
+    sleep 10
     docker-compose up --build -d
 
 Al termine della build e dell'inizializzazione del database sarà possibile visitare l'indirizzo:
 
-http://stanzadelcittadino.localtest.me
+http://stanzadelcittadino.localtest.me/
 
-e si dovrebbe vedere una pagina web del tutto simile a https://demosdc.opencontent.it/
+In caso di problemi è possibile trovare maggiori infomazioni nel [wiki](https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/Ambiente-di-sviluppo).
+
+### Senza l'ausilio di docker
+
+I `Dockerfile` presenti nel repository principale e in quelli secondari possono essere utilizzati
+per dedurre quali sono i requisiti a livello di sistema operativo di ogni componente, per questo
+motivo non viene fornita documentazione in merito, ma in caso di necessità è possibile aprire una
+issue per richiedere chiarimenti. Si sconsiglia comunque il setup senza docker perché rende molto
+oneroso gli aggiornamenti, che ad oggi sono variabili da 1-2 al mese fino a 2-3 a settimana in caso
+di bugfix.
+
+
 
 ## Abilitazione features
 
@@ -146,14 +142,14 @@ Mediante specifiche variabili d'ambiente è possibile abilitare o disabilitare f
 
     FEATURE_NOME=true
 
- Feature disponibili:
-   - Nuovo Browser outdated, si abilita tramite la variabile d'ambiente `FEATURE_NEW_OUTDATED_BROWSER`:
+Feature disponibili:
+   - Browser outdated, si abilita tramite la variabile d'ambiente `FEATURE_NEW_OUTDATED_BROWSER`:
    sostituisce il vecchio plugin browser outdated per la verifica di browser obsoleti.
    Migliora la scelta di browser compatibili tramite la versione minima configurata.
-   Supporta browser mobile con callback specifiche per Web - Android - IOS
+   Supporta browser mobile con callback specifiche per Web - Android - IOS.
 
 
-   - Nuova interfaccia di dettaglio pratica per il cittadino, si abilita tramite la variabile d'ambiente `FEATURE_APPLICATION_DETAIL`:
+   - Interfaccia di dettaglio pratica per il cittadino, si abilita tramite la variabile d'ambiente `FEATURE_APPLICATION_DETAIL`:
    sostituisce l'interfaccia di dettaglio ad uso del cittadino, migliorandone la user experience.
    Consente inoltre lo scambio di messaggi tra operatore e cittadino.
 
@@ -165,9 +161,7 @@ La sintassi della variabile è cosi definita:  `nome browser,operatore logico, v
 
 Es. `Maxthon,<,4.0.5`
 
-Il componente utilizzato è https://github.com/WhichBrowser/Parser-PHP al quale si rimanda per uteriori informazioni.
-
-
+Il componente utilizzato è [Parser-PHP](https://github.com/WhichBrowser/Parser-PHP) al quale si rimanda per uteriori informazioni.
 
 ## Project status
 
@@ -184,9 +178,7 @@ Altri limiti:
 - la gestione degli operatori è molto limitata al momento e non consente grande flessibilità
   o l'utilizzo di gruppi di operatori per la gestione delle pratiche
 - il security log è minimale e intellegibile solo da personale tecnico
-- le API coprono attualmente circa il 50% delle funzionalità dell'applicativo
-- il test OWASP condotto durante la build è effettuato sull'ambiente di sviluppo e non su un ambiente creato
-  appositamente con la versione corrente
+- le API coprono attualmente circa l'80% delle funzionalità dell'applicativo
 
 ## Copyright
 
