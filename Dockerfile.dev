@@ -58,9 +58,17 @@ RUN ./compose_conf/scripts/get-version.sh > /var/www/html/web/VERSION
 COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
 RUN chmod 755 ./bin/*.sh
 
-RUN ./compose_conf/php/init-uploads.sh
+RUN mkdir -p var/uploads && chown wodby:wodby var -R
 
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
+
+# Add utility to check healthness of php-fpm
+# remember to add PHP_FPM_PM_STATUS_PATH env variable to /php-status
+ENV FCGI_STATUS_PATH=/php-status
+RUN curl https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck > /usr/local/bin/php-fpm-healthcheck && \
+    chmod +x /usr/local/bin/php-fpm-healthcheck
+HEALTHCHECK --interval=1m --timeout=3s \
+        CMD /usr/local/bin/php-fpm-healthcheck
 
 # lo script richiede che il file dei parametri sia già al suo posto
 RUN composer run-script post-docker-install-cmd

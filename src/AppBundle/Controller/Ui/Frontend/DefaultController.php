@@ -45,10 +45,6 @@ class DefaultController extends Controller
 
   /** @var InstanceService */
   private $instanceService;
-  /**
-   * @var Renderer
-   */
-  private $metricsRenderer;
 
   /**
    * DefaultController constructor.
@@ -62,7 +58,6 @@ class DefaultController extends Controller
     $this->logger = $logger;
     $this->translator = $translator;
     $this->instanceService = $instanceService;
-    $this->metricsRenderer = $metricsRenderer;
   }
 
 
@@ -105,45 +100,6 @@ class DefaultController extends Controller
    */
   public function privacyAction()
   {
-  }
-
-  /**
-   * @Route("/login", name="login")
-   */
-  public function loginAction()
-  {
-    // Redirect in base a configurazione di istanza
-    return $this->redirectToRoute($this->getAuthRedirect());
-  }
-
-  /**
-   * @Route("/auth/login-pat", name="login_pat")
-   */
-  public function loginPatAction()
-  {
-    throw new UnauthorizedHttpException("Something went wrong in authenticator");
-  }
-
-  /**
-   * @Route("/auth/login-open", name="login_open")
-   * @param Request $request
-   */
-  public function loginOpenAction(Request $request)
-  {
-    if ($request->query->has('_abort')){
-      return $this->redirectToRoute('home');
-    }
-    throw new UnauthorizedHttpException("Something went wrong in authenticator");
-  }
-
-  /**
-   * @Route("/logout", name="user_logout")
-   * @throws Exception
-   * @see LogoutSuccessHandler
-   */
-  public function logout()
-  {
-    throw new Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
   }
 
   /**
@@ -247,52 +203,5 @@ class DefaultController extends Controller
     }
 
     return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
-  }
-
-  /**
-   * @Route("/metrics", name="sdc_metrics")
-   *
-   * @return Response
-   */
-  public function metricsAction()
-  {
-    return $this->metricsRenderer->renderResponse();
-  }
-
-  /**
-   * @Route("/prometheus.json", name="prometheus")
-   */
-  public function prometheusAction(Request $request)
-  {
-    $result = [];
-    $hostname = $request->getHost();
-    $env = null;
-
-    $scheme = $request->isSecure() ? 'https' : 'http';
-
-    foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance){
-      $indentifierParts = explode('/', $identifier);
-      $result[] = [
-        "targets" => [$hostname],
-        "labels" => [
-          "job" => $hostname,
-          "env" => $env,
-          "__scheme__" => $scheme,
-          "__metrics_path__" => "/". $indentifierParts[1] ."/metrics",
-        ],
-      ];
-    }
-    $request->setRequestFormat('json');
-
-    return new JsonResponse(json_encode($result), 200, [], true);
-  }
-
-  private function getAuthRedirect()
-  {
-    if ($this->getParameter('login_route') == AbstractAuthenticator::LOGIN_TYPE_NONE) {
-      return 'home';
-    }
-
-    return $this->getParameter('login_route');
   }
 }
