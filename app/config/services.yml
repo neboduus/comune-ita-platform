@@ -87,6 +87,9 @@ services:
   AppBundle\Controller\Ui\Frontend\DefaultController:
     autowire: true
 
+  AppBundle\Controller\General\MetricsController:
+    autowire: true
+
   AppBundle\Controller\Ui\Frontend\AllegatoController:
     autowire: true
 

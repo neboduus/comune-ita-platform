@@ -114,7 +114,7 @@ services:
       traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
 
       traefik.http.routers.caddy-auth.entrypoints: web
-      traefik.http.routers.caddy-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/[^/]{2}/auth/login-open`)"
+      traefik.http.routers.caddy-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-open`)"
       traefik.http.routers.caddy-auth.middlewares: "spid-auth"
 
       traefik.http.routers.caddy.entrypoints: web
@@ -141,7 +141,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.apache.entrypoints: web
-      traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/[^/]{2}/auth/login-pat`)'
+      traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-pat`)'
 
   traefik:
     image: 'traefik:2.0'
