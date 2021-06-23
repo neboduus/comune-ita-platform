@@ -253,9 +253,17 @@ class PiTreProtocolloParameters extends ParameterBag
     $this->set('senderEmail', $senderEmail);
   }
 
-
   public function getSenderEmail()
   {
     return $this->get('senderEmail');
+  }
+
+  public function toString()
+  {
+    if ($this->has('file')) {
+      $this->remove('file');
+    }
+
+    return \json_encode($this->parameters);
   }
 }

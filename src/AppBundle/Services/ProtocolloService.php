@@ -285,13 +285,14 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
   public function protocollaRisposta(Pratica $pratica)
   {
     $this->validateRisposta($pratica);
-    $this->logger->debug(__METHOD__, ['pratica' => $pratica->getId()]);
-
-    $this->handler->sendRispostaToProtocollo($pratica);
-    $this->logger->notice('Sending risposta operatore as allegato : id '.$pratica->getRispostaOperatore()->getId());
+    if ($pratica->getRispostaOperatore()->getNumeroProtocollo() === null) {
+      $this->logger->debug(__METHOD__, ['pratica' => $pratica->getId()]);
+      $this->handler->sendRispostaToProtocollo($pratica);
+      $this->logger->notice('Sending risposta operatore as allegato : id ' . $pratica->getRispostaOperatore()->getId());
+    }
 
     try {
-      $this->validateUploadFile($pratica, $pratica->getRispostaOperatore());
+      $this->validateRispostaUploadFile($pratica, $pratica->getRispostaOperatore());
       $this->handler->sendAllegatoRispostaToProtocollo($pratica, $pratica->getRispostaOperatore());
     } catch (AlreadyUploadException $e) {
       $this->logger->error($e->getMessage());
@@ -300,7 +301,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     $allegati = $pratica->getAllegatiOperatore();
     foreach ($allegati as $allegato) {
       try {
-        $this->validateUploadFile($pratica, $allegato);
+        $this->validateRispostaUploadFile($pratica, $allegato);
         $this->handler->sendAllegatoRispostaToProtocollo($pratica, $allegato);
       } catch (AlreadyUploadException $e) {
         $this->logger->error($e->getMessage());

@@ -61,7 +61,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $pratica->setNumeroProtocollo($responseData->getNProt());
       $pratica->setNumeroFascicolo($responseData->getIdProj());
     } else {
-      throw new ResponseErrorException($responseData . ' on request ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on request ' . $parameters->toString());
     }
   }
 
@@ -90,7 +90,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         'protocollo' => $responseData->getIdDoc(),
       ]);
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
   }
 
@@ -119,7 +119,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         'protocollo' => $responseData->getIdDoc() ?? '',
       ]);
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
   }
 
@@ -144,7 +144,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         'protocollo' => $responseData->getIdDoc() ?? '',
       ]);
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
   }
 
@@ -174,7 +174,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       ]);
 
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
   }
 
@@ -199,7 +199,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $risposta->setNumeroProtocollo($responseData->getNProt());
       $risposta->setIdDocumentoProtocollo($responseData->getIdDoc());
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
   }
 
@@ -220,7 +220,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
       $withdrawAttachment->setNumeroProtocollo($responseData->getNProt());
       $withdrawAttachment->setIdDocumentoProtocollo($responseData->getIdDoc());
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
   }
 
@@ -249,7 +249,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
         'protocollo' => $responseData->getIdDoc(),
       ]);
     } else {
-      throw new ResponseErrorException($responseData . ' on query ' . json_encode($parameters->all()));
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
   }
 

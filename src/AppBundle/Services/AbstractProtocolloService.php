@@ -93,17 +93,23 @@ class AbstractProtocolloService
   protected function validateRisposta(Pratica $pratica)
   {
     $risposta = $pratica->getRispostaOperatore();
-    /*if (!$risposta instanceof RispostaOperatore) {
-        throw new AlreadySentException();
-    }*/
+    $mainSent = $risposta->getNumeroProtocollo() !== null;
+    $mainSentAttachment = $this->validateRispostaUploadFile($pratica, $pratica->getRispostaOperatore());
 
-    if ($risposta->getNumeroProtocollo() !== null) {
+    $allegati = $pratica->getAllegatiOperatore();
+    $countSentAllegati = 0;
+    foreach ($allegati as $allegato) {
+      try {
+        $this->validateRispostaUploadFile($pratica, $allegato);
+      } catch (AlreadyUploadException $e) {
+        $countSentAllegati++;
+      }
+    }
+
+    if ($mainSent && $mainSentAttachment && $countSentAllegati == $allegati->count()){
       throw new AlreadySentException();
     }
 
-    foreach ($pratica->getAllegatiOperatore() as $allegato) {
-      $this->validateRispostaUploadFile($pratica, $allegato);
-    }
   }
 
   protected function validateRispostaUploadFile(Pratica $pratica, AllegatoInterface $allegato)
