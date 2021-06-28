@@ -15,6 +15,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
+use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
@@ -750,7 +751,9 @@ class OperatoriController extends Controller
     }
 
     $outcome = (new ApplicationOutcome())->setApplicationId($pratica->getId());
-    $outcomeForm = $this->createForm(ApplicationOutcomeType::class, $outcome)->handleRequest($request);
+    $options["helper"] = new TestiAccompagnatoriProcedura($this->translator, $this->getParameter('prefix') . '/' . $this->getParameter('locale'));
+    $outcomeForm = $this->createForm(ApplicationOutcomeType::class, $outcome, $options)->handleRequest($request);
+
     if ($outcomeForm->isSubmitted() && $outcomeForm->isValid()) {
 
       $allegatoOperatoreRepository = $this->getDoctrine()->getRepository(AllegatoOperatore::class);
