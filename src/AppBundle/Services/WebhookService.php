@@ -85,16 +85,16 @@ class WebhookService implements ScheduledActionHandlerInterface
   {
     $params = unserialize($action->getParams());
     if ($action->getType() == self::SCHEDULED_APPLICATION_WEBHOOK) {
-      $this->applicationWebhook($params, $action->getId());
+      $this->applicationWebhook($params, $action);
     }
   }
 
   /**
    * @param $params
-   * @param string $eventId
+   * @param ScheduledAction|null $event
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public function applicationWebhook($params, $eventId = null)
+  public function applicationWebhook($params, ScheduledAction $event = null)
   {
 
     /** @var Pratica $pratica */
@@ -114,8 +114,11 @@ class WebhookService implements ScheduledActionHandlerInterface
       $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/' . $pratica->getId()
     );
 
-    $content->setEventId($eventId);
-    $content->setEventVersion(Webhook::VERSION);
+    if ($event) {
+      $content->setEventId($event->getId());
+      $content->setEventCreatedAt($event->getCreatedAt());
+      $content->setEventVersion(Webhook::VERSION);
+    }
 
     $headers = ['Content-Type' => 'application/json'];
     if (!empty($webhook->getHeaders())) {

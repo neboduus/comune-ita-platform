@@ -321,6 +321,13 @@ class Application
   private $eventId;
 
   /**
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Event Creation date time", type="dateTime")
+   * @Groups({"webhook"})
+   */
+  private $eventCreatedAt;
+
+  /**
    * @Serializer\Type("string")
    * @SWG\Property(description="Webhook event Version")
    * @Groups({"webhook"})
@@ -936,6 +943,22 @@ class Application
   public function setEventId($eventId): void
   {
     $this->eventId = $eventId;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getEventCreatedAt()
+  {
+    return $this->eventCreatedAt;
+  }
+
+  /**
+   * @param mixed $eventCreatedAt
+   */
+  public function setEventCreatedAt($eventCreatedAt): void
+  {
+    $this->eventCreatedAt = $eventCreatedAt;
   }
 
   /**
