@@ -96,7 +96,7 @@ export default class FormioCalendar extends Base {
         let self = this,
             calendarID = this.component.calendarId,
             selectOpeningHours = this.component.select_opening_hours,
-            openingHours = this.component.select_opening_hours ? this.component.opening_hours : null,
+            openingHours = this.component.select_opening_hours ? this.component.opening_hours : [],
             location = window.location,
             html = '',
             explodedPath = location.pathname.split("/");
@@ -121,7 +121,7 @@ export default class FormioCalendar extends Base {
 
         if (calendarID !== '' && calendarID != null) {
             let url = location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities';
-            if (selectOpeningHours) {
+            if (selectOpeningHours && openingHours) {
                 url = url + '?opening_hours='+openingHours.join();
             }
             $.ajax(url,
@@ -245,7 +245,7 @@ export default class FormioCalendar extends Base {
         let self = this,
             calendarID = this.component.calendarId,
             selectOpeningHours = this.component.select_opening_hours,
-            openingHours = this.component.select_opening_hours ? this.component.opening_hours : null,
+            openingHours = this.component.select_opening_hours ? this.component.opening_hours : [],
             step = this.component.range_step ? this.component.range_step : 1,
             html = '',
             location = window.location,
@@ -260,7 +260,7 @@ export default class FormioCalendar extends Base {
             // Exclude saved meeting from unavailabilities
             queryParameters.push(`exclude=${self.meeting}`)
         }
-        if (selectOpeningHours) {
+        if (selectOpeningHours && openingHours) {
             // Select specific opening hours
             queryParameters.push('opening_hours='+openingHours.join())
         }
