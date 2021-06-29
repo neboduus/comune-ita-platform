@@ -84,7 +84,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     $content = "<![CDATA[<datiin>
                         <registro>".$parameters['sipal_registro']."</registro>
                         <movimentazione>A</movimentazione>
-                        <tipoposta>P1</tipoposta>
+                        <tipoposta>IO</tipoposta>
                         <oggetto>" . $this->retrieveOggettoFromPratica($pratica) . "</oggetto>
                         <classificazione>".$parameters['sipal_classificazione']."</classificazione>
                         <destinatariointerno>".$parameters['sipal_destinatario_interno']."</destinatariointerno>
@@ -93,6 +93,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
                                 <ragionesociale>". $user->getFullName() ."</ragionesociale>
                                 <indirizzo>". $user->getIndirizzoResidenza() ."</indirizzo>
                                 <comune>" . $user->getCittaResidenza() ."</comune>
+                                <email>" . $user->getEmail() ."</email>
                             </mittenteesterno>
                         </mittenti>
                     </datiin>]]>";
