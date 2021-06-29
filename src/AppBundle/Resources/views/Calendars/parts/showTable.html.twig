@@ -100,7 +100,7 @@ $('#meetings_table').DataTable( {
           <tbody>
           {% for t in datatable %}
             <tr>
-              <td>{{ t.fromTime |date("d/m/Y") }}</td>
+              <td>{{ t.fromTime |date("Y/m/d") }}</td>
               <td>{{ t.fromTime |date('H:i') }} - {{ t.toTime | date('H:i') }}</td>
               <td>{{ t.user.nome }} {{ t.user.cognome }}</td>
               <td><a href="mailto:{{ t.email }}">{{ t.email }}</a></td>
