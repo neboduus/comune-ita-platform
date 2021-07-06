@@ -28,6 +28,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -240,6 +241,7 @@ class AllegatoController extends Controller
   public function cpsUserUploadAllegatoSciaAction(Request $request, Pratica $pratica)
   {
 
+    /** @var UploadedFile $uploadedFile */
     $uploadedFile = $request->files->get('file');
     if (is_null($uploadedFile)) {
       $this->logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
@@ -251,7 +253,10 @@ class AllegatoController extends Controller
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_NOT_FOUND], Response::HTTP_NOT_FOUND);
     }
 
-    $uploadedFile = $request->files->get('file');
+    if ($uploadedFile->getSize()  <= 0) {
+      return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_SIZE_ERROR], Response::HTTP_NOT_ACCEPTABLE);
+    }
+
     $pathParts = pathinfo($uploadedFile->getRealPath());
 
     /*$targetFile = $dirname . '/' . $pratica->getId() . time();

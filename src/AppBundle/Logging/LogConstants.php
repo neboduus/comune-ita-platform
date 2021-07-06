@@ -30,6 +30,7 @@ class LogConstants
 
   const ALLEGATO_UPLOAD_ERROR = "Upload error";
   const ALLEGATO_FILE_NOT_FOUND = "File not found";
+  const ALLEGATO_FILE_SIZE_ERROR = "File size upload Error";
 
   const PRATICA_CHANGED_STATUS = "Pratica {pratica} status has changed from {before_status} to {after_status}";
   const PRATICA_CHANGED_STATUS_FAILED = "Failed changing pratica {pratica} from {before_status} to {after_status}, error: {error}";
