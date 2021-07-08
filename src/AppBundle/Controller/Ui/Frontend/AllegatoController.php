@@ -253,7 +253,7 @@ class AllegatoController extends Controller
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_NOT_FOUND], Response::HTTP_NOT_FOUND);
     }
 
-    if ($uploadedFile->getSize()  <= 0) {
+    if ($uploadedFile->getSize() <= 0) {
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_FILE_SIZE_ERROR], Response::HTTP_NOT_ACCEPTABLE);
     }
 
