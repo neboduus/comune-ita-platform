@@ -147,6 +147,8 @@ class OpeningHour
    * @var int
    *
    * @ORM\Column(name="meeting_queue", type="integer", options={"default" : 1})
+   * @Assert\GreaterThanOrEqual(1)
+   * @Assert\NotNull(message="Questo valore è obbligatorio (meetingQueue)")
    * @SWG\Property(description="Opening Hour's meeting queue", type="integer")
    */
   private $meetingQueue = 1;
