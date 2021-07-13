@@ -157,7 +157,14 @@
           // Add margin bottom to datatables info
           $('#dt_info').css('margin-bottom', '0.85em')
 
-          let inputForm = '<input type="file" id="file-input2" accept=".csv" class="upload"><label for="file-input2" class="pt-2 pb-2 pr-3 pl-3 bg-secondary" style="float: right;"><i class="fas fa-upload"></i><span class="d-none d-xl-inline-block">&nbsp Importa CSV</span></label>';
+          let inputForm = '' +
+                  '<input type="file" id="file-input2" accept=".csv" class="upload">' +
+                  '<label for="file-input2" class="pt-2 pb-2 pr-3 pl-3 bg-secondary float-right">' +
+                  '    <i class="fas fa-upload"></i><span class="d-none d-xl-inline-block">&nbsp Importa CSV</span>' +
+                  '</label>' +
+                  '<a class="btn btn-sm btn-secondary mr-1" href="{{ path("operatori_subscriptions_template_csv") }}">' +
+                  '    <i class="fas fa-download"></i><span class="d-none d-xl-inline-block">&nbsp Template</span>' +
+                  '</a>';
           $("div.dt-buttons").append(inputForm);
           $("#file-input2").on("change", function (e) {
             var fdata = new FormData();
