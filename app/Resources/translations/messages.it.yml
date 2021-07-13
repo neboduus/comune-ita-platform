@@ -1995,8 +1995,11 @@ meetings:
     complete_name: "Nome e cognome"
     backoffice_user_message: "Oggetto... (creato dall'ufficio)"
     select_slot: "Seleziona orario"
+    select_slot_start: "Dalle"
+    select_slot_end: "Alle"
   error:
     no_slots_available: "Non ci sono orari disponibili alla data e all'ora selezionata"
+    no_slots_available_for_opening_hor: "Non ci sono orari disponibili alla data e all'ora selezionata per l'orario di apertura selezionato"
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
     no_opening_hour_with_overlaps: "L'orario di apertura è obbligatorio se il calendario prevede sovrapposizioni"

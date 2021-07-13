@@ -1,0 +1,126 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="modalNew">
+  <div class="modal-lg modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button id="modalClose" class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <svg class="icon">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-title mx-4">
+        <input id="modalNewName" type="text" placeholder="{{ 'meetings.labels.complete_name' | trans }}">
+      </div>
+      <div class="modal-body">
+        <div id="modalId" class="d-none"></div>
+        <div class="d-none" id="modalNewStatus"></div>
+        <div class="row mt-3 {% if not calendar.allowOverlaps %} d-none {% endif %}">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <select id="modalNewOpeningHour" class="selectpicker">
+              {% for opening_hour in calendar.openingHours %}
+                <option value="{{opening_hour.id}}">{{opening_hour.name}}</option>
+              {% endfor %}
+              {% if not calendar.allowOverlaps %}
+                <option value="" selected>{{ "meetings.modal.all" | trans() }}</option>
+              {% endif %}
+            </select>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use>
+            </svg>
+          </div>
+          <div class="col-4">
+            <input id="modalNewDate" type="date">
+          </div>
+          <div class="col-2"></div>
+          <div class="col-2">
+            <input type="time" id="modalNewStart" placeholder="{{ 'meetings.labels.select_slot_start' |  trans}}">
+          </div>
+          <div class="col-2">
+            <input type="time" id="modalNewEnd"  placeholder="{{ 'meetings.labels.select_slot_end' |  trans}}">
+          </div>
+        </div>
+        <div id="no_slots_new_alert" class="row mt-3">
+          <div class="col-1"></div>
+          <div class="col-10">
+            <small class="text-danger">{{ 'meetings.error.no_slots_available' | trans }}</small>
+          </div>
+        </div>
+        <br>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <textarea style="border: none" id="modalNewDescription" placeholder="{{ 'meetings.labels.backoffice_user_message' | trans }}"></textarea>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-link"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <input type="url" id="modalNewVideoconferenceLink" placeholder="{{ 'meetings.labels.videoconference_link' | trans }}">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+            </svg>
+          </div>
+          <div class="col-6">
+            <input type="text" id="modalNewFiscalCode" class="col-10" placeholder="{{ 'meetings.labels.fiscal_code' | trans }}">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
+            </svg>
+          </div>
+          <div class="col-6">
+            <input type="text" id="modalNewPhone" class="col-10" placeholder="{{ 'meetings.labels.phone_number' | trans }}">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
+            </svg>
+          </div>
+          <div class="col-6">
+            <input type="email" id="modalNewEmail" class="col-10" placeholder="{{ 'meetings.labels.email' | trans }}">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-1">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-comment"></use>
+            </svg>
+          </div>
+          <div class="col-10">
+            <p class="mb-3 small">{{ 'meetings.modal.motivation_outcome_helper' | trans }}</p>
+            <textarea style="border: none" id="modalNewMotivationOutcome" ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer my-3 d-flex justify-content-between" >
+        <ul id="modalNewError" class="text-danger list-unstyled"></ul>
+        <button id="modalCreate" class="btn btn-primary btn-sm" data-url='{{ path("meetings_api_post") }}' type="button" onclick="createMeeting(this.id, '{{ calendar.id }}')">{{ "meetings.modal.create" | trans }}</button>
+      </div>
+    </div>
+  </div>x
+</div>

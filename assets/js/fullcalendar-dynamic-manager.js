@@ -16,36 +16,6 @@ $(document).ready(function () {
     $("#edit_alert").show();
   });
 
-  // Calculate slots when date changes
-
-  // NEW MODAL
-  $("#modalNewOpeningHour, #modalNewDate").change(function () {
-    $("#modalNewSlot").val('');
-    $("#no_slots_new_alert").hide();
-    getSlots($("#modalNewDate").val(), null, $("#modalNewOpeningHour").val(), null,function(slot) {
-      if (slot) {
-        $("#modalNewSlot").val(slot)
-      } else {
-        $("#no_slots_new_alert").show();
-      }
-    })
-  });
-
-  // EDIT MODAL
-  $("#modalOpeningHour, #modalDate").change(function () {
-    $("#modalSlot").val('');
-    $("#no_slots_edit_alert").hide();
-    getSlots($("#modalDate").val(), null,   $("#modalOpeningHour").val(), $("#modalId").html(),function(slot) {
-      if (slot) {
-        $("#no_slots_edit_alert").hide();
-        $("#modalSlot").val(slot)
-      } else {
-        $("#no_slots_edit_alert").show();
-      }
-    })
-  });
-
-
   // Fullcalendar initialization
   var calendarEl = document.getElementById('fullcalendar');
 
@@ -64,10 +34,23 @@ $(document).ready(function () {
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,timeGridDay, listMonth, listWeek, listDay'
     },
-    slotDuration: calculateSlot(),
+    selectable: true,
+    slotDuration: '00:05:00',
     contentHeight: 600,
     minTime: JSON.parse($('#hidden').attr('data-range-time-event')).min,
     maxTime: JSON.parse($('#hidden').attr('data-range-time-event')).max,
+    select(selectionInfo) {
+      newModal(selectionInfo)
+    },
+    selectAllow: function (selectInfo) {
+      var someEvents = calendar.getEvents().filter(function(evt) {
+        return (evt.start <= selectInfo.start
+            && evt.end >= selectInfo.end
+            && evt.resourceId === selectInfo.resourceId);
+
+      });
+      return someEvents.length > 0;
+    },
     eventRender: function (info) {
       if (info.event.extendedProps.status === 0) {
         var dotEl = info.el.getElementsByClassName('fc-event-dot')[0];
@@ -83,8 +66,24 @@ $(document).ready(function () {
       }
     },
     editable: true,
-    eventDurationEditable: false,
+    eventDurationEditable: true,
+    eventAllow: function (dropInfo, draggedEvent) {
+      var someEvents = calendar.getEvents().filter(function(evt) {
+        return (evt.start <= dropInfo.start
+            && evt.end >= dropInfo.end
+            && evt.resourceId === dropInfo.resourceId);
+      });
+      return someEvents.length > 0;
+    },
     eventDrop: function (info) {
+      if (!info.event.extendedProps.uid && info.event.extendedProps.status !== 6) {
+        compileModal(info);
+        $("#edit_alert").show();
+      } else {
+        info.revert();
+      }
+    },
+    eventResize: function (info) {
       if (!info.event.extendedProps.uid && info.event.extendedProps.status !== 6) {
         compileModal(info);
         $("#edit_alert").show();
@@ -96,7 +95,6 @@ $(document).ready(function () {
       if (info.event.extendedProps.status === 6) {
         deleteDraftModal(info)
       } else if (info.event.id) compileModal(info);
-      else if (info.event.title === 'Apertura') newModal(info)
     },
     dateClick: function(info) {
       if (info.view.type === 'dayGridMonth')
@@ -125,17 +123,6 @@ $(document).ready(function () {
   })
 });
 
-
-/**
- * Calculates minumin slot duration
- */
-function calculateSlot() {
-  let minDuration = $('#hidden').attr('data-duration');
-  if (minDuration <= 60) {
-    return `00:${minDuration}:00`
-  } else return "01:00:00";
-}
-
 /**
  * Fills modal data
  * @param info: event
@@ -153,11 +140,14 @@ function compileModal(info) {
 
   let date = new Date(info.event.start).toISOString().slice(0, 10);
   let start = new Date(info.event.start).toISOString().slice(11, 16);
+  let end = new Date(info.event.end).toISOString().slice(11, 16);
 
   // Populate modal
   $('#modalId').html(info.event.id);
-  $('#modalOpeningHour').val(info.event.extendedProps.opening_hour)
   $('#modalDate').val(date);
+  $('#modalStart').val(start);
+  $('#modalEnd').val(end);
+  $('#modalOpeningHour').val(info.event.extendedProps.opening_hour);
   $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name || 'Nome non fornito'}`);
   $('#modalDescription').val(info.event.extendedProps.description);
   $('#modalMotivationOutcome').val(info.event.extendedProps.motivation_outcome);
@@ -199,19 +189,8 @@ function compileModal(info) {
   }
 
   $('#modalError').html('');
-
-  $("#modalSlot").val('');
+  $('#modalCenter').modal('show');
   $("#no_slots_edit_alert").hide();
-
-  getSlots($("#modalDate").val(), start, $("#modalOpeningHour").val(), $("#modalId").html(),function(slot) {
-    if (slot) {
-      $("#no_slots_edit_alert").hide();
-      $("#modalSlot").val(slot)
-    } else {
-      $("#no_slots_edit_alert").show();
-    }
-    $('#modalCenter').modal('show');
-  })
 
   $('#modalClose').click(info.revert)
 }
@@ -221,22 +200,21 @@ function compileModal(info) {
  * @param info: event
  */
 function newModal(info) {
-  let date = new Date(info.event.start).toISOString().slice(0, 10);
-  let start = new Date(info.event.start).toISOString().slice(11, 16);
+
+  let date = new Date(info.start).toISOString().slice(0, 10);
+  let start = new Date(info.start).toISOString().slice(11, 16);
+  let end = new Date(info.end).toISOString().slice(11, 16);
 
   $('#modalNewDate').val(date);
+  $('#modalNewStart').val(start);
+  $('#modalNewEnd').val(end);
   $('#modalNewStatus').html(1);
 
-  $("#modalNewSlot").val('');
-  $("#no_slots_new_alert").hide();
-  getSlots($("#modalNewDate").val(), start,   $("#modalNewOpeningHour").val(), null,function(slot) {
-    if (slot) {
-      $("#modalNewSlot").val(slot)
-    } else {
-      $("#no_slots_new_alert").show();
-    }
-    $('#modalNew').modal('show');
-  })
+  $('#modalNew').modal('show');
+  /*
+
+  $('#modalNewStatus').html(1);
+  */
 }
 
 /**
@@ -256,58 +234,6 @@ function deleteDraftModal(info) {
   $('#modalDraftDescription').html(description)
 
   $('#modalDeleteDraft').modal('show');
-}
-
-/**
- * Retrieves slots for selected date
- * @param date
- * @param start
- * @param opening_hour
- * @param exclude_id
- * @param callback
- */
-function getSlots(date, start, opening_hour, exclude_id, callback) {
-  $('#modalError').html('');
-  let calendar = $('#hidden').attr('data-calendar');
-  let slot;
-  let overlaps = $('#hidden').attr('data-overlaps');
-
-  let url = $('#hidden').attr('data-url');
-  url = url.replace("calendar_id", calendar).replace("date", date);
-  url = url + '?all=true';
-
-  if (overlaps && opening_hour){
-    url = url + '&opening_hours=' + opening_hour;
-  }
-
-  if (exclude_id){
-    url = url + '&exclude=' + exclude_id;
-  }
-
-  $.ajax({
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    url: url,
-    type: 'GET',
-    success: function (response, textStatus, jqXhr) {
-      $('#slots').empty();
-      for (let i = 0; i < response.length; i++) {
-        let value = response[i]['start_time'] + ' - ' + response[i]['end_time'];
-        let available = response[i]['availability'];
-        // If start is defined get right slot
-        if (start && start === response[i]['start_time']) slot = value;
-        else if (!slot && !start && available) slot = value;
-        if (available)
-          $("#slots").append("<option value='" + value + "'>" + value + "</option>");
-      }
-      callback(slot);
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      $('#modalError').html('Impossibile recuperare le disponibilità per la data selezionata');
-    }
-  });
 }
 
 /**

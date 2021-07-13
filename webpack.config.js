@@ -27,6 +27,7 @@ Encore
   .addEntry('subscription-service-manager', './assets/js/subscription-service-manager.js')
   .addEntry('calendar-manager', './assets/js/calendar-manager.js')
   .addEntry('fullcalendar-manager', './assets/js/fullcalendar-manager.js')
+  .addEntry('fullcalendar-dynamic-manager', './assets/js/fullcalendar-dynamic-manager.js')
   .addEntry('chars-operator', './assets/js/Charts/chart-operator.js')
   .addEntry('jquery-ui-only-calendar', './assets/js/jquery-ui-custom-calendar.js')
   .addEntry('outdated-browser-rework', './assets/js/outdated-browser-rework.js')

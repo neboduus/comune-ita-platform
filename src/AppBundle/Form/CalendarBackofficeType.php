@@ -22,6 +22,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class CalendarBackofficeType extends AbstractType
 {
@@ -36,10 +37,16 @@ class CalendarBackofficeType extends AbstractType
    */
   private $featureManager;
 
-  public function __construct(EntityManagerInterface $entityManager, FeatureManagerInterface $featureManager)
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  public function __construct(EntityManagerInterface $entityManager, FeatureManagerInterface $featureManager, TranslatorInterface $translator)
   {
     $this->em = $entityManager;
     $this->featureManager = $featureManager;
+    $this->translator = $translator;
   }
 
   /**

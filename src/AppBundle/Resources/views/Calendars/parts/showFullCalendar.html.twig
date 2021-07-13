@@ -31,8 +31,13 @@
         <h1 class="d-none d-print-block">{{ calendar.title }}</h1>
         <div id='fullcalendar'></div>
       </div>
-      {{ include('AppBundle:Calendars/parts:modalEdit.html.twig') }}
-      {{ include('AppBundle:Calendars/parts:modalNew.html.twig') }}
+      {% if calendar.type == 'time_fixed_slots' %}
+        {{ include('AppBundle:Calendars/parts:modalEdit.html.twig') }}
+        {{ include('AppBundle:Calendars/parts:modalNew.html.twig') }}
+      {% else %}
+        {{ include('@App/Calendars/parts/variable_slots/modalNew.html.twig') }}
+        {{ include('@App/Calendars/parts/variable_slots/modalEdit.html.twig') }}
+      {% endif %}
       {{ include('AppBundle:Calendars/parts:modalDeleteDraft.html.twig') }}
     </div>
   </div>

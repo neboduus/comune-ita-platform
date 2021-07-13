@@ -111,7 +111,7 @@ class CalendarsController extends Controller
           return sprintf('<span class="badge badge-outline-secondary"><svg class="icon icon-sm icon-secondary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use></svg>Non richiede moderazione</span>');
         }
       }])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable'=>false, 'render' => function ($value, $calendar) {
+      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable' => false, 'render' => function ($value, $calendar) {
         $cal = $this->em->getRepository('AppBundle:Calendar')->find($value);
         $canAccess = $this->canUserAccessCalendar($cal);
         return sprintf('
@@ -135,7 +135,7 @@ class CalendarsController extends Controller
     if ($table->isCallback()) {
       return $table->getResponse();
     }
-    return $this->render( '@App/Calendars/indexCalendars.html.twig', [
+    return $this->render('@App/Calendars/indexCalendars.html.twig', [
       'user' => $user,
       'datatable' => $table
     ]);
@@ -182,7 +182,7 @@ class CalendarsController extends Controller
       }
     }
 
-    return $this->render( '@App/Calendars/newCalendar.html.twig', [
+    return $this->render('@App/Calendars/newCalendar.html.twig', [
       'user' => $user,
       'calendar' => $calendar,
       'form' => $form->createView(),
@@ -288,7 +288,7 @@ class CalendarsController extends Controller
       }
     }
 
-    return $this->render( '@App/Calendars/editCalendar.html.twig', [
+    return $this->render('@App/Calendars/editCalendar.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
       'calendar' => $calendar
@@ -348,52 +348,53 @@ class CalendarsController extends Controller
     $events = [];
     // meetings
     foreach ($meetings as $meeting) {
-        switch ($meeting->getStatus()) {
-          case 0: // STATUS_PENDING
-            $color = 'var(--white)';
-            $borderColor = 'var(--success)';
-            $textColor = 'var(--success)';
-            break;
-          case 1: // STATUS_APPROVED
-            $color = 'var(--indigo)';
-            $borderColor = 'var(--indigo)';
-            $textColor = 'var(--white)';
-            break;
-          case 2: // STATUS_REFUSED
-            $color = 'var(--danger)';
-            $borderColor = 'var(--danger)';
-            $textColor = 'var(--white)';
-            break;
-          case 3: // STATUS_MISSED
-            $color = 'var(--danger)';
-            $borderColor = 'var(--danger)';
-            $textColor = 'var(--white)';
-            break;
-          case 4: // STATUS_DONE
-            $color = 'var(--secondary)';
-            $borderColor = 'var(--secondary)';
-            $textColor = 'var(--white)';
-            break;
-          case 5: // STATUS_CANCELLED
-            $color = 'var(--warning)';
-            $borderColor = 'var(--warning)';
-            $textColor = 'var(--white)';
-            break;
-          case 6: // STATUS_DRAFT
-            $color = 'var(--light)';
-            $borderColor = 'var(--light)';
-            $textColor = 'var(--dark)';
-            break;
-          default:
-            $color = 'var(--blue)';
-            $borderColor = 'var(--blue)';
-            $textColor = 'var(--white)';
+      switch ($meeting->getStatus()) {
+        case 0: // STATUS_PENDING
+          $color = 'var(--white)';
+          $borderColor = 'var(--success)';
+          $textColor = 'var(--success)';
+          break;
+        case 1: // STATUS_APPROVED
+          $color = 'var(--indigo)';
+          $borderColor = 'var(--indigo)';
+          $textColor = 'var(--white)';
+          break;
+        case 2: // STATUS_REFUSED
+          $color = 'var(--danger)';
+          $borderColor = 'var(--danger)';
+          $textColor = 'var(--white)';
+          break;
+        case 3: // STATUS_MISSED
+          $color = 'var(--danger)';
+          $borderColor = 'var(--danger)';
+          $textColor = 'var(--white)';
+          break;
+        case 4: // STATUS_DONE
+          $color = 'var(--secondary)';
+          $borderColor = 'var(--secondary)';
+          $textColor = 'var(--white)';
+          break;
+        case 5: // STATUS_CANCELLED
+          $color = 'var(--warning)';
+          $borderColor = 'var(--warning)';
+          $textColor = 'var(--white)';
+          break;
+        case 6: // STATUS_DRAFT
+          $color = 'var(--light)';
+          $borderColor = 'var(--light)';
+          $textColor = 'var(--dark)';
+          break;
+        default:
+          $color = 'var(--blue)';
+          $borderColor = 'var(--blue)';
+          $textColor = 'var(--white)';
       }
       $events[] = [
         'id' => $meeting->getId(),
-        'title' => $meeting->getName() ? $meeting->getName() : ($meeting->getStatus() == Meeting::STATUS_DRAFT ? "Bozza" :'Nome non fornito'),
+        'title' => $meeting->getName() ? $meeting->getName() : ($meeting->getStatus() == Meeting::STATUS_DRAFT ? "Bozza" : 'Nome non fornito'),
         'name' => $meeting->getName(),
         'opening_hour' => $meeting->getOpeningHour() ? $meeting->getOpeningHour()->getId() : null,
+        'is_allow_overlap' => $calendar->isAllowOverlaps(),
         'start' => $meeting->getFromTime()->format('c'),
         'end' => $meeting->getToTime()->format('c'),
         'description' => $meeting->getUserMessage(),
@@ -453,7 +454,7 @@ class CalendarsController extends Controller
     // compute min slot dimension
     $minDuration = PHP_INT_MAX;
     foreach ($calendar->getOpeningHours() as $openingHour) {
-      $events = array_merge($events, $this->meetingService->getInterval($openingHour));
+      $events = array_merge($events, $this->meetingService->getAbsoluteAvailabilities($openingHour));
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 
@@ -492,7 +493,7 @@ class CalendarsController extends Controller
 
     $jwt = $this->JWTTokenManager->create($this->getUser());
 
-    return $this->render( '@App/Calendars/showCalendar.html.twig', [
+    $data = [
       'user' => $user,
       'calendar' => $calendar,
       'canEdit' => $canEdit,
@@ -506,7 +507,13 @@ class CalendarsController extends Controller
         'min' => $minDate,
         'max' => $maxDate
       ]
-    ]);
+    ];
+
+    if ($calendar->getType() === Calendar::TYPE_TIME_FIXED) {
+      return $this->render('@App/Calendars/showCalendar.html.twig', $data);
+    } else {
+      return $this->render('@App/Calendars/showDynamicCalendar.html.twig', $data);
+    }
   }
 
   /**
@@ -546,7 +553,7 @@ class CalendarsController extends Controller
         $this->addFlash('error', 'Si è verificato un errore durante l\'annullamento dell\'appuntamento' . $exception->getMessage());
       }
     }
-    return $this->render( '@App/Calendars/cancelMeeting.html.twig', [
+    return $this->render('@App/Calendars/cancelMeeting.html.twig', [
       'form' => $form->createView(),
       'canCancel' => $canCancel,
       'meeting' => $meeting
@@ -570,7 +577,7 @@ class CalendarsController extends Controller
       return new Response(null, Response::HTTP_NOT_FOUND);
 
     if ($meeting->getStatus() != Meeting::STATUS_PENDING) {
-      return $this->render( '@App/Calendars/editMeeting.html.twig', [
+      return $this->render('@App/Calendars/editMeeting.html.twig', [
         'form' => null,
         'meeting' => $meeting
       ]);
@@ -624,7 +631,7 @@ class CalendarsController extends Controller
         $this->addFlash('error', 'Si è verificato un errore durante la modifica dell\'appuntamento' . $exception->getMessage());
       }
     }
-    return $this->render( '@App/Calendars/editMeeting.html.twig', [
+    return $this->render('@App/Calendars/editMeeting.html.twig', [
       'form' => $form->createView(),
       'meeting' => $meeting
     ]);

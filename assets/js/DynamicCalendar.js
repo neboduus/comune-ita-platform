@@ -118,7 +118,6 @@ export default class FormioCalendar extends Base {
 
         $.datepicker.setDefaults($.datepicker.regional['it']);
 
-
         if (calendarID !== '' && calendarID != null && !this.disabled) {
             let url = location.origin + '/' + explodedPath[1] + '/api/calendars/' + calendarID + '/availabilities';
             if (selectOpeningHours && openingHours) {
