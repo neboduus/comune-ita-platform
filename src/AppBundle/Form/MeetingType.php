@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
+use AppBundle\Entity\OpeningHour;
 use AppBundle\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,6 +56,11 @@ class MeetingType extends AbstractType
       ->add('calendar', EntityType::class, [
         'class' => Calendar::class,
         'label' => 'meetings.labels.calendar',
+        'required' => true,
+      ])
+      ->add('opening_hour', EntityType::class, [
+        'class' => OpeningHour::class,
+        'label' => 'Orario di apertura',
         'required' => true,
       ])
       ->add('user', EntityType::class, [

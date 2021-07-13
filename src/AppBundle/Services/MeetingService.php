@@ -68,6 +68,29 @@ class MeetingService
    */
   public function isSlotAvailable(Meeting $meeting)
   {
+    $meetings = $this->entityManager->createQueryBuilder()
+      ->select('count(meeting) as meetingCount')
+      ->from('AppBundle:Meeting', 'meeting')
+      ->leftJoin('meeting.calendar', 'calendar')
+      ->where('meeting.calendar = :calendar')
+      ->andWhere('meeting.fromTime <= :toTime AND meeting.toTime >= :fromTime')
+      ->andWhere('meeting.id != :id')
+      ->andWhere('meeting.status != :refused')
+      ->andWhere('meeting.status != :cancelled')
+      ->setParameter('calendar', $meeting->getCalendar())
+      ->setParameter('fromTime', $meeting->getFromTime())
+      ->setParameter('toTime', $meeting->getToTime())
+      ->setParameter('id', $meeting->getId())
+      ->setParameter('refused', Meeting::STATUS_REFUSED)
+      ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
+      //->groupBy('meeting.fromTime', 'meeting.toTime')
+      ->getQuery()->getResult();
+
+    if (!empty($meetings) && $meetings[0]['meetingCount'] >= $meeting->getOpeningHour()->getMeetingQueue()) {
+      return false;
+    }
+    return true;
+
     // Retrieve all meetings in the same time slot
 
     $meetings = $this->entityManager->createQueryBuilder()
@@ -93,6 +116,7 @@ class MeetingService
       return false;
     }
     return true;
+
   }
 
   /**
@@ -265,24 +289,39 @@ class MeetingService
     return $array;
   }
 
-  public function getInterval(OpeningHour $openingHour)
+  public function getAbsoluteAvailabilities(OpeningHour $openingHour, $all=false, DateTime $from=null, DateTime $to=null)
   {
     $slots = [];
-    foreach ($this->explodeDays($openingHour, true) as $date) {
-      foreach ($this->explodeMeetings($openingHour, new DateTime($date)) as $slot) {
-        $now = (new DateTime())->format('Y-m-d:H:i');
-        $startTime = (\DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time']))->format('Y-m-d:H:i');
-        if ($startTime > $now) {
-          $start = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time'])->format('c');
-          $end = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['end_time'])->format('c');
-          $slots[] = [
-            'title' => 'Apertura',
-            'start' => $start,
-            'end' => $end,
-            'rendering' => 'background',
-            'color' => 'var(--blue)'
-          ];
+    $startDate = max($from ?? new DateTime(), $openingHour->getStartDate())->format('Y-m-d');
+    $endDate = min($to ?? (new DateTime())->modify('+1year'), $openingHour->getEndDate())->format('Y-m-d');
+    foreach ($this->explodeDays($openingHour, $all, $startDate, $endDate) as $date) {
+      if ($openingHour->getCalendar()->getType() === Calendar::TYPE_TIME_FIXED) {
+        foreach ($this->explodeMeetings($openingHour, new DateTime($date)) as $slot) {
+          $now = (new DateTime())->format('Y-m-d:H:i');
+          $startTime = (\DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time']))->format('Y-m-d:H:i');
+          if ($startTime > $now) {
+            $start = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time'])->format('c');
+            $end = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['end_time'])->format('c');
+            $slots[] = [
+              'title' => 'Apertura',
+              'start' => $start,
+              'end' => $end,
+              'rendering' => 'background',
+              'color' => 'var(--blue)'
+            ];
+          }
         }
+      } else {
+        $start = DateTime::createFromFormat('Y-m-d:H:i', $date . ':' . $openingHour->getBeginHour()->format('H:i'))->format('c');
+        $start = max($start, (new DateTime())->format('c'));
+        $end = DateTime::createFromFormat('Y-m-d:H:i', $date . ':' . $openingHour->getEndHour()->format('H:i'))->format('c');
+        $slots[] = [
+          'title' => 'Apertura',
+          'start' => $start,
+          'end' => $end,
+          'rendering' => 'background',
+          'color' => 'var(--blue)'
+        ];
       }
     }
     return $slots;

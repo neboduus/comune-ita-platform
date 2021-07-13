@@ -1,7 +1,7 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block stylesheets %}
-  {{ encore_entry_link_tags('fullcalendar-manager') }}
+  {{ encore_entry_link_tags('fullcalendar-dynamic-manager') }}
 
   <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css"/>
@@ -42,7 +42,7 @@
 
 {% block javascripts %}
 
-  {{ encore_entry_script_tags('fullcalendar-manager') }}
+  {{ encore_entry_script_tags('fullcalendar-dynamic-manager') }}
 
   <script type="text/javascript"
           src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
@@ -71,9 +71,8 @@
     else status = $('#modalStatus').html();
 
     let date = $('#modalDate').val();
-    let slot = $('#modalSlot').val().split(' - ');
-    let start = slot[0];
-    let end = slot[1];
+    let start = $('#modalStart').val();
+    let end = $('#modalEnd').val();
     let id = $('#modalId').html();
 
     if (!start || !end)
@@ -164,12 +163,11 @@
    */
   function createMeeting(btnId, calendar) {
     let date = $('#modalNewDate').val();
-    let slot = $('#modalNewSlot').val().split(' - ');
-    let start = slot[0];
-    let end = slot[1];
+    let start = $('#modalNewStart').val();
+    let end = $('#modalNewEnd').val();
 
-      if (!start || !end)
-          return $('#modalNewError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+    if (!start || !end)
+        return $('#modalNewError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
 
     let data = {
       status: 1,
@@ -234,7 +232,6 @@
          data-duration='{{ minDuration }}'
          data-token='{{ token }}'
          data-range-time-event='{{ rangeTimeEvent | json_encode  }}'
-         data-overlaps='{{ calendar.allowOverlaps }}'
     ></div>
     <div class="nav-tabs-hidescroll mt-4 mt-md-5">
       <ul class="nav nav-tabs auto no-border no-background" id="tab" role="tablist">
@@ -279,7 +276,7 @@
       <div class="col-8">
         <a class="btn btn-100 btn-sm" href="{{ path('operatori_calendars_index') }}">Torna alla lista</a>
         <a class="btn btn-primary btn-sm" href="#" onclick="printJS({
-        printable: 'container-fullcalendar',
+        printable: 'fullcalendar',
         type: 'html',
         honorColor: true,
          css: ['https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css',

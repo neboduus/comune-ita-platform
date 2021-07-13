@@ -40,22 +40,18 @@
           <div class="col-4">
             <input id="modalDate" type="date">
           </div>
-          <div class="col-1"></div>
-          <div class="col-auto">
-            <input type="text" id="modalSlot" list="slots" class="custom-select custom-select-sm"
-                   onclick="this.value = ''" placeholder="{{ "meetings.labels.select_slot" | trans() }}">
-            <datalist id="slots"></datalist>
+          <div class="col-2"></div>
+          <div class="col-2">
+            <input type="time" id="modalStart" placeholder="{{ 'meetings.labels.select_slot_start' |  trans}}">
+          </div>
+          <div class="col-2">
+            <input type="time" id="modalEnd"  placeholder="{{ 'meetings.labels.select_slot_end' |  trans}}">
           </div>
         </div>
-
         <div id="no_slots_edit_alert" class="row mt-3">
           <div class="col-1"></div>
           <div class="col-10">
-            {% if not calendar.allowOverlaps %}
-              <small class="text-danger">{{ 'meetings.error.no_slots_available' | trans }}</small>
-            {% else %}
-              <small class="text-danger">{{ 'meetings.error.no_slots_available_for_opening_hor' | trans }}</small>
-            {% endif %}
+            <small class="text-danger">{{ 'meetings.error.no_slots_available' | trans }}</small>
           </div>
         </div>
         <div id="edit_alert" class="row mt-3">
