@@ -293,6 +293,10 @@ class MessagesAPIController extends AbstractFOSRestController
 
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $exception) {
+      $this->logger->error(
+        $exception->getMessage(),
+        ['request' => $request]
+      );
       return $this->view($exception->getMessage(), Response::HTTP_BAD_REQUEST);
     }
   }
@@ -440,7 +444,7 @@ class MessagesAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -516,7 +520,7 @@ class MessagesAPIController extends AbstractFOSRestController
     $repository = $this->getDoctrine()->getRepository('AppBundle:Message');
     $messageEntity = $repository->find($messageId);
     if (!$messageEntity) {
-      return $this->view("Message not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Message not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(MessageVoter::EDIT, $messageEntity);
@@ -530,12 +534,12 @@ class MessagesAPIController extends AbstractFOSRestController
       $serviceId = $messageEntity->getApplication()->getServizio()->getId();
 
       if (!$enabledServices->contains($serviceId)) {
-        return $this->view("You can't update messages of this service", Response::HTTP_FORBIDDEN);
+        return $this->view(["You can't update messages of this service"], Response::HTTP_FORBIDDEN);
       }
     }
 
     if ($messageEntity->getProtocolNumber() != null) {
-      return $this->view("Message has been protocolled, you can't update it!", Response::HTTP_FORBIDDEN);
+      return $this->view(["Message has been protocolled, you can't update it!"], Response::HTTP_FORBIDDEN);
     }
 
     foreach ($request->request->all() as $k => $item) {
@@ -569,6 +573,7 @@ class MessagesAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -578,7 +583,7 @@ class MessagesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Message Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Message Patched Successfully"], Response::HTTP_OK);
   }
 
 

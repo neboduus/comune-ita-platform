@@ -170,9 +170,9 @@ class MeetingsAPIController extends AbstractFOSRestController
 
         return $this->view($meeting, Response::HTTP_OK);
       }
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -301,7 +301,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -378,7 +378,7 @@ class MeetingsAPIController extends AbstractFOSRestController
     $oldMeeting = clone $meeting;
 
     if (!$meeting) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     $form = $this->createForm('AppBundle\Form\MeetingType', $meeting);
     $this->processForm($request, $form);
@@ -411,7 +411,8 @@ class MeetingsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -420,7 +421,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -485,7 +486,7 @@ class MeetingsAPIController extends AbstractFOSRestController
     $oldMeeting = clone $meeting;
 
     if (!$meeting) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(MeetingVoter::EDIT, $meeting);
@@ -522,7 +523,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -531,7 +532,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -584,7 +585,7 @@ class MeetingsAPIController extends AbstractFOSRestController
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
 
       } catch (\Exception $e) {
-        return $this->view("There was an error during delete process", Response::HTTP_NOT_FOUND);
+        return $this->view(["There was an error during delete process"], Response::HTTP_NOT_FOUND);
       }
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);

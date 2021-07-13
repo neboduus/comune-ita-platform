@@ -73,7 +73,7 @@ class SubscriptionsAPIController extends AbstractFOSRestController
     $code = $request->query->get('code');
 
     if (!$fiscalCode || !$code ) {
-      return $this->view("Missing parameter code or cf", Response::HTTP_BAD_REQUEST);
+      return $this->view(["Missing parameter code or cf"], Response::HTTP_BAD_REQUEST);
     }
 
     $subscription = $this->getDoctrine()->getManager()->createQueryBuilder()

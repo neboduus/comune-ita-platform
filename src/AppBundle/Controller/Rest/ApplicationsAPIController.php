@@ -583,7 +583,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -768,7 +768,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $application = $repository->find($id);
 
     if (!$application) {
-      return $this->view("Application not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $application);
@@ -777,7 +777,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $application->getStatus(),
       [Pratica::STATUS_PAYMENT_OUTCOME_PENDING, Pratica::STATUS_PAYMENT_PENDING]
     )) {
-      return $this->view("Application isn't in correct state", Response::HTTP_UNPROCESSABLE_ENTITY);
+      return $this->view(["Application isn't in correct state"], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     $paymentOutcome = new paymentOutcome();
@@ -830,7 +830,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -840,7 +840,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Application Payment Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Application Payment Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -899,7 +899,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $application = $repository->find($id);
 
     if (!$application) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
@@ -908,11 +908,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $application->getStatus(),
       [Pratica::STATUS_DRAFT, Pratica::STATUS_PAYMENT_OUTCOME_PENDING, Pratica::STATUS_PAYMENT_PENDING]
     )) {
-      return $this->view("Application isn't in correct state", Response::HTTP_UNPROCESSABLE_ENTITY);
+      return $this->view(["Application isn't in correct state"], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     if ($application->getType() !== Pratica::TYPE_FORMIO) {
-      return $this->view("Application can not be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
+      return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     $_application = Application::fromEntity($application);
@@ -955,6 +955,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->get('logger')->error(
         $e->getMessage(),
@@ -964,7 +965,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -1014,7 +1015,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1082,15 +1083,15 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
 
       if (!empty($application->getNumeroProtocollo())) {
-        return $this->view("Application already has a protocol number", Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->view(["Application already has a protocol number"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
       if (!$application->getServizio()->isProtocolRequired()) {
-        return $this->view("Application does not need to be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
       if ($application->getType() !== Pratica::TYPE_FORMIO) {
-        return $this->view("Application can not be protocolled", Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
       $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
@@ -1149,7 +1150,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1207,7 +1208,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1312,7 +1313,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1370,7 +1371,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => $e->getMessage(),
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
