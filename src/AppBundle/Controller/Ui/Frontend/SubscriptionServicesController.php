@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Ui\Frontend;
 
+use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -15,6 +16,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -63,7 +67,7 @@ class SubscriptionServicesController extends Controller
       }])
       ->add('beginDate', DateTimeColumn::class, ['label' => 'Data di inizio', 'format' => 'd/m/Y', 'searchable' => false])
       ->add('endDate', DateTimeColumn::class, ['label' => 'Data di fine', 'format' => 'd/m/Y', 'searchable' => false])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable'=>false, 'render' => function ($value, $subscriptionService) {
+      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable' => false, 'render' => function ($value, $subscriptionService) {
         return sprintf('
         <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
         <a class="btn btn-warning btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s">Modifica</a>
@@ -84,12 +88,41 @@ class SubscriptionServicesController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render( '@App/SubscriptionServices/indexSubscriptionService.html.twig', [
+    return $this->render('@App/SubscriptionServices/indexSubscriptionService.html.twig', [
       'user' => $user,
       'items' => $items,
       'statuses' => $statuses,
       'datatable' => $table
     ]);
+  }
+
+  /**
+   * @Route("/operatori/subscription-service-csv",name="operatori_subscriptions_template_csv")
+   * @param Request $request
+   */
+  public function indexCSVAction(Request $request)
+  {
+    $responseCallback = function () use ($request) {
+      $csvHeaders = $this->container->get(SubcriptionsBackOffice::class)->getRequiredHeaders();
+
+      $handle = fopen('php://output', 'w');
+      fputcsv($handle, $csvHeaders);
+      fclose($handle);
+    };
+
+    $fileName = 'template.csv';
+    $response = new StreamedResponse();
+    $response->headers->set('Content-Encoding', 'none');
+    $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+    $response->headers->set('X-Accel-Buffering', 'no');
+    $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $fileName
+    ));
+    $response->headers->set('Content-Description', 'File Transfer');
+    $response->setStatusCode(Response::HTTP_OK);
+    $response->setCallback($responseCallback);
+    $response->send();
   }
 
   /**
@@ -122,7 +155,7 @@ class SubscriptionServicesController extends Controller
       }
     }
 
-    return $this->render( '@App/SubscriptionServices/newSubscriptionService.html.twig', [
+    return $this->render('@App/SubscriptionServices/newSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'form' => $form->createView(),
@@ -184,7 +217,7 @@ class SubscriptionServicesController extends Controller
       }
     }
 
-    return $this->render( '@App/SubscriptionServices/editSubscriptionService.html.twig', [
+    return $this->render('@App/SubscriptionServices/editSubscriptionService.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
     ]);
@@ -201,7 +234,7 @@ class SubscriptionServicesController extends Controller
     $user = $this->getUser();
 
     $deleteForm = $this->createDeleteForm($subscriptionService);
-    return $this->render( '@App/SubscriptionServices/showSubscriptionService.html.twig', [
+    return $this->render('@App/SubscriptionServices/showSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'delete_form' => $deleteForm->createView(),
