@@ -150,11 +150,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
       $result = $repository->find($id);
       if ($result === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -235,7 +235,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -309,7 +309,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
@@ -334,7 +334,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -343,7 +344,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -404,7 +405,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $this->processForm($request, $form);
@@ -427,7 +428,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -436,7 +438,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -566,11 +568,11 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
       $subscriptionService = $repository->find($subscription_service_id);
       if ($subscriptionService === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
       return $this->view(['results' => $subscriptionService->getSubscriptions(), 'count' => count($subscriptionService->getSubscriptions())], Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -619,10 +621,10 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     if ($subscription === null) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     $this->denyAccessUnlessGranted(SubscriptionVoter::VIEW, $subscription);
     return $this->view($subscription, Response::HTTP_OK);
@@ -758,7 +760,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         $data = [
           'type' => 'error',
           'title' => 'There was an error during save process',
-          'description' => $e->getMessage()
+          'description' => 'Contact technical support at support@opencontent.it'
         ];
         $this->logger->error(
           $e->getMessage(),
@@ -777,7 +779,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -850,7 +852,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(SubscriptionVoter::EDIT, $subscription);
@@ -876,7 +878,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -885,7 +888,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -950,7 +953,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(SubscriptionVoter::EDIT, $subscription);
@@ -976,7 +979,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -985,6 +989,6 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 }

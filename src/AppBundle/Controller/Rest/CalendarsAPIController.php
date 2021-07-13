@@ -125,12 +125,12 @@ class CalendarsAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
       $result = $repository->find($id);
       if ($result === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -202,7 +202,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     try {
       $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($calendar === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       /** @var OpeningHour[] $openingHours */
@@ -248,7 +248,7 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       return $this->view(array_values($availabilities), Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -323,13 +323,13 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
     if ($calendar === null) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     try {
       $inputDate = new DateTime($date);
     } catch (\Exception $e) {
-      return $this->view('Invalid parameter. ' . $date . ' is not a valid date', Response::HTTP_BAD_REQUEST);
+      return $this->view(['Invalid parameter. ' . $date . ' is not a valid date'], Response::HTTP_BAD_REQUEST);
     }
 
     try {
@@ -337,7 +337,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
       $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($openingHours === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       if ($calendar->getType() === Calendar::TYPE_TIME_FIXED) {
@@ -354,7 +354,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       }
       return $this->view(array_values($slots), Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -438,7 +438,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -511,7 +511,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $calendar = $repository->find($id);
 
     if (!$calendar) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $calendar);
@@ -538,7 +538,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -547,7 +548,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -611,7 +612,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $calendar = $repository->find($id);
 
     if (!$calendar) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $calendar);
@@ -637,7 +638,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -646,7 +648,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -697,7 +699,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         $em->remove($calendar);
         $em->flush();
       } catch (\Exception $e) {
-        return $this->view("There was an error during delete process", Response::HTTP_NOT_FOUND);
+        return $this->view(["There was an error during delete process"], Response::HTTP_NOT_FOUND);
       }
 
     }
@@ -771,11 +773,11 @@ class CalendarsAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
       $calendar = $repository->find($calendar_id);
       if ($calendar === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
       return $this->view(['results' => $calendar->getOpeningHours(), 'count' => count($calendar->getOpeningHours())], Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -816,11 +818,11 @@ class CalendarsAPIController extends AbstractFOSRestController
       $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
       if ($openingHour === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
       return $this->view($openingHour, Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -962,7 +964,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -1036,7 +1038,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
     if (!$openingHour) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $openingHour->getCalendar());
@@ -1062,7 +1064,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -1071,7 +1074,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -1139,7 +1142,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $openingHour->setDaysOfWeek([]);
 
     if (!$openingHour) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(CalendarVoter::EDIT, $openingHour->getCalendar());
@@ -1165,7 +1168,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -1174,7 +1178,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -1216,7 +1220,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     try {
       $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ( $calendar === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       $overlaps = $this->meetingService->getOpeningHoursOverlaps($calendar, $selectedOpeningHours);
@@ -1225,7 +1229,7 @@ class CalendarsAPIController extends AbstractFOSRestController
         "count"=>count($overlaps)
       ], Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 }

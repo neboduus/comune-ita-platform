@@ -151,11 +151,11 @@ class UsersAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
       $result = $repository->find($id);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     if ($result === null) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(UserVoter::VIEW, $result);
@@ -242,7 +242,7 @@ class UsersAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -309,7 +309,7 @@ class UsersAPIController extends AbstractFOSRestController
     $user = $repository->find($id);
 
     if (!$user) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
@@ -338,7 +338,8 @@ class UsersAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -347,7 +348,7 @@ class UsersAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -406,7 +407,7 @@ class UsersAPIController extends AbstractFOSRestController
     $user = $repository->find($id);
 
     if (!$user) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
@@ -434,7 +435,8 @@ class UsersAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -443,7 +445,7 @@ class UsersAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**

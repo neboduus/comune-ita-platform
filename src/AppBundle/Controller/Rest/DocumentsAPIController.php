@@ -190,14 +190,14 @@ class DocumentsAPIController extends AbstractFOSRestController
       $repository = $this->getDoctrine()->getRepository('AppBundle:Document');
       $document = $repository->find($id);
       if ($document === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       $this->denyAccessUnlessGranted(DocumentVoter::VIEW, $document);
 
       return $this->view($document, Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -286,7 +286,7 @@ class DocumentsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -351,7 +351,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $document = $this->em->getRepository('AppBundle:Document')->find($id);
 
     if (!$document) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(DocumentVoter::EDIT, $document);
@@ -378,7 +378,8 @@ class DocumentsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -387,7 +388,7 @@ class DocumentsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -445,7 +446,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $document = $this->em->getRepository('AppBundle:Document')->find($id);
 
     if (!$document) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     $this->denyAccessUnlessGranted(DocumentVoter::EDIT, $document);
 
@@ -470,7 +471,8 @@ class DocumentsAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -479,7 +481,7 @@ class DocumentsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -565,7 +567,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(DocumentVoter::VIEW, $document);
 
     if (!$document) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $extension = explode('.', $document->getOriginalFilename());
@@ -582,7 +584,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     try {
       $fileContent = file_get_contents($fileName);
     } catch (\Exception $exception) {
-      return $this->view("File non trovato", Response::HTTP_BAD_REQUEST);
+      return $this->view(["File non trovato"], Response::HTTP_BAD_REQUEST);
     }
 
     // Provide a name for your file with extension

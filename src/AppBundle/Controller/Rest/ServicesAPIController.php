@@ -153,7 +153,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
       return $this->view(Service::fromEntity($result, $this->formServerApiAdapterService->getFormServerPublicUrl()), Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -182,7 +182,7 @@ class ServicesAPIController extends AbstractFOSRestController
       /** @var Servizio $service */
       $service = $repository->find($id);
       if ($service === null) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       $response = $this->formServerApiAdapterService->getForm($service->getFormIoId());
@@ -190,10 +190,10 @@ class ServicesAPIController extends AbstractFOSRestController
       if ($response['status'] == 'success') {
         return $this->view($response['form'], Response::HTTP_OK);
       } else {
-        return $this->view("Form not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Form not found"], Response::HTTP_NOT_FOUND);
       }
     } catch (\Exception $e) {
-      return $this->view("Service not found", Response::HTTP_NOT_FOUND);
+      return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
@@ -247,7 +247,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     if (!$this->checkProtocolHandler($request)) {
-      return $this->view("Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList), Response::HTTP_BAD_REQUEST);
+      return $this->view(["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)], Response::HTTP_BAD_REQUEST);
     }
 
     $serviceDto = new Service();
@@ -300,7 +300,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => $e->getMessage()
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -367,14 +367,14 @@ class ServicesAPIController extends AbstractFOSRestController
     try {
 
       if (!$this->checkProtocolHandler($request)) {
-        return $this->view("Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList), Response::HTTP_BAD_REQUEST);
+        return $this->view(["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)], Response::HTTP_BAD_REQUEST);
       }
 
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
       $service = $repository->find($id);
 
       if (!$service) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
       //$serviceDto = Service::fromEntity($service);
       $serviceDto = new Service();
@@ -411,7 +411,8 @@ class ServicesAPIController extends AbstractFOSRestController
 
       $data = [
         'type' => 'error',
-        'title' => $e->getMessage()
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -420,9 +421,9 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Modified Successfully", Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
     /*} catch (\Exception $e) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }*/
   }
 
@@ -482,7 +483,7 @@ class ServicesAPIController extends AbstractFOSRestController
     try {
 
       if (!$this->checkProtocolHandler($request)) {
-        return $this->view("Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList), Response::HTTP_BAD_REQUEST);
+        return $this->view(["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)], Response::HTTP_BAD_REQUEST);
       }
 
       $em = $this->getDoctrine()->getManager();
@@ -491,7 +492,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $service = $repository->find($id);
 
       if (!$service) {
-        return $this->view("Object not found", Response::HTTP_NOT_FOUND);
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
       $serviceDto = Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
       $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
@@ -524,7 +525,8 @@ class ServicesAPIController extends AbstractFOSRestController
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process'
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -533,7 +535,7 @@ class ServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view("Object Patched Successfully", Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
   /**
