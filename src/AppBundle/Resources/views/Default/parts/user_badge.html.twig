@@ -1,28 +1,30 @@
 {% set locales = app_locales|split('|') %}
 <div class="header-slim-right-zone">
-  <div class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
-      <span>{{ app.request.locale|capitalize }}</span>
-      <svg class="icon d-none d-lg-block">
-        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-expand"></use>
-      </svg>
-    </a>
-    <div class="dropdown-menu">
-      <div class="row">
-        <div class="col-12">
-          <div class="link-list-wrapper">
-            <ul class="link-list">
-              {% for locale in locales %}
-                {% if locale is not empty %}
-                  <li><a class="list-item" href="{{ app.request.pathInfo|replace({(prefix) ~ '/' ~ (app.request.locale): prefix ~ '/' ~ locale}) }}"><span>{{ locale|upper }}</span></a></li>
-                {% endif %}
-              {% endfor %}
-            </ul>
+  {% if locales|length > 1 %}
+    <div class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+        <span>{{ app.request.locale|capitalize }}</span>
+        <svg class="icon d-none d-lg-block">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-expand"></use>
+        </svg>
+      </a>
+      <div class="dropdown-menu">
+        <div class="row">
+          <div class="col-12">
+            <div class="link-list-wrapper">
+              <ul class="link-list">
+                {% for locale in locales %}
+                  {% if locale is not empty %}
+                    <li><a class="list-item" href="{{ app.request.pathInfo|replace({(prefix) ~ '/' ~ (app.request.locale): prefix ~ '/' ~ locale}) }}"><span>{{ locale|upper }}</span></a></li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  {% endif %}
   {% if user.roles is defined %}
     <div class="it-access-top-wrapper">
       {% if 'ROLE_CPS_USER' in user.roles %}
