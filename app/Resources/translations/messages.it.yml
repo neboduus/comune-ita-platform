@@ -2170,3 +2170,4 @@ ente:
 
 buttons:
   draft: 'Salva bozza'
+  last_save: 'Ultimo salvataggio:'

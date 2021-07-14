@@ -7,6 +7,7 @@ use AppBundle\Model\Transition;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -131,6 +132,8 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   const TIPO_DELEGA_ALTRO = 'altro';
 
   const HASH_SESSION_KEY = 'anonymous-hash';
+
+  use TimestampableEntity;
 
   /**
    * @var string

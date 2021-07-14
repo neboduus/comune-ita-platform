@@ -23,10 +23,13 @@ use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\CallToAction;
 use AppBundle\Security\Voters\ApplicationVoter;
+use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
+use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
+use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -91,6 +94,18 @@ class PraticheController extends Controller
    * @var DataTableFactory
    */
   private $dataTableFactory;
+  /**
+   * @var PraticaManager
+   */
+  private $praticaManager;
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerService;
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
 
 
   /**
@@ -105,6 +120,9 @@ class PraticheController extends Controller
    * @param MailerService $mailer
    * @param FeatureManagerInterface $featureManager
    * @param DataTableFactory $dataTableFactory
+   * @param PraticaManager $praticaManager
+   * @param FormServerApiAdapterService $formServerService
+   * @param EntityManagerInterface $entityManager
    */
   public function __construct(
     InstanceService $instanceService,
@@ -116,7 +134,10 @@ class PraticheController extends Controller
     RouterInterface $router,
     MailerService $mailer,
     FeatureManagerInterface $featureManager,
-    DataTableFactory $dataTableFactory
+    DataTableFactory $dataTableFactory,
+    PraticaManager $praticaManager,
+    FormServerApiAdapterService $formServerService,
+    EntityManagerInterface $entityManager
   )
   {
     $this->instanceService = $instanceService;
@@ -129,6 +150,9 @@ class PraticheController extends Controller
     $this->mailer = $mailer;
     $this->featureManager = $featureManager;
     $this->dataTableFactory = $dataTableFactory;
+    $this->praticaManager = $praticaManager;
+    $this->formServerService = $formServerService;
+    $this->entityManager = $entityManager;
   }
 
   /**
@@ -182,19 +206,6 @@ class PraticheController extends Controller
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
-
-    /*$table = $this->dataTableFactory->createFromType(PraticaTableType::class)->handleRequest($request);
-
-    if ($table->isCallback()) {
-      return $table->getResponse();
-    }
-
-    return $this->render( '@App/Pratiche/list.html.twig', [
-      'user'  => $this->getUser(),
-      'title' => 'lista_pratiche',
-      'datatable' => $table
-    ])*/
-
     $criteria = [
       'user' => $user
     ];
@@ -213,14 +224,6 @@ class PraticheController extends Controller
       $criteria,
       ['latestStatusChangeTimestamp' => 'DESC',]
     );
-
-    //$praticheDraft = $repo->findDraftPraticaForUser($user);
-    //$pratichePending = $repo->findPendingPraticaForUser($user);
-    //$praticheProcessing = $repo->findProcessingPraticaForUser($user);
-    //$praticheCompleted = $repo->findCompletePraticaForUser($user);
-    //$praticheCancelled = $repo->findCancelledPraticaForUser($user);
-    //$praticheDraftForIntegration = $repo->findDraftForIntegrationPraticaForUser($user);
-    //$praticheWithdrawn = $repo->findWithdrawnPraticaForUser($user);
 
     $services = $applications = [];
 
@@ -432,9 +435,48 @@ class PraticheController extends Controller
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
-      'user' => $user,
+      'user' => $user
       //'threads' => $thread,
     ]);
+  }
+
+  /**
+   * @Route("/draft/{pratica}", name="pratiche_draft")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
+   * @param Pratica $pratica
+   *
+   * @return Response
+   */
+  public function draftAction(Request $request, Pratica $pratica)
+  {
+    $service = $pratica->getServizio();
+    $schema = null;
+    $result = $this->formServerService->getFormSchema($service->getFormIoId());
+    if ($result['status'] == 'success') {
+      $schema = $result['schema'];
+    }
+
+    $flatSchema = $this->praticaManager->arrayFlat($schema, true);
+    $flatData = $this->praticaManager->arrayFlat($request->request);
+
+    $data = [
+      'data' => $request->request->all(),
+      'flattened' => $flatData,
+      'schema' => $flatSchema,
+    ];
+
+    try {
+      $pratica->setDematerializedForms($data);
+      $this->entityManager->persist($pratica);
+      $this->entityManager->flush();
+
+      return new JsonResponse(['status' => 'ok']);
+
+    } catch (\Exception $e) {
+      return new JsonResponse(['status' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
   }
 
   private function checkUserCanAccessPratica(Pratica $pratica, CPSUser $user)

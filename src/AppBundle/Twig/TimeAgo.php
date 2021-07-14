@@ -22,6 +22,7 @@ class TimeAgo extends \Twig_Extension
 
   public function timeAgo($_time)
   {
+
     $time = time() - $_time;
 
     $units = array(
