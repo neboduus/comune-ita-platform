@@ -16,9 +16,11 @@ $(document).ready(function () {
     $("#edit_alert").show();
   });
 
+  var view_cookie = getCookie("d_view_type")
+  var date_cookie = getCookie("d_date_view")
+
   // Fullcalendar initialization
   var calendarEl = document.getElementById('fullcalendar');
-
   var calendar = new FullCalendar.Calendar(calendarEl, {
     plugins: ['bootstrap', 'dayGrid', 'timeGrid', 'list', 'interaction'],
     themeSystem: 'bootstrap',
@@ -28,7 +30,8 @@ $(document).ready(function () {
     eventColor: '#3478BD',
     events: JSON.parse($('#hidden').attr('data-events')),
     allDaySlot: false,
-    defaultView: $(window).width() < 765 ? 'timeGridDay' : 'dayGridMonth',
+    defaultView: view_cookie ? view_cookie : ($(window).width() < 765 ? 'timeGridDay' : 'dayGridMonth'),
+    defaultDate: date_cookie ? new Date(date_cookie) : new Date(),
     header: {
       left: 'prev,today,next',
       center: 'title',
@@ -100,6 +103,10 @@ $(document).ready(function () {
       if (info.view.type === 'dayGridMonth')
         this.changeView("timeGridDay", info.dateStr)
     },
+    datesRender: function (info) {
+      document.cookie = "d_view_type="+info.view.type;
+      document.cookie = "d_date_view="+info.view.activeStart;
+    }
   });
 
   calendar.render();
@@ -259,4 +266,15 @@ function getStatus(status) {
     default:
       return 'Errore';
   }
+}
+
+function getCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+    var c = ca[i];
+    while (c.charAt(0)===' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
 }
