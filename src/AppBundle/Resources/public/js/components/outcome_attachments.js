@@ -8,6 +8,7 @@ Vue.component('outcome_attachments', {
         :on-success="onSuccess"
         :on-remove="onRemove"
         :on-error="onError"
+        :before-upload="onBeforeUpload"
         :multiple="true">
         <el-button type="primary">Carica allegato</el-button>
       </el-upload>
@@ -42,6 +43,12 @@ Vue.component('outcome_attachments', {
         }
       }
       this.updateFormValue()
+    },
+    onBeforeUpload(file) {
+      if (file.size / 1024 / 1024 > 25) {
+        this.$message.error('Attenzione: non è possibile caricare file con una dimensione maggiore di 25Mb.');
+        return false;
+      }
     },
     updateFormValue() {
       document.getElementById('outcome_attachments').value = JSON.stringify(this.attachments)
