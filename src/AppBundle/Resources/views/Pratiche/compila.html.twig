@@ -61,6 +61,7 @@
   <script>
     $(document).ready(function () {
       let formIoIdInput = $('#formio_render_form_id');
+
       if (formIoIdInput.length) {
         let customErrorContainer = $('#formio-custom-errors');
 
@@ -78,6 +79,31 @@
         }).then(function (form) {
           form.formReady.then(() => {
             setTimeout(disableApplicant, 1000);
+
+            const draftButton =  $('#save-draft');
+            const draftInfo = $('.save-draft-info');
+            const draftTextInfo = draftInfo.find('span');
+            if (draftButton.length) {
+              draftButton.parent().removeClass('d-none');
+              draftButton.on('click', function (e) {
+                e.preventDefault();
+                let text = draftButton.html();
+                draftButton.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salvataggio in corso...')
+                axios.post(draftButton.data('save-draft-url'), form.submission.data)
+                  .then(function (reponse) {
+                    draftInfo.removeClass('d-none');
+                    draftTextInfo.text('pochi secondi fa')
+                  })
+                  .catch(function (error) {
+                    draftInfo.removeClass('d-none');
+                    draftTextInfo.text('si è verificato un errore durante il salvataggio')
+                  })
+                  .then(function () {
+                    draftButton.html(text)
+                  });
+              });
+            }
+
           });
 
           if (form.hasOwnProperty('wizard')) {
@@ -227,6 +253,7 @@
           {% endif %}
 
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
+
           {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
             <p>Verifica i dati inseriti prima di passare al metodo di pagamento</p>
             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
@@ -272,6 +299,15 @@
             <div class="body">
               <p>{{ form.vars.helper.guideText|raw }}</p>
             </div>
+          </div>
+        {% endif %}
+
+        {% if is_granted('ROLE_USER') %}
+          <div class="d-none" id="save-draft-container">
+            <button id="save-draft" class="btn btn-outline-primary w-100" data-save-draft-url="{{ path('pratiche_draft', {'pratica': pratica}) }}">
+              <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ 'buttons.draft'|trans }}
+            </button>
+            <small class="save-draft-info w-100 mt-1 text-center text-info {% if pratica.dematerializedForms is not defined or pratica.dematerializedForms|length <= 0 %}d-none{% endif %}"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }} <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
           </div>
         {% endif %}
 
