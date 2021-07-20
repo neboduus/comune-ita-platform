@@ -28,6 +28,7 @@ use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -1261,10 +1262,9 @@ class OperatoriController extends Controller
     /** @var EntityManager $em */
     $em = $this->getDoctrine()->getManager();
     try {
-
       $stmt = $em->getConnection()->executeQuery($sql, $sqlParams);
-      $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
-    } catch (DBALException $e) {
+      $result = $stmt->fetchAllAssociative();
+    } catch (Exception $e) {
       $this->logger->error($e->getMessage());
       $result = [];
     }
