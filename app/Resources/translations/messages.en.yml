@@ -524,6 +524,7 @@ user:
     pratiche_related: 'Aperte per mio conto'
     pratiche_integration: 'Da integrare'
     pratiche_withdrawn: 'Ritirate'
+    pratiche_payment_pending: 'Da pagare'
     vai_al_dettaglio: 'Dettaglio'
     avvisi_notizie: 'Avvisi / Notizie'
     scadenze: 'Scadenze'
