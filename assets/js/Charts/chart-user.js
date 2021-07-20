@@ -8,7 +8,7 @@ const _ = require('lodash');
 
 const location = window.location
 const explodedPath = location.pathname.split("/");
-const endpointUrl = location.origin + '/' + explodedPath[1] + '/admin/usage/metriche'
+const endpointUrl = location.origin + '/' + explodedPath[1] + '/' + explodedPath[2] + '/admin/usage/metriche'
 
 let selectStatus =  $('select.select-status');
 let selectServices =  $('select.select-services');
