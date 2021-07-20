@@ -237,7 +237,7 @@ class PraticheController extends Controller
       if ($p->getStatus() == Pratica::STATUS_DRAFT) {
         $applications['draft'][]= $p;
       } elseif (in_array($p->getStatus(), [
-          Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING, Pratica::STATUS_PENDING_AFTER_INTEGRATION,
+          Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING, Pratica::STATUS_PENDING_AFTER_INTEGRATION,
           Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE, Pratica::STATUS_REQUEST_INTEGRATION, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE])) {
         $applications['pending'][]= $p;
       } elseif ($p->getStatus() == Pratica::STATUS_COMPLETE) {
@@ -246,6 +246,8 @@ class PraticheController extends Controller
         $applications['cancelled'][]= $p;
       } elseif (in_array($p->getStatus(), [Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION])) {
         $applications['integration'][]= $p;
+      } elseif ($p->getStatus() == Pratica::STATUS_PAYMENT_PENDING) {
+        $applications['payment_pending'][]= $p;
       } elseif ($p->getStatus() == Pratica::STATUS_WITHDRAW) {
         $applications['withdrawn'][]= $p;
       }

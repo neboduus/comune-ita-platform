@@ -31,9 +31,15 @@
                               <svg class="icon icon-sm mr-2">
                                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
                               </svg>
-                              <a class="d-inline p-0" href="{% if feature('feature_application_detail') %}{{ path('pratica_show_detail', {'pratica': p}) }}{% else %}{{ path('pratiche_show', {'pratica': p}) }}{% endif %}">
-                                <span style="flex:1">Pratica del {{ p.creationTime|date(ocsdc_default_date_format) }}</span>
-                              </a>
+                              {% if p.status == constant('STATUS_PAYMENT_PENDING', p) %}
+                                <a class="d-inline p-0" href="{{ path('pratiche_compila', {'pratica': p}) }}">
+                                  <span style="flex:1">Pratica del {{ p.creationTime|date(ocsdc_default_date_format) }}</span>
+                                </a>
+                              {% else %}
+                                <a class="d-inline p-0" href="{% if feature('feature_application_detail') %}{{ path('pratica_show_detail', {'pratica': p}) }}{% else %}{{ path('pratiche_show', {'pratica': p}) }}{% endif %}">
+                                  <span style="flex:1">Pratica del {{ p.creationTime|date(ocsdc_default_date_format) }}</span>
+                                </a>
+                              {% endif %}
                               {% if p.status == constant('STATUS_PAYMENT_PENDING', p) %}
                                 <small><span class="badge badge-secondary">Da pagare</span></small>
                               {% elseif p.status == constant('STATUS_DRAFT_FOR_INTEGRATION', p) %}
