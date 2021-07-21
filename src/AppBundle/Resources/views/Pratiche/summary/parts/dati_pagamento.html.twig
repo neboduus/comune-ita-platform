@@ -103,7 +103,11 @@
         </table>
       </div>
     {% else %}
-      <div class="font-italic text-center">{{ 'operatori.pagamento_non_previsto'|trans }}</div>
+      {% if pratica.isPaymentExempt %}
+        <div class="font-italic text-center">{{ 'operatori.pagamento_esentato'|trans }}</div>
+      {% else %}
+        <div class="font-italic text-center">{{ 'operatori.pagamento_non_previsto'|trans }}</div>
+      {% endif %}
     {% endif %}
   </div>
 </div>

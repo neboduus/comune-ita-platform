@@ -613,6 +613,7 @@ operatori:
   pagamento: 'Pagamento'
   protocollo: 'Protocollo'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
+  pagamento_esentato: 'Per questa pratica il pagamento è stato esentato'
   protocollo_non_previsto: 'Per questa pratica non è prevista la protocollazione'
   meetings: 'Appuntamenti'
   meetings_in_evidence: 'Appuntamenti in evidenza'

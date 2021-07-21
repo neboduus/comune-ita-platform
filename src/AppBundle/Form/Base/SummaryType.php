@@ -5,6 +5,7 @@ namespace AppBundle\Form\Base;
 
 
 use AppBundle\Entity\Pratica;
+use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
@@ -67,22 +68,25 @@ class SummaryType extends AbstractType
     // Se c'è un solo metodo di pagamneto lo imposto e salto lo step
     /** @var Pratica $application */
     $application = $event->getForm()->getData();
+    $data = $application->getDematerializedForms();
 
-    $service = $application->getServizio();
-    $paymentParameters = $service->getPaymentParameters();
-    $selectedGateways = isset($paymentParameters['gateways']) ? $paymentParameters['gateways'] : [];
+    if (isset($data['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && $data['flattened'][PaymentDataType::PAYMENT_AMOUNT] > 0) {
+      $service = $application->getServizio();
+      $paymentParameters = $service->getPaymentParameters();
+      $selectedGateways = isset($paymentParameters['gateways']) ? $paymentParameters['gateways'] : [];
 
-    if (count($selectedGateways) == 1) {
-      $identifier = array_keys($selectedGateways)[0];
-      $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
-        'identifier' => array_keys($selectedGateways)[0]
-      ]);
-      if (count($gateways) > 0) {
-        $application->setPaymentType($gateways[0]);
-        $this->em->persist($application);
-        $this->em->flush();
-        if ($identifier == 'mypay' && $application->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
-          $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_PENDING);
+      if (count($selectedGateways) == 1) {
+        $identifier = array_keys($selectedGateways)[0];
+        $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
+          'identifier' => array_keys($selectedGateways)[0]
+        ]);
+        if (count($gateways) > 0) {
+          $application->setPaymentType($gateways[0]);
+          $this->em->persist($application);
+          $this->em->flush();
+          if ($identifier == 'mypay' && $application->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
+            $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_PENDING);
+          }
         }
       }
     }
