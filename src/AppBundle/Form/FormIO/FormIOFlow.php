@@ -5,6 +5,7 @@ namespace AppBundle\Form\FormIO;
 use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Form\Base\PaymentGatewayType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\RecaptchaType;
@@ -49,6 +50,7 @@ class FormIOFlow extends PraticaFlow
   {
     /** @var Pratica $pratica */
     $pratica = $this->getFormData();
+    $data = $pratica->getDematerializedForms();
 
     $steps = array(
       self::STEP_MODULO_FORMIO => array(
@@ -81,20 +83,23 @@ class FormIOFlow extends PraticaFlow
           return $flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $flow->getFormData()->getServizio()->isPaymentDeferred() && $flow->getFormData()->getEsito();
         },
       );
-      $steps[] = array(
-        'label' => 'steps.common.select_payment_gateway.label',
-        'form_type' => SelectPaymentGatewayType::class,
-        'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
-          return $flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $flow->getFormData()->getPaymentType();
-        },
-      );
-      $steps[] = array(
-        'label' => 'steps.common.payment_gateway.label',
-        'form_type' => PaymentGatewayType::class,
-      );
-      $steps[] = array(
-        'label' => 'Verifica pagamento',
-      );
+
+      if (empty($data) || (isset($data['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && $data['flattened'][PaymentDataType::PAYMENT_AMOUNT] > 0)) {
+        $steps[] = array(
+          'label' => 'steps.common.select_payment_gateway.label',
+          'form_type' => SelectPaymentGatewayType::class,
+          'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
+            return $flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $flow->getFormData()->getPaymentType();
+          },
+        );
+        $steps[] = array(
+          'label' => 'steps.common.payment_gateway.label',
+          'form_type' => PaymentGatewayType::class,
+        );
+        $steps[] = array(
+          'label' => 'Verifica pagamento',
+        );
+      }
     } else {
       // Step conferma
       if ($pratica->getUser() != null) {

@@ -70,6 +70,12 @@ class FormIO extends Pratica implements DematerializedFormPratica
     $this->dematerializedForms = $dematerializedForms;
   }
 
+  public function isPaymentExempt()
+  {
+    $data = $this->dematerializedForms;
+    return isset($data['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && $data['flattened'][PaymentDataType::PAYMENT_AMOUNT] <= 0;
+  }
+
   public function getType(): string
   {
     return Pratica::TYPE_FORMIO;
