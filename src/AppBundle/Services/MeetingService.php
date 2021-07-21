@@ -73,7 +73,7 @@ class MeetingService
       ->from('AppBundle:Meeting', 'meeting')
       ->leftJoin('meeting.calendar', 'calendar')
       ->where('meeting.calendar = :calendar')
-      ->andWhere('meeting.fromTime <= :toTime AND meeting.toTime >= :fromTime')
+      ->andWhere('meeting.fromTime < :toTime AND meeting.toTime > :fromTime')
       ->andWhere('meeting.id != :id')
       ->andWhere('meeting.status != :refused')
       ->andWhere('meeting.status != :cancelled')
@@ -83,40 +83,12 @@ class MeetingService
       ->setParameter('id', $meeting->getId())
       ->setParameter('refused', Meeting::STATUS_REFUSED)
       ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
-      //->groupBy('meeting.fromTime', 'meeting.toTime')
       ->getQuery()->getResult();
 
     if (!empty($meetings) && $meetings[0]['meetingCount'] >= $meeting->getOpeningHour()->getMeetingQueue()) {
       return false;
     }
     return true;
-
-    // Retrieve all meetings in the same time slot
-
-    $meetings = $this->entityManager->createQueryBuilder()
-      ->select('count(meeting.fromTime) as meetingCount')
-      ->from('AppBundle:Meeting', 'meeting')
-      ->leftJoin('meeting.calendar', 'calendar')
-      ->where('meeting.calendar = :calendar')
-      ->andWhere('meeting.fromTime >= :fromTime')
-      ->andWhere('meeting.toTime <= :toTime')
-      ->andWhere('meeting.id != :id')
-      ->andWhere('meeting.status != :refused')
-      ->andWhere('meeting.status != :cancelled')
-      ->setParameter('calendar', $meeting->getCalendar())
-      ->setParameter('fromTime', $meeting->getFromTime())
-      ->setParameter('toTime', $meeting->getToTime())
-      ->setParameter('id', $meeting->getId())
-      ->setParameter('refused', Meeting::STATUS_REFUSED)
-      ->setParameter('cancelled', Meeting::STATUS_CANCELLED)
-      ->groupBy('meeting.fromTime', 'meeting.toTime')
-      ->getQuery()->getResult();
-
-    if (!empty($meetings) && $meetings[0]['meetingCount'] >= $meeting->getOpeningHour()->getMeetingQueue()) {
-      return false;
-    }
-    return true;
-
   }
 
   /**
