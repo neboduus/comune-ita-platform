@@ -14,11 +14,11 @@ parameters:
   app_locales: "it"
 
 framework:
-  default_locale: "%locale%"
+  default_locale: "it"
   #esi:             ~
   translator:
     fallbacks:
-      - "%locale%"
+      - "it"
   secret: "%secret%"
   router:
     resource: "%kernel.root_dir%/config/routing.yml"
