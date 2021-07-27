@@ -309,16 +309,18 @@ class MeetingService
   {
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
+    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
     $contact = $calendar->getContactEmail();
 
     if (($calendar->getIsModerated() || $meeting->getOpeningHour()->getIsModerated()) && $status == Meeting::STATUS_PENDING) {
-      $userMessage = $this->translator->trans('meetings.email.new_meeting.pending');
+      $userMessage = $this->translator->trans('meetings.email.new_meeting.pending', ['%service%' => $service]);
     } else if ($status == Meeting::STATUS_APPROVED) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.approved',
         [
+          '%service%' => $service,
           'hour' => $hour,
           'date' => $date,
           'location' => $calendar->getLocation()
@@ -444,6 +446,7 @@ class MeetingService
 
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
+    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
@@ -464,18 +467,21 @@ class MeetingService
     if ($statusChanged && $status == Meeting::STATUS_REFUSED) {
       // Meeting has been refused. Date change does not matter
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.refused', [
+        '%service%' => $service,
         'date' => $date,
         'email_address' => $contact
       ]);
     } else if ($statusChanged && $status == Meeting::STATUS_CANCELLED) {
       // Meeting has been cancelled. Date change does not matter
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.cancelled', [
+        '%service%' => $service,
         'date' => $date,
         'hour' => $hour
       ]);
     } else if (!$statusChanged && $dateChanged && $status == Meeting::STATUS_APPROVED) {
       // Approved meeting has been rescheduled
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.rescheduled', [
+        '%service%' => $service,
         'old_date' => $oldDate,
         'hour' => $hour,
         'new_date' => $date,
@@ -484,6 +490,7 @@ class MeetingService
     } else if ($statusChanged && $dateChanged && $status == Meeting::STATUS_APPROVED) {
       // Auto approved meeting due to date change
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.rescheduled_and_approved', [
+        '%service%' => $service,
         'hour' => $hour,
         'date' => $date,
         'location' => $location
@@ -491,6 +498,7 @@ class MeetingService
     } else if ($statusChanged && !$dateChanged && $status == Meeting::STATUS_APPROVED) {
       // Approved meeting with no date change
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.approved', [
+        '%service%' => $service,
         'hour' => $hour,
         'date' => $date,
         'location' => $location,
@@ -499,14 +507,16 @@ class MeetingService
       // Videoconference link changed for approved meeting
       if ($link && $oldLink) {
         $userMessage = $this->translator->trans('meetings.email.meeting_link.changed', [
+          '%service%' => $service,
           'videoconference_link' => $link
         ]);
       } else if (!$oldLink) {
         $userMessage = $this->translator->trans('meetings.email.meeting_link.new', [
+          '%service%' => $service,
           'videoconference_link' => $link
         ]);
       } else if (!$link) {
-        $userMessage = $this->translator->trans('meetings.email.meeting_link.removed');
+        $userMessage = $this->translator->trans('meetings.email.meeting_link.removed', ['%service%' => $service]);
       }
 
     } else return;
@@ -597,10 +607,11 @@ class MeetingService
    */
   public function sendEmailRemovedMeeting(Meeting $meeting)
   {
-    $calendar = $meeting->getCalendar();
+    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
     $ente = $this->instanceService->getCurrentInstance();
 
     $message = $this->translator->trans('meetings.email.delete_meeting.delete', [
+      '%service%' => $service,
       'date' => $meeting->getFromTime()->format('d/m/Y'),
       'hour' => $meeting->getFromTime()->format('H:i')
     ]);
@@ -634,10 +645,11 @@ class MeetingService
    */
   public function sendEmailUnavailableMeeting(Meeting $meeting)
   {
-    $calendar = $meeting->getCalendar();
+    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
     $ente = $this->instanceService->getCurrentInstance();
 
     $message = $this->translator->trans('meetings.email.invalid_meeting.invalid', [
+      '%service%' => $service,
       'date' => $meeting->getFromTime()->format('d/m/Y'),
       'hour' => $meeting->getFromTime()->format('H:i')
     ]);

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
@@ -129,6 +130,11 @@ class Meeting
   private $motivationOutcome;
 
   /**
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="meetings")
+   */
+  private $applications;
+
+  /**
    * @var string
    *
    * @ORM\Column(name="videoconference_link", type="string", nullable=true)
@@ -189,6 +195,7 @@ class Meeting
     if (!$this->id) {
       $this->id = Uuid::uuid4();
       $this->cancelLink = hash('sha256', $this->id . (new DateTime())->format('c'));
+      $this->applications = new ArrayCollection();
     }
   }
 
@@ -491,6 +498,29 @@ class Meeting
 
     return $this;
   }
+
+  /**
+   * Get Applications
+   *
+   */
+  public function getApplications()
+  {
+    return $this->applications;
+  }
+
+  /**
+   * @param Pratica $application
+   * @return $this
+   */
+  public function addApplication(Pratica $application)
+  {
+    if (!$this->applications->contains($application)) {
+      $this->applications->add($application);
+    }
+
+    return $this;
+  }
+
 
   /**
    * Set userMessage.
