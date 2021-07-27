@@ -581,6 +581,55 @@ class PraticaRepository extends EntityRepository
     return $data;
   }
 
+  public function getApplications($parameters = [], $onlyCount = false, $order = 'creationTime', $sort = 'ASC', $offset = 0, $limit = 10)
+  {
+
+    $qb = $this->createQueryBuilder('pratica')
+      ->where('pratica.status != :status')->setParameter('status', Pratica::STATUS_DRAFT)
+      ->andWhere('pratica.servizio IN (:services)')->setParameter('services', $parameters['service']);
+
+    // after|before|strictly_after|strictly_before
+    if (isset($parameters['createdAt'])) {
+      if (isset($parameters['createdAt']['strictly_after'])) {
+        $qb->andWhere('pratica.createdAt > :createdAt')->setParameter('createdAt', $parameters['createdAt']);
+      } else if (isset($parameters['createdAt']['after'])) {
+        $qb->andWhere('pratica.createdAt >= :createdAt')->setParameter('createdAt', $parameters['createdAt']);
+      }
+
+      if (isset($parameters['createdAt']['strictly_before'])) {
+        $qb->andWhere('pratica.createdAt < :createdAt')->setParameter('createdAt', $parameters['createdAt']);
+      } else if (isset($parameters['createdAt']['before'])) {
+        $qb->andWhere('pratica.createdAt <= :createdAt')->setParameter('createdAt', $parameters['createdAt']);
+      }
+    }
+
+    if (isset($parameters['updatedAt'])) {
+      if (isset($parameters['updatedAt']['strictly_after'])) {
+        $qb->andWhere('pratica.updatedAt > :updatedAt')->setParameter('updatedAt', $parameters['updatedAt']);
+      } else if (isset($parameters['updatedAt']['after'])) {
+        $qb->andWhere('pratica.updatedAt >= :updatedAt')->setParameter('updatedAt', $parameters['updatedAt']);
+      }
+
+      if (isset($parameters['updatedAt']['strictly_before'])) {
+        $qb->andWhere('pratica.updatedAt < :updatedAt')->setParameter('updatedAt', $parameters['updatedAt']);
+      } else if (isset($parameters['updatedAt']['before'])) {
+        $qb->andWhere('pratica.updatedAt <= :updatedAt')->setParameter('updatedAt', $parameters['updatedAt']);
+      }
+    }
+
+    if ($onlyCount) {
+      $qb->select('COUNT(pratica.id)');
+      return $qb->getQuery()->getSingleScalarResult();
+    } else {
+      $qb
+        ->orderBy('pratica.' . $order, $sort)
+        ->setFirstResult($offset)
+        ->setMaxResults($limit);
+    }
+
+    return $qb->getQuery()->execute();
+  }
+
   /**
    * @param Pratica $pratica
    * @return Pratica[]

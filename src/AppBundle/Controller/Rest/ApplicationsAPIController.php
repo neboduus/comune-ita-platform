@@ -28,6 +28,7 @@ use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use AppBundle\Utils\UploadedBase64File;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\DriverException;
@@ -226,6 +227,20 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      description="Sorting criteria of the order field. Default ASC"
    *  )
    * @SWG\Parameter(
+   *      name="createdAt[after|before|strictly_after|strictly_before]",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Created at filter, format yyyy-mm-dd"
+   *  )
+   * @SWG\Parameter(
+   *      name="updatedAt[after|before|strictly_after|strictly_before]",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Updated at filter, format yyyy-mm-dd"
+   *  )
+   * @SWG\Parameter(
    *      name="offset",
    *      in="query",
    *      type="integer",
@@ -272,6 +287,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $orderParameter = $request->get('order', false);
     $sortParameter = $request->get('sort', false);
 
+    $createdAtParameter = $request->get('createdAt', false);
+    $updatedAtParameter = $request->get('updatedAt', false);
+
     if ($limit > 100) {
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
@@ -294,47 +312,56 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['sort'] = $sortParameter;
     }
 
+    $format = 'Y-m-d';
+
+    if ($createdAtParameter) {
+      foreach ($createdAtParameter as $v) {
+        $date = DateTime::createFromFormat($format, $v);
+        if (!$date || $date->format($format) !== $v) {
+          return $this->view(["Parameter createdAt must be in this format: yyyy-mm-dd"], Response::HTTP_BAD_REQUEST);
+        }
+      }
+      $queryParameters['createdAt'] = $createdAtParameter;
+    }
+    if ($updatedAtParameter) {
+      foreach ($updatedAtParameter as $v) {
+        $date = DateTime::createFromFormat($format, $v);
+        if (!$date || $date->format($format) !== $v) {
+          return $this->view(["Parameter updatedAt must be in this format: yyyy-mm-dd"], Response::HTTP_BAD_REQUEST);
+        }
+      }
+      $queryParameters['updatedAt'] = $updatedAtParameter;
+    }
+
     if ($serviceParameter) {
       $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
       if (!$service instanceof Servizio) {
         return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
       }
-
       if (!in_array($service->getId(), $allowedServices)) {
         return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
       }
-
       $allowedServices = [$service->getId()];
+      $queryParameters['service'] = $serviceParameter;
     }
 
-    $repoApplications = $this->em->getRepository(Pratica::class);
-    /** @var QueryBuilder $query */
-    $query = $repoApplications->createQueryBuilder('a')
-      ->select('count(a.id)')
-      ->where('a.status != :status')
-      ->setParameter('status', Pratica::STATUS_DRAFT);
+    $result = [];
+    $result['meta']['parameter'] = $queryParameters;
 
-    $query
-      ->andWhere('a.servizio IN (:serviceId)')
-      ->setParameter('serviceId', $allowedServices);
-    $criteria = ['servizio' => $allowedServices];
+    $repoApplications = $this->em->getRepository(Pratica::class);
 
 
     try {
-      $count = $query
-        ->getQuery()
-        ->getSingleScalarResult();
+      $parameters = $queryParameters;
+      $parameters['service'] = $allowedServices;
+      $count = $repoApplications->getApplications($parameters, true);
     } catch (NoResultException $e) {
       $count = 0;
     } catch (NonUniqueResultException $e) {
       return $this->view($e->getMessage(), Response::HTTP_I_AM_A_TEAPOT);
     }
 
-    $result = [];
     $result['meta']['count'] = $count;
-    $result['meta']['parameter']['offset'] = $offset;
-    $result['meta']['parameter']['limit'] = $limit;
-
     $result['links']['self'] = $this->generateUrl(
       'applications_api_list',
       $queryParameters,
@@ -346,8 +373,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     if ($offset != 0) {
       $queryParameters['offset'] = $offset - $limit;
-      $result['links']['prev'] = $this->generateUrl(
-        'applications_api_list',
+      $result['links']['prev'] = $this->generateUrl('applications_api_list',
         $queryParameters,
         UrlGeneratorInterface::ABSOLUTE_URL
       );
@@ -362,13 +388,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       );
     }
 
-    $order = $orderParameter ? $orderParameter : "creationTime";
-    $sort = $sortParameter ? $sortParameter : "ASC";
+    $order = $orderParameter ?: "creationTime";
+    $sort = $sortParameter ?: "ASC";
     try {
-      $statuses = Pratica::getStatuses();
-      unset($statuses[Pratica::STATUS_DRAFT]);
-      $criteria['status'] = array_keys($statuses);
-      $applications = $repoApplications->findBy($criteria, [$order => $sort], $limit, $offset);
+      $applications = $repoApplications->getApplications($parameters, false, $order, $sort, $offset, $limit);
+
       foreach ($applications as $s) {
         $result ['data'][] = Application::fromEntity($s, $this->baseUrl.'/'.$s->getId(), true, $version);
       }
