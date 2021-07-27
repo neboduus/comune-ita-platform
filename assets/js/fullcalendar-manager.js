@@ -139,7 +139,7 @@ $(document).ready(function () {
 function calculateSlot() {
   let minDuration = $('#hidden').attr('data-duration');
   if (minDuration <= 60) {
-    return `00:${minDuration}:00`
+    return `00:${("0" + minDuration).slice(-2)}:00`
   } else return "01:00:00";
 }
 
