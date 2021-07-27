@@ -122,6 +122,7 @@ pratica:
   iter: 'Iter della pratica'
   tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
+  crea_nuova_pratica: 'Crea nuova pratica'
   ritira_la_pratica: 'Annulla la richiesta'
   nuova_pratica: 'Nuova pratica: %name%'
   integrazione_pratica: 'Integrazione pratica: %name%'
