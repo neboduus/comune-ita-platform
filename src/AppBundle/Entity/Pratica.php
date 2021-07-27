@@ -503,7 +503,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $folderId;
 
   /**
-   * @ORM\ManyToMany (targetEntity="AppBundle\Entity\Meeting")
+   * @ORM\ManyToMany (targetEntity="AppBundle\Entity\Meeting", inversedBy="applications")
    * @ORM\JoinTable(name="application_meetings",
    *      joinColumns={@ORM\JoinColumn(name="application_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="meeting_id", referencedColumnName="id", unique=true)}
@@ -2193,6 +2193,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   {
     if (!$this->meetings->contains($meeting)) {
       $this->meetings->add($meeting);
+      $meeting->addApplication($this);
     }
 
     return $this;
