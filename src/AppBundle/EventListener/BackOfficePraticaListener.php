@@ -7,6 +7,7 @@ use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class BackOfficePraticaListener
 {
@@ -17,14 +18,20 @@ class BackOfficePraticaListener
   private $container;
 
   /**
+   * @var Session
+   */
+  private $session;
+
+  /**
    * @var LoggerInterface
    */
   private $logger;
 
-  public function __construct(Container $container,  LoggerInterface $logger)
+  public function __construct(Container $container, LoggerInterface $logger, Session $session)
   {
     $this->container = $container;
     $this->logger = $logger;
+    $this->session = $session;
   }
 
   /**
@@ -44,6 +51,11 @@ class BackOfficePraticaListener
         $backOfficeHandler = $this->container->get($integration);
         $result = $backOfficeHandler->execute($pratica);
         if (is_array($result) && isset($result["error"])) {
+          $this->session->getFlashBag()->add(
+            'error',
+            $result["error"]
+          );
+          $this->logger->error($result["error"] . " for pratica " . $pratica->getId());
           throw new \Exception($result["error"]);
         }
       }

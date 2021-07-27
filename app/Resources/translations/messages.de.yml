@@ -2120,6 +2120,7 @@ backoffice:
       limit_error: 'Limite massimo di iscrizioni raggiunto. Utente user non iscritto al corso code'
       save_subscriber_error: 'Si è verificato un errore durante il salvataggio dell utente user'
       save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
+      duplicate_error: "l'utente user risulta già iscritto al servizio service_name"
     subscription_service:
       payment:
         due_date: "Data di scadenza del pagamento"

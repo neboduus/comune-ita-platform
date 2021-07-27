@@ -9,6 +9,7 @@ use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -193,12 +194,14 @@ class SubcriptionsBackOffice implements BackOfficeInterface
           $fixedData["related_cfs"][] = $subscriptionData["applicant.data.fiscal_code.data.fiscal_code"];
         }
       } else {
+        $this->logger->error($this->translator->trans('backoffice.integration.fields_error'));
         return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
       }
     } else {
       // CSV Import
       ksort($data);
       if (array_values(array_intersect(array_keys($data), $requiredHeaders)) != array_values($requiredHeaders)) {
+        $this->logger->error($this->translator->trans('backoffice.integration.fields_error'));
         return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
       }
       $fixedData= $data;
@@ -216,10 +219,13 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
     // No such subscription service with given code
     if (!$subscriptionService) {
+      $this->logger->error($this->translator->trans('backoffice.integration.subscriptions.subscription_service_error', ['code'=>$fixedData['code']]));
       return ['error' => $this->translator->trans('backoffice.integration.subscriptions.subscription_service_error', ['code'=>$fixedData['code']])];
     }
     // limit of subscriptions reached
     if ($subscriptionService->getSubscribersLimit() && count($subscriptionService->getSubscriptions()) >= $subscriptionService->getSubscribersLimit()) {
+      $this->logger->error($this->translator->trans('backoffice.integration.subscriptions.limit_error',
+        ['user' => $fixedData['fiscal_code'], 'code'=> $fixedData['code']]));
       return ['error' => $this->translator->trans('backoffice.integration.subscriptions.limit_error',
         ['user' => $fixedData['fiscal_code'], 'code'=> $fixedData['code']])];
     }
@@ -290,6 +296,11 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       }
 
       return $subscription;
+    } catch (UniqueConstraintViolationException $exception) {
+      $this->logger->error($exception->getMessage() . ' on subscription');
+      return ['error' => $this->translator->trans('backoffice.integration.subscriptions.duplicate_error', [
+        'user' => $subscriber->getFiscalCode(),
+        'service_name' => $subscriptionService->getName()])];
     } catch (\Exception $exception) {
       $this->logger->error($exception->getMessage() . ' on subscription');
       return ['error' => $this->translator->trans('backoffice.integration.subscriptions.save_subscription_error', ['user' => $subscriber->getFiscalCode()])];

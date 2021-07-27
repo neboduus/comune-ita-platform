@@ -160,6 +160,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
         }
       }
       if (!$integrationType) {
+        $this->logger->error($this->translator->trans('backoffice.integration.fields_error'));
         return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
       }
     }
@@ -181,6 +182,10 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     $subscription = $qb->getQuery()->getSingleResult();
 
     if (!$subscription) {
+      $this->logger->error($this->translator->trans('backoffice.integration.subscriptions.subscription_error', [
+        '%code%'=>$subscriptionData['code'],
+        '%fiscal_code%' => $subscriberFiscalCode
+      ]));
       return ['error' => $this->translator->trans('backoffice.integration.subscriptions.subscription_error', [
         '%code%'=>$subscriptionData['code'],
         '%fiscal_code%' => $subscriberFiscalCode
