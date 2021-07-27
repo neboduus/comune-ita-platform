@@ -9,6 +9,14 @@
   <script>
 $(document).ready(function () {
 $('#meetings_table').DataTable( {
+    "columnDefs": [{
+      "targets": [0],
+      "orderData": [0, 1]
+    },
+    {
+      "targets": [1],
+      "orderData": [1, 0]
+    }],
     "language": {
       "sEmptyTable": "Nessun dato presente nella tabella",
       "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
@@ -100,7 +108,7 @@ $('#meetings_table').DataTable( {
           <tbody>
           {% for t in datatable %}
             <tr>
-              <td>{{ t.fromTime |date("Y/m/d") }}</td>
+              <td data-order="{{ t.fromTime | date("U")}}">{{ t.fromTime |date("d/m/Y") }}</td>
               <td>{{ t.fromTime |date('H:i') }} - {{ t.toTime | date('H:i') }}</td>
               <td>{{ t.user.nome }} {{ t.user.cognome }}</td>
               <td><a href="mailto:{{ t.email }}">{{ t.email }}</a></td>
