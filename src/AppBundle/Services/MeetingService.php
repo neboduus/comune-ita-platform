@@ -795,8 +795,8 @@ class MeetingService
       foreach ($openingHours as $index2 => $openingHour2) {
         if ($index2 > $index1) {
           // Skip opening hours already analyzed
-          $isDatesOverlapped = $openingHour1->getStartDate() <= $openingHour2->getEndDate() && $openingHour1->getEndDate() >= $openingHour2->getStartDate();
-          $isTimesOverlapped = $openingHour1->getBeginHour() <= $openingHour2->getEndHour() && $openingHour1->getEndHour() >= $openingHour2->getBeginHour();
+          $isDatesOverlapped = $openingHour1->getStartDate() < $openingHour2->getEndDate() && $openingHour1->getEndDate() > $openingHour2->getStartDate();
+          $isTimesOverlapped = $openingHour1->getBeginHour() < $openingHour2->getEndHour() && $openingHour1->getEndHour() > $openingHour2->getBeginHour();
           $weekDaysOverlapped = array_intersect($openingHour1->getDaysOfWeek(), $openingHour2->getDaysOfWeek());
 
           if ($isTimesOverlapped && $isDatesOverlapped && !empty($weekDaysOverlapped)) {

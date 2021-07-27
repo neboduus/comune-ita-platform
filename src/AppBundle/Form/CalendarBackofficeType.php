@@ -187,8 +187,8 @@ class CalendarBackofficeType extends AbstractType
         foreach ($openingHours as $index2 => $openingHour2) {
           // Skip opening hours already analyzed
           if ($index2 > $index1) {
-            $isDatesOverlapped = $openingHour1['start_date'] <= $openingHour2['end_date'] && $openingHour1['end_date'] >= $openingHour2['start_date'];
-            $isTimesOverlapped = $openingHour1['begin_hour'] <= $openingHour2['end_hour'] && $openingHour1['end_hour'] >= $openingHour2['begin_hour'];
+            $isDatesOverlapped = $openingHour1['start_date'] < $openingHour2['end_date'] && $openingHour1['end_date'] > $openingHour2['start_date'];
+            $isTimesOverlapped = $openingHour1['begin_hour'] < $openingHour2['end_hour'] && $openingHour1['end_hour'] > $openingHour2['begin_hour'];
             $weekDaysOverlapped = array_intersect($openingHour1['days_of_week'], $openingHour2['days_of_week']);
 
             if ($isTimesOverlapped && $isDatesOverlapped && !empty($weekDaysOverlapped)) {
