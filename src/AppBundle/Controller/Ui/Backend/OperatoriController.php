@@ -21,6 +21,7 @@ use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
 use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
 use AppBundle\Services\Manager\MessageManager;
@@ -37,6 +38,7 @@ use JMS\Serializer\Serializer;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -115,6 +117,10 @@ class OperatoriController extends Controller
 
   /** @var JWTTokenManagerInterface */
   private $JWTTokenManager;
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerService;
 
   /**
    * OperatoriController constructor.
@@ -131,7 +137,8 @@ class OperatoriController extends Controller
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaManager $praticaManager
    * @param MessageManager $messageManager
-   * @param JWTTokenManagerInterface
+   * @param JWTTokenManagerInterface $JWTTokenManager
+   * @param FormServerApiAdapterService $formServerService
    */
   public function __construct(
     SchemaFactory $schemaFactory,
@@ -147,7 +154,8 @@ class OperatoriController extends Controller
     ModuloPdfBuilderService $moduloPdfBuilderService,
     PraticaManager $praticaManager,
     MessageManager $messageManager,
-    JWTTokenManagerInterface $JWTTokenManager
+    JWTTokenManagerInterface $JWTTokenManager,
+    FormServerApiAdapterService $formServerService
   )
   {
     $this->schemaFactory = $schemaFactory;
@@ -164,6 +172,7 @@ class OperatoriController extends Controller
     $this->praticaManager = $praticaManager;
     $this->messageManager = $messageManager;
     $this->JWTTokenManager = $JWTTokenManager;
+    $this->formServerService = $formServerService;
   }
 
 
@@ -1293,5 +1302,43 @@ class OperatoriController extends Controller
     $data['categories'] = $categories;
     return new Response(json_encode($data), 200);
 
+  }
+
+  /**
+   * @Route("/backoffice/{pratica}", name="save_backoffice_data")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
+   * @param Pratica $pratica
+   *
+   * @return Response
+   */
+  public function saveBackofficeDataAction(Request $request, Pratica $pratica)
+  {
+    $service = $pratica->getServizio();
+    $schema = null;
+    $result = $this->formServerService->getFormSchema($service->getBackofficeFormId());
+    if ($result['status'] == 'success') {
+      $schema = $result['schema'];
+    }
+
+    $flatSchema = $this->praticaManager->arrayFlat($schema, true);
+    $flatData = $this->praticaManager->arrayFlat($request->request);
+
+    $data = [
+      'data' => $request->request->all(),
+      'flattened' => $flatData,
+      'schema' => $flatSchema,
+    ];
+
+    try {
+      $pratica->setBackofficeFormData($data);
+      $this->entityManager->persist($pratica);
+      $this->entityManager->flush();
+
+      return new JsonResponse(['status' => 'ok']);
+
+    } catch (\Exception $e) {
+      return new JsonResponse(['status' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
   }
 }

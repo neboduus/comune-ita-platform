@@ -676,6 +676,7 @@ operatori:
   pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo numero"
+  dati_generali: "Dati generali"
   documenti: "Documenti"
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"
