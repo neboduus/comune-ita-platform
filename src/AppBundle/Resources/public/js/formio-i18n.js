@@ -59,6 +59,7 @@ var formIoI18n = {
     next: 'Successivo',
     previous: 'Precedente',
     cancel: 'Annulla',
+    next: 'Successivo',
     submit: 'Successivo',
     required: 'Campo richiesto',
     invalid_email: "Indirizzo email non valido",

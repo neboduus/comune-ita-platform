@@ -513,6 +513,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $meetings;
 
   /**
+   * @ORM\Column(type="json", nullable=true, options={"jsonb":true})
+   * @var $backofficeFormData
+   */
+  private $backofficeFormData;
+
+  /**
    * Pratica constructor.
    */
   public function __construct()
@@ -2198,4 +2204,21 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
     return $this;
   }
+
+  /**
+   * @return mixed
+   */
+  public function getBackofficeFormData()
+  {
+    return $this->backofficeFormData;
+  }
+
+  /**
+   * @param mixed $backofficeFormData
+   */
+  public function setBackofficeFormData($backofficeFormData): void
+  {
+    $this->backofficeFormData = $backofficeFormData;
+  }
+
 }

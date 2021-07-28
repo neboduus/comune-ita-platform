@@ -14,6 +14,7 @@ Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
 window.onload = function () {
+  // Application summary
   Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
     readOnly: true,
     noAlerts: true,
@@ -39,6 +40,73 @@ window.onload = function () {
       disableFileLink();
     });
   });
+
+
+  // Backoffice
+  const backofficeFormContainer = $('#backoffice-form');
+  if (backofficeFormContainer.length) {
+    const saveInfo = $('.save-backoffice-info');
+    const backofficeTextInfo = saveInfo.find('span');
+    const backofficeFormIOI18n = {
+      en: {},
+      sp: {},
+      it: {
+        next: 'Successivo',
+        previous: 'Precedente',
+        cancel: 'Annulla',
+        submit: 'Salva',
+      }
+    }
+    Formio.icons = 'fontawesome';
+    Formio.createForm(document.getElementById('backoffice-form'), backofficeFormContainer.data('formserver_url') + '/form/' + backofficeFormContainer.data('form_id'), {
+      noAlerts: true,
+      language: 'it',
+      i18n: backofficeFormIOI18n,
+      buttonSettings: {
+        showCancel: false
+      }
+    }).then(function (form) {
+      form.formReady.then(() => {
+        // On ready
+      });
+
+      // Recupero i dati della pratica se presenti
+      if (backofficeFormContainer.data('submission') !== '' && backofficeFormContainer.data('submission') !== null) {
+        form.submission = {
+          data: backofficeFormContainer.data('submission').data
+        };
+      }
+
+      form.on('prevPage', function () {});
+
+      $('.btn-wizard-nav-cancel').on('click', function (e) {
+        e.preventDefault()
+        location.reload();
+      })
+
+      form.nosubmit = true;
+
+      // Triggered when they click the submit button.
+      form.on('submit', function (submission) {
+        let submitButton = backofficeFormContainer.find('.btn-wizard-nav-submit');
+        submitButton.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salva ...')
+        axios.post(backofficeFormContainer.data('backoffice-save-url'), submission.data)
+          .then(function (reponse) {
+            saveInfo.removeClass('d-none');
+            backofficeTextInfo.text('pochi secondi fa')
+            form.emit('submitDone', submission)
+          })
+          .catch(function (error) {
+            saveInfo.removeClass('d-none');
+            backofficeTextInfo.text('si è verificato un errore durante il salvataggio')
+          })
+          .then(function () {
+            submitButton.html('Salva')
+          });
+      });
+    });
+  }
+
 };
 
 $(document).ready(function () {

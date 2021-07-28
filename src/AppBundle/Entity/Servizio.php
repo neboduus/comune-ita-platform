@@ -344,6 +344,12 @@ class Servizio
   private $IOServiceParameters;
 
   /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true)
+   */
+  private $backofficeFormId;
+
+  /**
    * @Gedmo\Locale
    */
   private $locale;
@@ -1235,4 +1241,21 @@ class Servizio
 
     return true;
   }
+
+  /**
+   * @return string
+   */
+  public function getBackofficeFormId(): ?string
+  {
+    return $this->backofficeFormId;
+  }
+
+  /**
+   * @param string $backofficeFormId
+   */
+  public function setBackofficeFormId(?string $backofficeFormId): void
+  {
+    $this->backofficeFormId = $backofficeFormId;
+  }
+
 }

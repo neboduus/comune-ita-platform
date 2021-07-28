@@ -1,9 +1,10 @@
 #formio,
 .formio-form {
-  label{
+  label {
     font-weight: 400;
     line-height: 1.5;
   }
+
   .form-check {
     label {
       input[type='checkbox'],
@@ -43,7 +44,7 @@ select {
   background-color: #fafafa !important;
 }
 
-.form-control:disabled, .form-control[readonly]{
+.form-control:disabled, .form-control[readonly] {
   background-color: #e6e9f2;
 }
 
@@ -54,6 +55,7 @@ input.form-control::placeholder {
 .form-group {
   padding-bottom: 1rem;
   margin-bottom: 1rem;
+
   label {
     position: relative;
     white-space: normal;
@@ -85,49 +87,56 @@ input.form-control::placeholder {
     }
   }
 
-  #formio {
+  .btn-wizard-nav-submit,
+  .btn-wizard-nav-previous,
+  .btn-wizard-nav-cancel,
+  .btn-wizard-nav-next {
+    margin-top: 20px;
+  }
+}
 
-    .formio-choices {
-      .form-control {
-        box-shadow: none;
-      }
+.formio-form {
+
+  .formio-choices {
+    .form-control {
+      box-shadow: none;
     }
+  }
 
-    nav {
-      padding: 11px;
-      background-color: #ddd;
-      margin-bottom: 20px;
-      text-align: center;
+  nav {
+    padding: 11px;
+    background-color: #ddd;
+    margin-bottom: 20px;
+    text-align: center;
 
-      .pagination {
-        margin-bottom: 0 !important;
+    .pagination {
+      margin-bottom: 0 !important;
 
-        li {
-          border: 1px solid #ccc;
-          background-color: $white;
+      li {
+        border: 1px solid #ccc;
+        background-color: $white;
 
-          &.active {
-            background-color: $primary;
+        &.active {
+          background-color: $primary;
 
-            span {
-              color: $white;
+          span {
+            color: $white;
 
-              &:after {
-                content: '';
-                border: 7px solid transparent;
-                border-left: 10px solid white;
-                margin-left: 5px;
-                margin-top: 3px;
-              }
+            &:after {
+              content: '';
+              border: 7px solid transparent;
+              border-left: 10px solid white;
+              margin-left: 5px;
+              margin-top: 3px;
             }
           }
+        }
 
-          &:last-child {
-            &.active {
-              span {
-                &:after {
-                  display: none;
-                }
+        &:last-child {
+          &.active {
+            span {
+              &:after {
+                display: none;
               }
             }
           }
@@ -135,25 +144,20 @@ input.form-control::placeholder {
       }
     }
   }
-
-    .btn-wizard-nav-submit,
-    .btn-wizard-nav-previous,
-    .btn-wizard-nav-cancel,
-    .btn-wizard-nav-next {
-      margin-top: 20px;
-    }
 }
 
-.choices{
+.choices {
   .selection {
     box-shadow: none;
     border-bottom: 1px solid #5c6f82;
   }
+
   &.is-open {
     &:after {
       margin-top: -18px !important;
     }
   }
+
   &:after {
     margin-top: -13px !important;
   }
@@ -191,14 +195,13 @@ textarea {
   display: none;
 }
 
-@media print
-{
-  .d-preview-none, .d-preview-none *
-  {
+@media print {
+  .d-preview-none, .d-preview-none * {
     display: none !important;
   }
 }
-.label-datetime-field{
+
+.label-datetime-field {
   background-color: transparent;
   font-weight: 600;
   line-height: calc(2.5rem - 1px);
@@ -217,21 +220,24 @@ textarea {
 }
 
 
-#formio, #formio_summary  {
+#formio, #formio_summary, #backoffice-form {
 
   .formio-component {
     margin-bottom: 1.3rem;
   }
+
   .formio-component.formio-hidden {
-    margin-bottom:0;
+    margin-bottom: 0;
   }
+
   table {
-    .formio-component{
-      margin-bottom:0;
+    .formio-component {
+      margin-bottom: 0;
     }
   }
-  .formio-component-columns.formio-component-label-hidden{
-    margin-bottom:0;
+
+  .formio-component-columns.formio-component-label-hidden {
+    margin-bottom: 0;
   }
 
 
@@ -239,41 +245,49 @@ textarea {
     padding-bottom: inherit;
   }
 
-  .form-check-inline{
+  .form-check-inline {
     margin-top: .5rem;
   }
 
-  .form-check.checkbox{
+  .form-check.checkbox {
     padding-left: 0;
-    + .form-text.text-muted{
+
+    + .form-text.text-muted {
       padding-left: 2rem;
-      + .formio-errors.invalid-feedback
-      {
+
+      + .formio-errors.invalid-feedback {
         padding-left: 1.5rem;
       }
     }
 
   }
-  .form-check{
+
+  .form-check {
     padding-left: 1rem;
-    + .form-text.text-muted{
+
+    + .form-text.text-muted {
       padding-left: 2rem;
     }
+
     + .form-text.error {
       padding-left: 1rem;
     }
   }
-  .form-radio{
+
+  .form-radio {
     padding-left: 1rem;
-    + .formio-errors .error{
+
+    + .formio-errors .error {
       padding-left: 2rem;
     }
-    .form-check-inline{
+
+    .form-check-inline {
       padding-left: 1rem;
     }
   }
+
   .formio-read-only {
-    .form-group.formio-hidden{
+    .form-group.formio-hidden {
       padding-bottom: 0;
       margin-bottom: 0;
     }
