@@ -13,7 +13,6 @@ use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -130,12 +129,14 @@ class SubscriptionServicesController extends Controller
    * @Route("/operatori/subscription-service/new", name="operatori_subscription-service_new")
    * @Method({"GET", "POST"})
    * @param Request $request the request
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response
    */
   public function newSubscriptionServiceAction(Request $request)
   {
     /** @var User $user */
     $user = $this->getUser();
+
+    $subscriptionServices =$this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
 
     $subscriptionService = new SubscriptionService();
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
@@ -159,6 +160,7 @@ class SubscriptionServicesController extends Controller
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'form' => $form->createView(),
+      'subscriptionServices' => $subscriptionServices
     ]);
   }
 
@@ -193,12 +195,14 @@ class SubscriptionServicesController extends Controller
    * @param Request $request the request
    * @param SubscriptionService $subscriptionService The SubscriptionService entity
    *
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return Response
    */
   public function editSubscriptionServiceAction(Request $request, SubscriptionService $subscriptionService)
   {
     /** @var User $user */
     $user = $this->getUser();
+
+    $subscriptionServices =$this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
 
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
@@ -220,6 +224,7 @@ class SubscriptionServicesController extends Controller
     return $this->render('@App/SubscriptionServices/editSubscriptionService.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
+      'subscriptionServices' => $subscriptionServices
     ]);
   }
 
