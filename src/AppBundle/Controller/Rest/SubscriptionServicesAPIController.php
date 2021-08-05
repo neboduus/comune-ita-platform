@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\Subscription;
+use AppBundle\Model\SubscriptionPayment;
 use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\SubscriptionVoter;
 use AppBundle\Services\InstanceService;
@@ -153,6 +154,78 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
       return $this->view($result, Response::HTTP_OK);
+    } catch (\Exception $e) {
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+    }
+  }
+
+  /**
+   * Retreive a SubscriptionService
+   * @Rest\Get("/{id}/payments", name="subscription-service_payments_api_get")
+   *
+   * @SWG\Parameter(
+   *      name="required",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="Filter results by payment mandatory option"
+   *  )
+   *
+   * @SWG\Parameter(
+   *      name="create_draft",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="Filter results by payment draft creation option"
+   *  )
+   *
+   * @SWG\Parameter(
+   *      name="identifier",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Filter results by subscription payment identifier"
+   *  )
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retreive a SubscriptionService's payments",
+   *     @Model(type=SubscriptionPayment::class)
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Subscription Service not found"
+   * )
+   * @SWG\Tag(name="subscription-services")
+   *
+   * @param $id
+   * @return View
+   */
+  public function getSubscriptionServicePaymentsAction(Request $request, $id)
+  {
+    $this->denyAccessUnlessGranted(
+      BackofficeVoter::VIEW,
+      SubcriptionsBackOffice::PATH,
+      SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
+    );
+
+    $required = $request->query->get('required');
+    $create_draft = $request->query->get('create_draft');
+    $identifier = $request->query->get('identifier');
+
+    if ($required)
+      $required = strtolower($request->query->get('required')) === "true";
+    if ($create_draft)
+      $create_draft = strtolower($request->query->get('create_draft')) === "true";
+
+    try {
+      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+      $result = $repository->find($id);
+      if ($result === null) {
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+      }
+      return $this->view($result->getFilteredSubscriptionPayments($required, $create_draft, $identifier), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }

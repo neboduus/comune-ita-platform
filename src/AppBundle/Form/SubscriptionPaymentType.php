@@ -7,6 +7,8 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Model\SubscriptionPayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -55,6 +57,14 @@ class SubscriptionPaymentType extends AbstractType
       # Fixme:aggiungere scelta del servizio dinamica
       ->add('payment_service', TextType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.service_id'
+      ])
+      ->add('required', CheckboxType::class, [
+        'label' => 'backoffice.integration.subscription_service.payment.required',
+        'required' => false
+      ])
+      ->add('create_draft', CheckboxType::class, [
+        'label' => 'backoffice.integration.subscription_service.payment.create_draft',
+        'required' => false
       ])
       ->add('meta', TextareaType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.meta',

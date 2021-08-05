@@ -57,7 +57,7 @@ class CreateSubscriptionPaymentDraftsCommand extends ContainerAwareCommand
           $today = new \DateTime();
           $createDate = (clone $subscriptionPayment->getDate())->modify('-7days');
 
-          if ($today >= $createDate && $today <= $subscriptionPayment->getDate()) {
+          if ($today >= $createDate && $today <= $subscriptionPayment->getDate() && $subscriptionPayment->getCreateDraft() && $subscriptionPayment->isRequired()) {
             /** @var SubscriptionPayment $subscriptionPayment */
             $service = $em->getRepository(Servizio::class)->find($subscriptionPayment->getPaymentService());
             if (!$service) {
