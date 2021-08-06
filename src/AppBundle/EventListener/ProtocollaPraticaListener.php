@@ -5,6 +5,8 @@ namespace AppBundle\EventListener;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Pratica;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
+use AppBundle\Protocollo\ProtocolloHandlerInterface;
+use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
 use AppBundle\Services\PraticaStatusService;
 use AppBundle\Services\ProtocolloServiceInterface;
 use Psr\Log\LoggerInterface;
@@ -37,6 +39,18 @@ class ProtocollaPraticaListener
     {
         $pratica = $event->getPratica();
         if ($pratica->getServizio()->isProtocolRequired()) {
+
+          /** @var ProtocolloHandlerInterface $handler */
+          if ($this->protocollo instanceof ScheduledActionHandlerInterface) {
+            $handler = $this->protocollo->getHandler()->getHandler($pratica);
+          } else {
+            $handler = $this->protocollo->getHandler($pratica);
+          }
+          $handlerIsExternal = $handler->getExecutionType() == ProtocolloHandlerInterface::PROTOCOL_EXECUTION_TYPE_EXTERNAL;
+
+          if ($handlerIsExternal) {
+            return;
+          }
 
           if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
             $this->protocollo->protocollaPratica($pratica);

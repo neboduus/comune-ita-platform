@@ -407,6 +407,12 @@ services:
     tags:
       - { name: ocsdc.protocollo.handler, alias: dummy }
 
+  ocsdc.protocollo.handlers.external:
+    class: AppBundle\Protocollo\ExternalProtocolloHandler
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: external }
+
   ocsdc.protocollo.handlers.pec:
     class: AppBundle\Protocollo\PecProtocolloHandler
     public: false

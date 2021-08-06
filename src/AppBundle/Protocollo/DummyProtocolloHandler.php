@@ -7,9 +7,15 @@ use AppBundle\Entity\Pratica;
 
 class DummyProtocolloHandler implements ProtocolloHandlerInterface
 {
+
   public function getName()
   {
     return 'Dummy';
+  }
+
+  public function getExecutionType()
+  {
+    return self::PROTOCOL_EXECUTION_TYPE_INTERNAL;
   }
 
   public function getConfigParameters()

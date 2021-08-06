@@ -8,7 +8,16 @@ use AppBundle\Entity\Pratica;
 interface ProtocolloHandlerInterface
 {
 
+  const PROTOCOL_EXECUTION_TYPE_INTERNAL = 'internal';
+  const PROTOCOL_EXECUTION_TYPE_EXTERNAL = 'external';
+
   public function getName();
+
+  /**
+   * @return mixed
+   *
+   */
+  public function getExecutionType();
 
   /**
    * @return mixed

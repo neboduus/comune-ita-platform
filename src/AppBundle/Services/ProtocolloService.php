@@ -285,6 +285,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
   public function protocollaRisposta(Pratica $pratica)
   {
     $this->validateRisposta($pratica);
+
     if ($pratica->getRispostaOperatore()->getNumeroProtocollo() === null) {
       $this->logger->debug(__METHOD__, ['pratica' => $pratica->getId()]);
       $this->handler->sendRispostaToProtocollo($pratica);

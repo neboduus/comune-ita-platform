@@ -33,6 +33,13 @@ class ConfigProtocolloHandler implements ProtocolloHandlerInterface
     return $this->getHandler()->getName();
   }
 
+  public function getExecutionType()
+  {
+    if ($this->getHandler() instanceof ProtocolloHandlerInterface) {
+      return $this->getHandler()->getExecutionType();
+    }
+  }
+
   public function getConfigParameters()
   {
     return $this->getHandler()->getConfigParameters();

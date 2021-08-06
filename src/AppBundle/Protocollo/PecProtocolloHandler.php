@@ -97,6 +97,11 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     return 'Pec';
   }
 
+  public function getExecutionType()
+  {
+    return self::PROTOCOL_EXECUTION_TYPE_INTERNAL;
+  }
+
   public function getConfigParameters()
   {
     // Tutto su db, riabilitare in seguito
