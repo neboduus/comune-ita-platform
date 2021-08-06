@@ -13,15 +13,80 @@
 
         {% if servizio.description|striptags|trim != '' %}
           <article class="mb-3">
-            <h4>Descrizione</h4>
+            <h4>{{ 'gruppo_di_servizi.cos_e' | trans }}</h4>
             {{ servizio.description|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.who|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>{{ 'gruppo_di_servizi.a_chi_si_rivolge' | trans }}</h4>
+            {{ servizio.who|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.coverage %}
+          {% if servizio.coverage|length > 0 %}
+            <article class="mb-3">
+              <h5>{{ 'gruppo_di_servizi.copertura' | trans }}</h5>
+              {% for c in servizio.coverage %}
+                <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary">
+                  <span class="chip-label">{{ c }}</span>
+                </div>
+              {% endfor %}
+            </article>
+          {% endif %}
+        {% endif %}
+
+        {% if servizio.howto|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>{{ 'gruppo_di_servizi.accedere' | trans }}</h4>
+            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.specialCases|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>{{ 'gruppo_di_servizi.casi_particolari' | trans }}</h4>
+            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+          </article>
+        {% endif %}
+
+        {% if servizio.moreInfo|striptags|trim != '' %}
+          <article class="mb-3">
+            <h4>{{ 'gruppo_di_servizi.maggiori_info' | trans }}</h4>
+            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
           </article>
         {% endif %}
       </div>
     </div>
   </section>
 
-  {%  if servizio.getStickyServices.count > 0 %}
+  <section>
+    <div class="d-flex justify-content-center pb-5">
+      {% for sharedService in servizio.getSharedServices %}
+        {% if sharedService.accessLevel > 0 or sharedService.accessLevel is null %}
+          <div class="mx-2">
+            <a href="{{ path('pratiche_new', {'servizio': sharedService.slug}) }}"
+               class="btn btn-success btn-lg service-access-button font-130">
+              <span>{{ sharedService.name }}</span>
+            </a>
+          </div>
+        {% else %}
+          <div class="mx-2">
+            <a href="{{ path('pratiche_anonime_new', {'servizio': sharedService.slug}) }}"
+               class="btn btn-success btn-lg service-access-button font-130">
+              <span>{{ sharedService.name }}</span>
+            </a>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+
+
+  {% if servizio.getStickyServices.count > 0 %}
     <section class="container px-4 my-4">
       <div class="pb-5">
         <div class="container px-4">
@@ -55,7 +120,7 @@
           <div class="row">
             {% for item in servizio.getNotStickyServices %}
               <div class="col-12 col-sm-6 col-lg-4">
-                  {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
+                {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
               </div>
             {% endfor %}
           </div>

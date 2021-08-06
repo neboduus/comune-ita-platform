@@ -318,6 +318,13 @@ class Servizio
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true, options={"default":"0"})
+   * @SWG\Property(description="If selected the service will share the group's descriptipn")
+   */
+  private $sharedWithGroup;
+
+  /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true, options={"default":"0"})
    * @SWG\Property(description="If selected, service's applications can be reopend")
    */
   private $allowReopening;
@@ -1167,7 +1174,28 @@ class Servizio
    */
   public function setServiceGroup(?ServiceGroup $serviceGroup)
   {
+    if (!$serviceGroup) {
+      $this->sharedWithGroup = false;
+    }
     $this->serviceGroup = $serviceGroup;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isSharedWithGroup()
+  {
+    return $this->sharedWithGroup;
+  }
+
+  /**
+   * @param bool $shared
+   * @return $this
+   */
+  public function setSharedWithGroup( $shared )
+  {
+    $this->sharedWithGroup = $shared;
+    return $this;
   }
 
   /**

@@ -3,6 +3,7 @@
 
 namespace AppBundle\Form\Admin\ServiceGroup;
 
+use AppBundle\Entity\ServiceGroup;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
@@ -17,21 +18,45 @@ class ServiceGroupType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
 
+    /** @var ServiceGroup $serviceGroup */
+    $serviceGroup = $builder->getData();
+
     $builder
       ->add('name', TextType::class, [
-        'label' => 'Nome'
+        'label' => 'gruppo_di_servizi.nome'
       ])
       ->add('slug', HiddenType::class, [])
       ->add('description', TextareaType::class, [
-        'label' => 'Descrizione',
+        'label' => 'gruppo_di_servizi.descrizione',
+        'required' => false
+      ])
+      ->add('who', TextareaType::class, [
+        'label' => 'gruppo_di_servizi.a_chi_si_rivolge',
+        'required' => false
+      ])
+      ->add('coverage', TextType::class, [
+        'label' => 'gruppo_di_servizi.copertura_helper',
+        'data' => is_array($serviceGroup->getCoverage()) ? implode(',', $serviceGroup->getCoverage()) : $serviceGroup->getCoverage(),
+        'required' => false
+      ])
+      ->add('howto', TextareaType::class, [
+        'label' => 'gruppo_di_servizi.accedere',
+        'required' => false
+      ])
+      ->add('special_cases', TextareaType::class, [
+        'label' => 'gruppo_di_servizi.casi_particolari',
+        'required' => false
+      ])
+      ->add('more_info', TextareaType::class, [
+        'label' => 'gruppo_di_servizi.maggiori_info',
         'required' => false
       ])
       ->add('sticky', CheckboxType::class, [
-        'label' => 'In evidenza?',
+        'label' => 'gruppo_di_servizi.in_evidenza',
         'required' => false,
       ])
       ->add('register_in_folder', CheckboxType::class, [
-        'label' => 'Protocollare all\'interno dello stesso fascicolo?',
+        'label' => 'gruppo_di_servizi.protocolla_in_fascicolo',
         'required' => false
       ]);
   }

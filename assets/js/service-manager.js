@@ -41,6 +41,25 @@ $(document).ready(function () {
   })
 
 
+  let serviceGroup = $('#general_data_service_group');
+  let sharedCheckbox = $('#general_data_shared_with_group');
+  if (serviceGroup.val()) {
+    sharedCheckbox.closest('div').show();
+  } else {
+    sharedCheckbox.closest('div').hide();
+  }
+
+  // Show/Hide login checkbox
+  serviceGroup.change(function () {
+    if (this.value) {
+      sharedCheckbox.closest('div').show();
+    } else {
+      sharedCheckbox.prop('checked', false);
+      sharedCheckbox.closest('div').hide();
+    }
+  })
+
+
   let loginCheckbox = $('#general_data_login_suggested');
   if ($('#general_data_access_level').val() === '0') {
     loginCheckbox.closest('div').show();

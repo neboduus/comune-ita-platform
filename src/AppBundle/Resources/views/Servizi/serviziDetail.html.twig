@@ -13,14 +13,14 @@
 
         {% if servizio.description|striptags|trim != '' %}
           <article class="mb-3">
-            <h4>Cos'è</h4>
+            <h4>{{ 'servizio.cos_e' | trans }}</h4>
             {{ servizio.description|raw }}
           </article>
         {% endif %}
 
         {% if servizio.who|striptags|trim != '' %}
           <article class="mb-3">
-            <h4>A chi si rivolge</h4>
+            <h4>{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
             {{ servizio.who|raw }}
           </article>
         {% endif %}
@@ -28,7 +28,7 @@
         {% if servizio.coverage %}
           {% if servizio.coverage|length > 0 %}
           <article class="mb-3">
-            <h5>Copertura geografica</h5>
+            <h5>{{ 'servizio.copertura' | trans }}</h5>
             {% for c in servizio.coverage %}
                 <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary">
                   <span class="chip-label">{{ c }}</span>
@@ -40,21 +40,21 @@
 
         {% if servizio.howto|striptags|trim != '' %}
           <article class="mb-3">
-            <h4>Accedere al servizio</h4>
+            <h4>{{ 'servizio.accedere' | trans }}</h4>
             {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
           </article>
         {% endif %}
 
         {% if servizio.specialCases|striptags|trim != '' %}
           <article class="mb-3">
-            <h4>Casi particolari</h4>
+            <h4>{{ 'servizio.casi_particolari' | trans }}</h4>
             {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
           </article>
         {% endif %}
 
         {% if servizio.moreInfo|striptags|trim != '' %}
           <article class="mb-3">
-            <h4>Maggiori informazioni</h4>
+            <h4>{{ 'servizio.maggiori_info' | trans }}</h4>
             {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
           </article>
         {% endif %}
@@ -94,14 +94,14 @@
                 {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
                   <p class="text-center">
                     <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
-                       class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
+                       class="btn btn-success btn-lg service-access-button font-130">
                         <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
                     </a>
                   </p>
                 {% else %}
                   <p class="text-center">
                     <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
-                       class="btn btn-success btn-lg service-access-button" style="font-size: 1.3em">
+                       class="btn btn-success btn-lg service-access-button font-130">
                       <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
                     </a>
                   </p>

@@ -56,6 +56,41 @@ class ServiceGroup
   private $description;
 
   /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Compilation guide, accepts html tags")
+   */
+  private $howto;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
+   */
+  private $who;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
+   */
+  private $specialCases;
+
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Other info, accepts html tags")
+   */
+  private $moreInfo;
+
+  /**
+   * @var string[]
+   * @ORM\Column(type="array", nullable=true)
+   * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
+   */
+  private $coverage;
+
+  /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true)
    * @SWG\Property(description="If selected the service group will be shown at the top of the page")
@@ -158,6 +193,94 @@ class ServiceGroup
   }
 
   /**
+   * @return string
+   */
+  public function getHowto()
+  {
+    return $this->howto;
+  }
+
+  /**
+   * @param string $howto
+   *
+   * @return ServiceGroup
+   */
+  public function setHowto($howto)
+  {
+    $this->howto = $howto;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getWho()
+  {
+    return $this->who;
+  }
+
+  /**
+   * @param string|null $who
+   */
+  public function setWho($who)
+  {
+    $this->who = $who;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSpecialCases()
+  {
+    return $this->specialCases;
+  }
+
+  /**
+   * @param string $specialCases
+   */
+  public function setSpecialCases($specialCases)
+  {
+    $this->specialCases = $specialCases;
+  }
+
+  /**
+   * @return string
+   */
+  public function getMoreInfo()
+  {
+    return $this->moreInfo;
+  }
+
+  /**
+   * @param string $moreInfo
+   */
+  public function setMoreInfo($moreInfo)
+  {
+    $this->moreInfo = $moreInfo;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCoverage()
+  {
+    if (is_array($this->coverage)) {
+      return array_filter($this->coverage);
+    } else {
+      return array_filter(explode(',', $this->coverage));
+    }
+  }
+
+  /**
+   * @param $coverage
+   */
+  public function setCoverage($coverage)
+  {
+    $this->coverage = $coverage;
+  }
+
+  /**
    * @return bool
    */
   public function isSticky()
@@ -169,7 +292,7 @@ class ServiceGroup
    * @param bool $sticky
    * @return $this
    */
-  public function setSticky( $sticky )
+  public function setSticky($sticky)
   {
     $this->sticky = $sticky;
     return $this;
@@ -223,13 +346,13 @@ class ServiceGroup
     /** @var Servizio $service */
     foreach ($this->services as $service) {
       // Only sticky services
-      if ($service->isSticky() && $service->getStatus() !== Servizio::STATUS_CANCELLED) {
+      if ($service->isSticky() && $service->getStatus() !== Servizio::STATUS_CANCELLED && !$service->isSharedWithGroup()) {
         /*
          * For all STICKY services
          * If service group is private (i.e. all services are private) show all services
          * show only not private services otherwise
          */
-        if ((!$this->isPrivate() && $service->getStatus() !== Servizio::STATUS_PRIVATE) || $this->isPrivate() ) {
+        if ((!$this->isPrivate() && $service->getStatus() !== Servizio::STATUS_PRIVATE) || $this->isPrivate()) {
           $result->add($service);
         }
       }
@@ -252,7 +375,7 @@ class ServiceGroup
          * If service group is private (i.e. all services are private) show all services
          * show only not private services otherwise
          */
-      if (!$service->isSticky() && $service->getStatus() !== Servizio::STATUS_CANCELLED) {
+      if (!$service->isSticky() && $service->getStatus() !== Servizio::STATUS_CANCELLED && !$service->isSharedWithGroup()) {
         if ((!$this->isPrivate() && $service->getStatus() !== Servizio::STATUS_PRIVATE) || $this->isPrivate() ) {
           $result->add($service);
         }
@@ -263,7 +386,24 @@ class ServiceGroup
 
   }
 
-  public function isPrivate() {
+  /**
+   * @return mixed
+   */
+  public function getSharedServices()
+  {
+    $result = new ArrayCollection();
+    /** @var Servizio $service */
+    foreach ($this->getPublicServices() as $service) {
+      // Only sticky services
+      if ($service->isSharedWithGroup()) {
+          $result->add($service);
+      }
+    }
+    return $result;
+  }
+
+  public function isPrivate()
+  {
     $private = true;
     /** @var Servizio $service */
     foreach ($this->services as $service) {
