@@ -111,6 +111,7 @@ class ServizioFormType extends AbstractType
         'empty_data' => null
       ])
       ->add('service_group')
+      ->add('shared_with_group')
       ->add('allow_reopening')
       ->add('allow_withdraw')
       ->add('workflow');

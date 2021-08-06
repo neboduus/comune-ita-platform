@@ -57,6 +57,29 @@ terms:
   title: 'Accettazione termini di utilizzo'
 
 servizio:
+  nome: "Nome del servizio"
+  categoria: "Categoria"
+  cos_e: "Cos'è"
+  descrizione: "Descrizione"
+  a_chi_si_rivolge: "A chi si rivolge"
+  copertura: "Copertura geografica"
+  copertura_helper: "Copertura geografica - (se più di uno inserire i valori separati da virgola)"
+  accedere: "Accedere al servizio"
+  casi_particolari: "Casi particolari"
+  maggiori_info: "Maggiori informazioni"
+  in_evidenza: "In evidenza?"
+  info_compilazione: "Informazioni visualizzate durante la compilazione del servizio"
+  indicazioni_finali: "Indicazioni mostrate al termine della compilazione del servizio"
+  stato: "Stato"
+  data_attivazione: "Data di attivazione del servizio"
+  data_cessazione: "Data di cessazione del servizio"
+  gruppo: "Gruppo di servizi"
+  condiviso_con_gruppo: "Condividi scheda del servizio con il gruppo"
+  livello_accesso: "Livello di accesso al servizio"
+  suggerisci_login: "Suggerisci il Login per l 'autocompletamento?"
+  consenti_riapertura: "Consenti di riprendere in carico le pratiche accettate o rifiutate"
+  consenti_ritiro: "Consenti al cittadino di annullare la presentazione della pratica"
+  flusso: "Flusso di lavoro"
   crea: 'Crea nuovo servizio'
   modifica: 'Modifica %name%'
   placeholder_disponibili: 'Placeholder disponibili nel modulo'
@@ -86,6 +109,15 @@ gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
   nome: 'Nome'
   descrizione: 'Descrizione'
+  cos_e: "Cos'è"
+  a_chi_si_rivolge: "A chi si rivolge"
+  copertura: "Copertura geografica"
+  copertura_helper: "Copertura geografica - (se più di uno inserire i valori separati da virgola)"
+  accedere: "Accedere al servizio"
+  casi_particolari: "Casi particolari"
+  maggiori_info: "Maggiori informazioni"
+  in_evidenza: "In evidenza?"
+  protocolla_in_fascicolo: "Protocollare all'interno dello stesso fascicolo?"
   url: 'Url'
   protocollazione_fascicoli: 'Protocollazione in fascicoli'
   azioni: 'Azioni'

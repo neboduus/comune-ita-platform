@@ -221,6 +221,14 @@ class Service
   /**
    * @var bool
    * @Serializer\Type("boolean")
+   * @SWG\Property(description="If selected the service will share the group's descriptipn")
+   */
+  private $sharedWithGroup;
+
+
+  /**
+   * @var bool
+   * @Serializer\Type("boolean")
    * @SWG\Property(description="If selected, service's applications can be reopend")
    */
   private $allowReopening;
@@ -706,7 +714,28 @@ class Service
    */
   public function setServiceGroup($serviceGroup)
   {
+    if (!$serviceGroup) {
+      $this->sharedWithGroup = false;
+    }
     $this->serviceGroup = $serviceGroup;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isSharedWithGroup()
+  {
+    return $this->sharedWithGroup;
+  }
+
+  /**
+   * @param bool $sticky
+   * @return $this
+   */
+  public function setSharedWithGroup( $shared )
+  {
+    $this->sharedWithGroup = $shared;
+    return $this;
   }
 
   /**
@@ -810,6 +839,7 @@ class Service
     $dto->scheduledFrom = $servizio->getScheduledFrom();
     $dto->scheduledTo = $servizio->getScheduledTo();
     $dto->serviceGroup = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null;
+    $dto->sharedWithGroup = $servizio->isSharedWithGroup();
     $dto->allowReopening = $servizio->isAllowReopening();
     $dto->allowWithdraw = $servizio->isAllowWithdraw();
     $dto->workflow = $servizio->getWorkflow();
@@ -862,6 +892,7 @@ class Service
     if ($this->serviceGroup instanceof ServiceGroup) {
       $entity->setServiceGroup($this->serviceGroup);
     }
+    $entity->setSharedWithGroup($this->sharedWithGroup);
 
     $entity->setAllowReopening($this->allowReopening);
     $entity->setAllowWithdraw($this->allowWithdraw);

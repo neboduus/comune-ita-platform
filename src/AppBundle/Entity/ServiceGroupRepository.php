@@ -23,4 +23,13 @@ class ServiceGroupRepository extends EntityRepository
 
     return $qb->getQuery()->getResult();
   }
+
+  public function findSharedServices()
+  {
+    $qb = $this->createQueryBuilder('s')
+      ->where('s.sticky = false OR s.sticky IS NULL')
+      ->orderBy('s.name', 'ASC');
+
+    return $qb->getQuery()->getResult();
+  }
 }
