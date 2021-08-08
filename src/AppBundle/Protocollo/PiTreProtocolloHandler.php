@@ -37,6 +37,11 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     return 'PiTre';
   }
 
+  public function getExecutionType()
+  {
+    return self::PROTOCOL_EXECUTION_TYPE_INTERNAL;
+  }
+
   public function getConfigParameters()
   {
     return PiTreProtocolloParameters::getEnteParametersKeys();

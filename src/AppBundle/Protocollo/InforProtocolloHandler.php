@@ -84,6 +84,11 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     return 'Infor';
   }
 
+  public function getExecutionType()
+  {
+    return self::PROTOCOL_EXECUTION_TYPE_INTERNAL;
+  }
+
   public function getConfigParameters()
   {
     /*
