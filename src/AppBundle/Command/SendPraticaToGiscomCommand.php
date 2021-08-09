@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Services\DelayedGiscomAPIAdapterService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,7 +40,10 @@ class SendPraticaToGiscomCommand extends ContainerAwareCommand
       exit;
     }
 
-    $giscomeService = $this->getApplication()->getKernel()->getContainer()->get('ocsdc.giscom_api.adapter_direct');
+    $giscomAdapter  = $this->getContainer()->get('ocsdc.giscom_api.adapter_delayed');
+    $giscomAdapter->sendPraticaToGiscom($application);
+
+    /*$giscomeService = $this->getApplication()->getKernel()->getContainer()->get('ocsdc.giscom_api.adapter_direct');
     $response = $giscomeService->sendPraticaToGiscom($application);
 
     $status = $response->getStatusCode();
@@ -48,6 +52,6 @@ class SendPraticaToGiscomCommand extends ContainerAwareCommand
     } else {
       $output->writeln("Errore durante l'invio della pratica");
       $output->writeln($response->getBody());
-    }
+    }*/
   }
 }
