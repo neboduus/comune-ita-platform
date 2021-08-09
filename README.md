@@ -123,6 +123,9 @@ Al termine della build e dell'inizializzazione del database sarà possibile visi
 
 http://stanzadelcittadino.localtest.me/
 
+Una volta fatto il primo setup, se si inizia a configurare il tenant di prova è consigliabile
+impostare a `FALSE` la variabile `ENABLE_INSTANCE_CONFIG` nel `docker-compose.yml`.
+
 In caso di problemi è possibile trovare maggiori infomazioni nel [wiki](https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/Ambiente-di-sviluppo).
 
 ### Senza l'ausilio di docker

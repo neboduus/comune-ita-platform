@@ -28,6 +28,7 @@ services:
       ENV: ${ENV:-DEV}
       SYMFONY_ENV: ${SYMFONY_ENV:-dev}
       ENABLE_MIGRATIONS: 'true'
+      ENABLE_INSTANCE_CONFIG: 'true'
       PREFIX: ${PREFIX:-}
       DB_DRIVER: ${DB_DRIVER:-pdo_pgsql}
       DB_HOST: ${DB_HOST:-postgres}
