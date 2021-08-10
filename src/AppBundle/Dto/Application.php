@@ -335,6 +335,15 @@ class Application
   private $eventVersion;
 
   /**
+   * @var array
+   * @SWG\Property(property="backoffice_data", description="Applcation's backoffice data")
+   * @Groups({"read"})
+   * @Serializer\Type("array")
+   */
+  private $backofficeData;
+
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -978,6 +987,26 @@ class Application
   }
 
   /**
+   * @return array
+   */
+  public function getBackofficeData(): ?array
+  {
+    return $this->backofficeData;
+  }
+
+  /**
+   * @param array $data
+   */
+  public function setBackofficeData($data)
+  {
+    if (is_array($data)) {
+      $this->backofficeData = $data;
+    } elseif (is_string($data)) {
+      $this->backofficeData = json_decode($data, true);
+    }
+  }
+
+  /**
    * @param Pratica $pratica
    * @param string $attachmentEndpointUrl
    * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
@@ -996,6 +1025,7 @@ class Application
     $dto->serviceName = $pratica->getServizio()->getName();
     $dto->subject = $pratica->getOggetto();
 
+    // Form data
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
       if ($version >= 2) {
         $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl);
@@ -1004,6 +1034,17 @@ class Application
       }
     } else {
       $dto->data = [];
+    }
+
+    // Backoffice form data
+    if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
+      if ($version >= 2) {
+        $dto->backofficeData = self::decorateDematerializedFormsV2($pratica->getBackofficeFormData(), $attachmentEndpointUrl);
+      } else {
+        $dto->backofficeData = self::decorateDematerializedForms($pratica->getBackofficeFormData(), $attachmentEndpointUrl);
+      }
+    } else {
+      $dto->backofficeData = [];
     }
 
     $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl) : [];
