@@ -624,6 +624,191 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
+   * Retreive backoffice data of an application
+   * @Rest\Get("/{id}/backoffice", name="application_backoffice_api_get")
+   *
+   *
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
+   *  )
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retreive backoffice data of an application",
+   *     @SWG\Schema(
+   *         type="object",
+   *         @SWG\Property(property="backoffice_data", type="object")
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function getApplicationBackofficeDataAction($id, Request $request)
+  {
+    $version = intval($request->get('version', 1));
+
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $result */
+      $result = $repository->find($id);
+      if ($result === null) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+
+      $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
+
+      $allowedServices = $this->getAllowedServices();
+      if (!in_array($result->getServizio()->getId(), $allowedServices)) {
+        return $this->view(["You are not allowed to view this application"], Response::HTTP_FORBIDDEN);
+      }
+
+      $data = Application::fromEntity($result, $this->baseUrl.'/'.$result->getId(), true, $version);
+
+      return $this->view([
+        'backoffice_data' => $data->getBackofficeData()
+      ], Response::HTTP_OK);
+    } catch (\Exception $e) {
+      return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Add or update backoffice data an Application
+   * @Rest\Put("/{id}/backoffice", name="applications_backoffice_api_put")
+   * @Rest\Post("/{id}/backoffice", name="applications_backoffice_api_post")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Backoffice data",
+   *     in="body",
+   *     type="json",
+   *     description="The application to update",
+   *     required=true,
+   *     @SWG\Schema(
+   *         type="object",
+   *         @SWG\Property(property="backoffice_data", type="object")
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=201,
+   *     description="Create or update backoffice data"
+   * )
+   *
+   * @SWG\Response(
+   *     response=400,
+   *     description="Bad request"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Tag(name="applications")
+   *
+   * @param Request $request
+   * @return \FOS\RestBundle\View\View
+   */
+  public function updateApplicationBackofficeDataAction($id, Request $request)
+  {
+
+    $repository = $this->em->getRepository('AppBundle:Pratica');
+    /** @var Pratica $application */
+    $application = $repository->find($id);
+    if ($application === null) {
+      throw new Exception('Application not found');
+    }
+    $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+
+    $form = $this->createForm('AppBundle\Form\Rest\ApplicationBackofficeFormType');
+    $this->processForm($request, $form);
+
+    if ($form->isSubmitted() && !$form->isValid()) {
+      $errors = $this->getErrorsFromForm($form);
+      $data = [
+        'type' => 'validation_error',
+        'title' => 'There was a validation error',
+        'errors' => $errors,
+      ];
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    $service = $application->getServizio();
+
+    $schema = null;
+    $result = $this->formServerService->getFormSchema($service->getBackofficeFormId());
+    if ($result['status'] == 'success') {
+      $schema = $result['schema'];
+    }
+
+    $flatSchema = $this->praticaManager->arrayFlat($schema, true);
+    $flatData = $this->praticaManager->arrayFlat($request->request->get('backoffice_data'));
+
+    foreach ($flatData as $k => $v) {
+      if (!isset($flatSchema[$k . '.type']) && !isset($flatSchema[$k])) {
+        return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
+      }
+    }
+
+    $data = [
+      'data' => $request->request->get('backoffice_data'),
+      'flattened' => $flatData,
+      'schema' => $flatSchema,
+    ];
+
+    try {
+      $application->setBackofficeFormData($data);
+      $this->em->persist($application);
+      $this->em->flush();
+
+    } catch (\Exception $e) {
+
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    return $this->view(
+      Application::fromEntity($application, $this->baseUrl.'/'.$application->getId()),
+      Response::HTTP_CREATED
+    );
+  }
+
+  /**
    * Retreive application history
    * @Rest\Get("/{id}/history", name="application_api_get_history")
    *
@@ -1418,6 +1603,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data['data'] = \json_encode($data['data']);
     } else {
       $data['data'] = \json_encode([]);
+    }
+
+    if (isset($data['backoffice_data']) && count($data['backoffice_data']) > 0) {
+      $data['backoffice_data'] = \json_encode($data['backoffice_data']);
+    } else {
+      $data['backoffice_data'] = \json_encode([]);
     }
 
     $clearMissing = $request->getMethod() != 'PATCH';
