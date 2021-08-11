@@ -77,7 +77,7 @@ servizio:
   condiviso_con_gruppo: "Condividi scheda del servizio con il gruppo"
   livello_accesso: "Livello di accesso al servizio"
   suggerisci_login: "Suggerisci il Login per l 'autocompletamento?"
-  consenti_riapertura: "Consenti di riprendere in carico le pratiche accettate o rifiutate"
+  consenti_riapertura: "Consenti agli operatori di cambiare manualmente lo stato di una pratica"
   consenti_ritiro: "Consenti al cittadino di annullare la presentazione della pratica"
   flusso: "Flusso di lavoro"
   crea: 'Crea nuovo servizio'
@@ -257,6 +257,7 @@ pratica:
     stato_8000: 'Rifiutata (in attesa di protocollazione del documento di esito)'
     stato_9000: 'Rifiutata'
     stato_20000: 'Ritirata'
+    stato_50000: 'Annullata'
 
     stato_4100: 'Richiesta integrazioni'
     stato_4100_legacy: 'Richiesta integrazioni (in attesa di protocollazione)'
@@ -309,6 +310,7 @@ STATUS_REGISTERED_AFTER_INTEGRATION: 'Integrazioni protocollate'
 STATUS_PENDING_AFTER_INTEGRATION: 'Presa in carico in seguito a integrazioni'
 STATUS_PROCESSING: 'In elaborazione'
 STATUS_WITHDRAW: 'Ritirata'
+STATUS_REVOKED: 'Annullata'
 
 iscrizioni:
   iscrizioni: "Iscrizioni"
@@ -709,6 +711,7 @@ operatori:
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo numero"
   dati_generali: "Dati generali"
+  cambio_stato: "Cambio stato"
   documenti: "Documenti"
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"

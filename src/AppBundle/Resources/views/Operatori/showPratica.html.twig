@@ -103,20 +103,6 @@
           {% if pratica.operatore == user %}
             {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
 
-            {% if pratica.isInFinalStates and pratica.servizio.allowReopening %}
-              <div class="row mb-3">
-                <div class="col d-flex justify-content-center">
-                  <a class="btn btn-outline-warning"
-                     href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
-                    <svg class="icon icon-warning icon-sm">
-                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
-                    </svg>
-                    {{ 'operatori.riapri_pratica' | trans }}
-                  </a>
-                </div>
-              </div>
-            {% endif %}
-
           {% else %}
             {{ include('@App/Operatori/parts/riassegna.html.twig') }}
           {% endif %}
@@ -184,6 +170,7 @@
         {% endif %}
 
         <div class="row pl-4">
+
           {# Backoffice #}
           {% if pratica.servizio.backofficeFormId %}
             <div class="col-12 pb-3">
@@ -193,20 +180,65 @@
                    data-backoffice-save-url="{{ path('save_backoffice_data', {'pratica': pratica.id}) }}"
                    data-submission="{% if pratica.backofficeFormData is defined %}{{ pratica.backofficeFormData | json_encode }}{% endif %}">
               </div>
-              <small class="save-backoffice-info w-100 mt-1 text-center text-info {% if pratica.backofficeFormData is not defined or pratica.backofficeFormData|length <= 0 %}d-none{% endif %}"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }} <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
+              <small
+                class="save-backoffice-info w-100 mt-1 text-center text-info {% if pratica.backofficeFormData is not defined or pratica.backofficeFormData|length <= 0 %}d-none{% endif %}"><i
+                  class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }}
+                <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
             </div>
+          {% endif %}
+
+          {% if pratica.servizio.allowReopening %}
+            <div class="col-12 pb-3">
+              <div id="accordion_changestatus" class="collapse-div w-100 border-0" role="tablist">
+                <div class="collapse-header" id="heading_changestatus">
+                  <button data-toggle="collapse" data-target="#acc_changestatus" aria-expanded="false"
+                          aria-controls="acc_changestatus">
+                    {{ 'operatori.cambio_stato' | trans }}
+                  </button>
+                </div>
+                <div id="acc_changestatus" class="collapse" role="tabpanel" aria-labelledby="heading_changestatus" data-parent="#accordion_changestatus">
+                  <div class="collapse-body py-2">
+                    <div class="row">
+                      <div class="col-12 pb-3">
+                        <form action="{{ path('operatori_show_change_status', {'pratica': pratica.id}) }}" method="post">
+                          <div class="form-group">
+                            <div class="bootstrap-select-wrapper">
+                              <select title="Scegli il nuovo stato della pratica" name="status" required="required">
+                                {% for state in pratica.allowedStates %}
+                                  <option value="{{ state }}">{{ ('pratica.dettaglio.stato_'~state)|trans }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                          </div>
+                          <button class="btn btn-outline-warning btn-sm w-100" type="submit">Applica</button>
+                        </form>
+
+                        {# <a class="btn btn-outline-warning"
+                           href="{{ path('operatori_show_reopen', {'pratica': pratica}) }}">
+                          <svg class="icon icon-warning icon-sm">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+                          </svg>
+                          {{ 'operatori.riapri_pratica' | trans }}
+                        </a> #}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           {% endif %}
 
           {# Dati generali #}
           <div class="col-12 pb-3">
             <div id="accordion_general" class="collapse-div w-100 border-0" role="tablist">
               <div class="collapse-header" id="heading_fascicolo">
-                <button data-toggle="collapse" data-target="#acc_general" aria-expanded="true"
+                <button data-toggle="collapse" data-target="#acc_general" aria-expanded="false"
                         aria-controls="acc_general">
                   {{ 'operatori.dati_generali' | trans }}
                 </button>
               </div>
-              <div id="acc_general" class="collapse show" role="tabpanel" aria-labelledby="heading_general"
+              <div id="acc_general" class="collapse" role="tabpanel" aria-labelledby="heading_general"
                    data-parent="#accordion_general">
                 <div class="collapse-body py-2">
                   <div class="row">
