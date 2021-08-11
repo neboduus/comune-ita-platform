@@ -1427,6 +1427,7 @@ class CPSUser extends User
     $data["Mantova"] = 'MN';
     $data["Massa-Carrara"] = 'MS';
     $data["Matera"] = 'MT';
+    $data["Medio Campidano"] = 'VS';
     $data["Messina"] = 'ME';
     $data["Milano"] = 'MI';
     $data["Modena"] = 'MO';
@@ -1458,12 +1459,12 @@ class CPSUser extends User
     $data["Roma"] = 'RM';
     $data["Rovigo"] = 'RO';
     $data["Salerno"] = 'SA';
-    $data["Medio Campidano"] = 'VS';
     $data["Sassari"] = 'SS';
     $data["Savona"] = 'SV';
     $data["Siena"] = 'SI';
     $data["Siracusa"] = 'SR';
     $data["Sondrio"] = 'SO';
+    $data["Sud Sardegna"] = 'SU';
     $data["Taranto"] = 'TA';
     $data["Teramo"] = 'TE';
     $data["Terni"] = 'TR';
