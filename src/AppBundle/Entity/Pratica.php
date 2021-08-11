@@ -81,6 +81,16 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   const STATUS_CANCELLED = 9000;
   const STATUS_WITHDRAW = 20000;
 
+  const STATUS_REVOKED = 50000;
+
+  const ALLOWED_STATES = [
+    Pratica::STATUS_PAYMENT_PENDING,
+    Pratica::STATUS_SUBMITTED,
+    Pratica::STATUS_REGISTERED,
+    Pratica::STATUS_PENDING,
+    Pratica::STATUS_REVOKED,
+  ];
+
   const FINAL_STATES = [
     Pratica::STATUS_COMPLETE,
     Pratica::STATUS_CANCELLED,
@@ -793,11 +803,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @param OperatoreUser $operatore
+   * @param OperatoreUser|null $operatore
    *
    * @return Pratica
    */
-  public function setOperatore(OperatoreUser $operatore)
+  public function setOperatore(?OperatoreUser $operatore)
   {
     $this->operatore = $operatore;
 
@@ -2127,6 +2137,15 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function isInFinalStates()
   {
     return in_array($this->status, self::FINAL_STATES);
+  }
+
+  public function getAllowedStates()
+  {
+    $states = self::ALLOWED_STATES;
+    if (($key = array_search($this->getStatus(), $states)) !== false) {
+      unset($states[$key]);
+    }
+    return $states;
   }
 
   /**

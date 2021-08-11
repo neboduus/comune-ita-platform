@@ -924,6 +924,60 @@ class OperatoriController extends Controller
   }
 
   /**
+   * @Route("/{pratica}/change-status",name="operatori_show_change_status")
+   * @param Pratica|DematerializedFormPratica $pratica
+   * @return RedirectResponse
+   */
+  public function changeStatusPraticaAction(Pratica $pratica, Request $request)
+  {
+
+    if (!in_array($request->request->get('status'), $pratica->getAllowedStates())) {
+      $this->addFlash('error', 'Lo stato selezionato non è tra quelli permessi per la pratica.');
+      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+    }
+
+    $newStatus = $request->request->get('status');
+
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+    if ($pratica->getServizio()->isAllowReopening()) {
+      try {
+
+        if ($pratica->getEsito() !== null && $pratica->setMotivazioneEsito() !== null && $newStatus < Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE ) {
+          $pratica->setEsito(null);
+          $pratica->setMotivazioneEsito(null);
+          $pratica->removeRispostaOperatore();
+        }
+
+        // Todo: verificare
+        /*if ($pratica->getOperatore() && $newStatus < Pratica::STATUS_PENDING) {
+          $pratica->setOperatore(null);
+        }*/
+
+        $statusChange = new StatusChange();
+        $statusChange->setEvento('Cambio stato pratica pratica');
+        $statusChange->setOperatore($user->getFullName());
+
+        $this->praticaStatusService->setNewStatus(
+          $pratica,
+          $newStatus,
+          $statusChange,
+          true
+        );
+        $this->addFlash('success', 'Stato della pratica cambiato correttamente');
+      } catch (\Exception $e) {
+        $this->logger->error('Errore durante il cambio stato della pratica: ' . $pratica->getIdDocumentoProtocollo() . ' ' . $e->getMessage());
+        $this->addFlash('error', 'Si è verificato un errore durante il cambio stato della pratica.');
+      }
+    } else {
+      $this->addFlash('error', 'Lo stato della pratica non può essere modificato.');
+    }
+    $this->entityManager->refresh($pratica);
+    return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+  }
+
+  /**
    * @Route("/{pratica}/acceptIntegration",name="operatori_accept_integration")
    * @param Pratica|DematerializedFormPratica $pratica
    * @return array|RedirectResponse

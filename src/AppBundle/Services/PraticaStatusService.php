@@ -176,7 +176,7 @@ class PraticaStatusService
       throw new \Exception("Pratica status $status not found");
     }
 
-    if ($this->validateChangeStatus($pratica, $afterStatus)) {
+    if ($this->validateChangeStatus($pratica, $afterStatus, $force)) {
 
       $this->entityManager->beginTransaction();
 
