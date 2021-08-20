@@ -50,12 +50,9 @@ class ProtocolloSuccessSubscriber implements EventSubscriberInterface
     public function onProtocollaAllegatiOperatore(ProtocollaAllegatiOperatoreSuccessEvent $event)
     {
         $pratica = $event->getPratica();
-        if ($pratica->getEsito())
-        {
+        if ($pratica->getEsito()) {
             $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_COMPLETE);
-        }
-        else
-        {
+        } else {
             $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_CANCELLED);
         }
 

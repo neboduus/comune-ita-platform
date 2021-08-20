@@ -83,7 +83,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   const STATUS_REVOKED = 50000;
 
-  const ALLOWED_STATES = [
+  const ALLOWED_MANUAL_CHANGE_STATES = [
     Pratica::STATUS_PAYMENT_PENDING,
     Pratica::STATUS_SUBMITTED,
     Pratica::STATUS_REGISTERED,
@@ -927,6 +927,9 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function addNumeroDiProtocollo($numeroDiProtocollo)
   {
+    if (!$this->numeriProtocollo instanceof ArrayCollection) {
+      $this->jsonToArray();
+    }
     if (!$this->numeriProtocollo->contains($numeroDiProtocollo)) {
       $this->numeriProtocollo->add($numeroDiProtocollo);
     }
@@ -2141,7 +2144,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   public function getAllowedStates()
   {
-    $states = self::ALLOWED_STATES;
+    $states = self::ALLOWED_MANUAL_CHANGE_STATES;
     if (($key = array_search($this->getStatus(), $states)) !== false) {
       unset($states[$key]);
     }
