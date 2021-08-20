@@ -1370,6 +1370,145 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
+   * Register application outcome
+   * @Rest\Post("/{id}/transition/register-outcome", name="application_api_post_transition_register_outcome")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Message",
+   *     in="body",
+   *     type="json",
+   *     description="The transition to create",
+   *     required=true,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="protocol_number", type="string", description="Outcome protocol number"),
+   *        @SWG\Property(property="protocol_document_id", type="string", description="Outcome protocol document id")
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function postApplicationTransitionRegisterOutcomeAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $application */
+      $application = $repository->find($id);
+      if ($application === null) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+
+      $outcome = $application->getRispostaOperatore();
+      if (empty($outcome)) {
+        return $this->view(["Application doesn't has an outcome"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      if (!empty($outcome->getNumeroProtocollo())) {
+        return $this->view(["Outcome already has a protocol number"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      if (!$application->getServizio()->isProtocolRequired()) {
+        return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      if ($application->getType() !== Pratica::TYPE_FORMIO) {
+        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
+        ->add(
+          'protocol_number',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
+        ->add(
+          'protocol_document_id',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
+        ->getForm();
+      $this->processForm($request, $form);
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = $this->getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = $form->getData();
+      $outcome->setNumeroProtocollo($data['protocol_number']);
+      $outcome->setIdDocumentoProtocollo($data['protocol_document_id']);
+
+      $this->em->persist($outcome);
+      $this->em->flush();
+
+      $application->addNumeroDiProtocollo([
+        'id' => $outcome->getId(),
+        'protocollo' => $data['protocol_document_id'],
+      ]);
+
+      if ($application->getEsito()) {
+        $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
+      } else {
+        $this->statusService->setNewStatus($application, Pratica::STATUS_CANCELLED);
+      }
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => 'Contact technical support at support@opencontent.it'
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
+  }
+
+  /**
    * Assign an operator to an Application
    * @Rest\Post("/{id}/transition/assign", name="application_api_post_transition_assign")
    *
