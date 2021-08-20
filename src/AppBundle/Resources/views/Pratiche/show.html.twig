@@ -58,40 +58,9 @@
             </div>
           {% endif %}
           <div class="col-12">
-            {% if can_compile or can_withdraw or pratica.status >= 1900 %}
-              <h4>Azioni</h4>
-              {% if pratica.status >= 1900 %}
-                <p>
-                  <a class="btn btn-primary mb-4"
-                    {% if pratica.servizio.accessLevel > 0 or pratica.servizio.accessLevel is null %}
-                    href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
-                  {% else %}
-                    href="{{ path('pratiche_anonime_new', {'servizio': pratica.servizio.slug}) }}"
-                    {% endif %}>
-                    <i class="fa fa-plus mr-2"></i>{{ 'pratica.crea_nuova_pratica'|trans }}
-                  </a>
-                </p>
-              {% endif %}
-              {% if can_compile %}
-                <p>
-                  <a class="btn btn-success mb-4" data-action="edit_draft"
-                     href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                    <i class="far fa-arrow-alt-circle-right"></i>
-                    {{ 'pratica.vai_alla_pratica'|trans }}
-                  </a>
-                </p>
-              {% endif %}
-              {% if can_withdraw %}
-                <p>
-                  <a class="btn btn-danger mb-4"
-                     onclick="return confirm('Sei sicuro di procedere? Questa azione non potrà più essere annullata.');"
-                     href="{{ path('pratiche_withdraw', {'pratica': pratica.id}) }}">
-                    <svg class="icon icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use></svg>
-                    {{ 'pratica.ritira_la_pratica'|trans }}
-                  </a>
-                </p>
-              {% endif %}
-            {% endif %}
+
+            {{ include('AppBundle:Pratiche/parts:pratica_actions.html.twig', {'pratica':pratica}) }}
+
             {% if pratica.type != 'form_io' %}
               <div class="row">
                 <div class="col-12">

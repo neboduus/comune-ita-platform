@@ -147,6 +147,6 @@ class ApplicationVoter extends Voter
     if ($pratica->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD && $pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
       return false;
     }
-    return $pratica->getStatus() == Pratica::STATUS_SUBMITTED && empty($pratica->getPaymentData()) && $pratica->getServizio()->isAllowWithdraw() && !$pratica->getServizio()->isProtocolRequired() && $pratica->getUser()->getId() == $user->getId();
+    return in_array($pratica->getStatus(),  [Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING]) && empty($pratica->getPaymentData()) && $pratica->getServizio()->isAllowWithdraw() && $pratica->getUser()->getId() == $user->getId();
   }
 }

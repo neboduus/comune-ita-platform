@@ -1287,7 +1287,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $repository = $this->em->getRepository('AppBundle:Pratica');
       $application = $repository->find($id);
       if ($application === null) {
-        throw new Exception('Application not found');
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
       $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
 
