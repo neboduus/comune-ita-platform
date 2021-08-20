@@ -104,48 +104,23 @@
         {{ include('@App/Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}
       </div>
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
-        <div class="row pl-3 mb-5 d-flex justify-content-between">
-          <div class="col-auto ">
+        <div class="row pl-4">
+          <div class="col-12">
             {% if pratica.moduliCompilati|length > 0 %}
-              <a class="btn btn-outline-secondary"
+              <a class="btn btn-outline-secondary mb-4 w-100"
                  href="{{ path('allegati_download_cpsuser', {'allegato': pratica.moduliCompilati[0]}) }}">
                 <svg class="icon icon-sm">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
                 </svg>
                 {{ 'operatori.scarica' | trans }}
               </a>
-            {% else %}
-              <button class="btn btn-outline-secondary" disabled>
-                <svg class="icon icon-sm">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-                </svg>
-                {{ 'operatori.scarica' | trans }}
-              </button>
             {% endif %}
           </div>
-          <div class="col-auto">
-            {% if can_compile or can_withdraw %}
-              {% if can_compile %}
-                <a class="btn btn-success" data-action="edit_draft"
-                   href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-                  <i class="fas fa-arrow-alt-circle-right"></i>
-                  {{ 'pratica.vai_alla_pratica'|trans }}
-                </a>
-              {% endif %}
-              {% if can_withdraw %}
-                <a class="btn btn-danger"
-                   onclick="return confirm('Sei sicuro di procedere? Questa azione non potrà più essere annullata.');"
-                   href="{{ path('pratiche_withdraw', {'pratica': pratica.id}) }}">
-                  <svg class="icon icon-white icon-sm">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
-                  </svg>
-                  {{ 'pratica.ritira_la_pratica'|trans }}
-                </a>
-              {% endif %}
-            {% endif %}
+          <div class="col-12">
+            {{ include('AppBundle:Pratiche/parts:pratica_actions.html.twig', {'pratica':pratica}) }}
           </div>
         </div>
-        <div class="row my-4 pl-4">
+        <div class="row pl-4">
           {% if pratica.type == 'form_io' %}
             <div class="col-12 pb-3">
               <h6>{{ 'pratica.numero' | trans }}:</h6>
