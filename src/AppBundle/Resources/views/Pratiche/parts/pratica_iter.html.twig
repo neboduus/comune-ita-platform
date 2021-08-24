@@ -1,5 +1,5 @@
 {% set duration = pratica|iter_duration(app.request.locale) %}
- <div class="it-page-section anchor-offset">
+ <div class="it-page-section">
   <h6> {{ 'pratica.iter'|trans }} </h6>
 <div class="point-list-wrapper my-4">
   {% for timestamp, changes in pratica.storicoStati %}
