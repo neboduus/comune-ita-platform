@@ -30,6 +30,7 @@ class PaymentOutcomeType extends AbstractType
   {
     $resolver->setDefaults(array(
       'data_class' => PaymentOutcome::class,
+      'allow_extra_fields' => true,
       'csrf_protection' => false
     ));
   }
