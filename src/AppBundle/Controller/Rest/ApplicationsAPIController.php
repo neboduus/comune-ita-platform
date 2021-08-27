@@ -1105,6 +1105,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   {
 
     $repository = $this->em->getRepository('AppBundle:Pratica');
+    /** @var Pratica $application */
     $application = $repository->find($id);
 
     if (!$application) {
@@ -1141,14 +1142,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     try {
 
+      $application = $_application->toEntity($application);
+      $this->em->persist($application);
+      $this->em->flush();
+
       if (!$application->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_SUBMITTED &&
            $application->getServizio()->isProtocolRequired()) {
-
-        $application = $_application->toEntity($application);
-        $this->em->persist($application);
-        $this->em->flush();
-
-        // Update application status if protocol is enabled and application is submitted
         $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);
       }
 
@@ -1157,15 +1156,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
         if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
           $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
         }
-        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus(
-          ) == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
+        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
           $this->statusService->setNewStatus($application, Pratica::STATUS_CANCELLED);
         }
-
-        $application = $_application->toEntity($application);
-        $this->em->persist($application);
-        $this->em->flush();
-
       }
 
     } catch (\Exception $e) {
