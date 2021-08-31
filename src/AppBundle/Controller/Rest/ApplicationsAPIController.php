@@ -1142,23 +1142,34 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     try {
 
+      // calcolo degli eventuali cambi stato prima di persistere
+      $needChangeStateToRegistered = !$application->getNumeroProtocollo()
+        && $application->getStatus() == Pratica::STATUS_SUBMITTED
+        && $application->getServizio()->isProtocolRequired();
+
+      $rispostaOperatore = $application->getRispostaOperatore();
+      $needChangeStateToComplete = $rispostaOperatore
+        && !$rispostaOperatore->getNumeroProtocollo()
+        && $application->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE;
+
+      $needChangeStateToCancelled = $rispostaOperatore
+        && !$rispostaOperatore->getNumeroProtocollo()
+        && $application->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE;
+
+      // persist della patch
       $application = $_application->toEntity($application);
       $this->em->persist($application);
       $this->em->flush();
 
-      if (!$application->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_SUBMITTED &&
-           $application->getServizio()->isProtocolRequired()) {
+      // esecuzione degli eventuali cambi stato
+      if ($needChangeStateToRegistered) {
         $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);
       }
-
-      $rispostaOperatore = $application->getRispostaOperatore();
-      if ($rispostaOperatore) {
-        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
-          $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
-        }
-        if (!$rispostaOperatore->getNumeroProtocollo() && $application->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
-          $this->statusService->setNewStatus($application, Pratica::STATUS_CANCELLED);
-        }
+      if ($needChangeStateToComplete) {
+        $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
+      }
+      if ($needChangeStateToCancelled) {
+        $this->statusService->setNewStatus($application, Pratica::STATUS_CANCELLED);
       }
 
     } catch (\Exception $e) {
