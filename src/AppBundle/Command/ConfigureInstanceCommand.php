@@ -160,21 +160,20 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     $loader->setContainer($this->getContainer());
     $loader->loadPaymentGateways($this->entityManager);
 
-    /** @var PaymentGateway $bollo */
-    $bollo = $this->entityManager->getRepository('AppBundle:PaymentGateway')->findOneByIdentifier('bollo');
-    $gateway = new Gateway();
-    $gateway->setIdentifier($bollo->getIdentifier());
-    $gateway->setParameters(array('identifier' => $bollo->getIdentifier(), 'parameters' => null));
-
-    $ente->setGateways(array('bollo' => $gateway));
+    if (!$instanceExists) {
+      /** @var PaymentGateway $bollo */
+      $bollo = $this->entityManager->getRepository('AppBundle:PaymentGateway')->findOneByIdentifier('bollo');
+      $gateway = new Gateway();
+      $gateway->setIdentifier($bollo->getIdentifier());
+      $gateway->setParameters(array('identifier' => $bollo->getIdentifier(), 'parameters' => null));
+      $ente->setGateways(array('bollo' => $gateway));
+    }
 
     $this->entityManager->persist($ente);
     $this->entityManager->flush();
 
-    if (!$instanceExists) {
-      $loader->loadCategories($this->entityManager);
-      $loader->loadTerminiUtilizzo($this->entityManager);
-    }
+    $loader->loadCategories($this->entityManager);
+    $loader->loadTerminiUtilizzo($this->entityManager);
 
     return $ente;
 

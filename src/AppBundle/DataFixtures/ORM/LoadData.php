@@ -14,15 +14,10 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Google\Spreadsheet\DefaultServiceRequest;
-use Google\Spreadsheet\ServiceRequestFactory;
-use Google\Spreadsheet\SpreadsheetService;
+use AppBundle\Utils\Csv;
 
 class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
 {
-  const PUBLIC_SPREADSHEETS_URL = 'https://docs.google.com/spreadsheets/d/1mbGZN9OIjfsrrjVbs2QB1DjzzMoCPT6MD5cPTJS4308/edit#gid=0';
-
-  const PUBLIC_SPREADSHEETS_ID = '1mbGZN9OIjfsrrjVbs2QB1DjzzMoCPT6MD5cPTJS4308';
 
   private $counters = [
     'servizi' => [
@@ -41,10 +36,16 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
       'new' => 0,
       'updated' => 0,
     ],
+    'privacy' => [
+      'new' => 0,
+      'updated' => 0,
+    ],
   ];
 
   /** @var  ContainerInterface */
   private $container;
+
+  private $data = [];
 
   public function setContainer(ContainerInterface $container = null)
   {
@@ -67,6 +68,10 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
 
   }
 
+  /**
+   * @param ObjectManager $manager
+   * @deprecated
+   */
   public function loadAsili(ObjectManager $manager)
   {
     $data = $this->getData('Asili');
@@ -85,34 +90,34 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     }
   }
 
-  private function getData($worksheetTitle)
+  private function getData($key)
   {
-    $serviceRequest = new DefaultServiceRequest("");
-    ServiceRequestFactory::setInstance($serviceRequest);
+    if (empty($this->data)) {
+      $rootDir =  $this->getContainer()->get('kernel')->getRootDir();
+      $dataDir = $rootDir . '/../data';
 
-    $spreadsheetService = new SpreadsheetService();
-    $worksheetFeed = $spreadsheetService->getPublicSpreadsheet(self::PUBLIC_SPREADSHEETS_ID);
-    $worksheet = $worksheetFeed->getByTitle($worksheetTitle);
+      $categories = Csv::csvToArray($dataDir . '/categories.csv');
+      $paymentGateways = Csv::csvToArray($dataDir . '/payment-gateways.csv');
+      $privacy = Csv::csvToArray($dataDir . '/privacy.csv');
 
-    $data = $worksheet->getCsv();
-
-    $dataArray = str_getcsv($data, "\r\n");
-    foreach ($dataArray as &$row) {
-      $row = str_getcsv($row, ",");
+      $this->data = [
+        'categories'       => $categories,
+        'payment_gateways' => $paymentGateways,
+        'privacy' => $privacy,
+      ];
     }
 
-    array_walk(
-      $dataArray,
-      function (&$a) use ($dataArray) {
-        $a = array_map('trim', $a);
-        $a = array_combine($dataArray[0], $a);
-      }
-    );
-    array_shift($dataArray); # remove column header
+    if (isset($this->data[$key])) {
+      return $this->data[$key];
+    }
 
-    return $dataArray;
+    return [];
   }
 
+  /**
+   * @param ObjectManager $manager
+   * @deprecated
+   */
   public function loadEnti(ObjectManager $manager)
   {
     $data = $this->getData('Enti');
@@ -154,7 +159,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
 
   public function loadCategories(ObjectManager $manager)
   {
-    $data = $this->getData('Categorie');
+    $data = $this->getData('categories');
     $categoryRepo = $manager->getRepository('AppBundle:Categoria');
     foreach ($data as $item) {
       $category = $categoryRepo->findOneByTreeId($item['tree_id']);
@@ -172,6 +177,23 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
         $manager->persist($category);
 
       } else {
+        // Update name
+        if ($item['name'] != $category->getName()) {
+          $category->setName($item['name']);
+        }
+        // Update Description
+        if ($item['description'] != $category->getDescription()) {
+          $category->setDescription($item['description']);
+        }
+        // Update tree_id
+        if ($item['tree_id'] != $category->getTreeId()) {
+          $category->setTreeId($item['tree_id']);
+        }
+        // Update tree_parent_id
+        if ($item['tree_parent_id'] != $category->getTreeParentId()) {
+          $category->setTreeParentId($item['tree_parent_id']);
+        }
+        $manager->persist($category);
         $this->counters['categorie']['updated']++;
       }
 
@@ -181,6 +203,7 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
 
   /**
    * @param ObjectManager $manager
+   * @deprecated
    */
   public function loadServizi(ObjectManager $manager)
   {
@@ -244,10 +267,10 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
    */
   public function loadPaymentGateways(ObjectManager $manager)
   {
-    $data = $this->getData('PaymentGateways');
+    $data = $this->getData('payment_gateways');
     $gatewayRepo = $manager->getRepository('AppBundle:PaymentGateway');
     foreach ($data as $item) {
-      $gateway = $gatewayRepo->findOneByName($item['name']);
+      $gateway = $gatewayRepo->findOneByIdentifier($item['identifier']);
       if (!$gateway) {
         $this->counters['payment_gateways']['new']++;
         $gateway = new PaymentGateway();
@@ -260,6 +283,23 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
           ->setEnabled($item['enabled']);
         $manager->persist($gateway);
       } else {
+        // Update name
+        if ($item['name'] != $gateway->getName()) {
+          $gateway->setName($item['name']);
+        }
+        // Update Description
+        if ($item['description'] != $gateway->getDescription()) {
+          $gateway->setDescription($item['description']);
+        }
+        // Update Disclaimer
+        if ($item['disclaimer'] != $gateway->getDisclaimer()) {
+          $gateway->setDisclaimer($item['disclaimer']);
+        }
+        // Update Disclaimer
+        if ($item['enabled'] != $gateway->isEnabled()) {
+          $gateway->setEnabled($item['enabled']);
+        }
+        $manager->persist($gateway);
         $this->counters['payment_gateways']['updated']++;
       }
       $manager->flush();
@@ -267,15 +307,33 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
   }
 
 
+  /**
+   * @param ObjectManager $manager
+   */
   public function loadTerminiUtilizzo(ObjectManager $manager)
   {
-    $data = $this->getData('TerminiUtilizzo');
+    $data = $this->getData('privacy');
+    $terminiUtilizzoRepo = $manager->getRepository('AppBundle:TerminiUtilizzo');
     foreach ($data as $item) {
-      $terminiUtilizzo = (new TerminiUtilizzo())
-        ->setName($item['name'])
-        ->setText($item['text'])
-        ->setMandatory(true);
-      $manager->persist($terminiUtilizzo);
+      $terminiUtilizzo = $terminiUtilizzoRepo->findOneByName($item['name']);
+      if (!$terminiUtilizzo) {
+        $this->counters['privacy']['new']++;
+        $terminiUtilizzo = (new TerminiUtilizzo())
+          ->setName($item['name'])
+          ->setText($item['text'])
+          ->setMandatory(true);
+        $manager->persist($terminiUtilizzo);
+      } else {
+        // Update name
+        if ($item['name'] != $terminiUtilizzo->getName()) {
+          $terminiUtilizzo->setName($item['name']);
+        }
+        // Update Description
+        if ($item['text'] != $terminiUtilizzo->getText()) {
+          $terminiUtilizzo->setText($item['text']);
+        }
+        $manager->persist($terminiUtilizzo);
+      }
       $manager->flush();
     }
   }

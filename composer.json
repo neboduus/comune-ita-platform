@@ -80,7 +80,6 @@
     "phpspec/phpspec": "3.4.3",
     "phpunit/phpunit": "7.5.20",
     "squizlabs/php_codesniffer": "*",
-    "asimlqt/php-google-spreadsheet-client": "3.0.2",
     "escapestudios/symfony2-coding-standard": "2.11.0"
   },
   "scripts": {
