@@ -1,0 +1,7 @@
+name,identifier,description,disclaimer,fcqn,enabled
+Marca da bollo,bollo,Metodo di pagamento tramite marca da bollo,"<img class=""img-fluid center-block"" width=""300"" src=""/bundles/app/images/bollo.png"" alt=""Valori bollati"">
+Prima dell'invio del modulo online è necessario acquistare la <strong>marca da bollo</strong> e riportarne gli estremi.<br />
+Il numero seriale, la data e l'ora indicati identificano univocamente la marca da bollo che <strong>dovrà essere conservata
+per eventuali accertamenti e non potrà essere riutilizzata</strong>.
+<br /><small>(Ai sensi dell'articolo 3 del Decreto Ministeriale 10/11/2011)</small>",AppBundle\Payment\Gateway\Bollo,1
+MyPay,mypay,Metodo di pagamento MyPay per pagare tramite PagoPA,"Segui le istruzioni presenti nella pagina. Ricorda che MyPay ha bisogno di qualche minuto per comunicarci l'esito del pagamento, permettendo di registrarlo nella Stanza del Cittadino",AppBundle\Payment\Gateway\MyPay,1

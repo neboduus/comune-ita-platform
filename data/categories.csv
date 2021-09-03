@@ -1,0 +1,16 @@
+tree_id,name,slug,description,tree_parent_id,depth
+1,Educazione e formazione,educazione-e-formazione,"Educazione e formazione - nido, scuola, università",0,0
+2,"Salute, benessere e assistenza",salute-benessere-e-assistenza,"Salute, benessere e assistenza - animali, invalidità, esami sanitari, anziani",0,0
+3,Vita lavorativa,vita-lavorativa,"Vita lavorativa - lavoro, disoccupazione, pensione",0,0
+4,Mobilità e trasporti,mobilita-e-trasporti,"Mobilità e trasporti - parcheggi, automobile, patente, trasporto pubblico",0,0
+5,Catasto e urbanistica,catasto-e-urbanistica,"Catasto e urbanistica - case, terreni, edifici",0,0
+6,Anagrafe e stato civile,anagrafe-e-stato-civile,"Anagrafe e stato civile - residenza, matrimonio, nascita, morte, espatrio, elezioni",0,0
+7,Turismo,turismo,"Turismo - viaggi, passaporto, visto",0,0
+8,Giustizia e sicurezza pubblica,giustizia-e-sicurezza-pubblica,"Giustizia e sicurezza pubblica - crimini, protezione civile",0,0
+9,Tributi e finanze,tributi-e-finanze,"Tributi e finanze - dichiarazione redditi, contributi, contravvenzioni",0,0
+10,Cultura e tempo libero,cultura-e-tempo-libero,"Cultura e tempo libero - luoghi della cultura, impianti sportivi",0,0
+11,Ambiente,ambiente,"Ambiente - rifiuti, verde urbano, incendi",0,0
+12,Attività produttive e commercio,attivita-produttive-e-commercio,"Attività produttive e commercio - impresa nazionale/estera, notifiche, bancarotta, risorse umane",0,0
+13,Autorizzazioni,autorizzazioni,"Autorizzazioni - permessi, licenze, finanziamenti",0,0
+14,Appalti pubblici,appalti-pubblici,"Appalti pubblici - gare nazionali/estere, bandi",0,0
+15,Agricoltura,agricoltura,"Agricoltura - pesca, politiche agricole e alimentari",0,0
