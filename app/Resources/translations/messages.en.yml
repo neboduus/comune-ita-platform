@@ -805,6 +805,7 @@ email:
         registered.after.integration: "le comunichiamo che l'integrazione alla sua richiesta con protocollo <strong>%protocollo%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della richiesta."
         pending.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         withdraw: "le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+        revoked: "le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata annullata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta."
         payment:
           pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
           success: "le comunichiamo che il pagamento per la sua richiesta per il servizio <strong>%servizio%</strong> è avvenuto con successo"
@@ -819,6 +820,8 @@ email:
         complete: "hai accettato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
         complete.waitallegatioperatore: "la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi documenti allegati."
         pending: "hai preso in carico la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
+        withdraw: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ritirata."
+        revoked: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata annullata."
         payment:
           pending: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è in attesa di pagamento"
           success: "il pagamento per la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è avvenuto con successo"
