@@ -219,6 +219,12 @@ class Service
   private $serviceGroup;
 
   /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Services group id")
+   */
+  private $serviceGroupId;
+
+  /**
    * @var bool
    * @Serializer\Type("boolean")
    * @SWG\Property(description="If selected the service will share the group's descriptipn")
@@ -721,6 +727,22 @@ class Service
   }
 
   /**
+   * @return mixed
+   */
+  public function getServiceGroupId()
+  {
+    return $this->serviceGroupId;
+  }
+
+  /**
+   * @param mixed $serviceGroupId
+   */
+  public function setServiceGroupId($serviceGroupId): void
+  {
+    $this->serviceGroupId = $serviceGroupId;
+  }
+
+  /**
    * @return bool
    */
   public function isSharedWithGroup()
@@ -838,6 +860,7 @@ class Service
     $dto->loginSuggested = $servizio->isLoginSuggested() || false;
     $dto->scheduledFrom = $servizio->getScheduledFrom();
     $dto->scheduledTo = $servizio->getScheduledTo();
+    $dto->serviceGroupId = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getId() : null;
     $dto->serviceGroup = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null;
     $dto->sharedWithGroup = $servizio->isSharedWithGroup();
     $dto->allowReopening = $servizio->isAllowReopening();

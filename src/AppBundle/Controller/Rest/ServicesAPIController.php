@@ -96,6 +96,14 @@ class ServicesAPIController extends AbstractFOSRestController
    * List all Services
    * @Rest\Get("", name="services_api_list")
    *
+   * @SWG\Parameter(
+   *      name="service_group_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the service group"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of services",
@@ -106,17 +114,45 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="services")
    */
-  public function getServicesAction()
+  public function getServicesAction(Request $request)
   {
-    $result = [];
-    $repoServices = $this->em->getRepository(Servizio::class);
-    $criteria['status'] = Servizio::PUBLIC_STATUSES;
-    $services = $repoServices->findBy($criteria);
-    foreach ($services as $s) {
-      $result [] = Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
+
+    try {
+      $serviceGroupId = $request->get('service_group_id', false);
+      $result = [];
+      $repoServices = $this->em->getRepository(Servizio::class);
+      $criteria['status'] = Servizio::PUBLIC_STATUSES;
+
+      if ($serviceGroupId) {
+        $serviceGroupRepo = $this->em->getRepository('AppBundle:ServiceGroup');
+        $serviceGroup = $serviceGroupRepo->find($serviceGroupId);
+        if (!$serviceGroup instanceof ServiceGroup) {
+          return $this->view(["Service group not found"], Response::HTTP_NOT_FOUND);
+        }
+
+        $criteria['serviceGroup'] = $serviceGroupId;
+      }
+
+      $services = $repoServices->findBy($criteria);
+      foreach ($services as $s) {
+        $result [] = Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
+      }
+
+      return $this->view($result, Response::HTTP_OK);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view($result, Response::HTTP_OK);
   }
 
   /**
