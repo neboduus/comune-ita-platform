@@ -61,7 +61,7 @@ class ExpressionValidator
       $expression = "applications.count({
         service: ['{$servizio->getSlug()}'],
         data: {'{$uniqueFieldName}': submission['{$uniqueFieldName}']},
-        status: ['1000','1530','8000', '9000','20000']
+        status: ['1000','1530','8000','9000','20000','50000']
       }) == 0";
       if (empty($message)){
         $message = "Non è possibile inviare la pratica: è già stata presentata una richiesta per questo servizio";
