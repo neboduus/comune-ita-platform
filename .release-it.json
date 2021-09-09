@@ -8,5 +8,19 @@
   },
   "gitlab": {
     "release": true
+  },
+  "plugins": {
+    "@release-it/bumper": {
+      "in": "composer.json",
+      "out": [
+        "composer.json",
+        "package.json",
+        {
+          "file": "publiccode.yml",
+          "type": "text/yaml",
+          "path": "softwareVersion"
+        }
+      ]
+    }
   }
 }
