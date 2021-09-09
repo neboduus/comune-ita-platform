@@ -1,14 +1,10 @@
-# This repository adheres to the publiccode.yml standard by including this
-# metadata file that makes public software easily discoverable.
-# More info at https://github.com/italia/publiccode.yml
-
 publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
 name: La Stanza del Cittadino
-url: 'https://gitlab.com/opencontent/stanzadelcittadino'
-landingURL: 'https://link.opencontent.it/sdc-home'
+url: https://gitlab.com/opencontent/stanzadelcittadino
+landingURL: https://link.opencontent.it/sdc-home
 releaseDate: '2021-09-03'
-softwareVersion: 1.7.21
+softwareVersion: 1.7.22
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -127,13 +123,12 @@ it:
 description:
   it:
     genericName: ' L’area personale del cittadino'
-    apiDocumentation: 'https://link.opencontent.it/sdc-apidoc'
-    documentation: 'https://link.opencontent.it/sdc-manuale'
+    apiDocumentation: https://link.opencontent.it/sdc-apidoc
+    documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
-      Creazione moduli compilabili online e pratiche digitali con
-      backoffice per gli operatori. Gestione Appuntamenti presso gli uffici o
-      online.
-    longDescription: >
+      Creazione moduli compilabili online e pratiche digitali conbackoffice per
+      gli operatori. Gestione Appuntamenti presso gli uffici online.
+    longDescription: >-
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
       asilo nido), verificare lo stato delle pratiche, ricevere comunicazioni da
       parte dell’ente (messaggi, scadenze, ...) ed effettuare pagamenti.
@@ -149,22 +144,52 @@ description:
       Trentini - ANCI Trentino, che accompagna i comuni nella revisione dei
       servizi al cittadino in un’ottica digitale (digital first)
     features:
-      - Gestione Appuntamenti, per singole persone, per Uffici e per sportelli con più operatori.
-      - Possibilità di approvare/spostare appuntamenti e gestire orari multipli di apertura.
-      - Interfaccia responsive (Bootstrap Italia) conforme Linee Guida di design per i servizi web della PA
-      - Autenticazione con SPID o Social e possibilità di aprire servizi anche senza autenticazione
-      - Possibilità di scrivere al cittadino dal backoffice (con ricevuta di presa visione e PEC)
-      - Integrazione con PagoPA attraverso MyPAY o altri gateway di pagamento regionali
-      - Meccanismo di compilazione on-line dei moduli a step, con possibilità di salvare bozze
-      - Gestione completa dell’iter. Invio, presa in carico, risposta al cittadino, richiesta integrazioni
-      - Controllo della validità di firme digitali e formati dei file, per la conservazione sostitutiva
-      - Generazione automatica del modulo compilato con ricevuta di invio dell’istanza, in formato PDF
-      - Integrazione con il sito comunale Comunweb per prossime scadenze e descrizione dei servizi
-      - Integrazione con i sistemi di protocollazione più diffusi (PiTre, Infor, Maggioli).
+      - >-
+        Gestione Appuntamenti, per singole persone, per Uffici e per sportelli
+        con più operatori.
+      - >-
+        Possibilità di approvare/spostare appuntamenti e gestire orari multipli
+        di apertura.
+      - >-
+        Interfaccia responsive (Bootstrap Italia) conforme Linee Guida di design
+        per i servizi web della PA
+      - >-
+        Autenticazione con SPID o Social e possibilità di aprire servizi anche
+        senza autenticazione
+      - >-
+        Possibilità di scrivere al cittadino dal backoffice (con ricevuta di
+        presa visione e PEC)
+      - >-
+        Integrazione con PagoPA attraverso MyPAY o altri gateway di pagamento
+        regionali
+      - >-
+        Meccanismo di compilazione on-line dei moduli a step, con possibilità di
+        salvare bozze
+      - >-
+        Gestione completa dell’iter. Invio, presa in carico, risposta al
+        cittadino, richiesta integrazioni
+      - >-
+        Controllo della validità di firme digitali e formati dei file, per la
+        conservazione sostitutiva
+      - >-
+        Generazione automatica del modulo compilato con ricevuta di invio
+        dell’istanza, in formato PDF
+      - >-
+        Integrazione con il sito comunale Comunweb per prossime scadenze e
+        descrizione dei servizi
+      - >-
+        Integrazione con i sistemi di protocollazione più diffusi (PiTre, Infor,
+        Maggioli).
       - Possibilità di raccogliere servizi diversi in unico fascicolo
-      - Pubblicazione documenti nell'area riservata del cittadino (cert. fiscali, tassa rifiuti, multe)
-      - Creazione da parte di tecnici comunali di form complessi, con integrazione di API esterne
-      - Integrazione completa con software open-source form.io per generazione dinamica dei moduli online
+      - >-
+        Pubblicazione documenti nell'area riservata del cittadino (cert.
+        fiscali, tassa rifiuti, multe)
+      - >-
+        Creazione da parte di tecnici comunali di form complessi, con
+        integrazione di API esterne
+      - >-
+        Integrazione completa con software open-source form.io per generazione
+        dinamica dei moduli online
     screenshots:
       - images/sdc001.jpg
       - images/sdc002.jpg
@@ -178,4 +203,3 @@ description:
       - images/sdc009.jpg
       - images/sdc010.jpg
       - images/sdc011.jpg
-

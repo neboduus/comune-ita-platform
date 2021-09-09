@@ -117,5 +117,6 @@
     "incenteev-parameters": {
       "file": "app/config/parameters.yml"
     }
-  }
+  },
+  "version": "1.7.22"
 }
