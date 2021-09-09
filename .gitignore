@@ -15,10 +15,7 @@
 /vendor/
 /bin/*
 !/bin/dockerized_startup
-/web/bundles/
-/web/css
-/web/js
-/web/build
+/web
 /public/bootstrap-italia
 /public/VERSION
 /bower_components
