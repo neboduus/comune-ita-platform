@@ -533,6 +533,12 @@ class AdminController extends Controller
     $user = $this->getUser();
     $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId(), false);
 
+    $backofficeSchema = false;
+    if ($servizio->getBackofficeFormId()) {
+      $backofficeSchema = $this->get('formio.factory')->createFromFormId($servizio->getBackofficeFormId(), false);
+    }
+
+
     $flowService = $this->serviceFlow;
     $flowService->setInstanceKey($user->getId());
     $flowService->bind($servizio);
@@ -575,6 +581,7 @@ class AdminController extends Controller
       //'test_form' => $testForm->getForm()->createView(),
       'servizio' => $flowService->getFormData(),
       'schema' => $schema,
+      'backoffice_schema' => $backofficeSchema,
       'flow' => $flowService,
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'user' => $user

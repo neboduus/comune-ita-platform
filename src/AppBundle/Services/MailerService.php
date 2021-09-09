@@ -25,7 +25,6 @@ use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class MailerService
@@ -63,9 +62,9 @@ class MailerService
   private $logger;
 
   /**
-   * @var UrlGeneratorInterface
+   * @var PraticaPlaceholderService
    */
-  private $router;
+  private $praticaPlaceholderService;
 
   private $blacklistedStates = [
     Pratica::STATUS_REQUEST_INTEGRATION,
@@ -86,18 +85,18 @@ class MailerService
    * @param TwigEngine $templating
    * @param RegistryInterface $doctrine
    * @param LoggerInterface $logger
-   * @param UrlGeneratorInterface $router
    * @param IOService $ioService
+   * @param PraticaPlaceholderService $praticaPlaceholderService
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, UrlGeneratorInterface $router, IOService $ioService)
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService)
   {
     $this->mailer = $mailer;
     $this->translator = $translator;
     $this->templating = $templating;
     $this->doctrine = $doctrine;
     $this->logger = $logger;
-    $this->router = $router;
     $this->ioService = $ioService;
+    $this->praticaPlaceholderService = $praticaPlaceholderService;
   }
 
   /**
@@ -105,7 +104,6 @@ class MailerService
    * @param $fromAddress
    * @param bool $resend
    * @return int
-   * @throws \Twig\Error\Error
    */
   public function dispatchMailForPratica(Pratica $pratica, $fromAddress, $resend = false)
   {
@@ -264,33 +262,7 @@ class MailerService
       throw new MessageDisabledException('Message for ' . $pratica->getStatus() . ' is not active');
     }
 
-    $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
-    $protocolTime = $pratica->getProtocolTime() ? (new \DateTime())->setTimestamp($pratica->getProtocolTime()) : null;
-
-    $placeholders = [
-      '%id%' => $pratica->getId(),
-      '%pratica_id%' => $pratica->getId(),
-      '%servizio%' => $pratica->getServizio()->getName(),
-      '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
-      '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
-      '%user_name%' => $pratica->getUser()->getFullName(),
-      '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
-      '%data_corrente%' => (new \DateTime())->format('d/m/Y'),
-      '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : "",
-      '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : "",
-      '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : "",
-      '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : ""
-    ];
-
-    $dataPlaceholders = [];
-    $submission = PraticaManager::getFlattenedSubmission($pratica);
-    foreach ($submission as $key => $value) {
-      if (!is_array($value)) {
-        $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? "" : $value;
-      }
-    }
-
-    $placeholders = array_merge($placeholders, $dataPlaceholders);
+    $placeholders = $this->praticaPlaceholderService->getPlaceholders($pratica);
 
     if ($textOnly) {
       return strtr($feedbackMessage['message'], $placeholders);
@@ -556,7 +528,7 @@ class MailerService
         // Create the Mailer using your created Transport
         $pecMailer = new Swift_Mailer($transport);
 
-        $submission = PraticaManager::getFlattenedSubmission($pratica);
+        $submission = PraticaPlaceholderService::getFlattenedSubmission($pratica);
         // Recupero indirizzo email da campo segnalato in pec_receiver
         if (!isset($submission[$feedbackMessageSettings->getPecReceiver()])) {
           $this->logger->error('Error in dispatchPecEmail: emprty pec receiver field');

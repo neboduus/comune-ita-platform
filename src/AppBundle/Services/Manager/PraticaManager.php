@@ -13,8 +13,11 @@ use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Entity\User;
+use AppBundle\Event\DispatchEmailFromMessageEvent;
+use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Form\FormIO\FormIORenderType;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
@@ -25,6 +28,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -63,23 +67,25 @@ class PraticaManager
    */
   private $router;
 
-  /** @var MessageManager */
-  private $messageManager;
-
   /**
    * @var TranslatorInterface
    */
   private $translator;
+  /**
+   * @var EventDispatcherInterface
+   */
+  private $dispatcher;
 
   /**
    * PraticaManagerService constructor.
    * @param EntityManagerInterface $entityManager
+   * @param InstanceService $instanceService
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaStatusService $praticaStatusService
    * @param TranslatorInterface $translator
    * @param RouterInterface $router
    * @param LoggerInterface $logger
-   * @param MessageManager $messageManager
+   * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -89,7 +95,7 @@ class PraticaManager
     TranslatorInterface $translator,
     RouterInterface $router,
     LoggerInterface $logger,
-    MessageManager $messageManager
+    EventDispatcherInterface $dispatcher
   )
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
@@ -98,8 +104,8 @@ class PraticaManager
     $this->entityManager = $entityManager;
     $this->is = $instanceService;
     $this->router = $router;
-    $this->messageManager = $messageManager;
     $this->translator = $translator;
+    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -314,8 +320,10 @@ class PraticaManager
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
 
-    $this->messageManager->dispatchMailForMessage($message, false);
-
+    $this->dispatcher->dispatch(
+      DispatchEmailFromMessageEvent::EVENT_IDENTIFIER,
+      new DispatchEmailFromMessageEvent($message)
+    );
 
     $statusChange = new StatusChange();
     $statusChange->setOperatore($user->getFullName());
@@ -358,61 +366,6 @@ class PraticaManager
     $this->entityManager->flush();
 
     return $message;
-  }
-
-  public function getPlaceholders (Pratica  $pratica) {
-    $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
-    $protocolTime = $pratica->getProtocolTime() ? (new \DateTime())->setTimestamp($pratica->getProtocolTime()) : null;
-
-    $placeholders = [
-      '%id%' => $pratica->getId(),
-      '%pratica_id%' => $pratica->getId(),
-      '%servizio%' => $pratica->getServizio()->getName(),
-      '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
-      '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
-      '%user_name%' => $pratica->getUser()->getFullName(),
-      '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
-      '%data_corrente%' => (new \DateTime())->format('d/m/Y'),
-      '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : "",
-      '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : "",
-      '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : "",
-      '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : ""
-    ];
-
-    $dataPlaceholders = [];
-    $submission = PraticaManager::getFlattenedSubmission($pratica);
-    foreach ($submission as $key => $value) {
-      if (!is_array($value)) {
-        $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? "" : $value;
-      }
-    }
-
-    return array_merge($placeholders, $dataPlaceholders);
-  }
-
-  public static function getFlattenedSubmission(Pratica $pratica) {
-    $data = ($pratica instanceof FormIO) ? $pratica->getDematerializedForms() : [];
-
-    if (!isset($data['flattened'])) {
-      return $data;
-    }
-
-    $decoratedData = $data['flattened'];
-    $submission = array();
-
-    foreach (array_keys($decoratedData) as $path) {
-      $parts = explode('.', trim($path, '.'));
-      $key = null;
-      foreach ($parts as $part) {
-        // Salto data
-        if ($part === 'data') {
-          continue;
-        }
-        $key = join(".", array_filter(array($key, $part)));
-      }
-      $submission[$key] = $decoratedData[$path];
-    }
-    return $submission;
   }
 
   public function createDraftApplication(Servizio $servizio, CPSUser $user, array $additionalDematerializedData) {

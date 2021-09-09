@@ -7,6 +7,7 @@ use AppBundle\Entity\StatusChange;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Model\Transition;
 use AppBundle\Services\Manager\PraticaManager;
+use AppBundle\Services\PraticaPlaceholderService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
@@ -26,11 +27,6 @@ class StatusMessagePraticaListener
   private $praticaManager;
 
   /**
-   * @var UrlGeneratorInterface
-   */
-  private $router;
-
-  /**
    * @var TranslatorInterface
    */
   private $translator;
@@ -39,6 +35,11 @@ class StatusMessagePraticaListener
    * @var EntityManager
    */
   private $entityManager;
+
+  /**
+   * @var PraticaPlaceholderService
+   */
+  private $praticaPlaceholderService;
 
   private $blacklistedStates = [
     Pratica::STATUS_REQUEST_INTEGRATION,
@@ -53,13 +54,21 @@ class StatusMessagePraticaListener
     Pratica::STATUS_PENDING
   ];
 
-  public function __construct(EntityManager $entityManager, PraticaManager $praticaManager, UrlGeneratorInterface $router, TranslatorInterface $translator, LoggerInterface $logger)
+
+  /**
+   * @param EntityManager $entityManager
+   * @param PraticaManager $praticaManager
+   * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
+   * @param PraticaPlaceholderService $praticaPlaceholderService
+   */
+  public function __construct(EntityManager $entityManager, PraticaManager $praticaManager, TranslatorInterface $translator, LoggerInterface $logger, PraticaPlaceholderService $praticaPlaceholderService)
   {
     $this->entityManager = $entityManager;
-    $this->praticaManager = $praticaManager;
-    $this->router = $router;
     $this->translator = $translator;
     $this->logger = $logger;
+    $this->praticaManager = $praticaManager;
+    $this->praticaPlaceholderService = $praticaPlaceholderService;
   }
 
   public function onStatusChange(PraticaOnChangeStatusEvent $event)
@@ -83,7 +92,7 @@ class StatusMessagePraticaListener
       }
     }
 
-    $placeholders = $this->praticaManager->getPlaceholders($pratica);
+    $placeholders = $this->praticaPlaceholderService->getPlaceholders($pratica);
 
     $defaultMessage = $this->translator->trans('messages.pratica.status.' . $newStatus, $placeholders);
     $defaultSubject = $this->translator->trans('pratica.email.status_change.subject', $placeholders);

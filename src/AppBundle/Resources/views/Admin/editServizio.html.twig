@@ -86,18 +86,34 @@
               </a>
               <span class="font-weight-semibold text-secondary">{{ 'servizio.placeholder_disponibili'  | trans }}</span>
             </div>
-            <div id="form_placeholders" class="py-3 collapse">
-              <p>{{ 'servizio.placeholder_disponibili_descrizione'  | trans }}</p>
-              <table class="table table-hover">
+            <div id="form_placeholders" class="mt-2 p-3 border collapse">
+              <p><svg class="icon">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
+                </svg> {{ 'servizio.placeholder_disponibili_descrizione'  | trans }}</p>
+              <h5>Modulo utente</h5>
+              <table class="table table-hover table-condensed table-striped table-sm mt-2">
                 <tbody>
-              {% for component in schema.components %}
-              <tr>
-                <td class="font-weight-semibold text-secondary">{{ component.formOptions.label|slice(0,100) }}:</td>
-                <td>%{{ component.name }}%</td>
-              </tr>
-              {% endfor %}
+                  {% for component in schema.components %}
+                  <tr>
+                    <td class="font-weight-semibold text-secondary w-50">{{ component.formOptions.label|slice(0,100) }}:</td>
+                    <td>%{{ component.name }}%</td>
+                  </tr>
+                  {% endfor %}
                 </tbody>
               </table>
+              {% if backoffice_schema %}
+                <h5 class="mt2">Modulo backoffice</h5>
+                <table class="table table-hover table-condensed table-striped table-sm mt-2">
+                  <tbody>
+                  {% for component in backoffice_schema.components %}
+                    <tr>
+                      <td class="font-weight-semibold text-secondary w-50">{{ component.formOptions.label|slice(0,100) }}:</td>
+                      <td>%{{ component.name }}%</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              {% endif %}
             </div>
           {% endif %}
 
