@@ -944,7 +944,7 @@ class OperatoriController extends Controller
     if ($pratica->getServizio()->isAllowReopening()) {
       try {
 
-        if ($pratica->getEsito() !== null && $pratica->setMotivazioneEsito() !== null && $newStatus < Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE ) {
+        if ($pratica->getEsito() !== null && $pratica->getMotivazioneEsito() !== null && $newStatus < Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE ) {
           $pratica->setEsito(null);
           $pratica->setMotivazioneEsito(null);
           $pratica->removeRispostaOperatore();

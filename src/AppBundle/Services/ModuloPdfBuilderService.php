@@ -118,7 +118,27 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @var LoggerInterface
    */
   private $logger;
+  /**
+   * @var PraticaPlaceholderService
+   */
+  private $praticaPlaceholderService;
 
+  /**
+   * @param Filesystem $filesystem
+   * @param EntityManagerInterface $em
+   * @param TranslatorInterface $translator
+   * @param PropertyMappingFactory $propertyMappingFactory
+   * @param DirectoryNamerInterface $directoryNamer
+   * @param string $wkhtmltopdfService
+   * @param EngineInterface $templating
+   * @param $dateTimeFormat
+   * @param UrlGeneratorInterface $router
+   * @param string $printablePassword
+   * @param PraticaStatusService $statusService
+   * @param ScheduleActionService $scheduleActionService
+   * @param LoggerInterface $logger
+   * @param PraticaPlaceholderService $praticaPlaceholderService
+   */
   public function __construct(
     Filesystem $filesystem,
     EntityManagerInterface $em,
@@ -132,7 +152,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     string $printablePassword,
     PraticaStatusService $statusService,
     ScheduleActionService $scheduleActionService,
-    LoggerInterface $logger
+    LoggerInterface $logger,
+    PraticaPlaceholderService $praticaPlaceholderService
   )
   {
     $this->filesystem = $filesystem;
@@ -148,6 +169,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $this->statusService = $statusService;
     $this->scheduleActionService = $scheduleActionService;
     $this->logger = $logger;
+    $this->praticaPlaceholderService = $praticaPlaceholderService;
   }
 
   /**
@@ -466,33 +488,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     if (isset($feedbackMessages[$status])) {
       /** @var FeedbackMessage $feedbackMessage */
       $feedbackMessage = $feedbackMessages[$status];
-      $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp($pratica->getSubmissionTime()) : null;
-      $protocolTime = $pratica->getProtocolTime() ? (new \DateTime())->setTimestamp($pratica->getProtocolTime()) : null;
 
-      $placeholders = [
-        '%id%' => $pratica->getId(),
-        '%pratica_id%' => $pratica->getId(),
-        '%servizio%' => $pratica->getServizio()->getName(),
-        '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
-        '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : $this->translator->trans('messages.pratica.no_reason'),
-        '%user_name%' => $pratica->getUser()->getFullName(),
-        '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
-        '%data_corrente%' => (new \DateTime())->format('d/m/Y'),
-        '%data_acquisizione%' => $submissionTime ? $submissionTime->format('d/m/Y') : "",
-        '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : "",
-        '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : "",
-        '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : ""
-      ];
-
-      $dataPlaceholders = [];
-      $submission = PraticaManager::getFlattenedSubmission($pratica);
-      foreach ($submission as $key => $value) {
-        if (!is_array($value)) {
-          $dataPlaceholders["%".$key."%"] = (!$value || $value == "") ? "" : $value;
-        }
-      }
-
-      $placeholders = array_merge($placeholders, $dataPlaceholders);
+      $placeholders = $this->praticaPlaceholderService->getPlaceholders($pratica);
 
       $html = $this->templating->render(
         'AppBundle:Pratiche:pdf/RispostaOperatoreCustom.html.twig',

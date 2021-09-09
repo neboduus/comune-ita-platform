@@ -350,7 +350,7 @@ services:
 
   ocsdc.mailer:
     class: AppBundle\Services\MailerService
-    arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', '@router', "@ocsdc.io_service" ]
+    arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', "@ocsdc.io_service", "@ocsdc.pratica_placeholder_service" ]
 
   AppBundle\Services\ModuloPdfBuilderService:
     arguments:
@@ -367,6 +367,7 @@ services:
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.schedule_action_service"
       - "@logger"
+      - "@ocsdc.pratica_placeholder_service"
 
   ocsdc.webhook_service:
     class: AppBundle\Services\WebhookService
@@ -1081,6 +1082,10 @@ services:
     autowire: true
     tags:
       - { name: prometheus_metrics_bundle.metrics_generator }
+
+  ocsdc.pratica_placeholder_service:
+    class: AppBundle\Services\PraticaPlaceholderService
+    autowire: true
 
   security.access.users_voter:
     class: AppBundle\Security\Voters\UserVoter
