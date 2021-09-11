@@ -29,6 +29,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
 use function json_encode;
 
@@ -70,12 +71,6 @@ class FormIORenderType extends AbstractType
    */
   private $userSessionService;
 
-  private $genericViolationMessage = "Il form non sembra essere compilato correttamente";
-
-  private $attachmentsViolationMessage = "Si è verificato un problema durante il salvataggio degli allegati, si prega di ricompilare la domanda e ripetere l'invio.";
-
-  private $paymentViolationMessage = "Si è verificato un problema con i dati del pagamento, impossibile inviare la pratica";
-
   private $constraintGroups = ['flow_formIO_step1', 'flow_FormIOAnonymous_step1', 'Default'];
 
   private static $applicantUserMap = [
@@ -96,6 +91,10 @@ class FormIORenderType extends AbstractType
     'applicant.gender.gender' => 'getSessoAsString',
     'cell_number' => 'getCellulare'
   ];
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
 
   /**
    * FormIORenderType constructor.
@@ -105,6 +104,7 @@ class FormIORenderType extends AbstractType
    * @param LoggerInterface $logger
    * @param SessionInterface $session
    * @param UserSessionService $userSessionService
+   * @param TranslatorInterface $translator
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -112,7 +112,8 @@ class FormIORenderType extends AbstractType
     SchemaFactoryInterface $schemaFactory,
     LoggerInterface $logger,
     SessionInterface $session,
-    UserSessionService $userSessionService
+    UserSessionService $userSessionService,
+    TranslatorInterface $translator
   )
   {
     $this->em = $entityManager;
@@ -121,6 +122,7 @@ class FormIORenderType extends AbstractType
     $this->logger = $logger;
     $this->session = $session;
     $this->userSessionService = $userSessionService;
+    $this->translator = $translator;
   }
 
   /**
@@ -148,13 +150,13 @@ class FormIORenderType extends AbstractType
       'value' => '[]',
       'groups' => $this->constraintGroups,
     ]);
-    $notEmptyConstraint->message = $this->genericViolationMessage;
+    $notEmptyConstraint->message = $this->translator->trans('steps.formio.generic_violation_message');
 
     $notNullConstraint = new NotEqualTo([
       'value' => '',
       'groups' => $this->constraintGroups,
     ]);
-    $notNullConstraint->message = $this->genericViolationMessage;
+    $notNullConstraint->message = $this->translator->trans('steps.formio.generic_violation_message');
 
     $expressionBasedConstraint = new ExpressionBasedFormIOConstraint([
       'service' => $pratica->getServizio(),
@@ -214,13 +216,13 @@ class FormIORenderType extends AbstractType
 
     if ($pratica->getServizio()->isPaymentRequired() && !$this->isPaymentValid($compiledData)) {
       $event->getForm()->addError(
-        new FormError($this->paymentViolationMessage)
+        new FormError($this->translator->trans('steps.formio.payment_violation_message'))
       );
     }
 
     if (empty($compiledData)) {
       $this->logger->error("Form data is empty", ['pratica' => $pratica->getId()]);
-      $event->getForm()->addError(new FormError($this->genericViolationMessage));
+      $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.generic_violation_message')));
     }
 
     // Check sulla presenza del codice fiscale (per pratiche vuote)
@@ -228,18 +230,39 @@ class FormIORenderType extends AbstractType
       $this->logger->error("Dematerialized form not well formed", [
         'pratica' => $pratica->getId()
       ]);
-      $event->getForm()->addError(new FormError($this->genericViolationMessage));
+      $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.generic_violation_message')));
     }
 
-    // Check su cnformità codice fiscale
-    /*if ($pratica->getUser() instanceof CPSUser && strcasecmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
-      $this->logger->error("Fiscal code Mismatch", [
-        'pratica' => $pratica->getId(),
-        'cps' => $pratica->getUser()->getCodiceFiscale(),
-        'form' => $flattenedData['applicant.data.fiscal_code.data.fiscal_code']]
-      );
-      $event->getForm()->addError(new FormError('Il codice fiscale inserito non è conforme con quello resitutito dal sistema di autenticazione.'));
-    }*/
+    // Check su conformità codice fiscale
+    if ($pratica->getUser() instanceof CPSUser) {
+      if (strcmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
+        $this->logger->error("Fiscal code Mismatch", [
+            'pratica' => $pratica->getId(),
+            'cps' => $pratica->getUser()->getCodiceFiscale(),
+            'form' => $flattenedData['applicant.data.fiscal_code.data.fiscal_code']]
+        );
+        $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.fiscalcode_violation_message')));
+      }
+
+      if (strcmp($flattenedData['applicant.data.completename.data.name'], $pratica->getUser()->getNome()) != 0) {
+        $this->logger->error("Name Mismatch", [
+            'pratica' => $pratica->getId(),
+            'cps' => $pratica->getUser()->getCodiceFiscale(),
+            'form' => $flattenedData['applicant.data.completename.data.name']]
+        );
+        $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.name_violation_message')));
+      }
+
+      if (strcmp($flattenedData['applicant.data.completename.data.surname'], $pratica->getUser()->getCognome()) != 0) {
+        $this->logger->error("Surname Mismatch", [
+            'pratica' => $pratica->getId(),
+            'cps' => $pratica->getUser()->getCodiceFiscale(),
+            'form' => $flattenedData['applicant.data.completename.data.surname']]
+        );
+        $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.surname_violation_message')));
+      }
+    }
+
 
     $pratica->setDematerializedForms([
       'data' => $compiledData,
@@ -263,7 +286,7 @@ class FormIORenderType extends AbstractType
             $pratica->addAllegato($attachment);
           } else {
             $this->logger->error("The file present in form schema doesn't exist in database", ['pratica' => $pratica->getId(), 'allegato' => $id]);
-            $event->getForm()->addError(new FormError($this->attachmentsViolationMessage));
+            $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.attachments_violation_message')));
           }
         }
       }
@@ -272,7 +295,7 @@ class FormIORenderType extends AbstractType
     // Verifico che il numero degli allegati associati alla pratica sia uguale a quello passato nel form
     if ($pratica->getAllegati()->count() != count($attachments)) {
       $this->logger->error("The number of files in form data is not equal to those linked to the application", ['pratica' => $pratica->getId()]);
-      $event->getForm()->addError(new FormError($this->attachmentsViolationMessage));
+      $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.attachments_violation_message')));
     }
 
     if ($pratica->getUser() instanceof CPSUser) {
