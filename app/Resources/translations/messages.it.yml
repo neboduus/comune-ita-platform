@@ -949,7 +949,6 @@ steps:
       allegato_cariche_sociali: "elenco delle Cariche sociali"
       allegato_logo: "Logo"
 
-
     dati_conto_corrente:
       label: 'Dati Conto Corrente'
       title: 'Dati Conto Corrente'
@@ -1054,6 +1053,14 @@ steps:
       description: 'Specifica uso per il certificato'
       guida_alla_compilazione: 'Specifica uso per il certificato'
       uso: 'Specifica uso per il certificato'
+
+  formio:
+    generic_violation_message: "Il form non sembra essere compilato correttamente"
+    attachments_violation_message: "Si è verificato un problema durante il salvataggio degli allegati, si prega di ricompilare la domanda e ripetere l'invio."
+    payment_violation_message: "Si è verificato un problema con i dati del pagamento, impossibile inviare la pratica"
+    fiscalcode_violation_message: "Il codice fiscale inserito non ècoincide con quello resitutito dal sistema di autenticazione"
+    name_violation_message: "Il nome non coincide con quello resitutito dal sistema di autenticazione"
+    surname_violation_message: "Il cognome non coincide con quello resitutito dal sistema di autenticazione"
 
   allacciamento_acquedotto:
     dati_immobile:
