@@ -110,6 +110,14 @@
                   Gruppo di servizi
                 </a>
               </li>
+              {% if is_granted('ROLE_SUPER_ADMIN') %}
+                <li class="nav-item {% if 'payment-gateway' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link "
+                     href="{{ path('admin_payment_gateway_index') }}">
+                    Metodi di pagamento
+                  </a>
+                </li>
+              {% endif %}
               <li class="nav-item {% if 'webhook' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_webhook_index') }}">

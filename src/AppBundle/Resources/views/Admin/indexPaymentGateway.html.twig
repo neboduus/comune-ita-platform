@@ -1,0 +1,44 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block main_content %}
+  <section id="intro" class="container my-4">
+    <div class="row">
+      <div class="col-lg-12">
+        <h2>Metodi di Pagamento</h2>
+      </div>
+
+      <div class="col-lg-12">
+        <div id="no-more-tables">
+          <table class="table table-striped table-condensed cf">
+            <thead>
+            <tr>
+              <th>{{ 'gateway.name' | trans() }}</th>
+              <th>{{ 'gateway.url' | trans() }}</th>
+              <th>{{ 'gateway.enabled' | trans() }}</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+              <tr>
+                <td data-title="Nome">
+                  <a href="{{ path('admin_payment_gateway_edit', { 'id': item.id }) }}">{{ item.name }}</a>
+                </td>
+                <td>{{ item.url|raw }}</td>
+                <td>{{ (item.enabled) ? 'gateway.enabled'|trans() : 'gateway.disabled'|trans() }}</td>
+                <td data-title="Azioni" class="actions">
+                  <a class="btn btn-secondary btn-xs" href="{{ path('admin_payment_gateway_edit', { 'id': item.id }) }}">{{ 'gruppo_di_servizi.modifica' | trans() }}</a>
+                  <a class="btn btn-danger btn-xs"
+                     onclick="return confirm('{{ 'gateway.delete_alert'|trans() }})';"
+                     href="{{ path('admin_payment_gateway_delete', { 'id': item.id }) }}">Elimina</a>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <a class="btn btn-primary" href="{{ path('admin_payment_gateway_new') }}">{{ 'gateway.add' | trans() }}</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

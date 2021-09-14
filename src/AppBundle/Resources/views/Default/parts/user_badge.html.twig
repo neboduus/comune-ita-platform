@@ -59,7 +59,7 @@
             </div>
           </div>
         </div>
-      {% elseif ('ROLE_OPERATORE' in user.roles) or ('ROLE_ADMIN' in user.roles) %}
+      {% elseif is_granted('ROLE_ADMIN') or is_granted('ROLE_OPERATORE') %}
         <div class="dropdown">
           <a class="btn btn-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

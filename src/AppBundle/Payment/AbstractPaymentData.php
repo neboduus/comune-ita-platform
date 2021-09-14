@@ -2,6 +2,9 @@
 
 namespace AppBundle\Payment;
 
+use AppBundle\Entity\Pratica;
+use AppBundle\Form\Admin\Servizio\PaymentDataType;
+
 abstract class AbstractPaymentData implements PaymentDataInterface
 {
   protected $attributes = array();
@@ -100,10 +103,37 @@ abstract class AbstractPaymentData implements PaymentDataInterface
     return new static(json_decode($json, true));
   }
 
-  function toJson()
+  public function toJson()
   {
     return json_encode($this->toArray());
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return array|false
+   */
+  public static function getSanitizedPaymentData(Pratica $pratica)
+  {
+
+    $data = $pratica->getDematerializedForms();
+
+    if (isset($data['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && is_numeric(str_replace(',', '.', $data['flattened'][PaymentDataType::PAYMENT_AMOUNT]))) {
+      $paymentData[PaymentDataType::PAYMENT_AMOUNT] = str_replace(',', '.', $data['flattened'][PaymentDataType::PAYMENT_AMOUNT]);
+
+      if (isset($data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {
+        $paymentData[PaymentDataType::PAYMENT_FINANCIAL_REPORT] = $data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT];
+      }
+      return $paymentData;
+    }
+
+    // Fallback su configurazione dal backend
+    if (isset($pratica->getServizio()->getPaymentParameters()['total_amounts'])
+      && is_numeric(str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']))) {
+      $paymentData[PaymentDataType::PAYMENT_AMOUNT] = str_replace(',', '.', $pratica->getServizio()->getPaymentParameters()['total_amounts']);
+      return $paymentData;
+    }
+    return false;
+
+  }
 
 }

@@ -790,7 +790,7 @@ class PraticheController extends Controller
     $em->flush();
 
 
-    return $this->redirectToRoute('pratiche');
+    return $this->redirectToRoute('pratiche_list');
   }
 
   /**

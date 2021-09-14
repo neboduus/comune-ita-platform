@@ -1935,13 +1935,20 @@ protocollo:
 
 
 gateway:
+  add: Aggiungi metodo di pagamento
+  name: Nome
+  description: Descrizione
+  url: Url
+  enabled: Abilitato
+  disabled: Disabilitato
+  delete_alert: "Sei sicuro di procedere? Il gateway di pagamento verrà eliminato definitivamente."
   bollo:
     identifier: 'Identificatore'
     data: 'Data emissione'
     ora: 'Ora emissione'
   mypay:
     redirect_button: "Paga adesso online"
-    redirect_text: "Usa il pulsante che segue per pagare online sul sito di MyPay/PagoPA.<br />A pagamento effettuato tornerai su questo sito per la conferma che la tua pratica è stata inoltrata correttamente all'Ente."
+    redirect_text: "Usa il pulsante che segue per pagare online sul sito di %gateway_name%.<br />A pagamento effettuato tornerai su questo sito per la conferma che la tua pratica è stata inoltrata correttamente all'Ente."
     download_button: "Scarica avviso di pagamento"
     download_receipt_button: "Scarica ricevuta di pagamento"
     download_text: "Usa il pulsante che segue per scaricare il documento PDF (Avviso di Pagamento) che potrai pagare presso un ufficio postale, un ATM Bancario, ricevitoria Sisal, l'App IO o Satispay."
