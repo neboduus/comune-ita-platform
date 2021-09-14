@@ -45,19 +45,24 @@ class SummaryType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+    /** @var Pratica $pratica */
+    $pratica = $builder->getData();
 
-    $constraint = new RecaptchaTrue();
-    $constraint->message = 'Questo valore non è un captcha valido.';
-    $constraint->groups = ['recaptcha'];
+    // Add recaptcha if user is anonymous
+    if ($pratica->getUser() == null) {
+      $constraint = new RecaptchaTrue();
+      $constraint->message = 'Questo valore non è un captcha valido.';
+      $constraint->groups = ['recaptcha'];
 
 
-    $builder
-      ->add('recaptcha', EWZRecaptchaType::class,
-        [
-          'label' => false,
-          'mapped' => false,
-          'constraints' => [$constraint]
-        ]);
+      $builder
+        ->add('recaptcha', EWZRecaptchaType::class,
+          [
+            'label' => false,
+            'mapped' => false,
+            'constraints' => [$constraint]
+          ]);
+    }
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
@@ -84,7 +89,7 @@ class SummaryType extends AbstractType
           $application->setPaymentType($gateways[0]);
           $this->em->persist($application);
           $this->em->flush();
-          if ($identifier == 'mypay' && $application->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
+          if ($identifier != 'bollo' && $application->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
             $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_PENDING);
           }
         }

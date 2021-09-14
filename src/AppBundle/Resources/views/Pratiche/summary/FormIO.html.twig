@@ -11,14 +11,31 @@
       </div>
     </div>
 
-    <p class='mt-3'>{{ 'gateway.mypay.redirect_text'|trans|raw }}</p>
-    <div class='text-center mt-5'><a href="{{ pratica.paymentData.response.url }}" class='btn btn-lg btn-primary'>{{ 'gateway.mypay.redirect_button'|trans }}</a></div>
-
-    <p class='mt-3'>{{ 'gateway.mypay.download_text'|trans|raw }}</p>
-    <div class='text-center mt-5 mb-5'><a href="{{ pratica.paymentData.response.urlFileAvviso }}" class='btn btn-lg btn-secondary'>{{ 'gateway.mypay.download_button'|trans }}</a></div>
+    <p class='mt-3'>{{ 'gateway.mypay.redirect_text'|trans({'%gateway_name%': pratica.paymentType.name})|raw }}</p>
+    {% if pratica.paymentType.identifier == 'mypay' %}
+      <div class='text-center mt-5'>
+        <a href="{{ pratica.paymentData.response.url }}" class='btn btn-lg btn-primary'>{{ 'gateway.mypay.redirect_button'|trans }}</a>
+      </div>
+      <p class='mt-3'>{{ 'gateway.mypay.download_text'|trans|raw }}</p>
+      <div class='text-center mt-5 mb-5'>
+        <a href="{{ pratica.paymentData.response.urlFileAvviso }}" class='btn btn-lg btn-secondary'>{{ 'gateway.mypay.download_button'|trans }}</a>
+      </div>
+    {% else %}
+      <div class='text-center mt-5'>
+        <a href="{{ pratica.paymentData.response.online_url }}" class='btn btn-lg btn-primary'>{{ 'gateway.mypay.redirect_button'|trans }}</a>
+      </div>
+      {% if pratica.paymentData.response.file_url is defined %}
+        <p class='mt-3'>{{ 'gateway.mypay.download_text'|trans|raw }}</p>
+        <div class='text-center mt-5 mb-5'>
+          <a href="{{ pratica.paymentData.response.file_url }}" class='btn btn-lg btn-secondary'>{{ 'gateway.mypay.download_button'|trans }}</a>
+        </div>
+      {% endif %}
+    {% endif %}
 
   {% elseif pratica.statusName == 'STATUS_PAYMENT_OUTCOME_PENDING' %}
-    <div class="alert alert-info mb-5"><i class="fa fa-refresh fa-spin fa-fw"></i> Siamo in attesa dell'esito del pagamento</div>
+    <div class="alert alert-info mb-5"><i class="fa fa-refresh fa-spin fa-fw"></i> Siamo in attesa dell'esito del
+      pagamento
+    </div>
   {% elseif pratica.status >= 1900 %}
     {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}

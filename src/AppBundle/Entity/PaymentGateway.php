@@ -17,183 +17,213 @@ use Ramsey\Uuid\UuidInterface;
  */
 class PaymentGateway
 {
-    const GATEWAY_DISABLED = 0;
-    const GATEWAY_ENABLED = 1;
+  const GATEWAY_DISABLED = 0;
+  const GATEWAY_ENABLED = 1;
 
-    /**
-     * @ORM\Column(type="guid")
-     * @ORM\Id
-     */
-    protected $id;
+  /**
+   * @ORM\Column(type="guid")
+   * @ORM\Id
+   */
+  protected $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=100)
-     */
-    private $name;
+  /**
+   * @var string
+   *
+   * @ORM\Column(type="string", length=100)
+   */
+  private $name;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=100, unique=true)
-     */
-    private $identifier;
+  /**
+   * @var string
+   *
+   * @ORM\Column(type="string", length=100, unique=true)
+   */
+  private $identifier;
 
-    /**
-     * @var string
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $description;
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   */
+  private $description;
 
-    /**
-     * @var string
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $disclaimer;
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   */
+  private $disclaimer;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $fcqn;
+  /**
+   * @var string
+   *
+   * @ORM\Column(type="string", length=100, nullable=true)
+   */
+  private $fcqn;
 
-    /**
-     * @var bool
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $enabled;
+  /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true)
+   */
+  private $enabled;
+
+  /**
+   * @var string
+   *
+   * @ORM\Column(type="string", nullable=true)
+   */
+  private $url;
 
 
-    public function __construct()
-    {
-        if (!$this->id) {
-            $this->id = Uuid::uuid4();
-        }
-        $this->enabled = self::GATEWAY_ENABLED;
+  public function __construct()
+  {
+    if (!$this->id) {
+      $this->id = Uuid::uuid4();
     }
+    $this->enabled = self::GATEWAY_ENABLED;
+  }
 
 
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+  /**
+   * @return mixed
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
 
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
+  /**
+   * @param mixed $id
+   */
+  public function setId($id)
+  {
+    $this->id = $id;
+  }
 
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
+  /**
+   * @return string
+   */
+  public function getName(): ?string
+  {
+    return $this->name;
+  }
 
-    /**
-     * @param string $name
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-        return $this;
-    }
+  /**
+   * @param string $name
+   */
+  public function setName(string $name)
+  {
+    $this->name = $name;
 
-    /**
-     * @return string
-     */
-    public function getIdentifier(): string
-    {
-        return $this->identifier;
-    }
+    return $this;
+  }
 
-    /**
-     * @param string $identifier
-     */
-    public function setIdentifier(string $identifier)
-    {
-        $this->identifier = $identifier;
-        return $this;
-    }
+  /**
+   * @return string
+   */
+  public function getIdentifier(): ?string
+  {
+    return $this->identifier;
+  }
 
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
+  /**
+   * @param string $identifier
+   */
+  public function setIdentifier(string $identifier)
+  {
+    $this->identifier = $identifier;
 
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * @return string
-     */
-    public function getDisclaimer(): string
-    {
-        return $this->disclaimer;
-    }
+  /**
+   * @return string
+   */
+  public function getDescription(): ?string
+  {
+    return $this->description;
+  }
 
-    /**
-     * @param string $disclaimer
-     */
-    public function setDisclaimer(string $disclaimer)
-    {
-        $this->disclaimer = $disclaimer;
-        return $this;
-    }
+  /**
+   * @param string $description
+   */
+  public function setDescription(string $description)
+  {
+    $this->description = $description;
 
-    /**
-     * @return string
-     */
-    public function getFcqn(): string
-    {
-        return $this->fcqn;
-    }
+    return $this;
+  }
 
-    /**
-     * @param string $fcqn
-     */
-    public function setFcqn(string $fcqn)
-    {
-        $this->fcqn = $fcqn;
-        return $this;
-    }
+  /**
+   * @return string
+   */
+  public function getDisclaimer(): ?string
+  {
+    return $this->disclaimer;
+  }
 
-    /**
-     * @return bool
-     */
-    public function isEnabled(): bool
-    {
-        return $this->enabled;
-    }
+  /**
+   * @param string $disclaimer
+   */
+  public function setDisclaimer(string $disclaimer)
+  {
+    $this->disclaimer = $disclaimer;
 
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled(bool $enabled)
-    {
-        $this->enabled = $enabled;
-        return $this;
-    }
+    return $this;
+  }
 
-    public function __toString() {
-      return $this->getName();
-    }
+  /**
+   * @return string
+   */
+  public function getFcqn(): ?string
+  {
+    return $this->fcqn;
+  }
+
+  /**
+   * @param string $fcqn
+   */
+  public function setFcqn(string $fcqn)
+  {
+    $this->fcqn = $fcqn;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getUrl(): ?string
+  {
+    return $this->url;
+  }
+
+  /**
+   * @param string $url
+   */
+  public function setUrl(string $url): void
+  {
+    $this->url = $url;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isEnabled(): bool
+  {
+    return $this->enabled;
+  }
+
+  /**
+   * @param bool $enabled
+   */
+  public function setEnabled(bool $enabled)
+  {
+    $this->enabled = $enabled;
+
+    return $this;
+  }
+
+  public function __toString()
+  {
+    return $this->getName();
+  }
 }

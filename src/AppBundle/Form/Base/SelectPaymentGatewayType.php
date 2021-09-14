@@ -96,7 +96,7 @@ class SelectPaymentGatewayType extends AbstractType
     }
 
     $this->em->persist($pratica);
-    if ($this->gatewaysMap[$data['payment_type']] == 'mypay' && $pratica->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
+    if ($this->gatewaysMap[$data['payment_type']] != 'bollo' && $pratica->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PAYMENT_PENDING);
     }
 

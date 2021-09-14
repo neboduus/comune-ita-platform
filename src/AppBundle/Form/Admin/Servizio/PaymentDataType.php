@@ -178,7 +178,7 @@ class PaymentDataType extends AbstractType
       $this->em->flush($service);
 
       // Se è impostata la tipologia di pagamento istantaneo ma ho speciicato un valore <= 0 restituisco un errore
-      if ($data['payment_required'] == Servizio::PAYMENT_REQUIRED && $data['total_amounts'] <= 0) {
+      if ($data['payment_required'] == Servizio::PAYMENT_REQUIRED && $data['total_amounts'] <= 0 && !isset($this->fields[PaymentDataType::PAYMENT_AMOUNT])) {
         $event->getForm()->addError(
           new FormError('Devi inserire un costo maggiore di zero')
         );

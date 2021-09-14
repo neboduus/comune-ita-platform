@@ -75,6 +75,9 @@ services:
   AppBundle\Controller\Ui\Backend\WebhookController:
     autowire: true
 
+  AppBundle\Controller\Ui\Backend\PaymentGatewayController:
+    autowire: true
+
   AppBundle\Controller\Ui\Backend\ServiceGroupController:
     autowire: true
 
@@ -217,6 +220,9 @@ services:
     autowire: true
 
   AppBundle\Payment\Gateway\MyPay:
+    autowire: true
+
+  AppBundle\Payment\Gateway\GenericExternalPay:
     autowire: true
 
   AppBundle\Validator\Constraints:
