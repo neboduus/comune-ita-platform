@@ -235,7 +235,7 @@ class FormIORenderType extends AbstractType
 
     // Check su conformità codice fiscale
     if ($pratica->getUser() instanceof CPSUser) {
-      if (strcmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
+      if (strcasecmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
         $this->logger->error("Fiscal code Mismatch", [
             'pratica' => $pratica->getId(),
             'cps' => $pratica->getUser()->getCodiceFiscale(),
@@ -244,7 +244,7 @@ class FormIORenderType extends AbstractType
         $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.fiscalcode_violation_message')));
       }
 
-      if (strcmp($flattenedData['applicant.data.completename.data.name'], $pratica->getUser()->getNome()) != 0) {
+      if (strcasecmp($flattenedData['applicant.data.completename.data.name'], $pratica->getUser()->getNome()) != 0) {
         $this->logger->error("Name Mismatch", [
             'pratica' => $pratica->getId(),
             'cps' => $pratica->getUser()->getCodiceFiscale(),
@@ -253,7 +253,7 @@ class FormIORenderType extends AbstractType
         $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.name_violation_message')));
       }
 
-      if (strcmp($flattenedData['applicant.data.completename.data.surname'], $pratica->getUser()->getCognome()) != 0) {
+      if (strcasecmp($flattenedData['applicant.data.completename.data.surname'], $pratica->getUser()->getCognome()) != 0) {
         $this->logger->error("Surname Mismatch", [
             'pratica' => $pratica->getId(),
             'cps' => $pratica->getUser()->getCodiceFiscale(),
