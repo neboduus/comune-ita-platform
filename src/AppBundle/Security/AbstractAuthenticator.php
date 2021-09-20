@@ -6,6 +6,8 @@ use AppBundle\Dto\UserAuthenticationData;
 use AppBundle\Entity\Ente;
 use AppBundle\Services\CPSUserProvider;
 use AppBundle\Services\UserSessionService;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +28,8 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
 
   const KEY_PARAMETER_NAME = 'codiceFiscale';
 
+  const FORMAT_JWT = 'jwt';
+
   /**
    * @var UrlGeneratorInterface
    */
@@ -37,6 +41,11 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
    * @var UserSessionService
    */
   protected $userSessionService;
+
+  /**
+   * @var JWTTokenManagerInterface
+   */
+  protected $JWTTokenManager;
 
   /**
    * @return string[]
@@ -133,11 +142,18 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
    */
   public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
   {
+    $user = $token->getUser();
     $this->userSessionService->storeCurrentUserSessionData(
-      $token->getUser(),
+      $user,
       $this->getRequestDataToStoreInUserSession($request),
       $this->getUserAuthenticationData($request, $token->getUser())
     );
+
+    $format = $request->query->get('format', false);
+    if ($format === self::FORMAT_JWT) {
+      return new RedirectResponse($this->urlGenerator->generate('login_success', ['token' => $this->JWTTokenManager->create($user)]));
+    }
+
     if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
       return new RedirectResponse($targetPath);
     }

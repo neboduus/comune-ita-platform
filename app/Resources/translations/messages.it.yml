@@ -549,6 +549,8 @@ errori:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
 
 user:
+  welcome: 'Benvenuto'
+  welcome_msg: 'Il login è avvenuto con successo'
   dashboard:
     title: 'La mia stanza'
     pratiche_draft: 'In bozza'

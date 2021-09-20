@@ -7,6 +7,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\UserSessionService;
 use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,14 +30,17 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
    * @param MetricsGeneratorInterface $userMetrics
+   * @param JWTTokenManagerInterface $JWTTokenManager
    */
-  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute, UserSessionService $userSessionService, InstanceService $instanceService, MetricsGeneratorInterface $userMetrics)
+  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute, UserSessionService $userSessionService, InstanceService $instanceService, MetricsGeneratorInterface $userMetrics, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->urlGenerator = $urlGenerator;
     $this->loginRoute = $loginRoute;
     $this->userSessionService = $userSessionService;
     $this->instanceService = $instanceService;
     $this->userMetrics = $userMetrics;
+    $this->JWTTokenManager = $JWTTokenManager;
+
   }
 
   protected function getLoginRouteSupported()

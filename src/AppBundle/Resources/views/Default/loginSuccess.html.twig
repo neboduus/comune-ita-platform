@@ -1,0 +1,16 @@
+{% extends '@App/Default/index.html.twig' %}
+{% block main_content %}
+  <section id="section container px-4 my-4">
+    <div class="pb-5">
+      <div class="container px-4">
+        <div class="row mt-5">
+          <div class="col">
+            <h1>{{ 'user.welcome'|trans }} {{ user.fullName }}</h1>
+            <div class="alert alert-success mt-3">{{ 'user.welcome_msg'|trans }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

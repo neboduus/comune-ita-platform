@@ -282,6 +282,7 @@ services:
       - '@AppBundle\Services\UserSessionService'
       - '@ocsdc.instance_service'
       - '@AppBundle\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
 
   ocsdc.openlogin.authenticator:
     class: AppBundle\Security\OpenLoginAuthenticator
@@ -291,6 +292,7 @@ services:
       - '@AppBundle\Services\UserSessionService'
       - '@ocsdc.instance_service'
       - '@AppBundle\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
 
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator
