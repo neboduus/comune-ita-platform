@@ -8,6 +8,7 @@ use AppBundle\Services\InstanceService;
 use AppBundle\Services\Metrics\UserMetrics;
 use AppBundle\Services\UserSessionService;
 use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -34,6 +35,7 @@ class PatAuthenticator extends AbstractAuthenticator
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
    * @param MetricsGeneratorInterface $userMetrics
+   * @param JWTTokenManagerInterface $JWTTokenManager
    */
   public function __construct(
     UrlGeneratorInterface $urlGenerator,
@@ -41,7 +43,8 @@ class PatAuthenticator extends AbstractAuthenticator
     $loginRoute,
     UserSessionService $userSessionService,
     InstanceService $instanceService,
-    MetricsGeneratorInterface $userMetrics
+    MetricsGeneratorInterface $userMetrics,
+    JWTTokenManagerInterface $JWTTokenManager
   ) {
     $this->urlGenerator = $urlGenerator;
     $this->shibboletServerVarNames = $shibboletServerVarNames;
@@ -49,6 +52,7 @@ class PatAuthenticator extends AbstractAuthenticator
     $this->userSessionService = $userSessionService;
     $this->userMetrics = $userMetrics;
     $this->instanceService = $instanceService;
+    $this->JWTTokenManager = $JWTTokenManager;
   }
 
   public function supports(Request $request)
