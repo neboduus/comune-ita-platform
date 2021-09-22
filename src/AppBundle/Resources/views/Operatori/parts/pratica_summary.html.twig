@@ -10,7 +10,7 @@
        data-toggle="tab" href="#allegati" role="tab"
        aria-controls="allegati" aria-selected="{{ tab and tab == 'allegati' }}">
       {{ 'operatori.allegati' | trans }}
-      <span class="badge badge-light ml-1">{{ pratica.allegati.count + messageAttachments|length }}</span>
+      <span class="badge badge-light ml-1">{{ pratica.moduliCompilati.count + pratica.allegati.count + messageAttachments|length }}</span>
     </a>
     <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} " id="messaggi-tab" data-toggle="tab"
        href="#messaggi" role="tab"
@@ -59,9 +59,8 @@
       {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
-  <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati"
-       role="tabpanel" aria-labelledby="allegati-tab">
-    {{ include('AppBundle:Operatori/parts:allegati.html.twig', {'pratica':pratica}) }}
+  <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
+    {{ include('@App/Allegato/parts/_application_attachments.html.twig', {'pratica':pratica}) }}
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel"
        aria-labelledby="messaggi-tab">
