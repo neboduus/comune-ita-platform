@@ -1,0 +1,23 @@
+<div class="row align-items-center text-center my-2 py-2 border-bottom">
+  <div class="col-1">
+    <i class="fa fa-file-pdf-o"></i>
+  </div>
+  <div class="col-7 text-truncate">
+    {{ attachment.originalFilename }}
+  </div>
+  <div class="col-2 text-monospace">
+    {{ attachment.getHumanReadableFileSize }}
+  </div>
+  <div class="col-2">
+    {# todo: unificare i controller per il download #}
+    {% if is_granted('ROLE_OPERATORE') %}
+      <a href="{{ path('allegati_download_operatore', {'allegato': attachment}) }}" download>
+        <i class="fa fa-download"></i>
+      </a>
+    {% else %}
+      <a href="{{ path('allegati_download_cpsuser', {'allegato': attachment.id}) }}" download>
+        <i class="fa fa-download"></i>
+      </a>
+    {% endif %}
+  </div>
+</div>

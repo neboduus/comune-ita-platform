@@ -106,17 +106,6 @@
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
         <div class="row pl-4">
           <div class="col-12">
-            {% if pratica.moduliCompilati|length > 0 %}
-              <a class="btn btn-outline-secondary mb-4 w-100"
-                 href="{{ path('allegati_download_cpsuser', {'allegato': pratica.moduliCompilati[0]}) }}">
-                <svg class="icon icon-sm">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-                </svg>
-                {{ 'operatori.scarica' | trans }}
-              </a>
-            {% endif %}
-          </div>
-          <div class="col-12">
             {{ include('AppBundle:Pratiche/parts:pratica_actions.html.twig', {'pratica':pratica}) }}
           </div>
         </div>
