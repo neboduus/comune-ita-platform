@@ -529,6 +529,13 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $backofficeFormData;
 
   /**
+   * @ORM\Column(type="string", nullable=true)
+   * @var string
+   */
+  private $locale = 'it';
+
+
+  /**
    * Pratica constructor.
    */
   public function __construct()
@@ -2043,15 +2050,15 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function getRootParent()
   {
-    if (!$this->getParent()){
+    if (!$this->getParent()) {
       return $this;
-    }else{
+    } else {
       $hasParent = true;
       $parent = $this;
-      while ($hasParent){
-        if ($parent->getParent()){
+      while ($hasParent) {
+        if ($parent->getParent()) {
           $parent = $parent->getParent();
-        }else{
+        } else {
           $hasParent = false;
         }
       }
@@ -2064,7 +2071,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $list = new \ArrayObject();
     $root = $this->getRootParent();
     $list[] = $root->getId();
-    foreach ($root->getChildren() as $child){
+    foreach ($root->getChildren() as $child) {
       $this->appendSubTreeIdList($child, $list);
     }
 
@@ -2074,7 +2081,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private function appendSubTreeIdList(Pratica $root, $list)
   {
     $list[] = $root->getId();
-    foreach ($root->getChildren() as $child){
+    foreach ($root->getChildren() as $child) {
       $this->appendSubTreeIdList($child, $list);
     }
   }
@@ -2189,9 +2196,10 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
           $date = new \DateTime();
           $date->setTimestamp($k);
           $transition->setDate($date);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
         $transition->setDate($date);
-        $history[]= $transition;
+        $history[] = $transition;
       }
     }
     return $history;
@@ -2241,6 +2249,22 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setBackofficeFormData($backofficeFormData): void
   {
     $this->backofficeFormData = $backofficeFormData;
+  }
+
+  /**
+   * @return string
+   */
+  public function getLocale(): ?string
+  {
+    return $this->locale;
+  }
+
+  /**
+   * @param string $locale
+   */
+  public function setLocale(string $locale): void
+  {
+    $this->locale = $locale;
   }
 
 }

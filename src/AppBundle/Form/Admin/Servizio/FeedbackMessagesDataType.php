@@ -13,6 +13,7 @@ use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
 use AppBundle\Model\Mailer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,17 +43,21 @@ class FeedbackMessagesDataType extends AbstractType
   /** @var SchemaFactory */
   private $schemaFactory;
 
+  private $locales = [];
+
   /**
    * FeedbackMessagesDataType constructor.
    * @param TranslatorInterface $translator
    * @param EntityManagerInterface $entityManager
    * @param SchemaFactory $schemaFactory
+   * @param $locales
    */
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, SchemaFactory $schemaFactory)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, SchemaFactory $schemaFactory, $locales)
   {
     $this->translator = $translator;
     $this->entityManager = $entityManager;
     $this->schemaFactory = $schemaFactory;
+    $this->locales = explode('|', $locales);
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -94,28 +99,35 @@ class FeedbackMessagesDataType extends AbstractType
       }
     }
 
-    // Recupero i messaggi inviati al cambio di stato
-    $savedMessages = $service->getFeedbackMessages();
-    $messages = [];
-    foreach ($status as $k => $v) {
-      $tempMessage = isset($savedMessages[$k]) ? (array)$savedMessages[$k] : null;
+    $translationsRepo = $this->entityManager->getRepository('Gedmo\Translatable\Entity\Translation');
+    $translations = $translationsRepo->findTranslations($service);
 
-      $temp = new FeedbackMessage();
-      $temp->setName($v);
-      $temp->setTrigger($k);
-      $temp->setSubject(isset($tempMessage['subject']) ? $tempMessage['subject'] : $this->translator->trans('pratica.email.status_change.subject'));
-      $temp->setMessage(
-        isset($tempMessage['message']) ? $tempMessage['message'] : $this->translator->trans('messages.pratica.status.'.$k)
-      );
+    $i18nMessages = [];
+    foreach ($this->locales as $locale) {
 
-      $defaultIsActive = true;
-      if ($k == Pratica::STATUS_PENDING || $k == Pratica::STATUS_DRAFT) {
-        $defaultIsActive = false;
+      $savedFeedbackMessages = isset($translations[$locale]['feedbackMessages']) ? \json_decode($translations[$locale]['feedbackMessages'], 1) : [];
+      foreach ($status as $k => $v) {
+        $tempMessage = isset($savedFeedbackMessages[$k]) ? $savedFeedbackMessages[$k] : null;
+        $temp = new FeedbackMessage();
+        $temp->setName($v);
+        $temp->setTrigger($k);
+        $temp->setSubject(
+          $tempMessage['subject'] ?? $this->translator->trans('pratica.email.status_change.subject', [], null, $locale
+          )
+        );
+        $temp->setMessage(
+          $tempMessage['message'] ?? $this->translator->trans('messages.pratica.status.'.$k, [], null, $locale)
+        );
+
+        $defaultIsActive = true;
+        if ($k == Pratica::STATUS_PENDING || $k == Pratica::STATUS_DRAFT) {
+          $defaultIsActive = false;
+        }
+        $temp->setIsActive(
+          $tempMessage['isActive'] ?? $defaultIsActive
+        );
+        $i18nMessages[$locale][]= $temp;
       }
-      $temp->setIsActive(
-        isset($tempMessage['isActive']) ? $tempMessage['isActive'] : $defaultIsActive
-      );
-      $messages[] = $temp;
     }
 
     if (!empty($mailers)) {
@@ -129,22 +141,36 @@ class FeedbackMessagesDataType extends AbstractType
         ]);
     }
 
-    $builder
-      ->add(
-        'feedback_messages',
-        CollectionType::class,
-        [
-          'required' => false,
-          'data' => $messages,
-          'label' => false,
-          'entry_type' => FeedbackMessageType::class,
-          'entry_options' => [
-            'label' => false,
-          ],
-          'allow_add' => false,
-          'allow_delete' => false,
+    $i18nForm = $builder->create('i18n', FormType::class, [
+        'mapped' => false
+      ]
+    );
+
+    foreach ($this->locales as $locale) {
+      $localeForm = $builder->create($locale, FormType::class, [
+          'mapped' => false
         ]
       );
+      $localeForm
+        ->add(
+          'feedback_messages',
+          CollectionType::class,
+          [
+            'required' => false,
+            'data' => $i18nMessages[$locale],
+            'label' => false,
+            'entry_type' => FeedbackMessageType::class,
+            'entry_options' => [
+              'label' => false,
+            ],
+            'allow_add' => false,
+            'allow_delete' => false,
+          ]
+        );
+      $i18nForm->add($localeForm);
+    }
+
+    $builder->add($i18nForm);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
@@ -158,8 +184,18 @@ class FeedbackMessagesDataType extends AbstractType
     if (isset($data[FeedbackMessagesSettings::KEY])) {
       $service->setFeedbackMessagesSettings($data[FeedbackMessagesSettings::KEY]);
     }
-
     $this->entityManager->persist($service);
+
+    $repository = $this->entityManager->getRepository('Gedmo\\Translatable\\Entity\\Translation');
+    foreach ($data['i18n'] as $k => $v) {
+      $messages = [];
+      foreach ($v['feedback_messages'] as $feedbackMessage) {
+        $messages [$feedbackMessage['trigger']] = $feedbackMessage;
+      }
+      $repository->translate($service, 'feedbackMessages', $k, $messages);
+      $this->entityManager->persist($service);
+    }
+
     $this->entityManager->flush();
   }
 

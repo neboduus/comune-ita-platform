@@ -12,7 +12,7 @@
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
-        <h2>Modifica istanza {{ ente.name }}</h2>
+        <h2>{{ 'modifica'|trans }} {{ ente.name }}</h2>
       </div>
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         {{ form_start(form) }}
@@ -21,7 +21,7 @@
                                   href="#default-settings" role="tab" aria-controls="default-settings-tab"
                                   aria-selected="true">{{ 'backoffice.entity.setting'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="protocol-tab" data-toggle="tab" href="#protocol" role="tab"
-                                  aria-controls="protocol-tab" aria-selected="false">Protocollo</a></li>
+                                  aria-controls="protocol-tab" aria-selected="false">{{ 'nav.admin.tenant.protocollo'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="mailers-tab" data-toggle="tab" href="#mailers" role="tab"
                                   aria-controls="mailers-tab"
                                   aria-selected="false">{{ 'backoffice.entity.mailers'|trans }}</a></li>
@@ -29,28 +29,26 @@
                                   aria-controls="meta-tab"
                                   aria-selected="false">{{ 'backoffice.entity.meta'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
-                                  aria-controls="payments-tab" aria-selected="false">Pagamenti</a></li>
+                                  aria-controls="payments-tab" aria-selected="false">{{ 'nav.admin.tenant.pagamenti'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="options-tab" data-toggle="tab" href="#options" role="tab"
-                                  aria-controls="options-tab" aria-selected="false">Opzioni</a></li>
+                                  aria-controls="options-tab" aria-selected="false">{{ 'nav.admin.tenant.opzioni'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="webhooks-tab" data-toggle="tab" href="#webhooks" role="tab"
-                                  aria-controls="options-tab" aria-selected="false">Webhooks</a></li>
+                                  aria-controls="options-tab" aria-selected="false">{{ 'nav.admin.tenant.webhooks'|trans }}</a></li>
         </ul>
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane p-2 fade show active" id="default-settings" role="tabpanel"
+          <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
                aria-labelledby="default-settings-tab">
-            <div class="mt-3">
-              <p>Tipologia di login: <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
-            </div>
+              <p>{{ 'login_type.label'|trans }} <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
             <hr>
             {{ form_row(form.codice_meccanografico) }}
             {{ form_row(form.site_url) }}
             {{ form_row(form.codice_amministrativo) }}
           </div>
-          <div class="tab-pane p-2 fade" id="protocol" role="tabpanel" aria-labelledby="protocol-tab">
+          <div class="tab-pane p-3 fade" id="protocol" role="tabpanel" aria-labelledby="protocol-tab">
             {{ form_row(form.default_settings) }}
           </div>
           {# Mailers #}
-          <div class="tab-pane p-2 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
+          <div class="tab-pane p-3 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
             <div class="form-group mt-3" id="app_io">
               {{ form_widget(form.io_enabled) }}
               <span class="text-info px-2" id="io_helper"><i
@@ -58,7 +56,7 @@
             </div>
             <hr>
             <div class="form-group">
-              <label>Configurazione mailers</label>
+              <label>{{ 'ente.mailers.title' | trans }}</label>
               <div id="current-mailers"
                    data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}"
                    data-widget-counter="{{ form.mailers|length }}">
@@ -95,7 +93,7 @@
                                 <svg class="icon icon-sm icon-white d-md-none">
                                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
                                 </svg>
-                                <span class="d-none d-md-block">Elimina</span>
+                                <span class="d-none d-md-block">{{ 'elimina' | trans }}</span>
                               </a>
                             </div>
                           </div>
@@ -107,22 +105,20 @@
                 {% else %}
                   <p class="text-info px-2" id="no-mailers">
                     <i class="fa fa-info-circle"></i>
-                    Non sono ancora stati impostati mailer per l'ente, i messaggi verranno inviati via e-mail
-                    dall'indirizzo di default dal sistema
+                    {{ 'ente.mailers.helper' | trans }}
                   </p>
                 {% endif %}
               </div>
               <div class="row mt-4">
                 <div class="col-9"></div>
                 <div class="col-3">
-                  <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">Aggiungi mailer
-                  </button>
+                  <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">{{ 'aggiungi' | trans }}</button>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="tab-pane p-2 fade" id="options" role="tabpanel" aria-labelledby="options-tab">
+          <div class="tab-pane p-3 fade" id="options" role="tabpanel" aria-labelledby="options-tab">
             {{ form_row(form.backoffice_enabled_integrations) }}
             <div id="linkable_application_meetings" class="form-group">
               {{ form_widget(form.linkable_application_meetings) }}
@@ -130,11 +126,11 @@
             </div>
           </div>
 
-          <div class="tab-pane p-2 fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
+          <div class="tab-pane p-3 fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
             {{ form_row(form.meta) }}
           </div>
 
-          <div class="tab-pane p-2 fade" id="webhooks" role="tabpanel" aria-labelledby="webhooks-tab">
+          <div class="tab-pane p-3 fade" id="webhooks" role="tabpanel" aria-labelledby="webhooks-tab">
             <div class="form-group">
               <table class="table table-sm table-striped mt-3">
                 <thead>
@@ -174,7 +170,7 @@
           </div>
 
 
-          <div class="tab-pane p-2 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+          <div class="tab-pane p-3 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
             {{ form_rest(form) }}
           </div>
 
@@ -182,8 +178,8 @@
         </div>
         <hr>
         <div class="form-group">
-          <button type="submit" id="ente_save" class="btn-primary btn">Salva</button>
-          <a href="{{ path('admin_servizio_index') }}" class="btn btn-secondary">Annulla</a>
+          <button type="submit" id="ente_save" class="btn-primary btn">{{ 'salva'|trans }}</button>
+          <a href="{{ path('admin_servizio_index') }}" class="btn btn-secondary">{{ 'annulla'|trans }}</a>
         </div>
         {{ form_end(form) }}
       </div>
@@ -253,7 +249,7 @@
               <svg class="icon icon-sm icon-white d-md-none">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
               </svg>
-              <span class="d-none d-md-block">Elimina</span>
+              <span class="d-none d-md-block">{{ 'elimina'|trans }}</span>
             </a>
           </div>
         </div>

@@ -58,6 +58,7 @@ twig:
   form_themes:
     - 'bootstrap_4_layout.html.twig'
     - 'VichUploaderBundle:Form:fields.html.twig'
+    - 'AppBundle:Form:fields.html.twig'
   globals:
     header_top:
       title: "%header_top_title%"
@@ -290,3 +291,5 @@ artprima_prometheus_metrics:
     read_timeout: 10
     persistent_connections: true
     password: "%metrics_redis_password%"
+
+

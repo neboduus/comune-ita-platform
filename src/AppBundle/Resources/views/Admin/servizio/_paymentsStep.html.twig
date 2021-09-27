@@ -1,0 +1,18 @@
+<div class="row">
+  <div class="col-lg-12 px-lg-4">
+
+    {% if servizio.ente.gateways|length > 0 %}
+      {{ form_start(form) }}
+      {{ form_errors(form) }}
+      {{ form_rest(form) }}
+      {{ include('AppBundle:Admin/servizio:_saveButtons.html.twig') }}
+      {{ form_end(form) }}
+    {% else %}
+      <div class="alert alert-warning">
+        <p>Abilita i <a href="{{ path('admin_edit_ente') }}#payments">gateways di pagamento</a> per poter accedere
+          a questa sezione.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>

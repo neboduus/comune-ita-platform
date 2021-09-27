@@ -78,12 +78,11 @@ $(document).ready(function () {
   })
 
   // Step Template form
-  if ($("#formio_template_service_id").length) {
+  if ($("#form-step-template").length) {
     const formioEmptyTemplatesContainer = $("#formio-empty-templates-container");
     const formioTemplatesContainer = $("#formio-templates-container");
 
     formioTemplatesContainer.parent().removeClass('d-none');
-
     formioEmptyTemplatesContainer.append($.templates("#tpl-form").render({
       id: 'new',
       title: 'Crea nuovo form',
@@ -112,7 +111,44 @@ $(document).ready(function () {
     });
   }
 
-  if ($("#general_data_flow_service_step").length /*|| $("#feedback_messages_data_flow_service_step").length*/) {
+  if ($("#form-step-general").length) {
+
+    const serviceStatus = $('#general_data_status');
+    const scheduledFrom = $('#general_data_scheduled_from').parent();
+    const scheduledTo = $('#general_data_scheduled_to').parent();
+    const accessLevel = $('#general_data_access_level');
+    const loginCheckbox = $('#general_data_login_suggested');
+
+    const hideScheduler = function () {
+      if (serviceStatus.val() === '4') {
+        scheduledFrom.show();
+        scheduledTo.show();
+      } else {
+        scheduledFrom.hide();
+        scheduledTo.hide();
+      }
+    }
+
+    // Show/Hide scheduler on init
+    hideScheduler();
+
+    // Show/Hide scheduler on access level change
+    serviceStatus.change(function () {
+      hideScheduler()
+    })
+
+    // Show/Hide login checkbox
+    accessLevel.change(function () {
+      if (this.value === '0') {
+        loginCheckbox.closest('div').show();
+      } else {
+        loginCheckbox.prop('checked', false);
+        loginCheckbox.closest('div').hide();
+      }
+    })
+    accessLevel.trigger('change');
+
+
     const limitChars = 2000;
     TextEditor.init({
       onInit: function () {
@@ -121,15 +157,6 @@ $(document).ready(function () {
 
         $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di ' + limitChars + ' caratteri (<span class="total-chars">' + totalChars + '</span> / <span class="max-chars"> ' + limitChars + '</span>)</small>')
       },
-      /*onKeydown: function() {
-        let chars = $(this).parent().find(".note-editable").text();
-        let totalChars = chars.length;
-
-        //Check and Limit Charaters
-        if(totalChars >= limitChars){
-          return false;
-        }
-      },*/
       onChange: function () {
         let chars = $(this).parent().find(".note-editable").text();
         let totalChars = chars.length;
@@ -146,7 +173,11 @@ $(document).ready(function () {
     })
   }
 
-  if ( $("#feedback_messages_data_flow_service_step").length ) {
+  if ( $("#form-step-messages").length ) {
+
+    let draftMessage = $('#feedback_messages_data_feedback_messages_7_is_active');
+    draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
+
     $('textarea').summernote({
       toolbar: [
         ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -169,7 +200,7 @@ $(document).ready(function () {
   }
 
   // Step Form Fields
-  if ($("#formio_builder_render_form_id").length) {
+  if ($("#form-step-formio").length) {
 
     const saveForm = function( saveUrl, targetUrl, type){
       let schema = $("#formio_builder_render_form_schema").val();
@@ -323,12 +354,13 @@ $(document).ready(function () {
       });
     });
   }
+
   // Step Payment data
-  if ($("#payment_data_flow_service_step").length) {
+  if ($("#form-step-payments").length) {
 
     const paymentRequiredField = $('#payment_data_payment_required');
 
-    let paymentTypeHelp = function (type) {
+    const paymentTypeHelp = function (type) {
       $("#payment-type-help").remove();
       if (type == 1) {
         paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento immediato viene richiesto dopo aver confermato la volontà di inviare una pratica, se non effettuato la pratica resta in stato "da pagare", è visibile agli operatori ma non può essere presa in carico.</small>');
@@ -336,12 +368,6 @@ $(document).ready(function () {
         paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento posticipato viene richiesto dopo aver inviato la pratica, gli operatori potranno approvare la pratica impostando un importo da pagare. Solo dopo l\'approvazione sarà richiesto il pagamento.</small>');
       }
     };
-
-    if (!paymentRequiredField.val()) {
-      $('#payment_data_total_amounts').attr('disabled', 'disabled');
-      $('#payment_data_gateways').find('input[type="checkbox"]').attr('disabled', 'disabled');
-    }
-    paymentTypeHelp(paymentRequiredField.val());
 
     paymentRequiredField.change(function() {
       if($(this).val() == 0) {
@@ -370,10 +396,12 @@ $(document).ready(function () {
         $('#payment_data_' + $(this).val()).find('input').removeAttr('required');
       }
     })
+
+    paymentRequiredField.trigger('change');
   }
 
   // Step Integrations data
-  if ($("#integrations_data_flow_service_step").length) {
+  if ($("#form-step-backoffices").length) {
     $('#integrations_data_trigger').change(function() {
       if ($(this).val() == '0') {
         $('#integrations_data_action').attr('disabled', 'disabled');
@@ -384,7 +412,7 @@ $(document).ready(function () {
   }
 
   // Protocol data
-  if ($('#protocol_data_flow_service_step').length) {
+  if ($('#form-step-protocol').length) {
     $('#protocol_data_protocol_required').change(function () {
       if(this.checked) {
         $('.protocollo_params').removeAttr('disabled');
@@ -414,7 +442,7 @@ $(document).ready(function () {
 
 
   // IO config
-  if ($('#io_integration_data_flow_service_step').length) {
+  if ($('#form-step-app-io').length) {
     let service_id = $('#io_integration_data_io_service_parameters_IOserviceId');
     let primary_key = $('#io_integration_data_io_service_parameters_primaryKey');
     let secondary_key = $('#io_integration_data_io_service_parameters_secondaryKey');

@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -68,18 +69,26 @@ class OperatoreUserType extends AbstractType
     }
 
     $builder
-      ->add('nome')
-      ->add('cognome')
-      ->add('username')
-      ->add('email')
+      ->add('nome', TextType::class, [
+        'label' => 'general.nome'
+      ])
+      ->add('cognome', TextType::class, [
+        'label' => 'general.cognome'
+      ])
+      ->add('username', TextType::class, [
+        'label' => 'general.username'
+      ])
+      ->add('email', TextType::class, [
+        'label' => 'general.email'
+      ])
       ->add('services', ChoiceType::class, [
+        'label' => 'operatori.servizi_abilitati',
         'data' => $serviziAbilitati,
         'choices' => $serviceChoices,
         'mapped' => false,
         'expanded' => true,
         'multiple' => true,
-        'required' => false,
-        'label' => 'Seleziona i servizi abilitati per l\'operatore'
+        'required' => false
       ]);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmitWithGroups'));

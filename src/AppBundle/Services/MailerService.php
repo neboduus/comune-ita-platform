@@ -20,6 +20,7 @@ use AppBundle\Model\Mailer;
 use AppBundle\Model\SubscriberMessage;
 use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Model\Transition;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -77,6 +78,10 @@ class MailerService
   private $blacklistedSDuplicatetates = [
     Pratica::STATUS_PENDING
   ];
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
 
   /**
    * MailerService constructor.
@@ -143,9 +148,9 @@ class MailerService
         $sentAmount += $this->send($CPSUsermessage);
         $pratica->setLatestCPSCommunicationTimestamp(time());
       } catch (MessageDisabledException $e) {
-        $this->logger->info('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        $this->logger->info('Notification disabled for current status -  Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       } catch (\Exception $e) {
-        $this->logger->error('Error in dispatchMailForPratica: Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        $this->logger->error('Error in dispatchMailForPratica - Email: ' . $pratica->getUser()->getEmailContatto() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
       }
     }
 
@@ -251,14 +256,23 @@ class MailerService
     $ente = $pratica->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
+    // Todo: get from default locale
+    $locale = $pratica->getLocale() ?? 'it';
+    $service = $pratica->getServizio();
+
+    if ($locale !== 'it') {
+      $service->setTranslatableLocale($locale);
+      $this->doctrine->getManager()->refresh($service);
+    }
+    $feedbackMessages = $service->getFeedbackMessages();
+
     if (!isset($feedbackMessages[$pratica->getStatus()])) {
-      return $this->setupCPSUserMessageFallback($pratica, $fromAddress, $textOnly);
+      return $this->setupCPSUserMessageFallback($pratica, $fromAddress, $textOnly, $locale);
     }
 
     /** @var FeedbackMessage $feedbackMessage */
     $feedbackMessage = $feedbackMessages[$pratica->getStatus()];
-    if (!$feedbackMessage['isActive']) {
+    if ((isset($feedbackMessage['isActive']) && !$feedbackMessage['isActive']) || (isset($feedbackMessage['is_active']) && !$feedbackMessage['is_active'])) {
       throw new MessageDisabledException('Message for ' . $pratica->getStatus() . ' is not active');
     }
 
@@ -329,7 +343,7 @@ class MailerService
    * @return \Swift_Message
    * @throws \Twig\Error\Error
    */
-  private function setupCPSUserMessageFallback(Pratica $pratica, $fromAddress, $textOnly=false)
+  private function setupCPSUserMessageFallback(Pratica $pratica, $fromAddress, $textOnly = false, $locale)
   {
     $toEmail = $pratica->getUser()->getEmailContatto();
     $toName = $pratica->getUser()->getFullName();
@@ -348,6 +362,7 @@ class MailerService
       'data_protocollo' => $protocolTime ? $protocolTime->format('d/m/Y') : "",
       'ora_protocollo' => $protocolTime ? $protocolTime->format('H:i:s') : "",
       'data_corrente' => (new \DateTime())->format('d/m/Y'),
+      'locale' => $locale
     );
 
     if ($textOnly) {
@@ -358,7 +373,7 @@ class MailerService
     }
 
     $message = \Swift_Message::newInstance()
-      ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
+      ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()], null, $locale))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
       ->setBody(

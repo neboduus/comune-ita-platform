@@ -85,28 +85,31 @@ class EnteType extends AbstractType
     }
 
     $builder
-      ->add('codice_meccanografico', TextType::class)
-      ->add('site_url', TextType::class, [
-        'label' => 'Link sul titolo di ogni pagina'
+      ->add('codice_meccanografico', TextType::class, [
+        'label' => 'ente.codice_meccanografico'
       ])
-      ->add('codice_amministrativo', TextType::class)
-      ->add('meta', TextareaType::class, ['required' => false, 'empty_data'=>""])
+      ->add('site_url', TextType::class, [
+        'label' => 'ente.site_url'
+      ])
+      ->add('codice_amministrativo', TextType::class, [
+        'label' => 'ente.codice_amministrativo'
+      ])
+      ->add('meta', TextareaType::class, ['required' => false, 'empty_data' => ""])
       ->add(DefaultProtocolSettings::KEY, DefaultProtocolSettingsType::class, [
-        'label' => 'Impostazioni di default per il protocollo',
+        'label' => 'ente.impostazioni_protocollo',
         'mapped' => false,
         'data' => $settings
-      ])
-    ;
+      ]);
 
-    if ( !empty($backOfficesData)) {
+    if (!empty($backOfficesData)) {
       $builder->add('backoffice_enabled_integrations', ChoiceType::class, [
         'choices' => $backOfficesData,
         'expanded' => true,
         'multiple' => true,
         'required' => false,
-        'label' => 'Abilita integrazione con i backoffice',
-        'choice_attr' => function($backoffice) {
-          return ['class' => $backoffice ];
+        'label' => 'ente.backoffices',
+        'choice_attr' => function ($backoffice) {
+          return ['class' => $backoffice];
         },
       ])
         ->add('linkable_application_meetings', CheckboxType::class, [
@@ -122,9 +125,8 @@ class EnteType extends AbstractType
       'expanded' => true,
       'multiple' => true,
       'required' => false,
-      'label' => 'Seleziona i metodi di pagamento disponibili per l\'ente',
+      'label' => 'ente.pagamenti.label',
     ]);
-
 
 
     foreach ($availableGateways as $g) {
@@ -156,7 +158,7 @@ class EnteType extends AbstractType
     }
 
     $builder->add('io_enabled', CheckboxType::class, [
-      'label' => 'Abilita App IO?',
+      'label' => 'ente.app_io',
       'required' => false
     ]);
 

@@ -19,15 +19,15 @@ class DefaultProtocolSettingsType extends AbstractType
   {
     $builder
       ->add('certificate', TextareaType::class, [
-        'label' => 'Certificato',
+        'label' => 'ente.certificato',
         'required' => false
       ])
       ->add('certificateKey', TextareaType::class, [
-        'label' => 'Chiave certificato',
+        'label' => 'ente.chiave_certificato',
         'required' => false
       ])
       ->add('certificatePassword', TextType::class, [
-        'label' => 'Password certificato',
+        'label' => 'ente.password_certifcato',
         'required' => false
       ])
     ;

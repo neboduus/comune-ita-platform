@@ -7,7 +7,7 @@
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
-        <h2>Modifica - {{ operatoreUser.fullName }}</h2>
+        <h2>{{ 'modifica'|trans }} - {{ operatoreUser.fullName }}</h2>
       </div>
 
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
@@ -51,8 +51,10 @@
             {% endfor %}
           </ul>
         {% endblock %}
-        <input class="btn btn-primary mr-1" type="submit" value="Modifica" style="float: left"/>
-        <a class="btn btn-100 mr-1" href="{{ path('admin_operatore_index') }}" style="float: left">Torna alla lista</a>
+        <div class="form-group">
+          <button type="submit" class="btn-primary btn">{{ 'salva'|trans }}</button>
+          <a href="{{ path('admin_operatore_index') }}" class="btn btn-secondary">{{ 'annulla'|trans }}</a>
+        </div>
         {{ form_end(edit_form) }}
       </div>
     </div>

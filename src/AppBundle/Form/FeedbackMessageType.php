@@ -24,7 +24,7 @@ class FeedbackMessageType extends AbstractType
         'attr' => ['readonly' => 'readonly'],
         'required' => false
       ])
-      ->add('is_active', CheckboxType::class, [
+      ->add('isActive', CheckboxType::class, [
         'label' => "Abilitare l'invio del messaggio?",
         'required' => false
       ])

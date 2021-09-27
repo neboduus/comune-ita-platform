@@ -21,15 +21,10 @@ class ApplicationOutcomeType extends AbstractType
    */
   private $entityManager;
 
-  /**
-   * @var FormServerApiAdapterService
-   */
-  private $formServerService;
 
   /**
    * ApplicationOutcomeType constructor.
    * @param EntityManagerInterface $entityManager
-   * @param FormServerApiAdapterService $formServerService
    */
   public function __construct(EntityManagerInterface $entityManager)
   {

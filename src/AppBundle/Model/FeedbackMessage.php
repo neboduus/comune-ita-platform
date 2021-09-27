@@ -6,8 +6,7 @@ namespace AppBundle\Model;
 
 class FeedbackMessage implements \JsonSerializable
 {
-  // ocsdc.pratica.on_status_change
-  // email.pratica.user.status.presubmit
+
   /**
    * @var string
    */
