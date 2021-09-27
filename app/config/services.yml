@@ -136,6 +136,18 @@ services:
 
   GuzzleHttp\Client: '@guzzle.client.mypay'
 
+  i18n.datamapper:
+    class: AppBundle\Form\I18n\I18nDataMapper
+    autowire: true
+
+  AppBundle\Form\Admin\Servizio\GeneralDataType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\ApplicationMessageType:
     arguments: ['@doctrine.orm.entity_manager']
     tags:
@@ -359,6 +371,7 @@ services:
   ocsdc.mailer:
     class: AppBundle\Services\MailerService
     arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', "@ocsdc.io_service", "@ocsdc.pratica_placeholder_service" ]
+
 
   AppBundle\Services\ModuloPdfBuilderService:
     arguments:
@@ -606,6 +619,8 @@ services:
 
   AppBundle\Form\Admin\Servizio\FeedbackMessagesDataType:
     autowire: true
+    arguments:
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 

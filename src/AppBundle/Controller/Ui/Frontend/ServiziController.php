@@ -12,6 +12,7 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -41,17 +42,23 @@ class ServiziController extends Controller
    * @var TranslatorInterface
    */
   private $translator;
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
 
   /**
    * ServiziController constructor.
    * @param InstanceService $instanceService
    * @param TranslatorInterface $translator
+   * @param EntityManagerInterface $entityManager
    * @param LoggerInterface $logger
    */
-  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger)
   {
     $this->instanceService = $instanceService;
     $this->translator = $translator;
+    $this->entityManager = $entityManager;
     $this->logger = $logger;
   }
 
@@ -152,13 +159,17 @@ class ServiziController extends Controller
     $user = $this->getUser();
 
     /** @var EntityRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $serviziRepository = $this->entityManager->getRepository('AppBundle:Servizio');
 
     /** @var Servizio $servizio */
     $servizio = $serviziRepository->findOneBySlug($slug);
     if (!$servizio instanceof Servizio) {
       throw new NotFoundHttpException("Servizio $slug not found");
     }
+
+    /*try {
+      $servizioI18n = $serviziRepository->findOneI18n($servizio->getId(), $request->getLocale());
+    } catch (\Exception $e) {}*/
 
     $serviziArea = $serviziRepository->createQueryBuilder('servizio')
       ->andWhere('servizio.id != :servizio')

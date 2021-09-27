@@ -350,6 +350,7 @@ class PraticheController extends Controller
   /**
    * @Route("/compila/{pratica}", name="pratiche_compila")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
    * @param Pratica $pratica
    *
    * @return Response
@@ -385,6 +386,8 @@ class PraticheController extends Controller
       $praticaFlowService->setPaymentRequired(true);
     }
 
+    $pratica->setLocale($request->getLocale());
+
     $praticaFlowService->setInstanceKey($user->getId());
 
     $praticaFlowService->bind($pratica);
@@ -413,6 +416,9 @@ class PraticheController extends Controller
 
       } else {
 
+        $pratica->setLocale($request->getLocale());
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
         $praticaFlowService->onFlowCompleted($pratica);
 
         $this->logger->info(

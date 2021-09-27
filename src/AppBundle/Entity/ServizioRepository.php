@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 
 class ServizioRepository extends EntityRepository
 {
@@ -32,5 +33,35 @@ class ServizioRepository extends EntityRepository
       ->orderBy('s.name', 'ASC');
 
     return $qb->getQuery()->getResult();
+  }
+
+  public function findOneI18n($id, $locale)
+  {
+    $qb = $this->createQueryBuilder('s')
+      ->select('s')
+      ->where('s.id = :id')
+      ->setMaxResults(1)
+      ->setParameter('id', $id);
+    ;
+
+    $query = $qb->getQuery();
+
+    $query->setHint(
+      \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
+      'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+    );
+
+    // force Gedmo Translatable to not use current locale
+    $query->setHint(
+      \Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+      $locale
+    );
+
+    $query->setHint(
+      \Gedmo\Translatable\TranslatableListener::HINT_FALLBACK,
+      1
+    );
+
+    return $query->getSingleResult();
   }
 }

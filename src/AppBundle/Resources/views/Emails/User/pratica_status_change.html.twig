@@ -6,13 +6,13 @@
     <tr>
       <td style="padding: 20px;line-height: 1.4;">
         <p>
-          {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
+          {{ 'email.pratica.dear'|trans({'%user_name%' : user_name}, null, locale)|striptags }}
         </p>
-        <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo, '%data_corrente%':data_corrente })|raw }}</p>
+        <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo, '%data_corrente%':data_corrente }, null, locale)|raw }}</p>
 
         {% if pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) and pratica.servizio.isPaymentDeferred %}
           <p>
-            {{ 'email.pratica.payment_link'|trans() }}<br />
+            {{ 'email.pratica.payment_link'|trans({}, null, locale) }}<br />
             <a href="{{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}">{{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}</a>
           </p>
         {% endif %}
@@ -24,7 +24,7 @@
           </p>
         {% endif %}
         <p>
-          {{ 'email.pratica.thanks'|trans() }}
+          {{ 'email.pratica.thanks'|trans({}, null, locale) }}
         </p>
       </td>
     </tr>

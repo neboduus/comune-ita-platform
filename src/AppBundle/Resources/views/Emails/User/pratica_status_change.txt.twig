@@ -1,8 +1,8 @@
 {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
-{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo, '%data_corrente%':data_corrente })|striptags }}
+{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo, '%data_corrente%':data_corrente }, null, locale)|striptags }}
 
 {% if pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) and pratica.servizio.isPaymentDeferred %}
-  {{ 'email.pratica.payment_link'|trans() }}
+  {{ 'email.pratica.payment_link'|trans({}, null, locale) }}
   {{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}
 {% endif %}
 
@@ -12,5 +12,5 @@
     {{ pratica.getMotivazioneEsito() }}
   {% endif %}
 {% endif %}
-{{ 'email.pratica.thanks'|trans() }}
+{{ 'email.pratica.thanks'|trans({}, null, locale) }}
 {{ absolute_url(path('pratiche_show', {'pratica': pratica}))  }}

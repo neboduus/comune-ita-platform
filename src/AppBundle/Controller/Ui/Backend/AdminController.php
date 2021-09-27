@@ -15,6 +15,14 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\Webhook;
 use AppBundle\Form\Admin\ServiceFlow;
+use AppBundle\Form\Admin\Servizio\FeedbackMessagesDataType;
+use AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType;
+use AppBundle\Form\Admin\Servizio\FormIOTemplateType;
+use AppBundle\Form\Admin\Servizio\GeneralDataType;
+use AppBundle\Form\Admin\Servizio\IntegrationsDataType;
+use AppBundle\Form\Admin\Servizio\IOIntegrationDataType;
+use AppBundle\Form\Admin\Servizio\PaymentDataType;
+use AppBundle\Form\Admin\Servizio\ProtocolDataType;
 use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
@@ -131,7 +139,7 @@ class AdminController extends Controller
    */
   public function indexAction(Request $request)
   {
-    return $this->render( '@App/Admin/index.html.twig', [
+    return $this->render('@App/Admin/index.html.twig', [
       'user' => $this->getUser()
     ]);
   }
@@ -164,7 +172,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_edit_ente');
     }
 
-    return $this->render( '@App/Admin/editEnte.html.twig', [
+    return $this->render('@App/Admin/editEnte.html.twig', [
       'user' => $this->getUser(),
       'ente' => $ente,
       'statuses' => Webhook::TRIGGERS,
@@ -185,7 +193,7 @@ class AdminController extends Controller
 
     $operatoreUsers = $em->getRepository('AppBundle:OperatoreUser')->findAll();
 
-    return $this->render( '@App/Admin/indexOperatore.html.twig', [
+    return $this->render('@App/Admin/indexOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUsers' => $operatoreUsers,
     ]);
@@ -224,7 +232,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
-    return $this->render( '@App/Admin/newOperatore.html.twig', [
+    return $this->render('@App/Admin/newOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'form' => $form->createView(),
@@ -246,7 +254,7 @@ class AdminController extends Controller
       $serviziAbilitati = [];
     }
 
-    return $this->render( '@App/Admin/showOperatore.html.twig', [
+    return $this->render('@App/Admin/showOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'servizi_abilitati' => $serviziAbilitati
@@ -269,7 +277,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
     }
 
-    return $this->render( '@App/Admin/editOperatore.html.twig', [
+    return $this->render('@App/Admin/editOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'edit_form' => $editForm->createView()
@@ -339,7 +347,7 @@ class AdminController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render( '@App/Admin/indexLogs.html.twig', [
+    return $this->render('@App/Admin/indexLogs.html.twig', [
       'user' => $this->getUser(),
       'datatable' => $table
     ]);
@@ -359,8 +367,8 @@ class AdminController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render( '@App/Admin/indexScheduledActions.html.twig', [
-      'user'  => $this->getUser(),
+    return $this->render('@App/Admin/indexScheduledActions.html.twig', [
+      'user' => $this->getUser(),
       'datatable' => $table
     ]);
 
@@ -393,7 +401,7 @@ class AdminController extends Controller
     $em = $this->getDoctrine()->getManager();
     $items = $em->getRepository('AppBundle:Servizio')->findBy([], ['name' => 'ASC']);
 
-    return $this->render( '@App/Admin/indexServizio.html.twig', [
+    return $this->render('@App/Admin/indexServizio.html.twig', [
       'user' => $this->getUser(),
       'items' => $items,
       'statuses' => $statuses,
@@ -432,7 +440,7 @@ class AdminController extends Controller
   /**
    * @Route("/servizio/import", name="admin_servizio_import")
    * @param Request $request
-   * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @return array|RedirectResponse
    */
   public function importServizioAction(Request $request)
   {
@@ -522,13 +530,13 @@ class AdminController extends Controller
   }
 
   /**
-   * @Route("/servizio/{servizio}/edit", name="admin_servizio_edit")
+   * @Route("/servizio/{servizio}/edit-old", name="admin_servizio_edit_old")
    * @ParamConverter("servizio", class="AppBundle:Servizio")
    * @param Servizio $servizio
    *
    * @return Response
    */
-  public function editServizioAction(Servizio $servizio)
+  public function oldEeditServizioAction(Servizio $servizio)
   {
     $user = $this->getUser();
     $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId(), false);
@@ -576,13 +584,126 @@ class AdminController extends Controller
       }
     }
 
-    return $this->render( '@App/Admin/editServizio.html.twig', [
+    return $this->render('@App/Admin/oldEditServizio.html.twig', [
       'form' => $form->createView(),
       //'test_form' => $testForm->getForm()->createView(),
       'servizio' => $flowService->getFormData(),
       'schema' => $schema,
       'backoffice_schema' => $backofficeSchema,
       'flow' => $flowService,
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
+      'user' => $user
+    ]);
+  }
+
+  /**
+   * @Route("/servizio/{servizio}/new", name="admin_servizio_edit")
+   * @ParamConverter("servizio", class="AppBundle:Servizio")
+   * @param Servizio $servizio
+   * @param Request $request
+   * @return Response
+   */
+  public function editServizioAction(Servizio $servizio, Request $request)
+  {
+    $user = $this->getUser();
+
+    $steps = [
+      'template' => [
+        'label' => 'Template del form',
+        'class' => FormIOTemplateType::class,
+        'icon'  => 'fa-clone',
+      ],
+      'general' => [
+        'label' => 'Dati generali',
+        'class' => GeneralDataType::class,
+        'icon'  => 'fa-file-text-o',
+      ],
+      'formio' => [
+        'label' => 'Modulo',
+        'class' => FormIOBuilderRenderType::class,
+        'template' => 'AppBundle:Admin/servizio:_formIOBuilderStep.html.twig',
+        'icon'  => 'fa-server',
+      ],
+      'messages' => [
+        'label' => 'Messaggi',
+        'class' => FeedbackMessagesDataType::class,
+        'template' => 'AppBundle:Admin/servizio:_feedbackMessagesStep.html.twig',
+        'icon'  => 'fa-envelope-o',
+      ],
+      'app-io' => [
+        'label' => 'App IO',
+        'class' => IOIntegrationDataType::class,
+        'template' => 'AppBundle:Admin/servizio:_ioIntegrationStep.html.twig',
+        'icon'  => 'fa-bullhorn',
+      ],
+      'payments' => [
+        'label' => 'Dati pagamento',
+        'class' => PaymentDataType::class,
+        'template' => 'AppBundle:Admin/servizio:_paymentsStep.html.twig',
+        'icon'  => 'fa-credit-card',
+      ],
+      'backoffices' => [
+        'label' => 'Integrazioni',
+        'class' => IntegrationsDataType::class,
+        'template' => 'AppBundle:Admin/servizio:_backofficesStep.html.twig',
+        'icon'  => 'fa-cogs',
+      ],
+      'protocol' => [
+        'label' => 'Dati protocollo',
+        'class' => ProtocolDataType::class,
+        'icon'  => 'fa-folder-open-o',
+      ]
+    ];
+
+    if ($servizio->getPraticaFCQN() != '\AppBundle\Entity\FormIO') {
+      unset($steps['template']);
+      unset($steps['fields']);
+    }
+
+    if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO' && !empty($servizio->getFormIoId())) {
+      unset($steps['template']);
+    }
+
+    $currentStep = $request->query->get('step');
+    $nexStep = false;
+    $keys = array_keys($steps);
+    if (!in_array($currentStep, $keys)) {
+      $currentStep = $keys[0];
+    }
+    $currentKey = array_search($currentStep, $keys);
+    if (isset($keys[$currentKey + 1])) {
+      $nexStep = $keys[$currentKey + 1];
+    }
+    $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId(), false);
+    $backofficeSchema = false;
+    if ($servizio->getBackofficeFormId()) {
+      $backofficeSchema = $this->get('formio.factory')->createFromFormId($servizio->getBackofficeFormId(), false);
+    }
+
+    $form = null;
+    if (isset($steps[$currentStep]['class'])) {
+      $form = $this->createForm($steps[$currentStep]['class'], $servizio);
+      $form->handleRequest($request);
+      if ($form->isSubmitted() && $form->isValid()) {
+        $manager = $this->getDoctrine()->getManager();
+        $manager->persist($servizio);
+        $manager->flush();
+
+        if ($request->request->get('save') === 'next') {
+          return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId(), 'step' => $nexStep]);
+        }
+        return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId(), 'step' => $currentStep]);
+      }
+    }
+
+    return $this->render('@App/Admin/editServizio.html.twig', [
+      'form' => $form ? $form->createView() : null,
+      'steps' => $steps,
+      'current_step' => $currentStep,
+      'next_step' => $nexStep,
+      'servizio' => $servizio,
+      'schema' => $schema,
+      'backoffice_schema' => $backofficeSchema,
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'user' => $user
     ]);
@@ -628,7 +749,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
     }
 
-    return $this->render( '@App/Admin/editCustomValidationServizio.html.twig', [
+    return $this->render('@App/Admin/editCustomValidationServizio.html.twig', [
       'form' => $form->createView(),
       'servizio' => $servizio,
       'user' => $user,
@@ -655,6 +776,7 @@ class AdminController extends Controller
     $servizio->setPraticaFlowServiceName('ocsdc.form.flow.formio');
     $servizio->setEnte($ente);
     $servizio->setStatus(Servizio::STATUS_CANCELLED);
+    $servizio->setProtocolRequired(false);
 
     // Erogatore
     $erogatore = new Erogatore();
@@ -666,44 +788,7 @@ class AdminController extends Controller
     $this->getDoctrine()->getManager()->persist($servizio);
     $this->getDoctrine()->getManager()->flush();
 
-    $user = $this->getUser();
-    $flowService = $this->serviceFlow;
-
-    $flowService->setInstanceKey($user->getId());
-
-    $flowService->bind($servizio);
-
-    $form = $flowService->createForm();
-    if ($flowService->isValid($form)) {
-
-      $flowService->saveCurrentStepData($form);
-      //$servizio->setLastCompiledStep($flowService->getCurrentStepNumber());
-
-      if ($flowService->nextStep()) {
-        $this->getDoctrine()->getManager()->flush();
-        $form = $flowService->createForm();
-      } else {
-
-        // Retrocompatibilità --> salvo i parametri dei protocollo nell'ente
-        $ente = $servizio->getEnte();
-        $ente->setProtocolloParametersPerServizio($servizio->getProtocolloParameters(), $servizio);
-        $this->getDoctrine()->getManager()->flush();
-        $flowService->getDataManager()->drop($flowService);
-        $flowService->reset();
-
-        $this->addFlash('feedback', 'Servizio creato correttamente');
-
-        return $this->redirectToRoute('admin_servizio_index', ['servizio' => $servizio]);
-      }
-    }
-
-    return $this->render('@App/Admin/editServizio.html.twig', [
-      'form' => $form->createView(),
-      'servizio' => $flowService->getFormData(),
-      'flow' => $flowService,
-      'formserver_url' => $this->getParameter('formserver_admin_url'),
-      'user' => $user
-    ]);
+    return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId()]);
 
   }
 
@@ -827,7 +912,7 @@ class AdminController extends Controller
       $result = [];
     }
 
-    return $this->render( '@App/Admin/usage.html.twig', [
+    return $this->render('@App/Admin/usage.html.twig', [
       'all_user' => $result,
       'user' => $this->getUser(),
     ]);
@@ -854,10 +939,10 @@ class AdminController extends Controller
     $calculateInterval = date('Y-m-d H:i:s', strtotime($timeDiff));
 
     //TODO create filter bu type authentication
-   /* $where = '';
-    if ($services && $services != 'all') {
-      $where .= " AND p.authentication_data = ?";
-    }*/
+    /* $where = '';
+     if ($services && $services != 'all') {
+       $where .= " AND p.authentication_data = ?";
+     }*/
     $isUserActive = "";
     if ($status && $status != 'all') {
       $isUserActive .= " LEFT JOIN pratica AS p ON p.user_id = u.id where TO_TIMESTAMP(p.creation_time) AT TIME ZONE '" . $timeZone . "' >= '" . $calculateInterval . "'" . "and p.creation_time IS NOT NULL";
@@ -902,7 +987,7 @@ class AdminController extends Controller
 
     $listMonths = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
-    foreach ($listMonths as $key=>$value){
+    foreach ($listMonths as $key => $value) {
       foreach ($resultByYear as $r) {
         if (trim($r['month']) == $value) {
           $series[0]['name'] = 'Utenti registrasti';

@@ -72,8 +72,15 @@
     "whichbrowser/parser": "^2.0",
     "league/html-to-markdown": "^4.10",
     "artprima/prometheus-metrics-bundle": "1.1.1",
-    "queueit/knownuserv3": "^3.6"
+    "queueit/knownuserv3": "^3.6",
+    "simettric/doctrine-translatable-form-bundle": "^0.1.5"
   },
+  "repositories": [
+    {
+      "type" : "vcs",
+      "url" : "https://github.com/alahtarin/symfony-translatable.git"
+    }
+  ],
   "require-dev": {
     "sensio/generator-bundle": "3.1.7",
     "symfony/phpunit-bridge": "3.4.39",

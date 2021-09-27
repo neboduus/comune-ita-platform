@@ -1073,7 +1073,6 @@ class OperatoriController extends Controller
    * @param Request $request
    * @param Pratica $pratica
    *
-   * @param ModuloPdfBuilderService $pdfBuilderService
    * @return BinaryFileResponse
    * @throws \Exception
    */

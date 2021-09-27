@@ -1,6 +1,9 @@
 prometheus:
   path:     /prometheus.json
   defaults: { _controller: AppBundle:General\Metrics:prometheus}
+status:
+  path:     /php-status
+  defaults: { _controller: AppBundle:Ui\Frontend\Default:status}
 home:
   path:     /{path}
   defaults: { _controller: AppBundle:Ui\Frontend\Default:common, path: "" }

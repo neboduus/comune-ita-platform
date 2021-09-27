@@ -11,6 +11,7 @@ use AppBundle\Model\PaymentParameters;
 use AppBundle\Model\FlowStep;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -18,13 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 
-
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Entity\ServizioRepository")
  * @ORM\Table(name="servizio")
  * @ORM\HasLifecycleCallbacks
  */
-class Servizio
+class Servizio implements Translatable
 {
 
   const STATUS_CANCELLED = 0;
@@ -57,7 +57,6 @@ class Servizio
 
   /**
    * @var string
-   *
    * @Gedmo\Translatable
    * @ORM\Column(type="string", length=255, unique=true)
    * @Assert\NotBlank(message="name")
@@ -104,6 +103,7 @@ class Servizio
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Service's description, accepts html tags")
    */
@@ -111,6 +111,7 @@ class Servizio
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Compilation guide, accepts html tags")
    */
@@ -118,6 +119,7 @@ class Servizio
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
    */
@@ -125,6 +127,7 @@ class Servizio
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
    */
@@ -132,6 +135,7 @@ class Servizio
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Other info, accepts html tags")
    */
@@ -139,6 +143,7 @@ class Servizio
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Information shown to the citizen during the compilation of the service, accepts html tags")
    */
@@ -146,6 +151,7 @@ class Servizio
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Indications shown to the citizen at the end of the compilation of the service, accepts html tags")
    */
@@ -277,6 +283,7 @@ class Servizio
 
   /**
    * @var FeedbackMessage[]
+   * @Gedmo\Translatable
    * @ORM\Column(type="json", nullable=true)
    * @SWG\Property(description="Service feedback messages")
    */
@@ -358,6 +365,8 @@ class Servizio
 
   /**
    * @Gedmo\Locale
+   * Used locale to override Translation listener`s locale
+   * this is not a mapped field of entity metadata, just a simple property
    */
   private $locale;
 
@@ -1280,11 +1289,16 @@ class Servizio
   }
 
   /**
-   * @param string $backofficeFormId
+   * @param string|null $backofficeFormId
    */
   public function setBackofficeFormId(?string $backofficeFormId): void
   {
     $this->backofficeFormId = $backofficeFormId;
+  }
+
+  public function setTranslatableLocale($locale)
+  {
+    $this->locale = $locale;
   }
 
 }

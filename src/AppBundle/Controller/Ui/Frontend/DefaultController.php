@@ -87,6 +87,14 @@ class DefaultController extends Controller
   }
 
   /**
+   * @return Response
+   */
+  public function statusAction()
+  {
+    return new JsonResponse(json_encode(['status' => 'ok']), Response::HTTP_OK, [], true);
+  }
+
+  /**
    * @Route("/", name="home")
    * @return Response
    */

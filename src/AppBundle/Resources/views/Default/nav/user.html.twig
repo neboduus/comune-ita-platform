@@ -84,19 +84,19 @@
               <li class="nav-item {% if 'ente' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_edit_ente') }}">
-                  Impostazioni istanza
+                  {{ 'nav.admin.impostazioni_istanza'|trans }}
                 </a>
               </li>
               <li class="nav-item {% if 'operatore' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_operatore_index') }}">
-                  Operatori
+                  {{ 'nav.admin.operatori'|trans }}
                 </a>
               </li>
               <li class="nav-item {% if 'servizio' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link"
                    href="{{ path('admin_servizio_index') }}">
-                  Servizi
+                  {{ 'nav.admin.servizi'|trans }}
                 </a>
               </li>
               <li class="nav-item {% if 'usage' in app.request.pathInfo %} active {% endif %}">
@@ -107,21 +107,21 @@
               <li class="nav-item {% if 'service-group' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_service_group_index') }}">
-                  Gruppo di servizi
+                  {{ 'nav.admin.gruppo_servizi'|trans }}
                 </a>
               </li>
               {% if is_granted('ROLE_SUPER_ADMIN') %}
                 <li class="nav-item {% if 'payment-gateway' in app.request.pathInfo %} active {% endif %}">
                   <a class="nav-link "
                      href="{{ path('admin_payment_gateway_index') }}">
-                    Metodi di pagamento
+                    {{ 'nav.admin.metodi_pagamento'|trans }}
                   </a>
                 </li>
               {% endif %}
               <li class="nav-item {% if 'webhook' in app.request.pathInfo %} active {% endif %}">
                 <a class="nav-link "
                    href="{{ path('admin_webhook_index') }}">
-                  Webhook
+                  {{ 'nav.admin.webhook'|trans }}
                 </a>
               </li>
               <li class="nav-item">
@@ -129,7 +129,7 @@
                   <a class="btn btn-dropdown dropdown-toggle" style="padding: 0.5rem 1rem; font-weight: 300" href="#"
                      role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                      aria-expanded="false">
-                    Strumenti
+                    {{ 'nav.admin.strumenti'|trans }}
                     <svg class="icon-expand icon icon-sm icon-primary">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-expand"></use>
                     </svg>
@@ -137,9 +137,9 @@
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <div class="link-list-wrapper">
                       <ul class="link-list">
-                        <li><a class="list-item" href="{{ path('admin_scheduled_actions_index') }}"><span>Azioni programmate</span></a>
+                        <li><a class="list-item" href="{{ path('admin_scheduled_actions_index') }}"><span>{{ 'nav.admin.azioni_programmate'|trans }}</span></a>
                         </li>
-                        <li><a class="list-item" href="{{ path('admin_logs_index') }}"><span>Logs</span></a></li>
+                        <li><a class="list-item" href="{{ path('admin_logs_index') }}"><span>{{ 'nav.admin.logs'|trans }}</span></a></li>
                       </ul>
                     </div>
                   </div>
