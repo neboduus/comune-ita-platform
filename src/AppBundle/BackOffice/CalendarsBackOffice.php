@@ -102,35 +102,52 @@ class CalendarsBackOffice implements BackOfficeInterface
         // Extract meeting id from calendar string
         preg_match_all("/\(([^\)]*)\)/", $data->getDematerializedForms()['flattened']['calendar'], $matches);
         $meetingId = trim(explode("#", $matches[1][0])[1]);
-        $meeting = $meetingId ? $this->em->getRepository('AppBundle:Meeting')->find($meetingId) : null;
+        $_meeting = $meetingId ? $this->em->getRepository('AppBundle:Meeting')->find($meetingId) : null;
+        $meetings[] = $_meeting;
 
-        if (!$meeting) {
+        if (!$meetings) {
           // Meeting not found, can't update
           return [];
         }
 
+
         switch ($status) {
           case Pratica::STATUS_WITHDRAW:
+          case Pratica::STATUS_REVOKED:
             // Cancel meeting
-            $meeting->setStatus(Meeting::STATUS_CANCELLED);
+            foreach ($data->getMeetings() as $meeting) {
+              if (in_array($meeting->getStatus(), [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING]) && ($meeting->getFromTime() > new \DateTime())) {
+                $meeting->setStatus(Meeting::STATUS_CANCELLED);
+              }
+            }
             break;
           case Pratica::STATUS_PAYMENT_PENDING:
             // Increment draft duration
-            $currentExpiration = clone $meeting->getDraftExpiration() ?? new \DateTime();
-            $meeting->setDraftExpiration($currentExpiration->modify('+' . ($meeting->getCalendar()->getDraftsDurationIncrement() ?? Calendar::DEFAULT_DRAFT_INCREMENT) . 'seconds'));
-          break;
+            foreach ($meetings as $meeting) {
+              if ($meeting->getStatus() == Meeting::STATUS_DRAFT) {
+                $currentExpiration = clone $meeting->getDraftExpiration() ?? new \DateTime();
+                $meeting->setDraftExpiration($currentExpiration->modify('+' . ($meeting->getCalendar()->getDraftsDurationIncrement() ?? Calendar::DEFAULT_DRAFT_INCREMENT) . 'seconds'));
+              }
+            }
+            break;
           case Pratica::STATUS_PAYMENT_ERROR:
           case Pratica::STATUS_CANCELLED:
             // Refuse meeting
-            $meeting->setStatus(Meeting::STATUS_REFUSED);
+            foreach ($data->getMeetings() as $meeting) {
+              if (in_array($meeting->getStatus(), [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING]) && ($meeting->getFromTime() > new \DateTime())) {
+                $meeting->setStatus(Meeting::STATUS_REFUSED);
+              }
+            }
             break;
           default:
             // do nothing
         }
         try {
-          $this->em->persist($meeting);
+          foreach ($meetings as $meeting) {
+            $this->em->persist($meeting);
+          }
           $this->em->flush();
-          return $meeting;
+          return $_meeting;
         } catch (\Exception $e) {
           $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
           return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
@@ -215,7 +232,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       $meeting->setFromTime($meetingData['from_time']);
       $meeting->setToTime($meetingData['to_time']);
       $meeting->setCalendar($calendar);
-      if($openingHour)
+      if ($openingHour)
         $meeting->setOpeningHour($openingHour);
 
       if (!empty($this->meetingService->getMeetingErrors($meeting))) {
