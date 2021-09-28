@@ -94,7 +94,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   const FINAL_STATES = [
     Pratica::STATUS_COMPLETE,
     Pratica::STATUS_CANCELLED,
-    Pratica::STATUS_WITHDRAW
+    Pratica::STATUS_WITHDRAW,
   ];
 
   const ACCEPTED = true;
@@ -1028,7 +1028,13 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function getModuliCompilati(): Collection
   {
-    return $this->moduliCompilati;
+    $files = [];
+    /** @var Allegato $item */
+    foreach ($this->moduliCompilati as $item) {
+      $files[$item->getCreatedAt()->format('U')] = $item;
+    }
+    krsort($files, SORT_NUMERIC);
+    return new ArrayCollection($files);
   }
 
   /**
