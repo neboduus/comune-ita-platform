@@ -45,6 +45,9 @@ services:
   AppBundle\Controller\Rest\ApplicationsAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\CategoriesAPIController:
+    autowire: true
+
   AppBundle\Controller\Rest\UsersAPIController:
     autowire: true
 
@@ -76,6 +79,9 @@ services:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\PaymentGatewayController:
+    autowire: true
+
+  AppBundle\Controller\Ui\Backend\CategoryController:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\ServiceGroupController:
