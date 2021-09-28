@@ -58,6 +58,8 @@ nav:
     usage: 'Statistiche'
   admin:
     impostazioni_istanza: 'Impostazioni istanza'
+    ente: 'Ente'
+    categorie: 'Categorie'
     operatori: 'Operatori'
     servizi: 'Servizi'
     gruppo_servizi: 'Gruppo di servizi'
@@ -81,12 +83,15 @@ terms:
   title: 'Accettazione termini di utilizzo'
 general:
   nome: 'Nome'
+  descrizione: 'Descrizione'
   cognome: 'Cognome'
   username: 'Username'
   email: 'Email'
   stato: 'Stato'
   url: 'Url'
   alert_elimina: "Sei sicuro di procedere? L&#39;oggetto verrà eliminato definitivamente."
+  flash:
+    created: 'Oggetto creato correttamente'
 servizio:
   bozza_successo: 'Bozza salvata con successo'
   nessun_template: 'Nessun template disponibile'
@@ -1863,6 +1868,9 @@ protocollo:
   sipal_registro: 'Registro'
   sipal_classificazione: 'Classificazione'
   sipal_destinatario_interno: 'Destinatario interno'
+categories:
+  title: 'Categorie'
+  parent: 'Categoria genitore'
 gateway:
   add: Aggiungi metodo di pagamento
   name: Nome

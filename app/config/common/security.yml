@@ -54,7 +54,7 @@ security:
           - lexik_jwt_authentication.jwt_token_authenticator
 
     api:
-      pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services)
+      pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services|categories)
       methods: [ POST, PUT, PATCH, DELETE ]
       stateless: true
       provider: fos_userbundle

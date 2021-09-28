@@ -97,6 +97,14 @@ class ServicesAPIController extends AbstractFOSRestController
    * @Rest\Get("", name="services_api_list")
    *
    * @SWG\Parameter(
+   *      name="topics_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the category"
+   *  )
+   *
+   * @SWG\Parameter(
    *      name="service_group_id",
    *      in="query",
    *      type="string",
@@ -109,7 +117,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *     description="Retrieve list of services",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Service::class))
+   *         @SWG\Items(ref=@Model(type=Service::class, groups={"read"}))
    *     )
    * )
    * @SWG\Tag(name="services")
@@ -119,6 +127,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
     try {
       $serviceGroupId = $request->get('service_group_id', false);
+      $categoryId = $request->get('topics_id', false);
       $result = [];
       $repoServices = $this->em->getRepository(Servizio::class);
       $criteria['status'] = Servizio::PUBLIC_STATUSES;
@@ -129,8 +138,16 @@ class ServicesAPIController extends AbstractFOSRestController
         if (!$serviceGroup instanceof ServiceGroup) {
           return $this->view(["Service group not found"], Response::HTTP_NOT_FOUND);
         }
-
         $criteria['serviceGroup'] = $serviceGroupId;
+      }
+
+      if ($categoryId) {
+        $categoriesRepo = $this->em->getRepository('AppBundle:Categoria');
+        $category = $categoriesRepo->find($categoryId);
+        if (!$category instanceof Categoria) {
+          return $this->view(["Category not found"], Response::HTTP_NOT_FOUND);
+        }
+        $criteria['topics'] = $categoryId;
       }
 
       $services = $repoServices->findBy($criteria);
@@ -162,7 +179,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Service",
-   *     @Model(type=Service::class)
+   *     @Model(type=Service::class, groups={"read"})
    * )
    *
    * @SWG\Response(
@@ -254,7 +271,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Service::class)
+   *         ref=@Model(type=Service::class, groups={"write"})
    *     )
    * )
    *
@@ -368,7 +385,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Service::class)
+   *         ref=@Model(type=Service::class, groups={"write"})
    *     )
    * )
    *
@@ -483,7 +500,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Service::class)
+   *         ref=@Model(type=Service::class, groups={"write"})
    *     )
    * )
    *

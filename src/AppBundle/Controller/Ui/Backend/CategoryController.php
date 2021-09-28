@@ -2,27 +2,22 @@
 
 namespace AppBundle\Controller\Ui\Backend;
 
-use AppBundle\Entity\PaymentGateway;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\Webhook;
-use AppBundle\Services\InstanceService;
-use Doctrine\DBAL\Exception\DriverException;
+use AppBundle\Entity\Categoria;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 
 /**
  * Class PaymentGatewayController
- * @Route("/admin/payment-gateway")
+ * @Route("/admin/categories")
  */
-class PaymentGatewayController extends Controller
+class CategoryController extends Controller
 {
   /**
    * @var EntityManagerInterface
@@ -39,43 +34,42 @@ class PaymentGatewayController extends Controller
 
 
   /**
-   * @Route("/", name="admin_payment_gateway_index")
+   * @Route("/", name="admin_category_index")
    * @Method("GET")
    *
    */
-  public function indexPaymentGatewaysAction()
+  public function indexCategoriesAction()
   {
 
-    $items = $this->entityManager->getRepository('AppBundle:PaymentGateway')->findAll();
+    $items = $this->entityManager->getRepository('AppBundle:Categoria')->findBy([], ['name' => 'asc']);
 
-    return $this->render( '@App/Admin/indexPaymentGateway.html.twig', [
+    return $this->render( '@App/Admin/indexCategory.html.twig', [
       'user'  => $this->getUser(),
       'items' => $items
     ]);
   }
 
   /**
-   * @Route("/new", name="admin_payment_gateway_new")
+   * @Route("/new", name="admin_category_new")
    * @Method({"GET", "POST"})
    * @param Request $request
    * @return RedirectResponse|Response|null
    */
-  public function newPaymentGatewayAction(Request $request)
+  public function newCategoryAction(Request $request)
   {
-    $item = new PaymentGateway();
-    $form = $this->createForm('AppBundle\Form\Admin\PaymentGatewayType', $item);
+    $item = new Categoria();
+    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      $item->setFcqn('AppBundle\Payment\Gateway\GenericExternalPay');
       $this->entityManager->persist($item);
       $this->entityManager->flush();
 
-      $this->addFlash('feedback', 'Metodo di pagamento creato con successo');
-      return $this->redirectToRoute('admin_payment_gateway_index');
+      $this->addFlash('feedback', 'general.flash.created');
+      return $this->redirectToRoute('admin_category_index');
     }
 
-    return $this->render( '@App/Admin/editPaymentGateway.html.twig', [
+    return $this->render( '@App/Admin/editCategory.html.twig', [
       'user'  => $this->getUser(),
       'item' => $item,
       'form' => $form->createView(),
@@ -83,22 +77,22 @@ class PaymentGatewayController extends Controller
   }
 
   /**
-   * @Route("/{id}/edit", name="admin_payment_gateway_edit")
+   * @Route("/{id}/edit", name="admin_category_edit")
    * @Method({"GET", "POST"})
    * @param Request $request
-   * @param PaymentGateway $item
+   * @param Categoria $item
    * @return Response|null
    */
-  public function editPaymentGatewayAction(Request $request, PaymentGateway $item)
+  public function editCategoryAction(Request $request, Categoria $item)
   {
-    $form = $this->createForm('AppBundle\Form\Admin\PaymentGatewayType', $item);
+    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
       $this->entityManager->flush();
     }
 
-    return $this->render( '@App/Admin/editPaymentGateway.html.twig',
+    return $this->render( '@App/Admin/editCategory.html.twig',
       [
         'user'  => $this->getUser(),
         'item' => $item,
@@ -107,21 +101,21 @@ class PaymentGatewayController extends Controller
   }
 
   /**
-   * @Route("/{id}/delete", name="admin_payment_gateway_delete")
+   * @Route("/{id}/delete", name="admin_category_delete")
    * @Method({"GET", "POST", "DELETE"})
    */
-  public function deletePaymentGatewayAction(Request $request, PaymentGateway $item)
+  public function deletePaymentGatewayAction(Request $request, Categoria $item)
   {
     try {
       $em = $this->getDoctrine()->getManager();
       $em->remove($item);
       $em->flush();
       $this->addFlash('feedback', 'Metodo di pagamento eliminato correttamente');
-      return $this->redirectToRoute('admin_payment_gateway_index');
+      return $this->redirectToRoute('admin_category_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
       $this->addFlash('warning', 'Impossibile eliminare il Metodo di pagamento, ci sono dei servizi collegati.');
-      return $this->redirectToRoute('admin_payment_gateway_index');
+      return $this->redirectToRoute('admin_category_index');
     }
   }
 }

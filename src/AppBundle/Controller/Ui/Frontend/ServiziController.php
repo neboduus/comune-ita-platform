@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Ui\Frontend;
 
 
+use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\ServiceGroupRepository;
@@ -167,10 +168,6 @@ class ServiziController extends Controller
       throw new NotFoundHttpException("Servizio $slug not found");
     }
 
-    /*try {
-      $servizioI18n = $serviziRepository->findOneI18n($servizio->getId(), $request->getLocale());
-    } catch (\Exception $e) {}*/
-
     $serviziArea = $serviziRepository->createQueryBuilder('servizio')
       ->andWhere('servizio.id != :servizio')
       ->setParameter('servizio', $servizio->getId())
@@ -240,6 +237,36 @@ class ServiziController extends Controller
     $response =  $this->render( '@App/Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio
+    ]);
+
+    return $response;
+  }
+
+  /**
+   * @Route("/categoria/{slug}", name="category_show")
+   * @param string $slug
+   * @param Request $request
+   *
+   * @return Response
+   */
+  public function categoryDetailAction($slug, Request $request)
+  {
+    $user = $this->getUser();
+    $categoryRepository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
+
+    /** @var Servizio $servizio */
+    $category = $categoryRepository->findOneBySlug($slug);
+    if (!$category instanceof Categoria) {
+      throw new NotFoundHttpException("Category $slug not found");
+    }
+
+    $repoServices = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $services = $repoServices->findBy(['topics' => $category->getId()]);
+
+    $response =  $this->render( '@App/Servizi/categoryDetail.html.twig', [
+      'user' => $user,
+      'category' => $category,
+      'services' => $services
     ]);
 
     return $response;

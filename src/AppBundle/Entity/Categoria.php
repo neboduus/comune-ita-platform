@@ -4,7 +4,10 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
+use Swagger\Annotations as SWG;
 
 
 /**
@@ -14,170 +17,174 @@ use Ramsey\Uuid\Uuid;
  */
 class Categoria
 {
-    /**
-     * @ORM\Column(type="guid")
-     * @ORM\Id
-     */
-    protected $id;
+  /**
+   * @ORM\Column(type="guid")
+   * @ORM\Id
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Category id")
+   * @Groups({"read"})
+   */
+  protected $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+  /**
+   * @var string
+   * @ORM\Column(type="string", length=255)
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Category name")
+   * @Groups({"read", "write"})
+   */
+  private $name;
 
-    /**
-     * @var string
-     *
-     * @Gedmo\Slug(fields={"name"})
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    private $slug;
+  /**
+   * @var string
+   *
+   * @Gedmo\Slug(fields={"name"})
+   * @ORM\Column(type="string", length=255, unique=true)
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Category slug")
+   * @Groups({"read"})
+   */
+  private $slug;
 
-    /**
-     * @var string
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $description;
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Category description")
+   * @Groups({"read", "write"})
+   */
+  private $description;
 
-    /**
-     * @ORM\Column(type="guid", nullable=true)
-     */
-    private $parentId;
+  /**
+   * @ORM\OneToMany(targetEntity="Categoria", mappedBy="parent", fetch="EXTRA_LAZY")
+   * @Serializer\Exclude()
+   */
+  private $children;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $treeId;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $treeParentId;
+  /**
+   * @ORM\ManyToOne(targetEntity="Categoria", inversedBy="children")
+   * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+   * @Serializer\Exclude
+   */
+  private $parent;
 
 
-
-    /**
-     * Categoria constructor.
-     */
-    public function __construct()
-    {
-        if (!$this->id) {
-            $this->id = Uuid::uuid4();
-        }
+  /**
+   * Categoria constructor.
+   */
+  public function __construct()
+  {
+    if (!$this->id) {
+      $this->id = Uuid::uuid4();
     }
+  }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
+  /**
+   * @return mixed
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
+
+  /**
+   * @return string
+   */
+  public function getName(): ?string
+  {
+    return $this->name;
+  }
+
+  /**
+   * @param string $name
+   */
+  public function setName(string $name)
+  {
+    $this->name = $name;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSlug(): ?string
+  {
+    return $this->slug;
+  }
+
+  /**
+   * @param string $slug
+   */
+  public function setSlug(string $slug)
+  {
+    $this->slug = $slug;
+
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getDescription(): ?string
+  {
+    return $this->description;
+  }
+
+  /**
+   * @param string $description
+   */
+  public function setDescription(string $description)
+  {
+    $this->description = $description;
+
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getChildren()
+  {
+    return $this->children;
+  }
+
+  /**
+   * @param mixed $children
+   */
+  public function setChildren($children): void
+  {
+    $this->children = $children;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getParent()
+  {
+    return $this->parent;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("parent_id")
+   * @SWG\Property(description="Parent category id")
+   * @Groups({"read", "write"})
+   */
+  public function getParentId()
+  {
+    if ($this->parent) {
+      return $this->parent->getId();
     }
+    return null;
+  }
 
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSlug(): string
-    {
-        return $this->slug;
-    }
-
-    /**
-     * @param string $slug
-     */
-    public function setSlug(string $slug)
-    {
-        $this->slug = $slug;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * @param mixed $parentId
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = $parentId;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTreeId()
-    {
-        return $this->treeId;
-    }
-
-    /**
-     * @param mixed $treeId
-     */
-    public function setTreeId($treeId)
-    {
-        $this->treeId = $treeId;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTreeParentId()
-    {
-        return $this->treeParentId;
-    }
-
-    /**
-     * @param mixed $treeParentId
-     */
-    public function setTreeParentId($treeParentId)
-    {
-        $this->treeParentId = $treeParentId;
-        return $this;
-    }
-
-
-
+  /**
+   * @param mixed $parent
+   */
+  public function setParent($parent): void
+  {
+    $this->parent = $parent;
+  }
 }
