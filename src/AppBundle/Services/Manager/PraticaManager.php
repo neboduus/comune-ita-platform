@@ -360,6 +360,8 @@ class PraticaManager
     $message->setVisibility(Message::VISIBILITY_APPLICANT);
     $message->setMessage($text);
     $message->setSubject($subject);
+    $message->setEmail($pratica->getUser()->getEmailContatto());
+    $message->setSentAt(time());
 
     $this->entityManager->persist($message);
     $this->entityManager->persist($pratica);
