@@ -77,8 +77,8 @@
   },
   "repositories": [
     {
-      "type" : "vcs",
-      "url" : "https://github.com/alahtarin/symfony-translatable.git"
+      "type": "vcs",
+      "url": "https://github.com/alahtarin/symfony-translatable.git"
     }
   ],
   "require-dev": {
@@ -125,5 +125,5 @@
       "file": "app/config/parameters.yml"
     }
   },
-  "version": "1.7.25"
+  "version": "1.8.0"
 }
