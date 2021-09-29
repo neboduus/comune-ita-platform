@@ -87,7 +87,8 @@
     "phpspec/phpspec": "3.4.3",
     "phpunit/phpunit": "7.5.20",
     "squizlabs/php_codesniffer": "*",
-    "escapestudios/symfony2-coding-standard": "2.11.0"
+    "escapestudios/symfony2-coding-standard": "2.11.0",
+    "phpstan/phpstan": "^0.12.99"
   },
   "scripts": {
     "post-install-cmd": [

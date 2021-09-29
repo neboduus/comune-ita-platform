@@ -40,6 +40,7 @@ use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\DataTableFactory;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -95,6 +96,10 @@ class AdminController extends Controller
    * @var DataTableFactory
    */
   private $dataTableFactory;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
   /**
    * AdminController constructor.
@@ -107,6 +112,7 @@ class AdminController extends Controller
    * @param IOService $ioService
    * @param RouterInterface $router
    * @param DataTableFactory $dataTableFactory
+   * @param LoggerInterface $logger
    */
   public function __construct(
     InstanceService $instanceService,
@@ -117,7 +123,8 @@ class AdminController extends Controller
     SchemaFactoryInterface $schemaFactory,
     IOService $ioService,
     RouterInterface $router,
-    DataTableFactory $dataTableFactory
+    DataTableFactory $dataTableFactory,
+    LoggerInterface $logger
   )
   {
     $this->instanceService = $instanceService;
@@ -129,6 +136,7 @@ class AdminController extends Controller
     $this->ioService = $ioService;
     $this->router = $router;
     $this->dataTableFactory = $dataTableFactory;
+    $this->logger = $logger;
   }
 
 
@@ -657,7 +665,6 @@ class AdminController extends Controller
 
     if ($servizio->getPraticaFCQN() != '\AppBundle\Entity\FormIO') {
       unset($steps['template']);
-      unset($steps['fields']);
     }
 
     if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO' && !empty($servizio->getFormIoId())) {
