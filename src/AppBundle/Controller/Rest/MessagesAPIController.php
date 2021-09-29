@@ -57,6 +57,12 @@ use Symfony\Component\Translation\TranslatorInterface;
 class MessagesAPIController extends AbstractFOSRestController
 {
 
+  /** @var EntityManagerInterface */
+  private $em;
+
+  /** @var InstanceService */
+  private $is;
+
   /** @var PraticaStatusService  */
   private $statusService;
 

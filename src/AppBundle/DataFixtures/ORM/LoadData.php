@@ -162,18 +162,14 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     $data = $this->getData('categories');
     $categoryRepo = $manager->getRepository('AppBundle:Categoria');
     foreach ($data as $item) {
-      $category = $categoryRepo->findOneByTreeId($item['tree_id']);
-      $parent = $categoryRepo->findOneByTreeId($item['tree_parent_id']);
+      $category = $categoryRepo->findOneBySlug($item['slug']);
       if (!$category) {
         $this->counters['categorie']['new']++;
         $category = new Categoria();
         $category
           ->setName($item['name'])
-          ->setDescription($item['description'])
-          ->setTreeId($item['tree_id'])
-          ->setTreeParentId($item['tree_parent_id']);
+          ->setDescription($item['description']);
 
-        $category->setParentId(($parent ? $parent->getId() : null));
         $manager->persist($category);
 
       } else {
@@ -184,14 +180,6 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
         // Update Description
         if ($item['description'] != $category->getDescription()) {
           $category->setDescription($item['description']);
-        }
-        // Update tree_id
-        if ($item['tree_id'] != $category->getTreeId()) {
-          $category->setTreeId($item['tree_id']);
-        }
-        // Update tree_parent_id
-        if ($item['tree_parent_id'] != $category->getTreeParentId()) {
-          $category->setTreeParentId($item['tree_parent_id']);
         }
         $manager->persist($category);
         $this->counters['categorie']['updated']++;
