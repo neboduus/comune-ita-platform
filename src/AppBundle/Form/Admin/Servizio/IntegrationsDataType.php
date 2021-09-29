@@ -92,10 +92,10 @@ class IntegrationsDataType extends AbstractType
       ])
       ->add('action', ChoiceType::class, [
         'label' => 'Azione da eseguire',
+        'data' => $selectedIntegration != 0 ? $integrations[$selectedIntegration] : null,
         'choices' => $backOffices,
         'mapped' => false,
         'attr' => ['class' => 'backoffice-form-type'],
-        'disabled' => $selectedIntegration == 0
       ]);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));

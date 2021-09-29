@@ -16,6 +16,24 @@ Formio.registerComponent('financial_report', FinancialReport);
 
 $(document).ready(function () {
 
+  let integrationTrigger = $('#integrations_data_trigger');
+  let integrationAction = $('#integrations_data_action');
+
+  function disableIntegration() {
+    if (integrationTrigger.val() === "0") {
+      integrationAction.attr('disabled', true);
+    } else {
+      integrationAction.attr('disabled', false);
+    }
+  }
+
+  disableIntegration();
+  integrationTrigger.on("change", function () {
+   disableIntegration();
+  })
+
+
+
   let draftMessage = $('#feedback_messages_data_feedback_messages_7_is_active');
   draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
 
