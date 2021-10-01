@@ -128,7 +128,7 @@ class ServizioFormType extends AbstractType
     if (isset($data['integrations']['trigger']) && $data['integrations']['trigger']) {
       $service->setIntegrations($data['integrations']);
       $event->getForm()->setData($service);
-      
+
     } else {
       // No integration needed
       $service->setIntegrations(null);
@@ -162,6 +162,7 @@ class ServizioFormType extends AbstractType
   {
     $resolver->setDefaults(array(
       'data_class' => 'AppBundle\Dto\Service',
+      'allow_extra_fields' => true,
       'csrf_protection' => false
     ));
   }
