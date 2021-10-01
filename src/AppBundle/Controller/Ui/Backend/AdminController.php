@@ -433,7 +433,7 @@ class AdminController extends Controller
       $descLimit = 150;
       $description = strip_tags($s->getDescription());
       if (strlen($description) > $descLimit) {
-        $description = substr($description, 0, $descLimit) . '...';
+        $description = utf8_encode(substr($description, 0, $descLimit) . '...');
       }
       $data [] = [
         'id' => $s->getId(),
