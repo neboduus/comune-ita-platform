@@ -190,7 +190,7 @@ class GiscomAPIMapperService
         $modulo->setContent(null);
         $result[]=$modulo;
       }*/
-      $m = $moduli[0];
+      $m = array_values($moduli)[0];
       $modulo = new MappedPraticaEdilizia\ModuloCompilato();
       $modulo->setId($m->getId());
       $modulo->setName($m->getFilename());
