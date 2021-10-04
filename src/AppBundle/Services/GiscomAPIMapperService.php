@@ -14,6 +14,7 @@ use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Mapper\Giscom\File;
 use AppBundle\Mapper\Giscom\FileCollection;
 use AppBundle\Mapper\Giscom\SciaPraticaEdilizia as MappedPraticaEdilizia;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -176,7 +177,7 @@ class GiscomAPIMapperService
   private function prepareModuloCompilato(GiscomPratica $pratica)
   {
     // Recupero i file collegati alle richieste di integrazione
-    /** @var Collection $moduli */
+    /** @var ArrayCollection $moduli */
     $moduli = $pratica->getModuliCompilati();
     if (count($moduli) > 0) {
       /** @var Allegato $m */
@@ -190,7 +191,7 @@ class GiscomAPIMapperService
         $modulo->setContent(null);
         $result[]=$modulo;
       }*/
-      $m = array_values($moduli)[0];
+      $m = $moduli->first();
       $modulo = new MappedPraticaEdilizia\ModuloCompilato();
       $modulo->setId($m->getId());
       $modulo->setName($m->getFilename());
