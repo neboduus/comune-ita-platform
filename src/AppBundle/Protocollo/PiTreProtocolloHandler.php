@@ -15,11 +15,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\All;
 
 /**
  * @property $instance string
  */
-class PiTreProtocolloHandler implements ProtocolloHandlerInterface
+class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedProtocolHandlerInterface
 {
   /**
    * @var Client
@@ -54,17 +55,60 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
    */
   public function sendPraticaToProtocollo(Pratica $pratica)
   {
+
+    if (!empty($pratica->getIdDocumentoProtocollo()) && !empty($pratica->getNumeroFascicolo())) {
+
+      // Todo throw exception?
+      return;
+    }
+
     $parameters = $this->getParameters($pratica);
-    $parameters->set('method', 'createDocumentAndAddInProject');
+    $parameters->set('method', 'createDocumentPredisposed');
     //$queryString = http_build_query($parameters->all());
     //$response = $this->client->get('?' . $queryString);
     $response = $this->client->post('', ['form_params' => $parameters->all()]);
 
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
+
     if ($responseData->getStatus() == 'success') {
       $pratica->setIdDocumentoProtocollo($responseData->getIdDoc());
-      $pratica->setNumeroProtocollo($responseData->getNProt());
       $pratica->setNumeroFascicolo($responseData->getIdProj());
+      //$pratica->setNumeroProtocollo($responseData->getNProt());
+    } else {
+      throw new ResponseErrorException($responseData . ' on request ' . $parameters->toString());
+    }
+  }
+
+  public function protocolPredisposed(Pratica $pratica)
+  {
+    $parameters = $this->getParameters($pratica);
+    $parameters->set('method', 'protocolPredisposed');
+    $parameters->set('documentId', $pratica->getIdDocumentoProtocollo());
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
+    $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
+    if ($responseData->getStatus() == 'success') {
+      $pratica->setNumeroProtocollo($responseData->getNProt());
+    } else {
+      throw new ResponseErrorException($responseData . ' on request ' . $parameters->toString());
+    }
+  }
+
+
+  public function protocolPredisposedAttachment(Pratica $pratica, AllegatoInterface $attachment)
+  {
+    $parameters = $this->getParameters($pratica);
+    $parameters->set('method', 'protocolPredisposed');
+    $parameters->set('documentId', $attachment->getIdDocumentoProtocollo());
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+
+    $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
+    if ($responseData->getStatus() == 'success') {
+      $attachment->setNumeroProtocollo($responseData->getNProt());
+      $pratica->addNumeroDiProtocollo([
+        'id' => $attachment->getIdDocumentoProtocollo(),
+        'protocollo' => $attachment->getIdDocumentoProtocollo(),
+      ]);
     } else {
       throw new ResponseErrorException($responseData . ' on request ' . $parameters->toString());
     }
@@ -82,9 +126,6 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
     $parameters->set('method', 'uploadFileToDocument');
     // trasmissionIDArray va valorizzato solo per il metodo createDocumentAndAddInProject
     $parameters->remove('trasmissionIDArray');
-
-    //$queryString = http_build_query($parameters->all());
-    //$response = $this->client->get('?' . $queryString);
 
     $response = $this->client->post('', ['form_params' => $parameters->all()]);
 
@@ -108,24 +149,17 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiesta)
   {
     $parameters = $this->getRichiestaIntegrazioneParameters($pratica, $richiesta);
-    $parameters->set('method', 'createDocumentAndAddInProject');
-
-    //$queryString = http_build_query($parameters->all());
-    //$response = $this->client->get('?' . $queryString);
+    $parameters->set('method', 'createDocumentPredisposed');
     $response = $this->client->post('', ['form_params' => $parameters->all()]);
-
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
 
     if ($responseData->getStatus() == 'success') {
-      $richiesta->setNumeroProtocollo($responseData->getNProt());
       $richiesta->setIdDocumentoProtocollo($responseData->getIdDoc());
-      $pratica->addNumeroDiProtocollo([
-        'id' => $richiesta->getId(),
-        'protocollo' => $responseData->getIdDoc() ?? '',
-      ]);
     } else {
       throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
+
+    $this->protocolPredisposedAttachment($pratica, $richiesta);
   }
 
   /**
@@ -137,12 +171,12 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $risposta)
   {
     $parameters = $this->getRispostaIntegrazioneParameters($pratica, $risposta);
-    $parameters->set('method', 'createDocumentAndAddInProject');
+    $parameters->set('method', 'createDocumentPredisposed');
     $response = $this->client->post('', ['form_params' => $parameters->all()]);
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
 
     if ($responseData->getStatus() == 'success') {
-      $risposta->setNumeroProtocollo($responseData->getNProt());
+      //$risposta->setNumeroProtocollo($responseData->getNProt());
       $risposta->setIdDocumentoProtocollo($responseData->getIdDoc());
       $pratica->addNumeroDiProtocollo([
         'id' => $risposta->getId(),
@@ -163,7 +197,6 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $integrazione)
   {
     $parameters = $this->getIntegrazioneParameters($pratica, $rispostaIntegrazione, $integrazione);
-    $parameters->set('method', 'createDocumentAndAddInProject');
     $parameters->set('method', 'uploadFileToDocument');
     // trasmissionIDArray va valorizzato solo per il metodo createDocumentAndAddInProject
     $parameters->remove('trasmissionIDArray');
@@ -193,15 +226,13 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface
   {
     $risposta = $pratica->getRispostaOperatore();
     $parameters = $this->getRispostaParameters($pratica);
-    $parameters->set('method', 'createDocumentAndAddInProject');
+    $parameters->set('method', 'createDocumentPredisposed');
 
-    //$queryString = http_build_query($parameters->all());
-    //$response = $this->client->get('?' . $queryString);
     $response = $this->client->post('', ['form_params' => $parameters->all()]);
 
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
     if ($responseData->getStatus() == 'success') {
-      $risposta->setNumeroProtocollo($responseData->getNProt());
+      //$risposta->setNumeroProtocollo($responseData->getNProt());
       $risposta->setIdDocumentoProtocollo($responseData->getIdDoc());
     } else {
       throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());

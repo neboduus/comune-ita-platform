@@ -6,7 +6,7 @@ use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Pratica;
 
-class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface
+class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface, PredisposedProtocolHandlerInterface
 {
   private $registry;
 
@@ -93,13 +93,24 @@ class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface
     return $this->getHandler($pratica)->sendRispostaIntegrazioneToProtocollo($pratica, $allegato);
   }
 
-  public function sendIntegrazioneToProtocollo(
-    Pratica $pratica,
-    AllegatoInterface $rispostaIntegrazione,
-    AllegatoInterface $allegato
-  )
+  public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
   {
     return $this->getHandler($pratica)->sendIntegrazioneToProtocollo($pratica, $rispostaIntegrazione, $allegato);
+  }
+
+  // Fixme: verificare come spostare negli handler
+  public function protocolPredisposed(Pratica $pratica)
+  {
+    if ($this->getHandler($pratica) instanceof PredisposedProtocolHandlerInterface) {
+      return $this->getHandler($pratica)->protocolPredisposed($pratica);
+    }
+  }
+
+  public function protocolPredisposedAttachment(Pratica $pratica, AllegatoInterface $attachment)
+  {
+    if ($this->getHandler($pratica) instanceof PredisposedProtocolHandlerInterface) {
+      return $this->getHandler($pratica)->protocolPredisposedAttachment($pratica, $attachment);
+    }
   }
 
 }

@@ -17,12 +17,6 @@ class Integrazione extends Allegato
   const TYPE_DEFAULT = 'integrazione';
 
   /**
-   * @ORM\Column(type="string", nullable=true)
-   * @var string
-   */
-  private $idDocumentoProtocollo;
-
-  /**
    * @ORM\Column(type="array", nullable=true)
    * @var ArrayCollection
    */
@@ -42,25 +36,6 @@ class Integrazione extends Allegato
     parent::__construct();
     $this->type = self::TYPE_DEFAULT;
     $this->numeriProtocollo = new ArrayCollection();
-  }
-
-
-  /**
-   * @return string|null
-   */
-  public function getIdDocumentoProtocollo()
-  {
-    return $this->idDocumentoProtocollo;
-  }
-
-  /**
-   * @param string $idDocumentoProtocollo
-   * @return Integrazione
-   */
-  public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
-  {
-    $this->idDocumentoProtocollo = $idDocumentoProtocollo;
-    return $this;
   }
 
   /**
