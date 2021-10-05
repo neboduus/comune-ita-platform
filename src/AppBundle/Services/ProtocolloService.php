@@ -16,6 +16,7 @@ use AppBundle\Protocollo\Exception\AlreadySentException;
 use AppBundle\Protocollo\Exception\AlreadyUploadException;
 use AppBundle\Protocollo\Exception\IncompleteExecutionException;
 use AppBundle\Protocollo\Exception\ParentNotRegisteredException;
+use AppBundle\Protocollo\PredisposedProtocolHandlerInterface;
 use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Protocollo\ProtocolloHandlerInterface;
 use Doctrine\ORM\EntityManager;
@@ -134,6 +135,20 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       }
     }
 
+    // Predispose document
+    if ($this->handler instanceof PredisposedProtocolHandlerInterface && $pratica->getNumeroProtocollo() === null) {
+      try {
+        $this->handler->protocolPredisposed($pratica);
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
+      } catch (\Exception $e) {
+        $this->logger->error(
+          "Errore nella predisposizione della pratica", ['pratica' => $pratica->getId()]
+        );
+        $dispatchSuccess = false;
+      }
+    }
+
     if ($dispatchSuccess) {
       $this->dispatcher->dispatch(
         ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS,
@@ -154,7 +169,6 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
   {
     $this->validatePraticaForUploadFile($pratica);
     $allegati = $pratica->getRichiesteIntegrazione();
-
 
     if (!empty($allegati)) {
       /** @var Allegato $allegato */
@@ -261,6 +275,19 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       }
     }
 
+    // Predispose document
+    if ($this->handler instanceof PredisposedProtocolHandlerInterface && $integrationAnswer->getNumeroProtocollo() === null) {
+      try {
+        $this->handler->protocolPredisposedAttachment($pratica, $integrationAnswer);
+        $this->entityManager->persist($integrationAnswer);
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
+      } catch (\Exception $e) {
+        $this->logger->error("Errore nella predisposizione della pratica", ['pratica' => $pratica->getId()]);
+        $dispatchSuccess = false;
+      }
+    }
+
     if ($dispatchSuccess) {
       $integrationRequest->markAsDone();
       $this->entityManager->persist($integrationRequest);
@@ -285,16 +312,18 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
   public function protocollaRisposta(Pratica $pratica)
   {
     $this->validateRisposta($pratica);
+    
+    $rispostaOperatore = $pratica->getRispostaOperatore();
 
-    if ($pratica->getRispostaOperatore()->getNumeroProtocollo() === null) {
+    if ($rispostaOperatore->getNumeroProtocollo() === null) {
       $this->logger->debug(__METHOD__, ['pratica' => $pratica->getId()]);
       $this->handler->sendRispostaToProtocollo($pratica);
-      $this->logger->notice('Sending risposta operatore as allegato : id ' . $pratica->getRispostaOperatore()->getId());
+      $this->logger->notice('Sending risposta operatore as allegato : id ' . $rispostaOperatore->getId());
     }
 
     try {
-      $this->validateRispostaUploadFile($pratica, $pratica->getRispostaOperatore());
-      $this->handler->sendAllegatoRispostaToProtocollo($pratica, $pratica->getRispostaOperatore());
+      $this->validateRispostaUploadFile($pratica, $rispostaOperatore);
+      $this->handler->sendAllegatoRispostaToProtocollo($pratica, $rispostaOperatore);
     } catch (AlreadyUploadException $e) {
       $this->logger->error($e->getMessage());
     }
@@ -306,6 +335,17 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         $this->handler->sendAllegatoRispostaToProtocollo($pratica, $allegato);
       } catch (AlreadyUploadException $e) {
         $this->logger->error($e->getMessage());
+      }
+    }
+
+    // Predispose document
+    if ($this->handler instanceof PredisposedProtocolHandlerInterface && $rispostaOperatore->getNumeroProtocollo() === null) {
+      try {
+        $this->handler->protocolPredisposedAttachment($pratica, $rispostaOperatore);
+        $this->entityManager->persist($rispostaOperatore);
+      } catch (\Exception $e) {
+        $this->logger->error("Errore nella predisposizione della pratica", ['pratica' => $pratica->getId()]);
+        $dispatchSuccess = false;
       }
     }
 
