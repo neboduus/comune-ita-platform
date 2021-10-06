@@ -29,6 +29,7 @@ use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -519,5 +520,25 @@ class PraticaManager
     }
 
     return $user;
+  }
+
+  /**
+   * @param array $data
+   * @param CPSUser $user
+   * @throws Exception
+   */
+  public function validateUserData(array $data, CPSUser $user)
+  {
+    if (strcasecmp($data['applicant.data.fiscal_code.data.fiscal_code'], $user->getCodiceFiscale()) != 0) {
+      throw new Exception($this->translator->trans('steps.formio.fiscalcode_violation_message'));
+    }
+
+    if (strcasecmp($data['applicant.data.completename.data.name'], $user->getNome()) != 0) {
+      throw new Exception($this->translator->trans('steps.formio.name_violation_message'));
+    }
+
+    if (strcasecmp($data['applicant.data.completename.data.surname'], $user->getCognome()) != 0) {
+      throw new Exception($this->translator->trans('steps.formio.surname_violation_message'));
+    }
   }
 }
