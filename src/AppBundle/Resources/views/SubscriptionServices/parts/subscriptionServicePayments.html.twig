@@ -8,6 +8,7 @@
             {{ 'backoffice.integration.subscription_service.payment.import' | trans }}
         </button>
     </div>
+    <p class="text-secondary font-italic mt-2">{{ 'backoffice.integration.subscription_service.payment.meta_available_placeholders' | trans }}</p>
     <div class="row">
         <div class="col-6">
             <div class="form-group">
@@ -127,6 +128,7 @@
     {% if form.subscription_payments|length > 0 %}
       {% for payment in form.subscription_payments %}
         <div class="js-payment-item">
+          <p class="text-secondary font-italic mt-2">{{ 'backoffice.integration.subscription_service.payment.meta_available_placeholders' | trans }}</p>
           <div id="appbundle_subscriptionservice_subscription_payments___name__">
             <div class="row">
               <div class="col-6">

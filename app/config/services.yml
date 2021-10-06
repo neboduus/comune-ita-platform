@@ -31,7 +31,7 @@ services:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
 
   AppBundle\Controller\Rest\APIController:
-    arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service']
+    arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.instance_service' ]
 
   AppBundle\Controller\Rest\ServicesAPIController:
     autowire: true
@@ -155,7 +155,7 @@ services:
       - { name: form.type }
 
   AppBundle\Form\ApplicationMessageType:
-    arguments: ['@doctrine.orm.entity_manager']
+    arguments: [ '@doctrine.orm.entity_manager' ]
     tags:
       - { name: form.type }
 
@@ -318,7 +318,7 @@ services:
 
   ocsdc.cache_listener:
     class: AppBundle\EventListener\ResponseListener
-    arguments: ["%cache_max_age%"]
+    arguments: [ "%cache_max_age%" ]
     tags:
       - { name: kernel.event_listener, event: kernel.response, priority: -10000 }
 
@@ -378,6 +378,19 @@ services:
     class: AppBundle\Services\MailerService
     arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', "@ocsdc.io_service", "@ocsdc.pratica_placeholder_service" ]
 
+
+  ocsdc.subscriptions_service:
+    class: AppBundle\Services\SubscriptionsService
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@ocsdc.instance_service'
+      - '@ocsdc.mailer'
+      - '@translator'
+      - '@logger'
+      - '@router'
+      - '%ocsdc_scheme%'
+      - '%ocsdc_host%'
+      - '%default_from_email_address%'
 
   AppBundle\Services\ModuloPdfBuilderService:
     arguments:
@@ -1092,7 +1105,7 @@ services:
 
   ocsdc.logout_success_handler:
     class: AppBundle\Security\LogoutSuccessHandler
-    arguments: ['@router', "%single_logout_url%"]
+    arguments: [ '@router', "%single_logout_url%" ]
 
   AppBundle\Services\UserSessionService:
     autowire: true

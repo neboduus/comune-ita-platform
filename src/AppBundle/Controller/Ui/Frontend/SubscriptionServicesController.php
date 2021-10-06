@@ -96,10 +96,10 @@ class SubscriptionServicesController extends Controller
   }
 
   /**
-   * @Route("/operatori/subscription-service-csv",name="operatori_subscriptions_template_csv")
+   * @Route("/operatori/subscribers-template-csv",name="operatori_download_subscribers_template_csv")
    * @param Request $request
    */
-  public function indexCSVAction(Request $request)
+  public function downloadSubscribersTemplateAction(Request $request)
   {
     $responseCallback = function () use ($request) {
       $csvHeaders = $this->container->get(SubcriptionsBackOffice::class)->getRequiredHeaders();
@@ -109,7 +109,39 @@ class SubscriptionServicesController extends Controller
       fclose($handle);
     };
 
-    $fileName = 'template.csv';
+    $fileName = 'subscribers_template.csv';
+    $response = new StreamedResponse();
+    $response->headers->set('Content-Encoding', 'none');
+    $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+    $response->headers->set('X-Accel-Buffering', 'no');
+    $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $fileName
+    ));
+    $response->headers->set('Content-Description', 'File Transfer');
+    $response->setStatusCode(Response::HTTP_OK);
+    $response->setCallback($responseCallback);
+    $response->send();
+  }
+
+  /**
+   * @Route("/operatori/subscriprion-payments-template-csv",name="operatori_download_subscription_payments_template_csv")
+   * @param Request $request
+   */
+  public function downloadSubscriptionPaymentsTemplateAction(Request $request)
+  {
+    $responseCallback = function () use ($request) {
+      $csvHeaders = array(
+        'fiscal_code',
+        'amount'
+      );
+
+      $handle = fopen('php://output', 'w');
+      fputcsv($handle, $csvHeaders);
+      fclose($handle);
+    };
+
+    $fileName = 'subscription_payments_template.csv';
     $response = new StreamedResponse();
     $response->headers->set('Content-Encoding', 'none');
     $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
