@@ -6,10 +6,12 @@ namespace AppBundle\Controller\Ui\Frontend;
 use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\OperatoreUser;
+use AppBundle\Entity\Servizio;
+use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
-use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\SubscriptionsService;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
@@ -18,8 +20,9 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
-use stdClass;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,16 +49,21 @@ class SubscriptionsController extends Controller
    */
   private $translator;
   /**
-   * @var ModuloPdfBuilderService
+   * @var SubscriptionsService
    */
-  private $pdfBuilderService;
+  private $subscriptionsService;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
-  public function __construct(EntityManager $entityManager, ModuloPdfBuilderService $pdfBuilderService, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice)
+  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
     $this->entityManager = $entityManager;
+    $this->logger = $logger;
     $this->translator = $translator;
-    $this->pdfBuilderService = $pdfBuilderService;
+    $this->subscriptionsService = $subscriptionsService;
   }
 
   /**
@@ -68,19 +76,19 @@ class SubscriptionsController extends Controller
     $user = $this->getUser();
 
     $table = $this->createDataTable()
-      ->add('show', TextColumn::class, ['label' => 'show', 'field' => 'subscriber.id', 'searchable' => false, 'orderable' => false, 'render' => function ($value, $subscriptionService) {
+      ->add('show', TextColumn::class, ['label' => 'iscrizioni.subscribers.show', 'field' => 'subscriber.id', 'searchable' => false, 'orderable' => false, 'render' => function ($value, $subscriptionService) {
         return sprintf('<a href="%s"><svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-zoom-in"></use></svg></a>', $this->generateUrl('operatori_subscriber_show', [
           'subscriber' => $value
         ]), $value);
       }])
-      ->add('name', TextColumn::class, ['label' => 'name', 'field' => 'subscriber.name', 'searchable' => true])
-      ->add('surname', TextColumn::class, ['label' => 'surname', 'field' => 'subscriber.surname', 'searchable' => true])
-      ->add('fiscal_code', TextColumn::class, ['label' => 'fiscal_code', 'field' => 'subscriber.fiscal_code', 'searchable' => true])
-      ->add('email', TextColumn::class, ['label' => 'email_address', 'field' => 'subscriber.email', 'render' => function ($value, $subscriptionService) {
+      ->add('name', TextColumn::class, ['label' => 'iscrizioni.subscribers.name', 'field' => 'subscriber.name', 'searchable' => true])
+      ->add('surname', TextColumn::class, ['label' => 'iscrizioni.subscribers.surname', 'field' => 'subscriber.surname', 'searchable' => true])
+      ->add('fiscal_code', TextColumn::class, ['label' => 'iscrizioni.subscribers.fiscal_code', 'field' => 'subscriber.fiscal_code', 'searchable' => true])
+      ->add('email', TextColumn::class, ['label' => 'iscrizioni.subscribers.email_address', 'field' => 'subscriber.email', 'render' => function ($value, $subscriptionService) {
         return sprintf('<a href="mailto:%s"><div class="text-truncate">%s</div></a>', $value, $value);
       }])
-      ->add('created_at', DateTimeColumn::class, ['label' => 'created_at', 'format' => 'd/m/Y', 'searchable' => false])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable' => false, 'render' => function ($value, $subscriptionService) {
+      ->add('created_at', DateTimeColumn::class, ['label' => 'iscrizioni.subscribers.created_at', 'format' => 'd/m/Y', 'searchable' => false])
+      ->add('id', TextColumn::class, ['label' => 'iscrizioni.subscribers.actions', 'searchable' => false, 'render' => function ($value, $subscriptionService) {
         return sprintf('
         <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s" onclick="return confirm(\'Sei sicuro di procedere? la sottoscrizione verrà eliminato definitivamente.\');"><svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg></a>
         <a class="btn btn-danger btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s" onclick="return confirm(\'Sei sicuro di procedere? la sottoscrizione verrà eliminato definitivamente.\');">Elimina</a>',
@@ -107,7 +115,7 @@ class SubscriptionsController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render( '@App/Subscriptions/showSubscriptions.html.twig', [
+    return $this->render('@App/Subscriptions/showSubscriptions.html.twig', [
       'user' => $user,
       'datatable' => $table, 'subscriptionService' => $subscriptionService
     ]);
@@ -115,7 +123,133 @@ class SubscriptionsController extends Controller
 
   /**
    * @param Request $request
-   * @Route("/operatori/subscriptions/{subscriptionService}/upload",name="operatori_importa_csv_iscrizioni")
+   * @Route("/operatori/subscriptions/{subscriptionService}/upload-payment",name="operatori_import_payments_csv")
+   * @Method("POST")
+   * @return mixed
+   * @throws \Exception
+   */
+  public function paymentsCsvUploadAction(Request $request, SubscriptionService $subscriptionService)
+  {
+    $uploadedFile = $request->files->get('upload');
+    $paymentIdentifier = $request->get('payment');
+    if (empty($uploadedFile)) {
+      return new JsonResponse(
+        ["errors" => [$this->translator->trans('iscrizioni.missing_file')]],
+        Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    if ($uploadedFile->getMimeType() != 'text/csv' && ($uploadedFile->getMimeType() == 'text/plain' && $uploadedFile->guessClientExtension() != 'csv')) {
+      return new JsonResponse(
+        ['errors' => [$this->translator->trans('iscrizioni.invalid_file')]],
+        Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    $rows = $this->csv_to_array($uploadedFile->getPathname(), $this->detectDelimiter($uploadedFile));
+
+    // Search subscription payment configuration
+    $paymentConfig = null;
+    foreach ($subscriptionService->getSubscriptionPayments() as $payment) {
+      if ($payment->getPaymentIdentifier() === $paymentIdentifier) {
+        $paymentConfig = $payment;
+      }
+    }
+
+    if (!$paymentConfig) {
+      return new JsonResponse(
+        ['errors' => [$this->translator->trans('iscrizioni.missing_payment_config', ['%identifier%' => $paymentIdentifier])]],
+        Response::HTTP_BAD_REQUEST);
+    }
+
+    $service = $this->entityManager->getRepository(Servizio::class)->find($paymentConfig->getPaymentService());
+    if (!$service) {
+      return new JsonResponse(
+        ['errors' => [$this->translator->trans('iscrizioni.no_payment_service')]],
+        Response::HTTP_BAD_REQUEST);
+    }
+
+    if (!$rows) {
+      return new JsonResponse(
+        ['errors' => [$this->translator->trans('iscrizioni.empty_file')]],
+        Response::HTTP_BAD_REQUEST);
+    }
+
+    if (!array_key_exists('fiscal_code', $rows[0]) || !array_key_exists('amount', $rows[0])) {
+      return new JsonResponse(
+        ['errors' => [$this->translator->trans('backoffice.integration.fields_error')]],
+        Response::HTTP_BAD_REQUEST);
+    }
+
+    $errors = [];
+    $applications = [];
+
+
+    foreach ($rows as $row) {
+      $subscriber = $this->entityManager->getRepository(Subscriber::class)->findOneBy(['fiscal_code' => $row['fiscal_code']]);
+      if (!$subscriber) {
+        $errors[] = $this->translator->trans('iscrizioni.missing_subscriber', ['%fiscal_code%' => $row['fiscal_code']]);
+        continue;
+      }
+
+      $subscription = $this->entityManager->getRepository(Subscription::class)->findOneBy([
+        'subscriber' => $subscriber,
+        'subscription_service' => $subscriptionService
+      ]);
+
+      if (!$subscription) {
+        $errors[] = $this->translator->trans('iscrizioni.missing_subscription', ['%fiscal_code%' => $row['fiscal_code']]);
+        continue;
+      }
+
+      $users = [];
+      $user = $this->entityManager->getRepository(CPSUser::class)->findOneBy(['codiceFiscale' => $subscriber->getFiscalCode()]);
+      if ($user) {
+        // Create draft for subscription owner
+        $users[] = $user;
+      }
+
+      // Create draft for subscription delegates
+      foreach ($subscription->getRelatedCFs() as $relatedCF) {
+        $user = $this->entityManager->getRepository(CPSUser::class)->findOneBy(['username' => $relatedCF]);
+        if ($user) {
+          $users[] = $user;
+        }
+      }
+
+      $uniqueId = trim($paymentConfig->getPaymentIdentifier() . '_' . $subscription->getSubscriptionService()->getId() . '_' . $subscription->getSubscriber()->getFiscalCode());
+      $dematerializedData = SubscriptionsService::getDematerializedFormForPayment($paymentConfig, $subscription, $row['amount'], $uniqueId);
+
+      foreach ($users as $user) {
+        // Check if application has already been created
+        $results = $this->subscriptionsService->getDraftsApplicationForUser($user, $service, $uniqueId);
+
+        if (!$results) {
+          $application = $this->get('ocsdc.pratica_manager')->createDraftApplication($service, $user, $dematerializedData);
+          $this->logger->info("Payment draft application created for user " . $user->getId() . "and identifier " . $paymentConfig->getPaymentIdentifier());
+          $applications[] = $application;
+          $this->subscriptionsService->sendEmailForDraftApplication($application, $subscription);
+
+        } else {
+          $this->logger->info("Payment draft application already exists for user " . $user->getId() . "and identifier " . $paymentConfig->getPaymentIdentifier());
+          $errors[] = $this->translator->trans('iscrizioni.application_already_exists', [
+            '%user_fiscal_code%' => $user->getCodiceFiscale(),
+            '%subscriber_fiscal_code%' => $subscriber->getFiscalCode()
+          ]);
+        }
+      }
+    }
+
+    if (count($applications) > 0) {
+      $this->addFlash('success', $this->translator->trans('iscrizioni.drafts_created', ["%num_applications%" => count($applications)]));
+    }
+
+    return new JsonResponse(
+      ['errors' => $errors, 'applications' => $applications],
+      $errors ? Response::HTTP_BAD_REQUEST : Response::HTTP_OK);
+  }
+
+  /**
+   * @param Request $request
+   * @Route("/operatori/subscriptions/{subscriptionService}/upload-subscribers",name="operatori_importa_csv_iscrizioni")
    * @Method("POST")
    * @return mixed
    * @throws \Exception
@@ -124,46 +258,59 @@ class SubscriptionsController extends Controller
   {
     $uploadedFile = $request->files->get('upload');
     if (empty($uploadedFile)) {
-      return new Response('Error: no file imported', Response::HTTP_UNPROCESSABLE_ENTITY,
-        ['content-type' => 'text/plain']);
+      return new JsonResponse(
+        ["errors" => [$this->translator->trans('iscrizioni.missing_file')]],
+        Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     if ($uploadedFile->getMimeType() != 'text/csv' && ($uploadedFile->getMimeType() == 'text/plain' && $uploadedFile->guessClientExtension() != 'csv')) {
-      return new Response('Invalid file', Response::HTTP_UNPROCESSABLE_ENTITY,
-        ['content-type' => 'text/plain']);
+      return new JsonResponse(
+        ['errors' => [$this->translator->trans('iscrizioni.invalid_file')]],
+        Response::HTTP_UNPROCESSABLE_ENTITY);
     }
-    $rows = $this->csv_to_array($uploadedFile->getPathname());
 
-    // create response object
-    $response = new stdClass();
-    $response->errors = [];
+    $rows = $this->csv_to_array($uploadedFile->getPathname(), $this->detectDelimiter($uploadedFile));
+    $errors = [];
+    $subscriptions = [];
 
     // If subscriptions limits exceedes available space skip import
     if ($subscriptionService->getSubscribersLimit() && $subscriptionService->getSubscribersLimit() - $subscriptionService->getSubscriptions()->count() < count($rows)) {
-      $response->errors[] = ['error' => 'Il numero di iscrizioni è superiore al numero massimo consentito'];
-    } else {
-      foreach ($rows as $row) {
-        // No code provided: set default to current subscription service
-        if (!array_key_exists('code', $row)) {
-          $row['code'] = $subscriptionService->getCode();
+      return new JsonResponse(
+        ['errors' => [$this->translator->trans('iscrizioni.subscriptions_limit_reached')]],
+        Response::HTTP_BAD_REQUEST);
+    }
+
+    foreach ($rows as $row) {
+      // No code provided: set default to current subscription service
+      if (!array_key_exists('code', $row)) {
+        $row['code'] = $subscriptionService->getCode();
+      }
+
+
+      if ($row['code'] == $subscriptionService->getCode()) {
+        $subscription = $this->subscriptionsBackOffice->execute($row);
+        if (!$subscription instanceof Subscription) {
+          $errors[] = $subscription["error"];
+        } else {
+          $subscriptions[] = $subscription;
         }
-        if ($row['code'] == $subscriptionService->getCode()) {
-          $subscription = $this->subscriptionsBackOffice->execute($row);
-          if (!$subscription instanceof Subscription) {
-            // error
-            $response->errors[] = $subscription;
-          }
-        }
+      } else {
+        $errors[] = [$this->translator->trans(
+          'iscrizioni.import_invalid_code',
+          ['%code%' => $row['code']]
+        )];
       }
     }
 
     // Remove duplicates
-    $response->errors = array_map('unserialize', array_unique(array_map('serialize', $response->errors)));
-    if (count($response->errors) > 0) {
-      return new Response(json_encode($response), Response::HTTP_BAD_REQUEST, ['content-type' => 'application/json']);
-    } else {
-      return new Response("Subscriptions correctly imported", Response::HTTP_OK, ['content-type' => 'text/plain']);
+    $errors = array_unique($errors);
+
+    if (count($subscriptions) > 0) {
+      $this->addFlash('success', $this->translator->trans('iscrizioni.subscriptions_created', ["%num_subscriptions%" => count($subscriptions)]));
     }
+    return new JsonResponse(
+      ['errors' => $errors, 'subscriptions' => $subscriptions],
+      $errors ? Response::HTTP_BAD_REQUEST : Response::HTTP_OK);
   }
 
   /**
@@ -228,6 +375,25 @@ class SubscriptionsController extends Controller
     return $data;
   }
 
+  protected function detectDelimiter($csvFile)
+  {
+    $delimiters = array(
+      ';' => 0,
+      ',' => 0,
+      "\t" => 0,
+      "|" => 0
+    );
+
+    $handle = fopen($csvFile, "r");
+    $firstLine = fgets($handle);
+    fclose($handle);
+    foreach ($delimiters as $delimiter => &$count) {
+      $count = count(str_getcsv($firstLine, $delimiter));
+    }
+
+    return array_search(max($delimiters), $delimiters);
+  }
+
   /**
    * @Route("/subscriptions/", name="subscriptions_list_cpsuser")
    * @return Response
@@ -259,7 +425,7 @@ class SubscriptionsController extends Controller
       $userSubscriptions[] = $this->entityManager->getRepository('AppBundle:Subscription')->find($id);
     }
 
-    return $this->render( '@App/Subscriptions/cpsUserListSubscription.html.twig', [
+    return $this->render('@App/Subscriptions/cpsUserListSubscription.html.twig', [
       'subscriptions' => $userSubscriptions,
       'user' => $user
     ]);
@@ -287,7 +453,7 @@ class SubscriptionsController extends Controller
       return $this->redirectToRoute('subscriptions_list_cpsuser');
     }
 
-    return $this->render( '@App/Subscriptions/cpsUserShowSubscription.html.twig', [
+    return $this->render('@App/Subscriptions/cpsUserShowSubscription.html.twig', [
       'subscription' => $subscription,
       'user' => $user
     ]);
@@ -317,7 +483,7 @@ class SubscriptionsController extends Controller
       return $this->redirectToRoute('subscriptions_list_cpsuser');
     }
 
-    return $this->render( '@App/Subscriptions/cpsUserShowSubscriptionPayment.html.twig', [
+    return $this->render('@App/Subscriptions/cpsUserShowSubscriptionPayment.html.twig', [
       'payment' => $subscriptionPayment,
       'user' => $user
     ]);

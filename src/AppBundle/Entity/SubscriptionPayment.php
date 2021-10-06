@@ -57,7 +57,7 @@ class SubscriptionPayment
   private $description;
 
   /**
-   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Subscription", inversedBy="subscription_payments")
+   * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Subscription", inversedBy="subscriptionPayments")
    * @ORM\JoinColumn(nullable=false)
    * @SWG\Property(description="Subscription payment")
    */

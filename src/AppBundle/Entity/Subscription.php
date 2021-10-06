@@ -76,7 +76,7 @@ class Subscription
    */
   public function __toString()
   {
-    return (string)$this->getCode();
+    return (string)$this->getSubscriptionService()->getCode();
   }
 
   /**

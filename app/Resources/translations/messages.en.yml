@@ -324,7 +324,6 @@ STATUS_PENDING_AFTER_INTEGRATION: 'Taking charge following integrations'
 STATUS_PROCESSING: 'Processing'
 STATUS_WITHDRAW: 'Withdrawed'
 iscrizioni:
-  iscrizioni: "Subscriptions"
   le_mie_iscrizioni: "My subscriptions"
   iscrizioni_delegate: "Available subscriptions"
   no_iscrizioni: "No subscriptions available"
@@ -335,14 +334,56 @@ iscrizioni:
   modifica_negata: "You don't have the permission to edit this subscriptionq"
   torna_alle_iscrizioni: "Back to subscriptions"
   torna_all_iscrizione: "Back to the subscription"
+  back_to_service: "Torna al servizio"
+  back_to_list: "Torna alla lista"
+  payments: "Pagamenti"
+  subscriptions: "Iscrizioni"
+  subscriber_data: "Scheda personale"
+  messages: "Messaggi"
+  import: 'Importazioni'
+  export: 'Esportazioni'
+  import_payments: 'Importa pagamenti'
+  import_subscriptions: 'Importa iscrizioni'
+  import_success: "Importazione avvenuta con successo"
+  import_error: "Si è verificato un errore durante l'importazione"
+  import_invalid_code: "Il codice %code% non coincide con il servizio selezionato"
+  missing_file: "Nessun file selezionato"
+  invalid_file: "Il file selezionato non è valido"
+  empty_file: "Il file selezionato è vuoto"
+  subscriptions_limit_reached: "Il numero di iscrizioni è superiore al numero massimo consentito"
+  no_payments_config: "Nessun sono presenti configurazioni di pagamento"
+  missing_payment_config: "Nessun pagamento trovato con identificativo %identifier%"
+  no_payment_service: 'Il servizio specificato nella configurazione di pagamento non esiste'
+  missing_subscriber: 'Non è stato trovato un iscritto con codice fiscale %fiscal_code%'
+  missing_subscription: "L'utente %fiscal_code% non risulta iscritto a questo servizio a sottoscrizione"
+  application_already_exists: "La pratica di pagamento a nome di %user_fiscal_code% per l'iscritto %subscriber_fiscal_code% è già presente"
+  drafts_created: '%num_applications% pratiche create correttamente'
+  subscriptions_created: '%num_subscriptions% iscrizioni importate correttamente'
+  select_payment_config: 'Seleziona una configurazione di pagamento'
+  cancel: 'Annulla'
+  send: 'Invia'
+  upload_csv: 'Carica file csv'
+  modals:
+    payments_header: 'In questa sezione è possibile importare pagamenti e creare delle pratiche di pagamento in bozza
+                attraverso un file di tipo CSV ben definito. Per procedere:'
+    subscriptions_header: 'In questa sezione è possibile importare iscrizioni attraverso un file di tipo CSV ben definito. Per
+                procedere:'
+    download_template: 'scaricare il template'
+    open_in_excel: 'aprilo con un foglio di calcolo come Excel o Openoffice'
+    payments_edit_file: "inserisci il codice fiscale degli iscritti e l'importo del pagamento uno per ogni riga, avendo cura di inserire tutte e sole le colonne indicate"
+    subscriptions_edit_file: "inserisci i dati degli iscritti uno per ogni riga, avendo cura di inserire tutte e sole le colonne indicate"
+    save_and_upload: 'salva il file e caricalo usando il pulsante Carica in questa pagina'
+    payments_check_errors: "controlla e correggi eventuali errori indicati al termine dell'importazione"
+    subscriptions_check_errors: "controlla nell'Elenco degli Iscritti che gli iscritti sono stati importati correttamente"
   condividi: "Share"
   condividi_con: "Share with"
   condividi_iscrizione: "Share subscription"
   descrizione_condividi: "To share this registration information with other people, please indicate their social security numbers in the space above"
   cf_non_valido: "The Tax Code %fiscal_code% is not valid"
+  share_helper: "Inserisci una lista di codici fiscali separati da virgola"
+  copy_application_helper: "Clicca per copiare l'id della pratica alla quale è associato il pagamento"
   data_inizio: "Starting date"
   data_fine: "Ending date"
-  pagamenti: "Payments"
   nome: "name"
   codice: "Code"
   descrizione: "Description"
@@ -375,6 +416,14 @@ iscrizioni:
   status_1: "Active"
   status_2: "Inactive"
   errore_salvataggio: "An error has occurred while saving the subscription"
+  subscribers:
+    show: 'Mostra'
+    name: 'Nome'
+    surname: 'Cognome'
+    fiscal_code: 'Codice fiscale'
+    email_address: 'Email'
+    created_at: 'Data iscrizione'
+    actions: 'Azioni'
 documenti:
   i_miei_documenti: "My documents"
   no_documenti: "No documents available"
@@ -2088,6 +2137,7 @@ backoffice:
         no_payments: "There are no payments"
         required: ""
         create_draft: ""
+        meta_available_placeholders: 'Sono disponibili i seguenti placeholders: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
         select_service: ""
         select_payment: ""
         select: ""

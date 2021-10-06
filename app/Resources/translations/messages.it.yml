@@ -343,7 +343,6 @@ STATUS_PROCESSING: 'In elaborazione'
 STATUS_WITHDRAW: 'Ritirata'
 STATUS_REVOKED: 'Annullata'
 iscrizioni:
-  iscrizioni: "Iscrizioni"
   le_mie_iscrizioni: "Le mie iscrizioni"
   iscrizioni_delegate: "Iscrizioni a cui ho accesso"
   no_iscrizioni: "Non sono presenti iscrizioni"
@@ -354,14 +353,56 @@ iscrizioni:
   modifica_negata: "Non hai i permessi necessari per modificare questa iscrizione"
   torna_alle_iscrizioni: "Torna alle iscrizioni"
   torna_all_iscrizione: "Torna all'iscrizione"
+  back_to_service: "Torna al servizio"
+  back_to_list: "Torna alla lista"
+  payments: "Pagamenti"
+  subscriptions: "Iscrizioni"
+  subscriber_data: "Scheda personale"
+  messages: "Messaggi"
+  import: 'Importazioni'
+  export: 'Esportazioni'
+  import_payments: 'Importa pagamenti'
+  import_subscriptions: 'Importa iscrizioni'
+  import_success: "Importazione avvenuta con successo"
+  import_error: "Si è verificato un errore durante l'importazione"
+  import_invalid_code: "Il codice %code% non coincide con il servizio selezionato"
+  missing_file: "Nessun file selezionato"
+  invalid_file: "Il file selezionato non è valido"
+  empty_file: "Il file selezionato è vuoto"
+  subscriptions_limit_reached: "Il numero di iscrizioni è superiore al numero massimo consentito"
+  no_payments_config: "Nessun sono presenti configurazioni di pagamento"
+  missing_payment_config: "Nessun pagamento trovato con identificativo %identifier%"
+  no_payment_service: 'Il servizio specificato nella configurazione di pagamento non esiste'
+  missing_subscriber: 'Non è stato trovato un iscritto con codice fiscale %fiscal_code%'
+  missing_subscription: "L'utente %fiscal_code% non risulta iscritto a questo servizio a sottoscrizione"
+  application_already_exists: "La pratica di pagamento a nome di %user_fiscal_code% per l'iscritto %subscriber_fiscal_code% è già presente"
+  drafts_created: '%num_applications% pratiche create correttamente'
+  subscriptions_created: '%num_subscriptions% iscrizioni importate correttamente'
+  select_payment_config: 'Seleziona una configurazione di pagamento'
+  cancel: 'Annulla'
+  send: 'Invia'
+  upload_csv: 'Carica file csv'
+  modals:
+    payments_header: 'In questa sezione è possibile importare pagamenti e creare delle pratiche di pagamento in bozza
+              attraverso un file di tipo CSV ben definito. Per procedere:'
+    subscriptions_header: 'In questa sezione è possibile importare iscrizioni attraverso un file di tipo CSV ben definito. Per
+              procedere:'
+    download_template: 'scaricare il template'
+    open_in_excel: 'aprilo con un foglio di calcolo come Excel o Openoffice'
+    payments_edit_file: "inserisci il codice fiscale degli iscritti e l'importo del pagamento uno per ogni riga, avendo cura di inserire tutte e sole le colonne indicate"
+    subscriptions_edit_file: "inserisci i dati degli iscritti uno per ogni riga, avendo cura di inserire tutte e sole le colonne indicate"
+    save_and_upload: 'salva il file e caricalo usando il pulsante Carica in questa pagina'
+    payments_check_errors: "controlla e correggi eventuali errori indicati al termine dell'importazione"
+    subscriptions_check_errors: "controlla nell'Elenco degli Iscritti che gli iscritti sono stati importati correttamente"
   condividi: "Condividi"
   condividi_con: "Condividi con"
   condividi_iscrizione: "Condividi iscrizione"
   descrizione_condividi: "Per condividere le informazioni di questa iscrizione con altre persone, indicare i codici fiscali nello spazio sovrastante"
   cf_non_valido: "Il codice fiscale %fiscal_code% non risulta essere un codice fiscale valido"
+  share_helper: "Inserisci una lista di codici fiscali separati da virgola"
+  copy_application_helper: "Clicca per copiare l'id della pratica alla quale è associato il pagamento"
   data_inizio: "Data di inizio"
   data_fine: "Data di fine"
-  pagamenti: "Pagamenti"
   nome: "Nome"
   codice: "Codice"
   descrizione: "Descrizione"
@@ -394,6 +435,14 @@ iscrizioni:
   status_1: "Attivo"
   status_2: "Non attivo"
   errore_salvataggio: "Si è verificato un errore durante il salvataggio dell'iscrizione"
+  subscribers:
+    show: 'Mostra'
+    name: 'Nome'
+    surname: 'Cognome'
+    fiscal_code: 'Codice fiscale'
+    email_address: 'Email'
+    created_at: 'Data iscrizione'
+    actions: 'Azioni'
 documenti:
   i_miei_documenti: "I miei documenti"
   no_documenti: "Non sono presenti documenti"
@@ -1907,9 +1956,9 @@ calendars:
     label: "Durata di un appuntamento in bozza (in minuti)"
     description: "Tempo per il quale uno slot viene riservato in attesa della conferma da parte dell'utente. Lo slot viene riservato quando viene scelto dal cittadino facendo click sullo slot e viene confermato quando invia la richiesta. Se l'appuntamento non viene confermato entro questo tempo, lo slot torna libero."
   type:
-      label: "Tipologia di appuntamento"
-      time_fixed_slots: "Appuntamenti a durata fissa"
-      time_variable_slots: "Appuntamenti a durata variabile"
+    label: "Tipologia di appuntamento"
+    time_fixed_slots: "Appuntamenti a durata fissa"
+    time_variable_slots: "Appuntamenti a durata variabile"
   rolling_days:
     label: "Disponibilità per le prenotazioni"
     text_before: "E' possibile prenotare in anticipo fino a"
@@ -2114,6 +2163,7 @@ backoffice:
         required: "Il pagamento è obblogatorio per tutti gli iscritti?"
         create_draft: "Crea automaticamente una pratica di pagamento in bozza prima della scadenza?"
         meta: "Metadati utili alla compilazione del servizio"
+        meta_available_placeholders: 'Sono disponibili i seguenti placeholders: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
         remove: "Elimina pagamento"
         add: "Aggiungi pagamento"
         select_service: "Seleziona servizio a sottoscrizione"

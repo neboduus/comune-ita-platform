@@ -23,6 +23,140 @@
   <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
 
   <script>
+    function getFileSize(uploadField, index = 0) {
+      let _size = uploadField.files[index].size;
+      let fSExt = ['Bytes', 'KB', 'MB', 'GB']
+      let i = 0;
+      while (_size > 900) {
+        _size /= 1024;
+        i++;
+      }
+      return (Math.round(_size * 100) / 100) + ' ' + fSExt[i];
+    }
+
+    $("#import_subscribers_btn").click(function (e) {
+      $("#import_subscribers_errors").html("");
+      let files = $('#subcribers_upload').prop('files');
+      if (files.length === 0) {
+        $("#import_subscribers_errors").append('<p class="text-danger"><svg class="icon-expand icon icon-sm icon-danger mr-2">' +
+          '<use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>' +
+          '</svg>{{ "iscrizioni.missing_file" | trans }}</p>');
+        return;
+      }
+
+      let data = new FormData();
+      data.append("upload", files[0]);
+
+      $.ajax({
+        url: $(this).attr('data-url'),
+        type: "post",
+        data: data,
+        processData: false, //tell jquery not to process data
+        contentType: false, //tell jquery not to set content-type
+        success: function (response, status, jqxhr) {
+        },
+        error: function (jqxhr) {
+          // todo: manage error
+          let errors = jqxhr.responseJSON.errors || [];
+          errors.forEach(function (error) {
+            $("#import_subscribers_errors").append(`<p class="text-danger"><svg class="icon-expand icon icon-sm icon-danger mr-2">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+          </svg>${error}</p>`);
+          })
+        },
+        complete: function (jqxhr) {
+          let subscriptions = jqxhr.responseJSON.subscriptions || [];
+          if (subscriptions.length > 0) {
+            $("#import_subscribers_success").append(`<p class="text-success"><svg class="icon-expand icon icon-sm icon-success mr-2">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+          </svg>${subscriptions.length} iscrizioni importate</p>`);
+          }
+        }
+      });
+    })
+
+    $("#import_payments_btn").click(function (e) {
+      $("#import_payments_errors").html("");
+      $("#import_payments_success").html("");
+
+      let files = $('#payments_upload').prop('files');
+      if (files.length === 0) {
+        $("#import_payments_errors").append('<p class="text-danger"><svg class="icon-expand icon icon-sm icon-danger mr-2">' +
+          '<use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>' +
+          '</svg>{{ "iscrizioni.missing_file" | trans }}</p>');
+        return
+      }
+      let paymentConfig = $('#select_payment').val();
+
+      let data = new FormData();
+      data.append("upload", files[0]);
+      data.append("payment", paymentConfig)
+
+      $.ajax({
+        url: $(this).attr('data-url'),
+        type: "post",
+        data: data,
+        processData: false, //tell jquery not to process data
+        contentType: false, //tell jquery not to set content-type
+        success: function (response, status, jqxhr) {
+        },
+        error: function (jqxhr) {
+          // todo: manage error
+          let errors = jqxhr.responseJSON.errors || [];
+
+          errors.forEach(function (error) {
+            $("#import_payments_errors").append(`<p class="text-danger"><svg class="icon-expand icon icon-sm icon-danger mr-2">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+          </svg>${error}</p>`);
+          })
+        },
+        complete: function (jqxhr) {
+          let applications = jqxhr.responseJSON.applications || [];
+          if (applications.length > 0) {
+            $("#import_payments_success").append(`<p class="text-success"><svg class="icon-expand icon icon-sm icon-success mr-2">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+          </svg>${applications.length} pratiche create</p>`);
+          }
+        }
+      });
+    })
+
+    // Add the following code if you want the name of the file appear on select
+    $("#subcribers_upload").on("change", function () {
+      $("#import_subscribers_errors").html("")
+
+      let fileName = $(this).val().split("\\").pop();
+      if (fileName) {
+        $('#subscribers_file').html(`<li class="upload-file success">
+      <svg class="icon icon-sm" aria-hidden="true"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use></svg>
+      <p>${fileName} <span class="upload-file-weight">${getFileSize(this)}</span></p>
+      <button disabled>
+        <svg class="icon icon-sm icon-success" aria-hidden="true"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use></svg>
+      </button>
+    </li>`);
+      } else {
+        $('.subscribers_file').innerHTML = "";
+      }
+    });
+
+    // Add the following code if you want the name of the file appear on select
+    $("#payments_upload").on("change", function () {
+      $("#import_payments_errors").html("");
+      $("#import_payments_success").html("");
+      var fileName = $(this).val().split("\\").pop();
+      if (fileName) {
+        $('#payments_file').html(`<li class="upload-file success">
+      <svg class="icon icon-sm" aria-hidden="true"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use></svg>
+      <p>${fileName} <span class="upload-file-weight">${getFileSize(this)}</span></p>
+      <button disabled>
+        <svg class="icon icon-sm icon-success" aria-hidden="true"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use></svg>
+      </button>
+    </li>`);
+      } else {
+        $('.payments_file').innerHTML = "";
+      }
+    });
+
     var oldExportAction = function (self, e, dt, button, config) {
       if (button[0].className.indexOf('buttons-excel') >= 0) {
         if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
@@ -79,9 +213,7 @@
       dt.ajax.reload();
     };
 
-    // Upload Editor - triggered from the import button. Used only for uploading a file to the browser
-
-    $(function () {
+    $(document).ready(function () {
       $('#subscriptions').initDataTables({{ datatable_settings(datatable) }}, {
         dom: 'fBrtip',
         searching: true,
@@ -90,32 +222,32 @@
         buttons: [
           {
             extend: 'excel',
-            text: '<i class="fas fa-file-excel"></i><span class="d-none d-xl-inline-block">&nbsp Esporta Excel</span>',
+            text: '<i class="fas fa-file-excel"></i><span class="ml-2">Excel</span>',
             title: 'Iscrizioni',
             action: newExportAction,
-            className: 'btn btn-sm btn-secondary'
+            className: 'btn btn-link'
           },
           {
             extend: 'csv',
-            text: '<i class="fas fa-file-csv"></i><span class="d-none d-xl-inline-block">&nbsp Esporta CSV</span>',
+            text: '<i class="fas fa-file-csv"></i><span class="ml-2">CSV</span>',
             title: 'Iscrizioni',
             action: newExportAction,
-            className: 'btn btn-sm btn-secondary'
+            className: 'btn btn-link'
           },
           {
             extend: 'pdf',
-            text: '<i class="fas fa-file-pdf"></i><span class="d-none d-xl-inline-block">&nbsp Esporta PDF</span>',
+            text: '<i class="fas fa-file-pdf"></i><span class="ml-2">PDF</span>',
             title: 'Iscrizioni',
             pageSize: 'LEGAL',
             action: newExportAction,
-            className: 'btn btn-sm btn-secondary'
+            className: 'btn btn-link'
           },
           {
             extend: 'print',
-            text: '<i class="fas fa-print"></i><span class="d-none d-xl-inline-block">&nbsp Stampa</span>',
+            text: '<i class="fas fa-print"></i><span class="ml-2">Stampa</span>',
             title: 'Iscrizioni',
             action: newExportAction,
-            className: 'btn btn-sm btn-secondary'
+            className: 'btn btn-link'
           }
         ],
         "language": {
@@ -147,9 +279,9 @@
         },
         initComplete: function () {
           // Add data-title attribute
-          $('#subscriptions thead tr th').each(function(index,element){
+          $('#subscriptions thead tr th').each(function (index, element) {
             index += 1;
-            $('tr td:nth-child('+index+')').attr('data-title', element.innerHTML);
+            $('tr td:nth-child(' + index + ')').attr('data-title', element.innerHTML);
           });
 
           // Use bootstrap buttons for pagination
@@ -157,15 +289,6 @@
           // Add margin bottom to datatables info
           $('#dt_info').css('margin-bottom', '0.85em')
 
-          let inputForm = '' +
-                  '<input type="file" id="file-input2" accept=".csv" class="upload">' +
-                  '<label for="file-input2" class="pt-2 pb-2 pr-3 pl-3 bg-secondary float-right">' +
-                  '    <i class="fas fa-upload"></i><span class="d-none d-xl-inline-block">&nbsp Importa CSV</span>' +
-                  '</label>' +
-                  '<a class="btn btn-sm btn-secondary mr-1" href="{{ path("operatori_subscriptions_template_csv") }}">' +
-                  '    <i class="fas fa-download"></i><span class="d-none d-xl-inline-block">&nbsp Template</span>' +
-                  '</a>';
-          $("div.dt-buttons").append(inputForm);
           $("#file-input2").on("change", function (e) {
             var fdata = new FormData();
 
@@ -183,11 +306,9 @@
                 // todo: manage error
                 let errors = jqxhr.responseJSON.errors || [];
                 errors.forEach(function (error) {
-                  let inputForm = `<div class="alert alert-danger alert-dismissible fade show" role="alert">${error.error}
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                   </div>`;
+                  let inputForm = `<p class="text-danger"><svg class="icon-expand icon icon-danger">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+          </svg>${error.error}</p>`;
                   $("#errors").append(inputForm);
                 })
               }
@@ -195,6 +316,13 @@
           });
         }
       }).then(function (dt) {
+        dt.buttons().container().children().each(function (index, elem) {
+          var listViewItem = document.createElement('li');
+          listViewItem.append(elem);
+          $('#export_list').append(listViewItem);
+        })
+        $("#dropdown_group").appendTo(".dt-buttons");
+        $('#dropdown_group').removeClass('d-none');
       })
     });
   </script>
@@ -206,39 +334,72 @@
     <div id="errors"></div>
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
-        {#<nav class="breadcrumb-container" aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ path('operatori_subscription-service_index') }}">Servizi a sottoscrizione</a></li>
-            <li class="breadcrumb-item"><a href="{{ path('operatori_subscription-service_show', { 'subscriptionService': subscriptionService.id }) }}">{{ subscriptionService.name }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Iscritti</li>
-          </ol>
-        </nav>#}
-        <h1> {{ subscriptionService.name }} / Iscritti</h1>
+        <h1> {{ subscriptionService.name }} / {{ 'iscrizioni.subscriptions' | trans }}</h1>
       </div>
-      <!--form method="post" action="{{ path('operatori_importa_csv_iscrizioni', { 'subscriptionService': subscriptionService.id }) }}" enctype="multipart/form-data">
-        <input name="upload" type="file" id="file" accept=".csv" class="upload">
-        <label for="file" style="float: right; padding: 12px 24px">
-          <svg class="icon icon-sm" aria-hidden="true">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-upload"></use>
-          </svg>
-          <span>Importa CSV</span>
-        </label>
-        <button type="submit">Invia</button>
-      </form-->
-
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         <div id="no-more-tables" class="table-striped">
-          <div id="subscriptions" style="margin: 10px"></div>
+          <div id="subscriptions"></div>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2 mx-2 my-2">
         <a class="btn btn-100 mr-1 btn-sm"
-           href="{{ path('operatori_subscription-service_show', { 'subscriptionService': subscriptionService.id }) }}">Torna
-          al servizio</a>
-        <a class="btn btn-100 btn-sm" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
+           href="{{ path('operatori_subscription-service_show', { 'subscriptionService': subscriptionService.id }) }}">{{ 'iscrizioni.back_to_service' | trans }}</a>
+        <a class="btn btn-100 btn-sm"
+           href="{{ path('operatori_subscription-service_index') }}">{{ 'iscrizioni.back_to_list' | trans }}</a>
       </div>
     </div>
+    <div id="dropdown_group" class="d-none">
+      <div class="btn-group">
+        <button id="export_button" type="button" class="btn btn-primary btn-xs dropdown-toggle"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <svg class="icon-expand icon icon-sm icon-light">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+          </svg>
+          {{ 'iscrizioni.export' | trans }}
+          <svg class="icon-expand icon icon-sm icon-light">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-expand"></use>
+          </svg>
+        </button>
+        <div class="dropdown-menu">
+          <div class="link-list-wrapper">
+            <ul class="link-list w-max-content" id="export_list">
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button id="import_button" type="button" class="btn btn-primary btn-xs dropdown-toggle"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <svg class="icon-expand icon icon-sm icon-light">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-upload"></use>
+          </svg>
+          {{ 'iscrizioni.import' | trans }}
+          <svg class="icon-expand icon icon-sm icon-light">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-expand"></use>
+          </svg>
+        </button>
+        <div class="dropdown-menu">
+          <div class="link-list-wrapper">
+            <ul class="link-list w-max-content">
+              <li>
+                <button type="button" class="btn btn-link" data-toggle="modal"
+                        data-target="#modal_import_subscriptions">
+                  <i class="fas fa-user-plus mr-2"></i><span>{{ 'iscrizioni.subscriptions' | trans }}</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#modal_import_payments">
+                  <i class="fas fa-credit-card mr-2"></i><span>{{ 'iscrizioni.payments' | trans }}</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ include('@App/SubscriptionServices/parts/subscriptionsModal.html.twig') }}
+    {{ include('@App/SubscriptionServices/parts/paymentsModal.html.twig') }}
   </section>
 {% endblock %}
