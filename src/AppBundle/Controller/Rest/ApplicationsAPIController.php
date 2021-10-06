@@ -405,7 +405,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
 
   /**
-   * Retreive an Applications
+   * Retreive an Application
    * @Rest\Get("/{id}", name="application_api_get")
    *
    * @SWG\Parameter(
@@ -506,11 +506,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function postApplicationAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
+    $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_ADMIN']);
 
     $applicationDto = new Application();
     $form = $this->createForm('AppBundle\Form\Rest\ApplicationFormType', $applicationDto);
@@ -536,12 +536,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Service uuid is not formally correct"], Response::HTTP_BAD_REQUEST);
     }
 
-    $schema = null;
     $result = $this->formServerService->getFormSchema($service->getFormIoId());
-    if ($result['status'] == 'success') {
-      $schema = $result['schema'];
+    if ($result['status'] != 'success') {
+      return $this->view(["There was an error on retrieve form schema"], Response::HTTP_BAD_REQUEST);
     }
-
+    $schema = $result['schema'];
     $flatSchema = $this->praticaManager->arrayFlat($schema, true);
     $flatData = $this->praticaManager->arrayFlat($applicationDto->getData());
 
@@ -566,18 +565,32 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data['flattened'] = $flatData;
     }
 
-    try {
-      $user = $this->em->getRepository('AppBundle:CPSUser')->find($applicationDto->getUser());
-      if (!$user instanceof CPSUser) {
-        $user = $this->praticaManager->checkUser($data);
+    if ($this->getUser() instanceof CPSUser) {
+      $user = $this->getUser();
+      try {
+        $this->praticaManager->validateUserData($flatData, $user);
+      } catch (\Exception $e) {
+        $data = [
+          'type' => 'error',
+          'title' => 'There was an error during save process',
+          'description' => $e->getMessage()
+        ];
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
-    } catch (DriverException $e) {
-      $user = $this->praticaManager->checkUser($data);
-    } catch (ORMException $e) {
-      $user = $this->praticaManager->checkUser($data);
-    } catch (\Exception $e) {
-      $this->logger->error($e->getMessage());
-      return $this->view(["Something is wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+    } else {
+      try {
+        $user = $this->em->getRepository('AppBundle:CPSUser')->find($applicationDto->getUser());
+        if (!$user instanceof CPSUser) {
+          $user = $this->praticaManager->checkUser($data);
+        }
+      } catch (DriverException $e) {
+        $user = $this->praticaManager->checkUser($data);
+      } catch (ORMException $e) {
+        $user = $this->praticaManager->checkUser($data);
+      } catch (\Exception $e) {
+        $this->logger->error($e->getMessage());
+        return $this->view(["Something is wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
+      }
     }
 
     try {
@@ -732,7 +745,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param Request $request
-   * @return \FOS\RestBundle\View\View
+   * @return View
    */
   public function updateApplicationBackofficeDataAction($id, Request $request)
   {
