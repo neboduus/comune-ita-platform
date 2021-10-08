@@ -261,7 +261,10 @@ class ServiziController extends Controller
     }
 
     $repoServices = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    $services = $repoServices->findBy(['topics' => $category->getId()]);
+    $services = $repoServices->findBy([
+      'topics' => $category->getId(),
+      'status' => Servizio::PUBLIC_STATUSES
+    ]);
 
     $response =  $this->render( '@App/Servizi/categoryDetail.html.twig', [
       'user' => $user,
