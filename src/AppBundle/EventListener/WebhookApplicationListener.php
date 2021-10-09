@@ -49,13 +49,14 @@ class WebhookApplicationListener
 
     $repo = $this->entityManager->getRepository('AppBundle:Webhook');
     $webhooks = $repo->findBy([
-      'trigger' => [$status, 'all']
+      'trigger' => [$status, 'all'],
+      'active' => true
     ]);
+
     if (count($webhooks) > 0 ) {
       foreach ($webhooks as $w) {
         try {
-          // todo: move in query?
-          if ( in_array('all', $w->getFilters()) || in_array($pratica->getServizio(), $w->getFilters())) {
+          if ( ('all' === $w->getTrigger() || $status === $w->getTrigger()) && (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array('all', $w->getFilters()))) {
             $this->webhookService->createApplicationWebhookAsync($pratica, $w);
           }
         }catch (AlreadyScheduledException $e){
