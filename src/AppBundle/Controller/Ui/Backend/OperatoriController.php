@@ -1069,34 +1069,6 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @Route("/{pratica}/pdf", name="operatori_pratiche_show_pdf")
-   * @param Request $request
-   * @param Pratica $pratica
-   *
-   * @return BinaryFileResponse
-   * @throws \Exception
-   */
-  public function showPdfAction(Request $request, Pratica $pratica)
-  {
-    $allegato = $this->moduloPdfBuilderService->showForPratica($pratica);
-
-    $fileName = $allegato->getOriginalFilename();
-    if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
-      $fileName .= '.' . $allegato->getFile()->getExtension();
-    }
-
-    return new BinaryFileResponse(
-      $allegato->getFile()->getPath() . '/' . $allegato->getFile()->getFilename(),
-      200,
-      [
-        'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
-      ]
-    );
-  }
-
-
-  /**
    * @Route("/list",name="operatori_list_by_ente")
    * @Security("has_role('ROLE_OPERATORE_ADMIN')")
    * @return array

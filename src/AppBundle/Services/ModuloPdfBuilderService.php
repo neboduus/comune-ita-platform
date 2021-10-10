@@ -32,7 +32,6 @@ use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -55,7 +54,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   const PRINTABLE_USERNAME = 'ez';
 
   /**
-   * @var Filesystem
+   * @var FileSystemService
    */
   private $filesystem;
 
@@ -124,7 +123,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   private $praticaPlaceholderService;
 
   /**
-   * @param Filesystem $filesystem
+   * @param FileSystemService $filesystem
    * @param EntityManagerInterface $em
    * @param TranslatorInterface $translator
    * @param PropertyMappingFactory $propertyMappingFactory
@@ -140,7 +139,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param PraticaPlaceholderService $praticaPlaceholderService
    */
   public function __construct(
-    Filesystem $filesystem,
+    FileSystemService $filesystem,
     EntityManagerInterface $em,
     TranslatorInterface $translator,
     PropertyMappingFactory $propertyMappingFactory,
@@ -274,36 +273,6 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica $pratica
-   *
-   * @return ModuloCompilato
-   * @throws Exception
-   */
-  public function showForPratica(Pratica $pratica)
-  {
-    $allegato = new ModuloCompilato();
-    $content = $this->renderForPratica($pratica);
-
-    $allegato->setOwner($pratica->getUser());
-    $destinationDirectory = $this->getDestinationDirectoryFromContext($allegato);
-    $fileName = $pratica->getId() . '-prot.pdf';
-    $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
-
-    $this->filesystem->dumpFile($filePath, $content);
-    $allegato->setFile(new File($filePath));
-    $allegato->setFilename($fileName);
-
-
-    $servizioName = $pratica->getServizio()->getName();
-    $now = new DateTime();
-    $now->setTimestamp($pratica->getSubmissionTime());
-    $allegato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi'));
-
-    return $allegato;
-  }
-
-
-  /**
-   * @param Pratica $pratica
    * @param RichiestaIntegrazioneDTO $integrationRequest
    *
    * @return RichiestaIntegrazione
@@ -335,7 +304,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $destinationDirectory = $this->getDestinationDirectoryFromContext($integration);
     $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
 
-    $this->filesystem->dumpFile($filePath, $content);
+    $this->filesystem->getFilesystem()->write($filePath, $content);
     $integration->setFile(new File($filePath));
     $integration->setFilename($fileName);
 
@@ -367,7 +336,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $destinationDirectory = $this->getDestinationDirectoryFromContext($attachment);
     $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
 
-    $this->filesystem->dumpFile($filePath, $content);
+    $this->filesystem->getFilesystem()->write($filePath, $content);
     $attachment->setFile(new File($filePath));
     $attachment->setFilename($fileName);
 
@@ -399,7 +368,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $destinationDirectory = $this->getDestinationDirectoryFromContext($response);
       $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
 
-      $this->filesystem->dumpFile($filePath, $content);
+      $this->filesystem->getFilesystem()->write($filePath, $content);
       $response->setFile(new File($filePath));
       $response->setFilename($fileName);
 
@@ -526,7 +495,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $mapping = $this->propertyMappingFactory->fromObject($moduloCompilato)[0];
     $path = $this->directoryNamer->directoryName($moduloCompilato, $mapping);
 
-    return $mapping->getUploadDestination() . '/' . $path;
+    return  $path;
   }
 
   /**
@@ -546,16 +515,16 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     if ($allegato instanceof RispostaOperatore) {
       $content = $this->renderForResponse($pratica);
-      $this->filesystem->dumpFile($filePath, $content);
+      $this->filesystem->getFilesystem()->write($filePath, $content);
     } else if ($allegato instanceof Ritiro) {
       $content = $this->renderForWithdraw($pratica);
-      $this->filesystem->dumpFile($filePath, $content);
+      $this->filesystem->getFilesystem()->write($filePath, $content);
     } else {
       $content = $this->renderForPratica($pratica);
-      $this->filesystem->dumpFile($filePath, $content);
+      $this->filesystem->getFilesystem()->write($filePath, $content);
     }
 
-    $allegato->setFile(new File($filePath));
+    $allegato->setFile(new File($filePath, false));
     $allegato->setFilename($fileName);
   }
 

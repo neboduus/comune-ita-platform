@@ -27,8 +27,7 @@ class DirectoryNamerService implements DirectoryNamerInterface
     if ($object instanceof Allegato) {
       $owner = $object->getOwner();
       if ($owner instanceof User && $this->isUserAwareAllegato($object)) {
-
-        return $object->getOwner()->getId();
+        return '/pratiche/allegati/' . $object->getOwner()->getId();
       } elseif ($this->isBOAAllegato($object)) {
 
         return date('Y/m-d/Hi', $object->getCreatedAt()->format('U'));

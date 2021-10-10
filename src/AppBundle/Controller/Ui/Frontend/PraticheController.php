@@ -747,38 +747,9 @@ class PraticheController extends Controller
   }
 
   /**
-   * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
-   * @param Request $request
-   * @param Pratica $pratica
-   *
-   * @return BinaryFileResponse
-   * @throws \Exception
-   */
-  public function showPdfAction(Request $request, Pratica $pratica)
-  {
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
-    $allegato = $this->pdfBuilderService->showForPratica($pratica);
-
-    $fileName = $allegato->getOriginalFilename();
-    if (substr($fileName, -3) != $allegato->getFile()->getExtension()) {
-      $fileName .= '.'.$allegato->getFile()->getExtension();
-    }
-
-    return new BinaryFileResponse(
-      $allegato->getFile()->getPath().'/'.$allegato->getFile()->getFilename(),
-      200,
-      [
-        'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
-      ]
-    );
-  }
-
-  /**
    * @Route("/{pratica}/delete", name="pratiche_delete")
    * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
    * @param Pratica $pratica
    *
    * @return RedirectResponse

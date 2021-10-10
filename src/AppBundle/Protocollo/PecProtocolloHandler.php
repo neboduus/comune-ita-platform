@@ -8,6 +8,7 @@ use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Services\FileService;
 use AppBundle\Services\MailerService;
 use Hoa\Event\Exception;
 use Psr\Log\LoggerInterface;
@@ -60,6 +61,10 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @var Swift_Mailer
    */
   private $mailer = null;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
    * PecProtocolloHandler constructor.
@@ -69,10 +74,11 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @param string $password
    * @param string $sender
    * @param TranslatorInterface $translator
-   * @param TemplatingExtension $templating
+   * @param TwigEngine $templating
    * @param LoggerInterface $logger
+   * @param FileService $fileService
    */
-  public function __construct(string $host, string $port, $user, $password, string $sender, TranslatorInterface $translator, TwigEngine $templating, LoggerInterface $logger)
+  public function __construct(string $host, string $port, string  $user, string  $password, string $sender, TranslatorInterface $translator, TwigEngine $templating, LoggerInterface $logger, FileService $fileService)
   {
     $this->host = $host;
     $this->port = $port;
@@ -90,6 +96,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
     // Create the Mailer using your created Transport
     $this->mailer = new Swift_Mailer($transport);
+    $this->fileService = $fileService;
   }
 
   public function getName()
@@ -131,8 +138,10 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $message = $this->setupMessage($pratica, $this->sender, $parameters['receiver'], self::TYPE_SEND_APPLICATION);
 
     if ($pratica->getModuliCompilati()->count() > 0 ) {
+      /** @var AllegatoInterface $moduloCompilato */
       $moduloCompilato = $pratica->getModuliCompilati()->first();
-      $message->attach(\Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname()));
+      $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFilename(), $this->fileService->getMimeType($moduloCompilato));
+      $message->attach($attachment);
     }
     $result = $this->mailer->send($message);
 
@@ -174,7 +183,8 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $this->checkParameters($parameters);
     $message = $this->setupMessage($pratica, $this->sender, $parameters['receiver'], self::TYPE_SEND_INTEGRATION);
 
-    $message->attach(\Swift_Attachment::fromPath($allegato->getFile()->getPathname()));
+    $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFilename(), $this->fileService->getMimeType($allegato));
+    $message->attach($attachment);
     $result = $this->mailer->send($message);
 
     if (!$result) {
@@ -194,7 +204,8 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
     $risposta = $pratica->getRispostaOperatore();
     if ($risposta != null ) {
-      $message->attach(\Swift_Attachment::fromPath($risposta->getFile()->getPathname()));
+      $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($risposta), $risposta->getFilename(), $this->fileService->getMimeType($risposta));
+      $message->attach($attachment);
     }
     $result = $this->mailer->send($message);
 
@@ -225,7 +236,8 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $this->checkParameters($parameters);
     $message = $this->setupMessage($pratica, $this->sender, $parameters['receiver'], self::TYPE_SEND_ATTACHMENT);
 
-    $message->attach(\Swift_Attachment::fromPath($allegato->getFile()->getPathname()));
+    $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFilename(), $this->fileService->getMimeType($allegato));
+    $message->attach($attachment);
     $result = $this->mailer->send($message);
 
     if (!$result) {

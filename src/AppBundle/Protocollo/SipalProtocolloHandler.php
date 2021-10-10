@@ -9,6 +9,7 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\OccupazioneSuoloPubblico;
 use AppBundle\Entity\Pratica;
 use AppBundle\Model\DefaultProtocolSettings;
+use AppBundle\Services\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
 use Psr\Log\LoggerInterface;
@@ -29,10 +30,19 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   const ACTION_ADD_ALLEGATO = 'addAllegato';
 
   private $logger;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
-  public function __construct(LoggerInterface $logger)
+  /**
+   * @param LoggerInterface $logger
+   * @param FileService $fileService
+   */
+  public function __construct(LoggerInterface $logger, FileService $fileService)
   {
     $this->logger = $logger;
+    $this->fileService = $fileService;
   }
 
   public function getName()
@@ -148,8 +158,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
       $attachmentType = 'S';
     }
 
-    $path = $allegato->getFile()->getPathname();
-    $fileContent = base64_encode(file_get_contents($path));
+    $fileContent = base64_encode($this->fileService->getAttachmentContent($allegato));
 
     $content = "<![CDATA[<datiin>
         <registro>".$parameters['sipal_registro']."</registro>

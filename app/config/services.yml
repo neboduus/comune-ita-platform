@@ -4,6 +4,24 @@ parameters:
 #    parameter_name: value
 
 services:
+  League\Flysystem\FilesystemInterface: '@sdc_filesystem'
+
+  ocsdc.s3_client:
+    class: Aws\S3\S3Client
+    arguments:
+      - version: '2006-03-01' # or 'latest'
+        region: '%s3_region%' # 'eu-central-1' for example
+        credentials:
+          key: '%s3_key%'
+          secret: "%s3_secret%"
+
+  ocsdc.filesystem:
+    class: AppBundle\Services\FileSystemService
+    arguments: [ '@oneup_flysystem.s3_filesystem_filesystem' ]
+    public: true
+
+  AppBundle\Services\FileService:
+    autowire: true
 
   ocsdc.meeting_service:
     class: AppBundle\Services\MeetingService
@@ -376,8 +394,8 @@ services:
 
   ocsdc.mailer:
     class: AppBundle\Services\MailerService
-    arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', "@ocsdc.io_service", "@ocsdc.pratica_placeholder_service" ]
-
+    autowire: true
+    #arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', "@ocsdc.io_service", "@ocsdc.pratica_placeholder_service" ]
 
   ocsdc.subscriptions_service:
     class: AppBundle\Services\SubscriptionsService
@@ -393,21 +411,11 @@ services:
       - '%default_from_email_address%'
 
   AppBundle\Services\ModuloPdfBuilderService:
+    autowire: true
     arguments:
-      - "@filesystem"
-      - "@doctrine.orm.default_entity_manager"
-      - "@translator"
-      - "@vich_uploader.property_mapping_factory"
-      - "@ocsdc.allegati.directory_namer"
-      - "%wkhtmltopdf_service%"
-      - "@templating"
-      - "%ocsdc_default_datetime_format%"
-      - "@router"
-      - "%ez_password%"
-      - '@ocsdc.pratica_status_service'
-      - "@ocsdc.schedule_action_service"
-      - "@logger"
-      - "@ocsdc.pratica_placeholder_service"
+      $wkhtmltopdfService: "%wkhtmltopdf_service%"
+      $dateTimeFormat: "%ocsdc_default_datetime_format%"
+      $printablePassword: "%ez_password%"
 
   ocsdc.webhook_service:
     class: AppBundle\Services\WebhookService
@@ -441,7 +449,6 @@ services:
     arguments:
       - '@AppBundle\Protocollo\ProtocolloHandlerRegistry'
 
-
   ocsdc.protocollo.handlers.dummy:
     class: AppBundle\Protocollo\DummyProtocolloHandler
     public: false
@@ -457,22 +464,23 @@ services:
   ocsdc.protocollo.handlers.pec:
     class: AppBundle\Protocollo\PecProtocolloHandler
     public: false
+    autowire: true
     arguments:
-      - "%pec_mailer_host%"
-      - "%pec_mailer_port%"
-      - "%pec_mailer_user%"
-      - "%pec_mailer_password%"
-      - "%pec_delivery_address%"
-      - "@translator"
-      - "@templating"
-      - "@logger"
+      $host: "%pec_mailer_host%"
+      $port: "%pec_mailer_port%"
+      $user:  "%pec_mailer_user%"
+      $password: "%pec_mailer_password%"
+      $sender: "%pec_delivery_address%"
     tags:
       - { name: ocsdc.protocollo.handler, alias: pec }
 
 
   ocsdc.protocollo.handlers.pitre:
     class: AppBundle\Protocollo\PiTreProtocolloHandler
-    arguments: [ "@ocsdc.protocollo.client", "%prefix%" ]
+    arguments:
+      $client: "@ocsdc.protocollo.client"
+      $instance: "%prefix%"
+    autowire: true
     public: false
     tags:
       - { name: ocsdc.protocollo.handler, alias: pitre }
@@ -480,7 +488,6 @@ services:
   ocsdc.protocollo.handlers.infor:
     class: AppBundle\Protocollo\InforProtocolloHandler
     autowire: true
-    #        arguments: ["@doctrine.orm.entity_manager",'@logger', '@ocsdc.allegati.directory_namer',  '@vich_uploader.property_mapping_factory' ]
     public: false
     tags:
       - { name: ocsdc.protocollo.handler, alias: infor }
@@ -972,7 +979,7 @@ services:
     arguments:
       - '@ocsdc.allegati.directory_namer'
       - '@vich_uploader.property_mapping_factory'
-      - '@filesystem'
+      - '@ocsdc.filesystem'
       - '@doctrine.orm.entity_manager'
     tags:
       - { name: 'validator.constraint_validator' }
@@ -1180,5 +1187,13 @@ services:
   security.access.meeting_voter:
     class: AppBundle\Security\Voters\MeetingVoter
     autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.attachment_voter:
+    class: AppBundle\Security\Voters\AttachmentVoter
+    autowire: true
+    arguments:
+      $hashValidity: '%hash_validity%'
     tags:
       - { name: security.voter }

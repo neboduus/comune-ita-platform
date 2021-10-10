@@ -85,6 +85,11 @@ services:
       METRICS_REDIS_HOST: ${METRICS_REDIS_HOST:-redis}
       METRICS_REDIS_PORT: ${METRICS_REDIS_PORT:-6379}
       METRICS_REDIS_PASSWORD: ${METRICS_REDIS_PASSWORD:-}
+      UPLOAD_DESTINATION: ${UPLOAD_DESTINATION:-local_filesystem}
+      S3_REGION: ${S3_REGION:-}
+      S3_KEY: ${S3_KEY:-}
+      S3_SECRET: ${S3_SECRET:-}
+      S3_BUCKET: ${S3_BUCKET:-}
 
       # Your Queue-it customer ID
       #QUEUEIT_CUSTOMER_ID: 'xxx'

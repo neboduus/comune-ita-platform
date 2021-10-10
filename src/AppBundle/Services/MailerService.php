@@ -18,7 +18,6 @@ use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
 use AppBundle\Model\Mailer;
 use AppBundle\Model\SubscriberMessage;
-use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Model\Transition;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -82,6 +81,10 @@ class MailerService
    * @var EntityManagerInterface
    */
   private $entityManager;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
    * MailerService constructor.
@@ -92,8 +95,9 @@ class MailerService
    * @param LoggerInterface $logger
    * @param IOService $ioService
    * @param PraticaPlaceholderService $praticaPlaceholderService
+   * @param FileService $fileService
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService)
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService, FileService $fileService)
   {
     $this->mailer = $mailer;
     $this->translator = $translator;
@@ -102,6 +106,7 @@ class MailerService
     $this->logger = $logger;
     $this->ioService = $ioService;
     $this->praticaPlaceholderService = $praticaPlaceholderService;
+    $this->fileService = $fileService;
   }
 
   /**
@@ -310,9 +315,10 @@ class MailerService
       if ($pratica->getModuliCompilati()->count() > 0) {
         /** @var ModuloCompilato $moduloCompilato */
         $moduloCompilato = $pratica->getModuliCompilati()->first();
-        if (is_file($moduloCompilato->getFile()->getPathname())) {
-          $attachment = \Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname());
-          $attachment->setFilename($moduloCompilato->getFile()->getFilename());
+        if ($this->fileService->fileExist($moduloCompilato)) {
+          /*$attachment = \Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname());
+          $attachment->setFilename($moduloCompilato->getFile()->getFilename());*/
+          $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFile()->getFilename(), $this->fileService->getMimeType($moduloCompilato));
           $message->attach($attachment);
         }
       }
@@ -323,9 +329,8 @@ class MailerService
       if ($pratica->getAllegatiOperatore()->count() > 0) {
         /** @var AllegatoOperatore $allegato */
         foreach ($pratica->getAllegatiOperatore() as $allegato) {
-          if (is_file($allegato->getFile()->getPathname())) {
-            $attachment = \Swift_Attachment::fromPath($allegato->getFile()->getPathname());
-            $attachment->setFilename($allegato->getFile()->getFilename());
+          if ($this->fileService->fileExist($allegato)) {
+            $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFile()->getFilename(), $this->fileService->getMimeType($allegato));
             $message->attach($attachment);
           }
         }
@@ -394,8 +399,9 @@ class MailerService
     if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
       if ($pratica->getModuliCompilati()->count() > 0) {
         $moduloCompilato = $pratica->getModuliCompilati()->first();
-        if (is_file($moduloCompilato->getFile()->getPathname())) {
-          $message->attach(\Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname()));
+        if ($this->fileService->fileExist($moduloCompilato)) {
+          $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFile()->getFilename(), $this->fileService->getMimeType($moduloCompilato));
+          $message->attach($attachment);
         }
       }
     }
