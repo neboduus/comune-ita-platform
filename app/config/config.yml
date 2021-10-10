@@ -292,4 +292,24 @@ artprima_prometheus_metrics:
     persistent_connections: true
     password: "%metrics_redis_password%"
 
-
+# Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle/tree/master/Resources/doc/index.md
+oneup_flysystem:
+  adapters:
+    s3_adapter:
+      awss3v3:
+        client: ocsdc.s3_client
+        bucket: "%s3_bucket%"
+        prefix: 'uploads'
+    local_adapter:
+      local:
+        directory: '%kernel.root_dir%/../var/uploads'
+  filesystems:
+    s3_filesystem:
+      adapter: s3_adapter
+      mount: s3_filesystem
+      # optional - defines the default visibility of the filesystem: `public` or `private`(default)
+      visibility: private
+      alias: sdc_filesystem
+    local_filesystem:
+      adapter: local_adapter
+      mount: local_filesystem

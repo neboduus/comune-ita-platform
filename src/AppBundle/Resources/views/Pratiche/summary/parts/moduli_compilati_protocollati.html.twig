@@ -1,22 +1,26 @@
 <p class="text-center m-2">
-{%  if user is defined and not user is null %}
-  {% set download_allegato_path = user.id == pratica.user.id ? 'pratiche_show_pdf' : 'operatori_pratiche_show_pdf' %}
-  <a href="{{ path(download_allegato_path, {'pratica': pratica.id}) }}" class="btn btn-lg btn-primary">
-    <i class="fa fa-download"></i>
-    {% if pratica.servizio.isProtocolRequired %}
-      {{ 'operatori.scarica_richiesta_protocollata'|trans }}
+  {% if pratica.servizio.isProtocolRequired %}
+    {% set button_text = 'operatori.scarica_richiesta_protocollata'|trans %}
+  {% else %}
+    {% set button_text = 'operatori.scarica_ricevuta'|trans %}
+  {% endif %}
+  {% if user is defined and not user is null %}
+    {% set attachment = pratica.moduliCompilati|first %}
+    {% if is_granted('ROLE_OPERATORE') %}
+      <a href="{{ path('allegati_download_operatore', {'allegato': attachment}) }}" class="btn btn-primary" download>
+        <i class="fa fa-download"></i>
+        {{ button_text }}
+      </a>
     {% else %}
-      {{ 'operatori.scarica_ricevuta'|trans }}
+      <a href="{{ path('allegati_download_cpsuser', {'allegato': attachment.id}) }}" class="btn btn-primary" download>
+        <i class="fa fa-download"></i>
+        {{ button_text }}
+      </a>
     {% endif %}
-  </a>
-{% else %}
-  <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.id, 'hash': pratica.hash}) }}" class="btn btn-lg btn-primary">
-    <i class="fa fa-download"></i>
-    {% if pratica.servizio.isProtocolRequired %}
-      {{ 'operatori.scarica_richiesta_protocollata'|trans }}
-    {% else %}
-      {{ 'operatori.scarica_ricevuta'|trans }}
-    {% endif %}
-  </a>
-{% endif %}
+  {% else %}
+    <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.id, 'hash': pratica.hash}) }}" class="btn btn-primary">
+      <i class="fa fa-download"></i>
+      {{ button_text }}
+    </a>
+  {% endif %}
 </p>

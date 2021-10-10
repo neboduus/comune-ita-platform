@@ -8,6 +8,7 @@ use AppBundle\Entity\IscrizioneRegistroAssociazioni;
 use AppBundle\Entity\OccupazioneSuoloPubblico;
 use AppBundle\Entity\Pratica;
 use AppBundle\Model\DefaultProtocolSettings;
+use AppBundle\Services\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
 use Psr\Log\LoggerInterface;
@@ -65,18 +66,24 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
 
   private $em;
   private $logger;
-  private $directoryNamer;
-  private $propertyMappingFactory;
 
   private $tempPemFile = false;
   private $tempKeyFile = false;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
-  public function __construct(EntityManagerInterface $em, LoggerInterface $logger, DirectoryNamerInterface $dn, PropertyMappingFactory $pmf)
+  /**
+   * @param EntityManagerInterface $em
+   * @param LoggerInterface $logger
+   * @param FileService $fileService
+   */
+  public function __construct(EntityManagerInterface $em, LoggerInterface $logger, FileService $fileService)
   {
-    $this->directoryNamer = $dn;
     $this->em = $em;
     $this->logger = $logger;
-    $this->propertyMappingFactory = $pmf;
+    $this->fileService = $fileService;
   }
 
   public function getName()
@@ -438,16 +445,11 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $riferimento->addChild('web:anno', $anno, 'web');
     $riferimento->addChild('web:numero', $numero, 'web');
 
-
-    $mapping = $this->propertyMappingFactory->fromObject($allegato)[0];
-    $destDir = $mapping->getUploadDestination() . '/' . $this->directoryNamer->directoryName($allegato, $mapping);
-    $documentPath = $destDir . DIRECTORY_SEPARATOR . $allegato->getFilename();
-
-    if ($documentPath && file_exists($documentPath)) {
+    if ($this->fileService->fileExist($allegato)) {
       $documento = $richiesta->addChild('web:documento', null, 'web');
       $documento->addChild('web:titolo', substr($allegato->getDescription(), 0, 99), 'web');
       $documento->addChild('web:nomeFile', $allegato->getFilename(), 'web');
-      $documento->addChild('web:file', base64_encode(file_get_contents($documentPath)), 'web');
+      $documento->addChild('web:file', base64_encode($this->fileService->getAttachmentContent($allegato)), 'web');
       return trim(str_replace(array('<?xml version="1.0"?>', ' xmlns:web="web"', ' xmlns=""'), '', $xml->asXML()));
     }
     $this->logger->critical('Missing actual allegato file for allegato, NOT sending it to Infor protocol ', [$allegato]);

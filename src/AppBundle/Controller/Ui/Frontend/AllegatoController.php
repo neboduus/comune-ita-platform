@@ -17,8 +17,12 @@ use AppBundle\Entity\User;
 use AppBundle\Form\Base\AllegatoType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Security\Voters\AttachmentVoter;
+use AppBundle\Services\FileService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use Doctrine\ORM\Query;
+use League\Flysystem\FileNotFoundException;
+use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -33,6 +37,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -67,14 +72,14 @@ class AllegatoController extends Controller
   /** @var ValidatorInterface */
   private $validator;
 
-  /** @var ModuloPdfBuilderService */
-  private $moduloPdfBuilderService;
-
-  /** @var DirectoryNamerInterface */
-  private $directoryNamer;
-
-  /** @var PropertyMappingFactory */
-  private $propertyMappingFactory;
+  /**
+   * @var FilesystemInterface
+   */
+  private $fileSystem;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
    * AllegatoController constructor.
@@ -82,27 +87,24 @@ class AllegatoController extends Controller
    * @param RouterInterface $router
    * @param LoggerInterface $logger
    * @param ValidatorInterface $validator
-   * @param ModuloPdfBuilderService $moduloPdfBuilderService
-   * @param DirectoryNamerInterface $directoryNamer
-   * @param PropertyMappingFactory $propertyMappingFactory
+   * @param FileService $fileService
+   * @param FilesystemInterface $fileSystem
    */
   public function __construct(
     TranslatorInterface $translator,
     RouterInterface $router,
     LoggerInterface $logger,
     ValidatorInterface $validator,
-    ModuloPdfBuilderService $moduloPdfBuilderService,
-    DirectoryNamerInterface $directoryNamer,
-    PropertyMappingFactory $propertyMappingFactory
+    FileService $fileService,
+    FilesystemInterface $fileSystem
   )
   {
     $this->translator = $translator;
     $this->router = $router;
     $this->logger = $logger;
     $this->validator = $validator;
-    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
-    $this->directoryNamer = $directoryNamer;
-    $this->propertyMappingFactory = $propertyMappingFactory;
+    $this->fileSystem = $fileSystem;
+    $this->fileService = $fileService;
   }
 
   /**
@@ -153,7 +155,7 @@ class AllegatoController extends Controller
         $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
           if ($file->getHash() == hash('sha256', $session->getId())){
-            return $this->createBinaryResponseForAllegato($file);
+            return $this->createBinaryResponse($file);
           }else{
             return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $file]);
           }
@@ -194,6 +196,7 @@ class AllegatoController extends Controller
           ];
           return new JsonResponse($data);
         } catch (\Exception $e) {
+          $this->logger->error($e->getMessage());
           return new JsonResponse(['status' => 'error', 'message' => 'Whoops, looks like something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -233,10 +236,11 @@ class AllegatoController extends Controller
   /**
    * TODO: TestMe
    * @param Request $request
-   * @Route("/pratiche/allegati/upload/scia/{id}",name="allegati_scia_create_cpsuser")
-   * @Method("POST")
+   * @param Pratica $pratica
    * @return mixed
    * @throws \Exception
+   * @Route("/pratiche/allegati/upload/scia/{id}",name="allegati_scia_create_cpsuser")
+   * @Method("POST")
    */
   public function cpsUserUploadAllegatoSciaAction(Request $request, Pratica $pratica)
   {
@@ -321,43 +325,18 @@ class AllegatoController extends Controller
   }
 
   /**
-   * @param Request $request
    * @param Allegato $allegato
    * @Route("/pratiche/allegati/{allegato}", name="allegati_download_cpsuser")
    * @return BinaryFileResponse
    * @throws NotFoundHttpException
    */
-  public function cpsUserAllegatoDownloadAction(Request $request, Allegato $allegato)
+  public function cpsUserAllegatoDownloadAction(Allegato $allegato)
   {
 
-    $user = $this->getUser();
-    $session = $this->get('session');
-    $canDownload = $allegato->getOwner() === $user;
-    if (!$canDownload) {
-      $pratica = $allegato->getPratiche()->first();
-      if ($pratica instanceof Pratica) {
-        if ($user instanceof CPSUser) {
-          $relatedCFs = $pratica->getRelatedCFs();
-          $canDownload = (is_array($relatedCFs) && in_array($user->getCodiceFiscale(), $relatedCFs ) || $pratica->getUser() == $user);
-        } elseif ($session->isStarted() && $session->has(Pratica::HASH_SESSION_KEY)) {
-          $canDownload = $pratica->isValidHash($session->get(Pratica::HASH_SESSION_KEY), $this->getParameter('hash_validity'));
-        }
-      }
-    }
-    if ($canDownload) {
-      $this->logger->info(
-        LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_CPSUSER,
-        [
-          'user' => $user ? $user->getId() : $allegato->getHash(),
-          'originalFileName' => $allegato->getOriginalFilename(),
-          'allegato' => $allegato->getId(),
-        ]
-      );
+    $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
 
-      return $this->createBinaryResponseForAllegato($allegato);
-    }
-    $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
-    throw new NotFoundHttpException(); //security by obscurity
+    return $this->createBinaryResponse($allegato);
+
   }
 
   /**
@@ -540,104 +519,31 @@ class AllegatoController extends Controller
   }
 
   /**
-   * @param Request $request
    * @param Allegato $allegato
    * @Route("/operatori/allegati/{allegato}", name="allegati_download_operatore")
-   * @return BinaryFileResponse
+   * @return Response
    * @throws NotFoundHttpException
    */
-  public function operatoreAllegatoDownloadAction(Request $request, Allegato $allegato)
+  public function operatoreAllegatoDownloadAction(Allegato $allegato)
   {
-    $user = $this->getUser();
-    $isOperatoreAmongstTheAllowedOnes = false;
-    $becauseOfPratiche = [];
+    $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
 
-    foreach ($allegato->getPratiche() as $pratica) {
-      $isOperatoreEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-      if ($pratica->getOperatore() === $user || $isOperatoreEnabled) {
-        $becauseOfPratiche[] = $pratica->getId();
-        $isOperatoreAmongstTheAllowedOnes = true;
-      }
-    }
-
-    if ($isOperatoreAmongstTheAllowedOnes) {
-      $this->logger->info(
-        LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE,
-        [
-          'user' => $user->getId() . ' (' . $user->getNome() . ' ' . $user->getCognome() . ')',
-          'originalFileName' => $allegato->getOriginalFilename(),
-          'allegato' => $allegato->getId(),
-          'pratiche' => $becauseOfPratiche,
-        ]
-      );
-
-      return $this->createBinaryResponseForAllegato($allegato);
-    }
-    $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
-    throw new NotFoundHttpException(); //security by obscurity
+    return $this->createBinaryResponse($allegato);
   }
 
   /**
-   * @param Request $request
    * @param Allegato $allegato
    * @Route("/operatori/risposta/{allegato}", name="risposta_download_operatore")
    * @return BinaryFileResponse
    * @throws NotFoundHttpException
    */
-  public function operatoreRispostaDownloadAction(Request $request, Allegato $allegato)
+  public function operatoreRispostaDownloadAction(Allegato $allegato)
   {
-    $user = $this->getUser();
-    $isOperatoreAmongstTheAllowedOnes = false;
-    $becauseOfPratiche = [];
+    $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
 
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
-    $pratiche = $repo->findBy(
-      array('rispostaOperatore' => $allegato)
-    );
+    return $this->createBinaryResponse($allegato);
 
-    foreach ($pratiche as $pratica) {
-      if (in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
-        $becauseOfPratiche[] = $pratica->getId();
-        $isOperatoreAmongstTheAllowedOnes = true;
-      }
-    }
-
-    if ($isOperatoreAmongstTheAllowedOnes) {
-      $this->logger->info(
-        LogConstants::ALLEGATO_DOWNLOAD_PERMESSO_OPERATORE,
-        [
-          'user' => $user->getId() . ' (' . $user->getNome() . ' ' . $user->getCognome() . ')',
-          'originalFileName' => $allegato->getOriginalFilename(),
-          'allegato' => $allegato->getId(),
-          'pratiche' => $becauseOfPratiche,
-        ]
-      );
-
-      return $this->createBinaryResponseForAllegato($allegato);
-    }
-    $this->logUnauthorizedAccessAttempt($allegato, $this->logger);
-    throw new UnauthorizedHttpException();
   }
-
-  /**
-   * @Route("/operatori/{pratica}/risposta_non_firmata",name="allegati_download_risposta_non_firmata")
-   * @param Pratica $pratica
-   */
-  public function scaricaRispostaNonFirmata(Pratica $pratica)
-  {
-
-    if ($pratica->getOperatore() !== $this->getUser()) {
-      throw new AccessDeniedHttpException();
-    }
-
-    if ($pratica->getEsito() === null) {
-      throw new NotFoundHttpException();
-    }
-
-    $unsignedResponse = $this->moduloPdfBuilderService->createUnsignedResponseForPratica($pratica);
-    return $this->createBinaryResponseForAllegato($unsignedResponse);
-  }
-
 
   /**
    * @Route("/pratiche/allegati/", name="allegati_list_cpsuser")
@@ -713,31 +619,47 @@ class AllegatoController extends Controller
 
   /**
    * @param Allegato $allegato
-   * @return BinaryFileResponse
+   * @return Response
    */
-  private function createBinaryResponseForAllegato(Allegato $allegato)
+  private function createBinaryResponse(Allegato $allegato)
   {
-    $filename = $allegato->getFilename();
-    $directoryNamer = $this->directoryNamer;
-    /** @var PropertyMapping $mapping */
-    $mapping = $this->propertyMappingFactory->fromObject($allegato)[0];
-    $destDir = $mapping->getUploadDestination() . '/' . $directoryNamer->directoryName($allegato, $mapping);
-    $filePath = $destDir . DIRECTORY_SEPARATOR . $filename;
-
-    $filename = $allegato->getOriginalFilename();
-    $filenameParts = explode('.', $filename);
-    if (end($filenameParts) != $allegato->getFile()->getExtension()) {
-      $filename = $allegato->getOriginalFilename() . '.' . $allegato->getFile()->getExtension();
+    $data = $this->fileService->getAttachmentData($allegato);
+    $path = $data['path'];
+    if (!$path) {
+      throw $this->createNotFoundException('The file does not exist!');
     }
 
-    return new BinaryFileResponse(
-      $filePath,
-      200,
-      [
-        'Content-type' => 'application/octet-stream',
-        'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
-      ]
-    );
+    // todo: find a fix...
+    // Provide a name for your file with extension
+    $fileNameParts = explode('/', $path);
+    $filename = end($fileNameParts);
+
+    try {
+
+      $file = $this->fileSystem->read($path);
+
+      // Return a response with a specific content
+      $response = new Response($file);
+
+      // Set file Content-Type
+      $mimeType = $this->fileSystem->getMimetype($path);
+      $response->headers->set('Content-Type', $mimeType);
+
+      // Create the disposition of the file
+      $disposition = $response->headers->makeDisposition(
+        ResponseHeaderBag::DISPOSITION_INLINE,
+        $filename
+      );
+
+      // Set the content disposition
+      $response->headers->set('Content-Disposition', $disposition);
+
+      // Dispatch request
+      return $response;
+    } catch (FileNotFoundException $exception) {
+    }
+
+    throw $this->createNotFoundException('The file does not exist!');
   }
 
   /**

@@ -116,6 +116,11 @@ parameters:
     metrics_redis_host: '%env(METRICS_REDIS_HOST)%'
     metrics_redis_port: 6379 #se passato con variabile da errore sul tipo, risolto in sf4
     metrics_redis_password: '%env(METRICS_REDIS_PASSWORD)%'
+    upload_destination: '%env(UPLOAD_DESTINATION)%'
+    s3_region: '%env(S3_REGION)%'
+    s3_key: '%env(S3_KEY)%'
+    s3_secret: '%env(S3_SECRET)%'
+    s3_bucket: '%env(S3_BUCKET)%'
 
     #Default fallback if env not set
     env(PREFIX): ''
@@ -205,4 +210,9 @@ parameters:
     env(METRICS_REDIS_HOST): 'redis'
     env(METRICS_REDIS_PORT): 6379
     env(METRICS_REDIS_PASSWORD): ~
+    env(UPLOAD_DESTINATION): 'local_filesystem'
+    env(S3_REGION): 'eu-west-1'
+    env(S3_KEY): ''
+    env(S3_SECRET): ''
+    env(S3_BUCKET): ''
 

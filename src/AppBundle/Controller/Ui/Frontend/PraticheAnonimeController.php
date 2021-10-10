@@ -227,7 +227,7 @@ class PraticheAnonimeController extends Controller
       if (empty($compiledModules)) {
         return new Response('', Response::HTTP_NOT_FOUND);
       }
-      $attachment = $compiledModules[0];
+      $attachment = $compiledModules->first();
       $fileContent = file_get_contents($attachment->getFile()->getPathname());
       $filename = $pratica->getId().'.pdf';
       $response = new Response($fileContent);
