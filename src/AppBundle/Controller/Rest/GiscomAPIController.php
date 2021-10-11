@@ -13,6 +13,7 @@ use AppBundle\Entity\StatusChange;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Mapper\Giscom\GiscomStatusMapper;
 use AppBundle\Services\DelayedGiscomAPIAdapterService;
+use AppBundle\Services\FileService;
 use AppBundle\Services\GiscomAPIAdapterService;
 use AppBundle\Services\GiscomAPIMapperService;
 use AppBundle\Services\PraticaIntegrationService;
@@ -20,6 +21,7 @@ use AppBundle\Services\PraticaStatusService;
 use AppBundle\Services\UserSessionService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -44,12 +46,12 @@ class GiscomAPIController extends Controller
   const CURRENT_API_VERSION = 'v1.0';
 
   /**
-   * @var \Symfony\Bridge\Monolog\Logger
+   * @var Logger
    */
   private $logger;
 
   /**
-   * @var \AppBundle\Services\PraticaStatusService
+   * @var PraticaStatusService
    */
   private $statusService;
 
@@ -74,6 +76,10 @@ class GiscomAPIController extends Controller
 
   /** @var UserSessionService  */
   private $userSessionService;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
    * GiscomAPIController constructor.
@@ -84,6 +90,8 @@ class GiscomAPIController extends Controller
    * @param GiscomAPIMapperService $mapper
    * @param GiscomAPIAdapterService $giscomAPIAdapterService
    * @param DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService
+   * @param UserSessionService $userSessionService
+   * @param FileService $fileService
    */
   public function __construct(
     LoggerInterface $logger,
@@ -93,7 +101,8 @@ class GiscomAPIController extends Controller
     GiscomAPIMapperService $mapper,
     GiscomAPIAdapterService $giscomAPIAdapterService,
     DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService,
-    UserSessionService $userSessionService
+    UserSessionService $userSessionService,
+    FileService $fileService
   ) {
     $this->logger = $logger;
     $this->statusService = $statusService;
@@ -103,6 +112,7 @@ class GiscomAPIController extends Controller
     $this->giscomAPIAdapterService = $giscomAPIAdapterService;
     $this->delayedGiscomAPIAdapterService = $delayedGiscomAPIAdapterService;
     $this->userSessionService = $userSessionService;
+    $this->fileService = $fileService;
   }
 
 
@@ -148,7 +158,7 @@ class GiscomAPIController extends Controller
    */
   public function attachmentAction(Request $request, Allegato $attachment)
   {
-    $fileContent = file_get_contents($attachment->getFile()->getPathname());
+    $fileContent = $this->fileService->getAttachmentContent($attachment);
     // Provide a name for your file with extension
     $filename = mb_convert_encoding($attachment->getOriginalFilename(), "ASCII", "auto");
     // Return a response with a specific content

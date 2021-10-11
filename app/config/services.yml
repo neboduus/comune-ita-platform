@@ -127,15 +127,10 @@ services:
     autowire: true
 
   AppBundle\Controller\Rest\GiscomAPIController:
+    autowire: true
     arguments:
-      - '@logger'
-      - '@ocsdc.pratica_status_service'
-      - '@ocsdc.status_mapper.giscom'
-      - '@ocsdc.pratica_integration_service'
-      - '@ocsdc.giscom_api.mapper'
-      - '@ocsdc.giscom_api.adapter_direct'
-      - '@ocsdc.giscom_api.adapter_delayed'
-      - '@AppBundle\Services\UserSessionService'
+      $giscomAPIAdapterService: '@ocsdc.giscom_api.adapter_direct'
+      $delayedGiscomAPIAdapterService: '@ocsdc.giscom_api.adapter_delayed'
 
   AppBundle\Controller\Rest\FoldersAPIController:
     autowire: true
