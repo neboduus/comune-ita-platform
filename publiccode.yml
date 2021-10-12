@@ -3,8 +3,8 @@ applicationSuite: Sito comunale
 name: La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanzadelcittadino
 landingURL: https://link.opencontent.it/sdc-home
-releaseDate: '2021-10-08'
-softwareVersion: 1.8.6
+releaseDate: '2021-10-12'
+softwareVersion: 1.8.7
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
