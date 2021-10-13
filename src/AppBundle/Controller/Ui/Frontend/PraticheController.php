@@ -800,40 +800,6 @@ class PraticheController extends Controller
   }
 
   /**
-   * @Route("/{pratica}/protocollo", name="pratiche_show_protocolli")
-   * @ParamConverter("pratica", class="AppBundle:Pratica")
-   * @param Pratica $pratica
-   *
-   * @return Response
-   */
-  public function showProtocolliAction(Request $request, Pratica $pratica)
-  {
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
-    $resumeURI = $request->getUri();
-    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
-
-    $allegati = [];
-    foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
-      if ($allegato instanceof Allegato) {
-        $allegati[] = [
-          'allegato' => $allegato,
-          'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
-          'protocollo' => $protocollo->protocollo,
-        ];
-      }
-    }
-
-    return $this->render( '@App/Pratiche/showProtocolli.html.twig',  [
-      'pratica' => $pratica,
-      'allegati' => $allegati,
-      'user' => $user,
-      //'threads' => $thread,
-    ]);
-  }
-
-  /**
    * @Route("/formio/validate/{servizio}", name="formio_validate")
    * @ParamConverter("servizio", class="AppBundle:Servizio", options={"mapping": {"servizio": "slug"}})
    *
