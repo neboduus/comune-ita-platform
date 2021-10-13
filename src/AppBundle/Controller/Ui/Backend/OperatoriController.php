@@ -569,6 +569,42 @@ class OperatoriController extends Controller
   }
 
   /**
+   * @Route("/{pratica}/protocollo", name="operatori_pratiche_show_protocolli")
+   * @param Pratica $pratica
+   *
+   * @return Response
+   * @throws \Exception
+   */
+  public function showProtocolliAction(Pratica $pratica)
+  {
+    /** @var OperatoreUser $user */
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($user, $pratica);
+
+    $allegati = [];
+    foreach ($pratica->getNumeriProtocollo() as $protocollo) {
+      if (Uuid::isValid($protocollo->id)) {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      } else {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->findOneBy(['id_documento_protocollo' => $protocollo->id]);
+      }
+      if ($allegato instanceof Allegato) {
+        $allegati[] = [
+          'allegato' => $allegato,
+          'tipo' => (new \ReflectionClass(get_class($allegato)))->getShortName(),
+          'protocollo' => $protocollo->protocollo
+        ];
+      }
+    }
+
+    return $this->render( '@App/Operatori/showProtocolli.html.twig', [
+      'pratica' => $pratica,
+      'allegati' => $allegati,
+      'user' => $user
+    ]);
+  }
+
+  /**
    * @Route("/parametri-protocollo", name="operatori_impostazioni_protocollo_list")
    * @return array
    */
