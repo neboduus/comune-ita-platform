@@ -46,10 +46,10 @@ class MeetingService
 
   public function __construct(
     EntityManagerInterface $entityManager,
-    InstanceService $instanceService,
-    MailerService $mailer, $defaultSender,
-    TranslatorInterface $translator,
-    UrlGeneratorInterface $router
+    InstanceService        $instanceService,
+    MailerService          $mailer, $defaultSender,
+    TranslatorInterface    $translator,
+    UrlGeneratorInterface  $router
   )
   {
     $this->entityManager = $entityManager;
@@ -128,7 +128,8 @@ class MeetingService
     return false;
   }
 
-  private function isOpeningHourValidForMeeting(Meeting $meeting, OpeningHour $openingHour) {
+  private function isOpeningHourValidForMeeting(Meeting $meeting, OpeningHour $openingHour)
+  {
     $dates = $this->explodeDays($openingHour, true);
     $meetingDate = $meeting->getFromTime()->format('Y-m-d');
 
@@ -190,7 +191,7 @@ class MeetingService
           'start_time' => $_begin->format('H:i'),
           'end_time' => $_end->format('H:i'),
           'slots_available' => $openingHour->getMeetingQueue(),
-          'opening_hour' =>$openingHour->getId()
+          'opening_hour' => $openingHour->getId()
         ];
       }
     }
@@ -261,7 +262,7 @@ class MeetingService
     return $array;
   }
 
-  public function getAbsoluteAvailabilities(OpeningHour $openingHour, $all=false, DateTime $from=null, DateTime $to=null)
+  public function getAbsoluteAvailabilities(OpeningHour $openingHour, $all = false, DateTime $from = null, DateTime $to = null)
   {
     $slots = [];
     $startDate = max($from ?? new DateTime(), $openingHour->getStartDate())->format('Y-m-d');
@@ -309,7 +310,7 @@ class MeetingService
   {
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
-    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
+    $service = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0]->getServizio()->getName() : "";
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
@@ -399,28 +400,26 @@ class MeetingService
     }
 
     // Send email for each moderator
-    if ($calendar->getIsModerated() || $meeting->getOpeningHour()->getIsModerated()) {
-      foreach ($calendar->getModerators() as $moderator) {
-        $this->mailer->dispatchMail(
-          $this->defaultSender,
-          $ente->getName(),
-          $moderator->getEmail(),
-          $moderator->getNome(),
-          $operatoreMessage . $this->translator->trans('meetings.email.operatori.new_meeting.approve_link', [
-            'approve_link' => $this->router->generate(
-              'operatori_approve_meeting',
-              [
-                'id' => $meeting->getId(),
-              ],
-              UrlGeneratorInterface::ABSOLUTE_URL)
-          ]),
-          $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
-            '%calendar%' => $calendar->getTitle(),
-          ]),
-          $ente,
-          []
-        );
-      }
+    foreach ($calendar->getModerators() as $moderator) {
+      $this->mailer->dispatchMail(
+        $this->defaultSender,
+        $ente->getName(),
+        $moderator->getEmail(),
+        $moderator->getNome(),
+        $operatoreMessage . $this->translator->trans('meetings.email.operatori.new_meeting.approve_link', [
+          'approve_link' => $this->router->generate(
+            'operatori_approve_meeting',
+            [
+              'id' => $meeting->getId(),
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL)
+        ]),
+        $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
+          '%calendar%' => $calendar->getTitle(),
+        ]),
+        $ente,
+        []
+      );
     }
   }
 
@@ -438,7 +437,7 @@ class MeetingService
     $linkChanged = key_exists('videoconferenceLink', $changeSet);
 
     if ($dateChanged) {
-      $oldDate = $changeSet['fromTime'][0]->format('d/m/Y');
+      $oldDate = $changeSet['fromTime'][0];
     }
     if ($linkChanged) {
       $oldLink = $changeSet['videoconferenceLink'][0];
@@ -446,7 +445,7 @@ class MeetingService
 
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
-    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
+    $service = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0]->getServizio()->getName() : "";
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
@@ -482,7 +481,7 @@ class MeetingService
       // Approved meeting has been rescheduled
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.rescheduled', [
         '%service%' => $service,
-        'old_date' => $oldDate,
+        'old_date' => $oldDate->format('d/m/Y'),
         'hour' => $hour,
         'new_date' => $date,
         'location' => $location
@@ -583,7 +582,25 @@ class MeetingService
       $subject = $this->translator->trans('meetings.email.operatori.meeting_cancelled.subject', [
         '%calendar%' => $calendar->getTitle(),
       ]);
-    } else return;
+    } else if ($dateChanged && !$statusChanged) {
+      $contactMessage = $this->translator->trans('meetings.email.operatori.meeting_rescheduled.message', [
+        '%calendar%' => $calendar->getTitle(),
+        '%old_date%' => $oldDate->format('d/m/Y'),
+        '%old_hour%' => $oldDate->format('H:i'),
+        '%new_date%' => $date,
+        '%new_hour%' => $hour
+      ]);
+      $subject = $this->translator->trans('meetings.email.operatori.meeting_rescheduled.subject', [
+        '%calendar%' => $calendar->getTitle(),
+      ]);
+    };
+
+    $contactMessage = $contactMessage . $this->translator->trans('meetings.email.operatori.meeting_details', [
+        '%completename%' => $meeting->getUser()->getFullName(),
+        '%start%' => $meeting->getFromTime()->format('d/m/y H:i'),
+        '%end%' => $meeting->getToTime()->format('d/m/y H:i'),
+        '%reason%' => $meeting->getUserMessage()
+      ]);
 
     if ($calendar->getContactEmail()) {
       $this->mailer->dispatchMail(
@@ -593,6 +610,33 @@ class MeetingService
         'Contatto Calendario',
         $contactMessage,
         $subject,
+        $ente,
+        []
+      );
+    }
+
+    if ($meeting->getStatus() == Meeting::STATUS_PENDING) {
+      $contactMessage . $this->translator->trans('meetings.email.operatori.new_meeting.approve_link', [
+        'approve_link' => $this->router->generate(
+          'operatori_approve_meeting',
+          [
+            'id' => $meeting->getId(),
+          ],
+          UrlGeneratorInterface::ABSOLUTE_URL)
+      ]);
+    }
+
+    // Send email for each moderator
+    foreach ($calendar->getModerators() as $moderator) {
+      $this->mailer->dispatchMail(
+        $this->defaultSender,
+        $ente->getName(),
+        $moderator->getEmail(),
+        $moderator->getNome(),
+        $contactMessage,
+        $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
+          '%calendar%' => $calendar->getTitle(),
+        ]),
         $ente,
         []
       );
@@ -607,7 +651,7 @@ class MeetingService
    */
   public function sendEmailRemovedMeeting(Meeting $meeting)
   {
-    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
+    $service = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0]->getServizio()->getName() : "";
     $ente = $this->instanceService->getCurrentInstance();
 
     $message = $this->translator->trans('meetings.email.delete_meeting.delete', [
@@ -645,7 +689,7 @@ class MeetingService
    */
   public function sendEmailUnavailableMeeting(Meeting $meeting)
   {
-    $service = count($meeting->getApplications()) > 0 ?  $meeting->getApplications()[0]->getServizio()->getName(): "";
+    $service = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0]->getServizio()->getName() : "";
     $ente = $this->instanceService->getCurrentInstance();
 
     $message = $this->translator->trans('meetings.email.invalid_meeting.invalid', [
@@ -674,8 +718,8 @@ class MeetingService
     if ($selectedOpeningHours) {
       foreach ($selectedOpeningHours as $selectedOpeningHour) {
         $openingHour = $this->entityManager->getRepository('AppBundle:OpeningHour')->findOneBy([
-          'calendar'=>$calendar,
-          'id'=>$selectedOpeningHour
+          'calendar' => $calendar,
+          'id' => $selectedOpeningHour
         ]);
         if ($openingHour) {
           $openingHours[] = $openingHour;
@@ -731,7 +775,7 @@ class MeetingService
     foreach ($slots as $key => $day) {
       $totalSlotsAvailable = $slots[$key]['slots_available'];
       $slotsUnavailable = 0;
-      if(array_key_exists($key, $meetings)) {
+      if (array_key_exists($key, $meetings)) {
         $totalSlotsAvailable = $totalSlotsAvailable - $meetings[$key]['count'];
       } else {
         // Todo: trovare un modo migliore
@@ -815,8 +859,8 @@ class MeetingService
     if ($selectedOpeningHours) {
       foreach ($selectedOpeningHours as $selectedOpeningHour) {
         $openingHour = $this->entityManager->getRepository('AppBundle:OpeningHour')->findOneBy([
-          'calendar'=>$calendar,
-          'id'=>$selectedOpeningHour
+          'calendar' => $calendar,
+          'id' => $selectedOpeningHour
         ]);
         if ($openingHour) {
           $openingHours[] = $openingHour;
@@ -827,8 +871,7 @@ class MeetingService
     }
 
 
-
-    $bookedMeetings=$this->getBookedSlotsByDate($date, $calendar, $excludedMeeting);
+    $bookedMeetings = $this->getBookedSlotsByDate($date, $calendar, $excludedMeeting);
 
     if ($all) {
       $noticeInterval = new DateInterval('PT0H');
@@ -840,8 +883,8 @@ class MeetingService
     $firstAvailableDate->setTime($firstAvailableDate->format("H"), $firstAvailableDate->format("i"), 0, 0);
 
     $minute = ($firstAvailableDate->format("i")) % 5;
-    if($minute != 0) {
-      $firstAvailableDate->add(new DateInterval("PT".(5 - $minute)."M"));
+    if ($minute != 0) {
+      $firstAvailableDate->add(new DateInterval("PT" . (5 - $minute) . "M"));
     }
 
 
@@ -864,8 +907,8 @@ class MeetingService
 
     // Remove bookend meetings
     foreach ($bookedMeetings as $bookedMeeting) {
-      foreach (new DatePeriod($bookedMeeting["start_time"], new DateInterval("PT1M"), $bookedMeeting["end_time"]->modify('+'.$bookedMeeting["interval_minutes"].'minutes')) as $interval) {
-        if(isset($timeIntervals[$interval->format('H:i')]))
+      foreach (new DatePeriod($bookedMeeting["start_time"], new DateInterval("PT1M"), $bookedMeeting["end_time"]->modify('+' . $bookedMeeting["interval_minutes"] . 'minutes')) as $interval) {
+        if (isset($timeIntervals[$interval->format('H:i')]))
           $timeIntervals[$interval->format('H:i')]["availabilities"] = max($timeIntervals[$interval->format('H:i')]["availabilities"] - $bookedMeeting["count"], 0);
       }
     }
@@ -877,7 +920,7 @@ class MeetingService
       if ($closingPeriod->getFromTime() <= $endTime && $firstTime <= $closingPeriod->getToTime()) {
         $closure = new DatePeriod(max($closingPeriod->getFromTime(), $firstTime), new DateInterval("PT1M"), min($closingPeriod->getToTime(), $endTime));
         foreach ($closure as $closureInterval) {
-          if(isset($timeIntervals[$closureInterval->format("H:i")]))
+          if (isset($timeIntervals[$closureInterval->format("H:i")]))
             $timeIntervals[$closureInterval->format("H:i")]["availabilities"] = 0;
         }
       }
@@ -892,7 +935,6 @@ class MeetingService
     $slotAvailability = min($timeIntervals[$slotStart]["availabilities"], 1);
     $slotEnd = $slotStart;
     $duration = null;
-
 
 
     foreach ($timeIntervals as $time => $interval) {
@@ -911,7 +953,7 @@ class MeetingService
         ];
 
         $slotAvailability = $tmpAvailability;
-        $slotOpeningHour =  $tmpOpeningHour;
+        $slotOpeningHour = $tmpOpeningHour;
         $slotStart = $time;
 
       } else {
@@ -926,7 +968,7 @@ class MeetingService
         "start_time" => $slotStart,
         "end_time" => $slotEnd,
         "slots_available" => $slotAvailability,
-        "availability" => $slotAvailability > 0  && $duration >= $slotOpeningHour->getMeetingMinutes(),
+        "availability" => $slotAvailability > 0 && $duration >= $slotOpeningHour->getMeetingMinutes(),
         "opening_hour" => $slotOpeningHour->getId(),
         "min_duration" => $slotOpeningHour->getMeetingMinutes(),
       ];
@@ -935,7 +977,8 @@ class MeetingService
     return $slots;
   }
 
-  private function getBookedSlotsByDate($date, $calendar, $excludedMeeting=null) {
+  private function getBookedSlotsByDate($date, $calendar, $excludedMeeting = null)
+  {
     $start = clone ($date)->setTime(0, 0, 0);
     $end = clone ($date)->setTime(23, 59, 59);
 
@@ -964,8 +1007,8 @@ class MeetingService
   }
 
 
-
-  public function getMeetingErrors(Meeting $meeting) {
+  public function getMeetingErrors(Meeting $meeting)
+  {
     $errors = [];
     if ($meeting->getCalendar()->isAllowOverlaps() && !$meeting->getOpeningHour()) {
       $errors[] = $this->translator->trans('meetings.error.no_opening_hour_with_overlaps');
@@ -980,7 +1023,8 @@ class MeetingService
     return $errors;
   }
 
-  private function getDifferenceInMinutes(DateTime $from, DateTime $to) {
+  private function getDifferenceInMinutes(DateTime $from, DateTime $to)
+  {
     $diff = $from->diff($to);
     return ($diff->h * 60) + ($diff->i);
   }

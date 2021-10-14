@@ -2081,6 +2081,10 @@ meetings:
     delete: "Elimina bozza"
   email:
     operatori:
+      meeting_details: '</br><p><b>Dettagli appuntamento:</b></p><table><tr><td>Nome e cognome</td><td>%completename%</td></tr><tr><td>Inizio</td><td>%start%</td></tr><tr><td>Fine</td><td>%end%</td></tr><tr><td>Motivazione</td><td><i>%reason%</i></td></r></table>'
+      meeting_rescheduled:
+        subject: 'Spostamento appuntamento - %calendar%'
+        message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>%old_date%</b> alle ore <b>%old_hour%</b> è stato <b>spostato</b> al giorno <b>%new_date%</b> alle ore <b>%new_hour%</b><p>"
       meeting_cancelled:
         subject: 'Annullamento appuntamento - %calendar%'
         message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b><p>"
