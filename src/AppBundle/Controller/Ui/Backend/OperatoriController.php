@@ -854,7 +854,7 @@ class OperatoriController extends Controller
       if (Uuid::isValid($protocollo->id)) {
         $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
       } else {
-        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->findOneBy(['id_documento_protocollo' => $protocollo->id]);
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->findOneBy(['idDocumentoProtocollo' => $protocollo->id]);
       }
       if ($allegato instanceof Allegato) {
         $moduleProtocols[] = [
