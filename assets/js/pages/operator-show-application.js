@@ -3,15 +3,19 @@ import '../core';
 
 
 import Calendar from '../Calendar';
+import DynamicCalendar from '../DynamicCalendar';
 import PageBreak from '../PageBreak';
 import FinancialReport from "../FinancialReport";
+import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import {TextEditor} from "../utils/TextEditor";
 
 Formio.registerComponent('calendar', Calendar);
+Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
+Formio.registerComponent('sdcfile', SdcFile);
 
 window.onload = function () {
   // Application summary
@@ -138,4 +142,7 @@ $(document).ready(function () {
 
   //Init TextArea
   TextEditor.init();
+
+  // Tooltips
+  $('[data-toggle="tooltip"]').tooltip();
 });

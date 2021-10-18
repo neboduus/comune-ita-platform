@@ -4,7 +4,8 @@ parameters:
 #    parameter_name: value
 
 services:
-  League\Flysystem\FilesystemInterface: '@sdc_filesystem'
+  League\Flysystem\FilesystemInterface: '@s3_filesystem'
+  #League\Flysystem\FilesystemInterface: '@local_filesystem'
 
   ocsdc.s3_client:
     class: Aws\S3\S3Client
@@ -17,11 +18,14 @@ services:
 
   ocsdc.filesystem:
     class: AppBundle\Services\FileSystemService
-    arguments: [ '@oneup_flysystem.s3_filesystem_filesystem' ]
+    arguments: [ '@League\Flysystem\FilesystemInterface' ]
     public: true
 
   AppBundle\Services\FileService:
     autowire: true
+    arguments:
+      $s3Bucket: '%s3_bucket%'
+      $uploadDestination: '%upload_destination%'
 
   ocsdc.meeting_service:
     class: AppBundle\Services\MeetingService
@@ -66,6 +70,9 @@ services:
   AppBundle\Controller\Rest\CategoriesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\RecipientsAPIController:
+    autowire: true
+
   AppBundle\Controller\Rest\UsersAPIController:
     autowire: true
 
@@ -93,6 +100,9 @@ services:
   AppBundle\Controller\Ui\Backend\AdminController:
     autowire: true
 
+  AppBundle\Controller\Ui\Backend\ServiceController:
+    autowire: true
+
   AppBundle\Controller\Ui\Backend\WebhookController:
     autowire: true
 
@@ -100,6 +110,9 @@ services:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\CategoryController:
+    autowire: true
+
+  AppBundle\Controller\Ui\Backend\RecipientController:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\ServiceGroupController:
@@ -126,6 +139,9 @@ services:
   AppBundle\Controller\Ui\Frontend\PrintController:
     autowire: true
 
+  AppBundle\Controller\Ui\Frontend\SubscriptionServicesController:
+    autowire: true
+
   AppBundle\Controller\Rest\GiscomAPIController:
     autowire: true
     arguments:
@@ -140,15 +156,9 @@ services:
       [ "@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service', '@logger' ]
 
   AppBundle\Controller\Ui\Frontend\PraticheAnonimeController:
+    autowire: true
     arguments:
-      - '@logger'
-      - "@translator"
-      - "@ocsdc.pratica_status_service"
-      - "@ocsdc.modulo_pdf_builder"
-      - "@ocsdc.allegati.dematerialized_attacher"
-      - "@ocsdc.instance_service"
-      - '%hash_validity%'
-      - "@formio.expression_validator"
+      $hashValidity: '%hash_validity%'
 
   AppBundle\Controller\Ui\Frontend\TrackingController:
     autowire: true
@@ -158,6 +168,14 @@ services:
   i18n.datamapper:
     class: AppBundle\Form\I18n\I18nDataMapper
     autowire: true
+
+  AppBundle\Form\Admin\RecipientType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
 
   AppBundle\Form\Admin\Servizio\GeneralDataType:
     arguments:
@@ -343,6 +361,16 @@ services:
       $defaultLocale: "%locale%"
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -200 }
+
+  ocsdc.locale_api_listener:
+    class: AppBundle\EventListener\LocaleApiListener
+    autowire: true
+    arguments:
+      $defaultLocale: "%locale%"
+      $availableLocales: "%app_locales%"
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -10 }
+      - { name: kernel.event_listener, event: kernel.response, priority: -10 }
 
   ocsdc.cps.terms_acceptance_listener:
     class: AppBundle\EventListener\TermsAcceptListener

@@ -4,12 +4,14 @@
 namespace AppBundle\Dto;
 
 use AppBundle\Entity\Categoria;
+use AppBundle\Entity\Recipient;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;
 use AppBundle\Model\PaymentParameters;
 use AppBundle\Model\FlowStep;
 use AppBundle\Model\IOServiceParameters;
 use AppBundle\Services\Manager\BackofficeManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -301,6 +303,22 @@ class Service
    * @Serializer\Exclude()
    */
   private $ioParameters;
+
+  /**
+   * @var string[]
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's recipients name", type="array", @SWG\Items(type="string"))
+   * @Groups({"read"})
+   */
+  private $recipients;
+
+  /**
+   * @var string[]
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's recipients id", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
+   */
+  private $recipientsId;
 
   /**
    * @return mixed
@@ -882,6 +900,38 @@ class Service
     $this->ioParameters = $ioParameters;
   }
 
+  /**
+   * @return string[]
+   */
+  public function getRecipients(): array
+  {
+    return $this->recipients;
+  }
+
+  /**
+   * @param string[] $recipients
+   */
+  public function setRecipients(?array $recipients): void
+  {
+    $this->recipients = $recipients;
+  }
+
+  /**
+   * @return string[]
+   */
+  public function getRecipientsId(): ?array
+  {
+    return $this->recipientsId;
+  }
+
+  /**
+   * @param string[] $recipientsId
+   */
+  public function setRecipientsId(?array $recipientsId): void
+  {
+    $this->recipientsId = $recipientsId;
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -925,6 +975,19 @@ class Service
     $dto->allowWithdraw = $servizio->isAllowWithdraw();
     $dto->workflow = $servizio->getWorkflow();
 
+    $dto->recipients = [];
+    $dto->recipientsId = [];
+    /** @var Recipient $r */
+    if ($servizio->getRecipients()) {
+      foreach ($servizio->getRecipients() as $r) {
+        $dto->recipients[]= $r->getName();
+      }
+
+      /** @var Recipient $r */
+      foreach ($servizio->getRecipients() as $r) {
+        $dto->recipientsId[]= $r->getId();
+      }
+    }
     return $dto;
   }
 
@@ -978,6 +1041,8 @@ class Service
     $entity->setAllowReopening($this->allowReopening);
     $entity->setAllowWithdraw($this->allowWithdraw);
     $entity->setWorkflow($this->workflow);
+
+    $entity->setRecipients(new ArrayCollection($this->recipientsId));
 
     return $entity;
   }

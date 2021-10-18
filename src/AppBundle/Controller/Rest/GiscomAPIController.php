@@ -445,10 +445,14 @@ class GiscomAPIController extends Controller
         'request' => $payload,
       ]
     );
-
-    $richiestaIntegrazione = new RichiestaIntegrazioneDTO($payload, null, $message);
-    $this->integrationService->requestIntegration($pratica, $richiestaIntegrazione);
-
+    try {
+      $richiestaIntegrazione = new RichiestaIntegrazioneDTO($payload, null, $message);
+      $this->integrationService->requestIntegration($pratica, $richiestaIntegrazione);
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage() . ' - ' . $e->getTraceAsString());
+      return new Response('Error creating integration', Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    
     return new Response(null, 201);
   }
 

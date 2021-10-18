@@ -114,7 +114,15 @@ class ServizioFormType extends AbstractType
       ->add('shared_with_group')
       ->add('allow_reopening')
       ->add('allow_withdraw')
-      ->add('workflow');
+      ->add('workflow')
+      ->add('recipients_id', CollectionType::class, [
+        'entry_type' => TextType::class,
+        "allow_add" => true,
+        "allow_delete" => true,
+        'prototype' => true,
+        "label" => false
+      ])
+    ;
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }

@@ -37,6 +37,7 @@ use Flagception\Manager\FeatureManagerInterface;
 use JMS\Serializer\Serializer;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -235,6 +236,39 @@ class OperatoriController extends Controller
 
     $request->setRequestFormat('json');
     return new JsonResponse(json_encode($result), 200, [], true);
+  }
+
+  /**
+   * @Route("/pratiche/{servizio}/new", name="new_application_by_operator")
+   * @param Request $request
+   * @return Response
+   */
+  public function newAppicationByOperatorAction(Request $request, Servizio $servizio)
+  {
+    $userId = $request->query->get('user', false);
+
+    $application = new Pratica();
+    $application->setServizio($servizio);
+
+    $cpsUserData = false;
+    if ($userId) {
+      $cpsUserRepo = $this->entityManager->getRepository('AppBundle:CPSUser');
+      $cpsUser = $cpsUserRepo->find($userId);
+      if ($cpsUser instanceof CPSUser) {
+        $application->setUser($cpsUser);
+        $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
+        $cpsUserData = ['data' => $this->praticaManager->getMappedFormDataWithUserData($schema, $cpsUser)];
+      }
+    }
+
+    return $this->render( '@App/Operatori/newApplication.html.twig', [
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
+      'user' => $this->getUser(),
+      'token' => $this->JWTTokenManager->create($this->getUser()),
+      'service' => $servizio,
+      'application' => $application,
+      'cps_user_data' => $cpsUserData
+    ]);
   }
 
   /**
@@ -582,7 +616,11 @@ class OperatoriController extends Controller
 
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->getDoctrine()->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      if (Uuid::isValid($protocollo->id)) {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      } else {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->findOneBy(['id_documento_protocollo' => $protocollo->id]);
+      }
       if ($allegato instanceof Allegato) {
         $allegati[] = [
           'allegato' => $allegato,
@@ -846,7 +884,11 @@ class OperatoriController extends Controller
     $outcomeProtocols = [];
 
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
-      $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      if (Uuid::isValid($protocollo->id)) {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->find($protocollo->id);
+      } else {
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->findOneBy(['idDocumentoProtocollo' => $protocollo->id]);
+      }
       if ($allegato instanceof Allegato) {
         $moduleProtocols[] = [
           'allegato' => $allegato,

@@ -23,6 +23,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
  * Class MeetingsAPIController
@@ -263,12 +264,12 @@ class MeetingsAPIController extends AbstractFOSRestController
           ->where('upper(user.username) = upper(:username)')
           ->setParameter('username', $meeting->getFiscalCode())
           ->getQuery()->getResult();
-        if ( !empty($result)) {
+        if (!empty($result)) {
           $repository = $em->getRepository('AppBundle:CPSUser');
           /**
            * @var CPSUser $user
            */
-          $user =  $repository->find($result[0]['id']);
+          $user = $repository->find($result[0]['id']);
         } else {
           $user = null;
         }
@@ -297,6 +298,17 @@ class MeetingsAPIController extends AbstractFOSRestController
 
       if ($meeting->getUser()->getEmail())
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+    } catch (ValidatorException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => $e->getMessage(),
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
@@ -407,8 +419,18 @@ class MeetingsAPIController extends AbstractFOSRestController
 
       if ($meeting->getUser()->getEmail())
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
+    } catch (ValidatorException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => $e->getMessage(),
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -519,6 +541,17 @@ class MeetingsAPIController extends AbstractFOSRestController
       if ($meeting->getUser()->getEmail())
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
 
+    } catch (ValidatorException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => $e->getMessage(),
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',

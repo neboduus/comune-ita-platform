@@ -116,7 +116,7 @@
         </div>
       </div>
       <div class="modal-footer my-3 d-flex justify-content-between" >
-        <ul id="modalNewError" class="text-danger list-unstyled"></ul>
+        <p id="modalNewError" class="text-danger"></p>
         <button id="modalCreate" class="btn btn-primary btn-sm" data-url='{{ path("meetings_api_post") }}' type="button" onclick="createMeeting(this.id, '{{ calendar.id }}')">{{ "meetings.modal.create" | trans }}</button>
       </div>
     </div>

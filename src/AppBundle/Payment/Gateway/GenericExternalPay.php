@@ -9,7 +9,6 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\AbstractPaymentData;
-use AppBundle\Payment\PaymentDataInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
@@ -67,7 +66,8 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
   public static function getPaymentParameters()
   {
     return [
-      'identificativoTipoDovuto'  => 'Identificativo tipo dovuto'
+      'identificativoTipoDovuto'  => 'Identificativo tipo dovuto',
+      'datiSpecificiRiscossione'  => 'Dati specifici riscossione'
     ];
   }
 
@@ -187,7 +187,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
     $request = new Request(
       'POST',
       $gateway->getUrl(),
-      [],
+      ['Content-Type' => 'application/json'],
       \json_encode($requestBody)
     );
 
@@ -294,10 +294,11 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
         'address' => $user->getIndirizzoResidenza(),
         'postal_code' => $user->getCapResidenza(),
         'city' => $user->getCittaResidenza(),
-        'distict' => $provincia
+        'county' => $provincia
       ],
-      'pagopa_payment_code'=> $paymentParameters['gateways'][$paymentIdentifier]['parameters']['identificativoTipoDovuto'] ?? '9/3300.1',
-      'expiration_time' => time() + (60 * 60 * 24 * $paymentDayLifeTime),
+      'pagopa_payment_code'=> $paymentParameters['gateways'][$paymentIdentifier]['parameters']['datiSpecificiRiscossione'] ?? '9/3300.1',
+      'expiration_time' => (new \DateTime())->modify('+'.$paymentDayLifeTime.'days')->format('Y-m-d'),
+      'payment_split' => []
     );
 
     if (isset($data[PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {

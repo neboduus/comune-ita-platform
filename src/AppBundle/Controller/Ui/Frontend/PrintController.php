@@ -6,6 +6,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\FileService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -30,18 +31,26 @@ use TheCodingMachine\Gotenberg\Request as GotembergRequest;
  */
 class PrintController extends Controller
 {
+
   /**
    * @var ModuloPdfBuilderService
    */
   private $moduloPdfBuilderService;
 
   /**
+   * @var FileService
+   */
+  private $fileService;
+
+  /**
    * PrintController constructor.
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
+   * @param FileService $fileService
    */
-  public function __construct(ModuloPdfBuilderService $moduloPdfBuilderService)
+  public function __construct(ModuloPdfBuilderService $moduloPdfBuilderService, FileService $fileService)
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
+    $this->fileService = $fileService;
   }
 
 
@@ -59,9 +68,11 @@ class PrintController extends Controller
 
     $attachments = $pratica->getAllegati();
     $preparedAttachments = [];
+    $preparedNoProtocolAttachments = [];
     if ( $attachments->count() > 0) {
       /** @var Allegato $a */
       foreach ($attachments as $a) {
+        $protocolRequired = $a->isProtocolRequired() ?? true;
         $temp = [];
         $temp['id'] = $a->getId();
         $temp['local_name'] = $a->getFilename();
@@ -69,9 +80,12 @@ class PrintController extends Controller
         $originalFilenameParts = explode('-',  $a->getOriginalFilename());
         $userFilename = implode('-', array_slice($originalFilenameParts, 0, -5)) . '.' . $a->getFile()->getExtension();
         $temp['original_filename'] = $userFilename;
-        $temp['hash'] = hash_file('md5', $a->getFile()->getPathname());
-
-        $preparedAttachments[]=$temp;
+        $temp['hash'] = $this->fileService->getHash($a);
+        if ($protocolRequired) {
+          $preparedAttachments[]=$temp;
+        } else {
+          $preparedNoProtocolAttachments[]=$temp;
+        }
       }
     }
 
@@ -80,7 +94,8 @@ class PrintController extends Controller
       'form' => $form->createView(),
       'pratica' => $pratica,
       'user' => $user,
-      'attachments' => $preparedAttachments
+      'attachments' => $preparedAttachments,
+      'attachmentsNoProtocol' => $preparedNoProtocolAttachments,
     ]);
 
   }

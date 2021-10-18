@@ -10,6 +10,7 @@ elimina: 'Elimina'
 reply: 'Rispondi'
 view: 'Visualizza'
 read_more: 'Leggi di più'
+load_more: 'Altro...'
 terms_do_il_consenso: "Ho letto l'informativa"
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
@@ -89,15 +90,17 @@ general:
   email: 'Email'
   stato: 'Stato'
   url: 'Url'
-  alert_elimina: "Sei sicuro di procedere? L&#39;oggetto verrà eliminato definitivamente."
+  alert_elimina: "Sicuro di voler procedere?"
   flash:
     created: 'Oggetto creato correttamente'
+  search: 'Cerca'
 servizio:
   bozza_successo: 'Bozza salvata con successo'
   nessun_template: 'Nessun template disponibile'
   importa: 'Importa da remoto'
   nome: "Nome del servizio"
   categoria: "Categoria"
+  destinatari: "Destinatari"
   cos_e: "Cos'è"
   descrizione: "Descrizione"
   a_chi_si_rivolge: "A chi si rivolge"
@@ -112,9 +115,9 @@ servizio:
   stato: "Stato"
   data_attivazione: "Data di attivazione del servizio"
   data_cessazione: "Data di cessazione del servizio"
-  gruppo: "Gruppo di servizi"
+  gruppo: "Gruppo"
   condiviso_con_gruppo: "Condividi scheda del servizio con il gruppo"
-  livello_accesso: "Livello di accesso al servizio"
+  livello_accesso: "Accesso"
   suggerisci_login: "Suggerisci il Login per l 'autocompletamento?"
   consenti_riapertura: "Consenti agli operatori di cambiare manualmente lo stato di una pratica"
   consenti_ritiro: "Consenti al cittadino di annullare la presentazione della pratica"
@@ -244,6 +247,8 @@ pratica:
     dichiarazione_cambiamenti_detail: "Il dichiarante &egrave; consapevole che in caso di dichiarazione mendace sar&agrave; punito ai sensi del Codice Penale secondo quanto prescritto dall'art. 76 del D.P.R. 445/2000 e che, inoltre, qualora dal controllo effettuato emerga la non veridicit&agrave; del contenuto di taluna delle dichiarazioni rese, decadr&agrave; dai benefici conseguenti al provvedimento eventualmente emanato sulla base della dichiarazione non veritiera (art. 75 D.P.R. 445/2000).Il dichiarante &egrave; informato ed autorizza la raccolta dei dati per l'emanazione del provvedimento amministrativo ai sensi dell'art. 13 del D. Lgs. 196/2003."
     luogo: 'L&igrave;'
     riferimento_sdc: 'Riferimento in Stanza del Cittadino:'
+    allegati_protocollo: 'Allegati inviati al protocollo'
+    allegati_no_protocollo: 'Allegati non inviati al protocollo'
   dettaglio:
     data_ora_presentazione: 'Richiesta presentata il'
     alle: 'alle'
@@ -440,6 +445,7 @@ iscrizioni:
     name: 'Nome'
     surname: 'Cognome'
     fiscal_code: 'Codice fiscale'
+    date_of_birth: 'Data di nascita'
     email_address: 'Email'
     created_at: 'Data iscrizione'
     actions: 'Azioni'
@@ -761,6 +767,7 @@ operatori:
   pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo numero"
+  in_questo_fascicolo: "In questo fascicolo"
   dati_generali: "Dati generali"
   cambio_stato: "Cambio stato"
   documenti: "Documenti"
@@ -828,6 +835,10 @@ allegato:
   non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'
   aggiungi: 'Aggiungi un allegato'
   cancellato: 'Allegato cancellato correttamente'
+  protocollo:
+    protocollato: 'Protocollato'
+    in_attesa: 'In attesa di protocollazione'
+    non_richiesto: 'Protocollazione non richiesta'
 email:
   detail_link: 'link'
   pratica:
@@ -895,6 +906,7 @@ messages:
       8000: ''
       9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata. Il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
       20000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata. Il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      50000: "Gentile <strong>%user_name%</strong>,<br/> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata annullata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta."
     no_reason: '<i>Nessun messaggio specificato</i>'
 messaggi:
   messaggio: 'Messaggio'
@@ -1917,9 +1929,17 @@ protocollo:
   sipal_registro: 'Registro'
   sipal_classificazione: 'Classificazione'
   sipal_destinatario_interno: 'Destinatario interno'
+recipients:
+  title: 'Destinatari'
+  all: 'Tutti i destinatari'
+  delete_success: 'Destinatario eliminato correttamente'
+  delete_error: 'Impossibile eliminare il destinatario, ci sono dei servizi collegati'
 categories:
   title: 'Categorie'
+  all: 'Tutte le categorie'
   parent: 'Categoria genitore'
+  delete_success: 'Categoria eliminata correttamente'
+  delete_error: 'Impossibile eliminare la categoria, ci sono dei servizi collegati'
 gateway:
   add: Aggiungi metodo di pagamento
   name: Nome
@@ -2042,6 +2062,7 @@ meetings:
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
     no_opening_hour_with_overlaps: "L'orario di apertura è obbligatorio se il calendario prevede sovrapposizioni"
+    invalid_meeting: "Appuntamento non valido"
   legend:
     title: "Legenda stato appuntamenti"
     approved: "Confermato / Non richiede moderazione"
@@ -2063,7 +2084,7 @@ meetings:
     warning: "Attenzione"
     notification_alert: "la modifica dello stato comporterà l'invio di una notifica al cittadino"
     notification_alert_confirm: "la modifica della data comporterà l'invio di una notifica al cittadino e la conferma automatica dell'appuntamento"
-    motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullameto dell'appuntamento"
+    motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullamento dell'appuntamento"
     status_change_helper: "E' possibile registrare se l'appuntamento è avvenuto come previsto"
     no_status_actions: "Non ci sono azioni disponibili per questo appuntamento"
     confirm_edit:
@@ -2088,6 +2109,9 @@ meetings:
       meeting_cancelled:
         subject: 'Annullamento appuntamento - %calendar%'
         message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b><p>"
+      meeting_refused:
+        subject: 'Rifiuto appuntamento - %calendar%'
+        message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>rifiutato</b><p>"
       meeting_approved:
         subject: 'Approvazione appuntamento - %calendar%'
         message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>approvato</b><p>"
@@ -2157,6 +2181,17 @@ backoffice:
       save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
       duplicate_error: "l'utente user risulta già iscritto al servizio service_name"
     subscription_service:
+      subscription_services: "Servizi a sottoscrizione"
+      new: "Crea servizio a sottoscrizione"
+      search_results: "Risultati della ricerca"
+      no_results: "La ricerca non ha prodotto alcun risultato"
+      search_error: "Si è verificato un errore durante la ricerca"
+      search: "Cerca"
+      search_subscribers_helper: "Utilizza questo campo per ricercare gli iscritti per nome, cognome oppure codice fiscale"
+      search_subscribers: "Ricerca iscritti"
+      close: "Chiudi"
+      loading: "Caricamento..."
+      all: "Tutti"
       payments: "Pagamenti"
       payment:
         due_date: "Data di scadenza del pagamento"

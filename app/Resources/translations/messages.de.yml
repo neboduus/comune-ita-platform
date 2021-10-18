@@ -889,6 +889,7 @@ messages:
       8000: ''
       9000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata rifiutata, il numero di richiesta è <strong>%pratica_id%</strong>.<br />Con il seguente messaggio:<br /> %messaggio_personale%<br />La ringraziamo per la collaborazione."
       20000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
+      50000: "Gentile <strong>%user_name%</strong>,<br/> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata annullata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta."
     no_reason: '<i>Nessun messaggio specificato</i>'
 messaggi:
   messaggio: 'Messaggio'
@@ -2121,7 +2122,7 @@ meetings:
     warning: "Attenzione"
     notification_alert: "la modifica dello stato comporterà l'invio di una notifica al cittadino"
     notification_alert_confirm: "la modifica della data comporterà l'invio di una notifica al cittadino e la conferma automatica dell'appuntamento"
-    motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullameto dell'appuntamento"
+    motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullamento dell'appuntamento"
     status_change_helper: "E' possibile registrare se l'appuntamento è avvenuto come previsto"
     no_status_actions: "Non ci sono azioni disponibili per questo appuntamento"
     confirm_edit:

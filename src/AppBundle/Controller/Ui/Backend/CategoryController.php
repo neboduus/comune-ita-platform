@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
@@ -23,13 +24,19 @@ class CategoryController extends Controller
    * @var EntityManagerInterface
    */
   private $entityManager;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
 
   /**
    * @param EntityManagerInterface $entityManager
+   * @param TranslatorInterface $translator
    */
-  public function __construct(EntityManagerInterface $entityManager)
+  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
   {
     $this->entityManager = $entityManager;
+    $this->translator = $translator;
   }
 
 
@@ -65,7 +72,7 @@ class CategoryController extends Controller
       $this->entityManager->persist($item);
       $this->entityManager->flush();
 
-      $this->addFlash('feedback', 'general.flash.created');
+      $this->addFlash('feedback', $this->translator->trans('general.flash.created'));
       return $this->redirectToRoute('admin_category_index');
     }
 
@@ -104,17 +111,17 @@ class CategoryController extends Controller
    * @Route("/{id}/delete", name="admin_category_delete")
    * @Method({"GET", "POST", "DELETE"})
    */
-  public function deletePaymentGatewayAction(Request $request, Categoria $item)
+  public function deleteCategoryAction(Categoria $item)
   {
     try {
       $em = $this->getDoctrine()->getManager();
       $em->remove($item);
       $em->flush();
-      $this->addFlash('feedback', 'Metodo di pagamento eliminato correttamente');
+      $this->addFlash('feedback', $this->translator->trans('categories.delete_success'));
       return $this->redirectToRoute('admin_category_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare il Metodo di pagamento, ci sono dei servizi collegati.');
+      $this->addFlash('warning', $this->translator->trans('categories.delete_error'));
       return $this->redirectToRoute('admin_category_index');
     }
   }

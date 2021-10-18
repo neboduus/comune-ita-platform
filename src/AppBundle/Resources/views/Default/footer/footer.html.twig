@@ -45,7 +45,7 @@
                   <a href="{{ item.url }}"
                      title="Vai alla pagina: {{ item.text }}">{{ item.text }}</a>
                 </h4>
-                {% if item.children %}
+                {% if item.children is defined %}
                   <div class="link-list-wrapper">
                     <ul class="footer-list link-list clearfix">
                       {% for subitem in item.children %}

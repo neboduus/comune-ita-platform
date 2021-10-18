@@ -3,6 +3,7 @@ import Calendar from './Calendar';
 import DynamicCalendar from './DynamicCalendar';
 import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
+import SdcFile from "./SdcFile";
 import 'formiojs'
 import {TextEditor} from "./utils/TextEditor";
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
@@ -12,6 +13,7 @@ Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
+Formio.registerComponent('sdcfile', SdcFile);
 
 
 $(document).ready(function () {
@@ -307,6 +309,21 @@ $(document).ready(function () {
                 fileMinSize: "1KB",
                 fileMaxSize: "10MB",
                 url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] +"/allegati",
+              }
+            },
+            sdcfile: {
+              title: 'File Sdc',
+              key: 'sdcfile',
+              icon: 'file',
+              schema: {
+                label: 'File',
+                type: 'sdcfile',
+                key: 'sdcfile',
+                input: true,
+                storage: "url",
+                fileMinSize: "1KB",
+                fileMaxSize: "10MB",
+                url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] +"/it/upload",
               }
             },
             financial_report: true,

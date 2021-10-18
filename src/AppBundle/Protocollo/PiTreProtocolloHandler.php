@@ -121,7 +121,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     if ($responseData->getStatus() == 'success') {
       $attachment->setNumeroProtocollo($responseData->getNProt());
       $pratica->addNumeroDiProtocollo([
-        'id' => $attachment->getIdDocumentoProtocollo(),
+        'id' => $attachment->getId(),
         'protocollo' => $attachment->getIdDocumentoProtocollo(),
       ]);
     } else {

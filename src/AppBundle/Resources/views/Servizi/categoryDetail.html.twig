@@ -1,14 +1,11 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block title %}{{ category.name }} - Stanza del cittadino{% endblock %}
-
+{% set sidebar_list_limit = 4 %}
 {% block main_content %}
   <section id="intro" class="container px-4 my-4">
     <div class="row">
-      <div class="col-12 px-lg-4 py-lg-2">
-        <h1>{{ category.name }}</h1>
-      </div>
       <div class="col-lg-8 px-lg-4 py-lg-2">
-
+        <h1>{{ category.name }}</h1>
         {% if category.description|striptags|trim != '' %}
           <article class="mb-3">
             <h4>{{ 'general.descrizione'|trans }}</h4>
@@ -16,18 +13,62 @@
           </article>
         {% endif %}
       </div>
+
+      <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
+        <h6>{{ 'categories.all'|trans }}</h6>
+        <div class="link-list-wrapper">
+          <ul class="link-list m-0">
+            {% for item in categories|slice(0, sidebar_list_limit) %}
+              <li>
+                <a class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
+                   href="{{ path('category_show', {'slug': item.slug}) }}">
+                  {{ item.name }}
+                </a>
+              </li>
+            {% endfor %}
+            {% if categories|length > sidebar_list_limit %}
+              <li>
+                <a class="p-0 list-item" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
+                  <em>{{ 'load_more'|trans }}</em>
+                </a>
+              </li>
+            {% else %}
+              <li>
+                <a class="p-0 list-item medium"
+                   href="{{ path('servizi_list') }}">
+                  {{ 'nav.servizi'|trans }}
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+        <div class="link-list-wrapper collapse" id="collapseExample">
+          <ul class="link-list">
+            {% for item in categories|slice(sidebar_list_limit, (categories|length-sidebar_list_limit)) %}
+              <li>
+                <a class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
+                   href="{{ path('category_show', {'slug': item.slug}) }}">
+                  {{ item.name }}
+                </a>
+              </li>
+            {% endfor %}
+            <li>
+              <a class="p-0 list-item medium"
+                 href="{{ path('servizi_list') }}">
+                {{ 'nav.servizi'|trans }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
   {% if services|length > 0 %}
-    <section class="container px-4 my-4">
+    <section class="container px-4 py-5">
       <div class="pb-5">
         <div class="container px-4">
-          <div class="row mt-5">
-            <div class="col">
-              <h3 class="mb-4 text-primary">{{ 'tutti_i_servizi'|trans() }}</h3>
-            </div>
-          </div>
           <div class="row">
             {% for item in services %}
               <div class="col-12 col-sm-6 col-lg-4">

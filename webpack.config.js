@@ -1,11 +1,13 @@
-var Encore = require('@symfony/webpack-encore');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
+const Encore = require('@symfony/webpack-encore');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const package = require("./package.json");
+//const webpack = require('webpack');
 
 Encore
-// directory where compiled assets will be stored
-  .setOutputPath('web/build/')
+  // directory where compiled assets will be stored
+  .setOutputPath('web/build/' + package.version + '/')
   // public path used by the web server to access the output path
-  .setPublicPath('/build')
+  .setPublicPath('/build/' + package.version + '/')
   // only needed for CDN's or sub-directory deploy
   //.setManifestKeyPrefix('build/')
 
@@ -33,6 +35,7 @@ Encore
   .addEntry('outdated-browser-rework', './assets/js/outdated-browser-rework.js')
   .addEntry('edit-operator', './assets/js/edit-operator')
   .addEntry('operator-show-application', './assets/js/pages/operator-show-application')
+  .addEntry('operator-new-application', './assets/js/pages/operator-new-application')
   .addEntry('user-show-application', './assets/js/pages/user-show-application')
   .addEntry('chars-user', './assets/js/Charts/chart-user.js')
   .addEntry('admin-scheduled-actions', './assets/js/pages/admin-scheduled-actions')
@@ -64,11 +67,10 @@ Encore
   .autoProvidejQuery()
   .addPlugin(new CopyWebpackPlugin({
     patterns: [
-      {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../bootstrap-italia/dist/fonts/'},
-      {from: './node_modules/bootstrap-italia/dist/svg/', to: '../bootstrap-italia/dist/svg/'}
+      {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../../bootstrap-italia/dist/fonts/'},
+      {from: './node_modules/bootstrap-italia/dist/svg/', to: '../../bootstrap-italia/dist/svg/'}
     ]
   }))
 ;
-
-
+  
 module.exports = Encore.getWebpackConfig();

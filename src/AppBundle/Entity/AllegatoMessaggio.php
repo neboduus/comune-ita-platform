@@ -109,7 +109,7 @@ class AllegatoMessaggio extends Allegato
    * @param string $idDocumentoProtocollo
    * @return AllegatoMessaggio
    */
-  public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
+  public function setIdDocumentoProtocollo($idDocumentoProtocollo)
   {
     $this->idDocumentoProtocollo = $idDocumentoProtocollo;
     return $this;

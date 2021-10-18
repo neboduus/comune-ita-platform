@@ -3,13 +3,13 @@
 {% set ente = instance_service.getCurrentInstance() %}
 {% set customName = ente.getMetaAsArray('name') %}
 {% set enteName = customName != '' ? customName :  ente.name %}
+{% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
 {% set logoMeta = ente.getMetaAsArray('logo') %}
-{% set logo = logoMeta != '' ? logoMeta :  asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') %}
+{% set logo = logoMeta  ? logoMeta :  host_url ~ 'bundles/app/images/logo-default.png' %}
 
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
-
   {{ include('@App/Print/parts/style.html.twig') }}
 {% endblock %}
 
@@ -97,7 +97,7 @@
 
     <div class="row">
       <div class="col-12">
-        <div class=" card-header bg-default"> {{ 'pratica.dettaglio.allegati'|trans }}</div>
+        <div class=" card-header bg-default"> {{ 'pratica.pdf.allegati_protocollo'|trans }}</div>
       </div>
     </div>
 
@@ -108,7 +108,7 @@
             <p><strong>Nome del file</strong></p>
           </div>
           <div class="col-6">
-            <p><strong>Hash del file (md5)</strong></p>
+            <p><strong>Hash del file</strong></p>
           </div>
           {% for a in attachments %}
             <div class="col-6">
@@ -117,11 +117,11 @@
             <div class="col-6">
               <p>{{ a.hash }}</p>
             </div>
-          {% if loop.index % 20 == 0 %}
-          </div>
-        <div class="row page-break-before"></div>
-        <div class="row">
-          {% endif %}
+            {% if loop.index % 20 == 0 %}
+              </div>
+              <div class="row page-break-before"></div>
+              <div class="row">
+            {% endif %}
           {% endfor %}
         </div>
       </div>
@@ -131,6 +131,37 @@
       </div>
     {% endif %}
 
+    {% if attachmentsNoProtocol|length > 0 %}
+      <div class="row page-break-before"></div>
+      <div class="row">
+        <div class="col-12">
+          <div class=" card-header bg-default"> {{ 'pratica.pdf.allegati_no_protocollo'|trans }}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <p><strong>Nome del file</strong></p>
+          </div>
+          <div class="col-6">
+            <p><strong>Hash del file (md5)</strong></p>
+          </div>
+          {% for a in attachmentsNoProtocol %}
+          <div class="col-6">
+            <p>{{ a.original_filename }}</p>
+          </div>
+          <div class="col-6">
+            <p>{{ a.hash }}</p>
+          </div>
+          {% if loop.index % 20 == 0 %}
+        </div>
+        <div class="row page-break-before"></div>
+        <div class="row">
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
 
     {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
 
@@ -148,12 +179,12 @@
           <p>{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
         </div>
         {% for key, value in securityFields %}
-        <div class="col-md-3">
-          <p><strong>{{ key }}</strong></p>
-        </div>
-        <div class="col-md-9">
-          <p class="text-break"><small>{{ value }}</small></p>
-        </div>
+          <div class="col-md-3">
+            <p><strong>{{ key }}</strong></p>
+          </div>
+          <div class="col-md-9">
+            <p class="text-break"><small>{{ value }}</small></p>
+          </div>
         {% endfor %}
       </div>
     {% endif %}

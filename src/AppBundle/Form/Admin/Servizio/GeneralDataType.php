@@ -96,6 +96,18 @@ class GeneralDataType extends AbstractI18nType
         ]
       )
       ->add(
+        'recipients',
+        EntityType::class,
+        [
+          'class' => 'AppBundle\Entity\Recipient',
+          'choice_label' => 'name',
+          'label' => 'servizio.destinatari',
+          'required' => false,
+          'multiple' => true,
+          'expanded' => true
+        ]
+      )
+      ->add(
         'coverage',
         TextType::class,
         [

@@ -8,10 +8,6 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
-parameters:
-  #container.autowiring.strict_mode: true
-  locale: it
-  app_locales: "it"
 
 framework:
   default_locale: "it"
@@ -79,6 +75,7 @@ twig:
     login_callout_texts: "%login_callout_texts%"
     login_route: "%login_route%"
     protocollo_handler: "@ocsdc.protocollo.handler"
+    locale: "%locale%"
     app_locales: "%app_locales%"
     prefix: "%prefix%"
 
@@ -230,7 +227,7 @@ nelmio_api_doc:
     default:
       path_patterns: # an array of regexps
         #- ^/%prefix%/api(?!/doc$)
-        - ^/%prefix%/api/(services|services-groups|applications|subscription-services|subscriptions|calendars|meetings|folders|documents|messages|users|tenants|categories)(?!/doc$)
+        - ^/%prefix%/api/(services|services-groups|applications|subscription-services|subscriptions|calendars|meetings|folders|documents|messages|users|tenants|categories|recipients)(?!/doc$)
     v2:
       name_patterns:
         - ^v2
@@ -309,7 +306,8 @@ oneup_flysystem:
       mount: s3_filesystem
       # optional - defines the default visibility of the filesystem: `public` or `private`(default)
       visibility: private
-      alias: sdc_filesystem
+      alias: s3_filesystem
     local_filesystem:
       adapter: local_adapter
       mount: local_filesystem
+      alias: local_filesystem

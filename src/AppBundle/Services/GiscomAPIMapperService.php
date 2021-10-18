@@ -164,7 +164,6 @@ class GiscomAPIMapperService
       if ($realFile instanceof Allegato && $realFile->getFile() instanceof \Symfony\Component\HttpFoundation\File\File) {
 
         // Set endpoint url to recover file content
-        //$file->setContent(base64_encode(file_get_contents($realFile->getFile()->getPathname())));
         $file->setContent($this->router->generate('giscom_api_attachment', ['attachment' => $file->getId()], UrlGeneratorInterface::ABSOLUTE_URL));
       }
     }
@@ -199,7 +198,6 @@ class GiscomAPIMapperService
       // Il numero di protocollo del modulo compilato coincide con quello della pratica
       $modulo->setProtocollo($pratica->getNumeroProtocollo());
       // Set endpoint url to recover file content
-      //$modulo->setContent(base64_encode(file_get_contents($m->getFile()->getPathname())));
       $modulo->setContent($this->router->generate('giscom_api_attachment', ['attachment' => $m->getId()], UrlGeneratorInterface::ABSOLUTE_URL));
       return $modulo;
     }

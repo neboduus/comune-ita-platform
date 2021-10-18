@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 
 use AppBundle\Dto\Application;
 use AppBundle\Entity\AdminUser;
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
@@ -12,6 +13,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\StatusChange;
 use AppBundle\Entity\User;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Base\AllegatoType;
@@ -22,6 +24,7 @@ use AppBundle\Model\Transition;
 use AppBundle\Model\File as FileModel;
 use AppBundle\PraticaEvents;
 use AppBundle\Security\Voters\ApplicationVoter;
+use AppBundle\Services\FileService;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\Manager\PraticaManager;
@@ -133,8 +136,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   protected $logger;
 
-  /** @var TranslatorInterface */
-  private $translator;
   /**
    * @var PraticaManager
    */
@@ -147,6 +148,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @var EventDispatcherInterface
    */
   private $dispatcher;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
    * ApplicationsAPIController constructor.
@@ -156,10 +161,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param ModuloPdfBuilderService $pdfBuilder
    * @param UrlGeneratorInterface $router
    * @param LoggerInterface $logger
-   * @param TranslatorInterface $translator
    * @param PraticaManager $praticaManager
    * @param FormServerApiAdapterService $formServerService
    * @param EventDispatcherInterface $dispatcher
+   * @param FileService $fileService
    */
   public function __construct(
     EntityManagerInterface $em,
@@ -168,10 +173,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     ModuloPdfBuilderService $pdfBuilder,
     UrlGeneratorInterface $router,
     LoggerInterface $logger,
-    TranslatorInterface $translator,
     PraticaManager $praticaManager,
     FormServerApiAdapterService $formServerService,
-    EventDispatcherInterface $dispatcher
+    EventDispatcherInterface $dispatcher,
+    FileService $fileService
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -180,10 +185,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->router = $router;
     $this->baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
     $this->logger = $logger;
-    $this->translator = $translator;
     $this->praticaManager = $praticaManager;
     $this->formServerService = $formServerService;
     $this->dispatcher = $dispatcher;
+    $this->fileService = $fileService;
   }
 
   /**
@@ -241,6 +246,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      description="Updated at filter, format yyyy-mm-dd"
    *  )
    * @SWG\Parameter(
+   *      name="status",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Status code of application"
+   *  )
+   * @SWG\Parameter(
    *      name="offset",
    *      in="query",
    *      type="integer",
@@ -277,33 +289,30 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   public function getApplicationsAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
+    $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $offset = intval($request->get('offset', 0));
     $limit = intval($request->get('limit', 10));
     $version = intval($request->get('version', 1));
 
     $serviceParameter = $request->get('service', false);
-    $orderParameter = $request->get('order', false);
-    $sortParameter = $request->get('sort', false);
-
+    $statusParameter = $request->get('status', false);
     $createdAtParameter = $request->get('createdAt', false);
     $updatedAtParameter = $request->get('updatedAt', false);
+
+    $orderParameter = $request->get('order', false);
+    $sortParameter = $request->get('sort', false);
 
     if ($limit > 100) {
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
-    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
-    $allowedServices = $this->getAllowedServices();
-
-    if (empty($allowedServices)) {
-      return $this->view(["You are not allowed to view applications"], Response::HTTP_FORBIDDEN);
-    }
-
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
     if ($serviceParameter) {
       $queryParameters['service'] = $serviceParameter;
+    }
+    if ($statusParameter) {
+      $queryParameters['status'] = $statusParameter;
     }
     if ($orderParameter) {
       $queryParameters['order'] = $orderParameter;
@@ -313,7 +322,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $format = 'Y-m-d';
-
     if ($createdAtParameter) {
       foreach ($createdAtParameter as $v) {
         $date = DateTime::createFromFormat($format, $v);
@@ -323,6 +331,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
       $queryParameters['createdAt'] = $createdAtParameter;
     }
+
     if ($updatedAtParameter) {
       foreach ($updatedAtParameter as $v) {
         $date = DateTime::createFromFormat($format, $v);
@@ -333,12 +342,27 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['updatedAt'] = $updatedAtParameter;
     }
 
+    if ($statusParameter) {
+      $applicationStatuses = array_keys(Pratica::getStatuses());
+      if (!in_array($statusParameter, $applicationStatuses)) {
+        return $this->view(["Status code not present, chose one between: " . implode(',', $applicationStatuses)], Response::HTTP_BAD_REQUEST);
+      }
+    }
+
+    $user = $this->getUser();
+    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $allowedServices = $this->getAllowedServices();
+
+    if (empty($allowedServices) && $user instanceof OperatoreUser) {
+      return $this->view(["You are not allowed to view applications"], Response::HTTP_FORBIDDEN);
+    }
+
     if ($serviceParameter) {
       $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
       if (!$service instanceof Servizio) {
         return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
       }
-      if (!in_array($service->getId(), $allowedServices)) {
+      if (!empty($allowedServices) && !in_array($service->getId(), $allowedServices)) {
         return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
       }
       $allowedServices = [$service->getId()];
@@ -347,14 +371,19 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $result = [];
     $result['meta']['parameter'] = $queryParameters;
-
     $repoApplications = $this->em->getRepository(Pratica::class);
-
 
     try {
       $parameters = $queryParameters;
-      $parameters['service'] = $allowedServices;
+      if (!empty($allowedServices)) {
+        $parameters['service'] = $allowedServices;
+      }
+      $user = $this->getUser();
+      if ($user instanceof CPSUser) {
+        $parameters['user'] = $user->getId();
+      }
       $count = $repoApplications->getApplications($parameters, true);
+
     } catch (NoResultException $e) {
       $count = 0;
     } catch (NonUniqueResultException $e) {
@@ -510,7 +539,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    */
   public function postApplicationAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_ADMIN']);
+    $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $applicationDto = new Application();
     $form = $this->createForm('AppBundle\Form\Rest\ApplicationFormType', $applicationDto);
@@ -541,6 +570,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["There was an error on retrieve form schema"], Response::HTTP_BAD_REQUEST);
     }
     $schema = $result['schema'];
+    $this->praticaManager->setSchema($schema);
     $flatSchema = $this->praticaManager->arrayFlat($schema, true);
     $flatData = $this->praticaManager->arrayFlat($applicationDto->getData());
 
@@ -549,8 +579,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     foreach ($flatData as $k => $v) {
-      if (!isset($flatSchema[$k . '.type'])) {
-        return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
+      // Todo: creare servizio più efficace per controllo conformità schema
+      if ($flatSchema[$k . '.type'] != 'file') {
+        if (!isset($flatSchema[$k . '.type'])) {
+          return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
+        }
       }
     }
 
@@ -595,28 +628,32 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     try {
 
-      /** @var FormIO $pratica */
+      $statusChange = null;
+      if ($user != $this->getUser()) {
+        $statusChange = new StatusChange();
+        $statusChange->setEvento('Creazione pratica da altro soggetto.');
+        $statusChange->setOperatore($this->getUser()->getFullName());
+      }
+
+        /** @var FormIO $pratica */
       $pratica = $applicationDto->toEntity(new FormIO());
       $pratica->setUser($user);
       $pratica->setEnte($this->is->getCurrentInstance());
       $pratica->setServizio($service);
-      $pratica->setStatus(Pratica::STATUS_DRAFT);
+      $pratica->setStatus($applicationDto->getStatus(), $statusChange);
       $pratica->setDematerializedForms($data);
+      if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
+        $pratica->setSubmissionTime(time());
+      }
+      $this->praticaManager->addAttachmentsToApplication($pratica, $flatData);
       $this->em->persist($pratica);
       $this->em->flush();
 
-
-      if ($applicationDto->getStatus() == Pratica::STATUS_DRAFT) {
-        $this->dispatcher->dispatch(
-          PraticaEvents::ON_STATUS_CHANGE,
-          new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_DRAFT, 0)
-        );
-      } else {
+      if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
         $this->pdfBuilder->createForPraticaAsync($pratica, $applicationDto->getStatus());
       }
 
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -626,13 +663,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $e->getMessage(),
         ['request' => $request]
       );
-
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     return $this->view(
-      Application::fromEntity($pratica, $this->baseUrl.'/'.$pratica->getId()),
-      Response::HTTP_CREATED
+      Application::fromEntity($pratica, $this->baseUrl.'/'.$pratica->getId()), Response::HTTP_CREATED
     );
   }
 
@@ -888,7 +923,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param $id
-   * @return Response
+   * @return View|Response
    */
   public function attachmentAction($id, $attachmentId)
   {
@@ -911,9 +946,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $filename
       );
     } else {
-      /** @var File $file */
-      $file = $result->getFile();
-      $fileContent = file_get_contents($file->getPathname());
+      $fileContent = $this->fileService->getAttachmentContent($result);
       $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
       $response = new Response($fileContent);
       $disposition = $response->headers->makeDisposition(
@@ -1811,12 +1844,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $allowedServices = [];
     if ($user instanceof OperatoreUser) {
       $allowedServices = $user->getServiziAbilitati()->toArray();
-    } elseif ($user instanceof AdminUser) {
-      $services = $repositoryService->findAll();
-      /** @var Servizio $service */
-      foreach ($services as $service) {
-        $allowedServices [] = $service->getId();
-      }
     }
 
     return $allowedServices;

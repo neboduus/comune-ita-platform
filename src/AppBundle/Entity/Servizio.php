@@ -364,6 +364,17 @@ class Servizio implements Translatable
   private $backofficeFormId;
 
   /**
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Recipient", inversedBy="services")
+   * @ORM\JoinTable(
+   *     name="servizio_recipient",
+   *     joinColumns={@ORM\JoinColumn(name="servizio_id", referencedColumnName="id")},
+   *     inverseJoinColumns={@ORM\JoinColumn(name="recipient_id", referencedColumnName="id")}
+   * )
+   * @var ArrayCollection
+   */
+  private $recipients;
+
+  /**
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
    * this is not a mapped field of entity metadata, just a simple property
@@ -383,6 +394,7 @@ class Servizio implements Translatable
     $this->erogatori = new ArrayCollection();
     $this->flowSteps = new ArrayCollection();
     $this->feedbackMessages = new ArrayCollection();
+    $this->recipients = new ArrayCollection();
     //$this->paymentParameters = new ArrayCollection();
     $this->status = self::STATUS_AVAILABLE;
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
@@ -1294,6 +1306,48 @@ class Servizio implements Translatable
   public function setBackofficeFormId(?string $backofficeFormId): void
   {
     $this->backofficeFormId = $backofficeFormId;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getRecipients()
+  {
+    return $this->recipients;
+  }
+
+  /**
+   * @param Collection $recipients
+   */
+  public function setRecipients(?Collection $recipients): void
+  {
+    $this->recipients = $recipients;
+  }
+
+  /**
+   * @param Recipient $recipient
+   *
+   * @return $this
+   */
+  public function addRecipient(Recipient $recipient)
+  {
+    if (!$this->recipients->contains($recipient)) {
+      $this->recipients->add($recipient);
+    }
+    return $this;
+  }
+
+  /**
+   * @param Recipient $recipient
+   *
+   * @return $this
+   */
+  public function removeAllegato(Recipient $recipient)
+  {
+    if ($this->recipients->contains($recipient)) {
+      $this->recipients->removeElement($recipient);
+    }
+    return $this;
   }
 
   public function setTranslatableLocale($locale)

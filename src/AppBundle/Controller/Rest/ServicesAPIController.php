@@ -8,6 +8,7 @@ use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\Recipient;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\PaymentParameters;
@@ -20,6 +21,7 @@ use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -78,15 +80,20 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param FormServerApiAdapterService $formServerApiAdapterService
    * @param ProtocolloHandlerRegistry $handlerRegistry
    */
-  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, FormServerApiAdapterService $formServerApiAdapterService, ProtocolloHandlerRegistry $handlerRegistry)
-  {
+  public function __construct(
+    EntityManagerInterface $em,
+    InstanceService $is,
+    LoggerInterface $logger,
+    FormServerApiAdapterService $formServerApiAdapterService,
+    ProtocolloHandlerRegistry $handlerRegistry
+  ) {
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
     $this->formServerApiAdapterService = $formServerApiAdapterService;
     $this->handlerRegistry = $handlerRegistry;
 
-    foreach ($this->handlerRegistry->getAvailableHandlers() as $alias => $handler){
+    foreach ($this->handlerRegistry->getAvailableHandlers() as $alias => $handler) {
       $this->handlerList[] = $alias;
     }
   }
@@ -112,6 +119,14 @@ class ServicesAPIController extends AbstractFOSRestController
    *      description="Id of the service group"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="recipient_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the recipient"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of services",
@@ -128,6 +143,7 @@ class ServicesAPIController extends AbstractFOSRestController
     try {
       $serviceGroupId = $request->get('service_group_id', false);
       $categoryId = $request->get('topics_id', false);
+      $recipientId = $request->get('recipient_id', false);
       $result = [];
       $repoServices = $this->em->getRepository(Servizio::class);
       $criteria['status'] = Servizio::PUBLIC_STATUSES;
@@ -150,7 +166,17 @@ class ServicesAPIController extends AbstractFOSRestController
         $criteria['topics'] = $categoryId;
       }
 
-      $services = $repoServices->findBy($criteria);
+      if ($recipientId) {
+        $recipientsRepo = $this->em->getRepository('AppBundle:Recipient');
+        $recipient = $recipientsRepo->find($recipientId);
+        if (!$recipient instanceof Recipient) {
+          return $this->view(["Recipient not found"], Response::HTTP_NOT_FOUND);
+        }
+        $criteria['recipients'] = $recipientId;
+      }
+
+      $services = $repoServices->findByCriteria($criteria);
+
       foreach ($services as $s) {
         $result [] = Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
       }
@@ -160,7 +186,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -204,7 +230,10 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view(["You are not allowed to see this service"], Response::HTTP_FORBIDDEN);
       }
 
-      return $this->view(Service::fromEntity($result, $this->formServerApiAdapterService->getFormServerPublicUrl()), Response::HTTP_OK);
+      return $this->view(
+        Service::fromEntity($result, $this->formServerApiAdapterService->getFormServerPublicUrl()),
+        Response::HTTP_OK
+      );
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
@@ -300,7 +329,10 @@ class ServicesAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     if (!$this->checkProtocolHandler($request)) {
-      return $this->view(["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)], Response::HTTP_BAD_REQUEST);
+      return $this->view(
+        ["Unknown protocol handler, allowed handlers are: ".implode(', ', $this->handlerList)],
+        Response::HTTP_BAD_REQUEST
+      );
     }
 
     $serviceDto = new Service();
@@ -312,57 +344,63 @@ class ServicesAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
-        'errors' => $errors
+        'errors' => $errors,
       ];
+
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $em = $this->getDoctrine()->getManager();
-
-    $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-    if ($category instanceof Categoria) {
-      $serviceDto->setTopics($category);
-    }
-
-    $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-    if ($serviceGroup instanceof ServiceGroup) {
-      $serviceDto->setServiceGroup($serviceGroup);
-    }
-
-    $service = $serviceDto->toEntity();
-    $service->setPraticaFCQN('\AppBundle\Entity\FormIO');
-    $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
-
-    // Imposto l'ente in base all'istanza
-    $ente = $this->is->getCurrentInstance();
-    $service->setEnte($ente);
-
-    // Erogatore
-    $erogatore = new Erogatore();
-    $erogatore->setName('Erogatore di ' . $service->getName() . ' per ' . $ente->getName());
-    $erogatore->addEnte($ente);
-    $em->persist($erogatore);
-    $service->activateForErogatore($erogatore);
-    $em->persist($service);
-    $em->flush();
-
     try {
-      $em->persist($service);
-      $em->flush();
-    } catch (\Exception $e) {
+
+      $this->checkServiceRelations($serviceDto);
+
+      $service = $serviceDto->toEntity();
+      $service->setPraticaFCQN('\AppBundle\Entity\FormIO');
+      $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
+
+      // Imposto l'ente in base all'istanza
+      $ente = $this->is->getCurrentInstance();
+      $service->setEnte($ente);
+
+      // Erogatore
+      $erogatore = new Erogatore();
+      $erogatore->setName('Erogatore di '.$service->getName().' per '.$ente->getName());
+      $erogatore->addEnte($ente);
+      $this->em->persist($erogatore);
+      $service->activateForErogatore($erogatore);
+      $this->em->persist($service);
+      $this->em->flush();
+
+    } catch (UniqueConstraintViolationException $e) {
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'title' => 'Duplicate key',
+        'description' => 'A service with same name is already present',
       ];
       $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view(Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl()), Response::HTTP_CREATED);
+    return $this->view(
+      Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl()),
+      Response::HTTP_CREATED
+    );
+
   }
 
   /**
@@ -410,6 +448,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="services")
    *
+   * @param $id
    * @param Request $request
    * @return View
    */
@@ -420,7 +459,10 @@ class ServicesAPIController extends AbstractFOSRestController
     try {
 
       if (!$this->checkProtocolHandler($request)) {
-        return $this->view(["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)], Response::HTTP_BAD_REQUEST);
+        return $this->view(
+          ["Unknown protocol handler, allowed handlers are: ".implode(', ', $this->handlerList)],
+          Response::HTTP_BAD_REQUEST
+        );
       }
 
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
@@ -439,45 +481,34 @@ class ServicesAPIController extends AbstractFOSRestController
         $data = [
           'type' => 'put_validation_error',
           'title' => 'There was a validation error',
-          'errors' => $errors
+          'errors' => $errors,
         ];
+
         return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
 
-      $em = $this->getDoctrine()->getManager();
-      $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-      if ($category instanceof Categoria) {
-        $serviceDto->setTopics($category);
-      }
-
-      $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-      if ($serviceGroup instanceof ServiceGroup) {
-        $serviceDto->setServiceGroup($serviceGroup);
-      }
-
+      $this->checkServiceRelations($serviceDto);
       $service = $serviceDto->toEntity($service);
 
-
-      $em->persist($service);
-      $em->flush();
+      $this->em->persist($service);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
+
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
-    /*} catch (\Exception $e) {
-        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
-    }*/
+
   }
 
   /**
@@ -536,10 +567,12 @@ class ServicesAPIController extends AbstractFOSRestController
     try {
 
       if (!$this->checkProtocolHandler($request)) {
-        return $this->view(["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)], Response::HTTP_BAD_REQUEST);
+        return $this->view(
+          ["Unknown protocol handler, allowed handlers are: ".implode(', ', $this->handlerList)],
+          Response::HTTP_BAD_REQUEST
+        );
       }
 
-      $em = $this->getDoctrine()->getManager();
       $repository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
       /** @var Servizio $service */
       $service = $repository->find($id);
@@ -556,35 +589,28 @@ class ServicesAPIController extends AbstractFOSRestController
         $data = [
           'type' => 'validation_error',
           'title' => 'There was a validation error',
-          'errors' => $errors
+          'errors' => $errors,
         ];
+
         return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
 
-      $category = $em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-      if ($category instanceof Categoria) {
-        $serviceDto->setTopics($category);
-      }
-
-      $serviceGroup = $em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
-      if ($serviceGroup instanceof ServiceGroup) {
-        $serviceDto->setServiceGroup($serviceGroup);
-      }
-
+      $this->checkServiceRelations($serviceDto);
       $service = $serviceDto->toEntity($service);
 
-      $em->persist($service);
-      $em->flush();
+      $this->em->persist($service);
+      $this->em->flush();
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
+
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -613,15 +639,12 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
-    $service = $this->getDoctrine()->getRepository('AppBundle:Servizio')->find($id);
+    $service = $this->em->getRepository('AppBundle:Servizio')->find($id);
     if ($service) {
-      // debated point: should we 404 on an unknown nickname?
-      // or should we just return a nice 204 in all cases?
-      // we're doing the latter
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($service);
-      $em->flush();
+      $this->em->remove($service);
+      $this->em->flush();
     }
+
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
 
@@ -644,7 +667,7 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     $errors = array();
     foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
+      $errors[] = $error;
     }
     foreach ($form->all() as $childForm) {
       if ($childForm instanceof FormInterface) {
@@ -653,6 +676,7 @@ class ServicesAPIController extends AbstractFOSRestController
         }
       }
     }
+
     return $errors;
   }
 
@@ -661,6 +685,35 @@ class ServicesAPIController extends AbstractFOSRestController
     if ($request->get('protocol_handler') && !in_array($request->get('protocol_handler'), $this->handlerList)) {
       return false;
     }
+
     return true;
   }
+
+
+  /**
+   * @param $serviceDto
+   */
+  private function checkServiceRelations(&$serviceDto)
+  {
+    $category = $this->em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    if ($category instanceof Categoria) {
+      $serviceDto->setTopics($category);
+    }
+
+    $serviceGroup = $this->em->getRepository('AppBundle:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]
+    );
+    if ($serviceGroup instanceof ServiceGroup) {
+      $serviceDto->setServiceGroup($serviceGroup);
+    }
+
+    $recipients = [];
+    foreach ($serviceDto->getRecipientsId() as $r) {
+      $recipient = $this->em->getRepository('AppBundle:Recipient')->find($r);
+      if ($recipient instanceof Recipient) {
+        $recipients []= $recipient;
+      }
+    }
+    $serviceDto->setRecipientsId($recipients);
+  }
+
 }

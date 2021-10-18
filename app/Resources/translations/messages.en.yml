@@ -874,6 +874,7 @@ messages:
       8000: '8000'
       9000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been refused, the request number is <strong>%pratica_id%</strong>. <br /> With the following message: <br />%messaggio_personale%<br /> Thank you for your cooperation."
       20000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been successfully withdrawn, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request. <br /> Thank you for your cooperation."
+      50000: "Dear <strong>%user_name%</strong>,<br/> we inform you that your request for the <strong>%servizio%</strong> service has been canceled. The request number is <strong>%pratica_id%</strong>. Always refer to this identifier in case of communications relating to your request."
       1000: ""
     no_reason: '<i>No message specified</i>'
 messaggi:

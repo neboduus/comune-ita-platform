@@ -420,8 +420,6 @@ class CategoriesAPIController extends AbstractFOSRestController
   private function getErrorsFromForm(FormInterface $form)
   {
     $errors = array();
-    dump($form->getErrors());
-    exit;
     foreach ($form->getErrors() as $error) {
       $errors[] = $error->getMessage();
     }

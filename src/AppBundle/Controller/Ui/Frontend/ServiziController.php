@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
+use AppBundle\Entity\Recipient;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\ServiceGroupRepository;
 use AppBundle\Entity\Servizio;
@@ -260,6 +261,8 @@ class ServiziController extends Controller
       throw new NotFoundHttpException("Category $slug not found");
     }
 
+    $categories = $categoryRepository->findBy([], ['name' => 'asc']);
+
     $repoServices = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $services = $repoServices->findBy([
       'topics' => $category->getId(),
@@ -269,6 +272,43 @@ class ServiziController extends Controller
     $response =  $this->render( '@App/Servizi/categoryDetail.html.twig', [
       'user' => $user,
       'category' => $category,
+      'categories' => $categories,
+      'services' => $services
+    ]);
+
+    return $response;
+  }
+
+  /**
+   * @Route("/destinatario/{slug}", name="recipient_show")
+   * @param string $slug
+   * @param Request $request
+   *
+   * @return Response
+   */
+  public function recipientDetailAction($slug)
+  {
+    $user = $this->getUser();
+    $recipientRepository = $this->getDoctrine()->getRepository('AppBundle:Recipient');
+
+    /** @var Servizio $servizio */
+    $recipient = $recipientRepository->findOneBySlug($slug);
+    if (!$recipient instanceof Recipient) {
+      throw new NotFoundHttpException("Recipient $slug not found");
+    }
+
+    $recipients = $recipientRepository->findBy([], ['name' => 'asc']);
+
+    $repoServices = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+    $services = $repoServices->findByCriteria([
+      'recipients' => $recipient->getId(),
+      'status' => Servizio::PUBLIC_STATUSES
+    ]);
+
+    $response =  $this->render( '@App/Servizi/recipientDetail.html.twig', [
+      'user' => $user,
+      'recipient' => $recipient,
+      'recipients' => $recipients,
       'services' => $services
     ]);
 

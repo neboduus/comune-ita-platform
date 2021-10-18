@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="it">
 <head>
+  {% block head %}
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>{% block title %}{% endblock %}</title>
@@ -29,6 +30,36 @@
       f.parentNode.insertBefore(j, f);
     })(window, document, 'script', 'dataLayer', 'GTM-TTVNWDL');</script>
   <!-- End Google Tag Manager -->
+    <script>
+      // Plain Javascript
+      //event listener: DOM ready
+      function addLoadEvent(func) {
+        var oldonload = window.onload;
+        if (typeof window.onload != 'function') {
+          window.onload = func;
+        } else {
+          window.onload = function () {
+            if (oldonload) {
+              oldonload();
+            }
+            func();
+          }
+        }
+      }
+
+      //call plugin function after DOM ready
+      addLoadEvent(function () {
+        {% if not feature('feature_new_outdatedbrowser') %}
+        outdatedBrowser({
+          bgColor: '#3478bd',
+          color: '#ffffff',
+          lowerThan: 'object-fit',
+          languagePath: ''
+        })
+        {% endif %}
+      });
+    </script>
+  {% endblock %}
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -49,35 +80,7 @@
   </div>
 
 {% block footer %}{% endblock %}
-  <script>
-    // Plain Javascript
-    //event listener: DOM ready
-    function addLoadEvent(func) {
-      var oldonload = window.onload;
-      if (typeof window.onload != 'function') {
-        window.onload = func;
-      } else {
-        window.onload = function () {
-          if (oldonload) {
-            oldonload();
-          }
-          func();
-        }
-      }
-    }
 
-    //call plugin function after DOM ready
-    addLoadEvent(function () {
-      {% if not feature('feature_new_outdatedbrowser') %}
-      outdatedBrowser({
-        bgColor: '#3478bd',
-        color: '#ffffff',
-        lowerThan: 'object-fit',
-        languagePath: ''
-      })
-    {% endif %}
-    });
-  </script>
 {% if not feature('feature_new_outdatedbrowser') %}
   <div id="outdated" style="height: 100%;opacity: 0.95;background-color: #3478bd">
     <div style="position: absolute;width: 100%;top: 30%;">
