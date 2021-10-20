@@ -140,15 +140,9 @@ services:
       [ "@translator", "%kernel.root_dir%", '@doctrine.orm.entity_manager', '@ocsdc.instance_service', '@logger' ]
 
   AppBundle\Controller\Ui\Frontend\PraticheAnonimeController:
+    autowire: true
     arguments:
-      - '@logger'
-      - "@translator"
-      - "@ocsdc.pratica_status_service"
-      - "@ocsdc.modulo_pdf_builder"
-      - "@ocsdc.allegati.dematerialized_attacher"
-      - "@ocsdc.instance_service"
-      - '%hash_validity%'
-      - "@formio.expression_validator"
+      $hashValidity: '%hash_validity%'
 
   AppBundle\Controller\Ui\Frontend\TrackingController:
     autowire: true

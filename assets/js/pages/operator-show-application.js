@@ -138,4 +138,7 @@ $(document).ready(function () {
 
   //Init TextArea
   TextEditor.init();
+
+  // Tooltips
+  $('[data-toggle="tooltip"]').tooltip();
 });

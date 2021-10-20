@@ -1244,6 +1244,7 @@ class Application
       $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $id;
       $temp['originalName'] = $f['originalName'];
       $temp['description'] = isset($f['fileType']) ? $f['fileType'] : Allegato::DEFAULT_DESCRIPTION;
+      $temp['protocol_required'] = $f['protocol_required'] ?? true;
       $result[] = $temp;
     }
     return $result;
@@ -1257,6 +1258,7 @@ class Application
     $temp['originalName'] = $file->getFilename();
     $temp['description'] = $file->getDescription() ?? Allegato::DEFAULT_DESCRIPTION;
     $temp['created_at'] = $file->getCreatedAt();
+    $temp['protocol_required'] = $file->isProtocolRequired();
 
     return $temp;
   }

@@ -22,6 +22,7 @@ use AppBundle\Model\Transition;
 use AppBundle\Model\File as FileModel;
 use AppBundle\PraticaEvents;
 use AppBundle\Security\Voters\ApplicationVoter;
+use AppBundle\Services\FileService;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\Manager\PraticaManager;
@@ -133,8 +134,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   protected $logger;
 
-  /** @var TranslatorInterface */
-  private $translator;
   /**
    * @var PraticaManager
    */
@@ -147,6 +146,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @var EventDispatcherInterface
    */
   private $dispatcher;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
    * ApplicationsAPIController constructor.
@@ -156,10 +159,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param ModuloPdfBuilderService $pdfBuilder
    * @param UrlGeneratorInterface $router
    * @param LoggerInterface $logger
-   * @param TranslatorInterface $translator
    * @param PraticaManager $praticaManager
    * @param FormServerApiAdapterService $formServerService
    * @param EventDispatcherInterface $dispatcher
+   * @param FileService $fileService
    */
   public function __construct(
     EntityManagerInterface $em,
@@ -168,10 +171,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     ModuloPdfBuilderService $pdfBuilder,
     UrlGeneratorInterface $router,
     LoggerInterface $logger,
-    TranslatorInterface $translator,
     PraticaManager $praticaManager,
     FormServerApiAdapterService $formServerService,
-    EventDispatcherInterface $dispatcher
+    EventDispatcherInterface $dispatcher,
+    FileService $fileService
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -180,10 +183,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->router = $router;
     $this->baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
     $this->logger = $logger;
-    $this->translator = $translator;
     $this->praticaManager = $praticaManager;
     $this->formServerService = $formServerService;
     $this->dispatcher = $dispatcher;
+    $this->fileService = $fileService;
   }
 
   /**
@@ -888,7 +891,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Tag(name="applications")
    *
    * @param $id
-   * @return Response
+   * @return View|Response
    */
   public function attachmentAction($id, $attachmentId)
   {
@@ -911,9 +914,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $filename
       );
     } else {
-      /** @var File $file */
-      $file = $result->getFile();
-      $fileContent = file_get_contents($file->getPathname());
+      $fileContent = $this->fileService->getAttachmentContent($result);
       $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
       $response = new Response($fileContent);
       $disposition = $response->headers->makeDisposition(

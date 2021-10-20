@@ -10,8 +10,8 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\DematerializedFormAllegatiAttacherService;
+use AppBundle\Services\FileService;
 use AppBundle\Services\InstanceService;
-use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -48,11 +48,6 @@ class PraticheAnonimeController extends Controller
   protected $statusService;
 
   /**
-   * @var ModuloPdfBuilderService
-   */
-  protected $pdfBuilder;
-
-  /**
    * @var DematerializedFormAllegatiAttacherService
    */
   protected $dematerializer;
@@ -67,37 +62,41 @@ class PraticheAnonimeController extends Controller
 
   /** @var ExpressionValidator */
   protected $expressionValidator;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
-   * PraticaFlow constructor.
+   * PraticheAnonimeController constructor.
    *
    * @param LoggerInterface $logger
    * @param TranslatorInterface $translator
    * @param PraticaStatusService $statusService
-   * @param ModuloPdfBuilderService $pdfBuilder
    * @param DematerializedFormAllegatiAttacherService $dematerializer
    * @param InstanceService $instanceService
    * @param $hashValidity
    * @param ExpressionValidator $expressionValidator
+   * @param FileService $fileService
    */
   public function __construct(
     LoggerInterface $logger,
     TranslatorInterface $translator,
     PraticaStatusService $statusService,
-    ModuloPdfBuilderService $pdfBuilder,
     DematerializedFormAllegatiAttacherService $dematerializer,
     InstanceService $instanceService,
     $hashValidity,
-    ExpressionValidator $expressionValidator
+    ExpressionValidator $expressionValidator,
+    FileService $fileService
   ) {
     $this->logger = $logger;
     $this->translator = $translator;
     $this->statusService = $statusService;
-    $this->pdfBuilder = $pdfBuilder;
     $this->dematerializer = $dematerializer;
     $this->instanceService = $instanceService;
     $this->hashValidity = $hashValidity;
     $this->expressionValidator = $expressionValidator;
+    $this->fileService = $fileService;
   }
 
   /**
@@ -228,7 +227,7 @@ class PraticheAnonimeController extends Controller
         return new Response('', Response::HTTP_NOT_FOUND);
       }
       $attachment = $compiledModules->first();
-      $fileContent = file_get_contents($attachment->getFile()->getPathname());
+      $fileContent = $this->fileService->getAttachmentContent($attachment);
       $filename = $pratica->getId().'.pdf';
       $response = new Response($fileContent);
       $disposition = $response->headers->makeDisposition(

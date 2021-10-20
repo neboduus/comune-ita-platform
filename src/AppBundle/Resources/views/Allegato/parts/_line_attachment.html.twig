@@ -1,22 +1,53 @@
-<div class="row align-items-center text-center my-2 py-2 border-bottom">
-  <div class="col-1">
-    <i class="fa fa-file-pdf-o"></i>
-  </div>
+<div class="row py-2 border-bottom">
   <div class="col-7 text-truncate">
+    <svg class="icon">
+      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+    </svg>
     {{ attachment.originalFilename }}
   </div>
   <div class="col-2 text-monospace">
     {{ attachment.getHumanReadableFileSize }}
   </div>
   <div class="col-2">
+    {% if attachment.isProtocolRequired %}
+      {% if attachment.numeroProtocollo %}
+        <span data-toggle="tooltip" data-placement="right" title="{{ 'allegato.protocollo.protocollato'|trans }}">
+          <svg class="icon icon-sm icon-success">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use>
+          </svg>
+        </span>
+      {% else %}
+        <span data-toggle="tooltip" data-placement="right" title="{{ 'allegato.protocollo.in_attesa'|trans }}">
+          <svg class="icon icon-sm icon-warning">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use>
+          </svg>
+        </span>
+      {% endif %}
+    {% else %}
+      <span data-toggle="tooltip" data-placement="right" title="{{ 'allegato.protocollo.non_richiesto'|trans }}">
+        <svg class="icon icon-sm icon-secondary">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use>
+        </svg>
+      </span>
+    {% endif %}
+  </div>
+  <div class="col-1">
     {# todo: unificare i controller per il download #}
     {% if is_granted('ROLE_OPERATORE') %}
       <a href="{{ path('allegati_download_operatore', {'allegato': attachment}) }}" download>
-        <i class="fa fa-download"></i>
+        <span data-toggle="tooltip" data-placement="right" title="Download">
+          <svg class="icon icon-primary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+          </svg>
+        </span>
       </a>
     {% else %}
       <a href="{{ path('allegati_download_cpsuser', {'allegato': attachment.id}) }}" download>
-        <i class="fa fa-download"></i>
+        <span data-toggle="tooltip" data-placement="right" title="{{ 'allegato.scarica_allegato'|trans }}">
+          <svg class="icon icon-primary">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+          </svg>
+        </span>
       </a>
     {% endif %}
   </div>
