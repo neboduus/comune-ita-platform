@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Ui\Backend;
 
-use AppBundle\Entity\Categoria;
+use AppBundle\Entity\Recipient;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -15,10 +15,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
- * Class PaymentGatewayController
- * @Route("/admin/categories")
+ * Class RecipientController
+ * @Route("/admin/recipients")
  */
-class CategoryController extends Controller
+class RecipientController extends Controller
 {
   /**
    * @var EntityManagerInterface
@@ -41,31 +41,31 @@ class CategoryController extends Controller
 
 
   /**
-   * @Route("/", name="admin_category_index")
+   * @Route("/", name="admin_recipient_index")
    * @Method("GET")
    *
    */
-  public function indexCategoriesAction()
+  public function indexRecipientsAction()
   {
 
-    $items = $this->entityManager->getRepository('AppBundle:Categoria')->findBy([], ['name' => 'asc']);
+    $items = $this->entityManager->getRepository('AppBundle:Recipient')->findBy([], ['name' => 'asc']);
 
-    return $this->render( '@App/Admin/indexCategory.html.twig', [
+    return $this->render( '@App/Admin/indexRecipient.html.twig', [
       'user'  => $this->getUser(),
       'items' => $items
     ]);
   }
 
   /**
-   * @Route("/new", name="admin_category_new")
+   * @Route("/new", name="admin_recipient_new")
    * @Method({"GET", "POST"})
    * @param Request $request
    * @return RedirectResponse|Response|null
    */
-  public function newCategoryAction(Request $request)
+  public function newRecipientAction(Request $request)
   {
-    $item = new Categoria();
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $item = new Recipient();
+    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -73,10 +73,10 @@ class CategoryController extends Controller
       $this->entityManager->flush();
 
       $this->addFlash('feedback', $this->translator->trans('general.flash.created'));
-      return $this->redirectToRoute('admin_category_index');
+      return $this->redirectToRoute('admin_recipient_index');
     }
 
-    return $this->render( '@App/Admin/editCategory.html.twig', [
+    return $this->render( '@App/Admin/editRecipient.html.twig', [
       'user'  => $this->getUser(),
       'item' => $item,
       'form' => $form->createView(),
@@ -84,22 +84,22 @@ class CategoryController extends Controller
   }
 
   /**
-   * @Route("/{id}/edit", name="admin_category_edit")
+   * @Route("/{id}/edit", name="admin_recipient_edit")
    * @Method({"GET", "POST"})
    * @param Request $request
-   * @param Categoria $item
+   * @param Recipient $item
    * @return Response|null
    */
-  public function editCategoryAction(Request $request, Categoria $item)
+  public function editRecipientAction(Request $request, Recipient $item)
   {
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
       $this->entityManager->flush();
     }
 
-    return $this->render( '@App/Admin/editCategory.html.twig',
+    return $this->render( '@App/Admin/editRecipient.html.twig',
       [
         'user'  => $this->getUser(),
         'item' => $item,
@@ -108,21 +108,21 @@ class CategoryController extends Controller
   }
 
   /**
-   * @Route("/{id}/delete", name="admin_category_delete")
+   * @Route("/{id}/delete", name="admin_recipient_delete")
    * @Method({"GET", "POST", "DELETE"})
    */
-  public function deleteCategoryAction(Categoria $item)
+  public function deletePaymentGatewayAction(Request $request, Recipient $item)
   {
     try {
       $em = $this->getDoctrine()->getManager();
       $em->remove($item);
       $em->flush();
-      $this->addFlash('feedback', $this->translator->trans('categories.delete_success'));
-      return $this->redirectToRoute('admin_category_index');
+      $this->addFlash('feedback', $this->translator->trans('recipients.delete_success'));
+      return $this->redirectToRoute('admin_recipient_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', $this->translator->trans('categories.delete_error'));
-      return $this->redirectToRoute('admin_category_index');
+      $this->addFlash('warning', $this->translator->trans('recipients.delete_error'));
+      return $this->redirectToRoute('admin_recipient_index');
     }
   }
 }

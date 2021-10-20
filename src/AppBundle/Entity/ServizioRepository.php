@@ -7,6 +7,42 @@ use Doctrine\ORM\NonUniqueResultException;
 
 class ServizioRepository extends EntityRepository
 {
+
+  public function findByCriteria($criteria)
+  {
+    $qb = $this->createQueryBuilder('s');
+
+    // Status
+    if (isset($criteria['status'])) {
+      $qb
+        ->andWhere('s.status IN (:status)')
+        ->setParameter('status', $criteria['status']);
+    }
+
+    // serviceGroup
+    if (isset($criteria['serviceGroup'])) {
+      $qb
+        ->andWhere('s.serviceGroup = :serviceGroup')
+        ->setParameter('serviceGroup', $criteria['serviceGroup']);
+    }
+
+    // topics
+    if (isset($criteria['topics'])) {
+      $qb
+        ->andWhere('s.topics = :topics')
+        ->setParameter('topics', $criteria['topics']);
+    }
+
+    if (isset($criteria['recipients'])) {
+      $qb
+        ->leftJoin('s.recipients', 'recipients')
+        ->andWhere('recipients.id = :recipients')
+        ->setParameter('recipients', $criteria['recipients']);
+    }
+
+    return $qb->getQuery()->getResult();
+  }
+
   public function findStickyAvailable(int $limit = null)
   {
     $qb = $this->createQueryBuilder('s')
