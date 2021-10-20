@@ -2,10 +2,11 @@
 
 namespace AppBundle\Controller\Rest;
 
-use AppBundle\Entity\Categoria;
+use AppBundle\Entity\Recipient;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use Gedmo\Translatable\TranslatableListener;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,11 +19,11 @@ use Swagger\Annotations as SWG;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
- * Class CategoriesAPIController
+ * Class RecipientsAPIController
  * @package AppBundle\Controller
- * @Route("/categories")
+ * @Route("/recipients")
  */
-class CategoriesAPIController extends AbstractFOSRestController
+class RecipientsAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
@@ -34,6 +35,10 @@ class CategoriesAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   private $logger;
 
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param LoggerInterface $logger
+   */
   public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
   {
     $this->entityManager = $entityManager;
@@ -41,52 +46,68 @@ class CategoriesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * List all Categories
-   * @Rest\Get("", name="categories_api_list")
+   * List all Recipients
+   * @Rest\Get("", name="recipients_api_list")
+   *
+   * @SWG\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false,
+   *      type="string"
+   *  )
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retrieve list of categories",
+   *     description="Retrieve list of recipients",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Categoria::class, groups={"read"}))
+   *         @SWG\Items(ref=@Model(type=Recipient::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Tag(name="categories")
+   * @SWG\Tag(name="recipients")
    * @param Request $request
    * @return View
    */
-  public function getCategoriesAction(Request $request)
+  public function getRecipientsAction(Request $request)
   {
-    $result = $this->entityManager->getRepository('AppBundle:Categoria')->findBy([], ['name' => 'asc']);
+    $result = $this->entityManager->getRepository('AppBundle:Recipient')->findBy([], ['name' => 'asc']);
     return $this->view($result, Response::HTTP_OK);
   }
 
   /**
-   * Retreive a Category by id
-   * @Rest\Get("/{id}", name="category_api_get")
+   * Retreive a Recipient by id
+   * @Rest\Get("/{id}", name="recipient_api_get")
+   *
+   * @SWG\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false,
+   *      type="string"
+   *  )
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive a Category",
-   *     @Model(type=Categoria::class, groups={"read"})
+   *     description="Retreive a Recipient",
+   *     @Model(type=Recipient::class, groups={"read"})
    * )
    *
    * @SWG\Response(
    *     response=404,
-   *     description="Category not found"
+   *     description="Recipient not found"
    * )
-   * @SWG\Tag(name="categories")
+   * @SWG\Tag(name="recipients")
    *
    * @param Request $request
    * @param string $id
    * @return View
    */
-  public function getCategoryAction(Request $request, $id)
+  public function getRecipientAction(Request $request, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
+      $repository = $this->getDoctrine()->getRepository('AppBundle:Recipient');
       $result = $repository->find($id);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -100,8 +121,8 @@ class CategoriesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Create a Category
-   * @Rest\Post(name="categories_api_post")
+   * Create a Recipient
+   * @Rest\Post(name="recipients_api_post")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -112,20 +133,28 @@ class CategoriesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
-   *     name="Category",
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false,
+   *      type="string"
+   *  )
+   *
+   * @SWG\Parameter(
+   *     name="Recipient",
    *     in="body",
    *     type="json",
-   *     description="The category to create",
+   *     description="The recipient to create",
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Categoria::class, groups={"write"})
+   *         ref=@Model(type=Recipient::class, groups={"write"})
    *     )
    * )
    *
    * @SWG\Response(
    *     response=201,
-   *     description="Create a Category"
+   *     description="Create a Recipient"
    * )
    *
    * @SWG\Response(
@@ -138,17 +167,17 @@ class CategoriesAPIController extends AbstractFOSRestController
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="categories")
+   * @SWG\Tag(name="recipients")
    *
    * @param Request $request
    * @return View
    */
-  public function postCategoryAction(Request $request)
+  public function postRecipientAction(Request $request)
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
-    $item = new Categoria();
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $item = new Recipient();
+    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -183,8 +212,8 @@ class CategoriesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Edit full Category
-   * @Rest\Put("/{id}", name="categories_api_put")
+   * Edit full Recipient
+   * @Rest\Put("/{id}", name="recipients_api_put")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -195,20 +224,28 @@ class CategoriesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
-   *     name="Category",
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false,
+   *      type="string"
+   *  )
+   *
+   * @SWG\Parameter(
+   *     name="Recipient",
    *     in="body",
    *     type="json",
-   *     description="The category to update",
+   *     description="The recipient to update",
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Categoria::class, groups={"write"})
+   *         ref=@Model(type=Recipient::class, groups={"write"})
    *     )
    * )
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Edit full Category"
+   *     description="Edit full Recipient"
    * )
    *
    * @SWG\Response(
@@ -225,25 +262,25 @@ class CategoriesAPIController extends AbstractFOSRestController
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="categories")
+   * @SWG\Tag(name="recipients")
    *
    * @param $id
    * @param Request $request
    * @return View
    */
-  public function putCategoryAction($id, Request $request)
+  public function putRecipientAction($id, Request $request)
   {
 
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Recipient');
     $item = $repository->find($id);
 
     if (!$item) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -277,8 +314,8 @@ class CategoriesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Patch a Category
-   * @Rest\Patch("/{id}", name="categories_api_patch")
+   * Patch a Recipient
+   * @Rest\Patch("/{id}", name="recipients_api_patch")
    *
    * @SWG\Parameter(
    *     name="Authorization",
@@ -289,20 +326,28 @@ class CategoriesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
-   *     name="Category",
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false,
+   *      type="string"
+   *  )
+   *
+   * @SWG\Parameter(
+   *     name="Recipient",
    *     in="body",
    *     type="json",
-   *     description="The category to update",
+   *     description="The recipient to update",
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Categoria::class, groups={"write"})
+   *         ref=@Model(type=Recipient::class, groups={"write"})
    *     )
    * )
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Patch a Category"
+   *     description="Patch a Recipient"
    * )
    *
    * @SWG\Response(
@@ -319,25 +364,25 @@ class CategoriesAPIController extends AbstractFOSRestController
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="categories")
+   * @SWG\Tag(name="recipients")
    *
    * @param $id
    * @param Request $request
    * @return View
    */
-  public function patchCategoryAction($id, Request $request)
+  public function patchRecipientAction($id, Request $request)
   {
 
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
+    $repository = $this->getDoctrine()->getRepository('AppBundle:Recipient');
     $item = $repository->find($id);
 
     if (!$item) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -371,8 +416,8 @@ class CategoriesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Delete a Category
-   * @Rest\Delete("/{id}", name="category_api_delete")
+   * Delete a Recipient
+   * @Rest\Delete("/{id}", name="recipient_api_delete")
    *
    * @SWG\Response(
    *     response=204,
@@ -384,16 +429,16 @@ class CategoriesAPIController extends AbstractFOSRestController
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="categories")
+   * @SWG\Tag(name="recipients")
    *
    * @Method("DELETE")
    * @param $id
    * @return View
    */
-  public function deleteCategoryAction($id)
+  public function deleteRecipientAction($id)
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
-    $item = $this->getDoctrine()->getRepository('AppBundle:Categoria')->find($id);
+    $item = $this->getDoctrine()->getRepository('AppBundle:Recipient')->find($id);
     if ($item) {
       $this->entityManager->remove($item);
       $this->entityManager->flush();

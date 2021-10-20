@@ -20,14 +20,14 @@
       <div class="col-lg-8 px-lg-4 py-lg-2">
 
         {% if servizio.description|striptags|trim != '' %}
-          <article class="mb-3">
+          <article class="mb-4">
             <h4>{{ 'servizio.cos_e' | trans }}</h4>
             {{ servizio.description|raw }}
           </article>
         {% endif %}
 
         {% if servizio.who|striptags|trim != '' %}
-          <article class="mb-3">
+          <article class="mb-4">
             <h4>{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
             {{ servizio.who|raw }}
           </article>
@@ -35,8 +35,8 @@
 
         {% if servizio.coverage %}
           {% if servizio.coverage|length > 0 %}
-          <article class="mb-3">
-            <h5>{{ 'servizio.copertura' | trans }}</h5>
+          <article class="mb-4">
+            <h4>{{ 'servizio.copertura' | trans }}</h4>
             {% for c in servizio.coverage %}
                 <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary">
                   <span class="chip-label">{{ c }}</span>
@@ -46,22 +46,35 @@
           {% endif %}
         {% endif %}
 
+        {% if servizio.recipients %}
+          {% if servizio.recipients|length > 0 %}
+            <article class="mb-4">
+              <h4>{{ 'recipients.title' | trans }}</h4>
+              {% for r in servizio.recipients %}
+                <div class="chip chip-primary chip-lg mr-2">
+                  <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span class="chip-label">{{ r.name }}</span></a>
+                </div>
+              {% endfor %}
+            </article>
+          {% endif %}
+        {% endif %}
+
         {% if servizio.howto|striptags|trim != '' %}
-          <article class="mb-3">
+          <article class="mb-4">
             <h4>{{ 'servizio.accedere' | trans }}</h4>
             {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
           </article>
         {% endif %}
 
         {% if servizio.specialCases|striptags|trim != '' %}
-          <article class="mb-3">
+          <article class="mb-4">
             <h4>{{ 'servizio.casi_particolari' | trans }}</h4>
             {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
           </article>
         {% endif %}
 
         {% if servizio.moreInfo|striptags|trim != '' %}
-          <article class="mb-3">
+          <article class="mb-4">
             <h4>{{ 'servizio.maggiori_info' | trans }}</h4>
             {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
           </article>

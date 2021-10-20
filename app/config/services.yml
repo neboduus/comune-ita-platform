@@ -66,6 +66,9 @@ services:
   AppBundle\Controller\Rest\CategoriesAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\RecipientsAPIController:
+    autowire: true
+
   AppBundle\Controller\Rest\UsersAPIController:
     autowire: true
 
@@ -100,6 +103,9 @@ services:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\CategoryController:
+    autowire: true
+
+  AppBundle\Controller\Ui\Backend\RecipientController:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\ServiceGroupController:
@@ -152,6 +158,14 @@ services:
   i18n.datamapper:
     class: AppBundle\Form\I18n\I18nDataMapper
     autowire: true
+
+  AppBundle\Form\Admin\RecipientType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
 
   AppBundle\Form\Admin\Servizio\GeneralDataType:
     arguments:
@@ -337,6 +351,16 @@ services:
       $defaultLocale: "%locale%"
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -200 }
+
+  ocsdc.locale_api_listener:
+    class: AppBundle\EventListener\LocaleApiListener
+    autowire: true
+    arguments:
+      $defaultLocale: "%locale%"
+      $availableLocales: "%app_locales%"
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -10 }
+      - { name: kernel.event_listener, event: kernel.response, priority: -10 }
 
   ocsdc.cps.terms_acceptance_listener:
     class: AppBundle\EventListener\TermsAcceptListener

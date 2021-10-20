@@ -8,6 +8,7 @@ use AppBundle\Entity\Erogatore;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
+use AppBundle\Entity\Recipient;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\PaymentParameters;
@@ -112,6 +113,14 @@ class ServicesAPIController extends AbstractFOSRestController
    *      description="Id of the service group"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="recipient_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the recipient"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of services",
@@ -128,6 +137,7 @@ class ServicesAPIController extends AbstractFOSRestController
     try {
       $serviceGroupId = $request->get('service_group_id', false);
       $categoryId = $request->get('topics_id', false);
+      $recipientId = $request->get('recipient_id', false);
       $result = [];
       $repoServices = $this->em->getRepository(Servizio::class);
       $criteria['status'] = Servizio::PUBLIC_STATUSES;
@@ -150,13 +160,25 @@ class ServicesAPIController extends AbstractFOSRestController
         $criteria['topics'] = $categoryId;
       }
 
-      $services = $repoServices->findBy($criteria);
+      if ($recipientId) {
+        $recipientsRepo = $this->em->getRepository('AppBundle:Recipient');
+        $recipient = $recipientsRepo->find($recipientId);
+        if (!$recipient instanceof Recipient) {
+          return $this->view(["Recipient not found"], Response::HTTP_NOT_FOUND);
+        }
+        $criteria['recipients'] = $recipientId;
+      }
+
+      $services = $repoServices->findByCriteria($criteria);
+
       foreach ($services as $s) {
         $result [] = Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
       }
 
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $e) {
+      dump($e);
+      exit;
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',

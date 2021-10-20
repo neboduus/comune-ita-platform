@@ -10,6 +10,7 @@ elimina: 'Elimina'
 reply: 'Rispondi'
 view: 'Visualizza'
 read_more: 'Leggi di più'
+load_more: 'Altro...'
 terms_do_il_consenso: "Ho letto l'informativa"
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
@@ -89,7 +90,7 @@ general:
   email: 'Email'
   stato: 'Stato'
   url: 'Url'
-  alert_elimina: "Sei sicuro di procedere? L&#39;oggetto verrà eliminato definitivamente."
+  alert_elimina: "Sicuro di voler procedere?"
   flash:
     created: 'Oggetto creato correttamente'
 servizio:
@@ -98,6 +99,7 @@ servizio:
   importa: 'Importa da remoto'
   nome: "Nome del servizio"
   categoria: "Categoria"
+  destinatari: "Destinatari"
   cos_e: "Cos'è"
   descrizione: "Descrizione"
   a_chi_si_rivolge: "A chi si rivolge"
@@ -1924,9 +1926,17 @@ protocollo:
   sipal_registro: 'Registro'
   sipal_classificazione: 'Classificazione'
   sipal_destinatario_interno: 'Destinatario interno'
+recipients:
+  title: 'Destinatari'
+  all: 'Tutti i destinatari'
+  delete_success: 'Destinatario eliminato correttamente'
+  delete_error: 'Impossibile eliminare il destinatario, ci sono dei servizi collegati'
 categories:
   title: 'Categorie'
+  all: 'Tutte le categorie'
   parent: 'Categoria genitore'
+  delete_success: 'Categoria eliminata correttamente'
+  delete_error: 'Impossibile eliminare la categoria, ci sono dei servizi collegati'
 gateway:
   add: Aggiungi metodo di pagamento
   name: Nome

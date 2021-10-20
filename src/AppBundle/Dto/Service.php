@@ -4,6 +4,7 @@
 namespace AppBundle\Dto;
 
 use AppBundle\Entity\Categoria;
+use AppBundle\Entity\Recipient;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Entity\Servizio;
 use AppBundle\Model\PaymentParameters;
@@ -301,6 +302,22 @@ class Service
    * @Serializer\Exclude()
    */
   private $ioParameters;
+
+  /**
+   * @var string[]
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's recipients name", type="array", @SWG\Items(type="string"))
+   * @Groups({"read"})
+   */
+  private $recipients;
+
+  /**
+   * @var string[]
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's recipients id", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
+   */
+  private $recipientsId;
 
   /**
    * @return mixed
@@ -882,6 +899,38 @@ class Service
     $this->ioParameters = $ioParameters;
   }
 
+  /**
+   * @return string[]
+   */
+  public function getRecipients(): array
+  {
+    return $this->recipients;
+  }
+
+  /**
+   * @param string[] $recipients
+   */
+  public function setRecipients(array $recipients): void
+  {
+    $this->recipients = $recipients;
+  }
+
+  /**
+   * @return string[]
+   */
+  public function getRecipientsId(): array
+  {
+    return $this->recipientsId;
+  }
+
+  /**
+   * @param string[] $recipientsId
+   */
+  public function setRecipientsId(array $recipientsId): void
+  {
+    $this->recipientsId = $recipientsId;
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -924,6 +973,18 @@ class Service
     $dto->allowReopening = $servizio->isAllowReopening();
     $dto->allowWithdraw = $servizio->isAllowWithdraw();
     $dto->workflow = $servizio->getWorkflow();
+
+    $dto->recipients = [];
+    /** @var Recipient $r */
+    foreach ($servizio->getRecipients() as $r) {
+      $dto->recipients[]= $r->getName();
+    }
+
+    $dto->recipientsId = [];
+    /** @var Recipient $r */
+    foreach ($servizio->getRecipients() as $r) {
+      $dto->recipientsId[]= $r->getId();
+    }
 
     return $dto;
   }
@@ -978,6 +1039,8 @@ class Service
     $entity->setAllowReopening($this->allowReopening);
     $entity->setAllowWithdraw($this->allowWithdraw);
     $entity->setWorkflow($this->workflow);
+
+    $entity->setRecipients($this->recipientsId);
 
     return $entity;
   }

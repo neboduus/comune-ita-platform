@@ -1,32 +1,32 @@
 {% extends '@App/Default/index.html.twig' %}
-{% block title %}{{ category.name }} - Stanza del cittadino{% endblock %}
+{% block title %}{{ recipient.name }} - Stanza del cittadino{% endblock %}
 {% set sidebar_list_limit = 4 %}
 {% block main_content %}
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
-        <h1>{{ category.name }}</h1>
-        {% if category.description|striptags|trim != '' %}
+        <h1>{{ recipient.name }}</h1>
+        {% if recipient.description|striptags|trim != '' %}
           <article class="mb-3">
             <h4>{{ 'general.descrizione'|trans }}</h4>
-            {{ category.description|raw }}
+            {{ recipient.description|raw }}
           </article>
         {% endif %}
       </div>
 
       <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
-        <h6>{{ 'categories.all'|trans }}</h6>
+        <h6>{{ 'recipients.all'|trans }}</h6>
         <div class="link-list-wrapper">
           <ul class="link-list m-0">
-            {% for item in categories|slice(0, sidebar_list_limit) %}
+            {% for item in recipients|slice(0, sidebar_list_limit) %}
               <li>
-                <a class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
-                   href="{{ path('category_show', {'slug': item.slug}) }}">
+                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}"
+                   href="{{ path('recipient_show', {'slug': item.slug}) }}">
                   {{ item.name }}
                 </a>
               </li>
             {% endfor %}
-            {% if categories|length > sidebar_list_limit %}
+            {% if recipients|length > sidebar_list_limit %}
               <li>
                 <a class="p-0 list-item" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                   <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
@@ -45,7 +45,7 @@
         </div>
         <div class="link-list-wrapper collapse" id="collapseExample">
           <ul class="link-list">
-            {% for item in categories|slice(sidebar_list_limit, (categories|length-sidebar_list_limit)) %}
+            {% for item in recipients|slice(sidebar_list_limit, (recipients|length-sidebar_list_limit)) %}
               <li>
                 <a class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
                    href="{{ path('category_show', {'slug': item.slug}) }}">
