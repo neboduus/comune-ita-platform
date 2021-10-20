@@ -11,6 +11,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Message as MessageEntity;
 use AppBundle\Security\Voters\ApplicationVoter;
 use AppBundle\Security\Voters\MessageVoter;
+use AppBundle\Services\FileService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
@@ -75,6 +76,10 @@ class MessagesAPIController extends AbstractFOSRestController
 
   /** @var TranslatorInterface */
   private $translator;
+  /**
+   * @var FileService
+   */
+  private $fileService;
 
   /**
    * ApplicationsAPIController constructor.
@@ -84,6 +89,7 @@ class MessagesAPIController extends AbstractFOSRestController
    * @param UrlGeneratorInterface $router
    * @param LoggerInterface $logger
    * @param TranslatorInterface $translator
+   * @param FileService $fileService
    */
   public function __construct(
     EntityManagerInterface $em,
@@ -91,7 +97,8 @@ class MessagesAPIController extends AbstractFOSRestController
     PraticaStatusService $statusService,
     UrlGeneratorInterface $router,
     LoggerInterface $logger,
-    TranslatorInterface $translator
+    TranslatorInterface $translator,
+    FileService $fileService
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -100,6 +107,7 @@ class MessagesAPIController extends AbstractFOSRestController
     $this->baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
     $this->logger = $logger;
     $this->translator = $translator;
+    $this->fileService = $fileService;
   }
 
   /**
@@ -628,8 +636,7 @@ class MessagesAPIController extends AbstractFOSRestController
     }
 
     /** @var File $file */
-    $file = $result->getFile();
-    $fileContent = file_get_contents($file->getPathname());
+    $fileContent = $this->fileService->getAttachmentContent($result);
     $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
     $response = new Response($fileContent);
     $disposition = $response->headers->makeDisposition(

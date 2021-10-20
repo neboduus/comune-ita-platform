@@ -4,7 +4,7 @@
 
 {# Moduli compilati #}
 {% if pratica.moduliCompilati|length > 0 %}
-  <h6 class="primary-color">{{ 'operatori.scarica' | trans }}</h6>
+  {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica'}) }}
   {% for modulo in pratica.moduliCompilati %}
     {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': modulo}) }}
   {% endfor %}
@@ -12,39 +12,30 @@
 
 {# Allegati #}
 {% if pratica.allegati.count > 0 %}
-  <h6 class="primary-color">{{ 'operatori.allegati_modulo' | trans }}</h6>
-  {% for allegato in pratica.allegati %}
-    {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato}) }}
-  {% endfor %}
+  <div class="pt-4">
+    {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.allegati_modulo'}) }}
+    {% for allegato in pratica.allegati %}
+      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato}) }}
+    {% endfor %}
+  </div>
 {% endif %}
 
 {# Allegati ai messaggi #}
 {% if messageAttachments|length > 0 %}
-  <h6 class="primary-color">{{ 'operatori.allegati_messaggi' | trans }}</h6>
-  {% for allegato in messageAttachments %}
-    {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato}) }}
-  {% endfor %}
+  <div class="pt-4">
+    {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.allegati_messaggi'}) }}
+    {% for allegato in messageAttachments %}
+      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato}) }}
+    {% endfor %}
+  </div>
 {% endif %}
 
 {# Risposta operatore #}
 {% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
   {% if pratica.rispostaOperatore %}
-    <h6 class="primary-color">{{ 'operatori.scarica_risposta_firmata'|trans }}</h6>
-    <div class="row align-items-center text-center my-2 py-2 border-bottom">
-      <div class="col-1">
-        <i class="fa fa-file-pdf-o"></i>
-      </div>
-      <div class="col-7 text-truncate">
-        {{ pratica.rispostaOperatore.originalFilename }}
-      </div>
-      <div class="col-2">
-        {{ pratica.rispostaOperatore.getHumanReadableFileSize }}
-      </div>
-      <div class="col-2">
-        <a href="{{ path('risposta_download_operatore', {'allegato': pratica.rispostaOperatore.id}) }}" download>
-          <i class="fa fa-download"></i>
-        </a>
-      </div>
+    <div class="pt-4">
+      {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica_risposta_firmata'}) }}
+      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': pratica.rispostaOperatore}) }}
     </div>
   {% endif %}
 {% endif %}

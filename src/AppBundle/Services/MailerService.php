@@ -316,8 +316,6 @@ class MailerService
         /** @var ModuloCompilato $moduloCompilato */
         $moduloCompilato = $pratica->getModuliCompilati()->first();
         if ($this->fileService->fileExist($moduloCompilato)) {
-          /*$attachment = \Swift_Attachment::fromPath($moduloCompilato->getFile()->getPathname());
-          $attachment->setFilename($moduloCompilato->getFile()->getFilename());*/
           $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFile()->getFilename(), $this->fileService->getMimeType($moduloCompilato));
           $message->attach($attachment);
         }

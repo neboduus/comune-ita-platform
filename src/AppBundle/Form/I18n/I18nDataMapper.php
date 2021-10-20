@@ -195,8 +195,6 @@ class I18nDataMapper implements I18nDataMapperInterface
             }
           }
         }
-
-
       } else {
 
         if (false === $form->getConfig()->getOption("mapped") || null === $form->getConfig()->getOption("mapped")) {

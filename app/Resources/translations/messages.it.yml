@@ -244,6 +244,8 @@ pratica:
     dichiarazione_cambiamenti_detail: "Il dichiarante &egrave; consapevole che in caso di dichiarazione mendace sar&agrave; punito ai sensi del Codice Penale secondo quanto prescritto dall'art. 76 del D.P.R. 445/2000 e che, inoltre, qualora dal controllo effettuato emerga la non veridicit&agrave; del contenuto di taluna delle dichiarazioni rese, decadr&agrave; dai benefici conseguenti al provvedimento eventualmente emanato sulla base della dichiarazione non veritiera (art. 75 D.P.R. 445/2000).Il dichiarante &egrave; informato ed autorizza la raccolta dei dati per l'emanazione del provvedimento amministrativo ai sensi dell'art. 13 del D. Lgs. 196/2003."
     luogo: 'L&igrave;'
     riferimento_sdc: 'Riferimento in Stanza del Cittadino:'
+    allegati_protocollo: 'Allegati inviati al protocollo'
+    allegati_no_protocollo: 'Allegati non inviati al protocollo'
   dettaglio:
     data_ora_presentazione: 'Richiesta presentata il'
     alle: 'alle'
@@ -828,6 +830,10 @@ allegato:
   non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'
   aggiungi: 'Aggiungi un allegato'
   cancellato: 'Allegato cancellato correttamente'
+  protocollo:
+    protocollato: 'Protocollato'
+    in_attesa: 'In attesa di protocollazione'
+    non_richiesto: 'Protocollazione non richiesta'
 email:
   detail_link: 'link'
   pratica:

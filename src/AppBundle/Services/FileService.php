@@ -16,7 +16,6 @@ class FileService
   /**
    * @param PropertyMappingFactory $propertyMappingFactory
    * @param FilesystemInterface $fileSystem
-   * @param EntityManagerInterface $entityManager
    */
   public function __construct(PropertyMappingFactory $propertyMappingFactory, FilesystemInterface $fileSystem) {
     $this->propertyMappingFactory = $propertyMappingFactory;
@@ -65,6 +64,18 @@ class FileService
   {
     $filenameWithPath = $this->getFilenameWithPath($allegato);
     return $this->fileSystem->read($filenameWithPath);
+  }
+
+  /**
+   * @param Allegato $allegato
+   * @return array|string|string[]
+   * @throws FileNotFoundException
+   */
+  public function getHash(Allegato $allegato)
+  {
+    $filenameWithPath = $this->getFilenameWithPath($allegato);
+    $metadata = $this->fileSystem->getMetadata($filenameWithPath);
+    return str_replace('"', '', $metadata['etag']);
   }
 
   /**

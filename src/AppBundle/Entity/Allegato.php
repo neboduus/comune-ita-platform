@@ -108,6 +108,12 @@ class Allegato implements AllegatoInterface
   private $hash;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true, options={"default":"1"})
+   */
+  private $protocolRequired;
+
+  /**
    * Allegato constructor.
    */
   public function __construct()
@@ -117,6 +123,7 @@ class Allegato implements AllegatoInterface
     $this->createdAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
     $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
     $this->pratiche = new ArrayCollection();
+    $this->protocolRequired = true;
   }
 
   /**
@@ -129,6 +136,7 @@ class Allegato implements AllegatoInterface
    * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $file
    *
    * @return AllegatoInterface
+   * @throws \Exception
    */
   public function setFile(File $file = null): AllegatoInterface
   {
@@ -377,6 +385,25 @@ class Allegato implements AllegatoInterface
     return $this;
   }
 
+  /**
+   * @return bool
+   */
+  public function isProtocolRequired(): ?bool
+  {
+    return $this->protocolRequired;
+  }
+
+  /**
+   * @param bool $protocolRequired
+   */
+  public function setProtocolRequired(?bool $protocolRequired): void
+  {
+    $this->protocolRequired = $protocolRequired;
+  }
+
+  /**
+   * @return string
+   */
   public function getHumanReadableFileSize()
   {
     try{
