@@ -3,6 +3,7 @@ import '../core';
 
 
 import Calendar from '../Calendar';
+import DynamicCalendar from '../DynamicCalendar';
 import PageBreak from '../PageBreak';
 import FinancialReport from "../FinancialReport";
 import 'formiojs';
@@ -10,6 +11,7 @@ import 'formiojs/dist/formio.form.min.css';
 import {TextEditor} from "../utils/TextEditor";
 
 Formio.registerComponent('calendar', Calendar);
+Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 
