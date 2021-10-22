@@ -1319,7 +1319,7 @@ class Servizio implements Translatable
   /**
    * @param Collection $recipients
    */
-  public function setRecipients(Collection $recipients): void
+  public function setRecipients(?Collection $recipients): void
   {
     $this->recipients = $recipients;
   }
