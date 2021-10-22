@@ -100,13 +100,16 @@ class CalendarsBackOffice implements BackOfficeInterface
       if (isset($integrations[$status]) && $integrations[$status] == get_class($this)) {
         return $this->createMeetingFromPratica($data);
       } else {
+        $linkedMeetings= [];
         // Extract meeting id from calendar string
         preg_match_all("/\(([^\)]*)\)/", $data->getDematerializedForms()['flattened']['calendar'], $matches);
         $meetingId = trim(explode("#", $matches[1][0])[1]);
         $_meeting = $meetingId ? $this->em->getRepository('AppBundle:Meeting')->find($meetingId) : null;
-        $meetings[] = $_meeting;
+        if ($_meeting) {
+          $linkedMeetings[] = $_meeting;
+        }
 
-        if (!$meetings) {
+        if (!$linkedMeetings) {
           // Meeting not found, can't update
           return [];
         }
@@ -124,7 +127,7 @@ class CalendarsBackOffice implements BackOfficeInterface
             break;
           case Pratica::STATUS_PAYMENT_PENDING:
             // Increment draft duration
-            foreach ($meetings as $meeting) {
+            foreach ($linkedMeetings as $meeting) {
               if ($meeting->getStatus() == Meeting::STATUS_DRAFT) {
                 $currentExpiration = clone $meeting->getDraftExpiration() ?? new \DateTime();
                 $meeting->setDraftExpiration($currentExpiration->modify('+' . ($meeting->getCalendar()->getDraftsDurationIncrement() ?? Calendar::DEFAULT_DRAFT_INCREMENT) . 'seconds'));
@@ -144,13 +147,13 @@ class CalendarsBackOffice implements BackOfficeInterface
             // do nothing
         }
         try {
-          foreach ($meetings as $meeting) {
+          foreach ($linkedMeetings as $meeting) {
             $this->em->persist($meeting);
           }
           $this->em->flush();
           return $_meeting;
         } catch (\Exception $e) {
-          $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
+          $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error') . ' - ' . $e->getMessage());
           return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
         }
       }
@@ -256,7 +259,7 @@ class CalendarsBackOffice implements BackOfficeInterface
 
       return $meeting;
     } catch (\Exception $exception) {
-      $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error'));
+      $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error') . ' - ' . $exception->getMessage());
       return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
     }
   }
