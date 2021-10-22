@@ -305,7 +305,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
 
     $this->filesystem->getFilesystem()->write($filePath, $content);
-    $integration->setFile(new File($filePath));
+    $integration->setFile(new File($filePath, false));
     $integration->setFilename($fileName);
 
     $this->em->persist($integration);
@@ -337,7 +337,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
 
     $this->filesystem->getFilesystem()->write($filePath, $content);
-    $attachment->setFile(new File($filePath));
+    $attachment->setFile(new File($filePath, false));
     $attachment->setFilename($fileName);
 
     $this->em->persist($attachment);
@@ -369,7 +369,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
 
       $this->filesystem->getFilesystem()->write($filePath, $content);
-      $response->setFile(new File($filePath));
+      $response->setFile(new File($filePath, false));
       $response->setFilename($fileName);
 
       $this->em->persist($response);
