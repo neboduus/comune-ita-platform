@@ -46,7 +46,10 @@ class Calendar
     'Un giorno prima' => 24,
     'Due giorni prima' => 48,
     'Tre giorni prima' => 72,
-    'Una settimana prima' => 168
+    'Una settimana prima' => 168,
+    'Due settimane prima' => 336,
+    'Tre settimane prima' => 504,
+    'Un mese prima (30 giorni)' => 720
   ];
 
   const CALENDAR_TYPES = [
@@ -134,6 +137,10 @@ class Calendar
    *
    * @ORM\Column(name="minimum_scheduling_notice", type="integer", nullable=true)
    * @SWG\Property(description="Calendar's minimum scheduling notice", type="integer")
+   * @Assert\Expression(
+   *     "this.getRollingDays() * 24 > value",
+   *     message="Must be less than rolling days"
+   * )
    */
   private $minimumSchedulingNotice;
 
