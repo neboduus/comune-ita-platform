@@ -3,8 +3,9 @@
 {% set ente = instance_service.getCurrentInstance() %}
 {% set customName = ente.getMetaAsArray('name') %}
 {% set enteName = customName != '' ? customName :  ente.name %}
+{% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
 {% set logoMeta = ente.getMetaAsArray('logo') %}
-{% set logo = logoMeta != '' ? logoMeta :  asset('bundles/app/images/logo-' ~ ente.slug ~ '.png') %}
+{% set logo = logoMeta  ? logoMeta :  host_url ~ 'bundles/app/images/logo-default.png' %}
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
