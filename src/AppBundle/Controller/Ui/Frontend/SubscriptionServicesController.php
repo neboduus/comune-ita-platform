@@ -3,9 +3,12 @@
 namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\BackOffice\SubcriptionsBackOffice;
+use AppBundle\Entity\Subscriber;
+use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\ORM\EntityManager;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\MapColumn;
@@ -14,6 +17,7 @@ use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -29,6 +33,20 @@ class SubscriptionServicesController extends Controller
   use DataTablesTrait;
 
   /**
+   * @var EntityManager
+   */
+  private $em;
+
+  /**
+   * SubscriptionServicesController constructor.
+   * @param EntityManager $entityManager
+   */
+  public function __construct(EntityManager $entityManager)
+  {
+    $this->em = $entityManager;
+  }
+
+  /**
    * Lists all SubscriptionService entities.
    * @Route("/operatori/subscription-service", name="operatori_subscription-service_index")
    */
@@ -41,8 +59,7 @@ class SubscriptionServicesController extends Controller
       SubscriptionService::STATUS_ACTIVE => 'Attivo',
       SubscriptionService::STATUS_UNACTIVE => 'Inattivo'
     ];
-    $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('AppBundle:SubscriptionService')->findAll();
+    $items = $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
 
 
     $table = $this->createDataTable()
@@ -168,18 +185,17 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $subscriptionServices =$this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
+    $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
 
     $subscriptionService = new SubscriptionService();
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      $em = $this->getDoctrine()->getManager();
 
       try {
-        $em->persist($subscriptionService);
-        $em->flush();
+        $this->em->persist($subscriptionService);
+        $this->em->flush();
 
         $this->addFlash('feedback', 'Servizio a sottoscrizione creato correttamente');
         return $this->redirectToRoute('operatori_subscription-service_index');
@@ -208,9 +224,8 @@ class SubscriptionServicesController extends Controller
   {
     try {
 
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($subscriptionService);
-      $em->flush();
+      $this->em->remove($subscriptionService);
+      $this->em->flush();
 
       $this->addFlash('feedback', 'Servizio a sottoscizione eliminato correttamente');
 
@@ -234,17 +249,16 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $subscriptionServices =$this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
+    $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
 
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      $em = $this->getDoctrine()->getManager();
 
       try {
-        $em->persist($subscriptionService);
-        $em->flush();
+        $this->em->persist($subscriptionService);
+        $this->em->flush();
 
         $this->addFlash('feedback', 'Servizio a sottoscrizione modificato correttamente');
         return $this->redirectToRoute('operatori_subscription-service_index');
@@ -300,5 +314,26 @@ class SubscriptionServicesController extends Controller
   public function indexSubscriptionServicePaymentsAction(Request $request)
   {
     return $this->redirectToRoute('operatori_subscription-service_index');
+  }
+
+  /**
+   * Lists all SubscriptionService entities.
+   * @Route("/operatori/subscription-service-search", name="operatori_subscription-service_search")
+   */
+  public function searchSubscriptionsAction(Request $request): JsonResponse
+  {
+    $query = $request->query->get('q');
+    $subscribers = [];
+    if ($query) {
+      $query = strtolower($query);
+      $subscribers = $this->em->createQueryBuilder()
+        ->select('subscriber')
+        ->from(Subscriber::class, 'subscriber')
+        ->andWhere("LOWER(CONCAT(subscriber.name,' ',subscriber.surname)) LIKE '%$query%' OR LOWER(subscriber.fiscal_code) LIKE '%$query%'")
+        ->orderBy('subscriber.name', 'ASC')
+        ->getQuery()->getResult();
+    }
+
+    return new JsonResponse($this->render('@App/SubscriptionServices/parts/searchResults.html.twig', ['subscribers' =>$subscribers])->getContent(), Response::HTTP_OK);
   }
 }

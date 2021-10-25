@@ -444,6 +444,7 @@ iscrizioni:
     name: 'Nome'
     surname: 'Cognome'
     fiscal_code: 'Codice fiscale'
+    date_of_birth: 'Data di nascita'
     email_address: 'Email'
     created_at: 'Data iscrizione'
     actions: 'Azioni'
@@ -2174,6 +2175,17 @@ backoffice:
       save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
       duplicate_error: "l'utente user risulta già iscritto al servizio service_name"
     subscription_service:
+      subscription_services: "Servizi a sottoscrizione"
+      new: "Crea servizio a sottoscrizione"
+      search_results: "Risultati della ricerca"
+      no_results: "La ricerca non ha prodotto alcun risultato"
+      search_error: "Si è verificato un errore durante la ricerca"
+      search: "Cerca"
+      search_subscribers_helper: "Utilizza questo campo per ricercare gli iscritti per nome, cognome oppure codice fiscale"
+      search_subscribers: "Ricerca iscritti"
+      close: "Chiudi"
+      loading: "Caricamento..."
+      all: "Tutti"
       payments: "Pagamenti"
       payment:
         due_date: "Data di scadenza del pagamento"
