@@ -1,7 +1,7 @@
 {
   "name": "stanzadelcittadino",
   "author": "Opencontent S.c.a.r.l",
-  "version": "1.8.7",
+  "version": "1.9.0-0",
   "devDependencies": {
     "@babel/core": "7.12.16",
     "@babel/plugin-proposal-class-properties": "7.12.13",
