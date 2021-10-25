@@ -1,13 +1,13 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block stylesheets %}
-  {{ parent() }}
+  {{ encore_entry_link_tags('subscription-service-manager') }}
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
 
 {% endblock %}
 
 {% block javascripts %}
-  {{ parent() }}
+  {{ encore_entry_script_tags('subscription-service-manager') }}
   <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
   <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
   <script>
@@ -66,15 +66,24 @@
 
 {% block main_content %}
   <section id="intro" class="container px-4 my-4">
-    <div class="row">
-      <div class="col-lg-12 px-lg-4 py-lg-2">
-        <h1>Servizi a sottoscrizione</h1>
+
+    <div class="col-12 d-flex justify-content-between">
+      <h1>{{ 'backoffice.integration.subscription_service.subscription_services' | trans }}</h1>
+      <div>
+        <a data-toggle="modal" data-target="#searchModal">
+          <span class="text-400 font-weight-bolder">{{ 'backoffice.integration.subscription_service.search_subscribers' | trans }}</span>
+          <div class="avatar size-lg" href="#">
+            <svg class="icon icon-secondary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-search"></use></svg>
+          </div>
+        </a>
       </div>
+    </div>
+    <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         <div id="no-more-tables" class="table-striped">
           <div class="bootstrap-select-wrapper" style="float: left">
             <select class="table_filter" id="filter" title="Stato">
-              <option value="">Tutti</option>
+              <option value="">{{ 'backoffice.integration.subscription_service.all' | trans }}</option>
               {% for status in statuses %}
                 <option value="{{ status }}">{{ status }}</option>
               {% endfor %}
@@ -82,11 +91,11 @@
           </div>
           <div id="subscription_services_table" class="stripe"></div>
           <div class="mt-4">
-            <a class="btn btn-success btn-primary" href="{{ path('operatori_subscription-service_new') }}">Crea nuovo
-              servizio a sottoscrizione</a>
+            <a class="btn btn-success btn-primary" href="{{ path('operatori_subscription-service_new') }}">{{ 'backoffice.integration.subscription_service.new' | trans }}</a>
           </div>
         </div>
       </div>
     </div>
   </section>
+  {% include "AppBundle:SubscriptionServices/parts:searchModal.html.twig" %}
 {% endblock %}

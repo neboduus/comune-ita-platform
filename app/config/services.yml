@@ -132,6 +132,9 @@ services:
   AppBundle\Controller\Ui\Frontend\PrintController:
     autowire: true
 
+  AppBundle\Controller\Ui\Frontend\SubscriptionServicesController:
+    autowire: true
+
   AppBundle\Controller\Rest\GiscomAPIController:
     autowire: true
     arguments:

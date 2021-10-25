@@ -1,0 +1,62 @@
+<div class="mx-2 my-5">
+  <div class="font-weight-semibold text-secondary">{{ 'backoffice.integration.subscription_service.search_results' | trans }}:</div>
+  <div class="my-3">
+    {% if subscribers | length > 0 %}
+    <div class="link-list-wrapper">
+      <ul class="link-list">
+        <div class="row">
+        {% for subscriber in  subscribers %}
+          <div class="col-6">
+            <li class="mb-3">
+              <a class="list-item large medium left-icon" href="{{ path('operatori_subscriber_show', {'subscriber': subscriber.id}) }}">
+                <div class="avatar size-md">
+                  <svg class="icon icon-secondary">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+                  </svg>
+                </div>
+                <span class="font-weight-lighter">{{ subscriber.completeName }}</span>
+              </a>
+              <div class="small ml-5">
+                <div class="row ml-2">
+                  <div class="col-3 font-weight-semibold">{{ 'iscrizioni.subscribers.fiscal_code' | trans }}</div>
+                  <div class="col-9">{{ subscriber.fiscalCode }}</div>
+                </div>
+                {% if subscriber.dateOfBirth %}
+                  <div class="row ml-2">
+                    <div class="col-3 font-weight-semibold">{{ 'iscrizioni.subscribers.date_of_birth' | trans }}</div>
+                    <div class="col-9">{{ subscriber.dateOfBirth | date('d-m-Y') }}</div>
+                  </div>
+                {% endif %}
+                <div class="row ml-2">
+                  <div class="col-3 font-weight-semibold">{{ 'iscrizioni.subscribers.email_address' | trans }}</div>
+                  <div class="col-9">{{ subscriber.email }}</div>
+                </div>
+              </div>
+              {% if subscriber.subscriptions | length > 0 %}
+                <div class="link-list-wrapper ml-5">
+                  <ul class="link-list">
+                    {% for subscription in subscriber.subscriptions %}
+                      <li>
+                        <a class="list-item p-0 left-icon ml-2"
+                           href="{{ path('operatori_subscriptions', {'subscriptionService': subscription.subscriptionService.id }) }}">
+                          <svg class="icon icon-sm icon-secondary">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pin"></use>
+                          </svg>
+                          <span>{{ subscription.subscriptionService.name }}</span>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+            </li>
+          </div>
+        {% endfor %}
+        </div>
+      </ul>
+    </div>
+    {% else %}
+      <p class="font-italic mx-3">{{ 'backoffice.integration.subscription_service.no_results' | trans }}</p>
+    {% endif %}
+  </div>
+</div>

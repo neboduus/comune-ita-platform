@@ -7,6 +7,30 @@ import {TextEditor} from "./utils/TextEditor";
 
 
 $(document).ready(function () {
+  $('div#spinner').hide()
+  $('div#search-results-error').hide()
+
+  $('#search-btn').on('click', function () {
+    let search = $('#search-subscriber').val()
+    let url =  $(this).attr('data-url')
+    $('div#spinner').show();
+    $("div#search-results").empty();
+    $('div#search-results-error').hide();
+
+    $.ajax({
+      url: `${url}?q=${search}`,
+      type: "GET",
+      success: function(response) {
+        $('div#spinner').hide()
+        $("div#search-results").append(response);
+      },
+      error: function() {
+        $('div#spinner').hide()
+        $("div#search-results-error").show();
+      }
+    });
+  })
+
   $('.bootstrap-select-wrapper.select-payment-wrapper').hide();
   $('#modal-service-error').hide();
   $('#modal-payment-error').hide();
