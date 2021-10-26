@@ -6,7 +6,6 @@ use AppBundle\Entity\Recipient;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
-use Gedmo\Translatable\TranslatableListener;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +15,6 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class RecipientsAPIController
@@ -177,7 +175,7 @@ class RecipientsAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
     $item = new Recipient();
-    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
+    $form = $this->createForm('AppBundle\Form\Api\RecipientApiType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -280,7 +278,7 @@ class RecipientsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
+    $form = $this->createForm('AppBundle\Form\Api\RecipientApiType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -382,7 +380,7 @@ class RecipientsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\RecipientType', $item);
+    $form = $this->createForm('AppBundle\Form\Api\RecipientApiType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
