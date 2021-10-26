@@ -11,6 +11,7 @@ use AppBundle\Model\PaymentParameters;
 use AppBundle\Model\FlowStep;
 use AppBundle\Model\IOServiceParameters;
 use AppBundle\Services\Manager\BackofficeManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -910,7 +911,7 @@ class Service
   /**
    * @param string[] $recipients
    */
-  public function setRecipients(array $recipients): void
+  public function setRecipients(?array $recipients): void
   {
     $this->recipients = $recipients;
   }
@@ -918,7 +919,7 @@ class Service
   /**
    * @return string[]
    */
-  public function getRecipientsId(): array
+  public function getRecipientsId(): ?array
   {
     return $this->recipientsId;
   }
@@ -926,7 +927,7 @@ class Service
   /**
    * @param string[] $recipientsId
    */
-  public function setRecipientsId(array $recipientsId): void
+  public function setRecipientsId(?array $recipientsId): void
   {
     $this->recipientsId = $recipientsId;
   }
@@ -975,17 +976,18 @@ class Service
     $dto->workflow = $servizio->getWorkflow();
 
     $dto->recipients = [];
-    /** @var Recipient $r */
-    foreach ($servizio->getRecipients() as $r) {
-      $dto->recipients[]= $r->getName();
-    }
-
     $dto->recipientsId = [];
     /** @var Recipient $r */
-    foreach ($servizio->getRecipients() as $r) {
-      $dto->recipientsId[]= $r->getId();
-    }
+    if ($servizio->getRecipients()) {
+      foreach ($servizio->getRecipients() as $r) {
+        $dto->recipients[]= $r->getName();
+      }
 
+      /** @var Recipient $r */
+      foreach ($servizio->getRecipients() as $r) {
+        $dto->recipientsId[]= $r->getId();
+      }
+    }
     return $dto;
   }
 
@@ -1040,7 +1042,7 @@ class Service
     $entity->setAllowWithdraw($this->allowWithdraw);
     $entity->setWorkflow($this->workflow);
 
-    $entity->setRecipients($this->recipientsId);
+    $entity->setRecipients(new ArrayCollection($this->recipientsId));
 
     return $entity;
   }

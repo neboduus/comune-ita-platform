@@ -47,8 +47,8 @@
           <ul class="link-list">
             {% for item in recipients|slice(sidebar_list_limit, (recipients|length-sidebar_list_limit)) %}
               <li>
-                <a class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
-                   href="{{ path('category_show', {'slug': item.slug}) }}">
+                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}"
+                   href="{{ path('recipient_show', {'slug': item.slug}) }}">
                   {{ item.name }}
                 </a>
               </li>
