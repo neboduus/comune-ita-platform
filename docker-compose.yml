@@ -25,8 +25,8 @@ services:
     stop_grace_period: 90s
     environment:
       PHP_FPM_CLEAR_ENV: 'no'
-      ENV: ${ENV:-PROD}
-      SYMFONY_ENV: ${SYMFONY_ENV:-prod}
+      ENV: ${ENV:-DEV}
+      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
       ENABLE_MIGRATIONS: 'true'
       ENABLE_INSTANCE_CONFIG: 'true'
       PREFIX: ${PREFIX:-}
