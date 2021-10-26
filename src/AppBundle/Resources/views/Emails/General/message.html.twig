@@ -2,7 +2,7 @@
 {% set instance_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' ~ ente.getSlug %}
 {% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
 {% set email_footer = ente.getMetaAsArray('email_footer') %}
-{% set logo = logo is defined and logo is not empty ? ente.getMetaAsArray('logo') : host_url ~ 'bundles/app/images/logo-default.png' %}
+{% set logo = ente.getMetaAsArray('logo') is defined and ente.getMetaAsArray('logo') is not empty : host_url ~ 'bundles/app/images/logo-default.png' %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
