@@ -75,12 +75,17 @@ class FileService
   {
     $filenameWithPath = $this->getFilenameWithPath($allegato);
     $metadata = $this->fileSystem->getMetadata($filenameWithPath);
-    return str_replace('"', '', $metadata['etag']);
+    if (isset($metadata['etag'])) {
+      return str_replace('"', '', $metadata['etag']);
+    } else {
+      return '-';
+    }
   }
 
   /**
    * @param Allegato $allegato
    * @return bool
+   * @throws FileNotFoundException
    */
   public function getMimeType(Allegato $allegato)
   {

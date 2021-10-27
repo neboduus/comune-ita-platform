@@ -218,7 +218,7 @@ class Allegato implements AllegatoInterface
    * @param string $numeroProtocollo
    * @return AllegatoInterface
    */
-  public function setNumeroProtocollo(string $numeroProtocollo)
+  public function setNumeroProtocollo($numeroProtocollo)
   {
     $this->numeroProtocollo = $numeroProtocollo;
     return $this;
@@ -236,7 +236,7 @@ class Allegato implements AllegatoInterface
    * @param string $idDocumentoProtocollo
    * @return Allegato
    */
-  public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
+  public function setIdDocumentoProtocollo($idDocumentoProtocollo)
   {
     $this->idDocumentoProtocollo = $idDocumentoProtocollo;
     return $this;
