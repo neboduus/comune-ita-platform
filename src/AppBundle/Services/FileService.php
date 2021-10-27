@@ -68,6 +68,18 @@ class FileService
 
   /**
    * @param Allegato $allegato
+   * @return false|resource
+   * @throws FileNotFoundException
+   */
+  public function getAttachmentStream(Allegato $allegato)
+  {
+    $filenameWithPath = $this->getFilenameWithPath($allegato);
+    return $this->fileSystem->readStream($filenameWithPath);
+  }
+
+
+  /**
+   * @param Allegato $allegato
    * @return array|string|string[]
    * @throws FileNotFoundException
    */

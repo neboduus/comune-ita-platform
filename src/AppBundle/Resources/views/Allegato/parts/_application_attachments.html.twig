@@ -6,7 +6,7 @@
 {% if pratica.moduliCompilati|length > 0 %}
   {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica'}) }}
   {% for modulo in pratica.moduliCompilati %}
-    {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': modulo}) }}
+    {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': modulo, 'application': pratica}) }}
   {% endfor %}
 {% endif %}
 
@@ -15,7 +15,7 @@
   <div class="pt-4">
     {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.allegati_modulo'}) }}
     {% for allegato in pratica.allegati %}
-      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato}) }}
+      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato, 'application': pratica}) }}
     {% endfor %}
   </div>
 {% endif %}
@@ -25,7 +25,7 @@
   <div class="pt-4">
     {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.allegati_messaggi'}) }}
     {% for allegato in messageAttachments %}
-      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato}) }}
+      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato, 'application': pratica}) }}
     {% endfor %}
   </div>
 {% endif %}
@@ -35,7 +35,7 @@
   {% if pratica.rispostaOperatore %}
     <div class="pt-4">
       {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica_risposta_firmata'}) }}
-      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': pratica.rispostaOperatore}) }}
+      {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': pratica.rispostaOperatore, 'application': pratica}) }}
     </div>
   {% endif %}
 {% endif %}

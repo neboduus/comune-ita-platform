@@ -38,6 +38,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -623,39 +624,28 @@ class AllegatoController extends Controller
    */
   private function createBinaryResponse(Allegato $allegato)
   {
-    $data = $this->fileService->getAttachmentData($allegato);
-    $path = $data['path'];
-    if (!$path) {
-      throw $this->createNotFoundException('The file does not exist!');
-    }
-
-    // todo: find a fix...
-    // Provide a name for your file with extension
-    $fileNameParts = explode('/', $path);
-    $filename = end($fileNameParts);
-
     try {
 
-      $file = $this->fileSystem->read($path);
-
-      // Return a response with a specific content
-      $response = new Response($file);
-
+      $fileService = $this->fileService;
+      $response = new StreamedResponse(function() use ($allegato, $fileService) {
+        $outputStream = fopen('php://output', 'wb');
+        $fileStream = $fileService->getAttachmentStream($allegato);
+        stream_copy_to_stream($fileStream, $outputStream);
+      });
       // Set file Content-Type
-      $mimeType = $this->fileSystem->getMimetype($path);
+      $mimeType = $this->fileService->getMimetype($allegato);
       $response->headers->set('Content-Type', $mimeType);
 
       // Create the disposition of the file
+      $filename = mb_convert_encoding($allegato->getFilename(), "ASCII", "auto");
       $disposition = $response->headers->makeDisposition(
-        ResponseHeaderBag::DISPOSITION_INLINE,
+        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
         $filename
       );
 
-      // Set the content disposition
       $response->headers->set('Content-Disposition', $disposition);
-
-      // Dispatch request
       return $response;
+
     } catch (FileNotFoundException $exception) {
     }
 

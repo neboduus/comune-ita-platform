@@ -9,8 +9,8 @@
     {{ attachment.getHumanReadableFileSize }}
   </div>
   <div class="col-2">
-    {% if attachment.isProtocolRequired %}
-      {% if attachment.numeroProtocollo %}
+    {% if application.servizio.isProtocolRequired and attachment.isProtocolRequired %}
+      {% if attachment.numeroProtocollo or attachment.idDocumentoProtocollo %}
         <span data-toggle="tooltip" data-placement="right" title="{{ 'allegato.protocollo.protocollato'|trans }}">
           <svg class="icon icon-sm icon-success">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use>
