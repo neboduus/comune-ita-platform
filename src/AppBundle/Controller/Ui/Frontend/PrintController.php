@@ -80,7 +80,7 @@ class PrintController extends Controller
         $originalFilenameParts = explode('-',  $a->getOriginalFilename());
         $userFilename = implode('-', array_slice($originalFilenameParts, 0, -5)) . '.' . $a->getFile()->getExtension();
         $temp['original_filename'] = $userFilename;
-        $temp['hash'] = $a->getHash() ?? $this->fileService->getHash($a);
+        $temp['hash'] = $this->fileService->getHash($a);
         if ($protocolRequired) {
           $preparedAttachments[]=$temp;
         } else {

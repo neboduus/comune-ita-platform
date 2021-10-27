@@ -54,7 +54,7 @@ class Ritiro extends Allegato
    * @param string $idDocumentoProtocollo
    * @return Ritiro
    */
-  public function setIdDocumentoProtocollo(string $idDocumentoProtocollo)
+  public function setIdDocumentoProtocollo($idDocumentoProtocollo)
   {
     $this->idDocumentoProtocollo = $idDocumentoProtocollo;
     return $this;
