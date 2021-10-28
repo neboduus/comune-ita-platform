@@ -39,7 +39,7 @@ var formIoI18n = {
     october: 'Ottobre',
     november: 'Novembre',
     december: 'Dicembre',
-    confirmCancel: 'Sei sucuro di voler annullare?',
+    confirmCancel: 'Sei sicuro di voler annullare?',
     time: 'Tempo non valido',
     Month: 'Mese',
     Day: 'Giorno',
