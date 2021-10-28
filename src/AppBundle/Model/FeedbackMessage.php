@@ -99,7 +99,7 @@ class FeedbackMessage implements \JsonSerializable
   /**
    * @return bool
    */
-  public function isActive(): bool
+  public function isActive(): ?bool
   {
     return $this->isActive;
   }
@@ -107,7 +107,7 @@ class FeedbackMessage implements \JsonSerializable
   /**
    * @param bool $isActive
    */
-  public function setIsActive(bool $isActive)
+  public function setIsActive(?bool $isActive)
   {
     $this->isActive = $isActive;
   }

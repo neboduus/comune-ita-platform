@@ -49,6 +49,13 @@ class ProtocollaPraticaListener
           $handlerIsExternal = $handler->getExecutionType() == ProtocolloHandlerInterface::PROTOCOL_EXECUTION_TYPE_EXTERNAL;
 
           if ($handlerIsExternal) {
+            if ( $event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE || $event->getNewStateIdentifier() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE ) {
+              if ($pratica->getEsito()) {
+                $this->statusService->setNewStatus($pratica, Pratica::STATUS_COMPLETE);
+              } else {
+                $this->statusService->setNewStatus($pratica, Pratica::STATUS_CANCELLED);
+              }
+            }
             return;
           }
 
