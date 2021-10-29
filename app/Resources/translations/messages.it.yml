@@ -766,6 +766,7 @@ operatori:
   pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo numero"
+  in_questo_fascicolo: "In questo fascicolo"
   dati_generali: "Dati generali"
   cambio_stato: "Cambio stato"
   documenti: "Documenti"
