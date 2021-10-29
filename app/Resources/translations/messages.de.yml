@@ -2122,7 +2122,7 @@ meetings:
     warning: "Attenzione"
     notification_alert: "la modifica dello stato comporterà l'invio di una notifica al cittadino"
     notification_alert_confirm: "la modifica della data comporterà l'invio di una notifica al cittadino e la conferma automatica dell'appuntamento"
-    motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullameto dell'appuntamento"
+    motivation_outcome_helper: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al cittadino in caso di approvazione, rifiuto o annullamento dell'appuntamento"
     status_change_helper: "E' possibile registrare se l'appuntamento è avvenuto come previsto"
     no_status_actions: "Non ci sono azioni disponibili per questo appuntamento"
     confirm_edit:
