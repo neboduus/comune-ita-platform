@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 
 use AppBundle\Dto\Application;
 use AppBundle\Entity\AdminUser;
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
@@ -12,6 +13,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\StatusChange;
 use AppBundle\Entity\User;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Form\Base\AllegatoType;
@@ -513,7 +515,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    */
   public function postApplicationAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_ADMIN']);
+    $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $applicationDto = new Application();
     $form = $this->createForm('AppBundle\Form\Rest\ApplicationFormType', $applicationDto);
@@ -544,6 +546,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["There was an error on retrieve form schema"], Response::HTTP_BAD_REQUEST);
     }
     $schema = $result['schema'];
+    $this->praticaManager->setSchema($schema);
     $flatSchema = $this->praticaManager->arrayFlat($schema, true);
     $flatData = $this->praticaManager->arrayFlat($applicationDto->getData());
 
@@ -552,8 +555,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     foreach ($flatData as $k => $v) {
-      if (!isset($flatSchema[$k . '.type'])) {
-        return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
+      // Todo: creare servizio più efficace per controllo conformità schema
+      if ($flatSchema[$k . '.type'] != 'file') {
+        if (!isset($flatSchema[$k . '.type'])) {
+          return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
+        }
       }
     }
 
@@ -598,28 +604,32 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     try {
 
-      /** @var FormIO $pratica */
+      $statusChange = null;
+      if ($user != $this->getUser()) {
+        $statusChange = new StatusChange();
+        $statusChange->setEvento('Creazione pratica da altro soggetto.');
+        $statusChange->setOperatore($this->getUser()->getFullName());
+      }
+
+        /** @var FormIO $pratica */
       $pratica = $applicationDto->toEntity(new FormIO());
       $pratica->setUser($user);
       $pratica->setEnte($this->is->getCurrentInstance());
       $pratica->setServizio($service);
-      $pratica->setStatus(Pratica::STATUS_DRAFT);
+      $pratica->setStatus($applicationDto->getStatus(), $statusChange);
       $pratica->setDematerializedForms($data);
+      if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
+        $pratica->setSubmissionTime(time());
+      }
+      $this->praticaManager->addAttachmentsToApplication($pratica, $flatData);
       $this->em->persist($pratica);
       $this->em->flush();
 
-
-      if ($applicationDto->getStatus() == Pratica::STATUS_DRAFT) {
-        $this->dispatcher->dispatch(
-          PraticaEvents::ON_STATUS_CHANGE,
-          new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_DRAFT, 0)
-        );
-      } else {
+      if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
         $this->pdfBuilder->createForPraticaAsync($pratica, $applicationDto->getStatus());
       }
 
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -629,13 +639,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $e->getMessage(),
         ['request' => $request]
       );
-
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     return $this->view(
-      Application::fromEntity($pratica, $this->baseUrl.'/'.$pratica->getId()),
-      Response::HTTP_CREATED
+      Application::fromEntity($pratica, $this->baseUrl.'/'.$pratica->getId()), Response::HTTP_CREATED
     );
   }
 

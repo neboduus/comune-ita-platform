@@ -239,6 +239,39 @@ class OperatoriController extends Controller
   }
 
   /**
+   * @Route("/pratiche/{servizio}/new", name="new_application_by_operator")
+   * @param Request $request
+   * @return Response
+   */
+  public function newAppicationByOperatorAction(Request $request, Servizio $servizio)
+  {
+    $userId = $request->query->get('user', false);
+
+    $application = new Pratica();
+    $application->setServizio($servizio);
+
+    $cpsUserData = false;
+    if ($userId) {
+      $cpsUserRepo = $this->entityManager->getRepository('AppBundle:CPSUser');
+      $cpsUser = $cpsUserRepo->find($userId);
+      if ($cpsUser instanceof CPSUser) {
+        $application->setUser($cpsUser);
+        $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
+        $cpsUserData = ['data' => $this->praticaManager->getMappedFormDataWithUserData($schema, $cpsUser)];
+      }
+    }
+
+    return $this->render( '@App/Operatori/newApplication.html.twig', [
+      'formserver_url' => $this->getParameter('formserver_admin_url'),
+      'user' => $this->getUser(),
+      'token' => $this->JWTTokenManager->create($this->getUser()),
+      'service' => $servizio,
+      'application' => $application,
+      'cps_user_data' => $cpsUserData
+    ]);
+  }
+
+  /**
    * @Route("/pratiche/csv",name="operatori_index_csv")
    * @param Request $request
    */

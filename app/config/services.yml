@@ -96,6 +96,9 @@ services:
   AppBundle\Controller\Ui\Backend\AdminController:
     autowire: true
 
+  AppBundle\Controller\Ui\Backend\ServiceController:
+    autowire: true
+
   AppBundle\Controller\Ui\Backend\WebhookController:
     autowire: true
 

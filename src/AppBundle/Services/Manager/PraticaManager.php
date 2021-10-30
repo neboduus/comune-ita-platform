@@ -4,6 +4,7 @@
 namespace AppBundle\Services\Manager;
 
 
+use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Message;
@@ -16,6 +17,7 @@ use AppBundle\Entity\User;
 use AppBundle\Event\DispatchEmailFromMessageEvent;
 use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Form\FormIO\FormIORenderType;
+use AppBundle\FormIO\Schema;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Services\InstanceService;
@@ -29,6 +31,8 @@ use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -37,10 +41,30 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class PraticaManager
 {
+
+  const APPLICATION_USER_MAP = [
+    'applicant.completename.name' => 'getNome',
+    'applicant.completename.surname' => 'getCognome',
+    'applicant.Born.natoAIl' => 'getDataNascita',
+    'applicant.Born.place_of_birth' => 'getLuogoNascita',
+    'applicant.fiscal_code.fiscal_code' => 'getCodiceFiscale',
+    'applicant.address.address' => 'getIndirizzoResidenza',
+    'applicant.address.house_number' => '',
+    'applicant.address.municipality' => 'getCittaResidenza',
+    'applicant.address.postal_code' => 'getCapResidenza',
+    'applicant.address.county' => 'getProvinciaResidenza',
+    'applicant.email_address' => 'getEmail',
+    'applicant.email_repeat' => 'getEmail',
+    'applicant.cell_number' => 'getCellulare',
+    'applicant.phone_number' => 'getTelefono',
+    'applicant.gender.gender' => 'getSessoAsString',
+    'cell_number' => 'getCellulare'
+  ];
+
   /**
    * @var
    */
-  private $schema = false;
+  private $schema = null;
 
   /**
    * @var ModuloPdfBuilderService
@@ -107,6 +131,22 @@ class PraticaManager
     $this->router = $router;
     $this->translator = $translator;
     $this->dispatcher = $dispatcher;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getSchema()
+  {
+    return $this->schema;
+  }
+
+  /**
+   * @param mixed $schema
+   */
+  public function setSchema($schema): void
+  {
+    $this->schema = $schema;
   }
 
   /**
@@ -539,6 +579,87 @@ class PraticaManager
 
     if (strcasecmp($data['applicant.data.completename.data.surname'], $user->getCognome()) != 0) {
       throw new Exception($this->translator->trans('steps.formio.surname_violation_message'));
+    }
+  }
+
+  /**
+   * @param Schema $schema
+   * @param CPSUser $user
+   * @return mixed
+   */
+  public function getMappedFormDataWithUserData(Schema $schema, CPSUser $user)
+  {
+    $data = $schema->getDataBuilder();
+    if ($schema->hasComponents()) {
+      foreach (self::APPLICATION_USER_MAP as $schemaFlatName => $userMethod) {
+        try {
+          if ($schema->hasComponent($schemaFlatName) && method_exists($user, $userMethod)) {
+            $component = $schema->getComponent($schemaFlatName);
+            $value = $user->{$userMethod}();
+            // se il campo è datatime popola con iso8601 altrimenti testo
+            if ($value instanceof DateTime) {
+              if ($component['form_type'] == DateTimeType::class) {
+                $value = $value->format(DateTime::ISO8601);
+              } else {
+                $value = $value->format('d/m/Y');
+              }
+            }
+            if ($component['form_type'] == ChoiceType::class
+              && isset($component['form_options']['choices'])
+              && !empty($component['form_options']['choices'])) {
+              if ($schemaFlatName !== 'applicant.gender.gender') {
+                $value = strtoupper($value);
+              }
+              if (!in_array($value, $component['form_options']['choices'])) {
+                $value = null;
+              }
+            }
+            if ($value) {
+              $data->set($schemaFlatName, $value);
+            }
+          }
+        } catch (\Exception $e) {
+          $this->logger->error($e->getMessage());
+        }
+      }
+    }
+    return $data->toArray();
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param $flattenedData
+   * @throws Exception
+   */
+  public function addAttachmentsToApplication(Pratica $pratica, $flattenedData)
+  {
+    $attachments = [];
+    foreach ($flattenedData as $key => $value) {
+      // Associa gli allegati alla pratica
+      if (isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
+        foreach ($value as $file) {
+          $id = $file['data']['id'];
+          $attachment = $this->entityManager->getRepository('AppBundle:Allegato')->find($id);
+          if ($attachment instanceof Allegato) {
+            if (isset($file['fileType']) && !empty($file['fileType'])) {
+              $attachment->setDescription($file['fileType']);
+              $this->entityManager->persist($attachment);
+            }
+            $attachments[] = $id;
+            $pratica->addAllegato($attachment);
+          } else {
+            $msg = "The file present in form schema doesn't exist in database";
+            $this->logger->error($msg, ['pratica' => $pratica->getId(), 'allegato' => $id]);
+            throw new \Exception($msg);
+          }
+        }
+      }
+    }
+    // Verifico che il numero degli allegati associati alla pratica sia uguale a quello passato nel form
+    if ($pratica->getAllegati()->count() != count($attachments)) {
+      $msg = 'The number of files in form data is not equal to those linked to the application';
+      $this->logger->error($msg, ['pratica' => $pratica->getId()]);
+      throw new \Exception($msg);
     }
   }
 }

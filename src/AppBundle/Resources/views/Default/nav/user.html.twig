@@ -7,15 +7,22 @@
         <div class="col-lg-12">
           <div class="menu-wrapper user-menu pl-4 nav-tabs-hidescrol">
             <ul class="nav nav-tabs nav-tabs-icon-text auto" style="background-color: transparent">
-              <li
-                class="nav-item">
-                <a
-                  class="nav-link {% if  app.request.pathInfo ends with 'operatori/' %} active {% endif %}"
+              <li class="nav-item">
+                <a class="nav-link {% if  app.request.pathInfo ends with 'operatori/' %} active {% endif %}"
                   href="{{ path('operatori_index') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-list"></use>
                   </svg>
                   {{ 'nav.operatori.panello_controllo'|trans }}
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if  app.request.pathInfo ends with 'services' %} active {% endif %}"
+                   href="{{ path('backend_services_index') }}">
+                  <svg class="icon icon-sm icon-primary left mr-1">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-piattaforme"></use>
+                  </svg>
+                  {{ 'nav.admin.servizi'|trans }}
                 </a>
               </li>
               {# <li class="nav-item {% if 'parametri-protocollo' in app.request.pathInfo %} active {% endif %}">
