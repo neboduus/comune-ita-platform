@@ -93,6 +93,7 @@ general:
   alert_elimina: "Sicuro di voler procedere?"
   flash:
     created: 'Oggetto creato correttamente'
+  search: 'Cerca'
 servizio:
   bozza_successo: 'Bozza salvata con successo'
   nessun_template: 'Nessun template disponibile'

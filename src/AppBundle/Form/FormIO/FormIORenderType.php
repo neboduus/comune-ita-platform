@@ -421,7 +421,6 @@ class FormIORenderType extends AbstractType
             if ($component['form_type'] == ChoiceType::class
               && isset($component['form_options']['choices'])
               && !empty($component['form_options']['choices'])) {
-              // FIXME: fai le cose piu ordinate!!
               if ($schemaFlatName !== 'applicant.gender.gender') {
                 $value = strtoupper($value);
               }

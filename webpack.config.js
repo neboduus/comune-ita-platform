@@ -33,6 +33,7 @@ Encore
   .addEntry('outdated-browser-rework', './assets/js/outdated-browser-rework.js')
   .addEntry('edit-operator', './assets/js/edit-operator')
   .addEntry('operator-show-application', './assets/js/pages/operator-show-application')
+  .addEntry('operator-new-application', './assets/js/pages/operator-new-application')
   .addEntry('user-show-application', './assets/js/pages/user-show-application')
   .addEntry('chars-user', './assets/js/Charts/chart-user.js')
   .addEntry('admin-scheduled-actions', './assets/js/pages/admin-scheduled-actions')
