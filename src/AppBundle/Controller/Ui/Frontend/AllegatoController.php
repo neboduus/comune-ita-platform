@@ -20,6 +20,9 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Security\Voters\AttachmentVoter;
 use AppBundle\Services\FileService;
 use AppBundle\Services\ModuloPdfBuilderService;
+use Aws\S3\S3Client;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\FilesystemInterface;
@@ -32,6 +35,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -73,14 +77,12 @@ class AllegatoController extends Controller
   /** @var ValidatorInterface */
   private $validator;
 
-  /**
-   * @var FilesystemInterface
-   */
-  private $fileSystem;
-  /**
-   * @var FileService
-   */
+  /** @var FileService */
   private $fileService;
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
 
   /**
    * AllegatoController constructor.
@@ -89,7 +91,7 @@ class AllegatoController extends Controller
    * @param LoggerInterface $logger
    * @param ValidatorInterface $validator
    * @param FileService $fileService
-   * @param FilesystemInterface $fileSystem
+   * @param EntityManagerInterface $entityManager
    */
   public function __construct(
     TranslatorInterface $translator,
@@ -97,15 +99,15 @@ class AllegatoController extends Controller
     LoggerInterface $logger,
     ValidatorInterface $validator,
     FileService $fileService,
-    FilesystemInterface $fileSystem
+    EntityManagerInterface $entityManager
   )
   {
     $this->translator = $translator;
     $this->router = $router;
     $this->logger = $logger;
     $this->validator = $validator;
-    $this->fileSystem = $fileSystem;
     $this->fileService = $fileService;
+    $this->entityManager = $entityManager;
   }
 
   /**
@@ -138,6 +140,95 @@ class AllegatoController extends Controller
 
   /**
    * @param Request $request
+   * @return JsonResponse
+   * @Route("/upload", name="attachment_upload")
+   * @Method("POST")
+   */
+  public function uploadAttachmentAction(Request $request)
+  {
+    try {
+      $session = $this->get('session');
+      if (!$session->isStarted()){
+        $session->start();
+      }
+
+      $fileName = $request->request->get('name');
+      $description = $request->get('description', Allegato::DEFAULT_DESCRIPTION);
+      $protocolRequired = $request->get('protocol_required', true);
+
+      $allegato = new Allegato();
+      $user  = $this->getUser();
+      if ($user instanceof CPSUser || $user instanceof User) {
+        $allegato->setOwner($user);
+      }
+
+      // a-36851661-ca5a-4d67-ac8c-cfa5b1d374af.pdf
+      $allegato->setFilename($fileName);
+      // a.pdf
+      $allegato->setOriginalFilename($fileName);
+
+      $allegato->setDescription($description);
+
+      $expireDate = new DateTime(FileService::PRESIGNED_PUT_EXPIRE_STRING);
+      $allegato->setExpireDate($expireDate);
+
+      $allegato->setProtocolRequired($protocolRequired);
+
+      $path = $this->fileService->getPath($allegato);
+      $filePath = $path . DIRECTORY_SEPARATOR . $fileName;
+      $allegato->setFile(new File($filePath, false));
+      $allegato->setHash(hash('sha256', $session->getId()));
+      $this->entityManager->persist($allegato);
+      $this->entityManager->flush();
+
+      $uri = $this->fileService->createPresignedPostRequest($allegato);
+      $data = [
+        'id' => $allegato->getId(),
+        'uri' => $uri,
+      ];
+      return new JsonResponse($data, Response::HTTP_CREATED);
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
+      return new JsonResponse(['status' => 'error', 'message' => 'Whoops, looks like something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * @param Request $request
+   * @param Allegato $allegato
+   * @return JsonResponse
+   * @Route("/upload/{allegato}",name="attachment_upload_finalize")
+   * @Method("PUT")
+   */
+  public function uploadAttachmentFinalizeAction(Request $request, Allegato $allegato)
+  {
+    // Todo: Come garantisco in sicurezza per gli anonimi?
+    //$this->denyAccessUnlessGranted(AttachmentVoter::EDIT, $allegato);
+
+    try {
+
+      $session = $this->get('session');
+      if (!$session->isStarted()){
+        $session->start();
+      }
+
+      $fileHash = $request->request->get('file_hash');
+      $allegato->setFileHash($fileHash);
+      $allegato->setExpireDate(null);
+      $this->entityManager->persist($allegato);
+      $this->entityManager->flush();
+
+      return new JsonResponse([], Response::HTTP_NO_CONTENT);
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
+      return new JsonResponse(['status' => 'error', 'message' => 'Whoops, looks like something went wrong'], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+  }
+
+
+
+  /**
+   * @param Request $request
    * @Route("/allegati",name="allegati_upload")
    * @return mixed
    */
@@ -153,12 +244,12 @@ class AllegatoController extends Controller
 
       case 'GET':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
-        if ($file instanceof Allegato) {
-          if ($file->getHash() == hash('sha256', $session->getId())){
-            return $this->createBinaryResponse($file);
+        $allegato = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        if ($allegato instanceof Allegato) {
+          if ($allegato->getHash() == hash('sha256', $session->getId())){
+            return $this->fileService->download($allegato);
           }else{
-            return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $file]);
+            return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $allegato]);
           }
         } else {
           return new Response('', Response::HTTP_NOT_FOUND);
@@ -323,21 +414,6 @@ class AllegatoController extends Controller
 
     //unlink($targetFile);
     return new JsonResponse($data);
-  }
-
-  /**
-   * @param Allegato $allegato
-   * @Route("/pratiche/allegati/{allegato}", name="allegati_download_cpsuser")
-   * @return BinaryFileResponse
-   * @throws NotFoundHttpException
-   */
-  public function cpsUserAllegatoDownloadAction(Allegato $allegato)
-  {
-
-    $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
-
-    return $this->createBinaryResponse($allegato);
-
   }
 
   /**
@@ -521,29 +597,15 @@ class AllegatoController extends Controller
 
   /**
    * @param Allegato $allegato
+   * @Route("/pratiche/allegati/{allegato}", name="allegati_download_cpsuser")
    * @Route("/operatori/allegati/{allegato}", name="allegati_download_operatore")
-   * @return Response
-   * @throws NotFoundHttpException
-   */
-  public function operatoreAllegatoDownloadAction(Allegato $allegato)
-  {
-    $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
-
-    return $this->createBinaryResponse($allegato);
-  }
-
-  /**
-   * @param Allegato $allegato
    * @Route("/operatori/risposta/{allegato}", name="risposta_download_operatore")
-   * @return BinaryFileResponse
-   * @throws NotFoundHttpException
+   * @return Response
    */
-  public function operatoreRispostaDownloadAction(Allegato $allegato)
+  public function allegatoDownloadAction(Allegato $allegato)
   {
     $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
-
-    return $this->createBinaryResponse($allegato);
-
+    return $this->fileService->download($allegato);
   }
 
   /**
@@ -616,55 +678,6 @@ class AllegatoController extends Controller
     return $allegato->getOwner() === $this->getUser()
       && $allegato->getPratiche()->count() == 0
       && !is_subclass_of($allegato, Allegato::class);
-  }
-
-  /**
-   * @param Allegato $allegato
-   * @return Response
-   */
-  private function createBinaryResponse(Allegato $allegato)
-  {
-    try {
-
-      $fileService = $this->fileService;
-      $response = new StreamedResponse(function() use ($allegato, $fileService) {
-        $outputStream = fopen('php://output', 'wb');
-        $fileStream = $fileService->getAttachmentStream($allegato);
-        stream_copy_to_stream($fileStream, $outputStream);
-      });
-      // Set file Content-Type
-      $mimeType = $this->fileService->getMimetype($allegato);
-      $response->headers->set('Content-Type', $mimeType);
-
-      // Create the disposition of the file
-      $filename = mb_convert_encoding($allegato->getFilename(), "ASCII", "auto");
-      $disposition = $response->headers->makeDisposition(
-        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-        $filename
-      );
-
-      $response->headers->set('Content-Disposition', $disposition);
-      return $response;
-
-    } catch (FileNotFoundException $exception) {
-    }
-
-    throw $this->createNotFoundException('The file does not exist!');
-  }
-
-  /**
-   * @param Allegato $allegato
-   * @param LoggerInterface $logger
-   */
-  private function logUnauthorizedAccessAttempt(Allegato $allegato, $logger)
-  {
-    $logger->info(
-      LogConstants::ALLEGATO_DOWNLOAD_NEGATO,
-      [
-        'originalFileName' => $allegato->getOriginalFilename(),
-        'allegato' => $allegato->getId(),
-      ]
-    );
   }
 
   /**

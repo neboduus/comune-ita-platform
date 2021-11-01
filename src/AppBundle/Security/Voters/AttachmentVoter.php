@@ -19,6 +19,7 @@ class AttachmentVoter extends Voter
 {
 
   const DOWNLOAD = 'download';
+  const EDIT = 'edit';
   const UPLOAD = 'upload';
 
 
@@ -43,10 +44,16 @@ class AttachmentVoter extends Voter
     $this->hashValidity = $hashValidity;
   }
 
+  /**
+   * @param string $attribute
+   * @param mixed $subject
+   * @return bool
+   */
   protected function supports($attribute, $subject)
   {
     if (!in_array($attribute, [
       self::DOWNLOAD,
+      self::EDIT,
       self::UPLOAD
     ])) {
       return false;
@@ -74,6 +81,7 @@ class AttachmentVoter extends Voter
 
     switch ($attribute) {
       case self::UPLOAD:
+      case self::EDIT:
         return $this->canEdit($attachment, $user);
       case self::DOWNLOAD:
         return $this->canDownload($attachment, $user);
@@ -120,16 +128,27 @@ class AttachmentVoter extends Voter
 
   }
 
-  private function canEdit(Pratica $pratica, User $user)
+  /**
+   * @param Allegato $attachment
+   * @param User $user
+   * @return bool
+   */
+  private function canEdit(Allegato $attachment, User $user)
   {
     if ($this->security->isGranted('ROLE_ADMIN')) {
       return true;
     }
+
     if ($this->security->isGranted('ROLE_OPERATORE')) {
-      /** @var OperatoreUser $user */
-      if (in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
-        return true;
-      }
+      return true;
+    }
+
+    if ($attachment->getOwner() === $user) {
+      return true;
+    }
+
+    if ($this->session->isStarted() && $attachment->getHash() === hash('sha256', $this->session->getId())) {
+      return true;
     }
 
     return false;

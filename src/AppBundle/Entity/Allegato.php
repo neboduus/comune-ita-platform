@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Validator\Constraints as SDCAssert;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -50,7 +51,7 @@ class Allegato implements AllegatoInterface
 
   /**
    * @var File
-   * @Vich\UploadableField(mapping="allegato", fileNameProperty="filename")
+   * @Vich\UploadableField(mapping="allegato", fileNameProperty="filename", size="fileSize")
    */
   private $file;
 
@@ -114,14 +115,31 @@ class Allegato implements AllegatoInterface
   private $protocolRequired;
 
   /**
+   * @ORM\Column(type="decimal", precision=14, scale=2, nullable=true)
+   */
+  private $fileSize;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true)
+   */
+  private $fileHash;
+
+  /**
+   * @var DateTime
+   * @ORM\Column(type="datetime", nullable=true)
+   */
+  protected $expireDate;
+
+  /**
    * Allegato constructor.
    */
   public function __construct()
   {
     $this->id = Uuid::uuid4();
     $this->type = self::TYPE_DEFAULT;
-    $this->createdAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
-    $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
+    $this->createdAt = new DateTime('now', new \DateTimeZone('Europe/Rome'));
+    $this->updatedAt = new DateTime('now', new \DateTimeZone('Europe/Rome'));
     $this->pratiche = new ArrayCollection();
     $this->protocolRequired = true;
   }
@@ -143,7 +161,7 @@ class Allegato implements AllegatoInterface
     $this->file = $file;
 
     if ($file) {
-      $this->updatedAt = new \DateTime('now', new \DateTimeZone('Europe/Rome'));
+      $this->updatedAt = new DateTime('now', new \DateTimeZone('Europe/Rome'));
       if ($file instanceof UploadedFile) {
         $this->originalFilename = $file->getClientOriginalName();
       }
@@ -400,6 +418,55 @@ class Allegato implements AllegatoInterface
   {
     $this->protocolRequired = $protocolRequired;
   }
+
+  /**
+   * @return mixed
+   */
+  public function getFileSize()
+  {
+    return $this->fileSize;
+  }
+
+  /**
+   * @param mixed $fileSize
+   */
+  public function setFileSize($fileSize): void
+  {
+    $this->fileSize = $fileSize;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFileHash(): string
+  {
+    return $this->fileHash;
+  }
+
+  /**
+   * @param string $fileHash
+   */
+  public function setFileHash(?string $fileHash): void
+  {
+    $this->fileHash = $fileHash;
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getExpireDate()
+  {
+    return $this->expireDate;
+  }
+
+  /**
+   * @param DateTime|null $expireDate
+   */
+  public function setExpireDate(?DateTime $expireDate)
+  {
+    $this->expireDate = $expireDate;
+  }
+
 
   /**
    * @return string

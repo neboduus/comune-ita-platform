@@ -309,7 +309,8 @@ oneup_flysystem:
       mount: s3_filesystem
       # optional - defines the default visibility of the filesystem: `public` or `private`(default)
       visibility: private
-      alias: sdc_filesystem
+      alias: s3_filesystem
     local_filesystem:
       adapter: local_adapter
       mount: local_filesystem
+      alias: local_filesystem

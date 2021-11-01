@@ -4,7 +4,8 @@ parameters:
 #    parameter_name: value
 
 services:
-  League\Flysystem\FilesystemInterface: '@sdc_filesystem'
+  League\Flysystem\FilesystemInterface: '@s3_filesystem'
+  #League\Flysystem\FilesystemInterface: '@local_filesystem'
 
   ocsdc.s3_client:
     class: Aws\S3\S3Client
@@ -17,11 +18,14 @@ services:
 
   ocsdc.filesystem:
     class: AppBundle\Services\FileSystemService
-    arguments: [ '@oneup_flysystem.s3_filesystem_filesystem' ]
+    arguments: [ '@League\Flysystem\FilesystemInterface' ]
     public: true
 
   AppBundle\Services\FileService:
     autowire: true
+    arguments:
+      $s3Bucket: '%s3_bucket%'
+      $uploadDestination: '%upload_destination%'
 
   ocsdc.meeting_service:
     class: AppBundle\Services\MeetingService
