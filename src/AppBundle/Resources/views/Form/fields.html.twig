@@ -34,50 +34,57 @@
 {% endblock %}
 
 {% block i18n_text_row %}
-  {{ form_label(form) }}
-  {{ form_errors(form) }}
-  <ul class="nav nav-tabs{% if form|length <= 1 %} d-none{% endif %}">
-    {% for locale,child in form %}
-      <li role="presentation" class="nav-item">
-        <a class="nav-link {{ locale == app.request.locale?"active":"" }}" aria-controls="trans-field-{{ form.vars.name }}-{{ locale }}" role="tab" data-toggle="tab"
-           href="#trans-field-{{ form.vars.name }}-{{ locale }}">{{ child.vars.name|trans|capitalize }}</a>
-      </li>
-    {% endfor %}
-  </ul>
+  <div class="form-group">
+    {% set locale_form = attribute(form.children, locale) %}
+    <label>{{ locale_form.vars.label|trans }}</label>
+    {#{ form_label(form) }#}
+    {{ form_errors(form) }}
+    <ul class="nav nav-tabs{% if form|length <= 1 %} d-none{% endif %}">
+      {% for locale,child in form %}
+        <li role="presentation" class="nav-item">
+          <a class="nav-link {{ locale == app.request.locale?"active":"" }}" aria-controls="trans-field-{{ form.vars.name }}-{{ locale }}" role="tab" data-toggle="tab"
+             href="#trans-field-{{ form.vars.name }}-{{ locale }}">{{ child.vars.name|trans|capitalize }}</a>
+        </li>
+      {% endfor %}
+    </ul>
 
-  <!-- Tab panes -->
-  <div class="tab-content mt-1 pb-3">
-    {% for locale,child in form %}
-      <div role="tabpanel" class="tab-pane {{ locale == app.request.locale?"active":"" }}"
-           id="trans-field-{{ form.vars.name }}-{{ locale }}">
-        {{ form_widget(child, {attr: form.vars.attr}) }}
-      </div>
-    {% endfor %}
+    <!-- Tab panes -->
+    <div class="tab-content mt-1 pb-3">
+      {% for locale,child in form %}
+        <div role="tabpanel" class="tab-pane {{ locale == app.request.locale?"active":"" }}"
+             id="trans-field-{{ form.vars.name }}-{{ locale }}">
+          {{ form_widget(child, {attr: form.vars.attr}) }}
+        </div>
+      {% endfor %}
+    </div>
   </div>
-
 
 {% endblock %}
 
 {% block i18n_textarea_row %}
-  {{ form_label(form) }}
-  {{ form_errors(form) }}
-  <ul class="nav nav-tabs{% if form|length <= 1 %} d-none{% endif %}">
-    {% for locale,child in form %}
-      <li role="presentation" class="nav-item">
-        <a class="nav-link {{ locale == app.request.locale?"active":"" }}" aria-controls="trans-field-{{ form.vars.name }}-{{ locale }}" role="tab" data-toggle="tab"
-           href="#trans-field-{{ form.vars.name }}-{{ locale }}">{{ child.vars.name|trans|capitalize }}</a>
-      </li>
-    {% endfor %}
-  </ul>
+  <div class="form-group">
+    {% set locale_form = attribute(form.children, locale) %}
+    <label>{{ locale_form.vars.label|trans }}</label>
+    {#{ form_label(form) }#}
+    {{ form_errors(form) }}
+    <ul class="nav nav-tabs{% if form|length <= 1 %} d-none{% endif %}">
+      {% for locale,child in form %}
+        <li role="presentation" class="nav-item">
+          <a class="nav-link {{ locale == app.request.locale?"active":"" }}" aria-controls="trans-field-{{ form.vars.name }}-{{ locale }}" role="tab" data-toggle="tab"
+             href="#trans-field-{{ form.vars.name }}-{{ locale }}">{{ child.vars.name|trans|capitalize }}</a>
+        </li>
+      {% endfor %}
+    </ul>
 
-  <!-- Tab panes -->
-  <div class="tab-content mt-1 pb-3">
-    {% for locale,child in form %}
-      <div role="tabpanel" class="tab-pane {{ locale == app.request.locale?"active":"" }}"
-           id="trans-field-{{ form.vars.name }}-{{ locale }}">
-        {{ form_widget(child) }}
-      </div>
-    {% endfor %}
+    <!-- Tab panes -->
+    <div class="tab-content mt-1 pb-3">
+      {% for locale,child in form %}
+        <div role="tabpanel" class="tab-pane {{ locale == app.request.locale?"active":"" }}"
+             id="trans-field-{{ form.vars.name }}-{{ locale }}">
+          {{ form_widget(child) }}
+        </div>
+      {% endfor %}
+    </div>
   </div>
 
 
