@@ -79,6 +79,7 @@ twig:
     login_callout_texts: "%login_callout_texts%"
     login_route: "%login_route%"
     protocollo_handler: "@ocsdc.protocollo.handler"
+    locale: "%locale%"
     app_locales: "%app_locales%"
     prefix: "%prefix%"
 
