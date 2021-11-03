@@ -50,6 +50,11 @@ class SelectPaymentGatewayType extends AbstractType
     /** @var Pratica $pratica */
     $pratica = $builder->getData();
     $tenantGateways = $pratica->getServizio()->getEnte()->getGateways();
+    $normalizedTenantGateways = [];
+    foreach ($tenantGateways as $s) {
+      $normalizedTenantGateways [$s['identifier']] = $s;
+    }
+    $tenantGateways = $normalizedTenantGateways;
     $availableGateways = array_keys($tenantGateways);
 
     $paymnetParameters = $pratica->getServizio()->getPaymentParameters();
@@ -61,6 +66,7 @@ class SelectPaymentGatewayType extends AbstractType
     $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
       'identifier' => $availableGateways
     ]);
+    
     /** @var PaymentGateway $g */
     foreach ($gateways as $g) {
       $this->gatewaysMap[$g->getId()] = $g->getIdentifier();

@@ -71,9 +71,7 @@ class PaymentDataType extends AbstractType
     }
 
     $paymentParameters = $service->getPaymentParameters();
-
     $selectedGateways = isset($paymentParameters['gateways']) ? $paymentParameters['gateways'] : [];
-
     $selectedGatewaysIentifiers = [];
     $selectedGatewaysParameters = [];
 
@@ -88,6 +86,11 @@ class PaymentDataType extends AbstractType
     }
 
     $tenantGateways = $service->getEnte()->getGateways();
+    $normalizedTenantGateways = [];
+    foreach ($tenantGateways as $s) {
+      $normalizedTenantGateways [$s['identifier']] = $s;
+    }
+    $tenantGateways = $normalizedTenantGateways;
 
     // Gateways abilitati nel tenant
     $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
