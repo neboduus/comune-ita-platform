@@ -71,7 +71,7 @@ class ServizioRepository extends EntityRepository
     return $qb->getQuery()->getResult();
   }
 
-  public function findOneI18n($id, $locale)
+  /*public function findOneI18n($id, $locale)
   {
     $qb = $this->createQueryBuilder('s')
       ->select('s')
@@ -99,5 +99,5 @@ class ServizioRepository extends EntityRepository
     );
 
     return $query->getSingleResult();
-  }
+  }*/
 }
