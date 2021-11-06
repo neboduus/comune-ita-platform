@@ -246,6 +246,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      description="Updated at filter, format yyyy-mm-dd"
    *  )
    * @SWG\Parameter(
+   *      name="status",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Status code of application"
+   *  )
+   * @SWG\Parameter(
    *      name="offset",
    *      in="query",
    *      type="integer",
@@ -282,33 +289,30 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   public function getApplicationsAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
+    $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $offset = intval($request->get('offset', 0));
     $limit = intval($request->get('limit', 10));
     $version = intval($request->get('version', 1));
 
     $serviceParameter = $request->get('service', false);
-    $orderParameter = $request->get('order', false);
-    $sortParameter = $request->get('sort', false);
-
+    $statusParameter = $request->get('status', false);
     $createdAtParameter = $request->get('createdAt', false);
     $updatedAtParameter = $request->get('updatedAt', false);
+
+    $orderParameter = $request->get('order', false);
+    $sortParameter = $request->get('sort', false);
 
     if ($limit > 100) {
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
-    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
-    $allowedServices = $this->getAllowedServices();
-
-    if (empty($allowedServices)) {
-      return $this->view(["You are not allowed to view applications"], Response::HTTP_FORBIDDEN);
-    }
-
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
     if ($serviceParameter) {
       $queryParameters['service'] = $serviceParameter;
+    }
+    if ($statusParameter) {
+      $queryParameters['status'] = $statusParameter;
     }
     if ($orderParameter) {
       $queryParameters['order'] = $orderParameter;
@@ -318,7 +322,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $format = 'Y-m-d';
-
     if ($createdAtParameter) {
       foreach ($createdAtParameter as $v) {
         $date = DateTime::createFromFormat($format, $v);
@@ -328,6 +331,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
       $queryParameters['createdAt'] = $createdAtParameter;
     }
+
     if ($updatedAtParameter) {
       foreach ($updatedAtParameter as $v) {
         $date = DateTime::createFromFormat($format, $v);
@@ -338,12 +342,27 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['updatedAt'] = $updatedAtParameter;
     }
 
+    if ($statusParameter) {
+      $applicationStatuses = array_keys(Pratica::getStatuses());
+      if (!in_array($statusParameter, $applicationStatuses)) {
+        return $this->view(["Status code not present, chose one between: " . implode(',', $applicationStatuses)], Response::HTTP_BAD_REQUEST);
+      }
+    }
+
+    $user = $this->getUser();
+    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
+    $allowedServices = $this->getAllowedServices();
+
+    if (empty($allowedServices) && $user instanceof OperatoreUser) {
+      return $this->view(["You are not allowed to view applications"], Response::HTTP_FORBIDDEN);
+    }
+
     if ($serviceParameter) {
       $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
       if (!$service instanceof Servizio) {
         return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
       }
-      if (!in_array($service->getId(), $allowedServices)) {
+      if (!empty($allowedServices) && !in_array($service->getId(), $allowedServices)) {
         return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
       }
       $allowedServices = [$service->getId()];
@@ -352,14 +371,19 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $result = [];
     $result['meta']['parameter'] = $queryParameters;
-
     $repoApplications = $this->em->getRepository(Pratica::class);
-
 
     try {
       $parameters = $queryParameters;
-      $parameters['service'] = $allowedServices;
+      if (!empty($allowedServices)) {
+        $parameters['service'] = $allowedServices;
+      }
+      $user = $this->getUser();
+      if ($user instanceof CPSUser) {
+        $parameters['user'] = $user->getId();
+      }
       $count = $repoApplications->getApplications($parameters, true);
+
     } catch (NoResultException $e) {
       $count = 0;
     } catch (NonUniqueResultException $e) {
@@ -1820,12 +1844,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $allowedServices = [];
     if ($user instanceof OperatoreUser) {
       $allowedServices = $user->getServiziAbilitati()->toArray();
-    } elseif ($user instanceof AdminUser) {
-      $services = $repositoryService->findAll();
-      /** @var Servizio $service */
-      foreach ($services as $service) {
-        $allowedServices [] = $service->getId();
-      }
     }
 
     return $allowedServices;

@@ -584,9 +584,16 @@ class PraticaRepository extends EntityRepository
   public function getApplications($parameters = [], $onlyCount = false, $order = 'creationTime', $sort = 'ASC', $offset = 0, $limit = 10)
   {
 
-    $qb = $this->createQueryBuilder('pratica')
-      ->where('pratica.status != :status')->setParameter('status', Pratica::STATUS_DRAFT)
-      ->andWhere('pratica.servizio IN (:services)')->setParameter('services', $parameters['service']);
+    $qb = $this->createQueryBuilder('pratica');
+    if (isset($parameters['status'])) {
+      $qb->where('pratica.status = :status')->setParameter('status', $parameters['status']);
+    } else {
+      $qb->where('pratica.status != :status')->setParameter('status', Pratica::STATUS_DRAFT);
+    }
+
+    if (isset($parameters['service'])) {
+      $qb->andWhere('pratica.servizio IN (:services)')->setParameter('services', $parameters['service']);
+    }
 
     // after|before|strictly_after|strictly_before
     if (isset($parameters['createdAt'])) {
@@ -615,6 +622,10 @@ class PraticaRepository extends EntityRepository
       } else if (isset($parameters['updatedAt']['before'])) {
         $qb->andWhere('pratica.updatedAt <= :updatedAt')->setParameter('updatedAt', $parameters['updatedAt']);
       }
+    }
+
+    if (isset($parameters['user'])) {
+      $qb->andWhere('pratica.user = :user')->setParameter('user', $parameters['user']);
     }
 
     if ($onlyCount) {
