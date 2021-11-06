@@ -1,11 +1,13 @@
-var Encore = require('@symfony/webpack-encore');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
+const Encore = require('@symfony/webpack-encore');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const package = require("./package.json");
+//const webpack = require('webpack');
 
 Encore
-// directory where compiled assets will be stored
-  .setOutputPath('web/build/')
+  // directory where compiled assets will be stored
+  .setOutputPath('web/build/' + package.version + '/')
   // public path used by the web server to access the output path
-  .setPublicPath('/build')
+  .setPublicPath('/build/' + package.version + '/')
   // only needed for CDN's or sub-directory deploy
   //.setManifestKeyPrefix('build/')
 
@@ -65,11 +67,10 @@ Encore
   .autoProvidejQuery()
   .addPlugin(new CopyWebpackPlugin({
     patterns: [
-      {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../bootstrap-italia/dist/fonts/'},
-      {from: './node_modules/bootstrap-italia/dist/svg/', to: '../bootstrap-italia/dist/svg/'}
+      {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../../bootstrap-italia/dist/fonts/'},
+      {from: './node_modules/bootstrap-italia/dist/svg/', to: '../../bootstrap-italia/dist/svg/'}
     ]
   }))
 ;
-
-
+  
 module.exports = Encore.getWebpackConfig();

@@ -18,6 +18,11 @@
           "file": "publiccode.yml",
           "type": "text/yaml",
           "path": "softwareVersion"
+        },
+        {
+          "file": "app/config/app.yml",
+          "type": "text/yaml",
+          "path": "version"
         }
       ]
     }
