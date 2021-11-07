@@ -3,6 +3,7 @@ imports:
     - { resource: ../common/security.yml }
     - { resource: ../common/monolog.yml }
     - { resource: ../services.yml }
+    - { resource: ../app.yml }
     - { resource: ../bundles/ }
     - { resource: ../config.yml }
 
