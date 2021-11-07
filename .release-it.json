@@ -22,7 +22,7 @@
         {
           "file": "app/config/app.yml",
           "type": "text/yaml",
-          "path": "version"
+          "path": "parameters.version"
         }
       ]
     }
