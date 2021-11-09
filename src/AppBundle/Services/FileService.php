@@ -90,11 +90,12 @@ class FileService
     $filePath = $mapping->getDirectoryNamer()->directoryName($allegato, $mapping);
     if ($absolute) {
       $prefix = str_replace('/', '', $mapping->getUriPrefix());
-      $filenameWithPath = sprintf('%s%s/%s', $prefix, $filePath, $allegato->getFileName());
+      $filenameWithPath = sprintf('%s/%s/%s', $prefix, $filePath, $allegato->getFileName());
     } else {
       $filenameWithPath = sprintf('%s/%s', $filePath, $allegato->getFileName());
     }
-
+    // Todo: correggere impostazioni e testare upload
+    $filenameWithPath = str_replace('//', '/', $filenameWithPath);
     return $filenameWithPath;
   }
 
