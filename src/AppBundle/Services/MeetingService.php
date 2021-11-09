@@ -316,7 +316,7 @@ class MeetingService
     $hour = $meeting->getFromTime()->format('H:i');
     $contact = $calendar->getContactEmail();
 
-    if (($calendar->getIsModerated() || $meeting->getOpeningHour()->getIsModerated()) && $status == Meeting::STATUS_PENDING) {
+    if ($status == Meeting::STATUS_PENDING) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.pending', ['%service%' => $service]);
     } else if ($status == Meeting::STATUS_APPROVED) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.approved',
@@ -383,6 +383,15 @@ class MeetingService
         ]);
     }
 
+    if ($meeting->getStatus() === Meeting::STATUS_PENDING) {
+      $operatoreMessage = $operatoreMessage . $this->translator->trans('meetings.email.operatori.new_meeting.approve_link', [
+          'approve_link' => $this->router->generate(
+            'operatori_approve_meeting',
+            ['id' => $meeting->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL)
+        ]);
+    }
+
     // Send mail to calendar's contact
     if ($calendar->getContactEmail()) {
       $this->mailer->dispatchMail(
@@ -406,14 +415,7 @@ class MeetingService
         $ente->getName(),
         $moderator->getEmail(),
         $moderator->getNome(),
-        $operatoreMessage . $this->translator->trans('meetings.email.operatori.new_meeting.approve_link', [
-          'approve_link' => $this->router->generate(
-            'operatori_approve_meeting',
-            [
-              'id' => $meeting->getId(),
-            ],
-            UrlGeneratorInterface::ABSOLUTE_URL)
-        ]),
+        $operatoreMessage,
         $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
           '%calendar%' => $calendar->getTitle(),
         ]),
@@ -582,6 +584,15 @@ class MeetingService
       $subject = $this->translator->trans('meetings.email.operatori.meeting_cancelled.subject', [
         '%calendar%' => $calendar->getTitle(),
       ]);
+    } else if ($statusChanged && $status == Meeting::STATUS_REFUSED) {
+      $contactMessage = $this->translator->trans('meetings.email.operatori.meeting_refused.message', [
+        '%calendar%' => $calendar->getTitle(),
+        'date' => $date,
+        'hour' => $hour
+      ]);
+      $subject = $this->translator->trans('meetings.email.operatori.meeting_refused.subject', [
+        '%calendar%' => $calendar->getTitle(),
+      ]);
     } else if ($dateChanged && !$statusChanged) {
       $contactMessage = $this->translator->trans('meetings.email.operatori.meeting_rescheduled.message', [
         '%calendar%' => $calendar->getTitle(),
@@ -593,7 +604,7 @@ class MeetingService
       $subject = $this->translator->trans('meetings.email.operatori.meeting_rescheduled.subject', [
         '%calendar%' => $calendar->getTitle(),
       ]);
-    };
+    }
 
     $contactMessage = $contactMessage . $this->translator->trans('meetings.email.operatori.meeting_details', [
         '%completename%' => $meeting->getUser()->getFullName(),
@@ -601,6 +612,15 @@ class MeetingService
         '%end%' => $meeting->getToTime()->format('d/m/y H:i'),
         '%reason%' => $meeting->getUserMessage()
       ]);
+
+    if ($meeting->getStatus() === Meeting::STATUS_PENDING) {
+      $contactMessage = $contactMessage . $this->translator->trans('meetings.email.operatori.new_meeting.approve_link', [
+          'approve_link' => $this->router->generate(
+            'operatori_approve_meeting',
+            ['id' => $meeting->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL)
+        ]);
+    }
 
     if ($calendar->getContactEmail()) {
       $this->mailer->dispatchMail(
@@ -615,17 +635,6 @@ class MeetingService
       );
     }
 
-    if ($meeting->getStatus() == Meeting::STATUS_PENDING) {
-      $contactMessage . $this->translator->trans('meetings.email.operatori.new_meeting.approve_link', [
-        'approve_link' => $this->router->generate(
-          'operatori_approve_meeting',
-          [
-            'id' => $meeting->getId(),
-          ],
-          UrlGeneratorInterface::ABSOLUTE_URL)
-      ]);
-    }
-
     // Send email for each moderator
     foreach ($calendar->getModerators() as $moderator) {
       $this->mailer->dispatchMail(
@@ -634,9 +643,7 @@ class MeetingService
         $moderator->getEmail(),
         $moderator->getNome(),
         $contactMessage,
-        $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
-          '%calendar%' => $calendar->getTitle(),
-        ]),
+        $subject,
         $ente,
         []
       );

@@ -2062,6 +2062,7 @@ meetings:
     slot_unavailable: "L'intervallo selezionato non è disponibile"
     slot_invalid: "L'intervallo selezionato non è valido"
     no_opening_hour_with_overlaps: "L'orario di apertura è obbligatorio se il calendario prevede sovrapposizioni"
+    invalid_meeting: "Appuntamento non valido"
   legend:
     title: "Legenda stato appuntamenti"
     approved: "Confermato / Non richiede moderazione"
@@ -2108,6 +2109,9 @@ meetings:
       meeting_cancelled:
         subject: 'Annullamento appuntamento - %calendar%'
         message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>cancellato</b><p>"
+      meeting_refused:
+        subject: 'Rifiuto appuntamento - %calendar%'
+        message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>rifiutato</b><p>"
       meeting_approved:
         subject: 'Approvazione appuntamento - %calendar%'
         message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>date</b> alle ore <b>hour</b> è stato <b>approvato</b><p>"

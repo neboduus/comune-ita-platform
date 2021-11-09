@@ -105,15 +105,8 @@
         location.reload();
       },
       error: function (jqXHR, textStatus, errorThrown) {
-          let errorMessage = ''
-          if ( jqXHR.responseJSON.errors) {
-              jqXHR.responseJSON.errors.forEach(function (error) {
-                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
-              })
-          } else {
-              // Errore generico
-              errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante il salvataggio dell\'appuntamento</li>`
-          }
+        let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
+        let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
         $('#modalError').html(errorMessage);
       },
     });
@@ -142,16 +135,9 @@
               location.reload();
           },
           error: function (jqXHR, textStatus, errorThrown) {
-              let errorMessage = ''
-              if ( jqXHR.responseJSON.errors) {
-                  jqXHR.responseJSON.errors.forEach(function (error) {
-                      errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
-                  })
-              } else {
-                  // Errore generico
-                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante l\'eliminazione dell\'appuntamento</li>`
-              }
-              $('#modalDraftError').html(errorMessage);
+            let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
+            let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+            $('#modalDraftError').html(errorMessage);
           },
       });
   }
@@ -199,16 +185,9 @@
         location.reload();
       },
       error: function (jqXHR, textStatus, errorThrown) {
-          let errorMessage = ''
-          if ( jqXHR.responseJSON.errors) {
-              jqXHR.responseJSON.errors.forEach(function (error) {
-                  errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>${error}</li>`
-              })
-          } else {
-              // Errore generico
-              errorMessage = errorMessage + `<li><span class="badge badge-danger mr-2">Errore</span>Si è verificato un errore durante il salvataggio dell\'appuntamento</li>`
-          }
-          $('#modalNewError').html(errorMessage);
+        let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
+        let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+        $('#modalNewError').html(errorMessage);
       },
     });
   }
