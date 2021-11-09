@@ -15,11 +15,11 @@
         <div id="modalDraftId" class="d-none"></div>
         <p id="modalDraftDescription">{{ "meetings.delete_draft.description" | trans() | raw}}</p>
         <div class="modal-footer my-3 d-flex justify-content-between">
-          <ul id="modalDeleteDraftError" class="text-danger list-unstyled"></ul>
+          <p id="modalDeleteDraftError" class="text-danger"></p>
         </div>
       </div>
       <div class="modal-footer">
-        <ul id="modalError" class="text-danger list-unstyled"></ul>
+        <p id="modalError" class="text-danger"></p>
         <button id="modalApprove" data-url='{{ path("meetings_api_delete", {'id': 'meeting_id'}) }}'
                 class="btn btn-danger btn-sm mr-3" type="button" onclick="deleteEvent(this.id)">
           {{ "meetings.delete_draft.delete" | trans }}

@@ -8,9 +8,9 @@ use AppBundle\Entity\Meeting;
 use AppBundle\Services\MeetingService;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use PHPUnit\Runner\Exception;
 use Safe\DateTime;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 class MeetingLifeCycleListener
 {
@@ -39,8 +39,9 @@ class MeetingLifeCycleListener
   {
     $meeting = $args->getObject();
     if ($meeting instanceof Meeting) {
-      if (!empty($this->meetingService->getMeetingErrors($meeting))) {
-        throw new Exception("invalid meeting");
+      $errors = $this->meetingService->getMeetingErrors($meeting);
+      if (!empty($errors)) {
+        throw new ValidatorException($this->translator->trans('meetings.error.invalid_meeting') . ': ' . implode(', ', $errors));
       }
       $dateTimeNow = new DateTime();
 
@@ -75,8 +76,9 @@ class MeetingLifeCycleListener
     if ($meeting instanceof Meeting) {
       $changeSet = $args->getEntityChangeSet();
       $wasDraft = $args->hasChangedField('status') && $changeSet['status'][0] == Meeting::STATUS_DRAFT;
-      if (!empty($this->meetingService->getMeetingErrors($meeting))) {
-        throw new Exception("invalid meeting");
+      $errors = $this->meetingService->getMeetingErrors($meeting);
+      if (!empty($errors)) {
+        throw new ValidatorException($this->translator->trans('meetings.error.invalid_meeting') . ': ' . implode(', ', $errors));
       }
       $meeting->setUpdatedAt(new DateTime());
 
