@@ -141,7 +141,7 @@ class EnteType extends AbstractType
         ]);
 
         $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
-          'label' => 'Parametri necessari per ' . $g->getName() . ' ( lasciare in binaco se si desidera impostare i valori a livello di servizio)'
+          'label' => 'Parametri necessari per ' . $g->getName() . ' ( lasciare in bianco se si desidera impostare i valori a livello di servizio)'
         ]);
 
         foreach ($parameters as $k => $v) {
