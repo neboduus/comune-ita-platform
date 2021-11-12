@@ -1,6 +1,5 @@
 import Base from 'formiojs/components/_classes/component/Component';
 import editForm from './PageBreak/PageBreak.form'
-import moment from 'moment'
 
 export default class FormioPageBreak extends Base {
   constructor(component, options, data) {

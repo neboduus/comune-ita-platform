@@ -6,6 +6,7 @@ import Calendar from '../Calendar';
 import DynamicCalendar from '../DynamicCalendar';
 import PageBreak from '../PageBreak';
 import FinancialReport from "../FinancialReport";
+import SdcFile from "../SdcFile";
 import {TextEditor} from "../utils/TextEditor";
 import {Formio} from "formiojs";
 import 'formiojs/dist/formio.form.min.css';
@@ -16,6 +17,7 @@ Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
+Formio.registerComponent('sdcfile', SdcFile);
 
 window.onload = function () {
   Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
