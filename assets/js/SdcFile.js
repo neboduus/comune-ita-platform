@@ -3,7 +3,7 @@ import editForm from './SdcFile/SdcFile.form'
 import {uniqueName} from 'formiojs/utils/utils';
 import axios from "axios";
 
-const endpoint = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] + "it"
+const endpoint = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] + "/it"
 
 export default class SdcFile extends File {
   constructor(component, options, data) {
@@ -240,11 +240,10 @@ export default class SdcFile extends File {
                 fileInfo.name = fileUpload.name;
                 fileInfo.size = fileUpload.size;
                 fileInfo.mime_type = fileUpload.mime_type
-                fileInfo.url = fileInfo.data.uri
-                fileInfo.data.baseUrl = fileInfo.data.uri
+                fileInfo.url = endpoint + "/allegati/"+ idUpload
+                fileInfo.data.baseUrl = endpoint + "/allegati/"+ idUpload
                 fileInfo.storage = 'url'
                 fileInfo.protocol_required = fileUpload.protocol_required
-
                 if (!this.hasValue()) {
                   this.dataValue = [];
                 }
