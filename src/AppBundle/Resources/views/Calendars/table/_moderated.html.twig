@@ -1,0 +1,13 @@
+{% if value %}
+  {% set color='primary' %}
+  {% set label='calendars.moderated' %}
+{% else %}
+  {% set color='secondary' %}
+  {% set label='calendars.not_moderated' %}
+{% endif %}
+<div class="badge badge-outline-{{ color }} w-100">
+  <span>{{ label | trans }}</span>
+  {% if value %}
+    <span class="badge badge-light">{{ row.meetingsToModerate }}</span>
+  {% endif %}
+</div>

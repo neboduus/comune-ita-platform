@@ -3,7 +3,6 @@
 {% block stylesheets %}
   {{ parent() }}
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
-
 {% endblock %}
 
 {% block javascripts %}
@@ -56,6 +55,26 @@
           $('#dt_info').css('margin-bottom', '0.85em')
         }
       }).then(function (dt) {
+        $('input.disablepaste').bind('paste', function (e) {
+          e.preventDefault();
+        });
+
+        $('.delete-btn').on('click', function () {
+          if (checkName($(this).attr('data-id')))
+            window.location.assign($(this).attr('data-url'));
+        })
+
+        $('.name-input').on('input', function () {
+          let id = $(this).attr('data-id')
+          let confirmBtn = $(`#confirm-delete-btn-${id}`)
+          checkName(id) ? confirmBtn.attr('disabled', false) : confirmBtn.attr('disabled', true);
+        })
+
+        function checkName(id) {
+          let input = $(`#input-calendar-name-${id}`).val();
+          let check = $(`#check-calendar-name-${id}`).val();
+          return !!(check && input && check.toLowerCase() === input.toLowerCase());
+        }
       })
     });
   </script>
