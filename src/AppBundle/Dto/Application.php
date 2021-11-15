@@ -1218,7 +1218,7 @@ class Application
 
   public static function isUploadField($schema, $field)
   {
-    return (isset($schema[$field . '.type']) && $schema[$field . '.type'] == 'file');
+    return (isset($schema[$field . '.type']) && ($schema[$field . '.type'] == 'file' || $schema[$field . '.type'] == 'sdcfile'));
   }
 
   public static function prepareFileCollection($collection, $attachmentEndpointUrl = '')

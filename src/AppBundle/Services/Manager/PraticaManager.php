@@ -490,7 +490,7 @@ class PraticaManager
 
       $isFile = false;
       if (!$isSchema && isset($this->schema[$key]['type']) &&
-        ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'financial_report')) {
+        ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'sdcfile' || $this->schema[$key]['type'] == 'financial_report')) {
         $isFile = true;
       }
       $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
@@ -636,7 +636,7 @@ class PraticaManager
     $attachments = [];
     foreach ($flattenedData as $key => $value) {
       // Associa gli allegati alla pratica
-      if (isset($this->schema[$key]['type']) && $this->schema[$key]['type'] == 'file') {
+      if (isset($this->schema[$key]['type']) && ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'sdcfile')) {
         foreach ($value as $file) {
           $id = $file['data']['id'];
           $attachment = $this->entityManager->getRepository('AppBundle:Allegato')->find($id);

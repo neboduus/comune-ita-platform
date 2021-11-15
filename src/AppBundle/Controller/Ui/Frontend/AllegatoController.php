@@ -597,6 +597,7 @@ class AllegatoController extends Controller
 
   /**
    * @param Allegato $allegato
+   * @Route("/allegati/{allegato}", name="allegati_download")
    * @Route("/pratiche/allegati/{allegato}", name="allegati_download_cpsuser")
    * @Route("/operatori/allegati/{allegato}", name="allegati_download_operatore")
    * @Route("/operatori/risposta/{allegato}", name="risposta_download_operatore")
