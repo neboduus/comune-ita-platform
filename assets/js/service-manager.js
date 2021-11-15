@@ -35,9 +35,15 @@ $(document).ready(function () {
   })
 
 
-
-  let draftMessage = $('#feedback_messages_data_feedback_messages_7_is_active');
-  draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
+  if ($('#form-step-messages').length) {
+    $('.placeholders').append(function(){
+      return $('<button type="button" class="btn btn-outline-primary btn-xs float-right">Placeholders disponibili</button>').on('click', function (){
+        $('#form_placeholders').modal('toggle')
+      });
+    });
+    let draftMessage = $('#feedback_messages_data_i18n_it_feedback_messages_7');
+    draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
+  }
 
   const serviceStatus = $('#general_data_status');
   const scheduledFrom = $('#general_data_scheduled_from').parent();
