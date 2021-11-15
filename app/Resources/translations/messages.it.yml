@@ -124,7 +124,7 @@ servizio:
   flusso: "Flusso di lavoro"
   crea: 'Crea nuovo servizio'
   modifica: 'Modifica %name%'
-  placeholder_disponibili: 'Placeholder disponibili nel modulo'
+  placeholder_disponibili: 'Placeholder disponibili'
   placeholder_disponibili_descrizione: "E' possibile utilizzare le informazioni compilate dall'utente utilizzando i placeholders di seguito elencati"
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
@@ -890,6 +890,8 @@ email:
             pending: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento"
         draft: ''
 messages:
+  subject_label: 'Oggetto'
+  message_label: 'Messaggio'
   pratica:
     status:
       1900: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata. Il numero di richiesta è <strong>%pratica_id%</strong>. Faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."

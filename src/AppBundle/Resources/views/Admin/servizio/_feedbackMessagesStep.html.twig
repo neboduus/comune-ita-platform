@@ -8,43 +8,101 @@
       </blockquote>
     {% endif %}
 
-    <div class="col-12 text-right">
-      <a data-toggle="collapse" data-target="#form_placeholders" aria-expanded="false"
-         aria-controls="form_placeholders" role="button">
-        <svg class="icon">
-          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-items"></use>
-        </svg>
-      </a>
-      <span
-        class="font-weight-semibold text-secondary">{{ 'servizio.placeholder_disponibili'  | trans }}</span>
+    <div class="modal it-dialog-scrollable fade" tabindex="-1" role="dialog" id="form_placeholders">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ 'servizio.placeholder_disponibili'  | trans }}</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <svg class="icon">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+              </svg>
+            </button>
+          </div>
+          <div class="modal-body">
+            <h5>Generali</h5>
+            <table class="table table-hover table-condensed table-striped table-sm mt-2">
+              <tbody>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Id pratica:</td>
+                <td>%pratica_id%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Nome servizio:</td>
+                <td>%servizio%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Data corrente:</td>
+                <td>%data_corrente%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Data acquisizione:</td>
+                <td>%data_acquisizione%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Ora acquisizione:</td>
+                <td>%ora_acquisizione%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Protocollo:</td>
+                <td>%protocollo%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Data protocollo:</td>
+                <td>%data_protocollo%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Ora protocollo:</td>
+                <td>%ora_protocollo%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Messaggio personale:</td>
+                <td>%messaggio_personale%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Nome utente:</td>
+                <td>%user_name%</td>
+              </tr>
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">Indirizzo utente:</td>
+                <td>%indirizzo%</td>
+              </tr>
+              </tbody>
+            </table>
+            {% if schema.components %}
+              <h5>Modulo utente</h5>
+              <table class="table table-hover table-condensed table-striped table-sm mt-2">
+                <tbody>
+                {% for component in schema.components %}
+                  <tr>
+                    <td class="font-weight-semibold text-secondary w-50">{{ component.formOptions.label|slice(0,100) }}:</td>
+                    <td>%{{ component.name }}%</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+            {% if backoffice_schema %}
+              <h5 class="mt2">Modulo backoffice</h5>
+              <table class="table table-hover table-condensed table-striped table-sm mt-2">
+                <tbody>
+                {% for component in backoffice_schema.components %}
+                  <tr>
+                    <td class="font-weight-semibold text-secondary w-50">{{ component.formOptions.label|slice(0,100) }}:</td>
+                    <td>%{{ component.name }}%</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" type="button" data-dismiss="modal" aria-label="Close">Chiudi</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="form_placeholders" class="mt-2 p-3 border collapse">
-      <h5>Modulo utente</h5>
-      <table class="table table-hover table-condensed table-striped table-sm mt-2">
-        <tbody>
-        {% for component in schema.components %}
-          <tr>
-            <td class="font-weight-semibold text-secondary w-50">{{ component.formOptions.label|slice(0,100) }}:</td>
-            <td>%{{ component.name }}%</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% if backoffice_schema %}
-        <h5 class="mt2">Modulo backoffice</h5>
-        <table class="table table-hover table-condensed table-striped table-sm mt-2">
-          <tbody>
-          {% for component in backoffice_schema.components %}
-            <tr>
-              <td class="font-weight-semibold text-secondary w-50">{{ component.formOptions.label|slice(0,100) }}:</td>
-              <td>%{{ component.name }}%</td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      {% endif %}
-    </div>
 
 
     {% if form.feedback_messages_settings is defined %}
@@ -61,7 +119,7 @@
       {% endfor %}
     </ul>
 
-    <div class="tab-content mt-1 pb-3">
+    <div class="tab-content mt-1 py-3">
       {% for locale,child in form.i18n %}
         <div role="tabpanel" class="tab-pane {{ locale == app.request.locale?"active":"" }}" id="{{ locale }}_i18n-fields">
           {{ form_widget(child) }}
