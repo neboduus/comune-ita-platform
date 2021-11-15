@@ -515,8 +515,8 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   /**
    * @ORM\ManyToMany (targetEntity="AppBundle\Entity\Meeting", inversedBy="applications")
    * @ORM\JoinTable(name="application_meetings",
-   *      joinColumns={@ORM\JoinColumn(name="application_id", referencedColumnName="id")},
-   *      inverseJoinColumns={@ORM\JoinColumn(name="meeting_id", referencedColumnName="id", unique=true)}
+   *      joinColumns={@ORM\JoinColumn(name="application_id", referencedColumnName="id", onDelete="CASCADE")},
+   *      inverseJoinColumns={@ORM\JoinColumn(name="meeting_id", referencedColumnName="id", unique=true, onDelete="CASCADE")}
    *      )
    * @var ArrayCollection
    */

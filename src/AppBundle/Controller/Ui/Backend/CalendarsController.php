@@ -7,6 +7,7 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\User;
+use AppBundle\Security\Voters\CalendarVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MeetingService;
 use DateTime;
@@ -16,7 +17,10 @@ use Doctrine\ORM\EntityManager;
 use ICal\ICal;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
+use Omines\DataTablesBundle\Column\BoolColumn;
+use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -84,52 +88,79 @@ class CalendarsController extends Controller
     $query = $builder->getQuery();
 
     foreach ($query->getResult() as $calendarEntry) {
+
+      $canEdit = $this->isGranted(CalendarVoter::EDIT, $calendarEntry);
+      $canDelete = $this->isGranted(CalendarVoter::DELETE, $calendarEntry);
+
+      $futureMeetings = -1;
+      if ($canDelete) {
+        $date = new DateTime();
+        $futureMeetings = $this->em->createQueryBuilder()
+          ->select('count(meeting.id)')
+          ->from(Meeting::class, 'meeting')
+          ->where('meeting.calendar = :calendar')
+          ->andWhere('meeting.status = :pending or meeting.status = :approved or meeting.status = :draft')
+          ->andWhere('meeting.fromTime >= :now or meeting.toTime >= :now')
+          ->setParameter('calendar', $calendarEntry->getId())
+          ->setParameter('draft', Meeting::STATUS_DRAFT)
+          ->setParameter('pending', Meeting::STATUS_PENDING)
+          ->setParameter('approved', Meeting::STATUS_APPROVED)
+          ->setParameter('now', $date->format('Y-m-d h:i:s'))
+          ->getQuery()->getSingleScalarResult();
+      }
+
+      $meetingsToModerate = $this->em->createQueryBuilder()
+        ->select('count(meeting.id)')
+        ->from(Meeting::class, 'meeting')
+        ->where('meeting.calendar = :calendar')
+        ->andWhere('meeting.status = :pending')
+        ->andWhere('meeting.fromTime >= :now or meeting.toTime >= :now')
+        ->setParameter('calendar', $calendarEntry->getId())
+        ->setParameter('pending', Meeting::STATUS_PENDING)
+        ->setParameter('now', $date->format('Y-m-d h:i:s'))
+        ->getQuery()->getSingleScalarResult();
+
       $data[] = array(
         'title' => $calendarEntry->getTitle(),
         'id' => $calendarEntry->getId(),
         'owner' => $calendarEntry->getOwner()->getUsername(),
         'isModerated' => $calendarEntry->getIsModerated(),
+        'canView' => $canEdit,
+        'canEdit' => $canEdit,
+        'canDelete' => $canDelete,
+        'futureMeetings' => $futureMeetings,
+        'meetingsToModerate' => $meetingsToModerate
       );
     }
 
     $table = $this->createDataTable()
-      ->add('title', TextColumn::class, ['label' => 'Titolo', 'propertyPath' => 'Titolo', 'render' => function ($value, $calendar) {
-        /** @var Calendar $cal */
-        $cal = $this->em->getRepository('AppBundle:Calendar')->find($calendar['id']);
-        $canAccess = $this->canUserAccessCalendar($cal);
-
-        return sprintf('<a class="btn-link %s" href="%s">%s</a>', $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_show', [
-            'calendar' => $calendar['id']
-          ]), $calendar['title']);
-      }])
-      ->add('owner', TextColumn::class, ['label' => 'Proprietario', 'searchable' => true])
-      ->add('isModerated', TextColumn::class, ['label' => 'Moderazione', 'render' => function ($value, $calendar) {
-        if ($value) {
-          return sprintf('<span class="badge badge-outline-primary"><svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-locked"></use></svg>Richiede moderazione</span>');
-        } else {
-          return sprintf('<span class="badge badge-outline-secondary"><svg class="icon icon-sm icon-secondary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use></svg>Non richiede moderazione</span>');
-        }
-      }])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable' => false, 'render' => function ($value, $calendar) {
-        $cal = $this->em->getRepository('AppBundle:Calendar')->find($value);
-        $canAccess = $this->canUserAccessCalendar($cal);
-        return sprintf('
-        <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none %s" href="%s"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
-        <a class="btn btn-warning btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block %s" href="%s">Modifica</a>
-        <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none %s" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il calendario verrà eliminato definitivamente.\');"><svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg></a>
-        <a class="btn btn-danger btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block %s" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il calendario verrà eliminato definitivamente.\');">Elimina</a>',
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_edit', ['calendar' => $value]),
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_edit', ['calendar' => $value]),
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_delete', ['id' => $value]),
-          $canAccess ? "" : "disabled",
-          $this->generateUrl('operatori_calendar_delete', ['id' => $value]),
-        );
-      }])
+      ->add('title', TwigColumn::class, [
+        'label' => 'calendars.table.title',
+        'orderable' => true,
+        'searchable' => true,
+        'template' => '@App/Calendars/table/_title.html.twig',
+      ])
+      ->add('owner', TextColumn::class, ['label' => 'calendars.table.owner', 'orderable'=>true, 'searchable'=>true])
+      ->add('isModerated', TwigColumn::class, [
+        'label' => 'calendars.table.moderated',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/Calendars/table/_moderated.html.twig',
+        'className' => 'px-5'
+      ])
+      ->add('canView', BoolColumn::class, ['visible' => false])
+      ->add('canEdit', BoolColumn::class, ['visible' => false])
+      ->add('canDelete', BoolColumn::class, ['visible' => false])
+      ->add('futureMeetings', NumberColumn::class, ['visible' => false])
+      ->add('meetingsToModerate', NumberColumn::class, ['visible' => false])
+      ->add('actions', TwigColumn::class, [
+        'label' => 'calendars.table.actions',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/Calendars/table/_actions.html.twig',
+      ])
       ->createAdapter(ArrayAdapter::class, $data)
+      ->addOrderBy('canEdit', 'desc')
       ->handleRequest($request);
 
     if ($table->isCallback()) {
