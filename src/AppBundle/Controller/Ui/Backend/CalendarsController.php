@@ -87,14 +87,13 @@ class CalendarsController extends Controller
 
     $query = $builder->getQuery();
 
+    $date = new DateTime();
     foreach ($query->getResult() as $calendarEntry) {
-
       $canEdit = $this->isGranted(CalendarVoter::EDIT, $calendarEntry);
       $canDelete = $this->isGranted(CalendarVoter::DELETE, $calendarEntry);
 
       $futureMeetings = -1;
       if ($canDelete) {
-        $date = new DateTime();
         $futureMeetings = $this->em->createQueryBuilder()
           ->select('count(meeting.id)')
           ->from(Meeting::class, 'meeting')
