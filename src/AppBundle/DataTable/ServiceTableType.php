@@ -34,6 +34,18 @@ class ServiceTableType implements DataTableTypeInterface
         'orderable' => true,
         'searchable' => true
       ])
+      ->add('serviceGroup', TwigColumn::class, [
+        'label' => 'Gruppo',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/Admin/table/services/_service_group.html.twig',
+      ])
+      ->add('topics', TwigColumn::class, [
+        'label' => 'Categoria',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/Admin/table/services/_topics.html.twig',
+      ])
       ->add('status', MapColumn::class, [
         'label' => 'Stato',
         'orderable' => false,
