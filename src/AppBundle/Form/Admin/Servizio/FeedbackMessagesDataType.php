@@ -148,7 +148,7 @@ class FeedbackMessagesDataType extends AbstractType
 
     foreach ($this->locales as $locale) {
       $localeForm = $builder->create($locale, FormType::class, [
-          'mapped' => false
+          'mapped' => false,
         ]
       );
       $localeForm
@@ -190,6 +190,9 @@ class FeedbackMessagesDataType extends AbstractType
     foreach ($data['i18n'] as $k => $v) {
       $messages = [];
       foreach ($v['feedback_messages'] as $feedbackMessage) {
+        if (!isset($feedbackMessage['isActive'])) {
+          $feedbackMessage['isActive'] = '0';
+        }
         $messages [$feedbackMessage['trigger']] = $feedbackMessage;
       }
       $repository->translate($service, 'feedbackMessages', $k, $messages);
