@@ -945,16 +945,28 @@ class Service
     $dto->slug = $servizio->getSlug();
     $dto->tenant = $servizio->getEnteId();
 
-    $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getSlug() : null;
-    $dto->topics_id = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
-    $dto->description = $servizio->getDescription() ?? '';
-    $dto->howto = $servizio->getHowto();
-    $dto->who = $servizio->getWho() ?? '';
-    $dto->specialCases = $servizio->getSpecialCases() ?? '';
-    $dto->moreInfo = $servizio->getMoreInfo() ?? '';
+    if ($servizio->isSharedWithGroup()) {
+      $dto->topics = $servizio->getServiceGroup()->getTopics() ? $servizio->getServiceGroup()->getTopics()->getSlug() : null;
+      $dto->topics_id = $servizio->getServiceGroup()->getTopics() ? $servizio->getServiceGroup()->getTopics()->getId() : null;
+      $dto->description = $servizio->getServiceGroup()->getDescription() ?? '';
+      $dto->howto = $servizio->getServiceGroup()->getHowto();
+      $dto->who = $servizio->getServiceGroup()->getWho() ?? '';
+      $dto->specialCases = $servizio->getServiceGroup()->getSpecialCases() ?? '';
+      $dto->moreInfo = $servizio->getServiceGroup()->getMoreInfo() ?? '';
+      $dto->coverage = $servizio->getServiceGroup()->getCoverage();
+    } else {
+      $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getSlug() : null;
+      $dto->topics_id = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
+      $dto->description = $servizio->getDescription() ?? '';
+      $dto->howto = $servizio->getHowto();
+      $dto->who = $servizio->getWho() ?? '';
+      $dto->specialCases = $servizio->getSpecialCases() ?? '';
+      $dto->moreInfo = $servizio->getMoreInfo() ?? '';
+      $dto->coverage = $servizio->getCoverage();
+    }
+
     $dto->compilationInfo = $servizio->getCompilationInfo() ?? '';
     $dto->finalIndications = $servizio->getFinalIndications() ?? '';
-    $dto->coverage = $servizio->getCoverage();
     $dto->flowSteps = self::prepareFlowSteps($servizio->getFlowSteps(), $formServerUrl);
     $dto->setProtocolRequired($servizio->isProtocolRequired());
     $dto->protocolloParameters = [];
@@ -977,17 +989,25 @@ class Service
 
     $dto->recipients = [];
     $dto->recipientsId = [];
-    /** @var Recipient $r */
-    if ($servizio->getRecipients()) {
-      foreach ($servizio->getRecipients() as $r) {
-        $dto->recipients[]= $r->getName();
-      }
 
-      /** @var Recipient $r */
-      foreach ($servizio->getRecipients() as $r) {
-        $dto->recipientsId[]= $r->getId();
+    if ($servizio->isSharedWithGroup()) {
+      if ($servizio->getServiceGroup()->getRecipients()) {
+        /** @var Recipient $r */
+        foreach ($servizio->getServiceGroup()->getRecipients() as $r) {
+          $dto->recipients[]= $r->getName();
+          $dto->recipientsId[]= $r->getId();
+        }
+      }
+    } else {
+      if ($servizio->getRecipients()) {
+        /** @var Recipient $r */
+        foreach ($servizio->getRecipients() as $r) {
+          $dto->recipients[]= $r->getName();
+          $dto->recipientsId[]= $r->getId();
+        }
       }
     }
+
     return $dto;
   }
 

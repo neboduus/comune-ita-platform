@@ -299,3 +299,28 @@ form[name="upload_allegato_operatore"] {
 .w-max-content {
   width: max-content;
 }
+
+.dropdown-actions {
+  .dropdown-menu-right {
+    padding: 0;
+    border: 1px solid #e5e9f2;
+    &::before {
+      left: unset;
+      right: 10px;
+    }
+
+    li {
+      border-bottom: 1px solid #e5e9f2;
+      &.last {
+        border-bottom: none;
+      }
+
+      a {
+        padding: 4px 16px;
+        i {
+          width: 1.4rem;
+        }
+      }
+    }
+  }
+}

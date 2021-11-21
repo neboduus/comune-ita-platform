@@ -4,6 +4,7 @@
 namespace AppBundle\Form\Admin\ServiceGroup;
 
 use AppBundle\Entity\ServiceGroup;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
@@ -25,7 +26,6 @@ class ServiceGroupType extends AbstractType
       ->add('name', TextType::class, [
         'label' => 'gruppo_di_servizi.nome'
       ])
-      ->add('slug', HiddenType::class, [])
       ->add('description', TextareaType::class, [
         'label' => 'gruppo_di_servizi.descrizione',
         'required' => false
@@ -55,6 +55,27 @@ class ServiceGroupType extends AbstractType
         'label' => 'gruppo_di_servizi.in_evidenza',
         'required' => false,
       ])
+      ->add(
+        'topics',
+        EntityType::class,
+        [
+          'class' => 'AppBundle\Entity\Categoria',
+          'choice_label' => 'name',
+          'label' => 'servizio.categoria',
+        ]
+      )
+      ->add(
+        'recipients',
+        EntityType::class,
+        [
+          'class' => 'AppBundle\Entity\Recipient',
+          'choice_label' => 'name',
+          'label' => 'servizio.destinatari',
+          'required' => false,
+          'multiple' => true,
+          'expanded' => true
+        ]
+      )
       ->add('register_in_folder', CheckboxType::class, [
         'label' => 'gruppo_di_servizi.protocolla_in_fascicolo',
         'required' => false

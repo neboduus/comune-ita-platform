@@ -62,21 +62,6 @@ class GeneralDataType extends AbstractI18nType
       ->add("name", I18nTextType::class, [
         "label" => 'servizio.nome'
       ])
-      ->add("description", I18nTextareaType::class, [
-        "label" => 'servizio.cos_e'
-      ])
-      ->add("who", I18nTextareaType::class, [
-        "label" => 'servizio.a_chi_si_rivolge'
-      ])
-      ->add("howto", I18nTextareaType::class, [
-        "label" => 'servizio.accedere'
-      ])
-      ->add("specialCases", I18nTextareaType::class, [
-        "label" => 'servizio.casi_particolari'
-      ])
-      ->add("moreInfo", I18nTextareaType::class, [
-        "label" => 'servizio.maggiori_info'
-      ])
       ->add("compilationInfo", I18nTextareaType::class, [
         "label" => 'servizio.info_compilazione'
       ])
@@ -86,39 +71,6 @@ class GeneralDataType extends AbstractI18nType
     ;
 
     $builder
-      ->add(
-        'topics',
-        EntityType::class,
-        [
-          'class' => 'AppBundle\Entity\Categoria',
-          'choice_label' => 'name',
-          'label' => 'servizio.categoria',
-        ]
-      )
-      ->add(
-        'recipients',
-        EntityType::class,
-        [
-          'class' => 'AppBundle\Entity\Recipient',
-          'choice_label' => 'name',
-          'label' => 'servizio.destinatari',
-          'required' => false,
-          'multiple' => true,
-          'expanded' => true
-        ]
-      )
-      ->add(
-        'coverage',
-        TextType::class,
-        [
-          'label' => 'servizio.copertura_helper',
-          'data' => is_array($servizio->getCoverage()) ? implode(
-            ',',
-            $servizio->getCoverage()
-          ) : $servizio->getCoverage(),
-          'required' => false,
-        ]
-      )
       ->add(
         'sticky',
         CheckboxType::class,

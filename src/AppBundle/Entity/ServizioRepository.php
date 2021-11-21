@@ -19,6 +19,11 @@ class ServizioRepository extends EntityRepository
         ->setParameter('status', $criteria['status']);
     }
 
+    // grouped
+    if (!$criteria['grouped']) {
+      $criteria['serviceGroup'] = null;
+    }
+
     // serviceGroup
     if (isset($criteria['serviceGroup'])) {
       $qb
@@ -33,12 +38,15 @@ class ServizioRepository extends EntityRepository
         ->setParameter('topics', $criteria['topics']);
     }
 
+    // Recipients
     if (isset($criteria['recipients'])) {
       $qb
         ->leftJoin('s.recipients', 'recipients')
         ->andWhere('recipients.id = :recipients')
         ->setParameter('recipients', $criteria['recipients']);
     }
+
+    $qb->orderBy('s.name', 'ASC');
 
     return $qb->getQuery()->getResult();
   }

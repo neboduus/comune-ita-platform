@@ -12,23 +12,6 @@
           crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
   <script>
-    $(document).ready(function () {
-      $('.clone').click(function (e) {
-        e.preventDefault()
-        let button = $(this)
-        let temp = $("<input>")
-        $("body").append(temp)
-        temp.val(button.data('url')).select()
-        document.execCommand("copy")
-        button.find('span').text('URL copiato')
-        temp.remove();
-        setTimeout(function () {
-          button.find('span').text('Copia URL')
-        }, 2000);
-
-      })
-    })
-
     // Datatable
     $('#service-table').DataTable({
       "order": [[ 0, "asc" ]],
@@ -45,6 +28,16 @@
         "<'row'<'col-12'tr>>" +
         "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 mt-2'p>>"
     });
+
+    $('.clone').click(function (e) {
+      e.preventDefault()
+      let button = $(this)
+      let temp = $("<input>")
+      $("body").append(temp)
+      temp.val(button.data('url')).select()
+      document.execCommand("copy")
+      temp.remove();
+    })
   </script>
 {% endblock %}
 
@@ -75,7 +68,7 @@
                 </td>
                 <td class="min-h-65">
                   <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-xs btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Copia
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -100,7 +93,12 @@
                     </div>
                   </div>
                 </td>
-                <td>{% if item.serviceGroup %}{{ item.serviceGroup.name }}{% endif %}</td>
+                <td>
+                  {% if item.serviceGroup %}
+                    {{ item.serviceGroup.name }}
+                    <a href="{{ path('admin_service_group_edit', {'id': item.serviceGroup.id}) }}"><i class="fa fa-edit"></i></a>
+                  {% endif %}
+                </td>
                 <td class="min-h-65">
                   {{ access_levels[item.accessLevel] }}
                 </td>
@@ -111,20 +109,58 @@
                     <small class="d-block">a {{ item.scheduledTo|date(ocsdc_default_datetime_format) }}</small>
                   {% endif %}
                 </td>
-                <td class="min-h-65 text-right actions">
-                  <a class="btn btn-secondary btn-xs mb-1 "
-                     href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
-                    <svg class="icon icon-sm icon-white">
-                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
-                    </svg>
-                      <span class="d-none d-md-inline-block">{{ 'modifica'|trans }}</span></a>
-                  <a class="btn btn-danger btn-xs mb-1"
-                     onclick="return confirm('{{ 'general.alert_elimina'|trans }}');"
-                     href="{{ path('admin_servizio_delete', { 'id': item.id }) }}">
-                    <svg class="icon icon-sm icon-white">
-                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
-                    </svg>
-                    <span class="d-none d-md-inline-block">{{ 'elimina'|trans }}</span></a>
+                <td class="min-h-65">
+                  <div class="dropdown dropdown-actions">
+                    <button class="btn btn-link btn-dropdown dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <svg class="icon-expand icon align-middle icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <div class="link-list-wrapper">
+                        <ul class="link-list">
+                          <li>
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
+                              <span class="text-primary"><i class="fa fa-file-text-o fa-lg"></i> Dati generali</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'formio' }) }}">
+                              <span class="text-primary"><i class="fa fa-server fa-lg"></i> Modulo</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'messages' }) }}">
+                              <span class="text-primary"><i class="fa fa-envelope-o fa-lg"></i> Messaggi</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'app-io' }) }}">
+                              <span class="text-primary"><i class="fa fa-bullhorn fa-lg"></i> App IO</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'payments' }) }}">
+                              <span class="text-primary"><i class="fa fa-credit-card fa-lg"></i> Pagamenti</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'backoffices' }) }}">
+                              <span class="text-primary"><i class="fa fa-cogs fa-lg"></i> Integrazioni</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'protocol' }) }}">
+                              <span class="text-primary"><i class="fa fa-folder-open-o fa-lg"></i> Protocollo</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a class="list-item left-icon" onclick="return confirm('{{ 'general.alert_elimina'|trans }}');" href="{{ path('admin_servizio_delete', { 'id': item.id }) }}">
+                              <span class="text-danger"><i class="fa fa-trash-o fa-lg"></i> {{ 'elimina'|trans }}</span>
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
             {% endfor %}
