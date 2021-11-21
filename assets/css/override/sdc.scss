@@ -304,6 +304,7 @@ form[name="upload_allegato_operatore"] {
   .dropdown-menu-right {
     padding: 0;
     border: 1px solid #e5e9f2;
+
     &::before {
       left: unset;
       right: 10px;
@@ -311,16 +312,22 @@ form[name="upload_allegato_operatore"] {
 
     li {
       border-bottom: 1px solid #e5e9f2;
+
       &.last {
         border-bottom: none;
       }
 
       a {
         padding: 4px 16px;
+
         i {
           width: 1.4rem;
         }
       }
     }
   }
+}
+
+.service-access-button {
+  min-height: 5.5em;
 }

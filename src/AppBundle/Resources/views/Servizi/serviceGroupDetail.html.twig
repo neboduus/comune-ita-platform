@@ -62,24 +62,19 @@
     </div>
   </section>
 
-  <section>
-    <div class="d-flex justify-content-center pb-5">
+  <section class="container px-4 my-4">
+    <div class="row d-flex flex-wrap">
       {% for sharedService in servizio.getSharedServices %}
+        {% set serviceUrl = path('pratiche_anonime_new', {'servizio': sharedService.slug}) %}
         {% if sharedService.accessLevel > 0 or sharedService.accessLevel is null %}
-          <div class="mx-2">
-            <a href="{{ path('pratiche_new', {'servizio': sharedService.slug}) }}"
-               class="btn btn-success btn-lg service-access-button font-130">
-              <span>{{ sharedService.name }}</span>
-            </a>
-          </div>
-        {% else %}
-          <div class="mx-2">
-            <a href="{{ path('pratiche_anonime_new', {'servizio': sharedService.slug}) }}"
-               class="btn btn-success btn-lg service-access-button font-130">
-              <span>{{ sharedService.name }}</span>
-            </a>
-          </div>
+          {% set serviceUrl = path('pratiche_new', {'servizio': sharedService.slug}) %}
         {% endif %}
+        <div class="col-12 col-md-6 px-lg-4 mb-2">
+          <a href="{{ serviceUrl }}"
+             class="btn btn-success btn-lg d-flex flex-column justify-content-center h-100 service-access-button">
+            {{ sharedService.name }}
+          </a>
+        </div>
       {% endfor %}
     </div>
   </section>
