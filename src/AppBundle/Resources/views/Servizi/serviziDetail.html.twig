@@ -5,8 +5,8 @@
 {% set metaContacts = ente.getMetaAsArray('contacts') ? ente.getMetaAsArray('contacts') : null %}
 
 {% block head %}
-    {{ parent() }}
-    {{ include('@App/Servizi/parts/_json-ld.html.twig', {'servizio':servizio}) }}
+  {{ parent() }}
+  {{ include('@App/Servizi/parts/_json-ld.html.twig', {'servizio':servizio}) }}
 {% endblock %}
 
 {% block main_content %}
@@ -35,14 +35,14 @@
 
         {% if servizio.coverage %}
           {% if servizio.coverage|length > 0 %}
-          <article class="mb-4">
-            <h4>{{ 'servizio.copertura' | trans }}</h4>
-            {% for c in servizio.coverage %}
+            <article class="mb-4">
+              <h4>{{ 'servizio.copertura' | trans }}</h4>
+              {% for c in servizio.coverage %}
                 <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary">
                   <span class="chip-label">{{ c }}</span>
                 </div>
-            {% endfor %}
-          </article>
+              {% endfor %}
+            </article>
           {% endif %}
         {% endif %}
 
@@ -52,7 +52,8 @@
               <h4>{{ 'recipients.title' | trans }}</h4>
               {% for r in servizio.recipients %}
                 <div class="chip chip-primary chip-lg mr-2">
-                  <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span class="chip-label">{{ r.name }}</span></a>
+                  <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
+                      class="chip-label">{{ r.name }}</span></a>
                 </div>
               {% endfor %}
             </article>
@@ -84,8 +85,8 @@
           <br/>
           <div class="alert alert-info">
             <p>
-              {#<a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Scarica il modulo da
-                  compilare</b></a><br/>#}
+              {# <a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Scarica il modulo da
+                  compilare</b></a><br/> #}
               <a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Questo è il modulo
                   principale del servizio</b></a> e andrà compilato e caricato quando il sistema lo
               chiederà.
@@ -93,40 +94,24 @@
           </div>
         {% endif %}
 
-        {# todo: aggiornare descrizioni servizi con pagamento giscom #}
-        {# % if servizio.isPaymentRequired %}
-          <br/>
-          <div class="alert alert-info">
-            <p>
-              Prima dell'invio del modulo online <b>sarà necessario completare il pagamento nella modalità indicata</b>
-            </p>
-          </div>
-        {% endif %#}
-
         <div class="row">
           <div class="col-md-12">
-            {#todo: usare constant()#}
+            {# todo: usare constant() #}
             {% if not can_access %}
               <div class="alert alert-danger" role="alert">
                 <i class="fa fa-times" aria-hidden="true"></i> {{ deny_access_message }}
               </div>
             {% else %}
               <div>
+                {% set serviceUrl = path('pratiche_anonime_new', {'servizio': servizio.slug}) %}
                 {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
-                  <p class="text-center">
-                    <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
-                       class="btn btn-success btn-lg service-access-button font-130">
-                        <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                    </a>
-                  </p>
-                {% else %}
-                  <p class="text-center">
-                    <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
-                       class="btn btn-success btn-lg service-access-button font-130">
-                      <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                    </a>
-                  </p>
+                  {% set serviceUrl = path('pratiche_new', {'servizio': servizio.slug}) %}
                 {% endif %}
+                <p class="text-center">
+                  <a href="{{ serviceUrl }}" class="btn btn-success btn-lg">
+                    <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                  </a>
+                </p>
 
                 {% if servizio.enti|length > 1 %}
                   <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
@@ -150,26 +135,26 @@
       </div>
 
       {% if servizi_area|length > 0 and servizio.topics %}
-      <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
-        <div class="border-left border-light pl-5 pb-4">
-        <h6>{% if servizio.topics %}Altri servizi disponibili in {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h6>
-        <div class="link-list-wrapper">
-          <ul class="link-list">
-            {% for s in servizi_area %}
-              <li>
-                <a class="list-item icon-left pr-0{% if s.id == servizio.id %} active{% endif %}"
-                   href="{{ path('servizi_show', {'slug': s.slug}) }}">
-                  <svg class="icon icon-primary">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
-                  </svg>
-                  <span style="line-height: 1.7">{{ s.name }}</span>
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
+        <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
+          <div class="border-left border-light pl-5 pb-4">
+            <h6>{% if servizio.topics %}Altri servizi disponibili in {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h6>
+            <div class="link-list-wrapper">
+              <ul class="link-list">
+                {% for s in servizi_area %}
+                  <li>
+                    <a class="list-item icon-left pr-0{% if s.id == servizio.id %} active{% endif %}"
+                       href="{{ path('servizi_show', {'slug': s.slug}) }}">
+                      <svg class="icon icon-primary">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
+                      </svg>
+                      <span style="line-height: 1.7">{{ s.name }}</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
         </div>
-        </div>
-      </div>
       {% endif %}
 
     </div>
