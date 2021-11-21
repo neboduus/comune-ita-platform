@@ -17,8 +17,7 @@
   <section id="intro" class="container-full px-2">
     <div class="row">
       <div class="col-12 col-md-3 col-xl-2 p-0">
-        <div class="nav nav-tabs nav-tabs-vertical nav-tabs-vertical-background overflow-hidden"
-             id="nav-vertical-tab-bg" role="tablist" aria-orientation="vertical">
+        <div class="nav nav-tabs nav-tabs-vertical nav-tabs-vertical-background overflow-hidden pt-4" id="nav-vertical-tab-bg" role="tablist" aria-orientation="vertical">
           {% for k, v in steps %}
             <a class="py-3 nav-link {% if current_step == k %}active{% endif %}" id="{{ k }}-tab" href="{{ path('admin_servizio_edit', {'servizio': servizio.id, 'step': k}) }}">
               {{ v.label }}
@@ -28,9 +27,9 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-9 col-xl-10 py-lg-2" id="form-step-{{ current_step }}">
+      <div class="col-12 col-md-9 col-xl-10 p-4" id="form-step-{{ current_step }}">
         <div class="row mb-4">
-          <div class="col-md-12 px-md-4">
+          <div class="col-md-12">
             <h4>
               {% if servizio.name == '' %}
                 {{ 'servizio.crea'|trans() }}
