@@ -15,6 +15,7 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\Webhook;
 use AppBundle\Form\Admin\ServiceFlow;
+use AppBundle\Form\Admin\Servizio\CardDataType;
 use AppBundle\Form\Admin\Servizio\FeedbackMessagesDataType;
 use AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType;
 use AppBundle\Form\Admin\Servizio\FormIOTemplateType;
@@ -557,6 +558,12 @@ class AdminController extends Controller
       'general' => [
         'label' => 'Dati generali',
         'class' => GeneralDataType::class,
+        'icon'  => 'fa-file-o',
+      ],
+      'card' => [
+        'label' => 'Scheda',
+        'class' => CardDataType::class,
+        'template' => 'AppBundle:Admin/servizio:_CardStep.html.twig',
         'icon'  => 'fa-file-text-o',
       ],
       'formio' => [

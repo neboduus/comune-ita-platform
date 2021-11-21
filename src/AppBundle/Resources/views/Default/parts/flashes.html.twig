@@ -1,6 +1,6 @@
 {% set flashes = app.session.flashbag.all() %}
 {% if flashes|length > 0  %}
-<div class="container px-4 my-4">
+<div class="container my-4">
   <div class="row">
     <div class="col-lg-12 px-lg-4 py-lg-2">
       {% for k,v in flashes %}

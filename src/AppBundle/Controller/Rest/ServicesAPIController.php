@@ -126,6 +126,13 @@ class ServicesAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Id of the recipient"
    *  )
+   * @SWG\Parameter(
+   *      name="grouped",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="If false grouped services are excluded from results"
+   *  )
    *
    * @SWG\Response(
    *     response=200,
@@ -144,9 +151,11 @@ class ServicesAPIController extends AbstractFOSRestController
       $serviceGroupId = $request->get('service_group_id', false);
       $categoryId = $request->get('topics_id', false);
       $recipientId = $request->get('recipient_id', false);
+      $grouped = $request->get('grouped', true);
       $result = [];
       $repoServices = $this->em->getRepository(Servizio::class);
       $criteria['status'] = Servizio::PUBLIC_STATUSES;
+      $criteria['grouped'] = $grouped;
 
       if ($serviceGroupId) {
         $serviceGroupRepo = $this->em->getRepository('AppBundle:ServiceGroup');
@@ -183,6 +192,8 @@ class ServicesAPIController extends AbstractFOSRestController
 
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $e) {
+      dump($e);
+      exit;
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Rest;
 
+use AppBundle\Entity\Categoria;
+use AppBundle\Entity\Recipient;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -18,7 +20,6 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -53,25 +54,77 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * List all Services groups
    * @Rest\Get("", name="services_groups_api_list")
    *
+   * @SWG\Parameter(
+   *      name="topics_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the category"
+   *  )
+   *
+   *
+   * @SWG\Parameter(
+   *      name="recipient_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the recipient"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of services groups",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=ServiceGroup::class))
+   *         @SWG\Items(ref=@Model(type=ServiceGroup::class, groups={"read"}))
    *     )
    * )
    * @SWG\Tag(name="services-groups")
    */
-  public function getServicesGroupsAction()
+  public function getServicesGroupsAction(Request $request)
   {
     $result = [];
-    $services = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup')->findAll();
+    $categoryId = $request->get('topics_id', false);
+    $recipientId = $request->get('recipient_id', false);
+    $criteria = [];
+
+    if ($categoryId) {
+      $categoriesRepo = $this->em->getRepository('AppBundle:Categoria');
+      $category = $categoriesRepo->find($categoryId);
+      if (!$category instanceof Categoria) {
+        return $this->view(["Category not found"], Response::HTTP_NOT_FOUND);
+      }
+      $criteria['topics'] = $categoryId;
+    }
+
+    if ($recipientId) {
+      $recipientsRepo = $this->em->getRepository('AppBundle:Recipient');
+      $recipient = $recipientsRepo->find($recipientId);
+      if (!$recipient instanceof Recipient) {
+        return $this->view(["Recipient not found"], Response::HTTP_NOT_FOUND);
+      }
+      $criteria['recipients'] = $recipientId;
+    }
+
+
+    $services = $this->em->getRepository('AppBundle:ServiceGroup')->findByCriteria($criteria);
     foreach ($services as $s) {
       $result []= $s;
     }
-
-    return $this->view($result, Response::HTTP_OK);
+    try {
+      return $this->view($result, Response::HTTP_OK);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => $e->getMessage()
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**
@@ -81,7 +134,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Service group by id or slug",
-   *     @Model(type=ServiceGroup::class)
+   *     @Model(type=ServiceGroup::class, groups={"read"})
    * )
    *
    * @SWG\Response(
@@ -135,7 +188,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=ServiceGroup::class)
+   *         ref=@Model(type=ServiceGroup::class, groups={"write"})
    *     )
    * )
    *
@@ -177,11 +230,11 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $em = $this->getDoctrine()->getManager();
-
     try {
-      $em->persist($serviceGroup);
-      $em->flush();
+      $this->em->persist($serviceGroup);
+      $this->em->flush();
+      return $this->view($serviceGroup, Response::HTTP_CREATED);
+
     } catch (UniqueConstraintViolationException $e) {
       $data = [
         'type' => 'error',
@@ -197,7 +250,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => $e->getMessage()
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -205,8 +258,6 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       );
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
-
-    return $this->view($serviceGroup, Response::HTTP_CREATED);
   }
 
   /**
@@ -229,7 +280,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=ServiceGroup::class)
+   *         ref=@Model(type=ServiceGroup::class, groups={"write"})
    *     )
    * )
    *
@@ -268,24 +319,24 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
-    $this->processForm($request, $form);
-
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
-      $data = [
-        'type' => 'put_validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors
-      ];
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-
-    $em = $this->getDoctrine()->getManager();
-
     try {
-      $em->persist($serviceGroup);
-      $em->flush();
+      $form = $this->createForm('AppBundle\Form\Admin\ServiceGroup\ServiceGroupType', $serviceGroup);
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = $this->getErrorsFromForm($form);
+        $data = [
+          'type' => 'put_validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors
+        ];
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $this->em->persist($serviceGroup);
+      $this->em->flush();
+
+      return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
     } catch (\Exception $e) {
 
       $data = [
@@ -299,8 +350,6 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       );
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
-
-    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
   /**
@@ -449,7 +498,9 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   {
     $errors = array();
     foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
+      $message = $error->getMessage() . ': '. $error->getOrigin()->getName() . ' - ';
+      $message .= is_array($error->getOrigin()->getViewData()) ? implode(', ', $error->getOrigin()->getViewData()) : $error->getOrigin()->getViewData();
+      $errors[] = $message;
     }
     foreach ($form->all() as $childForm) {
       if ($childForm instanceof FormInterface) {

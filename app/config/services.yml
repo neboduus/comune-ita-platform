@@ -185,6 +185,14 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Admin\Servizio\CardDataType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\ApplicationMessageType:
     arguments: [ '@doctrine.orm.entity_manager' ]
     tags:
@@ -246,8 +254,7 @@ services:
     tags:
       - { name: form.type }
 
-  ocsdc.pratica_manager:
-    class: AppBundle\Services\Manager\PraticaManager
+  AppBundle\Services\Manager\PraticaManager:
     autowire: true
 
   ocsdc.backoffice_manager:
@@ -906,6 +913,11 @@ services:
   ocsdc.messages_adapter:
     class: AppBundle\Services\MessagesAdapterService
     arguments: [ "@ocsdc.messages.client", "@logger", "@doctrine", "%messages_enabled%" ]
+
+  AppBundle\Twig\AppExtension:
+    autowire: true
+    tags:
+      - { name: twig.extension }
 
   ocsdc.twig.iter_calculator_extension:
     class: AppBundle\Twig\IterCalculatorExtension

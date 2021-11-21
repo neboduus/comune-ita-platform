@@ -4,8 +4,10 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Swagger\Annotations as SWG;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -26,6 +28,7 @@ class ServiceGroup
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @SWG\Property(description="Service's uuid")
+   * @Groups({"read"})
    */
   protected $id;
 
@@ -36,6 +39,7 @@ class ServiceGroup
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
    * @SWG\Property(description="Service's name")
+   * @Groups({"read", "write"})
    */
   private $name;
 
@@ -45,6 +49,7 @@ class ServiceGroup
    * @Gedmo\Slug(fields={"name"})
    * @ORM\Column(type="string", length=255)
    * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
+   * @Groups({"read"})
    */
   private $slug;
 
@@ -52,6 +57,7 @@ class ServiceGroup
    * @var string
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Services group description")
+   * @Groups({"read", "write"})
    */
   private $description;
 
@@ -59,6 +65,7 @@ class ServiceGroup
    * @var string
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Compilation guide, accepts html tags")
+   * @Groups({"read", "write"})
    */
   private $howto;
 
@@ -66,6 +73,7 @@ class ServiceGroup
    * @var string
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
+   * @Groups({"read", "write"})
    */
   private $who;
 
@@ -73,6 +81,7 @@ class ServiceGroup
    * @var string
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
+   * @Groups({"read", "write"})
    */
   private $specialCases;
 
@@ -80,6 +89,7 @@ class ServiceGroup
    * @var string
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Other info, accepts html tags")
+   * @Groups({"read", "write"})
    */
   private $moreInfo;
 
@@ -87,6 +97,7 @@ class ServiceGroup
    * @var string[]
    * @ORM\Column(type="array", nullable=true)
    * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
    */
   private $coverage;
 
@@ -94,6 +105,7 @@ class ServiceGroup
    * @var bool
    * @ORM\Column(type="boolean", nullable=true)
    * @SWG\Property(description="If selected the service group will be shown at the top of the page")
+   * @Groups({"read", "write"})
    */
   private $sticky;
 
@@ -101,6 +113,7 @@ class ServiceGroup
    * @var bool
    * @ORM\Column(type="boolean", nullable=true)
    * @SWG\Property(description="Set true if application of  of this service group need to be registerd in folders")
+   * @Groups({"read", "write"})
    */
   private $registerInFolder;
 
@@ -118,6 +131,19 @@ class ServiceGroup
   private $applications;
 
   /**
+   * @ORM\ManyToOne(targetEntity="Categoria")
+   * @Serializer\Exclude()
+   */
+  private $topics;
+
+  /**
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Recipient")
+   * @Serializer\Exclude
+   * @var ArrayCollection
+   */
+  private $recipients;
+
+  /**
    * ServiceGroup constructor.
    */
   public function __construct()
@@ -126,6 +152,7 @@ class ServiceGroup
       $this->id = Uuid::uuid4();
     }
     $this->services = new ArrayCollection();
+    $this->recipients = new ArrayCollection();
   }
 
   /**
@@ -446,6 +473,98 @@ class ServiceGroup
   public function setApplications($applications)
   {
     $this->applications = $applications;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getTopics()
+  {
+    return $this->topics;
+  }
+
+  /**
+   * @param mixed $topics
+   * @return self
+   */
+  public function setTopics($topics)
+  {
+    $this->topics = $topics;
+    return $this;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("topics")
+   * @SWG\Property(description="Service's topic (uuid)")
+   * @Groups({"read", "write"})
+   */
+  public function getTopicsId()
+  {
+    if ($this->topics instanceof Categoria) {
+      return $this->topics->getId();
+    }
+    return null;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\SerializedName("recipients")
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's recipients id", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
+   */
+  public function getRecipientsIds()
+  {
+    $recipients = [];
+    /** @var Recipient $r */
+    foreach ($this->recipients as $r) {
+      $recipients []= $r->getId();
+    }
+    return $recipients;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getRecipients()
+  {
+    return $this->recipients;
+  }
+
+  /**
+   * @param Collection|null $recipients
+   */
+  public function setRecipients(?Collection $recipients): void
+  {
+    $this->recipients = $recipients;
+  }
+
+  /**
+   * @param Recipient $recipient
+   *
+   * @return $this
+   */
+  public function addRecipient(Recipient $recipient)
+  {
+    if (!$this->recipients->contains($recipient)) {
+      $this->recipients->add($recipient);
+    }
+    return $this;
+  }
+
+  /**
+   * @param Recipient $recipient
+   *
+   * @return $this
+   */
+  public function removeRecipient(Recipient $recipient)
+  {
+    if ($this->recipients->contains($recipient)) {
+      $this->recipients->removeElement($recipient);
+    }
+    return $this;
   }
 
 }

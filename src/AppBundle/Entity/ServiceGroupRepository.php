@@ -6,6 +6,30 @@ use Doctrine\ORM\EntityRepository;
 
 class ServiceGroupRepository extends EntityRepository
 {
+
+  public function findByCriteria(array $criteria)
+  {
+    $qb = $this->createQueryBuilder('s');
+
+    // topics
+    if (isset($criteria['topics'])) {
+      $qb
+        ->andWhere('s.topics = :topics')
+        ->setParameter('topics', $criteria['topics']);
+    }
+
+    if (isset($criteria['recipients'])) {
+      $qb
+        ->leftJoin('s.recipients', 'recipients')
+        ->andWhere('recipients.id = :recipients')
+        ->setParameter('recipients', $criteria['recipients']);
+    }
+
+    $qb->orderBy('s.name', 'ASC');
+
+    return $qb->getQuery()->getResult();
+  }
+
   public function findStickyAvailable()
   {
     $qb = $this->createQueryBuilder('s')
