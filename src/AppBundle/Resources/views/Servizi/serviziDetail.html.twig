@@ -12,13 +12,81 @@
 {% block main_content %}
 
 
-  <section id="intro" class="container px-4 my-4">
+  <section class="container mt-4">
     <div class="row">
-      <div class="col-12 px-lg-4 py-lg-2">
+      <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ servizio.name }}</h1>
       </div>
-      <div class="col-lg-8 px-lg-4 py-lg-2">
+      <div class="col-lg-3 offset-lg-1 py-lg-2">
+        <div class="dropdown d-inline">
+          <button class="btn btn-dropdown dropdown-toggle" type="button" id="shareActions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-share"></use></svg>
+            <small>Condividi</small>
+          </button>
+          <div class="dropdown-menu shadow-lg" aria-labelledby="shareActions" style="">
+            <div class="link-list-wrapper">
+              <ul class="link-list">
+                <li>
+                  <a class="list-item" href="https://facebook.com/sharer/sharer.php?u={{ absolute_url(path('servizi_show', {'slug': servizio.slug})) }}" target="_blank" rel="noopener" aria-label="Share on Facebook">
+                    <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-facebook"></use></svg>
+                    <span>Facebook</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item" href="https://twitter.com/intent/tweet/?text={{ servizio.name }}+{{ absolute_url(path('servizi_show', {'slug': servizio.slug})) }}" target="_blank" rel="noopener" aria-label="Share on Twitter">
+                    <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-twitter"></use></svg>
+                    <span>Twitter</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item" href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{ absolute_url(path('servizi_show', {'slug': servizio.slug})) }}&amp;title={{ servizio.name }}&amp;ro=false&amp;source={{ absolute_url(path('home')) }}" target="_blank" rel="noopener" aria-label="Share on Linkedin">
+                    <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-linkedin"></use></svg>
+                    <span>Linkedin</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item" href="whatsapp://send?text=={{ absolute_url(path('servizi_show', {'slug': servizio.slug})) }}" target="_blank" rel="noopener" aria-label="Share on Whatsapp">
+                    <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-whatsapp"></use></svg>
+                    <span>Whatsapp</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown d-inline">
+          <button class="btn btn-dropdown dropdown-toggle" type="button" id="viewActions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-items"></use></svg>
+            <small>Vedi azioni</small>
+          </button>
+          <div class="dropdown-menu shadow-lg" aria-labelledby="viewActions" style="">
+            <div class="link-list-wrapper">
+              <ul class="link-list">
+                <li>
+                  <a class="list-item" href="mailto:?subject={{ servizio.name }}&amp;body={{ absolute_url(path('servizi_show', {'slug': servizio.slug})) }}">
+                    <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use></svg>
+                    <span>Invia</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
+        {% if servizio.topics %}
+          <div class="mt-4 mb-4">
+            <h6 class="mb-0"><small>Argomenti</small></h6>
+            <a class="text-decoration-none text-nowrap d-inline-block " href="{{ path('category_show', {'slug': servizio.topics.slug}) }}"><div class="chip chip-simple chip-primary"><span class="chip-label">{{ servizio.topics.name }}</span></div></a>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </section>
+  <div class="row row-full-width my-3 mx-0"></div>
+  <section class="container">
+    <div class="row border-top row-column-border">
+      <div class="col-lg-8 px-lg-4 py-lg-2">
         {% if servizio.description|striptags|trim != '' %}
           <article class="mb-4">
             <h4>{{ 'servizio.cos_e' | trans }}</h4>
@@ -93,16 +161,6 @@
           </div>
         {% endif %}
 
-        {# todo: aggiornare descrizioni servizi con pagamento giscom #}
-        {# % if servizio.isPaymentRequired %}
-          <br/>
-          <div class="alert alert-info">
-            <p>
-              Prima dell'invio del modulo online <b>sarà necessario completare il pagamento nella modalità indicata</b>
-            </p>
-          </div>
-        {% endif %#}
-
         <div class="row">
           <div class="col-md-12">
             {#todo: usare constant()#}
@@ -112,21 +170,15 @@
               </div>
             {% else %}
               <div>
+                {% set serviceUrl = path('pratiche_anonime_new', {'servizio': servizio.slug}) %}
                 {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
-                  <p class="text-center">
-                    <a href="{{ path('pratiche_new', {'servizio': servizio.slug}) }}"
-                       class="btn btn-success btn-lg service-access-button font-130">
-                        <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                    </a>
-                  </p>
-                {% else %}
-                  <p class="text-center">
-                    <a href="{{ path('pratiche_anonime_new', {'servizio': servizio.slug}) }}"
-                       class="btn btn-success btn-lg service-access-button font-130">
-                      <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                    </a>
-                  </p>
+                  {% set serviceUrl = path('pratiche_new', {'servizio': servizio.slug}) %}
                 {% endif %}
+                <p class="text-center">
+                  <a href="{{ serviceUrl }}" class="btn btn-success btn-lg">
+                      <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+                  </a>
+                </p>
 
                 {% if servizio.enti|length > 1 %}
                   <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
@@ -151,7 +203,6 @@
 
       {% if servizi_area|length > 0 and servizio.topics %}
       <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
-        <div class="border-left border-light pl-5 pb-4">
         <h6>{% if servizio.topics %}Altri servizi disponibili in {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h6>
         <div class="link-list-wrapper">
           <ul class="link-list">
@@ -167,7 +218,6 @@
               </li>
             {% endfor %}
           </ul>
-        </div>
         </div>
       </div>
       {% endif %}
