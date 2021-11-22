@@ -21,6 +21,8 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\LessThan;
 
 class OpeningHourType extends AbstractType
 {
@@ -59,12 +61,20 @@ class OpeningHourType extends AbstractType
       ->add('start_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'calendars.opening_hours.start_date'
+        'label' => 'calendars.opening_hours.start_date',
+        'constraints' => [new LessThan([
+          'propertyPath' => 'parent.all[end_date].data',
+          'message' => $this->translator->trans('calendars.opening_hours.errors.less_than_end_date')
+        ]),]
       ])
       ->add('end_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'calendars.opening_hours.end_date'
+        'label' => 'calendars.opening_hours.end_date',
+        'constraints' => [new GreaterThan([
+          'propertyPath' => 'parent.all[start_date].data',
+          'message' => $this->translator->trans('calendars.opening_hours.errors.greater_than_start_date')
+        ]),]
       ])
       ->add('days_of_week', ChoiceType::class, [
         'label' => 'calendars.opening_hours.days_of_week',
@@ -76,12 +86,20 @@ class OpeningHourType extends AbstractType
       ->add('begin_hour', TimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'calendars.opening_hours.begin_hour'
+        'label' => 'calendars.opening_hours.begin_hour',
+        'constraints' => [new LessThan([
+          'propertyPath' => 'parent.all[end_hour].data',
+          'message' => $this->translator->trans('calendars.opening_hours.errors.less_than_end_hour')
+        ]),]
       ])
       ->add('end_hour', TimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'calendars.opening_hours.end_hour'
+        'label' => 'calendars.opening_hours.end_hour',
+        'constraints' => [new GreaterThan([
+          'propertyPath' => 'parent.all[begin_hour].data',
+          'message' => $this->translator->trans('calendars.opening_hours.errors.greater_than_begin_hour')
+        ]),]
       ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
