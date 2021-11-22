@@ -1295,7 +1295,7 @@ class Servizio implements Translatable
   {
     $this->backofficeFormId = $backofficeFormId;
   }
-
+  
   public function setTranslatableLocale($locale)
   {
     $this->locale = $locale;

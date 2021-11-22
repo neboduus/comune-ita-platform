@@ -60,7 +60,7 @@ var _default = [{
   },
   {
     label: "Base url",
-    defaultValue: location.origin + "/" + explodedPath[1],
+    calculateValue: "let url = '"+location.origin + "/" + explodedPath[1]+"'; data.url = url; value=url;",
     key: "url",
     type: "hidden",
     input: true,
