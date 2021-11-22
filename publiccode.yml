@@ -4,7 +4,7 @@ name: La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanzadelcittadino
 landingURL: https://link.opencontent.it/sdc-home
 releaseDate: '2021-10-08'
-softwareVersion: 1.8.6
+softwareVersion: 1.8.8
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
