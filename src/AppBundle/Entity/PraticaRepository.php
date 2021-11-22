@@ -623,6 +623,20 @@ class PraticaRepository extends EntityRepository
         $qb->andWhere('pratica.updatedAt <= :updatedAt')->setParameter('updatedAt', $parameters['updatedAt']);
       }
     }
+    // after|before|strictly_after|strictly_before
+    if (isset($parameters['submittedAt'])) {
+      if (isset($parameters['submittedAt']['strictly_after'])) {
+        $qb->andWhere('pratica.submissionTime > :submittedAt')->setParameter('submittedAt', (new \DateTime($parameters['submittedAt']['strictly_after']))->getTimestamp());
+      } else if (isset($parameters['submittedAt']['after'])) {
+        $qb->andWhere('pratica.submissionTime >= :submittedAt')->setParameter('submittedAt', (new \DateTime($parameters['submittedAt']['after']))->getTimestamp());
+      }
+
+      if (isset($parameters['submittedAt']['strictly_before'])) {
+        $qb->andWhere('pratica.submissionTime < :submittedAt')->setParameter('submittedAt', (new \DateTime($parameters['submittedAt']['strictly_before']))->getTimestamp());
+      } else if (isset($parameters['submittedAt']['before'])) {
+        $qb->andWhere('pratica.submissionTime <= :submittedAt')->setParameter('submittedAt', (new \DateTime($parameters['submittedAt']['before']))->getTimestamp());
+      }
+    }
 
     if (isset($parameters['user'])) {
       $qb->andWhere('pratica.user = :user')->setParameter('user', $parameters['user']);

@@ -236,14 +236,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Created at filter, format yyyy-mm-dd"
+   *      description="Created at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
    *  )
    * @SWG\Parameter(
    *      name="updatedAt[after|before|strictly_after|strictly_before]",
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Updated at filter, format yyyy-mm-dd"
+   *      description="Updated at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
+   *  )
+   * @SWG\Parameter(
+   *      name="submittedAt[after|before|strictly_after|strictly_before]",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Submitted at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
    *  )
    * @SWG\Parameter(
    *      name="status",
@@ -299,6 +306,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $statusParameter = $request->get('status', false);
     $createdAtParameter = $request->get('createdAt', false);
     $updatedAtParameter = $request->get('updatedAt', false);
+    $submittedAtParameter = $request->get('submittedAt', false);
 
     $orderParameter = $request->get('order', false);
     $sortParameter = $request->get('sort', false);
@@ -321,12 +329,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['sort'] = $sortParameter;
     }
 
-    $format = 'Y-m-d';
+    $dateFormat = 'Y-m-d';
+    $datetimeFormat = DATE_ATOM;
+
     if ($createdAtParameter) {
       foreach ($createdAtParameter as $v) {
-        $date = DateTime::createFromFormat($format, $v);
-        if (!$date || $date->format($format) !== $v) {
-          return $this->view(["Parameter createdAt must be in this format: yyyy-mm-dd"], Response::HTTP_BAD_REQUEST);
+        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
+        if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
+          return $this->view(["Parameter createdAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"], Response::HTTP_BAD_REQUEST);
         }
       }
       $queryParameters['createdAt'] = $createdAtParameter;
@@ -334,12 +344,23 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     if ($updatedAtParameter) {
       foreach ($updatedAtParameter as $v) {
-        $date = DateTime::createFromFormat($format, $v);
-        if (!$date || $date->format($format) !== $v) {
-          return $this->view(["Parameter updatedAt must be in this format: yyyy-mm-dd"], Response::HTTP_BAD_REQUEST);
+        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
+
+        if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
+          return $this->view(["Parameter updatedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"], Response::HTTP_BAD_REQUEST);
         }
       }
       $queryParameters['updatedAt'] = $updatedAtParameter;
+    }
+
+    if ($submittedAtParameter) {
+      foreach ($submittedAtParameter as $v) {
+        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
+        if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
+          return $this->view(["Parameter submittedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"], Response::HTTP_BAD_REQUEST);
+        }
+      }
+      $queryParameters['submittedAt'] = $submittedAtParameter;
     }
 
     if ($statusParameter) {
