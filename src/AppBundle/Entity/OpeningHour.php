@@ -71,6 +71,7 @@ class OpeningHour
    *
    * @ORM\Column(name="start_date", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (startDate)")
+   * @Assert\LessThanOrEqual(propertyPath="endDate", message="La data di inizio deve essere minore della data di fine")
    * @SWG\Property(description="Opening Hour's start date")
    */
   private $startDate;
@@ -80,6 +81,7 @@ class OpeningHour
    *
    * @ORM\Column(name="end_date", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (endDate)")
+   * @Assert\GreaterThanOrEqual(propertyPath="startDate",  message="La data di fine deve essere maggiore della data di inizio")
    * @SWG\Property(description="Opening Hour's end date")
    */
   private $endDate;
@@ -97,6 +99,7 @@ class OpeningHour
    *
    * @ORM\Column(name="begin_hour", type="time")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (beginHour)")
+   * @Assert\LessThan(propertyPath="endHour",  message="L'orario di inizio deve essere minore dell'orario di fine")
    * @SWG\Property(description="Opening Hour's begin hour")
    * @Serializer\Type("DateTime<'H:i'>")
    */
@@ -107,6 +110,7 @@ class OpeningHour
    *
    * @ORM\Column(name="end_hour", type="time")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (endHour)")
+   * @Assert\GreaterThan(propertyPath="beginHour",  message="L'orario di fine deve essere maggiore dell'orario di inizio")
    * @SWG\Property(description="Opening Hour's end hour")
    * @Serializer\Type("DateTime<'H:i'>")
    */

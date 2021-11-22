@@ -296,8 +296,7 @@ class CalendarsController extends Controller
         $editIds = [];
 
         foreach ($calendar->getOpeningHours() as $openingHour) {
-          if (!$openingHour->getCalendar()) {
-            $openingHour->setCalendar($calendar);
+          if (!$em->contains($openingHour)) {
             $em->persist($openingHour);
           } else {
             $editIds[$openingHour->getId()] = $openingHour;
@@ -483,37 +482,13 @@ class CalendarsController extends Controller
 
     // compute min slot dimension
     $minDuration = PHP_INT_MAX;
+    $minDate = Calendar::MAX_DATE;
+    $maxDate = Calendar::MIN_DATE;
     foreach ($calendar->getOpeningHours() as $openingHour) {
+      $minDate = min($minDate, $openingHour->getBeginHour()->format('H:i'));
+      $maxDate = max($maxDate, $openingHour->getEndHour()->format('H:i'));
       $events = array_merge($events, $this->meetingService->getAbsoluteAvailabilities($openingHour));
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
-    }
-
-    function blockMinutesRound($time, $calculateHour, $minutes = '30', $format = "H:i")
-    {
-      $seconds = strtotime($time);
-      $hour = intval(date("H", $seconds));
-      if ($calculateHour && $hour < 19) {
-        $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60) + ((20 - $hour) * 3600);
-        return date($format, $rounded);
-      } else {
-        $rounded = round($seconds / ($minutes * 60)) * ($minutes * 60);
-        return date($format, $rounded);
-      }
-
-    }
-
-    if (count($events) > 0) {
-      $minDate = min(array_map(function ($item) {
-        return blockMinutesRound($item['start'], false);
-      }, $events));
-      $maxDate = max(array_map(function ($item) {
-        return blockMinutesRound($item['end'], true);
-      }, $events));
-    } else {
-      # Default values for empty events array
-      $minDate = Calendar::MIN_DATE;
-      $maxDate = Calendar::MAX_DATE;
-      $minDuration = Calendar::SLOT_DURATION;
     }
 
     // Check permissions if calendar is moderated

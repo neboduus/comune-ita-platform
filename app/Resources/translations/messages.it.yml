@@ -2025,6 +2025,11 @@ calendars:
     remove: "Elimina apertura"
     no_opening_hours: "Non sono presenti orari di apertura"
     opening_hours: "Orari di apertura"
+    errors:
+      greater_than_begin_hour: "L'orario di fine deve essere maggiore dell'orario di inizio"
+      greater_than_start_date: "La data di fine deve essere maggiore della data di inizio"
+      less_than_end_hour: "L'orario di inizio deve essere minore dell'orario di fine"
+      less_than_end_date: "La data di inizio deve essere minore della data di fine"
     months:
       short:
         Jan: 'Gen'
