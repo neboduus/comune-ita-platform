@@ -61,7 +61,7 @@ window.onload = function () {
         application.user = applicationFormContainer.data('user');
         application.service = applicationFormContainer.data('service');
         application.data = submission.data;
-        application.status = 1900;
+        application.status = 2000;
 
         api.postApplication(JSON.stringify(application))
           .fail(function (xhr, type, exception) {
