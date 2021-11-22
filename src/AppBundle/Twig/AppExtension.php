@@ -31,8 +31,12 @@ class AppExtension  extends AbstractExtension
    * @param string $string
    * @return string
    */
-  public function cleanMarkup(string $string): string
+  public function cleanMarkup(?string $string): string
   {
+    if ($string === null) {
+      return '';
+    }
+
     $allowedMarkup = '<br><p><a><strong><ul><ol><i><b><u><li>';
     $string = strip_tags($string, $allowedMarkup);
 

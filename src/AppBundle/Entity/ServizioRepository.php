@@ -20,15 +20,15 @@ class ServizioRepository extends EntityRepository
     }
 
     // grouped
-    if (!$criteria['grouped']) {
-      $criteria['serviceGroup'] = null;
-    }
-
-    // serviceGroup
-    if (isset($criteria['serviceGroup'])) {
-      $qb
-        ->andWhere('s.serviceGroup = :serviceGroup')
-        ->setParameter('serviceGroup', $criteria['serviceGroup']);
+    if (isset($criteria['grouped']) && !$criteria['grouped']) {
+      $qb->andWhere('s.serviceGroup IS NULL');
+    } else {
+      // serviceGroup
+      if (isset($criteria['serviceGroup'])) {
+        $qb
+          ->andWhere('s.serviceGroup = :serviceGroup')
+          ->setParameter('serviceGroup', $criteria['serviceGroup']);
+      }
     }
 
     // topics
@@ -49,6 +49,21 @@ class ServizioRepository extends EntityRepository
     $qb->orderBy('s.name', 'ASC');
 
     return $qb->getQuery()->getResult();
+  }
+
+  public function findAvailable($criteria = [])
+  {
+
+    $criteria['grouped'] = false;
+    $criteria['status'] = Servizio::PUBLIC_STATUSES;
+
+    /*$qb = $this->createQueryBuilder('s')
+      ->where('s.status NOT IN (:notAvailableStatues)')
+      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
+      ->andWhere('s.serviceGroup IS NULL')
+      ->orderBy('s.name', 'ASC');
+    return $qb->getQuery()->getResult();*/
+    return $this->findByCriteria($criteria);
   }
 
   public function findStickyAvailable(int $limit = null)
@@ -78,34 +93,4 @@ class ServizioRepository extends EntityRepository
 
     return $qb->getQuery()->getResult();
   }
-
-  /*public function findOneI18n($id, $locale)
-  {
-    $qb = $this->createQueryBuilder('s')
-      ->select('s')
-      ->where('s.id = :id')
-      ->setMaxResults(1)
-      ->setParameter('id', $id);
-    ;
-
-    $query = $qb->getQuery();
-
-    $query->setHint(
-      \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
-      'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
-    );
-
-    // force Gedmo Translatable to not use current locale
-    $query->setHint(
-      \Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
-      $locale
-    );
-
-    $query->setHint(
-      \Gedmo\Translatable\TranslatableListener::HINT_FALLBACK,
-      1
-    );
-
-    return $query->getSingleResult();
-  }*/
 }

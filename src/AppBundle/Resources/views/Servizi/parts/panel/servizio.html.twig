@@ -1,32 +1,35 @@
 {% set text_area_limit = 30 %}
 {% set text_limit = 100 %}
-{% if route is not defined %}
-    {% set route = 'esplora_servizi_show' %}
+{% if showTopic is not defined %}
+  {% set showTopic = true %}
 {% endif %}
 
 <article class="card-wrapper card-space">
-    <div class="card card-bg rounded shadow">
-        <div class="card-body">
-            <div class="category-top">
-              {% if servizio.topics %}
-                <a href="{{ path('category_show', {'slug': servizio.topics.slug}) }}">
-                  <span class="category">{{ servizio.topics.name }}</span>
-                </a>
-              {% endif %}
-            </div>
-            <h5 class="card-title">
-              <svg class="icon">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-              </svg>
-              {{ servizio.name }}
-            </h5>
-            <p class="card-text">{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit)|striptags ~ '...' : servizio.description|striptags  }}</p>
-            <a class="read-more stretched-link text-decoration-none" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
-                <span class="text">{{ 'read_more'|trans }}</span>
-                <svg class="icon">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-right"></use>
-                </svg>
-            </a>
+  <div class="card card-bg rounded shadow">
+    <div class="card-body">
+      {% if servizio.topics and showTopic %}
+        <div class="category-top">
+          <a href="{{ path('category_show', {'slug': servizio.topics.slug}) }}" class="category">
+            <span class="category">{{ servizio.topics.name }}</span>
+          </a>
         </div>
+      {% endif %}
+      <h5 class="card-title">
+        <svg class="icon">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+        </svg>
+        {{ servizio.name }}
+      </h5>
+      {% if servizio.description|striptags|trim != '' %}
+        <p
+          class="card-text">{{ servizio.description|length > text_limit ? servizio.description|striptags|slice(0, text_limit) ~ '...' : servizio.description|striptags }}</p>
+      {% endif %}
+      <a class="read-more stretched-link" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
+        <span class="text">{{ 'read_more'|trans }}</span>
+        <svg class="icon">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-right"></use>
+        </svg>
+      </a>
     </div>
+  </div>
 </article>

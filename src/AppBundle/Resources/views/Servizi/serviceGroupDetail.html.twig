@@ -3,8 +3,7 @@
 
 {% block main_content %}
 
-
-  <section id="intro" class="container px-4 my-4">
+  <section class="container my-4">
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
         <h1>{{ servizio.name }}</h1>
@@ -14,14 +13,14 @@
         {% if servizio.description|striptags|trim != '' %}
           <article class="mb-3">
             <h4>{{ 'gruppo_di_servizi.cos_e' | trans }}</h4>
-            {{ servizio.description|raw }}
+            {{ servizio.description|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
         {% if servizio.who|striptags|trim != '' %}
           <article class="mb-3">
             <h4>{{ 'gruppo_di_servizi.a_chi_si_rivolge' | trans }}</h4>
-            {{ servizio.who|raw }}
+            {{ servizio.who|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
@@ -41,28 +40,28 @@
         {% if servizio.howto|striptags|trim != '' %}
           <article class="mb-3">
             <h4>{{ 'gruppo_di_servizi.accedere' | trans }}</h4>
-            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
         {% if servizio.specialCases|striptags|trim != '' %}
           <article class="mb-3">
             <h4>{{ 'gruppo_di_servizi.casi_particolari' | trans }}</h4>
-            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
         {% if servizio.moreInfo|striptags|trim != '' %}
           <article class="mb-3">
             <h4>{{ 'gruppo_di_servizi.maggiori_info' | trans }}</h4>
-            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
       </div>
     </div>
   </section>
 
-  <section class="container px-4 my-4">
+  <section class="container py-5">
     <div class="row d-flex flex-wrap">
       {% for sharedService in servizio.getSharedServices %}
         {% set serviceUrl = path('pratiche_anonime_new', {'servizio': sharedService.slug}) %}
@@ -82,21 +81,14 @@
 
 
   {% if servizio.getStickyServices.count > 0 %}
-    <section class="container px-4 my-4">
-      <div class="pb-5">
-        <div class="container px-4">
-          <div class="row mt-5">
-            <div class="col">
-              <h3 class="mb-4 text-primary">{{ 'servizi_primo_piano'|trans() }}</h3>
+    <section class="container-fluid py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          {% for servizio in servizio.getStickyServices %}
+            <div class="col-12">
+              {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
             </div>
-          </div>
-          <div class="row">
-            {% for servizio in servizio.getStickyServices %}
-              <div class="col-12">
-                {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
-              </div>
-            {% endfor %}
-          </div>
+          {% endfor %}
         </div>
       </div>
     </section>
@@ -104,22 +96,13 @@
 
 
   {% if servizio.getNotStickyServices.count > 0 %}
-    <section class="container px-4 my-4">
-      <div class="pb-5">
-        <div class="container px-4">
-          <div class="row mt-5">
-            <div class="col">
-              <h3 class="mb-4 text-primary">{{ 'tutti_i_servizi'|trans() }}</h3>
-            </div>
+    <section class="container py-5">
+      <div class="row">
+        {% for item in servizio.getNotStickyServices %}
+          <div class="col-12 col-sm-6 col-lg-4">
+            {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
           </div>
-          <div class="row">
-            {% for item in servizio.getNotStickyServices %}
-              <div class="col-12 col-sm-6 col-lg-4">
-                {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
-              </div>
-            {% endfor %}
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
   {% endif %}

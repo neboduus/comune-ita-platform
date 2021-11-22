@@ -72,55 +72,24 @@ class ServiziController extends Controller
    */
   public function serviziAction(Request $request)
   {
-    /** @var ServizioRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    /** @var ServiceGroupRepository $servicesGroupRepository */
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    switch ($this->instanceService->getCurrentInstance()->getNavigationType()) {
+      case Ente::NAVIGATION_TYPE_CATEGORIES:
+        $topics = $this->getServicesByCategories($request);
+        $response = $this->render('@App/Servizi/serviziTopics.html.twig', [
+          'topics' => $topics,
+          'user' => $this->getUser()
+        ]);
+        break;
 
-    $stickyServices = $serviziRepository->findStickyAvailable();
-    $servizi = $serviziRepository->findNotStickyAvailable();
-
-    $stickyservicesGroup = $servicesGroupRepository->findStickyAvailable();
-    $servicesGroup = $servicesGroupRepository->findNotStickyAvailable();
-
-    $services = array();
-    $sticky = array();
-
-    /** @var Servizio $item */
-    foreach ($servizi as $item) {
-      $services[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
-      $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
+      default:
+        $services = $this->getServices($request);
+        $response = $this->render('@App/Servizi/servizi.html.twig', [
+          'sticky_services' => $services['sticky'],
+          'servizi' => $services['default'],
+          'user' => $this->getUser()
+        ]);
+        break;
     }
-
-    /** @var ServiceGroup $item */
-    foreach ($servicesGroup as $item) {
-      if ($item->getPublicServices()->count() > 0) {
-        $services[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
-        $services[$item->getSlug() . '-' . $item->getId()]['object']= $item;
-      }
-    }
-
-    /** @var Servizio $item */
-    foreach ($stickyServices as $item) {
-      $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'service';
-      $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
-    }
-
-    /** @var ServiceGroup $item */
-    foreach ($stickyservicesGroup as $item) {
-      if ($item->getPublicServices()->count() > 0) {
-        $sticky[$item->getSlug() . '-' . $item->getId()]['type']= 'group';
-        $sticky[$item->getSlug() . '-' . $item->getId()]['object']= $item;
-      }
-    }
-
-    ksort($services);
-
-    $response =  $this->render( '@App/Servizi/servizi.html.twig', [
-      'sticky_services' => $sticky,
-      'servizi' => $services,
-      'user' => $this->getUser()
-    ]);
 
     return $response;
   }
@@ -204,7 +173,7 @@ class ServiziController extends Controller
     }
 
 
-    $response =  $this->render( '@App/Servizi/serviziDetail.html.twig', [
+    $response = $this->render('@App/Servizi/serviziDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio,
       'servizi_area' => $serviziArea,
@@ -235,7 +204,7 @@ class ServiziController extends Controller
       throw new NotFoundHttpException("ServiceGroup $slug not found");
     }
 
-    $response =  $this->render( '@App/Servizi/serviceGroupDetail.html.twig', [
+    $response = $this->render('@App/Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio
     ]);
@@ -261,19 +230,46 @@ class ServiziController extends Controller
       throw new NotFoundHttpException("Category $slug not found");
     }
 
+    $topics = [];
     $categories = $categoryRepository->findBy([], ['name' => 'asc']);
+    /** @var Categoria $c */
+    foreach ($categories as $c) {
+      if ($c->getServices()->count() > 0 || $c->getServicesGroup()->count() > 0) {
+        $topics []= $c;
+      }
+    }
 
+    $result = [];
     $repoServices = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-    $services = $repoServices->findBy([
-      'topics' => $category->getId(),
-      'status' => Servizio::PUBLIC_STATUSES
-    ]);
+    $services = $repoServices->findAvailable(
+      ['topics' => $category->getId()]
+    );
 
-    $response =  $this->render( '@App/Servizi/categoryDetail.html.twig', [
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $servicesGroup = $servicesGroupRepository->findByCriteria(
+      ['topics' => $category->getId()]
+    );
+
+    /** @var Servizio $item */
+    foreach ($services as $item) {
+      $result[$item->getSlug() . '-' . $item->getId()]['type'] = 'service';
+      $result[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
+    }
+
+    /** @var ServiceGroup $item */
+    foreach ($servicesGroup as $item) {
+      if ($item->getPublicServices()->count() > 0) {
+        $result[$item->getSlug() . '-' . $item->getId()]['type'] = 'group';
+        $result[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
+      }
+    }
+    ksort($services);
+
+    $response = $this->render('@App/Servizi/categoryDetail.html.twig', [
       'user' => $user,
       'category' => $category,
-      'categories' => $categories,
-      'services' => $services
+      'categories' => $topics,
+      'services' => $result
     ]);
 
     return $response;
@@ -305,7 +301,7 @@ class ServiziController extends Controller
       'status' => Servizio::PUBLIC_STATUSES
     ]);
 
-    $response =  $this->render( '@App/Servizi/recipientDetail.html.twig', [
+    $response = $this->render('@App/Servizi/recipientDetail.html.twig', [
       'user' => $user,
       'recipient' => $recipient,
       'recipients' => $recipients,
@@ -313,6 +309,99 @@ class ServiziController extends Controller
     ]);
 
     return $response;
+  }
+
+  private function getServices(Request $request)
+  {
+    /** @var ServizioRepository $serviziRepository */
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+
+    /** @var ServiceGroupRepository $servicesGroupRepository */
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+
+    $stickyServices = $serviziRepository->findStickyAvailable();
+    $servizi = $serviziRepository->findNotStickyAvailable();
+
+    $stickyservicesGroup = $servicesGroupRepository->findStickyAvailable();
+    $servicesGroup = $servicesGroupRepository->findNotStickyAvailable();
+
+    $services = array();
+    $sticky = array();
+
+    /** @var Servizio $item */
+    foreach ($servizi as $item) {
+      $services[$item->getSlug() . '-' . $item->getId()]['type'] = 'service';
+      $services[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
+    }
+
+    /** @var ServiceGroup $item */
+    foreach ($servicesGroup as $item) {
+      if ($item->getPublicServices()->count() > 0) {
+        $services[$item->getSlug() . '-' . $item->getId()]['type'] = 'group';
+        $services[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
+      }
+    }
+
+    /** @var Servizio $item */
+    foreach ($stickyServices as $item) {
+      $sticky[$item->getSlug() . '-' . $item->getId()]['type'] = 'service';
+      $sticky[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
+    }
+
+    /** @var ServiceGroup $item */
+    foreach ($stickyservicesGroup as $item) {
+      if ($item->getPublicServices()->count() > 0) {
+        $sticky[$item->getSlug() . '-' . $item->getId()]['type'] = 'group';
+        $sticky[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
+      }
+    }
+
+    ksort($services);
+    ksort($sticky);
+
+    return [
+      'sticky' => $sticky,
+      'default' => $services
+    ];
+
+  }
+
+  private function getServicesByCategories(Request $request)
+  {
+    /** @var ServizioRepository $serviziRepository */
+    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+
+    /** @var ServiceGroupRepository $servicesGroupRepository */
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+
+    $servizi = $serviziRepository->findAvailable();
+    $servicesGroup = $servicesGroupRepository->findByCriteria();
+    $topics = [];
+
+    /** @var Servizio $item */
+    foreach ($servizi as $item) {
+      /** @var Categoria $topic */
+      $topic = $item->getTopics();
+      if ($topic instanceof Categoria && !isset($topics[$topic->getSlug() . '-' . $topic->getId()])) {
+        $topics[$topic->getSlug() . '-' . $topic->getId()]['type'] = 'topic';
+        $topics[$topic->getSlug() . '-' . $topic->getId()]['object'] = $topic;
+      }
+    }
+
+    /** @var ServiceGroup $item */
+    foreach ($servicesGroup as $item) {
+      /** @var Categoria $topic */
+      $topic = $item->getTopics();
+      if ($topic instanceof Categoria && !isset($topics[$topic->getSlug() . '-' . $topic->getId()]) && $item->getPublicServices()->count() > 0) {
+        $topics[$topic->getSlug() . '-' . $topic->getId()]['type'] = 'topic';
+        $topics[$topic->getSlug() . '-' . $topic->getId()]['object'] = $topic;
+      }
+    }
+
+    ksort($topics);
+
+    return $topics;
+
   }
 
 }

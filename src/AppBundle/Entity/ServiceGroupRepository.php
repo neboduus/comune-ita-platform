@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 class ServiceGroupRepository extends EntityRepository
 {
 
-  public function findByCriteria(array $criteria)
+  public function findByCriteria($criteria = [])
   {
     $qb = $this->createQueryBuilder('s');
 

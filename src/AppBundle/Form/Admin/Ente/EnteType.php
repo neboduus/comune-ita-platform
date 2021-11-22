@@ -31,7 +31,7 @@ class EnteType extends AbstractType
 {
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -48,6 +48,13 @@ class EnteType extends AbstractType
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+
+    $navigationTypes = [
+      'ente.navigation_type.services' => Ente::NAVIGATION_TYPE_SERVICES,
+      'ente.navigation_type.categories' => Ente::NAVIGATION_TYPE_CATEGORIES
+    ];
+
+
     /** @var Ente $ente */
     $ente = $builder->getData();
     $availableGateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
@@ -94,6 +101,11 @@ class EnteType extends AbstractType
       ->add('codice_amministrativo', TextType::class, [
         'label' => 'ente.codice_amministrativo'
       ])
+      ->add('navigation_type', ChoiceType::class, [
+          'label' => 'ente.navigation_type.label',
+          'choices' => $navigationTypes,
+        ]
+      )
       ->add('meta', TextareaType::class, ['required' => false, 'empty_data' => ""])
       ->add(DefaultProtocolSettings::KEY, DefaultProtocolSettingsType::class, [
         'label' => 'ente.impostazioni_protocollo',

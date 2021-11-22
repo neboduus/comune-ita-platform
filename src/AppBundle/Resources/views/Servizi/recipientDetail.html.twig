@@ -2,7 +2,7 @@
 {% block title %}{{ recipient.name }} - Stanza del cittadino{% endblock %}
 {% set sidebar_list_limit = 4 %}
 {% block main_content %}
-  <section id="intro" class="container px-4 my-4">
+  <section class="container my-4">
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ recipient.name }}</h1>
@@ -66,17 +66,13 @@
   </section>
 
   {% if services|length > 0 %}
-    <section class="container px-4 py-5">
-      <div class="pb-5">
-        <div class="container px-4">
-          <div class="row">
-            {% for item in services %}
-              <div class="col-12 col-sm-6 col-lg-4">
-                {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
-              </div>
-            {% endfor %}
+    <section class="container py-5">
+      <div class="row">
+        {% for item in services %}
+          <div class="col-12 col-sm-6 col-lg-4">
+            {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
           </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
   {% endif %}

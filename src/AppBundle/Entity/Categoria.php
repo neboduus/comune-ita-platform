@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
@@ -68,6 +69,21 @@ class Categoria
    */
   private $parent;
 
+  /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\Servizio", mappedBy="topics")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $services;
+
+
+  /**
+   * @ORM\OneToMany(targetEntity="AppBundle\Entity\ServiceGroup", mappedBy="topics")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $servicesGroup;
+
 
   /**
    * Categoria constructor.
@@ -77,6 +93,8 @@ class Categoria
     if (!$this->id) {
       $this->id = Uuid::uuid4();
     }
+    $this->services = new ArrayCollection();
+    $this->servicesGroup = new ArrayCollection();
   }
 
   /**
@@ -187,4 +205,37 @@ class Categoria
   {
     $this->parent = $parent;
   }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getServices()
+  {
+    return $this->services;
+  }
+
+  /**
+   * @param ArrayCollection $services
+   */
+  public function setServices($services): void
+  {
+    $this->services = $services;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getServicesGroup()
+  {
+    return $this->servicesGroup;
+  }
+
+  /**
+   * @param ArrayCollection $servicesGroup
+   */
+  public function setServicesGroup($servicesGroup): void
+  {
+    $this->servicesGroup = $servicesGroup;
+  }
+
 }
