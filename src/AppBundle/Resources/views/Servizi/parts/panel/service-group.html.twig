@@ -1,21 +1,29 @@
 {% set text_area_limit = 30 %}
 {% set text_limit = 100 %}
+{% if showTopic is not defined %}
+  {% set showTopic = true %}
+{% endif %}
 
 <article class="card-wrapper card-space">
   <div class="card card-bg rounded shadow">
     <div class="card-body">
-      <div class="category-top">
-        <span class="category"></span>
-      </div>
+      {% if servizio.topics and showTopic %}
+        <div class="category-top">
+          <a href="{{ path('category_show', {'slug': servizio.topics.slug}) }}" class="category">
+            <span class="category">{{ servizio.topics.name }}</span>
+          </a>
+        </div>
+      {% endif %}
       <h5 class="card-title">
         <svg class="icon">
-          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{% if servizio.isSharedGroup %}file{% else %}folder{% endif %}"></use>
         </svg>
         {{ servizio.name }}
       </h5>
-      <p
-        class="card-text">{{ servizio.description|length > text_limit ? servizio.description|slice(0, text_limit)|striptags ~ '...' : servizio.description|striptags }}</p>
-      <a class="read-more stretched-link text-decoration-none" href="{{ path('service_group_show', {'slug': servizio.slug}) }}">
+      {% if servizio.description|striptags|trim != '' %}
+        <p class="card-text">{{ servizio.description|length > text_limit ? servizio.description|striptags|slice(0, text_limit) ~ '...' : servizio.description|striptags }}</p>
+      {% endif %}
+      <a class="read-more stretched-link" href="{{ path('service_group_show', {'slug': servizio.slug}) }}">
         <span class="text">Leggi di più</span>
         <svg class="icon">
           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-right"></use>

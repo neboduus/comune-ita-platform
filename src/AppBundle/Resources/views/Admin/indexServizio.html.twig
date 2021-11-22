@@ -16,10 +16,10 @@
     $('#service-table').DataTable({
       "order": [[ 0, "asc" ]],
       columnDefs: [
-        { orderable: false, targets: 1 },
         { orderable: false, targets: 2 },
         { orderable: false, targets: 3 },
-        { orderable: false, targets: 4 }
+        { orderable: false, targets: 4 },
+        { orderable: false, targets: 5 }
       ],
       language: {
         url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/it_it.json'
@@ -54,6 +54,7 @@
             <thead>
             <tr>
               <th>{{ 'servizio.gruppo'|trans }}<i class="fa fa-caret-right px-2" aria-hidden="true"></i>{{ 'general.nome'|trans }}</th>
+              <th>{{ 'servizio.categoria'|trans }}</th>
               <th>{{ 'general.url'|trans }}</th>
               <th>{{ 'servizio.livello_accesso'|trans }}</th>
               <th>{{ 'general.stato'|trans }}</th>
@@ -70,7 +71,13 @@
                   {% endif %}
                   <a class="" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
                 </td>
-
+                <td>
+                  {% if item.sharedWithGroup %}
+                    {{ (item.serviceGroup.topics) ? item.serviceGroup.topics.name : '' }}
+                  {% else %}
+                    {{ (item.topics) ? item.topics.name : '' }}
+                  {% endif %}
+                </td>
                 <td>
                   <a class="btn btn-xs btn-outline-secondary" href="{{ absolute_url(path('servizi_show', { 'slug': item.slug })) }}" target="_blank"
                      data-url="{{ absolute_url(path('servizi_show', { 'slug': item.slug })) }}"

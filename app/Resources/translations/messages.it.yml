@@ -17,7 +17,6 @@ registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
 servizi_pending: 'Servizi con pratiche inviate'
 esplora_i_servizi: 'Esplora i servizi'
 servizi_primo_piano: 'Servizi in primo piano'
-tutti_i_servizi: 'Tutti i servizi'
 lista_pratiche: 'Le mie pratiche'
 bozze_servizio: 'Pratiche in bozza per il servizio'
 msg_bozze_servizio: 'Attenzione, ci sono delle pratiche in compilazione per il servizio selezionato.'
@@ -2288,6 +2287,10 @@ ente:
   pagamenti:
     label: "Seleziona i metodi di pagamento disponibili per l'ente"
     panel_title: 'Parametri necessari per %gateway_name% ( lasciare in binaco se si desidera impostare i valori a livello di servizio)'
+  navigation_type:
+    label: 'Tipo di navigazione'
+    services: 'Servizi'
+    categories: 'Categorie'
 buttons:
   draft: 'Salva bozza'
   last_save: 'Ultimo salvataggio:'

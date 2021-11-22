@@ -2,15 +2,14 @@
 {% block title %}{{ category.name }} - Stanza del cittadino{% endblock %}
 {% set sidebar_list_limit = 4 %}
 {% block main_content %}
-  <section id="intro" class="container px-4 my-4">
+  <section class="container my-4">
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ category.name }}</h1>
         {% if category.description|striptags|trim != '' %}
-          <article class="mb-3">
-            <h4>{{ 'general.descrizione'|trans }}</h4>
+          <div class="clearfix">
             {{ category.description|raw }}
-          </article>
+          </div>
         {% endif %}
       </div>
 
@@ -29,14 +28,13 @@
             {% if categories|length > sidebar_list_limit %}
               <li>
                 <a class="p-0 list-item" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                  <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
+                  <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-items"></use></svg>
                   <em>{{ 'load_more'|trans }}</em>
                 </a>
               </li>
             {% else %}
               <li>
-                <a class="p-0 list-item medium"
-                   href="{{ path('servizi_list') }}">
+                <a class="p-0 list-item" href="{{ path('servizi_list') }}">
                   {{ 'nav.servizi'|trans }}
                 </a>
               </li>
@@ -54,8 +52,7 @@
               </li>
             {% endfor %}
             <li>
-              <a class="p-0 list-item medium"
-                 href="{{ path('servizi_list') }}">
+              <a class="p-0 list-item" href="{{ path('servizi_list') }}">
                 {{ 'nav.servizi'|trans }}
               </a>
             </li>
@@ -65,18 +62,32 @@
     </div>
   </section>
 
-  {% if services|length > 0 %}
-    <section class="container px-4 py-5">
-      <div class="pb-5">
-        <div class="container px-4">
-          <div class="row">
-            {% for item in services %}
-              <div class="col-12 col-sm-6 col-lg-4">
-                {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
-              </div>
-            {% endfor %}
-          </div>
+  {% if category.children|length > 0 %}
+    <section class="container-fluid py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          {% for item in category.children %}
+            <div class="col-12 col-sm-6 col-lg-4">
+              {{ include('@App/Servizi/parts/panel/topic.html.twig', {'item': item}) }}
+            </div>
+          {% endfor %}
         </div>
+      </div>
+    </section>
+  {% endif %}
+
+  {% if services|length > 0 %}
+    <section class="container py-5">
+      <div class="row">
+        {% for item in services %}
+          <div class="col-12 col-sm-6 col-lg-4">
+            {% if item.type == 'service' %}
+              {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item.object, showTopic: false}) }}
+            {% else %}
+              {{ include('@App/Servizi/parts/panel/service-group.html.twig', {'servizio':item.object, showTopic: false}) }}
+            {% endif %}
+          </div>
+        {% endfor %}
       </div>
     </section>
   {% endif %}

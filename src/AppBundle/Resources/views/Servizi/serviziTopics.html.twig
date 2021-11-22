@@ -1,0 +1,28 @@
+{% extends '@App/Default/index.html.twig' %}
+{% block title %}{{'nav.servizi'|trans()}} - Stanza del cittadino{% endblock %}
+{% block main_content %}
+
+  <section id="intro" class="container my-4">
+    <div class="row">
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+        <h1>{{ 'nav.servizi'|trans }}</h1>
+        <div class="clearfix">
+          <p>Gli argomenti rispondono a un'esigenza di organizzazione dei contenuti del sito istituzionale per temi e rappresentano le principali categorie di contenuti, informazioni e documenti specifici.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {% if topics %}
+    <section class="container py-5">
+      <div class="row">
+        {% for item in topics %}
+          <div class="col-12 col-sm-6 col-lg-4">
+            {{ include('@App/Servizi/parts/panel/topic.html.twig', {'item':item.object}) }}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+{% endblock %}

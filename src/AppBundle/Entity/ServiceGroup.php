@@ -131,7 +131,7 @@ class ServiceGroup
   private $applications;
 
   /**
-   * @ORM\ManyToOne(targetEntity="Categoria")
+   * @ORM\ManyToOne(targetEntity="Categoria", inversedBy="servicesGroup")
    * @Serializer\Exclude()
    */
   private $topics;
@@ -565,6 +565,17 @@ class ServiceGroup
       $this->recipients->removeElement($recipient);
     }
     return $this;
+  }
+
+  public function isSharedGroup()
+  {
+    /** @var Servizio $s */
+    foreach ($this->services as $s) {
+      if (!$s->isSharedWithGroup()) {
+        return false;
+      }
+    }
+    return true;
   }
 
 }

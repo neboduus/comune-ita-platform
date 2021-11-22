@@ -1,53 +1,48 @@
-{% extends '@App/Default/index.html.twig' %}
-{% block title %}{{'tutti_i_servizi'|trans()}} - Stanza del cittadino{% endblock %}
+ {% extends '@App/Default/index.html.twig' %}
+{% block title %}{{ 'nav.servizi'|trans() }} - Stanza del cittadino{% endblock %}
 {% block main_content %}
+  <section class="container my-4">
+    <div class="row">
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+        <h1>Servizi</h1>
+        <div class="clearfix">
+          <p>Domande e iscrizioni, contributi e graduatorie, segnalazioni, autorizzazioni e concessioni, certificati e
+            dichiarazioni, pagamenti, servizi pubblici.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   {% if sticky_services %}
-    <section class="container px-4 my-4">
-      <div class="pb-5">
-        <div class="container px-4">
-          <div class="row mt-5">
-            <div class="col">
-              <h3 class="mb-4 text-primary">{{ 'servizi_primo_piano'|trans() }}</h3>
-            </div>
-          </div>
-          <div class="row">
-            {% for item in sticky_services %}
-              <div class="col-12">
+    <section class="container-fluid py-5 bg-light">
+      <div class="container">
+        <div class="row">
+          {% for item in sticky_services %}
+            <div class="col-12 col-md-6">
               {% if item.type == 'service' %}
                 {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig', {'servizio':item.object}) }}
               {% else %}
                 {{ include('@App/Servizi/parts/panel/service-group_sticky.html.twig', {'servizio':item.object}) }}
               {% endif %}
-              </div>
-            {% endfor %}
-          </div>
+            </div>
+          {% endfor %}
         </div>
       </div>
     </section>
   {% endif %}
 
   {% if servizi %}
-    <section class="container px-4 my-4">
-      <div class="pb-5">
-        <div class="container px-4">
-          <div class="row mt-5">
-            <div class="col">
-              <h3 class="mb-4 text-primary">{{ 'tutti_i_servizi'|trans() }}</h3>
-            </div>
+    <section class="container py-5">
+      <div class="row">
+        {% for item in servizi %}
+          <div class="col-12 col-sm-6 col-lg-4">
+            {% if item.type == 'service' %}
+              {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item.object}) }}
+            {% else %}
+              {{ include('@App/Servizi/parts/panel/service-group.html.twig', {'servizio':item.object}) }}
+            {% endif %}
           </div>
-          <div class="row">
-            {% for item in servizi %}
-              <div class="col-12 col-sm-6 col-lg-4">
-                {% if item.type == 'service' %}
-                  {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item.object}) }}
-                {% else %}
-                  {{ include('@App/Servizi/parts/panel/service-group.html.twig', {'servizio':item.object}) }}
-                {% endif %}
-              </div>
-            {% endfor %}
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </section>
   {% endif %}

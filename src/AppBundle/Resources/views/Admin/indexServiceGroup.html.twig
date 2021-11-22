@@ -38,7 +38,7 @@
             <thead>
             <tr>
               <th>{{ 'gruppo_di_servizi.nome' | trans() }}</th>
-              <th>{{ 'gruppo_di_servizi.descrizione' | trans() }}</th>
+              <th>{{ 'servizio.categoria' | trans() }}</th>
               <th>{{ 'gruppo_di_servizi.url' | trans() }}</th>
               <th>{{ 'gruppo_di_servizi.protocollazione_fascicoli' | trans() }}</th>
               <th>{{ 'gruppo_di_servizi.azioni' | trans() }}</th>
@@ -50,7 +50,7 @@
                 <td data-title="Nome">
                   <a href="{{ path('admin_service_group_edit', { 'id': item.id }) }}">{{ item.name }}</a>
                 </td>
-                <td>{{ item.description|raw }}</td>
+                <td>{{ (item.topics) ? item.topics.name : '' }}</td>
                 <td>
                   <a class="btn btn-sm btn-secondary clone" href="#"
                      data-url="{{ absolute_url(path('service_group_show', { 'slug': item.slug })) }}"

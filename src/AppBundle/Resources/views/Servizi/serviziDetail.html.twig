@@ -12,7 +12,7 @@
 {% block main_content %}
 
 
-  <section id="intro" class="container px-4 my-4">
+  <section id="intro" class="container my-4">
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
         <h1>{{ servizio.name }}</h1>
@@ -22,14 +22,14 @@
         {% if servizio.description|striptags|trim != '' %}
           <article class="mb-4">
             <h4>{{ 'servizio.cos_e' | trans }}</h4>
-            {{ servizio.description|raw }}
+            {{ servizio.description|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
         {% if servizio.who|striptags|trim != '' %}
           <article class="mb-4">
             <h4>{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
-            {{ servizio.who|raw }}
+            {{ servizio.who|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
@@ -63,21 +63,21 @@
         {% if servizio.howto|striptags|trim != '' %}
           <article class="mb-4">
             <h4>{{ 'servizio.accedere' | trans }}</h4>
-            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
         {% if servizio.specialCases|striptags|trim != '' %}
           <article class="mb-4">
             <h4>{{ 'servizio.casi_particolari' | trans }}</h4>
-            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 
         {% if servizio.moreInfo|striptags|trim != '' %}
           <article class="mb-4">
             <h4>{{ 'servizio.maggiori_info' | trans }}</h4>
-            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|raw }}
+            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
 

@@ -22,6 +22,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Ente
 {
+
+  const NAVIGATION_TYPE_SERVICES = 'services';
+  const NAVIGATION_TYPE_CATEGORIES = 'categories';
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
@@ -162,6 +166,12 @@ class Ente
    * @Serializer\Exclude()
    */
   private $webhooks;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true, options={"default" : Ente::NAVIGATION_TYPE_SERVICES})
+   */
+  private $navigationType = self::NAVIGATION_TYPE_SERVICES;
 
   /**
    * Ente constructor.
@@ -659,4 +669,21 @@ class Ente
   {
     $this->linkableApplicationMeetings = $linkableApplicationMeetings;
   }
+
+  /**
+   * @return string
+   */
+  public function getNavigationType(): ?string
+  {
+    return $this->navigationType;
+  }
+
+  /**
+   * @param string $navigationType
+   */
+  public function setNavigationType(?string $navigationType): void
+  {
+    $this->navigationType = $navigationType;
+  }
+
 }

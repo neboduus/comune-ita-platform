@@ -1,0 +1,18 @@
+{% set text_area_limit = 30 %}
+{% set text_limit = 100 %}
+
+<article class="card-wrapper card-space">
+  <div class="card card-bg rounded shadow">
+    <div class="card-body">
+      <a href="{{ path('category_show', {'slug': item.slug}) }}">
+        <svg class="icon">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
+        </svg>
+        <h4 class="card-title">{{ item.name }}</h4>
+      </a>
+      {% if item.description|striptags|trim != '' %}
+        <p class="card-text">{{ item.description|length > text_limit ? item.description|striptags|slice(0, text_limit) ~ '...' : item.description|striptags }}</p>
+      {% endif %}
+    </div>
+  </div>
+</article>
