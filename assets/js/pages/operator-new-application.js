@@ -6,6 +6,7 @@ import Calendar from '../Calendar';
 import DynamicCalendar from '../DynamicCalendar';
 import PageBreak from '../PageBreak';
 import FinancialReport from "../FinancialReport";
+import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import Swal from 'sweetalert2/src/sweetalert2.js'
@@ -61,7 +62,7 @@ window.onload = function () {
         application.user = applicationFormContainer.data('user');
         application.service = applicationFormContainer.data('service');
         application.data = submission.data;
-        application.status = 2000;
+        application.status = 1900;
 
         api.postApplication(JSON.stringify(application))
           .fail(function (xhr, type, exception) {

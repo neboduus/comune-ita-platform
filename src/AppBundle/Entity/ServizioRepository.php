@@ -45,6 +45,7 @@ class ServizioRepository extends EntityRepository
         ->andWhere('recipients.id = :recipients')
         ->setParameter('recipients', $criteria['recipients']);
     }
+
     $qb->orderBy('s.name', 'ASC');
     return $qb->getQuery()->getResult();
   }
