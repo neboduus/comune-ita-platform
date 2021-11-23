@@ -41,6 +41,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use function Aws\boolean_value;
 
 /**
  * Class ServicesAPIController
@@ -151,7 +152,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $serviceGroupId = $request->get('service_group_id', false);
       $categoryId = $request->get('topics_id', false);
       $recipientId = $request->get('recipient_id', false);
-      $grouped = $request->get('grouped', true);
+      $grouped = boolean_value($request->get('grouped', true));
       $result = [];
       $repoServices = $this->em->getRepository(Servizio::class);
       $criteria['status'] = Servizio::PUBLIC_STATUSES;
@@ -192,8 +193,6 @@ class ServicesAPIController extends AbstractFOSRestController
 
       return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $e) {
-      dump($e);
-      exit;
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
