@@ -85,7 +85,6 @@ $(document).ready(function () {
     }
   })
 
-
   let loginCheckbox = $('#general_data_login_suggested');
   if ($('#general_data_access_level').val() === '0') {
     loginCheckbox.closest('div').show();
@@ -175,6 +174,31 @@ $(document).ready(function () {
     accessLevel.trigger('change');
 
 
+    const limitChars = 2000;
+    TextEditor.init({
+      onInit: function () {
+        let chars = $(this).parent().find(".note-editable").text();
+        let totalChars = chars.length;
+
+        $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di ' + limitChars + ' caratteri (<span class="total-chars">' + totalChars + '</span> / <span class="max-chars"> ' + limitChars + '</span>)</small>')
+      },
+      onChange: function () {
+        let chars = $(this).parent().find(".note-editable").text();
+        let totalChars = chars.length;
+
+        //Update value
+        $(this).parent().find(".total-chars").text(totalChars);
+
+
+        //Check and Limit Charaters
+        if (totalChars >= limitChars) {
+          return false;
+        }
+      }
+    })
+  }
+
+  if ( $("#form-step-card").length) {
     const limitChars = 2000;
     TextEditor.init({
       onInit: function () {
