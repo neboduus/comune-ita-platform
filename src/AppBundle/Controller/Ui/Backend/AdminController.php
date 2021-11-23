@@ -563,7 +563,7 @@ class AdminController extends Controller
       'card' => [
         'label' => 'Scheda',
         'class' => CardDataType::class,
-        'template' => 'AppBundle:Admin/servizio:_CardStep.html.twig',
+        'template' => 'AppBundle:Admin/servizio:_cardStep.html.twig',
         'icon'  => 'fa-file-text-o',
       ],
       'formio' => [
