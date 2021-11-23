@@ -4,12 +4,15 @@
 <article class="card-wrapper card-space">
   <div class="card card-bg rounded shadow">
     <div class="card-body">
-      <a href="{{ path('category_show', {'slug': item.slug}) }}">
-        <svg class="icon">
+      <div class="clearfix pb-4">
+        <svg class="icon align-text-bottom">
           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
         </svg>
-        <h4 class="card-title">{{ item.name }}</h4>
-      </a>
+        <a href="{{ path('category_show', {'slug': item.slug}) }}">
+          <h4 class="card-title d-inline">{{ item.name }}</h4>
+        </a>
+      </div>
+
       {% if item.description|striptags|trim != '' %}
         <p class="card-text">{{ item.description|length > text_limit ? item.description|striptags|slice(0, text_limit) ~ '...' : item.description|striptags }}</p>
       {% endif %}

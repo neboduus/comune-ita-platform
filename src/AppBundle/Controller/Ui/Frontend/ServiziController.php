@@ -231,7 +231,7 @@ class ServiziController extends Controller
     }
 
     $topics = [];
-    $categories = $categoryRepository->findBy([], ['name' => 'asc']);
+    $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);
     /** @var Categoria $c */
     foreach ($categories as $c) {
       if ($c->getServices()->count() > 0 || $c->getServicesGroup()->count() > 0) {
@@ -382,7 +382,7 @@ class ServiziController extends Controller
     foreach ($servizi as $item) {
       /** @var Categoria $topic */
       $topic = $item->getTopics();
-      if ($topic instanceof Categoria && !isset($topics[$topic->getSlug() . '-' . $topic->getId()])) {
+      if ($topic instanceof Categoria && $topic->getParent() === null && !isset($topics[$topic->getSlug() . '-' . $topic->getId()])) {
         $topics[$topic->getSlug() . '-' . $topic->getId()]['type'] = 'topic';
         $topics[$topic->getSlug() . '-' . $topic->getId()]['object'] = $topic;
       }
@@ -392,7 +392,7 @@ class ServiziController extends Controller
     foreach ($servicesGroup as $item) {
       /** @var Categoria $topic */
       $topic = $item->getTopics();
-      if ($topic instanceof Categoria && !isset($topics[$topic->getSlug() . '-' . $topic->getId()]) && $item->getPublicServices()->count() > 0) {
+      if ($topic instanceof Categoria && $topic->getParent() === null && !isset($topics[$topic->getSlug() . '-' . $topic->getId()]) && $item->getPublicServices()->count() > 0) {
         $topics[$topic->getSlug() . '-' . $topic->getId()]['type'] = 'topic';
         $topics[$topic->getSlug() . '-' . $topic->getId()]['object'] = $topic;
       }
