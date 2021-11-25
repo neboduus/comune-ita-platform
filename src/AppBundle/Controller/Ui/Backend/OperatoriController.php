@@ -997,6 +997,10 @@ class OperatoriController extends Controller
           $pratica->setOperatore(null);
         }*/
 
+        if (!$pratica->getOperatore() && $newStatus >= Pratica::STATUS_PENDING) {
+          $pratica->setOperatore($user);
+        }
+
         $statusChange = new StatusChange();
         $statusChange->setEvento('Cambio stato pratica pratica');
         $statusChange->setOperatore($user->getFullName());
