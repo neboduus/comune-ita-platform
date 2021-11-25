@@ -297,6 +297,7 @@ class CalendarsController extends Controller
 
         foreach ($calendar->getOpeningHours() as $openingHour) {
           if (!$em->contains($openingHour)) {
+            $openingHour->setCalendar($calendar);
             $em->persist($openingHour);
           } else {
             $editIds[$openingHour->getId()] = $openingHour;
