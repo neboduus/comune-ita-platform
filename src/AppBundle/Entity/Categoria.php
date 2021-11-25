@@ -152,7 +152,7 @@ class Categoria
   /**
    * @param string $description
    */
-  public function setDescription(string $description)
+  public function setDescription(?string $description)
   {
     $this->description = $description;
 
