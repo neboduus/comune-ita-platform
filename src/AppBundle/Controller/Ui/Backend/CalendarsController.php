@@ -440,17 +440,6 @@ class CalendarsController extends Controller
       ];
     }
 
-    // closures
-    foreach ($calendar->getClosingPeriods() as $closingPeriod) {
-      $events[] = [
-        'title' => 'Chiusura',
-        'start' => $closingPeriod->getFromTime()->format('c'),
-        'end' => $closingPeriod->getToTime()->format('c'),
-        'rendering' => 'background',
-        'color' => 'var(--200)'
-      ];
-    }
-
     $externalCalendars = [];
     $externalEvents = [];
 
@@ -487,7 +476,7 @@ class CalendarsController extends Controller
     foreach ($calendar->getOpeningHours() as $openingHour) {
       $minDate = min($minDate, $openingHour->getBeginHour()->format('H:i'));
       $maxDate = max($maxDate, $openingHour->getEndHour()->format('H:i'));
-      $events = array_merge($events, $this->meetingService->getAbsoluteAvailabilities($openingHour));
+      $events = array_merge($events, $this->meetingService->getAbsoluteAvailabilities($openingHour, true));
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
 

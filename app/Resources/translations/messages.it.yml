@@ -2095,7 +2095,7 @@ meetings:
     pending: "In attesa di conferma"
     missed: "Non avvenuto / Assente"
     done: "Avvenuto"
-    closure: "Chiusura"
+    closure: "Chiusura / Disponibilità passata"
     availability: "Disponibilità"
     draft: "Bozza"
   modal:
@@ -2124,7 +2124,7 @@ meetings:
   no_info: "<i>Informazione non disponibile</i>"
   delete_draft:
     label: "Annulla appuntamento riservato"
-    description: "Questo appuntamento è stato riservato tramite la compilazione di un servizio di prenotazione: se non confermato dall'utente verrà eliminato automaticamente alle ore %expire_time% del giorno %expire_date%. <br>L'eliminazione forzata della bozza renderà l'intervallo di nuovo disponibile e il cittadino che ha riservato l'appuntamento potrebbe dover richiedere un nuovo appuntamento. <br><br>. Sei sicuro di voler procedere con la rimozione forzata della bozza?"
+    description: "Questo appuntamento è stato riservato tramite la compilazione di un servizio di prenotazione: se non confermato dall'utente verrà eliminato automaticamente alle ore %expire_time% del giorno %expire_date%. <br>L'eliminazione forzata della bozza renderà l'intervallo di nuovo disponibile e il cittadino che ha riservato l'appuntamento potrebbe dover richiedere un nuovo appuntamento. <br><br>Sei sicuro di voler procedere con la rimozione forzata della bozza?"
     delete: "Elimina bozza"
   email:
     operatori:

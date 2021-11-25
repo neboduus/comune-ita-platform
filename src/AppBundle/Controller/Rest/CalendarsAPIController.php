@@ -240,13 +240,9 @@ class CalendarsAPIController extends AbstractFOSRestController
 
       $availableAvailabilities = [];
       foreach ($availabilities as $availability) {
-
-        $availableAvailabilities[] = ['date' => $availability, 'available' => !empty($this->meetingService->getSlottedAvailabilitiesByDate($calendar, new DateTime($availability), false, true))];
+        $availableAvailabilities[] = ['date' => $availability, 'available' => !empty($this->meetingService->getAvailabilitiesByDate($calendar, new DateTime($availability), false, true))];
       }
       return $this->view(array_values($availableAvailabilities), Response::HTTP_OK);
-
-
-      return $this->view(array_values($availabilities), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
@@ -340,11 +336,8 @@ class CalendarsAPIController extends AbstractFOSRestController
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
-      if ($calendar->getType() === Calendar::TYPE_TIME_FIXED) {
-        $slots = $this->meetingService->getSlottedAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable), $excludedMeeting, $selectedOpeningHours);
-      } else {
-        $slots = $this->meetingService->getVariableAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable), $excludedMeeting, $selectedOpeningHours);
-      }
+      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable), $excludedMeeting, $selectedOpeningHours);
+
       if ($selectedOpeningHours) {
         foreach ($slots as $key => $slot) {
           if (!in_array($slot["opening_hour"], $selectedOpeningHours)) {

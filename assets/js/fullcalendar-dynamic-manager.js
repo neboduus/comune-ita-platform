@@ -49,8 +49,7 @@ $(document).ready(function () {
       var someEvents = calendar.getEvents().filter(function(evt) {
         return (evt.start <= selectInfo.start
             && evt.end >= selectInfo.end
-            && evt.resourceId === selectInfo.resourceId);
-
+            && evt.resourceId === selectInfo.resourceId && evt.title === 'Apertura');
       });
       return someEvents.length > 0;
     },
@@ -66,6 +65,9 @@ $(document).ready(function () {
         textEl.append(`: ${info.event.extendedProps.description}`);
       } else if (textEl) {
         textEl.append(`Occupato`);
+      }
+      if (info.event.title === 'OpeningDay'){
+        if (info.view.type !== 'dayGridMonth') return false;
       }
     },
     editable: true,
