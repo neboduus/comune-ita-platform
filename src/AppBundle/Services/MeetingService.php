@@ -7,6 +7,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
+use Cassandra\Date;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -175,23 +176,23 @@ class MeetingService
 
     $periods = new DatePeriod($begin, $meetingInterval, $end);
     foreach ($periods as $period) {
-      $shoudAdd = true;
+      $available = true;
       // Check if period falls on closure
       foreach ($closures as $closure) {
         if ($period >= $closure->getFromTime() && $period < $closure->getToTime())
-          $shoudAdd = false;
+          $available = false;
       }
 
       $_begin = $period;
       $_end = clone $_begin;
       $_end = $_end->add($meetingInterval);
-      if ($_end <= $end && $shoudAdd) {
+      if ($_end <= $end) {
         $intervals[$_begin->format('H:i') . '-' . $_end->modify('- ' . $openingHour->getIntervalMinutes() . ' minutes')->format('H:i')] = [
           'date' => $date->format('Y-m-d'),
           'start_time' => $_begin->format('H:i'),
           'end_time' => $_end->format('H:i'),
-          'slots_available' => $openingHour->getMeetingQueue(),
-          'opening_hour' => $openingHour->getId()
+          'slots_available' => $available ? $openingHour->getMeetingQueue() : 0,
+          'opening_hour' => $openingHour->getId(),
         ];
       }
     }
@@ -262,39 +263,41 @@ class MeetingService
     return $array;
   }
 
+  private function getCalendarEvent($title, $start, $end, $available)
+  {
+    if (!$available && $title === 'Apertura') {
+      $title = "Non disp";
+    }
+    return [
+      'title' => $title ,
+      'start' => $start,
+      'end' => $end,
+      'rendering' => 'background',
+      'color' => $available ? 'var(--blue)' : 'var(--200)',
+    ];
+  }
+
   public function getAbsoluteAvailabilities(OpeningHour $openingHour, $all = false, DateTime $from = null, DateTime $to = null)
   {
     $slots = [];
     $startDate = max($from ?? new DateTime(), $openingHour->getStartDate())->format('Y-m-d');
     $endDate = min($to ?? (new DateTime())->modify('+1year'), $openingHour->getEndDate())->format('Y-m-d');
     foreach ($this->explodeDays($openingHour, $all, $startDate, $endDate) as $date) {
-      if ($openingHour->getCalendar()->getType() === Calendar::TYPE_TIME_FIXED) {
-        foreach ($this->explodeMeetings($openingHour, new DateTime($date)) as $slot) {
-          $now = (new DateTime())->format('Y-m-d:H:i');
-          $startTime = (\DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time']))->format('Y-m-d:H:i');
-          if ($startTime > $now) {
-            $start = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['start_time'])->format('c');
-            $end = DateTime::createFromFormat('Y-m-d:H:i', $slot['date'] . ':' . $slot['end_time'])->format('c');
-            $slots[] = [
-              'title' => 'Apertura',
-              'start' => $start,
-              'end' => $end,
-              'rendering' => 'background',
-              'color' => 'var(--blue)'
-            ];
-          }
+      $futureEvent = $date >= (new DateTime())->format('Y-m-d');
+      // Monthly view availability: Check day only, without time
+      $slots[] = $this->getCalendarEvent('OpeningDay', $date, $date, $futureEvent);
+
+      if ($futureEvent) {
+        $availabilities = $this->getAvailabilitiesByDate($openingHour->getCalendar(), new DateTime($date), true, false, null, [$openingHour]);
+        foreach ($availabilities as $availability) {
+          $start = DateTime::createFromFormat('Y-m-d:H:i', $availability['date'] . ':' . $availability['start_time'])->format('c');
+          $end = DateTime::createFromFormat('Y-m-d:H:i', $availability['date'] . ':' . $availability['end_time'])->format('c');
+          $slots[] = $this->getCalendarEvent('Apertura', $start, $end, $availability['availability']);
         }
       } else {
         $start = DateTime::createFromFormat('Y-m-d:H:i', $date . ':' . $openingHour->getBeginHour()->format('H:i'))->format('c');
-        $start = max($start, (new DateTime())->format('c'));
         $end = DateTime::createFromFormat('Y-m-d:H:i', $date . ':' . $openingHour->getEndHour()->format('H:i'))->format('c');
-        $slots[] = [
-          'title' => 'Apertura',
-          'start' => $start,
-          'end' => $end,
-          'rendering' => 'background',
-          'color' => 'var(--blue)'
-        ];
+        $slots[] = $this->getCalendarEvent('Apertura', $start, $end, false);
       }
     }
     return $slots;
@@ -719,7 +722,15 @@ class MeetingService
   }
 
 
-  public function getSlottedAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
+  public function getAvailabilitiesByDate(Calendar $calendar, $date, $ignoreMinimumSchedulingNotice = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
+  {
+    if ($calendar->getType() === Calendar::TYPE_TIME_FIXED)
+      return $this->getSlottedAvailabilitiesByDate($calendar, $date, $ignoreMinimumSchedulingNotice, $exludeUnavailable, $excludedMeeting, $selectedOpeningHours);
+
+    return $this->getVariableAvailabilitiesByDate($calendar, $date, $ignoreMinimumSchedulingNotice, $exludeUnavailable, $excludedMeeting, $selectedOpeningHours);
+  }
+
+  private function getSlottedAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
   {
     /** @var OpeningHour[] $openingHours */
     if ($selectedOpeningHours) {
@@ -860,7 +871,7 @@ class MeetingService
     return array_values($overlaps);
   }
 
-  public function getVariableAvailabilitiesByDate(Calendar $calendar, $date, $all = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
+  private function getVariableAvailabilitiesByDate(Calendar $calendar, $date, $ignoreMinimumSchedulingNotice = false, $exludeUnavailable = false, $excludedMeeting = null, $selectedOpeningHours = [])
   {
     /** @var OpeningHour[] $openingHours */
     if ($selectedOpeningHours) {
@@ -880,15 +891,15 @@ class MeetingService
 
     $bookedMeetings = $this->getBookedSlotsByDate($date, $calendar, $excludedMeeting);
 
-    if ($all) {
+    if ($ignoreMinimumSchedulingNotice) {
       $noticeInterval = new DateInterval('PT0H');
     } else {
       $noticeInterval = new DateInterval('PT' . $calendar->getMinimumSchedulingNotice() . 'H');
     }
+
+    // 5min round
     $firstAvailableDate = (new DateTime())->add($noticeInterval);
-
     $firstAvailableDate->setTime($firstAvailableDate->format("H"), $firstAvailableDate->format("i"), 0, 0);
-
     $minute = ($firstAvailableDate->format("i")) % 5;
     if ($minute != 0) {
       $firstAvailableDate->add(new DateInterval("PT" . (5 - $minute) . "M"));
@@ -897,7 +908,7 @@ class MeetingService
 
     $timeIntervals = [];
     foreach ($openingHours as $openingHour) {
-      if (in_array($date->format('Y-m-d'), $this->explodeDays($openingHour, $all)) && $openingHour->getStartDate() <= $date && $openingHour->getEndDate() >= $date) {
+      if (in_array($date->format('Y-m-d'), $this->explodeDays($openingHour, $ignoreMinimumSchedulingNotice)) && $openingHour->getStartDate() <= $date && $openingHour->getEndDate() >= $date) {
         $begin = (clone $date)->setTime($openingHour->getBeginHour()->format('H'), $openingHour->getBeginHour()->format('i'), 0, 0);
         $end = (clone $date)->setTime($openingHour->getEndHour()->format('H'), $openingHour->getEndHour()->format('i'), 0, 0)->modify('+1minute');
         foreach (new DatePeriod($begin, new DateInterval("PT1M"), $end) as $interval) {
@@ -920,6 +931,7 @@ class MeetingService
       }
     }
 
+    // Remove closures
     $firstTime = DateTime::createFromFormat('Y-m-d H:i', $date->format('Y-m-d') . ' ' . array_key_first($timeIntervals));
     $endTime = DateTime::createFromFormat('Y-m-d H:i', $date->format('Y-m-d') . ' ' . array_key_last($timeIntervals));
 
@@ -937,6 +949,7 @@ class MeetingService
     if (empty($timeIntervals))
       return $slots;
 
+    // Regroup
     $slotStart = array_key_first($timeIntervals);
     $slotOpeningHour = $timeIntervals[$slotStart]["opening_hour"];
     $slotAvailability = min($timeIntervals[$slotStart]["availabilities"], 1);
@@ -949,15 +962,19 @@ class MeetingService
       $tmpOpeningHour = $interval["opening_hour"];
       $slotEnd = $slotOpeningHour === $tmpOpeningHour ? $time : $slotEnd;
       if ($slotAvailability !== $tmpAvailability || $slotOpeningHour !== $tmpOpeningHour) {
-        $slots[$slotStart . '-' . $slotEnd] = [
-          "date" => $date->format('Y-m-d'),
-          "start_time" => $slotStart,
-          "end_time" => $slotEnd,
-          "slots_available" => $slotAvailability,
-          "availability" => $slotAvailability > 0 && $duration >= $slotOpeningHour->getMeetingMinutes(),
-          "opening_hour" => $slotOpeningHour->getId(),
-          "min_duration" => $slotOpeningHour->getMeetingMinutes(),
-        ];
+        $available = $slotAvailability > 0 && $duration >= $slotOpeningHour->getMeetingMinutes();
+        if ($available || !$exludeUnavailable) {
+          // Check if unvailable slots should be added
+          $slots[$slotStart . '-' . $slotEnd] = [
+            "date" => $date->format('Y-m-d'),
+            "start_time" => $slotStart,
+            "end_time" => $slotEnd,
+            "slots_available" => $slotAvailability,
+            "availability" => $available,
+            "opening_hour" => $slotOpeningHour->getId(),
+            "min_duration" => $slotOpeningHour->getMeetingMinutes(),
+          ];
+        }
 
         $slotAvailability = $tmpAvailability;
         $slotOpeningHour = $tmpOpeningHour;
@@ -969,13 +986,15 @@ class MeetingService
       $duration = $this->getDifferenceInMinutes($timeIntervals[$slotStart]["datetime"], $timeIntervals[$slotEnd]["datetime"]);
     }
 
-    if ($slotStart !== $slotEnd) {
+    // Last slot
+    $available = $slotAvailability > 0 && $duration >= $slotOpeningHour->getMeetingMinutes();
+    if ($slotStart !== $slotEnd && ($available || !$exludeUnavailable)) {
       $slots[$slotStart . '-' . $slotEnd] = [
         "date" => $date->format('Y-m-d'),
         "start_time" => $slotStart,
         "end_time" => $slotEnd,
         "slots_available" => $slotAvailability,
-        "availability" => $slotAvailability > 0 && $duration >= $slotOpeningHour->getMeetingMinutes(),
+        "availability" => $available,
         "opening_hour" => $slotOpeningHour->getId(),
         "min_duration" => $slotOpeningHour->getMeetingMinutes(),
       ];

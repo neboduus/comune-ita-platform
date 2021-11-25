@@ -84,6 +84,9 @@ $(document).ready(function () {
       } else if (textEl) {
         textEl.append(`Occupato`);
       }
+      if (info.event.title === 'OpeningDay'){
+        if (info.view.type !== 'dayGridMonth') return false;
+      }
     },
     editable: true,
     eventDurationEditable: false,
