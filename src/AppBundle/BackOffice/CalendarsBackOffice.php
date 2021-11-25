@@ -8,7 +8,6 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\Pratica;
-use AppBundle\Services\InstanceService;
 use AppBundle\Services\MeetingService;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
@@ -26,10 +25,6 @@ class CalendarsBackOffice implements BackOfficeInterface
    * @var EntityManager
    */
   private $em;
-  /**
-   * @var InstanceService
-   */
-  private $is;
 
   /**
    * @var MeetingService
@@ -61,12 +56,11 @@ class CalendarsBackOffice implements BackOfficeInterface
    */
   private $logger;
 
-  public function __construct(EntityManager $em, InstanceService $is, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(EntityManager $em, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->meetingService = $meetingService;
     $this->em = $em;
-    $this->is = $is;
     $this->logger = $logger;
   }
 
@@ -97,65 +91,82 @@ class CalendarsBackOffice implements BackOfficeInterface
       $status = $data->getStatus();
       $integrations = $data->getServizio()->getIntegrations();
 
+      // Create meeting on activation point
       if (isset($integrations[$status]) && $integrations[$status] == get_class($this)) {
-        return $this->createMeetingFromPratica($data);
-      } else {
-        $linkedMeetings= [];
-        // Extract meeting id from calendar string
-        preg_match_all("/\(([^\)]*)\)/", $data->getDematerializedForms()['flattened']['calendar'], $matches);
-        $meetingId = trim(explode("#", $matches[1][0])[1]);
-        $_meeting = $meetingId ? $this->em->getRepository('AppBundle:Meeting')->find($meetingId) : null;
-        if ($_meeting) {
-          $linkedMeetings[] = $_meeting;
-        }
+        $this->createMeetingFromPratica($data);
+      }
 
-        if (!$linkedMeetings) {
-          // Meeting not found, can't update
-          return [];
-        }
+      $linkedMeetings = $data->getMeetings()->toArray();
+      // Extract meeting id from calendar string
+      preg_match_all("/\(([^\)]*)\)/", $data->getDematerializedForms()['flattened']['calendar'], $matches);
+      $meetingId = trim(explode("#", $matches[1][0])[1]);
+      $_meeting = $meetingId ? $this->em->getRepository('AppBundle:Meeting')->find($meetingId) : null;
+      if ($_meeting) {
+        $linkedMeetings[] = $_meeting;
+      }
 
+      if (!$linkedMeetings) {
+        // Meeting not found, nothing to do
+        return [];
+      }
 
-        switch ($status) {
-          case Pratica::STATUS_WITHDRAW:
-          case Pratica::STATUS_REVOKED:
-            // Cancel meeting
-            foreach ($data->getMeetings() as $meeting) {
-              if (in_array($meeting->getStatus(), [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING]) && ($meeting->getFromTime() > new \DateTime())) {
-                $meeting->setStatus(Meeting::STATUS_CANCELLED);
-              }
-            }
-            break;
-          case Pratica::STATUS_PAYMENT_PENDING:
-            // Increment draft duration
-            foreach ($linkedMeetings as $meeting) {
-              if ($meeting->getStatus() == Meeting::STATUS_DRAFT) {
-                $currentExpiration = clone $meeting->getDraftExpiration() ?? new \DateTime();
-                $meeting->setDraftExpiration($currentExpiration->modify('+' . ($meeting->getCalendar()->getDraftsDurationIncrement() ?? Calendar::DEFAULT_DRAFT_INCREMENT) . 'seconds'));
-              }
-            }
-            break;
-          case Pratica::STATUS_PAYMENT_ERROR:
-          case Pratica::STATUS_CANCELLED:
-            // Refuse meeting
-            foreach ($data->getMeetings() as $meeting) {
-              if (in_array($meeting->getStatus(), [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING]) && ($meeting->getFromTime() > new \DateTime())) {
-                $meeting->setStatus(Meeting::STATUS_REFUSED);
-              }
-            }
-            break;
-          default:
-            // do nothing
-        }
-        try {
+      // Application's status change actions
+      switch ($status) {
+        case Pratica::STATUS_PRE_SUBMIT:
+          // link drafts to application
           foreach ($linkedMeetings as $meeting) {
-            $this->em->persist($meeting);
+            if ($meeting->getStatus() === Meeting::STATUS_DRAFT) {
+              $data->addMeeting($meeting);
+            }
           }
-          $this->em->flush();
-          return $_meeting;
-        } catch (\Exception $e) {
-          $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error') . ' - ' . $e->getMessage());
-          return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
+          break;
+        case Pratica::STATUS_WITHDRAW:
+        case Pratica::STATUS_REVOKED:
+          // Cancel meeting
+          foreach ($linkedMeetings as $meeting) {
+            if (in_array($meeting->getStatus(), [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING]) && ($meeting->getFromTime() > new \DateTime())) {
+              $meeting->setStatus(Meeting::STATUS_CANCELLED);
+            }
+          }
+          break;
+        case Pratica::STATUS_PAYMENT_PENDING:
+          // Increment draft duration
+          foreach ($linkedMeetings as $meeting) {
+            if ($meeting->getStatus() == Meeting::STATUS_DRAFT) {
+              $currentExpiration = clone $meeting->getDraftExpiration() ?? new \DateTime();
+              $meeting->setDraftExpiration($currentExpiration->modify('+' . ($meeting->getCalendar()->getDraftsDurationIncrement() ?? Calendar::DEFAULT_DRAFT_INCREMENT) . 'seconds'));
+            }
+          }
+          break;
+        case Pratica::STATUS_PAYMENT_ERROR:
+        case Pratica::STATUS_CANCELLED:
+          // Refuse meeting
+          foreach ($linkedMeetings as $meeting) {
+            if (in_array($meeting->getStatus(), [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING]) && ($meeting->getFromTime() > new \DateTime())) {
+              $meeting->setStatus(Meeting::STATUS_REFUSED);
+            }
+          }
+          break;
+        case Pratica::STATUS_COMPLETE:
+          // Approve pending meetings
+          foreach ($linkedMeetings as $meeting) {
+            if ($meeting->getStatus() == Meeting::STATUS_PENDING) {
+              $meeting->setStatus(Meeting::STATUS_APPROVED);
+            }
+          }
+          break;
+        default:
+          // do nothing
+      }
+      try {
+        foreach ($linkedMeetings as $meeting) {
+          $this->em->persist($meeting);
         }
+        $this->em->flush();
+        return $_meeting;
+      } catch (\Exception $e) {
+        $this->logger->error($this->translator->trans('backoffice.integration.calendars.save_meeting_error') . ' - ' . $e->getMessage());
+        return ['error' => $this->translator->trans('backoffice.integration.calendars.save_meeting_error')];
       }
     }
     return [];

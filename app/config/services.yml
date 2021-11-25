@@ -290,12 +290,7 @@ services:
     tags: [ 'app.backoffice' ]
 
   AppBundle\BackOffice\CalendarsBackOffice:
-    arguments:
-      - '@doctrine.orm.entity_manager'
-      - '@ocsdc.instance_service'
-      - '@ocsdc.meeting_service'
-      - "@translator"
-      - "@logger"
+    autowire: true
     public: true
     tags: [ 'app.backoffice' ]
 
