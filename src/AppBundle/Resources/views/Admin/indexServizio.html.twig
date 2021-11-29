@@ -69,7 +69,7 @@
                     <a href="{{ path('admin_service_group_edit', {'id': item.serviceGroup.id}) }}">{{ item.serviceGroup.name }}</a>
                     <i class="fa fa-caret-right px-2" aria-hidden="true"></i>
                   {% endif %}
-                  <a class="" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">{{ item.name }}</a>
+                  <a class="" href="{{ path('admin_servizio_edit', { 'id': item.id }) }}">{{ item.name }}</a>
                 </td>
                 <td>
                   {% if item.sharedWithGroup %}
@@ -117,42 +117,42 @@
                       <div class="link-list-wrapper">
                         <ul class="link-list">
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id }) }}">
                               <span class="text-primary"><i class="fa fa-file-o fa-lg"></i> Dati generali</span>
                             </a>
                           </li>
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'card' }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'card' }) }}">
                               <span class="text-primary"><i class="fa fa-file-text-o fa-lg"></i> Scheda</span>
                             </a>
                           </li>
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'formio' }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'formio' }) }}">
                               <span class="text-primary"><i class="fa fa-server fa-lg"></i> Modulo</span>
                             </a>
                           </li>
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'messages' }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'messages' }) }}">
                               <span class="text-primary"><i class="fa fa-envelope-o fa-lg"></i> Messaggi</span>
                             </a>
                           </li>
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'app-io' }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'app-io' }) }}">
                               <span class="text-primary"><i class="fa fa-bullhorn fa-lg"></i> App IO</span>
                             </a>
                           </li>
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'payments' }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'payments' }) }}">
                               <span class="text-primary"><i class="fa fa-credit-card fa-lg"></i> Pagamenti</span>
                             </a>
                           </li>
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'backoffices' }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'backoffices' }) }}">
                               <span class="text-primary"><i class="fa fa-cogs fa-lg"></i> Integrazioni</span>
                             </a>
                           </li>
                           <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'servizio': item.id, 'step': 'protocol' }) }}">
+                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'protocol' }) }}">
                               <span class="text-primary"><i class="fa fa-folder-open-o fa-lg"></i> Protocollo</span>
                             </a>
                           </li>

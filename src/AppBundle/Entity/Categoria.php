@@ -93,9 +93,16 @@ class Categoria
     if (!$this->id) {
       $this->id = Uuid::uuid4();
     }
+    $this->children = new ArrayCollection();
     $this->services = new ArrayCollection();
     $this->servicesGroup = new ArrayCollection();
   }
+
+  public function __toString()
+  {
+    return $this->getId();
+  }
+
 
   /**
    * @return mixed
@@ -238,4 +245,11 @@ class Categoria
     $this->servicesGroup = $servicesGroup;
   }
 
+  /**
+   * @return bool
+   */
+  public function hasRelations(): bool
+  {
+    return $this->getChildren()->count() > 0 || $this->getServices()->count() > 0 || $this->getServicesGroup()->count() > 0;
+  }
 }

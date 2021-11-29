@@ -1,11 +1,11 @@
 {% set text_area_limit = 30 %}
 {% set text_limit = 100 %}
 
-<article class="card-wrapper card-space">
+<article class="card-wrapper card-space topic">
   <div class="card card-bg rounded shadow">
     <div class="card-body">
-      <div class="clearfix pb-4">
-        <svg class="icon align-text-bottom">
+      <div class="clearfix pb-4 d-flex">
+        <svg class="icon mt-1 mr-1">
           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
         </svg>
         <a href="{{ path('category_show', {'slug': item.slug}) }}">

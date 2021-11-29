@@ -539,8 +539,8 @@ class AdminController extends Controller
   }
 
   /**
-   * @Route("/servizio/{servizio}/new", name="admin_servizio_edit")
-   * @ParamConverter("servizio", class="AppBundle:Servizio")
+   * @Route("/servizio/{id}/new", name="admin_servizio_edit")
+   * @ParamConverter("id", class="AppBundle:Servizio")
    * @param Servizio $servizio
    * @param Request $request
    * @return Response
@@ -637,9 +637,9 @@ class AdminController extends Controller
         $manager->flush();
 
         if ($request->request->get('save') === 'next') {
-          return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId(), 'step' => $nexStep]);
+          return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId(), 'step' => $nexStep]);
         }
-        return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId(), 'step' => $currentStep]);
+        return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId(), 'step' => $currentStep]);
       }
     }
 
@@ -735,7 +735,7 @@ class AdminController extends Controller
     $this->getDoctrine()->getManager()->persist($servizio);
     $this->getDoctrine()->getManager()->flush();
 
-    return $this->redirectToRoute('admin_servizio_edit', ['servizio' => $servizio->getId()]);
+    return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId()]);
 
   }
 

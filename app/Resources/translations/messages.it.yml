@@ -1940,7 +1940,15 @@ categories:
   all: 'Tutte le categorie'
   parent: 'Categoria genitore'
   delete_success: 'Categoria eliminata correttamente'
-  delete_error: 'Impossibile eliminare la categoria, ci sono dei servizi collegati'
+  delete_service_error: 'Impossibile eliminare la categoria, ci sono %count% servizi collegati'
+  delete_service_group_error: 'Impossibile eliminare la categoria, ci sono %count% gruppi di servizi collegati'
+  delete_subcategories_error: 'Impossibile eliminare la categoria, ci sono %count% sottocategorie collegate'
+  related_title: 'Oggetti relazionati alla categoria'
+  related_type: 'Tipo'
+  service_remove_success: 'Oggetto rimosso correttamente'
+  service_remove_error: "Si è verificato un errore durante la rimozione dell'oggetto"
+  error_reference_parent: 'La categoria non può avere come padre se stessa!'
+  error_reference_children: 'La categoria non può avere come padre un elemento figlio!'
 gateway:
   add: Aggiungi metodo di pagamento
   name: Nome

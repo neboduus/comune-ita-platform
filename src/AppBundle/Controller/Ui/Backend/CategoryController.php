@@ -3,6 +3,10 @@
 namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Entity\Categoria;
+use AppBundle\Entity\ServiceGroup;
+use AppBundle\Entity\Servizio;
+use AppBundle\Services\Manager\CategoryManager;
+use AppBundle\Services\Manager\PraticaManager;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,15 +32,22 @@ class CategoryController extends Controller
    * @var TranslatorInterface
    */
   private $translator;
+  /**
+   * @var CategoryManager
+   */
+  private $categoryManager;
+
 
   /**
    * @param EntityManagerInterface $entityManager
    * @param TranslatorInterface $translator
+   * @param CategoryManager $categoryManager
    */
-  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator, CategoryManager $categoryManager)
   {
     $this->entityManager = $entityManager;
     $this->translator = $translator;
+    $this->categoryManager = $categoryManager;
   }
 
 
@@ -48,10 +59,10 @@ class CategoryController extends Controller
   public function indexCategoriesAction()
   {
 
-    $items = $this->entityManager->getRepository('AppBundle:Categoria')->findBy([], ['name' => 'asc']);
+    $items = $this->categoryManager->getCategoryTree();
 
-    return $this->render( '@App/Admin/indexCategory.html.twig', [
-      'user'  => $this->getUser(),
+    return $this->render('@App/Admin/indexCategory.html.twig', [
+      'user' => $this->getUser(),
       'items' => $items
     ]);
   }
@@ -76,8 +87,8 @@ class CategoryController extends Controller
       return $this->redirectToRoute('admin_category_index');
     }
 
-    return $this->render( '@App/Admin/editCategory.html.twig', [
-      'user'  => $this->getUser(),
+    return $this->render('@App/Admin/editCategory.html.twig', [
+      'user' => $this->getUser(),
       'item' => $item,
       'form' => $form->createView(),
     ]);
@@ -99,9 +110,9 @@ class CategoryController extends Controller
       $this->entityManager->flush();
     }
 
-    return $this->render( '@App/Admin/editCategory.html.twig',
+    return $this->render('@App/Admin/editCategory.html.twig',
       [
-        'user'  => $this->getUser(),
+        'user' => $this->getUser(),
         'item' => $item,
         'form' => $form->createView()
       ]);
@@ -114,15 +125,70 @@ class CategoryController extends Controller
   public function deleteCategoryAction(Categoria $item)
   {
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($item);
-      $em->flush();
+      $this->entityManager->remove($item);
+      $this->entityManager->flush();
       $this->addFlash('feedback', $this->translator->trans('categories.delete_success'));
       return $this->redirectToRoute('admin_category_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', $this->translator->trans('categories.delete_error'));
+      if ($item->getServices()->count() > 0) {
+        $this->addFlash('warning', $this->translator->trans('categories.delete_service_error', ['%count%' => $item->getServices()->count()]));
+      } elseif ($item->getServicesGroup()->count() > 0) {
+        $this->addFlash('warning', $this->translator->trans('categories.delete_service_group_error', ['%count%' => $item->getServicesGroup()->count()]));
+      } elseif ($item->getChildren()->count() > 0) {
+        $this->addFlash('warning', $this->translator->trans('categories.delete_subcategories_error', ['%count%' => $item->getChildren()->count()]));
+      } else {
+        $this->addFlash('warning', $this->translator->trans('categories.service_remove_error', ['%count%' => $item->getChildren()->count()]));
+      }
       return $this->redirectToRoute('admin_category_index');
+    }
+  }
+
+  /**
+   * Removes service from Category.
+   * @Route("/{id}/remove-service", name="admin_category_remove_service")
+   * @param Request $request
+   * @param Servizio $service
+   * @return RedirectResponse
+   */
+  public function removeServiceFromCategory(Servizio $service)
+  {
+    /** @var Categoria $category */
+    $category = $service->getTopics();
+    try {
+      $service->setTopics(null);
+      $this->entityManager->persist($service);
+      $this->entityManager->flush();
+      $this->addFlash('feedback', $this->translator->trans('categories.service_remove_success'));
+      return $this->redirectToRoute('admin_category_edit', array('id' => $category->getId()));
+
+    } catch (\Exception $exception) {
+      $this->addFlash('warning', $this->translator->trans('categories.service_remove_error'));
+      return $this->redirectToRoute('admin_category_edit', array('id' => $category->getId()));
+    }
+  }
+
+  /**
+   * Removes service from Category.
+   * @Route("/{id}/remove-service-group", name="admin_category_remove_service_group")
+   * @param Request $request
+   * @param ServiceGroup $service
+   * @return RedirectResponse
+   */
+  public function removeServiceGroupFromCategory(ServiceGroup $service)
+  {
+    /** @var Categoria $category */
+    $category = $service->getTopics();
+    try {
+      $service->setTopics(null);
+      $this->entityManager->persist($service);
+      $this->entityManager->flush();
+      $this->addFlash('feedback', $this->translator->trans('categories.service_remove_success'));
+      return $this->redirectToRoute('admin_category_edit', array('id' => $category->getId()));
+
+    } catch (\Exception $exception) {
+      $this->addFlash('warning', $this->translator->trans('categories.service_remove_error'));
+      return $this->redirectToRoute('admin_category_edit', array('id' => $category->getId()));
     }
   }
 }

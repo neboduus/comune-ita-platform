@@ -1,0 +1,21 @@
+<div class="dropdown dropdown-actions">
+  <button class="btn btn-link btn-dropdown dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <svg class="icon-expand icon align-middle icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <div class="link-list-wrapper">
+      <ul class="link-list">
+        <li>
+          <a class="list-item left-icon" target="_blank" href="{{ path(edit_route, { 'id': item.id }) }}">
+            <span class="text-primary"><i class="fa fa-pencil fa-lg"></i> {{ 'modifica'|trans }}</span>
+          </a>
+        </li>
+        <li>
+          <a class="list-item left-icon" onclick="return confirm('{{ 'general.alert_elimina'|trans }}');" href="{{ path(delete_route, { 'id': item.id }) }}">
+            <span class="text-danger"><i class="fa fa-trash-o fa-lg"></i> {{ 'elimina'|trans }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
