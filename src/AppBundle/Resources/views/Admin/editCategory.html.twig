@@ -1,22 +1,69 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% block main_content %}
-  <section id="intro" class="container px-4 my-4">
+  <section class="container my-4">
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
-        <h2>{{ 'modifica' | trans() }} {% if item.name %} - {{ item.name }}{% endif %}</h2>
+        <h1>{{ 'modifica' | trans() }} {% if item.name %} - {{ item.name }}{% endif %}</h1>
       </div>
-      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="row">
+      <div class="col-12">
         {{ form_start(form) }}
         {{ form_widget(form) }}
-        <div class="row">
-          <div class="col-md-12 py-lg-2 text-left">
-            <input class="btn btn-primary mr-1" type="submit" value="Salva"/>
-            <a class="btn btn-100 mr-1" href="{{ path('admin_category_index') }}">{{ 'webhook.back_to_list' | trans() }}</a>
-          </div>
+        <div class="form-row text-left">
+          <input class="btn btn-primary mr-1" type="submit" value="Salva"/>
+          <a class="btn btn-100 mr-1"
+             href="{{ path('admin_category_index') }}">{{ 'webhook.back_to_list' | trans() }}</a>
         </div>
         {{ form_end(form) }}
       </div>
     </div>
   </section>
+
+  {% if item.services.count > 0 %}
+    <section class="container-fluid py-5 mt-5 bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="col-12">
+              <h3>{{ 'categories.related_title' | trans() }}</h3>
+              <table class="table table-sm table-condensed table-striped mt-3 bg-white">
+                <thead>
+                <tr>
+                  <th class="w-75">{{ 'gruppo_di_servizi.nome' | trans() }}</th>
+                  <th>{{ 'categories.related_type' | trans() }}</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for service in item.services %}
+                  <tr>
+                    <td>{{ service.name }}</td>
+                    <td>Servizio</td>
+                    <td class="text-right">
+                      {{ include('@App/Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_servizio_edit', 'delete_route': 'admin_category_remove_service', item: service}) }}
+                    </td>
+                  </tr>
+                {% endfor %}
+                {% for service in item.servicesGroup %}
+                  <tr>
+                    <td>{{ service.name }}</td>
+                    <td>Gruppo di servizi</td>
+                    <td class="text-right">
+                      {{ include('@App/Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_service_group_edit', 'delete_route': 'admin_category_remove_service_group', item: service}) }}
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
 {% endblock %}

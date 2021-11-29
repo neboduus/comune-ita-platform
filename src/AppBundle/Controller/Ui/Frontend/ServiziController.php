@@ -16,6 +16,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Entity\Repository\CategoryRepository;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -368,15 +369,26 @@ class ServiziController extends Controller
 
   private function getServicesByCategories(Request $request)
   {
+    $categoryRepository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
+
     /** @var ServizioRepository $serviziRepository */
     $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
 
     /** @var ServiceGroupRepository $servicesGroupRepository */
     $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
 
+    $topics = [];
+    $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);
+    /** @var Categoria $c */
+    foreach ($categories as $c) {
+      if ($c->getServices()->count() > 0 || $c->getServicesGroup()->count() > 0 || $c->getChildren()->count() > 0) {
+        $topics[$c->getSlug() . '-' . $c->getId()]['type'] = 'topic';
+        $topics[$c->getSlug() . '-' . $c->getId()]['object'] = $c;
+      }
+    }
+
     $servizi = $serviziRepository->findAvailable();
     $servicesGroup = $servicesGroupRepository->findByCriteria();
-    $topics = [];
 
     /** @var Servizio $item */
     foreach ($servizi as $item) {

@@ -19,7 +19,7 @@
       <div class="col-12 col-md-3 col-xl-2 p-0">
         <div class="nav nav-tabs nav-tabs-vertical nav-tabs-vertical-background overflow-hidden pt-4" id="nav-vertical-tab-bg" role="tablist" aria-orientation="vertical">
           {% for k, v in steps %}
-            <a class="py-3 nav-link {% if current_step == k %}active{% endif %}" id="{{ k }}-tab" href="{{ path('admin_servizio_edit', {'servizio': servizio.id, 'step': k}) }}">
+            <a class="py-3 nav-link {% if current_step == k %}active{% endif %}" id="{{ k }}-tab" href="{{ path('admin_servizio_edit', {'id': servizio.id, 'step': k}) }}">
               {{ v.label }}
               <i class="fa {{ v.icon }}"aria-hidden="true"></i>
             </a>

@@ -53,7 +53,7 @@
 
       <div class="mt-3 text-right">
         <a href="{{ path('admin_servizio_index') }}" class="btn btn-outline-secondary">{{ 'annulla'|trans }}</a>
-        <a href="{{ path('admin_servizio_edit', {'servizio': servizio.id, 'step': 'formio'}) }}"
+        <a href="{{ path('admin_servizio_edit', {'id': servizio.id, 'step': 'formio'}) }}"
            class="btn btn-secondary">{{ 'avanti'|trans }}</a>
       </div>
     </div>

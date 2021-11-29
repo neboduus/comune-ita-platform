@@ -193,6 +193,11 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Admin\CategoryType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
   AppBundle\Form\ApplicationMessageType:
     arguments: [ '@doctrine.orm.entity_manager' ]
     tags:
@@ -255,6 +260,9 @@ services:
       - { name: form.type }
 
   AppBundle\Services\Manager\PraticaManager:
+    autowire: true
+
+  AppBundle\Services\Manager\CategoryManager:
     autowire: true
 
   ocsdc.backoffice_manager:
