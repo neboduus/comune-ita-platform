@@ -78,9 +78,12 @@ class ServiceTableType implements DataTableTypeInterface
 
             $qb
               ->andWhere('servizio IN (:allowedServices)')
-              ->setParameter('allowedServices', $user->getServiziAbilitati());
+              ->setParameter('allowedServices', $user->getServiziAbilitati())
+              ->andWhere('servizio.status IN (:availableStatuses) OR (servizio.status = :statusScheduled AND servizio.scheduledFrom <= :now AND servizio.scheduledTo >= :now)')
+              ->setParameter('availableStatuses', array_values([Servizio::STATUS_AVAILABLE, Servizio::STATUS_PRIVATE]))
+              ->setParameter('statusScheduled', Servizio::STATUS_SCHEDULED)
+              ->setParameter('now', new \DateTime());
           }
-
         },
       ])
       ->addOrderBy('name', DataTable::SORT_ASCENDING);
