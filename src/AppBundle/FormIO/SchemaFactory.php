@@ -122,6 +122,8 @@ class SchemaFactory implements SchemaFactoryInterface
         case 'form':
         case 'panel':
         case 'column':
+        case 'fieldset':
+        case 'well':
           if ($component['type'] == 'form' && isset($component['form'])) {
             if (isset($component['key'])) {
               $prefixKey .= $component['key'].'.';
