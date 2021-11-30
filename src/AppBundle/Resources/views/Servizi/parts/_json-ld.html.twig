@@ -16,7 +16,9 @@
           "availableLanguage": "it",
           "serviceUrl": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
         },
-        "category": "{{ servizio.topics.name }}",
+        {% if servizio.topics %}
+          "category": "{{ servizio.topics.name }}",
+        {% endif %}
         "logo": "{{ logo }}",
         "provider": {
           "@type": "Organization",

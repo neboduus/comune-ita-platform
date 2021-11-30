@@ -338,7 +338,6 @@ class ServicesGroupAPIController extends AbstractFOSRestController
 
       return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -494,21 +493,21 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * @param FormInterface $form
    * @return array
    */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $message = $error->getMessage() . ': '. $error->getOrigin()->getName() . ' - ';
-      $message .= is_array($error->getOrigin()->getViewData()) ? implode(', ', $error->getOrigin()->getViewData()) : $error->getOrigin()->getViewData();
-      $errors[] = $message;
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
+    private function getErrorsFromForm(FormInterface $form)
+    {
+      $errors = array();
+      foreach ($form->getErrors() as $error) {
+        $message = $error->getMessage() . ': '. $error->getOrigin()->getName() . ' - ';
+        //$message .= is_array($error->getOrigin()->getViewData()) ? implode(', ', $error->getOrigin()->getViewData()) : $error->getOrigin()->getViewData();
+        $errors[] = $message;
+      }
+      foreach ($form->all() as $childForm) {
+        if ($childForm instanceof FormInterface) {
+          if ($childErrors = $this->getErrorsFromForm($childForm)) {
+            $errors[] = $childErrors;
+          }
         }
       }
+      return $errors;
     }
-    return $errors;
-  }
 }

@@ -945,26 +945,6 @@ class Service
     $dto->slug = $servizio->getSlug();
     $dto->tenant = $servizio->getEnteId();
 
-    /*if ($servizio->isSharedWithGroup()) {
-      $dto->topics = $servizio->getServiceGroup()->getTopics() ? $servizio->getServiceGroup()->getTopics()->getSlug() : null;
-      $dto->topics_id = $servizio->getServiceGroup()->getTopics() ? $servizio->getServiceGroup()->getTopics()->getId() : null;
-      $dto->description = $servizio->getServiceGroup()->getDescription() ?? '';
-      $dto->howto = $servizio->getServiceGroup()->getHowto();
-      $dto->who = $servizio->getServiceGroup()->getWho() ?? '';
-      $dto->specialCases = $servizio->getServiceGroup()->getSpecialCases() ?? '';
-      $dto->moreInfo = $servizio->getServiceGroup()->getMoreInfo() ?? '';
-      $dto->coverage = $servizio->getServiceGroup()->getCoverage();
-    } else {
-      $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getSlug() : null;
-      $dto->topics_id = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
-      $dto->description = $servizio->getDescription() ?? '';
-      $dto->howto = $servizio->getHowto();
-      $dto->who = $servizio->getWho() ?? '';
-      $dto->specialCases = $servizio->getSpecialCases() ?? '';
-      $dto->moreInfo = $servizio->getMoreInfo() ?? '';
-      $dto->coverage = $servizio->getCoverage();
-    }*/
-
     $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getSlug() : null;
     $dto->topics_id = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
     $dto->description = $servizio->getDescription() ?? '';
@@ -999,21 +979,6 @@ class Service
     $dto->recipients = [];
     $dto->recipientsId = [];
 
-    /*if ($servizio->isSharedWithGroup()) {
-      if ($servizio->getServiceGroup()->getRecipients()) {
-        foreach ($servizio->getServiceGroup()->getRecipients() as $r) {
-          $dto->recipients[]= $r->getName();
-          $dto->recipientsId[]= $r->getId();
-        }
-      }
-    } else {
-      if ($servizio->getRecipients()) {
-        foreach ($servizio->getRecipients() as $r) {
-          $dto->recipients[]= $r->getName();
-          $dto->recipientsId[]= $r->getId();
-        }
-      }
-    }*/
     if ($servizio->getRecipients()) {
       foreach ($servizio->getRecipients() as $r) {
         $dto->recipients[]= $r->getName();
