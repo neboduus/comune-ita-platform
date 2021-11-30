@@ -9,6 +9,9 @@ use Twig\TwigFunction;
 
 class AppExtension  extends AbstractExtension
 {
+
+  const ABSTRACT_LENGTH = 200;
+
   public function getFunctions(): array
   {
     return [
@@ -23,12 +26,13 @@ class AppExtension  extends AbstractExtension
   {
     return [
       new TwigFilter('cleanMarkup', [$this, 'cleanMarkup']),
+      new TwigFilter('abstract', [$this, 'abstract']),
     ];
   }
 
   /**
    * Clean markup.
-   * @param string $string
+   * @param string|null $string $string
    * @return string
    */
   public function cleanMarkup(?string $string): string
@@ -43,6 +47,39 @@ class AppExtension  extends AbstractExtension
     $string = preg_replace('/(<[^>]+) style=".*?"/i', '$1', $string);
 
     return $string;
+  }
+
+  /**
+   * Clean markup.
+   * @param string|null $string $string
+   * @return string
+   */
+  public function abstract(?string $string): string
+  {
+    $abstract = '';
+    if ($string === null) {
+      return $abstract;
+    }
+
+    $string = strip_tags($string, '<p>');
+    $string = preg_replace("/<([a-z][a-z0-9]*)[^>]*?(\/?)>/si",'<$1$2>', $string);
+    $string = html_entity_decode($string);
+
+    if (preg_match('/<p>(.*?)<\/p>/i', $string, $paragraphs)) {
+      $abstract = $paragraphs[1];
+    } else {
+      $abstract = $string;
+    }
+
+    if (strlen($abstract) > self::ABSTRACT_LENGTH) {
+      $abstract = \mb_substr($abstract, 0, self::ABSTRACT_LENGTH);
+      $abstractParts = explode(' ', $abstract);
+      array_pop($abstractParts);
+      $abstract = implode(' ', $abstractParts) . '...';
+    }
+
+    return $abstract;
+
   }
 
   /**
