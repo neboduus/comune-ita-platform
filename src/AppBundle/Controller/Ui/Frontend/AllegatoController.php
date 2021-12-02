@@ -154,6 +154,7 @@ class AllegatoController extends Controller
 
       $fileName = $request->request->get('name');
       $description = $request->get('description', Allegato::DEFAULT_DESCRIPTION);
+      $mimeType = $request->get('mime_type', Allegato::DEFAULT_MIME_TYPE);
       $protocolRequired = $request->get('protocol_required', true);
 
       $allegato = new Allegato();
@@ -162,17 +163,14 @@ class AllegatoController extends Controller
         $allegato->setOwner($user);
       }
 
-      // a-36851661-ca5a-4d67-ac8c-cfa5b1d374af.pdf
-      $allegato->setFilename($fileName);
-      // a.pdf
       $allegato->setOriginalFilename($fileName);
-
       $allegato->setDescription($description);
-
+      $allegato->setMimeType($mimeType);
       $expireDate = new DateTime(FileService::PRESIGNED_PUT_EXPIRE_STRING);
       $allegato->setExpireDate($expireDate);
-
       $allegato->setProtocolRequired($protocolRequired);
+
+      $allegato->setFilename($this->fileService->getName($allegato));
 
       $path = $this->fileService->getPath($allegato);
       $filePath = $path . DIRECTORY_SEPARATOR . $fileName;
@@ -601,12 +599,28 @@ class AllegatoController extends Controller
    * @Route("/pratiche/allegati/{allegato}", name="allegati_download_cpsuser")
    * @Route("/operatori/allegati/{allegato}", name="allegati_download_operatore")
    * @Route("/operatori/risposta/{allegato}", name="risposta_download_operatore")
+   * @Method("GET")
    * @return Response
    */
   public function allegatoDownloadAction(Allegato $allegato)
   {
     $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
     return $this->fileService->download($allegato);
+  }
+
+  /**
+   * @param Allegato $allegato
+   * @Route("/allegati/{allegato}", name="allegati_delete")
+   * @Method("DELETE")
+   * @return Response
+   */
+  public function allegatoDeleteAction(Allegato $allegato)
+  {
+    $this->denyAccessUnlessGranted(AttachmentVoter::DELETE, $allegato);
+    $this->entityManager->getRepository('AppBundle:Allegato');
+    $this->entityManager->remove($allegato);
+    $this->entityManager->flush();
+    return new JsonResponse(null, Response::HTTP_NO_CONTENT);
   }
 
   /**
