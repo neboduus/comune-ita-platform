@@ -25,6 +25,7 @@ var _default = [{
   tooltip: 'Which storage to save the files in.',
   valueProperty: 'value',
   dataSrc: 'custom',
+  hidden: true,
   data: {
     custom: function custom() {
       return [{
@@ -40,15 +41,9 @@ var _default = [{
   key: 'url',
   label: 'Url',
   weight: 10,
-  placeholder: 'Enter the url to post the files to.',
-  tooltip: "See <a href='https://github.com/danialfarid/ng-file-upload#server-side' target='_blank'>https://github.com/danialfarid/ng-file-upload#server-side</a> for how to set up the server.",
-  conditional: {
-    json: {
-      '===': [{
-        var: 'data.storage'
-      }, 'url']
-    }
-  }
+  placeholder: 'Enter the url to post the files to',
+  hidden: true,
+  value: 'url'
 },
   {
     type: 'checkbox',
