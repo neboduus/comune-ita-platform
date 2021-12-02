@@ -21,6 +21,7 @@ class AttachmentVoter extends Voter
   const DOWNLOAD = 'download';
   const EDIT = 'edit';
   const UPLOAD = 'upload';
+  const DELETE = 'delete';
 
 
   /** @var Security  */
@@ -54,7 +55,8 @@ class AttachmentVoter extends Voter
     if (!in_array($attribute, [
       self::DOWNLOAD,
       self::EDIT,
-      self::UPLOAD
+      self::UPLOAD,
+      self::DELETE
     ])) {
       return false;
     }
@@ -85,6 +87,9 @@ class AttachmentVoter extends Voter
         return $this->canEdit($attachment, $user);
       case self::DOWNLOAD:
         return $this->canDownload($attachment, $user);
+      case self::DELETE:
+        return $this->canDelete($attachment, $user);
+
     }
 
     throw new \LogicException('This code should not be reached!');
@@ -142,6 +147,25 @@ class AttachmentVoter extends Voter
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       return true;
     }
+
+    if ($attachment->getOwner() === $user) {
+      return true;
+    }
+
+    if ($this->session->isStarted() && $attachment->getHash() === hash('sha256', $this->session->getId())) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * @param Allegato $attachment
+   * @param User $user
+   * @return bool
+   */
+  private function canDelete(Allegato $attachment, User $user)
+  {
 
     if ($attachment->getOwner() === $user) {
       return true;

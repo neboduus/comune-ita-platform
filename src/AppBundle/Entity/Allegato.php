@@ -36,6 +36,7 @@ class Allegato implements AllegatoInterface
 
   const TYPE_DEFAULT = 'default';
   const DEFAULT_DESCRIPTION = 'Allegato';
+  const DEFAULT_MIME_TYPE = 'application/octet-stream';
 
   /**
    * @var string
@@ -51,7 +52,7 @@ class Allegato implements AllegatoInterface
 
   /**
    * @var File
-   * @Vich\UploadableField(mapping="allegato", fileNameProperty="filename", size="fileSize")
+   * @Vich\UploadableField(mapping="allegato", fileNameProperty="filename", size="fileSize", mimeType="mimeType")
    */
   private $file;
 
@@ -130,6 +131,12 @@ class Allegato implements AllegatoInterface
    * @ORM\Column(type="datetime", nullable=true)
    */
   protected $expireDate;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true)
+   */
+  private $mimeType;
 
   /**
    * Allegato constructor.
@@ -465,6 +472,22 @@ class Allegato implements AllegatoInterface
   public function setExpireDate(?DateTime $expireDate)
   {
     $this->expireDate = $expireDate;
+  }
+
+  /**
+   * @return string
+   */
+  public function getMimeType(): ?string
+  {
+    return $this->mimeType;
+  }
+
+  /**
+   * @param string $mimeType
+   */
+  public function setMimeType(?string $mimeType): void
+  {
+    $this->mimeType = $mimeType;
   }
 
 

@@ -81,6 +81,23 @@ class FileService
 
   /**
    * @param Allegato $allegato
+   * @return string
+   */
+  public function getName(Allegato $allegato)
+  {
+    $name = \str_replace('.', '', \uniqid('', true));
+    $fileNameParts = explode('.', $allegato->getOriginalFilename());
+    $extension = end($fileNameParts);
+
+    if (\is_string($extension) && '' !== $extension) {
+      $name = \sprintf('%s.%s', $name, $extension);
+    }
+
+    return $name;
+  }
+
+  /**
+   * @param Allegato $allegato
    * @param bool $absolute
    * @return string
    */
@@ -213,7 +230,7 @@ class FileService
     $command = $this->s3Client->getCommand('GetObject', [
       'Bucket' => $this->s3Bucket,
       'Key' => $this->getFilenameWithPath($allegato, true),
-      'ResponseContentType' => $this->getMimeType($allegato),
+      'ResponseContentType' => $allegato->getMimeType() ?? $this->getMimeType($allegato),
       'ResponseContentDisposition' => $disposition,
     ]);
     $request = $this->s3Client->createPresignedRequest($command, self::PRESIGNED_GET_EXPIRE_STRING);
@@ -226,6 +243,7 @@ class FileService
     $command = $this->s3Client->getCommand('PutObject', [
       'Bucket' => $this->s3Bucket,
       'Key' => $this->getFilenameWithPath($allegato, true),
+      'Content-Type' => $allegato->getMimeType() ?? Allegato::DEFAULT_MIME_TYPE
     ]);
     $request = $this->s3Client->createPresignedRequest($command, self::PRESIGNED_PUT_EXPIRE_STRING)->withMethod('PUT');
 

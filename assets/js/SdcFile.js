@@ -221,7 +221,9 @@ export default class SdcFile extends File {
                   console.log('file progress', fileUpload.progress)
                   fileUpload.status = 'progress';
                   delete fileUpload.message;
+                  this.fileDropHidden = false;
                   this.redraw();
+                  this.triggerChange();
                 },
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
@@ -258,21 +260,27 @@ export default class SdcFile extends File {
                   fileUpload.status = 'error';
                   fileUpload.message = err;
                   delete fileUpload.progress;
+                  this.fileDropHidden = false;
                   this.redraw();
+                  this.triggerChange();
                 })
               }).catch(err => {
                 console.error('error put aws', err)
                 fileUpload.status = 'error';
                 fileUpload.message = err;
                 delete fileUpload.progress;
+                this.fileDropHidden = false;
                 this.redraw();
+                this.triggerChange();
               })
             })
             .catch((response) => {
               fileUpload.status = 'error';
               fileUpload.message = response;
               delete fileUpload.progress;
+              this.fileDropHidden = false;
               this.redraw();
+              this.triggerChange();
             });
         }
       });
@@ -290,5 +298,4 @@ export default class SdcFile extends File {
       reader.readAsArrayBuffer(file)
     })
   }
-
 }
