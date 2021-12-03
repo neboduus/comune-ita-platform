@@ -5,6 +5,8 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Dto\User;
 use AppBundle\Security\Voters\UserVoter;
 use AppBundle\Services\InstanceService;
+use AppBundle\Utils\FormUtils;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
@@ -31,22 +33,20 @@ class UsersAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  private $em;
-  private $is;
-  /**
-   * @var TranslatorInterface $translator
-   */
-  private $translator;
-
   /** @var LoggerInterface */
   private $logger;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param LoggerInterface $logger
+   */
+  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
   {
-    $this->translator = $translator;
-    $this->em = $em;
-    $this->is = $is;
     $this->logger = $logger;
+    $this->entityManager = $entityManager;
   }
 
   /**
@@ -73,7 +73,7 @@ class UsersAPIController extends AbstractFOSRestController
    *     description="Retrieve list of users",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=User::class))
+   *         @SWG\Items(ref=@Model(type=User::class, groups={"read"}))
    *     )
    * )
    *
@@ -88,12 +88,12 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function getUsersAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $result = [];
     $cf = $request->query->get('cf');
 
-    $qb = $this->em->createQueryBuilder()
+    $qb = $this->entityManager->createQueryBuilder()
       ->select('user')
       ->from('AppBundle:CPSUser', 'user');
 
@@ -107,8 +107,9 @@ class UsersAPIController extends AbstractFOSRestController
       ->getResult();
 
     foreach ($users as $u) {
-      $result []= User::fromEntity($u);
+      $result [] = User::fromEntity($u);
     }
+
     return $this->view($result, Response::HTTP_OK);
   }
 
@@ -127,7 +128,7 @@ class UsersAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a User",
-   *     @Model(type=User::class)
+   *     @Model(type=User::class, groups={"read"})
    * )
    *
    * @SWG\Response(
@@ -160,7 +161,17 @@ class UsersAPIController extends AbstractFOSRestController
 
     $this->denyAccessUnlessGranted(UserVoter::VIEW, $result);
 
-    return $this->view(User::fromEntity($result), Response::HTTP_OK);
+    try {
+      return $this->view(User::fromEntity($result), Response::HTTP_OK);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error',
+        'description' => $e->getMessage(),
+      ];
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**
@@ -183,7 +194,7 @@ class UsersAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=User::class)
+   *         ref=@Model(type=User::class, groups={"write"})
    *     )
    * )
    *
@@ -209,45 +220,56 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function postUserAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $userDto = new User();
     $form = $this->createForm('AppBundle\Form\UserAPIFormType', $userDto);
-    $this->processForm($request, $form);
-
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
-      $data = [
-        'type' => 'validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors
-      ];
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-
-    $em = $this->getDoctrine()->getManager();
-
-    $user = $userDto->toEntity();
-
     try {
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $user = $userDto->toEntity();
       $user->addRole('ROLE_USER')
         ->addRole('ROLE_CPS_USER')
         ->setEnabled(true)
         ->setPassword('');
 
-      $em->persist($user);
-      $em->flush();
-    } catch (\Exception $e) {
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
 
+    } catch (UniqueConstraintViolationException $e) {
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'title' => 'Duplicate user',
+        'description' => 'An user with this passed fiscal code is already present',
       ];
       $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -274,7 +296,7 @@ class UsersAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=User::class)
+   *         ref=@Model(type=User::class, groups={"write"})
    *     )
    * )
    *
@@ -319,32 +341,33 @@ class UsersAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
         'title' => 'There was a validation error',
-        'errors' => $errors
+        'errors' => $errors,
       ];
+
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $em = $this->getDoctrine()->getManager();
     $user = $userDto->toEntity($user);
 
     try {
-      $em->persist($user);
-      $em->flush();
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
     } catch (\Exception $e) {
 
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
+
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -371,7 +394,7 @@ class UsersAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=User::class)
+   *         ref=@Model(type=User::class, groups={"write"})
    *     )
    * )
    *
@@ -402,8 +425,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function patchuserAction($id, Request $request)
   {
-    $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('AppBundle:CPSUser');
+    $repository = $this->entityManager->getRepository('AppBundle:CPSUser');
     $user = $repository->find($id);
 
     if (!$user) {
@@ -417,31 +439,33 @@ class UsersAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
-        'errors' => $errors
+        'errors' => $errors,
       ];
+
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
     $user = $userDto->toEntity($user);
 
     try {
-      $em->persist($user);
-      $em->flush();
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
     } catch (\Exception $e) {
 
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
+
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -470,16 +494,13 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
+    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
     $user = $this->getDoctrine()->getRepository('AppBundle:CPSUser')->find($id);
     if ($user) {
-      // debated point: should we 404 on an unknown nickname?
-      // or should we just return a nice 204 in all cases?
-      // we're doing the latter
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($user);
-      $em->flush();
+      $this->entityManager->remove($user);
+      $this->entityManager->flush();
     }
+
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
 
@@ -495,23 +516,4 @@ class UsersAPIController extends AbstractFOSRestController
     $form->submit($data, $clearMissing);
   }
 
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-    return $errors;
-  }
 }
