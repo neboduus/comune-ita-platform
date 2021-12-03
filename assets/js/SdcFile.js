@@ -150,6 +150,7 @@ export default class SdcFile extends File {
         }
 
         this.statuses.push(fileUpload);
+        this.fileDropHidden = false;
         this.redraw();
 
         if (fileUpload.status !== 'error') {
