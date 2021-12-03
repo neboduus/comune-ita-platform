@@ -192,6 +192,7 @@ pratica:
   iter: 'Iter della pratica'
   tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
+  vai_al_pagamento: 'Vai al pagamento'
   crea_nuova_pratica: 'Crea nuova pratica'
   ritira_la_pratica: 'Annulla la richiesta'
   nuova_pratica: 'Nuova pratica: %name%'

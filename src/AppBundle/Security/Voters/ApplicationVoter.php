@@ -8,6 +8,8 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
+use AppBundle\Handlers\Servizio\ForbiddenAccessException;
+use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
@@ -21,13 +23,22 @@ class ApplicationVoter extends Voter
   const ASSIGN = 'assign';
   const ACCEPT_OR_REJECT = 'accept_or_reject';
   const WITHDRAW = 'withdraw';
+  const COMPILE = 'compile';
 
 
+  /**
+   * @var ServizioHandlerRegistry
+   */
+  private $servizioHandlerRegistry;
+  /**
+   * @var Security
+   */
   private $security;
 
-  public function __construct(Security $security)
+  public function __construct(Security $security, ServizioHandlerRegistry $servizioHandlerRegistry)
   {
     $this->security = $security;
+    $this->servizioHandlerRegistry = $servizioHandlerRegistry;
   }
 
   protected function supports($attribute, $subject)
@@ -39,7 +50,8 @@ class ApplicationVoter extends Voter
       self::SUBMIT,
       self::ASSIGN,
       self::ACCEPT_OR_REJECT,
-      self::WITHDRAW
+      self::WITHDRAW,
+      self::COMPILE
     ])) {
       return false;
     }
@@ -79,8 +91,8 @@ class ApplicationVoter extends Voter
         return $this->canAcceptOrReject($pratica, $user);
       case self::WITHDRAW:
         return $this->canWithdraw($pratica, $user);
-
-
+      case self::COMPILE:
+        return $this->canCompile($pratica, $user);
     }
 
     throw new \LogicException('This code should not be reached!');
@@ -148,5 +160,21 @@ class ApplicationVoter extends Voter
       return false;
     }
     return in_array($pratica->getStatus(),  [Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING]) && empty($pratica->getPaymentData()) && $pratica->getServizio()->isAllowWithdraw() && $pratica->getUser()->getId() == $user->getId();
+  }
+
+  private function canCompile(Pratica $pratica, User $user)
+  {
+    $canCompile = false;
+    // se la pratica è in bozza oppure in attesa di creazione del pagamento
+    if (in_array($pratica->getStatus(), [Pratica::STATUS_DRAFT, Pratica::STATUS_DRAFT_FOR_INTEGRATION]) || $pratica->needsPaymentCreation() && $pratica->getUser()->getId() == $user->getId()) {
+      $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
+      try {
+        $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
+        $canCompile = true;
+      } catch (ForbiddenAccessException $e) {
+        $canCompile = false;
+      }
+    }
+    return $canCompile;
   }
 }
