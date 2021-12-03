@@ -50,6 +50,7 @@ require("summernote/dist/summernote-bs4.css");
 require("ion-rangeslider");
 require("ion-rangeslider/css/ion.rangeSlider.css");
 require("../css/app.scss");
+require('@fortawesome/fontawesome-free/css/all.min.css')
 
 
 import Calendar from './Calendar';

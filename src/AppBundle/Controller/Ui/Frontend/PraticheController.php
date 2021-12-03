@@ -517,23 +517,11 @@ class PraticheController extends Controller
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
 
-    $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT || $pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION)
-      && $pratica->getUser()->getId() == $user->getId();
-    if ($canCompile) {
-      $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
-      try {
-        $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
-      } catch (ForbiddenAccessException $e) {
-        $canCompile = false;
-      }
-    }
-
-
     $result = [
       'pratica' => $pratica,
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
-      'can_compile' => $canCompile,
+      'can_compile' => $this->isGranted( ApplicationVoter::COMPILE, $pratica),
       'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica)
       //'threads' => $thread,
     ];
@@ -583,16 +571,6 @@ class PraticheController extends Controller
     $tab = $request->query->get('tab', false);
 
     $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
-
-    $canCompile = ($pratica->getStatus() == Pratica::STATUS_DRAFT) && $pratica->getUser()->getId() == $user->getId();
-    if ($canCompile) {
-      $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
-      try {
-        $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
-      } catch (ForbiddenAccessException $e) {
-        $canCompile = false;
-      }
-    }
 
     $message = new Message();
     $message->setApplication($pratica);
@@ -659,7 +637,7 @@ class PraticheController extends Controller
       'pratica' => $pratica,
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
-      'can_compile' => $canCompile,
+      'can_compile' => $this->isGranted( ApplicationVoter::COMPILE, $pratica),
       'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica),
       'meetings' => $repository->findOrderedMeetings($pratica),
       //'threads' => $thread,

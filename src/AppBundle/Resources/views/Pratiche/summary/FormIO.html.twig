@@ -36,7 +36,7 @@
     <div class="alert alert-info mb-5"><i class="fa fa-refresh fa-spin fa-fw"></i> Siamo in attesa dell'esito del
       pagamento
     </div>
-  {% elseif pratica.status >= 1900 %}
+  {% elseif pratica.status >= 1500 %}
     {{ include('AppBundle:Pratiche/summary/parts:protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}
 
