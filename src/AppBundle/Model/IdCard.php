@@ -4,26 +4,42 @@
 namespace AppBundle\Model;
 
 
+use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
+
 class IdCard implements \JsonSerializable
 {
 
   /**
    * @var string
+   *
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Id card's number")
    */
   private $numero;
 
   /**
    * @var string
+   *
+   *
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Id card's city")
    */
   private $comuneRilascio;
 
   /**
    * @var \DateTime
+   *
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Id card's date")
    */
   private $dataRilascio;
 
   /**
    * @var \DateTime
+   *
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Id card's expire date")
    */
   private $dataScadenza;
 
