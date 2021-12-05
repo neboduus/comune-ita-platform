@@ -3,15 +3,14 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Utils\StringUtils;
 use Aws\S3\S3Client;
-use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\Validator\Constraints\All;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 class FileService
@@ -221,7 +220,7 @@ class FileService
   private function createPresignedRequest(Allegato $allegato)
   {
     $responseHeaderBag = new ResponseHeaderBag();
-    $filename = mb_convert_encoding($allegato->getOriginalFilename(), "ASCII", "auto");
+    $filename = StringUtils::clean(mb_convert_encoding($allegato->getOriginalFilename(), "ASCII", "auto"));
     $disposition = $responseHeaderBag->makeDisposition(
       ResponseHeaderBag::DISPOSITION_ATTACHMENT,
       $filename
@@ -269,7 +268,7 @@ class FileService
       $response->headers->set('Content-Type', $mimeType);
 
       // Create the disposition of the file
-      $filename = mb_convert_encoding($allegato->getOriginalFilename(), "ASCII", "auto");
+      $filename = StringUtils::clean(mb_convert_encoding($allegato->getOriginalFilename(), "ASCII", "auto"));
       $disposition = $response->headers->makeDisposition(
         ResponseHeaderBag::DISPOSITION_ATTACHMENT,
         $filename
