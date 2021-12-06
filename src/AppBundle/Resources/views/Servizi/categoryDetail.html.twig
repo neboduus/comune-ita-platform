@@ -62,11 +62,11 @@
     </div>
   </section>
 
-  {% if category.children|length > 0 %}
+  {% if children|length > 0 %}
     <section class="container-fluid py-5 bg-light">
       <div class="container">
         <div class="row">
-          {% for item in category.children %}
+          {% for item in children %}
             <div class="col-12 col-sm-6 col-lg-4">
               {{ include('@App/Servizi/parts/panel/topic.html.twig', {'item': item}) }}
             </div>
