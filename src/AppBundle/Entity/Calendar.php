@@ -104,7 +104,7 @@ class Calendar
    * @var int
    *
    * @ORM\Column(name="rolling_days", type="integer")
-   * @Assert\LessThanOrEqual(message="Maximum window is 365 days", value=365)
+   * @Assert\LessThanOrEqual(message="Maximum window is 180 days", value=180)
    * @SWG\Property(description="Calendar's rolling days", type="integer")
    */
   private $rollingDays;
