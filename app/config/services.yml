@@ -259,6 +259,8 @@ services:
     tags:
       - { name: form.type }
 
+  ocsdc.pratica_manager: '@AppBundle\Services\Manager\PraticaManager'
+
   AppBundle\Services\Manager\PraticaManager:
     autowire: true
 

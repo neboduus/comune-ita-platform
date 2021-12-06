@@ -87,6 +87,10 @@ class CategoryType extends AbstractType
     $category = $event->getForm()->getData();
     $data = $event->getData();
 
+    if (empty($data['parent_id'])) {
+      return;
+    }
+
     if ($category->getId() == $data['parent_id']) {
       $event->getForm()->addError(
         new FormError($this->translator->trans('categories.error_reference_parent'))
@@ -100,7 +104,6 @@ class CategoryType extends AbstractType
         new FormError($this->translator->trans('categories.error_reference_children'))
       );
     }
-
 
     $data['parent'] = $this->categoryManager->get($data['parent_id']);
     $event->setData($data);
