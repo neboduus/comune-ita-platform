@@ -270,7 +270,7 @@ class MeetingService
       $title = "Non disp";
     }
     return [
-      'title' => $title ,
+      'title' => $title,
       'start' => $start,
       'end' => $end,
       'rendering' => 'background',
@@ -1077,8 +1077,34 @@ class MeetingService
     return $builder->getQuery()->getResult();
   }
 
+  private function isUniqueActiveMeeting(Meeting $meeting): bool
+  {
+    $application = null;
+    if ($meeting->getApplications()->count() > 0) {
+      $application = $meeting->getApplications()->last();
+    }
+    if (!$application) {
+      return true;
+    }
 
-  public function getMeetingErrors(Meeting $meeting)
+    // Retrieve all active meetings (i.e pending of confirmed) linked to the same application
+    $builder = $this->entityManager->createQueryBuilder()
+      ->select('count(meeting.id)')
+      ->from(Meeting::class, 'meeting')
+      ->where(':applicationId MEMBER OF meeting.applications')
+      ->andWhere('meeting.status IN (:activeStatuses)')
+      ->setParameter(':applicationId', $application->getId())
+      ->setParameter(':activeStatuses', [Meeting::STATUS_PENDING, Meeting::STATUS_APPROVED]);
+
+    try {
+      $activeMeetings = $builder->getQuery()->getSingleScalarResult();
+    } catch (Exception $ex) {
+      return false;
+    }
+    return $activeMeetings <= 1;
+  }
+
+  public function getMeetingErrors(Meeting $meeting): array
   {
     $errors = [];
     if ($meeting->getCalendar()->isAllowOverlaps() && !$meeting->getOpeningHour()) {
@@ -1091,6 +1117,11 @@ class MeetingService
         $errors[] = $this->translator->trans('meetings.error.slot_unavailable');
       }
     }
+
+    if (!$this->isUniqueActiveMeeting($meeting)) {
+      $errors[] = $this->translator->trans('meetings.error.not_unique');
+    }
+
     return $errors;
   }
 
