@@ -2103,6 +2103,7 @@ meetings:
     slot_invalid: "L'intervallo selezionato non è valido"
     no_opening_hour_with_overlaps: "L'orario di apertura è obbligatorio se il calendario prevede sovrapposizioni"
     invalid_meeting: "Appuntamento non valido"
+    not_unique: "Non è possibile avere più di un meeting da confermare o confermato per pratica"
   legend:
     title: "Legenda stato appuntamenti"
     approved: "Confermato / Non richiede moderazione"

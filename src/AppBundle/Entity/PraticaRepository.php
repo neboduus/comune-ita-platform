@@ -934,7 +934,7 @@ class PraticaRepository extends EntityRepository
       ->setParameter(':meetings', $pratica->getMeetings())
       ->setParameter(':statuses', [Meeting::STATUS_APPROVED, Meeting::STATUS_PENDING])
       ->setParameter(':now', new \DateTime())
-      ->orderBy('meeting.fromTime', 'desc');
+      ->orderBy('meeting.fromTime', 'asc');
 
     return $qb->getQuery()->getResult();
   }
