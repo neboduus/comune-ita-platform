@@ -54,7 +54,7 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
        aria-labelledby="pagamento-tab">
-    {{ include('@App/Pratiche/summary/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
+    {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
   </div>
   {% if ente.isLinkableApplicationMeetings %}
     <div class="tab-pane py-4 fade {% if tab == 'meetings' %} show active {% endif %}" id="meetings" role="tabpanel"
