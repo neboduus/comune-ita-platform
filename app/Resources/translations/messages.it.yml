@@ -715,6 +715,7 @@ operatori:
   meetings_in_evidence: 'Appuntamenti in evidenza'
   no_meetings: 'Non ci sono appuntamenti collegati a questa pratica'
   no_meeting_description: 'Motivazione non fornita'
+  draft_description: "L'appuntamento non è ancora confermato, ma lo spazio resterà riservato fino alle ore %expiration_hour% del giorno %expiration_date%"
   go_to_videoconference: 'Vai alla videoconferenza'
   meeting_actions: 'Azioni'
   meeting_status:
@@ -2090,6 +2091,7 @@ meetings:
     motivation_outcome: "Motivazione esito"
     videoconference_link: "Link videoconferenza"
     complete_name: "Nome e cognome"
+    draft_expiration: "Scadenza della bozza"
     backoffice_user_message: "Oggetto... (creato dall'ufficio)"
     select_slot: "Seleziona orario"
     select_slot_start: "Dalle"
@@ -2118,6 +2120,8 @@ meetings:
     done: "Avvenuto"
     absent: "Non avvenuto"
     cancel: "Annulla"
+    extend_draft_for_days: 'Riserva ulteriori %num% giorni'
+    extend_draft_for_one_day: 'Riserva un ulteriore giorno'
     all: "Tutti"
     warning: "Attenzione"
     notification_alert: "la modifica dello stato comporterà l'invio di una notifica al cittadino"
@@ -2131,6 +2135,7 @@ meetings:
       status_4: "L'appuntamento verrà marcato come completato, NON verrà inviata una notifica al cittadino. Sei sicuro di voler procedere?"
       status_3: "L'appuntamento verrà marcato come NON completato, NON verrà inviata una notifica al cittadino. Sei sicuro di voler procedere?"
       status_5: "L'annullamento dell'appuntamento comporterà l'invio di una notifica al cittadino. Sei sicuro di voler procedere?"
+      extend: "La scadenza dell'appuntamento verrà estesa, NON verrà inviata una notifica al cittadino. Sei sicuro di voler procedere?"
   no_email_warning: 'Attenzione: non è presente un recapito di posta elettronica, in caso di modifiche si consiglia di notificare il cittadino attraverso il recapito telefonico fornito'
   default_draft_message: "Appuntamento in bozza"
   no_info: "<i>Informazione non disponibile</i>"

@@ -1,0 +1,91 @@
+<div class="it-card-footer d-block mt-2">
+  <div class="row">
+    <div class="col-12 text-right">
+      <a data-toggle="collapse" data-target="#info_{{ meeting.id }}" aria-expanded="false"
+         aria-controls="info_{{ meeting.id }}" role="button">
+        <svg class="icon icon-xs icon-secondary">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-plus"></use>
+        </svg>
+        <span
+          class="font-weight-semibold text-secondary">{{ 'operatori.meeting_actions' | trans }}</span>
+      </a>
+    </div>
+  </div>
+  <div id="info_{{ meeting.id }}" class="mt-1 collapse2 edit-meeting">
+    {% if meeting.status == 0 %}
+      <button id="approve_{{ meeting.id }}"
+              data-url='{{ path("meetings_api_patch", {'id': meeting.id}) }}' data-status="1"
+              class="btn btn-success btn-xs mr-3" type="button"
+              onclick="if(!confirm('{{ 'meetings.modal.confirm_edit.status_1' | trans | escape('js') }}')) stopPropagation()">
+        {{ "meetings.modal.confirm" | trans() }}
+        <svg class="icon icon-xs icon-white">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+        </svg>
+      </button>
+      <button id="refuse_{{ meeting.id }}"
+              data-url='{{ path("meetings_api_patch", {'id': meeting.id}) }}' data-status="2"
+              class="btn btn-danger btn-xs mr-3" type="button"
+              onclick="if(!confirm('{{ 'meetings.modal.confirm_edit.status_2' | trans | escape('js') }}')) stopPropagation()">
+        {{ "meetings.modal.refuse" | trans() }}
+        <svg class="icon icon-xs icon-white">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+        </svg>
+      </button>
+    {% elseif meeting.status in [1, 3, 4] %}
+      <p class="my-3 small">{{ 'meetings.modal.status_change_helper' | trans }}</p>
+      <button id="complete_{{ meeting.id }}"
+              data-url='{{ path("meetings_api_patch", {'id': meeting.id}) }}' data-status="4"
+              class="btn btn-success btn-xs mr-3" type="button"
+              onclick="if(!confirm('{{ 'meetings.modal.confirm_edit.status_4' | trans | escape('js') }}')) stopPropagation()">
+        {{ "meetings.modal.done" | trans() }}
+        <svg class="icon icon-xs icon-white">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+        </svg>
+      </button>
+      <button id="missed_{{ meeting.id }}"
+              data-url='{{ path("meetings_api_patch", {'id': meeting.id}) }}' data-status="3"
+              class="btn btn-danger btn-xs mr-3" type="button"
+              onclick="if(!confirm('{{ 'meetings.modal.confirm_edit.status_3' | trans | escape('js') }}')) stopPropagation()">
+        {{ "meetings.modal.absent" | trans() }}
+        <svg class="icon icon-xs icon-white">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+        </svg>
+      </button>
+      <button id="cancel_{{ meeting.id }}"
+              data-url='{{ path("meetings_api_patch", {'id': meeting.id}) }}' data-status="5"
+              class="btn btn-warning btn-xs mr-3" type="button"
+              onclick="if(!confirm('{{ 'meetings.modal.confirm_edit.status_5' | trans | escape('js') }}')) stopPropagation()">
+        {{ "meetings.modal.cancel" | trans() }}
+        <svg class="icon icon-xs icon-white">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+        </svg>
+      </button>
+    {% elseif meeting.status == 6 %}
+      {# DRAFT #}
+      <button id="cancel_{{ meeting.id }}"
+              data-url='{{ path("meetings_api_patch", {'id': meeting.id}) }}'
+              data-expiration='{{ meeting.draftExpiration | date('c') }}'
+              data-extend-seconds='{{ meeting.calendar.draftsDurationIncrement }}'
+              class="btn btn-light btn-xs mr-3 text-dark" type="button"
+              onclick="if(!confirm('{{ 'meetings.modal.confirm_edit.extend' | trans | escape('js') }}')) stopPropagation()">
+        {% set extend_days = meeting.calendar.draftsDurationIncrement / (60*60*24) %}
+        {% if extend_days > 1 %}
+          {{ "meetings.modal.extend_draft_for_days" | trans({ '%num%': extend_days }) }}
+        {% else %}
+          {{ "meetings.modal.extend_draft_for_one_day" | trans }}
+        {% endif %}
+        <svg class="icon icon-xs icon-dark">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use>
+        </svg>
+      </button>
+    {% else %}
+      <p class="my-3 small">{{ 'meetings.modal.no_status_actions' | trans }}</p>
+    {% endif %}
+    <p class="text-danger small mt-2 update_error d-none">
+      <svg class="icon icon-xs icon-danger">
+        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-error"></use>
+      </svg>
+      {{ 'backoffice.integration.calendars.save_meeting_error' | trans }}
+    </p>
+  </div>
+</div>

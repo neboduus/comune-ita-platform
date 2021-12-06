@@ -44,32 +44,6 @@
       });
     </script>
   {% endif %}
-
-  {% if ente.isLinkableApplicationMeetings %}
-    <script>
-      function editMeetingStatus(btnId, changeStatus) {
-        $.ajax({
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${$('#hidden').attr('data-token')}`
-          },
-          url: $(`#${btnId}`).attr('data-url'),
-          type: 'PATCH',
-          data: JSON.stringify({
-            status: changeStatus,
-          }),
-          success: function (response, textStatus, jqXhr) {
-            location.reload();
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            alert(`Si è verificato un errore durante il salvataggio dell\'appuntamento`);
-          },
-        });
-      }
-    </script>
-  {% endif %}
-
 {% endblock %}
 
 
