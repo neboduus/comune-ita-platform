@@ -232,7 +232,7 @@ services:
       - { name: form.type }
 
   AppBundle\Form\MeetingType:
-    arguments: [ "@doctrine.orm.entity_manager", '@ocsdc.meeting_service', '@translator' ]
+    autowire: true
     tags:
       - { name: form.type }
 

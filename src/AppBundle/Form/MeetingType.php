@@ -27,26 +27,15 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class MeetingType extends AbstractType
 {
-  /**
-   * @var EntityManager
-   */
-  private $em;
 
   /**
    * @var MeetingService
    */
   private $meetingService;
 
-  /**
-   * @var TranslatorInterface
-   */
-  private $translator;
-
-  public function __construct(EntityManagerInterface $entityManager, MeetingService $meetingService, TranslatorInterface $translator)
+  public function __construct(MeetingService $meetingService)
   {
-    $this->em = $entityManager;
     $this->meetingService = $meetingService;
-    $this->translator = $translator;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -120,6 +109,11 @@ class MeetingType extends AbstractType
       ->add('videoconference_link', UrlType::class, [
         'required' => false,
         'label' => 'meetings.labels.videoconference_link'
+      ])
+      ->add('draft_expiration', DateTimeType::class, [
+        'widget' => 'single_text',
+        'required' => false,
+        'label' => 'meetings.labels.draft_expiration'
       ])
       ->addEventListener(FormEvents::SUBMIT, array($this, 'onSubmit'));
   }

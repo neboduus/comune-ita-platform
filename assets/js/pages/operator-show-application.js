@@ -10,6 +10,7 @@ import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import {TextEditor} from "../utils/TextEditor";
+import moment from "moment";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
@@ -114,6 +115,44 @@ window.onload = function () {
 };
 
 $(document).ready(function () {
+
+  $('.edit-meeting').on('click', function editMeeting(e) {
+    let el = $(e.target)
+    let payload = {}
+    if (el.data('status')) {
+      payload['status'] = el.data('status');
+    }
+
+    if (el.data('expiration') && el.data('extend-seconds')) {
+      let currentExpiration = moment(el.data('expiration'));
+      let extendSeconds = parseInt(el.data('extend-seconds'));
+      let newExpiration = currentExpiration.add(extendSeconds, 's');
+      payload['draft_expiration'] = newExpiration.format()
+    }
+
+    if ($.isEmptyObject(payload))
+      return;
+
+    let errorEl = el.closest('div').find('.update_error');
+    errorEl.addClass('d-none');
+
+    $.ajax({
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${$('#hidden').data('token')}`
+      },
+      url: el.data('url'),
+      type: 'PATCH',
+      data: JSON.stringify(payload),
+      success: function (response, textStatus, jqXhr) {
+        location.reload();
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        errorEl.removeClass('d-none');
+      }
+    });
+  });
 
   $('#modal_approve').on('click', function () {
     $('#outcome_outcome_0').prop('checked', true);
