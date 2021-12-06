@@ -6,6 +6,7 @@ namespace AppBundle\Services\Manager;
 
 use AppBundle\Entity\Categoria;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\True_;
 
 class CategoryManager
 {
@@ -57,5 +58,20 @@ class CategoryManager
       }
     }
     return $result;
+  }
+
+  public function hasRecursiveRelations(Categoria $category)
+  {
+    if ($category->getServices()->count() > 0 || $category->getServicesGroup()->count() > 0) {
+      return true;
+    }
+
+    foreach ($category->getChildren() as $item) {
+      if ($this->hasRecursiveRelations($item)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

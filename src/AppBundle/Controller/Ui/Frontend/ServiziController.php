@@ -14,6 +14,7 @@ use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\Manager\CategoryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Entity\Repository\CategoryRepository;
@@ -49,6 +50,10 @@ class ServiziController extends Controller
    * @var EntityManagerInterface
    */
   private $entityManager;
+  /**
+   * @var CategoryManager
+   */
+  private $categoryManager;
 
   /**
    * ServiziController constructor.
@@ -56,13 +61,15 @@ class ServiziController extends Controller
    * @param TranslatorInterface $translator
    * @param EntityManagerInterface $entityManager
    * @param LoggerInterface $logger
+   * @param CategoryManager $categoryManager
    */
-  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger)
+  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger, CategoryManager $categoryManager)
   {
     $this->instanceService = $instanceService;
     $this->translator = $translator;
     $this->entityManager = $entityManager;
     $this->logger = $logger;
+    $this->categoryManager = $categoryManager;
   }
 
 
@@ -235,8 +242,16 @@ class ServiziController extends Controller
     $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);
     /** @var Categoria $c */
     foreach ($categories as $c) {
-      if ($c->getServices()->count() > 0 || $c->getServicesGroup()->count() > 0) {
+      if ($this->categoryManager->hasRecursiveRelations($c)) {
         $topics []= $c;
+      }
+    }
+
+    $children = [];
+    /** @var Categoria $c */
+    foreach ($category->getChildren() as $c) {
+      if ($this->categoryManager->hasRecursiveRelations($c)) {
+        $children []= $c;
       }
     }
 
@@ -246,16 +261,16 @@ class ServiziController extends Controller
       ['topics' => $category->getId()]
     );
 
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
-    $servicesGroup = $servicesGroupRepository->findByCriteria(
-      ['topics' => $category->getId()]
-    );
-
     /** @var Servizio $item */
     foreach ($services as $item) {
       $result[$item->getSlug() . '-' . $item->getId()]['type'] = 'service';
       $result[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
     }
+
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $servicesGroup = $servicesGroupRepository->findByCriteria(
+      ['topics' => $category->getId()]
+    );
 
     /** @var ServiceGroup $item */
     foreach ($servicesGroup as $item) {
@@ -270,7 +285,8 @@ class ServiziController extends Controller
       'user' => $user,
       'category' => $category,
       'categories' => $topics,
-      'services' => $result
+      'children' => $children,
+      'services' => $result,
     ]);
 
     return $response;
@@ -381,32 +397,13 @@ class ServiziController extends Controller
     $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);
     /** @var Categoria $c */
     foreach ($categories as $c) {
-      if ($c->getServices()->count() > 0 || $c->getServicesGroup()->count() > 0 || $c->getChildren()->count() > 0) {
+      /*if ($c->getServices()->count() > 0 || $c->getServicesGroup()->count() > 0 || $c->getChildren()->count() > 0) {
         $topics[$c->getSlug() . '-' . $c->getId()]['type'] = 'topic';
         $topics[$c->getSlug() . '-' . $c->getId()]['object'] = $c;
-      }
-    }
-
-    $servizi = $serviziRepository->findAvailable();
-    $servicesGroup = $servicesGroupRepository->findByCriteria();
-
-    /** @var Servizio $item */
-    foreach ($servizi as $item) {
-      /** @var Categoria $topic */
-      $topic = $item->getTopics();
-      if ($topic instanceof Categoria && $topic->getParent() === null && !isset($topics[$topic->getSlug() . '-' . $topic->getId()])) {
-        $topics[$topic->getSlug() . '-' . $topic->getId()]['type'] = 'topic';
-        $topics[$topic->getSlug() . '-' . $topic->getId()]['object'] = $topic;
-      }
-    }
-
-    /** @var ServiceGroup $item */
-    foreach ($servicesGroup as $item) {
-      /** @var Categoria $topic */
-      $topic = $item->getTopics();
-      if ($topic instanceof Categoria && $topic->getParent() === null && !isset($topics[$topic->getSlug() . '-' . $topic->getId()]) && $item->getPublicServices()->count() > 0) {
-        $topics[$topic->getSlug() . '-' . $topic->getId()]['type'] = 'topic';
-        $topics[$topic->getSlug() . '-' . $topic->getId()]['object'] = $topic;
+      }*/
+      if ($this->categoryManager->hasRecursiveRelations($c)) {
+        $topics[$c->getSlug() . '-' . $c->getId()]['type'] = 'topic';
+        $topics[$c->getSlug() . '-' . $c->getId()]['object'] = $c;
       }
     }
 
