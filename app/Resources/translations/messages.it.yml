@@ -2144,8 +2144,10 @@ meetings:
     description: "Questo appuntamento è stato riservato tramite la compilazione di un servizio di prenotazione: se non confermato dall'utente verrà eliminato automaticamente alle ore %expire_time% del giorno %expire_date%. <br>L'eliminazione forzata della bozza renderà l'intervallo di nuovo disponibile e il cittadino che ha riservato l'appuntamento potrebbe dover richiedere un nuovo appuntamento. <br><br>Sei sicuro di voler procedere con la rimozione forzata della bozza?"
     delete: "Elimina bozza"
   email:
+    service_detail: "%service%"
+    service_detail_with_group: "%service% in %group%"
     operatori:
-      meeting_details: '</br><p><b>Dettagli appuntamento:</b></p><table><tr><td>Nome e cognome</td><td>%completename%</td></tr><tr><td>Inizio</td><td>%start%</td></tr><tr><td>Fine</td><td>%end%</td></tr><tr><td>Motivazione</td><td><i>%reason%</i></td></r></table>'
+      meeting_details: '</br><p><b>Dettagli appuntamento:</b></p><table><tr><td>Nome e cognome</td><td>%completename%</td></tr><tr><td>Inizio</td><td>%start%</td></tr><tr><td>Fine</td><td>%end%</td></tr><tr><td>Motivazione</td><td><i>%reason%</i></td></tr><tr><td>Servizio</td><td>%service%</td></r></table>'
       meeting_rescheduled:
         subject: 'Spostamento appuntamento - %calendar%'
         message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>%old_date%</b> alle ore <b>%old_hour%</b> è stato <b>spostato</b> al giorno <b>%new_date%</b> alle ore <b>%new_hour%</b><p>"
