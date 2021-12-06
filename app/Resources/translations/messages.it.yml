@@ -706,6 +706,9 @@ operatori:
   pagamento: 'Pagamento'
   protocollo: 'Protocollo'
   pagamento_non_previsto: 'Per questa pratica non è previsto alcun pagamento'
+  pagamento_posticipato_previsto: "Per questo servizio è previsto un pagamento posticipato."
+  pagamento_posticipato: "Per questo servizio è previsto un pagamento di <b>%payment_amount% Euro</b>. Il richiedente è stato invitato a tornare sulla pratica e avviare il pagamento, eventualmente scegliendo se farlo online o offline.<br><br>Appena il richiedente procede al pagamento, tutti i dati disponibili compariranno in quest'area"
+  pagamento_posticipato_richiesto: "Per questo servizio è previsto un pagamento di <b>%payment_amount% Euro</b>. Sei invitato a tornare sulla tua pratica e avviare il pagamento, eventualmente scegliendo se farlo online o offline.<br><br>Una volta avviato il pagamento, tutti i dati disponibili compariranno in quest'area"
   pagamento_esentato: 'Per questa pratica il pagamento è stato esentato'
   protocollo_non_previsto: 'Per questa pratica non è prevista la protocollazione'
   meetings: 'Appuntamenti'

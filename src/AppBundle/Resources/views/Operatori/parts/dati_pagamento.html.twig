@@ -29,7 +29,8 @@
               <tr>
                 <td><b>{{ 'operatori.email_pagatore'|trans }}</b></td>
                 <td>
-                  <a href="mailto:{{ pratica.paymentData.request['e-mailPagatore'] }}">{{ pratica.paymentData.request['e-mailPagatore'] }}</a>
+                  <a
+                    href="mailto:{{ pratica.paymentData.request['e-mailPagatore'] }}">{{ pratica.paymentData.request['e-mailPagatore'] }}</a>
                 </td>
               </tr>
               <tr>
@@ -66,7 +67,7 @@
                   <td class="text-center border-0" colspan="2">
                     <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
                        class='btn btn-lg btn-primary'>
-                      {% if pratica.paymentData.outcome.status == 'OK'%}
+                      {% if pratica.paymentData.outcome.status == 'OK' %}
                         {{ 'gateway.mypay.download_receipt_button'|trans }}
                       {% else %}
                         {{ 'gateway.mypay.download_button'|trans }}
@@ -74,13 +75,13 @@
                     </a>
                   </td>
                 </tr>
-                {% else %}
-                  <tr>
-                    <td class="text-center border-0" colspan="2">
-                      <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
-                         class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_button'|trans }}</a>
-                    </td>
-                  </tr>
+              {% else %}
+                <tr>
+                  <td class="text-center border-0" colspan="2">
+                    <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
+                       class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_button'|trans }}</a>
+                  </td>
+                </tr>
               {% endif %}
             {% endif %}
           {% elseif pratica.paymentType.identifier == "bollo" %}
@@ -104,6 +105,8 @@
     {% else %}
       {% if pratica.isPaymentExempt %}
         <div class="font-italic text-center">{{ 'operatori.pagamento_esentato'|trans }}</div>
+      {% elseif pratica.servizio.isPaymentDeferred %}
+        {{ include('@App/Operatori/parts/payment_deferred.html.twig', {'pratica': pratica}) }}
       {% else %}
         <div class="font-italic text-center">{{ 'operatori.pagamento_non_previsto'|trans }}</div>
       {% endif %}
