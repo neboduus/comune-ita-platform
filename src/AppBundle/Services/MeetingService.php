@@ -7,6 +7,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
+use AppBundle\Entity\Pratica;
 use Cassandra\Date;
 use DateInterval;
 use DatePeriod;
@@ -313,11 +314,24 @@ class MeetingService
   {
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
-    $service = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0]->getServizio()->getName() : "";
+    /** @var Pratica $application */
+    $application = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0] : null;
+    $service = $application ? $application->getServizio()->getName() : "";
+    $serviceGroup = $application && $application->getServizio()->getServiceGroup() ? $application->getServizio()->getServiceGroup()->getName() : "";
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
     $contact = $calendar->getContactEmail();
+
+    if ($serviceGroup) {
+      $serviceDetail = $this->translator->trans(
+        'meetings.email.service_detail_with_group', ['%service%'=>$service, '%group%' => $serviceGroup]
+      );
+    } else {
+      $serviceDetail = $this->translator->trans(
+        'meetings.email.service_detail', ['%service%'=>$service]
+      );
+    }
 
     if ($status == Meeting::STATUS_PENDING) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.pending', ['%service%' => $service]);
@@ -359,6 +373,12 @@ class MeetingService
         ]);
     }
 
+
+    $userSubject =  $this->translator->trans('meetings.email.new_meeting.subject');
+    if ($application) {
+      $userSubject = $userSubject . " - " . $serviceDetail;
+    }
+
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
         $this->defaultSender,
@@ -366,7 +386,7 @@ class MeetingService
         $meeting->getEmail(),
         $meeting->getName(),
         $userMessage,
-        $this->translator->trans('meetings.email.new_meeting.subject'),
+        $userSubject,
         $ente,
         []
       );
@@ -395,6 +415,12 @@ class MeetingService
         ]);
     }
 
+    $subject = $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
+      '%calendar%' => $calendar->getTitle()
+    ]);
+    if ($application) {
+      $subject = $subject . ' - ' . $serviceDetail;
+    }
     // Send mail to calendar's contact
     if ($calendar->getContactEmail()) {
       $this->mailer->dispatchMail(
@@ -403,9 +429,7 @@ class MeetingService
         $calendar->getContactEmail(),
         'Contatto Calendario',
         $operatoreMessage,
-        $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
-          '%calendar%' => $calendar->getTitle()
-        ]),
+        $subject,
         $ente,
         []
       );
@@ -419,9 +443,7 @@ class MeetingService
         $moderator->getEmail(),
         $moderator->getNome(),
         $operatoreMessage,
-        $this->translator->trans('meetings.email.operatori.new_meeting.subject', [
-          '%calendar%' => $calendar->getTitle(),
-        ]),
+        $subject,
         $ente,
         []
       );
@@ -450,13 +472,26 @@ class MeetingService
 
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
-    $service = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0]->getServizio()->getName() : "";
+    /** @var Pratica $application */
+    $application = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0] : null;
+    $service = $application ? $application->getServizio()->getName() : "";
+    $serviceGroup = $application && $application->getServizio()->getServiceGroup() ? $application->getServizio()->getServiceGroup()->getName() : "";
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
     $location = $calendar->getLocation();
     $contact = $calendar->getContactEmail();
     $link = $meeting->getVideoconferenceLink();
+
+    if ($serviceGroup) {
+      $serviceDetail = $this->translator->trans(
+        'meetings.email.service_detail_with_group', ['%service%'=>$service, '%group%' => $serviceGroup]
+      );
+    } else {
+      $serviceDetail = $this->translator->trans(
+        'meetings.email.service_detail', ['%service%'=>$service]
+      );
+    }
 
     /*
      * invio email se:
@@ -556,6 +591,11 @@ class MeetingService
       }
     }
 
+    $userSubject =  $this->translator->trans('meetings.email.edit_meeting.subject');
+    if ($application) {
+      $userSubject = $userSubject . " - " . $serviceDetail;
+    }
+
     if ($meeting->getEmail()) {
       $this->mailer->dispatchMail(
         $this->defaultSender,
@@ -563,12 +603,13 @@ class MeetingService
         $meeting->getEmail(),
         $meeting->getName(),
         $userMessage ?? $this->translator->trans('meetings.no_info'),
-        $this->translator->trans('meetings.email.edit_meeting.subject'),
+        $userSubject,
         $ente,
         []
       );
     }
 
+    $subject = "";
     if ($statusChanged && $status == Meeting::STATUS_APPROVED) {
       $contactMessage = $this->translator->trans('meetings.email.operatori.meeting_approved.message', [
         '%calendar%' => $calendar->getTitle(),
@@ -613,7 +654,8 @@ class MeetingService
         '%completename%' => $meeting->getUser()->getFullName(),
         '%start%' => $meeting->getFromTime()->format('d/m/y H:i'),
         '%end%' => $meeting->getToTime()->format('d/m/y H:i'),
-        '%reason%' => $meeting->getUserMessage()
+        '%reason%' => $meeting->getUserMessage(),
+        "%service%" => $serviceDetail
       ]);
 
     if ($meeting->getStatus() === Meeting::STATUS_PENDING) {
@@ -625,6 +667,9 @@ class MeetingService
         ]);
     }
 
+    if ($application) {
+      $subject = $subject . ' - ' . $serviceDetail;
+    }
     if ($calendar->getContactEmail()) {
       $this->mailer->dispatchMail(
         $this->defaultSender,
