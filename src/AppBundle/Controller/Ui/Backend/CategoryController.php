@@ -84,7 +84,7 @@ class CategoryController extends Controller
       $this->entityManager->flush();
 
       $this->addFlash('feedback', $this->translator->trans('general.flash.created'));
-      return $this->redirectToRoute('admin_category_index');
+      return $this->redirectToRoute('admin_category_edit', ['id' => $item->getId()]);
     }
 
     return $this->render('@App/Admin/editCategory.html.twig', [

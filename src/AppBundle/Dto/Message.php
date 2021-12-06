@@ -490,7 +490,7 @@ class Message
     $temp->setId($file->getId());
     $temp->setName($file->getName());
     $temp->setUrl($attachmentEndpointUrl . '/attachments/' .  $file->getId());
-    $temp->getMimeType($file->getFile()->getMimeType());
+    //$temp->getMimeType($file->getFile()->getMimeType());
     return $temp;
   }
   /**
