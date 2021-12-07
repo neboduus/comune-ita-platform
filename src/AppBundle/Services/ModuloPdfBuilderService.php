@@ -50,6 +50,8 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 {
 
+  const MIME_TYPE = 'application/pdf';
+
   const SCHEDULED_CREATE_FOR_PRATICA = 'createForPratica';
   const PRINTABLE_USERNAME = 'ez';
 
@@ -193,6 +195,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
           'datacompilazione' => $now->format($this->dateTimeFormat)
         ])
     );
+
     $this->em->persist($unsignedResponse);
     return $unsignedResponse;
   }
@@ -526,6 +529,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     $allegato->setFile(new File($filePath, false));
     $allegato->setFilename($fileName);
+    $allegato->setMimeType(self::MIME_TYPE);
   }
 
   /**
