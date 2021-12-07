@@ -66,7 +66,9 @@ class CategoryType extends AbstractType
         'label' => 'general.descrizione',
         'required' => false
       ])
-      ->add('parent', HiddenType::class)
+      ->add('parent', HiddenType::class, [
+        'empty_data' => null
+      ])
       ->add('parent_id', ChoiceType::class,
         [
           'required' => false,
@@ -87,10 +89,6 @@ class CategoryType extends AbstractType
     $category = $event->getForm()->getData();
     $data = $event->getData();
 
-    if (empty($data['parent_id'])) {
-      return;
-    }
-
     if ($category->getId() == $data['parent_id']) {
       $event->getForm()->addError(
         new FormError($this->translator->trans('categories.error_reference_parent'))
@@ -105,7 +103,11 @@ class CategoryType extends AbstractType
       );
     }
 
-    $data['parent'] = $this->categoryManager->get($data['parent_id']);
+    if (empty($data['parent_id'])) {
+      $data['parent'] = null;
+    } else {
+      $data['parent'] = $this->categoryManager->get($data['parent_id']);
+    }
     $event->setData($data);
 
   }

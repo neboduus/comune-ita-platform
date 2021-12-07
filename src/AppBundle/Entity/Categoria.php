@@ -245,6 +245,30 @@ class Categoria
     $this->servicesGroup = $servicesGroup;
   }
 
+  public function getVisibleService()
+  {
+    $services = new ArrayCollection();
+    /** @var Servizio $service */
+    foreach ($this->services as $service) {
+      if (in_array($service->getStatus(), Servizio::PUBLIC_STATUSES)) {
+        $services []= $service;
+      }
+    }
+    return $services;
+  }
+
+  public function getVisibleServicesGroup()
+  {
+    $services = new ArrayCollection();
+    /** @var Servizio $service */
+    foreach ($this->servicesGroup as $service) {
+      if (in_array($service->getStatus(), Servizio::PUBLIC_STATUSES)) {
+        $services []= $service;
+      }
+    }
+    return $services;
+  }
+
   /**
    * @return bool
    */

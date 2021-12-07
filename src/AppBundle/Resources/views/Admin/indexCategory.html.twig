@@ -16,8 +16,8 @@
           <thead>
           <tr>
             <th>{{ 'general.nome' | trans() }}</th>
-            <th># Servizi collegati</th>
-            <th># Grupppi di servizi collegati</th>
+            <th>{{ 'categories.services_number'|trans() }}</th>
+            <th>{{ 'categories.services_group_number'|trans() }}</th>
             <th></th>
           </tr>
           </thead>
@@ -34,28 +34,32 @@
                 {{ item.related_services_group }}
               </td>
               <td class="text-right">
-                <div class="dropdown dropdown-actions">
-                  <button class="btn btn-link btn-dropdown dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <svg class="icon-expand icon align-middle icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right">
-                    <div class="link-list-wrapper">
-                      <ul class="link-list">
-                        <li>
-                          <a class="list-item left-icon" href="{{ path('admin_category_edit', { 'id': item.id }) }}">
-                            <span class="text-primary"><i class="fa fa-pencil fa-lg"></i> {{ 'modifica'|trans }}</span>
-                          </a>
-                        </li>
-                        {% if not item.object.hasRelations %}
-                          <li>
-                            <a class="list-item left-icon" onclick="return confirm('{{ 'general.alert_elimina'|trans }}');" href="{{ path('admin_category_delete', { 'id': item.id }) }}">
-                              <span class="text-danger"><i class="fa fa-trash-o fa-lg"></i> {{ 'elimina'|trans }}</span>
-                            </a>
-                          </li>
-                        {% endif %}
-                      </ul>
-                    </div>
-                  </div>
+                <div class="text-right">
+                  {# EDIT #}
+                  <a class="btn btn-xs btn-secondary"
+                     href="{{ path('admin_category_edit', { 'id': item.id }) }}">
+                    <svg class="icon icon-sm icon-white">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+                    </svg>
+                    <span class="d-none d-sm-inline-block d-lg-none d-xl-inline-block">{{ 'modifica'|trans }}</span>
+                  </a>
+
+                  {# DELETE #}
+                  {% if item.object.hasRelations %}
+                    <button class="btn btn-xs btn-primary disabled" type="button" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right" data-html="true" title="{{ 'categories.cant_delete_title'|trans() }}" data-content="{{ 'categories.cant_delete_content'|trans() }}">
+                      <svg class="icon icon-sm icon-300">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                      </svg>
+                      <span class="d-none d-sm-inline-block d-lg-none d-xl-inline-block">{{ 'elimina'|trans }}</span>
+                    </button>
+                  {% else %}
+                    <a class="btn btn-xs btn-danger" onclick="return confirm('{{ 'general.alert_elimina'|trans }}');" href="{{ path('admin_category_delete', { 'id': item.id }) }}">
+                      <svg class="icon icon-sm icon-white">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                      </svg>
+                      <span class="d-none d-sm-inline-block d-lg-none d-xl-inline-block">{{ 'elimina'|trans }}</span>
+                    </a>
+                  {% endif %}
                 </div>
               </td>
             </tr>

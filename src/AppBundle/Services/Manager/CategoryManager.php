@@ -62,7 +62,7 @@ class CategoryManager
 
   public function hasRecursiveRelations(Categoria $category)
   {
-    if ($category->getServices()->count() > 0 || $category->getServicesGroup()->count() > 0) {
+    if ($category->getVisibleService()->count() > 0 || $category->getVisibleServicesGroup()->count() > 0) {
       return true;
     }
 
