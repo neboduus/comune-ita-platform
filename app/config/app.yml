@@ -1,4 +1,4 @@
 parameters:
   locale: it
   app_locales: it
-  version: 1.11.2-rc.4
+  version: 1.11.2-rc.5
