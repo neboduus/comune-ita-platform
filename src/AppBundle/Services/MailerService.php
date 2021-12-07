@@ -260,10 +260,8 @@ class MailerService
     $locale = $pratica->getLocale() ?? 'it';
     $service = $pratica->getServizio();
 
-    if ($locale !== 'it') {
-      $service->setTranslatableLocale($locale);
-      $this->doctrine->getManager()->refresh($service);
-    }
+    $service->setTranslatableLocale($locale);
+    $this->doctrine->getManager()->refresh($service);
     $feedbackMessages = $service->getFeedbackMessages();
 
     if (!isset($feedbackMessages[$pratica->getStatus()])) {
