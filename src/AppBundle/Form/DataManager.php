@@ -59,7 +59,9 @@ class DataManager extends BaseDataManager
   {
     parent::__construct($storage);
     $this->tokenStorage = $tokenStorage;
-    $this->user = $this->tokenStorage->getToken()->getuser();
+    if ($this->tokenStorage->getToken()) {
+      $this->user = $this->tokenStorage->getToken()->getuser();
+    }
     $this->session = $session;
   }
 

@@ -92,6 +92,7 @@ general:
   alert_elimina: "Sicuro di voler procedere?"
   flash:
     created: 'Oggetto creato correttamente'
+    updated: 'Oggetto aggiornato correttamente'
   search: 'Cerca'
 servizio:
   bozza_successo: 'Bozza salvata con successo'
@@ -1944,11 +1945,15 @@ categories:
   title: 'Categorie'
   all: 'Tutte le categorie'
   parent: 'Categoria genitore'
+  services_number: '# Servizi'
+  services_group_number: '# Gruppo di servizi'
+  cant_delete_title: 'Impossibile eliminare'
+  cant_delete_content: 'Non puoi eliminare questa categoria perchè collegata a servizi, gruppi di servizi o sottacategorie'
   delete_success: 'Categoria eliminata correttamente'
   delete_service_error: 'Impossibile eliminare la categoria, ci sono %count% servizi collegati'
   delete_service_group_error: 'Impossibile eliminare la categoria, ci sono %count% gruppi di servizi collegati'
   delete_subcategories_error: 'Impossibile eliminare la categoria, ci sono %count% sottocategorie collegate'
-  related_title: 'Oggetti relazionati alla categoria'
+  related_title: 'Servizi che hanno questa categoria'
   related_type: 'Tipo'
   service_remove_success: 'Oggetto rimosso correttamente'
   service_remove_error: "Si è verificato un errore durante la rimozione dell'oggetto"

@@ -108,6 +108,8 @@ class CategoryController extends Controller
 
     if ($form->isSubmitted() && $form->isValid()) {
       $this->entityManager->flush();
+      $this->addFlash('feedback', $this->translator->trans('general.flash.updated'));
+      return $this->redirectToRoute('admin_category_edit', ['id' => $item->getId()]);
     }
 
     return $this->render('@App/Admin/editCategory.html.twig',

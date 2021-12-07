@@ -12,6 +12,10 @@ $(document).ready(function ($) {
     $('.nav-tabs li a[href="' + $(this).val() + '"]').tab('show');
   });
 
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
+
 });
 
 

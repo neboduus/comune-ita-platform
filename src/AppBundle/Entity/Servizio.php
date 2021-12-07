@@ -1088,7 +1088,7 @@ class Servizio implements Translatable
   /**
    * @return FeedbackMessage[]
    */
-  public function getFeedbackMessages(): ?array
+  public function getFeedbackMessages()
   {
     return $this->feedbackMessages;
   }
@@ -1096,7 +1096,7 @@ class Servizio implements Translatable
   /**
    * @param FeedbackMessage[] $feedbackMessages
    */
-  public function setFeedbackMessages(array $feedbackMessages)
+  public function setFeedbackMessages($feedbackMessages)
   {
     $messages = [];
     foreach ($feedbackMessages as $k => $feedbackMessage) {
