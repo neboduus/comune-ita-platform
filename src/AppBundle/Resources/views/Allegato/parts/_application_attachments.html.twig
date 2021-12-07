@@ -14,7 +14,7 @@
 {% if pratica.allegati.count > 0 %}
   <div class="pt-4">
     {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.allegati_modulo'}) }}
-    {% for allegato in pratica.allegati %}
+    {% for allegato in pratica.allegati | sort((a, b) => a.createdAt <=> b.createdAt) %}
       {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato, 'application': pratica}) }}
     {% endfor %}
   </div>
