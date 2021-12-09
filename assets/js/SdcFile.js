@@ -158,7 +158,7 @@ export default class SdcFile extends File {
             file.private = true;
           }
           const {storage, options = {}} = this.component;
-          const url = this.interpolate(this.component.url);
+          const url = endpoint + '/upload';
           let groupKey = null;
           let groupPermissions = null;
 
