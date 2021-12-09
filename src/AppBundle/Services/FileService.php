@@ -220,7 +220,7 @@ class FileService
   private function createPresignedRequest(Allegato $allegato)
   {
     $responseHeaderBag = new ResponseHeaderBag();
-    $filename = StringUtils::clean(mb_convert_encoding($allegato->getOriginalFilename(), "ASCII", "auto"));
+    $filename = $this->getDispositionFilename($allegato);
     $disposition = $responseHeaderBag->makeDisposition(
       ResponseHeaderBag::DISPOSITION_ATTACHMENT,
       $filename
@@ -268,7 +268,7 @@ class FileService
       $response->headers->set('Content-Type', $mimeType);
 
       // Create the disposition of the file
-      $filename = StringUtils::clean(mb_convert_encoding($allegato->getOriginalFilename(), "ASCII", "auto"));
+      $filename = $this->getDispositionFilename($allegato);
       $disposition = $response->headers->makeDisposition(
         ResponseHeaderBag::DISPOSITION_ATTACHMENT,
         $filename
@@ -280,6 +280,24 @@ class FileService
     } catch (FileNotFoundException $exception) {
       return new Response('File not found!', Response::HTTP_NOT_FOUND);
     }
+  }
+
+  /**
+   * @param Allegato $allegato
+   * @return array|string|string[]|null
+   */
+  private function getDispositionFilename(Allegato $allegato)
+  {
+    $filename = StringUtils::clean(mb_convert_encoding($allegato->getOriginalFilename(), "ASCII", "auto"));
+    $filenameParts = explode('.', $filename);
+
+    $systemFilename = $allegato->getFilename();
+    $systemFilenameParts = explode('.', $systemFilename);
+    if (end($filenameParts) != end($systemFilenameParts)) {
+      $filename .=  '.' . end($systemFilenameParts);
+    }
+
+    return $filename;
   }
 
   /**
