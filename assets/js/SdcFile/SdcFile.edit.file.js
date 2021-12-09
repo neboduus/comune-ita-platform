@@ -42,7 +42,7 @@ var _default = [{
   label: 'Url',
   weight: 10,
   placeholder: 'Enter the url to post the files to',
-  hidden: true,
+  hidden: false,
   value: 'url'
 },
   {

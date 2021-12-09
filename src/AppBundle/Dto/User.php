@@ -668,7 +668,7 @@ class User
     $entity->setStatoNascita($this->statoNascita);
     $entity->setSesso($this->sesso);
 
-    $entity->setTelefono($this->telefono);
+    $entity->setCpsTelefono($this->telefono);
     $entity->setCellulareContatto($this->cellulare);
     $entity->setEmail($this->email);
     $entity->setEmailContatto($this->email);
