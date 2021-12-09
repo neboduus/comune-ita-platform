@@ -668,22 +668,22 @@ class User
     $entity->setStatoNascita($this->statoNascita);
     $entity->setSesso($this->sesso);
 
-    $this->setTelefono($this->telefono);
+    $entity->setTelefono($this->telefono);
     $entity->setCellulareContatto($this->cellulare);
     $entity->setEmail($this->email);
     $entity->setEmailContatto($this->email);
 
-    $entity->setCpsIndirizzoDomicilio($this->indirizzoDomicilio);
-    $entity->setCpsCapDomicilio($this->capDomicilio);
+    $entity->setSdcIndirizzoDomicilio($this->indirizzoDomicilio);
+    $entity->setSdcCapDomicilio($this->capDomicilio);
     $entity->setSdcCittaDomicilio($this->cittaDomicilio);
-    $entity->setCpsProvinciaDomicilio($this->provinciaDomicilio);
-    $entity->setCpsStatoDomicilio($this->statoDomicilio);
+    $entity->setSdcProvinciaDomicilio($this->provinciaDomicilio);
+    $entity->setSdcStatoDomicilio($this->statoDomicilio);
 
-    $entity->setCpsIndirizzoResidenza($this->indirizzoResidenza);
-    $entity->setCpsCapResidenza($this->capResidenza);
+    $entity->setSdcIndirizzoResidenza($this->indirizzoResidenza);
+    $entity->setSdcCapResidenza($this->capResidenza);
     $entity->setSdcCittaResidenza($this->cittaResidenza);
-    $entity->setCpsProvinciaResidenza($this->provinciaResidenza);
-    $entity->setCpsStatoResidenza($this->statoResidenza);
+    $entity->setSdcProvinciaResidenza($this->provinciaResidenza);
+    $entity->setSdcStatoResidenza($this->statoResidenza);
 
     return $entity;
   }

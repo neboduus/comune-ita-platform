@@ -650,7 +650,7 @@ class Meeting
    *
    * @return Meeting
    */
-  public function setDraftExpiration(DateTime $draftExpiration): Meeting
+  public function setDraftExpiration(?DateTime $draftExpiration): Meeting
   {
     $this->draftExpiration = $draftExpiration;
 
