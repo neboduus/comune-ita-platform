@@ -13,7 +13,7 @@ use Gedmo\Translatable\TranslatableListener;
 class LocaleApiListener
 {
 
-  private $currentLocale;
+  private $currentLocale = false;
   private $translatableListener;
   private $defaultLocale;
   private $availableLocales;
@@ -31,29 +31,24 @@ class LocaleApiListener
     $this->availableLocales = explode('|', $availableLocales);
   }
 
-  public static function getSubscribedEvents()
-  {
-    return array(
-      KernelEvents::REQUEST => array(array('onKernelRequest', 200)),
-      KernelEvents::RESPONSE => array('setContentLanguage')
-    );
-  }
-
   public function onKernelRequest(GetResponseEvent $event)
   {
     // Persist DefaultLocale in translation table
     $this->translatableListener->setPersistDefaultLocaleTranslation(true);
 
     $request = $event->getRequest();
-    if ($request->headers->has("x-locale")) {
-      $locale = $request->headers->get('x-locale');
-      if (in_array($locale, $this->availableLocales)) {
-        $request->setLocale($locale);
+    
+    if (strpos($request->getRequestUri(), '/api/') == true) {
+      if ($request->headers->has("x-locale")) {
+        $locale = $request->headers->get('x-locale');
+        if (in_array($locale, $this->availableLocales)) {
+          $request->setLocale($locale);
+        } else {
+          $request->setLocale($this->defaultLocale);
+        }
       } else {
         $request->setLocale($this->defaultLocale);
       }
-    } else {
-      $request->setLocale($this->defaultLocale);
     }
 
     // Set currentLocale
@@ -66,8 +61,10 @@ class LocaleApiListener
    */
   public function onKernelResponse(FilterResponseEvent $event)
   {
-    $response = $event->getResponse();
-    $response->headers->add(array('Content-Language' => $this->currentLocale));
-    $event->setResponse($response);
+    if ($this->currentLocale) {
+      $response = $event->getResponse();
+      $response->headers->add(array('Content-Language' => $this->currentLocale));
+      $event->setResponse($response);
+    }
   }
 }

@@ -387,12 +387,6 @@ class ServiziController extends Controller
   {
     $categoryRepository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
 
-    /** @var ServizioRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:Servizio');
-
-    /** @var ServiceGroupRepository $servicesGroupRepository */
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
-
     $topics = [];
     $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);
     /** @var Categoria $c */
