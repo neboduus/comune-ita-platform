@@ -260,10 +260,14 @@ class Categoria
   public function getVisibleServicesGroup()
   {
     $services = new ArrayCollection();
-    /** @var Servizio $service */
-    foreach ($this->servicesGroup as $service) {
-      if (in_array($service->getStatus(), Servizio::PUBLIC_STATUSES)) {
-        $services []= $service;
+    /** @var ServiceGroup $serviceGroup */
+    foreach ($this->servicesGroup as $serviceGroup) {
+      /** @var Servizio $service */
+      foreach ($serviceGroup->getServices() as $service) {
+        if (in_array($service->getStatus(), Servizio::PUBLIC_STATUSES)) {
+          $services []= $serviceGroup;
+          break;
+        }
       }
     }
     return $services;

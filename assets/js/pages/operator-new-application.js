@@ -17,6 +17,7 @@ Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
+Formio.registerComponent('sdcfile', SdcFile);
 
 const api = new Api()
 // Todo: chiamare session-auth --> va modificato il provider, non solleva gli operatori
