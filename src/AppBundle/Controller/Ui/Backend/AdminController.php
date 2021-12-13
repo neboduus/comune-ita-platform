@@ -241,7 +241,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
-    return $this->render('@App/Admin/newOperatore.html.twig', [
+    return $this->render('@App/Admin/editOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'form' => $form->createView(),
@@ -277,10 +277,10 @@ class AdminController extends Controller
    */
   public function editOperatoreAction(Request $request, OperatoreUser $operatoreUser)
   {
-    $editForm = $this->createForm('AppBundle\Form\OperatoreUserType', $operatoreUser);
-    $editForm->handleRequest($request);
+    $form = $this->createForm('AppBundle\Form\OperatoreUserType', $operatoreUser);
+    $form->handleRequest($request);
 
-    if ($editForm->isSubmitted() && $editForm->isValid()) {
+    if ($form->isSubmitted() && $form->isValid()) {
       $this->getDoctrine()->getManager()->flush();
 
       return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
@@ -289,7 +289,7 @@ class AdminController extends Controller
     return $this->render('@App/Admin/editOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
-      'edit_form' => $editForm->createView()
+      'form' => $form->createView()
     ]);
   }
 

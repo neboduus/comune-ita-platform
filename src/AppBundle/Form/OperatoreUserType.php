@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -78,7 +79,7 @@ class OperatoreUserType extends AbstractType
       ->add('username', TextType::class, [
         'label' => 'general.username'
       ])
-      ->add('email', TextType::class, [
+      ->add('email', EmailType::class, [
         'label' => 'general.email'
       ])
       ->add('services', ChoiceType::class, [
