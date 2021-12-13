@@ -1,15 +1,17 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 image: docker:latest
-
 services:
-  - docker:dind
-
-# build -> push -> delivery
+- docker:dind
 stages:
-  - build
-  - test
-  - build_apache
-  - push
-
+- build
+- test
+- build_apache
+- push
 variables:
   DOCKER_BUILDKIT: 1
   PHP_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/app"
@@ -18,225 +20,168 @@ variables:
   APACHE_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/apache:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
   CADDY_IMAGE_NAME: "${CI_REGISTRY_IMAGE}/caddy"
   CADDY_IMAGE_TMP: "${CI_REGISTRY_IMAGE}/caddy:${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
-
-
-###################################################################################################################
-#
-# Build images with a temporary name
-#
-
 build_php:
   stage: build
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $PHP_IMAGE_NAME:latest || true
-    - docker pull $PHP_IMAGE_TMP 2> /dev/null || docker build --pull --cache-from $PHP_IMAGE_NAME:latest -t $PHP_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_SLUG --build-arg CI_COMMIT_TAG=$CI_COMMIT_TAG --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA .
-    - docker push $PHP_IMAGE_TMP
+  - docker pull $PHP_IMAGE_NAME:latest || true
+  - docker pull $PHP_IMAGE_TMP 2> /dev/null || docker build --pull --cache-from $PHP_IMAGE_NAME:latest
+    -t $PHP_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg CI_COMMIT_REF_NAME=$CI_COMMIT_REF_SLUG
+    --build-arg CI_COMMIT_TAG=$CI_COMMIT_TAG --build-arg CI_COMMIT_SHORT_SHA=$CI_COMMIT_SHORT_SHA
+    .
+  - docker push $PHP_IMAGE_TMP
   only:
-    - branches
-    - tags
-
+  - branches
+  - tags
 build_apache:
   stage: build_apache
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $APACHE_IMAGE_NAME:latest || true
-    - docker pull $APACHE_IMAGE_TMP 2> /dev/null || docker build --file Dockerfile.apache --pull --cache-from $APACHE_IMAGE_NAME:latest --build-arg php_image=$PHP_IMAGE_TMP -t $APACHE_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 .
-    - docker push $APACHE_IMAGE_TMP
+  - docker pull $APACHE_IMAGE_NAME:latest || true
+  - docker pull $APACHE_IMAGE_TMP 2> /dev/null || docker build --file Dockerfile.apache
+    --pull --cache-from $APACHE_IMAGE_NAME:latest --build-arg php_image=$PHP_IMAGE_TMP
+    -t $APACHE_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 .
+  - docker push $APACHE_IMAGE_TMP
   only:
-    - branches
-    - tags
-
+  - branches
+  - tags
 build_caddy:
   stage: build_apache
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $CADDY_IMAGE_NAME:latest || true
-    - docker pull $CADDY_IMAGE_TMP 2> /dev/null || docker build --file Dockerfile.caddy --pull --cache-from $CADDY_IMAGE_NAME:latest --build-arg php_image=$PHP_IMAGE_TMP -t $CADDY_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 .
-    - docker push $CADDY_IMAGE_TMP
+  - docker pull $CADDY_IMAGE_NAME:latest || true
+  - docker pull $CADDY_IMAGE_TMP 2> /dev/null || docker build --file Dockerfile.caddy
+    --pull --cache-from $CADDY_IMAGE_NAME:latest --build-arg php_image=$PHP_IMAGE_TMP
+    -t $CADDY_IMAGE_TMP --build-arg BUILDKIT_INLINE_CACHE=1 .
+  - docker push $CADDY_IMAGE_TMP
   only:
-    - branches
-    - tags
-
-
-###################################################################################################################
-#
-# Push PHP image with defintive name
-#
-
+  - branches
+  - tags
 push_php_branch:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $PHP_IMAGE_TMP
-    - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
-    - docker push "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+  - docker pull $PHP_IMAGE_TMP
+  - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+  - docker push "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
   only:
-    - branches
+  - branches
   except:
-    - master
-
+  - master
 push_php_tag:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $PHP_IMAGE_TMP
-    - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:$CI_COMMIT_TAG"
-    - docker push "$PHP_IMAGE_NAME:$CI_COMMIT_TAG"
+  - docker pull $PHP_IMAGE_TMP
+  - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:$CI_COMMIT_TAG"
+  - docker push "$PHP_IMAGE_NAME:$CI_COMMIT_TAG"
   only:
-    - tags
-
+  - tags
 push_php_latest:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $PHP_IMAGE_TMP
-    - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:latest"
-    - docker push "$PHP_IMAGE_NAME:latest"
+  - docker pull $PHP_IMAGE_TMP
+  - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:latest"
+  - docker push "$PHP_IMAGE_NAME:latest"
   only:
-    - master
-
-
-###################################################################################################################
-#
-# Push Apache image with defintive name
-#
-
+  - master
 push_apache_branch:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $APACHE_IMAGE_TMP
-    - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
-    - docker push "$APACHE_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+  - docker pull $APACHE_IMAGE_TMP
+  - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+  - docker push "$APACHE_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
   only:
-    - branches
+  - branches
   except:
-    - master
-
+  - master
 push_apache_tag:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $APACHE_IMAGE_TMP
-    - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:$CI_COMMIT_TAG"
-    - docker push "$APACHE_IMAGE_NAME:$CI_COMMIT_TAG"
+  - docker pull $APACHE_IMAGE_TMP
+  - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:$CI_COMMIT_TAG"
+  - docker push "$APACHE_IMAGE_NAME:$CI_COMMIT_TAG"
   only:
-    - tags
-
+  - tags
 push_apache_latest:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $APACHE_IMAGE_TMP
-    - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:latest"
-    - docker push "$APACHE_IMAGE_NAME:latest"
+  - docker pull $APACHE_IMAGE_TMP
+  - docker tag $APACHE_IMAGE_TMP "$APACHE_IMAGE_NAME:latest"
+  - docker push "$APACHE_IMAGE_NAME:latest"
   only:
-    - master
-
-###################################################################################################################
-#
-# Push CADDY image with defintive name
-#
-
+  - master
 push_caddy_branch:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $CADDY_IMAGE_TMP
-    - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
-    - docker push "$CADDY_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+  - docker pull $CADDY_IMAGE_TMP
+  - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+  - docker push "$CADDY_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
   only:
-    - branches
+  - branches
   except:
-    - master
-
+  - master
 push_caddy_tag:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $CADDY_IMAGE_TMP
-    - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:$CI_COMMIT_TAG"
-    - docker push "$CADDY_IMAGE_NAME:$CI_COMMIT_TAG"
+  - docker pull $CADDY_IMAGE_TMP
+  - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:$CI_COMMIT_TAG"
+  - docker push "$CADDY_IMAGE_NAME:$CI_COMMIT_TAG"
   only:
-    - tags
-
+  - tags
 push_caddy_latest:
   stage: push
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker pull $CADDY_IMAGE_TMP
-    - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:latest"
-    - docker push "$CADDY_IMAGE_NAME:latest"
+  - docker pull $CADDY_IMAGE_TMP
+  - docker tag $CADDY_IMAGE_TMP "$CADDY_IMAGE_NAME:latest"
+  - docker push "$CADDY_IMAGE_NAME:latest"
   only:
-    - master
-
-
-
-###################################################################################################################
-#
-# Test jobs
-#
-
-#zap_baseline:
-#  stage: test
-#  allow_failure: true
-#  script:
-#    - docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t https://devsdc.opencontent.it/comune-di-bugliano/
-#    # -z -config rules.csrf.ignorelist=search,login then ZAP will not fail the scan if forms with an ID of "search" or "login" do not have anti CSRF tokens.
-#    # - docker run -t owasp/zap2docker-stable zap-baseline.py -j -t https://10.0.1.22/ # with ajax scanning
-
+  - master
 publiccode:
   stage: test
   allow_failure: true
   script:
-#    - docker run -v $(pwd):/var/tmp:ro -t --rm golang sh -c "go get github.com/italia/publiccode-parser-go/pcvalidate; cd /var/tmp; /go/bin/pcvalidate -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master publiccode.yml"
-    - docker run -i italia/publiccode-parser-go -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master /dev/stdin < publiccode.yml
-
-
+  - docker run -i italia/publiccode-parser-go -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master
+    /dev/stdin < publiccode.yml
 php-qa-tools:
   stage: test
   allow_failure: true
   script:
-    # commands are executed with a path like: /builds/LzfeuYfm/0/opencontent/stanzadelcittadino
-    # to have reports uploaded to gitlab the runners must have /builds path shared
-    # ->  https://gitlab.com/gitlab-org/gitlab-foss/-/issues/41227
-    - docker run -t --rm -u "$UID" -v "$(pwd):/app" eko3alpha/docker-phpqa --tools phpmetrics,phploc,phpcs,php-cs-fixer,phpmd,pdepend,parallel-lint --report offline --ignoredDirs vendor,build,migrations,test --buildDir /app/reports
+  - docker run -t --rm -u "$UID" -v "$(pwd):/app" eko3alpha/docker-phpqa --tools phpmetrics,phploc,phpcs,php-cs-fixer,phpmd,pdepend,parallel-lint
+    --report offline --ignoredDirs vendor,build,migrations,test --buildDir /app/reports
   artifacts:
     name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
     paths:
-      - reports/*
+    - reports/*
     when: always
-
 var-dump-check:
   stage: test
   script:
-    - docker run -t --rm -v "$(pwd):/app" umutphp/php-docker-images-for-ci:7.3 var-dump-check /app
-
+  - docker run -t --rm -v "$(pwd):/app" umutphp/php-docker-images-for-ci:7.3 var-dump-check
+    /app
 security_composer_checker:
   stage: test
   image: umutphp/php-docker-images-for-ci:7.3
   script:
-    - local-php-security-checker --path=./composer.lock
-
-#dummy_protocol:
-#  stage: test
-#  allow_failure: true
-#  script:
-#    - echo "Looking for configuration files containing protocollo.handlers.dummy:"
-#    - find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \;
-#    - if [[ $(find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \; | wc -l) -gt 0 ]]; then echo "Error, at least one production file contains dummy protocol!" && exit 1; else echo "OK, no dummy protocol in production files"; fi
-
-# vim: autoindent tabstop=2 shiftwidth=2 expandtab softtabstop=2 filetype=yaml fileencoding=utf-8
+  - local-php-security-checker --path=./composer.lock
+include:
+- template: Auto-DevOps.gitlab-ci.yml
