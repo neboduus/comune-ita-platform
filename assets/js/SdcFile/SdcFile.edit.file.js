@@ -48,6 +48,7 @@ var _default = [{
   {
     type: 'checkbox',
     input: true,
+    defaultValue: true,
     key: 'protocol_required',
     label: 'Richiede protocollazione?',
     tooltip: '',
