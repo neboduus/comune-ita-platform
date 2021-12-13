@@ -242,7 +242,7 @@ class FileService
     $command = $this->s3Client->getCommand('PutObject', [
       'Bucket' => $this->s3Bucket,
       'Key' => $this->getFilenameWithPath($allegato, true),
-      'Content-Type' => $allegato->getMimeType() ?? Allegato::DEFAULT_MIME_TYPE
+      'ContentType' => $allegato->getMimeType() ?? Allegato::DEFAULT_MIME_TYPE
     ]);
     $request = $this->s3Client->createPresignedRequest($command, self::PRESIGNED_PUT_EXPIRE_STRING)->withMethod('PUT');
 

@@ -213,13 +213,12 @@ export default class SdcFile extends File {
               idUpload = fileInfo.data.id
               fileUpload.status = 'progress';
               fileUpload.progress = parseInt(0);
-              const formData = new FormData();
-              formData.append('file', file)
-              axios.put(fileInfo.data.uri, formData, {
+              /*const formData = new FormData();
+              formData.append('file', file)*/
+              axios.put(fileInfo.data.uri, file, {
                 onUploadProgress: progressEvent => {
                   let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                   fileUpload.progress = parseInt(percentCompleted);
-                  console.log('file progress', fileUpload.progress)
                   fileUpload.status = 'progress';
                   delete fileUpload.message;
                   this.fileDropHidden = false;
@@ -257,7 +256,6 @@ export default class SdcFile extends File {
                   file_hash: etag
                 }).then(resp => {
                 }).catch(err => {
-                  console.error('error put finalize', err)
                   fileUpload.status = 'error';
                   fileUpload.message = err;
                   delete fileUpload.progress;
@@ -266,7 +264,6 @@ export default class SdcFile extends File {
                   this.triggerChange();
                 })
               }).catch(err => {
-                console.error('error put aws', err)
                 fileUpload.status = 'error';
                 fileUpload.message = err;
                 delete fileUpload.progress;
