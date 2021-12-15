@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\BackOffice\CalendarsBackOffice;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\User;
 use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\MeetingVoter;
@@ -38,8 +39,6 @@ class MeetingsAPIController extends AbstractFOSRestController
 
   private $em;
 
-  private $is;
-
   /**
    * @var TranslatorInterface $translator
    */
@@ -48,11 +47,10 @@ class MeetingsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   private $logger;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->em = $em;
-    $this->is = $is;
     $this->logger = $logger;
   }
 
@@ -85,8 +83,6 @@ class MeetingsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
-
     /** @var User $user */
     $user = $this->getUser();
 
@@ -94,13 +90,19 @@ class MeetingsAPIController extends AbstractFOSRestController
     $builder
       ->select('meeting.id')
       ->from(Meeting::class, 'meeting')
-      ->leftJoin('meeting.calendar', 'calendar')
-      ->leftJoin('calendar.owner', 'owner')
-      ->leftJoin('calendar.moderators', 'moderators')
-      ->where('calendar.owner = :owner')
-      ->Orwhere('moderators.id = :operatore')
-      ->setParameter('operatore', $user)
-      ->setParameter('owner', $user);
+      ->leftJoin('meeting.calendar', 'calendar');
+
+    if ($user instanceof CPSUser) {
+      $builder
+        ->where('meeting.user = :user')
+        ->setParameter('user', $user);
+    } elseif ($user instanceof OperatoreUser) {
+      $builder
+        ->where(':user MEMBER OF calendar.moderators or calendar.owner = :user')
+        ->setParameter('user', $user);
+    }
+
+
 
     $results = $builder->getQuery()->getResult();
     $meetings = array();
@@ -145,22 +147,12 @@ class MeetingsAPIController extends AbstractFOSRestController
     );
 
     try {
-      /** @var User $user */
-      $user = $this->getUser();
-
       $builder = $this->em->createQueryBuilder();
       $builder
         ->select('meeting.id')
         ->from(Meeting::class, 'meeting')
-        ->leftJoin('meeting.calendar', 'calendar')
-        ->leftJoin('calendar.owner', 'owner')
-        ->leftJoin('calendar.moderators', 'moderators')
-        ->where('calendar.owner = :owner')
-        ->Orwhere('moderators.id = :operatore')
-        ->andWhere('meeting.id = :meeting_id')
-        ->setParameter('meeting_id', $id)
-        ->setParameter('operatore', $user)
-        ->setParameter('owner', $user);
+        ->where('meeting.id = :meeting_id')
+        ->setParameter('meeting_id', $id);
 
       $result = $builder->getQuery()->getOneOrNullResult();
 

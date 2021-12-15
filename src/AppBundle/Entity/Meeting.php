@@ -130,6 +130,7 @@ class Meeting
   private $motivationOutcome;
 
   /**
+   * @Serializer\Exclude()
    * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Pratica", mappedBy="meetings")
    */
   private $applications;
@@ -240,6 +241,20 @@ class Meeting
   public function getCalendarId(): string
   {
     return $this->calendar->getId();
+  }
+
+  /**
+   * @Serializer\VirtualProperty(name="application")
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("application")
+   */
+  public function getApplicationId(): ?string
+  {
+    $applicationId = null;
+    if ($this->getApplications()->count() > 0) {
+      $applicationId = $this->getApplications()->last()->getId();
+    }
+    return $applicationId;
   }
 
   /**
