@@ -152,7 +152,7 @@ class AllegatoController extends Controller
         $session->start();
       }
 
-      $fileName = $request->request->get('name');
+      $fileName = $request->request->get('original_filename');
       $description = $request->get('description', Allegato::DEFAULT_DESCRIPTION);
       $mimeType = $request->get('mime_type', Allegato::DEFAULT_MIME_TYPE);
       $protocolRequired = $request->get('protocol_required', true);
