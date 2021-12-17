@@ -95,7 +95,7 @@ class SubscriptionPaymentType extends AbstractType
           );
         }
 
-        if (!$service->isPaymentRequired()) {
+        if ($service->getPaymentRequired() === Servizio::PAYMENT_NOT_REQUIRED) {
           // Payment is not enabled for service
           $event->getForm()->addError(
             new FormError($this->translator->trans('backoffice.integration.subscription_service.no_payment',
