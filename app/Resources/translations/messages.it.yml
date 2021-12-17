@@ -2250,7 +2250,7 @@ backoffice:
         reason: "Causale di pagamento"
         identifier: "Identificativo del pagamento"
         service_id: "Identificativo del servizio utilizzato per il pagamento"
-        required: "Il pagamento è obblogatorio per tutti gli iscritti?"
+        required: "Il pagamento è obbligatorio per tutti gli iscritti?"
         create_draft: "Crea automaticamente una pratica di pagamento in bozza prima della scadenza?"
         meta: "Metadati utili alla compilazione del servizio"
         meta_available_placeholders: 'Sono disponibili i seguenti placeholders: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
