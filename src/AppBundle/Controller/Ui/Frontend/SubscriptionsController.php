@@ -11,6 +11,7 @@ use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
+use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\SubscriptionsService;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManager;
@@ -56,14 +57,19 @@ class SubscriptionsController extends Controller
    * @var LoggerInterface
    */
   private $logger;
+  /**
+   * @var ModuloPdfBuilderService
+   */
+  private $pdfBuilderService;
 
-  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService)
+  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService, ModuloPdfBuilderService $pdfBuilderService)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
     $this->entityManager = $entityManager;
     $this->logger = $logger;
     $this->translator = $translator;
     $this->subscriptionsService = $subscriptionsService;
+    $this->pdfBuilderService = $pdfBuilderService;
   }
 
   /**
@@ -519,7 +525,7 @@ class SubscriptionsController extends Controller
    * @param $subscriptionId
    * @param $subscriptionPaymentId
    * @return Response
-   * @Route("/operatori/{subscriptionId}/certificate/{subscriptionPaymentId}", name="payment_certificate_download_operatore")
+   * @Route("/operatori/subscriptions/{subscriptionId}/certificate/{subscriptionPaymentId}", name="payment_certificate_download_operatore")
    */
   public function operatorePaymentCertificareDownloadAction(Request $request, $subscriptionId, $subscriptionPaymentId): Response
   {
