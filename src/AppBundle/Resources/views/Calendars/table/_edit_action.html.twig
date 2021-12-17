@@ -1,0 +1,17 @@
+{% if canEdit %}
+  <a class="btn btn-xs btn-secondary"
+     href="{{ path('operatori_calendar_edit', {'calendar': id}) }}">
+    <svg class="icon icon-sm icon-white">
+      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+    </svg>
+    <span>{{ 'calendars.edit' | trans }}</span>
+  </a>
+{% else %}
+  <button data-toggle="tooltip" title="{{ 'calendars.cant_edit_tooltip' | trans }}"
+          class="btn btn-xs btn-primary disabled">
+    <svg class="icon icon-sm icon-300">
+      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+    </svg>
+    <span>{{ 'calendars.edit' | trans }}</span>
+  </button>
+{% endif %}

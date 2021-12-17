@@ -14,30 +14,6 @@
   <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css"/>
   <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css"/>
-  <style>
-
-    @media only screen and (max-width: 600px) {
-      .fc-toolbar.fc-header-toolbar {
-        display: block;
-      }
-
-      .fc-timeGridWeek-button {
-        display: none;
-      }
-
-      .fc-dayGridMonth-button {
-        display: none;
-      }
-    }
-
-    .fc td.fc-today {
-      background-image: none;
-    }
-
-    input[type=date], input[type=datetime-local], input[type=email], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], textarea {
-      font-weight: 100;
-    }
-  </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -199,84 +175,11 @@
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
-        <h1>
-          {{ calendar.title }}
-        </h1>
+        <h1>{{ calendar.title }}</h1>
       </div>
     </div>
-    <div id="hidden" class="hidden"
-         data-url='{{ path("calendar-day-availabilities_api_get", {'id': 'calendar_id', 'date': 'date'}) }}'
-         data-calendar='{{ calendar.id }}'
-         data-events='{{ events | json_encode }}'
-         data-duration='{{ minDuration }}'
-         data-token='{{ token }}'
-         data-range-time-event='{{ rangeTimeEvent | json_encode  }}'
-    ></div>
-    <div class="nav-tabs-hidescroll mt-4 mt-md-5">
-      <ul class="nav nav-tabs auto no-border no-background" id="tab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link text-primary active" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
-             aria-controls="calendar" aria-selected="true">Calendario</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-primary" id="meetings-tab" data-toggle="tab" href="#meetings" role="tab"
-             aria-controls="meetings" aria-selected="false">Appuntamenti</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-primary" id="detail-tab" data-toggle="tab" href="#detail" role="tab"
-             aria-controls="detail" aria-selected="false">Dettaglio</a>
-        </li>
-      </ul>
-    </div>
-    <div class="row">
-      <div class="col">
-        <!-- prettier-ignore -->
-        <div class="tab-content mt-5 mt-md-3" id="myTabContent">
-          <div class="tab-pane fade show active" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
-            {{ include('AppBundle:Calendars/parts:showFullCalendar.html.twig') }}
-          </div>
-          <div class="tab-pane fade" id="meetings" role="tabpanel" aria-labelledby="meetings-tab">
-            {{ include('AppBundle:Calendars/parts:showTable.html.twig') }}
-          </div>
-          <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab">
-            {{ include('AppBundle:Calendars/parts:showDetails.html.twig') }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 float-right">
-        <p><small class="text-200">Creato da {{ calendar.owner.username }}
-            il {{ calendar.createdAt | date('d/m/Y') }}, ultima modifica il {{ calendar.updatedAt | date('d/m/Y') }}
-            alle {{ calendar.updatedAt | date('H:i') }} </small></p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-8">
-        <a class="btn btn-100 btn-sm" href="{{ path('operatori_calendars_index') }}">Torna alla lista</a>
-        <a class="btn btn-primary btn-sm" href="#" onclick="printJS({
-        printable: 'fullcalendar',
-        type: 'html',
-        honorColor: true,
-         css: ['https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css']})">
-          Stampa
-        </a>
-        <a class="btn btn-warning btn-sm"
-           href="{{ path('operatori_calendar_edit', { 'calendar': calendar.id }) }}">Modifica</a>
-      </div>
-      <div class="col-4">
-        {{ form_start(delete_form) }}
-        <div>
-          <a class="btn btn-danger btn-sm float-right"
-             onclick="return confirm('Sei sicuro di procedere? il calendario verrà eliminato definitivamente.');"
-             href="{{ path('operatori_calendar_delete', { 'id': calendar.id }) }}">Elimina</a>
-          {{ form_end(delete_form) }}
-        </div>
-      </div>
-    </div>
+    {{ include('@App/Calendars/parts/tabs.twig') }}
+    {{ include('@App/Calendars/parts/lastModified.html.twig') }}
+    {{ include('@App/Calendars/parts/action_buttons.twig') }}
   </section>
 {% endblock %}

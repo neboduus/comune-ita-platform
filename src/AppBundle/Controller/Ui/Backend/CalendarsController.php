@@ -79,51 +79,23 @@ class CalendarsController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $builder = $em->createQueryBuilder();
-    $builder
-      ->select('calendar', 'moderators')
-      ->from(Calendar::class, 'calendar')
-      ->leftJoin('calendar.moderators', 'moderators');
-
-    $query = $builder->getQuery();
-
-    $date = new DateTime();
-    foreach ($query->getResult() as $calendarEntry) {
-      $canEdit = $this->isGranted(CalendarVoter::EDIT, $calendarEntry);
-      $canDelete = $this->isGranted(CalendarVoter::DELETE, $calendarEntry);
+    $calendars = $this->em->getRepository(Calendar::class)->findAll();
+    $repo = $this->em->getRepository(Meeting::class);
+    foreach ($calendars as $calendar) {
+      $canEdit = $this->isGranted(CalendarVoter::EDIT, $calendar);
+      $canDelete = $this->isGranted(CalendarVoter::DELETE, $calendar);
 
       $futureMeetings = -1;
       if ($canDelete) {
-        $futureMeetings = $this->em->createQueryBuilder()
-          ->select('count(meeting.id)')
-          ->from(Meeting::class, 'meeting')
-          ->where('meeting.calendar = :calendar')
-          ->andWhere('meeting.status = :pending or meeting.status = :approved or meeting.status = :draft')
-          ->andWhere('meeting.fromTime >= :now or meeting.toTime >= :now')
-          ->setParameter('calendar', $calendarEntry->getId())
-          ->setParameter('draft', Meeting::STATUS_DRAFT)
-          ->setParameter('pending', Meeting::STATUS_PENDING)
-          ->setParameter('approved', Meeting::STATUS_APPROVED)
-          ->setParameter('now', $date->format('Y-m-d h:i:s'))
-          ->getQuery()->getSingleScalarResult();
+        $futureMeetings = $repo->countFutureMeetingsByCalendar($calendar);
       }
-
-      $meetingsToModerate = $this->em->createQueryBuilder()
-        ->select('count(meeting.id)')
-        ->from(Meeting::class, 'meeting')
-        ->where('meeting.calendar = :calendar')
-        ->andWhere('meeting.status = :pending')
-        ->andWhere('meeting.fromTime >= :now or meeting.toTime >= :now')
-        ->setParameter('calendar', $calendarEntry->getId())
-        ->setParameter('pending', Meeting::STATUS_PENDING)
-        ->setParameter('now', $date->format('Y-m-d h:i:s'))
-        ->getQuery()->getSingleScalarResult();
+      $meetingsToModerate = $repo->countModeratedMeetingsByCalendar($calendar);
 
       $data[] = array(
-        'title' => $calendarEntry->getTitle(),
-        'id' => $calendarEntry->getId(),
-        'owner' => $calendarEntry->getOwner()->getUsername(),
-        'isModerated' => $calendarEntry->getIsModerated(),
+        'title' => $calendar->getTitle(),
+        'id' => $calendar->getId(),
+        'owner' => $calendar->getOwner()->getUsername(),
+        'isModerated' => $calendar->getIsModerated(),
         'canView' => $canEdit,
         'canEdit' => $canEdit,
         'canDelete' => $canDelete,
@@ -480,18 +452,14 @@ class CalendarsController extends Controller
       $events = array_merge($events, $this->meetingService->getAbsoluteAvailabilities($openingHour, true));
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
-
-    // Check permissions if calendar is moderated
-    if (!$calendar->getIsModerated() || ($this->getUser() == $calendar->getOwner() || $calendar->getModerators()->contains($this->getUser())))
-      $canEdit = true;
-    else $canEdit = false;
-
+    $futureMeetings =  $this->em->getRepository(Meeting::class)->countFutureMeetingsByCalendar($calendar);
     $jwt = $this->JWTTokenManager->create($this->getUser());
 
     $data = [
       'user' => $user,
       'calendar' => $calendar,
-      'canEdit' => $canEdit,
+      'canEdit' => $this->isGranted(CalendarVoter::EDIT, $calendar),
+      'canDelete' => $this->isGranted(CalendarVoter::DELETE, $calendar),
       'delete_form' => $deleteForm->createView(),
       'events' => array_values($events),
       'statuses' => $statuses,
@@ -501,7 +469,8 @@ class CalendarsController extends Controller
       'rangeTimeEvent' => [
         'min' => $minDate,
         'max' => $maxDate
-      ]
+      ],
+      'futureMeetings' => $futureMeetings
     ];
 
     if ($calendar->getType() === Calendar::TYPE_TIME_FIXED) {
