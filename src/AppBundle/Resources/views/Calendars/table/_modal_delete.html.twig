@@ -1,0 +1,71 @@
+<script>
+  $(document).ready(function () {
+    $('input.disablepaste').bind('paste', function (e) {
+      e.preventDefault();
+    });
+
+    $('.delete-btn').on('click', function () {
+      if (checkName($(this).attr('data-id')))
+        window.location.assign($(this).attr('data-url'));
+    })
+
+    $('.name-input').on('input', function () {
+      let id = $(this).attr('data-id')
+      let confirmBtn = $(`#confirm-delete-btn-${id}`)
+      checkName(id) ? confirmBtn.attr('disabled', false) : confirmBtn.attr('disabled', true);
+    })
+
+    function checkName(id) {
+      let input = $(`#input-calendar-name-${id}`).val();
+      let check = $(`#check-calendar-name-${id}`).val();
+      return !!(check && input && check.toLowerCase() === input.toLowerCase());
+    }
+  });
+</script>
+
+<div id="confirm-delete-modal-{{ id }}" class="modal fade bd-example-modal-sm text-left" tabindex="-1" role="dialog"
+     aria-labelledby="" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <svg class="icon icon-danger">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
+        </svg>
+        <h5 class=" modal-title text-danger align-self-center ml-2">{{ 'calendars.confirm_delete.title' | trans }}</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <svg class="icon">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h6 class="text-danger">{{ 'calendars.confirm_delete.description_title' | trans }}</h6>
+          <p>{{ 'calendars.confirm_delete.description_text' | trans }}</p>
+          {% if futureMeetings > 0 %}
+            <p
+              class="font-weight-semibold">{{ 'calendars.confirm_delete.future_meetings_alert' | trans({'%num%': futureMeetings}) }}</p>
+          {% endif %}
+        </div>
+        <div class="form-group mt-3">
+          <input type="hidden" id="check-calendar-name-{{ id }}" readonly value="{{ title }}">
+          <input type="text" class="form-control name-input disablepaste" id="input-calendar-name-{{ id }}"
+                 placeholder="{{ 'calendars.confirm_delete.type_name_placeholder' | trans }}"
+                 data-id="{{ id }}"
+                 aria-describedby="modal-input-description">
+          <p class="form-text text-muted">{{ 'calendars.confirm_delete.type_name' | trans }} <b>{{ title }}</b></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary btn-sm" type="button" id="cancel-delete-btn" data-dismiss="modal">
+          {{ 'calendars.cancel'| trans }}
+        </button>
+        <button class="btn btn-danger btn-sm delete-btn" id="confirm-delete-btn-{{ id }}" data-id="{{ id }}"
+                type="button" disabled
+                data-url="{{ path('operatori_calendar_delete', {'id': id}) }}">
+          {{ 'calendars.permanently_delete' | trans }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

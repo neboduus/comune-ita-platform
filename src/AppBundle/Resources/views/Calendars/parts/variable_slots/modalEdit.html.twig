@@ -129,23 +129,28 @@
           <div class="col-10">
             <p id="modalStatusHelper" class="mb-3 small">{{ 'meetings.modal.status_change_helper' | trans }}</p>
             <button id="modalApprove" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-success btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_1' | trans | escape('js') }}')) editEvent(this.id, 1)">
+                    class="btn btn-success btn-sm mr-3 modal-edit" type="button" data-status="1"
+                    data-confirm="{{ 'meetings.modal.confirm_edit.status_1' | trans}}">
             {{ "meetings.modal.confirm" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use></svg>
             </button>
             <button id="modalRefuse" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-danger btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_2' | trans | escape('js') }}')) editEvent(this.id,2)">
+                    class="btn btn-danger btn-sm mr-3 modal-edit" type="button" data-status="2"
+                    data-confirm="{{ 'meetings.modal.confirm_edit.status_2' | trans}}">
               {{ "meetings.modal.refuse" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use></svg>
             </button>
             <button id="modalComplete" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-success btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_4' | trans | escape('js') }}')) editEvent(this.id,4)">
+                    class="btn btn-success btn-sm mr-3 modal-edit" type="button" data-status="4"
+                    data-confirm="{{ 'meetings.modal.confirm_edit.status_4' | trans}}">
               {{ "meetings.modal.done" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use></svg>
             </button>
             <button id="modalMissed" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-danger btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_3' | trans | escape('js') }}')) editEvent(this.id,3)">
+                    class="btn btn-danger btn-sm mr-3 modal-edit" type="button" data-status="3"
+                    data-confirm="{{ 'meetings.modal.confirm_edit.status_3' | trans}}">
               {{ "meetings.modal.absent" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use></svg>
             </button>
             <button id="modalCancel" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                    class="btn btn-warning btn-sm mr-3" type="button" onclick="if(confirm('{{ 'meetings.modal.confirm_edit.status_5' | trans | escape('js') }}')) editEvent(this.id,5)">
+                    class="btn btn-warning btn-sm mr-3 modal-edit" type="button" data-status="5"
+                    data-confirm="{{ 'meetings.modal.confirm_edit.status_5' | trans}}">
               {{ "meetings.modal.cancel" | trans() }} <svg class="icon icon-sm icon-white"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
             </button>
           </div>
@@ -155,7 +160,8 @@
       <div class="modal-footer my-3 d-flex justify-content-between" >
         <p id="modalError" class="text-danger"></p>
         <button id="modalSave" data-url='{{ path("meetings_api_patch", {'id': 'meeting_id'}) }}'
-                class="btn btn-primary btn-sm" type="button" onclick="editEvent(this.id)">{{ "meetings.modal.save" | trans }}</button>
+                class="btn btn-primary btn-sm modal-edit" type="button"
+                data-confirm="{{ 'meetings.modal.confirm_edit.save' | trans}}">{{ "meetings.modal.save" | trans }}</button>
       </div>
     </div>
   </div>

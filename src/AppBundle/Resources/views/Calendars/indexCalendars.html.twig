@@ -55,26 +55,6 @@
           $('#dt_info').css('margin-bottom', '0.85em')
         }
       }).then(function (dt) {
-        $('input.disablepaste').bind('paste', function (e) {
-          e.preventDefault();
-        });
-
-        $('.delete-btn').on('click', function () {
-          if (checkName($(this).attr('data-id')))
-            window.location.assign($(this).attr('data-url'));
-        })
-
-        $('.name-input').on('input', function () {
-          let id = $(this).attr('data-id')
-          let confirmBtn = $(`#confirm-delete-btn-${id}`)
-          checkName(id) ? confirmBtn.attr('disabled', false) : confirmBtn.attr('disabled', true);
-        })
-
-        function checkName(id) {
-          let input = $(`#input-calendar-name-${id}`).val();
-          let check = $(`#check-calendar-name-${id}`).val();
-          return !!(check && input && check.toLowerCase() === input.toLowerCase());
-        }
       })
     });
   </script>
@@ -84,15 +64,14 @@
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2">
-        <h1>Calendari appuntamenti</h1>
+        <h1>{{ 'calendars.calendars' | trans }}</h1>
       </div>
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         <div id="no-more-tables" class="table-striped">
           <div id="calendars_table"></div>
         </div>
         <div class="mt-4">
-          <a class="btn btn-success btn-primary" href="{{ path('operatori_calendar_new') }}">Crea nuovo
-            calendario</a>
+          <a class="btn btn-success btn-primary" href="{{ path('operatori_calendar_new') }}">{{ 'calendars.new' | trans }}</a>
         </div>
       </div>
     </div>
