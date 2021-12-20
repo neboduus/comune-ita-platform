@@ -2,11 +2,11 @@
 
 namespace AppBundle\Controller\Ui\Backend;
 
-use App\Entity\User;
 use AppBundle\DataTable\ScheduledActionTableType;
 use AppBundle\DataTable\ServiceTableType;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
@@ -77,7 +77,10 @@ class ServiceController extends Controller
         ->andWhere('servizio.status IN (:availableStatuses) OR (servizio.status = :statusScheduled AND servizio.scheduledFrom <= :now AND servizio.scheduledTo >= :now)')
         ->setParameter('availableStatuses', array_values([Servizio::STATUS_AVAILABLE, Servizio::STATUS_PRIVATE]))
         ->setParameter('statusScheduled', Servizio::STATUS_SCHEDULED)
-        ->setParameter('now', new \DateTime());
+        ->setParameter('now', new \DateTime())
+        ->andWhere('(servizio.paymentRequired IS NULL OR servizio.paymentRequired NOT IN (:immediate_payment))')
+        ->setParameter('immediate_payment', Servizio::PAYMENT_REQUIRED)
+      ;
     }
 
     $items = $qb->getQuery()->getResult();
