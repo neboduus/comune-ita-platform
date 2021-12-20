@@ -1,0 +1,28 @@
+<div class="d-flex justify-content-between">
+  <div>
+    <a class="btn btn-100 btn-xs" href="{{ path('operatori_calendars_index') }}">
+      <svg class="icon icon-sm icon-300">
+        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-left"></use>
+      </svg>
+      {{ 'calendars.back_to_calendars' | trans }}
+    </a>
+    <a class="btn btn-primary btn-xs" href="#" onclick="printJS({
+        printable: 'fullcalendar',
+        type: 'html',
+        honorColor: true,
+         css: ['https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css']})">
+      <svg class="icon icon-sm icon-300">
+        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-print"></use>
+      </svg>
+      {{ 'calendars.print' | trans }}
+    </a>
+  </div>
+  <div>
+    {{ include('@App/Calendars/table/_edit_action.html.twig', {'canEdit': canEdit, 'id': calendar.id}) }}
+    {{ include('@App/Calendars/table/_delete_action.html.twig', {'canDelete': canDelete, 'id': calendar.id, 'title': calendar.title, 'futureMeetings': futureMeetings}) }}
+  </div>
+</div>

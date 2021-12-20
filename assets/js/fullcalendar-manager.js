@@ -1,6 +1,21 @@
+import {getStatus, deleteDraftModal, getCookie} from "./fullcalendar-common";
+import { Calendar, locales } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPligin from '@fullcalendar/list';
+import interactionPlugin from '@fullcalendar/interaction';
+import bootstrapPlugin from '@fullcalendar/bootstrap';
+import allLocales from '@fullcalendar/core/locales-all';
+
 require("bootstrap-italia");
 require("../css/app.scss");
-require("jquery"); // Load jQuery as a module
+require("jquery");
+
+require('@fullcalendar/core/main.min.css');
+require('@fullcalendar/daygrid/main.min.css');
+require('@fullcalendar/timegrid/main.min.css');
+require('@fullcalendar/list/main.min.css');
+require('@fullcalendar/bootstrap/main.min.css');
 
 $(document).ready(function () {
   // Hide all buttons
@@ -15,6 +30,9 @@ $(document).ready(function () {
   $("#modalSlot").click(function () {
     $("#edit_alert").show();
   });
+
+  var view_cookie = getCookie("view_type")
+  var date_cookie = getCookie("date_view")
 
   // Calculate slots when date changes
 
@@ -45,16 +63,13 @@ $(document).ready(function () {
     })
   });
 
-
-  var view_cookie = getCookie("view_type")
-  var date_cookie = getCookie("date_view")
-
   // Fullcalendar initialization
   var calendarEl = document.getElementById('fullcalendar');
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    plugins: ['bootstrap', 'dayGrid', 'timeGrid', 'list', 'interaction'],
+  var calendar = new Calendar(calendarEl, {
+    plugins: [dayGridPlugin, timeGridPlugin, listPligin, interactionPlugin, bootstrapPlugin],
     themeSystem: 'bootstrap',
     locale: 'it',
+    locales: allLocales,
     timeZone: 'Europe/Rome',
     nowIndicator: true,
     eventColor: '#3478BD',
@@ -249,24 +264,6 @@ function newModal(info) {
   })
 }
 
-/**
- * Delefe draft modal
- * @param info: event
- */
-function deleteDraftModal(info) {
-  $('#modalDraftId').html(info.event.id);
-
-  let date = new Date(info.event.extendedProps.draftExpireTime).toISOString().slice(0, 10);
-  let time = new Date(info.event.extendedProps.draftExpireTime).toISOString().slice(11, 16);
-  $('#modalDraftExpireTime').html(date);
-  $('#modalDraftExpireDate').html(time);
-
-  let description = $('#modalDraftDescription').html()
-  description = description.replace("%expire_time%", time).replace("%expire_date%", date)
-  $('#modalDraftDescription').html(description)
-
-  $('#modalDeleteDraft').modal('show');
-}
 
 /**
  * Retrieves slots for selected date
@@ -320,38 +317,126 @@ function getSlots(date, start, opening_hour, exclude_id, callback) {
   });
 }
 
-/**
- * Get status as string
- * @param status
- */
-function getStatus(status) {
-  switch (status) {
-    case 0:
-      return 'In attesa di conferma';
-    case 1:
-      return 'Confermato';
-    case 2:
-      return 'Rifiutato';
-    case 3:
-      return 'Assente';
-    case 4:
-      return 'Concluso';
-    case 5:
-      return 'Annullato';
-    case 6:
-      return 'Bozza';
-    default:
-      return 'Errore';
-  }
-}
 
-function getCookie(name) {
-  var nameEQ = name + "=";
-  var ca = document.cookie.split(';');
-  for(var i=0;i < ca.length;i++) {
-    var c = ca[i];
-    while (c.charAt(0)===' ') c = c.substring(1,c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
+$('.modal-edit').on('click', function editMeeting(e) {
+  if (!confirm($(this).data('confirm'))){
+    return;
   }
-  return null;
-}
+  let status = $(this).attr('data-status') ? $(this).attr('data-status') : $('#modalStatus').html();
+
+
+  let date = $('#modalDate').val();
+  let slot = $('#modalSlot').val().split(' - ');
+  let start = slot[0];
+  let end = slot[1];
+  let id = $('#modalId').html();
+
+  if (!start || !end) {
+    return $('#modalError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+  }
+
+  let data = {
+    status: status,
+    from_time: new Date(`${date}T${start}`).toISOString(),
+    to_time: new Date(`${date}T${end}`).toISOString(),
+    email: $('#modalEmail').val(),
+    phone_number: $('#modalPhone').val(),
+    user_message: $('#modalDescription').val(),
+    motivation_outcome: $('#modalMotivationOutcome').val(),
+    videoconference_link: $('#modalVideoconferenceLink').val(),
+    opening_hour: $('#modalOpeningHour').val()
+  };
+  let url = $(this).attr('data-url');
+  let token = $('#hidden').attr('data-token');
+  url = url.replace("meeting_id", id);
+  $.ajax({
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    url: url,
+    type: 'PATCH',
+    data: JSON.stringify(data),
+    success: function (response, textStatus, jqXhr) {
+      location.reload();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
+      let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+      $('#modalError').html(errorMessage);
+    },
+  });
+});
+
+
+$('.modal-delete').on('click', function () {
+  let url = $(this).attr('data-url');
+  let token = $('#hidden').attr('data-token');
+  url = url.replace("meeting_id", id);
+  $.ajax({
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    url: url,
+    type: 'DELETE',
+    success: function (response, textStatus, jqXhr) {
+      location.reload();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
+      let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+      $('#modalDraftError').html(errorMessage);
+    },
+  });
+});
+
+$('.modal-create').on('click', function () {
+  let calendar = $(this).attr('data-calendar');
+  let date = $('#modalNewDate').val();
+  let slot = $('#modalNewSlot').val().split(' - ');
+  let start = slot[0];
+  let end = slot[1];
+
+  if (!start || !end) {
+    return $('#modalNewError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+  }
+
+  let data = {
+    status: 1,
+    from_time: new Date(`${date}T${start}`).toISOString(),
+    to_time: new Date(`${date}T${end}`).toISOString(),
+    user_message: $('#modalNewDescription').val(),
+    motivation_outcome: $('#modalNewMotivationOutcome').val(),
+    fiscal_code: $('#modalNewFiscalCode').val(),
+    videoconference_link: $('#modalNewVideoconferenceLink').val(),
+    email: $('#modalNewEmail').val(),
+    name: $('#modalNewName').val(),
+    phone_number: $('#modalNewPhone').val(),
+    calendar: calendar,
+    opening_hour: $('#modalNewOpeningHour').val()
+  };
+
+  let url = $(this).attr('data-url');
+  let token = $('#hidden').attr('data-token');
+  $.ajax({
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    url: url,
+    type: 'POST',
+    data: JSON.stringify(data),
+    success: function (response, textStatus, jqXhr) {
+      location.reload();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
+      let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+      $('#modalNewError').html(errorMessage);
+    },
+  });
+});
