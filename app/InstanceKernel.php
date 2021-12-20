@@ -55,6 +55,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
       new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
       new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new Oneup\FlysystemBundle\OneupFlysystemBundle(),
+      new WhiteOctober\BreadcrumbsBundle\WhiteOctoberBreadcrumbsBundle(),
       new AppBundle\AppBundle(),
     ];
 

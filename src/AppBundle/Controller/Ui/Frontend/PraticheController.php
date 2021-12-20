@@ -23,6 +23,7 @@ use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Model\CallToAction;
 use AppBundle\Security\Voters\ApplicationVoter;
+use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
@@ -52,6 +53,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
  * Class PraticheController
@@ -107,6 +109,11 @@ class PraticheController extends Controller
    */
   private $entityManager;
 
+  /**
+   * @var BreadcrumbsService
+   */
+  private $breadcrumbsService;
+
 
   /**
    * PraticheController constructor.
@@ -123,6 +130,7 @@ class PraticheController extends Controller
    * @param PraticaManager $praticaManager
    * @param FormServerApiAdapterService $formServerService
    * @param EntityManagerInterface $entityManager
+   * @param BreadcrumbsService $breadcrumbsService
    */
   public function __construct(
     InstanceService $instanceService,
@@ -137,7 +145,8 @@ class PraticheController extends Controller
     DataTableFactory $dataTableFactory,
     PraticaManager $praticaManager,
     FormServerApiAdapterService $formServerService,
-    EntityManagerInterface $entityManager
+    EntityManagerInterface $entityManager,
+    BreadcrumbsService $breadcrumbsService
   )
   {
     $this->instanceService = $instanceService;
@@ -153,6 +162,8 @@ class PraticheController extends Controller
     $this->praticaManager = $praticaManager;
     $this->formServerService = $formServerService;
     $this->entityManager = $entityManager;
+
+    $this->breadcrumbsService = $breadcrumbsService;
   }
 
   /**
@@ -162,6 +173,7 @@ class PraticheController extends Controller
    */
   public function indexAction()
   {
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
     /** @var CPSUser $user */
     $user = $this->getUser();
     /** @var PraticaRepository $repo */
@@ -204,6 +216,8 @@ class PraticheController extends Controller
    */
   public function listAction(Request $request)
   {
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('breadcrumbs.list'), 'pratiche_list');
     /** @var CPSUser $user */
     $user = $this->getUser();
     $criteria = [
@@ -379,6 +393,9 @@ class PraticheController extends Controller
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
 
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
+    $this->breadcrumbsService->getBreadcrumbs()->addItem($this->translator->trans('breadcrumbs.compile'));
+
     /** @var PraticaFlow $praticaFlowService */
     $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
 
@@ -517,6 +534,9 @@ class PraticheController extends Controller
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
 
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
+    $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
+
     $result = [
       'pratica' => $pratica,
       'user' => $user,
@@ -569,6 +589,9 @@ class PraticheController extends Controller
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $tab = $request->query->get('tab', false);
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
+    $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 
     $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 

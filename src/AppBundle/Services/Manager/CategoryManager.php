@@ -60,6 +60,28 @@ class CategoryManager
     return $result;
   }
 
+  /**
+   * @param Categoria $category
+   * @param array $result
+   * @return array|mixed
+   */
+  public function getParents(Categoria $category, $result = [])
+  {
+    if ($category->getParent()) {
+      $result[$category->getId()] = [
+        'id' => $category->getId(),
+        'name' => $category->getName(),
+        'description' => $category->getDescription(),
+        'object' => $category
+      ];
+      $result = $this->getCategoryTree($category, $result);
+    }
+
+    return $result;
+  }
+
+
+
   public function hasRecursiveRelations(Categoria $category)
   {
     if ($category->getVisibleService()->count() > 0 || $category->getVisibleServicesGroup()->count() > 0) {

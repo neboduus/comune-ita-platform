@@ -15,34 +15,35 @@
 {% endblock %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags('app') }}
+  {{ encore_entry_link_tags('app') }}
 {% endblock %}
 
 {% block header %}
-    {{ include('@App/Default/header/header.html.twig') }}
+  {{ include('@App/Default/header/header.html.twig') }}
 {% endblock %}
 
 {% block content_container %}
-    <main>
+  <main>
 
-        {{ include('@App/Default/nav/user.html.twig') }}
-        {{ include('@App/Default/parts/breadcrumb.html.twig') }}
-        {{ include('@App/Default/parts/flashes.html.twig') }}
+    {{ include('@App/Default/nav/user.html.twig') }}
+    {# { include('@App/Default/parts/breadcrumb.html.twig') } #}
+    {{ wo_render_breadcrumbs() }}
+    {{ include('@App/Default/parts/flashes.html.twig') }}
 
-        {% block main_content %}{% endblock %}
+    {% block main_content %}{% endblock %}
 
 
-        {{ include('@App/Default/parts/survey.html.twig') }}
-    </main>
+    {{ include('@App/Default/parts/survey.html.twig') }}
+  </main>
 {% endblock %}
 
 {% block footer %}
-    {{ include('@App/Default/footer/prefooter.html.twig') }}
-    {{ include('@App/Default/footer/footer.html.twig') }}
-    {{ include('@App/Default/footer/subfooter.html.twig') }}
+  {{ include('@App/Default/footer/prefooter.html.twig') }}
+  {{ include('@App/Default/footer/footer.html.twig') }}
+  {{ include('@App/Default/footer/subfooter.html.twig') }}
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+  {{ encore_entry_script_tags('app') }}
 {% endblock %}
 

@@ -276,6 +276,9 @@ services:
     arguments:
       $defaultSender: "%default_from_email_address%"
 
+  AppBundle\Services\BreadcrumbsService:
+    autowire: true
+
   AppBundle\Services\MyPayService:
     autowire: true
 
@@ -316,7 +319,7 @@ services:
   ocsdc.backoffices: '@AppBundle\Services\BackOfficeCollection'
 
   AppBundle\Controller\Ui\Frontend\DocumentController:
-    arguments: [ "@translator", "@doctrine.orm.default_entity_manager", "@logger" ]
+    autowire: true
 
   AppBundle\Controller\Ui\Frontend\SubscriptionsController:
     autowire: true

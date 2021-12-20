@@ -35,6 +35,7 @@ class AppKernel extends Kernel
       new Flagception\Bundle\FlagceptionBundle\FlagceptionBundle(),
       new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new Oneup\FlysystemBundle\OneupFlysystemBundle(),
+      new WhiteOctober\BreadcrumbsBundle\WhiteOctoberBreadcrumbsBundle(),
       new AppBundle\AppBundle(),
     ];
 
