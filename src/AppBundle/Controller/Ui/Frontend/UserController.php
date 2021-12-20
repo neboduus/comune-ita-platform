@@ -13,6 +13,7 @@ use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Helpers\MunicipalityConverter;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Security\CPSAuthenticator;
+use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\CPSUserProvider;
 use AppBundle\Services\RemoteContentProviderServiceInterface;
 use DateTime;
@@ -29,6 +30,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
  * Class UserController
@@ -52,6 +54,11 @@ class UserController extends Controller
 
   /** @var SchemaFactory */
   private $schemaFactory;
+  /**
+   * @var BreadcrumbsService
+   */
+  private $breadcrumbsService;
+
 
   /**
    * UserController constructor.
@@ -60,13 +67,15 @@ class UserController extends Controller
    * @param RemoteContentProviderServiceInterface $remoteContentProviderService
    * @param Serializer $serializer
    * @param SchemaFactory $schemaFactory
+   * @param BreadcrumbsService $breadcrumbsService
    */
   public function __construct(
     TranslatorInterface $translator,
     LoggerInterface $logger,
     RemoteContentProviderServiceInterface $remoteContentProviderService,
     Serializer $serializer,
-    SchemaFactory $schemaFactory
+    SchemaFactory $schemaFactory,
+    BreadcrumbsService $breadcrumbsService
   )
   {
     $this->logger = $logger;
@@ -74,6 +83,7 @@ class UserController extends Controller
     $this->remoteContentProviderService = $remoteContentProviderService;
     $this->serializer = $serializer;
     $this->schemaFactory = $schemaFactory;
+    $this->breadcrumbsService = $breadcrumbsService;
   }
 
 
@@ -84,6 +94,8 @@ class UserController extends Controller
    */
   public function indexAction(Request $request)
   {
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.dashboard'), 'user_dashboard');
     $user = $this->getUser();
 
     /** @var ServizioRepository $serviziRepository */
@@ -128,6 +140,9 @@ class UserController extends Controller
    */
   public function profileAction(Request $request)
   {
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.profilo'), 'user_profile');
+
     /** @var CPSUser $user */
     $user = $this->getUser();
 

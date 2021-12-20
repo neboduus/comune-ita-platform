@@ -13,6 +13,7 @@ use AppBundle\Entity\ServizioRepository;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\Manager\CategoryManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 
 /**
@@ -54,6 +56,11 @@ class ServiziController extends Controller
    * @var CategoryManager
    */
   private $categoryManager;
+  /**
+   * @var BreadcrumbsService
+   */
+  private $breadcrumbsService;
+
 
   /**
    * ServiziController constructor.
@@ -62,14 +69,16 @@ class ServiziController extends Controller
    * @param EntityManagerInterface $entityManager
    * @param LoggerInterface $logger
    * @param CategoryManager $categoryManager
+   * @param BreadcrumbsService $breadcrumbsService
    */
-  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger, CategoryManager $categoryManager)
+  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger, CategoryManager $categoryManager, BreadcrumbsService $breadcrumbsService)
   {
     $this->instanceService = $instanceService;
     $this->translator = $translator;
     $this->entityManager = $entityManager;
     $this->logger = $logger;
     $this->categoryManager = $categoryManager;
+    $this->breadcrumbsService = $breadcrumbsService;
   }
 
 
@@ -103,30 +112,6 @@ class ServiziController extends Controller
   }
 
   /**
-   * @Route("/miller/{topic}/{subtopic}", name="servizi_miller", defaults={"topic":false, "subtopic":false})
-   * @param string $topic
-   * @param string $subtopic
-   * @param Request $request
-   * @return Response|array
-   */
-  public function serviziMillerAction($topic, $subtopic, Request $request)
-  {
-    return new Response(null, Response::HTTP_GONE);
-  }
-
-  /**
-   * @Route("/miller_ajax/{topic}/{subtopic}", name="servizi_miller_ajax", defaults={"subtopic":false})
-   * @param string $topic
-   * @param string $subtopic
-   * @param Request $request
-   * @return Response|array
-   */
-  public function serviziMillerAjaxAction($topic, $subtopic, Request $request)
-  {
-    return new Response(null, Response::HTTP_GONE);
-  }
-
-  /**
    * @Route("/{slug}", name="servizi_show")
    * @param string $slug
    * @param Request $request
@@ -145,6 +130,8 @@ class ServiziController extends Controller
     if (!$servizio instanceof Servizio) {
       throw new NotFoundHttpException("Servizio $slug not found");
     }
+
+    $this->breadcrumbsService->generateServiceBreadcrumbs($servizio);
 
     $serviziArea = $serviziRepository->createQueryBuilder('servizio')
       ->andWhere('servizio.id != :servizio')
@@ -212,6 +199,8 @@ class ServiziController extends Controller
       throw new NotFoundHttpException("ServiceGroup $slug not found");
     }
 
+    $this->breadcrumbsService->generateServiceGroupBreadcrumbs($servizio);
+
     $response = $this->render('@App/Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio
@@ -229,6 +218,7 @@ class ServiziController extends Controller
    */
   public function categoryDetailAction($slug, Request $request)
   {
+
     $user = $this->getUser();
     $categoryRepository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
 
@@ -237,6 +227,8 @@ class ServiziController extends Controller
     if (!$category instanceof Categoria) {
       throw new NotFoundHttpException("Category $slug not found");
     }
+
+    $this->breadcrumbsService->generateCategoryBreadcrumbs($category);
 
     $topics = [];
     $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);
@@ -309,6 +301,10 @@ class ServiziController extends Controller
     if (!$recipient instanceof Recipient) {
       throw new NotFoundHttpException("Recipient $slug not found");
     }
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($recipient->getName(), "recipient_show", [
+      'slug' => $slug,
+    ]);
 
     $recipients = $recipientRepository->findBy([], ['name' => 'asc']);
 
@@ -383,7 +379,10 @@ class ServiziController extends Controller
 
   }
 
-  private function getServicesByCategories(Request $request)
+  /**
+   * @return array
+   */
+  private function getServicesByCategories()
   {
     $categoryRepository = $this->getDoctrine()->getRepository('AppBundle:Categoria');
 
@@ -391,10 +390,6 @@ class ServiziController extends Controller
     $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);
     /** @var Categoria $c */
     foreach ($categories as $c) {
-      /*if ($c->getServices()->count() > 0 || $c->getServicesGroup()->count() > 0 || $c->getChildren()->count() > 0) {
-        $topics[$c->getSlug() . '-' . $c->getId()]['type'] = 'topic';
-        $topics[$c->getSlug() . '-' . $c->getId()]['object'] = $c;
-      }*/
       if ($this->categoryManager->hasRecursiveRelations($c)) {
         $topics[$c->getSlug() . '-' . $c->getId()]['type'] = 'topic';
         $topics[$c->getSlug() . '-' . $c->getId()]['object'] = $c;

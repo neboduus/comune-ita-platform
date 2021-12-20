@@ -75,7 +75,8 @@
     "queueit/knownuserv3": "^3.6",
     "simettric/doctrine-translatable-form-bundle": "^0.1.5",
     "oneup/flysystem-bundle": "3.7.1",
-    "league/flysystem-aws-s3-v3": "1.0.29"
+    "league/flysystem-aws-s3-v3": "1.0.29",
+    "whiteoctober/breadcrumbs-bundle": "^1.4"
   },
   "repositories": [
     {

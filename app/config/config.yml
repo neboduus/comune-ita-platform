@@ -311,3 +311,16 @@ oneup_flysystem:
       adapter: local_adapter
       mount: local_filesystem
       alias: local_filesystem
+
+# Breadcrumbs
+white_october_breadcrumbs:
+  separator: '/'
+  separatorClass: 'separator'
+  listId: 'breadcrumb'
+  listClass: 'breadcrumb'
+  itemClass: 'breadcrumb-item'
+  linkRel: ''
+  locale: ~ # defaults to null, so the default locale is used
+  translation_domain: ~ # defaults to null, so the default domain is used
+  viewTemplate: 'WhiteOctoberBreadcrumbsBundle::microdata.html.twig'
+

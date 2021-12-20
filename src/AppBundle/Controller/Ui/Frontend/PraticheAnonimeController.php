@@ -9,6 +9,7 @@ use AppBundle\FormIO\ExpressionValidator;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\DematerializedFormAllegatiAttacherService;
 use AppBundle\Services\FileService;
 use AppBundle\Services\InstanceService;
@@ -66,6 +67,10 @@ class PraticheAnonimeController extends Controller
    * @var FileService
    */
   private $fileService;
+  /**
+   * @var BreadcrumbsService
+   */
+  private $breadcrumbsService;
 
   /**
    * PraticheAnonimeController constructor.
@@ -78,6 +83,7 @@ class PraticheAnonimeController extends Controller
    * @param $hashValidity
    * @param ExpressionValidator $expressionValidator
    * @param FileService $fileService
+   * @param BreadcrumbsService $breadcrumbsService
    */
   public function __construct(
     LoggerInterface $logger,
@@ -87,7 +93,8 @@ class PraticheAnonimeController extends Controller
     InstanceService $instanceService,
     $hashValidity,
     ExpressionValidator $expressionValidator,
-    FileService $fileService
+    FileService $fileService,
+    BreadcrumbsService $breadcrumbsService
   ) {
     $this->logger = $logger;
     $this->translator = $translator;
@@ -97,6 +104,7 @@ class PraticheAnonimeController extends Controller
     $this->hashValidity = $hashValidity;
     $this->expressionValidator = $expressionValidator;
     $this->fileService = $fileService;
+    $this->breadcrumbsService = $breadcrumbsService;
   }
 
   /**
@@ -156,6 +164,8 @@ class PraticheAnonimeController extends Controller
   public function showAction(Request $request, Pratica $pratica)
   {
     if ($pratica->isValidHash($this->getHash($request), $this->hashValidity)) {
+      
+      $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 
       return $this->render( '@App/PraticheAnonime/show.html.twig', [
         'pratica' => $pratica,
@@ -227,17 +237,7 @@ class PraticheAnonimeController extends Controller
         return new Response('', Response::HTTP_NOT_FOUND);
       }
       $attachment = $compiledModules->first();
-      $fileContent = $this->fileService->getAttachmentContent($attachment);
-      $filename = $pratica->getId().'.pdf';
-      $response = new Response($fileContent);
-      $disposition = $response->headers->makeDisposition(
-        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-        $filename
-      );
-      $response->headers->set('Content-Disposition', $disposition);
-      $response->headers->set('Content-Type', 'application/pdf');
-
-      return $response;
+      return $this->fileService->download($attachment);
     }
 
     return new Response(null, Response::HTTP_FORBIDDEN);

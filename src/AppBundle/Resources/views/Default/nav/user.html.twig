@@ -172,14 +172,14 @@
                   </a>
                 </li>
               {% else %}
-                <li class="nav-item {% if 'dashboard' in app.request.pathInfo %} active {% endif %}">
-                  <a class="nav-link " href="{{ path('user_dashboard') }}">
-                    {{ 'nav.dashboard'|trans }}
-                  </a>
-                </li>
                 <li class="nav-item {% if 'servizi' in app.request.pathInfo %} active {% endif %}">
                   <a class="nav-link " href="{{ path('servizi_list') }}">
                     {{ 'nav.servizi'|trans }}
+                  </a>
+                </li>
+                <li class="nav-item {% if 'dashboard' in app.request.pathInfo %} active {% endif %}">
+                  <a class="nav-link " href="{{ path('user_dashboard') }}">
+                    {{ 'nav.dashboard'|trans }}
                   </a>
                 </li>
                 <li

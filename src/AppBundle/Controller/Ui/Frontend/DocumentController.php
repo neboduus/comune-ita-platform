@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Ui\Frontend;
 
 
 use AppBundle\Logging\LogConstants;
+use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
  * Class DocumentController
@@ -37,12 +39,28 @@ class DocumentController extends Controller
    * @var TranslatorInterface
    */
   private $translator;
+  /**
+   * @var BreadcrumbsService
+   */
+  private $breadcrumbsService;
 
-  public function __construct(TranslatorInterface $translator, EntityManager $em, LoggerInterface $logger)
+
+  /**
+   * DocumentController constructor.
+   * @param TranslatorInterface $translator
+   * @param EntityManager $em
+   * @param LoggerInterface $logger
+   * @param BreadcrumbsService $breadcrumbsService
+   */
+  public function __construct(TranslatorInterface $translator, EntityManager $em, LoggerInterface $logger, BreadcrumbsService $breadcrumbsService)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->logger = $logger;
+    $this->breadcrumbsService = $breadcrumbsService;
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.documenti'), 'folders_list_cpsuser');
+
   }
 
   /**
@@ -50,6 +68,7 @@ class DocumentController extends Controller
    */
   public function cpsUserListFoldersAction()
   {
+
     $user = $this->getUser();
     // Get all user's folders
     $folders = $this->getDoctrine()->getRepository('AppBundle:Folder')->findBy(['owner' => $user]);
@@ -64,7 +83,7 @@ class DocumentController extends Controller
       $folders[] = $this->em->getRepository('AppBundle:Folder')->find($id);
     }
 
-    return $this->render( '@App/Document/cpsUserListFolders.html.twig',  [
+    return $this->render('@App/Document/cpsUserListFolders.html.twig', [
       'folders' => $folders,
       'user' => $this->getUser(),
     ]);
@@ -86,26 +105,27 @@ class DocumentController extends Controller
       $this->addFlash('warning', $this->translator->trans('documenti.no_folder'));
       return $this->redirectToRoute('folders_list_cpsuser');
     }
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($folder->getTitle(), 'documenti_list_cpsuser', ['folderId' => $folderId]);
 
-      if ($folder->getOwner() == $user)
-        $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findBy(['folder' => $folder]);
-      else {
-        try {
-          $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' and folder.id = \'' . $folder->getId() . '\'';
+    if ($folder->getOwner() == $user)
+      $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findBy(['folder' => $folder]);
+    else {
+      try {
+        $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' and folder.id = \'' . $folder->getId() . '\'';
 
-          $stmt = $this->em->getConnection()->prepare($sql);
-          $stmt->execute();
-          $sharedDocuments = $stmt->fetchAll();
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $stmt->execute();
+        $sharedDocuments = $stmt->fetchAll();
 
-          foreach ($sharedDocuments as $id) {
-            $documents[] = $this->em->getRepository('AppBundle:Document')->find($id);
-          }
-        } catch (DBALException $exception) {
-          $this->addFlash('warning', $this->translator->trans('documenti.document_search_error'));
+        foreach ($sharedDocuments as $id) {
+          $documents[] = $this->em->getRepository('AppBundle:Document')->find($id);
         }
+      } catch (DBALException $exception) {
+        $this->addFlash('warning', $this->translator->trans('documenti.document_search_error'));
       }
+    }
 
-    return $this->render( '@App/Document/cpsUserListDocuments.html.twig', [
+    return $this->render('@App/Document/cpsUserListDocuments.html.twig', [
       'documents' => $documents,
       'folder' => $folder,
       'user' => $user
@@ -130,17 +150,20 @@ class DocumentController extends Controller
       return $this->redirectToRoute('folders_list_cpsuser');
     } elseif (!$document) {
       $this->addFlash('warning', $this->translator->trans('documenti.no_document'));
-      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId'=>$folderId]);
+      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId' => $folderId]);
     }
 
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($folder->getTitle(), 'documenti_list_cpsuser', ['folderId' => $folderId]);
+    $this->breadcrumbsService->getBreadcrumbs()->addItem($document->getTitle());
+
     if ($folder->getOwner() == $user->getCodiceFiscale() || in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
-      return $this->render( '@App/Document/cpsUserShowDocumento.html.twig', [
+      return $this->render('@App/Document/cpsUserShowDocumento.html.twig', [
         'document' => $document,
         'user' => $user,
       ]);
     } else {
       $this->addFlash('warning', $this->translator->trans('documenti.no_document_permissions'));
-      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId'=>$folderId]);
+      return $this->redirectToRoute('documenti_list_cpsuser', ['folderId' => $folderId]);
     }
   }
 
@@ -153,7 +176,7 @@ class DocumentController extends Controller
    * @return Response
    * @throws \Exception
    */
-  public function downloadDocumentAction(Request $request, $folderId,  $documentId)
+  public function downloadDocumentAction(Request $request, $folderId, $documentId)
   {
     $user = $this->getUser();
     $folder = $this->em->getRepository('AppBundle:Folder')->find($folderId);
@@ -195,7 +218,7 @@ class DocumentController extends Controller
     $response->headers->set('Content-Type', $document->getMimeType());
 
     try {
-      $document->setLastReadAt( new \DateTime());
+      $document->setLastReadAt(new \DateTime());
       $document->setDownloadsCounter($document->getDownloadsCounter() + 1);
       $this->em->persist($document);
       $this->em->flush();
