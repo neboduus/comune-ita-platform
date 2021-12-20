@@ -156,7 +156,7 @@ class AdminController extends Controller
   /**
    * @Route("/ente", name="admin_edit_ente")
    * @param Request $request
-   * @return array|RedirectResponse
+   * @return Response|RedirectResponse
    */
   public function editEnteAction(Request $request)
   {
@@ -539,7 +539,7 @@ class AdminController extends Controller
   }
 
   /**
-   * @Route("/servizio/{id}/new", name="admin_servizio_edit")
+   * @Route("/servizio/{id}", name="admin_servizio_edit")
    * @ParamConverter("id", class="AppBundle:Servizio")
    * @param Servizio $servizio
    * @param Request $request
@@ -605,6 +605,7 @@ class AdminController extends Controller
 
     if ($servizio->getPraticaFCQN() != '\AppBundle\Entity\FormIO') {
       unset($steps['template']);
+      unset($steps['formio']);
     }
 
     if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO' && !empty($servizio->getFormIoId())) {
