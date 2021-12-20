@@ -2158,6 +2158,22 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function getAllowedStates()
   {
     $states = self::ALLOWED_MANUAL_CHANGE_STATES;
+
+    // Escludo lo stato in attesa di pagamento se la pratica non prevede pagamento
+    if ($this->getServizio()->getPaymentRequired() == Servizio::PAYMENT_NOT_REQUIRED) {
+      if (($key = array_search(self::STATUS_PAYMENT_PENDING, $states)) !== false) {
+        unset($states[$key]);
+      }
+    }
+
+    // Escludo lo stato di presa in carico se la pratica prevede il flusso inoltro
+    if ($this->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD) {
+      if (($key = array_search(self::STATUS_PENDING, $states)) !== false) {
+        unset($states[$key]);
+      }
+    }
+
+    // Escludo lo stato attuale della pratica
     if (($key = array_search($this->getStatus(), $states)) !== false) {
       unset($states[$key]);
     }
