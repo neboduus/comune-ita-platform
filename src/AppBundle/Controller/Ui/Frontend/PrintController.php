@@ -77,9 +77,7 @@ class PrintController extends Controller
         $temp['id'] = $a->getId();
         $temp['local_name'] = $a->getFilename();
 
-        $originalFilenameParts = explode('-',  $a->getOriginalFilename());
-        $userFilename = implode('-', array_slice($originalFilenameParts, 0, -5)) . '.' . $a->getFile()->getExtension();
-        $temp['original_filename'] = $userFilename;
+        $temp['original_filename'] = $a->getOriginalFilename();
         $temp['hash'] = $this->fileService->getHash($a);
         if ($protocolRequired) {
           $preparedAttachments[]=$temp;

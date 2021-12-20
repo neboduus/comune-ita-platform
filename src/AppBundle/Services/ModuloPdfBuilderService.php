@@ -260,7 +260,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $servizioName = $pratica->getServizio()->getName();
     $now = new DateTime();
     $now->setTimestamp($pratica->getSubmissionTime());
-    $moduloCompilato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi'));
+    $moduloCompilato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi') . '.pdf');
     $moduloCompilato->setDescription(
       $this->translator->trans(
         'pratica.modulo.descrizione',

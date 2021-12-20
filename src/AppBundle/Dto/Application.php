@@ -1252,8 +1252,17 @@ class Application
 
   public static function prepareFile(Allegato $file, $attachmentEndpointUrl = '')
   {
+
+    $filename = $file->getName();
+    $filenameParts = explode('.', $filename);
+    $systemFilename = $file->getFilename();
+    $systemFilenameParts = explode('.', $systemFilename);
+    if (end($filenameParts) != end($systemFilenameParts)) {
+      $filename .=  '.' . end($systemFilenameParts);
+    }
+
     $temp['id'] = $file->getId();
-    $temp['name'] = $file->getName();
+    $temp['name'] = $filename;
     $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $file->getId();
     $temp['originalName'] = $file->getFilename();
     $temp['description'] = $file->getDescription() ?? Allegato::DEFAULT_DESCRIPTION;
