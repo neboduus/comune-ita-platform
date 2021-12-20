@@ -1721,7 +1721,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       $data = $form->getData();
       $application->setEsito($request->get('_route') == 'application_api_post_transition_accept');
-      $application->setMotivazioneEsito($data['message']);
+      if ($data['message']) {
+        $application->setMotivazioneEsito($data['message']);
+      }
 
       foreach ($data['attachments'] as $attachment) {
         $base64Content = $attachment->getFile();

@@ -41,10 +41,7 @@ class OutcomeFormType extends AbstractType
   {
     $builder
       ->add('message', TextType::class, [
-        'constraints' => [
-          new NotBlank(),
-          new NotNull(),
-        ]
+        'required' => false
       ])
       ->add('attachments', CollectionType::class, [
         'entry_type' => FileType::class,
