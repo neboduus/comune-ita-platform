@@ -60,6 +60,14 @@
     background-color: $primary;
     color: #fff;
   }
+
+  .btn-ora:hover {
+    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  .btn-ora:focus {
+    box-shadow: 0 0 0 2px $orange;
+  }
 }
 
 .slot-calendar, .sdc-datepicker, #ui-datepicker-div{
