@@ -58,6 +58,10 @@
 
 .date-picker {
   td{
+    & a.ui-state-active:focus,a.ui-state-default:focus  {
+      box-shadow: 0 0 0 2px $orange;
+    }
+
     &.not-available:not(.ui-state-disabled){
       background: linear-gradient(to top left, #fff calc(50% - 2px), #d9364f, #fff calc(50% + 2px));
       & a.ui-state-active {
