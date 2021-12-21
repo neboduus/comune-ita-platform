@@ -341,25 +341,3 @@ form[name="upload_allegato_operatore"] {
 .service-access-button {
   min-height: 5.5em;
 }
-
-@media only screen and (max-width: 600px) {
-  .fc-toolbar.fc-header-toolbar {
-    display: block;
-  }
-
-  .fc-timeGridWeek-button {
-    display: none;
-  }
-
-  .fc-dayGridMonth-button {
-    display: none;
-  }
-}
-
-.fc td.fc-today {
-  background-image: none;
-}
-
-input[type=date], input[type=datetime-local], input[type=email], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], textarea {
-  font-weight: 100;
-}
