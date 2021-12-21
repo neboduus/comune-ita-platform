@@ -304,7 +304,7 @@ export default class FormioCalendar extends Base {
               let op_hour = element.opening_hour;
               let min_duration = element.min_duration;
 
-              html = html.concat(`<div class="col-6"><button type="button" data-available_slots="${key}" data-opening_hour="${op_hour}" data-min_duration="${min_duration}" class="btn btn-ora p-0 ${cssClass}">${key}</button></div>`);
+              html = html.concat(`<div class="col-6"><button type="button" data-available_slots="${key}" data-opening_hour="${op_hour}" data-min_duration="${min_duration}" class="btn btn-ora p-0 ${cssClass}" ${ariaDisabled ? 'tabindex="-1"' : ''} aria-disabled="${ariaDisabled}">${key}</button></div>`);
 
             });
             self.container.find('#slot-picker').html(`<div class="col-12"><h6>Seleziona la fascia oraria per il giorno ${self.date}</h6></div>${html}`);
