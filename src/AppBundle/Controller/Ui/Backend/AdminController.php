@@ -539,7 +539,7 @@ class AdminController extends Controller
   }
 
   /**
-   * @Route("/servizio/{id}", name="admin_servizio_edit")
+   * @Route("/servizio/{id}/edit", name="admin_servizio_edit")
    * @ParamConverter("id", class="AppBundle:Servizio")
    * @param Servizio $servizio
    * @param Request $request
@@ -603,12 +603,12 @@ class AdminController extends Controller
       ]
     ];
 
-    if ($servizio->getPraticaFCQN() != '\AppBundle\Entity\FormIO') {
+    if ($servizio->isLegacy()) {
       unset($steps['template']);
       unset($steps['formio']);
     }
 
-    if ($servizio->getPraticaFCQN() == '\AppBundle\Entity\FormIO' && !empty($servizio->getFormIoId())) {
+    if (!$servizio->isLegacy() && !empty($servizio->getFormIoId())) {
       unset($steps['template']);
     }
 

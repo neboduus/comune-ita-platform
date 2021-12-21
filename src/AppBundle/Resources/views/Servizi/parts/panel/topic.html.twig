@@ -1,14 +1,9 @@
 <article class="card-wrapper card-space topic">
-  <div class="card card-bg rounded shadow">
+  <div class="card card-bg rounded shadow border">
     <div class="card-body">
-      <div class="clearfix pb-4 d-flex">
-        <svg class="icon mt-1 mr-1">
-          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
-        </svg>
-        <a href="{{ path('category_show', {'slug': item.slug}) }}">
-          <h4 class="card-title d-inline">{{ item.name }}</h4>
-        </a>
-      </div>
+      <h5 class="card-title mb-2 big-heading">
+        <a class="text-decoration-none" href="{{ path('category_show', {'slug': item.slug}) }}">{{ item.name }}</a>
+      </h5>
       <p class="card-text">{{ item.description|abstract }}</p>
     </div>
   </div>

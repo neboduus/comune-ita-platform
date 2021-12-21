@@ -216,8 +216,8 @@ class PraticheController extends Controller
    */
   public function listAction(Request $request)
   {
-    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
-    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('breadcrumbs.list'), 'pratiche_list');
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.pratiche', 'pratiche');
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('breadcrumbs.list', 'pratiche_list');
     /** @var CPSUser $user */
     $user = $this->getUser();
     $criteria = [
@@ -393,8 +393,8 @@ class PraticheController extends Controller
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
 
-    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
-    $this->breadcrumbsService->getBreadcrumbs()->addItem($this->translator->trans('breadcrumbs.compile'));
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($pratica->getServizio()->getName(), "servizi_show", ['slug' => $pratica->getServizio()->getSlug(),]);
+    $this->breadcrumbsService->getBreadcrumbs()->addItem('breadcrumbs.compile');
 
     /** @var PraticaFlow $praticaFlowService */
     $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());

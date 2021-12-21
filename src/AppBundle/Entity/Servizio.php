@@ -48,6 +48,8 @@ class Servizio implements Translatable
   const WORKFLOW_APPROVAL = 0;
   const WORKFLOW_FORWARD = 1;
 
+  const FORMIO_SERVICE_CLASS = '\AppBundle\Entity\FormIO';
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
@@ -1353,6 +1355,11 @@ class Servizio implements Translatable
   public function setTranslatableLocale($locale)
   {
     $this->locale = $locale;
+  }
+
+  public function isLegacy()
+  {
+    return $this->getPraticaFCQN() != self::FORMIO_SERVICE_CLASS;
   }
 
 }

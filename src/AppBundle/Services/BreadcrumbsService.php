@@ -20,17 +20,32 @@ class BreadcrumbsService
    * @var RouterInterface
    */
   private $router;
+  /**
+   * @var InstanceService
+   */
+  private $instanceService;
 
   /**
    * BreadcrumbsService constructor.
    * @param Breadcrumbs $breadcrumbs
    * @param RouterInterface $router
+   * @param InstanceService $instanceService
    */
-  public function __construct(Breadcrumbs $breadcrumbs, RouterInterface $router)
+  public function __construct(Breadcrumbs $breadcrumbs, RouterInterface $router, InstanceService $instanceService)
   {
     $this->breadcrumbs = $breadcrumbs;
-    $this->breadcrumbs->addRouteItem('Home', 'servizi_list');
     $this->router = $router;
+    $this->instanceService = $instanceService;
+    $this->init();
+
+  }
+
+  private function init()
+  {
+    if ($this->instanceService->getCurrentInstance()->getSiteUrl()) {
+      $this->breadcrumbs->addItem('Home', $this->instanceService->getCurrentInstance()->getSiteUrl());
+    }
+
   }
 
   /**
@@ -46,10 +61,11 @@ class BreadcrumbsService
    */
   public function generateCategoryBreadcrumbs(Categoria $category)
   {
+    $this->breadcrumbs->addRouteItem('nav.servizi', 'servizi_list');
     $router = $this->router;
     $this->breadcrumbs->addObjectTree($category, 'name', function($object) use ($router) {
       return $router->generate('category_show', ['slug' => $object->getSlug()]);
-    });
+    }, 'parent', [], 2);
   }
 
   /**
@@ -57,11 +73,12 @@ class BreadcrumbsService
    */
   public function generateServiceGroupBreadcrumbs(ServiceGroup $serviceGroup)
   {
+    $this->breadcrumbs->addRouteItem('nav.servizi', 'servizi_list');
     if ($serviceGroup->getTopics()) {
       $router = $this->router;
       $this->breadcrumbs->addObjectTree($serviceGroup->getTopics(), 'name', function($object) use ($router) {
         return $router->generate('category_show', ['slug' => $object->getSlug()]);
-      });
+      }, 'parent', [], 2);
     }
     $this->breadcrumbs->addRouteItem($serviceGroup->getName(), "service_group_show", [
       'slug' => $serviceGroup->getSlug(),
@@ -73,15 +90,25 @@ class BreadcrumbsService
    */
   public function generateServiceBreadcrumbs(Servizio $service)
   {
-    if ($service->getTopics()) {
-      $router = $this->router;
-      $this->breadcrumbs->addObjectTree($service->getTopics(), 'name', function($object) use ($router) {
-        return $router->generate('category_show', ['slug' => $object->getSlug()]);
-      });
+    $this->breadcrumbs->addRouteItem('nav.servizi', 'servizi_list');
+    if ($service->getServiceGroup() && $service->isSharedWithGroup()) {
+      $this->generateServiceGroupBreadcrumbs($service->getServiceGroup());
+    } else {
+      if ($service->getTopics()) {
+        $router = $this->router;
+        $this->breadcrumbs->addObjectTree($service->getTopics(), 'name', function($object) use ($router) {
+          return $router->generate('category_show', ['slug' => $object->getSlug()]);
+        }, 'parent', [], 2);
+      }
+      if ($service->getServiceGroup()) {
+        $this->breadcrumbs->addRouteItem($service->getServiceGroup()->getName(), "service_group_show", [
+          'slug' => $service->getServiceGroup()->getSlug(),
+        ]);
+      }
+      $this->breadcrumbs->addRouteItem($service->getName(), "servizi_show", [
+        'slug' => $service->getSlug(),
+      ]);
     }
-    $this->breadcrumbs->addRouteItem($service->getName(), "servizi_show", [
-      'slug' => $service->getSlug(),
-    ]);
   }
 
 }
