@@ -126,11 +126,13 @@
                               <span class="text-primary"><i class="fa fa-file-text-o fa-lg"></i> Scheda</span>
                             </a>
                           </li>
-                          <li>
-                            <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'formio' }) }}">
-                              <span class="text-primary"><i class="fa fa-server fa-lg"></i> Modulo</span>
-                            </a>
-                          </li>
+                          {% if not item.legacy %}
+                            <li>
+                              <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'formio' }) }}">
+                                <span class="text-primary"><i class="fa fa-server fa-lg"></i> Modulo</span>
+                              </a>
+                            </li>
+                          {% endif %}
                           <li>
                             <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'messages' }) }}">
                               <span class="text-primary"><i class="fa fa-envelope-o fa-lg"></i> Messaggi</span>

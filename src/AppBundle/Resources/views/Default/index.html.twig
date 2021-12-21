@@ -1,7 +1,5 @@
 {% extends '::base.html.twig' %}
 
-
-
 {% block title %}Stanza del cittadino{% endblock %}
 {% block favicon %}
   {% set ente = instance_service.getCurrentInstance() %}
@@ -26,21 +24,17 @@
   <main>
 
     {{ include('@App/Default/nav/user.html.twig') }}
-    {# { include('@App/Default/parts/breadcrumb.html.twig') } #}
-    {{ wo_render_breadcrumbs() }}
+    {{ include('@App/Default/parts/breadcrumb.html.twig') }}
     {{ include('@App/Default/parts/flashes.html.twig') }}
 
     {% block main_content %}{% endblock %}
-
 
     {{ include('@App/Default/parts/survey.html.twig') }}
   </main>
 {% endblock %}
 
 {% block footer %}
-  {{ include('@App/Default/footer/prefooter.html.twig') }}
   {{ include('@App/Default/footer/footer.html.twig') }}
-  {{ include('@App/Default/footer/subfooter.html.twig') }}
 {% endblock %}
 
 {% block javascripts %}

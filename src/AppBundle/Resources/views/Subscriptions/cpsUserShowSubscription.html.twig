@@ -8,19 +8,7 @@
 {% endblock %}
 {% block main_content %}
 
-  <div class="container px-4 my-4">
-    <div class="row">
-      <div class="mb-3">
-        <small>
-          <a class="text-decoration-none" href="{{ path('subscriptions_list_cpsuser') }}">
-            <svg class="icon icon-primary">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
-            </svg>
-            {{ 'iscrizioni.torna_alle_iscrizioni' | trans }}
-          </a>
-        </small>
-      </div>
-    </div>
+  <div class="container">
     <div class="row mb-5">
       <div class="col-lg-8 py-lg-2">
         <h1>{{ subscription.subscriptionService.name }}</h1>

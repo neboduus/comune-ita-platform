@@ -8,20 +8,9 @@
 {% endblock %}
 {% block main_content %}
 
-  <section id="intro" class="container px-4 my-4">
+  <section class="container">
     <div class="row">
       <div class="col-12 px-lg-4 py-lg-2">
-        <div class="mb-3">
-          <small>
-            <a class="text-decoration-none"
-               href="{{ path('documenti_list_cpsuser', {'folderId': document.folder.id}) }}">
-              <svg class="icon icon-primary">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
-              </svg>
-              {{ 'documenti.torna_alla_cartella' | trans }}
-            </a>
-          </small>
-        </div>
         <h3>{{ document.title }}</h3>
         <p>{{ document.description }}</p>
       </div>

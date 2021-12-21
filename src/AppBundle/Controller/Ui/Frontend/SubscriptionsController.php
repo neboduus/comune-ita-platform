@@ -11,6 +11,7 @@ use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
+use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\SubscriptionsService;
 use Doctrine\DBAL\Driver\Exception;
@@ -61,8 +62,21 @@ class SubscriptionsController extends Controller
    * @var ModuloPdfBuilderService
    */
   private $pdfBuilderService;
+  /**
+   * @var BreadcrumbsService
+   */
+  private $breadcrumbsService;
 
-  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService, ModuloPdfBuilderService $pdfBuilderService)
+  /**
+   * @param EntityManager $entityManager
+   * @param LoggerInterface $logger
+   * @param TranslatorInterface $translator
+   * @param SubcriptionsBackOffice $subscriptionsBackOffice
+   * @param SubscriptionsService $subscriptionsService
+   * @param ModuloPdfBuilderService $pdfBuilderService
+   * @param BreadcrumbsService $breadcrumbsService
+   */
+  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService, ModuloPdfBuilderService $pdfBuilderService, BreadcrumbsService $breadcrumbsService)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
     $this->entityManager = $entityManager;
@@ -70,6 +84,7 @@ class SubscriptionsController extends Controller
     $this->translator = $translator;
     $this->subscriptionsService = $subscriptionsService;
     $this->pdfBuilderService = $pdfBuilderService;
+    $this->breadcrumbsService = $breadcrumbsService;
   }
 
   /**
@@ -406,6 +421,9 @@ class SubscriptionsController extends Controller
    */
   public function cpsUserListSubscriptionAction(): Response
   {
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.iscrizioni', 'subscriptions_list_cpsuser');
+
     /** @var CPSUser $user */
     $user = $this->getUser();
 
@@ -458,6 +476,9 @@ class SubscriptionsController extends Controller
       $this->addFlash('warning', $this->translator->trans('iscrizioni.accesso_negato'));
       return $this->redirectToRoute('subscriptions_list_cpsuser');
     }
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.iscrizioni', 'subscriptions_list_cpsuser');
+    $this->breadcrumbsService->getBreadcrumbs()->addItem($subscription->getSubscriptionService()->getName());
 
     return $this->render('@App/Subscriptions/cpsUserShowSubscription.html.twig', [
       'subscription' => $subscription,
