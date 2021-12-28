@@ -174,9 +174,9 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
       ->from(Subscription::class, 'subscription')
       ->leftJoin('subscription.subscriber', 'subscriber')
       ->leftJoin('subscription.subscription_service', 'subscriptionService')
-      ->where('subscriber.fiscal_code = :fiscal_code')
+      ->where('lower(subscriber.fiscal_code) = :fiscal_code')
       ->andWhere('subscriptionService.code = :code')
-      ->setParameter('fiscal_code', $subscriberFiscalCode)
+      ->setParameter('fiscal_code', strtolower($subscriberFiscalCode))
       ->setParameter('code', $subscriptionData['code']);
 
     $subscription = $qb->getQuery()->getSingleResult();
