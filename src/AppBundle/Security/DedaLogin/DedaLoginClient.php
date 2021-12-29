@@ -28,7 +28,8 @@ class DedaLoginClient
 
   public function __construct(HttpClientInterface $httpClient, $dedaLoginClientId, $dedaLoginSecret)
   {
-    $this->baseUrl = getenv('SYMFONY_ENV') === 'dev' ? self::TEST_BASE_URL : self::PROD_BASE_URL;
+    $env = (string)getenv('ENV');
+    $this->baseUrl = strtolower($env) === 'dev' ? self::TEST_BASE_URL : self::PROD_BASE_URL;
     $this->httpClient = $httpClient;
     $this->clientId = $dedaLoginClientId;
     $this->clientSecret = $dedaLoginSecret;
@@ -117,6 +118,7 @@ class DedaLoginClient
           'client_id' => $this->clientId,
           'assertion' => base64_encode($assertion),
         ],
+        'auth_bearer' => $this->getAuthBearer(),
       ]
     );
 

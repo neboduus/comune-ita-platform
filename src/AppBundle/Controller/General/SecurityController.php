@@ -51,7 +51,7 @@ class SecurityController extends Controller
   }
 
   /**
-   * @Route("/metadata", name="metadata")
+   * @Route("/auth/spid/metadata", name="metadata")
    * @param Request $request
    * @return Response
    */
@@ -65,7 +65,7 @@ class SecurityController extends Controller
   }
 
   /**
-   * @Route("/acs", name="acs")
+   * @Route("/auth/spid/acs", name="acs")
    * @param Request $request
    * @return Response
    */
