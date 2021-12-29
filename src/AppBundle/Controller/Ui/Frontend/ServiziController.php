@@ -89,6 +89,9 @@ class ServiziController extends Controller
    */
   public function serviziAction(Request $request)
   {
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.servizi', 'servizi_list');
+
     switch ($this->instanceService->getCurrentInstance()->getNavigationType()) {
       case Ente::NAVIGATION_TYPE_CATEGORIES:
         $topics = $this->getServicesByCategories($request);

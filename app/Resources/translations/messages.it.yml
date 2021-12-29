@@ -96,6 +96,7 @@ general:
     updated: 'Oggetto aggiornato correttamente'
   search: 'Cerca'
 servizio:
+  sottotitolo: 'Domande e iscrizioni, contributi e graduatorie, segnalazioni, autorizzazioni e concessioni, certificati e dichiarazioni, pagamenti, servizi pubblici.'
   bozza_successo: 'Bozza salvata con successo'
   nessun_template: 'Nessun template disponibile'
   importa: 'Importa da remoto'
