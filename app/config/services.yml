@@ -163,6 +163,9 @@ services:
   AppBundle\Controller\Ui\Frontend\TrackingController:
     autowire: true
 
+  AppBundle\Controller\General\SecurityController:
+    autowire: true
+
   GuzzleHttp\Client: '@guzzle.client.mypay'
 
   i18n.datamapper:
@@ -357,6 +360,26 @@ services:
       - '@ocsdc.instance_service'
       - '@AppBundle\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
+
+  ocsdc.dedalogin.authenticator:
+    class: AppBundle\Security\DedaLoginAuthenticator
+    arguments:
+      - "@router"
+      - "%login_route%"
+      - '@AppBundle\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@AppBundle\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
+      - "@session"
+
+  AppBundle\Security\DedaLogin\DedaLoginClient:
+    public: true
+    arguments:
+      - '@http.client'
+      - "%deda_login_client_id%"
+      - "%deda_login_secret%"
+
+  ocsdc.dedalogin.client: '@AppBundle\Security\DedaLogin\DedaLoginClient'
 
   ocsdc.cps.token_authenticator:
     class: AppBundle\Security\CPSAuthenticator

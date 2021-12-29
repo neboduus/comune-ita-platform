@@ -7,12 +7,31 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use AppBundle\Security\DedaLoginAuthenticator;
+use AppBundle\Security\DedaLogin\DedaLoginClient;
 use Exception;
 
 class SecurityController extends Controller
 {
+  /**
+   * @var DedaLoginClient
+   */
+  private $dedaLoginClient;
+  /**
+   * @var SessionInterface
+   */
+  private $session;
+
+  public function __construct(DedaLoginClient $dedaLoginClient, SessionInterface $session)
+  {
+    $this->dedaLoginClient = $dedaLoginClient;
+    $this->session = $session;
+  }
+
   /**
    * @Route("/login", name="login")
    * @param Request $request
@@ -29,6 +48,39 @@ class SecurityController extends Controller
 
     // Redirect in base a configurazione di istanza
     return $this->redirectToRoute($this->getAuthRedirect(), $parameters);
+  }
+
+  /**
+   * @Route("/metadata", name="metadata")
+   * @param Request $request
+   * @return Response
+   */
+  public function metadataAction(Request $request)
+  {
+    if ($this->getParameter('login_route') === DedaLoginAuthenticator::LOGIN_ROUTE) {
+      return new Response($this->dedaLoginClient->getMetadata(), 200, ['Content-Type' => 'text/xml']);
+    }
+
+    throw new NotFoundHttpException("Current authentication handler does not handle metadata");
+  }
+
+  /**
+   * @Route("/acs", name="acs")
+   * @param Request $request
+   * @return Response
+   */
+  public function acsAction(Request $request)
+  {
+    if ($this->getParameter('login_route') === DedaLoginAuthenticator::LOGIN_ROUTE) {
+      if ($samlResponse = $request->get('SAMLResponse')) {
+        $assertionResponseData = $this->dedaLoginClient->checkAssertion($samlResponse);
+        $userData = $this->dedaLoginClient->createUserDataFromAssertion($assertionResponseData);
+        $this->session->set('DedaLoginUserData', $userData);
+        return $this->redirectToRoute("login_deda");
+      }
+    }
+
+    throw new NotFoundHttpException("Current authentication handler does not handle attribute consumer service");
   }
 
   /**
@@ -50,6 +102,23 @@ class SecurityController extends Controller
       return $this->redirectToRoute('home');
     }
     throw new UnauthorizedHttpException("Something went wrong in authenticator");
+  }
+
+  /**
+   * @Route("/auth/login-deda", name="login_deda")
+   * @param Request $request
+   * @return Response
+   */
+  public function loginDedaAction(Request $request)
+  {
+    if ($this->getParameter('login_route') !== DedaLoginAuthenticator::LOGIN_ROUTE) {
+      throw new UnauthorizedHttpException("User can not login with login_deda");
+    }
+
+    if ($request->query->has('idp')){
+      return new RedirectResponse($this->dedaLoginClient->getAuthRequest($request->query->get('idp')));
+    }
+    return $this->render('@App/Default/loginDeda.html.twig');
   }
 
   /**

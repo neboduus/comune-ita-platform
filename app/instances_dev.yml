@@ -2,8 +2,10 @@ instances:
   stanzadelcittadino.localtest.me/comune-di-bugliano:
     codice_meccanografico: c_cbug
     database_name: sdc_bugliano
-    #login_route: login_open
-    #single_logout_url: 'http://auth.localtest.me/slo?redirect=http://stanzadelcittadino.localtest.me/comune-di-bugliano/'
+    login_route: login_deda
+    single_logout_url: ''
+    deda_login_client_id: 'd8vbhj65d'
+    deda_login_secret: '8fgb78h232klv4rvsd6sv86fsvfsdnnvdfd'
     protocollo: dummy
     identifier: comune-di-bugliano # Slug dell'instanza sul database
     app_locales: "it|en|fr|de|es"
