@@ -40,7 +40,6 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
     $this->instanceService = $instanceService;
     $this->userMetrics = $userMetrics;
     $this->JWTTokenManager = $JWTTokenManager;
-
   }
 
   protected function getLoginRouteSupported()
@@ -64,7 +63,7 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
    *
    * Check if minimum header parameter is present
    */
-  private function checkHeaderUserData(Request $request)
+  protected function checkHeaderUserData(Request $request)
   {
     $this->hydrateHeaderUserDataIfNeeded($request);
 

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login</title>
+  <link type="text/css" rel="stylesheet" href="{{ asset('bundles/app/css/spid-sp-access-button.min.css') }}"/>
+  <style>
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    .box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 30%;
+    }
+
+    .box div {
+      width: 280px;
+      margin: 0 20px;
+      height: 100px;
+      text-align: left;
+    }
+
+    .box p{
+      font-family: "Titillium Web",HelveticaNeue-Light,"Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+      font-size: 1rem;
+    }
+  </style>
+  <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="{{ asset('bundles/app/js/spid-sp-access-button.min.js') }}"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        var rootList = $("#spid-idp-list-large-root-get");
+        var idpList = rootList.children(".spid-idp-button-link");
+        var lnkList = rootList.children(".spid-idp-support-link");
+        while (idpList.length) {
+          rootList.append(idpList.splice(Math.floor(Math.random() * idpList.length), 1)[0]);
+        }
+        rootList.append(lnkList);
+      });
+    </script>
+</head>
+<body>
+  <div class="box">
+    <div>
+      <p style="text-align: center">
+        <img src="{{ asset('bundles/app/images/spid/spid-agid-logo-lb.png') }}" alt="AGID-SPID" style="max-width: 280px;display: inline-block;"/>
+      </p>
+      <p>SPID è il sistema di identità digitale, valido a livello nazionale, che consente di accedere ai servizi online della Pubblica Amministrazione e dei privati accreditati.</p>
+      <p>Se sei già in possesso di un'identità digitale SPID, seleziona il gestore della tua identità dal menù a tendina.</p>
+      <p>Se non hai ancora un'identità digitale, richiedila ad uno dei gestori.</p>
+      <p style="text-align: center">
+        <a href="#" class="italia-it-button italia-it-button-size-l button-spid"
+           spid-idp-button="#spid-idp-button-large-get" aria-haspopup="true" aria-expanded="false">
+                    <span class="italia-it-button-icon">
+                        <img src="{{ asset('bundles/app/images/spid/spid-ico-circle-bb.svg') }}"
+                             onerror="this.src='{{ asset('bundles/app/images/spid/spid-ico-circle-bb.png') }}'; this.onerror=null;"
+                             alt=""/>
+                    </span>
+          <span class="italia-it-button-text">Entra con SPID</span>
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <div id="spid-idp-button-large-get" class="spid-idp-button spid-idp-button-tip spid-idp-button-relative">
+    <ul id="spid-idp-list-large-root-get" class="spid-idp-button-menu" aria-labelledby="spid-idp">
+      <li class="spid-idp-button-link" data-idp="arubaid">
+        <a href="{{ path('login_deda', {'idp': 'arubaid'}) }}">
+          <span class="spid-sr-only">Aruba ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-arubaid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-arubaid.png') }}'; this.onerror=null;"
+               alt="Aruba ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="infocertid">
+        <a href="{{ path('login_deda', {'idp': 'infocert'}) }}">
+          <span class="spid-sr-only">Infocert ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-infocertid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-infocertid.png') }}'; this.onerror=null;"
+               alt="Infocert ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="intesaid">
+        <a href="{{ path('login_deda', {'idp': 'intesa'}) }}">
+          <span class="spid-sr-only">Intesa ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-intesaid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-intesaid.png') }}'; this.onerror=null;"
+               alt="Intesa ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="lepidaid">
+        <a href="{{ path('login_deda', {'idp': 'idp_9'}) }}">
+          <span class="spid-sr-only">Lepida ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-lepidaid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-lepidaid.png') }}'; this.onerror=null;"
+               alt="Lepida ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="namirialid">
+        <a href="{{ path('login_deda', {'idp': 'namirialid'}) }}">
+          <span class="spid-sr-only">Namirial ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-namirialid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-namirialid.png') }}'; this.onerror=null;"
+               alt="Namirial ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="posteid">
+        <a href="{{ path('login_deda', {'idp': 'poste'}) }}">
+          <span class="spid-sr-only">Poste ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-posteid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-posteid.png') }}'; this.onerror=null;"
+               alt="Poste ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="sielteid">
+        <a href="{{ path('login_deda', {'idp': 'sielte'}) }}">
+          <span class="spid-sr-only">Sielte ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-sielteid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-sielteid.png') }}'; this.onerror=null;"
+               alt="Sielte ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="spiditalia">
+        <a href="{{ path('login_deda', {'idp': 'spiditalia'}) }}">
+          <span class="spid-sr-only">SPIDItalia Register.it</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-spiditalia.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-spiditalia.png') }}'; this.onerror=null;"
+               alt="SpidItalia"/>
+        </a>
+      </li>
+      <li class="spid-idp-button-link" data-idp="timid">
+        <a href="{{ path('login_deda', {'idp': 'tim'}) }}">
+          <span class="spid-sr-only">Tim ID</span>
+          <img src="{{ asset('bundles/app/images/spid/spid-idp-timid.svg') }}"
+               onerror="this.src='{{ asset('bundles/app/images/spid/spid-idp-timid.png') }}'; this.onerror=null;"
+               alt="Tim ID"/>
+        </a>
+      </li>
+      <li class="spid-idp-support-link" data-spidlink="info">
+        <a href="https://www.spid.gov.it">Maggiori informazioni</a>
+      </li>
+      <li class="spid-idp-support-link" data-spidlink="rich">
+        <a href="https://www.spid.gov.it/richiedi-spid">Non hai SPID?</a>
+      </li>
+      <li class="spid-idp-support-link" data-spidlink="help">
+        <a href="https://www.spid.gov.it/serve-aiuto">Serve aiuto?</a>
+      </li>
+    </ul>
+  </div>
+
+</body>
+</html>

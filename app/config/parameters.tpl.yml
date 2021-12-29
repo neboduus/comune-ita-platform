@@ -121,6 +121,8 @@ parameters:
     s3_key: '%env(S3_KEY)%'
     s3_secret: '%env(S3_SECRET)%'
     s3_bucket: '%env(S3_BUCKET)%'
+    deda_login_client_id: 'example'
+    deda_login_secret: 'example'
 
     #Default fallback if env not set
     env(PREFIX): ''

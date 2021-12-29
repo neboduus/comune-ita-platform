@@ -108,6 +108,7 @@ security:
         authenticators:
           - ocsdc.pat.authenticator
           - ocsdc.openlogin.authenticator
+          - ocsdc.dedalogin.authenticator
         entry_point: ocsdc.pat.authenticator
 
     main:
