@@ -68,22 +68,29 @@ class WebhookType extends AbstractType
       $serviceChoices[$s->getName()] = $s->getId();
     }
 
+    /** @var Webhook $webHook */
+    $webHook = $builder->getData();
+    if ($webHook->getVersion() === null) {
+      $versions = Webhook::VERSIONS;
+      $webHook->setVersion(end($versions));
+    }
+
     $builder
       ->add('title', TextType::class, [
-        'label' => 'backoffice.entity.title',
+        'label' => 'webhook.nome',
         'required' => true
       ])
       ->add('endpoint', UrlType::class, [
-        'label' => 'Endpoint',
+        'label' => 'webhook.endpoint',
         'required' => true
       ])
       ->add('method', ChoiceType::class, [
-        'label' => 'Method',
+        'label' => 'webhook.method',
         'choices' => $methods,
         'mapped' => false
       ])
       ->add('trigger', ChoiceType::class, [
-        'label' => 'Attivatore',
+        'label' => 'webhook.trigger',
         'choices' => $statuses,
       ])
       ->add('filters', ChoiceType::class, [
@@ -91,14 +98,18 @@ class WebhookType extends AbstractType
         'expanded' => true,
         'multiple' => true,
         'required' => true,
-        'label' => 'Seleziona i servizi abilitati per il webhook'
+        'label' => 'webhook.filters_label'
       ])
       ->add('headers', TextareaType::class, [
-        'label' => 'Headers (json)',
+        'label' => 'webhook.headers',
         'required' => false
       ])
+      ->add('version', ChoiceType::class, [
+        'label' => 'webhook.version',
+        'choices' => Webhook::VERSIONS,
+      ])
       ->add('active', CheckboxType::class, [
-        'label' =>  'Attivo?' ,
+        'label' =>  'webhook.active' ,
         'required' => false
       ])
     ;

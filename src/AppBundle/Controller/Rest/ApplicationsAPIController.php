@@ -208,7 +208,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
+   *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json object instead of version 1.* where are flattened strings"
    *  )
    * @SWG\Parameter(
    *      name="service",
@@ -463,7 +463,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
+   *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json object instead of version 1.* where are flattened strings"
    *  )
    *
    * @SWG\Response(

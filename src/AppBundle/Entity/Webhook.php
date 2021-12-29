@@ -16,6 +16,10 @@ class Webhook
 {
 
   const VERSION = '1.0';
+  const VERSIONS = [
+    '1.0' => '1.0',
+    '2.0' => '2.0'
+  ];
 
   const TRIGGERS = [
     'all' => 'Tutti',
@@ -88,6 +92,14 @@ class Webhook
    * @ORM\Column(type="boolean", nullable=true)
    */
   private $active;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string", nullable=true)
+   *
+   */
+  private $version;
+
 
   public function __construct()
   {
@@ -230,6 +242,22 @@ class Webhook
   public function setActive(bool $active): void
   {
     $this->active = $active;
+  }
+
+  /**
+   * @return string
+   */
+  public function getVersion(): ?string
+  {
+    return $this->version;
+  }
+
+  /**
+   * @param string $version
+   */
+  public function setVersion(?string $version): void
+  {
+    $this->version = $version;
   }
 
 }

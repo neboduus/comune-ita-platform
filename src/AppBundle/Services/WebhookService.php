@@ -11,6 +11,7 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Webhook;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
@@ -41,6 +42,10 @@ class WebhookService implements ScheduledActionHandlerInterface
    * @var SerializerInterface
    */
   private $serializer;
+  /**
+   * @var VersionService
+   */
+  private $versionService;
 
   /**
    * WebhookService constructor.
@@ -48,13 +53,15 @@ class WebhookService implements ScheduledActionHandlerInterface
    * @param EntityManagerInterface $entityManager
    * @param RouterInterface $router
    * @param SerializerInterface $serializer
+   * @param VersionService $versionService
    */
-  public function __construct(ScheduleActionService $scheduleActionService, EntityManagerInterface $entityManager, RouterInterface $router, SerializerInterface $serializer)
+  public function __construct(ScheduleActionService $scheduleActionService, EntityManagerInterface $entityManager, RouterInterface $router, SerializerInterface $serializer, VersionService $versionService)
   {
     $this->scheduleActionService = $scheduleActionService;
     $this->entityManager = $entityManager;
     $this->router = $router;
     $this->serializer = $serializer;
+    $this->versionService = $versionService;
   }
 
 
@@ -111,35 +118,38 @@ class WebhookService implements ScheduledActionHandlerInterface
 
     $content = Application::fromEntity(
       $pratica,
-      $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/' . $pratica->getId()
+      $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/' . $pratica->getId(),
+      true,
+      $webhook->getVersion()
     );
-
-    if ($event) {
-      $content->setEventId($event->getId());
-      $content->setEventCreatedAt($event->getCreatedAt());
-      $content->setEventVersion(Webhook::VERSION);
-    }
 
     $headers = ['Content-Type' => 'application/json'];
     if (!empty($webhook->getHeaders())) {
       $headers = array_merge($headers, json_decode($webhook->getHeaders(), true));
     }
 
-    $json = $this->serializer->serialize($content, 'json');
+    $data = json_decode($this->serializer->serialize($content, 'json'), true);
+
+    if ($event) {
+      $data['event_id'] = $event->getId();
+      $data['event_created_at'] = $event->getCreatedAt()->format(DateTime::W3C);
+    }
+    $data['event_version'] = $webhook->getVersion();
+    $data['app_version'] = $this->versionService->getVersion();
 
     $client = new Client();
     $request = new Request(
       $webhook->getMethod(),
       $webhook->getEndpoint(),
       $headers,
-      $json
+      json_encode($data)
     );
 
     /** @var Response $response */
     $response = $client->send($request);
 
     if (!in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_CREATED, Response::HTTP_ACCEPTED, Response::HTTP_NO_CONTENT])) {
-      throw new \Exception("Error sending webhook: " . $response->get());
+      throw new \Exception("Error sending webhook: " . $response->getContent());
     }
   }
 }

@@ -24,35 +24,6 @@ class CardDataType extends AbstractI18nType
 {
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-
-    $statuses = [
-      'Bozza' => Servizio::STATUS_CANCELLED,
-      'Pubblicato' => Servizio::STATUS_AVAILABLE,
-      'Non attivo' => Servizio::STATUS_SUSPENDED,
-      'Privato' => Servizio::STATUS_PRIVATE,
-      'Programmato' => Servizio::STATUS_SCHEDULED,
-    ];
-
-    $accessLevels = [
-      'Anonimo' => Servizio::ACCESS_LEVEL_ANONYMOUS,
-      'Social' => Servizio::ACCESS_LEVEL_SOCIAL,
-      'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
-      'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
-      'Cie' => Servizio::ACCESS_LEVEL_CIE,
-    ];
-
-    $legacyAccessLevels = [
-      'Social' => Servizio::ACCESS_LEVEL_SOCIAL,
-      'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
-      'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
-      'Cie' => Servizio::ACCESS_LEVEL_CIE,
-    ];
-
-    $workflows = [
-      'Approvazione' => Servizio::WORKFLOW_APPROVAL,
-      'Inoltro' => Servizio::WORKFLOW_FORWARD,
-    ];
-
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
 
