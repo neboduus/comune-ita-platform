@@ -314,27 +314,6 @@ class Application
   private $meetings;
 
   /**
-   * @Serializer\Type("string")
-   * @SWG\Property(description="Webhook event ID")
-   * @Groups({"webhook"})
-   */
-  private $eventId;
-
-  /**
-   * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Event Creation date time", type="dateTime")
-   * @Groups({"webhook"})
-   */
-  private $eventCreatedAt;
-
-  /**
-   * @Serializer\Type("string")
-   * @SWG\Property(description="Webhook event Version")
-   * @Groups({"webhook"})
-   */
-  private $eventVersion;
-
-  /**
    * @var array
    * @SWG\Property(property="backoffice_data", description="Applcation's backoffice data")
    * @Groups({"read"})
@@ -939,54 +918,6 @@ class Application
   }
 
   /**
-   * @return mixed
-   */
-  public function getEventId()
-  {
-    return $this->eventId;
-  }
-
-  /**
-   * @param mixed $eventId
-   */
-  public function setEventId($eventId): void
-  {
-    $this->eventId = $eventId;
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getEventCreatedAt()
-  {
-    return $this->eventCreatedAt;
-  }
-
-  /**
-   * @param mixed $eventCreatedAt
-   */
-  public function setEventCreatedAt($eventCreatedAt): void
-  {
-    $this->eventCreatedAt = $eventCreatedAt;
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getEventVersion()
-  {
-    return $this->eventVersion;
-  }
-
-  /**
-   * @param mixed $eventVersion
-   */
-  public function setEventVersion($eventVersion): void
-  {
-    $this->eventVersion = $eventVersion;
-  }
-
-  /**
    * @return array
    */
   public function getBackofficeData(): ?array
@@ -1010,6 +941,7 @@ class Application
    * @param Pratica $pratica
    * @param string $attachmentEndpointUrl
    * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
+   * @param int $version
    * @return Application
    */
   public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '', $loadFileCollection = true, $version = 1)
@@ -1028,9 +960,9 @@ class Application
     // Form data
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
       if ($version >= 2) {
-        $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+        $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl, $version);
       } else {
-        $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl);
+        $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl, $version);
       }
     } else {
       $dto->data = [];
@@ -1039,17 +971,17 @@ class Application
     // Backoffice form data
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
       if ($version >= 2) {
-        $dto->backofficeData = self::decorateDematerializedFormsV2($pratica->getBackofficeFormData(), $attachmentEndpointUrl);
+        $dto->backofficeData = self::decorateDematerializedFormsV2($pratica->getBackofficeFormData(), $attachmentEndpointUrl, $version);
       } else {
-        $dto->backofficeData = self::decorateDematerializedForms($pratica->getBackofficeFormData(), $attachmentEndpointUrl);
+        $dto->backofficeData = self::decorateDematerializedForms($pratica->getBackofficeFormData(), $attachmentEndpointUrl, $version);
       }
     } else {
       $dto->backofficeData = [];
     }
 
-    $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl) : [];
+    $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl, $version) : [];
 
-    $dto->outcomeFile = ($loadFileCollection && $pratica->getRispostaOperatore() instanceof Allegato) ? self::prepareFile($pratica->getRispostaOperatore(), $attachmentEndpointUrl) : null;
+    $dto->outcomeFile = ($loadFileCollection && $pratica->getRispostaOperatore() instanceof Allegato) ? self::prepareFile($pratica->getRispostaOperatore(), $attachmentEndpointUrl, $version) : null;
     $dto->outcome = $pratica->getEsito();
     $dto->outcomeMotivation = $pratica->getMotivazioneEsito();
 
@@ -1142,11 +1074,11 @@ class Application
     }
 
 
-    $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl));
+    $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl, $version));
     return $dto;
   }
 
-  public static function decorateDematerializedForms($data, $attachmentEndpointUrl = '')
+  public static function decorateDematerializedForms($data, $attachmentEndpointUrl = '', $version = 1)
   {
     if (!isset($data['flattened'])) {
       return $data;
@@ -1155,7 +1087,7 @@ class Application
     foreach ($decoratedData as $k => $v) {
 
       if (self::isUploadField($data['schema'], $k)) {
-        $decoratedData[$k] = self::prepareFormioFile($v, $attachmentEndpointUrl);
+        $decoratedData[$k] = self::prepareFormioFile($v, $attachmentEndpointUrl, $version);
       }
 
       if (self::isDateField($k)) {
@@ -1165,7 +1097,7 @@ class Application
     return $decoratedData;
   }
 
-  public static function decorateDematerializedFormsV2($data, $attachmentEndpointUrl = '')
+  public static function decorateDematerializedFormsV2($data, $attachmentEndpointUrl = '', $version = 1)
   {
 
     if (!isset($data['flattened'])) {
@@ -1201,7 +1133,7 @@ class Application
         // Se è l'ultimo elemento assegno il valore
         if ($counter == $partsCount) {
           if (self::isUploadField($data['schema'], $path)) {
-            $section[$sectionName] = self::prepareFormioFile($decoratedData[$path], $attachmentEndpointUrl);
+            $section[$sectionName] = self::prepareFormioFile($decoratedData[$path], $attachmentEndpointUrl, $version);
           } else if (self::isDateField($path)) {
             $section[$sectionName] = self::prepareDateField($decoratedData[$path]);
           } else {
@@ -1221,7 +1153,7 @@ class Application
     return (isset($schema[$field . '.type']) && ($schema[$field . '.type'] == 'file' || $schema[$field . '.type'] == 'sdcfile'));
   }
 
-  public static function prepareFileCollection($collection, $attachmentEndpointUrl = '')
+  public static function prepareFileCollection($collection, $attachmentEndpointUrl = '', $version = 1)
   {
     $files = [];
     if ($collection == null) {
@@ -1229,19 +1161,19 @@ class Application
     }
     /** @var Allegato $c */
     foreach ($collection as $c) {
-      $files[] = self::prepareFile($c, $attachmentEndpointUrl);
+      $files[] = self::prepareFile($c, $attachmentEndpointUrl, $version);
     }
     return $files;
   }
 
-  public static function prepareFormioFile($files, $attachmentEndpointUrl = '')
+  public static function prepareFormioFile($files, $attachmentEndpointUrl = '', $version = 1)
   {
     $result = [];
     foreach ($files as $f) {
       $id = $f['data']['id'];
       $temp['id'] = $id;
       $temp['name'] = $f['name'];
-      $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $id;
+      $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $id . '?version=' . $version;
       $temp['originalName'] = $f['originalName'];
       $temp['description'] = isset($f['fileType']) ? $f['fileType'] : Allegato::DEFAULT_DESCRIPTION;
       $temp['protocol_required'] = $f['protocol_required'] ?? true;
@@ -1250,7 +1182,7 @@ class Application
     return $result;
   }
 
-  public static function prepareFile(Allegato $file, $attachmentEndpointUrl = '')
+  public static function prepareFile(Allegato $file, $attachmentEndpointUrl = '', $version = 1)
   {
 
     $filename = $file->getName();
@@ -1263,7 +1195,7 @@ class Application
 
     $temp['id'] = $file->getId();
     $temp['name'] = $filename;
-    $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $file->getId();
+    $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $file->getId() . '?version=' . $version;
     $temp['originalName'] = $file->getFilename();
     $temp['description'] = $file->getDescription() ?? Allegato::DEFAULT_DESCRIPTION;
     $temp['created_at'] = $file->getCreatedAt();
@@ -1394,14 +1326,14 @@ class Application
    * @param string $baseUrl
    * @return array
    */
-  public static function getAvailableTransitions(Pratica $pratica, $baseUrl = '')
+  public static function getAvailableTransitions(Pratica $pratica, $baseUrl = '', $version = 1)
   {
     $availableTransitions = [];
     if (isset(PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()])) {
       $availableTransitions = PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()];
       foreach ($availableTransitions as $k => $v) {
         // todo: fare refactoring completo della classe e generare con router
-        $availableTransitions[$k]['url'] = $baseUrl . '/transiction/' . $v['action'];
+        $availableTransitions[$k]['url'] = $baseUrl . '/transiction/' . $v['action'] . '?version=' . $version;
 
         if ($v['action'] == 'register' && !$pratica->getServizio()->isProtocolRequired()) {
           unset($availableTransitions[$k]);

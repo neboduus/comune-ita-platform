@@ -10,7 +10,7 @@
         {{ form_start(form) }}
         {{ form_widget(form) }}
         <div class="row">
-          <div class="col-md-6 py-lg-2 text-md-right order-md-2">
+          <div class="col-md-6 py-lg-2">
             {% if test is defined %}
               <div class="form-group">
                 <div class="input-group">
@@ -29,9 +29,9 @@
               </div>
             {% endif %}
           </div>
-          <div class="col-md-6 py-lg-2 text-left  order-md-1">
-            <input class="btn btn-primary mr-1" type="submit" value="Salva"/>
+          <div class="col-md-6 py-lg-2 text-md-right">
             <a class="btn btn-100 mr-1" href="{{ path('admin_webhook_index') }}">{{ 'webhook.back_to_list' | trans() }}</a>
+            <input class="btn btn-primary mr-1" type="submit" value="Salva"/>
           </div>
         </div>
         {{ form_end(form) }}
