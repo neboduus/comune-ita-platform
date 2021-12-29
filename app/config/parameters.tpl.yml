@@ -123,6 +123,7 @@ parameters:
     s3_bucket: '%env(S3_BUCKET)%'
     deda_login_client_id: 'example'
     deda_login_secret: 'example'
+    deda_login_env: 'prod'
 
     #Default fallback if env not set
     env(PREFIX): ''

@@ -151,3 +151,4 @@ parameters:
     s3_bucket: ~
     deda_login_client_id: 'example'
     deda_login_secret: 'example'
+    deda_login_env: 'prod'

@@ -26,10 +26,9 @@ class DedaLoginClient
 
   private $authBearer;
 
-  public function __construct(HttpClientInterface $httpClient, $dedaLoginClientId, $dedaLoginSecret)
+  public function __construct(HttpClientInterface $httpClient, $dedaLoginClientId, $dedaLoginSecret, $dedaEnv)
   {
-    $env = (string)getenv('ENV');
-    $this->baseUrl = strtolower($env) === 'dev' ? self::TEST_BASE_URL : self::PROD_BASE_URL;
+    $this->baseUrl = strtolower($dedaEnv) === 'dev' ? self::TEST_BASE_URL : self::PROD_BASE_URL;
     $this->httpClient = $httpClient;
     $this->clientId = $dedaLoginClientId;
     $this->clientSecret = $dedaLoginSecret;

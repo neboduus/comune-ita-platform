@@ -378,6 +378,7 @@ services:
       - '@http.client'
       - "%deda_login_client_id%"
       - "%deda_login_secret%"
+      - "%deda_login_env%"
 
   ocsdc.dedalogin.client: '@AppBundle\Security\DedaLogin\DedaLoginClient'
 
