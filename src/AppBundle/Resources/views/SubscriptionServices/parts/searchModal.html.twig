@@ -21,13 +21,7 @@
             {{ 'backoffice.integration.subscription_service.search_subscribers_helper' | trans }}
           </small>
         </div>
-        <div id="spinner" class="text-center">
-          <div  class="progress-spinner progress-spinner-double progress-spinner-active">
-            <div class="progress-spinner-inner"></div>
-            <div class="progress-spinner-inner"></div>
-            <span class="sr-only">{{ 'backoffice.integration.subscription_service.loading' | trans }}</span>
-          </div>
-        </div>
+        {{ include('@App/Subscriptions/parts/spinner.html.twig') }}
         <div id="search-results-error" class="mx-2">
           <p class="text-danger">{{ 'backoffice.integration.subscription_service.search_error' | trans }}</p>
         </div>
