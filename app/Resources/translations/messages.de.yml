@@ -78,6 +78,7 @@ servizio:
   suggerisci_login: "Suggerisci il Login per l 'autocompletamento?"
   consenti_riapertura: "Consenti agli operatori di cambiare manualmente lo stato di una pratica"
   consenti_ritiro: "Consenti al cittadino di annullare la presentazione della pratica"
+  consenti_richiesta_integrazione: "Consenti agli operatori di richiedere integrazioni per le pratiche di questo servizio"
   flusso: "Flusso di lavoro"
   crea: 'Crea nuovo servizio'
   modifica: 'Modifica %name%'
@@ -672,7 +673,7 @@ operatori:
   scrivi_al_cittadino: "Scrivi al cittadino"
   riapri_pratica: "Riapri pratica"
   richiedi_intergrazioni: 'Richiedi intergrazioni'
-  chiudi_richiesta_integrazione: 'Chiudi richiesta integrazioni'
+  chiudi_richiesta_integrazione: 'Accetta integrazioni'
   richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"
   modulo: 'Modulo'
   richiesta: 'Richiesta'

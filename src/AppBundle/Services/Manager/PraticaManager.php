@@ -337,7 +337,9 @@ class PraticaManager
 
   /**
    * @param Pratica $pratica
-   * @param RichiestaIntegrazioneDTO $integration
+   * @param User $user
+   * @param string $text
+   * @throws Exception
    */
   public function requestIntegration(Pratica $pratica, User $user, string $text)
   {

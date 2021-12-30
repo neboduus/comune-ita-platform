@@ -346,6 +346,13 @@ class Servizio implements Translatable
   private $allowWithdraw;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true, options={"default":"0"})
+   * @SWG\Property(description="If selected, operator can request integrations for applications on this service")
+   */
+  private $allowIntegrationRequest;
+
+  /**
    * @var integer
    * @ORM\Column(type="integer", nullable=true, options={"default":"0"})
    * @SWG\Property(description="Service workflow type, accepts values: 0 - Approval, 1 - Forward")
@@ -404,6 +411,7 @@ class Servizio implements Translatable
     //$this->setProtocolRequired(true);
     $this->setAllowReopening(true);
     $this->setAllowWithdraw(true);
+    $this->setAllowIntegrationRequest(true);
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
   }
 
@@ -1252,6 +1260,22 @@ class Servizio implements Translatable
   public function setAllowWithdraw(?bool $allowWithdraw)
   {
     $this->allowWithdraw = $allowWithdraw;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isAllowIntegrationRequest(): ?bool
+  {
+    return $this->allowIntegrationRequest;
+  }
+
+  /**
+   * @param bool $allowIntegrationRequest
+   */
+  public function setAllowIntegrationRequest(?bool $allowIntegrationRequest): void
+  {
+    $this->allowIntegrationRequest = $allowIntegrationRequest;
   }
 
   /**

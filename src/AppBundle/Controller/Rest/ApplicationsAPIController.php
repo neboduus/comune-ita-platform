@@ -30,6 +30,7 @@ use AppBundle\Services\InstanceService;
 use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
+use AppBundle\Utils\FormUtils;
 use AppBundle\Utils\UploadedBase64File;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -567,7 +568,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -818,7 +819,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -1061,7 +1062,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -1197,7 +1198,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if (!$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -1288,7 +1289,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postApplicationTransitionAction($id, Request $request)
+  public function applicationTransitionSubmitAction($id, Request $request)
   {
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
@@ -1360,7 +1361,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postApplicationTransitionRegisterAction($id, Request $request)
+  public function applicationTransitionRegisterAction($id, Request $request)
   {
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
@@ -1417,7 +1418,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         ->getForm();
       $this->processForm($request, $form);
       if ($form->isSubmitted() && !$form->isValid()) {
-        $errors = $this->getErrorsFromForm($form);
+        $errors = FormUtils::getErrorsFromForm($form);
         $data = [
           'type' => 'validation_error',
           'title' => 'There was a validation error',
@@ -1493,7 +1494,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postApplicationTransitionRegisterOutcomeAction($id, Request $request)
+  public function applicationTransitionRegisterOutcomeAction($id, Request $request)
   {
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
@@ -1545,7 +1546,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         ->getForm();
       $this->processForm($request, $form);
       if ($form->isSubmitted() && !$form->isValid()) {
-        $errors = $this->getErrorsFromForm($form);
+        $errors = FormUtils::getErrorsFromForm($form);
         $data = [
           'type' => 'validation_error',
           'title' => 'There was a validation error',
@@ -1619,7 +1620,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postApplicationTransitionAssignAction($id, Request $request)
+  public function applicationTransitionAssignAction($id, Request $request)
   {
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
@@ -1692,7 +1693,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postApplicationTransitionOutcomeAction($id, Request $request)
+  public function applicationTransitionOutcomeAction($id, Request $request)
   {
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
@@ -1709,7 +1710,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $form = $this->createForm('AppBundle\Form\Rest\Transition\OutcomeFormType', $defaultData);
       $this->processForm($request, $form);
       if ($form->isSubmitted() && !$form->isValid()) {
-        $errors = $this->getErrorsFromForm($form);
+        $errors = FormUtils::getErrorsFromForm($form);
         $data = [
           'type' => 'validation_error',
           'title' => 'There was a validation error',
@@ -1743,6 +1744,159 @@ class ApplicationsAPIController extends AbstractFOSRestController
         'type' => 'error',
         'title' => 'There was an error during transition process',
         'description' => 'Contact technical support at support@opencontent.it'
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
+  }
+
+  /**
+   * Request integration on an application
+   * @Rest\Post("/{id}/transition/request-integration", name="application_api_post_transition_request_integration")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Message",
+   *     in="body",
+   *     type="json",
+   *     description="The transition to create",
+   *     required=true,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="message", type="string", description="Reason of the integration request")
+   *     )
+   * )
+   *
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function applicationTransitionRequestIntegrationAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::ACCEPT_OR_REJECT, $application);
+
+      $defaultData = [
+        'message' => null
+      ];
+
+      $form = $this->createForm('AppBundle\Form\Rest\Transition\RequestIntegrationFormType', $defaultData);
+      $this->processForm($request, $form);
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = $form->getData();
+      $this->praticaManager->requestIntegration($application, $this->getUser(), $data['message']);
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => 'Contact technical support at support@opencontent.it'
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
+  }
+
+  /**
+   * Accept integration on an application
+   * @Rest\Post("/{id}/transition/accept-integration", name="application_api_post_transition_accept_integration")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   *
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function applicationTransitionAcceptIntegrationAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::ACCEPT_OR_REJECT, $application);
+
+      if ($application->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+        throw new Exception('Application is not in the correct state');
+      }
+
+      $this->praticaManager->acceptIntegration($application, $this->getUser());
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => $e->getMessage()
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1836,34 +1990,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-
-    return $errors;
-  }
-
-  /**
    * @return array
    */
   private function getAllowedServices(): array
   {
     $user = $this->getUser();
-    $repositoryService = $this->em->getRepository('AppBundle:Servizio');
     $allowedServices = [];
     if ($user instanceof OperatoreUser) {
       $allowedServices = $user->getServiziAbilitati()->toArray();

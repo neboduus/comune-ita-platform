@@ -30,17 +30,15 @@ class PraticaStatusService
       ApplicationsAPIController::TRANSITION_WITHDRAW
     ],
     Pratica::STATUS_PENDING => [
-      // Todo: riabilitare dopo implementazione
-      //ApplicationsAPIController::TRANSITION_REQUEST_INTEGRATION,
+      ApplicationsAPIController::TRANSITION_REQUEST_INTEGRATION,
       ApplicationsAPIController::TRANSITION_ACCEPT,
       ApplicationsAPIController::TRANSITION_REJECT,
       ApplicationsAPIController::TRANSITION_WITHDRAW,
     ],
-    // Todo: riabilitare dopo implementazione
-    /*Pratica::STATUS_DRAFT_FOR_INTEGRATION => [
+    Pratica::STATUS_DRAFT_FOR_INTEGRATION => [
       ApplicationsAPIController::TRANSITION_ACCEPT_INTEGRATION,
       ApplicationsAPIController::TRANSITION_WITHDRAW,
-    ],*/
+    ],
     Pratica::STATUS_COMPLETE => [
       ApplicationsAPIController::TRANSITION_WITHDRAW
     ],

@@ -114,6 +114,7 @@ class ServizioFormType extends AbstractType
       ->add('shared_with_group')
       ->add('allow_reopening')
       ->add('allow_withdraw')
+      ->add('allow_integration_request')
       ->add('workflow')
       ->add('recipients_id', CollectionType::class, [
         'entry_type' => TextType::class,

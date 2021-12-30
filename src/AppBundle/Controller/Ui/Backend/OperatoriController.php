@@ -715,7 +715,7 @@ class OperatoriController extends Controller
    * @Route("/{pratica}/detail",name="operatori_show_pratica")
    * @param Pratica|DematerializedFormPratica $pratica
    * @param Request $request
-   * @return array|RedirectResponse
+   * @return Response
    */
   public function showPraticaAction(Pratica $pratica, Request $request)
   {
@@ -1035,7 +1035,7 @@ class OperatoriController extends Controller
     $this->checkUserCanAccessPratica($user, $pratica);
     if ($pratica->getStatus() === Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       try {
-        $this->praticaManager->acceptIntegration($pratica, $this->getUser());
+        $this->praticaManager->acceptIntegration($pratica, $user);
 
         $this->addFlash('success', 'Integrazione accettata correttamente');
       } catch (\Exception $e) {
