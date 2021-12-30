@@ -271,7 +271,6 @@ class Service
    */
   private $sharedWithGroup;
 
-
   /**
    * @var bool
    * @Serializer\Type("boolean")
@@ -280,7 +279,6 @@ class Service
    */
   private $allowReopening;
 
-
   /**
    * @var bool
    * @Serializer\Type("boolean")
@@ -288,6 +286,14 @@ class Service
    * @Groups({"read", "write"})
    */
   private $allowWithdraw;
+
+  /**
+   * @var bool
+   * @Serializer\Type("boolean")
+   * @SWG\Property(description="If selected, operator can request integrations for applications on this service")
+   * @Groups({"read", "write"})
+   */
+  private $allowIntegrationRequest;
 
   /**
    * @var integer
@@ -869,6 +875,22 @@ class Service
   }
 
   /**
+   * @return bool
+   */
+  public function isAllowIntegrationRequest(): ?bool
+  {
+    return $this->allowIntegrationRequest;
+  }
+
+  /**
+   * @param bool $allowIntegrationRequest
+   */
+  public function setAllowIntegrationRequest(?bool $allowIntegrationRequest): void
+  {
+    $this->allowIntegrationRequest = $allowIntegrationRequest;
+  }
+
+  /**
    * @return int
    */
   public function getWorkflow()
@@ -974,6 +996,7 @@ class Service
     $dto->sharedWithGroup = $servizio->isSharedWithGroup();
     $dto->allowReopening = $servizio->isAllowReopening();
     $dto->allowWithdraw = $servizio->isAllowWithdraw();
+    $dto->allowIntegrationRequest = $servizio->isAllowIntegrationRequest();
     $dto->workflow = $servizio->getWorkflow();
 
     $dto->recipients = [];
@@ -1038,6 +1061,7 @@ class Service
 
     $entity->setAllowReopening($this->allowReopening);
     $entity->setAllowWithdraw($this->allowWithdraw);
+    $entity->setAllowIntegrationRequest($this->allowIntegrationRequest);
     $entity->setWorkflow($this->workflow);
 
     $entity->setRecipients(new ArrayCollection($this->recipientsId));

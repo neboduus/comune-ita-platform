@@ -1333,7 +1333,7 @@ class Application
       $availableTransitions = PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()];
       foreach ($availableTransitions as $k => $v) {
         // todo: fare refactoring completo della classe e generare con router
-        $availableTransitions[$k]['url'] = $baseUrl . '/transiction/' . $v['action'] . '?version=' . $version;
+        $availableTransitions[$k]['url'] = $baseUrl . '/transition/' . $v['action'] . '?version=' . $version;
 
         if ($v['action'] == 'register' && !$pratica->getServizio()->isProtocolRequired()) {
           unset($availableTransitions[$k]);

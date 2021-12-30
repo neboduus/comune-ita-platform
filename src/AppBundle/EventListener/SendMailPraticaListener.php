@@ -32,4 +32,5 @@ class SendMailPraticaListener
         $pratica = $event->getPratica();
         $this->mailer->dispatchMailForPratica($pratica, $this->defaultSender);
     }
+
 }

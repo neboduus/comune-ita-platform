@@ -12,8 +12,8 @@
         </div>
       {% elseif  pratica.status == constant('STATUS_DRAFT_FOR_INTEGRATION', pratica) %}
         <div class="col d-flex justify-content-center">
-          <a href="{{ path('operatori_accept_integration', {'pratica': pratica}) }}" class="btn btn-primary">
-            <svg class="icon icon-light">
+          <a href="{{ path('operatori_accept_integration', {'pratica': pratica}) }}" class="btn btn-outline-primary">
+            <svg class="icon icon-success">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
             </svg>
             {{ 'operatori.chiudi_richiesta_integrazione' | trans }}
@@ -30,7 +30,7 @@
           </button>
         </div>
 
-        {% if feature('feature_integration_request') %}
+        {% if pratica.servizio.allowIntegrationRequest %}
           <div class="col d-flex justify-content-center">
             <button class="btn btn-outline-secondary" id="modal-integration" data-toggle="modal"
                     data-target="#integration-request-modal">

@@ -182,6 +182,14 @@ class GeneralDataType extends AbstractI18nType
         ]
       )
       ->add(
+        'allow_integration_request',
+        CheckboxType::class,
+        [
+          'label' => 'servizio.consenti_richiesta_integrazione',
+          'required' => false,
+        ]
+      )
+      ->add(
         'workflow',
         ChoiceType::class,
         [
