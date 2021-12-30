@@ -18,9 +18,11 @@ use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -66,6 +68,10 @@ class SubscriptionsController extends Controller
    * @var BreadcrumbsService
    */
   private $breadcrumbsService;
+  /**
+   * @var JWTTokenManagerInterface
+   */
+  private $JWTTokenManager;
 
   /**
    * @param EntityManager $entityManager
@@ -74,9 +80,10 @@ class SubscriptionsController extends Controller
    * @param SubcriptionsBackOffice $subscriptionsBackOffice
    * @param SubscriptionsService $subscriptionsService
    * @param ModuloPdfBuilderService $pdfBuilderService
-   * @param BreadcrumbsService $breadcrumbsService
+   * @param BreadcrumbsService $breadcrumbsService,
+   * @param JWTTokenManagerInterface $JWTTokenManager
    */
-  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService, ModuloPdfBuilderService $pdfBuilderService, BreadcrumbsService $breadcrumbsService)
+  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService, ModuloPdfBuilderService $pdfBuilderService, BreadcrumbsService $breadcrumbsService, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
     $this->entityManager = $entityManager;
@@ -85,6 +92,7 @@ class SubscriptionsController extends Controller
     $this->subscriptionsService = $subscriptionsService;
     $this->pdfBuilderService = $pdfBuilderService;
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->JWTTokenManager = $JWTTokenManager;
   }
 
   /**
@@ -97,26 +105,55 @@ class SubscriptionsController extends Controller
     $user = $this->getUser();
 
     $table = $this->createDataTable()
-      ->add('show', TextColumn::class, ['label' => 'iscrizioni.subscribers.show', 'field' => 'subscriber.id', 'searchable' => false, 'orderable' => false, 'render' => function ($value, $subscriptionService) {
-        return sprintf('<a href="%s"><svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-zoom-in"></use></svg></a>', $this->generateUrl('operatori_subscriber_show', [
-          'subscriber' => $value
-        ]), $value);
-      }])
-      ->add('name', TextColumn::class, ['label' => 'iscrizioni.subscribers.name', 'field' => 'subscriber.name', 'searchable' => true])
-      ->add('surname', TextColumn::class, ['label' => 'iscrizioni.subscribers.surname', 'field' => 'subscriber.surname', 'searchable' => true])
-      ->add('fiscal_code', TextColumn::class, ['label' => 'iscrizioni.subscribers.fiscal_code', 'field' => 'subscriber.fiscal_code', 'searchable' => true])
-      ->add('email', TextColumn::class, ['label' => 'iscrizioni.subscribers.email_address', 'field' => 'subscriber.email', 'render' => function ($value, $subscriptionService) {
-        return sprintf('<a href="mailto:%s"><div class="text-truncate">%s</div></a>', $value, $value);
-      }])
-      ->add('created_at', DateTimeColumn::class, ['label' => 'iscrizioni.subscribers.created_at', 'format' => 'd/m/Y', 'searchable' => false])
-      ->add('id', TextColumn::class, ['label' => 'iscrizioni.subscribers.actions', 'searchable' => false, 'render' => function ($value, $subscriptionService) {
-        return sprintf('
-        <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s" onclick="return confirm(\'Sei sicuro di procedere? la sottoscrizione verrà eliminato definitivamente.\');"><svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg></a>
-        <a class="btn btn-danger btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s" onclick="return confirm(\'Sei sicuro di procedere? la sottoscrizione verrà eliminato definitivamente.\');">Elimina</a>',
-          $this->generateUrl('operatori_subscription_delete', ['id' => $value]),
-          $this->generateUrl('operatori_subscription_delete', ['id' => $value])
-        );
-      }])
+      ->add('show', TwigColumn::class, [
+        'label' => '',
+        'field' => 'subscriber.id',
+        'searchable' => false,
+        'orderable' => false,
+        'template' => '@App/Subscriptions/table/_show.html.twig',
+      ])
+      ->add('name', TextColumn::class, [
+        'label' => 'iscrizioni.subscribers.name',
+        'field' => 'subscriber.name',
+        'searchable' => true,
+        'orderable' => true,
+      ])
+      ->add('surname', TextColumn::class, [
+        'label' => 'iscrizioni.subscribers.surname',
+        'field' => 'subscriber.surname',
+        'searchable' => true,
+        'orderable' => true
+      ])
+      ->add('fiscal_code', TextColumn::class, [
+        'label' => 'iscrizioni.subscribers.fiscal_code',
+        'field' => 'subscriber.fiscal_code',
+        'searchable' => true,
+      ])
+      ->add('email', TwigColumn::class, [
+        'label' => 'iscrizioni.subscribers.email_address',
+        'field' => 'subscriber.email',
+        'template' => '@App/Subscriptions/table/_email.html.twig',
+        'searchable' => false,
+        'orderable' => false
+      ])
+      ->add('created_at', DateTimeColumn::class, [
+        'label' => 'iscrizioni.subscribers.created_at',
+        'format' => 'd/m/Y',
+        'searchable' => false,
+        'orderable' => true
+      ])
+      ->add('subscriptionServiceId', TextColumn::class, [
+        'label' => '',
+        'field' => 'subscription_service.id',
+        'searchable' => false,
+        'visible'=>false
+      ])
+      ->add('actions', TwigColumn::class, [
+        'label' => 'iscrizioni.subscribers.actions',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/Subscriptions/table/_actions.html.twig',
+      ])
       ->createAdapter(ORMAdapter::class, [
         'entity' => Subscription::class,
         'query' => function (QueryBuilder $builder) use ($subscriptionService) {
@@ -136,9 +173,13 @@ class SubscriptionsController extends Controller
       return $table->getResponse();
     }
 
+    $subscriptionServices = $this->entityManager->getRepository(SubscriptionService::class)->findAll();
+
     return $this->render('@App/Subscriptions/showSubscriptions.html.twig', [
       'user' => $user,
-      'datatable' => $table, 'subscriptionService' => $subscriptionService
+      'datatable' => $table, 'subscriptionService' => $subscriptionService,
+      'subscriptionServices'=> $subscriptionServices,
+      'token' => $this->JWTTokenManager->create($user)
     ]);
   }
 
@@ -332,21 +373,6 @@ class SubscriptionsController extends Controller
     return new JsonResponse(
       ['errors' => $errors, 'subscriptions' => $subscriptions],
       $errors ? Response::HTTP_BAD_REQUEST : Response::HTTP_OK);
-  }
-
-  /**
-   * Creates a form to delete a Subscription entity.
-   *
-   * @param Subscription $subscription The Subscription entity
-   *
-   * @return \Symfony\Component\Form\Form The form
-   */
-  private function createDeleteForm(Subscription $subscription)
-  {
-    return $this->createFormBuilder()
-      ->setAction($this->generateUrl('operatori_subscription_delete', array('id' => $subscription->getId())))
-      ->setMethod('DELETE')
-      ->getForm();
   }
 
   /**

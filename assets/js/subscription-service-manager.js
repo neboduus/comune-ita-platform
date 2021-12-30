@@ -6,9 +6,100 @@ require("jquery"); // Load jQuery as a module
 import {TextEditor} from "./utils/TextEditor";
 
 
+$('#edit-subscription-modal, #delete-subscription-modal').on('show.bs.modal', function (event) {
+  $(this).find('.error').hide();
+  $(this).find('.error ul').empty();
+
+  let triggerElement = $(event.relatedTarget); // Button that triggered the modal
+  let modalBtn = $(this).find('.action-btn');
+  modalBtn.attr('data-url', triggerElement.attr('data-url'));
+  modalBtn.attr('data-id', triggerElement.attr('data-id'));
+  modalBtn.attr('data-redirect', triggerElement.attr('data-redirect'));
+
+  if (triggerElement.attr('data-subscription-service-id')) {
+    $('#new-subscription-service').val(triggerElement.attr('data-subscription-service-id')).change();
+  }
+});
+
+$('#searchModal').on('show.bs.modal', function () {
+  $('#search-results-error').hide();
+  $('div#search-results').empty();
+  $('div#search-results-error').hide();
+  $("#search-subscriber").val('');
+});
+
 $(document).ready(function () {
-  $('div#spinner').hide()
-  $('div#search-results-error').hide()
+  $('.edit-btn-modal').on('click', function () {
+    let url = $(this).attr('data-url');
+    let redirectUrl = $(this).attr('data-redirect');
+
+    let newSubscriptionService = $(`#new-subscription-service`).val();
+    $(`div#spinner`).show();
+    let modalEl = $('#edit-subscription-modal');
+    modalEl.find('.error').hide();
+    modalEl.find('.error ul').empty();
+
+    $.ajax({
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${$('#token').attr('data-token')}`
+      },
+      url:  url,
+      type: "PATCH",
+      data: JSON.stringify({
+        "subscription_service": `${newSubscriptionService}`
+      }),
+      success: function() {
+        $('div#spinner').hide()
+        window.location.replace(redirectUrl);
+      },
+      error: function(response) {
+        $(`div#spinner`).hide()
+        let data = response.responseJSON;
+        if (data.errors) {
+          $.each(data.errors, function (index) {
+            modalEl.find('.error ul').append(`<li>${data.errors[index]}</li>`);
+          });
+        }
+        modalEl.find('.error').show();
+      }
+    });
+  });
+
+  $('.delete-btn-modal').on('click', function () {
+    let url = $(this).attr('data-url');
+    let redirectUrl = $(this).attr('data-redirect');
+
+    $(`div#spinner`).show();
+    let modalEl = $('#delete-subscription-modal');
+    modalEl.find('.error').hide();
+    modalEl.find('.error ul').empty();
+
+    $.ajax({
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${$('#token').attr('data-token')}`
+      },
+      url: url,
+      type: "DELETE",
+      success: function() {
+        $('div#spinner').hide()
+        window.location.href = redirectUrl;
+      },
+      error: function(response) {
+        $(`div#spinner`).hide()
+        let data = response.responseJSON;
+        if (data.errors) {
+          $.each(data.errors, function (index) {
+            modalEl.find('.error ul').append(`<li>${data.errors[index]}</li>`);
+          });
+        }
+        modalEl.find('.error').show();
+      }
+    });
+  });
 
   $('#search-btn').on('click', function () {
     let search = $('#search-subscriber').val()

@@ -1,0 +1,40 @@
+<div id="delete-subscription-modal" class="modal fade bd-example-modal-sm text-left" tabindex="-1" role="dialog"
+     aria-labelledby="{{ 'iscrizioni.modals.delete_subscription' | trans }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <svg class="icon icon-danger">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
+        </svg>
+        <h5
+          class=" modal-title text-warning align-self-center ml-2">{{ 'iscrizioni.modals.delete_subscription' | trans }}</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <svg class="icon">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h6 class="text-danger">{{ 'iscrizioni.modals.confirm_delete.description_title' | trans }}</h6>
+          <p>{{ 'iscrizioni.modals.confirm_delete.description_text' | trans }}</p>
+        </div>
+        <div class="mt-4">
+          {{ include('@App/Subscriptions/parts/spinner.html.twig') }}
+          <div class="my-2 text-danger small error">
+            <p>{{ 'backoffice.integration.subscriptions.delete_subscription_error' | trans }}</p>
+            <ul></ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary btn-sm" type="button" id="cancel-delete-btn" data-dismiss="modal">
+          {{ 'annulla'| trans }}
+        </button>
+        <button class="btn btn-danger btn-sm delete-btn-modal action-btn">
+          {{ 'elimina' | trans }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

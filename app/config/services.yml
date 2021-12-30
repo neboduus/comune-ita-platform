@@ -329,7 +329,8 @@ services:
 
   AppBundle\Controller\Ui\Backend\SubscriberController:
     autowire: true,
-    arguments: [ "@ocsdc.mailer", "%default_from_email_address%", "@logger" ]
+    arguments:
+      $defaultSender: "%default_from_email_address%"
 
   AppBundle\Controller\Ui\Backend\CalendarsController:
     autowire: true

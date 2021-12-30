@@ -3,9 +3,12 @@
 namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Entity\Subscriber;
+use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use AppBundle\Model\SubscriberMessage;
 use AppBundle\Services\MailerService;
+use Doctrine\ORM\EntityManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -25,10 +28,21 @@ class SubscriberController extends Controller
   private $mailer;
 
   private $defaultSender;
+  /**
+   * @var EntityManager
+   */
+  private $entityManager;
 
-  public function __construct(MailerService $mailer, $defaultSender)
+  /**
+   * @var JWTTokenManagerInterface
+   */
+  private $JWTTokenManager;
+
+  public function __construct(EntityManager $entityManager, MailerService $mailer, JWTTokenManagerInterface $JWTTokenManager, $defaultSender)
   {
+    $this->entityManager = $entityManager;
     $this->mailer = $mailer;
+    $this->JWTTokenManager = $JWTTokenManager;
     $this->defaultSender = $defaultSender;
   }
 
@@ -45,11 +59,11 @@ class SubscriberController extends Controller
     $showSubscription = $request->query->get('show_subscription');
 
     $tableData = [];
-    $subscriptionServices = [];
+    $subscribedSubscriptionServices = [];
 
     // retrieve datatables subscriber payments data
     foreach ($subscriber->getSubscriptions() as $subscription) {
-      $subscriptionServices[] = $subscription->getSubscriptionService()->getName();
+      $subscribedSubscriptionServices[] = $subscription->getSubscriptionService()->getName();
 
       if ($subscription->getSubscriptionService()->getSubscriptionAmount())
         // Subscription Amount entry
@@ -117,6 +131,7 @@ class SubscriberController extends Controller
       return $this->redirectToRoute('operatori_subscriber_show', ['subscriber' => $subscriber->getId()]);
     }
 
+    $subscriptionServices = $this->entityManager->getRepository(SubscriptionService::class)->findAll();
     return $this->render( '@App/Subscriber/showSubscriber.html.twig', [
       'user' => $user,
       'subscriber' => $subscriber,
@@ -124,6 +139,8 @@ class SubscriberController extends Controller
       'show_subscription' => $showSubscription,
       'datatable' => $table,
       'message_form' => $messageForm->createView(),
+      'subscriptionServices'=> $subscriptionServices,
+      'token' => $this->JWTTokenManager->create($user)
     ]);
   }
 }

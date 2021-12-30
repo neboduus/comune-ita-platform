@@ -3,7 +3,7 @@
     <svg class="icon icon-sm icon-white">
       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
     </svg>
-    <span class="">{{ 'calendars.delete' | trans }}</span>
+    <span class="">{{ 'elimina' | trans }}</span>
   </button>
   {{ include('@App/Calendars/table/_modal_delete.html.twig', {'id': id, 'title': title, 'futureMeetings': futureMeetings}) }}
 {% else %}
@@ -12,6 +12,6 @@
     <svg class="icon icon-sm icon-300">
       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
     </svg>
-    <span class="">{{ 'calendars.delete' | trans }}</span>
+    <span class="">{{ 'elimina' | trans }}</span>
   </button>
 {% endif %}

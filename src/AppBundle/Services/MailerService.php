@@ -13,6 +13,7 @@ use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscriber;
+use AppBundle\Entity\User;
 use AppBundle\Exception\MessageDisabledException;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
@@ -585,7 +586,7 @@ class MailerService
    * @param OperatoreUser $operatore
    * @return int
    */
-  public function dispatchMailForSubscriber(SubscriberMessage $subscriberMessage, $fromAddress, OperatoreUser $operatore)
+  public function dispatchMailForSubscriber(SubscriberMessage $subscriberMessage, $fromAddress, User $operatore)
   {
     $sentAmount = 0;
 
@@ -619,7 +620,7 @@ class MailerService
    * @return \Swift_Message
    * @throws \Twig\Error\Error
    */
-  private function setupSubscriberMessage(SubscriberMessage $subscriberMessage, $fromAddress, OperatoreUser $operatoreUser)
+  private function setupSubscriberMessage(SubscriberMessage $subscriberMessage, $fromAddress, User $operatoreUser)
   {
     $toEmail = $subscriberMessage->getSubscriber()->getEmail();
     $toName = $subscriberMessage->getFullName();
