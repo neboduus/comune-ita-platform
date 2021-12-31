@@ -310,6 +310,7 @@ class PraticaManager
    */
   public function withdrawApplication(Pratica $pratica, User $user)
   {
+
     if ($pratica->getStatus() == Pratica::STATUS_WITHDRAW) {
       throw new BadRequestHttpException('La pratica è già stata elaborata');
     }
@@ -343,6 +344,9 @@ class PraticaManager
    */
   public function requestIntegration(Pratica $pratica, User $user, string $text)
   {
+
+    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
+
     // todo: verificare se va creato solo il messaggio o anche la richiesta di integrazione, per ora creo entrambi
     $richiestaIntegrazione = new RichiestaIntegrazioneDTO([], null, $text);
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
@@ -381,6 +385,8 @@ class PraticaManager
    */
   public function acceptIntegration(Pratica $pratica, User $user)
   {
+    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
+
     // Creo il file principale per le integrazioni
     $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica);
     $pratica->addAllegato($integrationsAnswer);

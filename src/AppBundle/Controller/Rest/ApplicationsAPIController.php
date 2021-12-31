@@ -1832,7 +1832,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => $e->getMessage()
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1938,7 +1938,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postApplicationTransitionWithDrawAction($id, Request $request)
+  public function applicationTransitionWithDrawAction($id, Request $request)
   {
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
