@@ -16,10 +16,16 @@ class Map {
    *
    * @param mapId
    * @param center
+   * @param target
    * @param options
    */
-  constructor(mapId = 'map', center, options) {
+  constructor(mapId = 'map', center, target, options) {
     this.locale = Locales.map['it'];
+
+    this.target = target;
+    this.targetName = $(target.name);
+    this.targetElement = $(target.element);
+
     // Map settings
     this.settings = {
       center: [41.9027835, 12.4963655],
@@ -39,7 +45,6 @@ class Map {
     // Map center
     const mapCenter = typeof center === 'object' && center.length === 2 ? center : this.settings.center;
     this.settings.defaults.center = L.latLng(mapCenter[0], mapCenter[1]);
-
     this.editableLayers = L.featureGroup();
 
     // Base layers
@@ -219,20 +224,8 @@ class Map {
       },
     });
 
-    const $target = $(params.targetEl);
-    const $name = $(params.nameEl);
-    const $color = $(params.colorEl);
+    const self = this;
 
-    const saveGeoJson = (geoJSON) => {
-      const feature = geoJSON.features[0];
-      if ($target.length && feature !== undefined) {
-        feature.properties = {
-          name: $name.val() || 'geofence',
-          color: $color.length ? $color.val() : '',
-        };
-        $target.val(JSON.stringify(geoJSON));
-      }
-    };
 
     // Add overlay to layer control
     if (this.layerControl) {
@@ -251,24 +244,23 @@ class Map {
       this.editableLayers.addLayer(e.layer);
       drawControlFull.remove(this.map);
       drawControlEditOnly.addTo(this.map);
-      saveGeoJson(this.editableLayers.toGeoJSON());
+      self.saveGeoJson(this.editableLayers.toGeoJSON());
     });
 
     this.map.on(L.Draw.Event.DELETED, () => {
       if (this.editableLayers.getLayers().length === 0) {
-        console.log('draw:deleted');
         drawControlEditOnly.remove(this.map);
         drawControlFull.addTo(this.map);
-        $target.val('');
+        self.targetElement.val('');
       }
     });
 
     this.map.on(L.Draw.Event.EDITSTOP, () => {
-      saveGeoJson(this.editableLayers.toGeoJSON());
+      self.saveGeoJson(this.editableLayers.toGeoJSON());
     });
 
     this.map.on('draw:edited', () => {
-      saveGeoJson(this.editableLayers.toGeoJSON());
+      self.saveGeoJson(this.editableLayers.toGeoJSON());
     });
   }
 
@@ -337,12 +329,15 @@ class Map {
       success: function (xml) {
         var layer = new L.OSMData.DataLayer(xml);
         var geoJSON = layer.toGeoJSON();
-        console.log(geoJSON);
         self.addGeojsonFeatures(geoJSON);
         self.saveGeoJson(geoJSON);
       }
     });
   }
+
+  saveGeoJson(geoJSON) {
+    this.targetElement.val(JSON.stringify(geoJSON));
+  };
 
 }
 

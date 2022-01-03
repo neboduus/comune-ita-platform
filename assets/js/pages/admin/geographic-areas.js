@@ -31,7 +31,10 @@ $(document).ready(function () {
 const $mapWrapper = $('#map');
 const $geoFence = $('#geographic_area_geofence');
 const center = [41.9027835, 12.4963655];
-const $map = new Map($mapWrapper[0], center);
+const $map = new Map($mapWrapper[0], center, {
+  name: '#geographic_area_name_it',
+  element: '#geographic_area_geofence'
+});
 
 const $importButton = $('#import-button');
 const $importUrlField = $('#import-url-field');
