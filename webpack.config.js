@@ -39,7 +39,8 @@ Encore
   .addEntry('operator-new-application', './assets/js/pages/operator-new-application')
   .addEntry('user-show-application', './assets/js/pages/user-show-application')
   .addEntry('chars-user', './assets/js/Charts/chart-user.js')
-  .addEntry('admin-scheduled-actions', './assets/js/pages/admin-scheduled-actions')
+  .addEntry('admin-scheduled-actions', './assets/js/pages/admin-scheduled-actions.js')
+  .addEntry('geographic-areas', './assets/js/pages/admin/geographic-areas.js')
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()

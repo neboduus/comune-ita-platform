@@ -71,6 +71,20 @@ class ServiceGroupType extends AbstractType
           'class' => 'AppBundle\Entity\Recipient',
           'choice_label' => 'name',
           'label' => 'servizio.destinatari',
+          'attr' => ['style' => 'columns: 2;'],
+          'required' => false,
+          'multiple' => true,
+          'expanded' => true
+        ]
+      )
+      ->add(
+        'geographic_areas',
+        EntityType::class,
+        [
+          'class' => 'AppBundle\Entity\GeographicArea',
+          'choice_label' => 'name',
+          'label' => 'servizio.aree_geografiche',
+          'attr' => ['style' => 'columns: 2;'],
           'required' => false,
           'multiple' => true,
           'expanded' => true

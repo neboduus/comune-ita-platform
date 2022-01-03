@@ -144,6 +144,13 @@ class ServiceGroup
   private $recipients;
 
   /**
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\GeographicArea", inversedBy="services")
+   * @Serializer\Exclude
+   * @var ArrayCollection
+   */
+  private $geographicAreas;
+
+  /**
    * ServiceGroup constructor.
    */
   public function __construct()
@@ -153,6 +160,7 @@ class ServiceGroup
     }
     $this->services = new ArrayCollection();
     $this->recipients = new ArrayCollection();
+    $this->geographicAreas = new ArrayCollection();
   }
 
   /**
@@ -563,6 +571,65 @@ class ServiceGroup
   {
     if ($this->recipients->contains($recipient)) {
       $this->recipients->removeElement($recipient);
+    }
+    return $this;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\SerializedName("geographic_areas")
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's geographic areas id", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
+   */
+  public function getGeographicAreasIds()
+  {
+    $geographicAreas = [];
+    /** @var Recipient $r */
+    foreach ($this->geographicAreas as $r) {
+      $geographicAreas []= $r->getId();
+    }
+    return $geographicAreas;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getGeographicAreas()
+  {
+    return $this->geographicAreas;
+  }
+
+  /**
+   * @param Collection $geographicAreas
+   */
+  public function setGeographicAreas(?Collection $geographicAreas): void
+  {
+    $this->geographicAreas = $geographicAreas;
+  }
+
+  /**
+   * @param GeographicArea $geographicArea
+   *
+   * @return $this
+   */
+  public function addGeographicArea(GeographicArea $geographicArea)
+  {
+    if (!$this->geographicAreas->contains($geographicArea)) {
+      $this->geographicAreas->add($geographicArea);
+    }
+    return $this;
+  }
+
+  /**
+   * @param GeographicArea $geographicArea
+   *
+   * @return $this
+   */
+  public function removeGeographicArea(GeographicArea $geographicArea)
+  {
+    if ($this->geographicAreas->contains($geographicArea)) {
+      $this->geographicAreas->removeElement($geographicArea);
     }
     return $this;
   }

@@ -123,6 +123,13 @@ class ServizioFormType extends AbstractType
         'prototype' => true,
         "label" => false
       ])
+      ->add('geographic_areas_id', CollectionType::class, [
+        'entry_type' => TextType::class,
+        "allow_add" => true,
+        "allow_delete" => true,
+        'prototype' => true,
+        "label" => false
+      ])
     ;
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));

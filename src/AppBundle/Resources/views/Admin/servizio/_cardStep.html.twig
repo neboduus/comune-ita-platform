@@ -2,8 +2,7 @@
   {% if servizio.isSharedWithGroup %}
     <div class="col-lg-12 px-lg-4">
       <div class="alert alert-info">
-        <p>Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo
-          di servizi associato. <a class="d-block" href="{{ path('admin_service_group_edit', {'id': servizio.serviceGroup.id}) }}"><i class="fa fa-pencil"></i> Modifica il gruppo di servizi</a></p>
+        <p>{{ 'servizio.shared_with_group_message'|trans }} <a class="d-block" href="{{ path('admin_service_group_edit', {'id': servizio.serviceGroup.id}) }}"><i class="fa fa-pencil"></i> {{ 'servizio.shared_with_group_action'|trans }}</a></p>
       </div>
 
       <p class="text-primary mb-2"><strong>{{ 'servizio.cos_e'|trans }}</strong></p>
@@ -36,7 +35,7 @@
         {% if servizio.serviceGroup.topics %}
           <li>{{ servizio.serviceGroup.topics.name }}</li>
         {% else %}
-          <li>Non è stata specificata una categoria</li>
+          <li>{{ 'servizio.no_topics'|trans }}</li>
         {% endif %}
       </ul>
 
@@ -47,7 +46,18 @@
             <li>{{ r.name }}</li>
           {% endfor %}
         {% else %}
-          <li>Non è stata specificata una categoria</li>
+          <li>{{ 'servizio.no_recipients'|trans }}</li>
+        {% endif %}
+      </ul>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.aree_geografiche'|trans }}</strong></p>
+      <ul>
+        {% if servizio.serviceGroup.recipients %}
+          {% for r in servizio.serviceGroup.recipients %}
+            <li>{{ r.name }}</li>
+          {% endfor %}
+        {% else %}
+          <li>{{ 'servizio.no_geographic_areas'|trans }}</li>
         {% endif %}
       </ul>
 

@@ -3,9 +3,11 @@
 namespace AppBundle\Controller\Rest;
 
 use AppBundle\Entity\Categoria;
+use AppBundle\Entity\GeographicArea;
 use AppBundle\Entity\Recipient;
 use AppBundle\Entity\ServiceGroup;
 use AppBundle\Services\InstanceService;
+use AppBundle\Utils\FormUtils;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,6 +73,14 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *      description="Id of the recipient"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="geographic_area_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the geographic area"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of services groups",
@@ -86,6 +96,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $result = [];
     $categoryId = $request->get('topics_id', false);
     $recipientId = $request->get('recipient_id', false);
+    $geographicAreaId = $request->get('geographic_area_id', false);
     $criteria = [];
 
     if ($categoryId) {
@@ -104,6 +115,15 @@ class ServicesGroupAPIController extends AbstractFOSRestController
         return $this->view(["Recipient not found"], Response::HTTP_NOT_FOUND);
       }
       $criteria['recipients'] = $recipientId;
+    }
+
+    if ($geographicAreaId) {
+      $geographicAreaRepo = $this->em->getRepository('AppBundle:GeographicArea');
+      $geographicArea = $geographicAreaRepo->find($geographicAreaId);
+      if (!$geographicArea instanceof GeographicArea) {
+        return $this->view(["Geographic area not found"], Response::HTTP_NOT_FOUND);
+      }
+      $criteria['geographic_areas'] = $geographicAreaId;
     }
 
 
@@ -221,7 +241,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -324,7 +344,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       $this->processForm($request, $form);
 
       if ($form->isSubmitted() && !$form->isValid()) {
-        $errors = $this->getErrorsFromForm($form);
+        $errors = FormUtils::getErrorsFromForm($form);
         $data = [
           'type' => 'put_validation_error',
           'title' => 'There was a validation error',
@@ -415,7 +435,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -428,7 +448,6 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       $em->persist($serviceGroup);
       $em->flush();
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -488,26 +507,4 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
   }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-    private function getErrorsFromForm(FormInterface $form)
-    {
-      $errors = array();
-      foreach ($form->getErrors() as $error) {
-        $message = $error->getMessage() . ': '. $error->getOrigin()->getName() . ' - ';
-        //$message .= is_array($error->getOrigin()->getViewData()) ? implode(', ', $error->getOrigin()->getViewData()) : $error->getOrigin()->getViewData();
-        $errors[] = $message;
-      }
-      foreach ($form->all() as $childForm) {
-        if ($childForm instanceof FormInterface) {
-          if ($childErrors = $this->getErrorsFromForm($childForm)) {
-            $errors[] = $childErrors;
-          }
-        }
-      }
-      return $errors;
-    }
 }

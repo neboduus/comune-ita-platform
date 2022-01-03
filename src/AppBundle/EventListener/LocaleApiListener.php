@@ -37,7 +37,7 @@ class LocaleApiListener
     $this->translatableListener->setPersistDefaultLocaleTranslation(true);
 
     $request = $event->getRequest();
-    
+
     if (strpos($request->getRequestUri(), '/api/') == true) {
       if ($request->headers->has("x-locale")) {
         $locale = $request->headers->get('x-locale');
