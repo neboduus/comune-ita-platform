@@ -103,6 +103,7 @@ servizio:
   nome: "Nome del servizio"
   categoria: "Categoria"
   destinatari: "Destinatari"
+  aree_geografiche: "Aree geografiche"
   cos_e: "Cos'è"
   descrizione: "Descrizione"
   a_chi_si_rivolge: "A chi si rivolge"
@@ -141,6 +142,11 @@ servizio:
   torna: "Torna al servizio"
   il_servizio: 'Il servizio'
   area_tematica: 'Area tematica'
+  no_topics: 'Non è stata specificata una categoria'
+  no_recipients: 'Non è stato specificato nessun destinatario'
+  no_geographic_areas: 'Non è stata specificata nessuna area geografica'
+  shared_with_group_message: 'Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo di servizi associato.'
+  shared_with_group_action: 'Modifica il gruppo di servizi'
   imis:
     download_pdf_imis: 'Esegui il download del pdf %name%'
   statutes:
@@ -1954,6 +1960,11 @@ recipients:
   all: 'Tutti i destinatari'
   delete_success: 'Destinatario eliminato correttamente'
   delete_error: 'Impossibile eliminare il destinatario, ci sono dei servizi collegati'
+geographic_areas:
+  title: 'Aree geografiche'
+  all: 'Tutte le areee geografiche'
+  delete_success: 'Area geografica eliminata correttamente'
+  delete_error: "Impossibile eliminare l'area, ci sono dei servizi collegati"
 categories:
   title: 'Categorie'
   all: 'Tutte le categorie'

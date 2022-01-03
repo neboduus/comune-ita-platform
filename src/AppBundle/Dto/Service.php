@@ -327,6 +327,22 @@ class Service
   private $recipientsId;
 
   /**
+   * @var string[]
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's geographic areas name", type="array", @SWG\Items(type="string"))
+   * @Groups({"read"})
+   */
+  private $geographicAreas;
+
+  /**
+   * @var string[]
+   * @Serializer\Type("array<string>")
+   * @SWG\Property(description="Service's geographic areas id", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
+   */
+  private $geographicAreasId;
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -954,6 +970,40 @@ class Service
     $this->recipientsId = $recipientsId;
   }
 
+  /**
+   * @return string[]
+   */
+  public function getGeographicAreas(): ?array
+  {
+    return $this->geographicAreas;
+  }
+
+  /**
+   * @param string[] $geographicAreas
+   */
+  public function setGeographicAreas(?array $geographicAreas): void
+  {
+    $this->geographicAreas = $geographicAreas;
+  }
+
+  /**
+   * @return string[]
+   */
+  public function getGeographicAreasId(): ?array
+  {
+    return $this->geographicAreasId;
+  }
+
+  /**
+   * @param string[] $geographicAreasId
+   */
+  public function setGeographicAreasId(?array $geographicAreasId): void
+  {
+    $this->geographicAreasId = $geographicAreasId;
+  }
+
+
+
 
   /**
    * @param Servizio $servizio
@@ -1006,6 +1056,16 @@ class Service
       foreach ($servizio->getRecipients() as $r) {
         $dto->recipients[]= $r->getName();
         $dto->recipientsId[]= $r->getId();
+      }
+    }
+
+    $dto->geographicAreas = [];
+    $dto->geographicAreasId = [];
+
+    if ($servizio->getGeographicAreas()) {
+      foreach ($servizio->getGeographicAreas() as $g) {
+        $dto->geographicAreas[]= $g->getName();
+        $dto->geographicAreasId[]= $g->getId();
       }
     }
 
@@ -1065,6 +1125,7 @@ class Service
     $entity->setWorkflow($this->workflow);
 
     $entity->setRecipients(new ArrayCollection($this->recipientsId));
+    $entity->setGeographicAreas(new ArrayCollection($this->geographicAreasId));
 
     return $entity;
   }

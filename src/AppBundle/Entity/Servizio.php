@@ -384,6 +384,17 @@ class Servizio implements Translatable
   private $recipients;
 
   /**
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\GeographicArea", inversedBy="services")
+   * @ORM\JoinTable(
+   *     name="servizio_geographic_area",
+   *     joinColumns={@ORM\JoinColumn(name="servizio_id", referencedColumnName="id")},
+   *     inverseJoinColumns={@ORM\JoinColumn(name="geographic_area_id", referencedColumnName="id")}
+   * )
+   * @var ArrayCollection
+   */
+  private $geographicAreas;
+
+  /**
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
    * this is not a mapped field of entity metadata, just a simple property
@@ -404,6 +415,7 @@ class Servizio implements Translatable
     $this->flowSteps = new ArrayCollection();
     $this->feedbackMessages = new ArrayCollection();
     $this->recipients = new ArrayCollection();
+    $this->geographicAreas = new ArrayCollection();
     //$this->paymentParameters = new ArrayCollection();
     $this->status = self::STATUS_AVAILABLE;
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
@@ -1368,10 +1380,52 @@ class Servizio implements Translatable
    *
    * @return $this
    */
-  public function removeAllegato(Recipient $recipient)
+  public function removeRecipient(Recipient $recipient)
   {
     if ($this->recipients->contains($recipient)) {
       $this->recipients->removeElement($recipient);
+    }
+    return $this;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getGeographicAreas()
+  {
+    return $this->geographicAreas;
+  }
+
+  /**
+   * @param Collection $geographicAreas
+   */
+  public function setGeographicAreas(?Collection $geographicAreas): void
+  {
+    $this->geographicAreas = $geographicAreas;
+  }
+
+  /**
+   * @param GeographicArea $geographicArea
+   *
+   * @return $this
+   */
+  public function addGeographicArea(GeographicArea $geographicArea)
+  {
+    if (!$this->geographicAreas->contains($geographicArea)) {
+      $this->geographicAreas->add($geographicArea);
+    }
+    return $this;
+  }
+
+  /**
+   * @param GeographicArea $geographicArea
+   *
+   * @return $this
+   */
+  public function removeGeographicArea(GeographicArea $geographicArea)
+  {
+    if ($this->geographicAreas->contains($geographicArea)) {
+      $this->geographicAreas->removeElement($geographicArea);
     }
     return $this;
   }

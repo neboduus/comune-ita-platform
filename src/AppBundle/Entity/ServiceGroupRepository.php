@@ -18,11 +18,20 @@ class ServiceGroupRepository extends EntityRepository
         ->setParameter('topics', $criteria['topics']);
     }
 
+    // Recipients
     if (isset($criteria['recipients'])) {
       $qb
         ->leftJoin('s.recipients', 'recipients')
         ->andWhere('recipients.id = :recipients')
         ->setParameter('recipients', $criteria['recipients']);
+    }
+
+    // GeographicAreas
+    if (isset($criteria['geographic_areas'])) {
+      $qb
+        ->leftJoin('s.geographicAreas', 'geographicAreas')
+        ->andWhere('geographicAreas.id = :geographic_areas')
+        ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
 
     $qb->orderBy('s.name', 'ASC');

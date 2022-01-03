@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Rest;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
+use AppBundle\Entity\GeographicArea;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
@@ -127,6 +128,15 @@ class ServicesAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Id of the recipient"
    *  )
+   *
+   * @SWG\Parameter(
+   *      name="geographic_area_id",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Id of the geographic area"
+   *  )
+   *
    * @SWG\Parameter(
    *      name="grouped",
    *      in="query",
@@ -152,6 +162,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $serviceGroupId = $request->get('service_group_id', false);
       $categoryId = $request->get('topics_id', false);
       $recipientId = $request->get('recipient_id', false);
+      $geographicAreaId = $request->get('geographic_area_id', false);
       $grouped = boolean_value($request->get('grouped', true));
       $result = [];
       $repoServices = $this->em->getRepository(Servizio::class);
@@ -183,6 +194,15 @@ class ServicesAPIController extends AbstractFOSRestController
           return $this->view(["Recipient not found"], Response::HTTP_NOT_FOUND);
         }
         $criteria['recipients'] = $recipientId;
+      }
+
+      if ($geographicAreaId) {
+        $geographicAreaRepo = $this->em->getRepository('AppBundle:GeographicArea');
+        $geographicArea = $geographicAreaRepo->find($geographicAreaId);
+        if (!$geographicArea instanceof GeographicArea) {
+          return $this->view(["Geographic area not found"], Response::HTTP_NOT_FOUND);
+        }
+        $criteria['geographic_areas'] = $geographicAreaId;
       }
 
       $services = $repoServices->findByCriteria($criteria);
@@ -611,6 +631,8 @@ class ServicesAPIController extends AbstractFOSRestController
       $this->em->persist($service);
       $this->em->flush();
     } catch (\Exception $e) {
+      dump($e);
+      exit;
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -703,7 +725,7 @@ class ServicesAPIController extends AbstractFOSRestController
   /**
    * @param $serviceDto
    */
-  private function checkServiceRelations(&$serviceDto)
+  private function checkServiceRelations(Service &$serviceDto)
   {
     $category = $this->em->getRepository('AppBundle:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
     if ($category instanceof Categoria) {
@@ -724,6 +746,15 @@ class ServicesAPIController extends AbstractFOSRestController
       }
     }
     $serviceDto->setRecipientsId($recipients);
+
+    $geographicAreas = [];
+    foreach ($serviceDto->getGeographicAreasId() as $g) {
+      $geographicArea = $this->em->getRepository('AppBundle:GeographicArea')->find($g);
+      if ($geographicArea instanceof GeographicArea) {
+        $geographicAreas []= $geographicArea;
+      }
+    }
+    $serviceDto->setGeographicAreasId($geographicAreas);
   }
 
 }
