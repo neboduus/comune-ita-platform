@@ -1965,6 +1965,14 @@ geographic_areas:
   all: 'Tutte le areee geografiche'
   delete_success: 'Area geografica eliminata correttamente'
   delete_error: "Impossibile eliminare l'area, ci sono dei servizi collegati"
+  edit:
+    area: 'Area'
+    import_area: 'Importa area'
+    help: 'Aiuto'
+    help_title: "Come aggingere un'area da Openstreetmap"
+    help_instruction_1: 'Si cerca la zona su <a href="https://www.openstreetmap.org/" target="_blank">openstreetmap</a><br /><small class="text-monospace">Es: cercando "vicopisano" si ottiene <a href="https://www.openstreetmap.org/relation/42583" target="_blank">https://www.openstreetmap.org/relation/42583</a></small>'
+    help_instruction_2: 'Si prende il link alla definizione XML e lo si incolla nel campo qui sotto<br /><small class="text-monospace">Es: <a href="https://www.openstreetmap.org/api/0.6/relation/42583" target="_blank">https://www.openstreetmap.org/api/0.6/relation/42583</a></small>'
+    help_instruction_3: 'Si clicca sul bottone "Importa"'
 categories:
   title: 'Categorie'
   all: 'Tutte le categorie'

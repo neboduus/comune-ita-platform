@@ -610,7 +610,9 @@ class ServicesAPIController extends AbstractFOSRestController
       if (!$service) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
+
       $serviceDto = Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
+
       $form = $this->createForm('AppBundle\Form\ServizioFormType', $serviceDto);
       $this->processForm($request, $form);
 
@@ -631,8 +633,6 @@ class ServicesAPIController extends AbstractFOSRestController
       $this->em->persist($service);
       $this->em->flush();
     } catch (\Exception $e) {
-      dump($e);
-      exit;
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',

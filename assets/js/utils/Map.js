@@ -7,7 +7,6 @@ import 'leaflet-easybutton';
 
 import ThemeColors from '../constant/theme-colors';
 import Locales from '../constant/locales';
-import '../plugins/leaflet-beautify-icon';
 import './LeafletOsmData';
 
 class Map {
@@ -32,9 +31,9 @@ class Map {
       controlsPosition: 'topleft',
       defaults: {
         zoom: 10,
-        // minZoom: 0,
-        // maxZoom: 20,
-        // maxNativeZoom: 18,
+        minZoom: 0,
+        maxZoom: 20,
+        maxNativeZoom: 18,
         zoomControl: false,
         scrollWheelZoom: false,
         attributionControl: true,
@@ -52,9 +51,7 @@ class Map {
       Base: L.tileLayer(
         'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png',
         {
-          attribution:
-            '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>',
-          maxZoom: 10,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>',
         }
       )
     };
@@ -309,9 +306,9 @@ class Map {
         return style;
       },
       onEachFeature(f, l) {
-        const p = $.extend({}, f.properties);
-        self.editableLayers.addLayer(l);
-
+        if (f.geometry.type != 'Point') {
+          self.editableLayers.addLayer(l);
+        }
       },
     });
 
@@ -322,6 +319,11 @@ class Map {
   }
 
   loadGeoJsonFromUrl(url) {
+
+    if (!url.endsWith("/full")) {
+      url = url + '/full';
+    }
+
     const self = this;
     $.ajax({
       url: url,
@@ -329,6 +331,7 @@ class Map {
       success: function (xml) {
         var layer = new L.OSMData.DataLayer(xml);
         var geoJSON = layer.toGeoJSON();
+        self.removeLayers();
         self.addGeojsonFeatures(geoJSON);
         self.saveGeoJson(geoJSON);
       }
@@ -339,6 +342,12 @@ class Map {
     this.targetElement.val(JSON.stringify(geoJSON));
   };
 
+  removeLayers() {
+    const self = this;
+    this.editableLayers.eachLayer(function (layer) {
+      self.editableLayers.removeLayer(layer);
+    });
+  }
 }
 
 export default Map;

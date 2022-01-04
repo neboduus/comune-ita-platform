@@ -14,14 +14,14 @@
         {{ form_row(form.name) }}
         {{ form_row(form.description) }}
         <div class="form-group">
-          <label>Area</label>
+          <label>{{ 'geographic_areas.edit.area'|trans }}</label>
           <div id="map" style="height: 400px"></div>
         </div>
         <div class="form-group">
           <div id="import-area-container" class="collapse-div" role="tablist">
             <div class="collapse-header" id="import-heading">
-              <button data-toggle="collapse" type="button" data-target="#import-panel" aria-expanded="false" aria-controls="accordion2">
-                Importa area
+              <button data-toggle="collapse" type="button" data-target="#import-panel" aria-expanded="false" aria-controls="import-panel">
+                {{ 'geographic_areas.edit.import_area'|trans }}
               </button>
             </div>
             <div id="import-panel" class="collapse bg-light" role="tabpanel" aria-labelledby="import-heading" data-parent="#import-area-container">
@@ -29,16 +29,17 @@
                 <div class="row">
                   <div class="col-12">
                     <div class="callout" style="max-width: none">
-                      <div class="callout-title bg-light"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg> Aiuto</div>
-                      <h6>Come aggingere un'area da Openstreetmap</h6>
+                      <div class="callout-title bg-light"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg> {{ 'geographic_areas.edit.help'|trans }}</div>
+                      <h6>{{ 'geographic_areas.edit.help_title'|trans }}</h6>
                       <ol>
                         <li>
-                          Si cerca la zona su <a href="https://www.openstreetmap.org/" target="_blank">openstreetmap</a><br />
-                          <small class="text-monospace">Es: cercando vicopisano si ottiene <a href="https://www.openstreetmap.org/relation/42583" target="_blank">https://www.openstreetmap.org/relation/42583</a></small>
+                          {{ 'geographic_areas.edit.help_instruction_1'|trans|raw }}
                         </li>
                         <li>
-                          Si prende il link alla definizione XML e vi si appende alla fine la stringa /full<br />
-                          <small class="text-monospace">Es: <a href="https://www.openstreetmap.org/api/0.6/relation/42583/full" target="_blank">https://www.openstreetmap.org/api/0.6/relation/42583/full</a></small>
+                          {{ 'geographic_areas.edit.help_instruction_2'|trans|raw }}
+                        </li>
+                        <li>
+                          {{ 'geographic_areas.edit.help_instruction_3'|trans|raw }}
                         </li>
                       </ol>
                     </div>

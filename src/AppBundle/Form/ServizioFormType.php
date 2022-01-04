@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -114,7 +115,10 @@ class ServizioFormType extends AbstractType
       ->add('shared_with_group')
       ->add('allow_reopening')
       ->add('allow_withdraw')
-      ->add('allow_integration_request')
+      ->add('allow_integration_request', CheckboxType::class, [
+          'required' => false,
+        ]
+      )
       ->add('workflow')
       ->add('recipients_id', CollectionType::class, [
         'entry_type' => TextType::class,
