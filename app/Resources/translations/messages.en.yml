@@ -658,7 +658,7 @@ operatori:
   elabora: 'Process'
   scrivi_al_cittadino: "Write to citizen"
   riapri_pratica: "Fill the practice"
-  richiedi_intergrazioni: 'Request integrations'
+  richiedi_integrazioni: 'Request integrations'
   chiudi_richiesta_integrazione: 'Close integration request'
   richiedi_integrazioni_tpl: "Dear <b>%user_name% </b> <br/> we inform you that an integration to the data of your request for the <b>%service%</b> service is required. <br/> [Insert reason] <br/> Enter your citizen room to complete the integration"
   modulo: 'Module'
