@@ -1,6 +1,6 @@
 # La Stanza Del Cittadino
 
-L’area personale del cittadino, progettata con il [Team Digitale](https://teamdigitale.governo.it) utilizzando lo [starter KIT per il sito di un comune](https://designers.italia.it/progetti/siti-web-comuni/)
+L’area personale del cittadino, progettata con il [Team Digitale di Presidenza del Consiglio](https://teamdigitale.governo.it) utilizzando lo [starter KIT per il sito di un comune](https://designers.italia.it/progetti/siti-web-comuni/). Disponibile anche in [versione SaaS](https://opencityitalia.it/) allineata ai contenuti di questo repository.
 
 ## Descrizione
 
