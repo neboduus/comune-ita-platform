@@ -1,6 +1,6 @@
 publiccodeYmlVersion: '0.2'
 applicationSuite: Sito comunale
-name: La Stanza del Cittadino
+name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanzadelcittadino
 landingURL: https://link.opencontent.it/sdc-home
 releaseDate: '2021-12-21'
@@ -126,8 +126,8 @@ description:
     apiDocumentation: https://link.opencontent.it/sdc-apidoc
     documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
-      Creazione moduli compilabili online e pratiche digitali conbackoffice per
-      gli operatori. Gestione Appuntamenti presso gli uffici online.
+      Creazione moduli compilabili online e pratiche digitali con backoffice per
+      gli operatori. Gestione Appuntamenti presso gli uffici online. Disponibile anche in [versione SaaS certificata AgId](https://catalogocloud.agid.gov.it/service/525)
     longDescription: >-
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
       asilo nido), verificare lo stato delle pratiche, ricevere comunicazioni da
