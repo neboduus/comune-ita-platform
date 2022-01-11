@@ -97,6 +97,33 @@ services:
       #QUEUEIT_SECRET: 'xxx'
       # Absolute path of Queue-it configuration json file @see https://github.com/queueit/KnownUser.V3.PHP/blob/master/Documentation/README.md
       #QUEUEIT_CONFIG_FILE: '/var/www/html/opencontent_knownuser_integration_config.json'
+
+      # In assenza di una vera autenticazione basata su SPID si può simulare
+      # un login di un utente con le seguenti variabili d'ambiente:
+      #shibb_pat_attribute_codicefiscale: ABCDEF00A11Z456X
+      #shibb_pat_attribute_cognome: Coliandro
+      #shibb_pat_attribute_nome: Vittorino
+      #shibb_pat_attribute_sesso: M
+      #shibb_pat_attribute_emailaddress: info@comune.bugliano.pi.it
+      #shibb_pat_attribute_datanascita: 1/9/1976
+      #shibb_pat_attribute_luogonascita: Ponsacco
+      #shibb_pat_attribute_provincianascita: PI
+      
+      #shibb_pat_attribute_telefono: 003912378945
+      #shibb_pat_attribute_cellulare: 333 444 666 99
+      #shibb_pat_attribute_indirizzoresidenza: Via Gramsci, 1
+      #shibb_pat_attribute_capresidenza: 56056
+      #shibb_pat_attribute_cittaresidenza: Bugliano
+      #shibb_pat_attribute_provinciaresidenza: PI
+      #shibb_pat_attribute_statoresidenza: Italia
+      #shibb_pat_attribute_spidcode: 123456789
+      #shibb_pat_attribute_x509certificate_issuerdn: FAKE_issuerdn
+      #shibb_pat_attribute_x509certificate_subjectdn: FAKE_subjectdn
+      #shibb_pat_attribute_x509certificate_base64: "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg=="
+      #shibb_Shib-Session-ID: abc123abc123abc123abc123abc123abc123abc123
+      #shibb_Shib-Session-Index: abc123abc123abc123abc123abc123abc123abc123
+      #shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
+
     volumes:
       - "uploads:/var/www/html/var/uploads"
 
