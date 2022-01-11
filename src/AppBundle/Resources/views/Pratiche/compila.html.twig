@@ -80,7 +80,7 @@
           form.formReady.then(() => {
             setTimeout(disableApplicant, 1000);
 
-            const draftButton =  $('.btn-wizard-nav-submit, #save-draft');
+            const draftButton =  $('#save-draft');
             const draftInfo = $('.save-draft-info');
             const draftTextInfo = draftInfo.find('span');
             if (draftButton.length) {
@@ -121,6 +121,7 @@
 
           form.on('nextPage', function () {
             document.getElementById("formio").scrollIntoView();
+            $('#save-draft').trigger('click');
           });
 
           form.on('prevPage', function () {
