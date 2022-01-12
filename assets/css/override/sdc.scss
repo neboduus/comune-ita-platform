@@ -341,3 +341,29 @@ form[name="upload_allegato_operatore"] {
 .service-access-button {
   min-height: 5.5em;
 }
+
+#collapse-attachments {
+  .collapse-div {
+    border: none;
+    .collapse-header button {
+      border-top: none;
+      border-bottom: 1px solid #e3e4e6;
+    }
+  }
+
+  .it-list-wrapper {
+    .it-list {
+      a {
+        .it-right-zone {
+          margin-left: 40px;
+          padding: 10px 0 10px 0;
+        }
+      }
+    }
+  }
+
+  .field {
+    margin: 10px 0 0 40px;
+  }
+}
+

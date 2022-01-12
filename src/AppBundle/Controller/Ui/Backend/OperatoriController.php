@@ -926,7 +926,8 @@ class OperatoriController extends Controller
       'outcome_protocols' => $outcomeProtocols,
       'token' => $this->JWTTokenManager->create($this->getUser()),
       'meetings' => $repository->findOrderedMeetings($pratica),
-      'incoming_meetings' => $repository->findIncomingMeetings($pratica)
+      'incoming_meetings' => $repository->findIncomingMeetings($pratica),
+      'module_files' => $this->praticaManager->getGroupedModuleFiles($pratica),
     ]);
   }
 

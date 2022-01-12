@@ -132,7 +132,7 @@ class SchemaFactory implements SchemaFactoryInterface
           }
 
           if ($component['type'] == 'panel' && isset($component['title'])) {
-            $prefixLabel .= $component['title'].'/';
+            $prefixLabel .= $component['title'];
           }
 
           if (isset($component['components'])) {
@@ -210,9 +210,10 @@ class SchemaFactory implements SchemaFactoryInterface
           break;
 
         case 'file': //@todo
+        case 'sdcfile': //@todo
           $schema->addComponent(
             $prefixKey.$component['key'],
-            Type\TextType::class,
+            Type\FileType::class,
             $this->parseComponentOptions($component, $prefixLabel)
           );
           break;
@@ -360,7 +361,7 @@ class SchemaFactory implements SchemaFactoryInterface
       $options['label'] = $component['label'];
     }
     if (isset($options['label']) && $prefixLabel) {
-      $options['label'] = $prefixLabel.$options['label'];
+      $options['label'] = $prefixLabel . '/' .$options['label'];
     }
 
     $constraints = [];
@@ -375,6 +376,8 @@ class SchemaFactory implements SchemaFactoryInterface
     }
 
     $options['mapped'] = false;
+
+
 
     return $options;
   }

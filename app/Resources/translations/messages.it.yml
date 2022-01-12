@@ -263,6 +263,10 @@ pratica:
     allegati_protocollo: 'Allegati inviati al protocollo'
     allegati_no_protocollo: 'Allegati non inviati al protocollo'
   dettaglio:
+    lista_allegati:
+      descrizione_modulo: 'Qui sono elencati il modulo compilato generato dal form ed i documenti allegati.'
+      descrizione_messaggi: 'Qui sono elencati i file allegati ai messaggi.'
+      descrizione_risposta: 'Qui sono elencati il file di risposta alla pratica e relativi allegati.'
     data_ora_presentazione: 'Richiesta presentata il'
     alle: 'alle'
     stato: 'Stato corrente'
@@ -757,7 +761,7 @@ operatori:
   data_ora_ricevuta: "Data e ora ricevuta"
   commenti_e_modifiche: 'Commenti'
   aggiungi_commento: 'Aggiungi commento'
-  allegati_modulo: 'Documenti allegati al modulo'
+  allegati_modulo: 'Modulo compilato e documenti allegati'
   allegati_messaggi: 'Documenti allegati nei messaggi'
   messaggi:
     titolo: 'Messaggi'

@@ -575,7 +575,6 @@ class PraticheController extends Controller
    */
   public function detailAction(Request $request, Pratica $pratica)
   {
-    $translator = $this->translator;
 
     if ($pratica instanceof GiscomPratica) {
       return $this->redirectToRoute('pratiche_show', ['pratica' => $pratica]);
@@ -632,8 +631,8 @@ class PraticheController extends Controller
         $instance = $this->instanceService->getCurrentInstance();
         /** @var OperatoreUser $userReceiver */
         $userReceiver = $message->getApplication()->getOperatore();
-        $subject = $translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
-        $mess = $translator->trans('pratica.messaggi.messaggio', [
+        $subject = $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
+        $mess = $this->translator->trans('pratica.messaggi.messaggio', [
           '%message%' => $message->getMessage(),
           '%link%' => $this->router->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
         $this->mailer->dispatchMail($defaultSender, $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
@@ -643,8 +642,6 @@ class PraticheController extends Controller
         $em->persist($message);
         $em->flush();
       }
-
-
       return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note']);
     }
 
@@ -663,6 +660,7 @@ class PraticheController extends Controller
       'can_compile' => $this->isGranted( ApplicationVoter::COMPILE, $pratica),
       'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica),
       'meetings' => $repository->findOrderedMeetings($pratica),
+      'module_files' => $this->praticaManager->getGroupedModuleFiles($pratica),
       //'threads' => $thread,
     ];
 

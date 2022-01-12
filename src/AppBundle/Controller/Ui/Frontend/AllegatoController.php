@@ -507,7 +507,6 @@ class AllegatoController extends Controller
     $allegato->setOwner($pratica->getUser());
 
     $violations = $this->validator->validate($allegato);
-
     if ($violations->count() > 0) {
       $messages = [];
       /** @var ConstraintViolationInterface $violation */
