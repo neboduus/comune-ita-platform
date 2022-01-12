@@ -4,7 +4,7 @@ name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanzadelcittadino
 landingURL: https://link.opencontent.it/sdc-home
 releaseDate: '2021-12-21'
-softwareVersion: 1.13.2
+softwareVersion: 1.14.0-rc.0
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -126,7 +126,9 @@ description:
     apiDocumentation: https://link.opencontent.it/sdc-apidoc
     documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
-      Area personale utente, back office operatori, moduli e pratiche on line, prenotazione appuntamenti. Anche in [versione SaaS certificata AgId](https://catalogocloud.agid.gov.it/service/525)
+      Area personale utente, back office operatori, moduli e pratiche on line,
+      prenotazione appuntamenti. Anche in [versione SaaS certificata
+      AgId](https://catalogocloud.agid.gov.it/service/525)
     longDescription: >-
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
       asilo nido), verificare lo stato delle pratiche, ricevere comunicazioni da

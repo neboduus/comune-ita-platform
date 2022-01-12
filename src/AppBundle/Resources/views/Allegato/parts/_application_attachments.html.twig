@@ -1,5 +1,5 @@
 {% if pratica.moduliCompilati.count + pratica.allegati.count + messageAttachments|length + pratica.allegatiOperatore.count  == 0 %}
-    <div class="font-italic text-center">{{ 'operatori.messaggi.no_attachments' | trans }}</div>
+    <div class="pt-2 font-italic text-center">{{ 'operatori.messaggi.no_attachments' | trans }}</div>
   {% else %}
     <div id="collapse-attachments" class="collapse-div collapse-left-icon" role="tablist">
       <div class="collapse-header" id="heading1-lft">
@@ -9,11 +9,11 @@
       </div>
       <div id="collapse1-lft" class="collapse show" role="tabpanel" aria-labelledby="heading1-lft">
         <div class="collapse-body">
-          <p class="font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_modulo'|trans }}</p>
+          <p class="pt-2 font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_modulo'|trans }}</p>
 
           {# Muduli compiliati #}
           {% if pratica.moduliCompilati|length > 0 %}
-            <div class="it-list-wrapper mt-3">
+            <div class="it-list-wrapper mt-4">
               {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica'}) }}
               <ul class="it-list">
                 {% for modulo in pratica.moduliCompilati %}
@@ -26,7 +26,7 @@
           {# Allegati #}
           {% if module_files|length > 0 %}
             {% for panel, fields in module_files %}
-              <div class="it-list-wrapper mt-3">
+              <div class="it-list-wrapper mt-4">
                 {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': panel}) }}
                 {% for field, files in fields %}
                   <strong class="field primary-color d-block">{{ field }}</strong>
@@ -51,10 +51,10 @@
         </div>
         <div id="collapse3-lft" class="collapse" role="tabpanel" aria-labelledby="heading3-lft">
           <div class="collapse-body">
-            <p class="font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_messaggi'|trans }}</p>
+            <p class="pt-2 font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_messaggi'|trans }}</p>
             {% if messageAttachments|length > 0 %}
               {% for allegato in messageAttachments %}
-                <div class="it-list-wrapper mt-3">
+                <div class="it-list-wrapper mt-4">
                   {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': allegato.messages[0].author.fullname}) }}
                   <ul class="it-list">
                     {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato, 'application': pratica}) }}
@@ -76,10 +76,10 @@
           </div>
           <div id="collapse4-lft" class="collapse" role="tabpanel" aria-labelledby="heading3-lft">
             <div class="collapse-body">
-              <p class="font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_risposta'|trans }}</p>
+              <p class="pt-2 font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_risposta'|trans }}</p>
               {% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
                 {% if pratica.rispostaOperatore %}
-                  <div class="it-list-wrapper mt-3">
+                  <div class="it-list-wrapper mt-4">
                     {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica_risposta_firmata'}) }}
                     <ul class="it-list">
                       {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': pratica.rispostaOperatore, 'application': pratica}) }}
@@ -89,7 +89,7 @@
               {% endif %}
 
               {% if pratica.allegatiOperatore|length > 0 %}
-                <div class="it-list-wrapper mt-3">
+                <div class="it-list-wrapper mt-4">
                   {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'Allegati risposta'}) }}
                   <ul class="it-list">
                     {% for allegato in pratica.allegatiOperatore %}

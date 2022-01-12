@@ -64,24 +64,12 @@
                 {% if pratica.allegatiOperatore|length > 0 %}
                   {% for allegato in pratica.allegatiOperatore %}
                     <div class="row my-3">
-                      <div class="col-2">
-                        {% if allegato.file.extension == 'pdf' or allegato.file.extension == 'p7m' %}
-                          <i class="fas fa-file-pdf"></i>
-                        {% else %}
-                          <i class="fas fa-file-pdf"></i>
-                        {% endif %}
-                      </div>
-                      <div class="col-6 text-truncate">
-                        {{ allegato.originalFilename }}
-                      </div>
-                      <div class="col-2">
-                        {{ allegato.getHumanReadableFileSize }}
-                      </div>
-                      <div class="col-2">
-                        <a href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
+                      <div class="col">
+                        <a class="text-truncate" href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
                           <svg class="icon icon-primary">
-                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
                           </svg>
+                          {{ allegato.originalFilename }}
                         </a>
                       </div>
                     </div>

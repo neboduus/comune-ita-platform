@@ -343,20 +343,33 @@ form[name="upload_allegato_operatore"] {
 }
 
 #collapse-attachments {
-  .collapse-div {
-    border: none;
-    .collapse-header button {
-      border-top: none;
-      border-bottom: 1px solid #e3e4e6;
-    }
+  border: none;
+  .collapse-header button {
+    border-top: none;
+    border-bottom: 1px solid $list-border-color;
   }
 
   .it-list-wrapper {
     .it-list {
-      a {
-        .it-right-zone {
-          margin-left: 40px;
-          padding: 10px 0 10px 0;
+      li {
+        margin-bottom: 2px;
+        a {
+          .it-right-zone {
+            margin-left: 40px;
+            padding: 10px 0 10px 0;
+          }
+          &:hover {
+            box-shadow: none;
+            .text {
+              text-decoration: none;
+            }
+            .it-right-zone {
+              border-color: $primary;
+              .icon {
+                fill: $primary;
+              }
+            }
+          }
         }
       }
     }
