@@ -110,4 +110,16 @@ class Schema
 
     return $required;
   }
+
+  public function getFileComponents()
+  {
+    $fileComponents = [];
+    foreach ($this->getComponents() as $component){
+      if ($component->getType() === 'file') {
+        $fileComponents[] = $component;
+      }
+    }
+
+    return $fileComponents;
+  }
 }

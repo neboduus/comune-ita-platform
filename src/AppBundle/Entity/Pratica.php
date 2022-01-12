@@ -981,6 +981,19 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
+   * @return array
+   */
+  public function getAllegatiWithIndex()
+  {
+    $allegati = [];
+    /** @var Allegato $a */
+    foreach ($this->allegati as $a) {
+      $allegati[$a->getId()]= $a;
+    }
+    return $allegati;
+  }
+
+  /**
    * @param Allegato $allegato
    *
    * @return $this

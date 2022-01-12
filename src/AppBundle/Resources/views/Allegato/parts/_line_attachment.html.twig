@@ -1,6 +1,6 @@
-<div class="row py-2 border-bottom">
+{# <div class="row py-2 border-bottom">
   <div class="col-7 text-truncate">
-    <svg class="icon">
+    <svg class="icon icon-sm">
       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
     </svg>
     {{ attachment.originalFilename }}
@@ -32,11 +32,10 @@
     {% endif %}
   </div>
   <div class="col-1">
-    {# todo: unificare i controller per il download #}
     {% if is_granted('ROLE_OPERATORE') %}
       <a href="{{ path('allegati_download_operatore', {'allegato': attachment}) }}" download>
         <span data-toggle="tooltip" data-placement="right" title="Download">
-          <svg class="icon icon-primary">
+          <svg class="icon icon-sm icon-primary">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
           </svg>
         </span>
@@ -44,7 +43,7 @@
     {% else %}
       <a href="{{ path('allegati_download_cpsuser', {'allegato': attachment.id}) }}" download>
         <span data-toggle="tooltip" data-placement="right" title="{{ 'allegato.scarica_allegato'|trans }}">
-          <svg class="icon icon-primary">
+          <svg class="icon icon-sm icon-primary">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
           </svg>
         </span>
@@ -52,3 +51,18 @@
     {% endif %}
   </div>
 </div>
+#}
+
+<li>
+  <a href="{% if is_granted('ROLE_OPERATORE') %}{{ path('allegati_download_operatore', {'allegato': attachment}) }}{% else %}{{ path('allegati_download_cpsuser', {'allegato': attachment.id}) }}{% endif %}" download="">
+    <div class="it-right-zone">
+      <span class="text"><em>{{ attachment.originalFilename }}</em></span>
+      <span class="it-multiple">
+            <span class="metadata"></span>
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+            </svg>
+          </span>
+    </div>
+  </a>
+</li>

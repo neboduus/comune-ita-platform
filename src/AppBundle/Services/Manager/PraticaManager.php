@@ -4,6 +4,7 @@
 namespace AppBundle\Services\Manager;
 
 
+use AppBundle\Dto\Application;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
@@ -18,6 +19,8 @@ use AppBundle\Event\DispatchEmailFromMessageEvent;
 use AppBundle\Event\ProtocollaPraticaSuccessEvent;
 use AppBundle\Form\FormIO\FormIORenderType;
 use AppBundle\FormIO\Schema;
+use AppBundle\FormIO\SchemaComponent;
+use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Services\InstanceService;
@@ -96,10 +99,16 @@ class PraticaManager
    * @var TranslatorInterface
    */
   private $translator;
+
   /**
    * @var EventDispatcherInterface
    */
   private $dispatcher;
+
+  /**
+   * @var SchemaFactoryInterface
+   */
+  private $schemaFactory;
 
   /**
    * PraticaManagerService constructor.
@@ -111,6 +120,7 @@ class PraticaManager
    * @param RouterInterface $router
    * @param LoggerInterface $logger
    * @param EventDispatcherInterface $dispatcher
+   * @param SchemaFactoryInterface $schemaFactory
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -120,7 +130,8 @@ class PraticaManager
     TranslatorInterface $translator,
     RouterInterface $router,
     LoggerInterface $logger,
-    EventDispatcherInterface $dispatcher
+    EventDispatcherInterface $dispatcher,
+    SchemaFactoryInterface $schemaFactory
   )
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
@@ -131,6 +142,7 @@ class PraticaManager
     $this->router = $router;
     $this->translator = $translator;
     $this->dispatcher = $dispatcher;
+    $this->schemaFactory = $schemaFactory;
   }
 
   /**
@@ -669,5 +681,33 @@ class PraticaManager
       $this->logger->error($msg, ['pratica' => $pratica->getId()]);
       throw new \Exception($msg);
     }
+  }
+
+
+  /**
+   * @param Pratica $pratica
+   * @return array
+   */
+  public function getGroupedModuleFiles(Pratica $pratica)
+  {
+    $files = [];
+    $attachments = $pratica->getAllegatiWithIndex();
+    $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
+    $filesComponents = $schema->getFileComponents();
+    $data = $pratica->getDematerializedForms();
+
+    /** @var SchemaComponent $component */
+    foreach ($filesComponents as $component) {
+      if (isset($data['flattened'][$component->getName()])) {
+        $componentOptions = $component->getFormOptions();
+        $labelParts = explode('/', $componentOptions['label']);
+        //$files [$labelParts[0]][end($labelParts)][]= Application::prepareFormioFile($data['flattened'][$component->getName()]);
+        foreach ($data['flattened'][$component->getName()] as $f) {
+          $id = $f['data']['id'];
+          $files [$labelParts[0]][end($labelParts)][]= $attachments[$id];
+        }
+      }
+    }
+    return $files;
   }
 }
