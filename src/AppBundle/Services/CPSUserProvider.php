@@ -328,6 +328,16 @@ class CPSUserProvider implements UserProviderInterface
           $user->setShibAuthenticationIstant($value);
         }
       },
+      'nome' => function (CPSUser $user, $value) {
+        if ($user->getNome() !== $value) {
+          $user->setNome($value);
+        }
+      },
+      'cognome' => function (CPSUser $user, $value) {
+        if ($user->getCognome() !== $value) {
+          $user->setCognome($value);
+        }
+      },
       'dataNascita' => function (CPSUser $user, $value) {
         if ($user->getDataNascita() === null || $user->getDataNascita() === '' || $user->getDataNascita()->format('d/m/Y') !== $value) {
           $dateTime = \DateTime::createFromFormat('d/m/Y', $value);
