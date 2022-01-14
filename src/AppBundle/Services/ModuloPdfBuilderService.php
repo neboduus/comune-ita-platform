@@ -183,18 +183,10 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   {
     $unsignedResponse = new RispostaOperatore();
     $this->createAllegatoInstance($pratica, $unsignedResponse);
-    $servizioName = $pratica->getServizio()->getName();
-    $now = new DateTime();
-    $now->setTimestamp(time());
-    $unsignedResponse->setOriginalFilename("Servizio {$servizioName} " . $now->format('Ymdhi'));
-    $unsignedResponse->setDescription(
-      $this->translator->trans(
-        'pratica.modulo.descrizioneRisposta',
-        [
-          'nomeservizio' => $pratica->getServizio()->getName(),
-          'datacompilazione' => $now->format($this->dateTimeFormat)
-        ])
-    );
+
+    $fileName = $this->generateFileName("Risposta {$pratica->getServizio()->getName()}");
+    $unsignedResponse->setOriginalFilename($fileName);
+    $unsignedResponse->setDescription($fileName);
 
     $this->em->persist($unsignedResponse);
     return $unsignedResponse;
@@ -211,18 +203,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   {
     $signedResponse = new RispostaOperatore();
     $this->createAllegatoInstance($pratica, $signedResponse);
-    $servizioName = $pratica->getServizio()->getName();
-    $now = new DateTime();
-    $now->setTimestamp(time());
-    $signedResponse->setOriginalFilename("Servizio {$servizioName} " . $now->format('Ymdhi'));
-    $signedResponse->setDescription(
-      $this->translator->trans(
-        'pratica.modulo.descrizioneRisposta',
-        [
-          'nomeservizio' => $pratica->getServizio()->getName(),
-          'datacompilazione' => $now->format($this->dateTimeFormat)
-        ])
-    );
+
+    $fileName = $this->generateFileName("Risposta {$pratica->getServizio()->getName()}");
+    $signedResponse->setOriginalFilename($fileName);
+    $signedResponse->setDescription($fileName);
+
     $this->em->persist($signedResponse);
     return $signedResponse;
   }
@@ -237,11 +222,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   {
     $withdrawAttachment = new Ritiro();
     $this->createAllegatoInstance($pratica, $withdrawAttachment);
-    $servizioName = $pratica->getServizio()->getName();
-    $now = new DateTime();
-    $now->setTimestamp(time());
-    $withdrawAttachment->setOriginalFilename("Ritiro servizio {$servizioName} " . $now->format('Ymdhi'));
-    $withdrawAttachment->setDescription("Ritiro servizio {$servizioName} " . $now->format('Ymdhi'));
+
+    $fileName = $this->generateFileName("Ritiro pratica {$pratica->getServizio()->getName()}");
+    $withdrawAttachment->setOriginalFilename($fileName);
+    $withdrawAttachment->setDescription($fileName);
+
     $this->em->persist($withdrawAttachment);
     return $withdrawAttachment;
   }
@@ -257,20 +242,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   {
     $moduloCompilato = new ModuloCompilato();
     $this->createAllegatoInstance($pratica, $moduloCompilato);
-    $servizioName = $pratica->getServizio()->getName();
-    $now = new DateTime();
-    $now->setTimestamp($pratica->getSubmissionTime());
-    $moduloCompilato->setOriginalFilename("Modulo {$servizioName} " . $now->format('Ymdhi') . '.pdf');
-    $moduloCompilato->setDescription(
-      $this->translator->trans(
-        'pratica.modulo.descrizione',
-        [
-          'nomeservizio' => $pratica->getServizio()->getName(),
-          'datacompilazione' => $now->format($this->dateTimeFormat)
-        ])
-    );
-    $this->em->persist($moduloCompilato);
 
+    $fileName = $this->generateFileName("Modulo {$pratica->getServizio()->getName()}");
+    $moduloCompilato->setOriginalFilename($fileName);
+    $moduloCompilato->setDescription($fileName);
+
+    $this->em->persist($moduloCompilato);
     return $moduloCompilato;
   }
 
@@ -578,6 +555,22 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $this->logger->error($e->getMessage());
       return $e->getMessage();
     }
+  }
+
+  /**
+   * @param $fileName
+   * @return string
+   */
+  private function generateFileName($fileName)
+  {
+    $now = new DateTime();
+    $now->setTimestamp(time());
+
+    $fileName = ("{$fileName} " . $now->format('Ymdhi'));
+    if (strlen($fileName) > 250) {
+      $fileName = substr($fileName, 0, 250);
+    }
+    return $fileName . '.pdf';
   }
 
   /**

@@ -63,6 +63,7 @@ class Servizio implements Translatable
    * @ORM\Column(type="string", length=255, unique=true)
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
+   * @Assert\Length(max="255")
    * @SWG\Property(description="Service's name")
    */
   private $name;

@@ -37,6 +37,7 @@ class Service
    * @Serializer\Type("string")
    * @SWG\Property(description="Service's name")
    * @Groups({"read", "write"})
+   * @Assert\Length(max="255")
    */
   private $name;
 
