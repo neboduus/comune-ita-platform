@@ -24,7 +24,7 @@
     </div>
 
     <div class="message-body">
-      <small>{{ message.message | raw }}</small>
+      <small>{{ message.message|purify }}</small>
       {# Show pixel if user is the applicant and different from message author, or if user is the operator and message author is the applicant #}
       {% if (user == pratica.user and message.author != user) or (user == pratica.operatore and message.author == pratica.user) %}
         <img class="d-none" src="{{ path('track_message', {'id':message.id}) }}">

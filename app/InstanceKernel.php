@@ -56,6 +56,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
       new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new Oneup\FlysystemBundle\OneupFlysystemBundle(),
       new WhiteOctober\BreadcrumbsBundle\WhiteOctoberBreadcrumbsBundle(),
+      new Exercise\HTMLPurifierBundle\ExerciseHTMLPurifierBundle(),
       new AppBundle\AppBundle(),
     ];
 

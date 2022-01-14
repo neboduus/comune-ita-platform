@@ -3,6 +3,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Utils\StringUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -168,7 +169,7 @@ class Message
    */
   public function setMessage($message)
   {
-    $this->message = strip_tags($message, '<p><a><b><i><u><ul><ol><li><br>');
+    $this->message = StringUtils::cleanMarkup($message);
 
     return $this;
   }

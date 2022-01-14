@@ -321,3 +321,7 @@ white_october_breadcrumbs:
   translation_domain: ~ # defaults to null, so the default domain is used
   viewTemplate: 'WhiteOctoberBreadcrumbsBundle::microdata.html.twig'
 
+# Html purifier
+exercise_html_purifier:
+  default_cache_serializer_path: '%kernel.cache_dir%/htmlpurifier'
+
