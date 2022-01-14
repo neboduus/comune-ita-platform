@@ -21,7 +21,7 @@
       {% endfor %}
       {% if feature('feature_application_detail') %}
         {% for message in pratica.messages %}
-          {{ include('AppBundle:Message:message.html.twig') }}
+          {{ include('@App/Message/message.html.twig') }}
         {% endfor %}
       {% endif %}
     </ul>

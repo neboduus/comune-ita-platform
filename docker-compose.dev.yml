@@ -61,12 +61,3 @@ services:
   caddy:
     volumes:
       - ./web:/srv:rw
-
-  pgweb:
-    image: sosedoff/pgweb
-    labels:
-      - 'traefik.port=8081'
-    environment:
-      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=disable
-    depends_on:
-      - postgres

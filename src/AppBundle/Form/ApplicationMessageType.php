@@ -32,6 +32,7 @@ class ApplicationMessageType extends AbstractType
       'message', TextareaType::class, [
       'label' => 'operatori.messaggi.testo_messaggio',
       'required' => true,
+      'purify_html' => true,
       'attr' => [
         'rows' => '5',
         'class' => 'form-control input-inline',

@@ -36,6 +36,7 @@ class AppKernel extends Kernel
       new Artprima\PrometheusMetricsBundle\ArtprimaPrometheusMetricsBundle(),
       new Oneup\FlysystemBundle\OneupFlysystemBundle(),
       new WhiteOctober\BreadcrumbsBundle\WhiteOctoberBreadcrumbsBundle(),
+      new Exercise\HTMLPurifierBundle\ExerciseHTMLPurifierBundle(),
       new AppBundle\AppBundle(),
     ];
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Twig;
 
 
+use AppBundle\Utils\StringUtils;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -41,12 +42,7 @@ class AppExtension  extends AbstractExtension
       return '';
     }
 
-    $allowedMarkup = '<br><p><a><strong><ul><ol><i><b><u><li>';
-    $string = strip_tags($string, $allowedMarkup);
-
-    $string = preg_replace('/(<[^>]+) style=".*?"/i', '$1', $string);
-
-    return $string;
+    return StringUtils::cleanMarkup($string);
   }
 
   /**
