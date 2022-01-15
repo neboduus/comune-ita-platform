@@ -468,6 +468,19 @@ class ServiceGroup
   }
 
   /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\SerializedName("services_count")
+   * @Serializer\Type("integer")
+   * @SWG\Property(description="Related services count", type="integer", @SWG\Items(type="integer"))
+   * @Groups({"read"})
+   */
+  public function getServicesCount()
+  {
+    return $this->services->count();
+  }
+
+
+  /**
    * @return mixed
    */
   public function getApplications()

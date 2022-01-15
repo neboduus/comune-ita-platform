@@ -23,6 +23,7 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Ramsey\Uuid\Uuid;
+use function Aws\boolean_value;
 
 /**
  * Class ServicesAPIController
@@ -81,6 +82,14 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *      description="Id of the geographic area"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="not_empty",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="If true empty services groups are excluded from results"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of services groups",
@@ -97,6 +106,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $categoryId = $request->get('topics_id', false);
     $recipientId = $request->get('recipient_id', false);
     $geographicAreaId = $request->get('geographic_area_id', false);
+    $notEmpty = boolean_value($request->get('not_empty', false));
     $criteria = [];
 
     if ($categoryId) {
@@ -128,7 +138,11 @@ class ServicesGroupAPIController extends AbstractFOSRestController
 
 
     $services = $this->em->getRepository('AppBundle:ServiceGroup')->findByCriteria($criteria);
+    /** @var ServiceGroup $s */
     foreach ($services as $s) {
+      if ($notEmpty && $s->getServicesCount() === 0) {
+        continue;
+      }
       $result []= $s;
     }
     try {
