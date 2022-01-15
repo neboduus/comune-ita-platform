@@ -553,6 +553,9 @@ class Servizio implements Translatable
    */
   public function getDescription()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getDescription();
+    }
     return $this->description;
   }
 
@@ -573,6 +576,9 @@ class Servizio implements Translatable
    */
   public function getHowto()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getHowto();
+    }
     return $this->howto;
   }
 
@@ -827,6 +833,9 @@ class Servizio implements Translatable
    */
   public function getTopics()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getTopics();
+    }
     return $this->topics;
   }
 
@@ -848,7 +857,10 @@ class Servizio implements Translatable
    */
   public function getTopicsId()
   {
-    return $this->topics->getId();
+    if ($this->getTopics()) {
+      $this->getTopics()->getId();
+    }
+    return '';
   }
 
   /**
@@ -856,6 +868,9 @@ class Servizio implements Translatable
    */
   public function getWho()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getWho();
+    }
     return $this->who;
   }
 
@@ -872,6 +887,9 @@ class Servizio implements Translatable
    */
   public function getSpecialCases()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getSpecialCases();
+    }
     return $this->specialCases;
   }
 
@@ -888,6 +906,9 @@ class Servizio implements Translatable
    */
   public function getMoreInfo()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getMoreInfo();
+    }
     return $this->moreInfo;
   }
 
@@ -1352,6 +1373,9 @@ class Servizio implements Translatable
    */
   public function getRecipients()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getRecipients();
+    }
     return $this->recipients;
   }
 
@@ -1394,6 +1418,9 @@ class Servizio implements Translatable
    */
   public function getGeographicAreas()
   {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getGeographicAreas();
+    }
     return $this->geographicAreas;
   }
 

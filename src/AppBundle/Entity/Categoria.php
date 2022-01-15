@@ -280,4 +280,12 @@ class Categoria
   {
     return $this->getChildren()->count() > 0 || $this->getServices()->count() > 0 || $this->getServicesGroup()->count() > 0;
   }
+
+  /**
+   * @return bool
+   */
+  public function hasVisibleRelations(): bool
+  {
+    return $this->getChildren()->count() > 0 || $this->getVisibleService()->count() > 0 || $this->getVisibleServicesGroup()->count() > 0;
+  }
 }

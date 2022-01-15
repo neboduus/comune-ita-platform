@@ -11,6 +11,14 @@ class ServiceGroupRepository extends EntityRepository
   {
     $qb = $this->createQueryBuilder('s');
 
+    /*$qb = $this->createQueryBuilder('s')
+      ->select('s', 'count(services) AS services_count')
+      ->leftJoin('s.services', 'services')
+      ->where('services.status IN (:status)')
+      ->setParameter('status', Servizio::PUBLIC_STATUSES)
+      ->groupBy('s.id')
+    ;*/
+
     // topics
     if (isset($criteria['topics'])) {
       $qb

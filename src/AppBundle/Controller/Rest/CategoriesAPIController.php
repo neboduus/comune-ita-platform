@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Symfony\Component\Translation\TranslatorInterface;
+use function Aws\boolean_value;
 
 /**
  * Class CategoriesAPIController
@@ -44,6 +45,14 @@ class CategoriesAPIController extends AbstractFOSRestController
    * List all Categories
    * @Rest\Get("", name="categories_api_list")
    *
+   * @SWG\Parameter(
+   *      name="not_empty",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="If true empty categories are excluded from results"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of categories",
@@ -59,7 +68,18 @@ class CategoriesAPIController extends AbstractFOSRestController
    */
   public function getCategoriesAction(Request $request)
   {
-    $result = $this->entityManager->getRepository('AppBundle:Categoria')->findBy([], ['name' => 'asc']);
+
+    $result = [];
+    $notEmpty = boolean_value($request->get('not_empty', false));
+
+    $categories = $this->entityManager->getRepository('AppBundle:Categoria')->findBy([], ['name' => 'asc']);
+    /** @var Categoria $c */
+    foreach ($categories as $c) {
+      if ($notEmpty && !$c->hasVisibleRelations()) {
+        continue;
+      }
+      $result []= $c;
+    }
     return $this->view($result, Response::HTTP_OK);
   }
 

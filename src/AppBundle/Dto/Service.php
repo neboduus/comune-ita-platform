@@ -1020,6 +1020,7 @@ class Service
 
     $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getSlug() : null;
     $dto->topics_id = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
+
     $dto->description = $servizio->getDescription() ?? '';
     $dto->howto = $servizio->getHowto();
     $dto->who = $servizio->getWho() ?? '';

@@ -34,11 +34,6 @@ class ServiceGroupType extends AbstractType
         'label' => 'gruppo_di_servizi.a_chi_si_rivolge',
         'required' => false
       ])
-      ->add('coverage', TextType::class, [
-        'label' => 'gruppo_di_servizi.copertura_helper',
-        'data' => is_array($serviceGroup->getCoverage()) ? implode(',', $serviceGroup->getCoverage()) : $serviceGroup->getCoverage(),
-        'required' => false
-      ])
       ->add('howto', TextareaType::class, [
         'label' => 'gruppo_di_servizi.accedere',
         'required' => false
@@ -90,6 +85,11 @@ class ServiceGroupType extends AbstractType
           'expanded' => true
         ]
       )
+      ->add('coverage', TextType::class, [
+        'label' => 'gruppo_di_servizi.copertura_helper',
+        'data' => is_array($serviceGroup->getCoverage()) ? implode(',', $serviceGroup->getCoverage()) : $serviceGroup->getCoverage(),
+        'required' => false
+      ])
       ->add('register_in_folder', CheckboxType::class, [
         'label' => 'gruppo_di_servizi.protocolla_in_fascicolo',
         'required' => false

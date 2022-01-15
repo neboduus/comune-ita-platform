@@ -105,6 +105,14 @@ class ServicesAPIController extends AbstractFOSRestController
    * List all Services
    * @Rest\Get("", name="services_api_list")
    *
+   * * @SWG\Parameter(
+   *      name="status",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Status of service, accepted values: 1 - Pubblished, 2 - Suspended, 4 - scheduled"
+   *  )
+   *
    * @SWG\Parameter(
    *      name="topics_id",
    *      in="query",
@@ -159,15 +167,23 @@ class ServicesAPIController extends AbstractFOSRestController
   {
 
     try {
+
+      $status = $request->get('status', false);
       $serviceGroupId = $request->get('service_group_id', false);
       $categoryId = $request->get('topics_id', false);
       $recipientId = $request->get('recipient_id', false);
       $geographicAreaId = $request->get('geographic_area_id', false);
       $grouped = boolean_value($request->get('grouped', true));
+
+      if ($status && in_array($status, Servizio::PUBLIC_STATUSES)) {
+        $criteria['status'] = [$status];
+      } else {
+        $criteria['status'] = Servizio::PUBLIC_STATUSES;
+      }
+      $criteria['grouped'] = $grouped;
+
       $result = [];
       $repoServices = $this->em->getRepository(Servizio::class);
-      $criteria['status'] = Servizio::PUBLIC_STATUSES;
-      $criteria['grouped'] = $grouped;
 
       if ($serviceGroupId) {
         $serviceGroupRepo = $this->em->getRepository('AppBundle:ServiceGroup');
