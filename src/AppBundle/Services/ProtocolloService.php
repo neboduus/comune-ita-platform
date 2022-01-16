@@ -312,7 +312,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
   public function protocollaRisposta(Pratica $pratica)
   {
     $this->validateRisposta($pratica);
-    
+
     $rispostaOperatore = $pratica->getRispostaOperatore();
 
     if ($rispostaOperatore->getNumeroProtocollo() === null) {
@@ -342,13 +342,13 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     if ($this->handler instanceof PredisposedProtocolHandlerInterface && $rispostaOperatore->getNumeroProtocollo() === null) {
       try {
         $this->handler->protocolPredisposedAttachment($pratica, $rispostaOperatore);
-        $this->entityManager->persist($rispostaOperatore);
       } catch (\Exception $e) {
         $this->logger->error("Errore nella predisposizione della pratica", ['pratica' => $pratica->getId()]);
         $dispatchSuccess = false;
       }
     }
 
+    $this->entityManager->persist($rispostaOperatore);
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
 

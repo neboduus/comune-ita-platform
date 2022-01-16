@@ -8,6 +8,7 @@ use AppBundle\Entity\AllegatoInterface;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\ModuloCompilato;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Services\FileService;
 use AppBundle\Services\MailerService;
 use Hoa\Event\Exception;
@@ -203,7 +204,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $message = $this->setupMessage($pratica, $this->sender, $parameters['receiver'], self::TYPE_SEND_RESULT);
 
     $risposta = $pratica->getRispostaOperatore();
-    if ($risposta != null ) {
+    if ($risposta instanceof RispostaOperatore) {
       $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($risposta), $risposta->getFilename(), $this->fileService->getMimeType($risposta));
       $message->attach($attachment);
     }
@@ -211,6 +212,11 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
     if (!$result) {
       throw new \Exception("Error sendRispostaToProtocollo application: " . $pratica->getId());
+    }
+
+    if ($risposta instanceof RispostaOperatore) {
+      $risposta->setNumeroProtocollo($message->getId());
+      $risposta->setIdDocumentoProtocollo($message->getId());
     }
   }
 
