@@ -334,6 +334,9 @@ pratica:
   messaggi:
     oggetto: 'Nuovo messaggio richiesta numero %pratica%'
     messaggio: '%message% <img src="%link%">'
+  payment_reminder:
+    message: "Gentile <b>%user_name%</b><br/> la richiesta numero <b>%id%</b> per <b>%service_fullname%</b> è in attesa di un pagamento, ti invitiamo ad usare i link che seguono per pagare quanto dovuto"
+    subject: "Promemoria pagamento richiesta numero %pratica%"
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
     descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
@@ -925,6 +928,7 @@ messages:
   message_label: 'Messaggio'
   pratica:
     status:
+      1000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che è stata creata una pratica in bozza a Suo nome per il servizio <strong>%servizio%</strong>, entri nella sua stanza del cittadino  e visiti la sezione <i>Le mie pratiche</i> per procedere all'invio della domanda.<br />La ringraziamo per la collaborazione."
       1900: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata. Il numero di richiesta è <strong>%pratica_id%</strong>. Faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
       1500: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di pagamento. Il numero di richiesta è <strong>%pratica_id%</strong>. Faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
       1510: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è in attesa di esito del pagamento. Il numero di richiesta è <strong>%pratica_id%</strong>. Faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
