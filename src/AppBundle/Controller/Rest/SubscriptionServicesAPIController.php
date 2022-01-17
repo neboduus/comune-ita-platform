@@ -107,7 +107,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
         ->orderBy('t1.name', "ASC")
         ->getQuery()->getResult();
     } else {
-      $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
+      $subscriptionServices = $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
     }
 
     foreach ($subscriptionServices as $subscriptionService) {
@@ -148,7 +148,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     );
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+      $repository = $this->em->getRepository('AppBundle:SubscriptionService');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -220,7 +220,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       $create_draft = strtolower($request->query->get('create_draft')) === "true";
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+      $repository = $this->em->getRepository('AppBundle:SubscriptionService');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -299,11 +299,9 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $em = $this->getDoctrine()->getManager();
-
     try {
-      $em->persist($subscriptionService);
-      $em->flush();
+      $this->em->persist($subscriptionService);
+      $this->em->flush();
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
@@ -378,7 +376,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+    $repository = $this->em->getRepository('AppBundle:SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
@@ -398,11 +396,9 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $em = $this->getDoctrine()->getManager();
-
     try {
-      $em->persist($subscriptionService);
-      $em->flush();
+      $this->em->persist($subscriptionService);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -474,7 +470,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+    $repository = $this->em->getRepository('AppBundle:SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
@@ -494,9 +490,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($subscriptionService);
-      $em->flush();
+      $this->em->persist($subscriptionService);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -551,14 +546,13 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $subscriptionService = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->find($id);
+    $subscriptionService = $this->em->getRepository('AppBundle:SubscriptionService')->find($id);
     if ($subscriptionService) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($subscriptionService);
-      $em->flush();
+      $this->em->remove($subscriptionService);
+      $this->em->flush();
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
@@ -638,7 +632,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService');
+      $repository = $this->em->getRepository('AppBundle:SubscriptionService');
       $subscriptionService = $repository->find($subscription_service_id);
       if ($subscriptionService === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -691,7 +685,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+      $repository = $this->em->getRepository('AppBundle:Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -742,15 +736,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     if ($subscription) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($subscription);
-      $em->flush();
+      $this->em->remove($subscription);
+      $this->em->flush();
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
@@ -921,7 +914,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       SubcriptionsBackOffice::PATH,
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
@@ -944,9 +937,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($subscription);
-      $em->flush();
+      $this->em->persist($subscription);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -1022,7 +1014,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       SubcriptionsBackOffice::PATH,
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
@@ -1045,9 +1037,8 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($subscription);
-      $em->flush();
+      $this->em->persist($subscription);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [

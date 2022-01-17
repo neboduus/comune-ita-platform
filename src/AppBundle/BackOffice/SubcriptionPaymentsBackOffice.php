@@ -9,6 +9,8 @@ use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -16,7 +18,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
 {
   const IDENTIFIER = "subscription_payments";
 
-  const NAME = 'Pagamenti per servizi a sottoscizione';
+  const NAME = 'Pagamenti per servizi a sottoscrizione';
 
   const PATH = 'operatori_subscription-service_payments_index';
 
@@ -172,24 +174,33 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     $qb = $this->em->createQueryBuilder()
       ->select('subscription')
       ->from(Subscription::class, 'subscription')
-      ->leftJoin('subscription.subscriber', 'subscriber')
-      ->leftJoin('subscription.subscription_service', 'subscriptionService')
+      ->join('subscription.subscriber', 'subscriber')
+      ->join('subscription.subscription_service', 'subscriptionService')
       ->where('lower(subscriber.fiscal_code) = :fiscal_code')
-      ->andWhere('subscriptionService.code = :code')
-      ->setParameter('fiscal_code', strtolower($subscriberFiscalCode))
-      ->setParameter('code', $subscriptionData['code']);
+      ->setParameter('fiscal_code', strtolower($subscriberFiscalCode));
 
-    $subscription = $qb->getQuery()->getSingleResult();
+    if (in_array($integrationType, [self::APPLICANT_SUBSCRIPTION_PAYMENT_BY_CODE, self::SUBSCRIBER_SUBSCRIPTION_PAYMENT_BY_CODE])) {
+      $qb
+        ->andWhere('subscriptionService.code = :code')
+        ->setParameter('code', $subscriptionData['code']);
+    }
+    if (in_array($integrationType, [self::APPLICANT_SUBSCRIPTION_PAYMENT_BY_ID, self::SUBSCRIBER_SUBSCRIPTION_PAYMENT_BY_ID])) {
+      $qb
+        ->andWhere('subscriptionService.id = :subscriptionServiceId')
+        ->setParameter('subscriptionServiceId', $subscriptionData['subscription_service']);
+    }
 
-    if (!$subscription) {
+    try {
+      $subscription = $qb->getQuery()->getSingleResult();
+    } catch (\Exception $e) {
       $this->logger->error($this->translator->trans('backoffice.integration.subscriptions.subscription_error', [
-        '%code%'=>$subscriptionData['code'],
+        '%code%'=> $subscriptionData['code'] ?? $subscriptionData['subscription_service'],
         '%fiscal_code%' => $subscriberFiscalCode
       ]));
       return ['error' => $this->translator->trans('backoffice.integration.subscriptions.subscription_error', [
-        '%code%'=>$subscriptionData['code'],
+        '%code%'=> $subscriptionData['code'] ?? $subscriptionData['subscription_service'],
         '%fiscal_code%' => $subscriberFiscalCode
-        ])];
+      ])];
     }
 
     try {
