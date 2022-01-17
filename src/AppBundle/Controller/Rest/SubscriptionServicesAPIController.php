@@ -9,8 +9,8 @@ use AppBundle\Model\SubscriptionPayment;
 use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\SubscriptionVoter;
 use AppBundle\Services\InstanceService;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Psr\Log\LoggerInterface;
@@ -30,25 +30,22 @@ use Swagger\Annotations as SWG;
  * @package AppBundle\Controller
  * @Route("/subscription-services")
  */
-class SubscriptionServicesAPIController extends AbstractFOSRestController
+class SubscriptionServicesAPIController extends AbstractApiController
 {
-
-  const CURRENT_API_VERSION = '1.0';
+  const SUPPORTED_API_VERSIONS = array(1);
 
   /** @var EntityManagerInterface  */
   private $em;
 
-  /** @var InstanceService  */
-  private $is;
   /**
    * @var LoggerInterface
    */
   private $logger;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
+  public function __construct(EntityManagerInterface $em, LoggerInterface $logger, $defaultApiVersion)
   {
+    parent::__construct($defaultApiVersion, self::SUPPORTED_API_VERSIONS);
     $this->em = $em;
-    $this->is = $is;
     $this->logger = $logger;
   }
 
@@ -608,6 +605,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. Version 1 is not available"
+   *  )
+   *
    * @SWG\Response(
    *     response=403,
    *     description="Access denied"
@@ -618,12 +623,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     description="Subscriptions not found"
    * )
    * @SWG\Tag(name="subscriptions")
+   * @param Request $request
    * @param $subscription_service_id
    *
    * @return View
    */
-  public function getSubscriptionsAction($subscription_service_id)
+  public function getSubscriptionsAction(Request $request, $subscription_service_id): View
   {
+    $this->checkRequestedVersion($request);
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
       SubcriptionsBackOffice::PATH,
@@ -661,6 +668,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. Version 1 is not available"
+   *  )
+   *
    * @SWG\Response(
    *     response=403,
    *     description="Access denied"
@@ -672,18 +687,21 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="subscriptions")
    *
+   * @param Request $request
    * @param $subscription_service_id
    * @param $id
    *
    * @return View
    */
-  public function getSubscriptionAction($subscription_service_id, $id)
+  public function getSubscriptionAction(Request $request, $subscription_service_id, $id): View
   {
+    $this->checkRequestedVersion($request);
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
       SubcriptionsBackOffice::PATH,
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
+
     try {
       $repository = $this->em->getRepository('AppBundle:Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
@@ -709,6 +727,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. Version 1 is not available"
+   *  )
+   *
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
@@ -721,14 +747,16 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *
    * @SWG\Tag(name="subscriptions")
    *
+   * @param Request $request
    * @param $subscription_service_id
    * @param $id
    *
-   * @Method("DELETE")
    * @return View
+   * @Method("DELETE")
    */
-  public function deleteSubscriptionAction($subscription_service_id, $id)
+  public function deleteSubscriptionAction(Request $request, $subscription_service_id, $id): View
   {
+    $this->checkRequestedVersion($request);
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
       SubcriptionsBackOffice::PATH,
@@ -737,6 +765,7 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     $repository = $this->em->getRepository('AppBundle:Subscription');
+
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     if ($subscription) {
       // debated point: should we 404 on an unknown nickname?
@@ -759,6 +788,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
+   *
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. Version 1 is not available"
+   *  )
    *
    * @SWG\Parameter(
    *     name="Subscription",
@@ -793,8 +830,9 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *
    * @return View
    */
-  public function postSubscriptionAction(Request $request)
+  public function postSubscriptionAction(Request $request): View
   {
+    $this->checkRequestedVersion($request);
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
       SubcriptionsBackOffice::PATH,
@@ -816,31 +854,20 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $subscriber = $this->em->getRepository('AppBundle:Subscriber')->findOneBy(['fiscal_code' => $subscription->getSubscriber()->getFiscalCode()]);
-
-    if (!$subscriber) {
-      try {
-        $this->em->persist($subscription->getSubscriber());
-        $this->em->flush();
-      } catch (\Exception $e) {
-        $data = [
-          'type' => 'error',
-          'title' => 'There was an error during save process',
-          'description' => 'Contact technical support at support@opencontent.it'
-        ];
-        $this->logger->error(
-          $e->getMessage(),
-          ['request' => $request]
-        );
-        return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
-      }
-    } else {
-      $subscription->setSubscriber($subscriber);
-    }
-
     try {
       $this->em->persist($subscription);
       $this->em->flush();
+    } catch (UniqueConstraintViolationException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'Duplicated subscription',
+        'description' => 'This subscription already exists'
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
@@ -867,6 +894,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
+   *
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. Version 1 is not available"
+   *  )
    *
    * @SWG\Parameter(
    *     name="Subscription",
@@ -907,13 +942,15 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *
    * @return View
    */
-  public function putSubscriptionAction($subscription_service_id, $id, Request $request)
+  public function putSubscriptionAction($subscription_service_id, $id, Request $request): View
   {
+    $this->checkRequestedVersion($request);
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
       SubcriptionsBackOffice::PATH,
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
+
     $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
@@ -939,8 +976,18 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     try {
       $this->em->persist($subscription);
       $this->em->flush();
+    } catch (UniqueConstraintViolationException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'Duplicated subscription',
+        'description' => 'This subscription already exists'
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -967,6 +1014,14 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
+   *
+   * @SWG\Parameter(
+   *      name="version",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Version of Api, default 1. Version 1 is not available"
+   *  )
    *
    * @SWG\Parameter(
    *     name="Subscription",
@@ -1007,13 +1062,15 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
    *
    * @return View
    */
-  public function patchSubscriptionAction($subscription_service_id, $id, Request $request)
+  public function patchSubscriptionAction($subscription_service_id, $id, Request $request): View
   {
+    $this->checkRequestedVersion($request);
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
       SubcriptionsBackOffice::PATH,
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
+
     $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
@@ -1039,8 +1096,18 @@ class SubscriptionServicesAPIController extends AbstractFOSRestController
     try {
       $this->em->persist($subscription);
       $this->em->flush();
-    } catch (\Exception $e) {
-
+    } catch (UniqueConstraintViolationException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'Duplicated subscription',
+        'description' => 'This subscription already exists'
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }  catch (\Exception $e) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',

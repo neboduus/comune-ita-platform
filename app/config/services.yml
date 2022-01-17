@@ -79,6 +79,11 @@ services:
   AppBundle\Controller\Rest\UsersAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\SubscriptionsAPIController:
+    autowire: true
+    arguments:
+      $defaultApiVersion: "%api_version%"
+
   AppBundle\Controller\Ui\Frontend\MessagesController:
     autowire: true
 
@@ -93,6 +98,8 @@ services:
 
   AppBundle\Controller\Rest\SubscriptionServicesAPIController:
     autowire: true
+    arguments:
+      $defaultApiVersion: "%api_version%"
 
   AppBundle\Controller\Rest\MessagesAPIController:
     autowire: true
@@ -766,6 +773,11 @@ services:
       - { name: form.type }
 
   AppBundle\Form\SubscriptionServiceType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\SubscriptionType:
     autowire: true
     tags:
       - { name: form.type }
