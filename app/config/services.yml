@@ -498,6 +498,12 @@ services:
     class: AppBundle\Services\WebhookService
     autowire: true
 
+  ocsdc.kafka_service:
+    class: AppBundle\Services\KafkaService
+    autowire: true
+    arguments:
+      $kafkaUrl: "%kafka_url%"
+
   ocsdc.io_service:
     class: AppBundle\Services\IOService
     autowire: true
@@ -584,6 +590,12 @@ services:
 
   ocsdc.protocollo: '@AppBundle\Services\DelayedProtocolloService'
   ocsdc.protocollo_direct: '@AppBundle\Services\ProtocolloService'
+
+  ocsdc.listeners.kafka:
+    class: AppBundle\EventListener\KafkaListener
+    autowire: true
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.kafka, method: produce, priority: 10 }
 
   ocsdc.pratica_listeners.createpdf:
     class: AppBundle\EventListener\CreatePdfPraticaListener

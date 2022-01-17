@@ -15,6 +15,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
+use AppBundle\Event\KafkaEvent;
 use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\FormIO\ExpressionValidator;
@@ -529,6 +530,7 @@ class PraticheController extends Controller
    */
   public function showAction(Request $request, Pratica $pratica)
   {
+
     /** @var CPSUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
@@ -575,6 +577,10 @@ class PraticheController extends Controller
    */
   public function detailAction(Request $request, Pratica $pratica)
   {
+
+
+    $dispatcher = $this->get('event_dispatcher');
+    $dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($pratica));
 
     if ($pratica instanceof GiscomPratica) {
       return $this->redirectToRoute('pratiche_show', ['pratica' => $pratica]);

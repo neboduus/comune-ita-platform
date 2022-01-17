@@ -90,6 +90,7 @@ services:
       S3_KEY: ${S3_KEY:-}
       S3_SECRET: ${S3_SECRET:-}
       S3_BUCKET: ${S3_BUCKET:-}
+      KAFKA_URL: ${KAFKA_URL:-}
 
       # Your Queue-it customer ID
       #QUEUEIT_CUSTOMER_ID: 'xxx'
@@ -108,7 +109,7 @@ services:
       #shibb_pat_attribute_datanascita: 1/9/1976
       #shibb_pat_attribute_luogonascita: Ponsacco
       #shibb_pat_attribute_provincianascita: PI
-      
+
       #shibb_pat_attribute_telefono: 003912378945
       #shibb_pat_attribute_cellulare: 333 444 666 99
       #shibb_pat_attribute_indirizzoresidenza: Via Gramsci, 1
