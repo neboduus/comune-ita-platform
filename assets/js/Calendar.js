@@ -128,7 +128,7 @@ export default class FormioCalendar extends Base {
                 $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${self.date} ${slotText}`);
 
                 if (self.meeting_expiration_time) {
-                  let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("hh:mm")}`;
+                  let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
                   $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
                 }
 
@@ -161,7 +161,7 @@ export default class FormioCalendar extends Base {
               $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${self.date} alle ore ${self.slot}`)
             }
             if (self.meeting_expiration_time) {
-              let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("hh:mm")}`;
+              let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
               $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
             }
           }
@@ -211,7 +211,7 @@ export default class FormioCalendar extends Base {
       $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${this.date} alle ore ${this.slot}`)
     }
     if (self.meeting_expiration_time) {
-      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("hh:mm")}`;
+      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
       $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
     }
   }
@@ -340,7 +340,7 @@ export default class FormioCalendar extends Base {
           let slotText = self.slot ? ` alle ore ${self.slot}` : '';
           $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${self.date} ${slotText}`);
           if (self.meeting_expiration_time) {
-            let expiration = `${self.meeting_expiration_time.format("YYYY-MM-DD")} alle ore ${self.meeting_expiration_time.format("hh:mm")}`;
+            let expiration = `${self.meeting_expiration_time.format("YYYY-MM-DD")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
             $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
           }
         }

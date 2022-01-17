@@ -107,6 +107,8 @@ doctrine:
       string_functions:
         FORMIO_JSON_FIELD: AppBundle\FormIO\FormIOJsonFieldParser
         JSON_FIELD: AppBundle\Doctrine\JsonFieldParser
+        JSON_TEXT: AppBundle\Doctrine\JSONText
+        JSONB_ARRAY_ELEMENTS_TEXT: AppBundle\Doctrine\JsonbArrayElementsText
     mappings:
       translatable:
         type: annotation

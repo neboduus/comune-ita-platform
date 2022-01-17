@@ -33,6 +33,7 @@ class Subscription
   /**
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Subscriber", inversedBy="subscriptions")
    * @ORM\JoinColumn(nullable=false)
+   * @Serializer\Exclude()
    * @SWG\Property(description="Subscription's subscriber")
    */
   private $subscriber;
@@ -190,5 +191,31 @@ class Subscription
     $this->created_at = $created_at;
 
     return $this;
+  }
+
+  /**
+   * Sybscription's subscriber
+   *
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("subscriber")
+   * @SWG\Property(description="Subscription's subscriber")
+   */
+  public function getSubscriberId()
+  {
+    return $this->subscriber->getId();
+  }
+
+  /**
+   * Sybscription's subscriber
+   *
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("subscription_service")
+   * @SWG\Property(description="Subscription's subscription service")
+   */
+  public function getSubscriptionServiceId()
+  {
+    return $this->subscription_service->getId();
   }
 }
