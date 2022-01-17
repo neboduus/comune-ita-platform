@@ -124,6 +124,7 @@ parameters:
     deda_login_client_id: 'example'
     deda_login_secret: 'example'
     deda_login_env: 'prod'
+    kafka_url: '%env(KAFKA_URL)%'
 
     #Default fallback if env not set
     env(PREFIX): ''
@@ -218,4 +219,5 @@ parameters:
     env(S3_KEY): ''
     env(S3_SECRET): ''
     env(S3_BUCKET): ''
+    env(KAFKA_URL): null
 

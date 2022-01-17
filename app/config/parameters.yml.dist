@@ -152,3 +152,4 @@ parameters:
     deda_login_client_id: 'example'
     deda_login_secret: 'example'
     deda_login_env: 'prod'
+    kafka_url: null
