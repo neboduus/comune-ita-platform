@@ -45,6 +45,7 @@ class PraticaPlaceholderService
       '%id%' => $pratica->getId(),
       '%pratica_id%' => $pratica->getId(),
       '%servizio%' => $pratica->getServizio()->getName(),
+      '%service_fullname%' => $pratica->getServizio()->getFullName(),
       '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
       '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito(
       ) : $this->translator->trans('messages.pratica.no_reason'),

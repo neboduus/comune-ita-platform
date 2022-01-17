@@ -413,7 +413,7 @@ class PraticaManager
    * @param string $subject
    * @return Message
    */
-  public function generateStatusMessage(Pratica $pratica, string $text, string $subject): Message
+  public function generateStatusMessage(Pratica $pratica, string $text, string $subject, array $callToActions = []): Message
   {
     $message = new Message();
     $message->setApplication($pratica);
@@ -421,6 +421,7 @@ class PraticaManager
     $message->setVisibility(Message::VISIBILITY_APPLICANT);
     $message->setMessage($text);
     $message->setSubject($subject);
+    $message->setCallToAction($callToActions);
     $message->setEmail($pratica->getUser()->getEmailContatto());
     $message->setSentAt(time());
 

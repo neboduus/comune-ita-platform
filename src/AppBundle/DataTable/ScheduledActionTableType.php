@@ -40,6 +40,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
           'giscom.sendPratica' => 'Invio pratica Giscomn',
           'giscom.askCFs' => 'Richiesta codici fiscali Giscom',
           'application_webhook' => 'Webhook',
+          'application_payment_reminder' => 'Promemoria pagamento',
         ],
       ])
       ->add('params', TwigColumn::class, [

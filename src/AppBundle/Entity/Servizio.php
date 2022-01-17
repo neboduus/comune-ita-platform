@@ -1468,4 +1468,11 @@ class Servizio implements Translatable
     return $this->getPraticaFCQN() != self::FORMIO_SERVICE_CLASS;
   }
 
+  public function getFullName(): string
+  {
+    if ($this->getServiceGroup()) {
+      return $this->getServiceGroup()->getName() . ' - ' . $this->getName();
+    }
+    return $this->name;
+  }
 }
