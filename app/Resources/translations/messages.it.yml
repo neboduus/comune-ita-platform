@@ -380,6 +380,7 @@ iscrizioni:
   payments: "Pagamenti"
   subscriptions: "Iscrizioni"
   subscriber_data: "Scheda personale"
+  subscriber: "Iscritto"
   messages: "Messaggi"
   import: 'Importazioni'
   export: 'Esportazioni'
@@ -450,6 +451,7 @@ iscrizioni:
     riferimento_pratica: "Riferimento pratica"
     beneficiario: "Beneficiario"
     cf_beneficiario: "Codice fiscale del beneficiario"
+  certificato: "Certificato"
   certificato_pagamento:
     testo: "Su richiesta dell'interessato, visti gli atti d'ufficio, si dichiara che lo studente/la studentessa <b>%completeName%</b>, nato/a a <b>%placeOfBirth%</b> il <b>%dateOfBirth%</b> C.F. <b>%fiscalCode%</b> nell'anno %paymentYear% ha sostenuto la seguente spesa:"
     importo: "Euro <b>%amount%</b> quale %name%"
@@ -466,6 +468,7 @@ iscrizioni:
   errore_salvataggio: "Si è verificato un errore durante il salvataggio dell'iscrizione"
   subscribers:
     show: 'Mostra'
+    completename: "Nome e cognome"
     name: 'Nome'
     surname: 'Cognome'
     fiscal_code: 'Codice fiscale'
@@ -2015,7 +2018,7 @@ gateway:
     download_text: "Usa il pulsante che segue per scaricare il documento PDF (Avviso di Pagamento) che potrai pagare presso un ufficio postale, un ATM Bancario, ricevitoria Sisal, l'App IO o Satispay."
 calendars:
   calendar: 'Calendario'
-  calendars: 'Calendari appuntamenti'
+  calendars: 'Calendari'
   meetings: 'Appuntamenti'
   detail: 'Dettaglio'
   cant_edit_tooltip: "Non puoi modificare questo calendario perché non ne sei nè il proprietario nè un coordinatore"
@@ -2275,6 +2278,7 @@ backoffice:
       delete_subscription_error: "Si è verificato un errore durante l'eliminazione dell'iscrizione"
       duplicate_error: "l'utente user risulta già iscritto al servizio service_name"
     subscription_service:
+      subscription_service: "Servizio a sottoscrizione"
       subscription_services: "Servizi a sottoscrizione"
       new: "Crea servizio a sottoscrizione"
       search_results: "Risultati della ricerca"
@@ -2283,13 +2287,16 @@ backoffice:
       search: "Cerca"
       search_subscribers_helper: "Utilizza questo campo per ricercare gli iscritti per nome, cognome oppure codice fiscale"
       search_subscribers: "Ricerca iscritti"
+      links: "Links"
       close: "Chiudi"
       loading: "Caricamento..."
       all: "Tutti"
       payments: "Pagamenti"
+      subscription_service_payments: "Pagamenti per Servizi a Sottoscrizione"
       payment:
+        execution_date: "Data di esecuzione"
         due_date: "Data di scadenza del pagamento"
-        amount: "Importo del pagamento"
+        amount: "Importo"
         reason: "Causale di pagamento"
         identifier: "Identificativo del pagamento"
         service_id: "Identificativo del servizio utilizzato per il pagamento"

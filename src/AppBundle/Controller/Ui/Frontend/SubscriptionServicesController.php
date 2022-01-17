@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Ui\Frontend;
 use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
+use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -142,7 +143,7 @@ class SubscriptionServicesController extends Controller
   }
 
   /**
-   * @Route("/operatori/subscriprion-payments-template-csv",name="operatori_download_subscription_payments_template_csv")
+   * @Route("/operatori/subscriptions-payments-template-csv",name="operatori_download_subscription_payments_template_csv")
    * @param Request $request
    */
   public function downloadSubscriptionPaymentsTemplateAction(Request $request)
@@ -185,7 +186,7 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
+    $subscriptionServices = $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
 
     $subscriptionService = new SubscriptionService();
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
@@ -249,7 +250,7 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $subscriptionServices = $this->getDoctrine()->getRepository('AppBundle:SubscriptionService')->findAll();
+    $subscriptionServices = $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
 
     $form = $this->createForm('AppBundle\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
@@ -313,7 +314,12 @@ class SubscriptionServicesController extends Controller
    */
   public function indexSubscriptionServicePaymentsAction(Request $request)
   {
-    return $this->redirectToRoute('operatori_subscription-service_index');
+    $items = $this->em->getRepository('AppBundle:SubscriptionPayment')->findBy([], ['paymentDate' => 'DESC']);
+
+    return $this->render('@App/SubscriptionServices/indexSubscriptionServicePayments.html.twig', [
+      'user' => $this->getUser(),
+      'items' => $items
+    ]);
   }
 
   /**
