@@ -578,10 +578,6 @@ class PraticheController extends Controller
   public function detailAction(Request $request, Pratica $pratica)
   {
 
-
-    $dispatcher = $this->get('event_dispatcher');
-    $dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($pratica));
-
     if ($pratica instanceof GiscomPratica) {
       return $this->redirectToRoute('pratiche_show', ['pratica' => $pratica]);
     }

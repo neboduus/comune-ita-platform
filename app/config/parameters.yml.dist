@@ -153,4 +153,5 @@ parameters:
     deda_login_secret: 'example'
     deda_login_env: 'prod'
     kafka_url: null
+    kafka_event_version: 1
     api_version: 1

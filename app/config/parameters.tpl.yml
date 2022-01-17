@@ -125,6 +125,7 @@ parameters:
     deda_login_secret: 'example'
     deda_login_env: 'prod'
     kafka_url: '%env(KAFKA_URL)%'
+    kafka_event_version: '%env(KAFKA_EVENT_VERSION)%'
     api_version: 1
 
     #Default fallback if env not set
@@ -221,5 +222,6 @@ parameters:
     env(S3_SECRET): ''
     env(S3_BUCKET): ''
     env(KAFKA_URL): null
+    env(KAFKA_EVENT_VERSION): 1
     env(API_VERSION): 1
 
