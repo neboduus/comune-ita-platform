@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Controller\Rest\ApplicationsAPIController;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\StatusChange;
+use AppBundle\Event\KafkaEvent;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Logging\LogConstants;
 use AppBundle\PraticaEvents;
@@ -190,6 +191,8 @@ class PraticaStatusService
           PraticaEvents::ON_STATUS_CHANGE,
           new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus)
         );
+
+        $this->dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($pratica));
 
         $this->entityManager->commit();
 

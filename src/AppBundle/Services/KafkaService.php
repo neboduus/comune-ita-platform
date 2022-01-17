@@ -48,11 +48,14 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @var VersionService
    */
   private $versionService;
-  private $kafkaUrl;
   /**
    * @var LoggerInterface
    */
   private $logger;
+
+  private $kafkaUrl;
+
+  private $kafkaEventVersion;
 
   /**
    * WebhookService constructor.
@@ -63,16 +66,27 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param VersionService $versionService
    * @param LoggerInterface $logger
    * @param $kafkaUrl
+   * @param $kafkaEventVersion
    */
-  public function __construct(ScheduleActionService $scheduleActionService, EntityManagerInterface $entityManager, RouterInterface $router, SerializerInterface $serializer, VersionService $versionService, LoggerInterface $logger, $kafkaUrl)
+  public function __construct(
+    ScheduleActionService $scheduleActionService,
+    EntityManagerInterface $entityManager,
+    RouterInterface $router,
+    SerializerInterface $serializer,
+    VersionService $versionService,
+    LoggerInterface $logger,
+    $kafkaUrl,
+    $kafkaEventVersion
+  )
   {
     $this->scheduleActionService = $scheduleActionService;
     $this->entityManager = $entityManager;
     $this->router = $router;
     $this->serializer = $serializer;
     $this->versionService = $versionService;
-    $this->kafkaUrl = $kafkaUrl;
     $this->logger = $logger;
+    $this->kafkaUrl = $kafkaUrl;
+    $this->kafkaEventVersion = $kafkaEventVersion;
   }
 
 
@@ -92,7 +106,7 @@ class KafkaService implements ScheduledActionHandlerInterface
         $params
       );
     } catch (AlreadyScheduledException $e) {
-      $this->logger->error('Webhook is already scheduled', $data);
+      $this->logger->error('Kafka message is already scheduled', $data);
     }
   }
 
@@ -130,7 +144,10 @@ class KafkaService implements ScheduledActionHandlerInterface
       $content = $item;
     }
 
-    $data = $this->serializer->serialize($content, 'json');
+    $data = json_decode($this->serializer->serialize($content, 'json'), true);
+    $data['event_version'] = $this->kafkaEventVersion;
+    $data['app_version'] = $this->versionService->getVersion();
+    $data = json_encode($data);
 
     try {
       $this->sendMessage($data);
