@@ -65,7 +65,7 @@
               <td>{{ item.subscription.subscriptionService.name }}</td>
               <td>{{ item.subscription.subscriber.name }} {{ item.subscription.subscriber.surname }}</td>
               <td>{{ item.subscription.subscriber.fiscalCode }}</td>
-              <td>{{ item.paymentDate | date('d/m/Y') }}</td>
+              <td>{{ item.paymentDate | date('Y-m-d') }}</td>
               <td>{{ item.amount }} €</td>
               <td class="text-right">
                 <div class="dropdown dropdown-actions">
