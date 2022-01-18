@@ -146,7 +146,6 @@ class ScheduleActionService
         (int)$count
       ]);
 
-
     }
 
     /**

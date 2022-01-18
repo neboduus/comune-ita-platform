@@ -67,6 +67,9 @@ parameters:
       - jpeg: image/jpeg
       - jpg: image/jpeg
       - png: image/png
+      - gif: image/gif
+      - p7m: application/pkcs7-mime
+      - xp7m: application/x-pkcs7-mime
     token_ttl: '%env(TOKEN_TTL)%'
     recaptcha_key: '%env(RECAPTCHA_KEY)%'
     recaptcha_secret: '%env(RECAPTCHA_SECRET)%'

@@ -863,7 +863,7 @@ allegato:
   scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'
   scarica_allegato_richiesta_integrazione: "Scarica file contenente la richiesta  d'integrazione"
   crea_allegato: 'Carica un allegato'
-  non_supportato: 'Il file che stai cercando di caricare non è di un tipo supportato. I tipi supportati sono pdf jpg gif png'
+  non_supportato: 'Il file che stai cercando di caricare non è di un tipo supportato. I tipi supportati sono pdf, jpg, jpeg, gif, png, p7m'
   guida_alla_compilazione:
     crea: 'Seleziona il file da caricare. Deve essere una immagine (png bmp gif jpg) o un file pdf. Dai al file una descrizione che ti aiuti a identificarlo'
   non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'

@@ -145,6 +145,8 @@ services:
 
   AppBundle\Controller\Ui\Frontend\AllegatoController:
     autowire: true
+    arguments:
+      $allowedExtensions: '%allowed_extensions%'
 
   AppBundle\Controller\Ui\Frontend\ServiziController:
     autowire: true
@@ -472,7 +474,9 @@ services:
 
   ocsdc.allegati.mimetype_validator:
     class: AppBundle\Validator\Constraints\ValidMimeTypeValidator
-    arguments: [ "@translator" ]
+    autowire: true
+    arguments:
+      $allowedExtensions: '%allowed_extensions%'
     tags:
       - { name: validator.constraint_validator }
 

@@ -17,13 +17,17 @@ class ValidMimeTypeValidator extends ConstraintValidator
    */
   private $translator;
 
+  private $allowedExtensions;
+
   /**
    * ValidMimeTypeValidator constructor.
    * @param TranslatorInterface $translator
+   * @param $allowedExtensions
    */
-  public function __construct(TranslatorInterface $translator)
+  public function __construct(TranslatorInterface $translator, $allowedExtensions)
   {
     $this->translator = $translator;
+    $this->allowedExtensions = array_merge(...$allowedExtensions);
   }
 
   /**
@@ -33,15 +37,8 @@ class ValidMimeTypeValidator extends ConstraintValidator
   public function validate($value, Constraint $constraint)
   {
     if ($value->getFile() == null || !in_array(
-        $value->getFile()->getMimeType(),
-        array(
-          'image/jpeg',
-          'image/gif',
-          'image/png',
-          'application/postscript',
-          'application/pdf',
-          'application/octet-stream',
-        )
+        $value->getMimeType(),
+        $this->allowedExtensions
       )) {
       $translatedMessage = $this->translator->trans(ValidMimeType::TRANSLATION_ID);
       $this->context
