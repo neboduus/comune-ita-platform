@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Swagger\Annotations as SWG;
@@ -27,6 +28,7 @@ class Subscription
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @SWG\Property(description="Subscription's uuid")
+   * @Groups({"read"})
    */
   protected $id;
 
@@ -55,6 +57,8 @@ class Subscription
 
   /**
    * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @SWG\Property(description="Subscription's related fiscal codes", type="array", @SWG\Items(type="string"))
+   * @Groups({"read", "write"})
    * @var $relatedCFs array
    */
   private $relatedCFs;
@@ -62,6 +66,7 @@ class Subscription
   /**
    * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
    * @SWG\Property(description="Subscription's creation date")
+   * @Groups({"read"})
    */
   private $created_at;
 
@@ -200,6 +205,7 @@ class Subscription
    * @Serializer\Type("string")
    * @Serializer\SerializedName("subscriber")
    * @SWG\Property(description="Subscription's subscriber")
+   * @Groups({"read", "write"})
    */
   public function getSubscriberId()
   {
@@ -213,6 +219,7 @@ class Subscription
    * @Serializer\Type("string")
    * @Serializer\SerializedName("subscription_service")
    * @SWG\Property(description="Subscription's subscription service")
+   * @Groups({"read", "write"})
    */
   public function getSubscriptionServiceId()
   {

@@ -11,6 +11,7 @@ use AppBundle\Entity\SubscriptionService;
 use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\SubscriptionVoter;
 use AppBundle\Services\InstanceService;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -101,7 +102,7 @@ class SubscriptionsAPIController extends AbstractApiController
       return $this->view(["Missing parameter code or cf"], Response::HTTP_BAD_REQUEST);
     }
 
-    $subscription = $this->getDoctrine()->getManager()->createQueryBuilder()
+    $subscription = $this-$this->em->createQueryBuilder()
       ->select('subscription')
       ->from('AppBundle:Subscription', 'subscription')
       ->leftJoin('subscription.subscription_service', 'service')
@@ -191,7 +192,7 @@ class SubscriptionsAPIController extends AbstractApiController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive all subscriptions",
-   *      @Model(type=Subscription::class)
+   *      @Model(type=Subscription::class, groups={"read"})
    * )
    *
    * @SWG\Response(
@@ -293,7 +294,7 @@ class SubscriptionsAPIController extends AbstractApiController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Subscription",
-   *      @Model(type=Subscription::class)
+   *      @Model(type=Subscription::class, groups={"read"})
    * )
    *
    * @SWG\Parameter(
@@ -338,7 +339,7 @@ class SubscriptionsAPIController extends AbstractApiController
     );
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+      $repository = $this->em->getRepository('AppBundle:Subscription');
       $subscription = $repository->find($id);
     } catch (\Exception $e) {
       $this->logger->error($e->getMessage(), ['request' => $request]);
@@ -399,15 +400,39 @@ class SubscriptionsAPIController extends AbstractApiController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->find($id);
     if ($subscription) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($subscription);
-      $em->flush();
+
+      try {
+        $this->em->remove($subscription);
+        $this->em->flush();
+      } catch (ForeignKeyConstraintViolationException $e) {
+        $data = [
+          'type' => 'error',
+          'title' => 'Related Payments',
+          'description' => 'This subscription has related payments'
+        ];
+        $this->logger->error(
+          $e->getMessage(),
+          ['request' => $request]
+        );
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      } catch (\Exception $e) {
+        $data = [
+          'type' => 'error',
+          'title' => 'There was an error during save process',
+          'description' => 'Contact technical support at support@opencontent.it'
+        ];
+        $this->logger->error(
+          $e->getMessage(),
+          ['request' => $request]
+        );
+        return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+      }
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
@@ -440,7 +465,7 @@ class SubscriptionsAPIController extends AbstractApiController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Subscription::class)
+   *         ref=@Model(type=Subscription::class, groups={"write"})
    *     )
    * )
    *
@@ -547,7 +572,7 @@ class SubscriptionsAPIController extends AbstractApiController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Subscription::class)
+   *         ref=@Model(type=Subscription::class, groups={"write"})
    *     )
    * )
    *
@@ -586,7 +611,7 @@ class SubscriptionsAPIController extends AbstractApiController
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->find($id);
 
     if (!$subscription) {
@@ -609,9 +634,8 @@ class SubscriptionsAPIController extends AbstractApiController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($subscription);
-      $em->flush();
+      $this->em->persist($subscription);
+      $this->em->flush();
     } catch (UniqueConstraintViolationException $e) {
       $data = [
         'type' => 'error',
@@ -668,7 +692,7 @@ class SubscriptionsAPIController extends AbstractApiController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Subscription::class)
+   *         ref=@Model(type=Subscription::class, groups={"write"})
    *     )
    * )
    *
@@ -707,7 +731,7 @@ class SubscriptionsAPIController extends AbstractApiController
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Subscription');
+    $repository = $this->em->getRepository('AppBundle:Subscription');
     $subscription = $repository->find($id);
 
     if (!$subscription) {
@@ -730,9 +754,8 @@ class SubscriptionsAPIController extends AbstractApiController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($subscription);
-      $em->flush();
+      $this->em->persist($subscription);
+      $this->em->flush();
     } catch (UniqueConstraintViolationException $e) {
       $data = [
         'type' => 'error',
