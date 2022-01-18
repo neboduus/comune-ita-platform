@@ -20,6 +20,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Security\Voters\AttachmentVoter;
 use AppBundle\Services\FileService;
 use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Validator\Constraints\ValidMimeType;
 use Aws\S3\S3Client;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -83,6 +84,8 @@ class AllegatoController extends Controller
   /** @var EntityManagerInterface */
   private $entityManager;
 
+  private $allowedExtensions;
+
 
   /**
    * AllegatoController constructor.
@@ -92,6 +95,7 @@ class AllegatoController extends Controller
    * @param ValidatorInterface $validator
    * @param FileService $fileService
    * @param EntityManagerInterface $entityManager
+   * @param $allowedExtensions
    */
   public function __construct(
     TranslatorInterface $translator,
@@ -99,7 +103,8 @@ class AllegatoController extends Controller
     LoggerInterface $logger,
     ValidatorInterface $validator,
     FileService $fileService,
-    EntityManagerInterface $entityManager
+    EntityManagerInterface $entityManager,
+    $allowedExtensions
   )
   {
     $this->translator = $translator;
@@ -108,6 +113,7 @@ class AllegatoController extends Controller
     $this->validator = $validator;
     $this->fileService = $fileService;
     $this->entityManager = $entityManager;
+    $this->allowedExtensions = array_merge(...$allowedExtensions);
   }
 
   /**
@@ -439,27 +445,16 @@ class AllegatoController extends Controller
     }
 
     $uploadedFile = $request->files->get('file');
-    $pathParts = pathinfo($uploadedFile->getRealPath());
-    $dirname = $pathParts['dirname'];
-    $targetFile = $dirname . '/' . $pratica->getId() . time();
+
+    if (!in_array(mime_content_type($uploadedFile->getRealPath()), $this->allowedExtensions)) {
+      return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
+    }
 
     $allegato = new AllegatoOperatore();
     $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
     $allegato->setFile($uploadedFile);
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
-
-    $violations = $this->validator->validate($allegato);
-
-    if ($violations->count() > 0) {
-      $messages = [];
-      /** @var ConstraintViolationInterface $violation */
-      foreach ($violations as $violation){
-        $messages[] = $violation->getMessage();
-      }
-      return new JsonResponse(implode(', ', $messages), Response::HTTP_BAD_REQUEST);
-    }
-
     $em = $this->getDoctrine()->getManager();
     $em->persist($allegato);
 
@@ -470,8 +465,6 @@ class AllegatoController extends Controller
       'url' => '#',
       'id' => $allegato->getId(),
     ];
-
-    @unlink($targetFile);
 
     return new JsonResponse($data);
   }
@@ -496,26 +489,16 @@ class AllegatoController extends Controller
     }
 
     $uploadedFile = $request->files->get('file');
-    $pathParts = pathinfo($uploadedFile->getRealPath());
-    $dirname = $pathParts['dirname'];
-    $targetFile = $dirname . '/' . $pratica->getId() . time();
+
+    if (!in_array(mime_content_type($uploadedFile->getRealPath()), $this->allowedExtensions)) {
+      return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
+    }
 
     $allegato = new AllegatoMessaggio();
     $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
     $allegato->setFile($uploadedFile);
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
-
-    $violations = $this->validator->validate($allegato);
-    if ($violations->count() > 0) {
-      $messages = [];
-      /** @var ConstraintViolationInterface $violation */
-      foreach ($violations as $violation){
-        $messages[] = $violation->getMessage();
-      }
-      return new JsonResponse(implode(', ', $messages), Response::HTTP_BAD_REQUEST);
-    }
-
     $em = $this->getDoctrine()->getManager();
     $em->persist($allegato);
 
@@ -527,8 +510,6 @@ class AllegatoController extends Controller
       'url' => '#',
       'id' => $allegato->getId(),
     ];
-
-    @unlink($targetFile);
 
     return new JsonResponse($data);
   }
@@ -554,30 +535,18 @@ class AllegatoController extends Controller
     }
 
     $uploadedFile = $request->files->get('file');
-    $pathParts = pathinfo($uploadedFile->getRealPath());
-    $dirname = $pathParts['dirname'];
-    $targetFile = $dirname . '/' . $pratica->getId() . time();
+
+    if (!in_array(mime_content_type($uploadedFile->getRealPath()), $this->allowedExtensions)) {
+      return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
+    }
 
     $allegato = new AllegatoMessaggio();
     $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
     $allegato->setFile($uploadedFile);
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
-
-    $violations = $this->validator->validate($allegato);
-
-    if ($violations->count() > 0) {
-      $messages = [];
-      /** @var ConstraintViolationInterface $violation */
-      foreach ($violations as $violation){
-        $messages[] = $violation->getMessage();
-      }
-      return new JsonResponse(implode(', ', $messages), Response::HTTP_BAD_REQUEST);
-    }
-
     $em = $this->getDoctrine()->getManager();
     $em->persist($allegato);
-
     $em->flush();
 
 
@@ -586,8 +555,6 @@ class AllegatoController extends Controller
       'url' => '#',
       'id' => $allegato->getId(),
     ];
-
-    @unlink($targetFile);
 
     return new JsonResponse($data);
   }
