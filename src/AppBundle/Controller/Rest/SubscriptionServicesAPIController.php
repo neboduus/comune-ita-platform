@@ -9,6 +9,7 @@ use AppBundle\Model\SubscriptionPayment;
 use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\SubscriptionVoter;
 use AppBundle\Services\InstanceService;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\View\View;
@@ -595,6 +596,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive the Subscriptions of a Subscription Service",
+   *   @Model(type=Subscription::class, groups={"read"})
    * )
    *
    * @SWG\Parameter(
@@ -610,7 +612,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. Version 1 is not available"
+   *      description="Version of Api, default 1"
    *  )
    *
    * @SWG\Response(
@@ -657,7 +659,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Subscription of a SubscriptionService",
-   *      @Model(type=Subscription::class)
+   *      @Model(type=Subscription::class, groups={"read"})
    * )
    *
    * @SWG\Parameter(
@@ -673,7 +675,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. Version 1 is not available"
+   *      description="Version of Api, default 1"
    *  )
    *
    * @SWG\Response(
@@ -732,7 +734,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. Version 1 is not available"
+   *      description="Version of Api, default 1"
    *  )
    *
    * @SWG\Response(
@@ -771,8 +773,32 @@ class SubscriptionServicesAPIController extends AbstractApiController
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
       // we're doing the latter
-      $this->em->remove($subscription);
-      $this->em->flush();
+      try {
+        $this->em->remove($subscription);
+        $this->em->flush();
+      } catch (ForeignKeyConstraintViolationException $e) {
+        $data = [
+          'type' => 'error',
+          'title' => 'Related Payments',
+          'description' => 'This subscription has related payments'
+        ];
+        $this->logger->error(
+          $e->getMessage(),
+          ['request' => $request]
+        );
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      } catch (\Exception $e) {
+        $data = [
+          'type' => 'error',
+          'title' => 'There was an error during save process',
+          'description' => 'Contact technical support at support@opencontent.it'
+        ];
+        $this->logger->error(
+          $e->getMessage(),
+          ['request' => $request]
+        );
+        return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+      }
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
@@ -794,7 +820,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. Version 1 is not available"
+   *      description="Version of Api, default 1"
    *  )
    *
    * @SWG\Parameter(
@@ -805,7 +831,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Subscription::class)
+   *         ref=@Model(type=Subscription::class, groups={"write"})
    *     )
    * )
    *
@@ -900,7 +926,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. Version 1 is not available"
+   *      description="Version of Api, default 1"
    *  )
    *
    * @SWG\Parameter(
@@ -911,7 +937,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Subscription::class)
+   *         ref=@Model(type=Subscription::class, groups={"write"})
    *     )
    * )
    *
@@ -1020,7 +1046,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *      in="query",
    *      type="string",
    *      required=false,
-   *      description="Version of Api, default 1. Version 1 is not available"
+   *      description="Version of Api, default 1"
    *  )
    *
    * @SWG\Parameter(
@@ -1031,7 +1057,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Subscription::class)
+   *         ref=@Model(type=Subscription::class, groups={"write"})
    *     )
    * )
    *
