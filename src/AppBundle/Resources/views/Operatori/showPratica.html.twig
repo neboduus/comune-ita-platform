@@ -107,7 +107,7 @@
                   '%ore%': pratica.latestStatusChangeTimestamp | date('H:i:s')})| raw }}
               </div>
             </div>
-          {% elseif pratica.servizio.workflow == constant('WORKFLOW_APPROVAL', pratica.servizio) %}
+          {% elseif pratica.servizio.workflow == constant('WORKFLOW_APPROVAL', pratica.servizio) and pratica.status == 2000 %}
             <div class="row mb-5">
               <div class="col-12 d-flex justify-content-center">
                 <a class="btn btn-primary"
