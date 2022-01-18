@@ -702,10 +702,13 @@ class PraticaManager
       if (isset($data['flattened'][$component->getName()])) {
         $componentOptions = $component->getFormOptions();
         $labelParts = explode('/', $componentOptions['label']);
+        $page = $labelParts[0];
+        unset($labelParts[0]);
+        $label = implode('/', $labelParts);
         //$files [$labelParts[0]][end($labelParts)][]= Application::prepareFormioFile($data['flattened'][$component->getName()]);
         foreach ($data['flattened'][$component->getName()] as $f) {
           $id = $f['data']['id'];
-          $files [$labelParts[0]][end($labelParts)][]= $attachments[$id];
+          $files [$page][$label][]= $attachments[$id];
         }
       }
     }

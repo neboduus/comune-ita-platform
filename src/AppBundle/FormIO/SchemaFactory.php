@@ -132,7 +132,10 @@ class SchemaFactory implements SchemaFactoryInterface
           }
 
           if ($component['type'] == 'panel' && isset($component['title'])) {
-            $prefixLabel .= $component['title'];
+            if ( $prefixLabel == null ) {
+              $prefixLabel .= $component['title'];
+            } else
+              $prefixLabel .= '/' . $component['title'];
           }
 
           if (isset($component['components'])) {
@@ -361,7 +364,7 @@ class SchemaFactory implements SchemaFactoryInterface
       $options['label'] = $component['label'];
     }
     if (isset($options['label']) && $prefixLabel) {
-      $options['label'] = $prefixLabel . '/' .$options['label'];
+      $options['label'] = $prefixLabel.'/'.$options['label'];
     }
 
     $constraints = [];
@@ -376,7 +379,6 @@ class SchemaFactory implements SchemaFactoryInterface
     }
 
     $options['mapped'] = false;
-
 
 
     return $options;
