@@ -32,10 +32,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @var ScheduleActionService
    */
   private $scheduleActionService;
-  /**
-   * @var EntityManagerInterface
-   */
-  private $entityManager;
+
   /**
    * @var RouterInterface
    */
@@ -60,7 +57,6 @@ class KafkaService implements ScheduledActionHandlerInterface
   /**
    * WebhookService constructor.
    * @param ScheduleActionService $scheduleActionService
-   * @param EntityManagerInterface $entityManager
    * @param RouterInterface $router
    * @param SerializerInterface $serializer
    * @param VersionService $versionService
@@ -70,7 +66,6 @@ class KafkaService implements ScheduledActionHandlerInterface
    */
   public function __construct(
     ScheduleActionService $scheduleActionService,
-    EntityManagerInterface $entityManager,
     RouterInterface $router,
     SerializerInterface $serializer,
     VersionService $versionService,
@@ -80,7 +75,6 @@ class KafkaService implements ScheduledActionHandlerInterface
   )
   {
     $this->scheduleActionService = $scheduleActionService;
-    $this->entityManager = $entityManager;
     $this->router = $router;
     $this->serializer = $serializer;
     $this->versionService = $versionService;
@@ -106,7 +100,7 @@ class KafkaService implements ScheduledActionHandlerInterface
         $params
       );
     } catch (AlreadyScheduledException $e) {
-      $this->logger->error('Kafka message is already scheduled', $data);
+      $this->logger->error('Kafka message is already scheduled', [$data]);
     }
   }
 
@@ -130,6 +124,9 @@ class KafkaService implements ScheduledActionHandlerInterface
    */
   public function produceMessage($item)
   {
+    if (empty($this->kafkaUrl)) {
+      return;
+    }
 
     // Todo: va creato un registry con i mapper delle singole entità
     if ($item instanceof Pratica) {
