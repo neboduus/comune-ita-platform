@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\ScheduledAction;
+use AppBundle\Exception\DelayedScheduledActionException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
 use AppBundle\Services\ScheduleActionService;
 use Doctrine\ORM\EntityRepository;
@@ -88,6 +89,8 @@ class ScheduledActionCommand extends ContainerAwareCommand
             $service->executeScheduledAction($action);
             $scheduleActionService->markAsDone($action);
             $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'success');
+          } catch (DelayedScheduledActionException $e) {
+              $logger->info($e->getMessage());
           } catch (\Throwable $e) {
             $message = $e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine();
             $logger->error($message);

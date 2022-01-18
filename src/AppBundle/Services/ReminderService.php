@@ -6,6 +6,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
+use AppBundle\Exception\DelayedScheduledActionException;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
 use AppBundle\Services\Manager\MessageManager;
@@ -105,6 +106,8 @@ class ReminderService implements ScheduledActionHandlerInterface
         $this->scheduleActionService->markAsDone($action);
       } else if  (new \DateTime($params['remindAt']) <= new \DateTime()) {
         $this->sendPaymentReminder($pratica);
+      } else {
+        throw new DelayedScheduledActionException('Skip reminder for application with id: ' . $params['pratica'] . ' until ' . $params['remindAt']);
       }
     }
   }
