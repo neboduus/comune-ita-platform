@@ -704,7 +704,7 @@ class PraticaManager
         $labelParts = explode('/', $componentOptions['label']);
         $page = $labelParts[0];
         unset($labelParts[0]);
-        $label = implode('/', $labelParts);
+        $label = implode(' / ', $labelParts);
         //$files [$labelParts[0]][end($labelParts)][]= Application::prepareFormioFile($data['flattened'][$component->getName()]);
         foreach ($data['flattened'][$component->getName()] as $f) {
           $id = $f['data']['id'];

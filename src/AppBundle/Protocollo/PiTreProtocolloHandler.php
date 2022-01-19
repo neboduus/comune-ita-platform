@@ -595,7 +595,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
 
     $parameters->setDocumentId($rispostaIntegrazione->getIdDocumentoProtocollo());
     $parameters->setFileName($integrazione->getFile()->getFilename());
-    $fileContent = base64_encode($this->fileService->getAttachmentContent($rispostaIntegrazione));
+    $fileContent = base64_encode($this->fileService->getAttachmentContent($integrazione));
     $parameters->setFile($fileContent);
     $parameters->setChecksum(md5($fileContent));
     $parameters->setAttachmentDescription($integrazione->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
