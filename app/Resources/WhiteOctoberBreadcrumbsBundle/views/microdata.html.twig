@@ -6,7 +6,7 @@
           {% apply spaceless %}
             <ol id="{{ listId }}" class="{{ listClass }}" itemscope itemtype="http://schema.org/BreadcrumbList">
               {% for b in breadcrumbs %}
-                <li class="{% if itemClass is defined and itemClass|length %}{{ itemClass }}{% endif %} {% if loop.last %} active{% endif %}" {% if loop.last %}aria-current="page"{% endif %}" itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                <li class="{% if itemClass is defined and itemClass|length %}{{ itemClass }}{% endif %} {% if loop.last %} active{% endif %}" {% if loop.last %}aria-current="page"{% endif %} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
                   {% if b.url and not loop.last %}
                     <a href="{{ b.url }}" itemprop="item"{% if linkRel is defined and linkRel|length %} rel="{{ linkRel }}"{% endif %}>
                   {% endif %}
