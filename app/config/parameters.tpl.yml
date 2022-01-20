@@ -129,6 +129,9 @@ parameters:
     deda_login_env: 'prod'
     kafka_url: '%env(KAFKA_URL)%'
     kafka_event_version: '%env(KAFKA_EVENT_VERSION)%'
+    kafka_topics:
+      applications: '%env(KAFKA_TOPIC_APPLICATIONS)%'
+      services: '%env(KAFKA_TOPIC_SERVICES)%'
     api_version: 1
 
     #Default fallback if env not set
@@ -223,8 +226,10 @@ parameters:
     env(S3_REGION): 'eu-west-1'
     env(S3_KEY): ''
     env(S3_SECRET): ''
-    env(S3_BUCKET): ''
+    env(S3_BUCKET): 'test'
     env(KAFKA_URL): null
     env(KAFKA_EVENT_VERSION): 1
+    env(KAFKA_TOPIC_APPLICATIONS): 'applications'
+    env(KAFKA_TOPIC_SERVICES): 'services'
     env(API_VERSION): 1
 

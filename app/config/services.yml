@@ -515,6 +515,7 @@ services:
     arguments:
       $kafkaUrl: "%kafka_url%"
       $kafkaEventVersion: "%kafka_event_version%"
+      $topics: "%kafka_topics%"
 
   ocsdc.reminder_service:
     class: AppBundle\Services\ReminderService
