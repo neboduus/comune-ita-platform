@@ -11,7 +11,6 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
@@ -53,6 +52,7 @@ class KafkaService implements ScheduledActionHandlerInterface
   private $kafkaUrl;
 
   private $kafkaEventVersion;
+  private $topics;
 
   /**
    * WebhookService constructor.
@@ -63,6 +63,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param LoggerInterface $logger
    * @param $kafkaUrl
    * @param $kafkaEventVersion
+   * @param $topics
    */
   public function __construct(
     ScheduleActionService $scheduleActionService,
@@ -71,7 +72,8 @@ class KafkaService implements ScheduledActionHandlerInterface
     VersionService $versionService,
     LoggerInterface $logger,
     $kafkaUrl,
-    $kafkaEventVersion
+    $kafkaEventVersion,
+    $topics
   )
   {
     $this->scheduleActionService = $scheduleActionService;
@@ -81,26 +83,23 @@ class KafkaService implements ScheduledActionHandlerInterface
     $this->logger = $logger;
     $this->kafkaUrl = $kafkaUrl;
     $this->kafkaEventVersion = $kafkaEventVersion;
+    $this->topics = $topics;
   }
 
 
   /**
    * @param $data
    */
-  private function produceMessageAsync($data)
+  private function produceMessageAsync($params)
   {
     try {
-      $params = serialize([
-        'data' => $data
-      ]);
-
       $this->scheduleActionService->appendAction(
         'ocsdc.kafka_service',
         self::ACTION_PRODUCE_MESSAGE,
-        $params
+        serialize($params)
       );
     } catch (AlreadyScheduledException $e) {
-      $this->logger->error('Kafka message is already scheduled', [$data]);
+      $this->logger->error('Kafka message is already scheduled', $params);
     }
   }
 
@@ -113,13 +112,12 @@ class KafkaService implements ScheduledActionHandlerInterface
   {
     $params = unserialize($action->getParams());
     if ($action->getType() == self::ACTION_PRODUCE_MESSAGE) {
-      $this->sendMessage($params['data']);
+      $this->sendMessage($params);
     }
   }
 
   /**
-   * @param $params
-   * @param ScheduledAction|null $event
+   * @param $item
    * @throws GuzzleException
    */
   public function produceMessage($item)
@@ -135,9 +133,12 @@ class KafkaService implements ScheduledActionHandlerInterface
         $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/' . $item->getId(),
         true
       );
+      $topic = $this->topics['applications'];
     } elseif ($item instanceof Servizio) {
       $content = Service::fromEntity($item);
+      $topic = $this->topics['applications'];
     } else {
+      $topic = 'default';
       $content = $item;
     }
 
@@ -146,10 +147,15 @@ class KafkaService implements ScheduledActionHandlerInterface
     $data['app_version'] = $this->versionService->getVersion();
     $data = json_encode($data);
 
+    $params = [
+      'topic' => $topic,
+      'data'  => $data
+    ];
+
     try {
-      $this->sendMessage($data);
+      $this->sendMessage($params);
     } catch (\Exception $e) {
-      $this->produceMessageAsync($data);
+      $this->produceMessageAsync($params);
     }
   }
 
@@ -157,16 +163,22 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param $data
    * @throws GuzzleException
    */
-  private function sendMessage($data)
+  private function sendMessage($params)
   {
+
     $client = new Client();
     $headers = ['Content-Type' => 'application/json'];
 
+    if (substr($this->kafkaUrl, -1) != '/') {
+      $this->kafkaUrl .= '/';
+    }
+    $url = $this->kafkaUrl . $params['topic'];
+
     $request = new Request(
       'POST',
-      $this->kafkaUrl,
+      $url,
       $headers,
-      $data
+      $params['data']
     );
 
     /** @var GuzzleResponse $response */
@@ -176,4 +188,7 @@ class KafkaService implements ScheduledActionHandlerInterface
       throw new \Exception("Error sending kafka message: " . $response->getBody());
     }
   }
+
+
+
 }
