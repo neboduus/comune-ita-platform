@@ -25,10 +25,13 @@ class ResponseListener
 
     $controller = $event->getRequest()->attributes->get('_controller');
     $requiredActions = [
-      "AppBundle\Controller\DefaultController::commonAction",
-      "AppBundle\Controller\ServiziController::serviziAction",
-      "AppBundle\Controller\ServiziController::serviziDetailAction",
-      "AppBundle\Controller\ServiziController::serviceGroupDetailAction",
+      "AppBundle\Controller\Ui\Frontend\DefaultController::commonAction",
+      "AppBundle\Controller\Ui\Frontend\ServiziController::serviziAction",
+      "AppBundle\Controller\Ui\Frontend\ServiziController::serviziDetailAction",
+      "AppBundle\Controller\Ui\Frontend\ServiziController::serviceGroupDetailAction",
+      "AppBundle\Controller\Ui\Frontend\ServiziController::categoryDetailAction",
+      "AppBundle\Controller\Rest\ServicesAPIController::getServicesAction",
+      "AppBundle\Controller\Rest\ServicesAPIController::getServiceAction",
     ];
 
     if (in_array($controller, $requiredActions) && !empty($this->cacheMaxAge)) {
