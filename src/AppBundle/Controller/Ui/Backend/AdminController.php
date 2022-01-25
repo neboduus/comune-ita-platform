@@ -28,6 +28,7 @@ use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\Manager\ServiceManager;
 use Doctrine\DBAL\DBALException;
 use AppBundle\Services\IOService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -101,9 +102,12 @@ class AdminController extends Controller
    * @var LoggerInterface
    */
   private $logger;
+  /**
+   * @var ServiceManager
+   */
+  private $serviceManager;
 
   /**
-   * AdminController constructor.
    * @param InstanceService $instanceService
    * @param FormServerApiAdapterService $formServer
    * @param TokenGeneratorInterface $tokenGenerator
@@ -114,6 +118,7 @@ class AdminController extends Controller
    * @param RouterInterface $router
    * @param DataTableFactory $dataTableFactory
    * @param LoggerInterface $logger
+   * @param ServiceManager $serviceManager
    */
   public function __construct(
     InstanceService $instanceService,
@@ -125,7 +130,8 @@ class AdminController extends Controller
     IOService $ioService,
     RouterInterface $router,
     DataTableFactory $dataTableFactory,
-    LoggerInterface $logger
+    LoggerInterface $logger,
+    ServiceManager $serviceManager
   )
   {
     $this->instanceService = $instanceService;
@@ -138,6 +144,7 @@ class AdminController extends Controller
     $this->router = $router;
     $this->dataTableFactory = $dataTableFactory;
     $this->logger = $logger;
+    $this->serviceManager = $serviceManager;
   }
 
 
@@ -499,8 +506,10 @@ class AdminController extends Controller
         $erogatore->addEnte($ente);
         $em->persist($erogatore);
         $service->activateForErogatore($erogatore);
-        $em->persist($service);
-        $em->flush();
+
+        // todo: verificare se è possibile eliminare
+        $this->serviceManager->save($service);
+
 
         if (!empty($service->getFormIoId())) {
           $response = $this->formServer->cloneFormFromRemote($service, $remoteUrl . '/form');
@@ -524,8 +533,7 @@ class AdminController extends Controller
           }
         }
 
-        $em->persist($service);
-        $em->flush();
+        $this->serviceManager->save($service);
 
         $this->addFlash('success', 'Servizio importato corettamente');
         return $this->redirectToRoute('admin_servizio_index');
@@ -633,9 +641,7 @@ class AdminController extends Controller
       $form = $this->createForm($steps[$currentStep]['class'], $servizio);
       $form->handleRequest($request);
       if ($form->isSubmitted() && $form->isValid()) {
-        $manager = $this->getDoctrine()->getManager();
-        $manager->persist($servizio);
-        $manager->flush();
+        $this->serviceManager->save($servizio);
 
         if ($request->request->get('save') === 'next') {
           return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId(), 'step' => $nexStep]);
@@ -689,9 +695,7 @@ class AdminController extends Controller
       $data = $form->getData();
       $servizio->setPostSubmitValidationExpression($data['post_submit_validation_expression']);
       $servizio->setPostSubmitValidationMessage($data['post_submit_validation_message']);
-      $entityManager = $this->getDoctrine()->getManager();
-      $entityManager->persist($servizio);
-      $entityManager->flush();
+      $this->serviceManager->save($servizio);
       $this->addFlash('feedback', 'Validazione salvata correttamente');
 
       return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
@@ -733,8 +737,7 @@ class AdminController extends Controller
     $this->getDoctrine()->getManager()->persist($erogatore);
     $servizio->activateForErogatore($erogatore);
 
-    $this->getDoctrine()->getManager()->persist($servizio);
-    $this->getDoctrine()->getManager()->flush();
+    $this->serviceManager->save($servizio);
 
     return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId()]);
 
@@ -788,26 +791,6 @@ class AdminController extends Controller
         return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
       }
     }
-  }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-    return $errors;
   }
 
   /**

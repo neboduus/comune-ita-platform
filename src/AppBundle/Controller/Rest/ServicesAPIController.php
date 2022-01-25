@@ -20,6 +20,7 @@ use AppBundle\Dto\Service;
 use AppBundle\Protocollo\ProtocolloHandlerRegistry;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\Manager\ServiceManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -73,6 +74,10 @@ class ServicesAPIController extends AbstractFOSRestController
   private $handlerRegistry;
 
   private $handlerList = [];
+  /**
+   * @var ServiceManager
+   */
+  private $serviceManager;
 
   /**
    * ServicesAPIController constructor.
@@ -81,19 +86,22 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param LoggerInterface $logger
    * @param FormServerApiAdapterService $formServerApiAdapterService
    * @param ProtocolloHandlerRegistry $handlerRegistry
+   * @param ServiceManager $serviceManager
    */
   public function __construct(
     EntityManagerInterface $em,
     InstanceService $is,
     LoggerInterface $logger,
     FormServerApiAdapterService $formServerApiAdapterService,
-    ProtocolloHandlerRegistry $handlerRegistry
+    ProtocolloHandlerRegistry $handlerRegistry,
+    ServiceManager $serviceManager
   ) {
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
     $this->formServerApiAdapterService = $formServerApiAdapterService;
     $this->handlerRegistry = $handlerRegistry;
+    $this->serviceManager = $serviceManager;
 
     foreach ($this->handlerRegistry->getAvailableHandlers() as $alias => $handler) {
       $this->handlerList[] = $alias;
@@ -414,8 +422,8 @@ class ServicesAPIController extends AbstractFOSRestController
       $erogatore->addEnte($ente);
       $this->em->persist($erogatore);
       $service->activateForErogatore($erogatore);
-      $this->em->persist($service);
-      $this->em->flush();
+
+      $this->serviceManager->save($service);
 
     } catch (UniqueConstraintViolationException $e) {
       $data = [
@@ -536,8 +544,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $this->checkServiceRelations($serviceDto);
       $service = $serviceDto->toEntity($service);
 
-      $this->em->persist($service);
-      $this->em->flush();
+      $this->serviceManager->save($service);
     } catch (\Exception $e) {
 
       $data = [
@@ -646,8 +653,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $this->checkServiceRelations($serviceDto);
       $service = $serviceDto->toEntity($service);
 
-      $this->em->persist($service);
-      $this->em->flush();
+      $this->serviceManager->save($service);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',

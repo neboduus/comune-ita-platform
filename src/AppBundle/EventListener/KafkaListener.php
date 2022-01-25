@@ -15,18 +15,11 @@ class KafkaListener
   private $kafkaService;
 
   /**
-   * @var LoggerInterface
-   */
-  private $logger;
-
-  /**
    * WebhookApplicationListener constructor.
    * @param KafkaService $kafkaService
-   * @param LoggerInterface $logger
    */
-  public function __construct(KafkaService $kafkaService, LoggerInterface $logger)
+  public function __construct(KafkaService $kafkaService)
   {
-    $this->logger = $logger;
     $this->kafkaService = $kafkaService;
   }
 
