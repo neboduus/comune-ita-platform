@@ -11,12 +11,14 @@ use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\ScheduledAction\ScheduledActionHandlerInterface;
+use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -53,6 +55,10 @@ class KafkaService implements ScheduledActionHandlerInterface
 
   private $kafkaEventVersion;
   private $topics;
+  /**
+   * @var FormServerApiAdapterService
+   */
+  private $formServerApiAdapterService;
 
   /**
    * WebhookService constructor.
@@ -61,6 +67,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param SerializerInterface $serializer
    * @param VersionService $versionService
    * @param LoggerInterface $logger
+   * @param FormServerApiAdapterService $formServerApiAdapterService
    * @param $kafkaUrl
    * @param $kafkaEventVersion
    * @param $topics
@@ -71,6 +78,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     SerializerInterface $serializer,
     VersionService $versionService,
     LoggerInterface $logger,
+    FormServerApiAdapterService $formServerApiAdapterService,
     $kafkaUrl,
     $kafkaEventVersion,
     $topics
@@ -84,6 +92,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     $this->kafkaUrl = $kafkaUrl;
     $this->kafkaEventVersion = $kafkaEventVersion;
     $this->topics = $topics;
+    $this->formServerApiAdapterService = $formServerApiAdapterService;
   }
 
 
@@ -135,14 +144,17 @@ class KafkaService implements ScheduledActionHandlerInterface
       );
       $topic = $this->topics['applications'];
     } elseif ($item instanceof Servizio) {
-      $content = Service::fromEntity($item);
-      $topic = $this->topics['applications'];
+      $content = Service::fromEntity($item, $this->formServerApiAdapterService->getFormServerPublicUrl());
+      $topic = $this->topics['services'];
     } else {
       $topic = 'default';
       $content = $item;
     }
 
     $data = json_decode($this->serializer->serialize($content, 'json'), true);
+    $data['event_id'] = Uuid::uuid4()->toString();
+    $date = new DateTime();
+    $data['event_created_at'] = $date->format(DateTime::W3C);
     $data['event_version'] = $this->kafkaEventVersion;
     $data['app_version'] = $this->versionService->getVersion();
     $data = json_encode($data);

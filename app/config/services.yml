@@ -293,6 +293,9 @@ services:
   AppBundle\Services\Manager\CategoryManager:
     autowire: true
 
+  AppBundle\Services\Manager\ServiceManager:
+    autowire: true
+
   ocsdc.backoffice_manager:
     class: AppBundle\Services\Manager\BackofficeManager
     autowire: true
