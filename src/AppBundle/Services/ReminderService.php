@@ -130,7 +130,7 @@ class ReminderService implements ScheduledActionHandlerInterface
       if (isset($paymentData["response"]["urlFileAvviso"])) {
         $callToActions[] = [
           'label'=>'gateway.mypay.download_button',
-          'link'=>$paymentData["response"]["urlFileAvviso"]
+          'link'=>htmlspecialchars_decode($paymentData["response"]["urlFileAvviso"])
         ];
       }
     } else {
