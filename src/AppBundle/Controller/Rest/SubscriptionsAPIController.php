@@ -190,6 +190,14 @@ class SubscriptionsAPIController extends AbstractApiController
    *      description="Subscriber fiscal code"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="status",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Subscription status, (available statuses are 'active' or 'withdraw')"
+   *  )
+   *
    * @SWG\Response(
    *     response=200,
    *     description="Retreive all subscriptions",
@@ -222,6 +230,7 @@ class SubscriptionsAPIController extends AbstractApiController
     $subscriptionsAvailable = $request->get('subscriptionsAvailable', false);
     $fiscalCodeParameter = $request->get('fiscalCode', false);
     $subscriptionServiceStatusParameter = $request->get('subscriptionServiceStatus', SubscriptionService::STATUS_ACTIVE);
+    $subscriptionStatusParameter = $request->get('status', false);
 
     $qb = $this->em->createQueryBuilder()
       ->select('subscription')
@@ -254,6 +263,11 @@ class SubscriptionsAPIController extends AbstractApiController
     if ($tagsParameter) {
       foreach (explode(',', $tagsParameter) as $tag)
         $qb->andWhere("LOWER(service.tags) LIKE LOWER('%" . $tag . "%')");
+    }
+
+    if ($subscriptionStatusParameter) {
+      $qb->andWhere('subscription.status = LOWER(:subscriptionStatus)')
+        ->setParameter('subscriptionStatus', $subscriptionStatusParameter);
     }
 
     // Filter by user permissions
