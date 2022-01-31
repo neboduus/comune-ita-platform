@@ -2314,6 +2314,8 @@ backoffice:
         identifier: "Identificativo del pagamento"
         service_id: "Identificativo del servizio utilizzato per il pagamento"
         required: "Il pagamento è obbligatorio per tutti gli iscritti?"
+        subscription_fee: "Il pagamento è richiesto al momento di iscrizione?"
+        subscription_fee_description: "Spuntare se il pagamento viene richiesto al momento dell'iscrizione. Tutti i pagamenti successivi al primo sono da considerarsi pagamenti aggiuntivi"
         create_draft: "Crea automaticamente una pratica di pagamento in bozza prima della scadenza?"
         meta: "Metadati utili alla compilazione del servizio"
         meta_available_placeholders: 'Sono disponibili i seguenti placeholders: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
@@ -2330,9 +2332,10 @@ backoffice:
       invalid_service: "L'identificativo %service_id% non è è valido"
       invalid_meta: "Meta non corretto: il valore inserito deve essere un json valido"
       no_service: "L'identificativo %service_id% non corrisponde ad un servizio esistente"
-      duplicate_identifier: 'Identificativo %identifier% duplicato non ammesso per il pagamento impostato per il giorno %date% con causale "%payment_reason%"'
-      no_payment: "Il pagamento non è disponibile per il servizio %service_name%"
-      no_integration: "L'integrazione con il backoffice 'Pagamenti per servizi a sottoscizione' non è abilitata per il servizio %service_name%"
+      duplicate_identifier: "Il pagamento impostato per il giorno %date% con causale '%payment_reason%' non è corretto! L'identificativo %identifier% è già stato utilizzato per un altro pagamento"
+      no_payment: "Il pagamento non è corretto! Il servizio che hai indicato (%service_name%) non prevede un pagamento"
+      no_integration_subscription: "Il pagamento della quota di iscrizione non è corretto! Per il servizio che hai indicato (%service_name%) non è stata abilitata l'integrazione con 'Servizi a sottoscizione'"
+      no_integration_additional_payment: "Il pagamento della quota di iscrizione non è corretto! Per il servizio che hai indicato (%service_name%) non è stata abilitata l'integrazione con 'Pagamenti per servizi a sottoscizione'"
       invalid_date: "Il formato della data %date% non è corretto"
       identifier_change_not_allowed: "Non è possibile modificare l'identificativo di pagamento '%payment_identifier%': sono già state create delle pratiche per questo pagamento "
       messages:

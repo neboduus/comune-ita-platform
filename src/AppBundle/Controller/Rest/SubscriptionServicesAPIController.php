@@ -178,6 +178,14 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *  )
    *
    * @SWG\Parameter(
+   *      name="subscription_fee",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="Filter results by payment type (subscription fee or additional payment)"
+   *  )
+   *
+   * @SWG\Parameter(
    *      name="identifier",
    *      in="query",
    *      type="string",
@@ -211,11 +219,17 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $required = $request->query->get('required');
     $create_draft = $request->query->get('create_draft');
     $identifier = $request->query->get('identifier');
+    $subscriptionFee = $request->query->get('subscription_fee');
 
-    if ($required)
-      $required = strtolower($request->query->get('required')) === "true";
-    if ($create_draft)
-      $create_draft = strtolower($request->query->get('create_draft')) === "true";
+    if ($required) {
+     $required = strtolower($request->query->get('required')) === "true";
+    }
+    if ($create_draft) {
+     $create_draft = strtolower($request->query->get('create_draft')) === "true";
+    }
+    if ($subscriptionFee) {
+     $subscriptionFee = strtolower($request->query->get('subscription_fee')) === "true";
+    }
 
     try {
       $repository = $this->em->getRepository('AppBundle:SubscriptionService');
@@ -223,7 +237,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
-      return $this->view($result->getFilteredSubscriptionPayments($required, $create_draft, $identifier), Response::HTTP_OK);
+      return $this->view($result->getFilteredSubscriptionPayments($required, $create_draft, $identifier, $subscriptionFee), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }

@@ -28,7 +28,29 @@ $('#searchModal').on('show.bs.modal', function () {
   $("#search-subscriber").val('');
 });
 
+function checkPayment(el) {
+  let checkbox = $(el).find('input');
+  let additionalPayments = $(el).siblings();
+  if (checkbox.prop('checked')) {
+    additionalPayments.hide();
+    additionalPayments.find('input').each(function () {
+      $(this).prop("checked", false);
+    })
+  } else {
+    additionalPayments.show();
+  }
+}
+
+$(document).on("change", ".subscription_fee", function(){
+  checkPayment(this)
+});
+
 $(document).ready(function () {
+  let subscriptionFee = $('.subscription_fee');
+  subscriptionFee.each(function () {
+    checkPayment(this)
+  })
+
   $('.edit-btn-modal').on('click', function () {
     let url = $(this).attr('data-url');
     let redirectUrl = $(this).attr('data-redirect');
@@ -129,6 +151,9 @@ $(document).ready(function () {
   TextEditor.init()
 
   $('#modal_select_service').on('change', function () {
+    if (!this.value) {
+      return
+    }
     $('.bootstrap-select-wrapper.select-payment-wrapper').hide();
     $('#modal-service-error').hide();
     let explodedPath = window.location.pathname.split("/");
@@ -195,6 +220,7 @@ $(document).ready(function () {
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_service`).attr('value', data["payment_service"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_required`).attr('checked', data["required"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_create_draft`).attr('checked', data["create_draft"])
+      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_subscription_fee`).attr('checked', data["subscription_fee"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
     }
   })
