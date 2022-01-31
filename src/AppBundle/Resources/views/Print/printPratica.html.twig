@@ -168,8 +168,10 @@
     {% set securityFields = [] %}
     {% if pratica.authenticationData|length > 0 %}
       {% set securityFields = pratica.authenticationData %}
+    {#  Elimino recupero da scheda utente perchè la pratica può essere aperta anche da operatore
     {% elseif user is defined  and user.getSecurityFields %}
       {% set securityFields = user.getSecurityFields %}
+    #}
     {% endif %}
 
     {# @var user \AppBundle\Entity\CPSUser #}
