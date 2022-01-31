@@ -97,6 +97,7 @@ general:
   search: 'Cerca'
 servizio:
   sottotitolo: 'Domande e iscrizioni, contributi e graduatorie, segnalazioni, autorizzazioni e concessioni, certificati e dichiarazioni, pagamenti, servizi pubblici.'
+  sottotitolo_categorie: "Gli argomenti rispondono a un'esigenza di organizzazione dei contenuti del sito istituzionale per temi e rappresentano le principali categorie di contenuti, informazioni e documenti specifici."
   bozza_successo: 'Bozza salvata con successo'
   nessun_template: 'Nessun template disponibile'
   importa: 'Importa da remoto'
@@ -2376,3 +2377,15 @@ buttons:
 breadcrumbs:
   list: 'Lista'
   compile: 'Compila'
+search:
+  label: 'Cerca'
+  close: 'Chiudi'
+  filters: 'Filtri'
+  apply_filters: 'Applica filtri'
+  reset_filters: 'Annulla filtri'
+  results_count: '{0} Trovati <strong>0</strong> servizi|{1} Trovato <strong>1</strong> servizo|]1,Inf[ Trovati <strong>%count%</strong> servizi'
+  topics: 'Argomenti'
+  recipients: 'Destinatari'
+  geographic_areas: 'Aree geografiche'
+
+

@@ -34,10 +34,16 @@ class ServizioRepository extends EntityRepository
 
   private function findNotSharedByCriteria($criteria)
   {
-
     $qb = $this->createQueryBuilder('s')
     ->where('s.sharedWithGroup = :sharedWithGroup')
     ->setParameter('sharedWithGroup', false);
+
+    // Search text
+    if (isset($criteria['search_text'])) {
+      $qb
+        ->andWhere($qb->expr()->like('LOWER(s.name)', ':search_text'))
+        ->setParameter('search_text', '%' . strtolower($criteria['search_text']) . '%');
+    }
 
     // Status
     if (isset($criteria['status'])) {
@@ -61,7 +67,7 @@ class ServizioRepository extends EntityRepository
       // topics
     if (isset($criteria['topics'])) {
       $qb
-        ->andWhere('s.topics = :topics')
+        ->andWhere('s.topics IN (:topics)')
         ->setParameter('topics', $criteria['topics']);
     }
 
@@ -69,7 +75,7 @@ class ServizioRepository extends EntityRepository
     if (isset($criteria['recipients'])) {
       $qb
         ->leftJoin('s.recipients', 'recipients')
-        ->andWhere('recipients.id = :recipients')
+        ->andWhere('recipients.id IN (:recipients)')
         ->setParameter('recipients', $criteria['recipients']);
     }
 
@@ -77,7 +83,7 @@ class ServizioRepository extends EntityRepository
     if (isset($criteria['geographic_areas'])) {
       $qb
         ->leftJoin('s.geographicAreas', 'geographicAreas')
-        ->andWhere('geographicAreas.id = :geographic_areas')
+        ->andWhere('geographicAreas.id IN (:geographic_areas)')
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
 
@@ -87,12 +93,18 @@ class ServizioRepository extends EntityRepository
 
   private function findSharedByCriteria($criteria)
   {
-
     $qb = $this->createQueryBuilder('s')
       ->leftJoin('s.serviceGroup', 'serviceGroup')
       ->where('s.serviceGroup IS NOT NULL')
       ->andWhere('s.sharedWithGroup = :sharedWithGroup')
       ->setParameter('sharedWithGroup', true);
+
+    // Search text
+    if (isset($criteria['search_text'])) {
+      $qb
+        ->andWhere($qb->expr()->like('LOWER(s.name)', ':search_text'))
+        ->setParameter('search_text', '%' . strtolower($criteria['search_text']) . '%');
+    }
 
     // Status
     if (isset($criteria['status'])) {
@@ -111,7 +123,7 @@ class ServizioRepository extends EntityRepository
     // topics
     if (isset($criteria['topics'])) {
       $qb
-        ->andWhere('serviceGroup.topics = :topics')
+        ->andWhere('serviceGroup.topics IN (:topics)')
         ->setParameter('topics', $criteria['topics']);
     }
 
@@ -119,7 +131,7 @@ class ServizioRepository extends EntityRepository
     if (isset($criteria['recipients'])) {
       $qb
         ->leftJoin('serviceGroup.recipients', 'recipients')
-        ->andWhere('recipients.id = :recipients')
+        ->andWhere('recipients.id IN (:recipients)')
         ->setParameter('recipients', $criteria['recipients']);
     }
 
@@ -127,7 +139,7 @@ class ServizioRepository extends EntityRepository
     if (isset($criteria['geographic_areas'])) {
       $qb
         ->leftJoin('serviceGroup.geographicAreas', 'geographicAreas')
-        ->andWhere('geographicAreas.id = :geographic_areas')
+        ->andWhere('geographicAreas.id IN (:geographic_areas)')
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
 
@@ -141,13 +153,6 @@ class ServizioRepository extends EntityRepository
 
     $criteria['grouped'] = false;
     $criteria['status'] = Servizio::PUBLIC_STATUSES;
-
-    /*$qb = $this->createQueryBuilder('s')
-      ->where('s.status NOT IN (:notAvailableStatues)')
-      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
-      ->andWhere('s.serviceGroup IS NULL')
-      ->orderBy('s.name', 'ASC');
-    return $qb->getQuery()->getResult();*/
     return $this->findByCriteria($criteria);
   }
 

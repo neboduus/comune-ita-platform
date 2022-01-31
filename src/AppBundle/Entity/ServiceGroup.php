@@ -137,14 +137,14 @@ class ServiceGroup
   private $topics;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Recipient")
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Recipient", inversedBy="servicesGroup")
    * @Serializer\Exclude
    * @var ArrayCollection
    */
   private $recipients;
 
   /**
-   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\GeographicArea", inversedBy="services")
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\GeographicArea", inversedBy="servicesGroup")
    * @Serializer\Exclude
    * @var ArrayCollection
    */

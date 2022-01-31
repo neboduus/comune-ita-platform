@@ -7,8 +7,9 @@
       <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ 'nav.servizi'|trans }}</h1>
         <div class="clearfix">
-          <p>Gli argomenti rispondono a un'esigenza di organizzazione dei contenuti del sito istituzionale per temi e rappresentano le principali categorie di contenuti, informazioni e documenti specifici.</p>
+          <p>{{ 'servizio.sottotitolo_categorie'|trans }}</p>
         </div>
+        {{ include('@App/Servizi/parts/_searchForm.html.twig') }}
       </div>
     </div>
   </section>

@@ -114,6 +114,14 @@ class ServicesAPIController extends AbstractFOSRestController
    * @Rest\Get("", name="services_api_list")
    *
    * * @SWG\Parameter(
+   *      name="search_text",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Search text"
+   *  )
+   *
+   * * @SWG\Parameter(
    *      name="status",
    *      in="query",
    *      type="string",
@@ -175,67 +183,16 @@ class ServicesAPIController extends AbstractFOSRestController
   {
 
     try {
-
-      $status = $request->get('status', false);
-      $serviceGroupId = $request->get('service_group_id', false);
-      $categoryId = $request->get('topics_id', false);
-      $recipientId = $request->get('recipient_id', false);
-      $geographicAreaId = $request->get('geographic_area_id', false);
-      $grouped = boolean_value($request->get('grouped', true));
-
-      if ($status && in_array($status, Servizio::PUBLIC_STATUSES)) {
-        $criteria['status'] = [$status];
-      } else {
-        $criteria['status'] = Servizio::PUBLIC_STATUSES;
-      }
-      $criteria['grouped'] = $grouped;
-
       $result = [];
-      $repoServices = $this->em->getRepository(Servizio::class);
-
-      if ($serviceGroupId) {
-        $serviceGroupRepo = $this->em->getRepository('AppBundle:ServiceGroup');
-        $serviceGroup = $serviceGroupRepo->find($serviceGroupId);
-        if (!$serviceGroup instanceof ServiceGroup) {
-          return $this->view(["Service group not found"], Response::HTTP_NOT_FOUND);
-        }
-        $criteria['serviceGroup'] = $serviceGroupId;
-      }
-
-      if ($categoryId) {
-        $categoriesRepo = $this->em->getRepository('AppBundle:Categoria');
-        $category = $categoriesRepo->find($categoryId);
-        if (!$category instanceof Categoria) {
-          return $this->view(["Category not found"], Response::HTTP_NOT_FOUND);
-        }
-        $criteria['topics'] = $categoryId;
-      }
-
-      if ($recipientId) {
-        $recipientsRepo = $this->em->getRepository('AppBundle:Recipient');
-        $recipient = $recipientsRepo->find($recipientId);
-        if (!$recipient instanceof Recipient) {
-          return $this->view(["Recipient not found"], Response::HTTP_NOT_FOUND);
-        }
-        $criteria['recipients'] = $recipientId;
-      }
-
-      if ($geographicAreaId) {
-        $geographicAreaRepo = $this->em->getRepository('AppBundle:GeographicArea');
-        $geographicArea = $geographicAreaRepo->find($geographicAreaId);
-        if (!$geographicArea instanceof GeographicArea) {
-          return $this->view(["Geographic area not found"], Response::HTTP_NOT_FOUND);
-        }
-        $criteria['geographic_areas'] = $geographicAreaId;
-      }
-
-      $services = $repoServices->findByCriteria($criteria);
+      $services = $this->serviceManager->getServices($request);
 
       foreach ($services as $s) {
         $result [] = Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
       }
 
       return $this->view($result, Response::HTTP_OK);
+    } catch (NotFoundHttpException $e) {
+      return $this->view([$e->getMessage()], Response::HTTP_NOT_FOUND);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
@@ -249,7 +206,24 @@ class ServicesAPIController extends AbstractFOSRestController
 
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+  }
 
+  /**
+   * Retreive service's facets
+   * @Rest\Get("/facets", name="service_api_facets")
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retreive service's facets"
+   * )
+   *
+   * @SWG\Tag(name="services")
+   *
+   */
+  public function facetsAction()
+  {
+    $data = $this->serviceManager->getFacets();
+    return $this->view($data, Response::HTTP_OK);
   }
 
   /**
