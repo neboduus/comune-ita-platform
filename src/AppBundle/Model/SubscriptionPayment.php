@@ -42,6 +42,12 @@ class SubscriptionPayment implements \JsonSerializable
 
   /**
    * @var bool
+   * @SWG\Property(description="Is the payment required upon registration or is it an additional payment? (All payments subsequent to the first are to be considered additional payments)", type="boolean")
+   */
+  private $subscriptionFee = false;
+
+  /**
+   * @var bool
    * @SWG\Property(description="Is payment required for all subscribers?", type="boolean")
    */
   private $required = true;
@@ -131,6 +137,16 @@ class SubscriptionPayment implements \JsonSerializable
     $this->required = $required;
   }
 
+  public function isSubscriptionFee()
+  {
+    return $this->subscriptionFee;
+  }
+
+  public function setSubscriptionFee($subscriptionFee)
+  {
+    $this->subscriptionFee = $subscriptionFee;
+  }
+
   public function getCreateDraft()
   {
     return $this->createDraft;
@@ -183,7 +199,8 @@ class SubscriptionPayment implements \JsonSerializable
       'meta'=> $this->meta,
       'code' => $this->subscriptionServiceCode,
       'required' => $this->required,
-      'create_draft' => $this->createDraft
+      'create_draft' => $this->createDraft,
+      'subscription_fee' => $this->subscriptionFee
     );
   }
 

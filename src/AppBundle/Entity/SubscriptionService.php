@@ -568,6 +568,7 @@ class SubscriptionService
         $payment->setSubscriptionServiceCode($this->code);
         $payment->setRequired($subscriptionPayment['required'] ?? true);
         $payment->setCreateDraft($subscriptionPayment['create_draft'] ?? true);
+        $payment->setSubscriptionFee($subscriptionPayment['subscription_fee'] ?? false);
 
         $subscriptionPayments[] = $payment;
       } else {
@@ -581,7 +582,7 @@ class SubscriptionService
    * @return SubscriptionPayment[]
    * @throws \Exception
    */
-  public function getFilteredSubscriptionPayments($required = null, $createDraft = null, $identifier=null)
+  public function getFilteredSubscriptionPayments($required = null, $createDraft = null, $identifier=null, $subscriptionFee=null)
   {
     $subscriptionPayments = [];
 
@@ -597,6 +598,7 @@ class SubscriptionService
         $payment->setSubscriptionServiceCode($this->code);
         $payment->setRequired($subscriptionPayment['required'] ?? true);
         $payment->setCreateDraft($subscriptionPayment['create_draft'] ?? true);
+        $payment->setSubscriptionFee($subscriptionPayment['subscription_fee'] ?? false);
       } else {
         $payment = $subscriptionPayment;
       }
@@ -608,6 +610,9 @@ class SubscriptionService
         $canAdd = false;
       }
       if ($identifier && $payment->getPaymentIdentifier() !== $identifier) {
+        $canAdd = false;
+      }
+      if ($subscriptionFee !== null && $payment->isSubscriptionFee() !== $subscriptionFee) {
         $canAdd = false;
       }
       if ($canAdd) {

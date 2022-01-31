@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\BackOffice\SubcriptionPaymentsBackOffice;
+use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\Servizio;
 use AppBundle\Model\SubscriptionPayment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -58,6 +59,10 @@ class SubscriptionPaymentType extends AbstractType
       ->add('payment_service', TextType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.service_id'
       ])
+      ->add('subscription_fee', CheckboxType::class, [
+        'label' => 'backoffice.integration.subscription_service.payment.subscription_fee',
+        'required' => false
+      ])
       ->add('required', CheckboxType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.required',
         'required' => false
@@ -69,9 +74,9 @@ class SubscriptionPaymentType extends AbstractType
       ->add('meta', TextareaType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.meta',
         'required' => false,
-        'empty_data'=>"{}",
+        'empty_data' => "{}",
         # ignore summernote
-        'attr'=>['class' => 'simple']
+        'attr' => ['class' => 'simple']
       ]);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
@@ -103,10 +108,17 @@ class SubscriptionPaymentType extends AbstractType
           );
         }
 
-        if (!$service->getIntegrations() || !in_array(SubcriptionPaymentsBackOffice::class, $service->getIntegrations())) {
-          // Integration with subscription service payments is not enabled for service
+        // Integration with subscription service payments is not enabled for service
+        if (isset($data['subscription_fee']) && !in_array(SubcriptionsBackOffice::class, $service->getIntegrations())) {
           $event->getForm()->addError(
-            new FormError($this->translator->trans('backoffice.integration.subscription_service.no_integration',
+            new FormError($this->translator->trans('backoffice.integration.subscription_service.no_integration_subscription',
+              ["%service_name%" => $service->getName()]))
+          );
+        }
+
+        if (!isset($data['subscription_fee']) && !in_array(SubcriptionPaymentsBackOffice::class, $service->getIntegrations())) {
+          $event->getForm()->addError(
+            new FormError($this->translator->trans('backoffice.integration.subscription_service.no_integration_additional_payment',
               ["%service_name%" => $service->getName()]))
           );
         }
@@ -139,7 +151,7 @@ class SubscriptionPaymentType extends AbstractType
       if (!empty($results)) {
         $event->getForm()->addError(
           new FormError($this->translator->trans('backoffice.integration.subscription_service.identifier_change_not_allowed', [
-            '%payment_identifier%'=> $subscriptionPayment->getPaymentIdentifier()
+            '%payment_identifier%' => $subscriptionPayment->getPaymentIdentifier()
           ]))
         );
       }
