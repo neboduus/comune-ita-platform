@@ -1,0 +1,78 @@
+<div class="modal modal-fullscreen fade" tabindex="-1" id="globalSearchModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header my-3">
+        <div class="container">
+          <div class="row">
+            <div class="offset-md-12 col-sm-12 text-center">
+              <button class="close float-left mt-1" type="button" data-dismiss="modal" aria-label="{{ 'search.close'|trans }}" title="{{ 'search.close'|trans }}">
+                <svg class="icon icon-primary">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-left-circle"></use>
+                </svg>
+              </button>
+              <h1 id="searchModalLabel" class="d-none d-sm-block">{{ 'search.label'|trans }}</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body p-0">
+
+        <form action="{{ path('search') }}" method="get" data-facets-url="{{ path('service_api_facets') }}">
+          <div class="container">
+            <div class="row">
+              <div class="offset-lg-2 col-lg-8 offset-md-1 col-md-10 col-sm-12">
+                <div class="form-group">
+                  <div class="form-label-group">
+                    <label class="sr-only active" for="search-gui-text">{{ 'search.label'|trans }}</label>
+                    <input type="text" autocomplete="off" class="form-control" id="search-gui-text" name="search_text" placeholder="{{ 'search.label'|trans }}">
+                    <button type="submit" class="autocomplete-icon btn btn-link" aria-label="{{ 'search.label'|trans }}">
+                      <svg class="icon icon-sm">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-search"></use>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container mt-3">
+            <div class="nav-tabs-hidescroll w-100">
+              <div class="row">
+                <div class="col-12">
+                  <ul class="nav nav-tabs auto">
+                    <li class="nav-item">
+                      <a data-toggle="tab" class="nav-link active" href="#filter-topics_id">{{ 'search.topics'|trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                      <a data-toggle="tab" class="nav-link" href="#filter-recipient_id">
+                        {{ 'search.recipients'|trans }}
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a data-toggle="tab" class="nav-link" href="#filter-geographic_area_id">
+                        {{ 'search.geographic_areas'|trans }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-content my-5">
+              <div class="tab-pane active" id="filter-topics_id">
+                <div class="row fields"></div>
+              </div>
+              <div class="tab-pane" id="filter-recipient_id">
+                <div class="row fields"></div>
+              </div>
+              <div class="tab-pane" id="filter-geographic_area_id">
+                <div class="row fields"></div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

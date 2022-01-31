@@ -38,3 +38,5 @@ require('bootstrap-italia/src/js/plugins/select');
 //require('bootstrap-italia/src/js/plugins/custom-select');
 require('bootstrap-italia/src/js/plugins/rating');
 require('bootstrap-italia/src/js/plugins/dimmer');
+
+import './utils/Search';

@@ -87,6 +87,9 @@ services:
   AppBundle\Controller\Ui\Frontend\MessagesController:
     autowire: true
 
+  AppBundle\Controller\Ui\Frontend\SearchController:
+    autowire: true
+
   AppBundle\Controller\Ui\Frontend\UserController:
     autowire: true
 

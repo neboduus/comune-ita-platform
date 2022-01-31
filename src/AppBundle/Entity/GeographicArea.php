@@ -81,6 +81,13 @@ class GeographicArea implements Translatable
   private $services;
 
   /**
+   * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ServiceGroup", mappedBy="geographicAreas")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $servicesGroup;
+
+  /**
    * @Serializer\Exclude()
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
@@ -98,6 +105,7 @@ class GeographicArea implements Translatable
       $this->id = Uuid::uuid4();
     }
     $this->services = new ArrayCollection();
+    $this->servicesGroup = new ArrayCollection();
   }
 
   /**
@@ -192,6 +200,22 @@ class GeographicArea implements Translatable
   public function setServices(ArrayCollection $services): void
   {
     $this->services = $services;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getServicesGroup(): ArrayCollection
+  {
+    return $this->servicesGroup;
+  }
+
+  /**
+   * @param ArrayCollection $servicesGroup
+   */
+  public function setServicesGroup(ArrayCollection $servicesGroup): void
+  {
+    $this->servicesGroup = $servicesGroup;
   }
 
   public function setTranslatableLocale($locale)
