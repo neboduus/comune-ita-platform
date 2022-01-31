@@ -18,44 +18,50 @@ class SubscriberType extends AbstractType
     $builder
       ->add('name', TextType::class, [
         'required' => true,
-        'label' => 'Nome'
+        'label' => 'iscrizioni.subscribers.name',
+        'disabled' => $options['is_edit']
       ])
       ->add('surname', TextType::class, [
         'required' => true,
-        'label' => 'Cognome'
+        'label' => 'iscrizioni.subscribers.surname',
+        'disabled' => $options['is_edit']
       ])
       ->add('date_of_birth', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'Nato/a il'
+        'label' => 'iscrizioni.subscribers.date_of_birth',
+        'disabled' => $options['is_edit']
       ])
       ->add('place_of_birth', TextType::class, [
         'required' => true,
-        'label' => 'A'
+        'label' => 'iscrizioni.subscribers.place_of_birth',
+        'disabled' => $options['is_edit']
       ])
       ->add('fiscal_code', TextType::class, [
         'required' => true,
-        'label' => 'Codice fiscale'
+        'label' => 'iscrizioni.subscribers.fiscal_code',
+        'disabled' => $options['is_edit']
       ])
       ->add('address', TextType::class, [
-        'required' => true,
-        'label' => 'Indirizzo'
+        'required' => false,
+        'label' => 'iscrizioni.subscribers.address'
       ])
       ->add('house_number', TextType::class, [
-        'required' => true,
-        'label' => 'Numero civico'
+        'required' => false,
+        'label' => 'iscrizioni.subscribers.house_number'
       ])
       ->add('municipality', TextType::class, [
-        'required' => true,
-        'label' => 'Comune'
+        'required' => false,
+        'label' => 'iscrizioni.subscribers.municipality'
       ])
       ->add('postal_code', TextType::class, [
-        'required' => true,
-        'label' => 'CAP'
+        'required' => false,
+        'label' => 'iscrizioni.subscribers.postal_code'
       ])
       ->add('email', EmailType::class, [
         'required' => true,
-        'label' => 'Email'
+        'label' => 'iscrizioni.subscribers.email_address',
+        'disabled' => $options['is_edit']
       ]);
   }
 
@@ -63,7 +69,8 @@ class SubscriberType extends AbstractType
   {
     $resolver->setDefaults(array(
       'data_class' => Subscriber::class,
-      'csrf_protection' => false
+      'csrf_protection' => false,
+      'is_edit' => false
     ));
 
   }

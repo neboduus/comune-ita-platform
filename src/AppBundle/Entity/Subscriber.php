@@ -5,10 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
 use Swagger\Annotations as SWG;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -21,18 +23,25 @@ class Subscriber
      * @ORM\Column(type="guid")
      * @ORM\Id
      * @SWG\Property(description="Subscriber's uuid")
+     * @Groups({"read"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="name")
+     * @Assert\NotNull()
      * @SWG\Property(description="Subscriber's name")
+     * @Groups({"read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="surname")
+     * @Assert\NotNull()
      * @SWG\Property(description="Subscriber's surname")
+     * @Groups({"read"})
      */
     private $surname;
 
@@ -45,49 +54,63 @@ class Subscriber
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\NotBlank(message="date_of_birth")
+     * @Assert\NotNull()
      * @SWG\Property(description="Subscriber's date of birth")
+     * @Groups({"read"})
      */
     private $date_of_birth;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="place_of_birth")
+     * @Assert\NotNull()
      * @SWG\Property(description="Subscriber's place of birth")
+     * @Groups({"read"})
      */
     private $place_of_birth;
 
     /**
      * @ORM\Column(type="string", length=16)
+     * @Assert\NotBlank(message="fiscal_code")
+     * @Assert\NotNull()
      * @SWG\Property(description="Subscriber's fiscal code")
+     * @Groups({"read"})
      */
     private $fiscal_code;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @SWG\Property(description="Subscriber's address")
+     * @Groups({"read", "write"})
      */
     private $address;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @SWG\Property(description="Subscriber's house number")
+     * @Groups({"read", "write"})
      */
     private $house_number;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @SWG\Property(description="Subscriber's municipality")
+     * @Groups({"read", "write"})
      */
     private $municipality;
 
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", length=5, nullable=true)
      * @SWG\Property(description="Subscriber's postal code")
+     * @Groups({"read", "write"})
      */
     private $postal_code;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @SWG\Property(description="Subscriber's email")
+     * @Groups({"read"})
      */
     private $email;
 
@@ -204,7 +227,7 @@ class Subscriber
         return $this->address;
     }
 
-    public function setAddress(string $address): self
+    public function setAddress(?string $address): self
     {
         $this->address = $address;
 
@@ -216,7 +239,7 @@ class Subscriber
         return $this->house_number;
     }
 
-    public function setHouseNumber(string $house_number): self
+    public function setHouseNumber(?string $house_number): self
     {
         $this->house_number = $house_number;
 
@@ -228,7 +251,7 @@ class Subscriber
         return $this->municipality;
     }
 
-    public function setMunicipality(string $municipality): self
+    public function setMunicipality(?string $municipality): self
     {
         $this->municipality = $municipality;
 
@@ -240,7 +263,7 @@ class Subscriber
         return $this->postal_code;
     }
 
-    public function setPostalCode(string $postal_code): self
+    public function setPostalCode(?string $postal_code): self
     {
         $this->postal_code = $postal_code;
 
@@ -263,4 +286,20 @@ class Subscriber
     {
       return $this->name . ' ' . $this->surname;
     }
+
+  /**
+   * @Serializer\VirtualProperty(name="subscriptions")
+   * @Serializer\Type("array<string>")
+   * @Serializer\SerializedName("subscriptions")
+   * @Groups({"read"})
+   */
+  public function getSubscriptionsId(): array
+  {
+    $subscriptions = [];
+    foreach ($this->getSubscriptions() as $subscription)
+    {
+      $subscriptions[] = $subscription->getId();
+    }
+    return $subscriptions;
+  }
 }

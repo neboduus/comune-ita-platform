@@ -4,8 +4,6 @@ namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\Subscriber;
-use AppBundle\Entity\Subscription;
-use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;

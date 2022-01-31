@@ -46,7 +46,7 @@ security:
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
     api_secure:
-      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|tenants|subscriptions|subscription-services\/.{36}\/subscriptions)
+      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|tenants|subscriptions|subscribers|subscription-services\/.{36}\/subscriptions)
       stateless: true
       provider: fos_userbundle
       guard:
