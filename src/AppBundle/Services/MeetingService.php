@@ -315,30 +315,37 @@ class MeetingService
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
     /** @var Pratica $application */
-    $application = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0] : null;
-    $service = $application ? $application->getServizio()->getName() : "";
-    $serviceGroup = $application && $application->getServizio()->getServiceGroup() ? $application->getServizio()->getServiceGroup()->getName() : "";
+    $application = $meeting->getApplications()->last();
+    $serviceName = "";
+    $serviceDetail = "";
+    if ($application) {
+      // Todo: get from default locale
+      $locale = $application->getLocale() ?? 'it';
+      $service = $application->getServizio();
+      $service->setTranslatableLocale($locale);
+      $serviceName = $service->getName();
+      $serviceGroup = $service->getServiceGroup();
+      if ($serviceGroup) {
+        $serviceDetail = $this->translator->trans(
+          'meetings.email.service_detail_with_group', ['%service%'=>$serviceName, '%group%' => $serviceGroup->getName()]
+        );
+      } else {
+        $serviceDetail = $this->translator->trans(
+          'meetings.email.service_detail', ['%service%'=>$serviceName]
+        );
+      }
+    }
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
     $contact = $calendar->getContactEmail();
 
-    if ($serviceGroup) {
-      $serviceDetail = $this->translator->trans(
-        'meetings.email.service_detail_with_group', ['%service%'=>$service, '%group%' => $serviceGroup]
-      );
-    } else {
-      $serviceDetail = $this->translator->trans(
-        'meetings.email.service_detail', ['%service%'=>$service]
-      );
-    }
-
     if ($status == Meeting::STATUS_PENDING) {
-      $userMessage = $this->translator->trans('meetings.email.new_meeting.pending', ['%service%' => $service]);
+      $userMessage = $this->translator->trans('meetings.email.new_meeting.pending', ['%service%' => $serviceName]);
     } else if ($status == Meeting::STATUS_APPROVED) {
       $userMessage = $this->translator->trans('meetings.email.new_meeting.approved',
         [
-          '%service%' => $service,
+          '%service%' => $serviceName,
           'hour' => $hour,
           'date' => $date,
           'location' => $calendar->getLocation()
@@ -473,25 +480,33 @@ class MeetingService
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
     /** @var Pratica $application */
-    $application = count($meeting->getApplications()) > 0 ? $meeting->getApplications()[0] : null;
-    $service = $application ? $application->getServizio()->getName() : "";
-    $serviceGroup = $application && $application->getServizio()->getServiceGroup() ? $application->getServizio()->getServiceGroup()->getName() : "";
+    /** @var Pratica $application */
+    $application = $meeting->getApplications()->last();
+    $serviceName = "";
+    $serviceDetail = "";
+    if ($application) {
+      // Todo: get from default locale
+      $locale = $application->getLocale() ?? 'it';
+      $service = $application->getServizio();
+      $service->setTranslatableLocale($locale);
+      $serviceName = $service->getName();
+      $serviceGroup = $service->getServiceGroup();
+      if ($serviceGroup) {
+        $serviceDetail = $this->translator->trans(
+          'meetings.email.service_detail_with_group', ['%service%'=>$serviceName, '%group%' => $serviceGroupName]
+        );
+      } else {
+        $serviceDetail = $this->translator->trans(
+          'meetings.email.service_detail', ['%service%'=>$serviceName]
+        );
+      }
+    }
     $ente = $this->instanceService->getCurrentInstance();
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
     $location = $calendar->getLocation();
     $contact = $calendar->getContactEmail();
     $link = $meeting->getVideoconferenceLink();
-
-    if ($serviceGroup) {
-      $serviceDetail = $this->translator->trans(
-        'meetings.email.service_detail_with_group', ['%service%'=>$service, '%group%' => $serviceGroup]
-      );
-    } else {
-      $serviceDetail = $this->translator->trans(
-        'meetings.email.service_detail', ['%service%'=>$service]
-      );
-    }
 
     /*
      * invio email se:
@@ -506,21 +521,21 @@ class MeetingService
     if ($statusChanged && $status == Meeting::STATUS_REFUSED) {
       // Meeting has been refused. Date change does not matter
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.refused', [
-        '%service%' => $service,
+        '%service%' => $serviceName,
         'date' => $date,
         'email_address' => $contact
       ]);
     } else if ($statusChanged && $status == Meeting::STATUS_CANCELLED) {
       // Meeting has been cancelled. Date change does not matter
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.cancelled', [
-        '%service%' => $service,
+        '%service%' => $serviceName,
         'date' => $date,
         'hour' => $hour
       ]);
     } else if (!$statusChanged && $dateChanged && $status == Meeting::STATUS_APPROVED) {
       // Approved meeting has been rescheduled
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.rescheduled', [
-        '%service%' => $service,
+        '%service%' => $serviceName,
         'old_date' => $oldDate->format('d/m/Y'),
         'hour' => $hour,
         'new_date' => $date,
@@ -529,7 +544,7 @@ class MeetingService
     } else if ($statusChanged && $dateChanged && $status == Meeting::STATUS_APPROVED) {
       // Auto approved meeting due to date change
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.rescheduled_and_approved', [
-        '%service%' => $service,
+        '%service%' => $serviceName,
         'hour' => $hour,
         'date' => $date,
         'location' => $location
@@ -537,7 +552,7 @@ class MeetingService
     } else if ($statusChanged && !$dateChanged && $status == Meeting::STATUS_APPROVED) {
       // Approved meeting with no date change
       $userMessage = $this->translator->trans('meetings.email.edit_meeting.approved', [
-        '%service%' => $service,
+        '%service%' => $serviceName,
         'hour' => $hour,
         'date' => $date,
         'location' => $location,
@@ -546,16 +561,16 @@ class MeetingService
       // Videoconference link changed for approved meeting
       if ($link && $oldLink) {
         $userMessage = $this->translator->trans('meetings.email.meeting_link.changed', [
-          '%service%' => $service,
+          '%service%' => $serviceName,
           'videoconference_link' => $link
         ]);
       } else if (!$oldLink) {
         $userMessage = $this->translator->trans('meetings.email.meeting_link.new', [
-          '%service%' => $service,
+          '%service%' => $serviceName,
           'videoconference_link' => $link
         ]);
       } else if (!$link) {
-        $userMessage = $this->translator->trans('meetings.email.meeting_link.removed', ['%service%' => $service]);
+        $userMessage = $this->translator->trans('meetings.email.meeting_link.removed', ['%service%' => $serviceName]);
       }
 
     } else return;
