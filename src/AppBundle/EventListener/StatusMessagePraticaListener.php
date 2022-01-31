@@ -76,6 +76,16 @@ class StatusMessagePraticaListener
     $pratica = $event->getPratica();
     $newStatus = $event->getNewStateIdentifier();
 
+    // Todo: get from default locale
+    $locale = $pratica->getLocale() ?? 'it';
+    $service = $pratica->getServizio();
+    $service->setTranslatableLocale($locale);
+    try {
+      $this->entityManager->refresh($service);
+    } catch (ORMException $e) {
+      $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+    }
+
     $feedbackMessages = $pratica->getServizio()->getFeedbackMessages();
 
     if (in_array($newStatus, $this->blacklistedStates)) {
@@ -96,8 +106,6 @@ class StatusMessagePraticaListener
 
     $defaultMessage = $this->translator->trans('messages.pratica.status.' . $newStatus, $placeholders);
     $defaultSubject = $this->translator->trans('pratica.email.status_change.subject', $placeholders);
-    $generateMessage = false;
-
 
     if (!isset($feedbackMessages[$newStatus])) {
       if ($newStatus == Pratica::STATUS_PENDING) {

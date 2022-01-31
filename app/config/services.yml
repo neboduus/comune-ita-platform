@@ -29,13 +29,9 @@ services:
 
   ocsdc.meeting_service:
     class: AppBundle\Services\MeetingService
+    autowire: true
     arguments:
-      - '@doctrine.orm.entity_manager'
-      - '@ocsdc.instance_service'
-      - '@ocsdc.mailer'
-      - '%default_from_email_address%'
-      - '@translator'
-      - '@router'
+      $defaultSender: "%default_from_email_address%"
 
   ocsdc.meeting_eventlistener:
     class: AppBundle\EventListener\MeetingLifeCycleListener

@@ -4,6 +4,9 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -19,15 +22,27 @@ class PraticaPlaceholderService
    * @var TranslatorInterface
    */
   private $translator;
+  /**
+   * @var EntityManager
+   */
+  private $em;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
   /**
    * PraticaPlaceholderService constructor.
+   * @param EntityManager $entityManager
    * @param RouterInterface $router
    * @param TranslatorInterface $translator
+   * @param LoggerInterface $logger
    */
-  public function __construct(RouterInterface $router, TranslatorInterface $translator) {
+  public function __construct(EntityManager $entityManager, RouterInterface $router, TranslatorInterface $translator, LoggerInterface $logger) {
+    $this->em = $entityManager;
     $this->router = $router;
     $this->translator = $translator;
+    $this->logger = $logger;
   }
 
   /**
@@ -36,6 +51,16 @@ class PraticaPlaceholderService
    */
   public function getPlaceholders(Pratica $pratica)
   {
+    // Todo: get from default locale
+    $locale = $pratica->getLocale() ?? 'it';
+    $service = $pratica->getServizio();
+    $service->setTranslatableLocale($locale);
+    try {
+      $this->em->refresh($service);
+    } catch (ORMException $e) {
+      $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+    }
+
     $submissionTime = $pratica->getSubmissionTime() ? (new \DateTime())->setTimestamp(
       $pratica->getSubmissionTime()
     ) : null;
@@ -44,8 +69,8 @@ class PraticaPlaceholderService
     $placeholders = [
       '%id%' => $pratica->getId(),
       '%pratica_id%' => $pratica->getId(),
-      '%servizio%' => $pratica->getServizio()->getName(),
-      '%service_fullname%' => $pratica->getServizio()->getFullName(),
+      '%servizio%' => $service->getName(),
+      '%service_fullname%' => $service->getFullName(),
       '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
       '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito(
       ) : $this->translator->trans('messages.pratica.no_reason'),
