@@ -84,6 +84,11 @@ services:
     arguments:
       $defaultApiVersion: "%api_version%"
 
+  AppBundle\Controller\Rest\SubscribersAPIController:
+    autowire: true
+    arguments:
+      $defaultApiVersion: "%api_version%"
+
   AppBundle\Controller\Ui\Frontend\MessagesController:
     autowire: true
 
@@ -1278,6 +1283,12 @@ services:
 
   security.access.subscription_voter:
     class: AppBundle\Security\Voters\SubscriptionVoter
+    autowire: true
+    tags:
+      - { name: security.voter }
+
+  security.access.subscriber_voter:
+    class: AppBundle\Security\Voters\SubscriberVoter
     autowire: true
     tags:
       - { name: security.voter }

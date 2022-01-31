@@ -11,6 +11,7 @@ use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
+use AppBundle\Entity\User;
 use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\SubscriptionsService;
@@ -25,6 +26,7 @@ use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -758,6 +760,40 @@ class SubscriptionsController extends Controller
 
     return $this->redirectToRoute('subscription_show_cpsuser', [
       'subscriptionId' => $subscriptionId
+    ]);
+  }
+
+  /**
+   * @Route("operatori/subscriber/{subscriber}/edit", name="operatori_subscriber_edit")
+   * @ParamConverter("subscriber", class="AppBundle:Subscriber")
+   * @param Request $request the request
+   * @param Subscriber $subscriber The Subscriber entity
+   *
+   * @return Response
+   */
+  public function editSubscriberAction(Request $request, Subscriber $subscriber)
+  {
+    /** @var User $user */
+    $user = $this->getUser();
+
+    $form = $this->createForm('AppBundle\Form\SubscriberType', $subscriber, ['is_edit' => true]);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+      try {
+        $this->entityManager->persist($subscriber);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('operatori_subscriber_show', ['subscriber' => $subscriber->getId()]);
+      } catch (\Exception $exception) {
+        $this->addFlash('error', $this->translator->trans('backoffice.integration.subscriptions.save_subscriber_error', ['user' => $subscriber->getCompleteName()]));
+      }
+    }
+
+    return $this->render('@App/Subscriber/editSubscriber.html.twig', [
+      'user' => $user,
+      'form' => $form->createView(),
+      'subscriber' => $subscriber
     ]);
   }
 

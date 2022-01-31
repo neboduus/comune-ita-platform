@@ -229,7 +229,7 @@ nelmio_api_doc:
     default:
       path_patterns: # an array of regexps
         #- ^/%prefix%/api(?!/doc$)
-        - ^/%prefix%/api/(services|services-groups|applications|subscription-services|subscriptions|calendars|meetings|folders|documents|messages|users|tenants|categories|recipients|geographic-areas)(?!/doc$)
+        - ^/%prefix%/api/(services|services-groups|applications|subscription-services|subscriptions|calendars|meetings|folders|documents|messages|users|tenants|categories|recipients|geographic-areas|subscribers)(?!/doc$)
     v2:
       name_patterns:
         - ^v2

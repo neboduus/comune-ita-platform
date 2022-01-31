@@ -381,6 +381,8 @@ iscrizioni:
   torna_all_iscrizione: "Torna all'iscrizione"
   back_to_service: "Torna al servizio"
   back_to_list: "Torna alla lista"
+  back_to_subscriber: "Torna all'iscritto"
+  edit_registry: 'Modifica anagrafica'
   payments: "Pagamenti"
   subscriptions: "Iscrizioni"
   subscriber_data: "Scheda personale"
@@ -471,12 +473,18 @@ iscrizioni:
   status_2: "Non attivo"
   errore_salvataggio: "Si è verificato un errore durante il salvataggio dell'iscrizione"
   subscribers:
+    registry: 'Anagrafica'
     show: 'Mostra'
     completename: "Nome e cognome"
     name: 'Nome'
     surname: 'Cognome'
     fiscal_code: 'Codice fiscale'
     date_of_birth: 'Data di nascita'
+    place_of_birth: 'Luogo di nascita'
+    address: 'Indirizzo'
+    house_number: 'Numero civico'
+    municipality: 'Comune'
+    postal_code: 'CAP'
     email_address: 'Email'
     created_at: 'Data iscrizione'
     actions: 'Azioni'
