@@ -7,73 +7,73 @@
   {{ encore_entry_script_tags('jquery-ui-only-calendar') }}
 
   <script>
-      function copia_residenza() {
-          event.preventDefault()
-          $('#form_sdc_indirizzo_domicilio').val($('#form_sdc_indirizzo_residenza').val());
-          $('#form_sdc_cap_domicilio').val($('#form_sdc_cap_residenza').val());
-          $('#form_sdc_citta_domicilio').val($('#form_sdc_citta_residenza').val());
-          $('#form_sdc_provincia_domicilio').val($('#form_sdc_provincia_residenza').val());
-          $('[data-id=form_sdc_provincia_domicilio]').attr('title', $('#form_sdc_provincia_residenza').val());
-          $('[data-id=form_sdc_provincia_domicilio]').find(".filter-option-inner-inner").html($('#form_sdc_provincia_residenza option:selected').text())
-          $('#form_sdc_stato_domicilio').val($('#form_sdc_stato_residenza').val());
+    function copia_residenza() {
+      event.preventDefault()
+      $('#form_sdc_indirizzo_domicilio').val($('#form_sdc_indirizzo_residenza').val());
+      $('#form_sdc_cap_domicilio').val($('#form_sdc_cap_residenza').val());
+      $('#form_sdc_citta_domicilio').val($('#form_sdc_citta_residenza').val());
+      $('#form_sdc_provincia_domicilio').val($('#form_sdc_provincia_residenza').val());
+      $('[data-id=form_sdc_provincia_domicilio]').attr('title', $('#form_sdc_provincia_residenza').val());
+      $('[data-id=form_sdc_provincia_domicilio]').find(".filter-option-inner-inner").html($('#form_sdc_provincia_residenza option:selected').text())
+      $('#form_sdc_stato_domicilio').val($('#form_sdc_stato_residenza').val());
+    }
+
+    function copia_domicilio(event) {
+      event.preventDefault()
+      $('#form_sdc_indirizzo_residenza').val($('#form_sdc_indirizzo_domicilio').val());
+      $('#form_sdc_cap_residenza').val($('#form_sdc_cap_domicilio').val());
+      $('#form_sdc_citta_residenza').val($('#form_sdc_citta_domicilio').val());
+      $('#form_sdc_provincia_residenza').val($('#form_sdc_provincia_domicilio').val());
+      $('[data-id=form_sdc_provincia_residenza]').attr('title', $('#form_sdc_provincia_domicilio').val());
+      $('[data-id=form_sdc_provincia_residenza]').find(".filter-option-inner-inner").html($('#form_sdc_provincia_domicilio option:selected').text())
+      $('#form_sdc_stato_residenza').val($('#form_sdc_stato_domicilio').val());
+    }
+
+
+    $('#form_save').on('click', function (element, child) {
+      var form = document.querySelector('form')
+      var errorsFieldForm = [];
+
+      function createListErr(ulList) {
+        errorsFieldForm.forEach(el => {
+            var listItem = $('<li></li>').text(el);
+            listItem.appendTo(ulList)
+          }
+        )
       }
 
-      function copia_domicilio(event) {
-          event.preventDefault()
-          $('#form_sdc_indirizzo_residenza').val($('#form_sdc_indirizzo_domicilio').val());
-          $('#form_sdc_cap_residenza').val($('#form_sdc_cap_domicilio').val());
-          $('#form_sdc_citta_residenza').val($('#form_sdc_citta_domicilio').val());
-          $('#form_sdc_provincia_residenza').val($('#form_sdc_provincia_domicilio').val());
-          $('[data-id=form_sdc_provincia_residenza]').attr('title', $('#form_sdc_provincia_domicilio').val());
-          $('[data-id=form_sdc_provincia_residenza]').find(".filter-option-inner-inner").html($('#form_sdc_provincia_domicilio option:selected').text())
-          $('#form_sdc_stato_residenza').val($('#form_sdc_stato_domicilio').val());
-      }
-
-
-      $('#form_save').on('click', function (element, child){
-        var form = document.querySelector('form')
-        var errorsFieldForm = [];
-
-       function createListErr(ulList){
-         errorsFieldForm.forEach(el =>{
-             var listItem = $('<li></li>').text(el);
-             listItem.appendTo(ulList)
-           }
-         )
+      form.addEventListener('invalid', (e) => {
+        if (e.target) {
+          errorsFieldForm.push(e.target.previousSibling.innerText)
         }
 
-        form.addEventListener('invalid', (e) => {
-          if(e.target){
-            errorsFieldForm.push(e.target.previousSibling.innerText)
-          }
+        if ($('.alert.alert-danger').length > 0) {
+          $("#edit_user_profile").find('.alert.alert-danger').remove()
+          $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
+            "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
+            "<ul class='list-error'>" +
+            "</ul>" +
+            "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+            "    <span aria-hidden=\"true\">&times;</span>\n" +
+            "  </button>\n" +
+            "</div>"
+          );
+          createListErr($('ul.list-error'))
 
-          if($('.alert.alert-danger').length > 0 ){
-            $("#edit_user_profile").find('.alert.alert-danger').remove()
-            $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
-              "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
-              "<ul class='list-error'>"+
-              "</ul>"+
-              "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
-              "    <span aria-hidden=\"true\">&times;</span>\n" +
-              "  </button>\n" +
-              "</div>"
-            );
-            createListErr($('ul.list-error'))
-
-          }else{
-            $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
-              "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
-              "<ul class='list-error'>"+
-              "</ul>"+
-              "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
-              "    <span aria-hidden=\"true\">&times;</span>\n" +
-              "  </button>\n" +
-              "</div>"
-            );
-            createListErr($('ul.list-error'))
-          }
-          }, true)
-      });
+        } else {
+          $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
+            "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
+            "<ul class='list-error'>" +
+            "</ul>" +
+            "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+            "    <span aria-hidden=\"true\">&times;</span>\n" +
+            "  </button>\n" +
+            "</div>"
+          );
+          createListErr($('ul.list-error'))
+        }
+      }, true)
+    });
   </script>
 {% endblock %}
 {% block main_content %}
@@ -93,17 +93,44 @@
           <div class="profile-tabs my-3">
             <div class="row">
               <div class="col-4 col-md-3">
-                <div class="nav nav-tabs nav-tabs-vertical nav-tabs-vertical-background" id="nav-vertical-tab-bg" role="tablist" aria-orientation="vertical">
-                  <a class="nav-link active" id="contacts-tab-tab" data-toggle="tab" href="#contacts-tab" role="tab" aria-controls="contacts-tab" aria-selected="true">{{ 'user.profile.contatti_per_sdc'|trans() }}<svg class="icon icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use></svg></a>
-                  <a class="nav-link " id="user-tab-tab" data-toggle="tab" href="#user-tab" role="tab" aria-controls="user-tab" aria-selected="true">{{ 'user.profile.dati_personali'|trans() }}<svg class="icon icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use></svg></a>
-                  <a class="nav-link" id="residenza-tab-tab" data-toggle="tab" href="#residenza-tab" role="tab" aria-controls="residenza-tab" aria-selected="false">{{ 'user.profile.residenza'|trans() }}<svg class="icon icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-box"></use></svg></a>
-                  <a class="nav-link" id="domicilio-tab-tab" data-toggle="tab" href="#domicilio-tab" role="tab" aria-controls="domicilio-tab" aria-selected="false">{{ 'user.profile.domicilio'|trans() }}<svg class="icon icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-box"></use></svg></a>
-                  <a class="nav-link" id="card-tab-tab" data-toggle="tab" href="#card-tab" role="tab" aria-controls="card-tab" aria-selected="false">{{ 'user.profile.carta_identita'|trans() }}<svg class="icon icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use></svg></a>
+                <div class="nav nav-tabs nav-tabs-vertical nav-tabs-vertical-background" id="nav-vertical-tab-bg"
+                     role="tablist" aria-orientation="vertical">
+                  <a class="nav-link active" id="contacts-tab-tab" data-toggle="tab" href="#contacts-tab" role="tab"
+                     aria-controls="contacts-tab" aria-selected="true">{{ 'user.profile.contatti_per_sdc'|trans() }}
+                    <svg class="icon icon-primary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
+                    </svg>
+                  </a>
+                  <a class="nav-link " id="user-tab-tab" data-toggle="tab" href="#user-tab" role="tab"
+                     aria-controls="user-tab" aria-selected="true">{{ 'user.profile.dati_personali'|trans() }}
+                    <svg class="icon icon-primary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+                    </svg>
+                  </a>
+                  <a class="nav-link" id="residenza-tab-tab" data-toggle="tab" href="#residenza-tab" role="tab"
+                     aria-controls="residenza-tab" aria-selected="false">{{ 'user.profile.residenza'|trans() }}
+                    <svg class="icon icon-primary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-box"></use>
+                    </svg>
+                  </a>
+                  <a class="nav-link" id="domicilio-tab-tab" data-toggle="tab" href="#domicilio-tab" role="tab"
+                     aria-controls="domicilio-tab" aria-selected="false">{{ 'user.profile.domicilio'|trans() }}
+                    <svg class="icon icon-primary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-box"></use>
+                    </svg>
+                  </a>
+                  <a class="nav-link" id="card-tab-tab" data-toggle="tab" href="#card-tab" role="tab"
+                     aria-controls="card-tab" aria-selected="false">{{ 'user.profile.carta_identita'|trans() }}
+                    <svg class="icon icon-primary">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
+                    </svg>
+                  </a>
                 </div>
               </div>
               <div class="col-8 col-md-9">
                 <div class="tab-content" id="tab-content">
-                  <div class="tab-pane p-3 fade show active" id="contacts-tab" role="tabpanel" aria-labelledby="contacts-tab-tab">
+                  <div class="tab-pane p-3 fade show active" id="contacts-tab" role="tabpanel"
+                       aria-labelledby="contacts-tab-tab">
                     <div class="row">
                       <div class="col-12 col-md-6">
                         {{ form_row(form.email_contatto, {'required': true, 'label': 'user.profile.email'|trans()}) }}
@@ -139,10 +166,14 @@
                     <div class="row">
                       <div class="col-xs-3 col-lg-6">
                         <div class="form-group">
-                          <label for="sesso">{{ 'user.profile.sesso'|trans() }}</label>
-                          <input type="text" class="form-control" id="sesso" required="required"
-                                 value="{{ user.sesso }}"
-                                 disabled="disabled"/>
+                          {% if not user.sesso %}
+                            {{ form_row(form.sesso, {'label': 'user.profile.sesso'|trans()}) }}
+                          {% else %}
+                            <label for="sesso">{{ 'user.profile.sesso'|trans() }}</label>
+                            <input type="text" class="form-control" id="sesso" required="required"
+                                   value="{{ user.sesso }}"
+                                   disabled="disabled"/>
+                          {% endif %}
                         </div>
                       </div>
                       <div class="col-xs-9 col-lg-6">
@@ -158,10 +189,14 @@
                     <div class="row">
                       <div class="col-12 col-md-6">
                         <div class="form-group">
-                          <label for="data_nascita">{{ 'user.profile.data_nascita'|trans() }}</label>
-                          <input type="text" class="form-control" id="data_nascita" required="required"
-                                 value="{% if not user.dataNascita is empty %}{{ user.dataNascita | date('d/m/Y') }}{% endif %}"
-                                 disabled="disabled">
+                          {% if not user.dataNascita %}
+                            {{ form_row(form.data_nascita, {'label': 'user.profile.data_nascita'|trans()}) }}
+                          {% else %}
+                            <label for="data_nascita">{{ 'user.profile.data_nascita'|trans() }}</label>
+                            <input type="text" class="form-control" id="data_nascita" required="required"
+                                   value="{% if not user.dataNascita is empty %}{{ user.dataNascita | date('d/m/Y') }}{% endif %}"
+                                   disabled="disabled">
+                          {% endif %}
                         </div>
                       </div>
                       <div class="col-12 col-md-6">

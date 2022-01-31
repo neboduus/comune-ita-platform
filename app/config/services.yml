@@ -403,6 +403,18 @@ services:
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
       - "@session"
 
+  ocsdc.cas.authenticator:
+    class: AppBundle\Security\CasAuthenticator
+    arguments:
+      - "@router"
+      - "%login_route%"
+      - '@AppBundle\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@AppBundle\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
+      - "%cas_login_url%"
+      - "%cas_validation_url%"
+
   AppBundle\Security\DedaLogin\DedaLoginClient:
     public: true
     arguments:

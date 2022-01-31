@@ -161,3 +161,5 @@ parameters:
       applications: 'applications'
       services: 'services'
     api_version: 1
+    cas_login_url: 'https://mycasserver/cas/'
+    cas_validation_url: 'https://mycasserver/cas/serviceValidate'

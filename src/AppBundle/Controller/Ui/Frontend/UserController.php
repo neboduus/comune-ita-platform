@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -194,6 +195,14 @@ class UserController extends Controller
       ->setSdcProvinciaDomicilio($data['sdc_provincia_domicilio'])
       ->setSdcStatoDomicilio($data['sdc_stato_domicilio']);
 
+    if (!$user->getSesso() && isset($data['sesso'])){
+      $user->setSesso($data['sesso']);
+    }
+
+    if (!$user->getDataNascita() && isset($data['data_nascita'])){
+      $user->setDataNascita($data['data_nascita']);
+    }
+
     if (!$user->getLuogoNascita() && isset($data['luogo_nascita'])){
       $user->setLuogoNascita($data['luogo_nascita']);
     }
@@ -296,7 +305,19 @@ class UserController extends Controller
         ['label' => 'user.profile.salva']
       );
 
-    if (!$user->getLuogoNascita()){
+    if (!$user->getSesso()){
+      $formBuilder->add('sesso', ChoiceType::class,
+        ['label' => false, 'required' => true, 'choices' => ['user.profile.genere.maschio' => 'M', 'user.profile.genere.femmina' => 'F']]
+      );
+    }
+
+    if (!$user->getDataNascita()){
+      $formBuilder->add('data_nascita', DateType::class,
+        ['widget' => 'single_text', 'required' => true, 'label' => false]
+      );
+    }
+
+    if (!$user->getLuogoNascita()) {
       $formBuilder->add('luogo_nascita', ChoiceType::class,
         ['label' => false, 'required' => true, 'choices' => array_flip(MunicipalityConverter::getCodes())]
       );

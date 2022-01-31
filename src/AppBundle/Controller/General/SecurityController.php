@@ -122,6 +122,14 @@ class SecurityController extends Controller
   }
 
   /**
+   * @Route("/auth/login-cas", name="login_cas")
+   */
+  public function loginCasAction(Request $request)
+  {
+    return new RedirectResponse($this->getParameter('cas_login_url').'?service='.urlencode($request->getUri()));
+  }
+
+  /**
    * @Route("/auth/login-success", name="login_success")
    * @param Request $request
    * @return Response

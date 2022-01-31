@@ -686,6 +686,9 @@ user:
     nome: 'Nome'
     cognome: 'Cognome'
     sesso: 'Sesso'
+    genere:
+      maschio: 'Maschio'
+      femmina: 'Femmina'
     codice_fiscale: 'Codice fiscale'
     telefono: 'Numero di telefono'
     email: 'Indirizzo email'
