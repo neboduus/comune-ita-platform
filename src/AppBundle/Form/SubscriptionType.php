@@ -7,6 +7,7 @@ use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +20,11 @@ class SubscriptionType extends AbstractType
 {
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+    /** @var Subscription $subscription */
+    $subscription = $builder->getData();
+
+    $statuses = [Subscription::STATUS_ACTIVE, Subscription::STATUS_WITHDRAW];
+
     $builder
       ->add('subscription_service', EntityType::class, [
         'class' => SubscriptionService::class,
@@ -45,7 +51,12 @@ class SubscriptionType extends AbstractType
         'entry_options' => [
           'constraints' => [new Length(16)],
         ],
-      ]);;
+      ])
+      ->add('status', ChoiceType ::class, [
+        'choices' => $statuses,
+        'required' => false,
+        'empty_data' => $subscription->getStatus() ?? Subscription::STATUS_ACTIVE
+      ]);
   }
 
   public function configureOptions(OptionsResolver $resolver)

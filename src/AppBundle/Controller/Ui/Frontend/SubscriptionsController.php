@@ -148,6 +148,11 @@ class SubscriptionsController extends Controller
         'searchable' => false,
         'visible'=>false
       ])
+      ->add('status', TextColumn::class, [
+        'label' => '',
+        'searchable' => false,
+        'visible'=>false
+      ])
       ->add('actions', TwigColumn::class, [
         'label' => 'iscrizioni.subscribers.actions',
         'orderable' => false,
@@ -164,7 +169,9 @@ class SubscriptionsController extends Controller
             ->leftJoin('subscription.subscriber', 'subscriber')
             ->leftJoin('subscription.subscription_service', 'subscription_service')
             ->andWhere('subscription.subscription_service = :subscription_service')
-            ->setParameter('subscription_service', $subscriptionService);
+            ->setParameter('subscription_service', $subscriptionService)
+            ->orderBy('subscription.status', 'ASC')
+            ->addOrderBy('subscriber.name', 'ASC');
         },
       ])
       ->handleRequest($request);

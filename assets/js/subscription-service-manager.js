@@ -6,7 +6,7 @@ require("jquery"); // Load jQuery as a module
 import {TextEditor} from "./utils/TextEditor";
 
 
-$('#edit-subscription-modal, #delete-subscription-modal').on('show.bs.modal', function (event) {
+$('.edit-subscription-modal').on('show.bs.modal', function (event) {
   $(this).find('.error').hide();
   $(this).find('.error ul').empty();
 
@@ -49,6 +49,44 @@ $(document).ready(function () {
       type: "PATCH",
       data: JSON.stringify({
         "subscription_service": `${newSubscriptionService}`
+      }),
+      success: function() {
+        $('div#spinner').hide()
+        window.location.replace(redirectUrl);
+      },
+      error: function(response) {
+        $(`div#spinner`).hide()
+        let data = response.responseJSON;
+        if (data.errors) {
+          $.each(data.errors, function (index) {
+            modalEl.find('.error ul').append(`<li>${data.errors[index]}</li>`);
+          });
+        }
+        modalEl.find('.error').show();
+      }
+    });
+  });
+
+  $('.toggle-status-btn-modal').on('click', function () {
+    let url = $(this).attr('data-url');
+    let redirectUrl = $(this).attr('data-redirect');
+    let newStatus = $(this).attr('data-status');
+
+    $(`div#spinner`).show();
+    let modalEl = $('#edit-subscription-modal');
+    modalEl.find('.error').hide();
+    modalEl.find('.error ul').empty();
+
+    $.ajax({
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${$('#token').attr('data-token')}`
+      },
+      url:  url,
+      type: "PATCH",
+      data: JSON.stringify({
+        "status": newStatus
       }),
       success: function() {
         $('div#spinner').hide()

@@ -1,6 +1,6 @@
 <button class="btn btn-xs btn-secondary ml-1" data-toggle="modal" data-target="#edit-subscription-modal" data-id="{{ id }}"
         data-subscription-service-id="{{ subscriptionServiceId }}"
-        data-url="{{ path('subscription_api_patch', {'id': id, 'subscription_service_id': subscriptionServiceId}) }}"
+        data-url="{{ path('subscription_api_patch_v2', {'id': id, 'version': 2}) }}"
         data-redirect="{{ dataRedirect }}">
   <svg class="icon icon-sm icon-300">
     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>

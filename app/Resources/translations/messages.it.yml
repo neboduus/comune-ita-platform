@@ -7,6 +7,8 @@ aggiungi: 'Aggiungi'
 annulla: 'Annulla'
 modifica: 'Modifica'
 elimina: 'Elimina'
+withdraw: 'Ritira'
+activate: 'Attiva'
 reply: 'Rispondi'
 view: 'Visualizza'
 read_more: 'Leggi di più'
@@ -408,6 +410,14 @@ iscrizioni:
   send: 'Invia'
   upload_csv: 'Carica file csv'
   modals:
+    withdraw_subscription: 'Ritira iscrizione'
+    confirm_withdraw:
+      description_title: 'Stai per ritirare questa iscrizione'
+      description_text: "Una volta ritirata l'iscrizione sarà ancora possibile visualizzare tutte le informazioni relative ed eventuali pagamenti collegati"
+    activate_subscription: 'Riattiva iscrizione'
+    confirm_activate:
+      description_title: 'Stai per riattivare questa iscrizione'
+      description_text: "Una volta riattivata l'iscrizione sarà ancora possibile ritirarla attraverso l'apposito pulsante"
     edit_subscription: 'Modifica iscrizione'
     confirm_edit:
       description_title: 'Stai per spostare questa iscrizione'
@@ -468,7 +478,10 @@ iscrizioni:
   status_0: "Sospeso"
   status_1: "Attivo"
   status_2: "Non attivo"
+  status_active: "Attiva"
+  status_withdraw: "Ritirata"
   errore_salvataggio: "Si è verificato un errore durante il salvataggio dell'iscrizione"
+  withdraw_description: "L'iscrizione risulta non attiva per questo servizio a sottoscrizione"
   subscribers:
     show: 'Mostra'
     completename: "Nome e cognome"

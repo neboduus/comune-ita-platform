@@ -24,6 +24,10 @@ use Swagger\Annotations as SWG;
  */
 class Subscription
 {
+
+  const STATUS_ACTIVE = 'active';
+  const STATUS_WITHDRAW = 'withdraw';
+
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
@@ -62,6 +66,14 @@ class Subscription
    * @var $relatedCFs array
    */
   private $relatedCFs;
+
+  /**
+   * @ORM\Column(type="string", nullable=false, options={"default":"active"})
+   * @Serializer\Type("string")
+   * @Groups({"read", "write"})
+   * @SWG\Property(description="Subscription status: available statuses are 'active' or 'withdraw'")
+   */
+  private $status = self::STATUS_ACTIVE;
 
   /**
    * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
@@ -186,6 +198,18 @@ class Subscription
     return $this;
   }
 
+  public function getStatus(): string
+  {
+    return $this->status;
+  }
+
+  public function setStatus($status): self
+  {
+    $this->status = $status;
+
+    return $this;
+  }
+
   public function getCreatedAt(): ?\DateTimeInterface
   {
     return $this->created_at;
@@ -224,5 +248,13 @@ class Subscription
   public function getSubscriptionServiceId()
   {
     return $this->subscription_service->getId();
+  }
+
+  /**
+   * @return bool
+   */
+  public function isActive(): bool
+  {
+    return $this->status === self::STATUS_ACTIVE;
   }
 }

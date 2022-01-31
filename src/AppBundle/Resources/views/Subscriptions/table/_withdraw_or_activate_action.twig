@@ -1,0 +1,17 @@
+{% if status == constant('\\AppBundle\\Entity\\Subscription::STATUS_ACTIVE') %}
+  <button class="btn btn-xs btn-100" data-toggle="modal" data-target="#withdraw-subscription-modal" data-id="{{ id }}"
+          data-url="{{ path('subscription_api_patch_v2', {'id': id, 'version': 2}) }}"  data-redirect="{{ dataRedirect }}">
+    <svg class="icon icon-sm">
+      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
+    </svg>
+    <span class="">{{ 'withdraw' | trans }}</span>
+  </button>
+{% elseif status == constant('\\AppBundle\\Entity\\Subscription::STATUS_WITHDRAW') %}
+  <button class="btn btn-xs btn-primary" data-toggle="modal" data-target="#activate-subscription-modal" data-id="{{ id }}"
+          data-url="{{ path('subscription_api_patch_v2', {'id': id, 'version': 2}) }}"  data-redirect="{{ dataRedirect }}">
+    <svg class="icon icon-sm icon-white">
+      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
+    </svg>
+    <span class="">{{ 'activate' | trans }}</span>
+  </button>
+{% endif %}
