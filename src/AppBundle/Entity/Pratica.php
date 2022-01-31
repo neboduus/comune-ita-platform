@@ -2291,7 +2291,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function getLocale(): ?string
   {
-    return $this->locale;
+    return $this->locale ?? 'it';
   }
 
   /**

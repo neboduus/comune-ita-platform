@@ -265,7 +265,6 @@ class MailerService
     // Todo: get from default locale
     $locale = $pratica->getLocale() ?? 'it';
     $service = $pratica->getServizio();
-
     $service->setTranslatableLocale($locale);
     $this->doctrine->getManager()->refresh($service);
     $feedbackMessages = $service->getFeedbackMessages();
@@ -309,30 +308,7 @@ class MailerService
       ->setBody($textHtml, 'text/html')
       ->addPart($textPlain, 'text/plain');
 
-    // Send attachment to user if status is submitted
-    if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
-      if ($pratica->getModuliCompilati()->count() > 0) {
-        /** @var ModuloCompilato $moduloCompilato */
-        $moduloCompilato = $pratica->getModuliCompilati()->first();
-        if ($this->fileService->fileExist($moduloCompilato)) {
-          $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFile()->getFilename(), $this->fileService->getMimeType($moduloCompilato));
-          $message->attach($attachment);
-        }
-      }
-    }
-
-    // Send operator attachment to user if status is complete
-    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE) {
-      if ($pratica->getAllegatiOperatore()->count() > 0) {
-        /** @var AllegatoOperatore $allegato */
-        foreach ($pratica->getAllegatiOperatore() as $allegato) {
-          if ($this->fileService->fileExist($allegato)) {
-            $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFile()->getFilename(), $this->fileService->getMimeType($allegato));
-            $message->attach($attachment);
-          }
-        }
-      }
-    }
+    $this->addAttachments($pratica, $message);
 
     $this->addCustomHeadersToMessage($message);
 
@@ -392,16 +368,8 @@ class MailerService
         ),
         'text/plain'
       );
-    // Send attachment to user if status is submitted
-    if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
-      if ($pratica->getModuliCompilati()->count() > 0) {
-        $moduloCompilato = $pratica->getModuliCompilati()->first();
-        if ($this->fileService->fileExist($moduloCompilato)) {
-          $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFile()->getFilename(), $this->fileService->getMimeType($moduloCompilato));
-          $message->attach($attachment);
-        }
-      }
-    }
+
+    $this->addAttachments($pratica, $message);
 
     $this->addCustomHeadersToMessage($message);
 
@@ -671,4 +639,35 @@ class MailerService
       ->addTextHeader('X-SES-CONFIGURATION-SET', self::SES_CONFIGURATION_SET);
   }
 
+  /**
+   * @param Pratica $pratica
+   * @param \Swift_Message $message
+   * @throws \League\Flysystem\FileNotFoundException
+   */
+  private function addAttachments(Pratica $pratica, \Swift_Message $message) {
+    // Send attachment to user if status is submitted
+    if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
+      if ($pratica->getModuliCompilati()->count() > 0) {
+        /** @var ModuloCompilato $moduloCompilato */
+        $moduloCompilato = $pratica->getModuliCompilati()->first();
+        if ($this->fileService->fileExist($moduloCompilato)) {
+          $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFile()->getFilename(), $this->fileService->getMimeType($moduloCompilato));
+          $message->attach($attachment);
+        }
+      }
+    }
+
+    // Send operator attachment to user if status is complete
+    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE) {
+      if ($pratica->getAllegatiOperatore()->count() > 0) {
+        /** @var AllegatoOperatore $allegato */
+        foreach ($pratica->getAllegatiOperatore() as $allegato) {
+          if ($this->fileService->fileExist($allegato)) {
+            $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFile()->getFilename(), $this->fileService->getMimeType($allegato));
+            $message->attach($attachment);
+          }
+        }
+      }
+    }
+  }
 }
