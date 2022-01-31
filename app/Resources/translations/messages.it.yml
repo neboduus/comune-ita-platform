@@ -131,8 +131,23 @@ servizio:
   flusso: "Flusso di lavoro"
   crea: 'Crea nuovo servizio'
   modifica: 'Modifica %name%'
+  generali: "Generali"
+  modulo_utente: "Modulo utente"
+  modulo_backoffice: "Modulo backoffice"
   placeholder_disponibili: 'Placeholder disponibili'
   placeholder_disponibili_descrizione: "E' possibile utilizzare le informazioni compilate dall'utente utilizzando i placeholders di seguito elencati"
+  id_pratica: "Id pratica"
+  nome_servizio: "Nome servizio"
+  nome_completo: "Nome completo (servizio in gruppo)"
+  data_corrente: "Data corrente"
+  data_acquisizione: "Data acquisizione"
+  ora_acquisizione: "Ora acquisizione"
+  protocollo: "Protocollo"
+  data_protocollo: "Data protocollo"
+  ora_protocollo: "Ora protocollo"
+  messaggio_personale: "Messaggio personale"
+  nome_utente: "Nome utente"
+  indirizzo_utente: "Indirizzo utente"
   enti_coinvolti: 'Servizio disponibile per'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Al momento il servizio non è attivo'

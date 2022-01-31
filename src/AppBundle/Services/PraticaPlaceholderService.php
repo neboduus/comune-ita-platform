@@ -69,8 +69,10 @@ class PraticaPlaceholderService
     $placeholders = [
       '%id%' => $pratica->getId(),
       '%pratica_id%' => $pratica->getId(),
-      '%servizio%' => $service->getName(),
-      '%service_fullname%' => $service->getFullName(),
+      '%servizio%' => $pratica->getServizio()->getName(),
+      '%service_fullname%' => $pratica->getServizio()->getFullName(),
+      '%gruppo%' => $pratica->getServizio()->getServiceGroup() ? $pratica->getServizio()->getServiceGroup()->getName() : "",
+      '%categoria%' => $pratica->getServizio()->getTopics() ? $pratica->getServizio()->getTopics()->getName() : "",
       '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
       '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito(
       ) : $this->translator->trans('messages.pratica.no_reason'),
