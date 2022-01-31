@@ -74,7 +74,6 @@ class CalendarsController extends Controller
    */
   public function indexCalendarsAction(Request $request)
   {
-    $em = $this->getDoctrine()->getManager();
     $data = [];
     /** @var User $user */
     $user = $this->getUser();
@@ -329,8 +328,10 @@ class CalendarsController extends Controller
       ->leftJoin('meeting.calendar', 'calendar')
       ->where('meeting.calendar = :calendar')
       ->andWhere('meeting.status != :draft')
+      ->andWhere('meeting.fromTime >= :rangeLimit')
       ->setParameter('calendar', $calendar)
       ->setParameter('draft', Meeting::STATUS_DRAFT)
+      ->setParameter('rangeLimit', (new DateTime())->modify('-1 months'))
       ->getQuery()->getResult();
 
     $deleteForm = $this->createDeleteForm($calendar);
@@ -444,11 +445,12 @@ class CalendarsController extends Controller
 
     // compute min slot dimension
     $minDuration = PHP_INT_MAX;
-    $minDate = Calendar::MAX_DATE;
-    $maxDate = Calendar::MIN_DATE;
+    $minTime = Calendar::MAX_DATE;
+    $maxTime = Calendar::MIN_DATE;
+
     foreach ($calendar->getOpeningHours() as $openingHour) {
-      $minDate = min($minDate, $openingHour->getBeginHour()->format('H:i'));
-      $maxDate = max($maxDate, $openingHour->getEndHour()->format('H:i'));
+      $minTime = min($minTime, $openingHour->getBeginHour()->format('H:i'));
+      $maxTime = max($maxTime, $openingHour->getEndHour()->format('H:i'));
       $events = array_merge($events, $this->meetingService->getAbsoluteAvailabilities($openingHour, true));
       $minDuration = min($minDuration, $openingHour->getMeetingMinutes() + $openingHour->getIntervalMinutes());
     }
@@ -467,8 +469,8 @@ class CalendarsController extends Controller
       'datatable' => $table,
       'token' => $jwt,
       'rangeTimeEvent' => [
-        'min' => $minDate,
-        'max' => $maxDate
+        'min' => $minTime,
+        'max' => $maxTime
       ],
       'futureMeetings' => $futureMeetings
     ];
