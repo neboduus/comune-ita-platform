@@ -82,6 +82,7 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
    */
   abstract protected function getUserAuthenticationData(Request $request, UserInterface $user);
 
+
   public function getUser($credentials, UserProviderInterface $userProvider)
   {
     if ($userProvider instanceof CPSUserProvider) {
