@@ -8,13 +8,14 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
 use AppBundle\Entity\Pratica;
-use Cassandra\Date;
 use DateInterval;
 use DatePeriod;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -46,12 +47,19 @@ class MeetingService
    */
   private $router;
 
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+
   public function __construct(
     EntityManagerInterface $entityManager,
     InstanceService        $instanceService,
     MailerService          $mailer, $defaultSender,
     TranslatorInterface    $translator,
-    UrlGeneratorInterface  $router
+    UrlGeneratorInterface  $router,
+    LoggerInterface        $logger
   )
   {
     $this->entityManager = $entityManager;
@@ -60,6 +68,7 @@ class MeetingService
     $this->defaultSender = $defaultSender;
     $this->translator = $translator;
     $this->router = $router;
+    $this->logger = $logger;
   }
 
   /**
@@ -323,6 +332,11 @@ class MeetingService
       $locale = $application->getLocale() ?? 'it';
       $service = $application->getServizio();
       $service->setTranslatableLocale($locale);
+      try {
+        $this->entityManager->refresh($service);
+      } catch (ORMException $e) {
+        $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+      }
       $serviceName = $service->getName();
       $serviceGroup = $service->getServiceGroup();
       if ($serviceGroup) {
@@ -489,11 +503,16 @@ class MeetingService
       $locale = $application->getLocale() ?? 'it';
       $service = $application->getServizio();
       $service->setTranslatableLocale($locale);
+      try {
+        $this->entityManager->refresh($service);
+      } catch (ORMException $e) {
+        $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
+      }
       $serviceName = $service->getName();
       $serviceGroup = $service->getServiceGroup();
       if ($serviceGroup) {
         $serviceDetail = $this->translator->trans(
-          'meetings.email.service_detail_with_group', ['%service%'=>$serviceName, '%group%' => $serviceGroupName]
+          'meetings.email.service_detail_with_group', ['%service%'=>$serviceName, '%group%' => $serviceGroup->getName()]
         );
       } else {
         $serviceDetail = $this->translator->trans(
@@ -1113,7 +1132,8 @@ class MeetingService
 
     try {
       $activeMeetings = $builder->getQuery()->getSingleScalarResult();
-    } catch (Exception $ex) {
+    } catch (Exception $e) {
+      $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
       return false;
     }
     return $activeMeetings <= 1;
