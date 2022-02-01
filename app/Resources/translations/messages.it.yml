@@ -2304,6 +2304,8 @@ backoffice:
     missing_field: 'Il campo field deve essere presente nel form per poter attivare questa integrazione.'
     or: 'Oppure'
     invalid_activation_point: 'Il punto di attivazione selezionato non è disponibile per questa azione'
+    related_payments_error: "L'integrazione non può essere modificata poichè ci sono %num% pagamenti a sottoscrizione collegati a questo servizio"
+    edit_integration_error: "Si è verificato un errore durante il controllo sui pagamenti a sottoscrizione collegati"
     invalid_action: "L'azione selezionata non è disponibile"
     fields_error: 'I campi richiesti non coincidono'
     calendars:
@@ -2325,6 +2327,12 @@ backoffice:
       subscription_service: "Servizio a sottoscrizione"
       subscription_services: "Servizi a sottoscrizione"
       new: "Crea servizio a sottoscrizione"
+      created: "Servizio a sottoscrizione creato correttamente"
+      duplicate_error: "Creazione fallita. Verifica che non esista già un servizio con questo codice"
+      deleted: "Servizio a sottoscrizione eliminato correttamente"
+      delete_error: "Impossibile eliminare il servizio a sottoscrizione, ci sono delle iscrizioni collegate."
+      edited: "Servizio a sottoscrizione modificato correttamente"
+      duplicate_code_error: "Codice servizio a sottoscrizione duplicato. Modifica fallita"
       search_results: "Risultati della ricerca"
       no_results: "La ricerca non ha prodotto alcun risultato"
       search_error: "Si è verificato un errore durante la ricerca"
@@ -2365,8 +2373,8 @@ backoffice:
       no_service: "L'identificativo %service_id% non corrisponde ad un servizio esistente"
       duplicate_identifier: "Il pagamento impostato per il giorno %date% con causale '%payment_reason%' non è corretto! L'identificativo %identifier% è già stato utilizzato per un altro pagamento"
       no_payment: "Il pagamento non è corretto! Il servizio che hai indicato (%service_name%) non prevede un pagamento"
-      no_integration_subscription: "Il pagamento della quota di iscrizione non è corretto! Per il servizio che hai indicato (%service_name%) non è stata abilitata l'integrazione con 'Servizi a sottoscizione'"
-      no_integration_additional_payment: "Il pagamento della quota di iscrizione non è corretto! Per il servizio che hai indicato (%service_name%) non è stata abilitata l'integrazione con 'Pagamenti per servizi a sottoscizione'"
+      no_integration_subscription: "Il pagamento della quota di iscrizione non è corretto! Per il servizio che hai indicato (%service_name%) non è stata abilitata l'integrazione con 'Servizi a sottoscrizione'"
+      no_integration_additional_payment: "Il pagamento della quota di iscrizione non è corretto! Per il servizio che hai indicato (%service_name%) non è stata abilitata l'integrazione con 'Pagamenti per servizi a sottoscrizione'"
       invalid_date: "Il formato della data %date% non è corretto"
       identifier_change_not_allowed: "Non è possibile modificare l'identificativo di pagamento '%payment_identifier%': sono già state create delle pratiche per questo pagamento "
       messages:
