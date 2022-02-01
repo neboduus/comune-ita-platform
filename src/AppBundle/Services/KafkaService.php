@@ -167,6 +167,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     try {
       $this->sendMessage($params);
     } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
       $this->produceMessageAsync($params);
     }
   }
