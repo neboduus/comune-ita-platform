@@ -397,6 +397,11 @@ class SubscriptionsAPIController extends AbstractApiController
    *     description="Access denied"
    * )
    *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Not found"
+   * )
+   *
    * @SWG\Tag(name="subscriptions")
    *
    * @param $id
@@ -448,6 +453,8 @@ class SubscriptionsAPIController extends AbstractApiController
         );
         return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
       }
+    } else {
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }

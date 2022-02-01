@@ -33,6 +33,9 @@ class SubscriptionType extends AbstractType
           new NotBlank(),
           new NotNull(),
         ],
+        'choice_value' => function (?SubscriptionService $entity) {
+          return $entity ? $entity->getId() : '';
+        },
       ])
       ->add('subscriber', EntityType::class, [
         'class' => Subscriber::class,
@@ -41,6 +44,9 @@ class SubscriptionType extends AbstractType
           new NotBlank(),
           new NotNull(),
         ],
+        'choice_value' => function (?Subscriber $entity) {
+          return $entity ? $entity->getId() : '';
+        },
       ])
       ->add('related_cfs', CollectionType::class, [
         'entry_type' => TextType::class,
@@ -49,7 +55,10 @@ class SubscriptionType extends AbstractType
         'prototype' => true,
         'required' => false,
         'entry_options' => [
-          'constraints' => [new Length(16)],
+          'constraints' => [
+            new Length(16),
+            new NotBlank()
+          ],
         ],
       ])
       ->add('status', ChoiceType ::class, [

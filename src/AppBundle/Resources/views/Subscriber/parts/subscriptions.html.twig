@@ -6,7 +6,7 @@
     {% if subscriber.subscriptions is empty %}
     <p class="font-italic mt-3">{{ 'iscrizioni.no_iscrizioni' | trans }}</p>
     {% else %}
-      {% for subscription in subscriber.subscriptions %}
+      {% for subscription in subscriber.subscriptions |sort((a, b) => b.createdAt <=> a.createdAt) %}
         <div class="collapse-header" id="{{ subscription.id }}">
           <button data-toggle="collapse" data-target="#collapse_{{ subscription.id }}"
                   aria-expanded="false"

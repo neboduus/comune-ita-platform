@@ -543,6 +543,11 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     description="Access denied"
    * )
    *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Not found"
+   * )
+   *
    * @SWG\Tag(name="subscription-services")
    *
    * @Method("DELETE")
@@ -565,6 +570,8 @@ class SubscriptionServicesAPIController extends AbstractApiController
       // we're doing the latter
       $this->em->remove($subscriptionService);
       $this->em->flush();
+    } else {
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
@@ -761,6 +768,11 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     description="Access denied"
    * )
    *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Not found"
+   * )
+   *
    * @SWG\Tag(name="subscriptions")
    *
    * @param Request $request
@@ -813,6 +825,8 @@ class SubscriptionServicesAPIController extends AbstractApiController
         );
         return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
       }
+    } else {
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
