@@ -12,7 +12,7 @@ class Search {
           this.popolateFilters(data)
         },
         error: (jqXhr, textStatus, errorMessage) => { // error callback
-          alert("Si è verificato un errore, si prega di riprovare");
+          console.log(errorMessage);
         }
       }
     );
@@ -40,12 +40,13 @@ class Search {
   }
 
   static init() {
-    this.loaded = false;
-    this.els = {
-      $globalSearchModal: $('#globalSearchModal')
+    if ($('#globalSearchModal').length > 0) {
+      this.els = {
+        $globalSearchModal: $('#globalSearchModal')
+      }
+      this.els.$searchForm = this.els.$globalSearchModal.find('form');
+      this.initSearchModal();
     }
-    this.els.$searchForm = this.els.$globalSearchModal.find('form');
-    this.initSearchModal();
   }
 
 }

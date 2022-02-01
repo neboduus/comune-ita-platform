@@ -12,19 +12,10 @@
 
     .modal-content {
       height: 100%;
-
-      input[type='text'],
-      input[type='number'],
-      input[type='password'],
-      input[type='checkbox'],
-      input[type='radio'],
-      input[type='email'],
-      input[type='date'],
-      textarea {
-        background: #fff;
-      }
     }
   }
+}
 
-
+.search-text {
+  background: $white !important;
 }

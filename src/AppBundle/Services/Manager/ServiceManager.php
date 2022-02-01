@@ -177,11 +177,12 @@ class ServiceManager
       ->groupBy('c.id');
     $categories = $qb->getQuery()->getResult();
     foreach ($categories as $item) {
-      $results['topics_id'][] = [
-        'id' => $item['id'],
-        'name' => $item['name'],
-      ];
-
+      if (!isset($results['topics_id'][$item['id']])) {
+        $results['topics_id'][$item['id']] = [
+          'id' => $item['id'],
+          'name' => $item['name'],
+        ];
+      }
     }
 
     $recipientsRepo = $this->entityManager->getRepository('AppBundle:Recipient');
@@ -197,10 +198,12 @@ class ServiceManager
       ->groupBy('r.id');
     $recipients = $qb->getQuery()->getResult();
     foreach ($recipients as $item) {
-      $results['recipient_id'][] = [
-        'id' => $item['id'],
-        'name' => $item['name'],
-      ];
+      if (!isset($results['recipient_id'][$item['id']])) {
+        $results['recipient_id'][$item['id']] = [
+          'id' => $item['id'],
+          'name' => $item['name'],
+        ];
+      }
     }
 
     $geographicAreasRepo = $this->entityManager->getRepository('AppBundle:GeographicArea');
@@ -216,10 +219,12 @@ class ServiceManager
       ->groupBy('g.id');
     $geographicAreas = $qb->getQuery()->getResult();
     foreach ($geographicAreas as $item) {
-      $results['geographic_area_id'][] = [
-        'id' => $item['id'],
-        'name' => $item['name'],
-      ];
+      if (!isset($results['geographic_area_id'][$item['id']])) {
+        $results['geographic_area_id'][$item['id']] = [
+          'id' => $item['id'],
+          'name' => $item['name'],
+        ];
+      }
     }
   }
 
@@ -240,10 +245,12 @@ class ServiceManager
       ->groupBy('c.id');
     $categories = $qb->getQuery()->getResult();
     foreach ($categories as $item) {
-      $results['topics_id'][] = [
-        'id' => $item['id'],
-        'name' => $item['name'],
-      ];
+      if (!isset($results['topics_id'][$item['id']])) {
+        $results['topics_id'][] = [
+          'id' => $item['id'],
+          'name' => $item['name'],
+        ];
+      }
     }
 
     $recipientsRepo = $this->entityManager->getRepository('AppBundle:Recipient');
@@ -261,10 +268,12 @@ class ServiceManager
       ->groupBy('r.id');
     $recipients = $qb->getQuery()->getResult();
     foreach ($recipients as $item) {
-      $results['recipient_id'][] = [
-        'id' => $item['id'],
-        'name' => $item['name'],
-      ];
+      if (!isset($results['recipient_id'][$item['id']])) {
+        $results['recipient_id'][] = [
+          'id' => $item['id'],
+          'name' => $item['name'],
+        ];
+      }
     }
 
     $geographicAreasRepo = $this->entityManager->getRepository('AppBundle:GeographicArea');
@@ -282,10 +291,12 @@ class ServiceManager
       ->groupBy('g.id');
     $geographicAreas = $qb->getQuery()->getResult();
     foreach ($geographicAreas as $item) {
-      $results['geographic_area_id'][] = [
-        'id' => $item['id'],
-        'name' => $item['name'],
-      ];
+      if (!isset($results['geographic_area_id'][$item['id']])) {
+        $results['geographic_area_id'][] = [
+          'id' => $item['id'],
+          'name' => $item['name'],
+        ];
+      }
     }
   }
 
