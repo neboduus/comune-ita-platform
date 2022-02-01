@@ -114,7 +114,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @Rest\Get("", name="services_api_list")
    *
    * * @SWG\Parameter(
-   *      name="search_text",
+   *      name="q",
    *      in="query",
    *      type="string",
    *      required=false,

@@ -46,7 +46,7 @@ class ServiceManager
   public function getServices(Request $request)
   {
 
-    $searchText = $request->get('search_text', false);
+    $searchText = $request->get('q', false);
     $status = $request->get('status', false);
     $serviceGroupId = $request->get('service_group_id', false);
     $categoryIds = $request->get('topics_id', false);
@@ -54,8 +54,10 @@ class ServiceManager
     $geographicAreaIds = $request->get('geographic_area_id', false);
     $grouped = boolean_value($request->get('grouped', true));
 
+    $criteria['locale'] = $request->getLocale();
+
     if ($searchText) {
-      $criteria['search_text'] = $searchText;
+      $criteria['q'] = $searchText;
     }
 
     if ($status && in_array($status, Servizio::PUBLIC_STATUSES)) {
