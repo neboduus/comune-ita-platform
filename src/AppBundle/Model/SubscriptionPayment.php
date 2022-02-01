@@ -179,7 +179,7 @@ class SubscriptionPayment implements \JsonSerializable
 
   /**
    * @Serializer\VirtualProperty(name="meta")
-   * @Serializer\Type("array")
+   * @Serializer\Type("array<string, string>")
    * @Serializer\SerializedName("meta")
    * @SWG\Property(description="Payment metadata", type="array", @SWG\Items(type="object"))
    */

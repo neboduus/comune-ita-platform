@@ -4,12 +4,16 @@
 namespace AppBundle\Form\Admin\Servizio;
 
 
+use AppBundle\BackOffice\SubcriptionPaymentsBackOffice;
+use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Pratica;
 use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\SubscriptionService;
 use AppBundle\Services\BackOfficeCollection;
 use AppBundle\Services\FormServerApiAdapterService;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
@@ -108,6 +112,28 @@ class IntegrationsDataType extends AbstractType
     $data = $event->getData();
 
     if (isset($data['trigger']) && $data['trigger']) {
+      $oldIntegration = $service->getIntegrations() ? array_values($service->getIntegrations())[0] : null;
+      if($oldIntegration && $oldIntegration !== $data['action']) {
+        // Integration changed
+        if ($oldIntegration == SubcriptionsBackOffice::class || SubcriptionPaymentsBackOffice::class) {
+          $sql = 'SELECT DISTINCT id FROM subscription_service, json_to_recordset(subscription_service.payments) as x("payment_service" text) WHERE payment_service = ?';
+          try {
+            $stmt = $this->em->getConnection()->executeQuery($sql, [$service->getId()]);
+            $countRelated = $stmt->rowCount();
+            if ($countRelated > 0) {
+              $event->getForm()->addError(
+                new FormError($this->translator->trans('backoffice.integration.related_payments_error', ['%num%' => $countRelated ])),
+              );
+            }
+          } catch (Exception $e) {
+            $event->getForm()->addError(
+              new FormError($this->translator->trans('backoffice.integration.edit_integration_error')),
+            );
+          }
+
+        }
+      }
+
       $service->setIntegrations([
         $data['trigger'] => $data['action']
       ]);

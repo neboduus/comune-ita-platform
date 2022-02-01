@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
@@ -35,14 +36,19 @@ class SubscriptionServicesController extends Controller
    * @var EntityManager
    */
   private $em;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
 
   /**
    * SubscriptionServicesController constructor.
    * @param EntityManager $entityManager
    */
-  public function __construct(EntityManager $entityManager)
+  public function __construct(EntityManager $entityManager, TranslatorInterface $translator)
   {
     $this->em = $entityManager;
+    $this->translator = $translator;
   }
 
   /**
@@ -62,14 +68,14 @@ class SubscriptionServicesController extends Controller
 
 
     $table = $this->createDataTable()
-      ->add('name', TextColumn::class, ['label' => 'Nome', 'propertyPath' => 'Nome', 'render' => function ($value, $subscriptionService) {
+      ->add('name', TextColumn::class, ['label' => 'iscrizioni.nome', 'propertyPath' => 'Nome', 'render' => function ($value, $subscriptionService) {
         return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscription-service_show', [
           'subscriptionService' => $subscriptionService->getId()
         ]), $subscriptionService->getName());
       }])
-      ->add('code', TextColumn::class, ['label' => 'Codice', 'searchable' => true])
-      ->add('status', MapColumn::class, ['label' => 'Stato', 'searchable' => false, 'map' => $statuses])
-      ->add('subscriptions', TextColumn::class, ['label' => 'Iscrizioni', 'render' => function ($value, $subscriptionService) {
+      ->add('code', TextColumn::class, ['label' => 'iscrizioni.codice', 'searchable' => true])
+      ->add('status', MapColumn::class, ['label' => 'iscrizioni.stato', 'searchable' => false, 'map' => $statuses])
+      ->add('subscriptions', TextColumn::class, ['label' => 'iscrizioni.subscriptions', 'render' => function ($value, $subscriptionService) {
         if ($subscriptionService->getSubscribersLimit()) {
           return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscriptions',
             ['subscriptionService' => $subscriptionService->getId()]),
@@ -196,10 +202,10 @@ class SubscriptionServicesController extends Controller
         $this->em->persist($subscriptionService);
         $this->em->flush();
 
-        $this->addFlash('feedback', 'Servizio a sottoscrizione creato correttamente');
+        $this->addFlash('feedback', $this->translator->trans('backoffice.integration.subscription_service.created'));
         return $this->redirectToRoute('operatori_subscription-service_index');
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Creazione fallita. Verifica che non esista già un servizio con questo codice');
+        $this->addFlash('error', $this->translator->trans('backoffice.integration.subscription_service.duplicate_error'));
       }
     }
 
@@ -226,11 +232,11 @@ class SubscriptionServicesController extends Controller
       $this->em->remove($subscriptionService);
       $this->em->flush();
 
-      $this->addFlash('feedback', 'Servizio a sottoscizione eliminato correttamente');
+      $this->addFlash('feedback', $this->translator->trans('backoffice.integration.subscription_service.deleted'));
 
       return $this->redirectToRoute('operatori_subscription-service_index');
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare il servizio a sottoscrizione, ci sono delle iscrizioni collegate.');
+      $this->addFlash('warning', $this->translator->trans('backoffice.integration.subscription_service.delete_error'));
       return $this->redirectToRoute('operatori_subscription-service_index');
     }
   }
@@ -259,10 +265,10 @@ class SubscriptionServicesController extends Controller
         $this->em->persist($subscriptionService);
         $this->em->flush();
 
-        $this->addFlash('feedback', 'Servizio a sottoscrizione modificato correttamente');
+        $this->addFlash('feedback', $this->translator->trans('backoffice.integration.subscription_service.edited'));
         return $this->redirectToRoute('operatori_subscription-service_index');
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Codice servizio a sottoscrizione duplicato. Modifica fallita');
+        $this->addFlash('error', $this->translator->trans('backoffice.integration.subscription_service.duplicate_code_error'));
       }
     }
 
