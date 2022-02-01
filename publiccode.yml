@@ -3,7 +3,7 @@ applicationSuite: Sito comunale
 name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanzadelcittadino
 landingURL: https://link.opencontent.it/sdc-home
-releaseDate: '2021-12-21'
+releaseDate: '2022-02-01'
 softwareVersion: 1.15.0
 developmentStatus: stable
 softwareType: standalone/web
@@ -64,7 +64,7 @@ usedBy:
   - Comune di Villa Lagarina (TN)
   - Comune di Spormaggiore (TN)
   - Comune di Baselga di Pinè (TN)
-  - Fondazione Mach (TN)
+  - Fondazione Edmund Mach (TN)
   - Provincia autonoma di Trento (TN)
   - Comune di Niscemi (CL)
   - Comune di Preganziol (TV)
@@ -73,6 +73,7 @@ usedBy:
   - Comune di Seriate (BG)
   - Comune di Monopoli (BA)
   - Comune di Verbania (VB)
+  - Comune di Vicopisano (PI)
 roadmap: https://link.opencontent.it/sdc-roadmap
 categories:
   - communications
@@ -126,8 +127,8 @@ description:
     apiDocumentation: https://link.opencontent.it/sdc-apidoc
     documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
-      Area personale utente, back office operatori, moduli e pratiche on line,
-      prenotazione appuntamenti. Anche in [versione SaaS certificata
+      Area personale, moduli on line e prenotazione appuntamenti. 
+      Anche in [versione SaaS certificata
       AgId](https://catalogocloud.agid.gov.it/service/525)
     longDescription: >-
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
