@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query;
 
 class ServizioRepository extends EntityRepository
 {
@@ -39,10 +40,10 @@ class ServizioRepository extends EntityRepository
     ->setParameter('sharedWithGroup', false);
 
     // Search text
-    if (isset($criteria['search_text'])) {
+    if (isset($criteria['q'])) {
       $qb
-        ->andWhere($qb->expr()->like('LOWER(s.name)', ':search_text'))
-        ->setParameter('search_text', '%' . strtolower($criteria['search_text']) . '%');
+        ->andWhere($qb->expr()->like('LOWER(s.name)', ':q'))
+        ->setParameter('q', '%' . strtolower($criteria['q']) . '%');
     }
 
     // Status
@@ -86,9 +87,19 @@ class ServizioRepository extends EntityRepository
         ->andWhere('geographicAreas.id IN (:geographic_areas)')
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
-
     $qb->orderBy('s.name', 'ASC');
-    return $qb->getQuery()->getResult();
+
+    return $qb->getQuery()
+      ->setHint(
+        Query::HINT_CUSTOM_OUTPUT_WALKER,
+        'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+      )
+      ->setHint(
+        \Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+        $criteria['locale']
+      )
+      ->setHint(\Gedmo\Translatable\TranslatableListener::HINT_FALLBACK, 1)
+      ->getResult();
   }
 
   private function findSharedByCriteria($criteria)
@@ -100,10 +111,10 @@ class ServizioRepository extends EntityRepository
       ->setParameter('sharedWithGroup', true);
 
     // Search text
-    if (isset($criteria['search_text'])) {
+    if (isset($criteria['q'])) {
       $qb
-        ->andWhere($qb->expr()->like('LOWER(s.name)', ':search_text'))
-        ->setParameter('search_text', '%' . strtolower($criteria['search_text']) . '%');
+        ->andWhere($qb->expr()->like('LOWER(s.name)', ':q'))
+        ->setParameter('q', '%' . strtolower($criteria['q']) . '%');
     }
 
     // Status
@@ -142,10 +153,19 @@ class ServizioRepository extends EntityRepository
         ->andWhere('geographicAreas.id IN (:geographic_areas)')
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
-
     $qb->orderBy('s.name', 'ASC');
 
-    return $qb->getQuery()->getResult();
+    return $qb->getQuery()
+      ->setHint(
+        Query::HINT_CUSTOM_OUTPUT_WALKER,
+        'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+      )
+      ->setHint(
+        \Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+        $criteria['locale']
+      )
+      ->setHint(\Gedmo\Translatable\TranslatableListener::HINT_FALLBACK, 1)
+      ->getResult();
   }
 
   public function findAvailable($criteria = [])

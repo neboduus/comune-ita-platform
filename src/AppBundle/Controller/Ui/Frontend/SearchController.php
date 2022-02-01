@@ -59,10 +59,10 @@ class SearchController extends Controller
     $facets = $this->serviceManager->getFacets();
 
     $filters = [
-      'search_text' => $request->query->get('search_text', ''),
+      'q' => $request->query->get('q', ''),
       'fields' => []
     ];
-    $request->query->remove('search_text');
+    $request->query->remove('q');
     foreach ($request->query->all() as  $v) {
       if (is_array($v)) {
         $filters['fields'] = array_merge($filters['fields'], $v);

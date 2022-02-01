@@ -23,7 +23,7 @@
 
             <div class="form-group floating-labels">
               <div class="form-label-group pr-2">
-                <input type="text" class="form-control  search-text" name="search_text" value="{{ filters.search_text }}" placeholder="{{ 'search.label'|trans }}">
+                <input type="text" class="form-control  search-text" name="q" value="{{ filters.q }}" placeholder="{{ 'search.label'|trans }}">
                 <button type="submit" class="autocomplete-icon btn btn-link" aria-label="{{ 'search.label'|trans }}">
                   <svg class="icon">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-search"></use>
@@ -84,7 +84,7 @@
                     {{ 'search.apply_filters'|trans }}
                   </button>
                 </div>
-                {% if filters.fields|length > 0 or filters.search_text != '' %}
+                {% if filters.fields|length > 0 or filters.q != '' %}
                   <div class="col">
                     <a href="{{ path('search') }}" class="btn btn-outline-secondary">
                       {{ 'search.reset_filters'|trans }}
