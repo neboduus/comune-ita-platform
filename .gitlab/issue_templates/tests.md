@@ -16,4 +16,8 @@ Ogni issue indicata di seguito ha dei casi di test o delle user stories da testa
 - [ ] #numero1 - breve descrizione
 - [ ] #numero2 - breve descrizione
 
+## Ambiente di dev
 
+L'ambiente di dev che si può creare dal repository deve essere sempre funzionante: con un clone del repo e un `docker-compose up` si deve sempre ottenere un ambiente minimale ma funzionante.
+
+- [ ] ci sono variabili da aggiungere al docker-compose.yml con un valore di default?
