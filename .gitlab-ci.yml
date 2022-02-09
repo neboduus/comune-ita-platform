@@ -200,10 +200,10 @@ push_caddy_latest:
 
 publiccode:
   stage: test
-  allow_failure: true
+  allow_failure: false
   script:
 #    - docker run -v $(pwd):/var/tmp:ro -t --rm golang sh -c "go get github.com/italia/publiccode-parser-go/pcvalidate; cd /var/tmp; /go/bin/pcvalidate -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master publiccode.yml"
-    - docker run -i italia/publiccode-parser-go -remote-base-url https://gitlab.com/opencontent/stanzadelcittadino/raw/master /dev/stdin < publiccode.yml
+    - docker run -i italia/publiccode-parser-go -remote-base-url https://gitlab.com/opencontent/stanza-del-cittadino/core/-/raw/master /dev/stdin < publiccode.yml
 
 
 php-qa-tools:
