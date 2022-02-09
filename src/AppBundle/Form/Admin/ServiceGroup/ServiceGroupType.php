@@ -28,23 +28,28 @@ class ServiceGroupType extends AbstractType
       ])
       ->add('description', TextareaType::class, [
         'label' => 'gruppo_di_servizi.descrizione',
-        'required' => false
+        'required' => false,
+        'purify_html' => true,
       ])
       ->add('who', TextareaType::class, [
         'label' => 'gruppo_di_servizi.a_chi_si_rivolge',
-        'required' => false
+        'required' => false,
+        'purify_html' => true,
       ])
       ->add('howto', TextareaType::class, [
         'label' => 'gruppo_di_servizi.accedere',
-        'required' => false
+        'required' => false,
+        'purify_html' => true,
       ])
       ->add('special_cases', TextareaType::class, [
         'label' => 'gruppo_di_servizi.casi_particolari',
-        'required' => false
+        'required' => false,
+        'purify_html' => true,
       ])
       ->add('more_info', TextareaType::class, [
         'label' => 'gruppo_di_servizi.maggiori_info',
-        'required' => false
+        'required' => false,
+        'purify_html' => true,
       ])
       ->add('sticky', CheckboxType::class, [
         'label' => 'gruppo_di_servizi.in_evidenza',

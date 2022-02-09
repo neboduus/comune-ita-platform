@@ -63,10 +63,12 @@ class GeneralDataType extends AbstractI18nType
         "label" => 'servizio.nome'
       ])
       ->add("compilationInfo", I18nTextareaType::class, [
-        "label" => 'servizio.info_compilazione'
+        "label" => 'servizio.info_compilazione',
+        'purify_html' => true,
       ])
       ->add("finalIndications", I18nTextareaType::class, [
-        "label" => 'servizio.indicazioni_finali'
+        "label" => 'servizio.indicazioni_finali',
+        'purify_html' => true,
       ])
     ;
 
