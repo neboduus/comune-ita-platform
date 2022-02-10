@@ -137,12 +137,6 @@
                   {{ 'nav.admin.gruppo_servizi'|trans }}
                 </a>
               </li>
-              <li class="nav-item {% if 'webhook' in app.request.pathInfo %} active {% endif %}">
-                <a class="nav-link "
-                   href="{{ path('admin_webhook_index') }}">
-                  {{ 'nav.admin.webhook'|trans }}
-                </a>
-              </li>
               <li class="nav-item">
                 <div class="dropdown">
                   <a class="btn btn-dropdown dropdown-toggle" style="padding: 0.5rem 1rem; font-weight: 300" href="#"
