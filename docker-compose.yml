@@ -98,6 +98,7 @@ services:
       KAFKA_EVENT_VERSION: ${KAFKA_EVENT_VERSION:-}
       KAFKA_TOPIC_APPLICATIONS: ${KAFKA_TOPIC_APPLICATIONS:-}
       KAFKA_TOPIC_SERVICES: ${KAFKA_TOPIC_SERVICES:-}
+      API_VERSION: ${API_VERSION:-1}
 
       # Your Queue-it customer ID
       #QUEUEIT_CUSTOMER_ID: 'xxx'
@@ -192,7 +193,7 @@ services:
       start_period: 30s
 
   formserver:
-    image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.0.11
+    image: registry.gitlab.com/opencontent/formmanagerserver:1.0.4
     restart: unless-stopped
     environment:
       DB_URL: mongodb://mongo:27017/formmanager
