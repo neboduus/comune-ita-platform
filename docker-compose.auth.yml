@@ -1,0 +1,86 @@
+version: "3.7"
+
+services:
+
+  apache:
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:master
+    depends_on:
+      - php
+    build:
+      context: .
+      dockerfile: Dockerfile.apache
+      args:
+        php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
+    environment:
+      WEB_DOCUMENT_ROOT: /var/www/html/web
+      WEB_PHP_SOCKET: php:9000
+      ORGANIZATION: ${ORGANIZATION:-Comune di Qui}
+      SERVER_NAME: ${SERVER_NAME:-stanzadelcittadino.localtest.me}
+      ENTITY_ID: ${ENTITY_ID:-stanzadelcittadino.localtest.me}
+      PROJECT_BASE_URL: ${PROJECT_BASE_URL:-stanzadelcittadino.localtest.me}
+    ports:
+      - "443:443"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.apache.entrypoints: web
+      traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-pat`)'
+
+  openlogin:
+    image: registry.gitlab.com/opencontent/traefik-spid-auth:1.1.0
+    restart: unless-stopped
+    environment:
+      SYNFONY_ENV: dev
+      ENABLE_PROVIDERS: spid
+      SP_ENTITYID: 'http://auth.localtest.me/'
+      SP_SINGLELOGOUT: 'http://auth.localtest.me/slo'
+      SP_ACS: 'http://auth.localtest.me/acs'
+      SP_ORG_NAME: 'Ambiente di sviluppo di OpenLogin'
+      SP_ORG_DISPLAY_NAME: 'Opencontent Scarl'
+      SP_CONTACT_IPA_CODE: 'opncnt_1'
+      SP_CONTACT_EMAIL: 'info@opencontent.it'
+      SP_CONTACT_PHONE: '00390461917437'
+      SPID_LEVEL: 2
+      TEST_SPID_IDP: 'enabled'
+      TEST_SPID_IDP_ID: 'http://spid.localtest.me/'
+      TEST_SPID_IDP_NAME: 'Test IdP'
+      TEST_SPID_IDP_METADATA_NUMBER: 10
+      #facebook
+      OAUTH_FACEBOOK_CLIENT_ID: ''
+      OAUTH_FACEBOOK_CLIENT_SECRET: ''
+      #github
+      OAUTH_GITHUB_CLIENT_ID: ''
+      OAUTH_GITHUB_CLIENT_SECRET: ''
+      #google
+      OAUTH_GOOGLE_CLIENT_ID: ''
+      OAUTH_GOOGLE_CLIENT_SECRET: ''
+      #instagram
+      OAUTH_INSTAGRAM_CLIENT_ID: ''
+      OAUTH_INSTAGRAM_CLIENT_SECRET: ''
+      COOKIE_LIFETIME_SECONDS: 20
+    labels:
+      traefik.enable: true
+      traefik.http.services.openlogin.loadbalancer.server.port: 2015
+      traefik.http.routers.openlogin-http.rule: Host(`auth.localtest.me`)
+      traefik.http.routers.openlogin-http.entrypoints: web
+    volumes:
+      #- ./openlogin/var:/srv/app/var:rw
+      - ./openlogin/spid:/srv/app/spid:ro
+
+  # identity provider di prova
+  idp:
+    image: italia/spid-testenv2
+    restart: unless-stopped
+    depends_on:
+      - openlogin
+    volumes:
+      - ./openlogin/idp:/app/conf
+    environment:
+      FLASK_ENV: development
+    labels:
+      traefik.enable: true
+      traefik.http.services.idp.loadbalancer.server.port: 80
+      traefik.http.routers.idp-http.rule: 'Host(`spid.localtest.me`)'
+      traefik.http.routers.idp-http.entrypoints: web
+    links:
+      - "openlogin:auth.localtest.me"
+

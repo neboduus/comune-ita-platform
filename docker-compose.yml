@@ -1,5 +1,10 @@
 version: "3.7"
 
+volumes:
+  pgdata:
+  uploads:
+  mongo:
+
 services:
 
   postgres:
@@ -15,9 +20,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    #volumes:
-      #- ./compose_conf/postgres:/docker-entrypoint-initdb.d
-      #- pgdata:/var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
 
   php:
     image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
@@ -49,7 +53,7 @@ services:
       SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
       DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-sdc@opencontent.it}
       WKHTMLBINARY: ${WKHTMLBINARY:-wkhtmltopdf}
-      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-gotemberg}
+      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-https://gotemberg.ship.opencontent.io}
       EZ_PASSWORD: ${EZ_PASSWORD:-ez}
       PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://localhost:8080/}
       #HEADER_TOP_TITLE: $HEADER_TOP_TITLE
@@ -82,9 +86,9 @@ services:
       IO_API_URL: ${IO_API_URL:-https://api.io.italia.it/api/v1}
       CACHE_MAX_AGE: ${CACHE_MAX_AGE:-3600}
       METRICS_TYPE: ${METRICS_TYPE:-in_memory}
-      METRICS_REDIS_HOST: ${METRICS_REDIS_HOST:-redis}
-      METRICS_REDIS_PORT: ${METRICS_REDIS_PORT:-6379}
-      METRICS_REDIS_PASSWORD: ${METRICS_REDIS_PASSWORD:-}
+      #METRICS_REDIS_HOST: ${METRICS_REDIS_HOST:-redis}
+      #METRICS_REDIS_PORT: ${METRICS_REDIS_PORT:-6379}
+      #METRICS_REDIS_PASSWORD: ${METRICS_REDIS_PASSWORD:-}
       UPLOAD_DESTINATION: ${UPLOAD_DESTINATION:-local_filesystem}
       S3_REGION: ${S3_REGION:-eu-west-1}
       S3_KEY: ${S3_KEY:-}
@@ -128,7 +132,6 @@ services:
       #shibb_Shib-Session-ID: abc123abc123abc123abc123abc123abc123abc123
       #shibb_Shib-Session-Index: abc123abc123abc123abc123abc123abc123abc123
       #shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
-
     volumes:
       - "uploads:/var/www/html/var/uploads"
 
@@ -158,33 +161,9 @@ services:
       traefik.http.routers.caddy.entrypoints: web
       traefik.http.routers.caddy.rule: 'Host(`stanzadelcittadino.localtest.me`)'
 
-  apache:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/apache:master
-    depends_on:
-      - php
-    build:
-      context: .
-      dockerfile: Dockerfile.apache
-      args:
-        php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
-    environment:
-      WEB_DOCUMENT_ROOT: /var/www/html/web
-      WEB_PHP_SOCKET: php:9000
-      ORGANIZATION: ${ORGANIZATION:-Comune di Qui}
-      SERVER_NAME: ${SERVER_NAME:-stanzadelcittadino.localtest.me}
-      ENTITY_ID: ${ENTITY_ID:-stanzadelcittadino.localtest.me}
-      PROJECT_BASE_URL: ${PROJECT_BASE_URL:-stanzadelcittadino.localtest.me}
-    ports:
-      - "443:443"
-    labels:
-      traefik.enable: true
-      traefik.http.routers.apache.entrypoints: web
-      traefik.http.routers.apache.rule: 'Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-pat`)'
-
   traefik:
     image: 'traefik:2.0'
     restart: unless-stopped
-    #command: -c /dev/null --web --docker --logLevel=DEBUG --docker.domain=localtest.me
     command:
       - "--log.level=DEBUG"
       - "--api.insecure=true"
@@ -204,10 +183,8 @@ services:
   mongo:
     image: mongo:4.2.2
     restart: unless-stopped
-    #volumes:
-      #- 'mongo:/data/db'
-  #    - './compose_conf/mongo/dump/:/dump/'
-  #    - './compose_conf/mongo/restore.sh:/docker-entrypoint-initdb.d/restore.sh:ro'
+    volumes:
+      - 'mongo:/data/db'
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
       interval: 10s
@@ -218,8 +195,6 @@ services:
   formserver:
     image: registry.gitlab.com/opencontent/formmanagerserver:1.0.4
     restart: unless-stopped
-    ports:
-      - '8000:8000'
     environment:
       DB_URL: mongodb://mongo:27017/formmanager
     depends_on:
@@ -230,106 +205,63 @@ services:
       traefik.http.routers.formserver.entrypoints: web
       traefik.http.routers.formserver.rule: 'Host(`formserver.localtest.me`)'
 
-  gotemberg:
-    image: thecodingmachine/gotenberg:6
-    restart: unless-stopped
-    ports:
-      - '3000:3000'
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-      #start_period: 5s
-    environment:
-      LOG_LEVEL: INFO
-      # DEFAULT_LISTEN_PORT: 3000
-      # DISABLE_GOOGLE_CHROME: 0
-      # DEFAULT_GOOGLE_CHROME_RPCC_BUFFER_SIZE: "1048576" #1Mb, max 100Mb
-      DISABLE_UNOCONV: 1
-      #DEFAULT_WAIT_TIMEOUT: 5
-      #MAXIMUM_WAIT_TIMEOUT: 30
-      #DEFAULT_WEBHOOK_URL_TIMEOUT: "2.5"
-      #MAXIMUM_WEBHOOK_URL_TIMEOUT: "2.5"
-      MAXIMUM_WAIT_DELAY: "30"
+  formserver-init:
+    image: lorello/alpine-bash:1.2.0
+    volumes: [ './compose_conf/formserver/init.d:/data:ro' ]
+    command:
+      - bash
+      - -c
+      - |
+        wait-for-it formserver:8000
+        http --check-status formserver:8000/form/5d5a66b7669977001b5b617b || (http post formserver:8000/form < /data/address.json)
+        http --check-status formserver:8000/form/5d5a45a8669977001b5b6179 || (http post formserver:8000/form < /data/birth-info.json)
+        http --check-status formserver:8000/form/5d7aa1b318fecd734051ae80 || (http post formserver:8000/form < /data/fiscal-code.json)
+        http --check-status formserver:8000/form/5d4d26ff9410f50010f30068 || (http post formserver:8000/form < /data/full-name.json)
+        http --check-status formserver:8000/form/5d5a41a4669977001b5b6177 || (http post formserver:8000/form < /data/gender.json)
+        http --check-status formserver:8000/form/5d7aa15b18fecd734051ae7f || (http post formserver:8000/form < /data/personal-data.json)
+        http --check-status formserver:8000/form/5e5e26ede170600020175850 || (http post formserver:8000/form < /data/personal-data-light.json)
 
-  openlogin:
-    image: registry.gitlab.com/opencontent/traefik-spid-auth:1.1.0
-    restart: unless-stopped
-    environment:
-      SYNFONY_ENV: dev
-      ENABLE_PROVIDERS: spid
-      SP_ENTITYID: 'http://auth.localtest.me/'
-      SP_SINGLELOGOUT: 'http://auth.localtest.me/slo'
-      SP_ACS: 'http://auth.localtest.me/acs'
-      SP_ORG_NAME: 'Ambiente di sviluppo di OpenLogin'
-      SP_ORG_DISPLAY_NAME: 'Opencontent Scarl'
-      SP_CONTACT_IPA_CODE: 'opncnt_1'
-      SP_CONTACT_EMAIL: 'info@opencontent.it'
-      SP_CONTACT_PHONE: '00390461917437'
-      SPID_LEVEL: 2
-      TEST_SPID_IDP: 'enabled'
-      TEST_SPID_IDP_ID: 'http://spid.localtest.me/'
-      TEST_SPID_IDP_NAME: 'Test IdP'
-      TEST_SPID_IDP_METADATA_NUMBER: 10
-      #facebook
-      OAUTH_FACEBOOK_CLIENT_ID: ''
-      OAUTH_FACEBOOK_CLIENT_SECRET: ''
-      #github
-      OAUTH_GITHUB_CLIENT_ID: ''
-      OAUTH_GITHUB_CLIENT_SECRET: ''
-      #google
-      OAUTH_GOOGLE_CLIENT_ID: ''
-      OAUTH_GOOGLE_CLIENT_SECRET: ''
-      #instagram
-      OAUTH_INSTAGRAM_CLIENT_ID: ''
-      OAUTH_INSTAGRAM_CLIENT_SECRET: ''
-      COOKIE_LIFETIME_SECONDS: 20
-    labels:
-      traefik.enable: true
-      traefik.http.services.openlogin.loadbalancer.server.port: 2015
-      traefik.http.routers.openlogin-http.rule: Host(`auth.localtest.me`)
-      traefik.http.routers.openlogin-http.entrypoints: web
-    volumes:
-      #- ./openlogin/var:/srv/app/var:rw
-      - ./openlogin/spid:/srv/app/spid:ro
+#  Enable to debug new version of gotemberg
+#  By default https://gotemberg.ship.opencontent.io is used
+#  gotemberg:
+#    image: thecodingmachine/gotenberg:6
+#    restart: unless-stopped
+#    ports:
+#      - '3000:3000'
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
+#      interval: 1m30s
+#      timeout: 10s
+#      retries: 3
+#      #start_period: 5s
+#    environment:
+#      LOG_LEVEL: INFO
+#      # DEFAULT_LISTEN_PORT: 3000
+#      # DISABLE_GOOGLE_CHROME: 0
+#      # DEFAULT_GOOGLE_CHROME_RPCC_BUFFER_SIZE: "1048576" #1Mb, max 100Mb
+#      DISABLE_UNOCONV: 1
+#      #DEFAULT_WAIT_TIMEOUT: 5
+#      #MAXIMUM_WAIT_TIMEOUT: 30
+#      #DEFAULT_WEBHOOK_URL_TIMEOUT: "2.5"
+#      #MAXIMUM_WEBHOOK_URL_TIMEOUT: "2.5"
+#      MAXIMUM_WAIT_DELAY: "30"
 
-  # identity provider di prova
-  idp:
-    image: italia/spid-testenv2
-    restart: unless-stopped
-    depends_on:
-      - openlogin
-    volumes:
-      - ./openlogin/idp:/app/conf
-    environment:
-      FLASK_ENV: development
-    labels:
-      traefik.enable: true
-      traefik.http.services.idp.loadbalancer.server.port: 80
-      traefik.http.routers.idp-http.rule: 'Host(`spid.localtest.me`)'
-      traefik.http.routers.idp-http.entrypoints: web
-    links:
-      - "openlogin:auth.localtest.me"
+  # Enable only to test metrics export in PHP container
+  #redis:
+  #  image: wodby/redis:5-3.7.6
+  #  environment:
+  #    REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
 
-  redis:
-    image: wodby/redis:5-3.7.6
-    environment:
-      REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
-
-  pgweb:
-    image: sosedoff/pgweb
-    labels:
-      traefik.enable: true
-      #traefik.http.services.pgweb.loadbalancer.server.port: 80
-      traefik.http.routers.pgweb-http.rule: 'Host(`pgweb.localtest.me`)'
-      traefik.http.routers.pgweb-http.entrypoints: web
-    environment:
-      - DATABASE_URL=postgres://${DB_USER:-sdc}:${DB_PASSWORD:-sdc}@postgres:5432/${DB_NAME:-sdc_bugliano}?sslmode=disable
-    depends_on:
-      - postgres
-
-volumes:
-#  pgdata:
-  uploads:
-  mongo:
+# Enable to have a postgres web interface
+#  pgweb:
+#    image: sosedoff/pgweb
+#    labels:
+#      traefik.enable: true
+#      #traefik.http.services.pgweb.loadbalancer.server.port: 80
+#      traefik.http.routers.pgweb-http.rule: 'Host(`pgweb.localtest.me`)'
+#      traefik.http.routers.pgweb-http.entrypoints: web
+#    environment:
+#      - DATABASE_URL=postgres://${DB_USER:-sdc}:${DB_PASSWORD:-sdc}@postgres:5432/${DB_NAME:-sdc_bugliano}?sslmode=disable
+#    depends_on:
+#      - postgres
+#

@@ -1,0 +1,56 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "label": "Codice Fiscale",
+      "placeholder": "MRARSI01A70G452D",
+      "errorLabel": "Codice fiscale non valido",
+      "inputMask": "AAAAAA99A99A***A",
+      "allowMultipleMasks": false,
+      "showWordCount": false,
+      "showCharCount": false,
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "textfield",
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "defaultValue": "",
+      "input": true,
+      "calculateValue": "value = data && data.fiscal_code \n&& data.fiscal_code !== undefined\n&& data.fiscal_code !==  \"\"  ? data.fiscal_code.toUpperCase() : null",
+      "tags": [],
+      "key": "fiscal_code",
+      "validate": {
+        "custom": "if(input && input.length > 16){\n    valid = 'Il CF non può contenere più di 16 caratteri'\n}",
+        "json": "",
+        "customMessage": "CF non valido",
+        "required": true
+      },
+      "case": "uppercase",
+      "calculatedValue": "value = data.fiscal_code.toUpperCase()",
+      "inputFormat": "plain",
+      "logic": [],
+      "customConditional": "",
+      "refreshOn": "data",
+      "widget": {
+        "type": ""
+      },
+      "reorder": false
+    }
+  ],
+  "tags": [
+    "component"
+  ],
+  "_id": "5d7aa1b318fecd734051ae80",
+  "title": "Codice Fiscale",
+  "name": "Codice Fiscale",
+  "path": "codicefiscale",
+  "description": "Richiesta codice fiscale",
+  "modified": "2021-08-19T10:38:54.701Z",
+  "created": "2019-09-12T19:51:15.724Z",
+  "__v": 40
+}

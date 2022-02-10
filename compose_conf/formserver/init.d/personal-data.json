@@ -1,0 +1,406 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "reference": false,
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "form": "5d4d26ff9410f50010f30068",
+      "overlay": {
+        "width": "",
+        "style": "",
+        "height": "",
+        "top": "",
+        "left": ""
+      },
+      "label": "Nome_Cognome",
+      "input": true,
+      "type": "form",
+      "reorder": false,
+      "tableView": true,
+      "tags": [],
+      "showWordCount": false,
+      "alwaysEnabled": false,
+      "calculateServer": false,
+      "key": "completename",
+      "allowMultipleMasks": false,
+      "validate": {
+        "unique": false,
+        "multiple": false,
+        "strictDateValidation": false
+      },
+      "showCharCount": false,
+      "formRevision": "",
+      "mask": false,
+      "logic": [],
+      "customConditional": ""
+    },
+    {
+      "reference": false,
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "form": "5d5a41a4669977001b5b6177",
+      "overlay": {
+        "width": "",
+        "style": "",
+        "height": "",
+        "top": "",
+        "left": ""
+      },
+      "label": "Sesso",
+      "input": true,
+      "type": "form",
+      "reorder": false,
+      "tableView": true,
+      "tags": [],
+      "showWordCount": false,
+      "alwaysEnabled": false,
+      "calculateServer": false,
+      "key": "gender",
+      "allowMultipleMasks": false,
+      "validate": {
+        "unique": false,
+        "multiple": false,
+        "strictDateValidation": false
+      },
+      "showCharCount": false,
+      "formRevision": "",
+      "mask": false,
+      "logic": [],
+      "customConditional": ""
+    },
+    {
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "errorLabel": "Non hai inserito una mail valida",
+      "spellcheck": true,
+      "showCharCount": false,
+      "overlay": {
+        "width": "",
+        "style": "",
+        "height": "",
+        "top": "",
+        "left": ""
+      },
+      "defaultValue": "",
+      "label": "Indirizzo Email",
+      "input": true,
+      "type": "email",
+      "reorder": false,
+      "widget": {
+        "i18n": {
+          "lng": "en",
+          "resources": {
+            "en": {
+              "translation": {
+                "invalid_email": "{{field}} must be a valid email.",
+                "september": "September",
+                "maxDate": "{{field}} should not contain date after {{- maxDate}}",
+                "maxSelectedCount": "You can only select up to {{maxCount}} items to continue.",
+                "invalid_url": "{{field}} must be a valid url.",
+                "month": "Month",
+                "year": "Year",
+                "cancel": "Cancel",
+                "invalid_day": "{{field}} is not a valid day.",
+                "next": "Next",
+                "november": "November",
+                "august": "August",
+                "min": "{{field}} cannot be less than {{min}}.",
+                "pattern": "{{field}} does not match the pattern {{pattern}}",
+                "april": "April",
+                "submit": "Submit Form",
+                "minWords": "{{field}} must have more than {{length}} words.",
+                "minLength": "{{field}} must be longer than {{length}} characters.",
+                "invalid_date": "{{field}} is not a valid date.",
+                "previous": "Previous",
+                "march": "March",
+                "complete": "Submission Complete",
+                "may": "May",
+                "max": "{{field}} cannot be greater than {{max}}.",
+                "june": "June",
+                "stripe": "{{stripe}}",
+                "maxLength": "{{field}} must be shorter than {{length}} characters.",
+                "july": "July",
+                "day": "Day",
+                "minDate": "{{field}} should not contain date before {{- minDate}}",
+                "december": "December",
+                "february": "February",
+                "october": "October",
+                "january": "January",
+                "required": "{{field}} is required",
+                "mask": "{{field}} does not match the mask.",
+                "maxWords": "{{field}} must have less than {{length}} words.",
+                "invalid_regex": "{{field}} does not match the pattern {{regex}}.",
+                "error": "Please fix the following errors before submitting.",
+                "minSelectedCount": "You must select at least {{minCount}} items to continue."
+              }
+            }
+          }
+        },
+        "type": "input",
+        "language": "en",
+        "icons": "fontawesome"
+      },
+      "tableView": true,
+      "tags": [],
+      "showWordCount": false,
+      "alwaysEnabled": false,
+      "calculateServer": false,
+      "key": "email_address",
+      "allowMultipleMasks": false,
+      "validate": {
+        "required": true,
+        "multiple": false,
+        "customMessage": "Non hai inserito una mail valida",
+        "json": "",
+        "unique": false,
+        "strictDateValidation": false
+      },
+      "placeholder": "mario.rossi@example.mail",
+      "inputFormat": "plain",
+      "logic": [],
+      "customConditional": ""
+    },
+    {
+      "reference": false,
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "form": "5d5a45a8669977001b5b6179",
+      "overlay": {
+        "width": "",
+        "style": "",
+        "height": "",
+        "top": "",
+        "left": ""
+      },
+      "label": "Form",
+      "input": true,
+      "type": "form",
+      "reorder": false,
+      "tableView": true,
+      "tags": [],
+      "showWordCount": false,
+      "alwaysEnabled": false,
+      "calculateServer": false,
+      "key": "Born",
+      "allowMultipleMasks": false,
+      "validate": {
+        "unique": false,
+        "multiple": false,
+        "strictDateValidation": false
+      },
+      "showCharCount": false,
+      "formRevision": "",
+      "mask": false,
+      "logic": [],
+      "customConditional": ""
+    },
+    {
+      "encrypted": false,
+      "conditional": {
+        "json": ""
+      },
+      "redrawOn": "",
+      "tag": "div",
+      "attrs": [
+        {
+          "attr": "id",
+          "value": "cf_alert"
+        },
+        {
+          "attr": "style",
+          "value": "display:none"
+        }
+      ],
+      "modalEdit": false,
+      "showCharCount": false,
+      "overlay": {
+        "style": "",
+        "top": "",
+        "height": "",
+        "width": "",
+        "page": "",
+        "left": ""
+      },
+      "label": "HTML",
+      "content": "Il codice fiscale inserito non sembra valido, controllare con attenzione di averlo riportato correttamente.",
+      "input": false,
+      "type": "htmlelement",
+      "tableView": false,
+      "tags": [],
+      "refreshOnChange": false,
+      "showWordCount": false,
+      "calculateServer": false,
+      "key": "html",
+      "allowMultipleMasks": false,
+      "validate": {
+        "unique": false,
+        "multiple": false,
+        "strictDateValidation": false
+      },
+      "className": "alert alert-danger",
+      "logic": [],
+      "customConditional": ""
+    },
+    {
+      "reference": false,
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "showCharCount": false,
+      "overlay": {
+        "style": "",
+        "top": "",
+        "height": "",
+        "width": "",
+        "page": "",
+        "left": ""
+      },
+      "label": "CodiceFiscale",
+      "input": true,
+      "type": "form",
+      "reorder": false,
+      "revision": "",
+      "calculateValue": "if(_.has(data, 'fiscal_code')){\n    let name = data.completename.data.name;\n    let surname = data.completename.data.surname;\n    let gender = data.gender.data.gender;\n    let date_of_birth = data.Born.data.natoAIl;\n    let fiscal_code = data.fiscal_code && data.fiscal_code.data.fiscal_code && data.fiscal_code.data.fiscal_code !== '' ? data.fiscal_code.data.fiscal_code.replace(/_/gi, \"\") : '';\n    \n    function loadJSON(path, payload, success, error) {\n        var xhr = new XMLHttpRequest();\n        xhr.open(\"POST\", path, true);\n        xhr.setRequestHeader(\"Content-Type\", \"application/json;charset=UTF-8\");\n    \n        xhr.onreadystatechange = function () {\n            if (xhr.readyState === XMLHttpRequest.DONE) {\n              var response = JSON.parse(xhr.response)\n              if (xhr.status === 200) {\n                document.getElementById('cf_alert').style.display = 'none';\n              } else {\n                document.getElementById('cf_alert').style.display = 'block';\n              }\n            }\n        };\n        \n        xhr.send(JSON.stringify(payload));\n    }\n    \n    if (name && surname && gender && date_of_birth && fiscal_code && fiscal_code.length === 16) {\n        let payload = {\n          \"name\": name,\n          \"surname\": surname,\n          \"gender\": gender,\n          \"date_of_birth\": date_of_birth,\n          \"fiscal_code\": fiscal_code.toUpperCase()\n        }\n    \n        loadJSON('https://fiscalcode.opencontent.it/validate', payload,\n            function () {\n            },\n            function () {\n            });\n    }\n}",
+      "form": "5d7aa1b318fecd734051ae80",
+      "tags": [],
+      "showWordCount": false,
+      "alwaysEnabled": false,
+      "calculateServer": false,
+      "key": "fiscal_code",
+      "allowMultipleMasks": false,
+      "validate": {
+        "unique": false,
+        "multiple": false,
+        "strictDateValidation": false
+      },
+      "formRevision": "",
+      "mask": false,
+      "tableView": true,
+      "logic": [],
+      "customConditional": ""
+    },
+    {
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "showCharCount": false,
+      "overlay": {
+        "width": "",
+        "style": "",
+        "height": "",
+        "top": "",
+        "left": ""
+      },
+      "label": "Content",
+      "html": "<p><strong>Residenza</strong></p>",
+      "input": false,
+      "type": "content",
+      "reorder": false,
+      "tableView": true,
+      "refreshOnChange": false,
+      "showWordCount": false,
+      "alwaysEnabled": false,
+      "calculateServer": false,
+      "key": "content2",
+      "allowMultipleMasks": false,
+      "validate": {
+        "json": "",
+        "customMessage": "",
+        "multiple": false,
+        "strictDateValidation": false,
+        "unique": false
+      },
+      "mask": false,
+      "className": "",
+      "logic": [],
+      "customConditional": ""
+    },
+    {
+      "reference": false,
+      "encrypted": false,
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "form": "5d5a66b7669977001b5b617b",
+      "overlay": {
+        "width": "",
+        "style": "",
+        "height": "",
+        "top": "",
+        "left": ""
+      },
+      "label": "Residenza",
+      "input": true,
+      "type": "form",
+      "reorder": false,
+      "tableView": true,
+      "tags": [],
+      "showWordCount": false,
+      "alwaysEnabled": false,
+      "calculateServer": false,
+      "key": "address",
+      "allowMultipleMasks": false,
+      "validate": {
+        "unique": false,
+        "multiple": false,
+        "strictDateValidation": false
+      },
+      "showCharCount": false,
+      "formRevision": "",
+      "mask": false,
+      "logic": [],
+      "customConditional": ""
+    }
+  ],
+  "tags": [
+    "component"
+  ],
+  "_id": "5d7aa15b18fecd734051ae7f",
+  "title": "Anagrafica",
+  "name": "Anagrafica",
+  "path": "anagrafica",
+  "description": "Richiesta dati anagrafici",
+  "modified": "2021-08-09T19:37:54.367Z",
+  "created": "2019-09-12T19:49:47.025Z",
+  "__v": 48
+}
