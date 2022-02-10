@@ -51,6 +51,38 @@ nav:
     accesso_operatori: 'Accesso operatori'
     protocollo: 'Configurazione di Protocollo'
     usage: 'Statistiche'
+  admin:
+    impostazioni_istanza: 'Impostazioni'
+    impostazioni_istanza_descrizione: "Configurazioni generali dell'ente"
+    ente: 'Ente'
+    categorie: 'Categorie'
+    operatori: 'Operatori'
+    servizi: 'Servizi'
+    servizi_descrizione: 'Gestione dei servizi'
+    operatori_descrizione: 'Gestione degli operatori'
+    gruppo_servizi: 'Gruppo di servizi'
+    gruppo_servizi_descrizione: 'Gestione dei gruppi di servizi'
+    webhook: 'Webhook'
+    webhook_descrizione: 'Gestione dei webhook'
+    metodi_pagamento: 'Metodi di pagamento'
+    strumenti: 'Strumenti'
+    azioni_programmate: 'Azioni programmate'
+    azioni_programmate_descrizione: 'Visualizza azioni programmate'
+    logs: 'Logs'
+    logs_descrizione: 'Logs sicurezza'
+    integrazioni: 'Funzionalità avanzate'
+    statistiche: 'Statistiche'
+    statistiche_descrizione: 'Visualizza le statistiche'
+    title: 'Benvenuto nella dashboard di amministrazione'
+    tenant:
+      protocollo: 'Protocollo'
+      pagamenti: 'Pagamenti'
+      opzioni: 'Opzioni'
+      webhooks: 'Webhooks'
+  backoffices:
+    servizi_sottoscrizione: 'Servizi a sottoscrizione'
+    prenotazione_appuntamenti: 'Prenotazione appuntamenti'
+    pagamenti_servizi_sottoscrizione: 'Pagamenti per servizi a sottoscrizione'
 
 terms:
   title: 'Accettazione termini di utilizzo'
