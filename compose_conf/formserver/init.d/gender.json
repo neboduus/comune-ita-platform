@@ -1,0 +1,59 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "label": "Genere",
+      "optionsLabelPosition": "right",
+      "values": [
+        {
+          "value": "maschio",
+          "label": "Maschio",
+          "shortcut": ""
+        },
+        {
+          "value": "femmina",
+          "label": "Femmina",
+          "shortcut": ""
+        }
+      ],
+      "inline": true,
+      "clearOnHide": false,
+      "mask": false,
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "radio",
+      "input": true,
+      "key": "gender",
+      "defaultValue": "",
+      "validate": {
+        "required": true,
+        "customMessage": "",
+        "json": ""
+      },
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": "",
+        "json": ""
+      },
+      "encrypted": false,
+      "customConditional": "",
+      "logic": [],
+      "reorder": false
+    }
+  ],
+  "tags": [
+    "component"
+  ],
+  "_id": "5d5a41a4669977001b5b6177",
+  "owner": "5d25902b9df0701900c9c015",
+  "title": "Sesso",
+  "name": "sesso",
+  "path": "sesso",
+  "description": "Sesso",
+  "machineName": "sesso",
+  "modified": "2021-08-09T19:37:50.109Z",
+  "created": "2019-09-05T15:42:33.024Z",
+  "__v": 13
+}
