@@ -1,0 +1,146 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "tableView": false,
+      "tags": [],
+      "conditional": {
+        "json": "",
+        "when": "",
+        "show": ""
+      },
+      "mask": false,
+      "alwaysEnabled": false,
+      "reorder": false,
+      "key": "template_birthday",
+      "logic": [],
+      "input": false,
+      "customConditional": "",
+      "label": "template",
+      "type": "columns",
+      "columns": [
+        {
+          "pull": 0,
+          "key": "column",
+          "tableView": true,
+          "hideOnChildrenHidden": false,
+          "label": "Column",
+          "width": 6,
+          "components": [
+            {
+              "label": "Data di nascita",
+              "errorLabel": "La data inserita non è valida",
+              "inputMask": "99/99/9999",
+              "allowMultipleMasks": false,
+              "showWordCount": false,
+              "showCharCount": false,
+              "tableView": true,
+              "alwaysEnabled": false,
+              "type": "textfield",
+              "tags": [],
+              "encrypted": false,
+              "defaultValue": "",
+              "conditional": {
+                "json": "",
+                "when": "",
+                "show": ""
+              },
+              "inputFormat": "plain",
+              "key": "natoAIl",
+              "logic": [],
+              "input": true,
+              "validate": {
+                "json": "",
+                "required": true,
+                "customMessage": "",
+                "custom": "let passedDate = moment(data.natoAIl, 'DD/MM/YYYY');\nif (!passedDate.isValid()){\n  valid = \"La data inserita non è valida\";\n} else if(!moment(data.natoAIl,\"DD-MM-YYYY\").isBetween(\n    moment(\"01-01-1900\",\"DD-MM-YYYY\"),\n    moment(),\n    \"day\",\n    '[]'\n  )){\n  valid = \"La data inserita non è valida\"\n}"
+              },
+              "customConditional": "",
+              "widget": {
+                "type": ""
+              },
+              "reorder": false
+            }
+          ],
+          "offset": 0,
+          "push": 0,
+          "input": false,
+          "type": "column"
+        },
+        {
+          "pull": 0,
+          "key": "column",
+          "tableView": true,
+          "hideOnChildrenHidden": false,
+          "label": "Column",
+          "width": 6,
+          "components": [
+            {
+              "widget": {
+                "type": ""
+              },
+              "spellcheck": true,
+              "showCharCount": false,
+              "tableView": true,
+              "tags": [],
+              "type": "textfield",
+              "defaultValue": "",
+              "conditional": {
+                "json": "",
+                "when": "",
+                "show": ""
+              },
+              "showWordCount": false,
+              "label": "Luogo di nascita",
+              "inputFormat": "plain",
+              "key": "place_of_birth",
+              "encrypted": false,
+              "allowMultipleMasks": false,
+              "input": true,
+              "validate": {
+                "json": "",
+                "required": true,
+                "customMessage": "",
+                "custom": "if(input.length > 100){\n    valid = 'Luogo di nascita non può contenere più di 100 caratteri'\n}"
+              },
+              "alwaysEnabled": false,
+              "placeholder": "Roma",
+              "customConditional": "",
+              "reorder": false,
+              "logic": []
+            }
+          ],
+          "offset": 0,
+          "push": 0,
+          "input": false,
+          "type": "column"
+        },
+        {
+          "pull": 0,
+          "components": [],
+          "tableView": true,
+          "hideOnChildrenHidden": false,
+          "label": "Column",
+          "width": 12,
+          "key": "column",
+          "offset": 0,
+          "push": 0,
+          "input": false,
+          "type": "column"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "component"
+  ],
+  "_id": "5d5a45a8669977001b5b6179",
+  "title": "Nascita",
+  "name": "nascita",
+  "path": "nascita",
+  "description": "Data e luogo di nascita",
+  "modified": "2021-08-19T12:15:59.547Z",
+  "created": "2019-09-06T12:55:42.717Z",
+  "__v": 59
+}

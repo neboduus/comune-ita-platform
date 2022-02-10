@@ -1,0 +1,287 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "encrypted": false,
+      "conditional": {
+        "show": ""
+      },
+      "redrawOn": "",
+      "modalEdit": false,
+      "showCharCount": false,
+      "overlay": {
+        "width": "",
+        "style": "",
+        "height": "",
+        "top": "",
+        "left": ""
+      },
+      "label": "Columns",
+      "input": false,
+      "type": "columns",
+      "columns": [
+        {
+          "pull": 0,
+          "components": [
+            {
+              "label": "Nome",
+              "widget": {
+                "type": "input",
+                "language": "en",
+                "icons": "fontawesome",
+                "i18n": {
+                  "lng": "en",
+                  "resources": {
+                    "en": {
+                      "translation": {
+                        "complete": "Submission Complete",
+                        "error": "Please fix the following errors before submitting.",
+                        "required": "{{field}} is required",
+                        "pattern": "{{field}} does not match the pattern {{pattern}}",
+                        "minLength": "{{field}} must be longer than {{length}} characters.",
+                        "maxLength": "{{field}} must be shorter than {{length}} characters.",
+                        "minWords": "{{field}} must have more than {{length}} words.",
+                        "maxWords": "{{field}} must have less than {{length}} words.",
+                        "min": "{{field}} cannot be less than {{min}}.",
+                        "max": "{{field}} cannot be greater than {{max}}.",
+                        "minSelectedCount": "You must select at least {{minCount}} items to continue.",
+                        "maxSelectedCount": "You can only select up to {{maxCount}} items to continue.",
+                        "maxDate": "{{field}} should not contain date after {{- maxDate}}",
+                        "minDate": "{{field}} should not contain date before {{- minDate}}",
+                        "invalid_email": "{{field}} must be a valid email.",
+                        "invalid_url": "{{field}} must be a valid url.",
+                        "invalid_regex": "{{field}} does not match the pattern {{regex}}.",
+                        "invalid_date": "{{field}} is not a valid date.",
+                        "invalid_day": "{{field}} is not a valid day.",
+                        "mask": "{{field}} does not match the mask.",
+                        "stripe": "{{stripe}}",
+                        "month": "Month",
+                        "day": "Day",
+                        "year": "Year",
+                        "january": "January",
+                        "february": "February",
+                        "march": "March",
+                        "april": "April",
+                        "may": "May",
+                        "june": "June",
+                        "july": "July",
+                        "august": "August",
+                        "september": "September",
+                        "october": "October",
+                        "november": "November",
+                        "december": "December",
+                        "next": "Next",
+                        "previous": "Previous",
+                        "cancel": "Cancel",
+                        "submit": "Submit Form"
+                      }
+                    }
+                  }
+                }
+              },
+              "placeholder": "Mario",
+              "allowMultipleMasks": false,
+              "showWordCount": false,
+              "showCharCount": false,
+              "clearOnHide": false,
+              "tableView": true,
+              "alwaysEnabled": false,
+              "type": "textfield",
+              "autocomplete": "",
+              "spellcheck": false,
+              "modalEdit": false,
+              "inputFormat": "plain",
+              "case": "",
+              "encrypted": false,
+              "redrawOn": "",
+              "calculateServer": false,
+              "validate": {
+                "required": true,
+                "customMessage": "",
+                "custom": "if(input.match('^([a-zA-Z óèéòàùì\\\\-\\'’‘çÄÀáäÖöüÜ])+$|^$')){\n  valid = true\n}else{\n  valid = 'Il nome può contenere solo caratteri alfabetici'\n}\n\nif(input.length > 100){\n    valid = 'Il nome non può contenere più di 100 caratteri'\n}",
+                "json": "",
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "key": "name",
+              "tags": [],
+              "conditional": {
+                "json": "",
+                "show": "",
+                "when": ""
+              },
+              "customConditional": "",
+              "logic": [],
+              "overlay": {
+                "style": "",
+                "page": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "input": true,
+              "defaultValue": "",
+              "reorder": false
+            }
+          ],
+          "tableView": true,
+          "hideOnChildrenHidden": false,
+          "label": "Column",
+          "width": 6,
+          "currentWidth": 6,
+          "key": "column",
+          "offset": 0,
+          "push": 0,
+          "input": false,
+          "type": "column",
+          "size": "md"
+        },
+        {
+          "pull": 0,
+          "components": [
+            {
+              "label": "Cognome",
+              "widget": {
+                "type": "input",
+                "language": "en",
+                "icons": "fontawesome",
+                "i18n": {
+                  "lng": "en",
+                  "resources": {
+                    "en": {
+                      "translation": {
+                        "complete": "Submission Complete",
+                        "error": "Please fix the following errors before submitting.",
+                        "required": "{{field}} is required",
+                        "pattern": "{{field}} does not match the pattern {{pattern}}",
+                        "minLength": "{{field}} must be longer than {{length}} characters.",
+                        "maxLength": "{{field}} must be shorter than {{length}} characters.",
+                        "minWords": "{{field}} must have more than {{length}} words.",
+                        "maxWords": "{{field}} must have less than {{length}} words.",
+                        "min": "{{field}} cannot be less than {{min}}.",
+                        "max": "{{field}} cannot be greater than {{max}}.",
+                        "minSelectedCount": "You must select at least {{minCount}} items to continue.",
+                        "maxSelectedCount": "You can only select up to {{maxCount}} items to continue.",
+                        "maxDate": "{{field}} should not contain date after {{- maxDate}}",
+                        "minDate": "{{field}} should not contain date before {{- minDate}}",
+                        "invalid_email": "{{field}} must be a valid email.",
+                        "invalid_url": "{{field}} must be a valid url.",
+                        "invalid_regex": "{{field}} does not match the pattern {{regex}}.",
+                        "invalid_date": "{{field}} is not a valid date.",
+                        "invalid_day": "{{field}} is not a valid day.",
+                        "mask": "{{field}} does not match the mask.",
+                        "stripe": "{{stripe}}",
+                        "month": "Month",
+                        "day": "Day",
+                        "year": "Year",
+                        "january": "January",
+                        "february": "February",
+                        "march": "March",
+                        "april": "April",
+                        "may": "May",
+                        "june": "June",
+                        "july": "July",
+                        "august": "August",
+                        "september": "September",
+                        "october": "October",
+                        "november": "November",
+                        "december": "December",
+                        "next": "Next",
+                        "previous": "Previous",
+                        "cancel": "Cancel",
+                        "submit": "Submit Form"
+                      }
+                    }
+                  }
+                }
+              },
+              "placeholder": "Rossi",
+              "allowMultipleMasks": false,
+              "showWordCount": false,
+              "showCharCount": false,
+              "clearOnHide": false,
+              "tableView": true,
+              "alwaysEnabled": false,
+              "type": "textfield",
+              "encrypted": false,
+              "conditional": {
+                "json": "",
+                "when": "",
+                "show": ""
+              },
+              "modalEdit": false,
+              "overlay": {
+                "style": "",
+                "top": "",
+                "height": "",
+                "width": "",
+                "page": "",
+                "left": ""
+              },
+              "defaultValue": "",
+              "input": true,
+              "tags": [],
+              "calculateServer": false,
+              "redrawOn": "",
+              "key": "surname",
+              "spellcheck": false,
+              "validate": {
+                "unique": false,
+                "customMessage": "",
+                "multiple": false,
+                "required": true,
+                "json": "",
+                "custom": "if(input.match('^([a-zA-Z óèéòàùì\\\\-\\'’‘çÄÀáäÖöüÜÈ])+$|^$')){\n  valid = true\n}else{\n  valid = 'Il cognome può contenere solo caratteri alfabetici'\n}\n\nif(input.length > 100){\n    valid = 'Il cognome non può contenere più di 100 caratteri'\n}",
+                "strictDateValidation": false
+              },
+              "case": "",
+              "autocomplete": "",
+              "inputFormat": "plain",
+              "logic": [],
+              "customConditional": "",
+              "reorder": false
+            }
+          ],
+          "tableView": true,
+          "hideOnChildrenHidden": false,
+          "label": "Column",
+          "width": 6,
+          "currentWidth": 6,
+          "key": "column",
+          "offset": 0,
+          "push": 0,
+          "input": false,
+          "type": "column",
+          "size": "md"
+        }
+      ],
+      "tableView": false,
+      "tags": [],
+      "showWordCount": false,
+      "calculateServer": false,
+      "key": "columns",
+      "allowMultipleMasks": false,
+      "validate": {
+        "multiple": false,
+        "unique": false,
+        "strictDateValidation": false
+      },
+      "hideLabel": true,
+      "tree": false
+    }
+  ],
+  "tags": [
+    "component"
+  ],
+  "_id": "5d4d26ff9410f50010f30068",
+  "title": "Nome e Cognome",
+  "name": "neC",
+  "path": "nec",
+  "description": "Nome e Cognome",
+  "modified": "2021-11-17T15:13:05.791Z",
+  "created": "2019-09-06T09:14:17.918Z",
+  "__v": 40
+}

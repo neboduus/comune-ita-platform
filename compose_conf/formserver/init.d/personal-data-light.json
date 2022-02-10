@@ -1,0 +1,117 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "label": "Nome_Cognome",
+      "mask": false,
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "form",
+      "input": true,
+      "key": "completename",
+      "conditional": {
+        "show": "",
+        "when": "",
+        "json": ""
+      },
+      "reference": false,
+      "form": "5d4d26ff9410f50010f30068",
+      "formRevision": "",
+      "customConditional": "",
+      "logic": [],
+      "tags": [],
+      "reorder": false
+    },
+    {
+      "label": "CodiceFiscale",
+      "mask": false,
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "form",
+      "input": true,
+      "key": "fiscal_code",
+      "conditional": {
+        "show": "",
+        "when": "",
+        "json": ""
+      },
+      "reference": false,
+      "form": "5d7aa1b318fecd734051ae80",
+      "formRevision": "",
+      "customConditional": "",
+      "logic": [],
+      "tags": [],
+      "reorder": false
+    },
+    {
+      "label": "Indirizzo Email",
+      "placeholder": "mario.rossi@example.mail",
+      "errorLabel": "Non hai inserito una mail valida",
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "email",
+      "input": true,
+      "key": "email_address",
+      "defaultValue": "",
+      "validate": {
+        "customMessage": "",
+        "json": "",
+        "custom": "if (!data.phone_number && !input) valid = 'Inserire almeno il numero di telefono o l’ indirizzo email';",
+        "required": true
+      },
+      "conditional": {
+        "show": "",
+        "when": "",
+        "json": ""
+      },
+      "encrypted": false,
+      "tags": [],
+      "customConditional": "",
+      "logic": [],
+      "reorder": false
+    },
+    {
+      "label": "Recapito telefonico",
+      "inputMask": "",
+      "allowMultipleMasks": false,
+      "showWordCount": false,
+      "showCharCount": false,
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "phoneNumber",
+      "input": true,
+      "key": "phone_number",
+      "defaultValue": "",
+      "validate": {
+        "customMessage": "Recapito telefonico non valido",
+        "json": "",
+        "custom": "if (!data.email_address && !input) valid = 'Inserire almeno il numero di telefono o l’ indirizzo email';",
+        "required": true,
+        "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$"
+      },
+      "conditional": {
+        "show": "",
+        "when": "",
+        "json": ""
+      },
+      "inputFormat": "plain",
+      "encrypted": false,
+      "customConditional": "let phone_number = document.querySelector(\"input[name^='data[phone_number]']\");\nif (!data.phone_number) {\n  if (data.cell_number) {\n    phone_number.value = data.cell_number;\n  }\n}",
+      "logic": [],
+      "tags": [],
+      "reorder": false
+    }
+  ],
+  "tags": [
+    "component"
+  ],
+  "_id": "5e5e26ede170600020175850",
+  "title": "Anagrafica lite",
+  "name": "Anagrafica lite",
+  "path": "anagrafica-lite",
+  "description": "Richiesta dati anagrafici lite",
+  "modified": "2021-06-04T13:48:35.343Z",
+  "created": "2019-09-12T19:49:47.025Z",
+  "__v": 16
+}
