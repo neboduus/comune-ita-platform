@@ -12,40 +12,44 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 - Creazione dei moduli da backend, grazie all'integrazione con [Form.IO](https://www.form.io/) un potente sistema di creazione di form dinamiche opensource
 - Interfaccia responsive (Bootstrap Italia), conforme alle [Linee Guida di design per i servizi web della PA](https://designers.italia.it/guide/)
 - Autenticazione con [SPID](https://www.spid.gov.it/)
-- Integrazione con [PagoPA](https://teamdigitale.governo.it/it/projects/pagamenti-digitali.htm) attraverso MyPAY
+- Integrazione con [PagoPA](https://teamdigitale.governo.it/it/projects/pagamenti-digitali.htm) attraverso MyPAY, PiemontePay, E-fil, IRIS
 - Meccanismo di compilazione on-line dei moduli a step
 - Gestione completa dell’iter di un’istanza: invio, presa in carico, risposta al cittadino, richiesta integrazioni
 - Controllo automatico della validità di firme digitali e formati dei file, ai fini della conservazione sostitutiva
-- Generazione automatica delle ricevuta di invio dell’istanza, in formato pdf
+- Generazione automatica delle ricevuta di invio dell’istanza, in formato PDF
 - Integrazione con il [sito comunale Comunweb](https://developers.italia.it/it/software/c_a116-opencontent-opencity): prossime scadenze e descrizione dei servizi
-- Integrazione con alcuni dei sistemi di protocollazione più diffusi presso i comuni (tra cui, [PiTre](https://www.pi3.it))
+- Integrazione con alcuni dei sistemi di protocollazione più diffusi presso i comuni (tra cui, [PiTre](https://www.pi3.it), Infor, Sicraweb, Datagraph)
 - Integrazione con Shibboleth (SAML 2.0)
 
 
 ## Altri riferimenti
 
-* [Manuale d'uso](https://manuale-stanza-del-cittadino.readthedocs.io/)
-* [API](https://stanzadelcittadino.it/comune-di-ala/api/doc)
-* [Demo](https://demosdc.opencontent.it/comune-di-ala)
+* [Manuale d'uso](https://link.opencontent.it/sdc-manuale)
+* [API](https://link.opencontent.it/sdc-apidoc)
+* [Demo](https://link.opencontent.it/sdc-demo)
 
 ## Struttura del progetto
 
-Il software è realizzato da una componente principale sviluppata con [Symfony](https://symfony.com/) e da varie componenti accessorie, che sono
+Il software è realizzato da una componente principale sviluppata con 
+[Symfony](https://symfony.com/) e da varie componenti accessorie, che sono
 facilmente sostituibili in caso di necessità:
 
-* symfony-app: costituisce l'interfaccia principale dell'applicativo, sia di front-end che di backend (utilizza postgresql come layer di persistenza) ed e' il software presente in questo repository
-* apache+shibboleth: il webserver apache distribuito nel presente repository contiene anche shibboleth per l'autenticazione mediante SPID, questo componente può essere sostituito facilmente da un altro sistema utilizzabile per l'autenticazione.
-* [wkhtmltopdf](https://hub.docker.com/r/traumfewo/docker-wkhtmltopdf-aas): questo microservizio è necessario per creazione di PDF, il formato con cui vengono creati e protocollati i documenti durante l'esecuzione delle pratiche del cittadino,
-* mypay-proxy e pitre-proxy: due proxy che espongono una semplice interfaccia ReST verso l'applicativo e inoltrano le chiamate ai servizi MyPAY e PiTRE mediante protocollo SOAP; questi due proxy sono in fase di rilascio, ma già operativi in produzione.
+* [symfony-core](https://gitlab.com/opencontent/stanza-del-cittadino/core): costituisce l'interfaccia principale dell'applicativo, sia di front-end che di backend (utilizza postgresql come layer di persistenza) ed e' il software presente in questo repository
+* [form-server](https://gitlab.com/opencontent/stanza-del-cittadino/form-server): tutti i moduli presentati ai cittadini sono realizzati mediante Form.IO di cui questo componente è la parte server. Ci siamo basati sulla versione opensource del prodotto per creare una nostra versione del server, compatibile 1:1 con la versione ufficiale. Abbiamo esteso la versione opensource con funzionalità specifiche necessarie al nostro prodotto, in particolare abbiamo lavorato sul versionamento dei moduli e sul supporto multilingua.
+* apache+shibboleth: il webserver apache distribuito nel presente repository contiene anche shibboleth per l'autenticazione mediante SPID, questo componente può essere sostituito facilmente da un altro sistema utilizzabile per l'autenticazione. Per una demo funzionante non è necessario attivare anche apache, l'autenticazione può essere efficacemente simulato.
+* [gotemberg](https://gotenberg.dev/): questo microservizio è necessario per creazione di PDF, il formato con cui vengono creati e protocollati i documenti durante l'esecuzione delle pratiche del cittadino,
+* per l'integrazione con sistemi di protocollo, di pagamento e di autenticazione ci sono poi una serie di componenti specifici che vengono attivati a seconda del territorio a cui appartiene l'Ente.
+  * [mypay-proxy](https://gitlab.com/opencontent/mypay-wrapper) e [pitre-proxy](https://gitlab.com/opencontent/stanza-del-cittadino/pitre-soap-proxy): due proxy che espongono una semplice interfaccia ReST verso l'applicativo e inoltrano le chiamate ai servizi MyPAY e PiTRE mediante protocollo SOAP; questi due proxy sono in fase di rilascio
+  * [piemontepay](https://gitlab.com/opencontent/stanza-del-cittadino/piemontepay) per l'integrazione con l'omonimo sistema di pagamento del Piemonte
+  * [traefik-forward-auth](https://github.com/thomseddon/traefik-forward-auth) usato per la comodissima integrazione con SPID/CIE/Eidas in Toscana, grazie al sistema [ARPA](https://www.regione.toscana.it/arpa)
+  * CAS Autentication
 
-## Requisiti
-
-Lo stack applicativo è composto da:
-
-* [Symfony 3.4](https://symfony.com/what-is-symfony) per lo sviluppo della componente principale che richiede quindi PHP 7.2.x
-* [Express](https://expressjs.com) per lo sviluppo del proxy MyPay, che richiede NodeJS
-* Java per lo sviluppo del proxy MyPay, che richiede quindi OpenJDK 8.x
-* PostgreSQL 10.x come database principale
+Altre dipendenze:
+  * il database principale utilizzato è *PostgreSQL*, versione 10 (ma supporta fino alla 12 senza problemi). E' compatibile anche 
+    con il servizio [Aurora Serverless v1 di AWS](https://aws.amazon.com/it/rds/aurora/serverless/) che usiamo con soddisfazione
+    in produzione sulla nostra installazione principale.
+  * secondariamente sono usati anche *MongoDB* (persistenza principale di form-server) e *Redis* (usato per la condivisione delle
+    sessioni PHP, per la cache di diversi componenti.
 
 La distribuzione di questi componenti avviene mediante immagini [Docker](https://it.wikipedia.org/wiki/Docker),
 non si tratta di un requisito, i singoli applicativi possono essere installati anche in assenza di esso, su un
@@ -86,18 +90,23 @@ e l'utility [jq](https://stedolan.github.io/jq/):
 ```bash
 $ export TOKEN=$(http post https://www.stanzadelcittadino.it/comune-di-ala/api/auth username=XXXXX password=XXXX | jq -raw-output .token)
 
-$ http get https://www.stanzadelcittadino.it/comune-di-ala/api/services "Authorization: Bearer $TOKEN"
+$ http get https://www.stanzadelcittadino.it/comune-di-ala/api/applications "Authorization: Bearer $TOKEN"
 ```
 
-## Versionamento delle API
+### Versionamento delle API
+
 È possibile specificare la versione delle Api che si vanno ad interrogare, questo è possibile in 2 modi differenti:
-* tramite parametro `version` da passare in get
-* tramite parametro `X-Accept-Version` da specificare nell' header della richiesta
 
-La versione di default è per retrocompatibilità la 1.x
+  * tramite parametro `version` da passare come parametro delle GET
+  * tramite parametro `X-Accept-Version` da specificare nell' header della richiesta
 
-Dalla versione 2 le chiavi dei valori del campo data delle `applications` non sono più restituite
+La versione di default è per retrocompatibilità la *1*
+
+Dalla versione *2* le chiavi dei valori del campo `data` delle `applications` non sono più restituite
 come un insieme di strighe piatto separato dal punto (.) ma come campo json con le chiavi esplose.
+
+Nota bene: si raccomanda di specificare sempre la versione di API utilizzata, anche se è il default (1), perche' in futuro
+il default potrebbe cambiare.
 
 ## Build system, CI e test automatici
 
@@ -111,9 +120,9 @@ Durante la build vengono inoltre effettuati:
 
 ### Con l'ausilio di docker
 
-Dal repository stesso è possibile fare il deploy di un *ambiente di sviluppo* del servizio. Per farlo è sufficiente fare il clone del repository sul proprio computer e utilizzare questo [docker-compose.yml](https://gitlab.com/opencontent/stanzadelcittadino/blob/master/docker-compose.yml) del progetto.
+Dal repository stesso è possibile fare il deploy di un *ambiente di sviluppo* del servizio. Per farlo è sufficiente fare il clone del repository sul proprio computer e utilizzare questo [docker-compose.yml](https://gitlab.com/opencontent/stanza-del-cittadino/core/-/blob/master/docker-compose.yml) del progetto.
 
-    git clone git@gitlab.com:opencontent/stanzadelcittadino.git
+    git clone git@gitlab.com:opencontent/stanza-del-cittadino/core.git
     cd stanzadelcittadino
     docker-compose up -d postgres
     sleep 10
@@ -126,7 +135,7 @@ http://stanzadelcittadino.localtest.me/
 Una volta fatto il primo setup, se si inizia a configurare il tenant di prova è consigliabile
 impostare a `FALSE` la variabile `ENABLE_INSTANCE_CONFIG` nel `docker-compose.yml`.
 
-In caso di problemi è possibile trovare maggiori infomazioni nel [wiki](https://gitlab.com/opencontent/stanzadelcittadino/-/wikis/Ambiente-di-sviluppo).
+In caso di problemi è possibile trovare maggiori infomazioni nel [wiki](https://gitlab.com/opencontent/stanza-del-cittadino/core/-/wikis/Informazioni-per-sviluppatori/Ambiente-di-sviluppo).
 
 ### Senza l'ausilio di docker
 
@@ -168,7 +177,7 @@ Il componente utilizzato è [Parser-PHP](https://github.com/WhichBrowser/Parser-
 
 ## Project status
 
-Il progetto e' stabile e usato in produzione da alcune amministrazioni pubbliche.
+Il progetto e' stabile e usato in produzione da oltre 200 amministrazioni pubbliche.
 
 Sebbene lo sviluppo sia stato orientato fin dall'inizio alla modularità e alla configurabilità
 delle feature, molti aspetti di dettaglio e le interfacce di comunicazione con i proxy non sono
@@ -179,9 +188,12 @@ in modo modulare e configurabile, in modo da non pregiudicare la flessibilità d
 
 Altri limiti:
 - la gestione degli operatori è molto limitata al momento e non consente grande flessibilità
-  o l'utilizzo di gruppi di operatori per la gestione delle pratiche
+  o l'utilizzo di gruppi di operatori per la gestione delle pratiche: i profili di accesso
+  sono tre rigidamente separati tra loro: il cittadino (user), l'operatore (il personale
+  dell'Ente addetto a gestire le pratiche) e l'amministratore che configura l'istanza
+  e i singoli servizi.
 - il security log è minimale e intellegibile solo da personale tecnico
-- le API coprono attualmente circa l'80% delle funzionalità dell'applicativo
+- le API coprono attualmente circa il 90% delle funzionalità dell'applicativo
 
 ## Copyright
 
