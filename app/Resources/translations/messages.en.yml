@@ -289,6 +289,7 @@ pratica:
       data_nascita: 'Birthdate'
       indirizzo: 'Address'
     stato_50000: 'Canceled'
+    or: 'Oppure'
   messaggi:
     oggetto: 'New message request numer %pratica%'
     messaggio: '%message% <img src="%link%">'
@@ -301,7 +302,7 @@ pratica:
     placeholder: 'Write a brief description'
   noteDiCompilazione: 'Notes'
   le_tue_note: 'Your notes'
-  crea_nuova_pratica: 'Create new practice'
+  crea_nuova_pratica: 'New practice'
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'

@@ -224,7 +224,7 @@ pratica:
   tooltip_durata_iter: "Durata iter: circa"
   vai_alla_pratica: 'Vai alla pratica'
   vai_al_pagamento: 'Vai al pagamento'
-  crea_nuova_pratica: 'Crea nuova pratica'
+  crea_nuova_pratica: 'Effettua una nuova richiesta'
   ritira_la_pratica: 'Annulla la richiesta'
   nuova_pratica: 'Nuova pratica: %name%'
   integrazione_pratica: 'Integrazione pratica: %name%'
@@ -349,6 +349,7 @@ pratica:
       cf: 'Codice Fiscale'
       data_nascita: 'Data di nascita'
       indirizzo: 'Indirizzo'
+    or: 'Oppure'
   messaggi:
     oggetto: 'Nuovo messaggio richiesta numero %pratica%'
     messaggio: '%message% <img src="%link%">'
