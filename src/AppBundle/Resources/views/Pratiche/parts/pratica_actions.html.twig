@@ -1,14 +1,4 @@
 {% if can_compile or can_withdraw or pratica.status >= 1900 %}
-  {% if pratica.status >= 1900 %}
-    <a class="btn btn-primary mb-4 w-100"
-      {% if pratica.servizio.accessLevel > 0 or pratica.servizio.accessLevel is null %}
-      href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
-    {% else %}
-      href="{{ path('pratiche_anonime_new', {'servizio': pratica.servizio.slug}) }}"
-      {% endif %}>
-      <i class="fa fa-plus mr-2"></i>{{ 'pratica.crea_nuova_pratica'|trans }}
-    </a>
-  {% endif %}
   {% if can_compile %}
     <a class="btn btn-success mb-4 w-100" data-action="edit_draft"
        href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
