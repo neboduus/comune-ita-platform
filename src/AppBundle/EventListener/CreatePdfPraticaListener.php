@@ -34,7 +34,7 @@ class CreatePdfPraticaListener
   {
     $pratica = $event->getPratica();
 
-    if ( $event->getNewStateIdentifier() == Pratica::STATUS_PRE_SUBMIT ) {
+    if ( $event->getNewStateIdentifier() == Pratica::STATUS_PRE_SUBMIT && $pratica->getModuliCompilati()->isEmpty() ) {
       try {
         $this->pdfBuilder->createForPraticaAsync($pratica);
       }catch (AlreadyScheduledException $e){
