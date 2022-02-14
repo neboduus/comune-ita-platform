@@ -34,7 +34,7 @@ operatore: "Operatore"
 credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Per proseguire è necessario aggiornare la tua email'
-
+practice_of: 'Pratica del'
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
@@ -312,8 +312,8 @@ pratica:
   messaggi:
     oggetto: 'Nuovo messaggio richiesta numero %pratica%'
     messaggio: '%message% <img src="%link%">'
-
-
+  vedi_tutte: 'Vedi tutte'
+  pratiche_in_evidenzia: 'Pratiche in evidenza'
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'
     descrizioneRisposta: 'Servizio nomeservizio, risposta compilata il datacompilazione'
