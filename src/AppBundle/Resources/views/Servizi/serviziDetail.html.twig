@@ -130,6 +130,14 @@
 
               </div>
             {% endif %}
+            <div class="link-list-wrapper">
+              <ul class="link-list">
+                <li><a class="list-item active icon-left" href="{{ absolute_url(path('service_api_get', { 'id': servizio.id })) }}">
+                    <svg class="icon icon-primary"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-code-circle"></use></svg>
+                    <span>{{ 'servizio.machine_readable'|trans }}</span></a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

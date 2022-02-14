@@ -124,6 +124,7 @@ servizio:
   bozza_successo: ''
   nessun_template: ''
   importa: ''
+  machine_readable: 'Get machine readable'
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
