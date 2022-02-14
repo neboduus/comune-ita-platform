@@ -158,8 +158,8 @@ class SubscriptionServicesAPIController extends AbstractApiController
   }
 
   /**
-   * Retreive a SubscriptionService
-   * @Rest\Get("/{id}/payments", name="subscription-service_payments_api_get")
+   * Retreive a SubscriptionService's Payment settings
+   * @Rest\Get("/{id}/payment-settings", name="subscription-service_payment-settings_api_get")
    *
    * @SWG\Parameter(
    *      name="required",
@@ -183,6 +183,14 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *      type="boolean",
    *      required=false,
    *      description="Filter results by payment type (subscription fee or additional payment)"
+   *  )
+   *
+   * @SWG\Parameter(
+   *      name="availbale",
+   *      in="query",
+   *      type="boolean",
+   *      required=false,
+   *      description="Filter results by payment availability (future payments)"
    *  )
    *
    * @SWG\Parameter(
@@ -220,6 +228,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $create_draft = $request->query->get('create_draft');
     $identifier = $request->query->get('identifier');
     $subscriptionFee = $request->query->get('subscription_fee');
+    $available = $request->query->get('available');
 
     if ($required) {
      $required = strtolower($request->query->get('required')) === "true";
@@ -230,14 +239,44 @@ class SubscriptionServicesAPIController extends AbstractApiController
     if ($subscriptionFee) {
      $subscriptionFee = strtolower($request->query->get('subscription_fee')) === "true";
     }
+    if ($available) {
+      $available = strtolower($available) === "true";
+    }
 
     try {
-      $repository = $this->em->getRepository('AppBundle:SubscriptionService');
-      $result = $repository->find($id);
-      if ($result === null) {
+      $subscriptionService = $this->em->getRepository(SubscriptionService::class)->find($id);
+
+      if ($subscriptionService === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
-      return $this->view($result->getFilteredSubscriptionPayments($required, $create_draft, $identifier, $subscriptionFee), Response::HTTP_OK);
+
+      $paymentSettings = [];
+
+      foreach ($subscriptionService->getSubscriptionPayments() as $paymentSetting) {
+        $canAdd = true;
+
+        if (!is_null($required)  && $required !== $paymentSetting->isRequired()) {
+          $canAdd = false;
+        }
+        if (!is_null($create_draft) && $create_draft !== $paymentSetting->getCreateDraft()) {
+          $canAdd = false;
+        }
+        if (!is_null($subscriptionFee) && $subscriptionFee !== $paymentSetting->isSubscriptionFee()) {
+          $canAdd = false;
+        }
+        if (!is_null($identifier) && $identifier !== $paymentSetting->getPaymentIdentifier()) {
+          $canAdd = false;
+        }
+        if($available && $paymentSetting->getDate() < new \DateTime()) {
+          $canAdd = false;
+        }
+
+        if ($canAdd) {
+          $paymentSettings[] = $paymentSetting;
+        }
+      }
+
+      return $this->view($paymentSettings, Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }

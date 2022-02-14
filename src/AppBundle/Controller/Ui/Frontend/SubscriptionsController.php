@@ -621,7 +621,7 @@ class SubscriptionsController extends Controller
    * @param $subscriptionId
    * @param $fiscalCode
    * @return Response|void
-   * @Route("/operatori/{subscriptionId}/unshare/{fiscalCode}", name="unshare_subscription_operatore")
+   * @Route("/operatori/subscriptions/{subscriptionId}/unshare/{fiscalCode}", name="unshare_subscription_operatore")
    */
   public function operatoreUnshareSubscriptionAction(Request $request, $subscriptionId, $fiscalCode): Response
   {
@@ -693,7 +693,7 @@ class SubscriptionsController extends Controller
    * @param $subscriptionId
    * @return Response|void
    * @Method("POST")
-   * @Route("/operatori/{subscriptionId}/share", name="subscription_share_operatore")
+   * @Route("/operatori/subscriptions/{subscriptionId}/share", name="subscription_share_operatore")
    */
   public function operatoreShareSubscriptionAction(Request $request, $subscriptionId): Response
   {

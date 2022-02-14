@@ -579,51 +579,6 @@ class SubscriptionService
   }
 
   /**
-   * @return SubscriptionPayment[]
-   * @throws \Exception
-   */
-  public function getFilteredSubscriptionPayments($required = null, $createDraft = null, $identifier=null, $subscriptionFee=null)
-  {
-    $subscriptionPayments = [];
-
-    foreach ($this->subscriptionPayments as $subscriptionPayment) {
-      if (is_array($subscriptionPayment)) {
-        $payment = new SubscriptionPayment();
-        $payment->setDate(new \DateTime($subscriptionPayment['date']));
-        $payment->setAmount($subscriptionPayment['amount']);
-        $payment->setPaymentReason(isset($subscriptionPayment['payment_reason']) ? $subscriptionPayment['payment_reason'] : "");
-        $payment->setPaymentIdentifier(isset($subscriptionPayment['payment_identifier']) ? $subscriptionPayment['payment_identifier'] : "");
-        $payment->setPaymentService(isset($subscriptionPayment['payment_service']) ? $subscriptionPayment['payment_service'] : "");
-        $payment->setMeta(isset($subscriptionPayment['meta']) ? $subscriptionPayment['meta'] : "");
-        $payment->setSubscriptionServiceCode($this->code);
-        $payment->setRequired($subscriptionPayment['required'] ?? true);
-        $payment->setCreateDraft($subscriptionPayment['create_draft'] ?? true);
-        $payment->setSubscriptionFee($subscriptionPayment['subscription_fee'] ?? false);
-      } else {
-        $payment = $subscriptionPayment;
-      }
-      $canAdd = true;
-      if ($required !== null && $payment->isRequired() !== $required) {
-        $canAdd = false;
-      }
-      if ($createDraft !== null && $payment->getCreateDraft() !== $createDraft) {
-        $canAdd = false;
-      }
-      if ($identifier && $payment->getPaymentIdentifier() !== $identifier) {
-        $canAdd = false;
-      }
-      if ($subscriptionFee !== null && $payment->isSubscriptionFee() !== $subscriptionFee) {
-        $canAdd = false;
-      }
-      if ($canAdd) {
-        $subscriptionPayments[] = $payment;
-      }
-    }
-
-    return $subscriptionPayments;
-  }
-
-  /**
    * @param SubscriptionPayment[]
    * @return $this
    */
