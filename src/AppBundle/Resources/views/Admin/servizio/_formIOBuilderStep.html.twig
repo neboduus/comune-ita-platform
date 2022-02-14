@@ -1,21 +1,28 @@
 <div class="row mb-4">
-  <div id="preview" class="col-md-12 px-md-4 d-none">
+  <div class="col-md-9">
+    {% if locales|length > 1 %}
+      <div class="alert alert-info">
+        {{ 'servizio.i18n.default_language_module_alert'|trans({'%default_language%': locale|capitalize, '%module_translation_url%': path('admin_servizio_edit', {'id': servizio.id, 'step': 'formioI18n'}) })|raw }}
+      </div>
+    {% endif %}
+  </div>
+  <div id="preview" class="col-md-3 px-md-4">
     <a href="#" data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}"
        data-type="preview" data-target="{{ path('preview_service', {'service':servizio.id}) }}"
        class="btn btn-xs btn-outline-primary float-right preview">
-      <svg class="icon">
+      <svg class="icon icon-sm icon-primary">
         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
       </svg>
-      Anteprima
+      {{ 'servizio.preview'|trans }}
     </a>
     <a href="#" data-schema="{{ path('admin_servizio_schema_edit', {'servizio':servizio.id} ) }}"
        data-type="print"
        data-target="{{ path('print_service_pdf', {'service':servizio.id}) }}"
        class="btn btn-xs btn-outline-primary float-right mr-2 print">
-      <svg class="icon">
+      <svg class="icon icon-sm icon-primary">
         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-print"></use>
       </svg>
-      Stampa
+      {{ 'servizio.print'|trans }}
     </a>
   </div>
 </div>
@@ -102,7 +109,7 @@
     <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
     <div id="builder"></div>
 
-    {{ include('AppBundle:Admin/servizio:_saveButtons.html.twig') }}
+    {{ include('@App/Admin/servizio/_saveButtons.html.twig') }}
     {{ form_end(form) }}
   </div>
 

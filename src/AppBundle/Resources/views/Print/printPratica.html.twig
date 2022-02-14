@@ -15,35 +15,6 @@
 
 {% block javascripts %}
   {{ encore_entry_script_tags('compile') }}
-  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-
-{% endblock %}
-
-{% block footer_scripts %}
-  <script>
-    if ($('#formio_render_form_id').length) {
-
-      Formio.icons = 'fontawesome';
-      Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/printable/' + $('#formio_render_form_id').val(), {
-        noAlerts: true,
-        language: 'it',
-        i18n: formIoI18n,
-        readOnly: true,
-        //renderMode: 'html'
-      })
-        .then(function (form) {
-          // Recupero i dati della pratica se presenti
-          if ($('#formio_render_dematerialized_forms').val() != '') {
-            form.submission = {
-              data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
-            };
-          }
-        });
-    }
-  </script>
-
 {% endblock %}
 
 {% block main_content %}
@@ -88,7 +59,7 @@
         {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_rest(form) }}
-        <div id="formio" data-formserver_url="{{ formserver_url }}"></div>
+        <div id="formio" class="printable" data-locale="{{ app.request.locale }}" data-formserver_url="{{ formserver_url }}" data-form_id="{{ pratica.servizio.formIoId }}"></div>
         {{ form_end(form) }}
       </div>
     </div>

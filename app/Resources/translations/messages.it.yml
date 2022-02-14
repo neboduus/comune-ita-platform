@@ -176,6 +176,12 @@ servizio:
   shared_with_group_message: 'Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo di servizi associato.'
   shared_with_group_action: 'Modifica il gruppo di servizi'
   machine_readable: 'Definizione machine readable'
+  preview: 'Anteprima'
+  print: 'Stampa'
+  i18n:
+    default_language_module_alert: 'La lingua di base del Modulo è <strong>%default_language%</strong>, puoi aggiungere una traduzione da <a href="%module_translation_url%">Traduzioni modulo</a>'
+    string: 'Stringa It'
+    translation: 'Traduzione %lang%'
   imis:
     download_pdf_imis: 'Esegui il download del pdf %name%'
   statutes:

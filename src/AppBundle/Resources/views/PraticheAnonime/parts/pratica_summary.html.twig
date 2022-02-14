@@ -1,30 +1,15 @@
 
 <div id="pratica-summary">
-
   {% if pratica.dematerializedForms.data is defined %}
     <div class="row">
       <div class="col-sm-12">
-        <div id="formio_summary_anonimo" class="formio-front formio-summary"
+        <div id="formio_summary" class="formio-front formio-summary"
+             data-locale="{{ app.request.locale }}"
              data-formserver_url="{{ formserver_url }}"
-             data-form_id="{{ pratica.servizio.additionalData['formio_id'] }}"
-             data-submission="{{ pratica.dematerializedForms.data | json_encode}}">
+             data-form_id="{{ pratica.servizio.getFormIoId }}"
+             data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
         </div>
       </div>
     </div>
   {% endif %}
 </div>
-
-<script type='text/javascript'>
-  document.onreadystatechange = function() {
-    Formio.createForm(document.getElementById('formio_summary_anonimo'), $('#formio_summary_anonimo').data('formserver_url') + '/printable/' + $('#formio_summary_anonimo').data('form_id') , {
-      readOnly: true,
-      noAlerts: true,
-      language: 'it',
-      i18n: formIoI18n,
-    }).then(function (form) {
-      form.submission = {
-        data: $('#formio_summary_anonimo').data('submission')
-      };
-    });
-  };
-</script>

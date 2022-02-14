@@ -193,7 +193,7 @@ services:
       start_period: 30s
 
   formserver:
-    image: registry.gitlab.com/opencontent/formmanagerserver:1.0.4
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.0.11
     restart: unless-stopped
     environment:
       DB_URL: mongodb://mongo:27017/formmanager

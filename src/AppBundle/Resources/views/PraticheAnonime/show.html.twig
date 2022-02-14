@@ -2,25 +2,18 @@
 {% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
 
 {% block stylesheets %}
-  {{ parent() }}
-  {{ encore_entry_link_tags('compile') }}
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  {{ encore_entry_link_tags('user-show-application') }}
 {% endblock %}
 
 {% block javascripts %}
-  {{ parent() }}
-  {{ encore_entry_script_tags('compile') }}
-  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-          crossorigin="anonymous"></script>
+  {{ encore_entry_script_tags('user-show-application') }}
 
   <script>
-      $(document).ready(function() {
-          setInterval(function() {
-              window.location.reload();
-          }, 15000);
-      });
+    (function() {
+      setInterval(function() {
+        window.location.reload();
+      }, 15000);
+    })();
   </script>
 
 {% endblock %}

@@ -18,6 +18,7 @@ use AppBundle\Form\Admin\ServiceFlow;
 use AppBundle\Form\Admin\Servizio\CardDataType;
 use AppBundle\Form\Admin\Servizio\FeedbackMessagesDataType;
 use AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType;
+use AppBundle\Form\Admin\Servizio\FormIOI18nType;
 use AppBundle\Form\Admin\Servizio\FormIOTemplateType;
 use AppBundle\Form\Admin\Servizio\GeneralDataType;
 use AppBundle\Form\Admin\Servizio\IntegrationsDataType;
@@ -106,6 +107,7 @@ class AdminController extends Controller
    * @var ServiceManager
    */
   private $serviceManager;
+  private $locales;
 
   /**
    * @param InstanceService $instanceService
@@ -131,7 +133,8 @@ class AdminController extends Controller
     RouterInterface $router,
     DataTableFactory $dataTableFactory,
     LoggerInterface $logger,
-    ServiceManager $serviceManager
+    ServiceManager $serviceManager,
+    $locales
   )
   {
     $this->instanceService = $instanceService;
@@ -145,6 +148,7 @@ class AdminController extends Controller
     $this->dataTableFactory = $dataTableFactory;
     $this->logger = $logger;
     $this->serviceManager = $serviceManager;
+    $this->locales = explode('|', $locales);
   }
 
 
@@ -580,6 +584,12 @@ class AdminController extends Controller
         'template' => 'AppBundle:Admin/servizio:_formIOBuilderStep.html.twig',
         'icon'  => 'fa-server',
       ],
+      'formioI18n' => [
+        'label' => 'Traduzioni modulo',
+        'class' => FormIOI18nType::class,
+        'template' => 'AppBundle:Admin/servizio:_formIOI18nStep.html.twig',
+        'icon'  => 'fa-language',
+      ],
       'messages' => [
         'label' => 'Messaggi',
         'class' => FeedbackMessagesDataType::class,
@@ -618,6 +628,10 @@ class AdminController extends Controller
 
     if (!$servizio->isLegacy() && !empty($servizio->getFormIoId())) {
       unset($steps['template']);
+    }
+
+    if (count($this->locales) <= 1) {
+      unset($steps['formioI18n']);
     }
 
     $currentStep = $request->query->get('step');
