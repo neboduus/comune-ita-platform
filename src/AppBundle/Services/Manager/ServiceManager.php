@@ -248,7 +248,7 @@ class ServiceManager
     $categories = $qb->getQuery()->getResult();
     foreach ($categories as $item) {
       if (!isset($results['topics_id'][$item['id']])) {
-        $results['topics_id'][] = [
+        $results['topics_id'][$item['id']] = [
           'id' => $item['id'],
           'name' => $item['name'],
         ];
@@ -271,7 +271,7 @@ class ServiceManager
     $recipients = $qb->getQuery()->getResult();
     foreach ($recipients as $item) {
       if (!isset($results['recipient_id'][$item['id']])) {
-        $results['recipient_id'][] = [
+        $results['recipient_id'][$item['id']] = [
           'id' => $item['id'],
           'name' => $item['name'],
         ];
@@ -294,7 +294,7 @@ class ServiceManager
     $geographicAreas = $qb->getQuery()->getResult();
     foreach ($geographicAreas as $item) {
       if (!isset($results['geographic_area_id'][$item['id']])) {
-        $results['geographic_area_id'][] = [
+        $results['geographic_area_id'][$item['id']] = [
           'id' => $item['id'],
           'name' => $item['name'],
         ];
