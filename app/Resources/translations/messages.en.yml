@@ -35,6 +35,7 @@ operatore: "Operator"
 credits: "The Stanza del cittadino is an experimental project initiative of %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Update your e-mail to continue'
+practice_of: 'Pratice of'
 nav:
   home: 'Homepage'
   dashboard: 'My room'
@@ -315,7 +316,9 @@ pratica:
     placeholder: 'Write a brief description'
   noteDiCompilazione: 'Notes'
   le_tue_note: 'Your notes'
-  crea_nuova_pratica: 'New practice'
+  crea_nuova_pratica: 'Create new practice'
+  vedi_tutte: 'Show all'
+  pratiche_in_evidenzia: 'Highlight pratices'
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
