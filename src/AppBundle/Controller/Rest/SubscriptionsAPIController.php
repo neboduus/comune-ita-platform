@@ -201,7 +201,22 @@ class SubscriptionsAPIController extends AbstractApiController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive all subscriptions",
-   *      @Model(type=Subscription::class, groups={"read"})
+   *     @SWG\schema(
+   *     		type="array",
+   *          	@SWG\items(
+   *          		type="object",
+   *              	@SWG\Property(property="id", type="string", description="Subscription identifier", format="uuid"),
+   *              	@SWG\Property(property="subscriber_name", type="string", description="Subscriber name"),
+   *                @SWG\Property(property="subscriber_surname", type="string", description="Subscriber surname"),
+   *                @SWG\Property(property="subscriber_fiscal_code", type="string", description="Subscriber fiscale code"),
+   *                @SWG\Property(property="related_cfs", type="array", description="Subscription related cfs", @SWG\items(type="string")),
+   *                @SWG\Property(property="subscription_service_name", type="string", description="Subscription service name"),
+   *                @SWG\Property(property="subscription_service_code", type="string", description="Subscription service code"),
+   *                @SWG\Property(property="subscription_service_id", type="string", description="Subscription service identifier", format="uuid"),
+   *                @SWG\Property(property="status", type="string", description="Subscription status (active or withdraw)", enum={"active", "withdraw"}),
+   *                @SWG\Property(property="created_at", type="string", format="date-time", description="Subscription creation datetime")
+   *          	),
+   *      )
    * )
    *
    * @SWG\Response(
@@ -233,7 +248,18 @@ class SubscriptionsAPIController extends AbstractApiController
     $subscriptionStatusParameter = $request->get('status', false);
 
     $qb = $this->em->createQueryBuilder()
-      ->select('subscription')
+      ->select(
+        'subscription.id as id',
+        'subscriber.name as subscriber_name',
+        'subscriber.surname as subscriber_surname',
+        'subscriber.fiscal_code as subscriber_fiscal_code',
+        'subscription.relatedCFs as related_cfs',
+        'service.name as subscription_service_name',
+        'service.id as subscription_service_id',
+        'service.code as subscription_service_code',
+        'subscription.status as status',
+        'subscription.created_at as created_at'
+      )
       ->from(Subscription::class, 'subscription')
       ->join('subscription.subscriber', 'subscriber')
       ->join('subscription.subscription_service', 'service')
@@ -309,7 +335,19 @@ class SubscriptionsAPIController extends AbstractApiController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Subscription",
-   *      @Model(type=Subscription::class, groups={"read"})
+   *     @SWG\schema(
+   *     		type="object",
+   *        @SWG\Property(property="id", type="string", description="Subscription identifier", format="uuid"),
+   *        @SWG\Property(property="subscriber_name", type="string", description="Subscriber name"),
+   *        @SWG\Property(property="subscriber_surname", type="string", description="Subscriber surname"),
+   *        @SWG\Property(property="subscriber_fiscal_code", type="string", description="Subscriber fiscale code"),
+   *        @SWG\Property(property="related_cfs", type="array", description="Subscription related cfs", @SWG\items(type="string")),
+   *        @SWG\Property(property="subscription_service_name", type="string", description="Subscription service name"),
+   *        @SWG\Property(property="subscription_service_code", type="string", description="Subscription service code"),
+   *        @SWG\Property(property="subscription_service_id", type="string", description="Subscription service identifier", format="uuid"),
+   *        @SWG\Property(property="status", type="string", description="Subscription status (active or withdraw)", enum={"active", "withdraw"}),
+   *        @SWG\Property(property="created_at", type="string", format="date-time", description="Subscription creation datetime")
+   *    ),
    * )
    *
    * @SWG\Parameter(
@@ -364,7 +402,19 @@ class SubscriptionsAPIController extends AbstractApiController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
     $this->denyAccessUnlessGranted(SubscriptionVoter::VIEW, $subscription);
-    return $this->view($subscription, Response::HTTP_OK);
+    $data = [
+      "id" => $subscription->getId(),
+      "subscriber_name" => $subscription->getSubscriber()->getName(),
+      "subscriber_surname" => $subscription->getSubscriber()->getSurname(),
+      "subscriber_fiscal_code" => $subscription->getSubscriber()->getFiscalCode(),
+      "related_cfs" => $subscription->getRelatedCfs(),
+      "subscription_service_name" => $subscription->getSubscriptionService()->getName(),
+      "subscription_service_code" => $subscription->getSubscriptionService()->getCode(),
+      "subscription_service_id" => $subscription->getSubscriptionService()->getId(),
+      "status" => $subscription->getStatus(),
+      "created_at" => $subscription->getCreatedAt()
+    ];
+    return $this->view($data, Response::HTTP_OK);
   }
 
   /**
@@ -805,7 +855,6 @@ class SubscriptionsAPIController extends AbstractApiController
 
     return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
-
 
   /**
    * @param Request $request
