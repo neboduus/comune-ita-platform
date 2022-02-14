@@ -532,8 +532,8 @@ class ServiceGroup
   /**
    * @Serializer\VirtualProperty()
    * @Serializer\SerializedName("recipients")
-   * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Service's recipients id", type="array", @SWG\Items(type="string"))
+   * @Serializer\Type("array")
+   * @SWG\Property(description="Service's recipients object defines an id and name", type="array", @SWG\Items(type="object"))
    * @Groups({"read", "write"})
    */
   public function getRecipientsIds()
@@ -541,7 +541,7 @@ class ServiceGroup
     $recipients = [];
     /** @var Recipient $r */
     foreach ($this->recipients as $r) {
-      $recipients []= $r->getId();
+      $recipients []= ['id' => $r->getId(), 'name' => $r->getName()];
     }
     return $recipients;
   }
@@ -591,8 +591,8 @@ class ServiceGroup
   /**
    * @Serializer\VirtualProperty()
    * @Serializer\SerializedName("geographic_areas")
-   * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Service's geographic areas id", type="array", @SWG\Items(type="string"))
+   * @Serializer\Type("array")
+   * @SWG\Property(description="Service's geographic areas object defines an id and name", type="array", @SWG\Items(type="object"))
    * @Groups({"read", "write"})
    */
   public function getGeographicAreasIds()
@@ -600,7 +600,7 @@ class ServiceGroup
     $geographicAreas = [];
     /** @var Recipient $r */
     foreach ($this->geographicAreas as $r) {
-      $geographicAreas []= $r->getId();
+      $geographicAreas []= ['id' => $r->getId(), 'name' => $r->getName()];
     }
     return $geographicAreas;
   }
