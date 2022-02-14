@@ -1,7 +1,7 @@
 {% extends '@App/Default/index.html.twig' %}
 
 {% set ente = instance_service.getCurrentInstance() %}
-
+{% set locales = app_locales|split('|') %}
 {% block stylesheets %}
   {{ parent() }}
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">

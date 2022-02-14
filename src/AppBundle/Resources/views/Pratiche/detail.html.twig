@@ -1,34 +1,30 @@
 {% extends '@App/Default/index.html.twig' %}
 {% set ente = instance_service.getCurrentInstance() %}
 
-{% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
+{% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
-  {{ parent() }}
   {{ encore_entry_link_tags('user-show-application') }}
   <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
 {% endblock %}
 
 {% block javascripts %}
-  {{ parent() }}
   {{ encore_entry_script_tags('user-show-application') }}
 
-  <script src="{{ asset('bundles/app/js/formio-i18n.js') }}"></script>
-
-    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
-    <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
-    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
-    {% if user.idp != 'anonymous' and pratica.operatore %}
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
+  <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
+  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
+  {% if user.idp != 'anonymous' and pratica.operatore %}
     <script type="application/javascript">
-        let vueBundledDataMessage = {
-            "attachments": [],
-            "upload_url": "{{ path('cps_user_allegato_messaggio_upload', {'id': pratica.id }) }}"
-        };
-        new Vue({
-            el: "#vueApp"
-        });
+      let vueBundledDataMessage = {
+        "attachments": [],
+        "upload_url": "{{ path('cps_user_allegato_messaggio_upload', {'id': pratica.id }) }}"
+      };
+      new Vue({
+        el: "#vueApp"
+      });
     </script>
-    {% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block main_content %}
@@ -65,7 +61,8 @@
                   {% for allegato in pratica.allegatiOperatore %}
                     <div class="row my-3">
                       <div class="col">
-                        <a class="text-truncate" href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
+                        <a class="text-truncate"
+                           href="{{ path('allegati_download_cpsuser', {'allegato': allegato.id}) }}" download>
                           <svg class="icon icon-primary">
                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
                           </svg>
@@ -85,7 +82,8 @@
             <h5>È stata richiesta un'integrazione</h5>
             <p>{{ pratica.richiestaDiIntegrazioneAttiva.description | raw }}</p>
             <p class="text-right">
-              <button id="answer-integration" type="button" class="btn btn-sm">Rispondi alla richiesta integrazione</button>
+              <button id="answer-integration" type="button" class="btn btn-sm">Rispondi alla richiesta integrazione
+              </button>
             </p>
           </div>
         {% endif %}
@@ -105,7 +103,8 @@
             </div>
             <div class="col-12 pb-3">
               <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
-              <span class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
+              <span
+                class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
             </div>
             {% if  pratica.servizio.isProtocolrequired %}
               <div class="col-12 pb-3">

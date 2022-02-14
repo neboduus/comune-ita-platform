@@ -27,7 +27,7 @@
     "@fullcalendar/list": "4.2.0",
     "@fullcalendar/timegrid": "4.2.0",
     "@sweetalert2/theme-bootstrap-4": "^5.0.7",
-    "axios": "0.21.1",
+    "axios": "^0.25.0",
     "bootstrap": "4.6.0",
     "bootstrap-italia": "1.4.3",
     "bootstrap-select": "1.13.18",

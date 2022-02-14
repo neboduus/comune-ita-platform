@@ -44,25 +44,12 @@
     {% if formserver_url is defined and pratica.status < 1900 %}
 
       <div id="formio_summary" class="formio-front formio-summary"
+           data-locale="{{ app.request.locale }}"
            data-formserver_url="{{ formserver_url }}"
            data-form_id="{{ pratica.servizio.getFormIoId }}"
            data-submission="{% if pratica.dematerializedForms.data is defined %}{{ pratica.dematerializedForms.data | json_encode }}{% else %}[]{% endif %}">
       </div>
 
-      <script type='text/javascript'>
-        window.onload = function () {
-          Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
-            readOnly: true,
-            noAlerts: true,
-            language: 'it',
-            i18n: formIoI18n
-          }).then(function (form) {
-            form.submission = {
-              data: $('#formio_summary').data('submission')
-            };
-          });
-        };
-      </script>
     {% endif %}
   {% endif %}
 

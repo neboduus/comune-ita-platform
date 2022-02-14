@@ -2,6 +2,7 @@ instances:
   stanzadelcittadino.localtest.me/comune-di-bugliano:
     codice_meccanografico: c_cbug
     database_name: sdc_bugliano
+    login_route: login_pat
     # Deda Login
     #login_route: login_deda
     #deda_login_client_id: 'd8vbhj65d'

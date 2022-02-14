@@ -113,6 +113,8 @@ services:
 
   AppBundle\Controller\Ui\Backend\AdminController:
     autowire: true
+    arguments:
+      $locales: "%app_locales%"
 
   AppBundle\Controller\Ui\Backend\ServiceController:
     autowire: true
@@ -751,6 +753,14 @@ services:
 
   AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType:
     autowire: true
+    tags:
+      - { name: form.type }
+
+  AppBundle\Form\Admin\Servizio\FormIOI18nType:
+    autowire: true
+    arguments:
+      $locale: "%locale%"
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 

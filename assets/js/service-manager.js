@@ -6,6 +6,7 @@ import FinancialReport from "./FinancialReport";
 import SdcFile from "./SdcFile";
 import 'formiojs'
 import {TextEditor} from "./utils/TextEditor";
+
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 
 
@@ -31,13 +32,13 @@ $(document).ready(function () {
 
   disableIntegration();
   integrationTrigger.on("change", function () {
-   disableIntegration();
+    disableIntegration();
   })
 
 
   if ($('#form-step-messages').length) {
-    $('.placeholders').append(function(){
-      return $('<button type="button" class="btn btn-outline-primary btn-xs float-right">Placeholders disponibili</button>').on('click', function (){
+    $('.placeholders').append(function () {
+      return $('<button type="button" class="btn btn-outline-primary btn-xs float-right">Placeholders disponibili</button>').on('click', function () {
         $('#form_placeholders').modal('toggle')
       });
     });
@@ -198,7 +199,7 @@ $(document).ready(function () {
     })
   }
 
-  if ( $("#form-step-card").length) {
+  if ($("#form-step-card").length) {
     const limitChars = 2000;
     TextEditor.init({
       onInit: function () {
@@ -223,7 +224,7 @@ $(document).ready(function () {
     })
   }
 
-  if ( $("#form-step-messages").length ) {
+  if ($("#form-step-messages").length) {
 
     let draftMessage = $('#feedback_messages_data_feedback_messages_7_is_active');
     draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
@@ -252,9 +253,9 @@ $(document).ready(function () {
   // Step Form Fields
   if ($("#form-step-formio").length) {
 
-    const saveForm = function( saveUrl, targetUrl, type){
+    const saveForm = function (saveUrl, targetUrl, type) {
       let schema = $("#formio_builder_render_form_schema").val();
-      $.ajax( saveUrl,
+      $.ajax(saveUrl,
         {
           dataType: 'json', // type of response data
           method: 'POST',
@@ -265,10 +266,10 @@ $(document).ready(function () {
             if (data.status === 'success') {
               if (type === 'print') {
                 window.location.href = targetUrl;
-              } else if(type === 'draft'){
+              } else if (type === 'draft') {
                 $('.toast').toast('show')
               } else {
-                window.open( targetUrl, '_blank');
+                window.open(targetUrl, '_blank');
               }
             } else {
               alert('Si è verificato un errore durante il salvataggio.')
@@ -282,13 +283,12 @@ $(document).ready(function () {
     };
 
     let preview = $('#preview');
-    preview.removeClass('d-none');
     preview.find('a').click(function (e) {
       e.preventDefault();
       saveForm($(this).data('schema'), $(this).data('target'), $(this).data('type'));
     });
 
-    const storeSchema = function( schema ) {
+    const storeSchema = function (schema) {
       $("#formio_builder_render_form_schema").val(schema);
     };
 
@@ -302,7 +302,7 @@ $(document).ready(function () {
         data: false,
         layout: false,
         premium: false,
-        resource:false,
+        resource: false,
         customBasic: {
           title: 'Componenti',
           default: true,
@@ -312,8 +312,8 @@ $(document).ready(function () {
             textarea: true,
             checkbox: true,
             number: true,
-            select:true,
-            radio:true,
+            select: true,
+            radio: true,
             selectboxes: true,
             email: true,
             phoneNumber: true,
@@ -338,7 +338,7 @@ $(document).ready(function () {
                 storage: "url",
                 fileMinSize: "1KB",
                 fileMaxSize: "10MB",
-                url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] +"/allegati",
+                url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] + "/allegati",
               }
             },
             sdcfile: {
@@ -353,12 +353,12 @@ $(document).ready(function () {
                 storage: "url",
                 fileMinSize: "1KB",
                 fileMaxSize: "10MB",
-                url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] +"/it/upload",
+                url: window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] + "/it/upload",
               }
             },
             financial_report: true,
-            address:true,
-            survey:true
+            address: true,
+            survey: true
           }
         },
         customLayout: {
@@ -382,9 +382,9 @@ $(document).ready(function () {
                 customDefaultValue: "value = [{}]",
               }
             },
-            well:true,
-            panel:true,
-            editgrid:true,
+            well: true,
+            panel: true,
+            editgrid: true,
             fieldset: true
           }
         },
@@ -434,8 +434,8 @@ $(document).ready(function () {
       }
     };
 
-    paymentRequiredField.change(function() {
-      if($(this).val() == 0) {
+    paymentRequiredField.change(function () {
+      if ($(this).val() == 0) {
         $('#payment_data_total_amounts').attr('disabled', 'disabled');
         $('#payment_data_gateways').find('input[type="checkbox"]').attr('disabled', 'disabled');
       } else {
@@ -445,15 +445,15 @@ $(document).ready(function () {
       paymentTypeHelp($(this).val());
     });
 
-    $('#payment_data_gateways').find('input[type="checkbox"]').each(function(){
-      if(this.checked) {
+    $('#payment_data_gateways').find('input[type="checkbox"]').each(function () {
+      if (this.checked) {
         $('#payment_data_' + $(this).val()).removeClass('d-none');
         $('#payment_data_' + $(this).val()).find('input').attr('required', 'required');
       }
     });
 
-    $('#payment_data_gateways').find('input[type="checkbox"]').change(function() {
-      if(this.checked) {
+    $('#payment_data_gateways').find('input[type="checkbox"]').change(function () {
+      if (this.checked) {
         $('#payment_data_' + $(this).val()).removeClass('d-none');
         $('#payment_data_' + $(this).val()).find('input').attr('required', 'required');
       } else {
@@ -467,7 +467,7 @@ $(document).ready(function () {
 
   // Step Integrations data
   if ($("#form-step-backoffices").length) {
-    $('#integrations_data_trigger').change(function() {
+    $('#integrations_data_trigger').change(function () {
       if ($(this).val() == '0') {
         $('#integrations_data_action').attr('disabled', 'disabled');
       } else {
@@ -479,7 +479,7 @@ $(document).ready(function () {
   // Protocol data
   if ($('#form-step-protocol').length) {
     $('#protocol_data_protocol_required').change(function () {
-      if(this.checked) {
+      if (this.checked) {
         $('.protocollo_params').removeAttr('disabled');
       } else {
         $('.protocollo_params').attr('disabled', 'disabled');
@@ -487,10 +487,10 @@ $(document).ready(function () {
     })
 
     let protocolHandler = $('#protocol_data_protocol_handler');
-    let setupProtocolSettings = function (){
-      $('.protocollo_params').each(function( i, e ) {
+    let setupProtocolSettings = function () {
+      $('.protocollo_params').each(function (i, e) {
         let element = $(e);
-        if(element.hasClass(protocolHandler.val())) {
+        if (element.hasClass(protocolHandler.val())) {
           element.closest('div').removeClass('d-none');
           element.removeAttr('disabled');
         } else {
@@ -518,7 +518,7 @@ $(document).ready(function () {
       switchTest(false)
     }
 
-    $('#form_io_send_test').click(function (){
+    $('#form_io_send_test').click(function () {
       $("#error_messages").empty();
       let url = $("#form_io_send_test").data("url")
       $.ajax({
@@ -530,29 +530,28 @@ $(document).ready(function () {
           "secondary_key": secondary_key.val(),
           "fiscal_code": $('#form_io_send_test_fiscal_code').val()
         },
-        success: function(data) {
+        success: function (data) {
           $("#error_messages").append("<p class='text-success'><i class='fa fa-check-circle mr-2'></i>La notifica è stata inviata con successo (identificativo " + data.id + ")</p>");
         },
-        error: function(data) {
+        error: function (data) {
           $("#error_messages").append(
-              "<p class='text-danger'><i class='fa fa-exclamation-circle mr-2'></i>la notifica NON è stata inviata a causa dell'errore:<ul class='list-unstyled text-danger'><li>" + data.responseJSON.error + "</li></ul></p>"
+            "<p class='text-danger'><i class='fa fa-exclamation-circle mr-2'></i>la notifica NON è stata inviata a causa dell'errore:<ul class='list-unstyled text-danger'><li>" + data.responseJSON.error + "</li></ul></p>"
           );
         }
       });
     })
 
-    service_id.change(function(){
+    service_id.change(function () {
       if (!service_id.val()) {
         switchTest(false)
       } else if (primary_key.val()) {
         switchTest(true)
       }
     })
-    primary_key.change(function(){
+    primary_key.change(function () {
       if (!primary_key.val()) {
         switchTest(false)
-      }
-      else if (service_id.val()) {
+      } else if (service_id.val()) {
         switchTest(true)
       }
     })
@@ -568,10 +567,10 @@ $(document).ready(function () {
 
   // Save form.io draft
   if ($("#btn-draft").length) {
-    $("#btn-draft").on('click', function (e){
+    $("#btn-draft").on('click', function (e) {
       e.preventDefault();
       let schema = $("#formio_builder_render_form_schema").val();
-      $.ajax( $(this).data('schema'),
+      $.ajax($(this).data('schema'),
         {
           dataType: 'json', // type of response data
           method: 'POST',
@@ -581,8 +580,7 @@ $(document).ready(function () {
           success: function (data, status, xhr) {   // success callback function
             if (data.status === 'success') {
               $('.toast').toast('show')
-            }
-            else {
+            } else {
               alert('Si è verificato un errore durante il salvataggio.')
             }
           },

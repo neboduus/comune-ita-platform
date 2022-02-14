@@ -482,4 +482,109 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
 
     return $formID;
   }
+
+  /**
+   * @param $formID
+   * @return array
+   */
+  public function getI18nLabels($formID)
+  {
+    $client = new Client(['base_uri' => $this->formServerUrl]);
+    $request = new Request(
+      'GET',
+      $client->getConfig('base_uri').'/form/'.$formID.'/i18n-labels',
+      ['Content-Type' => 'application/json']
+    );
+
+    try {
+      $response = $client->send($request, ['timeout' => 2]);
+      if ($response->getStatusCode() == 200) {
+        $responseBody = json_decode($response->getBody(), true);
+
+        return [
+          'status' => 'success',
+          'data' => $responseBody,
+        ];
+      }
+
+      throw new \Exception("Unexpected status response");
+
+    } catch (\Throwable $e) {
+      $error = $e->getMessage();
+      $this->logger->error($e->getMessage());
+
+      return [
+        'status' => 'error',
+        'message' => $error,
+      ];
+    }
+  }
+
+  /**
+   * @param $formID
+   * @return array
+   */
+  public function getTranslations($formID)
+  {
+    $client = new Client(['base_uri' => $this->formServerUrl]);
+    $request = new Request(
+      'GET',
+      $client->getConfig('base_uri').'/form/'.$formID.'/i18n',
+      ['Content-Type' => 'application/json']
+    );
+
+    try {
+      $response = $client->send($request);
+      if ($response->getStatusCode() == 200) {
+        $responseBody = json_decode($response->getBody(), true);
+
+        return [
+          'status' => 'success',
+          'data' => $responseBody,
+        ];
+      }
+
+      throw new \Exception("Unexpected status response");
+
+    } catch (\Throwable $e) {
+      $error = $e->getMessage();
+      $this->logger->error($e->getMessage());
+
+      return [
+        'status' => 'error',
+        'message' => $error,
+      ];
+    }
+  }
+
+  public function saveTranslations($formID, $translations, $update = false)
+  {
+
+    $method = $update ? 'PUT' : 'POST';
+    $client = new Client(['base_uri' => $this->formServerUrl]);
+    $request = new Request(
+      $method,
+      $client->getConfig('base_uri').'/form/'.$formID.'/i18n',
+      ['Content-Type' => 'application/json'],
+      json_encode($translations, JSON_UNESCAPED_UNICODE)
+    );
+
+    try {
+      $response = $client->send($request);
+      if ($response->getStatusCode() == 200) {
+        return [
+          'status' => 'success',
+        ];
+      }
+      throw new \Exception("Unexpected status response");
+    } catch (\Throwable $e) {
+      $error = $e->getMessage();
+      $this->logger->error($e->getMessage());
+      return [
+        'status' => 'error',
+        'message' => $error,
+      ];
+    }
+  }
+
 }
