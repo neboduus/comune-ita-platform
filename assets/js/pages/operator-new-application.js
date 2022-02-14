@@ -86,7 +86,7 @@ $(document).ready(function () {
   let $autocomplete = $('#users-list');
   let url = $input.data('url')
 
-  $input.on('keyup', function (e) {
+  $input.on('input', function (e) {
     const q = $input.val()
     $autocomplete.empty()
     if (q.length === 16) {
