@@ -175,6 +175,7 @@ servizio:
   no_geographic_areas: 'Non è stata specificata nessuna area geografica'
   shared_with_group_message: 'Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo di servizi associato.'
   shared_with_group_action: 'Modifica il gruppo di servizi'
+  machine_readable: 'Definizione machine readable'
   imis:
     download_pdf_imis: 'Esegui il download del pdf %name%'
   statutes:
