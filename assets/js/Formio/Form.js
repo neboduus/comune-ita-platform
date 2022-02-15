@@ -142,7 +142,6 @@ class Form {
         }
 
         let dataContainer = $('#formio_render_dematerialized_forms');
-
         // Recupero i dati della pratica se presenti
         if (dataContainer.val() !== '') {
           form.submission = {
@@ -265,10 +264,9 @@ class Form {
   static initSummary(containerId) {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
-    const printableFormUrl = $container.data('formserver_url') + '/printable/' + $container.data('form_id');
     $.getJSON(formUrl + '/i18n', function (data) {
       Formio.icons = 'fontawesome';
-      Formio.createForm(document.getElementById(containerId), printableFormUrl, {
+      Formio.createForm(document.getElementById(containerId), formUrl, {
         readOnly: true,
         noAlerts: true,
         language: $container.data('locale'),

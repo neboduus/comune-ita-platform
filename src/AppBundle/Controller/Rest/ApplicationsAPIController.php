@@ -672,7 +672,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $this->em->flush();
 
       if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
-        $this->pdfBuilder->createForPraticaAsync($pratica, $applicationDto->getStatus());
+        if ($applicationDto->getStatus() == Pratica::STATUS_PRE_SUBMIT) {
+          $this->pdfBuilder->createForPraticaAsync($pratica, Pratica::STATUS_SUBMITTED);
+        } else {
+          $this->pdfBuilder->createForPraticaAsync($pratica, $applicationDto->getStatus());
+        }
       }
 
     } catch (\Exception $e) {
