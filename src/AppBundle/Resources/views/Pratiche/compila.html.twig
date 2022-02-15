@@ -129,6 +129,7 @@
           </div>
         </div>
 
+      {% if formserver_url is defined and pratica.status != 1500 and pratica.status != 1510 %}
         <div id="formio"
              class="editable formio-front"
              data-locale="{{ app.request.locale }}"
@@ -136,7 +137,7 @@
              data-form_id="{{ pratica.servizio.formIoId }}"
              data-form_validate="{{ path( 'formio_validate', {'servizio': pratica.servizio.slug}) }}">
         </div>
-
+      {% endif %}
         <div id="formio-custom-errors" class="alert alert-danger alert-dismissible" style="display: none" role="alert" auto-close="5000">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
