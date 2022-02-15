@@ -570,7 +570,7 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
 
     try {
       $response = $client->send($request);
-      if ($response->getStatusCode() == 200) {
+      if (in_array($response->getStatusCode(), [200, 201])) {
         return [
           'status' => 'success',
         ];

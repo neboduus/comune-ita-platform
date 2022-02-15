@@ -1,4 +1,5 @@
 {% extends '@App/Default/index.html.twig' %}
+{% set locales = app_locales|split('|') %}
 
 {% block stylesheets %}
   {{ parent() }}
@@ -132,6 +133,13 @@
                                 <span class="text-primary"><i class="fa fa-server fa-lg"></i> Modulo</span>
                               </a>
                             </li>
+                            {% if locales|length > 1 %}
+                              <li>
+                                <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'formioI18n' }) }}">
+                                  <span class="text-primary"><i class="fa fa-language fa-lg"></i>Traduzioni</span>
+                                </a>
+                              </li>
+                            {% endif %}
                           {% endif %}
                           <li>
                             <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'messages' }) }}">

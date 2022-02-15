@@ -264,9 +264,10 @@ class Form {
   static initSummary(containerId) {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
+    const printableFormUrl = $container.data('formserver_url') + '/printable/' + $container.data('form_id');
     $.getJSON(formUrl + '/i18n', function (data) {
       Formio.icons = 'fontawesome';
-      Formio.createForm(document.getElementById(containerId), formUrl, {
+      Formio.createForm(document.getElementById(containerId), printableFormUrl, {
         readOnly: true,
         noAlerts: true,
         language: $container.data('locale'),
