@@ -559,7 +559,6 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
 
   public function saveTranslations($formID, $translations, $update = false)
   {
-
     $method = $update ? 'PUT' : 'POST';
     $client = new Client(['base_uri' => $this->formServerUrl]);
     $request = new Request(

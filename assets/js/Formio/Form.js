@@ -30,7 +30,7 @@ class Form {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
         noAlerts: true,
-        language: '"' + $container.data('locale') + '"',
+        language: $container.data('locale'),
         i18n: data,
         buttonSettings: {
           showCancel: false
@@ -102,7 +102,7 @@ class Form {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById(containerId), formUrl, {
         noAlerts: true,
-        language: '"' + $container.data('locale') + '"',
+        language: $container.data('locale'),
         i18n: data,
         buttonSettings: {
           showCancel: false
@@ -231,7 +231,7 @@ class Form {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById(containerId), formUrl, {
         noAlerts: true,
-        language: '"' + $container.data('locale') + '"',
+        language: $container.data('locale'),
         i18n: data,
         readOnly: true,
         //renderMode: 'html'
@@ -254,7 +254,7 @@ class Form {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById(containerId), formUrl, {
         noAlerts: true,
-        language: '"' + $container.data('locale') + '"',
+        language: $container.data('locale'),
         i18n: data,
         readOnly: false,
         //renderMode: 'html'
@@ -271,7 +271,7 @@ class Form {
       Formio.createForm(document.getElementById(containerId), printableFormUrl, {
         readOnly: true,
         noAlerts: true,
-        language: '"' + $container.data('locale') + '"',
+        language: $container.data('locale'),
         i18n: data
       }).then(function (form) {
         form.submission = {
