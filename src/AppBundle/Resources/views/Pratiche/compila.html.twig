@@ -13,11 +13,10 @@
 {% endblock %}
 
 {% block javascripts %}
-  {{ encore_entry_script_tags('compile') }}
-
+  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
   <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
-  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+  {{ encore_entry_script_tags('compile') }}
   {% if form.vars.helper.vueApp %}
     <script src="{{ asset('bundles/app/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
     <script>
