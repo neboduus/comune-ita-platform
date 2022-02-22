@@ -89,7 +89,11 @@
     </script>
 
     <script id="tpl-empty" type="text/x-jsrender">
-      <div class="col-lg-12 alert alert-warning"><p>{{ 'servizio.nessun_template'|trans }}</p></div>
+      <div class="col-lg-12 alert alert-warning"><p>
+  {% endverbatim %}
+      {{ 'servizio.nessun_template'|trans }}
+  {% verbatim %}
+        </p></div>
     </script>
   {% endverbatim %}
 
