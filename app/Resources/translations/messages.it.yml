@@ -179,6 +179,7 @@ servizio:
   machine_readable: 'Definizione machine readable'
   preview: 'Anteprima'
   print: 'Stampa'
+  name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
   i18n:
     default_language_module_alert: 'La lingua di base del Modulo è <strong>%default_language%</strong>, puoi aggiungere una traduzione da <a href="%module_translation_url%">Traduzioni modulo</a>'
     string: 'Stringa It'
@@ -2458,5 +2459,3 @@ search:
   topics: 'Argomenti'
   recipients: 'Destinatari'
   geographic_areas: 'Aree geografiche'
-
-
