@@ -5,14 +5,19 @@ namespace AppBundle\Controller\Ui\Frontend;
 use AppBundle\BackOffice\SubcriptionsBackOffice;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\Subscriber;
+use AppBundle\Entity\Subscription;
+use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\MapColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
+use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -69,38 +74,38 @@ class SubscriptionServicesController extends Controller
 
 
     $table = $this->createDataTable()
-      ->add('name', TextColumn::class, ['label' => 'iscrizioni.nome', 'propertyPath' => 'Nome', 'render' => function ($value, $subscriptionService) {
-        return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscription-service_show', [
-          'subscriptionService' => $subscriptionService->getId()
-        ]), $subscriptionService->getName());
-      }])
+      ->add('name', TwigColumn::class, [
+        'className' => 'text-truncate',
+        'label' => 'iscrizioni.nome',
+        'orderable' => true,
+        'searchable' => true,
+        'template' => '@App/SubscriptionServices/table/_name.html.twig',
+      ])
       ->add('code', TextColumn::class, ['label' => 'iscrizioni.codice', 'searchable' => true])
       ->add('status', MapColumn::class, ['label' => 'iscrizioni.stato', 'searchable' => false, 'map' => $statuses])
-      ->add('subscriptions', TextColumn::class, ['label' => 'iscrizioni.subscriptions', 'render' => function ($value, $subscriptionService) {
-        if ($subscriptionService->getSubscribersLimit()) {
-          return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscriptions',
-            ['subscriptionService' => $subscriptionService->getId()]),
-            count($subscriptionService->getSubscriptions()) . ' di ' . $subscriptionService->getSubscribersLimit());
-        } else {
-          return sprintf('<a href="%s">%s</a>', $this->generateUrl('operatori_subscriptions',
-            ['subscriptionService' => $subscriptionService->getId()]),
-            count($subscriptionService->getSubscriptions()));
-        }
-      }])
+      ->add('subscriptions', TwigColumn::class, [
+        'className' => 'text-truncate',
+        'label' => 'iscrizioni.subscriptions',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/SubscriptionServices/table/_subscriptions.html.twig',
+      ])
+      ->add('subscriptionPayments', TwigColumn::class, [
+        'className' => 'text-truncate',
+        'label' => 'backoffice.integration.subscription_service.payments',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/SubscriptionServices/table/_payments.html.twig',
+      ])
       ->add('beginDate', DateTimeColumn::class, ['label' => 'Data di inizio', 'format' => 'd/m/Y', 'searchable' => false])
       ->add('endDate', DateTimeColumn::class, ['label' => 'Data di fine', 'format' => 'd/m/Y', 'searchable' => false])
-      ->add('id', TextColumn::class, ['label' => 'Azioni', 'searchable' => false, 'render' => function ($value, $subscriptionService) {
-        return sprintf('
-        <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s"><svg class="icon icon-sm icon-warning"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use></svg></a>
-        <a class="btn btn-warning btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s">Modifica</a>
-        <a class="d-inline-block d-sm-none d-lg-inline-block d-xl-none" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.\');"><svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg></a>
-        <a class="btn btn-danger btn-sm d-none d-sm-inline-block d-lg-none d-xl-inline-block" href="%s" onclick="return confirm(\'Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.\');">Elimina</a>',
-          $this->generateUrl('operatori_subscription-service_edit', ['subscriptionService' => $value]),
-          $this->generateUrl('operatori_subscription-service_edit', ['subscriptionService' => $value]),
-          $this->generateUrl('operatori_subscription-service_delete', ['id' => $value]),
-          $this->generateUrl('operatori_subscription-service_delete', ['id' => $value])
-        );
-      }])
+      ->add('id', TwigColumn::class, [
+        'className' => 'text-truncate',
+        'label' => 'iscrizioni.subscribers.actions',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/SubscriptionServices/table/_actions.html.twig',
+      ])
       ->createAdapter(ORMAdapter::class, [
         'entity' => SubscriptionService::class
       ])
@@ -296,10 +301,31 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
+    $subscriptionServicePayments = [];
+    foreach ($subscriptionService->getSubscriptionPayments() as $paymentSetting) {
+      try {
+        $payments = $this->em->createQueryBuilder()
+          ->select('count(payment)')
+          ->from(SubscriptionPayment::class, 'payment')
+          ->join('payment.subscription', 'subscription')
+          ->where('subscription.subscription_service = :subscriptionServiceId')
+          ->andWhere('payment.name = :identifier')
+          ->groupBy('subscription.subscriber')
+          ->setParameter('subscriptionServiceId', $subscriptionService->getId())
+          ->setParameter('identifier', $paymentSetting->getPaymentIdentifier())
+          ->getQuery()->getSingleScalarResult();
+      } catch (NoResultException|NonUniqueResultException $e) {
+        $payments = 0;
+      }
+
+      $subscriptionServicePayments[$paymentSetting->getPaymentIdentifier()] = $payments;
+    }
+
     $deleteForm = $this->createDeleteForm($subscriptionService);
     return $this->render('@App/SubscriptionServices/showSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
+      'payments' => $subscriptionServicePayments,
       'delete_form' => $deleteForm->createView(),
     ]);
   }
@@ -327,9 +353,19 @@ class SubscriptionServicesController extends Controller
   {
     $items = $this->em->getRepository('AppBundle:SubscriptionPayment')->findBy([], ['paymentDate' => 'DESC']);
 
+    $subscriptionServices =  $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
+    $subscriptionServiceIdentifiers = [];
+    foreach ($subscriptionServices as $subscriptionService) {
+      $subscriptionServiceIdentifiers[$subscriptionService->getCode()] = [];
+      foreach ($subscriptionService->getSubscriptionPayments() as $paymentSetting) {
+        $subscriptionServiceIdentifiers[$subscriptionService->getCode()][$paymentSetting->getPaymentIdentifier()] = $paymentSetting->getType();
+      }
+    }
+
     return $this->render('@App/SubscriptionServices/indexSubscriptionServicePayments.html.twig', [
       'user' => $this->getUser(),
-      'items' => $items
+      'items' => $items,
+      'identifiers' => $subscriptionServiceIdentifiers
     ]);
   }
 
@@ -352,5 +388,55 @@ class SubscriptionServicesController extends Controller
     }
 
     return new JsonResponse($this->render('@App/SubscriptionServices/parts/searchResults.html.twig', ['subscribers' =>$subscribers])->getContent(), Response::HTTP_OK);
+  }
+
+  /**
+   * Show all subscription service payments
+   * @Route("/operatori/subscription-service/{subscriptionService}/payments/{identifier}", name="operatori_subscription-service_payments_show")
+   * @Method("GET")
+   */
+  public function showSubscriptionServicePaymentsAction(Request $request, SubscriptionService $subscriptionService, string $identifier)
+  {
+    /** @var User $user */
+    $user = $this->getUser();
+
+    $identifier = urldecode($identifier);
+    $paymentsMade = $this->em->createQueryBuilder()
+      ->select('payment', 'subscriber', 'subscription')
+      ->from(SubscriptionPayment::class, 'payment')
+      ->join('payment.subscription', 'subscription')
+      ->join('subscription.subscriber', 'subscriber')
+      ->where('subscription.subscription_service = :subscriptionService')
+      ->setParameter('subscriptionService', $subscriptionService->getId())
+      ->andWhere('payment.name = :paymentIdentifier')
+      ->setParameter('paymentIdentifier', $identifier)
+      ->getQuery()->getResult();
+
+    $excludedPayments = [];
+    foreach ($paymentsMade as $paymentMade) {
+      $excludedPayments[] = $paymentMade->getSubscription();
+    }
+    $qb = $this->em->createQueryBuilder()
+      ->select('subscription', 'subscriber')
+      ->from(Subscription::class, 'subscription')
+      ->join('subscription.subscriber', 'subscriber')
+      ->where('subscription.subscription_service = :subscriptionService')
+      ->setParameter('subscriptionService', $subscriptionService->getId());
+
+    if (count($paymentsMade) > 0) {
+      $qb
+        ->andWhere('subscription NOT IN (:payers)')
+        ->setParameter('payers', $excludedPayments);
+    }
+
+    $missingPayment = $qb->getQuery()->getResult();
+
+    return $this->render('@App/SubscriptionServices/showSubscriptionServicePayments.html.twig', [
+      'user' => $user,
+      'subscriptionService' => $subscriptionService,
+      'paymentsMade' => $paymentsMade,
+      'missingPayments' => $missingPayment,
+      'identifier' => $identifier
+    ]);
   }
 }

@@ -1,0 +1,16 @@
+<a class="btn btn-xs btn-secondary"
+   href="{{ path('operatori_subscription-service_edit', { 'subscriptionService': row.id }) }}">
+  <svg class="icon icon-sm icon-white">
+    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+  </svg>
+  <span>{{ 'modifica' | trans }}</span>
+</a>
+<a class="btn btn-xs btn-danger"
+   onclick="return confirm('{{ 'general.alert_elimina'|trans }}');"
+   href="{{ path('operatori_subscription-service_delete', { 'id': row.id }) }}">
+  <svg class="icon icon-sm icon-white">
+    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+  </svg>
+  <span>{{ 'elimina' | trans }}</span>
+</a>
+

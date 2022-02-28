@@ -44,6 +44,7 @@ credits: "La Stanza del Cittadino è una iniziativa progettuale sperimentale del
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Per proseguire è necessario aggiornare la tua email'
 practice_of: 'Pratica del'
+from_date_to_date: "Dal %from% al %to%"
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
@@ -489,6 +490,9 @@ iscrizioni:
   nome: "Nome"
   codice: "Codice"
   descrizione: "Descrizione"
+  duration: "Durata"
+  subscriptions_available: "Disponilitità iscrizioni"
+  subscribers_number: "Numero di iscritti"
   data_inizio_iscrizioni: "Data di inizio iscrizioni"
   data_fine_iscrizioni: "Data di fine iscrizioni"
   quota: "Quota di iscrizione"
@@ -512,6 +516,7 @@ iscrizioni:
   num_condivisioni: "%num% condivisioni"
   condivisioni: "Condivisioni"
   no_condivisioni: "Questa iscrizione non è condivisa con nessuno"
+  no_payment_settings: "Non ci sono pagamenti configurati per questo servizio a sottoscrizione"
   quota_iscrizione:
     nome: "Quota di iscrizione - %subscription_name% - %subscriber_completename% %subscriber_fiscal_code%"
     descrizione: "Quota di iscrizione"
@@ -2369,17 +2374,23 @@ backoffice:
       all: "Tutti"
       payments: "Pagamenti"
       subscription_service_payments: "Pagamenti per Servizi a Sottoscrizione"
+      identifier_payments: "Pagamenti %identifier%"
       payment:
-        type: "Tipologia pagamento"
+        payments_made: "Pagamenti effettuati"
+        missing_payments: "Pagamenti mancanti"
+        type: "Tipologia"
         type_subscription_fee: "quota di iscrizione"
         type_additional_fee: "quota aggiuntiva per tutti gli iscritti"
         type_optional: "solo gli iscritti possono pagare questa quota, ma non è obbligatoria per tutti i partecipanti"
+        text_subscription_fee: "Quota di iscrizione"
+        text_additional_fee: "Quota aggiuntiva"
+        text_optional: "Quota opzionale"
         execution_date: "Data di esecuzione"
-        due_date: "Data di scadenza del pagamento"
+        due_date: "Data di scadenza"
         amount: "Importo"
-        reason: "Causale di pagamento"
-        identifier: "Identificativo del pagamento"
-        service_id: "Servizio utilizzato per il pagamento"
+        reason: "Causale"
+        identifier: "Identificativo"
+        service_id: "Servizio utilizzato"
         required: "Il pagamento è obbligatorio per tutti gli iscritti?"
         subscription_fee: "Il pagamento è richiesto al momento di iscrizione?"
         subscription_fee_description: "Spuntare se il pagamento viene richiesto al momento dell'iscrizione. Tutti i pagamenti successivi al primo sono da considerarsi pagamenti aggiuntivi"
