@@ -216,6 +216,7 @@ services:
       - "%app_locales%"
     tags:
       - { name: form.type }
+    autowire: true
 
   AppBundle\Form\Admin\Servizio\CardDataType:
     arguments:

@@ -60,7 +60,10 @@ class GeneralDataType extends AbstractI18nType
     // you can add the translatable fields
     $this->createTranslatableMapper($builder, $options)
       ->add("name", I18nTextType::class, [
-        "label" => 'servizio.nome'
+        "label" => 'servizio.nome',
+        'attr' => [
+          'maxlength' => 255
+        ]
       ])
       ->add("compilationInfo", I18nTextareaType::class, [
         "label" => 'servizio.info_compilazione',

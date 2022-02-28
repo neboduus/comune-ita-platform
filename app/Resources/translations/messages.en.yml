@@ -138,6 +138,7 @@ servizio:
   nessun_template: ''
   importa: ''
   machine_readable: 'Get machine readable'
+  name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
