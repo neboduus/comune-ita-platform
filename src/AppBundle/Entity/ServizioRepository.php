@@ -203,4 +203,14 @@ class ServizioRepository extends EntityRepository
 
     return $qb->getQuery()->getResult();
   }
+
+  public function findAvailableForSubscriptionPaymentSettings()
+  {
+    $qb = $this->createQueryBuilder('s')
+      ->where('s.paymentRequired IS NOT NULL')
+      ->andWhere('s.integrations IS NOT NULL')
+      ->orderBy('s.name', 'ASC');
+
+    return $qb->getQuery()->getResult();
+  }
 }

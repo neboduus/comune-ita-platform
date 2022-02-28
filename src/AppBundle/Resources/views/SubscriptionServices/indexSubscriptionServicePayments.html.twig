@@ -45,6 +45,7 @@
           <thead>
           <tr>
             <th>{{ 'backoffice.integration.subscription_service.payment.reason'|trans }}</th>
+            <th>{{ 'backoffice.integration.subscription_service.payment.identifier'|trans }}</th>
             <th>{{ 'backoffice.integration.subscription_service.subscription_service'|trans }}</th>
             <th>{{ 'iscrizioni.subscribers.completename'|trans }}</th>
             <th>{{ 'iscrizioni.subscribers.fiscal_code'|trans }}</th>
@@ -62,6 +63,7 @@
                   <span data-toggle="tooltip" title="{{ item.description }}">{{ item.name }}</span>
                 </a>
               </td>
+              <td>{{ item.identifier }}</td>
               <td>{{ item.subscription.subscriptionService.name }}</td>
               <td>{{ item.subscription.subscriber.name }} {{ item.subscription.subscriber.surname }}</td>
               <td>{{ item.subscription.subscriber.fiscalCode }}</td>

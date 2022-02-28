@@ -83,16 +83,6 @@ class SubscriptionService
   private $subscriptionEnd;
 
   /**
-   * @var int
-   *
-   * @ORM\Column(name="subscription_amount", type="decimal", options={"default": 0})
-   * @Assert\GreaterThanOrEqual(0, message="La quota di iscrizione deve avere un importo positivo")
-   * @Serializer\Type("integer")
-   * @SWG\Property(description="Subscription Service's subscription amount")
-   */
-  private $subscriptionAmount = 0;
-
-  /**
    * @var \DateTime
    *
    * @Assert\NotBlank (message="Il campo data di inizio è un parametro obbligatorio")
@@ -345,34 +335,6 @@ class SubscriptionService
   }
 
   /**
-   * Set subscriptionAmount.
-   *
-   * @param integer $subscriptionAmount
-   *
-   * @return SubscriptionService
-   */
-  public function setSubscriptionAmount($subscriptionAmount)
-  {
-    if (!$subscriptionAmount) {
-      $this->subscriptionAmount = 0;
-    } else {
-      $this->subscriptionAmount = $subscriptionAmount;
-    }
-
-    return $this;
-  }
-
-  /**
-   * Get subscriptionAmount.
-   *
-   * @return integer
-   */
-  public function getSubscriptionAmount()
-  {
-    return $this->subscriptionAmount;
-  }
-
-  /**
    * Set beginDate.
    *
    * @param \DateTime $beginDate
@@ -559,6 +521,7 @@ class SubscriptionService
     foreach ($this->subscriptionPayments as $subscriptionPayment) {
       $payment = new SubscriptionPayment();
       if (is_array($subscriptionPayment)) {
+        $payment->setType($subscriptionPayment['type'] ?? SubscriptionPayment::TYPE_ADDITIONAL_FEE);
         $payment->setDate(new \DateTime($subscriptionPayment['date']));
         $payment->setAmount($subscriptionPayment['amount']);
         $payment->setPaymentReason(isset($subscriptionPayment['payment_reason']) ? $subscriptionPayment['payment_reason'] : "");

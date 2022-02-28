@@ -58,24 +58,10 @@ class SubscriberController extends Controller
     $showSubscription = $request->query->get('show_subscription');
 
     $tableData = [];
-    $subscribedSubscriptionServices = [];
 
     // retrieve datatables subscriber payments data
     foreach ($subscriber->getSubscriptions() as $subscription) {
-      $subscribedSubscriptionServices[] = $subscription->getSubscriptionService()->getName();
 
-      if ($subscription->getSubscriptionService()->getSubscriptionAmount())
-        // Subscription Amount entry
-        $tableData[] = array(
-          'created_at' => $subscription->getCreatedAt(),
-          'subscription_service_name' => $subscription->getSubscriptionService()->getName(),
-          'subscription_service_code' => $subscription->getSubscriptionService()->getCode(),
-          'subscription_service_id' => $subscription->getSubscriptionService()->getId(),
-          'start_date' => $subscription->getSubscriptionService()->getBeginDate(),
-          'end_date' => $subscription->getSubscriptionService()->getEndDate(),
-          'payment_date' => $subscription->getSubscriptionService()->getBeginDate(),
-          'payment_amount' => $subscription->getSubscriptionService()->getSubscriptionAmount()
-        );
       // Subscription Payments entries
       foreach ($subscription->getSubscriptionService()->getSubscriptionPayments() as $payment) {
         $tableData[] = array(

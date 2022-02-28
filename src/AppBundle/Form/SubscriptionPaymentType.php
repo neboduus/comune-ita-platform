@@ -41,7 +41,25 @@ class SubscriptionPaymentType extends AbstractType
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+    $servicesData = [];
+    $services = $this->em->getRepository(Servizio::class)->findAvailableForSubscriptionPaymentSettings();
+    foreach ($services as $service) {
+      $servicesData[$service->getName()] = $service->getId();
+    }
+
+    $types = [
+      'backoffice.integration.subscription_service.payment.type_subscription_fee' => SubscriptionPayment::TYPE_SUBSCRIPTION_FEE,
+      'backoffice.integration.subscription_service.payment.type_additional_fee' => SubscriptionPayment::TYPE_ADDITIONAL_FEE,
+      'backoffice.integration.subscription_service.payment.type_optional' => SubscriptionPayment::TYPE_OPTIONAL,
+    ];
+
     $builder
+      ->add('type', ChoiceType::class, [
+        'label' => 'backoffice.integration.subscription_service.payment.type',
+        'choices' => $types,
+        'empty_data' => SubscriptionPayment::TYPE_OPTIONAL,
+        'expanded' =>true
+      ])
       ->add('date', DateType::class, [
         'widget' => 'single_text',
         'label' => 'backoffice.integration.subscription_service.payment.due_date'
@@ -55,9 +73,10 @@ class SubscriptionPaymentType extends AbstractType
       ->add('payment_reason', TextType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.reason'
       ])
-      # Fixme:aggiungere scelta del servizio dinamica
-      ->add('payment_service', TextType::class, [
-        'label' => 'backoffice.integration.subscription_service.payment.service_id'
+      ->add('payment_service', ChoiceType::class, [
+        'label' => 'backoffice.integration.subscription_service.payment.service_id',
+        'choices' => $servicesData,
+        'required' => true
       ])
       ->add('subscription_fee', CheckboxType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.subscription_fee',
@@ -88,6 +107,7 @@ class SubscriptionPaymentType extends AbstractType
     /** @var SubscriptionPayment $subscriptionPayment */
     $subscriptionPayment = $event->getForm()->getData();
 
+    // Service check
     if (isset($data["payment_service"])) {
       try {
         /** @var Servizio $service */
@@ -156,8 +176,6 @@ class SubscriptionPaymentType extends AbstractType
         );
       }
     }
-
-
   }
 
   public function configureOptions(OptionsResolver $resolver)
