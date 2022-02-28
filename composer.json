@@ -130,5 +130,5 @@
       "file": "app/config/parameters.yml"
     }
   },
-  "version": "1.15.3"
+  "version": "1.16.0-rc.0"
 }
