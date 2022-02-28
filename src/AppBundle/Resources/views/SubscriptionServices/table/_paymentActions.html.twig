@@ -1,0 +1,33 @@
+<div class="dropdown dropdown-actions">
+  <button class="btn btn-link btn-dropdown dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <svg class="icon-expand icon align-middle icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
+  </button>
+  <div class="dropdown-menu dropdown-menu-right">
+    <div class="link-list-wrapper">
+      <ul class="link-list">
+        {% if payment.externalKey and is_granted('ROLE_OPERATORE') %}
+          <li>
+            <a class="list-item left-icon {% if not payment.externalKey or not is_granted('ROLE_OPERATORE') %}  {% endif %}" href="{{ path('operatori_show_pratica', { 'pratica': payment.externalKey }) }}">
+              <span class="text-primary"><i class="fa fa-file-text-o fa-lg"></i> {{ 'Pratica' | trans }}</span>
+            </a>
+          </li>
+        {% endif %}
+        <li>
+          <a class="list-item left-icon" href="{{ path('operatori_subscriptions', { 'subscriptionService': payment.subscription.subscriptionService.id }) }}">
+            <span class="text-primary"><i class="fa fa-users fa-lg"></i> {{ 'iscrizioni.subscriptions' | trans }}</span>
+          </a>
+        </li>
+        <li>
+          <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': payment.id, 'step': 'messages' }) }}">
+            <span class="text-primary"><i class="fa fa-user fa-lg"></i> {{ 'iscrizioni.subscriber' | trans }}</span>
+          </a>
+        </li>
+        <li>
+          <a class="list-item left-icon" href="{{ path('payment_certificate_download_operatore', {"subscriptionId": payment.subscription.id, "subscriptionPaymentId": payment.id }) }}">
+            <span class="text-primary"><i class="fa fa-download fa-lg"></i> {{ 'iscrizioni.certificato' | trans }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

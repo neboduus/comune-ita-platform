@@ -1,0 +1,3 @@
+<a href="{{ path('operatori_subscriptions', {'subscriptionService': row.id}) }}">
+  {% if row.subscribersLimit %} {{ row.subscriptions | length }} / {{ row.subscribersLimit }} {% else %} {{ row.subscriptions | length }} {% endif %}
+</a>

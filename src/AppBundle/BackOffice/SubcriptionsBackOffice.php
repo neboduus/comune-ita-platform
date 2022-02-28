@@ -274,11 +274,16 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
       if ($originalData instanceof Pratica && $originalData->getPaymentData()) {
         $subscriptionPayment = new SubscriptionPayment();
-        $subscriptionPayment->setName($this->translator->trans('iscrizioni.quota_iscrizione.nome', [
-          '%subscription_name%' => strtoupper($subscriptionService->getName()),
-          "%subscriber_completename%" => strtoupper($subscriber->getCompleteName()),
-          "%subscriber_fiscal_code%" => strtoupper($subscriber->getFiscalCode())
-        ]));
+
+        if (isset($subscriptionData['payment_identifier'])) {
+          $subscriptionPayment->setName($subscriptionData['payment_identifier']);
+        } else {
+          $subscriptionPayment->setName($this->translator->trans('iscrizioni.quota_iscrizione.nome', [
+            '%subscription_name%' => strtoupper($subscriptionService->getName()),
+            "%subscriber_completename%" => strtoupper($subscriber->getCompleteName()),
+            "%subscriber_fiscal_code%" => strtoupper($subscriber->getFiscalCode())
+          ]));
+        }
 
         $paymentAmount = isset($originalData->getPaymentData()['payment_amount']) ? (float)$originalData->getPaymentData()['payment_amount'] : (isset($subscriptionData["payment_amount"]) ? (float)$subscriptionData["payment_amount"] : null);
         $subscriptionPayment->setDescription($this->translator->trans("iscrizioni.quota_iscrizione.descrizione"));

@@ -206,7 +206,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     try {
       // Add subscription Payment
       $subscriptionPayment = new SubscriptionPayment();
-      $subscriptionPayment->setName($subscriptionData["payment_reason"]);
+      $subscriptionPayment->setName($subscriptionData["payment_identifier"]);
       $subscriptionPayment->setDescription($subscriptionData["payment_reason"]);
       $subscriptionPayment->setAmount((float)$subscriptionData['payment_amount']);
       $subscriptionPayment->setExternalKey($data->getId());

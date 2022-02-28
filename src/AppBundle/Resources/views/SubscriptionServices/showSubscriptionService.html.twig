@@ -17,48 +17,49 @@
         <h1>{{ subscriptionService.name }}</h1>
         <p><i>{{ subscriptionService.description | striptags }}</i></p>
         <div>
-          {%  for tag in subscriptionService.tags %}
+          {% for tag in subscriptionService.tags %}
             <div class="chip chip-simple chip-lg">
-              <span class="chip-label">{{tag}}</span>
+              <span class="chip-label">{{ tag }}</span>
             </div>
           {% endfor %}
         </div>
       </div>
-
+    </div>
+    <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         <div id="no-more-tables" class="table-striped">
           <table class="table table-bordered table-striped table-condensed cf">
             <tbody>
             <tr>
-              <th>Codice</th>
+              <th>{{ 'iscrizioni.codice' | trans }}</th>
               <td>{{ subscriptionService.code }}</td>
             </tr>
             <tr>
-              <th>Durata</th>
-              <td>dal {{ subscriptionService.beginDate|date('d/m/Y') }} al {{ subscriptionService.endDate|date('d/m/Y') }}</td>
+              <th>{{ 'iscrizioni.duration' | trans }}</th>
+              <td>{{ 'from_date_to_date' | trans({
+                  '%from%': subscriptionService.beginDate|date(ocsdc_default_date_format),
+                  '%to%': subscriptionService.endDate|date(ocsdc_default_date_format)
+                }) }}</td>
             </tr>
             <tr>
-              <th>Apertura iscrizioni</th>
-              <td>dal {{ subscriptionService.subscriptionBegin|date('d/m/Y') }} al {{ subscriptionService.subscriptionEnd|date('d/m/Y') }}</td>
-            </tr>
-            <tr>
-              <th>Quota di iscrizione</th>
+              <th>{{ 'iscrizioni.subscriptions_available' | trans }}</th>
               <td>
-                {% if subscriptionService.subscriptionAmount %}{{ subscriptionService.subscriptionAmount | number_format(2) }}€
-                {% else %} ---
-                {% endif %}
-              </td>
+                {{ 'from_date_to_date' | trans({
+                  '%from%': subscriptionService.subscriptionBegin|date(ocsdc_default_date_format),
+                  '%to%': subscriptionService.subscriptionEnd|date(ocsdc_default_date_format)
+                }) }}
+                </td>
             </tr>
             <tr>
-              <th>Numero di iscritti</th>
+              <th>{{ 'iscrizioni.subscribers_number' | trans }}</th>
               <td>
-                {% if subscriptionService.subscribersLimit %}{{ subscriptionService.subscriptions.count }} di {{ subscriptionService.subscribersLimit }}
+                {% if subscriptionService.subscribersLimit %}{{ subscriptionService.subscriptions.count }} / {{ subscriptionService.subscribersLimit }}
                 {% else %} {{ subscriptionService.subscriptions.count }}
                 {% endif %}
               </td>
             </tr>
             <tr>
-              <th>Messaggio di iscrizione</th>
+              <th>{{ 'iscrizioni.messaggio_iscrizione' | trans }}</th>
               <td>
                 {% if subscriptionService.subscriptionMessage %}{{ subscriptionService.subscriptionMessage | striptags }}
                 {% else %} ---
@@ -66,7 +67,7 @@
               </td>
             </tr>
             <tr>
-              <th>Messaggio iniziale</th>
+              <th>{{ 'iscrizioni.messaggio_inizio' | trans }}</th>
               <td>
                 {% if subscriptionService.beginMessage %}{{ subscriptionService.beginMessage | striptags }}
                 {% else %} ---
@@ -74,24 +75,9 @@
               </td>
             </tr>
             <tr>
-              <th>Messaggio finale </th>
+              <th>{{ 'iscrizioni.messaggio_fine' | trans }}</th>
               <td>
                 {% if subscriptionService.endMessage %}{{ subscriptionService.endMessage | striptags }}
-                {% else %} ---
-                {% endif %}
-              </td>
-            </tr>
-            <tr>
-              <th>Pagamenti</th>
-              <td>
-                {% if subscriptionService.subscriptionPayments %}
-                  <ul>
-                    {% for payment in subscriptionService.subscriptionPayments %}
-                      <li>
-                        <b>{{ payment.date|date('d/m/Y') }}</b>: {{ payment.amount}}€
-                      </li>
-                    {% endfor %}
-                  </ul>
                 {% else %} ---
                 {% endif %}
               </td>
@@ -99,19 +85,59 @@
             </tbody>
           </table>
         </div>
-        <div class="row">
-          <div class="col-8">
-            <a class="btn btn-100 btn-sm" href="{{ path('operatori_subscription-service_index') }}">Torna alla lista</a>
-            <a class="btn btn-primary btn-sm" href="{{ path('operatori_subscriptions', { 'subscriptionService': subscriptionService.id }) }}">Iscrizioni</a>
-            <a class="btn btn-warning btn-sm" href="{{ path('operatori_subscription-service_edit', { 'subscriptionService': subscriptionService.id }) }}">Modifica</a>
-          </div>
-          <div class="col-4">
-            {{ form_start(delete_form) }}
-            <div>
-              <a class="btn btn-danger btn-sm float-right" onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');" href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">Elimina</a>
-              {{ form_end(delete_form) }}
-            </div>
-          </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h3>{{ 'backoffice.integration.subscription_service.payments' | trans }}</h3>
+        <div class="mb-5">
+          {% if subscriptionService.subscriptionPayments | length == 0 %}
+            <i>{{ 'iscrizioni.no_payment_settings' | trans }}</i>
+          {% else %}
+          <table class="my-5 table table-striped table-condensed">
+            <thead>
+            <tr>
+              <th>{{ 'backoffice.integration.subscription_service.payment.type' | trans }}</th>
+              <th>{{ 'backoffice.integration.subscription_service.payment.identifier' | trans }}</th>
+              <th>{{ 'backoffice.integration.subscription_service.payment.due_date' | trans }}</th>
+              <th>{{ 'backoffice.integration.subscription_service.payment.amount' | trans }}</th>
+              <th>{{ 'backoffice.integration.subscription_service.payment.payments_made' | trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for paymentSetting in subscriptionService.subscriptionPayments %}
+              <tr>
+                <td>{{  ('backoffice.integration.subscription_service.payment.text_' ~ paymentSetting.type) | trans }}</td>
+                <td>{{ paymentSetting.paymentIdentifier }}</td>
+                <td>{{ paymentSetting.date | date(ocsdc_default_date_format)  }}</td>
+                <td>{{ paymentSetting.amount }} €</td>
+                <td><a href="{{ path('operatori_subscription-service_payments_show', {'subscriptionService': subscriptionService.id, 'identifier': paymentSetting.paymentIdentifier | url_encode }) }}">
+                    {{ payments[paymentSetting.paymentIdentifier] }}/ {{ subscriptionService.subscriptions | length }}
+                  </a></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-8">
+        <a class="btn btn-100 btn-sm" href="{{ path('operatori_subscription-service_index') }}">{{ 'iscrizioni.back_to_list' | trans }}</a>
+        <a class="btn btn-primary btn-sm"
+           href="{{ path('operatori_subscriptions', { 'subscriptionService': subscriptionService.id }) }}">{{ 'iscrizioni.subscriptions' | trans }}</a>
+        <a class="btn btn-warning btn-sm"
+           href="{{ path('operatori_subscription-service_edit', { 'subscriptionService': subscriptionService.id }) }}">{{ 'modifica' | trans }}</a>
+      </div>
+      <div class="col-4">
+        {{ form_start(delete_form) }}
+        <div>
+          <a class="btn btn-danger btn-sm float-right"
+             onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');"
+             href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">{{ 'elimina' | trans }}</a>
+          {{ form_end(delete_form) }}
         </div>
       </div>
     </div>
