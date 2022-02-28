@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 
 
 use AppBundle\Dto\Application;
+use AppBundle\Dto\ApplicationDto;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
@@ -54,11 +55,16 @@ class KafkaService implements ScheduledActionHandlerInterface
   private $kafkaUrl;
 
   private $kafkaEventVersion;
+
   private $topics;
   /**
    * @var FormServerApiAdapterService
    */
   private $formServerApiAdapterService;
+  /**
+   * @var ApplicationDto
+   */
+  private $applicationDto;
 
   /**
    * WebhookService constructor.
@@ -68,6 +74,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param VersionService $versionService
    * @param LoggerInterface $logger
    * @param FormServerApiAdapterService $formServerApiAdapterService
+   * @param ApplicationDto $applicationDto
    * @param $kafkaUrl
    * @param $kafkaEventVersion
    * @param $topics
@@ -79,6 +86,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     VersionService $versionService,
     LoggerInterface $logger,
     FormServerApiAdapterService $formServerApiAdapterService,
+    ApplicationDto $applicationDto,
     $kafkaUrl,
     $kafkaEventVersion,
     $topics
@@ -93,6 +101,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     $this->kafkaEventVersion = $kafkaEventVersion;
     $this->topics = $topics;
     $this->formServerApiAdapterService = $formServerApiAdapterService;
+    $this->applicationDto = $applicationDto;
   }
 
 
@@ -137,11 +146,12 @@ class KafkaService implements ScheduledActionHandlerInterface
 
     // Todo: va creato un registry con i mapper delle singole entità
     if ($item instanceof Pratica) {
-      $content = Application::fromEntity(
+      /*$content = Application::fromEntity(
         $item,
         $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/' . $item->getId(),
         true
-      );
+      );*/
+      $content = $this->applicationDto->fromEntity($item);
       $topic = $this->topics['applications'];
     } elseif ($item instanceof Servizio) {
       $content = Service::fromEntity($item, $this->formServerApiAdapterService->getFormServerPublicUrl());

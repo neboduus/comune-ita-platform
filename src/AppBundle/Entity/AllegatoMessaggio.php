@@ -23,17 +23,10 @@ class AllegatoMessaggio extends Allegato
   private $messages;
 
   /**
-   * @ORM\Column(type="string", nullable=true)
-   * @var string
-   */
-  private $idDocumentoProtocollo;
-
-  /**
    * @ORM\Column(type="array", nullable=true)
    * @var ArrayCollection
    */
   private $numeriProtocollo;
-
 
   /**
    * Allegato Messaggio constructor.
@@ -85,35 +78,6 @@ class AllegatoMessaggio extends Allegato
     return $this;
   }
 
-  /**
-   * @param $protocolledAt
-   *
-   * @return $this
-   */
-  public function setProtocolledAt($protocolledAt)
-  {
-    $this->protocolledAt = $protocolledAt;
-
-    return $this;
-  }
-
-  /**
-   * @return string|null
-   */
-  public function getIdDocumentoProtocollo()
-  {
-    return $this->idDocumentoProtocollo;
-  }
-
-  /**
-   * @param string $idDocumentoProtocollo
-   * @return AllegatoMessaggio
-   */
-  public function setIdDocumentoProtocollo($idDocumentoProtocollo)
-  {
-    $this->idDocumentoProtocollo = $idDocumentoProtocollo;
-    return $this;
-  }
 
   /**
    * @param array $numeroDiProtocollo
@@ -169,5 +133,22 @@ class AllegatoMessaggio extends Allegato
       }
     }
     return $pratiche;
+  }
+
+  /**
+   * @return \JsonSerializable
+   */
+  public function getIdRichiestaIntegrazione()
+  {
+    $payload = $this->payload;
+    return $payload[RichiestaIntegrazione::TYPE_DEFAULT];
+  }
+
+  /**
+   * @param $idRichiestaIntegrazione
+   */
+  public function setIdRichiestaIntegrazione($idRichiestaIntegrazione): void
+  {
+    $this->payload = [RichiestaIntegrazione::TYPE_DEFAULT => $idRichiestaIntegrazione];
   }
 }

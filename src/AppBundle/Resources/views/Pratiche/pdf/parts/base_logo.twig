@@ -1,21 +1,28 @@
-<html>
+{% set ente = instance_service.getCurrentInstance() %}
+{% set customName = ente.getMetaAsArray('name') %}
+{% set enteName = customName != '' ? customName :  ente.name %}
+{% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
+{% set logoMeta = ente.getMetaAsArray('logo') %}
+{% set logo = logoMeta  ? logoMeta :  host_url ~ 'bundles/app/images/logo-default.png' %}
+
+<!doctype html>
+<html lang="it">
 <head>
-    {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('AppBundle:Pratiche/pdf/parts:style.html.twig') }}
 </head>
 <body>
-{% set ente = instance_service.getCurrentInstance() %}
 
-<main class="container-fluid" style="padding: 40px">
-    <div class="row">
-        <div class="col-12 text-center">
-            {% if ente %}
-                <img class="logo" src="{{ absolute_url(asset('bundles/app/images/logo-' ~ ente.slug ~ '.png')) }}" alt="{{ ente.name }}"/>
-                <h2 class="ente">{{ ente.name }}</h2>
-            {% endif %}
-        </div>
+<main>
+  <div class="header">
+    <div class="text-center">
+      {% if ente %}
+        <img class="logo" src="{{ logo }}" alt="{{ enteName }}"/>
+        <h2>{{ enteName }}</h2>
+      {% endif %}
     </div>
+  </div>
 
-    {% block pdf_content %}{% endblock %}
+  {% block pdf_content %}{% endblock %}
 </main>
 
 </body>

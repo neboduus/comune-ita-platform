@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\Dto\Application;
+use AppBundle\Dto\ApplicationDto;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
@@ -59,6 +60,10 @@ class UserController extends Controller
    * @var BreadcrumbsService
    */
   private $breadcrumbsService;
+  /**
+   * @var ApplicationDto
+   */
+  private $applicationDto;
 
 
   /**
@@ -69,6 +74,7 @@ class UserController extends Controller
    * @param Serializer $serializer
    * @param SchemaFactory $schemaFactory
    * @param BreadcrumbsService $breadcrumbsService
+   * @param ApplicationDto $applicationDto
    */
   public function __construct(
     TranslatorInterface $translator,
@@ -76,7 +82,8 @@ class UserController extends Controller
     RemoteContentProviderServiceInterface $remoteContentProviderService,
     Serializer $serializer,
     SchemaFactory $schemaFactory,
-    BreadcrumbsService $breadcrumbsService
+    BreadcrumbsService $breadcrumbsService,
+    ApplicationDto $applicationDto
   )
   {
     $this->logger = $logger;
@@ -85,6 +92,7 @@ class UserController extends Controller
     $this->serializer = $serializer;
     $this->schemaFactory = $schemaFactory;
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->applicationDto = $applicationDto;
   }
 
 
@@ -391,7 +399,7 @@ class UserController extends Controller
   /**
    * @Route("/applications", name="user_applications_json")
    * @param Request $request
-   *
+   * @deprecated deprecated since version 1.5.3
    * @return JsonResponse
    */
   public function applicationsAction(Request $request)
@@ -454,7 +462,7 @@ class UserController extends Controller
       }
 
       foreach ($data as $s) {
-        $application = Application::fromEntity($s, '', false);
+        $application = $this->applicationDto->fromEntity($s, false);
         $applicationArray = json_decode($this->serializer->serialize($application, 'json'), true);
         if ($s instanceof FormIO){
           $schema = $this->schemaFactory->createFromFormId($s->getServizio()->getFormIoId());

@@ -782,6 +782,8 @@ operatori:
   riapri_pratica: "Riapri pratica"
   richiedi_integrazioni: 'Richiedi integrazioni'
   chiudi_richiesta_integrazione: 'Accetta integrazioni'
+  protocollazione_richiesta_integrazione: 'Richiesta integrazioni in attesa di protocollazione'
+  protocollazione_risposta_integrazione: 'Integrazioni in attesa di protocollazione'
   richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"
   modulo: 'Modulo'
   richiesta: 'Richiesta'
@@ -956,7 +958,7 @@ email:
         complete.waitallegatioperatore: 'le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione di nuovi documenti allegati.'
         pending: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."
         draft: "le comunichiamo che è stata creata una pratica in bozza a Suo nome per il servizio <strong>%servizio%</strong>, entri nella sua stanza del cittadino e visiti la sezione <i>Le mie pratiche</i> per procedere all'invio della domanda."
-        draft.for.integration: "le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <strong>%servizio%</strong>. Entri nella sua stanza del cittadino per effettuare l'integrazione"
+        draft.for.integration: "le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <strong>%servizio%</strong>.<br>Entri nella sua stanza del cittadino per effettuare l'integrazione"
         submitted.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata ricevuta dai nostri sistemi."
         registered.after.integration: "le comunichiamo che l'integrazione alla sua richiesta con protocollo <strong>%protocollo%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo di quanto integrato e all'elaborazione della richiesta."
         pending.after.integration: "le comunichiamo che l'integrazione alla sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore."

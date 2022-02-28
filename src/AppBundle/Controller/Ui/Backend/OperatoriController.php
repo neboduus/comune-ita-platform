@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Ui\Backend;
 
 use AppBundle\Dto\Application;
+use AppBundle\Dto\ApplicationDto;
 use AppBundle\Dto\ApplicationOutcome;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
@@ -23,10 +24,8 @@ use AppBundle\FormIO\SchemaFactory;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
-use AppBundle\Services\MailerService;
 use AppBundle\Services\Manager\MessageManager;
 use AppBundle\Services\Manager\PraticaManager;
-use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
@@ -60,7 +59,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
@@ -96,18 +94,7 @@ class OperatoriController extends Controller
    * @var FeatureManagerInterface
    */
   private $featureManager;
-  /**
-   * @var RouterInterface
-   */
-  private $router;
-  /**
-   * @var MailerService
-   */
-  private $mailerService;
-  /**
-   * @var ModuloPdfBuilderService
-   */
-  private $moduloPdfBuilderService;
+
   /**
    * @var PraticaManager
    */
@@ -122,6 +109,10 @@ class OperatoriController extends Controller
    * @var FormServerApiAdapterService
    */
   private $formServerService;
+  /**
+   * @var ApplicationDto
+   */
+  private $applicationDto;
 
   /**
    * OperatoriController constructor.
@@ -133,13 +124,11 @@ class OperatoriController extends Controller
    * @param InstanceService $instanceService
    * @param EntityManagerInterface $entityManager
    * @param FeatureManagerInterface $featureManager
-   * @param RouterInterface $router
-   * @param MailerService $mailerService
-   * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaManager $praticaManager
    * @param MessageManager $messageManager
    * @param JWTTokenManagerInterface $JWTTokenManager
    * @param FormServerApiAdapterService $formServerService
+   * @param ApplicationDto $applicationDto
    */
   public function __construct(
     SchemaFactory $schemaFactory,
@@ -150,13 +139,11 @@ class OperatoriController extends Controller
     InstanceService $instanceService,
     EntityManagerInterface $entityManager,
     FeatureManagerInterface $featureManager,
-    RouterInterface $router,
-    MailerService $mailerService,
-    ModuloPdfBuilderService $moduloPdfBuilderService,
     PraticaManager $praticaManager,
     MessageManager $messageManager,
     JWTTokenManagerInterface $JWTTokenManager,
-    FormServerApiAdapterService $formServerService
+    FormServerApiAdapterService $formServerService,
+    ApplicationDto $applicationDto
   )
   {
     $this->schemaFactory = $schemaFactory;
@@ -167,13 +154,11 @@ class OperatoriController extends Controller
     $this->instanceService = $instanceService;
     $this->entityManager = $entityManager;
     $this->featureManager = $featureManager;
-    $this->router = $router;
-    $this->mailerService = $mailerService;
-    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->praticaManager = $praticaManager;
     $this->messageManager = $messageManager;
     $this->JWTTokenManager = $JWTTokenManager;
     $this->formServerService = $formServerService;
+    $this->applicationDto = $applicationDto;
   }
 
 
@@ -525,7 +510,7 @@ class OperatoriController extends Controller
 
     foreach ($data as $s) {
       //load Application Dto without file collection to reduce the number of db queries
-      $application = Application::fromEntity($s, '', false);
+      $application = $this->applicationDto->fromEntity($s, false);
       $applicationArray = json_decode($this->serializer->serialize($application, 'json'), true);
       $minimunStatusForAssign = $s->getServizio()->isProtocolRequired() ? Pratica::STATUS_REGISTERED : Pratica::STATUS_SUBMITTED;
       $applicationArray['can_autoassign'] = $s->getOperatore() == null && $s->getStatus() >= $minimunStatusForAssign;
@@ -766,14 +751,6 @@ class OperatoriController extends Controller
           $em->persist($message);
           $em->flush();
 
-          $this->logger->info(
-            LogConstants::PRATICA_COMMENTED,
-            [
-              'pratica' => $pratica->getId(),
-              'user' => $pratica->getUser()->getId()
-            ]
-          );
-
           // Todo: rendere asincrono l'invio delle email
           if ($visibility == Message::VISIBILITY_APPLICANT) {
             $this->messageManager->dispatchMailForMessage($message, true);
@@ -787,13 +764,6 @@ class OperatoriController extends Controller
         $pratica->addCommento($commento);
         $this->getDoctrine()->getManager()->flush();
 
-        $this->logger->info(
-          LogConstants::PRATICA_COMMENTED,
-          [
-            'pratica' => $pratica->getId(),
-            'user' => $pratica->getUser()->getId()
-          ]
-        );
         return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
       }
     }
@@ -1037,10 +1007,9 @@ class OperatoriController extends Controller
     if ($pratica->getStatus() === Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       try {
         $this->praticaManager->acceptIntegration($pratica, $user);
-
         $this->addFlash('success', 'Integrazione accettata correttamente');
       } catch (\Exception $e) {
-        $this->addFlash('error', 'Si è veritifcato un errore duranre la fase di accettazione');
+        $this->addFlash('error', 'Si è veritifcato un errore durante la fase di accettazione');
       }
     } else {
       $this->addFlash('error', 'La pratica non si trova nello corretto');

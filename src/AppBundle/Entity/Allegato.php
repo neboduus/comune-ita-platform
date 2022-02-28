@@ -139,6 +139,12 @@ class Allegato implements AllegatoInterface
   private $mimeType;
 
   /**
+   * @ORM\Column(type="json", options={"jsonb":true})
+   * @var \JsonSerializable
+   */
+  protected $payload;
+
+  /**
    * Allegato constructor.
    */
   public function __construct()
@@ -490,6 +496,21 @@ class Allegato implements AllegatoInterface
     $this->mimeType = $mimeType;
   }
 
+  /**
+   * @return mixed
+   */
+  public function getPayload()
+  {
+    return $this->payload;
+  }
+
+  /**
+   * @param $payload
+   */
+  public function setPayload($payload)
+  {
+    $this->payload = $payload;
+  }
 
   /**
    * @return string

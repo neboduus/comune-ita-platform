@@ -314,12 +314,27 @@ class Application
   private $meetings;
 
   /**
+   * @var Allegato[]
+   * @SWG\Property(property="integrations", description="Integrations list", type="array", @SWG\Items(type="object"))
+   * @Serializer\Type("array")
+   * @Groups({"read"})
+   */
+  private $integrations;
+
+  /**
    * @var array
    * @SWG\Property(property="backoffice_data", description="Applcation's backoffice data")
    * @Groups({"read"})
    * @Serializer\Type("array")
    */
   private $backofficeData;
+
+  /**
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Flow change date time", type="dateTime")
+   * @Groups({"read"})
+   */
+  private $flowChangedAt;
 
 
   /**
@@ -352,6 +367,22 @@ class Application
   public function setUser($user)
   {
     $this->user = $user;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getUserName()
+  {
+    return $this->userName;
+  }
+
+  /**
+   * @param mixed $userName
+   */
+  public function setUserName($userName): void
+  {
+    $this->userName = $userName;
   }
 
   /**
@@ -673,7 +704,7 @@ class Application
   /**
    * @param bool $outcome
    */
-  public function setOutcome(bool $outcome)
+  public function setOutcome(?bool $outcome)
   {
     $this->outcome = $outcome;
   }
@@ -697,15 +728,15 @@ class Application
   /**
    * @return Allegato
    */
-  public function getOutcomeFile(): Allegato
+  public function getOutcomeFile()
   {
     return $this->outcomeFile;
   }
 
   /**
-   * @param Allegato $outcomeFile
+   * @param $outcomeFile
    */
-  public function setOutcomeFile(Allegato $outcomeFile)
+  public function setOutcomeFile($outcomeFile)
   {
     $this->outcomeFile = $outcomeFile;
   }
@@ -902,6 +933,22 @@ class Application
   }
 
   /**
+   * @return Allegato[]
+   */
+  public function getIntegrations(): array
+  {
+    return $this->integrations;
+  }
+
+  /**
+   * @param Allegato[] $integrations
+   */
+  public function setIntegrations(array $integrations): void
+  {
+    $this->integrations = $integrations;
+  }
+
+  /**
    * @return mixed
    */
   public function getLinks()
@@ -938,420 +985,51 @@ class Application
   }
 
   /**
-   * @param Pratica $pratica
-   * @param string $attachmentEndpointUrl
-   * @param bool $loadFileCollection default is true, if false: avoids additional queries for file loading
-   * @param int $version
-   * @return Application
-   */
-  public static function fromEntity(Pratica $pratica, $attachmentEndpointUrl = '', $loadFileCollection = true, $version = 1)
-  {
-
-    $dto = new self();
-    $dto->id = $pratica->getId();
-    $dto->user = $pratica->getUser()->getId();
-    $dto->userName = $pratica->getUser()->getFullName();
-    $dto->tenant = $pratica->getEnte()->getId();
-    $dto->service = $pratica->getServizio()->getSlug();
-    $dto->serviceId = $pratica->getServizio()->getId();
-    $dto->serviceName = $pratica->getServizio()->getName();
-    $dto->subject = $pratica->getOggetto();
-
-    // Form data
-    if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
-      if ($version >= 2) {
-        $dto->data = self::decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl, $version);
-      } else {
-        $dto->data = self::decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl, $version);
-      }
-    } else {
-      $dto->data = [];
-    }
-
-    // Backoffice form data
-    if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
-      if ($version >= 2) {
-        $dto->backofficeData = self::decorateDematerializedFormsV2($pratica->getBackofficeFormData(), $attachmentEndpointUrl, $version);
-      } else {
-        $dto->backofficeData = self::decorateDematerializedForms($pratica->getBackofficeFormData(), $attachmentEndpointUrl, $version);
-      }
-    } else {
-      $dto->backofficeData = [];
-    }
-
-    $dto->compiledModules = $loadFileCollection ? self::prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl, $version) : [];
-
-    $dto->outcomeFile = ($loadFileCollection && $pratica->getRispostaOperatore() instanceof Allegato) ? self::prepareFile($pratica->getRispostaOperatore(), $attachmentEndpointUrl, $version) : null;
-    $dto->outcome = $pratica->getEsito();
-    $dto->outcomeMotivation = $pratica->getMotivazioneEsito();
-
-    $dto->attachments = self::prepareFileCollection($pratica->getAllegati(), $attachmentEndpointUrl);
-    $dto->outcomeAttachments = self::prepareFileCollection($pratica->getAllegatiOperatore(), $attachmentEndpointUrl);
-
-    $dto->creationTime = $pratica->getCreationTime();
-    try {
-      $date = new \DateTime();
-      $dto->createdAt = $date->setTimestamp($pratica->getCreationTime());
-    } catch (\Exception $e) {
-      $dto->createdAt = $pratica->getCreationTime();
-    }
-
-    $dto->submissionTime = $pratica->getSubmissionTime();
-    if ($pratica->getSubmissionTime()) {
-      try {
-        $date = new \DateTime();
-        $dto->submittedAt = $date->setTimestamp($pratica->getSubmissionTime());
-      } catch (\Exception $e) {
-        $dto->submittedAt = $pratica->getSubmissionTime();
-      }
-    }
-
-    $dto->latestStatusChangeTime = $pratica->getLatestStatusChangeTimestamp();
-    if ($pratica->getLatestStatusChangeTimestamp()) {
-      try {
-        $date = new \DateTime();
-        $dto->latestStatusChangeAt = $date->setTimestamp($pratica->getLatestStatusChangeTimestamp());
-      } catch (\Exception $e) {
-        $dto->latestStatusChangeAt = $pratica->getLatestStatusChangeTimestamp();
-      }
-    }
-
-    $dto->protocolFolderNumber = $pratica->getNumeroFascicolo();
-    $dto->protocolFolderCode = $pratica->getCodiceFascicolo();
-    $dto->protocolNumber = $pratica->getNumeroProtocollo();
-    $dto->protocolDocumentId = $pratica->getIdDocumentoProtocollo();
-    $dto->protocolNumbers = $pratica->getNumeriProtocollo()->toArray();
-
-    if ($pratica->getProtocolTime()) {
-      $dto->protocolTime = $pratica->getProtocolTime();
-      try {
-        $date = new \DateTime();
-        $dto->protocolledAt = $date->setTimestamp($pratica->getProtocolTime());
-      } catch (\Exception $e) {
-        $dto->protocolledAt = $pratica->getProtocolTime();
-      }
-    }
-
-    $dto->outcome = $pratica->getEsito();
-
-    if ($pratica->getRispostaOperatore()) {
-      $dto->outcomeProtocolNumber = $pratica->getRispostaOperatore()->getNumeroProtocollo();
-      $dto->outcomeProtocolDocumentId = $pratica->getRispostaOperatore()->getIdDocumentoProtocollo();
-      $dto->outcomeProtocolNumbers = $pratica->getRispostaOperatore()->getNumeriProtocollo()->toArray();
-      if ($pratica->getRispostaOperatore()->getProtocolTime()) {
-        $dto->outcomeProtocolTime = $pratica->getRispostaOperatore()->getProtocolTime();
-        try {
-          $date = new \DateTime();
-          $dto->outcomeProtocolledAt = $date->setTimestamp($pratica->getRispostaOperatore()->getProtocolTime());
-        } catch (\Exception $e) {
-          $dto->outcomeProtocolledAt = $pratica->getRispostaOperatore()->getProtocolTime();
-        }
-      }
-    }
-
-    //$dto->outcomeMotivation = $pratica->getMotivazioneEsito();
-    //$dto->outcomeFile = $pratica->getRispostaOperatore();
-
-    $dto->paymentType = $pratica->getPaymentType();
-    $dto->paymentData = self::preparePaymentData($pratica);
-    $dto->status = $pratica->getStatus();
-    $dto->statusName = strtolower($pratica->getStatusName());
-    $dto->meetings = self::getLinkedMeetingsIds($pratica);
-
-    $dto->authentication = ($pratica->getAuthenticationData()->getAuthenticationMethod() ?
-      $pratica->getAuthenticationData() :
-      UserAuthenticationData::fromArray(['authenticationMethod' => $pratica->getUser()->getIdp()]));
-
-    // Fix for empty values
-    if ($pratica->getSessionData() instanceof UserSession) {
-      $sessionData = $pratica->getSessionData()->getSessionData();
-      if (empty($dto->authentication->offsetGet('sessionIndex')) && isset($sessionData['shibSessionIndex'])) {
-        $dto->authentication->offsetSet('sessionIndex', $sessionData['shibSessionIndex']);
-      }
-      if (empty($dto->authentication->offsetGet('instant')) && isset($sessionData['shibAuthenticationIstant'])) {
-        $dto->authentication->offsetSet('instant', $sessionData['shibAuthenticationIstant']);
-      }
-    }
-
-
-    $dto->setLinks(self::getAvailableTransitions($pratica, $attachmentEndpointUrl, $version));
-    return $dto;
-  }
-
-  public static function decorateDematerializedForms($data, $attachmentEndpointUrl = '', $version = 1)
-  {
-    if (!isset($data['flattened'])) {
-      return $data;
-    }
-    $decoratedData = $data['flattened'];
-    foreach ($decoratedData as $k => $v) {
-
-      if (self::isUploadField($data['schema'], $k)) {
-        $decoratedData[$k] = self::prepareFormioFile($v, $attachmentEndpointUrl, $version);
-      }
-
-      if (self::isDateField($k)) {
-        $decoratedData[$k] = self::prepareDateField($v);
-      }
-    }
-    return $decoratedData;
-  }
-
-  public static function decorateDematerializedFormsV2($data, $attachmentEndpointUrl = '', $version = 1)
-  {
-
-    if (!isset($data['flattened'])) {
-      return $data;
-    }
-
-    $decoratedData = $data['flattened'];
-    $keys = array_keys($decoratedData);
-
-    $multiArray = array();
-
-    foreach ($keys as $path) {
-      $parts = explode('.', trim($path, '.'));
-      $section = &$multiArray;
-      $sectionName = '';
-
-      $partsCount = count($parts);
-      $counter = 0;
-
-      foreach ($parts as $part) {
-        $counter++;
-        $sectionName = $part;
-
-        // Salto data
-        if ($part === 'data') {
-          continue;
-        }
-
-        if (array_key_exists($sectionName, $section) === false) {
-          $section[$sectionName] = array();
-        }
-
-        // Se è l'ultimo elemento assegno il valore
-        if ($counter == $partsCount) {
-          if (self::isUploadField($data['schema'], $path)) {
-            $section[$sectionName] = self::prepareFormioFile($decoratedData[$path], $attachmentEndpointUrl, $version);
-          } else if (self::isDateField($path)) {
-            $section[$sectionName] = self::prepareDateField($decoratedData[$path]);
-          } else {
-            $section[$sectionName] = $decoratedData[$path];
-          }
-        }
-        $section = &$section[$sectionName];
-
-      }
-    }
-
-    return $multiArray;
-  }
-
-  public static function isUploadField($schema, $field)
-  {
-    return (isset($schema[$field . '.type']) && ($schema[$field . '.type'] == 'file' || $schema[$field . '.type'] == 'sdcfile'));
-  }
-
-  public static function prepareFileCollection($collection, $attachmentEndpointUrl = '', $version = 1)
-  {
-    $files = [];
-    if ($collection == null) {
-      return $files;
-    }
-    /** @var Allegato $c */
-    foreach ($collection as $c) {
-      $files[] = self::prepareFile($c, $attachmentEndpointUrl, $version);
-    }
-    return $files;
-  }
-
-  public static function prepareFormioFile($files, $attachmentEndpointUrl = '', $version = 1)
-  {
-    $result = [];
-    foreach ($files as $f) {
-      $id = $f['data']['id'];
-      $temp['id'] = $id;
-      $temp['name'] = $f['name'];
-      $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $id . '?version=' . $version;
-      $temp['originalName'] = $f['originalName'];
-      $temp['description'] = isset($f['fileType']) ? $f['fileType'] : Allegato::DEFAULT_DESCRIPTION;
-      $temp['protocol_required'] = $f['protocol_required'] ?? true;
-      $result[] = $temp;
-    }
-    return $result;
-  }
-
-  public static function prepareFile(Allegato $file, $attachmentEndpointUrl = '', $version = 1)
-  {
-
-    $filename = $file->getName();
-    $filenameParts = explode('.', $filename);
-    $systemFilename = $file->getFilename();
-    $systemFilenameParts = explode('.', $systemFilename);
-    if (end($filenameParts) != end($systemFilenameParts)) {
-      $filename .=  '.' . end($systemFilenameParts);
-    }
-
-    $temp['id'] = $file->getId();
-    $temp['name'] = $filename;
-    $temp['url'] = $attachmentEndpointUrl . '/attachments/' . $file->getId() . '?version=' . $version;
-    $temp['originalName'] = $file->getFilename();
-    $temp['description'] = $file->getDescription() ?? Allegato::DEFAULT_DESCRIPTION;
-    $temp['created_at'] = $file->getCreatedAt();
-    $temp['protocol_required'] = $file->isProtocolRequired();
-
-    return $temp;
-  }
-
-  public static function isDateField($keyField)
-  {
-    $parts = explode('.', $keyField);
-    if (end($parts) === 'natoAIl') {
-      return true;
-    }
-    return false;
-  }
-
-  public static function prepareDateField($value)
-  {
-    $date = str_replace('/', '-', $value);
-    try {
-      $parsedDate = new DateTime($date);
-      return $parsedDate->format(DateTime::W3C);
-    } catch (\Exception $e) {
-      return '';
-    }
-  }
-
-  /**
-   * @param Pratica|null $entity
-   * @return Pratica
-   */
-  public function toEntity(Pratica $entity = null)
-  {
-    if (!$entity) {
-      $entity = new Pratica();
-    }
-
-    # Main document
-    $entity->setNumeroProtocollo($this->getProtocolNumber());
-    $entity->setNumeroFascicolo($this->getProtocolFolderNumber());
-    $entity->setCodiceFascicolo($this->getProtocolFolderCode());
-    $entity->setIdDocumentoProtocollo($this->getProtocolDocumentId());
-    if ($this->getProtocolledAt()) {
-      $entity->setProtocolTime($this->getProtocolledAt()->getTimestamp());
-    }
-
-    $applicationAttachments = array_merge($entity->getModuliCompilati()->getValues(), $entity->getAllegati()->getValues());
-
-    foreach ($applicationAttachments as $attachment) {
-      if ($this->getProtocolledAt()) {
-        $attachment->setProtocolTime($this->getProtocolledAt()->getTimestamp());
-      }
-      $numeroDiProtocollo = [
-        'id' => $attachment->getId(),
-        'protocollo' => $this->getProtocolNumber(),
-      ];
-
-      if (!$this->inProtocolNumbers($numeroDiProtocollo, $entity->getNumeriProtocollo())) {
-        $entity->addNumeroDiProtocollo($numeroDiProtocollo);
-      }
-    }
-
-
-    # Outcome document
-    $rispostaOperatore = $entity->getRispostaOperatore();
-    if ($rispostaOperatore && $this->getOutcomeProtocolNumber()) {
-      $rispostaOperatore->setNumeroProtocollo($this->getOutcomeProtocolNumber());
-      $rispostaOperatore->setIdDocumentoProtocollo($this->getOutcomeProtocolDocumentId());
-      if ($this->getOutcomeProtocolledAt()) {
-        $rispostaOperatore->setProtocolTime($this->getOutcomeProtocolledAt()->getTimestamp());
-      }
-
-      $outcomeAttachments = array_merge([$entity->getRispostaOperatore()], $entity->getAllegatiOperatore()->getValues());
-
-      foreach ($outcomeAttachments as $attachment) {
-        if ($this->getOutcomeProtocolledAt()) {
-          $attachment->setProtocolTime($this->getOutcomeProtocolledAt()->getTimestamp());
-        }
-        $numeroDiProtocollo = [
-          'id' => $attachment->getId(),
-          'protocollo' => $this->getOutcomeProtocolNumber(),
-        ];
-
-        if (!$this->inProtocolNumbers($numeroDiProtocollo, $rispostaOperatore->getNumeriProtocollo())) {
-          $rispostaOperatore->addNumeroDiProtocollo($numeroDiProtocollo);
-        }
-      }
-    }
-
-    return $entity;
-  }
-
-
-  private function inProtocolNumbers($needle, $protocolNumbers)
-  {
-    $found = false;
-
-    foreach ($protocolNumbers as $protocolNumber) {
-      $protocolNumber = json_decode(json_encode($protocolNumber), true);
-      if ($protocolNumber["id"] == $needle["id"] && $protocolNumber["protocollo"] == $needle["protocollo"]) {
-        $found = true;
-      }
-    }
-    return $found;
-  }
-
-  /**
-   * @param Pratica $pratica
    * @return mixed
    */
-  public static function preparePaymentData($pratica)
+  public function getLatestStatusChangeTime()
   {
-    if (!empty($pratica->getPaymentData())) {
-      $gateway = $pratica->getPaymentType();
-      /** @var PaymentDataInterface $gatewayClassHandler */
-      $gatewayClassHandler = $gateway->getFcqn();
-
-
-      return $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
-    }
-    return [];
+    return $this->latestStatusChangeTime;
   }
-
 
   /**
-   * @param Pratica $pratica
-   * @param string $baseUrl
-   * @return array
+   * @param mixed $latestStatusChangeTime
    */
-  public static function getAvailableTransitions(Pratica $pratica, $baseUrl = '', $version = 1)
+  public function setLatestStatusChangeTime($latestStatusChangeTime): void
   {
-    $availableTransitions = [];
-    if (isset(PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()])) {
-      $availableTransitions = PraticaStatusService::TRANSITIONS_MAPPING[$pratica->getStatus()];
-      foreach ($availableTransitions as $k => $v) {
-        // todo: fare refactoring completo della classe e generare con router
-        $availableTransitions[$k]['url'] = $baseUrl . '/transition/' . $v['action'] . '?version=' . $version;
-
-        if ($v['action'] == 'register' && !$pratica->getServizio()->isProtocolRequired()) {
-          unset($availableTransitions[$k]);
-        }
-
-        if ($v['action'] == 'withdraw' && !$pratica->getServizio()->isAllowReopening()) {
-          unset($availableTransitions[$k]);
-        }
-      }
-    }
-    return $availableTransitions;
+    $this->latestStatusChangeTime = $latestStatusChangeTime;
   }
 
-  public static function getLinkedMeetingsIds(Pratica $pratica) {
-    $meetings = [];
-    foreach ($pratica->getMeetings() as $meeting) {
-      $meetings[] = $meeting->getId();
-    }
-    return $meetings;
+  /**
+   * @return mixed
+   */
+  public function getLatestStatusChangeAt()
+  {
+    return $this->latestStatusChangeAt;
   }
+
+  /**
+   * @param mixed $latestStatusChangeAt
+   */
+  public function setLatestStatusChangeAt($latestStatusChangeAt): void
+  {
+    $this->latestStatusChangeAt = $latestStatusChangeAt;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getFlowChangedAt()
+  {
+    return $this->flowChangedAt;
+  }
+
+  /**
+   * @param mixed $flowChangedAt
+   */
+  public function setFlowChangedAt($flowChangedAt): void
+  {
+    $this->flowChangedAt = $flowChangedAt;
+  }
+
 }

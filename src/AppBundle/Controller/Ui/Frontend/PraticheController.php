@@ -619,14 +619,6 @@ class PraticheController extends Controller
       $em->persist($message);
       $em->flush();
 
-      $this->logger->info(
-        LogConstants::PRATICA_COMMENTED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId()
-        ]
-      );
-
       // Todo: rendere asincrono l'invio delle email
       if ($pratica->getOperatore()) {
         $defaultSender = $this->getParameter('default_from_email_address');

@@ -23,12 +23,6 @@ class Integrazione extends Allegato
   private $numeriProtocollo;
 
   /**
-   * @ORM\Column(type="json_array", options={"jsonb":true})
-   * @var \JsonSerializable
-   */
-  private $payload;
-
-  /**
    * ModuloCompilato constructor.
    */
   public function __construct()

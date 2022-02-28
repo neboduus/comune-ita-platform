@@ -27,13 +27,6 @@ security:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
 
-    #cps:
-    #    pattern: ^/%prefix%/(pratiche|terms_accept|user|documenti)/
-    #    guard:
-    #        provider: cps
-    #        authenticators:
-    #            - ocsdc.cps.token_authenticator
-
     api_login:
       pattern: ^/%prefix%/api/auth
       stateless: true

@@ -5,9 +5,11 @@ namespace AppBundle\Services\Manager;
 
 
 use AppBundle\Entity\Message;
+use AppBundle\Entity\Pratica;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\IOService;
 use AppBundle\Services\MailerService;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

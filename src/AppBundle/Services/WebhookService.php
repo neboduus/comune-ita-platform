@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 
 
 use AppBundle\Dto\Application;
+use AppBundle\Dto\ApplicationDto;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
@@ -46,6 +47,10 @@ class WebhookService implements ScheduledActionHandlerInterface
    * @var VersionService
    */
   private $versionService;
+  /**
+   * @var ApplicationDto
+   */
+  private $applicationDto;
 
   /**
    * WebhookService constructor.
@@ -54,14 +59,23 @@ class WebhookService implements ScheduledActionHandlerInterface
    * @param RouterInterface $router
    * @param SerializerInterface $serializer
    * @param VersionService $versionService
+   * @param ApplicationDto $applicationDto
    */
-  public function __construct(ScheduleActionService $scheduleActionService, EntityManagerInterface $entityManager, RouterInterface $router, SerializerInterface $serializer, VersionService $versionService)
+  public function __construct(
+    ScheduleActionService $scheduleActionService,
+    EntityManagerInterface $entityManager,
+    RouterInterface $router,
+    SerializerInterface $serializer,
+    VersionService $versionService,
+    ApplicationDto $applicationDto
+  )
   {
     $this->scheduleActionService = $scheduleActionService;
     $this->entityManager = $entityManager;
     $this->router = $router;
     $this->serializer = $serializer;
     $this->versionService = $versionService;
+    $this->applicationDto = $applicationDto;
   }
 
 
@@ -116,12 +130,7 @@ class WebhookService implements ScheduledActionHandlerInterface
       throw new \Exception('Not found webhook with id: ' . $params['pratica']);
     }
 
-    $content = Application::fromEntity(
-      $pratica,
-      $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/' . $pratica->getId(),
-      true,
-      $webhook->getVersion()
-    );
+    $content = $this->applicationDto->fromEntity($pratica, true, $webhook->getVersion());
 
     $headers = ['Content-Type' => 'application/json'];
     if (!empty($webhook->getHeaders())) {

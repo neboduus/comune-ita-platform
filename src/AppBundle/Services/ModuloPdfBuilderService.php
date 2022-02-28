@@ -8,6 +8,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Integrazione;
 use AppBundle\Entity\IntegrazioneRepository;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
 use AppBundle\Entity\RichiestaIntegrazioneRequestInterface;
@@ -295,20 +296,38 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica $pratica
-   *
+   * @param array $messages
    * @return RispostaIntegrazione
-   * @throws Exception
+   * @throws \League\Flysystem\FileExistsException
    */
-  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica)
+  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica, $messages = [])
   {
 
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+    $payload[RichiestaIntegrazione::TYPE_DEFAULT] = $integrationRequest->getId();
+
+    if (empty($messages)) {
+      $repo = $this->em->getRepository('AppBundle:Pratica');
+      $filters = ['from_date' => $integrationRequest->getCreatedAt()];
+      $messages = $repo->getMessages($filters, $pratica);
+    }
+
+    if (!empty($messages)) {
+      /** @var Message $m */
+      foreach ($messages as $m) {
+        $payload[RispostaIntegrazione::PAYLOAD_MESSAGES][]= $m->getId();
+        /** @var Allegato $a */
+        foreach ($m->getAttachments() as $a ) {
+          $payload[RispostaIntegrazione::PAYLOAD_ATTACHMENTS][]= $a->getId();
+        }
+      }
+    }
+
+    $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages);
+    $fileName = uniqid() . '.pdf';
 
     $attachment = new RispostaIntegrazione();
-    $content = $this->renderForPraticaIntegrationAnswer($pratica);
-    $fileName = uniqid() . '.pdf';
-    $attachment->setIdRichiestaIntegrazione($integrationRequest->getId());
-
+    $attachment->setPayload($payload);
     $attachment->setOwner($pratica->getUser());
     $attachment->setOriginalFilename($fileName);
     $attachment->setDescription('Risposta a richiesta integrazione: ' . $integrationRequest->getId());
@@ -378,12 +397,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica $pratica
+   * @param RichiestaIntegrazione $integrationRequest
+   * @param $messages
    * @return string
    */
-  private function renderForPraticaIntegrationAnswer(Pratica $pratica)
+  private function renderForPraticaIntegrationAnswer(Pratica $pratica, RichiestaIntegrazione $integrationRequest, $messages = [])
   {
 
-    $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
     /** @var IntegrazioneRepository $integrationRepo */
     $integrationRepo = $this->em->getRepository('AppBundle:Integrazione');
 
@@ -394,9 +414,9 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'integrazioni' => $integrations,
+      'messages' => $messages,
       'user' => $pratica->getUser(),
     ]);
-
     return $this->generatePdf($html);
   }
 

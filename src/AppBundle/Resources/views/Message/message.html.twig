@@ -9,14 +9,14 @@
         </svg>
       </span>
       <span class="mx-2 text-secondary">
-        <b>
+        <strong>
           {# if user or no author (system generated message) hide message author #}
           {% if (user != pratica.user and message.author ) or (user == pratica.user and class == 'mine') %}
           {{ message.author.fullName }}
           {% else %}
             {{ ente.name }}
           {% endif %}
-        </b>
+        </strong>
         {% if message.visibility == 'internal' %}
           <small> {{ 'operatori.messaggi.ha_aggiunto_nota_privata' | trans }}</small>
         {% endif %}
