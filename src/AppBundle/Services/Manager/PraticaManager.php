@@ -9,9 +9,12 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Message;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\RichiestaIntegrazioneDTO;
+use AppBundle\Entity\RispostaIntegrazione;
+use AppBundle\Entity\RispostaIntegrazioneRepository;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\StatusChange;
 use AppBundle\Entity\User;
@@ -399,12 +402,85 @@ class PraticaManager
   {
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
 
-    // Creo il file principale per le integrazioni
     $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica);
+
     $pratica->addAllegato($integrationsAnswer);
-    $statusChange = new StatusChange();
-    $statusChange->setOperatore($user->getFullName());
+
+    if (!$user instanceof CPSUser) {
+      $statusChange = new StatusChange();
+      $statusChange->setOperatore($user->getFullName());
+    }
     $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION, $statusChange);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param User $user
+   * @param $data
+   * @throws Exception
+   */
+  public function registerIntegrationRequest(Pratica $pratica, User $user, $data)
+  {
+    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_DRAFT_FOR_INTEGRATION);
+    $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+    $integrationRequest->setNumeroProtocollo($data['integration_outbound_protocol_number']);
+    $integrationRequest->setIdDocumentoProtocollo($data['integration_outbound_protocol_document_id']);
+    $this->entityManager->persist($integrationRequest);
+    $this->entityManager->flush();
+
+    if (!$user instanceof CPSUser) {
+      $statusChange = new StatusChange();
+      $statusChange->setOperatore($user->getFullName());
+    }
+    $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_DRAFT_FOR_INTEGRATION, $statusChange);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param User $user
+   * @param $data
+   * @throws Exception
+   */
+  public function registerIntegrationAnswer(Pratica $pratica, User $user, $data)
+  {
+    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION);
+
+    $integrationAnswer = $this->getIntegrationAnswer($pratica);
+    if ($integrationAnswer instanceof RispostaIntegrazione) {
+
+      $integrationAnswer->setNumeroProtocollo($data['integration_inbound_protocol_number']);
+      $integrationAnswer->setIdDocumentoProtocollo($data['integration_inbound_protocol_document_id']);
+
+      $this->entityManager->persist($integrationAnswer);
+      $this->entityManager->flush();
+
+      if (!$user instanceof CPSUser) {
+        $statusChange = new StatusChange();
+        $statusChange->setOperatore($user->getFullName());
+      }
+      $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION, $statusChange);
+    }
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return RispostaIntegrazione|null
+   */
+  public function getIntegrationAnswer(Pratica $pratica)
+  {
+
+    $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+    /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
+    $integrationAnswerRepo = $this->entityManager->getRepository('AppBundle:RispostaIntegrazione');
+
+    $integrationAnswerCollection = $integrationAnswerRepo->findByIntegrationRequest($integrationRequest->getId());
+
+    if (!empty($integrationAnswerCollection)) {
+      /** @var RispostaIntegrazione $answer */
+      return $integrationAnswerCollection[0];
+    }
+
+    return null;
   }
 
   /**

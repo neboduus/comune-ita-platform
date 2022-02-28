@@ -131,9 +131,8 @@ class AllegatoController extends Controller
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
       $allegato->setOwner($this->getUser());
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($allegato);
-      $em->flush();
+      $this->entityManager->persist($allegato);
+      $this->entityManager->flush();
 
       return new RedirectResponse($this->router->generate('allegati_list_cpsuser'));
     }
@@ -238,7 +237,6 @@ class AllegatoController extends Controller
    */
   public function uploadAllegatoAction(Request $request)
   {
-    $em = $this->getDoctrine()->getManager();
     $session = $this->get('session');
     if (!$session->isStarted()){
       $session->start();
@@ -248,7 +246,7 @@ class AllegatoController extends Controller
 
       case 'GET':
         $fileName = str_replace('/', '', $request->get('form'));
-        $allegato = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $allegato = $this->entityManager->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($allegato instanceof Allegato) {
           if ($allegato->getHash() == hash('sha256', $session->getId())){
             return $this->fileService->download($allegato);
@@ -284,8 +282,8 @@ class AllegatoController extends Controller
             $allegato->setOwner($user);
           }
           $allegato->setHash(hash('sha256', $session->getId()));
-          $em->persist($allegato);
-          $em->flush();
+          $this->entityManager->persist($allegato);
+          $this->entityManager->flush();
 
           $data = [
             'id' => $allegato->getId(),
@@ -300,7 +298,7 @@ class AllegatoController extends Controller
 
       case 'DELETE':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $em->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $this->entityManager->getRepository('AppBundle:Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
           if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $session->getId())) {
@@ -311,10 +309,10 @@ class AllegatoController extends Controller
           /** @var Pratica $item */
           foreach ($applications as $item) {
             $item->removeAllegato($file);
-            $em->persist($item);
+            $this->entityManager->persist($item);
           }
-          $em->remove($file);
-          $em->flush();;
+          $this->entityManager->remove($file);
+          $this->entityManager->flush();;
 
           return new Response('', Response::HTTP_OK);
 
@@ -396,9 +394,8 @@ class AllegatoController extends Controller
     $allegato->setDescription($description);
 
     $allegato->setOwner($this->getUser());
-    $em = $this->getDoctrine()->getManager();
-    $em->persist($allegato);
-    $em->flush();
+    $this->entityManager->persist($allegato);
+    $this->entityManager->flush();
 
     $data = [
       'name' => $allegato->getOriginalFilename(),
@@ -455,10 +452,8 @@ class AllegatoController extends Controller
     $allegato->setFile($uploadedFile);
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
-    $em = $this->getDoctrine()->getManager();
-    $em->persist($allegato);
-
-    $em->flush();
+    $this->entityManager->persist($allegato);
+    $this->entityManager->flush();
 
     $data = [
       'name' => $allegato->getOriginalFilename(),
@@ -472,65 +467,30 @@ class AllegatoController extends Controller
   /**
    * @param Request $request
    * @Route("/pratiche/allegati/message/upload/{id}",name="cps_user_allegato_messaggio_upload")
-   * @Method("POST")
-   * @return mixed
-   */
-  public function cpsUserAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
-  {
-    if (! in_array($pratica->getStatus(), [Pratica::STATUS_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PENDING_AFTER_INTEGRATION])){
-      return new JsonResponse("Lo pratica con id: {$pratica->getId()} si trova in uno stato in cui non possono essere allegati file", Response::HTTP_BAD_REQUEST);
-    }
-
-    /** @var CPSUser $user */
-    $user = $this->getUser();
-
-    if ($pratica->getUser()->getId() !== $user->getId()) {
-      return new JsonResponse("User can not access pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
-    }
-
-    $uploadedFile = $request->files->get('file');
-
-    if (!in_array(mime_content_type($uploadedFile->getRealPath()), $this->allowedExtensions)) {
-      return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
-    }
-
-    $allegato = new AllegatoMessaggio();
-    $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
-    $allegato->setFile($uploadedFile);
-    $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
-    $allegato->setOwner($pratica->getUser());
-    $em = $this->getDoctrine()->getManager();
-    $em->persist($allegato);
-
-    $em->flush();
-
-
-    $data = [
-      'name' => $allegato->getOriginalFilename(),
-      'url' => '#',
-      'id' => $allegato->getId(),
-    ];
-
-    return new JsonResponse($data);
-  }
-
-  /**
-   * @param Request $request
    * @Route("/operatori/allegati/message/upload/{id}",name="operatore_allegato_messaggio_upload")
    * @Method("POST")
-   * @return mixed
+   * @return JsonResponse
+   * @throw \Exception
    */
-  public function operatoreAllegatoMessaggioUploadAction(Request $request, Pratica $pratica)
+  public function allegatoMessaggioUploadAction(Request $request, Pratica $pratica)
   {
-    if (! in_array($pratica->getStatus(), [Pratica::STATUS_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PENDING_AFTER_INTEGRATION])){
+    if (!in_array($pratica->getStatus(), [Pratica::STATUS_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PENDING_AFTER_INTEGRATION])){
       return new JsonResponse("Lo pratica con id: {$pratica->getId()} si trova in uno stato in cui non possono essere allegati file", Response::HTTP_BAD_REQUEST);
     }
 
-    /** @var OperatoreUser $user */
+    /** @var User $user */
     $user = $this->getUser();
 
-    $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-    if (!$isEnabled) {
+    if ($user instanceof CPSUser) {
+      if ($pratica->getUser()->getId() !== $user->getId()) {
+        return new JsonResponse("User can not access pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
+      }
+    } else if ($user instanceof OperatoreUser) {
+      $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
+      if (!$isEnabled) {
+        return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
+      }
+    } else {
       return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
     }
 
@@ -545,10 +505,18 @@ class AllegatoController extends Controller
     $allegato->setFile($uploadedFile);
     $allegato->setDescription($request->get('description') ?? $uploadedFile->getClientOriginalName());
     $allegato->setOwner($pratica->getUser());
-    $em = $this->getDoctrine()->getManager();
-    $em->persist($allegato);
-    $em->flush();
 
+    // Imposto riferimento a richiesta integrazione attiva
+    if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+      $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+      if ( !$integrationRequest instanceof RichiestaIntegrazione ) {
+        return new JsonResponse('Integration request not found.');
+      }
+      $allegato->setIdRichiestaIntegrazione($integrationRequest->getId());
+    }
+
+    $this->entityManager->persist($allegato);
+    $this->entityManager->flush();
 
     $data = [
       'name' => $allegato->getOriginalFilename(),
@@ -639,9 +607,8 @@ class AllegatoController extends Controller
       $deleteForm->handleRequest($request);
 
       if ($this->canDeleteAllegato($allegato) && $deleteForm->isValid()) {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($allegato);
-        $em->flush();
+        $this->entityManager->remove($allegato);
+        $this->entityManager->flush();
         $this->get('session')->getFlashBag()
           ->add('info', $this->translator->trans('allegato.cancellato'));
         $this->logger->info(LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA, [

@@ -73,56 +73,10 @@
     </div>
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
-        {% if pratica.operatore %}
-          {% if pratica.operatore == user %}
-            {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
-
-          {% else %}
-            {{ include('@App/Operatori/parts/riassegna.html.twig') }}
-          {% endif %}
-        {% else %}
-          {% if pratica.status == 1900 %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.attesa_modulo_compilato'|trans }}
-              </div>
-            </div>
-          {% elseif pratica.status > 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.attesa_modulo_protocollato'|trans }}
-              </div>
-            </div>
-          {% elseif pratica.servizio.isPaymentRequired and pratica.status <= 1510 %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.attesa_pagamento'|trans }}
-              </div>
-            </div>
-          {% elseif pratica.status == 20000 %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                {{ 'operatori.pratica_ritirata'|trans({
-                  '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),
-                  '%ore%': pratica.latestStatusChangeTimestamp | date('H:i:s')})| raw }}
-              </div>
-            </div>
-          {% elseif pratica.servizio.workflow == constant('WORKFLOW_APPROVAL', pratica.servizio) and pratica.status in [2000, 3000] %}
-            <div class="row mb-5">
-              <div class="col-12 d-flex justify-content-center">
-                <a class="btn btn-primary"
-                   href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
-                  <svg class="icon icon-light" href="#">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
-                  </svg>
-                  {{ 'operatori.prendi_in_carico_pratica' | trans }}
-                </a>
-              </div>
-            </div>
-          {% endif %}
-        {% endif %}
+        {{ include('@App/Operatori/parts/operator_actions.html.twig') }}
         {{ include('@App/Operatori/parts/pratica_summary.html.twig') }}
       </div>
+      {# Sidebar #}
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
         {% if ente.isLinkableApplicationMeetings and incoming_meetings | length > 0 %}
           <div class="row pl-4">
@@ -144,7 +98,6 @@
         {% endif %}
 
         <div class="row pl-4">
-
           {# Backoffice #}
           {% if pratica.servizio.backofficeFormId %}
             <div class="col-12 pb-3">

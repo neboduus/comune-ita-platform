@@ -448,6 +448,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   /**
    * @ORM\OneToMany(targetEntity="AppBundle\Entity\RichiestaIntegrazione", mappedBy="praticaPerCuiServeIntegrazione", orphanRemoval=false)
+   * @ORM\OrderBy({"createdAt" = "ASC"})
    * @var ArrayCollection
    */
   private $richiesteIntegrazione;
@@ -1873,13 +1874,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function getRichiestaDiIntegrazioneAttiva()
   {
-
     foreach ($this->getRichiesteIntegrazione() as $richiestaIntegrazione) {
       if ($richiestaIntegrazione->getStatus() == RichiestaIntegrazione::STATUS_PENDING) {
         return $richiestaIntegrazione;
       }
     }
-
     return null;
   }
 
@@ -1887,7 +1886,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   {
     if (!$this->richiesteIntegrazione->contains($integration)) {
       $this->richiesteIntegrazione->add($integration);
-      $integration->addPratica($this);
+      //$integration->addPratica($this);
     }
 
     return $this;
@@ -2308,5 +2307,35 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       return true;
     }
     return false;
+  }
+
+  public function getFlowChangedAt(): ?\DateTime
+  {
+     switch ($this->getStatus()){
+       case Pratica::STATUS_DRAFT:
+         return $this->createdAt;
+
+       case Pratica::STATUS_PRE_SUBMIT:
+       case Pratica::STATUS_SUBMITTED:
+       $date = new \DateTime();
+       try {
+         $date->setTimestamp($this->getSubmissionTime());
+       } catch (\Exception $e) {}
+       return $date;
+
+       case Pratica::STATUS_REGISTERED:
+         $date = new \DateTime();
+         try {
+           $date->setTimestamp($this->getProtocolTime());
+
+         } catch (\Exception $e) {}
+         return $date;
+       default:
+         $date = new \DateTime();
+         try {
+           $date->setTimestamp($this->getLatestStatusChangeTimestamp());
+         } catch (\Exception $e) {}
+         return $date;
+     }
   }
 }

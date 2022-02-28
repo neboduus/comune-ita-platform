@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Rest;
 
 
 use AppBundle\Dto\Application;
+use AppBundle\Dto\ApplicationDto;
 use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
@@ -49,6 +50,7 @@ use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
@@ -98,9 +100,19 @@ class ApplicationsAPIController extends AbstractFOSRestController
     'description' => 'Request integration',
   ];
 
+  const TRANSITION_REGISTER_INTEGRATION_REQUEST = [
+    'action' => 'register-integration-request',
+    'description' => 'Register integration request',
+  ];
+
   const TRANSITION_ACCEPT_INTEGRATION = [
     'action' => 'accept-integration',
     'description' => 'Accept integration',
+  ];
+
+  const TRANSITION_REGISTER_INTEGRATION_ANSWER = [
+    'action' => 'register-integration-answer',
+    'description' => 'Register integration answer',
   ];
 
   const TRANSITION_ACCEPT = [
@@ -155,6 +167,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
   private $fileService;
 
   /**
+   * @var ApplicationDto
+   */
+  private $applicationDto;
+
+  /**
    * ApplicationsAPIController constructor.
    * @param EntityManagerInterface $em
    * @param InstanceService $is
@@ -177,7 +194,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     PraticaManager $praticaManager,
     FormServerApiAdapterService $formServerService,
     EventDispatcherInterface $dispatcher,
-    FileService $fileService
+    FileService $fileService,
+    ApplicationDto $applicationDto
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -190,6 +208,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->formServerService = $formServerService;
     $this->dispatcher = $dispatcher;
     $this->fileService = $fileService;
+    $this->applicationDto = $applicationDto;
   }
 
   /**
@@ -337,7 +356,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
       foreach ($createdAtParameter as $v) {
         $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
         if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
-          return $this->view(["Parameter createdAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"], Response::HTTP_BAD_REQUEST);
+          return $this->view(
+            ["Parameter createdAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"],
+            Response::HTTP_BAD_REQUEST
+          );
         }
       }
       $queryParameters['createdAt'] = $createdAtParameter;
@@ -348,7 +370,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
 
         if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
-          return $this->view(["Parameter updatedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"], Response::HTTP_BAD_REQUEST);
+          return $this->view(
+            ["Parameter updatedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"],
+            Response::HTTP_BAD_REQUEST
+          );
         }
       }
       $queryParameters['updatedAt'] = $updatedAtParameter;
@@ -358,7 +383,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
       foreach ($submittedAtParameter as $v) {
         $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
         if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
-          return $this->view(["Parameter submittedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"], Response::HTTP_BAD_REQUEST);
+          return $this->view(
+            ["Parameter submittedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"],
+            Response::HTTP_BAD_REQUEST
+          );
         }
       }
       $queryParameters['submittedAt'] = $submittedAtParameter;
@@ -367,7 +395,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if ($statusParameter) {
       $applicationStatuses = array_keys(Pratica::getStatuses());
       if (!in_array($statusParameter, $applicationStatuses)) {
-        return $this->view(["Status code not present, chose one between: " . implode(',', $applicationStatuses)], Response::HTTP_BAD_REQUEST);
+        return $this->view(
+          ["Status code not present, chose one between: ".implode(',', $applicationStatuses)],
+          Response::HTTP_BAD_REQUEST
+        );
       }
     }
 
@@ -424,7 +455,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     if ($offset != 0) {
       $queryParameters['offset'] = $offset - $limit;
-      $result['links']['prev'] = $this->generateUrl('applications_api_list',
+      $result['links']['prev'] = $this->generateUrl(
+        'applications_api_list',
         $queryParameters,
         UrlGeneratorInterface::ABSOLUTE_URL
       );
@@ -438,14 +470,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
         UrlGeneratorInterface::ABSOLUTE_URL
       );
     }
-
     $order = $orderParameter ?: "creationTime";
     $sort = $sortParameter ?: "ASC";
+
     try {
       $applications = $repoApplications->getApplications($parameters, false, $order, $sort, $offset, $limit);
 
       foreach ($applications as $s) {
-        $result ['data'][] = Application::fromEntity($s, $this->baseUrl.'/'.$s->getId(), true, $version);
+        $result ['data'][] = $this->applicationDto->fromEntity($s);
       }
 
       return $this->view($result, Response::HTTP_OK);
@@ -456,7 +488,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
 
   /**
-   * Retreive an Application
+   * Retrieve an Application
    * @Rest\Get("/{id}", name="application_api_get")
    *
    * @SWG\Parameter(
@@ -469,7 +501,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive an Application",
+   *     description="Retrieve an Application",
    *     @Model(type=Application::class, groups={"read"})
    * )
    *
@@ -490,6 +522,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    */
   public function getApplicationAction($id, Request $request)
   {
+
     $version = intval($request->get('version', 1));
 
     try {
@@ -501,13 +534,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
 
       $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
-
-      $allowedServices = $this->getAllowedServices();
-      if (!in_array($result->getServizio()->getId(), $allowedServices)) {
-        return $this->view(["You are not allowed to view this application"], Response::HTTP_FORBIDDEN);
-      }
-
-      $data = Application::fromEntity($result, $this->baseUrl.'/'.$result->getId(), true, $version);
+      $data = $this->applicationDto->fromEntity($result, true, $version);
 
       return $this->view($data, Response::HTTP_OK);
     } catch (\Exception $e) {
@@ -563,8 +590,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
 
-    $applicationDto = new Application();
-    $form = $this->createForm('AppBundle\Form\Rest\ApplicationFormType', $applicationDto);
+    $applicationModel = new Application();
+    $form = $this->createForm('AppBundle\Form\Rest\ApplicationFormType', $applicationModel);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -579,7 +606,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $service = $this->em->getRepository('AppBundle:Servizio')->find($applicationDto->getService());
+      $service = $this->em->getRepository('AppBundle:Servizio')->find($applicationModel->getService());
       if (!$service instanceof Servizio) {
         return $this->view(["Service not found"], Response::HTTP_BAD_REQUEST);
       }
@@ -594,16 +621,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $schema = $result['schema'];
     $this->praticaManager->setSchema($schema);
     $flatSchema = $this->praticaManager->arrayFlat($schema, true);
-    $flatData = $this->praticaManager->arrayFlat($applicationDto->getData());
+    $flatData = $this->praticaManager->arrayFlat($applicationModel->getData());
 
-    if (empty($applicationDto->getData())) {
+    if (empty($applicationModel->getData())) {
       return $this->view(["Empty application are not allowed"], Response::HTTP_BAD_REQUEST);
     }
 
     foreach ($flatData as $k => $v) {
       // Todo: creare servizio più efficace per controllo conformità schema
-      if ($flatSchema[$k . '.type'] != 'file') {
-        if (!isset($flatSchema[$k . '.type'])) {
+      if ($flatSchema[$k.'.type'] != 'file') {
+        if (!isset($flatSchema[$k.'.type'])) {
           return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
         }
       }
@@ -615,8 +642,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       'schema' => $flatSchema,
     ];
 
-    if (!empty($applicationDto->getData())) {
-      $data['data'] = $applicationDto->getData();
+    if (!empty($applicationModel->getData())) {
+      $data['data'] = $applicationModel->getData();
       $data['flattened'] = $flatData;
     }
 
@@ -628,13 +655,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $data = [
           'type' => 'error',
           'title' => 'There was an error during save process',
-          'description' => $e->getMessage()
+          'description' => $e->getMessage(),
         ];
+
         return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
     } else {
       try {
-        $user = $this->em->getRepository('AppBundle:CPSUser')->find($applicationDto->getUser());
+        $user = $this->em->getRepository('AppBundle:CPSUser')->find($applicationModel->getUser());
         if (!$user instanceof CPSUser) {
           $user = $this->praticaManager->checkUser($data);
         }
@@ -644,6 +672,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $user = $this->praticaManager->checkUser($data);
       } catch (\Exception $e) {
         $this->logger->error($e->getMessage());
+
         return $this->view(["Something is wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
       }
     }
@@ -657,12 +686,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $statusChange->setOperatore($this->getUser()->getFullName());
       }
 
-        /** @var FormIO $pratica */
-      $pratica = $applicationDto->toEntity(new FormIO());
+      /** @var FormIO $pratica */
+      $pratica = $this->applicationDto->toEntity($applicationModel, new FormIO());
       $pratica->setUser($user);
       $pratica->setEnte($this->is->getCurrentInstance());
       $pratica->setServizio($service);
-      $pratica->setStatus($applicationDto->getStatus(), $statusChange);
+      $pratica->setStatus($applicationModel->getStatus(), $statusChange);
       $pratica->setDematerializedForms($data);
       if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
         $pratica->setSubmissionTime(time());
@@ -672,10 +701,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $this->em->flush();
 
       if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
-        if ($applicationDto->getStatus() == Pratica::STATUS_PRE_SUBMIT) {
+        if ($applicationModel->getStatus() == Pratica::STATUS_PRE_SUBMIT) {
           $this->pdfBuilder->createForPraticaAsync($pratica, Pratica::STATUS_SUBMITTED);
         } else {
-          $this->pdfBuilder->createForPraticaAsync($pratica, $applicationDto->getStatus());
+          $this->pdfBuilder->createForPraticaAsync($pratica, $applicationModel->getStatus());
         }
       }
 
@@ -683,22 +712,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );
+
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view(
-      Application::fromEntity($pratica, $this->baseUrl.'/'.$pratica->getId()), Response::HTTP_CREATED
-    );
+    return $this->view($this->applicationDto->fromEntity($pratica), Response::HTTP_CREATED);
   }
 
   /**
-   * Retreive backoffice data of an application
+   * Retrieve backoffice data of an application
    * @Rest\Get("/{id}/backoffice", name="application_backoffice_api_get")
    *
    *
@@ -712,7 +740,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive backoffice data of an application",
+   *     description="Retrieve backoffice data of an application",
    *     @SWG\Schema(
    *         type="object",
    *         @SWG\Property(property="backoffice_data", type="object")
@@ -753,10 +781,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
         return $this->view(["You are not allowed to view this application"], Response::HTTP_FORBIDDEN);
       }
 
-      $data = Application::fromEntity($result, $this->baseUrl.'/'.$result->getId(), true, $version);
+      $data = $this->applicationDto->fromEntity($result, true, $version);
 
       return $this->view([
-        'backoffice_data' => $data->getBackofficeData()
+        'backoffice_data' => $data->getBackofficeData(),
       ], Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
@@ -845,7 +873,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $flatData = $this->praticaManager->arrayFlat($request->request->get('backoffice_data'));
 
     foreach ($flatData as $k => $v) {
-      if (!isset($flatSchema[$k . '.type']) && !isset($flatSchema[$k])) {
+      if (!isset($flatSchema[$k.'.type']) && !isset($flatSchema[$k])) {
         return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
       }
     }
@@ -866,7 +894,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -876,19 +904,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    return $this->view(
-      Application::fromEntity($application, $this->baseUrl.'/'.$application->getId()),
-      Response::HTTP_CREATED
-    );
+    return $this->view($this->applicationDto->fromEntity($application), Response::HTTP_CREATED);
   }
 
   /**
-   * Retreive application history
+   * Retrieve application history
    * @Rest\Get("/{id}/history", name="application_api_get_history")
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive application history",
+   *     description="Retrieve application history",
    *     @SWG\Schema(
    *         type="array",
    *         @SWG\Items(ref=@Model(type=Transition::class))
@@ -929,12 +954,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive an Applications attachment
+   * Retrieve an Applications attachment
    * @Rest\Get("/{id}/attachments/{attachmentId}", name="application_api_attachment_get")
    *
    * @SWG\Response(
    *     response=200,
-   *     description="Retreive attachment file",
+   *     description="Retrieve attachment file",
    * )
    *
    * @SWG\Response(
@@ -1111,7 +1136,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -1197,8 +1222,19 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    $_application = Application::fromEntity($application);
-    $form = $this->createForm('AppBundle\Form\ApplicationType', $_application);
+    // Todo: Passare alle transition prima possibile
+    if ($application->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION) {
+      $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationRequestAction', [
+        'id' => $application->getId()
+      ]);
+    } elseif ($application->getStatus() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
+      $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationAnswerAction', [
+        'id' => $application->getId()
+      ]);
+    }
+
+    $applicationModel = $this->applicationDto->fromEntity($application);
+    $form = $this->createForm('AppBundle\Form\ApplicationType', $applicationModel);
     $this->processForm($request, $form);
 
     if (!$form->isValid()) {
@@ -1208,7 +1244,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
         'title' => 'There was a validation error',
         'errors' => $errors,
       ];
-
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
@@ -1229,7 +1264,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         && $application->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE;
 
       // persist della patch
-      $application = $_application->toEntity($application);
+      $application = $this->applicationDto->toEntity($applicationModel, $application);
       $this->em->persist($application);
       $this->em->flush();
 
@@ -1248,7 +1283,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->get('logger')->error(
         $e->getMessage(),
@@ -1308,7 +1343,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1443,7 +1478,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1582,7 +1617,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1640,7 +1675,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1747,7 +1782,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1813,7 +1848,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $this->denyAccessUnlessGranted(ApplicationVoter::ACCEPT_OR_REJECT, $application);
 
       $defaultData = [
-        'message' => null
+        'message' => null,
       ];
 
       $form = $this->createForm('AppBundle\Form\Rest\Transition\RequestIntegrationFormType', $defaultData);
@@ -1836,7 +1871,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => $e->getMessage()
+        'description' => $e->getMessage(),
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1857,8 +1892,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
-   *
-   *
    *
    * @SWG\Response(
    *     response=204,
@@ -1900,7 +1933,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => $e->getMessage()
+        'description' => $e->getMessage(),
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1958,7 +1991,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = [
         'type' => 'error',
         'title' => 'There was an error during transition process',
-        'description' => 'Contact technical support at support@opencontent.it'
+        'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
 
@@ -1991,6 +2024,248 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
+  }
+
+  /**
+   * Register application integration request
+   * @Rest\Post("/{id}/transition/register-integration-request", name="application_api_post_transition_register_integration_request")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Transition",
+   *     in="body",
+   *     type="json",
+   *     description="The transition to execute",
+   *     required=true,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="integration_outbound_protocol_document_id", type="string", description="Integration request protocol number"),
+   *        @SWG\Property(property="integration_outbound_protocol_number", type="string", description="Integration request protocol document id"),
+   *        @SWG\Property(property="integration_outbound_protocolled_at", type="date-time", description="Integration request protocol date")
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function applicationTransitionRegisterIntegrationRequestAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $application */
+      $application = $repository->find($id);
+      if ($application === null) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+
+      if (!$application->getServizio()->isProtocolRequired()) {
+        return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      if ($application->getType() !== Pratica::TYPE_FORMIO) {
+        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
+        ->add(
+          'integration_outbound_protocol_number',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
+        ->add(
+          'integration_outbound_protocol_document_id',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
+        ->add('integration_outbound_protocolled_at', DateTimeType::class, [
+          'widget' => 'single_text',
+          'required' => false,
+          'empty_data' => '',
+        ])
+        ->getForm();
+      $this->processForm($request, $form);
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = $form->getData();
+      $this->praticaManager->registerIntegrationRequest($application, $this->getUser(), $data);
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
+  }
+
+  /**
+   * Register application integration answer
+   * @Rest\Post("/{id}/transition/register-integration-answer", name="application_api_post_transition_register_integration_answer")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Transition",
+   *     in="body",
+   *     type="json",
+   *     description="The transition to execute",
+   *     required=true,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="integration_inbound_protocol_document_id", type="string", description="Integration answer protocol number"),
+   *        @SWG\Property(property="integration_inbound_protocol_number", type="string", description="Integration answer protocol document id"),
+   *        @SWG\Property(property="integration_inbound_protocolled_at", type="date-time", description="Integration answer protocol date")
+   *     )
+   * )
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function applicationTransitionRegisterIntegrationAnswerAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $application */
+      $application = $repository->find($id);
+      if ($application === null) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+
+      if (!$application->getServizio()->isProtocolRequired()) {
+        return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      if ($application->getType() !== Pratica::TYPE_FORMIO) {
+        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
+        ->add(
+          'integration_inbound_protocol_document_id',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
+        ->add(
+          'integration_inbound_protocol_number',
+          TextType::class,
+          [
+            'constraints' => [
+              new NotBlank(),
+              new NotNull(),
+            ],
+          ]
+        )
+        ->add('integration_inbound_protocolled_at', DateTimeType::class, [
+          'widget' => 'single_text',
+          'required' => false,
+          'empty_data' => '',
+        ])
+        ->getForm();
+      $this->processForm($request, $form);
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = $form->getData();
+      $this->praticaManager->registerIntegrationAnswer($application, $this->getUser(), $data);
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
   }
 
   /**

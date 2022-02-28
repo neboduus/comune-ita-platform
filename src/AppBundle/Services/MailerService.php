@@ -133,10 +133,6 @@ class MailerService
       }
     }
 
-    if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION && !$pratica instanceof GiscomPratica) {
-      return $sentAmount;
-    }
-
     $CPSUsermessage = null;
     if ($this->CPSUserHasValidContactEmail($pratica->getUser()) && ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))) {
       try {

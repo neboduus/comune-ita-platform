@@ -36,9 +36,15 @@ class PraticaStatusService
       ApplicationsAPIController::TRANSITION_REJECT,
       ApplicationsAPIController::TRANSITION_WITHDRAW,
     ],
+    Pratica::STATUS_REQUEST_INTEGRATION => [
+      ApplicationsAPIController::TRANSITION_REGISTER_INTEGRATION_REQUEST,
+    ],
     Pratica::STATUS_DRAFT_FOR_INTEGRATION => [
       ApplicationsAPIController::TRANSITION_ACCEPT_INTEGRATION,
       ApplicationsAPIController::TRANSITION_WITHDRAW,
+    ],
+    Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION => [
+      ApplicationsAPIController::TRANSITION_REGISTER_INTEGRATION_ANSWER
     ],
     Pratica::STATUS_COMPLETE => [
       ApplicationsAPIController::TRANSITION_WITHDRAW

@@ -96,11 +96,18 @@ class ProtocollaPraticaListener
             return;
           }
 
+          if ($event->getNewStateIdentifier() == Pratica::STATUS_REGISTERED_AFTER_INTEGRATION) {
+            $pratica->getRichiestaDiIntegrazioneAttiva()->markAsDone();
+            $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING);
+            return;
+          }
+          
           if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
             $pratica->getRichiestaDiIntegrazioneAttiva()->markAsDone();
             $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING);
             return;
           }
+
 
           if ( $event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE || $event->getNewStateIdentifier() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE ) {
             if ($pratica->getEsito()) {

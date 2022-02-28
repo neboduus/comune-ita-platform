@@ -10,7 +10,7 @@ use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
@@ -27,7 +27,7 @@ class AttachmentVoter extends Voter
   /** @var Security  */
   private $security;
 
-  /** @var Session */
+  /** @var SessionInterface */
   private $session;
 
   private $hashValidity;
@@ -35,10 +35,10 @@ class AttachmentVoter extends Voter
   /**
    * AttachmentVoter constructor.
    * @param Security $security
-   * @param Session $session
+   * @param SessionInterface $session
    * @param $hashValidity
    */
-  public function __construct(Security $security, Session $session, $hashValidity)
+  public function __construct(Security $security, SessionInterface $session, $hashValidity)
   {
     $this->security = $security;
     $this->session = $session;

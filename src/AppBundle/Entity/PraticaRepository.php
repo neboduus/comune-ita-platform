@@ -684,25 +684,6 @@ class PraticaRepository extends EntityRepository
   }
 
   /**
-   * @param $serviceGroupId
-   * @param $allowedServices
-   * @return array
-   */
-  private function getServicesInServiceGroupByUser($serviceGroupId, $allowedServices)
-  {
-    $result = [];
-    $repo = $this->getEntityManager()->getRepository('AppBundle:Servizio');
-    $services = $repo->findBy(['serviceGroup' => $serviceGroupId]);
-
-    foreach ($services as $service) {
-      if (in_array($service->getId(), $allowedServices)) {
-        $result [] = $service->getId();
-      }
-    }
-    return $result;
-  }
-
-  /**
    * @return array
    */
   public function getServizioIdListByOperatore(OperatoreUser $user, $minStatus = null)
@@ -869,24 +850,36 @@ class PraticaRepository extends EntityRepository
     return $qb;
   }
 
+  /**
+   * @param $filters
+   * @param Pratica $pratica
+   * @return float|int|mixed|string
+   */
   public function getMessages($filters, Pratica $pratica)
   {
     $qb = $this->getEntityManager()->createQueryBuilder()
       ->select('message')
-      ->from('AppBundle:Message', 'message');
+      ->from('AppBundle:Message', 'message')
+      ->where('message.application = :application')
+      ->setParameter('application', $pratica);
 
     if (!empty($filters['visibility'])) {
       $qb->andWhere('message.visibility = :visibility')
         ->setParameter('visibility', (array)$filters['visibility']);
     }
 
-    $qb->andWhere('message.application = :application')
-      ->setParameter('application', $pratica)
-      ->orderBy('message.createdAt', 'asc');
+    if (isset($filters['from_date'])) {
+      $qb->andWhere('message.createdAt >= :from_date')->setParameter('from_date', $filters['from_date']->getTimestamp());
+    }
 
+    if (isset($filters['to_date'])) {
+      $qb->andWhere('message.createdAt <= :to_date')->setParameter('to_date', $filters['to_date']->getTimestamp());
+    }
 
+    $qb->orderBy('message.createdAt', 'ASC');
     return $qb->getQuery()->getResult();
   }
+
 
   public function getMessageAttachments($filters, Pratica $pratica)
   {

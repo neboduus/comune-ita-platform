@@ -16,12 +16,8 @@ class RispostaIntegrazione extends Allegato
   const STATUS_PENDING = 1000;
   const STATUS_DONE = 2000;
   const TYPE_DEFAULT = 'risposta_integrazione';
-
-  /**
-   * @ORM\Column(type="json_array", options={"jsonb":true})
-   * @var \JsonSerializable
-   */
-  private $payload;
+  const PAYLOAD_MESSAGES = 'messages';
+  const PAYLOAD_ATTACHMENTS = 'attachments';
 
   /**
    * @ORM\Column(type="integer")
@@ -39,31 +35,10 @@ class RispostaIntegrazione extends Allegato
   /**
    * @return mixed
    */
-  public function getPayload()
-  {
-    return $this->payload;
-  }
-
-  /**
-   * @param string $payload
-   *
-   * @return RispostaIntegrazione
-   */
-  public function setPayload($payload)
-  {
-    $this->payload = $payload;
-
-    return $this;
-  }
-
-  /**
-   * @return mixed
-   */
   public function getIdRichiestaIntegrazione()
   {
     $payload = $this->payload;
-
-    return $payload['richiesta_integrazione'];
+    return $payload[RichiestaIntegrazione::TYPE_DEFAULT];
   }
 
   /**
@@ -71,7 +46,52 @@ class RispostaIntegrazione extends Allegato
    */
   public function setIdRichiestaIntegrazione($idRichiestaIntegrazione): void
   {
-    $this->payload = ['richiesta_integrazione' => $idRichiestaIntegrazione];
+    $payload = $this->payload;
+    $payload[RichiestaIntegrazione::TYPE_DEFAULT] = $idRichiestaIntegrazione;
+    $this->payload = $payload;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getRelatedMessages()
+  {
+    if (isset($this->payload[self::PAYLOAD_MESSAGES])) {
+      return $this->payload[self::PAYLOAD_MESSAGES];
+    }
+    return [];
+  }
+
+  /**
+   * @param $idRichiestaIntegrazione
+   */
+  public function setRelatedMessages(array $messages): void
+  {
+    $payload = $this->payload;
+    $payload[self::PAYLOAD_MESSAGES] = $messages;
+    $this->payload = $payload;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getAttachments()
+  {
+    if (isset($this->payload[self::PAYLOAD_ATTACHMENTS])) {
+      return $this->payload[self::PAYLOAD_ATTACHMENTS];
+    }
+    return [];
+  }
+
+  /**
+   * @param array $attachments
+   * @return void
+   */
+  public function setAttachments(array $attachments): void
+  {
+    $payload = $this->payload;
+    $payload[self::PAYLOAD_ATTACHMENTS] = $attachments;
+    $this->payload = $payload;
   }
 
   /**
