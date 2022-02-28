@@ -121,8 +121,13 @@
                         </div>
                       {% endif %}
                       <p class="mb-3 h6 font-weight-normal">
+                        {% if servizio.sharedWithGroup %}
+                          <a href="{{ path('service_group_show', {'slug': servizio.serviceGroup.slug}) }}"
+                             title="{{ servizio.fullName }}">{{ servizio.fullName }}</a>
+                        {% else %}
                         <a href="{{ path('servizi_show', {'slug': servizio.slug}) }}"
                            title="{{ servizio.name }}">{{ servizio.name }}</a>
+                        {% endif %}
                       </p>
                       <div class="card-text">
                         <div class="mt-1">
