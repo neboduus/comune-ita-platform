@@ -324,8 +324,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     }
 
     $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages);
-    $fileName = uniqid() . '.pdf';
 
+    $fileName = uniqid() . '.pdf';
     $attachment = new RispostaIntegrazione();
     $attachment->setPayload($payload);
     $attachment->setOwner($pratica->getUser());

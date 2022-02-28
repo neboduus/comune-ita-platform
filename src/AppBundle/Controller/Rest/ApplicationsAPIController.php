@@ -1166,10 +1166,38 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     in="body",
    *     type="json",
    *     description="The application to patch",
-   *     required=true,
+   *     required=false,
    *     @SWG\Schema(
    *         type="object",
    *         ref=@Model(type=Application::class, groups={"write"})
+   *     )
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Register integration request",
+   *     in="body",
+   *     type="json",
+   *     description="Register integration request",
+   *     required=false,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="integration_outbound_protocol_document_id", type="string", description="Integration request protocol number"),
+   *        @SWG\Property(property="integration_outbound_protocol_number", type="string", description="Integration request protocol document id"),
+   *        @SWG\Property(property="integration_outbound_protocolled_at", type="string", description="Integration request protocol date")
+   *     )
+   * )
+   *
+   * @SWG\Parameter(
+   *     name="Register integration answer",
+   *     in="body",
+   *     type="json",
+   *     description="Register integration answer",
+   *     required=false,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="integration_inbound_protocol_document_id", type="string", description="Integration answer protocol number"),
+   *        @SWG\Property(property="integration_inbound_protocol_number", type="string", description="Integration answer protocol document id"),
+   *        @SWG\Property(property="integration_inbound_protocolled_at", type="string", description="Integration answer protocol date")
    *     )
    * )
    *
@@ -1699,7 +1727,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
-   *     name="Message",
+   *     name="Transition",
    *     in="body",
    *     type="json",
    *     description="The transition to create",
