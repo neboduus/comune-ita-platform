@@ -6,9 +6,9 @@
   <p>
     <strong>Servizio</strong>:{{ pratica.servizio.fullName }}<br>
     <strong>Richiedente</strong>: {{ pratica.user.fullName }}<br>
-    <strong>Numero richiesta</strong>: {{ {{ pratica.id }} }}<br>
+    <strong>Numero richiesta</strong>: {{ pratica.id }}<br>
     {% if pratica.numeroProtocollo %}
-      <strong>Numero protocollo</strong>: {{ {{ pratica.numeroProtocollo }} }}
+      <strong>Numero protocollo</strong>: {{ pratica.numeroProtocollo }}
     {% endif %}
   </p>
 
@@ -58,7 +58,7 @@
 
   {% if attachments|length > 0 %}
     <h3>Allegati</h3>
-    <table>
+    <table class="attachments">
       <thead>
         <tr>
           <th>Nome del file</th>
@@ -68,7 +68,7 @@
       <tbody>
       {% for a in attachments %}
         <tr>
-          <td>{{ a.original_filename }}</td>
+          <td>{{ a.originalFilename }}</td>
           <td>{{ a.hash }}</td>
         </tr>
       {% endfor %}

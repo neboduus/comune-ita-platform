@@ -446,7 +446,9 @@ class PraticaManager
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION);
 
     $integrationAnswer = $this->getIntegrationAnswer($pratica);
+
     if ($integrationAnswer instanceof RispostaIntegrazione) {
+
 
       $integrationAnswer->setNumeroProtocollo($data['integration_inbound_protocol_number']);
       $integrationAnswer->setIdDocumentoProtocollo($data['integration_inbound_protocol_document_id']);
@@ -470,6 +472,7 @@ class PraticaManager
   {
 
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
+
     /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
     $integrationAnswerRepo = $this->entityManager->getRepository('AppBundle:RispostaIntegrazione');
 

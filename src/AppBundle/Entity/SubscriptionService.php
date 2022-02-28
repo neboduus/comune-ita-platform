@@ -166,7 +166,7 @@ class SubscriptionService
    * @var string[]
    * @ORM\Column(name="tags", type="array", nullable=true)
    * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Subscription Service's tags. (String of comma sepatared tags)")
+   * @SWG\Property(type="array", @SWG\Items(type="string"), description="Subscription Service's tags. (String of comma sepatared tags)")
    */
   protected $tags;
 
