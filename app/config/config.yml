@@ -264,13 +264,13 @@ flagception:
     # Feature name as key
     feature_new_outdatedbrowser:
       # Default flag if inactive or active (default: false)
-      default: false
+      default: true
       env: FEATURE_NEW_OUTDATED_BROWSER
     feature_application_detail:
-      default: false
+      default: true
       env: FEATURE_APPLICATION_DETAIL
     feature_calendar_type:
-      default: false
+      default: true
       env: FEATURE_CALENDAR_TYPE
 
 # Prometheus

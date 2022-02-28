@@ -1,14 +1,19 @@
-version: "3.7"
+version: "3.8"
 
 volumes:
   pgdata:
   uploads:
   mongo:
+  caddydata:
+  caddycfg:
+
+networks:
+  default:
 
 services:
 
   postgres:
-    image: wodby/postgres:${POSTGRES_TAG:-10-1.6.0}
+    image: wodby/postgres:${POSTGRES_TAG:-11}
     stop_grace_period: 30s
     environment:
       POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-sdc}
@@ -22,169 +27,183 @@ services:
       retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
 
   php:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:latest
     build: .
+    volumes:
+      - "uploads:/var/www/html/var/uploads"
     stop_grace_period: 90s
     environment:
-      PHP_FPM_CLEAR_ENV: 'no'
+      CACHE_WARMUP: 'true'
+      OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
+      OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
+      PHP_FPM_LOG_LEVEL: error 
       ENV: ${ENV:-DEV}
       SYMFONY_ENV: ${SYMFONY_ENV:-dev}
       ENABLE_MIGRATIONS: 'true'
       ENABLE_INSTANCE_CONFIG: 'true'
-      PREFIX: ${PREFIX:-}
-      DB_DRIVER: ${DB_DRIVER:-pdo_pgsql}
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
-      DB_NAME: ${DB_NAME:-sdc_multi}
-      DB_USER: ${DB_USER:-sdc}
-      DB_PASSWORD: ${DB_PASSWORD:-sdc}
-      MAILER_TRANSPORT: ${MAILER_TRANSPORT:-sendmail}
-      MAILER_HOST: ${MAILER_HOST:-127.0.0.1}
-      MAILER_USER: ${MAILER_USER:-null}
-      MAILER_PASSWORD: ${MAILER_PASSWORD:-null}
+      #DB_NAME: ${DB_NAME:-sdc_multi}
+      #DB_USER: ${DB_USER:-sdc}
+      #DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      MAILER_HOST: ${MAILER_HOST:-mailserver}
+      MAILER_PORT: ${MAILER_PORT:-1025}
+      MAILER_ENCRYPTION: null
       PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
-      PEC_MAILER_HOST: ${PEC_MAILER_HOST:-smtp.pec.net}
-      PEC_MAILER_PORT: ${PEC_MAILER_PORT:-465}
-      PEC_MAILER_USER: ${PEC_MAILER_USER:-stanzadelcittadino@pec.net}
-      PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-WhoKnows}
+      PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
+      PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
+      PEC_MAILER_USER: ${PEC_MAILER_USER:-null}
+      PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-null}
       PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-:stanzadelcittadino@pec.net}
       SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
-      DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-sdc@opencontent.it}
-      WKHTMLBINARY: ${WKHTMLBINARY:-wkhtmltopdf}
-      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-https://gotemberg.ship.opencontent.io}
-      EZ_PASSWORD: ${EZ_PASSWORD:-ez}
-      PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://localhost:8080/}
+      DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
+      #WKHTMLBINARY: ${WKHTMLBINARY:-wkhtmltopdf}
+      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
+      #EZ_PASSWORD: ${EZ_PASSWORD:-ez}
+      #PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://pitre-soap:8080/}
       #HEADER_TOP_TITLE: $HEADER_TOP_TITLE
       #HEADER_TOP_LINK: $HEADER_TOP_LINK
       #FOOTER_CREDITS: $FOOTER_CREDITS
-      #OCSDC_SCHEME: $OCSDC_SCHEME
-      #OCSDC_HOST: $OCSDC_HOST
-      GISCOM_PASSWORD: ${GISCOM_PASSWORD:-giscom}
-      GISCOM_ADAPTER_URL: ${GISCOM_ADAPTER_URL:-https://www.giscom.cloud/WebAPI/}
-      GISCOM_ADAPTER_USERNAME: ${GISCOM_ADAPTER_USERNAME:-pippo}
-      GISCOM_ADAPTER_PASSWORD: ${GISCOM_ADAPTER_PASSWORD:-passw}
-      LOGS_PATH: ${LOGS_PATH:-php://stderr}
-      MYPAY_ADAPTER_URL: ${MYPAY_ADAPTER_URL:-http://localhost:3000}
-      PHP_FPM_USER: wodby
-      PHP_FPM_GROUP: wodby
       PHP_APCU_ENABLED: 0
       PHP_OPCACHE_ENABLE: 0
-      FORMSERVER_PRIVATE_URL: ${FORMSERVER_PRIVATE_URL:-http://formserver:8000}
-      FORMSERVER_PUBLIC_URL: ${FORMSERVER_PUBLIC_URL:-http://formserver.localtest.me:8000}
-      FORMSERVER_ADMIN_URL: ${FORMSERVER_ADMIN_URL:-http://formserver.localtest.me:8000}
+      FORMSERVER_PRIVATE_URL: ${FORMSERVER_PRIVATE_URL:-http://formserver:80}
+      FORMSERVER_PUBLIC_URL: ${FORMSERVER_PUBLIC_URL:-http://formserver.localtest.me}
+      FORMSERVER_ADMIN_URL: ${FORMSERVER_ADMIN_URL:-http://formserver.localtest.me}
       RECAPTCHA_KEY: ${RECAPTCHA_KEY:-key}
       RECAPTCHA_SECRET: ${RECAPTCHA_SECRET:-secret}
-      SENTRY_DSN: ${SENTRY_DSN:-}
-      PHP_DATE_TIMEZONE: 'Europe/Rome'
       PASSWORD_LIFE_TIME: ${PASSWORD_LIFE_TIME:-999999}
       HASH_VALIDITY: ${HASH_VALIDITY:-3}
       TOKEN_TTL: ${TOKEN_TTL:-3600}
-      LOGIN_ROUTE: ${LOGIN_ROUTE:-login_open}
-      SINGLE_LOGOUT_URL: '/Shibboleth.sso/Logout'
-      IO_API_URL: ${IO_API_URL:-https://api.io.italia.it/api/v1}
-      CACHE_MAX_AGE: ${CACHE_MAX_AGE:-3600}
-      METRICS_TYPE: ${METRICS_TYPE:-in_memory}
-      #METRICS_REDIS_HOST: ${METRICS_REDIS_HOST:-redis}
-      #METRICS_REDIS_PORT: ${METRICS_REDIS_PORT:-6379}
-      #METRICS_REDIS_PASSWORD: ${METRICS_REDIS_PASSWORD:-}
+      CACHE_MAX_AGE: ${CACHE_MAX_AGE:-60}
       UPLOAD_DESTINATION: ${UPLOAD_DESTINATION:-local_filesystem}
-      S3_REGION: ${S3_REGION:-eu-west-1}
-      S3_KEY: ${S3_KEY:-}
-      S3_SECRET: ${S3_SECRET:-}
-      S3_BUCKET: ${S3_BUCKET:-test}
-      KAFKA_URL: ${KAFKA_URL:-}
-      KAFKA_EVENT_VERSION: ${KAFKA_EVENT_VERSION:-}
-      KAFKA_TOPIC_APPLICATIONS: ${KAFKA_TOPIC_APPLICATIONS:-}
-      KAFKA_TOPIC_SERVICES: ${KAFKA_TOPIC_SERVICES:-}
       API_VERSION: ${API_VERSION:-1}
-
-      # Your Queue-it customer ID
-      #QUEUEIT_CUSTOMER_ID: 'xxx'
-      # Your 72 char secret key as specified in Go Queue-it self-service platform
-      #QUEUEIT_SECRET: 'xxx'
-      # Absolute path of Queue-it configuration json file @see https://github.com/queueit/KnownUser.V3.PHP/blob/master/Documentation/README.md
-      #QUEUEIT_CONFIG_FILE: '/var/www/html/opencontent_knownuser_integration_config.json'
+      KAFKA_URL: ${KAFKA_URL:-}
 
       # In assenza di una vera autenticazione basata su SPID si può simulare
       # un login di un utente con le seguenti variabili d'ambiente:
-      #shibb_pat_attribute_codicefiscale: ABCDEF00A11Z456X
-      #shibb_pat_attribute_cognome: Coliandro
-      #shibb_pat_attribute_nome: Vittorino
-      #shibb_pat_attribute_sesso: M
-      #shibb_pat_attribute_emailaddress: info@comune.bugliano.pi.it
-      #shibb_pat_attribute_datanascita: 1/9/1976
-      #shibb_pat_attribute_luogonascita: Ponsacco
-      #shibb_pat_attribute_provincianascita: PI
+      LOGIN_ROUTE: ${LOGIN_ROUTE:-login_pat}
+      shibb_pat_attribute_codicefiscale: ABCDEF00A11Z456X
+      shibb_pat_attribute_cognome: Coliandro
+      shibb_pat_attribute_nome: Vittorino
+      shibb_pat_attribute_sesso: M
+      shibb_pat_attribute_emailaddress: info@comune.bugliano.pi.it
+      shibb_pat_attribute_datanascita: 1/9/1976
+      shibb_pat_attribute_luogonascita: Ponsacco
+      shibb_pat_attribute_provincianascita: PI
+      shibb_pat_attribute_telefono: 003912378945
+      shibb_pat_attribute_cellulare: 333 444 666 99
+      shibb_pat_attribute_indirizzoresidenza: Via Gramsci, 1
+      shibb_pat_attribute_capresidenza: 56056
+      shibb_pat_attribute_cittaresidenza: Bugliano
+      shibb_pat_attribute_provinciaresidenza: PI
+      shibb_pat_attribute_statoresidenza: Italia
+      shibb_pat_attribute_spidcode: 123456789
+      shibb_pat_attribute_x509certificate_issuerdn: FAKE_issuerdn
+      shibb_pat_attribute_x509certificate_subjectdn: FAKE_subjectdn
+      shibb_pat_attribute_x509certificate_base64: "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg=="
+      shibb_Shib-Session-ID: abc123abc123abc123abc123abc123abc123abc123
+      shibb_Shib-Session-Index: abc123abc123abc123abc123abc123abc123abc123
+      shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
 
-      #shibb_pat_attribute_telefono: 003912378945
-      #shibb_pat_attribute_cellulare: 333 444 666 99
-      #shibb_pat_attribute_indirizzoresidenza: Via Gramsci, 1
-      #shibb_pat_attribute_capresidenza: 56056
-      #shibb_pat_attribute_cittaresidenza: Bugliano
-      #shibb_pat_attribute_provinciaresidenza: PI
-      #shibb_pat_attribute_statoresidenza: Italia
-      #shibb_pat_attribute_spidcode: 123456789
-      #shibb_pat_attribute_x509certificate_issuerdn: FAKE_issuerdn
-      #shibb_pat_attribute_x509certificate_subjectdn: FAKE_subjectdn
-      #shibb_pat_attribute_x509certificate_base64: "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg=="
-      #shibb_Shib-Session-ID: abc123abc123abc123abc123abc123abc123abc123
-      #shibb_Shib-Session-Index: abc123abc123abc123abc123abc123abc123abc123
-      #shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
+  cron:
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:latest
+    build: .
+    command: bash -c "while /bin/true; do ./bin/scheduled-actions.sh && sleep 60; done"
     volumes:
       - "uploads:/var/www/html/var/uploads"
+    stop_grace_period: 90s
+    healthcheck:
+      test: ["NONE"]
+    environment:
+      ENV: ${ENV:-DEV}
+      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      MAILER_TRANSPORT: ${MAILER_TRANSPORT:-sendmail}
+      MAILER_HOST: ${MAILER_HOST:-mailserver}
+      MAILER_PORT: ${MAILER_PORT:-1025}
+      PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
+      PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
+      PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
+      PEC_MAILER_USER: ${PEC_MAILER_USER:-null}
+      PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-null}
+      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-:stanzadelcittadino@pec.net}
+      SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
+      DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
+      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
+      FORMSERVER_PRIVATE_URL: ${FORMSERVER_PRIVATE_URL:-http://formserver:80}
+      PASSWORD_LIFE_TIME: ${PASSWORD_LIFE_TIME:-999999}
+      HASH_VALIDITY: ${HASH_VALIDITY:-3}
+      TOKEN_TTL: ${TOKEN_TTL:-3600}
+      UPLOAD_DESTINATION: ${UPLOAD_DESTINATION:-local_filesystem}
+      API_VERSION: ${API_VERSION:-1}
+      KAFKA_URL: ${KAFKA_URL:-}
 
   caddy:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/caddy:master
-    #volumes:
-    #  - "uploads:/srv/uploads"
+    image: registry.gitlab.com/opencontent/stanzadelcittadino/caddy:latest
+    volumes:
+      #- "uploads:/srv/uploads"
+      - caddydata:/data
+      - caddycfg:/config
     depends_on:
       - php
     build:
       context: .
       dockerfile: Dockerfile.caddy
       args:
-        php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
+        php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:latest
+    networks:
+      default:
+        aliases:
+          - stanzadelcittadino.localtest.me
     labels:
-      traefik.enable: true
+      traefik.enable: 'true'
+      traefik.docker.network: 'default'
       traefik.http.services.caddy.loadbalancer.server.port: 80
-
-      traefik.http.middlewares.spid-auth.forwardauth.address: http://auth.localtest.me
-      traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"
-      traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
-
-      traefik.http.routers.caddy-auth.entrypoints: web
-      traefik.http.routers.caddy-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-open`)"
-      traefik.http.routers.caddy-auth.middlewares: "spid-auth"
-
-      traefik.http.routers.caddy.entrypoints: web
       traefik.http.routers.caddy.rule: 'Host(`stanzadelcittadino.localtest.me`)'
 
+      #traefik.http.middlewares.spid-auth.forwardauth.address: http://boreale.localtest.me:5252
+      #traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"
+      #traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
+
+      #traefik.http.routers.caddy-auth.entrypoints: web
+      #traefik.http.routers.caddy-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-open`)"
+      #traefik.http.routers.caddy-auth.middlewares: "spid-auth"
+
   traefik:
-    image: 'traefik:2.0'
-    restart: unless-stopped
+    image: traefik:2.6
     command:
-      - "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+      #- '--log.level=DEBUG'
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
+      - '--entryPoints.websecure.address=:443'
       - '--entryPoints.web.forwardedHeaders.insecure'
+      - '--serversTransport.insecureSkipVerify=true'
+      - '--accesslog=true'
+      - '--accesslog.filters.statuscodes=300-999'
+      - '--accesslog.filters.retryattempts'
+      - '--accesslog.filters.minduration=10ms'
     labels:
       traefik.http.routers.traefik.rule: 'Host(`localtest.me`)'
     ports:
       - '80:80'
-    #  - '443:443'
+      - '443:443'
       - '8080:8080' # Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
   mongo:
     image: mongo:4.2.2
-    restart: unless-stopped
     volumes:
       - 'mongo:/data/db'
+    ports:
+      - 27017:27017
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
       interval: 10s
@@ -194,16 +213,23 @@ services:
 
   formserver:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.1.0
-    restart: unless-stopped
+    healthcheck:
+      test: ["NONE"]
+    networks:
+      default:
+        aliases:
+          - formserver.localtest.me
     environment:
+      PORT: 80
       DB_URL: mongodb://mongo:27017/formmanager
+    expose:
+      - 80
     depends_on:
       - mongo
     labels:
-      traefik.enable: true
-      traefik.http.services.formserver.loadbalancer.server.port: 8000
-      traefik.http.routers.formserver.entrypoints: web
-      traefik.http.routers.formserver.rule: 'Host(`formserver.localtest.me`)'
+      traefik.enable: 'true'
+      traefik.http.services.formserver.loadbalancer.server.port: 80
+      traefik.http.routers.formserver.rule: 'Host(`formserver.localtest.me`) && METHOD(`GET`, `HEAD`, `OPTIONS`)'
 
   formserver-init:
     image: lorello/alpine-bash:1.2.0
@@ -212,56 +238,34 @@ services:
       - bash
       - -c
       - |
-        wait-for-it formserver:8000
-        http --check-status formserver:8000/form/5d5a66b7669977001b5b617b || (http post formserver:8000/form < /data/address.json)
-        http --check-status formserver:8000/form/5d5a45a8669977001b5b6179 || (http post formserver:8000/form < /data/birth-info.json)
-        http --check-status formserver:8000/form/5d7aa1b318fecd734051ae80 || (http post formserver:8000/form < /data/fiscal-code.json)
-        http --check-status formserver:8000/form/5d4d26ff9410f50010f30068 || (http post formserver:8000/form < /data/full-name.json)
-        http --check-status formserver:8000/form/5d5a41a4669977001b5b6177 || (http post formserver:8000/form < /data/gender.json)
-        http --check-status formserver:8000/form/5d7aa15b18fecd734051ae7f || (http post formserver:8000/form < /data/personal-data.json)
-        http --check-status formserver:8000/form/5e5e26ede170600020175850 || (http post formserver:8000/form < /data/personal-data-light.json)
+        wait-for-it formserver:80
+        http --check-status formserver:80/form/5d5a66b7669977001b5b617b || (http post formserver:80/form < /data/address.json)
+        http --check-status formserver:80/form/5d5a45a8669977001b5b6179 || (http post formserver:80/form < /data/birth-info.json)
+        http --check-status formserver:80/form/5d7aa1b318fecd734051ae80 || (http post formserver:80/form < /data/fiscal-code.json)
+        http --check-status formserver:80/form/5d4d26ff9410f50010f30068 || (http post formserver:80/form < /data/full-name.json)
+        http --check-status formserver:80/form/5d5a41a4669977001b5b6177 || (http post formserver:80/form < /data/gender.json)
+        http --check-status formserver:80/form/5d7aa15b18fecd734051ae7f || (http post formserver:80/form < /data/personal-data.json)
+        http --check-status formserver:80/form/5e5e26ede170600020175850 || (http post formserver:80/form < /data/personal-data-light.json)
 
-#  Enable to debug new version of gotemberg
-#  By default https://gotemberg.ship.opencontent.io is used
-#  gotemberg:
-#    image: thecodingmachine/gotenberg:6
-#    restart: unless-stopped
-#    ports:
-#      - '3000:3000'
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
-#      interval: 1m30s
-#      timeout: 10s
-#      retries: 3
-#      #start_period: 5s
-#    environment:
-#      LOG_LEVEL: INFO
-#      # DEFAULT_LISTEN_PORT: 3000
-#      # DISABLE_GOOGLE_CHROME: 0
-#      # DEFAULT_GOOGLE_CHROME_RPCC_BUFFER_SIZE: "1048576" #1Mb, max 100Mb
-#      DISABLE_UNOCONV: 1
-#      #DEFAULT_WAIT_TIMEOUT: 5
-#      #MAXIMUM_WAIT_TIMEOUT: 30
-#      #DEFAULT_WEBHOOK_URL_TIMEOUT: "2.5"
-#      #MAXIMUM_WEBHOOK_URL_TIMEOUT: "2.5"
-#      MAXIMUM_WAIT_DELAY: "30"
+  gotenberg:
+    #image: gotenberg/gotenberg:7
+    image: registry.gitlab.com/opencontent/gotemberg:6-ok 
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    environment:
+      LOG_LEVEL: INFO
+      DISABLE_UNOCONV: 1
+      MAXIMUM_WAIT_DELAY: 30
 
-  # Enable only to test metrics export in PHP container
-  #redis:
-  #  image: wodby/redis:5-3.7.6
-  #  environment:
-  #    REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
-
-# Enable to have a postgres web interface
-#  pgweb:
-#    image: sosedoff/pgweb
-#    labels:
-#      traefik.enable: true
-#      #traefik.http.services.pgweb.loadbalancer.server.port: 80
-#      traefik.http.routers.pgweb-http.rule: 'Host(`pgweb.localtest.me`)'
-#      traefik.http.routers.pgweb-http.entrypoints: web
-#    environment:
-#      - DATABASE_URL=postgres://${DB_USER:-sdc}:${DB_PASSWORD:-sdc}@postgres:5432/${DB_NAME:-sdc_bugliano}?sslmode=disable
-#    depends_on:
-#      - postgres
-#
+  mailserver:
+    image: mailhog/mailhog
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: 'default'
+      traefik.http.services.mailserver.loadbalancer.server.port: 8025
+      traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
+ 

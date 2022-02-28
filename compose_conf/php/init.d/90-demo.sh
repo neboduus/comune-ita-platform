@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[[ $DEBUG == 1 ]] && set -x
+
 if [[ $ENV == 'DEMO' ]]; then
 
 	echo "==> ENV=DEMO, Environment demo is not available at the moment"

@@ -17,31 +17,6 @@ services:
     environment:
       ENV: DEV
       SYMFONY_ENV: dev
-      LOGIN_ROUTE: login_pat
-      #FEATURE_NEW_OUTDATED_BROWSER: 'true'
-      FEATURE_APPLICATION_DETAIL: 'true'
-      shibb_pat_attribute_codicefiscale: RSSMRA80A01H501U
-      shibb_pat_attribute_cognome: Rossi
-      shibb_pat_attribute_emailaddress: mario.rossi@sdc.it
-      shibb_pat_attribute_nome: Mario
-      shibb_pat_attribute_sesso: M
-      shibb_pat_attribute_datanascita: 01/01/1980
-      shibb_pat_attribute_luogonascita: 00100
-      shibb_pat_attribute_provincianascita: AQ
-      shibb_pat_attribute_telefono: 3331234567
-      shibb_pat_attribute_cellulare: 3331234567
-      shibb_pat_attribute_indirizzoresidenza: Via Roma, 1
-      shibb_pat_attribute_capresidenza: 00100
-      shibb_pat_attribute_cittaresidenza: Roma
-      shibb_pat_attribute_provinciaresidenza: Roma
-      shibb_pat_attribute_statoresidenza: Italia,
-      shibb_pat_attribute_spid_code: REGIISXXR42317
-      shibb_Shib-Session-ID: session_id
-      shibb_Shib-Session-Index: session_index
-      shibb_Shib-Authentication-Instant: auth_instant
-      shibb_pat_attribute_x509certificate_issuerdn: FAKE_issuerdn
-      shibb_pat_attribute_x509certificate_subjectdn: FAKE_subjectdn
-      shibb_pat_attribute_x509certificate_base64: DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg==
     volumes:
       - ./app:/var/www/html/app:rw,cached
       - ./src:/var/www/html/src:rw,cached
@@ -61,3 +36,24 @@ services:
   caddy:
     volumes:
       - ./web:/srv:rw
+
+
+  # Enable only to test metrics export in PHP container
+  #redis:
+  #  image: wodby/redis:5-3.7.6
+  #  environment:
+  #    REDIS_PASSWORD: $METRICS_REDIS_PASSWORD
+
+# Enable to have a postgres web interface
+#  pgweb:
+#    image: sosedoff/pgweb
+#    labels:
+#      traefik.enable: true
+#      #traefik.http.services.pgweb.loadbalancer.server.port: 80
+#      traefik.http.routers.pgweb-http.rule: 'Host(`pgweb.localtest.me`)'
+#      traefik.http.routers.pgweb-http.entrypoints: web
+#    environment:
+#      - DATABASE_URL=postgres://${DB_USER:-sdc}:${DB_PASSWORD:-sdc}@postgres:5432/${DB_NAME:-sdc_bugliano}?sslmode=disable
+#    depends_on:
+#      - postgres
+

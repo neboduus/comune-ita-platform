@@ -154,9 +154,9 @@ parameters:
     env(PEC_MAILER_PORT): '465'
     env(PEC_MAILER_USER): null
     env(PEC_MAILER_PASSWORD): null
-    env(PEC_DELIVERY_ADDRESS): 'stanzadelcittadino@dominio.estensione'
+    env(PEC_DELIVERY_ADDRESS): 'pec.stanzadelcittadino@localtest.me'
     env(SECRET): 'ThisTokenIsNotSoSecretChangeIt'
-    env(DEFAULT_FROM_EMAIL_ADDRESS): 'sdc@opencontent.it'
+    env(DEFAULT_FROM_EMAIL_ADDRESS): 'stanzadelcittadino@localtest.me'
     env(WKHTMLBINARY): 'wkhtmltopdf'
     env(WKHTMLTOPDF_SERVICE): 'wkhtmltopdf'
     env(EZ_PASSWORD): 'ez'
