@@ -1,10 +1,9 @@
 import moment from "moment";
+import {TextEditor} from "./utils/TextEditor";
 
 require("bootstrap-italia");
 require("../css/app.scss");
 require("jquery"); // Load jQuery as a module
-import {TextEditor} from "./utils/TextEditor";
-
 
 $('.edit-subscription-modal').on('show.bs.modal', function (event) {
   $(this).find('.error').hide();
@@ -41,14 +40,51 @@ function checkPayment(el) {
   }
 }
 
+function onTypeChange(el) {
+  let value = $(el).find('input:checked').val()
+
+  let createDraft = $(el).parent().find('.create-draft-input').first();
+  let dueDate = $(el).parent().find('.due-date input');
+  // Show create draft application if additional fee
+
+  if (value === 'additional_fee'){
+    createDraft.closest('.create-draft-option').removeClass('d-none');
+  } else {
+    createDraft.closest('.create-draft-option').addClass('d-none');
+    createDraft.prop("checked", false);
+  }
+  // Disable payment due date and autocomplete with subscriptions due date
+  if (value === 'subscription_fee'){
+    dueDate.val($('#appbundle_subscriptionservice_subscription_end').val());
+    dueDate.attr('readonly', true);
+  } else {
+    if (dueDate.attr('readonly')) {
+      // Clear value if readonly
+      dueDate.val("");
+    }
+    dueDate.attr('readonly', false);
+  }
+}
+
 $(document).on("change", ".subscription_fee", function(){
   checkPayment(this)
+});
+
+$(document).on("change", ".radio-type", function(){
+  onTypeChange(this)
 });
 
 $(document).ready(function () {
   let subscriptionFee = $('.subscription_fee');
   subscriptionFee.each(function () {
     checkPayment(this)
+  })
+
+  // On subscriptions end date change, change all subription fee payments due date
+  $('#appbundle_subscriptionservice_subscription_end').on('change', function () {
+    $('.due-date input').each(function (index, item) {
+      $(item).val($('#appbundle_subscriptionservice_subscription_end').val());
+    });
   })
 
   $('.edit-btn-modal').on('click', function () {
@@ -288,6 +324,8 @@ $(document).ready(function () {
     // with a number that's unique to your emails
     // end name attribute looks like name="contact[emails][2]"
     newWidget = newWidget.replace(/__name__/g, new Date().getTime());
+    newWidget = newWidget.replace(/__code__/g, $('#appbundle_subscriptionservice_code').val());
+    newWidget = newWidget.replace(/__counter__/g, counter);
     // Increase the counter
     counter++;
     // And store it, the length cannot be used if deleting widgets is allowed

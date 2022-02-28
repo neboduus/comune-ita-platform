@@ -10,6 +10,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SubscriptionPayment implements \JsonSerializable
 {
+  const TYPE_SUBSCRIPTION_FEE = "subscription_fee";
+  const TYPE_ADDITIONAL_FEE = "additional_fee";
+  const TYPE_OPTIONAL = "optional";
+
   /**
    * @var double
    * @Assert\GreaterThanOrEqual(0, message="L'importo del pagamento deve avere un valore positivo")
@@ -57,6 +61,12 @@ class SubscriptionPayment implements \JsonSerializable
    * @SWG\Property(description="Create draft application before due date?", type="boolean")
    */
   private $createDraft = true;
+
+  /**
+   * @var string
+   * @SWG\Property(description="Payment type", type="string", enum={"subscription_fee", "additional_required", "additional_optional"})
+   */
+  private $type;
 
   /**
    * @var string
@@ -129,7 +139,7 @@ class SubscriptionPayment implements \JsonSerializable
 
   public function isRequired()
   {
-    return $this->required;
+    return  $this->getType() === self::TYPE_ADDITIONAL_FEE || $this->required;
   }
 
   public function setRequired($required)
@@ -139,7 +149,7 @@ class SubscriptionPayment implements \JsonSerializable
 
   public function isSubscriptionFee()
   {
-    return $this->subscriptionFee;
+    return $this->getType() === self::TYPE_SUBSCRIPTION_FEE || $this->subscriptionFee ;
   }
 
   public function setSubscriptionFee($subscriptionFee)
@@ -177,6 +187,18 @@ class SubscriptionPayment implements \JsonSerializable
     $this->meta = $meta;
   }
 
+  public function getType()
+  {
+    return $this->type;
+  }
+
+  public function setType($type)
+  {
+    $this->type = $type;
+  }
+
+
+
   /**
    * @Serializer\VirtualProperty(name="meta")
    * @Serializer\Type("array<string, string>")
@@ -200,7 +222,8 @@ class SubscriptionPayment implements \JsonSerializable
       'code' => $this->subscriptionServiceCode,
       'required' => $this->required,
       'create_draft' => $this->createDraft,
-      'subscription_fee' => $this->subscriptionFee
+      'subscription_fee' => $this->subscriptionFee,
+      'type' => $this->type
     );
   }
 

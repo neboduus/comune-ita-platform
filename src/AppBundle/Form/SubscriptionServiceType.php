@@ -73,10 +73,6 @@ class SubscriptionServiceType extends AbstractType
         'required' => true,
         'label' => 'iscrizioni.data_fine_iscrizioni'
       ])
-      ->add('subscription_amount', MoneyType::class, [
-        'required' => false,
-        'label' => 'iscrizioni.quota'
-      ])
       ->add('begin_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,

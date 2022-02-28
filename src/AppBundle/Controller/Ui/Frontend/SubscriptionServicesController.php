@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Ui\Frontend;
 
 use AppBundle\BackOffice\SubcriptionsBackOffice;
+use AppBundle\Entity\Servizio;
 use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
@@ -209,11 +210,14 @@ class SubscriptionServicesController extends Controller
       }
     }
 
+    $services = $this->em->getRepository(Servizio::class)->findAvailableForSubscriptionPaymentSettings();
+
     return $this->render('@App/SubscriptionServices/newSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'form' => $form->createView(),
-      'subscriptionServices' => $subscriptionServices
+      'subscriptionServices' => $subscriptionServices,
+      'services' => $services
     ]);
   }
 
@@ -272,10 +276,13 @@ class SubscriptionServicesController extends Controller
       }
     }
 
+    $services = $this->em->getRepository(Servizio::class)->findAvailableForSubscriptionPaymentSettings();
+
     return $this->render('@App/SubscriptionServices/editSubscriptionService.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
-      'subscriptionServices' => $subscriptionServices
+      'subscriptionServices' => $subscriptionServices,
+      'services' => $services
     ]);
   }
 
