@@ -17,6 +17,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
@@ -146,11 +147,6 @@ class KafkaService implements ScheduledActionHandlerInterface
 
     // Todo: va creato un registry con i mapper delle singole entità
     if ($item instanceof Pratica) {
-      /*$content = Application::fromEntity(
-        $item,
-        $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL) . '/' . $item->getId(),
-        true
-      );*/
       $content = $this->applicationDto->fromEntity($item);
       $topic = $this->topics['applications'];
     } elseif ($item instanceof Servizio) {
@@ -161,7 +157,10 @@ class KafkaService implements ScheduledActionHandlerInterface
       $content = $item;
     }
 
-    $data = json_decode($this->serializer->serialize($content, 'json'), true);
+    $context = new SerializationContext();
+    $context->setSerializeNull(true);
+
+    $data = json_decode($this->serializer->serialize($content, 'json', $context), true);
     $data['event_id'] = Uuid::uuid4()->toString();
     $date = new DateTime();
     $data['event_created_at'] = $date->format(DateTime::W3C);
