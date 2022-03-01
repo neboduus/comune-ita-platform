@@ -981,6 +981,7 @@ email:
         registered: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata protocollata. Il numero di protocollo è <strong>%protocollo%</strong>."
         cancelled: "hai rifiutato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
         complete: "hai accettato la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
+        draft.for.integration: "hai richiesto intergazioni per la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>."
         complete.waitallegatioperatore: "la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata elaborata ed è in attesa della protocollazione dei nuovi documenti allegati."
         pending: "hai preso in carico la pratica dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong>"
         withdraw: "la richiesta dell'utente <strong>%user_pratica%</strong> per il servizio <strong>%servizio%</strong> è stata ritirata."
