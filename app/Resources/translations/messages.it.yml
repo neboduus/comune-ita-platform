@@ -491,7 +491,7 @@ iscrizioni:
   codice: "Codice"
   descrizione: "Descrizione"
   duration: "Durata"
-  subscriptions_available: "Disponilitità iscrizioni"
+  subscriptions_available: "Disponibilità iscrizioni"
   subscribers_number: "Numero di iscritti"
   data_inizio_iscrizioni: "Data di inizio iscrizioni"
   data_fine_iscrizioni: "Data di fine iscrizioni"

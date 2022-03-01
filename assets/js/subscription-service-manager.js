@@ -231,7 +231,7 @@ $(document).ready(function () {
     $('.bootstrap-select-wrapper.select-payment-wrapper').hide();
     $('#modal-service-error').hide();
     let explodedPath = window.location.pathname.split("/");
-    $.ajax(location.origin + '/' + explodedPath[1] + '/api/subscription-services/' + this.value + '/payments',
+    $.ajax(location.origin + '/' + explodedPath[1] + '/api/subscription-services/' + this.value + '/payment-settings',
       {
         method: "GET",
         dataType: 'json', // type of response data
@@ -260,7 +260,7 @@ $(document).ready(function () {
   $('#modal_select_payment').on('change', function () {
     $('#modal-payment-error').hide();
     let explodedPath = window.location.pathname.split("/");
-    $.ajax(location.origin + '/' + explodedPath[1] + '/api/subscription-services/' + $('#modal_select_service').val() + '/payments?identifier=' + this.value,
+    $.ajax(location.origin + '/' + explodedPath[1] + '/api/subscription-services/' + $('#modal_select_service').val() + '/payment-settings?identifier=' + this.value,
       {
         method: "GET",
         dataType: 'json', // type of response data

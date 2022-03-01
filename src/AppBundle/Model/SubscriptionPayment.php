@@ -139,7 +139,7 @@ class SubscriptionPayment implements \JsonSerializable
 
   public function isRequired()
   {
-    return  $this->getType() === self::TYPE_ADDITIONAL_FEE || $this->required;
+    return  $this->getType() === self::TYPE_ADDITIONAL_FEE;
   }
 
   public function setRequired($required)
@@ -149,7 +149,7 @@ class SubscriptionPayment implements \JsonSerializable
 
   public function isSubscriptionFee()
   {
-    return $this->getType() === self::TYPE_SUBSCRIPTION_FEE || $this->subscriptionFee ;
+    return $this->getType() === self::TYPE_SUBSCRIPTION_FEE;
   }
 
   public function setSubscriptionFee($subscriptionFee)
