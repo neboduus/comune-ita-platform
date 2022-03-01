@@ -31,7 +31,7 @@ services:
       - 5432:5432
 
   php:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:latest
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
     build: .
     volumes:
       - "uploads:/var/www/html/var/uploads"
@@ -40,7 +40,7 @@ services:
       CACHE_WARMUP: 'true'
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
-      PHP_FPM_LOG_LEVEL: error 
+      PHP_FPM_LOG_LEVEL: error
       ENV: ${ENV:-DEV}
       SYMFONY_ENV: ${SYMFONY_ENV:-dev}
       ENABLE_MIGRATIONS: 'true'
@@ -110,7 +110,7 @@ services:
       shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
 
   cron:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/app:latest
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
     build: .
     command: bash -c "while /bin/true; do ./bin/scheduled-actions.sh && sleep 60; done"
     volumes:
@@ -144,7 +144,7 @@ services:
       KAFKA_URL: ${KAFKA_URL:-}
 
   caddy:
-    image: registry.gitlab.com/opencontent/stanzadelcittadino/caddy:latest
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/caddy:latest
     volumes:
       #- "uploads:/srv/uploads"
       - caddydata:/data
@@ -155,7 +155,7 @@ services:
       context: .
       dockerfile: Dockerfile.caddy
       args:
-        php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:latest
+        php_image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
     networks:
       default:
         aliases:
@@ -249,7 +249,7 @@ services:
 
   gotenberg:
     #image: gotenberg/gotenberg:7
-    image: registry.gitlab.com/opencontent/gotemberg:6-ok 
+    image: registry.gitlab.com/opencontent/gotemberg:6-ok
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
       interval: 1m30s
@@ -268,4 +268,4 @@ services:
       traefik.docker.network: 'default'
       traefik.http.services.mailserver.loadbalancer.server.port: 8025
       traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
- 
+
