@@ -234,4 +234,5 @@ parameters:
     env(KAFKA_TOPIC_APPLICATIONS): 'applications'
     env(KAFKA_TOPIC_SERVICES): 'services'
     env(API_VERSION): 1
+    env(MYPAY_ADAPTER_URL): 'https://mypay-dev.ship.opencontent.io'
 
