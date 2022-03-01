@@ -267,7 +267,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
         if (!is_null($identifier) && $identifier !== $paymentSetting->getPaymentIdentifier()) {
           $canAdd = false;
         }
-        if($available && $paymentSetting->getDate() < new \DateTime()) {
+        if($available && $paymentSetting->getDate() < (new \DateTime())->setTime(0,0,0)) {
           $canAdd = false;
         }
 
