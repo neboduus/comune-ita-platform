@@ -48,7 +48,14 @@ class ProtocollaPraticaListener
           }
           $handlerIsExternal = $handler->getExecutionType() == ProtocolloHandlerInterface::PROTOCOL_EXECUTION_TYPE_EXTERNAL;
 
+          // Protocollazione esterna!!!!!!
           if ($handlerIsExternal) {
+            if ($event->getNewStateIdentifier() == Pratica::STATUS_REGISTERED_AFTER_INTEGRATION) {
+              $pratica->getRichiestaDiIntegrazioneAttiva()->markAsDone();
+              $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING);
+              return;
+            }
+
             if ( $event->getNewStateIdentifier() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE || $event->getNewStateIdentifier() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE ) {
               if ($pratica->getEsito()) {
                 $this->statusService->setNewStatus($pratica, Pratica::STATUS_COMPLETE);
@@ -71,12 +78,6 @@ class ProtocollaPraticaListener
 
           if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
             $this->protocollo->protocollaAllegatiIntegrazione($pratica);
-            return;
-          }
-
-          if ($event->getNewStateIdentifier() == Pratica::STATUS_REGISTERED_AFTER_INTEGRATION && !$pratica instanceof GiscomPratica) {
-            $pratica->getRichiestaDiIntegrazioneAttiva()->markAsDone();
-            $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING);
             return;
           }
 
