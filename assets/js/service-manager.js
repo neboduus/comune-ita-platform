@@ -596,9 +596,9 @@ $(document).ready(function () {
   $("input[name^='general_data[name]']").on("input", function() {
     if($(this).val().length > 50) {
       $(this).addClass('is-invalid warning')
-      if($('#warning-text-length').length === 0){
-        $('<small class="form-text text-muted" id="warning-text-length"> <b>Attenzione</b>, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l\'uso di titoli semplici,<br>' +
-          ' senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio).</small>').insertAfter($(this))
+      if ($('#warning-text-length').length === 0) {
+        $('<small class="form-text text-muted" id="warning-text-length"> Attenzione, i titoli troppo lunghi rendono più difficile la navigazione.\n' +
+          'Si raccomanda l\'uso di titoli semplici, senza riferimenti normativi, e l\'utilizzo del campo <b>"Maggiori informazioni"</b> presente nella scheda del servizio.</small>').insertAfter($(this));
       }
     }else{
       if($('#warning-text-length').length){
