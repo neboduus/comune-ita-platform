@@ -129,7 +129,7 @@
         </div>
 
 
-      {% if flow.getCurrentStepNumber() != flow.getLastStepNumber() %}
+      {% if flow.getCurrentStepNumber() != flow.getLastStepNumber() and pratica.status != 1500 %}
         <div id="formio"
              class="editable formio-front"
              data-locale="{{ app.request.locale }}"

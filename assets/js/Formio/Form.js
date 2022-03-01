@@ -43,7 +43,7 @@ class Form {
 
           let dataContainer = $('#formio_render_dematerialized_forms');
           // Recupero i dati della pratica se presenti
-          if (dataContainer.val() != '') {
+          if (dataContainer.val()) {
             form.submission = {
               data: JSON.parse(dataContainer.val()).data
             };
@@ -143,7 +143,7 @@ class Form {
 
         let dataContainer = $('#formio_render_dematerialized_forms');
         // Recupero i dati della pratica se presenti
-        if (dataContainer.val() !== '') {
+        if (dataContainer.val()) {
           form.submission = {
             data: JSON.parse(dataContainer.val()).data
           };
