@@ -13,7 +13,7 @@ RUN yarn encore production
 RUN ls -l web
 
 # prepare the vendor dir for symfony
-FROM wodby/php:7.3 as builder
+FROM wodby/php:${wodby_version:-7.3} as builder
 
 USER root
 
@@ -27,7 +27,7 @@ COPY app ./app
 RUN composer install --no-scripts --prefer-dist --no-suggest
 
 # prepare the final image
-FROM wodby/php:7.3
+FROM wodby/php:${wodby_version:-7.3} 
 
 USER root
 RUN apk add --no-cache jq httpie

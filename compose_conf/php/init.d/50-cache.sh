@@ -1,9 +1,9 @@
 #!/bin/bash
 
-[[ $DEBUG == 1 ]] && set -x
+[[ ${DEBUG} == 1 ]] && set -x
 
 
-if [[ $CACHE_WARMUP == 'true' ]]; then
+if [[ ${SYMFONY_ENV} != 'dev' ]]; then
 
   echo "==> Cache warmup"
   for instance in $(./bin/tenants); do
