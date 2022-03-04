@@ -13,7 +13,8 @@ services:
     #      PHP_XDEBUG_REMOTE_HOST: 10.0.75.1 # Windows
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      args:
+        wodby_version: 7.3-dev-macos
     environment:
       ENV: DEV
       SYMFONY_ENV: dev

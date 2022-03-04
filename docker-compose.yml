@@ -37,7 +37,6 @@ services:
       - "uploads:/var/www/html/var/uploads"
     stop_grace_period: 90s
     environment:
-      CACHE_WARMUP: 'true'
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       PHP_FPM_LOG_LEVEL: error
@@ -86,7 +85,7 @@ services:
       # In assenza di una vera autenticazione basata su SPID si può simulare
       # un login di un utente con le seguenti variabili d'ambiente:
       LOGIN_ROUTE: ${LOGIN_ROUTE:-login_pat}
-      shibb_pat_attribute_codicefiscale: ABCDEF00A11Z456X
+      shibb_pat_attribute_codicefiscale: CLNVTR76P01G822Q 
       shibb_pat_attribute_cognome: Coliandro
       shibb_pat_attribute_nome: Vittorino
       shibb_pat_attribute_sesso: M
@@ -119,6 +118,8 @@ services:
     healthcheck:
       test: ["NONE"]
     environment:
+      OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
+      OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       ENV: ${ENV:-DEV}
       SYMFONY_ENV: ${SYMFONY_ENV:-dev}
       DB_HOST: ${DB_HOST:-postgres}
