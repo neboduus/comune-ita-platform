@@ -146,7 +146,11 @@ issue per richiedere chiarimenti. Si sconsiglia comunque il setup senza docker p
 oneroso gli aggiornamenti, che ad oggi sono variabili da 1-2 al mese fino a 2-3 a settimana in caso
 di bugfix.
 
+## Credenziali d'accesso
+Per accedere come admin usare le seguenti credenziali
 
+    user: admin
+    password: changeme
 
 ## Abilitazione features
 
