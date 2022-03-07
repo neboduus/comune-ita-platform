@@ -113,7 +113,7 @@
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
 
           {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
-            <p>Verifica i dati inseriti prima di passare al metodo di pagamento</p>
+            <p>{{ 'steps.common.conferma.payment_help_text_top' | trans }}</p>
             {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
@@ -129,7 +129,7 @@
         </div>
 
 
-      {% if flow.getCurrentStepNumber() != flow.getLastStepNumber() and pratica.status != 1500 %}
+      {% if currentStep.formType == "AppBundle\\Form\\FormIO\\FormIORenderType" %}
         <div id="formio"
              class="editable formio-front"
              data-locale="{{ app.request.locale }}"
