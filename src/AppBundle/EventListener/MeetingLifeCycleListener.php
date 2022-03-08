@@ -75,18 +75,19 @@ class MeetingLifeCycleListener
     $meeting = $args->getObject();
     if ($meeting instanceof Meeting) {
       $changeSet = $args->getEntityChangeSet();
-      $wasDraft = $args->hasChangedField('status') && $changeSet['status'][0] == Meeting::STATUS_DRAFT;
+      $draft = $meeting->getStatus() === Meeting::STATUS_DRAFT || ($args->hasChangedField('status') && $changeSet['status'][0] == Meeting::STATUS_DRAFT);
       $errors = $this->meetingService->getMeetingErrors($meeting);
       if (!empty($errors)) {
         throw new ValidatorException($this->translator->trans('meetings.error.invalid_meeting') . ': ' . implode(', ', $errors));
       }
       $meeting->setUpdatedAt(new DateTime());
 
-      if (!$wasDraft && ($args->hasChangedField('fromTime') || $args->hasChangedField('toTime'))) {
+
+      if (!$draft && ($args->hasChangedField('fromTime') || $args->hasChangedField('toTime'))) {
         $meeting->setRescheduled($meeting->getRescheduled() + 1);
       }
 
-      if ($wasDraft && in_array($meeting->getStatus(), [Meeting::STATUS_PENDING, Meeting::STATUS_APPROVED])) {
+      if ($draft && in_array($meeting->getStatus(), [Meeting::STATUS_PENDING, Meeting::STATUS_APPROVED])) {
         $this->meetingService->sendEmailNewMeeting($meeting);
       } else {
         $this->meetingService->sendEmailUpdatedMeeting($meeting, $args->getEntityChangeSet());
