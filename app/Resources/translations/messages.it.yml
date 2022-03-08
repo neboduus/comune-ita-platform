@@ -2162,6 +2162,7 @@ calendars:
     errors:
       greater_than_begin_hour: "L'orario di fine deve essere maggiore dell'orario di inizio"
       greater_than_start_date: "La data di fine deve essere maggiore della data di inizio"
+      end_date_limit: "La data di fine non può essere superiore al %max_date%"
       less_than_end_hour: "L'orario di inizio deve essere minore dell'orario di fine"
       less_than_end_date: "La data di inizio deve essere minore della data di fine"
     months:

@@ -23,6 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\LessThan;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 
 class OpeningHourType extends AbstractType
 {
@@ -31,21 +32,9 @@ class OpeningHourType extends AbstractType
    */
   private $translator;
 
-  /**
-   * @var EntityManager
-   */
-  private $em;
-
-  /**
-   * @var MeetingService
-   */
-  private $meetingService;
-
   public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, MeetingService $meetingService)
   {
     $this->translator = $translator;
-    $this->em = $entityManager;
-    $this->meetingService = $meetingService;
   }
 
   /**
@@ -53,6 +42,8 @@ class OpeningHourType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+    $maxDate = (new DateTime())->setTimestamp(mktime(0,0,0,1,0,date('Y')+2));
+
     $builder
       ->add('name', TextType::class, [
         'required' => true,
@@ -74,7 +65,11 @@ class OpeningHourType extends AbstractType
         'constraints' => [new GreaterThan([
           'propertyPath' => 'parent.all[start_date].data',
           'message' => $this->translator->trans('calendars.opening_hours.errors.greater_than_start_date')
-        ]),]
+        ]),
+          new LessThanOrEqual([
+            'value' => $maxDate->format('c'),
+            'message' => $this->translator->trans('calendars.opening_hours.errors.end_date_limit', ['%max_date%' => $maxDate->format('d/m/Y')])
+          ]),]
       ])
       ->add('days_of_week', ChoiceType::class, [
         'label' => 'calendars.opening_hours.days_of_week',
