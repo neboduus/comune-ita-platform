@@ -23,12 +23,14 @@
 
         <div class="mt-5">
           <div class="mt-5">
-            <div class="bootstrap-select-wrapper select-payment-wrapper mb-5">
+            <div class="bootstrap-select-wrapper select-import-payment-wrapper mb-5">
               <label>{{ 'iscrizioni.select_payment_config' | trans }}</label>
               <select id="select_payment" title="Scegli una opzione">
+                <option value="" title="Scegli una opzione" data-content="{{ 'annulla' | trans }} <span class='reset-label'></span>"></option>
                 {% for payment in subscriptionService.subscriptionPayments %}
-                  <option
-                    value="{{ payment.paymentIdentifier }}">{{ payment.paymentReason }}</option>
+                  {% if payment.type != constant('\\AppBundle\\Model\\SubscriptionPayment::TYPE_SUBSCRIPTION_FEE') %}
+                    <option value="{{ payment.paymentIdentifier }}">{{ payment.paymentReason }}</option>
+                  {% endif %}
                 {% endfor %}
               </select>
               {% if subscriptionService.subscriptionPayments | length == 0 %}
@@ -52,7 +54,7 @@
       <div class="modal-footer">
         <button class="btn btn-outline-primary btn-sm" type="button"
                 data-dismiss="modal">{{ 'annulla' | trans }}</button>
-        <button class="btn btn-primary btn-sm" type="button" id="import_payments_btn"
+        <button class="btn btn-primary btn-sm" type="button" id="import_payments_btn" disabled
                 data-url="{{ path('operatori_import_payments_csv', { 'subscriptionService': subscriptionService.id }) }}">{{ 'iscrizioni.send' | trans }}</button>
       </div>
     </div>
