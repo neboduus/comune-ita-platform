@@ -54,7 +54,8 @@ class WebhookType extends AbstractType
       'Pratica protocollata' => Pratica::STATUS_REGISTERED,
       'Pratica presa in carico' => Pratica::STATUS_PENDING,
       'Pratica accettata' => Pratica::STATUS_COMPLETE,
-      'Pratica rifiutata' => Pratica::STATUS_CANCELLED
+      'Pratica rifiutata' => Pratica::STATUS_CANCELLED,
+      'Messaggio creato' => Webhook::TRIGGER_MESSAGE_CREATED,
     ];
 
     $methods = [
