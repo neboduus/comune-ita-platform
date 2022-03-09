@@ -2113,7 +2113,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @return mixed
+   * @return ServiceGroup
    */
   public function getServiceGroup()
   {

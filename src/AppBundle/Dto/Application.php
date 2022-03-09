@@ -65,6 +65,13 @@ class Application
 
   /**
    * @Serializer\Type("string")
+   * @SWG\Property(description="Applications's service group name")
+   * @Groups({"read"})
+   */
+  private $serviceGroupName;
+
+  /**
+   * @Serializer\Type("string")
    * @SWG\Property(description="Applications's tenant (uuid)")
    * @Groups({"read"})
    */
@@ -431,6 +438,22 @@ class Application
   public function setServiceName($serviceName): void
   {
     $this->serviceName = $serviceName;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getServiceGroupName()
+  {
+    return $this->serviceGroupName;
+  }
+
+  /**
+   * @param mixed $serviceGroupName
+   */
+  public function setServiceGroupName($serviceGroupName): void
+  {
+    $this->serviceGroupName = $serviceGroupName;
   }
 
   /**
