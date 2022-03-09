@@ -13,7 +13,7 @@ use AppBundle\Security\Voters\ApplicationVoter;
 use AppBundle\Security\Voters\MessageVoter;
 use AppBundle\Services\FileService;
 use AppBundle\Services\InstanceService;
-use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\Manager\MessageManager;
 use AppBundle\Services\PraticaStatusService;
 use AppBundle\Utils\UploadedBase64File;
 use Doctrine\ORM\EntityManagerInterface;
@@ -61,12 +61,7 @@ class MessagesAPIController extends AbstractFOSRestController
   /** @var EntityManagerInterface */
   private $em;
 
-  /** @var InstanceService */
-  private $is;
-
-  /** @var PraticaStatusService  */
-  private $statusService;
-
+  /**@var UrlGeneratorInterface */
   protected $router;
 
   protected $baseUrl = '';
@@ -74,40 +69,34 @@ class MessagesAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   protected $logger;
 
-  /** @var TranslatorInterface */
-  private $translator;
-  /**
-   * @var FileService
-   */
+  /** @var FileService */
   private $fileService;
+  /**
+   * @var MessageManager
+   */
+  private $messageManager;
 
   /**
    * ApplicationsAPIController constructor.
    * @param EntityManagerInterface $em
-   * @param InstanceService $is
-   * @param PraticaStatusService $statusService
    * @param UrlGeneratorInterface $router
    * @param LoggerInterface $logger
-   * @param TranslatorInterface $translator
    * @param FileService $fileService
+   * @param MessageManager $messageManager
    */
   public function __construct(
     EntityManagerInterface $em,
-    InstanceService $is,
-    PraticaStatusService $statusService,
     UrlGeneratorInterface $router,
     LoggerInterface $logger,
-    TranslatorInterface $translator,
-    FileService $fileService
+    FileService $fileService,
+    MessageManager $messageManager
   ) {
     $this->em = $em;
-    $this->is = $is;
-    $this->statusService = $statusService;
     $this->router = $router;
     $this->baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
     $this->logger = $logger;
-    $this->translator = $translator;
     $this->fileService = $fileService;
+    $this->messageManager = $messageManager;
   }
 
   /**
@@ -452,8 +441,8 @@ class MessagesAPIController extends AbstractFOSRestController
         $messageEntity->addAttachment($allegato);
       }
 
-      $this->em->persist($messageEntity);
-      $this->em->flush();
+      $this->messageManager->save($messageEntity);
+
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',

@@ -14,6 +14,7 @@ view: 'Visualizza'
 read_more: 'Leggi di più'
 load_more: 'Altro...'
 lista: 'Lista'
+tutti: 'Tutti'
 terms_do_il_consenso: "Ho letto l'informativa"
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'

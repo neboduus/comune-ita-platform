@@ -4,13 +4,18 @@
 namespace AppBundle\Services\Manager;
 
 
+use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Message;
+use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Event\KafkaEvent;
+use AppBundle\Event\MessageEvent;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\IOService;
 use AppBundle\Services\MailerService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -38,6 +43,10 @@ class MessageManager
 
   private $defaultSender;
   private $ioService;
+  /**
+   * @var EventDispatcherInterface
+   */
+  private $dispatcher;
 
 
   /**
@@ -50,6 +59,7 @@ class MessageManager
    * @param IOService $ioService
    * @param FlashBagInterface $flashBag
    * @param string $defaultSender
+   * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -59,7 +69,8 @@ class MessageManager
     MailerService $mailerService,
     IOService $ioService,
     FlashBagInterface $flashBag,
-    string $defaultSender
+    string $defaultSender,
+    EventDispatcherInterface $dispatcher
   )
   {
     $this->entityManager = $entityManager;
@@ -70,15 +81,55 @@ class MessageManager
     $this->ioService = $ioService;
     $this->flashBag = $flashBag;
     $this->defaultSender = $defaultSender;
+    $this->dispatcher = $dispatcher;
+  }
+
+
+  /**
+   * @param Message $message
+   */
+  public function save(Message $message)
+  {
+
+    // Email da parte dell'utente
+    /*if ($message->getApplication()->getOperatore()) {
+      $instance = $this->instanceService->getCurrentInstance();
+      $userReceiver = $message->getApplication()->getOperatore();
+      $subject = $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]);
+      $mess = $this->translator->trans('pratica.messaggi.messaggio', [
+        '%message%' => $message->getMessage(),
+        '%link%' => $this->router->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
+      $this->mailerService->dispatchMail(
+        $this->defaultSender,
+        $message->getAuthor()->getFullName(),
+        $userReceiver->getEmail(),
+        $userReceiver->getFullName(),
+        $mess,
+        $subject,
+        $instance,
+        $message->getCallToAction()
+      );
+
+      $message->setSentAt(time());
+      $message->setEmail($userReceiver->getEmail());
+    }*/
+
+    $this->entityManager->persist($message);
+    $this->entityManager->flush();
+
+    if ($message->getVisibility() == Message::VISIBILITY_APPLICANT) {
+      $this->dispatchMailForMessage($message);
+    }
+
+    $this->dispatcher->dispatch(MessageEvent::CREATED, new MessageEvent($message));
   }
 
   /**
    * @param Message $message
    * @param false $addFlash
    */
-  public function dispatchMailForMessage(Message $message, $addFlash = false)
+  public function dispatchMailForMessage(Message $message, bool $addFlash = false)
   {
-    $sentAmount = 0;
 
     $subject = $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]);
     $mess = $this->translator->trans('pratica.messaggi.messaggio', [
@@ -87,24 +138,32 @@ class MessageManager
     ]);
     $defaultSender = $this->defaultSender;
     $instance = $this->instanceService->getCurrentInstance();
-    $userReceiver = $message->getApplication()->getUser();
 
-    if ($message->getApplication()->getServizio()->isIOEnabled()) {
-      $sentAmount += $this->ioService->sendMessageForPratica(
-        $message->getApplication(),
-        $mess,
-        $subject
-      );
+    if ($message->getAuthor() instanceof CPSUser) {
+      $fromName = $message->getAuthor()->getFullName();
+      $userReceiver = $message->getApplication()->getOperatore();
+    } else {
+      $fromName = $instance->getName();
+      $userReceiver = $message->getApplication()->getUser();
+      $addFlash = true;
     }
-    if ($sentAmount == 0) {
-      $this->mailerService->dispatchMail($defaultSender, $instance->getName(), $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
-    }
+
+    $this->mailerService->dispatchMail($defaultSender, $fromName, $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
     $message->setSentAt(time());
     $message->setEmail($userReceiver->getEmailContatto());
     $this->entityManager->persist($message);
     $this->entityManager->flush();
+
+    // Todo: viene inviato solo nel caso dell'operatore, è veramente  necessario?
     if ($addFlash) {
+      if ($message->getApplication()->getServizio()->isIOEnabled()) {
+        $this->ioService->sendMessageForPratica(
+          $message->getApplication(),
+          $mess,
+          $subject
+        );
+      }
       $this->flashBag->add('info', $this->translator->trans('operatori.messaggi.feedback_inviato', ['%email%' =>$message->getApplication()->getUser()->getEmailContatto() ]));
     }
   }

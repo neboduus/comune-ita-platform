@@ -77,12 +77,15 @@
             </div>
           </div>
         {% endif %}
-        {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') %}
+        {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
           <div class="alert alert-warning">
             <h5>È stata richiesta un'integrazione</h5>
-            <p>{{ pratica.richiestaDiIntegrazioneAttiva.description | raw }}</p>
+            {% if pratica.richiestaDiIntegrazioneAttiva.description is defined %}
+              {{ pratica.richiestaDiIntegrazioneAttiva.description | raw }}
+            {% endif %}
             <p class="text-right">
-              <button id="answer-integration" type="button" class="btn btn-sm">Rispondi alla richiesta integrazione
+              <button id="answer-integration" type="button" class="btn btn-sm">
+                Rispondi alla richiesta integrazione
               </button>
             </p>
           </div>
