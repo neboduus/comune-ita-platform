@@ -27,19 +27,6 @@ $('#searchModal').on('show.bs.modal', function () {
   $("#search-subscriber").val('');
 });
 
-function checkPayment(el) {
-  let checkbox = $(el).find('input');
-  let additionalPayments = $(el).siblings();
-  if (checkbox.prop('checked')) {
-    additionalPayments.hide();
-    additionalPayments.find('input').each(function () {
-      $(this).prop("checked", false);
-    })
-  } else {
-    additionalPayments.show();
-  }
-}
-
 function onTypeChange(el) {
   let value = $(el).find('input:checked').val()
 
@@ -66,19 +53,11 @@ function onTypeChange(el) {
   }
 }
 
-$(document).on("change", ".subscription_fee", function(){
-  checkPayment(this)
-});
-
 $(document).on("change", ".radio-type", function(){
   onTypeChange(this)
 });
 
 $(document).ready(function () {
-  let subscriptionFee = $('.subscription_fee');
-  subscriptionFee.each(function () {
-    checkPayment(this)
-  })
 
   // On subscriptions end date change, change all subription fee payments due date
   $('#appbundle_subscriptionservice_subscription_end').on('change', function () {
@@ -225,10 +204,14 @@ $(document).ready(function () {
   TextEditor.init()
 
   $('#modal_select_service').on('change', function () {
+    $('#modal_copy').attr('disabled', true);
+    let select = $('.bootstrap-select-wrapper.select-payment-wrapper');
+    select.setOptionsToSelect([]);
+    select.hide();
     if (!this.value) {
       return
     }
-    $('.bootstrap-select-wrapper.select-payment-wrapper').hide();
+    $('#spinner').show();
     $('#modal-service-error').hide();
     let explodedPath = window.location.pathname.split("/");
     $.ajax(location.origin + '/' + explodedPath[1] + '/api/subscription-services/' + this.value + '/payment-settings',
@@ -244,7 +227,6 @@ $(document).ready(function () {
                 value: item.payment_identifier
               });
             })
-            let select = $('.bootstrap-select-wrapper.select-payment-wrapper');
             select.setOptionsToSelect(options);
             select.show();
           } else {
@@ -253,11 +235,18 @@ $(document).ready(function () {
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
           alert("Si è verificato un errore, si prega di riprovare");
+        },
+        complete: function () {
+          $('#spinner').hide();
         }
       });
   })
 
   $('#modal_select_payment').on('change', function () {
+    if (!this.value) {
+      return
+    }
+    $('#spinner').show();
     $('#modal-payment-error').hide();
     let explodedPath = window.location.pathname.split("/");
     $.ajax(location.origin + '/' + explodedPath[1] + '/api/subscription-services/' + $('#modal_select_service').val() + '/payment-settings?identifier=' + this.value,
@@ -267,12 +256,16 @@ $(document).ready(function () {
         success: function (data, status, xhr) {   // success callback function
           if (data && data.length>0) {
             $('#payment_identifier').attr('data-payment', JSON.stringify(data[0]));
+            $('#modal_copy').attr('disabled', false);
           } else {
             $('#modal-payment-error').show();
           }
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
           alert("Si è verificato un errore, si prega di riprovare");
+        },
+        complete: function () {
+          $('#spinner').hide();
         }
       });
   })
@@ -285,13 +278,19 @@ $(document).ready(function () {
     $('#select_payment').val("").change()
   })
 
-  $('#select_payment').on('change', function (){
+  $('#select_payment').on('change', function () {
     let btn = $('#import_payments_btn');
     if ($(this).val()) {
       btn.attr('disabled', false);
     } else {
       btn.attr('disabled', true);
     }
+  })
+
+  $('#importPaymentModal').on('hidden.bs.modal', function () {
+    $('#modal_select_service').val("").change()
+    $('#modal_select_payment').val("").change();
+    $('#modal_copy').attr('disabled', true);
   })
 
   $('#modal_copy').on('click', function () {
@@ -305,10 +304,9 @@ $(document).ready(function () {
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_identifier`).attr('value', data["payment_identifier"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_reason`).attr('value', data["payment_reason"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_service`).attr('value', data["payment_service"])
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_required`).attr('checked', data["required"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_create_draft`).attr('checked', data["create_draft"])
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_subscription_fee`).attr('checked', data["subscription_fee"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
+      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().attr('checked', true);
     }
   })
 
