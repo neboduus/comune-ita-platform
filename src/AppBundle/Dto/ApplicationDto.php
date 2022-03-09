@@ -138,6 +138,7 @@ class ApplicationDto extends AbstractDto
     $application->setServiceId($pratica->getServizio()->getId());
     $application->setServiceName($pratica->getServizio()->getName());
     $application->setSubject($pratica->getOggetto());
+    $application->setServiceGroupName($pratica->getServiceGroup() ? $pratica->getServiceGroup()->getName() : null);
 
     // Form data
     if ($pratica->getServizio()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
