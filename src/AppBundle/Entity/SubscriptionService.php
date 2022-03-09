@@ -529,9 +529,7 @@ class SubscriptionService
         $payment->setPaymentService(isset($subscriptionPayment['payment_service']) ? $subscriptionPayment['payment_service'] : "");
         $payment->setMeta(isset($subscriptionPayment['meta']) ? $subscriptionPayment['meta'] : "");
         $payment->setSubscriptionServiceCode($this->code);
-        $payment->setRequired($subscriptionPayment['required'] ?? true);
         $payment->setCreateDraft($subscriptionPayment['create_draft'] ?? true);
-        $payment->setSubscriptionFee($subscriptionPayment['subscription_fee'] ?? false);
 
         $subscriptionPayments[] = $payment;
       } else {

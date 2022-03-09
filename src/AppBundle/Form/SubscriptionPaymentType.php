@@ -58,7 +58,11 @@ class SubscriptionPaymentType extends AbstractType
         'label' => 'backoffice.integration.subscription_service.payment.type',
         'choices' => $types,
         'empty_data' => SubscriptionPayment::TYPE_OPTIONAL,
-        'expanded' =>true
+        'expanded' =>true,
+        'choice_attr' => function($choice, $key, $value) {
+          // adds a class like attending_yes, attending_no, etc
+          return ['class' => 'type_'.strtolower($value)];
+        },
       ])
       ->add('date', DateType::class, [
         'widget' => 'single_text',
@@ -77,14 +81,6 @@ class SubscriptionPaymentType extends AbstractType
         'label' => 'backoffice.integration.subscription_service.payment.service_id',
         'choices' => $servicesData,
         'required' => true
-      ])
-      ->add('subscription_fee', CheckboxType::class, [
-        'label' => 'backoffice.integration.subscription_service.payment.subscription_fee',
-        'required' => false
-      ])
-      ->add('required', CheckboxType::class, [
-        'label' => 'backoffice.integration.subscription_service.payment.required',
-        'required' => false
       ])
       ->add('create_draft', CheckboxType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.create_draft',
@@ -128,15 +124,17 @@ class SubscriptionPaymentType extends AbstractType
           );
         }
 
-        // Integration with subscription service payments is not enabled for service
-        if (isset($data['subscription_fee']) && !in_array(SubcriptionsBackOffice::class, $service->getIntegrations())) {
-          $event->getForm()->addError(
-            new FormError($this->translator->trans('backoffice.integration.subscription_service.no_integration_subscription',
-              ["%service_name%" => $service->getName()]))
-          );
-        }
 
-        if (!isset($data['subscription_fee']) && !in_array(SubcriptionPaymentsBackOffice::class, $service->getIntegrations())) {
+        if ($data['type'] === SubscriptionPayment::TYPE_SUBSCRIPTION_FEE) {
+          // Integration with subscription service payments is not enabled for service
+          if (!in_array(SubcriptionsBackOffice::class, $service->getIntegrations())) {
+            $event->getForm()->addError(
+              new FormError($this->translator->trans('backoffice.integration.subscription_service.no_integration_subscription',
+                ["%service_name%" => $service->getName()]))
+            );
+          }
+        } else if (!in_array(SubcriptionPaymentsBackOffice::class, $service->getIntegrations())) {
+          // Integration with subscription service is not enabled for service
           $event->getForm()->addError(
             new FormError($this->translator->trans('backoffice.integration.subscription_service.no_integration_additional_payment',
               ["%service_name%" => $service->getName()]))
