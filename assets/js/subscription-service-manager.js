@@ -281,6 +281,19 @@ $(document).ready(function () {
     $('#payment_identifier').val(event.relatedTarget.dataset.identifier)
   })
 
+  $('#modal_import_payments').on('hidden.bs.modal', function () {
+    $('#select_payment').val("").change()
+  })
+
+  $('#select_payment').on('change', function (){
+    let btn = $('#import_payments_btn');
+    if ($(this).val()) {
+      btn.attr('disabled', false);
+    } else {
+      btn.attr('disabled', true);
+    }
+  })
+
   $('#modal_copy').on('click', function () {
     let identifier_el =  $('#payment_identifier');
     let identifier = identifier_el.val();
