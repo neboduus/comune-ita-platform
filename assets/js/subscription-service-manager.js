@@ -303,10 +303,10 @@ $(document).ready(function () {
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_amount`).attr('value', data["amount"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_identifier`).attr('value', data["payment_identifier"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_reason`).attr('value', data["payment_reason"])
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_service`).attr('value', data["payment_service"])
+      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_service`).val(data["payment_service"]).change()
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_create_draft`).attr('checked', data["create_draft"])
       $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().attr('checked', true);
+      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().attr('checked', true).change();
     }
   })
 
