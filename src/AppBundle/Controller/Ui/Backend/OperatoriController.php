@@ -747,14 +747,7 @@ class OperatoriController extends Controller
           $message->setVisibility($visibility);
           $message->setCallToAction($callToActions);
 
-          $em = $this->getDoctrine()->getManager();
-          $em->persist($message);
-          $em->flush();
-
-          // Todo: rendere asincrono l'invio delle email
-          if ($visibility == Message::VISIBILITY_APPLICANT) {
-            $this->messageManager->dispatchMailForMessage($message, true);
-          }
+          $this->messageManager->save($message);
 
           return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
         }

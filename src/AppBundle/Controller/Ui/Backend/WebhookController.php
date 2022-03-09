@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class WebhookController
@@ -36,17 +37,23 @@ class WebhookController extends Controller
    * @var WebhookService
    */
   private $webhookService;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
 
   /**
    * @param EntityManagerInterface $entityManager
    * @param InstanceService $instanceService
    * @param WebhookService $webhookService
+   * @param TranslatorInterface $translator
    */
-  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService, WebhookService $webhookService)
+  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService, WebhookService $webhookService, TranslatorInterface $translator)
   {
     $this->entityManager = $entityManager;
     $this->instanceService = $instanceService;
     $this->webhookService = $webhookService;
+    $this->translator = $translator;
   }
 
 
@@ -59,7 +66,7 @@ class WebhookController extends Controller
 
     $servizi = $this->instanceService->getServices();
     $services = [];
-    $services ['all'] = 'Tutti';
+    $services ['all'] = $this->translator->trans('tutti');
     foreach ($servizi as $s) {
       $services[$s->getId()] = $s->getName();
     }

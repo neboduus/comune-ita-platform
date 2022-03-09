@@ -28,6 +28,7 @@ use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\MailerService;
+use AppBundle\Services\Manager\MessageManager;
 use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
@@ -88,9 +89,6 @@ class PraticheController extends Controller
   /** @var RouterInterface */
   private $router;
 
-  /** @var MailerService */
-  private $mailer;
-
   /** @var FeatureManagerInterface */
   private $featureManager;
   /**
@@ -109,15 +107,17 @@ class PraticheController extends Controller
    * @var EntityManagerInterface
    */
   private $entityManager;
-
   /**
    * @var BreadcrumbsService
    */
   private $breadcrumbsService;
+  /**
+   * @var MessageManager
+   */
+  private $messageManager;
 
 
   /**
-   * PraticheController constructor.
    * @param InstanceService $instanceService
    * @param PraticaStatusService $praticaStatusService
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
@@ -125,13 +125,13 @@ class PraticheController extends Controller
    * @param LoggerInterface $logger
    * @param TranslatorInterface $translator
    * @param RouterInterface $router
-   * @param MailerService $mailer
    * @param FeatureManagerInterface $featureManager
    * @param DataTableFactory $dataTableFactory
    * @param PraticaManager $praticaManager
    * @param FormServerApiAdapterService $formServerService
    * @param EntityManagerInterface $entityManager
    * @param BreadcrumbsService $breadcrumbsService
+   * @param MessageManager $messageManager
    */
   public function __construct(
     InstanceService $instanceService,
@@ -141,13 +141,13 @@ class PraticheController extends Controller
     LoggerInterface $logger,
     TranslatorInterface $translator,
     RouterInterface $router,
-    MailerService $mailer,
     FeatureManagerInterface $featureManager,
     DataTableFactory $dataTableFactory,
     PraticaManager $praticaManager,
     FormServerApiAdapterService $formServerService,
     EntityManagerInterface $entityManager,
-    BreadcrumbsService $breadcrumbsService
+    BreadcrumbsService $breadcrumbsService,
+    MessageManager $messageManager
   )
   {
     $this->instanceService = $instanceService;
@@ -157,7 +157,6 @@ class PraticheController extends Controller
     $this->logger = $logger;
     $this->translator = $translator;
     $this->router = $router;
-    $this->mailer = $mailer;
     $this->featureManager = $featureManager;
     $this->dataTableFactory = $dataTableFactory;
     $this->praticaManager = $praticaManager;
@@ -165,6 +164,7 @@ class PraticheController extends Controller
     $this->entityManager = $entityManager;
 
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->messageManager = $messageManager;
   }
 
   /**
@@ -178,7 +178,7 @@ class PraticheController extends Controller
     /** @var CPSUser $user */
     $user = $this->getUser();
     /** @var PraticaRepository $repo */
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repo = $this->entityManager->getRepository('AppBundle:Pratica');
     $pratiche = $repo->count(
       array('user' => $user)
     );
@@ -226,7 +226,7 @@ class PraticheController extends Controller
     ];
     $serviceSlug = $request->query->get('service', false);
     if ($serviceSlug) {
-      $serviceRepo = $this->getDoctrine()->getRepository('AppBundle:Servizio');
+      $serviceRepo = $this->entityManager->getRepository('AppBundle:Servizio');
       $service = $serviceRepo->findOneBy(['slug' => $serviceSlug]);
       if ($service instanceof Servizio) {
         $criteria ['servizio'] = $service;
@@ -234,7 +234,7 @@ class PraticheController extends Controller
     }
 
     /** @var PraticaRepository $repo */
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repo = $this->entityManager->getRepository('AppBundle:Pratica');
     $pratiche = $repo->findBy(
       $criteria,
       ['latestStatusChangeTimestamp' => 'DESC',]
@@ -338,7 +338,7 @@ class PraticheController extends Controller
   public function listDraftByServiceAction(Servizio $servizio)
   {
     $user = $this->getUser();
-    $repo = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repo = $this->entityManager->getRepository('AppBundle:Pratica');
     $pratiche = $repo->findBy(
       array(
         'user' => $user,
@@ -372,7 +372,7 @@ class PraticheController extends Controller
    */
   public function compilaAction(Request $request, Pratica $pratica)
   {
-    $em = $this->getDoctrine()->getManager();
+
     if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION
       && $pratica->getStatus() !== Pratica::STATUS_DRAFT
       && $pratica->getStatus() !== Pratica::STATUS_PAYMENT_PENDING) {
@@ -426,7 +426,7 @@ class PraticheController extends Controller
 
       if ($praticaFlowService->nextStep()) {
 
-        $em->flush();
+        $this->entityManager->flush();
         $form = $praticaFlowService->createForm();
 
         $resumeURI = $praticaFlowService->getResumeUrl($request);
@@ -594,7 +594,7 @@ class PraticheController extends Controller
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
     $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 
-    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->entityManager->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 
     $message = new Message();
     $message->setApplication($pratica);
@@ -615,31 +615,11 @@ class PraticheController extends Controller
       $message->setVisibility(Message::VISIBILITY_APPLICANT);
       $message->setCallToAction($callToActions);
 
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($message);
-      $em->flush();
-
-      // Todo: rendere asincrono l'invio delle email
-      if ($pratica->getOperatore()) {
-        $defaultSender = $this->getParameter('default_from_email_address');
-        $instance = $this->instanceService->getCurrentInstance();
-        /** @var OperatoreUser $userReceiver */
-        $userReceiver = $message->getApplication()->getOperatore();
-        $subject = $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $pratica]);
-        $mess = $this->translator->trans('pratica.messaggi.messaggio', [
-          '%message%' => $message->getMessage(),
-          '%link%' => $this->router->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
-        $this->mailer->dispatchMail($defaultSender, $user->getFullName(),$userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
-
-        $message->setSentAt(time());
-        $message->setEmail($userReceiver->getEmail());
-        $em->persist($message);
-        $em->flush();
-      }
+      $this->messageManager->save($message);
       return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note']);
     }
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Pratica');
+    $repository = $this->entityManager->getRepository('AppBundle:Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
 
     $result = [
@@ -755,9 +735,8 @@ class PraticheController extends Controller
       throw new UnauthorizedHttpException("Pratica can't be deleted, not in draft status");
     }
 
-    $em = $this->getDoctrine()->getManager();
-    $em->remove($pratica);
-    $em->flush();
+    $this->entityManager->remove($pratica);
+    $this->entityManager->flush();
 
 
     return $this->redirectToRoute('pratiche_list');

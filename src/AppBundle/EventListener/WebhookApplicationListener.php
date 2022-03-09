@@ -5,6 +5,8 @@ namespace AppBundle\EventListener;
 use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Webhook;
+use AppBundle\Event\MessageEvent;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\ScheduledAction\Exception\AlreadyScheduledException;
 use AppBundle\Services\ModuloPdfBuilderService;
@@ -49,7 +51,7 @@ class WebhookApplicationListener
 
     $repo = $this->entityManager->getRepository('AppBundle:Webhook');
     $webhooks = $repo->findBy([
-      'trigger' => [$status, 'all'],
+      'trigger' => [$status, Webhook::TRIGGER_ALL],
       'active' => true
     ]);
 
@@ -57,6 +59,29 @@ class WebhookApplicationListener
       foreach ($webhooks as $w) {
         try {
           if ( ('all' === $w->getTrigger() || $status === $w->getTrigger()) && (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array('all', $w->getFilters()))) {
+            $this->webhookService->createApplicationWebhookAsync($pratica, $w);
+          }
+        }catch (AlreadyScheduledException $e){
+          $this->logger->error('Webhook is already scheduled', ['pratica' => $pratica->getId()]);
+        }
+      }
+    }
+  }
+
+  public function onMessageCreated(MessageEvent $event)
+  {
+
+    $pratica = $event->getItem()->getApplication();
+    $repo = $this->entityManager->getRepository('AppBundle:Webhook');
+    $webhooks = $repo->findBy([
+      'trigger' => [Webhook::TRIGGER_MESSAGE_CREATED, Webhook::TRIGGER_ALL],
+      'active' => true
+    ]);
+
+    if (count($webhooks) > 0 ) {
+      foreach ($webhooks as $w) {
+        try {
+          if ( (Webhook::TRIGGER_ALL === $w->getTrigger() || Webhook::TRIGGER_MESSAGE_CREATED === $w->getTrigger()) && (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array('all', $w->getFilters()))) {
             $this->webhookService->createApplicationWebhookAsync($pratica, $w);
           }
         }catch (AlreadyScheduledException $e){

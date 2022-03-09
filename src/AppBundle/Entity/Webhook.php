@@ -21,15 +21,19 @@ class Webhook
     '2.0' => '2.0'
   ];
 
+  const TRIGGER_ALL = 'all';
+  const TRIGGER_MESSAGE_CREATED = 'message_created';
+
   const TRIGGERS = [
-    'all' => 'Tutti',
+    self::TRIGGER_ALL => 'tutti',
     Pratica::STATUS_PAYMENT_SUCCESS => 'Pratica pagata',
     Pratica::STATUS_PRE_SUBMIT => 'Pratica inviata',
     Pratica::STATUS_SUBMITTED => 'Pratica acquisita',
     Pratica::STATUS_REGISTERED => 'Pratica protocollata',
     Pratica::STATUS_PENDING => 'Pratica presa in carico',
     Pratica::STATUS_COMPLETE => 'Pratica accettata',
-    Pratica::STATUS_CANCELLED => 'Pratica rifiutata'
+    Pratica::STATUS_CANCELLED => 'Pratica rifiutata',
+    self::TRIGGER_MESSAGE_CREATED => 'Messaggio creato'
   ];
 
   /**

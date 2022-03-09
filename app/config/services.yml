@@ -674,6 +674,7 @@ services:
     autowire: true
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 110 }
+      - { name: kernel.event_listener, event: ocsdc.message.created, method: onMessageCreated, priority: 110 }
 
   ocsdc.pratica_listeners.payment_reminder:
     class: AppBundle\EventListener\PaymentReminderListener
