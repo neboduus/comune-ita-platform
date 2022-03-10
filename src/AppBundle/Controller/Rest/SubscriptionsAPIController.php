@@ -12,6 +12,7 @@ use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\SubscriptionVoter;
 use AppBundle\Services\InstanceService;
 use AppBundle\Utils\FormUtils;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
@@ -298,21 +299,19 @@ class SubscriptionsAPIController extends AbstractApiController
 
     // Filter by user permissions
     if ($user instanceof CPSUser) {
-      $expr = $this->em->getExpressionBuilder();
-      $qb->andWhere($qb->expr()->orX(
-        $expr->eq(
-          'LOWER(:user)',
-          'LOWER(subscriber.fiscal_code)'
-        ),
-        $expr->in(
-          'LOWER(:user)',
-          $this->em->createQueryBuilder()
-            ->select('LOWER(JSONB_ARRAY_ELEMENTS_TEXT(s.relatedCFs))')
-            ->from(Subscription::class, 's')
-            ->getDQL()
-        )
-      ))
-        ->setParameter('user', $user->getCodiceFiscale());
+      $relatedSubscriptions = [];
+      $sql = 'SELECT id from subscription as s where (LOWER(related_cfs::text))::jsonb @> \'"' . strtolower($user->getCodiceFiscale()) . '"\'';
+
+      try {
+        $stmt = $this->em->getConnection()->prepare($sql);
+        $relatedSubscriptions = $stmt->executeQuery()->fetchFirstColumn();
+      } catch (Exception | \Doctrine\DBAL\Exception $e) {
+        $this->logger->error('Unable to find related subscriptions for user ' . $user->getCodiceFiscale() . ': ' . $e->getMessage(), ['request' => $request]);
+      }
+
+      $qb->andWhere('LOWER(:user) = LOWER(subscriber.fiscal_code) OR subscription.id IN (:related_subscriptions)')
+        ->setParameter('user', $user->getCodiceFiscale())
+        ->setParameter('related_subscriptions', $relatedSubscriptions);
     }
     try {
       $subscriptions = $qb->getQuery()->getResult();
