@@ -4,9 +4,10 @@
 namespace AppBundle\Services;
 
 
-use AppBundle\Dto\Application;
+use AppBundle\Dto\Message as MessageDto;
 use AppBundle\Dto\ApplicationDto;
 use AppBundle\Entity\GiscomPratica;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Webhook;
@@ -26,6 +27,7 @@ class WebhookService implements ScheduledActionHandlerInterface
 {
 
   const SCHEDULED_APPLICATION_WEBHOOK = 'application_webhook';
+  const SCHEDULED_MESSAGE_WEBHOOK = 'message_webhook';
 
   /**
    * @var ScheduleActionService
@@ -86,7 +88,7 @@ class WebhookService implements ScheduledActionHandlerInterface
    */
   public function createApplicationWebhookAsync(Pratica $pratica, Webhook $webhook)
   {
-    
+
     $params = serialize([
       'pratica' => $pratica->getId(),
       'webhook' => $webhook->getId()
@@ -100,14 +102,40 @@ class WebhookService implements ScheduledActionHandlerInterface
   }
 
   /**
+   * @param Message $message
+   * @param Webhook $webhook
+   * @throws AlreadyScheduledException
+   */
+  public function createMessageWebhookAsync(Message $message, Webhook $webhook)
+  {
+
+    $params = serialize([
+      'message' => $message->getId(),
+      'webhook' => $webhook->getId()
+    ]);
+
+    $this->scheduleActionService->appendAction(
+      'ocsdc.webhook_service',
+      self::SCHEDULED_MESSAGE_WEBHOOK,
+      $params
+    );
+  }
+
+  /**
    * @param ScheduledAction $action
    * @throws \Exception
    */
   public function executeScheduledAction(ScheduledAction $action)
   {
     $params = unserialize($action->getParams());
-    if ($action->getType() == self::SCHEDULED_APPLICATION_WEBHOOK) {
-      $this->applicationWebhook($params, $action);
+    switch ($action->getType()) {
+      case self::SCHEDULED_APPLICATION_WEBHOOK:
+        $this->applicationWebhook($params, $action);
+        break;
+
+      case self::SCHEDULED_MESSAGE_WEBHOOK:
+        $this->messageWebhook($params, $action);
+        break;
     }
   }
 
@@ -132,6 +160,60 @@ class WebhookService implements ScheduledActionHandlerInterface
     }
 
     $content = $this->applicationDto->fromEntity($pratica, true, $webhook->getVersion());
+
+    $headers = ['Content-Type' => 'application/json'];
+    if (!empty($webhook->getHeaders())) {
+      $headers = array_merge($headers, json_decode($webhook->getHeaders(), true));
+    }
+
+    $data = json_decode($this->serializer->serialize($content, 'json'), true);
+
+    if ($event) {
+      $data['event_id'] = $event->getId();
+      $data['event_created_at'] = $event->getCreatedAt()->format(DateTime::W3C);
+    }
+    $data['event_version'] = $webhook->getVersion();
+    $data['app_version'] = $this->versionService->getVersion();
+
+    $client = new Client();
+    $request = new Request(
+      $webhook->getMethod(),
+      $webhook->getEndpoint(),
+      $headers,
+      json_encode($data)
+    );
+
+    /** @var Response $response */
+    $response = $client->send($request);
+
+    if (!in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_CREATED, Response::HTTP_ACCEPTED, Response::HTTP_NO_CONTENT])) {
+      throw new \Exception("Error sending webhook: " . $response->getContent());
+    }
+  }
+
+  /**
+   * @param $params
+   * @param ScheduledAction|null $event
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
+  public function messageWebhook($params, ScheduledAction $event = null)
+  {
+
+    /** @var Message $message */
+    $message = $this->entityManager->getRepository('AppBundle:Message')->find($params['message']);
+    if (!$message instanceof Message) {
+      throw new \Exception('Not found Message with id: ' . $params['message']);
+    }
+
+    /** @var Webhook $webhook */
+    $webhook = $this->entityManager->getRepository('AppBundle:Webhook')->find($params['webhook']);
+    if (!$webhook instanceof Webhook) {
+      throw new \Exception('Not found webhook with id: ' . $params['pratica']);
+    }
+
+    $baseUrl = $this->router->generate('applications_api_list', [], UrlGeneratorInterface::ABSOLUTE_URL);
+    $content = MessageDto::fromEntity($message, $baseUrl .'/' . $message->getId());
+    //$content = $this->applicationDto->fromEntity($pratica, true, $webhook->getVersion());
 
     $headers = ['Content-Type' => 'application/json'];
     if (!empty($webhook->getHeaders())) {

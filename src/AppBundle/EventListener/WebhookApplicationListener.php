@@ -70,8 +70,8 @@ class WebhookApplicationListener
 
   public function onMessageCreated(MessageEvent $event)
   {
-
-    $pratica = $event->getItem()->getApplication();
+    $message = $event->getItem();
+    $pratica = $message->getApplication();
     $repo = $this->entityManager->getRepository('AppBundle:Webhook');
     $webhooks = $repo->findBy([
       'trigger' => [Webhook::TRIGGER_MESSAGE_CREATED, Webhook::TRIGGER_ALL],
@@ -81,11 +81,12 @@ class WebhookApplicationListener
     if (count($webhooks) > 0 ) {
       foreach ($webhooks as $w) {
         try {
-          if ( (Webhook::TRIGGER_ALL === $w->getTrigger() || Webhook::TRIGGER_MESSAGE_CREATED === $w->getTrigger()) && (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array('all', $w->getFilters()))) {
-            $this->webhookService->createApplicationWebhookAsync($pratica, $w);
+          if ( (Webhook::TRIGGER_ALL === $w->getTrigger() || Webhook::TRIGGER_MESSAGE_CREATED === $w->getTrigger()) &&
+               (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array(Webhook::TRIGGER_ALL, $w->getFilters()))) {
+            $this->webhookService->createMessageWebhookAsync($message, $w);
           }
         }catch (AlreadyScheduledException $e){
-          $this->logger->error('Webhook is already scheduled', ['pratica' => $pratica->getId()]);
+          $this->logger->error('Webhook is already scheduled', ['message' => $message->getId()]);
         }
       }
     }
