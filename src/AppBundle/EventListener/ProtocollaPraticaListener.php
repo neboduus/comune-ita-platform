@@ -66,6 +66,7 @@ class ProtocollaPraticaListener
             return;
           }
 
+          // Protocollazione gestita internamente alla stanza
           if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED) {
             $this->protocollo->protocollaPratica($pratica);
             return;
@@ -78,6 +79,11 @@ class ProtocollaPraticaListener
 
           if ($event->getNewStateIdentifier() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
             $this->protocollo->protocollaAllegatiIntegrazione($pratica);
+            return;
+          }
+
+          if ($event->getNewStateIdentifier() == Pratica::STATUS_REGISTERED_AFTER_INTEGRATION && !$pratica instanceof GiscomPratica) {
+            $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING);
             return;
           }
 

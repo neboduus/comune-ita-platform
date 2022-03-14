@@ -558,7 +558,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
       $request = new HTMLRequest($index);
       $request->setPaperSize(GotembergRequest::A4);
-      $request->setMargins(GotembergRequest::NO_MARGINS);
+      //$request->setMargins(GotembergRequest::NO_MARGINS);
+      $request->setMargins([1,0,0,0]);
       $response =  $client->post($request);
       $fileStream = $response->getBody();
       return $fileStream->getContents();
@@ -607,6 +608,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
     $request->setMargins([1,0,0,0]);
+    //$request->setWaitTimeout(30);
     $request->setWaitDelay(5);
     $request->addRemoteURLHTTPHeader('Authorization', 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword])));
     $response =  $client->post($request);

@@ -305,6 +305,8 @@ pratica:
     lista_allegati:
       descrizione_modulo: 'Qui sono elencati il modulo compilato generato dal form ed i documenti allegati.'
       descrizione_messaggi: 'Qui sono elencati i file allegati ai messaggi.'
+      descrizione_richieste_integrazioni: 'Qui sono elencati i file di richiesta integrazione.'
+      descrizione_risposte_integrazioni: 'Qui sono elencati i file di risposta integrazione.'
       descrizione_risposta: 'Qui sono elencati il file di risposta alla pratica e relativi allegati.'
     data_ora_presentazione: 'Richiesta presentata il'
     alle: 'alle'
@@ -839,6 +841,8 @@ operatori:
   aggiungi_commento: 'Aggiungi commento'
   allegati_modulo: 'Modulo compilato e documenti allegati'
   allegati_messaggi: 'Documenti allegati nei messaggi'
+  richieste_integrazioni: 'Richieste integrazioni'
+  risposte_integrazioni: 'Risposte integrazioni'
   messaggi:
     titolo: 'Messaggi'
     emails: 'Recapitato a'

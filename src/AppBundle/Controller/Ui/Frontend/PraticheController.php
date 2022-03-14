@@ -2,21 +2,16 @@
 
 namespace AppBundle\Controller\Ui\Frontend;
 
-use AppBundle\DataTable\PraticaTableType;
-use AppBundle\DataTable\ScheduledActionTableType;
+
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\GiscomPratica;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Nota;
-use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\Servizio;
-use AppBundle\Entity\User;
-use AppBundle\Event\KafkaEvent;
-use AppBundle\Form\Base\MessageType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\FormIO\ExpressionValidator;
 use AppBundle\Handlers\Servizio\ForbiddenAccessException;
@@ -134,20 +129,20 @@ class PraticheController extends Controller
    * @param MessageManager $messageManager
    */
   public function __construct(
-    InstanceService $instanceService,
-    PraticaStatusService $praticaStatusService,
-    ModuloPdfBuilderService $moduloPdfBuilderService,
-    ExpressionValidator $validator,
-    LoggerInterface $logger,
-    TranslatorInterface $translator,
-    RouterInterface $router,
-    FeatureManagerInterface $featureManager,
-    DataTableFactory $dataTableFactory,
-    PraticaManager $praticaManager,
+    InstanceService             $instanceService,
+    PraticaStatusService        $praticaStatusService,
+    ModuloPdfBuilderService     $moduloPdfBuilderService,
+    ExpressionValidator         $validator,
+    LoggerInterface             $logger,
+    TranslatorInterface         $translator,
+    RouterInterface             $router,
+    FeatureManagerInterface     $featureManager,
+    DataTableFactory            $dataTableFactory,
+    PraticaManager              $praticaManager,
     FormServerApiAdapterService $formServerService,
-    EntityManagerInterface $entityManager,
-    BreadcrumbsService $breadcrumbsService,
-    MessageManager $messageManager
+    EntityManagerInterface      $entityManager,
+    BreadcrumbsService          $breadcrumbsService,
+    MessageManager              $messageManager
   )
   {
     $this->instanceService = $instanceService;
@@ -193,15 +188,15 @@ class PraticheController extends Controller
       if (!isset($pending[$p->getServizio()->getSlug()])) {
         $pending[$p->getServizio()->getSlug()]['name'] = $p->getServizio()->getName();
         $pending[$p->getServizio()->getSlug()]['slug'] = $p->getServizio()->getSlug();
-        $pending[$p->getServizio()->getSlug()]['applications'][]= $p;
+        $pending[$p->getServizio()->getSlug()]['applications'][] = $p;
       } else {
         if (count($pending[$p->getServizio()->getSlug()]) < 7) {
-          $pending[$p->getServizio()->getSlug()]['applications'][]= $p;
+          $pending[$p->getServizio()->getSlug()]['applications'][] = $p;
         }
       }
     }
 
-    return $this->render( '@App/Pratiche/index.html.twig', [
+    return $this->render('@App/Pratiche/index.html.twig', [
       'user' => $user,
       'pratiche' => $pratiche,
       'title' => 'lista_pratiche',
@@ -250,21 +245,21 @@ class PraticheController extends Controller
       }
 
       if ($p->getStatus() == Pratica::STATUS_DRAFT) {
-        $applications['draft'][]= $p;
+        $applications['draft'][] = $p;
       } elseif (in_array($p->getStatus(), [
-          Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING, Pratica::STATUS_PENDING_AFTER_INTEGRATION,
-          Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE, Pratica::STATUS_REQUEST_INTEGRATION, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE])) {
-        $applications['pending'][]= $p;
+        Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING, Pratica::STATUS_PENDING_AFTER_INTEGRATION,
+        Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE, Pratica::STATUS_REQUEST_INTEGRATION, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE])) {
+        $applications['pending'][] = $p;
       } elseif ($p->getStatus() == Pratica::STATUS_COMPLETE) {
-        $applications['completed'][]= $p;
+        $applications['completed'][] = $p;
       } elseif ($p->getStatus() == Pratica::STATUS_CANCELLED) {
-        $applications['cancelled'][]= $p;
+        $applications['cancelled'][] = $p;
       } elseif (in_array($p->getStatus(), [Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION])) {
-        $applications['integration'][]= $p;
+        $applications['integration'][] = $p;
       } elseif ($p->getStatus() == Pratica::STATUS_PAYMENT_PENDING) {
-        $applications['payment_pending'][]= $p;
+        $applications['payment_pending'][] = $p;
       } elseif ($p->getStatus() == Pratica::STATUS_WITHDRAW) {
-        $applications['withdrawn'][]= $p;
+        $applications['withdrawn'][] = $p;
       }
     }
 
@@ -273,7 +268,7 @@ class PraticheController extends Controller
       $applications['related'] = $praticheRelated;
     }
 
-    return $this->render( '@App/Pratiche/list.html.twig', [
+    return $this->render('@App/Pratiche/list.html.twig', [
       'user' => $user,
       'title' => 'lista_pratiche',
       'tab_pratiche' => $applications,
@@ -351,7 +346,7 @@ class PraticheController extends Controller
       array('creationTime' => 'ASC')
     );
 
-    return $this->render( '@App/Pratiche/listDraftByService.html.twig', [
+    return $this->render('@App/Pratiche/listDraftByService.html.twig', [
       'user' => $user,
       'pratiche' => $pratiche,
       'title' => 'bozze_servizio',
@@ -456,7 +451,7 @@ class PraticheController extends Controller
       }
     }
 
-    return $this->render( '@App/Pratiche/compila.html.twig',  [
+    return $this->render('@App/Pratiche/compila.html.twig', [
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
@@ -536,6 +531,7 @@ class PraticheController extends Controller
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
 
+    $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_REGISTERED);
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
     $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 
@@ -543,8 +539,8 @@ class PraticheController extends Controller
       'pratica' => $pratica,
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
-      'can_compile' => $this->isGranted( ApplicationVoter::COMPILE, $pratica),
-      'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica)
+      'can_compile' => $this->isGranted(ApplicationVoter::COMPILE, $pratica),
+      'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica)
       //'threads' => $thread,
     ];
 
@@ -557,15 +553,15 @@ class PraticheController extends Controller
         foreach ($attachments as $a) {
           $allegati[$a->getId()] = [
             'numero_protocollo' => $a->getNumeroProtocollo(),
-            'id_documento_protocollo'  => $a->getIdDocumentoProtocollo(),
-            'description'  => $a->getDescription()
+            'id_documento_protocollo' => $a->getIdDocumentoProtocollo(),
+            'description' => $a->getDescription()
           ];
         }
       }
       $result['allegati'] = $allegati;
     }
 
-    return $this->render( '@App/Pratiche/show.html.twig',  $result);
+    return $this->render('@App/Pratiche/show.html.twig', $result);
   }
 
   /**
@@ -594,7 +590,7 @@ class PraticheController extends Controller
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
     $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 
-    $attachments = $this->entityManager->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility'=> Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->entityManager->getRepository('AppBundle:Pratica')->getMessageAttachments(['visibility' => Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 
     $message = new Message();
     $message->setApplication($pratica);
@@ -607,8 +603,8 @@ class PraticheController extends Controller
       $message = $messageForm->getData();
 
       $callToActions = [
-        ['label'=>'view', 'link'=>$this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
-        ['label'=>'reply', 'link'=>$this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab'=>'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+        ['label' => 'view', 'link' => $this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+        ['label' => 'reply', 'link' => $this->generateUrl('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
       ];
 
       $message->setProtocolRequired(false);
@@ -616,7 +612,7 @@ class PraticheController extends Controller
       $message->setCallToAction($callToActions);
 
       $this->messageManager->save($message);
-      return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab'=>'note']);
+      return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note']);
     }
 
     $repository = $this->entityManager->getRepository('AppBundle:Pratica');
@@ -631,8 +627,8 @@ class PraticheController extends Controller
       'pratica' => $pratica,
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
-      'can_compile' => $this->isGranted( ApplicationVoter::COMPILE, $pratica),
-      'can_withdraw' => $this->isGranted( ApplicationVoter::WITHDRAW, $pratica),
+      'can_compile' => $this->isGranted(ApplicationVoter::COMPILE, $pratica),
+      'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica),
       'meetings' => $repository->findOrderedMeetings($pratica),
       'module_files' => $this->praticaManager->getGroupedModuleFiles($pratica),
       //'threads' => $thread,
@@ -647,15 +643,15 @@ class PraticheController extends Controller
         foreach ($attachments as $a) {
           $allegati[$a->getId()] = [
             'numero_protocollo' => $a->getNumeroProtocollo(),
-            'id_documento_protocollo'  => $a->getIdDocumentoProtocollo(),
-            'description'  => $a->getDescription()
+            'id_documento_protocollo' => $a->getIdDocumentoProtocollo(),
+            'description' => $a->getDescription()
           ];
         }
       }
       $result['allegati'] = $allegati;
     }
 
-    return $this->render( '@App/Pratiche/detail.html.twig',  $result);
+    return $this->render('@App/Pratiche/detail.html.twig', $result);
   }
 
   /**
@@ -671,7 +667,7 @@ class PraticheController extends Controller
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
-    if ($this->isGranted( ApplicationVoter::WITHDRAW, $pratica)) {
+    if ($this->isGranted(ApplicationVoter::WITHDRAW, $pratica)) {
       $withdrawAttachment = $this->pdfBuilderService->createWithdrawForPratica($pratica);
       $pratica->addAllegato($withdrawAttachment);
       $this->praticaStatusService->setNewStatus(
@@ -761,7 +757,7 @@ class PraticheController extends Controller
     );
 
     $response = ['status' => 'OK', 'errors' => null];
-    if (!empty($errors)){
+    if (!empty($errors)) {
       $response = ['status' => 'KO', 'errors' => $errors];
     }
 
