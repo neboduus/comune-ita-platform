@@ -30,4 +30,34 @@ class StringUtils
     return $string;
   }
 
+  /**
+   * @param $filename
+   * @return string
+   */
+  public static function sanitizeFileName($filename ): string
+  {
+
+    $filename = mb_convert_encoding($filename, "ASCII", "auto");
+
+    $special_chars = array( '?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', '’', '«', '»', '”', '“', chr( 0 ) );
+
+    // Check for support for utf8 in the installed PCRE library once and store the result in a static.
+    static $utf8_pcre = null;
+    if ( ! isset( $utf8_pcre ) ) {
+      $utf8_pcre = @preg_match( '/^./u', 'a' );
+    }
+
+    if ( $utf8_pcre ) {
+      $filename = preg_replace( "#\x{00a0}#siu", ' ', $filename );
+    }
+
+    $filename = str_replace( $special_chars, '', $filename );
+    $filename = str_replace( array( '%20', '+' ), '-', $filename );
+    $filename = preg_replace( '/[\r\n\t -]+/', '-', $filename );
+    $filename = trim( $filename, '.-_' );
+
+
+    return strtolower($filename);
+  }
+
 }

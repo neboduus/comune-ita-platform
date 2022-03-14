@@ -4,6 +4,7 @@
 namespace AppBundle\Model;
 
 
+use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Swagger\Annotations as SWG;
@@ -58,6 +59,46 @@ class File
    * @Groups({"read"})
    */
   private $url;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Original file name")
+   * @Groups({"read"})
+   */
+  private $originalName;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Description")
+   * @Groups({"read"})
+   */
+  private $description;
+
+  /**
+   * @var DateTime
+   * @Serializer\Type("DateTime")
+   * @SWG\Property(description="Created datetime")
+   * @Groups({"read"})
+   */
+  private $createdAt;
+
+  /**
+   * @var boolean
+   * @Serializer\Type("bool")
+   * @SWG\Property(description="Protocol required")
+   * @Groups({"read"})
+   */
+  private $protocolRequired;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Protocol number")
+   * @Groups({"read"})
+   */
+  private $protocolNumber;
 
   /**
    * @return string
@@ -137,6 +178,86 @@ class File
   public function setUrl(string $url): void
   {
     $this->url = $url;
+  }
+
+  /**
+   * @return string
+   */
+  public function getOriginalName(): ?string
+  {
+    return $this->originalName;
+  }
+
+  /**
+   * @param string $originalName
+   */
+  public function setOriginalName(?string $originalName): void
+  {
+    $this->originalName = $originalName;
+  }
+
+  /**
+   * @return string
+   */
+  public function getDescription(): ?string
+  {
+    return $this->description;
+  }
+
+  /**
+   * @param string $description
+   */
+  public function setDescription(?string $description): void
+  {
+    $this->description = $description;
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getCreatedAt(): ?DateTime
+  {
+    return $this->createdAt;
+  }
+
+  /**
+   * @param DateTime $createdAt
+   */
+  public function setCreatedAt(DateTime $createdAt): void
+  {
+    $this->createdAt = $createdAt;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isProtocolRequired(): ?bool
+  {
+    return $this->protocolRequired;
+  }
+
+  /**
+   * @param bool $protocolRequired
+   */
+  public function setProtocolRequired(?bool $protocolRequired): void
+  {
+    $this->protocolRequired = $protocolRequired;
+  }
+
+  /**
+   * @return string
+   */
+  public function getProtocolNumber(): ?string
+  {
+    return $this->protocolNumber;
+  }
+
+  /**
+   * @param string $protocolNumber
+   */
+  public function setProtocolNumber(?string $protocolNumber): void
+  {
+    $this->protocolNumber = $protocolNumber;
   }
 
 }

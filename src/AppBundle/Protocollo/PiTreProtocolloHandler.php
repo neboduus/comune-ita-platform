@@ -11,6 +11,7 @@ use AppBundle\Entity\RispostaIntegrazione;
 use AppBundle\Entity\Servizio;
 use AppBundle\Protocollo\Exception\ResponseErrorException;
 use AppBundle\Services\FileService;
+use AppBundle\Utils\StringUtils;
 use GuzzleHttp\Client;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -288,9 +289,6 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     $parameters->set('method', 'uploadFileToDocument');
     // trasmissionIDArray va valorizzato solo in createDocumentAndAddInProject
     $parameters->remove('trasmissionIDArray');
-
-    //$queryString = http_build_query($parameters->all());
-    //$response = $this->client->get('?' . $queryString);
     $response = $this->client->post('', ['form_params' => $parameters->all()]);
 
     $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
@@ -330,7 +328,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
       $this->checkFileSize($pratica, $allegato);
 
       $parameters->setDocumentId($pratica->getIdDocumentoProtocollo());
-      $parameters->setFileName($allegato->getFile()->getFilename());
+      $parameters->setFileName(StringUtils::sanitizeFileName($allegato->getOriginalFilename()));
       $fileContent = base64_encode($this->fileService->getAttachmentContent($allegato));
       $parameters->setFile($fileContent);
       $parameters->setChecksum(md5($fileContent));
@@ -352,7 +350,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
       $parameters->setDocumentObj($object);
       $parameters->setDocumentDescription($moduloCompilato->getDescription());
 
-      $parameters->setFileName($moduloCompilato->getFile()->getFilename());
+      $parameters->setFileName(StringUtils::sanitizeFileName($moduloCompilato->getOriginalFilename()));
       $fileContent = base64_encode($this->fileService->getAttachmentContent($moduloCompilato));
       $parameters->setFile($fileContent);
       $parameters->setChecksum(md5($fileContent));
@@ -387,7 +385,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
       $this->checkFileSize($pratica, $allegato);
 
       $parameters->setDocumentId($risposta->getIdDocumentoProtocollo());
-      $parameters->setFileName($allegato->getFile()->getFilename());
+      $parameters->setFileName(StringUtils::sanitizeFileName($allegato->getOriginalFilename()));
       $fileContent = base64_encode($this->fileService->getAttachmentContent($allegato));
       $parameters->setFile($fileContent);
       $parameters->setChecksum(md5($fileContent));
@@ -406,7 +404,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
       $parameters->setDocumentDescription('Risposta ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
 
-      $parameters->setFileName($risposta->getFile()->getFilename());
+      $parameters->setFileName(StringUtils::sanitizeFileName($risposta->getOriginalFilename()));
       $fileContent = base64_encode($this->fileService->getAttachmentContent($risposta));
       $parameters->setFile($fileContent);
       $parameters->setChecksum(md5($fileContent));
@@ -456,7 +454,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     $parameters->setDocumentObj('Ritiro ' . $object);
     $parameters->setDocumentDescription('Ritiro ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
-    $parameters->setFileName($ritiro->getFile()->getFilename());
+    $parameters->setFileName(StringUtils::sanitizeFileName($ritiro->getOriginalFilename()));
     $fileContent = base64_encode($this->fileService->getAttachmentContent($ritiro));
     $parameters->setFile($fileContent);
     $parameters->setChecksum(md5($fileContent));
@@ -504,7 +502,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     $parameters->setDocumentObj('Richiesta integrazione ' . $object);
     $parameters->setDocumentDescription('Richiesta integrazione ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
-    $parameters->setFileName($richiesta->getFile()->getFilename());
+    $parameters->setFileName(StringUtils::sanitizeFileName($richiesta->getOriginalFilename()));
     $fileContent = base64_encode($this->fileService->getAttachmentContent($richiesta));
     $parameters->setFile($fileContent);
     $parameters->setChecksum(md5($fileContent));
@@ -552,7 +550,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     $parameters->setDocumentObj('Risposta integrazione ' . $object);
     $parameters->setDocumentDescription('Risposta integrazione ' . $pratica->getServizio()->getName() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
-    $parameters->setFileName($allegato->getFile()->getFilename());
+    $parameters->setFileName(StringUtils::sanitizeFileName($allegato->getOriginalFilename()));
     $fileContent = base64_encode($this->fileService->getAttachmentContent($allegato));
     $parameters->setFile($fileContent);
     $parameters->setChecksum(md5($fileContent));
@@ -594,7 +592,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     }
 
     $parameters->setDocumentId($rispostaIntegrazione->getIdDocumentoProtocollo());
-    $parameters->setFileName($integrazione->getFile()->getFilename());
+    $parameters->setFileName(StringUtils::sanitizeFileName($integrazione->getOriginalFilename()));
     $fileContent = base64_encode($this->fileService->getAttachmentContent($integrazione));
     $parameters->setFile($fileContent);
     $parameters->setChecksum(md5($fileContent));

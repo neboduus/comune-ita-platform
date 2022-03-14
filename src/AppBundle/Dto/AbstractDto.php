@@ -3,6 +3,7 @@
 namespace AppBundle\Dto;
 
 use AppBundle\Entity\Allegato;
+use AppBundle\Utils\StringUtils;
 use \DateTime;
 
 abstract class AbstractDto
@@ -62,7 +63,7 @@ abstract class AbstractDto
   public function prepareFile(Allegato $file, string $baseUrl = '', int $version = 1): array
   {
 
-    $filename = $file->getName();
+    $filename = $file->getOriginalFilename();
     $filenameParts = explode('.', $filename);
     $systemFilename = $file->getFilename();
     $systemFilenameParts = explode('.', $systemFilename);
@@ -70,14 +71,21 @@ abstract class AbstractDto
       $filename .=  '.' . end($systemFilenameParts);
     }
 
+    $description = $file->getDescription();
+    if (empty($description) || $description === $filename) {
+      $description =  Allegato::DEFAULT_DESCRIPTION . ' - ' . $filename;
+    } else {
+      $description .= ' - ' . $filename;
+    }
+
     $temp['id'] = $file->getId();
-    $temp['name'] = $filename;
+    $temp['name'] = $systemFilename;
     $temp['url'] = $baseUrl . '/attachments/' . $file->getId() . '?version=' . $version;
-    $temp['originalName'] = $file->getFilename();
-    $temp['description'] = $file->getDescription() ?? Allegato::DEFAULT_DESCRIPTION;
+    $temp['originalName'] = StringUtils::sanitizeFileName($filename);
+    $temp['description'] = $description;
     $temp['created_at'] = $file->getCreatedAt();
     $temp['protocol_required'] = $file->isProtocolRequired();
-
+    $temp['protocol_number'] = $file->getNumeroProtocollo() ?: ($file->getIdDocumentoProtocollo() ?: null);
     return $temp;
   }
 

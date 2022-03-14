@@ -8,6 +8,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\Pratica;
 use AppBundle\Model\File;
+use AppBundle\Utils\StringUtils;
 use DateTime;
 use Exception;
 use JMS\Serializer\Annotation as Serializer;
@@ -486,10 +487,58 @@ class Message
    */
   public static function prepareFile(Allegato $file, $attachmentEndpointUrl = '')
   {
+    /*
+
+    $filename = $file->getOriginalFilename();
+    $filenameParts = explode('.', $filename);
+    $systemFilename = $file->getFilename();
+    $systemFilenameParts = explode('.', $systemFilename);
+    if (end($filenameParts) != end($systemFilenameParts)) {
+      $filename .=  '.' . end($systemFilenameParts);
+    }
+
+    $description = $file->getDescription();
+    if (empty($description) || $description === $filename) {
+      $description =  Allegato::DEFAULT_DESCRIPTION . ' - ' . $filename;
+    } else {
+      $description .= ' - ' . $filename;
+    }
+
+    $temp['id'] = $file->getId();
+    $temp['name'] = $systemFilename;
+    $temp['url'] = $baseUrl . '/attachments/' . $file->getId() . '?version=' . $version;
+    $temp['originalName'] = StringUtils::sanitizeFileName($filename);
+    $temp['description'] = $description;
+    $temp['created_at'] = $file->getCreatedAt();
+    $temp['protocol_required'] = $file->isProtocolRequired();
+    $temp['protocol_number'] = $file->getNumeroProtocollo() ?: ($file->getIdDocumentoProtocollo() ?: null);
+
+    */
+
+    $filename = $file->getOriginalFilename();
+    $filenameParts = explode('.', $filename);
+    $systemFilename = $file->getFilename();
+    $systemFilenameParts = explode('.', $systemFilename);
+    if (end($filenameParts) != end($systemFilenameParts)) {
+      $filename .=  '.' . end($systemFilenameParts);
+    }
+
+    $description = $file->getDescription();
+    if (empty($description) || $description === $filename) {
+      $description =  Allegato::DEFAULT_DESCRIPTION . ' - ' . $filename;
+    } else {
+      $description .= ' - ' . $filename;
+    }
+
     $temp = new File();
     $temp->setId($file->getId());
-    $temp->setName($file->getName());
+    $temp->setName($systemFilename);
     $temp->setUrl($attachmentEndpointUrl . '/attachments/' .  $file->getId());
+    $temp->setOriginalName(StringUtils::sanitizeFileName($filename));
+    $temp->setDescription($description);
+    $temp->setCreatedAt($file->getCreatedAt());
+    $temp->setProtocolRequired($file->isProtocolRequired());
+    $temp->setProtocolNumber($file->getNumeroProtocollo() ?: ($file->getIdDocumentoProtocollo() ?: null));
     //$temp->getMimeType($file->getFile()->getMimeType());
     return $temp;
   }
