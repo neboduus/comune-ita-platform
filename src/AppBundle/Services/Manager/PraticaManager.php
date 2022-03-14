@@ -6,6 +6,7 @@ namespace AppBundle\Services\Manager;
 
 use AppBundle\Dto\Application;
 use AppBundle\Entity\Allegato;
+use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Message;
@@ -29,6 +30,7 @@ use AppBundle\Protocollo\ProtocolloEvents;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\PraticaStatusService;
+use AppBundle\Utils\UploadedBase64File;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -357,35 +359,50 @@ class PraticaManager
    * @param string $text
    * @throws Exception
    */
-  public function requestIntegration(Pratica $pratica, User $user, string $text)
+  public function requestIntegration(Pratica $pratica, User $user, $data)
   {
 
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
 
     // todo: verificare se va creato solo il messaggio o anche la richiesta di integrazione, per ora creo entrambi
-    $richiestaIntegrazione = new RichiestaIntegrazioneDTO([], null, $text);
+    $richiestaIntegrazione = new RichiestaIntegrazioneDTO([], null, $data['message']);
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
     $integration = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRichiestaIntegrazione(
       $pratica,
       $richiestaIntegrazione
     );
-    $pratica->addRichiestaIntegrazione($integration);
+
 
     $message = new Message();
     $message->setApplication($pratica);
     $message->setProtocolRequired(false);
     $message->setVisibility(Message::VISIBILITY_APPLICANT);
-    $message->setMessage($text);
+    $message->setMessage($data['message']);
     $message->setSubject($this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]));
     $message->setAuthor($user);
+
+    foreach ($data['attachments'] as $attachment) {
+      $base64Content = $attachment->getFile();
+      $file = new UploadedBase64File($base64Content, $attachment->getMimeType());
+      $allegato = new AllegatoMessaggio();
+      $allegato->setFile($file);
+      $allegato->setOwner($pratica->getUser());
+      $allegato->setDescription('Allegato richiesta integrazione');
+      $allegato->setOriginalFilename($attachment->getName());
+      $allegato->setIdRichiestaIntegrazione($integration->getId());
+      $this->entityManager->persist($allegato);
+      $message->addAttachment($allegato);
+    }
+
+    $pratica->addRichiestaIntegrazione($integration);
     $this->entityManager->persist($message);
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
 
-    $this->dispatcher->dispatch(
+    /*$this->dispatcher->dispatch(
       DispatchEmailFromMessageEvent::EVENT_IDENTIFIER,
       new DispatchEmailFromMessageEvent($message)
-    );
+    );*/
 
     $statusChange = new StatusChange();
     $statusChange->setOperatore($user->getFullName());

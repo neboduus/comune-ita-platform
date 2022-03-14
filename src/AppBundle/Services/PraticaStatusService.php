@@ -213,7 +213,6 @@ class PraticaStatusService
           ]
         );
       } catch (\Exception $e) {
-
         $this->entityManager->rollback();
         $this->logger->error(
           LogConstants::PRATICA_CHANGED_STATUS_FAILED,
