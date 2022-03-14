@@ -530,8 +530,7 @@ class PraticheController extends Controller
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
     $resumeURI = $request->getUri();
-
-    $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_REGISTERED);
+    
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
     $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 

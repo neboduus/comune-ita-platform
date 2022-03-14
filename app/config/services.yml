@@ -295,6 +295,11 @@ services:
     tags:
       - { name: form.type }
 
+  AppBundle\Form\Rest\Transition\RequestIntegrationFormType:
+    arguments: [ '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
   ocsdc.pratica_manager: '@AppBundle\Services\Manager\PraticaManager'
 
   AppBundle\Services\Manager\PraticaManager:
