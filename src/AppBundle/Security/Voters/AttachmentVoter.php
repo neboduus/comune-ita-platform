@@ -8,6 +8,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\RichiestaIntegrazione;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -113,12 +114,22 @@ class AttachmentVoter extends Voter
           return true;
         }
       }
+
+      if ($attachment instanceof RichiestaIntegrazione) {
+        $pratica = $attachment->getPratica();
+        $isOperatoreEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
+        if ($pratica->getOperatore() === $user || $isOperatoreEnabled) {
+          return true;
+        }
+      }
+
     }
 
     if ($attachment->getOwner() === $user) {
       return true;
     }
 
+    $canDownload = false;
     $pratica = $attachment->getPratiche()->first();
     if ($pratica instanceof Pratica) {
       if ($user instanceof CPSUser) {

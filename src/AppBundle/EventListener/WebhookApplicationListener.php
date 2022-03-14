@@ -58,7 +58,8 @@ class WebhookApplicationListener
     if (count($webhooks) > 0 ) {
       foreach ($webhooks as $w) {
         try {
-          if ( ('all' === $w->getTrigger() || $status === $w->getTrigger()) && (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array('all', $w->getFilters()))) {
+          if ( (Webhook::TRIGGER_ALL === $w->getTrigger() || $status == $w->getTrigger()) &&
+               (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array(Webhook::TRIGGER_ALL, $w->getFilters()))) {
             $this->webhookService->createApplicationWebhookAsync($pratica, $w);
           }
         }catch (AlreadyScheduledException $e){
@@ -81,7 +82,7 @@ class WebhookApplicationListener
     if (count($webhooks) > 0 ) {
       foreach ($webhooks as $w) {
         try {
-          if ( (Webhook::TRIGGER_ALL === $w->getTrigger() || Webhook::TRIGGER_MESSAGE_CREATED === $w->getTrigger()) &&
+          if ( (Webhook::TRIGGER_ALL === $w->getTrigger() || Webhook::TRIGGER_MESSAGE_CREATED == $w->getTrigger()) &&
                (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array(Webhook::TRIGGER_ALL, $w->getFilters()))) {
             $this->webhookService->createMessageWebhookAsync($message, $w);
           }

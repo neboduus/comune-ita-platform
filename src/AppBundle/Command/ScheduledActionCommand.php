@@ -38,12 +38,15 @@ class ScheduledActionCommand extends ContainerAwareCommand
       $instance = 'default';
     }
 
-    $logger = $this->getContainer()->get('logger');
+    // Default locale
+    $locale = $this->getContainer()->getParameter('locale');
+    $this->getContainer()->get('translator')->setLocale($locale);
 
     $context = $this->getContainer()->get('router')->getContext();
     $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
     $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
 
+    $logger = $this->getContainer()->get('logger');
     $logger->info('Starting a scheduled action with options: ' . \json_encode($input->getOptions()));
 
     /** @var ScheduleActionService $scheduleActionService */

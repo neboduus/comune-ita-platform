@@ -42,6 +42,54 @@
         </div>
       </div>
 
+      {# Richieste integrazioni #}
+      {% if pratica.richiesteIntegrazione|length > 0 %}
+        <div class="collapse-header" id="heading-integration-request">
+          <button data-toggle="collapse" data-target="#collapse-integration-request" aria-expanded="false" aria-controls="collapse-integration-request">
+            {{ 'operatori.richieste_integrazioni'|trans }}
+          </button>
+        </div>
+        <div id="collapse-integration-request" class="collapse" role="tabpanel" aria-labelledby="heading-integration-request">
+          <div class="collapse-body">
+            <p class="pt-2 font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_richieste_integrazioni'|trans }}</p>
+            {% if pratica.richiesteIntegrazione|length > 0 %}
+              <div class="it-list-wrapper mt-4">
+                {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica'}) }}
+                <ul class="it-list">
+                  {% for file in pratica.richiesteIntegrazione %}
+                    {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': file, 'application': pratica}) }}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {# Risposte integrazioni #}
+      {% if pratica.integrationAnswers|length > 0 %}
+        <div class="collapse-header" id="heading-integration-answer">
+          <button data-toggle="collapse" data-target="#collapse-integration-answer" aria-expanded="false" aria-controls="collapse-integration-answer">
+            {{ 'operatori.risposte_integrazioni'|trans }}
+          </button>
+        </div>
+        <div id="collapse-integration-answer" class="collapse" role="tabpanel" aria-labelledby="heading-integration-answer">
+          <div class="collapse-body">
+            <p class="pt-2 font-italic">{{ 'pratica.dettaglio.lista_allegati.descrizione_risposte_integrazioni'|trans }}</p>
+            {% if pratica.integrationAnswers|length > 0 %}
+              <div class="it-list-wrapper mt-4">
+                {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'operatori.scarica'}) }}
+                <ul class="it-list">
+                  {% for file in pratica.integrationAnswers %}
+                    {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': file, 'application': pratica}) }}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
       {# Allegati ai messaggi #}
       {% if messageAttachments|length > 0 %}
         <div class="collapse-header" id="heading3-lft">
