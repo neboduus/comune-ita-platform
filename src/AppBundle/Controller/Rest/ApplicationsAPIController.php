@@ -1840,7 +1840,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *        type="object",
-   *        @SWG\Property(property="message", type="string", description="Reason of the integration request")
+   *        @SWG\Property(property="message", type="string", description="Reason of the integration request"),
+   *        @SWG\Property(property="attachments", type="array", @SWG\Items(ref=@Model(type=FileModel::class)))
    *     )
    * )
    *
@@ -1893,7 +1894,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
 
       $data = $form->getData();
-      $this->praticaManager->requestIntegration($application, $this->getUser(), $data['message']);
+      $this->praticaManager->requestIntegration($application, $this->getUser(), $data);
 
     } catch (\Exception $e) {
       $data = [

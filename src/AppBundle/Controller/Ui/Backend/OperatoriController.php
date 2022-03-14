@@ -798,24 +798,21 @@ class OperatoriController extends Controller
     }
 
     // Integration request
-    $integrationRequestform = $this->createFormBuilder(null)
-      ->add('message', TextareaType::class, [
-        'required' => true,
-        'data' => $this->translator->trans('operatori.richiedi_integrazioni_tpl', [
+    $defaultData = [
+      'message' => $this->translator->trans('operatori.richiedi_integrazioni_tpl', [
           '%user_name%' => $pratica->getUser()->getFullName(),
           '%servizio%' => $pratica->getServizio()->getName(),
-          ]
-        ),
-        'constraints' => [new NotBlank(), new NotNull()]
-      ])
-      ->getForm();
+        ]
+      )
+    ];
 
+    $integrationRequestform = $this->createForm('AppBundle\Form\Rest\Transition\RequestIntegrationFormType', $defaultData);
     $integrationRequestform->handleRequest($request);
     if ($integrationRequestform->isSubmitted() && $integrationRequestform->isValid()) {
 
       $data = $integrationRequestform->getData();
       try {
-        $this->praticaManager->requestIntegration($pratica, $this->getUser(), $data['message']);
+        $this->praticaManager->requestIntegration($pratica, $this->getUser(), $data);
         $this->addFlash('success', 'Integrazione richiesta correttamente.');
       } catch (\Exception $e) {
         $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
