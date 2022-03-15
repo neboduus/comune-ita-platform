@@ -1,15 +1,21 @@
 {% if can_compile or can_withdraw or pratica.status >= 1900 %}
   {% if can_compile %}
-    <a class="btn btn-success mb-4 w-100" data-action="edit_draft"
-       href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-      <i class="fa fa-arrow-circle-right"></i>
-      {% if pratica.status == constant('\\AppBundle\\Entity\\Pratica::STATUS_PAYMENT_PENDING') %}
+    {% if pratica.status == constant('\\AppBundle\\Entity\\Pratica::STATUS_PAYMENT_PENDING') %}
+      <a class="btn btn-success mb-4 w-100" data-action="edit_draft"
+         href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+        <i class="fa fa-arrow-circle-right"></i>
         {{ 'pratica.vai_al_pagamento'|trans }}
-      {% else %}
+      </a>
+    {% endif %}
+    {% if pratica.servizio.legacy %}
+      <a class="btn btn-success mb-4 w-100" data-action="edit_draft"
+         href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
+        <i class="fa fa-arrow-circle-right"></i>
         {{ 'pratica.vai_alla_pratica'|trans }}
-      {% endif %}
-    </a>
+      </a>
+    {% endif %}
   {% endif %}
+{% else %}
   {% if can_withdraw %}
     <a class="btn btn-danger mb-4 w-100"
        onclick="return confirm('Sei sicuro di procedere? Questa azione non potrà più essere annullata.');"

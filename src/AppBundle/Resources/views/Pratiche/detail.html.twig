@@ -79,15 +79,15 @@
         {% endif %}
         {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
           <div class="alert alert-warning">
-            <h5>È stata richiesta un'integrazione</h5>
+            <h5>{{ 'pratica.dettaglio.integrazioni.alert'|trans }}</h5>
             {% if pratica.richiestaDiIntegrazioneAttiva.description is defined %}
               {{ pratica.richiestaDiIntegrazioneAttiva.description | raw }}
             {% endif %}
-            <p class="text-right">
-              <button id="answer-integration" type="button" class="btn btn-sm">
-                Rispondi alla richiesta integrazione
+            <div class="text-right my-3">
+              <button id="answer-integration" type="button" class="btn btn-sm btn-outline-primary">
+                {{ 'pratica.dettaglio.integrazioni.button'|trans }}
               </button>
-            </p>
+            </div>
           </div>
         {% endif %}
         {{ include('@App/Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}

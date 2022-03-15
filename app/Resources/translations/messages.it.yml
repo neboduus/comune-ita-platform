@@ -334,6 +334,9 @@ pratica:
       rapporto_di_parentela: 'Rapporto di parentela'
       abbr_rapporto_di_parentela: 'Parentela'
     allegati: 'File allegati'
+    integrazioni:
+      alert: "È stata richiesta un'integrazione"
+      button: 'Rispondi alla richiesta integrazione'
     richiesta_integrazioni: 'Richiesta integrazioni'
     risposte_integrazioni: 'Risposte integrazioni'
     allegato:
