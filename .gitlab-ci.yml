@@ -38,7 +38,7 @@ build_php:
     - tags
 
 build_apache:
-  stage: build_apache
+  stage: test
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
@@ -50,7 +50,7 @@ build_apache:
     - tags
 
 build_caddy:
-  stage: build_apache
+  stage: test
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:

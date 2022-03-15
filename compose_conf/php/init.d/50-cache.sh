@@ -2,7 +2,6 @@
 
 [[ ${DEBUG} == 1 ]] && set -x
 
-
 if [[ ${SYMFONY_ENV} != 'dev' ]]; then
 
   echo "==> Cache warmup"

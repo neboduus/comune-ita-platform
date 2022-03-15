@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# Non e' più usato, il db viene creato all'avvio del postgres
+
 psql -v ON_ERROR_STOP=0 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
         CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';
 

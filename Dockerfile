@@ -27,7 +27,7 @@ COPY app ./app
 RUN composer install --no-scripts --prefer-dist --no-suggest
 
 # prepare the final image
-FROM wodby/php:${wodby_version:-7.3} 
+FROM wodby/php:${wodby_version:-7.3}
 
 USER root
 RUN apk add --no-cache jq httpie
@@ -36,6 +36,14 @@ RUN apk add --no-cache jq httpie
 # https://www.goetas.com/blog/traps-on-the-way-of-blue-green-deployments/
 RUN sed -i 's/;process_control_timeout = 0/process_control_timeout = 1m/' /usr/local/etc/php-fpm.conf
 RUN sed -i 's/^access.log =(.*)/access.log = \/dev\/null/' /usr/local/etc/php-fpm.d/docker.conf
+
+# Add utility to check healthness of php-fpm
+ENV FCGI_STATUS_PATH=/php-status PHP_FPM_PM_STATUS_PATH=/php-status PHP_FPM_CLEAR_ENV=no
+RUN curl https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck > /usr/local/bin/php-fpm-healthcheck && \
+    chmod +x /usr/local/bin/php-fpm-healthcheck
+
+RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh> /usr/local/bin/wait-for-it && \
+    chmod +x /usr/local/bin/wait-for-it
 
 USER wodby
 
@@ -64,10 +72,6 @@ RUN mkdir -p var/uploads && chown wodby:wodby var -R
 
 RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
-# Add utility to check healthness of php-fpm
-ENV FCGI_STATUS_PATH=/php-status PHP_FPM_PM_STATUS_PATH=/php-status PHP_FPM_CLEAR_ENV=no
-RUN curl https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck > /usr/local/bin/php-fpm-healthcheck && \
-    chmod +x /usr/local/bin/php-fpm-healthcheck
 HEALTHCHECK --interval=1m --timeout=3s \
         CMD /usr/local/bin/php-fpm-healthcheck
 
@@ -77,9 +81,6 @@ RUN composer run-script post-docker-install-cmd
 # il container wodby/php prevede una dir dove mettere script lanciati prima
 # di far partire PHP-FPM
 COPY compose_conf/php/init.d/*.sh /docker-entrypoint-init.d/
-
-RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh> /usr/local/bin/wait-for-it && \
-    chmod +x /usr/local/bin/wait-for-it
 
 ENV LOGS_PATH=php://stderr PHP_DATE_TIMEZONE=Europe/Rome
 
