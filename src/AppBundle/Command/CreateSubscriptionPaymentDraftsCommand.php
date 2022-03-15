@@ -61,7 +61,7 @@ class CreateSubscriptionPaymentDraftsCommand extends ContainerAwareCommand
                 $subscriber = $subscription->getSubscriber();
                 $users = [];
                 /** @var Subscription $subscription */
-                $user = $em->getRepository(CPSUser::class)->findOneBy(['username' => $subscriber->getFiscalCode()]);
+                $user = $subscriptionsService->getOrCreateUserFromSubscriber($subscriber);
                 if ($user) {
                   // Create draft for subscription owner
                   $users[] = $user;

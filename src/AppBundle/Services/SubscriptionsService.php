@@ -7,6 +7,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
+use AppBundle\Entity\Subscriber;
 use AppBundle\Entity\Subscription;
 use AppBundle\Model\SubscriptionPayment;
 use Doctrine\ORM\EntityManagerInterface;
@@ -151,6 +152,39 @@ class SubscriptionsService
       ]
     );
     return $sentAmount;
+  }
+
+  public function getOrCreateUserFromSubscriber(Subscriber $subscriber) {
+    if (!$subscriber->isAdult()) {
+      return null;
+    }
+
+    $user = $this->em->getRepository(CPSUser::class)->findOneBy(['username' => $subscriber->getFiscalCode()]);
+    if ($user) {
+      return $user;
+    }
+
+    $user = new CPSUser();
+    $user
+      ->setUsername($subscriber->getFiscalCode())
+      ->setCodiceFiscale($subscriber->getFiscalCode())
+      ->setEmail($subscriber->getEmail())
+      ->setEmailContatto($subscriber->getEmail())
+      ->setNome($subscriber->getName())
+      ->setCognome($subscriber->getSurname())
+      ->setDataNascita($subscriber->getDateOfBirth())
+      ->setLuogoNascita($subscriber->getPlaceOfBirth())
+      ->setSdcIndirizzoResidenza($subscriber->getAddress() . ($subscriber->getHouseNumber() ? ', ' . $subscriber->getHouseNumber() : ""))
+      ->setSdcCittaResidenza($subscriber->getMunicipality())
+      ->setSdcCapResidenza($subscriber->getPostalCode());
+
+    $user->addRole('ROLE_USER')
+      ->addRole('ROLE_CPS_USER')
+      ->setEnabled(true)
+      ->setPassword('');
+
+    $this->em->persist($user);
+    return $user;
   }
 
   public function getDraftsApplicationForUser(CPSUser $user, Servizio $service, $uniqueId)

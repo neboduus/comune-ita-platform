@@ -184,12 +184,12 @@ class Subscriber
         return $this;
     }
 
-    public function getDateOfBirth(): ?\DateTimeInterface
+    public function getDateOfBirth(): ?\DateTime
     {
         return $this->date_of_birth;
     }
 
-    public function setDateOfBirth(\DateTimeInterface $date_of_birth): self
+    public function setDateOfBirth(\DateTime $date_of_birth): self
     {
         $this->date_of_birth = $date_of_birth;
 
@@ -301,5 +301,13 @@ class Subscriber
       $subscriptions[] = $subscription->getId();
     }
     return $subscriptions;
+  }
+
+  public function isAdult(): bool
+  {
+    if ((new \DateTime())->diff($this->getDateOfBirth())->y < 18) {
+      return false;
+    }
+    return true;
   }
 }

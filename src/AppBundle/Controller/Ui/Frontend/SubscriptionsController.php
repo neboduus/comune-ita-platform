@@ -272,7 +272,7 @@ class SubscriptionsController extends Controller
       }
 
       $users = [];
-      $user = $this->entityManager->getRepository(CPSUser::class)->findOneBy(['codiceFiscale' => $subscriber->getFiscalCode()]);
+      $user = $this->subscriptionsService->getOrCreateUserFromSubscriber($subscriber);
       if ($user) {
         // Create draft for subscription owner
         $users[] = $user;
