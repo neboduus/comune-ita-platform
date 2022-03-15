@@ -17,6 +17,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -166,7 +167,9 @@ class WebhookService implements ScheduledActionHandlerInterface
       $headers = array_merge($headers, json_decode($webhook->getHeaders(), true));
     }
 
-    $data = json_decode($this->serializer->serialize($content, 'json'), true);
+    $context = new SerializationContext();
+    $context->setSerializeNull(true);
+    $data = json_decode($this->serializer->serialize($content, 'json', $context), true);
 
     if ($event) {
       $data['event_id'] = $event->getId();
@@ -220,7 +223,9 @@ class WebhookService implements ScheduledActionHandlerInterface
       $headers = array_merge($headers, json_decode($webhook->getHeaders(), true));
     }
 
-    $data = json_decode($this->serializer->serialize($content, 'json'), true);
+    $context = new SerializationContext();
+    $context->setSerializeNull(true);
+    $data = json_decode($this->serializer->serialize($content, 'json', $context), true);
 
     if ($event) {
       $data['event_id'] = $event->getId();
