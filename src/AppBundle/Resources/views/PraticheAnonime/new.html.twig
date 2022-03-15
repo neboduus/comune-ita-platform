@@ -97,7 +97,7 @@
 
         </div>
 
-        {% if flow.getCurrentStepNumber() != flow.getLastStepNumber() %}
+        {% if currentStep.formType == "AppBundle\\Form\\FormIO\\FormIORenderType" %}
         <div id="formio"
              class="editable-anonymous formio-front"
              data-locale="{{ app.request.locale }}"
