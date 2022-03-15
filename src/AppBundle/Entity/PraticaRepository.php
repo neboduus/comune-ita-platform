@@ -877,6 +877,7 @@ class PraticaRepository extends EntityRepository
     }
 
     $qb->orderBy('message.createdAt', 'ASC');
+
     return $qb->getQuery()->getResult();
   }
 

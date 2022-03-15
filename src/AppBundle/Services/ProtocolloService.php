@@ -4,6 +4,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoInterface;
+use AppBundle\Entity\AllegatoMessaggio;
 use AppBundle\Entity\Integrazione;
 use AppBundle\Entity\IntegrazioneRepository;
 use AppBundle\Entity\Pratica;
@@ -272,6 +273,40 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
           ['integrazione' => $allegato->getId(), 'pratica' => $pratica->getId()]
         );
         $dispatchSuccess = false;
+      }
+    }
+
+    if (!empty($integrationAnswer->getAttachments())) {
+
+      $allegatoMessaggioRepo = $this->entityManager->getRepository('AppBundle:AllegatoMessaggio');
+
+      foreach ($integrationAnswer->getAttachments() as $allegatoId) {
+        $allegato = $allegatoMessaggioRepo->find($allegatoId);
+        if ($allegato instanceof AllegatoMessaggio) {
+          try {
+            $this->validateUploadFile($pratica, $allegato);
+            $this->logger->debug(
+              __METHOD__.': send allegato_messaggio',
+              ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId()]
+            );
+            $this->handler->sendIntegrazioneToProtocollo($pratica, $integrationAnswer, $allegato);
+            $this->entityManager->persist($allegato);
+            $this->entityManager->persist($pratica);
+            $this->entityManager->flush();
+
+          } catch (AlreadyUploadException $e) {
+            $this->logger->debug(
+              "Allegato messaggio già inviata al protocollo",
+              ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId()]
+            );
+          } catch (GuzzleException $e) {
+            $this->logger->error(
+              "Errore inviando l'allegato al protocollo",
+              ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId()]
+            );
+            $dispatchSuccess = false;
+          }
+        }
       }
     }
 

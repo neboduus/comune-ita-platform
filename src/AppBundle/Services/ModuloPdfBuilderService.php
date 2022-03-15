@@ -308,7 +308,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     if (empty($messages)) {
       $repo = $this->em->getRepository('AppBundle:Pratica');
-      $filters = ['from_date' => $integrationRequest->getCreatedAt()];
+      $filters['from_date'] = $integrationRequest->getCreatedAt();
+      $filters['visibility'] = Message::VISIBILITY_APPLICANT;
       $messages = $repo->getMessages($filters, $pratica);
     }
 
