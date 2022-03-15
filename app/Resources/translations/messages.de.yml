@@ -431,7 +431,7 @@ iscrizioni:
                                          studentessa <b>%completeName%</b>, nato/a a <b>%placeOfBirth%</b> il <b>%dateOfBirth%</b>
                                          C.F. <b>%fiscalCode%</b> nell'anno %paymentYear% ha
                                          sostenuto la seguente spesa:"
-    importo: "Euro <b>%amount%</b> quale %name%"
+    importo: "Euro <b>%amount%</b> quale %description%"
   data_iscrizione: "Data di iscrizione"
   num_condivisioni: "%num% condivisioni"
   condivisioni: "Condivisioni"
