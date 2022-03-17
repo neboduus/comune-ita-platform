@@ -191,17 +191,12 @@ class PraticaStatusService
 
         $this->entityManager->persist($pratica);
         $this->entityManager->flush();
-
         $this->entityManager->refresh($pratica);
-
-        $this->dispatcher->dispatch(
-          PraticaEvents::ON_STATUS_CHANGE,
-          new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus)
-        );
+        $this->entityManager->commit();
 
         $this->dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($pratica));
+        $this->dispatcher->dispatch(PraticaEvents::ON_STATUS_CHANGE, new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus));
 
-        $this->entityManager->commit();
 
         $this->logger->info(
           LogConstants::PRATICA_CHANGED_STATUS,
@@ -209,9 +204,9 @@ class PraticaStatusService
             'pratica' => $pratica->getId(),
             'before_status' => $beforeStatusIdentifier,
             'after_status' => $afterStatusIdentifier,
-
           ]
         );
+
       } catch (\Exception $e) {
         $this->entityManager->rollback();
         $this->logger->error(
