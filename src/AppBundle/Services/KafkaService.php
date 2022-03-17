@@ -205,6 +205,8 @@ class KafkaService implements ScheduledActionHandlerInterface
     /** @var GuzzleResponse $response */
     $response = $client->send($request, ['timeout' => 2]);
 
+    //$this->logger->info('KAFKA-EVENT', $params);
+
     if (!in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_CREATED])) {
       throw new \Exception("Error sending kafka message: " . $response->getBody());
     }
