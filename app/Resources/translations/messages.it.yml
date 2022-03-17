@@ -376,6 +376,7 @@ pratica:
       data_nascita: 'Data di nascita'
       indirizzo: 'Indirizzo'
     or: 'Oppure'
+    cambio_operatore: 'Cambio operatore'
   messaggi:
     oggetto: 'Nuovo messaggio richiesta numero %pratica%'
     messaggio: '%message% <img src="%link%">'
