@@ -494,10 +494,13 @@ class AllegatoController extends Controller
       return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
     }
 
+    /** @var UploadedFile $uploadedFile */
     $uploadedFile = $request->files->get('file');
 
-    if (!in_array(mime_content_type($uploadedFile->getRealPath()), $this->allowedExtensions)) {
-      return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
+    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions)) {
+      if (!in_array($uploadedFile->getClientMimeType(), $this->allowedExtensions)) {
+        return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
+      }
     }
 
     $allegato = new AllegatoMessaggio();
