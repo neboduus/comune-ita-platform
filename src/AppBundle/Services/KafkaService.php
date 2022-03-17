@@ -4,7 +4,6 @@
 namespace AppBundle\Services;
 
 
-use AppBundle\Dto\Application;
 use AppBundle\Dto\ApplicationDto;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\Pratica;
