@@ -281,7 +281,6 @@ class PraticaManager
             $statusChange
           );
         }
-
       }
 
       $this->logger->info(
