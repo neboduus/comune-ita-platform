@@ -9,6 +9,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RichiestaIntegrazione;
+use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -121,6 +122,11 @@ class AttachmentVoter extends Voter
         if ($pratica->getOperatore() === $user || $isOperatoreEnabled) {
           return true;
         }
+      }
+
+      // Fixme: permetto sempre il download della risposta da parte degli operatori. Da sistemare una volta riorganizzati gli allegati
+      if ($attachment instanceof RispostaOperatore) {
+        return true;
       }
 
     }
