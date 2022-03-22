@@ -148,7 +148,7 @@ class ApplicationDto extends AbstractDto
         $application->setData($this->decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl, $version));
       }
     } else {
-      $application->setData([]);
+      $application->setData(null);
     }
 
     // Backoffice form data
@@ -159,7 +159,7 @@ class ApplicationDto extends AbstractDto
         $application->setBackofficeData($this->decorateDematerializedForms($pratica->getBackofficeFormData(), $attachmentEndpointUrl, $version));
       }
     } else {
-      $application->setBackofficeData([]);
+      $application->setBackofficeData(null);
     }
 
     $application->setCompiledModules($loadFileCollection ? $this->prepareFileCollection($pratica->getModuliCompilati(), $attachmentEndpointUrl, $version) : []);
