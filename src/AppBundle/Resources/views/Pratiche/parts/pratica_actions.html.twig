@@ -7,7 +7,7 @@
         {{ 'pratica.vai_al_pagamento'|trans }}
       </a>
     {% endif %}
-    {% if pratica.servizio.legacy %}
+    {% if pratica.servizio.legacy or pratica.status == 1000 %}
       <a class="btn btn-success mb-4 w-100" data-action="edit_draft"
          href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
         <i class="fa fa-arrow-circle-right"></i>
