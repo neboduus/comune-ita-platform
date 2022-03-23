@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\General;
 
 use AppBundle\Security\AbstractAuthenticator;
+use AppBundle\Security\CasAuthenticator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -126,6 +127,9 @@ class SecurityController extends Controller
    */
   public function loginCasAction(Request $request)
   {
+    if ($request->get(CasAuthenticator::QUERY_TICKET_PARAMETER)) {
+      throw new UnauthorizedHttpException("Something went wrong in authenticator");
+    }
     return new RedirectResponse($this->getParameter('cas_login_url').'?service='.urlencode($request->getUri()));
   }
 

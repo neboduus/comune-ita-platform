@@ -96,7 +96,6 @@ class CasAuthenticator extends AbstractAuthenticator
    */
   protected function createUserDataFromRequest(Request $request)
   {
-
     if ($request->get('test')) {
       $string = "
       <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
@@ -118,6 +117,15 @@ class CasAuthenticator extends AbstractAuthenticator
         </cas:authenticationSuccess>
       </cas:serviceResponse>
       ";
+      /*$string = "
+      <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
+        <cas:authenticationSuccess>
+          <cas:user>LCCRFL83S12A345M</cas:user>
+          <cas:attributes>
+          </cas:attributes>
+        </cas:authenticationSuccess>
+      </cas:serviceResponse>
+      ";*/
     } else {
 
       $url = $this->casValidationUrl . '?' . self::QUERY_TICKET_PARAMETER . '=' .
@@ -133,6 +141,9 @@ class CasAuthenticator extends AbstractAuthenticator
 
     if (isset($xml->authenticationSuccess)) {
       $this->userdata = (array)$xml->authenticationSuccess->attributes;
+      /*if (!isset($this->userdata[self::KEY_PARAMETER_NAME])) {
+        $this->userdata[self::KEY_PARAMETER_NAME] = (string)$xml->authenticationSuccess->user;
+      }*/
       return $this->userdata;
     }
 
