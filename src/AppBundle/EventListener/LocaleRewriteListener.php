@@ -11,6 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 class LocaleRewriteListener
 {
@@ -32,7 +33,7 @@ class LocaleRewriteListener
    */
   private $prefix;
 
-  public function __construct(Router $router, UrlMatcherInterface $matcher, $prefix, $defaultLocale)
+  public function __construct(RouterInterface $router, UrlMatcherInterface $matcher, $prefix, $defaultLocale)
   {
     $this->router = $router;
     $this->defaultLocale = $defaultLocale;

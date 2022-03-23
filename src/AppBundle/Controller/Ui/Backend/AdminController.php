@@ -29,6 +29,7 @@ use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FlowStep;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\MailerService;
 use AppBundle\Services\Manager\ServiceManager;
 use Doctrine\DBAL\DBALException;
 use AppBundle\Services\IOService;
@@ -36,7 +37,8 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
-use FOS\UserBundle\Util\TokenGeneratorInterface;
+use FOS\UserBundle\Mailer\MailerInterface;
+use FOS\UserBundle\Util\TokenGenerator;
 use GuzzleHttp\Client;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -76,7 +78,7 @@ class AdminController extends Controller
   /** @var FormServerApiAdapterService */
   private $formServer;
 
-  /**@var TokenGeneratorInterface */
+  /**@var TokenGenerator */
   private $tokenGenerator;
 
   /** @var TranslatorInterface */
@@ -108,11 +110,16 @@ class AdminController extends Controller
    */
   private $serviceManager;
   private $locales;
+  /**
+   * @var MailerService
+   */
+  private $mailer;
+
 
   /**
    * @param InstanceService $instanceService
    * @param FormServerApiAdapterService $formServer
-   * @param TokenGeneratorInterface $tokenGenerator
+   * @param TokenGenerator $tokenGenerator
    * @param TranslatorInterface $translator
    * @param ServiceFlow $serviceFlow
    * @param SchemaFactoryInterface $schemaFactory
@@ -125,7 +132,7 @@ class AdminController extends Controller
   public function __construct(
     InstanceService $instanceService,
     FormServerApiAdapterService $formServer,
-    TokenGeneratorInterface $tokenGenerator,
+    TokenGenerator $tokenGenerator,
     TranslatorInterface $translator,
     ServiceFlow $serviceFlow,
     SchemaFactoryInterface $schemaFactory,
@@ -134,6 +141,7 @@ class AdminController extends Controller
     DataTableFactory $dataTableFactory,
     LoggerInterface $logger,
     ServiceManager $serviceManager,
+    MailerService $mailer,
     $locales
   )
   {
@@ -149,6 +157,7 @@ class AdminController extends Controller
     $this->logger = $logger;
     $this->serviceManager = $serviceManager;
     $this->locales = explode('|', $locales);
+    $this->mailer = $mailer;
   }
 
 
@@ -245,8 +254,7 @@ class AdminController extends Controller
       $em->persist($operatoreUser);
       $em->flush();
 
-      $mailer = $this->get('fos_user.mailer');
-      $mailer->sendResettingEmailMessage($operatoreUser);
+      $this->mailer->sendResettingEmailMessage($operatoreUser);
 
       $this->addFlash('feedback', 'Operatore creato con successo');
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
@@ -318,8 +326,7 @@ class AdminController extends Controller
     $em->persist($operatoreUser);
     $em->flush();
 
-    $mailer = $this->get('fos_user.mailer');
-    $mailer->sendResettingEmailMessage($operatoreUser);
+    $this->mailer->sendResettingEmailMessage($operatoreUser);
 
     return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
   }
@@ -644,10 +651,10 @@ class AdminController extends Controller
     if (isset($keys[$currentKey + 1])) {
       $nexStep = $keys[$currentKey + 1];
     }
-    $schema = $this->get('formio.factory')->createFromFormId($servizio->getFormIoId(), false);
+    $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId(), false);
     $backofficeSchema = false;
     if ($servizio->getBackofficeFormId()) {
-      $backofficeSchema = $this->get('formio.factory')->createFromFormId($servizio->getBackofficeFormId(), false);
+      $backofficeSchema = $this->schemaFactory->createFromFormId($servizio->getBackofficeFormId(), false);
     }
 
     $form = null;

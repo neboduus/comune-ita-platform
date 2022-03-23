@@ -10,9 +10,9 @@ use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\EntityManagerInterface;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\MapColumn;
@@ -39,22 +39,27 @@ class SubscriptionServicesController extends Controller
   use DataTablesTrait;
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
   /**
    * @var TranslatorInterface
    */
   private $translator;
+  /**
+   * @var SubcriptionsBackOffice
+   */
+  private $subcriptionsBackOffice;
 
   /**
    * SubscriptionServicesController constructor.
-   * @param EntityManager $entityManager
+   * @param EntityManagerInterface $entityManager
    */
-  public function __construct(EntityManager $entityManager, TranslatorInterface $translator)
+  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator, SubcriptionsBackOffice $subcriptionsBackOffice)
   {
     $this->em = $entityManager;
     $this->translator = $translator;
+    $this->subcriptionsBackOffice = $subcriptionsBackOffice;
   }
 
   /**
@@ -130,7 +135,7 @@ class SubscriptionServicesController extends Controller
   public function downloadSubscribersTemplateAction(Request $request)
   {
     $responseCallback = function () use ($request) {
-      $csvHeaders = $this->container->get(SubcriptionsBackOffice::class)->getRequiredHeaders();
+      $csvHeaders = $this->subcriptionsBackOffice->getRequiredHeaders();
 
       $handle = fopen('php://output', 'w');
       fputcsv($handle, $csvHeaders);

@@ -45,7 +45,7 @@
         {% if steps[current_step].template is defined %}
           {{ include(steps[current_step].template) }}
         {% else %}
-          {{ include('AppBundle:Admin/servizio:_defaultStep.html.twig') }}
+          {{ include('@App/Admin/servizio/_defaultStep.html.twig') }}
         {% endif %}
       </div>
     </div>

@@ -11,7 +11,6 @@ use AppBundle\Entity\Pratica;
 use DateInterval;
 use DatePeriod;
 use DateTime;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Exception;
@@ -22,7 +21,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class MeetingService
 {
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   protected $entityManager;
   /**

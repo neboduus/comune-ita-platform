@@ -9,7 +9,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\FeedbackMessageType;
 use AppBundle\FormIO\SchemaComponent;
-use AppBundle\FormIO\SchemaFactory;
+use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Model\FeedbackMessage;
 use AppBundle\Model\FeedbackMessagesSettings;
 use AppBundle\Model\Mailer;
@@ -40,7 +40,7 @@ class FeedbackMessagesDataType extends AbstractType
    */
   private $entityManager;
 
-  /** @var SchemaFactory */
+  /** @var SchemaFactoryInterface */
   private $schemaFactory;
 
   private $locales = [];
@@ -49,10 +49,10 @@ class FeedbackMessagesDataType extends AbstractType
    * FeedbackMessagesDataType constructor.
    * @param TranslatorInterface $translator
    * @param EntityManagerInterface $entityManager
-   * @param SchemaFactory $schemaFactory
+   * @param SchemaFactoryInterface $schemaFactory
    * @param $locales
    */
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, SchemaFactory $schemaFactory, $locales)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, SchemaFactoryInterface $schemaFactory, $locales)
   {
     $this->translator = $translator;
     $this->entityManager = $entityManager;

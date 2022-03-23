@@ -24,7 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -91,14 +91,14 @@ class MailerService
    * MailerService constructor.
    * @param \Swift_Mailer $mailer
    * @param TranslatorInterface $translator
-   * @param TwigEngine $templating
+   * @param EngineInterface $templating
    * @param RegistryInterface $doctrine
    * @param LoggerInterface $logger
    * @param IOService $ioService
    * @param PraticaPlaceholderService $praticaPlaceholderService
    * @param FileService $fileService
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, TwigEngine $templating, RegistryInterface $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService, FileService $fileService)
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, RegistryInterface $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService, FileService $fileService)
   {
     $this->mailer = $mailer;
     $this->translator = $translator;

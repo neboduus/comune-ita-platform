@@ -1,36 +1,36 @@
 <div id="pratica-summary">
 
-  {{ include('AppBundle:Pratiche/summary/parts:allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
-  {{ include('AppBundle:Pratiche/summary/parts:base.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/base.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
-  {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
   {# Modulo domanda #}
-  {{ include('AppBundle:Pratiche/summary/parts/giscom:modulo_domanda.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/giscom/modulo_domanda.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
   {# Allegati alla domanda #}
-  {{ include('AppBundle:Pratiche/summary/parts/giscom:allegati_domanda.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/giscom/allegati_domanda.html.twig', {'pratica':pratica, 'user': user}) }}
 
   {# Soggetti #}
-  {{ include('AppBundle:Pratiche/summary/parts/giscom:soggetti.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/giscom/soggetti.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
   {# Allegati tecnici #}
-  {{ include('AppBundle:Pratiche/summary/parts/giscom:allegati_tecnici.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/giscom/allegati_tecnici.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
   {# Vincoli #}
-  {{ include('AppBundle:Pratiche/summary/parts/giscom:vincoli.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/giscom/vincoli.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
   {# Integrazioni #}
-  {{ include('AppBundle:Pratiche/summary/parts:richieste_integrazioni.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/richieste_integrazioni.html.twig', {'pratica':pratica, 'user': user}) }}
 
 
   {# Risposte integrazioni #}
-  {{ include('AppBundle:Pratiche/summary/parts:risposte_integrazioni.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('@App/Pratiche/summary/parts/risposte_integrazioni.html.twig', {'pratica':pratica, 'user': user}) }}
 </div>

@@ -43,6 +43,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -85,6 +86,10 @@ class AllegatoController extends Controller
   private $entityManager;
 
   private $allowedExtensions;
+  /**
+   * @var SessionInterface
+   */
+  private $session;
 
 
   /**
@@ -95,6 +100,7 @@ class AllegatoController extends Controller
    * @param ValidatorInterface $validator
    * @param FileService $fileService
    * @param EntityManagerInterface $entityManager
+   * @param SessionInterface $session
    * @param $allowedExtensions
    */
   public function __construct(
@@ -104,6 +110,7 @@ class AllegatoController extends Controller
     ValidatorInterface $validator,
     FileService $fileService,
     EntityManagerInterface $entityManager,
+    SessionInterface $session,
     $allowedExtensions
   )
   {
@@ -113,6 +120,7 @@ class AllegatoController extends Controller
     $this->validator = $validator;
     $this->fileService = $fileService;
     $this->entityManager = $entityManager;
+    $this->session = $session;
     $this->allowedExtensions = array_merge(...$allowedExtensions);
   }
 
@@ -152,7 +160,7 @@ class AllegatoController extends Controller
   public function uploadAttachmentAction(Request $request)
   {
     try {
-      $session = $this->get('session');
+      $session = $this->session;
       if (!$session->isStarted()){
         $session->start();
       }
@@ -210,7 +218,7 @@ class AllegatoController extends Controller
 
     try {
 
-      $session = $this->get('session');
+      $session = $this->session;
       if (!$session->isStarted()){
         $session->start();
       }
@@ -237,7 +245,7 @@ class AllegatoController extends Controller
    */
   public function uploadAllegatoAction(Request $request)
   {
-    $session = $this->get('session');
+    $session = $this->session;
     if (!$session->isStarted()){
       $session->start();
     }
@@ -612,7 +620,7 @@ class AllegatoController extends Controller
       if ($this->canDeleteAllegato($allegato) && $deleteForm->isValid()) {
         $this->entityManager->remove($allegato);
         $this->entityManager->flush();
-        $this->get('session')->getFlashBag()
+        $this->session->getFlashBag()
           ->add('info', $this->translator->trans('allegato.cancellato'));
         $this->logger->info(LogConstants::ALLEGATO_CANCELLAZIONE_PERMESSA, [
           'allegato' => $allegato,

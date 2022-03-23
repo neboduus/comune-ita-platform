@@ -21,6 +21,6 @@
     </div>
 
     <div class="row page-break-before"></div>
-    {{ include('AppBundle:Pratiche/pdf/parts:dati_autenticazione.html.twig', {'pratica':pratica,  'user': user}) }}
+    {{ include('@App/Pratiche/pdf/parts/dati_autenticazione.html.twig', {'pratica':pratica,  'user': user}) }}
 
 {% endblock %}

@@ -8,7 +8,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Psr\Log\LoggerInterface;
@@ -38,7 +38,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
   private $translator;
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -86,7 +86,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     Pratica::STATUS_COMPLETE
   ];
 
-  public function __construct(LoggerInterface $logger, TranslatorInterface $translator, EntityManager $em)
+  public function __construct(LoggerInterface $logger, TranslatorInterface $translator, EntityManagerInterface $em)
   {
     $this->logger = $logger;
     $this->translator = $translator;
